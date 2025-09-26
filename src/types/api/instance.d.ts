@@ -6,6 +6,7 @@ export type GetInstance = (params: {
     instanceId: string;
 }) => Promise<{
     json: GetInstanceResponse;
+    ref: GetInstanceResponse;
     params: { worldId: string; instanceId: string };
 }>;
 
