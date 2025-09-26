@@ -109,18 +109,17 @@
     import Sidebar from './views/Sidebar/Sidebar.vue';
     import Feed from './views/Feed/Feed.vue';
     import GameLog from './views/GameLog/GameLog.vue';
+    import PlayerList from './views/PlayerList/PlayerList.vue';
+    import Search from './views/Search/Search.vue';
+    import Favorites from './views/Favorites/Favorites.vue';
+    import FriendLog from './views/FriendLog/FriendLog.vue';
+    import Moderation from './views/Moderation/Moderation.vue';
+    import Notification from './views/Notifications/Notification.vue';
+    import FriendList from './views/FriendList/FriendList.vue';
+    import Charts from './views/Charts/Charts.vue';
+    import Tools from './views/Tools/Tools.vue';
+    import Profile from './views/Profile/Profile.vue';
     import Settings from './views/Settings/Settings.vue';
-
-    const PlayerList = defineAsyncComponent(() => import('./views/PlayerList/PlayerList.vue'));
-    const Search = defineAsyncComponent(() => import('./views/Search/Search.vue'));
-    const Favorites = defineAsyncComponent(() => import('./views/Favorites/Favorites.vue'));
-    const Notification = defineAsyncComponent(() => import('./views/Notifications/Notification.vue'));
-    const Tools = defineAsyncComponent(() => import('./views/Tools/Tools.vue'));
-    const Profile = defineAsyncComponent(() => import('./views/Profile/Profile.vue'));
-    const FriendLog = defineAsyncComponent(() => import('./views/FriendLog/FriendLog.vue'));
-    const Moderation = defineAsyncComponent(() => import('./views/Moderation/Moderation.vue'));
-    const FriendList = defineAsyncComponent(() => import('./views/FriendList/FriendList.vue'));
-    const Charts = defineAsyncComponent(() => import('./views/Charts/Charts.vue'));
 
     import UserDialog from './components/dialogs/UserDialog/UserDialog.vue';
     import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';
@@ -139,7 +138,8 @@
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
     import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
     import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
-    import { defineAsyncComponent, onMounted, computed, onBeforeMount } from 'vue';
+
+    import { onMounted, computed, onBeforeMount } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { createGlobalStores, useAppearanceSettingsStore } from './stores';
