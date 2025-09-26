@@ -545,7 +545,7 @@
                                                 type="text"
                                                 :icon="Edit"
                                                 size="small"
-                                                style="margin-left: 5px"
+                                                style="margin-left: 5px; padding: 0"
                                                 @click="
                                                     showGroupPostEditDialog(groupDialog.id, groupDialog.announcement)
                                                 " />
@@ -555,7 +555,7 @@
                                                 type="text"
                                                 :icon="Delete"
                                                 size="small"
-                                                style="margin-left: 5px"
+                                                style="margin-left: 5px; padding: 0"
                                                 @click="confirmDeleteGroupPost(groupDialog.announcement)" />
                                         </el-tooltip>
                                     </template>
