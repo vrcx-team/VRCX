@@ -193,7 +193,15 @@ export const useUserStore = defineStore('User', () => {
             $location: {},
             $homeLocationName: '',
             users: [],
-            instance: {},
+            instance: {
+                id: '',
+                tag: '',
+                $location: {},
+                friendCount: 0,
+                users: [],
+                shortName: '',
+                ref: {}
+            },
             worlds: [],
             avatars: [],
             isWorldsLoading: false,
@@ -1118,10 +1126,8 @@ export const useUserStore = defineStore('User', () => {
                 ref: {}
             };
         }
-        const instanceRef = instanceStore.cachedInstances.get(L.tag);
-        if (typeof instanceRef !== 'undefined') {
-            D.instance.ref = instanceRef;
-        }
+        const instanceRef = instanceStore.cachedInstances.get(L.tag) || {};
+        Object.assign(D.instance.ref, instanceRef);
         D.instance.friendCount = friendCount;
     }
 
