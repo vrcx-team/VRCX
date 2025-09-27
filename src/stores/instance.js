@@ -416,6 +416,21 @@ export const useInstanceStore = defineStore('Instance', () => {
         return ref;
     }
 
+    async function getInstanceName(location) {
+        let instanceName = '';
+
+        const L = parseLocation(location);
+        if (L.isRealInstance && L.worldId && L.instanceId) {
+            const args = await instanceRequest.getCachedInstance({
+                worldId: L.worldId,
+                instanceId: L.instanceId
+            });
+            instanceName = args.ref.displayName;
+        }
+
+        return instanceName;
+    }
+
     /**
      *
      * @param {string} worldId
@@ -1229,6 +1244,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         showPreviousInstancesInfoDialog,
         addInstanceJoinHistory,
         getCurrentInstanceUserList,
-        getInstanceJoinHistory
+        getInstanceJoinHistory,
+        getInstanceName
     };
 });

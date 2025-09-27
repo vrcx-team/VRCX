@@ -32,8 +32,10 @@ function isRealInstance(instanceId) {
         case 'private:private':
         case 'traveling':
         case 'traveling:traveling':
-        case instanceId.startsWith('local'):
             return false;
+    }
+    if (instanceId.startsWith('local')) {
+        return false;
     }
     return true;
 }

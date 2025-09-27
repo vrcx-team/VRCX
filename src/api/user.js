@@ -45,11 +45,11 @@ const userReq = {
             if (typeof ref === 'undefined') {
                 userReq
                     .getUser(params)
-                    .catch(reject)
                     .then((args) => {
                         args.ref = userStore.applyUser(args.json);
                         resolve(args);
-                    });
+                    })
+                    .catch(reject);
             } else {
                 resolve({
                     cache: true,

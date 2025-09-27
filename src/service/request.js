@@ -290,6 +290,12 @@ export function $throw(code, error, endpoint) {
     ) {
         ignoreError = true;
     }
+    if (
+        (code === 403 || code === 404 || code === -1) &&
+        endpoint.startsWith('instances/')
+    ) {
+        ignoreError = true;
+    }
     if (endpoint.startsWith('analysis/')) {
         ignoreError = true;
     }
