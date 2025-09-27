@@ -174,7 +174,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 'VRCX_lastVRCXVersion',
                 currentVersion.value
             );
-            return state.branch === 'Stable' && !!lastVersion;
+            return state.branch === 'Stable' && lastVersion;
         }
         return false;
     }

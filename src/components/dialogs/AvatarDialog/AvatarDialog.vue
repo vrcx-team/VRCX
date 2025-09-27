@@ -368,10 +368,10 @@
                                 @change="onFileChangeAvatarGallery" />
                             <el-button
                                 v-if="avatarDialog.ref.authorId === currentUser.id"
-                                :disabled="!!avatarDialog.galleryLoading"
+                                :disabled="avatarDialog.galleryLoading"
                                 size="small"
                                 :icon="Upload"
-                                :loading="!!avatarDialog.galleryLoading"
+                                :loading="avatarDialog.galleryLoading"
                                 style="margin-left: 5px"
                                 @click="displayAvatarGalleryUpload"
                                 >{{ t('dialog.screenshot_metadata.upload') }}</el-button

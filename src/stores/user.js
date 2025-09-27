@@ -193,7 +193,15 @@ export const useUserStore = defineStore('User', () => {
             $location: {},
             $homeLocationName: '',
             users: [],
-            instance: {},
+            instance: {
+                id: '',
+                tag: '',
+                $location: {},
+                friendCount: 0,
+                users: [],
+                shortName: '',
+                ref: {}
+            },
             worlds: [],
             avatars: [],
             isWorldsLoading: false,
@@ -1020,7 +1028,7 @@ export const useUserStore = defineStore('User', () => {
             });
         }
         D.$location = L;
-        L.user = null;
+        L.user = {};
         if (L.userId) {
             ref = cachedUsers.get(L.userId);
             if (typeof ref === 'undefined') {
@@ -1103,9 +1111,10 @@ export const useUserStore = defineStore('User', () => {
         }
         D.users = users;
         if (
-            L.worldId &&
-            currentLocation === L.tag &&
-            playersInInstance.size > 0
+            (L.worldId &&
+                currentLocation === L.tag &&
+                playersInInstance.size > 0) ||
+            !L.isRealInstance
         ) {
             D.instance = {
                 id: L.instanceId,
@@ -1117,21 +1126,8 @@ export const useUserStore = defineStore('User', () => {
                 ref: {}
             };
         }
-        if (!L.isRealInstance) {
-            D.instance = {
-                id: L.instanceId,
-                tag: L.tag,
-                $location: L,
-                friendCount: 0,
-                users: [],
-                shortName: '',
-                ref: {}
-            };
-        }
-        const instanceRef = instanceStore.cachedInstances.get(L.tag);
-        if (typeof instanceRef !== 'undefined') {
-            D.instance.ref = instanceRef;
-        }
+        const instanceRef = instanceStore.cachedInstances.get(L.tag) || {};
+        Object.assign(D.instance.ref, instanceRef);
         D.instance.friendCount = friendCount;
     }
 

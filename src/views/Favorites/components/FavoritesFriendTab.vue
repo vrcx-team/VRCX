@@ -9,7 +9,7 @@
             </div>
             <div style="display: flex; align-items: center; font-size: 13px; margin-right: 10px">
                 <span class="name" style="margin-right: 5px; line-height: 10px">{{ t('view.favorite.sort_by') }}</span>
-                <el-radio-group v-model="sortFav" @change="saveSortFavoritesOption">
+                <el-radio-group v-model="sortFav">
                     <el-radio :label="false">{{
                         t('view.settings.appearance.appearance.sort_favorite_by_name')
                     }}</el-radio>
@@ -108,8 +108,8 @@
         get() {
             return sortFavorites.value;
         },
-        set(value) {
-            setSortFavorites(value);
+        set() {
+            setSortFavorites();
         }
     });
 

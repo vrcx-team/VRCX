@@ -35,8 +35,9 @@ export async function initSentry(app) {
             dsn,
             environment: 'nightly',
             release: version,
-            replaysSessionSampleRate: 0.1,
+            replaysSessionSampleRate: 0,
             replaysOnErrorSampleRate: 1.0,
+            tracesSampleRate: 0.05,
             beforeSend(event, hint) {
                 if (
                     event.request?.status &&
@@ -50,6 +51,12 @@ export async function initSentry(app) {
                 Sentry.replayIntegration({
                     maskAllText: true,
                     blockAllMedia: true
+                }),
+                Sentry.browserTracingIntegration(),
+                Sentry.vueIntegration({
+                    tracingOptions: {
+                        trackComponents: true
+                    }
                 })
             ]
         });

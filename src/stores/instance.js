@@ -646,7 +646,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 L.shortName = instance.shortName;
             }
             instance.$location = L;
-            L.user = null;
+            L.user = {};
             if (L.userId) {
                 ref = userStore.cachedUsers.get(L.userId);
                 if (typeof ref === 'undefined') {
@@ -675,7 +675,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         for (const room of rooms) {
             ref = cachedInstances.get(room.tag);
             if (typeof ref !== 'undefined') {
-                room.ref = ref;
+                Object.assign(room.ref, ref);
             }
         }
         rooms.sort(function (a, b) {
