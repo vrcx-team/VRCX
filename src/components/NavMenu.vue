@@ -54,7 +54,7 @@
         { index: 'friendLog', icon: 'ri-contacts-line', tooltip: 'nav_tooltip.friend_log' },
         { index: 'moderation', icon: 'ri-user-forbid-line', tooltip: 'nav_tooltip.moderation' },
         { index: 'notification', icon: 'ri-notification-2-line', tooltip: 'nav_tooltip.notification' },
-        { index: 'friendList', icon: 'ri-contacts-book-2-line', tooltip: 'nav_tooltip.friend_list' },
+        { index: 'friendList', icon: 'ri-contacts-book-3-line', tooltip: 'nav_tooltip.friend_list' },
         { index: 'charts', icon: 'ri-bar-chart-line', tooltip: 'nav_tooltip.charts' },
         { index: 'tools', icon: 'ri-tools-line', tooltip: 'nav_tooltip.tools' },
         { index: 'profile', icon: 'ri-user-line', tooltip: 'nav_tooltip.profile' },
