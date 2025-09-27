@@ -14,10 +14,11 @@
     import { Lock, Unlock } from '@element-plus/icons-vue';
     import { ref, watch } from 'vue';
     import { getGroupName, parseLocation } from '../shared/utils';
-    import { useGroupStore, useLaunchStore } from '../stores';
+    import { useGroupStore, useLaunchStore, useInstanceStore } from '../stores';
 
     const launchStore = useLaunchStore();
     const groupStore = useGroupStore();
+    const { getInstanceName } = useInstanceStore();
 
     const props = defineProps({
         locationobject: Object,
@@ -41,7 +42,6 @@
     function parse() {
         const locObj = props.locationobject;
         location.value = locObj.tag;
-        instanceName.value = locObj.instanceName;
         accessTypeName.value = locObj.accessTypeName;
         strict.value = locObj.strict;
         shortName.value = locObj.shortName;
@@ -52,17 +52,29 @@
 
         region.value = locObj.region || 'us';
 
+        instanceName.value = locObj.instanceName;
+        getInstanceName(locObj.tag)
+            .then((name) => {
+                if (name && props.locationobject.tag === locObj.tag) {
+                    instanceName.value = name;
+                }
+            })
+            .catch((e) => {
+                console.error(e);
+            });
+
         if (props.grouphint) {
             groupName.value = props.grouphint;
         } else if (locObj.groupId) {
             groupName.value = locObj.groupId;
             getGroupName(locObj.groupId)
                 .then((name) => {
-                    groupName.value = name;
+                    if (name && props.locationobject.tag === locObj.tag) {
+                        groupName.value = name;
+                    }
                 })
-                .catch((error) => {
-                    console.error('Failed to get group name:', error);
-                    groupName.value = '';
+                .catch((e) => {
+                    console.error(e);
                 });
         } else {
             groupName.value = '';

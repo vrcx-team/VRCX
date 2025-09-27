@@ -84,14 +84,14 @@
                             "
                             @change="buildInstance"></el-checkbox>
                     </el-form-item>
-                    <!-- <el-form-item :label="t('dialog.new_instance.display_name')">
+                    <el-form-item :label="t('dialog.new_instance.display_name')">
                         <el-input
                             :disabled="!isLocalUserVrcplusSupporter"
                             v-model="newInstanceDialog.displayName"
                             size="small"
                             @click="$event.target.tagName === 'INPUT' && $event.target.select()"
                             @change="buildInstance"></el-input>
-                    </el-form-item> -->
+                    </el-form-item>
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
                         :label="t('dialog.new_instance.group_id')">

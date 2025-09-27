@@ -25,7 +25,7 @@
 
     const { cachedWorlds, showWorldDialog } = useWorldStore();
     const { showGroupDialog } = useGroupStore();
-    const { showPreviousInstancesInfoDialog } = useInstanceStore();
+    const { getInstanceName, showPreviousInstancesInfoDialog } = useInstanceStore();
     const { verifyShortName } = useSearchStore();
 
     const props = defineProps({
@@ -65,45 +65,30 @@
             isTraveling.value = true;
         }
         const L = parseLocation(instanceId);
-        if (L.isOffline) {
-            text.value = 'Offline';
-        } else if (L.isPrivate) {
-            text.value = 'Private';
-        } else if (L.isTraveling) {
-            text.value = 'Traveling';
-        } else if (typeof props.hint === 'string' && props.hint !== '') {
-            if (L.instanceId) {
-                text.value = `${props.hint} #${L.instanceName} ${L.accessTypeName}`;
-            } else {
-                text.value = props.hint;
-            }
-        } else if (L.worldId) {
-            const ref = cachedWorlds.get(L.worldId);
-            if (typeof ref === 'undefined') {
-                getWorldName(L.worldId).then((worldName) => {
-                    if (L.tag === instanceId) {
-                        if (L.instanceId) {
-                            text.value = `${worldName} #${L.instanceName} ${L.accessTypeName}`;
-                        } else {
-                            text.value = worldName;
-                        }
-                    }
-                });
-            } else if (L.instanceId) {
-                text.value = `${ref.name} #${L.instanceName} ${L.accessTypeName}`;
-            } else {
-                text.value = ref.name;
-            }
-        }
+        setText(L, L.instanceName);
+        getInstanceName(instanceId)
+            .then((name) => {
+                if (name && props.location === L.tag) {
+                    setText(L, name);
+                }
+            })
+            .catch((e) => {
+                console.error(e);
+            });
+
         if (props.grouphint) {
             groupName.value = props.grouphint;
         } else if (L.groupId) {
             groupName.value = L.groupId;
-            getGroupName(instanceId).then((name) => {
-                if (L.tag === instanceId) {
-                    groupName.value = name;
-                }
-            });
+            getGroupName(instanceId)
+                .then((name) => {
+                    if (name && props.location === L.tag) {
+                        groupName.value = name;
+                    }
+                })
+                .catch((e) => {
+                    console.error(e);
+                });
         }
         region.value = '';
         if (!L.isOffline && !L.isPrivate && !L.isTraveling) {
@@ -113,6 +98,49 @@
             }
         }
         strict.value = L.strict;
+    }
+
+    function setText(L, instanceName) {
+        if (L.isOffline) {
+            text.value = 'Offline';
+        } else if (L.isPrivate) {
+            text.value = 'Private';
+        } else if (L.isTraveling) {
+            text.value = 'Traveling';
+        } else if (typeof props.hint === 'string' && props.hint !== '') {
+            if (L.instanceId) {
+                text.value = `${props.hint} #${instanceName} ${L.accessTypeName}`;
+            } else {
+                text.value = props.hint;
+            }
+        } else if (L.worldId) {
+            const ref = cachedWorlds.get(L.worldId);
+            if (typeof ref === 'undefined') {
+                const worldName = L.worldId;
+                if (L.instanceId) {
+                    text.value = `${worldName} #${instanceName} ${L.accessTypeName}`;
+                } else {
+                    text.value = worldName;
+                }
+                getWorldName(L.worldId)
+                    .then((name) => {
+                        if (name && props.location === L.tag) {
+                            if (L.instanceId) {
+                                text.value = `${name} #${instanceName} ${L.accessTypeName}`;
+                            } else {
+                                text.value = name;
+                            }
+                        }
+                    })
+                    .catch((e) => {
+                        console.error(e);
+                    });
+            } else if (L.instanceId) {
+                text.value = `${ref.name} #${instanceName} ${L.accessTypeName}`;
+            } else {
+                text.value = ref.name;
+            }
+        }
     }
 
     function handleShowWorldDialog() {

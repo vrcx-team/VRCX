@@ -316,6 +316,11 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             }
         });
         instanceStore.cachedInstances.forEach((ref, id) => {
+            if (
+                friendStore.friends.values().some((f) => f.$location.tag === id)
+            ) {
+                return;
+            }
             // delete instances over an hour old
             if (Date.parse(ref.$fetchedAt) < Date.now() - 3600000) {
                 instanceStore.cachedInstances.delete(id);
