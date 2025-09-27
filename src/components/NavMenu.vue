@@ -51,7 +51,7 @@
         { index: 'playerList', icon: 'ri-group-3-line', tooltip: 'nav_tooltip.player_list' },
         { index: 'search', icon: 'ri-search-line', tooltip: 'nav_tooltip.search' },
         { index: 'favorite', icon: 'ri-star-line', tooltip: 'nav_tooltip.favorites' },
-        { index: 'friendLog', icon: 'ri-contacts-book-3-line', tooltip: 'nav_tooltip.friend_log' },
+        { index: 'friendLog', icon: 'ri-contacts-line', tooltip: 'nav_tooltip.friend_log' },
         { index: 'moderation', icon: 'ri-user-forbid-line', tooltip: 'nav_tooltip.moderation' },
         { index: 'notification', icon: 'ri-notification-2-line', tooltip: 'nav_tooltip.notification' },
         { index: 'friendList', icon: 'ri-contacts-book-2-line', tooltip: 'nav_tooltip.friend_list' },
