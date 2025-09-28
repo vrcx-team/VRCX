@@ -95,7 +95,7 @@
     import { Loading } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
 
-    import { watch, defineEmits } from 'vue';
+    import { watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { avatarRequest } from '../../../api';
     import { useAvatarStore } from '../../../stores';
