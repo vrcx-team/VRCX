@@ -17,7 +17,8 @@ import {
     getWorldName,
     hasGroupPermission,
     isRealInstance,
-    parseLocation
+    parseLocation,
+    replaceBioSymbols
 } from '../shared/utils';
 import { useFriendStore } from './friend';
 import { useGroupStore } from './group';
@@ -389,6 +390,9 @@ export const useInstanceStore = defineStore('Instance', () => {
                 }
                 ref.$disabledContentSettings.push(setting);
             }
+        }
+        if (ref.displayName) {
+            ref.displayName = replaceBioSymbols(ref.displayName);
         }
         if (
             userStore.userDialog.visible &&

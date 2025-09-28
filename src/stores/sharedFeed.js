@@ -216,6 +216,26 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
             return 0;
         });
         wristFeed.splice(16);
+        // temp fix, tack on instance names in the worst way possible
+        for (let feedEntry of wristFeed) {
+            if (feedEntry.location) {
+                const instanceRef = instanceStore.cachedInstances.get(
+                    feedEntry.location
+                );
+                if (instanceRef?.displayName) {
+                    feedEntry.instanceDisplayName = instanceRef.displayName;
+                }
+            }
+            // invites
+            if (feedEntry.details?.worldId) {
+                const instanceRef = instanceStore.cachedInstances.get(
+                    feedEntry.details.worldId
+                );
+                if (instanceRef?.displayName) {
+                    feedEntry.instanceDisplayName = instanceRef.displayName;
+                }
+            }
+        }
         AppApi.ExecuteVrFeedFunction(
             'wristFeedUpdate',
             JSON.stringify(wristFeed)

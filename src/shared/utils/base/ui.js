@@ -32,7 +32,7 @@ function changeAppThemeStyle(themeMode) {
     const themeConfig = THEME_CONFIG[themeMode];
     if (!themeConfig) {
         console.error('Invalid theme mode:', themeMode);
-        themeMode = 'light';
+        themeMode = systemIsDarkMode() ? 'dark' : 'light';
     }
 
     let filePathPrefix = 'file://vrcx/';
