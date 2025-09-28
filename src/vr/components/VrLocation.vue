@@ -26,6 +26,10 @@
         grouphint: {
             type: String,
             default: ''
+        },
+        instancedisplayname: {
+            type: String,
+            default: ''
         }
     });
 
@@ -38,6 +42,11 @@
         text.value = props.location;
         const L = parseLocation(props.location);
 
+        let instanceName = L.instanceName;
+        if (props.instancedisplayname) {
+            instanceName = props.instancedisplayname;
+        }
+
         if (L.isOffline) {
             text.value = 'Offline';
         } else if (L.isPrivate) {
@@ -46,13 +55,13 @@
             text.value = 'Traveling';
         } else if (typeof props.hint === 'string' && props.hint !== '') {
             if (L.instanceId) {
-                text.value = `${props.hint} #${L.instanceName} ${L.accessTypeName}`;
+                text.value = `${props.hint} #${instanceName} ${L.accessTypeName}`;
             } else {
                 text.value = props.hint;
             }
         } else if (L.worldId) {
             if (L.instanceId) {
-                text.value = ` #${L.instanceName} ${L.accessTypeName}`;
+                text.value = ` #${instanceName} ${L.accessTypeName}`;
             } else {
                 text.value = props.location;
             }
