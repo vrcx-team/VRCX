@@ -60,7 +60,7 @@
 </template>
 
 <script setup>
-    import { watch, defineEmits } from 'vue';
+    import { watch } from 'vue';
 
     import { useI18n } from 'vue-i18n';
     import { arraysMatch } from '../../../shared/utils';
