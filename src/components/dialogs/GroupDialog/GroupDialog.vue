@@ -165,11 +165,11 @@
                                 </el-tag>
                             </template>
                         </div>
-                        <div class="group-description" style="margin-top: 5px">
-                            <span
+                        <div style="margin-top: 5px">
+                            <pre
                                 v-show="groupDialog.ref.name !== groupDialog.ref.description"
-                                style="font-size: 12px"
-                                v-text="groupDialog.ref.description"></span>
+                                style="font-family: inherit; font-size: 12px; white-space: pre-wrap"
+                                v-text="groupDialog.ref.description"></pre>
                         </div>
                     </div>
                     <div style="flex: none; margin-left: 10px">
