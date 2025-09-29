@@ -307,7 +307,7 @@ export const useFriendStore = defineStore('Friend', () => {
         }
     }
 
-    const pendingOfflineDelay = 180000;
+    const pendingOfflineDelay = 170000;
 
     /**
      * @param {string} id
@@ -340,9 +340,10 @@ export const useFriendStore = defineStore('Friend', () => {
             location = ref.location;
             $location_at = ref.$location_at;
 
+            const currentState = stateInput || ctx.state;
             // wtf, fetch user if offline in an instance
             if (
-                ctx.state !== 'online' &&
+                currentState !== 'online' &&
                 isRealInstance(ref.location) &&
                 ref.$lastFetch < Date.now() - 10000 // 10 seconds
             ) {
@@ -355,7 +356,7 @@ export const useFriendStore = defineStore('Friend', () => {
             }
             // wtf, fetch user if online in an offline location
             if (
-                ctx.state === 'online' &&
+                currentState === 'online' &&
                 ref.location === 'offline' &&
                 ref.$lastFetch < Date.now() - 10000 // 10 seconds
             ) {
@@ -415,47 +416,40 @@ export const useFriendStore = defineStore('Friend', () => {
             ctx.pendingOffline = true;
             ctx.pendingOfflineTime = Date.now();
             // wait 2minutes then check if user came back online
-            workerTimers.setTimeout(() => {
-                if (!ctx.pendingOffline) {
-                    if (AppDebug.debugFriendState) {
-                        console.log(ctx.name, 'pendingOfflineAlreadyCancelled');
+            workerTimers.setTimeout(
+                () => {
+                    if (!ctx.pendingOffline) {
+                        if (AppDebug.debugFriendState) {
+                            console.log(
+                                ctx.name,
+                                'pendingOfflineAlreadyCancelled'
+                            );
+                        }
+                        return;
                     }
-                    return;
-                }
-                ctx.pendingOffline = false;
-                ctx.pendingOfflineTime = '';
-                if (ctx.pendingState === ctx.state) {
-                    if (AppDebug.debugFriendState) {
-                        console.log(
-                            ctx.name,
-                            'pendingOfflineCancelledStateMatched'
-                        );
+                    ctx.pendingOffline = false;
+                    ctx.pendingOfflineTime = '';
+                    if (ctx.pendingState === ctx.state) {
+                        if (AppDebug.debugFriendState) {
+                            console.log(
+                                ctx.name,
+                                'pendingOfflineCancelledStateMatched'
+                            );
+                        }
+                        return;
                     }
-                    return;
-                }
-                if (AppDebug.debugFriendState) {
-                    console.log(ctx.name, 'pendingOfflineEnd');
-                }
-                updateFriendDelayedCheck(ctx, location, $location_at);
-            }, pendingOfflineDelay);
+                    if (AppDebug.debugFriendState) {
+                        console.log(ctx.name, 'pendingOfflineEnd');
+                    }
+                    updateFriendDelayedCheck(ctx, location, $location_at);
+                },
+                pendingOfflineDelay + Math.floor(Math.random() * 10000)
+            ); // plus ~10sec random delay
         } else {
             ctx.ref = ref;
             ctx.isVIP = isVIP;
             if (typeof ref !== 'undefined') {
                 ctx.name = ref.displayName;
-                // wtf, try fetch user if online in offline location
-                if (
-                    stateInput === 'online' &&
-                    ref.$lastFetch < Date.now() - 10000 // 10 seconds
-                ) {
-                    console.log(
-                        `Fetching friend coming online in offline location ${ctx.name}`
-                    );
-                    userRequest.getUser({
-                        userId: id
-                    });
-                    return;
-                }
             }
             updateFriendDelayedCheck(ctx, location, $location_at);
         }
