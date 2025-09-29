@@ -466,10 +466,7 @@
                             :model-value="sidebarSortMethod1"
                             style="width: 170px"
                             :placeholder="t('view.settings.appearance.side_panel.sorting.placeholder')"
-                            @change="
-                                setSidebarSortMethod1($event);
-                                saveSidebarSortOrder();
-                            ">
+                            @change="setSidebarSortMethod1($event)">
                             <el-option-group :label="t('view.settings.appearance.side_panel.sorting.dropdown_header')">
                                 <el-option
                                     class="x-friend-item"
@@ -501,17 +498,14 @@
                                     value="Sort by Location"></el-option>
                             </el-option-group>
                         </el-select>
-                        <el-icon><ArrowRight /></el-icon>
+                        <el-icon style="padding: 5px"><ArrowRight /></el-icon>
                         <el-select
                             :model-value="sidebarSortMethod2"
                             :disabled="!sidebarSortMethod1"
                             style="width: 170px"
                             clearable
                             :placeholder="t('view.settings.appearance.side_panel.sorting.placeholder')"
-                            @change="
-                                setSidebarSortMethod2($event);
-                                saveSidebarSortOrder();
-                            ">
+                            @change="setSidebarSortMethod2($event)">
                             <el-option-group :label="t('view.settings.appearance.side_panel.sorting.dropdown_header')">
                                 <el-option
                                     class="x-friend-item"
@@ -543,17 +537,14 @@
                                     value="Sort by Location"></el-option>
                             </el-option-group>
                         </el-select>
-                        <el-icon><ArrowRight /></el-icon>
+                        <el-icon style="padding: 5px"><ArrowRight /></el-icon>
                         <el-select
                             :model-value="sidebarSortMethod3"
                             :disabled="!sidebarSortMethod2"
                             style="width: 170px"
                             clearable
                             :placeholder="t('view.settings.appearance.side_panel.sorting.placeholder')"
-                            @change="
-                                setSidebarSortMethod3($event);
-                                saveSidebarSortOrder();
-                            ">
+                            @change="setSidebarSortMethod3($event)">
                             <el-option-group :label="t('view.settings.appearance.side_panel.sorting.dropdown_header')">
                                 <el-option
                                     class="x-friend-item"
@@ -1493,7 +1484,6 @@
     const { showConsole } = useVrcxStore();
     const { disableGameLogDialog } = useGameLogStore();
     const { photonLoggingEnabled } = storeToRefs(usePhotonStore());
-    const { saveSidebarSortOrder } = useFriendStore();
     const { cachedWorlds } = useWorldStore();
     const { cachedInstances } = useInstanceStore();
     const { showLaunchOptions } = useLaunchStore();

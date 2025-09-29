@@ -56,6 +56,13 @@
         parse();
     });
 
+    function currentInstanceId() {
+        if (typeof props.traveling !== 'undefined' && props.location === 'traveling') {
+            return props.traveling;
+        }
+        return props.location;
+    }
+
     function parse() {
         isTraveling.value = false;
         groupName.value = '';
@@ -68,7 +75,7 @@
         setText(L, L.instanceName);
         getInstanceName(instanceId)
             .then((name) => {
-                if (name && props.location === L.tag) {
+                if (name && currentInstanceId() === L.tag) {
                     setText(L, name);
                 }
             })
@@ -82,7 +89,7 @@
             groupName.value = L.groupId;
             getGroupName(instanceId)
                 .then((name) => {
-                    if (name && props.location === L.tag) {
+                    if (name && currentInstanceId() === L.tag) {
                         groupName.value = name;
                     }
                 })
@@ -114,17 +121,16 @@
                 text.value = props.hint;
             }
         } else if (L.worldId) {
+            if (L.instanceId) {
+                text.value = `${L.worldId} #${instanceName} ${L.accessTypeName}`;
+            } else {
+                text.value = L.worldId;
+            }
             const ref = cachedWorlds.get(L.worldId);
             if (typeof ref === 'undefined') {
-                const worldName = L.worldId;
-                if (L.instanceId) {
-                    text.value = `${worldName} #${instanceName} ${L.accessTypeName}`;
-                } else {
-                    text.value = worldName;
-                }
                 getWorldName(L.worldId)
                     .then((name) => {
-                        if (name && props.location === L.tag) {
+                        if (name && currentInstanceId() === L.tag) {
                             if (L.instanceId) {
                                 text.value = `${name} #${instanceName} ${L.accessTypeName}`;
                             } else {
@@ -145,10 +151,7 @@
 
     function handleShowWorldDialog() {
         if (props.link) {
-            let instanceId = props.location;
-            if (props.traveling && props.location === 'traveling') {
-                instanceId = props.traveling;
-            }
+            let instanceId = currentInstanceId();
             if (!instanceId && props.hint.length === 8) {
                 verifyShortName('', props.hint);
                 return;
@@ -162,10 +165,7 @@
     }
 
     function handleShowGroupDialog() {
-        let location = props.location;
-        if (isTraveling.value) {
-            location = props.traveling;
-        }
+        let location = currentInstanceId();
         if (!location || !props.link) {
             return;
         }

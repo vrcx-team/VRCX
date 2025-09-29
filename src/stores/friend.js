@@ -16,7 +16,6 @@ import {
     getUserMemo,
     getWorldName,
     migrateMemos,
-    removeFromArray,
     isRealInstance
 } from '../shared/utils';
 import { useAuthStore } from './auth';
@@ -47,14 +46,6 @@ export const useFriendStore = defineStore('Friend', () => {
 
     const state = reactive({
         friends: new Map(),
-        onlineFriends_: [],
-        vipFriends_: [],
-        activeFriends_: [],
-        offlineFriends_: [],
-        sortOnlineFriends: false,
-        sortVIPFriends: false,
-        sortActiveFriends: false,
-        sortOfflineFriends: false,
         localFavoriteFriends: new Set(),
         isRefreshFriendsLoading: false,
         onlineFriendCount: 0,
@@ -125,125 +116,44 @@ export const useFriendStore = defineStore('Friend', () => {
 
     init();
 
-    // friends_(array) may not have change records in pinia because does not use action
-    const onlineFriends_ = computed({
-        get() {
-            return state.onlineFriends_;
-        },
-        set(value) {
-            state.onlineFriends_ = value;
-        }
-    });
-    const vipFriends_ = computed({
-        get() {
-            return state.vipFriends_;
-        },
-        set(value) {
-            state.vipFriends_ = value;
-        }
-    });
-    const activeFriends_ = computed({
-        get() {
-            return state.activeFriends_;
-        },
-        set(value) {
-            state.activeFriends_ = value;
-        }
-    });
-    const offlineFriends_ = computed({
-        get() {
-            return state.offlineFriends_;
-        },
-        set(value) {
-            state.offlineFriends_ = value;
-        }
-    });
-    const sortOnlineFriends = computed({
-        get() {
-            return state.sortOnlineFriends;
-        },
-        set(value) {
-            state.sortOnlineFriends = value;
-        }
-    });
-    const sortVIPFriends = computed({
-        get() {
-            return state.sortVIPFriends;
-        },
-        set(value) {
-            state.sortVIPFriends = value;
-        }
-    });
-    const sortActiveFriends = computed({
-        get() {
-            return state.sortActiveFriends;
-        },
-        set(value) {
-            state.sortActiveFriends = value;
-        }
-    });
-    const sortOfflineFriends = computed({
-        get() {
-            return state.sortOfflineFriends;
-        },
-        set(value) {
-            state.sortOfflineFriends = value;
-        }
-    });
-
-    // VIP friends
     const vipFriends = computed(() => {
-        if (!state.sortVIPFriends) {
-            return state.vipFriends_;
-        }
-        state.sortVIPFriends = false;
-
-        state.vipFriends_.sort(
-            getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods)
-        );
-        return state.vipFriends_;
+        return Array.from(state.friends.values())
+            .filter((f) => f.state === 'online' && f.isVIP)
+            .sort(
+                getFriendsSortFunction(
+                    appearanceSettingsStore.sidebarSortMethods
+                )
+            );
     });
 
-    // Online friends
     const onlineFriends = computed(() => {
-        if (!state.sortOnlineFriends) {
-            return state.onlineFriends_;
-        }
-        state.sortOnlineFriends = false;
-
-        state.onlineFriends_.sort(
-            getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods)
-        );
-
-        return state.onlineFriends_;
+        return Array.from(state.friends.values())
+            .filter((f) => f.state === 'online' && !f.isVIP)
+            .sort(
+                getFriendsSortFunction(
+                    appearanceSettingsStore.sidebarSortMethods
+                )
+            );
     });
 
-    // Active friends
     const activeFriends = computed(() => {
-        if (!state.sortActiveFriends) {
-            return state.activeFriends_;
-        }
-        state.sortActiveFriends = false;
-
-        state.activeFriends_.sort(
-            getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods)
-        );
-
-        return state.activeFriends_;
+        return Array.from(state.friends.values())
+            .filter((f) => f.state === 'active')
+            .sort(
+                getFriendsSortFunction(
+                    appearanceSettingsStore.sidebarSortMethods
+                )
+            );
     });
 
-    // Offline friends
     const offlineFriends = computed(() => {
-        if (!state.sortOfflineFriends) {
-            return state.offlineFriends_;
-        }
-        state.sortOfflineFriends = false;
-
-        state.offlineFriends_.sort(
-            getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods)
-        );
-
-        return state.offlineFriends_;
+        return Array.from(state.friends.values())
+            .filter((f) => f.state === 'offline' || !f.state)
+            .sort(
+                getFriendsSortFunction(
+                    appearanceSettingsStore.sidebarSortMethods
+                )
+            );
     });
 
     const isRefreshFriendsLoading = computed({
@@ -280,14 +190,6 @@ export const useFriendStore = defineStore('Friend', () => {
             friendLog.clear();
             state.friendLogTable.data = [];
             groupStore.groupInstances = [];
-            state.vipFriends_ = [];
-            state.onlineFriends_ = [];
-            state.activeFriends_ = [];
-            state.offlineFriends_ = [];
-            state.sortVIPFriends = false;
-            state.sortOnlineFriends = false;
-            state.sortActiveFriends = false;
-            state.sortOfflineFriends = false;
             state.onlineFriendCount = 0;
             if (isLoggedIn) {
                 initFriendsList();
@@ -402,18 +304,6 @@ export const useFriendStore = defineStore('Friend', () => {
                 continue;
             }
             ctx.isVIP = isVIP;
-            if (ctx.state !== 'online') {
-                continue;
-            }
-            if (ctx.isVIP) {
-                removeFromArray(state.onlineFriends_, ctx);
-                state.vipFriends_.push(ctx);
-                state.sortVIPFriends = true;
-            } else {
-                removeFromArray(state.vipFriends_, ctx);
-                state.onlineFriends_.push(ctx);
-                state.sortOnlineFriends = true;
-            }
         }
     }
 
@@ -491,40 +381,13 @@ export const useFriendStore = defineStore('Friend', () => {
                             userId: id
                         });
                     }
-                    if (ctx.isVIP) {
-                        state.sortVIPFriends = true;
-                    } else {
-                        state.sortOnlineFriends = true;
-                    }
                 }
             }
             if (ctx.isVIP !== isVIP) {
                 ctx.isVIP = isVIP;
-                if (ctx.state === 'online') {
-                    if (ctx.isVIP) {
-                        removeFromArray(state.onlineFriends_, ctx);
-                        state.vipFriends_.push(ctx);
-                        state.sortVIPFriends = true;
-                    } else {
-                        removeFromArray(state.vipFriends_, ctx);
-                        state.onlineFriends_.push(ctx);
-                        state.sortOnlineFriends = true;
-                    }
-                }
             }
             if (typeof ref !== 'undefined' && ctx.name !== ref.displayName) {
                 ctx.name = ref.displayName;
-                if (ctx.state === 'online') {
-                    if (ctx.isVIP) {
-                        state.sortVIPFriends = true;
-                    } else {
-                        state.sortOnlineFriends = true;
-                    }
-                } else if (ctx.state === 'active') {
-                    state.sortActiveFriends = true;
-                } else {
-                    state.sortOfflineFriends = true;
-                }
             }
         } else if (
             ctx.state === 'online' &&
@@ -684,32 +547,6 @@ export const useFriendStore = defineStore('Friend', () => {
                 ctx.ref.$active_for = Date.now();
             }
         }
-        if (ctx.state === 'online') {
-            if (ctx.isVIP) {
-                removeFromArray(state.vipFriends_, ctx);
-            } else {
-                removeFromArray(state.onlineFriends_, ctx);
-            }
-        } else if (ctx.state === 'active') {
-            removeFromArray(state.activeFriends_, ctx);
-        } else {
-            removeFromArray(state.offlineFriends_, ctx);
-        }
-        if (newState === 'online') {
-            if (isVIP) {
-                state.vipFriends_.push(ctx);
-                state.sortVIPFriends = true;
-            } else {
-                state.onlineFriends_.push(ctx);
-                state.sortOnlineFriends = true;
-            }
-        } else if (newState === 'active') {
-            state.activeFriends_.push(ctx);
-            state.sortActiveFriends = true;
-        } else {
-            state.offlineFriends_.push(ctx);
-            state.sortOfflineFriends = true;
-        }
         if (ctx.state !== newState) {
             ctx.state = newState;
             updateOnlineFriendCoutner();
@@ -729,17 +566,6 @@ export const useFriendStore = defineStore('Friend', () => {
             return;
         }
         state.friends.delete(id);
-        if (ctx.state === 'online') {
-            if (ctx.isVIP) {
-                removeFromArray(state.vipFriends_, ctx);
-            } else {
-                removeFromArray(state.onlineFriends_, ctx);
-            }
-        } else if (ctx.state === 'active') {
-            removeFromArray(state.activeFriends_, ctx);
-        } else {
-            removeFromArray(state.offlineFriends_, ctx);
-        }
     }
 
     /**
@@ -824,21 +650,6 @@ export const useFriendStore = defineStore('Friend', () => {
             ctx.name = ref.name;
         }
         state.friends.set(id, ctx);
-        if (ctx.state === 'online') {
-            if (ctx.isVIP) {
-                state.vipFriends_.push(ctx);
-                state.sortVIPFriends = true;
-            } else {
-                state.onlineFriends_.push(ctx);
-                state.sortOnlineFriends = true;
-            }
-        } else if (ctx.state === 'active') {
-            state.activeFriends_.push(ctx);
-            state.sortActiveFriends = true;
-        } else {
-            state.offlineFriends_.push(ctx);
-            state.sortOfflineFriends = true;
-        }
     }
 
     /**
@@ -1031,18 +842,6 @@ export const useFriendStore = defineStore('Friend', () => {
         }
         await refreshFriends();
         reconnectWebSocket();
-    }
-
-    /**
-     * @param {string} userId
-     */
-    function updateFriendGPS(userId) {
-        const ctx = state.friends.get(userId);
-        if (ctx.isVIP) {
-            state.sortVIPFriends = true;
-        } else {
-            state.sortOnlineFriends = true;
-        }
     }
 
     function updateOnlineFriendCoutner() {
@@ -1609,8 +1408,8 @@ export const useFriendStore = defineStore('Friend', () => {
         state.friendNumber = state.friends.size + 1;
         const friendLogTable = getFriendLogFriendOrder();
         for (let i = friendLogTable.length - 1; i > -1; i--) {
-            const friendLog = friendLogTable[i];
-            const ref = friendLog.get(friendLog.id);
+            const friendLogEntry = friendLogTable[i];
+            const ref = friendLog.get(friendLogEntry.id);
             if (!ref) {
                 continue;
             }
@@ -1620,7 +1419,7 @@ export const useFriendStore = defineStore('Friend', () => {
             ref.friendNumber = --state.friendNumber;
             friendLog.set(ref.userId, ref);
             database.setFriendLogCurrent(ref);
-            const friendRef = state.friends.get(friendLog.id);
+            const friendRef = state.friends.get(friendLogEntry.id);
             if (friendRef?.ref) {
                 friendRef.ref.$friendNumber = ref.friendNumber;
             }
@@ -1743,15 +1542,15 @@ export const useFriendStore = defineStore('Friend', () => {
             // will need to apply in reverse order instead
             return;
         }
-        for (const friendLog of friendLogTable) {
-            const ref = friendLog.get(friendLog.id);
+        for (const friendLogEntry of friendLogTable) {
+            const ref = friendLog.get(friendLogEntry.id);
             if (!ref || ref.friendNumber) {
                 continue;
             }
             ref.friendNumber = ++state.friendNumber;
             friendLog.set(ref.userId, ref);
             database.setFriendLogCurrent(ref);
-            const friendRef = state.friends.get(friendLog.id);
+            const friendRef = state.friends.get(friendLogEntry.id);
             if (friendRef?.ref) {
                 friendRef.ref.$friendNumber = ref.friendNumber;
             }
@@ -1771,13 +1570,6 @@ export const useFriendStore = defineStore('Friend', () => {
                 handleFriendDelete(args);
             })
             .catch(() => {});
-    }
-
-    async function saveSidebarSortOrder() {
-        state.sortVIPFriends = true;
-        state.sortOnlineFriends = true;
-        state.sortActiveFriends = true;
-        state.sortOfflineFriends = true;
     }
 
     async function initFriendsList() {
@@ -1806,10 +1598,6 @@ export const useFriendStore = defineStore('Friend', () => {
 
         tryApplyFriendOrder(); // once again
         getAllUserStats(); // joinCount, lastSeen, timeSpent
-        state.sortVIPFriends = true;
-        state.sortOnlineFriends = true;
-        state.sortActiveFriends = true;
-        state.sortOfflineFriends = true;
 
         // remove old data from json file and migrate to SQLite (July 2021)
         if (await VRCXStorage.Get(`${userId}_friendLogUpdatedAt`)) {
@@ -1823,20 +1611,11 @@ export const useFriendStore = defineStore('Friend', () => {
         state,
 
         friends,
-        onlineFriends_,
-        vipFriends_,
-        activeFriends_,
-        offlineFriends_,
 
         vipFriends,
         onlineFriends,
         activeFriends,
         offlineFriends,
-
-        sortOnlineFriends,
-        sortVIPFriends,
-        sortActiveFriends,
-        sortOfflineFriends,
 
         localFavoriteFriends,
         isRefreshFriendsLoading,
@@ -1854,7 +1633,6 @@ export const useFriendStore = defineStore('Friend', () => {
         refreshFriends,
         refreshFriendsList,
         updateOnlineFriendCoutner,
-        updateFriendGPS,
         getAllUserStats,
         initFriendLog,
         migrateFriendLog,
@@ -1862,7 +1640,6 @@ export const useFriendStore = defineStore('Friend', () => {
         getFriendRequest,
         userOnFriend,
         confirmDeleteFriend,
-        saveSidebarSortOrder,
         updateFriendships,
         updateUserCurrentStatus,
         handleFriendAdd,

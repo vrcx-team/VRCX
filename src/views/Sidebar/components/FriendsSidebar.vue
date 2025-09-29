@@ -175,7 +175,7 @@
     import { useI18n } from 'vue-i18n';
     import FriendItem from '../../../components/FriendItem.vue';
     import configRepository from '../../../service/config';
-    import { isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
+    import { isRealInstance, userImage, userStatusClass, getFriendsSortFunction } from '../../../shared/utils';
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
@@ -189,7 +189,7 @@
     const { t } = useI18n();
 
     const { vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
-    const { isSidebarGroupByInstance, isHideFriendsInSameInstance, isSidebarDivideByFriendGroup } =
+    const { isSidebarGroupByInstance, isHideFriendsInSameInstance, isSidebarDivideByFriendGroup, sidebarSortMethods } =
         storeToRefs(useAppearanceSettingsStore());
     const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
     const { showUserDialog } = useUserStore();
@@ -234,7 +234,7 @@
         const sortedFriendsList = [];
         for (const group of Object.values(friendsList)) {
             if (group.length > 1) {
-                sortedFriendsList.push(group.sort((a, b) => a.ref?.$location_at - b.ref?.$location_at));
+                sortedFriendsList.push(group.sort(getFriendsSortFunction(sidebarSortMethods.value)));
             }
         }
 

@@ -1349,7 +1349,6 @@ export const useUserStore = defineStore('User', () => {
                 };
                 feedStore.addFeed(feed);
                 database.addGPSToDatabase(feed);
-                friendStore.updateFriendGPS(ref.id);
                 // clear previousLocation after GPS
                 ref.$previousLocation = '';
                 ref.$travelingToTime = Date.now();
@@ -1363,7 +1362,6 @@ export const useUserStore = defineStore('User', () => {
             // store previous location when user is traveling
             ref.$previousLocation = props.location[1];
             ref.$travelingToTime = Date.now();
-            friendStore.updateFriendGPS(ref.id);
         }
         let imageMatches = false;
         if (
