@@ -112,7 +112,7 @@
   </Target>
   
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="$(ProjectDir)..\build-tools\Topten.nvpatch.exe --enable $(ProjectDir)..\build\Cef\VRCX.exe" />
+    <Exec Command="&quot;$(ProjectDir)..\build-tools\Topten.nvpatch.exe&quot; --enable &quot;$(ProjectDir)..\build\Cef\VRCX.exe&quot;" />
   </Target>
 
   <ItemGroup>
@@ -121,6 +121,6 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="$(ProjectDir)..\build-scripts\make-junction.cmd" />
+    <Exec Command="&quot;$(ProjectDir)..\build-scripts\make-junction.cmd&quot;" />
   </Target>
 </Project>
