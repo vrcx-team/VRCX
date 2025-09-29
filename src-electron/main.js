@@ -528,11 +528,11 @@ function createTray() {
     let tray = null;
     if (process.platform === 'darwin') {
         const image = nativeImage.createFromPath(
-            path.join(rootDir, 'images/tray.png')
+            path.join(rootDir, 'images/VRCX.ico')
         );
         tray = new Tray(image.resize({ width: 16, height: 16 }));
     } else {
-        tray = new Tray(path.join(rootDir, 'images/tray.png'));
+        tray = new Tray(path.join(rootDir, 'images/VRCX.ico'));
     }
     const contextMenu = Menu.buildFromTemplate([
         {

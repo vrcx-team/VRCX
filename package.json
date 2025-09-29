@@ -74,11 +74,11 @@
     "build": {
         "appId": "app.vrcx",
         "productName": "VRCX",
-        "icon": "VRCX.png",
+        "icon": "images/VRCX.png",
         "files": [
             "build/html/**/*",
             "src-electron/*",
-            "VRCX.png",
+            "images/VRCX.png",
             "images/tray.png",
             "Version",
             "src-electron/libs/linux/libopenvr_api.so"
@@ -93,7 +93,7 @@
         ],
         "extraResources": [
             {
-                "from": "VRCX.png",
+                "from": "images/VRCX.png",
                 "to": "VRCX.png"
             },
             {

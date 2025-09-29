@@ -1,13 +1,13 @@
 <div align="center">
 
-# <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.ico" width="64" height="64"> </img> VRCX
+# <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/images/VRCX.ico" width="64" height="64"> </img> VRCX
 
 [![GitHub release](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/vrcx-team/VRCX/total?color=6451f1)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
 [![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
 
-| [English](./README.md) | [Français](./README.fr.md) | [日本語](./README.jp.md) | [简体中文](./README.zh_CN.md) | [Italiano](./README.it.md) | [Русский](./README.ru_RU.md) | **Español** | [Polski](./README.pl.md) | [ภาษาไทย](./README.th.md)
+| [English](/README.md) |
 
 VRCX es una aplicación asistente/compañera para VRChat que proporciona información y te ayuda a realizar varias tareas relacionadas con VRChat de una manera más conveniente que depender únicamente del cliente de VRChat (escritorio o VR) o del sitio web. También incluye algunas otras características interesantes que se describen a continuación.
 
