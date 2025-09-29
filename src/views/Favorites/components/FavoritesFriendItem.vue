@@ -18,7 +18,7 @@
                         :link="false" />
                     <span v-else v-text="favorite.ref.statusDescription"></span>
                 </div>
-                <template v-if="editFavoritesMode">
+                <div class="editing">
                     <el-dropdown trigger="click" size="small" style="margin-left: 5px">
                         <div>
                             <el-tooltip placement="left" :content="t('view.favorite.move_tooltip')">
@@ -42,8 +42,8 @@
                     <el-button type="text" size="small" style="margin-left: 5px" @click.stop>
                         <el-checkbox v-model="favorite.$selected"></el-checkbox>
                     </el-button>
-                </template>
-                <template v-else>
+                </div>
+                <div class="default">
                     <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')">
                         <el-button
                             v-if="shiftHeld"
@@ -61,7 +61,7 @@
                             style="margin-left: 5px"
                             @click.stop="showFavoriteDialog('friend', favorite.id)"></el-button>
                     </el-tooltip>
-                </template>
+                </div>
             </template>
             <template v-else>
                 <div class="avatar"></div>
@@ -89,8 +89,7 @@
 
     defineProps({
         favorite: { type: Object, required: true },
-        group: { type: Object, required: true },
-        editFavoritesMode: Boolean
+        group: { type: Object, required: true }
     });
 
     defineEmits(['click']);

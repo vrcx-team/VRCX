@@ -12,7 +12,7 @@
                     </span>
                     <span v-else class="extra">{{ localFavFakeRef.authorName }}</span>
                 </div>
-                <template v-if="editFavoritesMode">
+                <div class="editing">
                     <el-dropdown trigger="click" size="small" style="margin-left: 5px">
                         <div>
                             <el-tooltip
@@ -40,8 +40,8 @@
                     <el-button v-if="!isLocalFavorite" type="text" size="small" @click.stop style="margin-left: 5px">
                         <el-checkbox v-model="isSelected"></el-checkbox>
                     </el-button>
-                </template>
-                <template v-else>
+                </div>
+                <div class="default">
                     <el-tooltip
                         v-if="!isLocalFavorite && favorite.deleted"
                         placement="left"
@@ -89,7 +89,7 @@
                             type="default"
                             @click.stop="showFavoriteDialog('world', favorite.id)"></el-button>
                     </el-tooltip>
-                </template>
+                </div>
                 <el-tooltip v-if="isLocalFavorite" placement="right" :content="t('view.favorite.unfavorite_tooltip')">
                     <el-button
                         v-if="shiftHeld"
@@ -142,7 +142,6 @@
     const props = defineProps({
         group: [Object, String],
         favorite: Object,
-        editFavoritesMode: Boolean,
         isLocalFavorite: { type: Boolean, default: false }
     });
 

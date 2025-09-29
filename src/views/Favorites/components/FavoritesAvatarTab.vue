@@ -82,13 +82,16 @@
                             @click.stop="clearFavoriteGroup(group)" />
                     </el-tooltip>
                 </template>
-                <div v-if="group.count" class="x-friend-list" style="margin-top: 10px">
+                <div
+                    v-if="group.count"
+                    class="x-friend-list"
+                    :class="{ 'is-editing': editFavoritesMode }"
+                    style="margin-top: 10px">
                     <FavoritesAvatarItem
                         v-for="favorite in groupedByGroupKeyFavoriteAvatars[group.key]"
                         :key="favorite.id"
                         :favorite="favorite"
                         :group="group"
-                        :edit-favorites-mode="editFavoritesMode"
                         style="display: inline-block; width: 300px; margin-right: 15px"
                         @handle-select="favorite.$selected = $event"
                         @click="showAvatarDialog(favorite.id)" />
@@ -181,7 +184,11 @@
                             @click.stop="promptLocalAvatarFavoriteGroupDelete(group)"></el-button>
                     </el-tooltip>
                 </template>
-                <div v-if="localAvatarFavorites[group].length" class="x-friend-list" :style="{ marginTop: '10px' }">
+                <div
+                    v-if="localAvatarFavorites[group].length"
+                    class="x-friend-list"
+                    :class="{ 'is-editing': editFavoritesMode }"
+                    :style="{ marginTop: '10px' }">
                     <FavoritesAvatarItem
                         v-for="favorite in localAvatarFavorites[group]"
                         :key="favorite.id"
@@ -189,7 +196,6 @@
                         :style="{ display: 'inline-block', width: '300px', marginRight: '15px' }"
                         :favorite="favorite"
                         :group="group"
-                        :edit-favorites-mode="editFavoritesMode"
                         @handle-select="favorite.$selected = $event"
                         @click="showAvatarDialog(favorite.id)" />
                 </div>
@@ -246,8 +252,7 @@
         getLocalAvatarFavoriteGroupLength,
         deleteLocalAvatarFavoriteGroup,
         renameLocalAvatarFavoriteGroup,
-        newLocalAvatarFavoriteGroup,
-        saveSortFavoritesOption
+        newLocalAvatarFavoriteGroup
     } = useFavoriteStore();
     const { avatarHistoryArray } = storeToRefs(useAvatarStore());
     const { promptClearAvatarHistory, showAvatarDialog } = useAvatarStore();
@@ -419,3 +424,15 @@
             .catch(() => {});
     }
 </script>
+
+<style scoped>
+    .x-friend-list :deep(.editing) {
+        display: none;
+    }
+    .x-friend-list.is-editing :deep(.editing) {
+        display: block;
+    }
+    .x-friend-list.is-editing :deep(.default) {
+        display: none;
+    }
+</style>
