@@ -746,7 +746,7 @@
                 :new-instance-dialog-location-tag="newInstanceDialogLocationTag"
                 :last-location="lastLocation" />
             <ChangeWorldImageDialog
-                :change-world-image-dialog-visible="changeWorldImageDialogVisible"
+                v-model:change-world-image-dialog-visible="changeWorldImageDialogVisible"
                 v-model:previousImageUrl="previousImageUrl" />
         </template>
     </el-dialog>
