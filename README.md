@@ -1,13 +1,13 @@
 <div align="center">
 
-# <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.ico" width="64" height="64"> </img> VRCX
+# <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/images/VRCX.ico" width="64" height="64"> </img> VRCX
 
 [![GitHub release](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/vrcx-team/VRCX/total?color=6451f1)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
 [![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
 
-| **English** | [Français](./README.fr.md) | [日本語](./README.jp.md) | [简体中文](./README.zh_CN.md) | [Italiano](./README.it.md) | [Русский](./README.ru_RU.md) | [Español](./README.es.md) | [Polski](./README.pl.md) | [ภาษาไทย](./README.th.md)
+| **English** | [Français](./README/README.fr.md) | [日本語](./README/README.jp.md) | [简体中文](./README/README.zh_CN.md) | [Italiano](./README/README.it.md) | [Русский](./README/README.ru_RU.md) | [Español](./README/README.es.md) | [Polski](./README/README.pl.md) | [ภาษาไทย](./README/README.th.md)
 
 VRCX is an assistant/companion application for VRChat that provides information about and helps you accomplish various things related to VRChat in a more convenient fashion than relying on the plain VRChat client (desktop or VR), or website alone. It also includes some other neat features outlined below.
 
@@ -24,26 +24,26 @@ Beta/nightly build available [here](https://vrcx.app/github/nightly) or in-app `
 <div align="left">
 
 - :family: Friend, world, and avatar list management
-  - Manage your friends list, world/group/avatar lists outside of VRChat.
-  - Monitor the world/avatar activity of your friends and check their online status.
-  - Keep track of when you first added them and when you last saw them.
-  - See how much time you've spent together in worlds and how many times.
-  - Keep track of friend name changes.
-  - Save notes to help remember how you met.
+    - Manage your friends list, world/group/avatar lists outside of VRChat.
+    - Monitor the world/avatar activity of your friends and check their online status.
+    - Keep track of when you first added them and when you last saw them.
+    - See how much time you've spent together in worlds and how many times.
+    - Keep track of friend name changes.
+    - Save notes to help remember how you met.
 - :electric_plug: Automatically launch apps when you start VRChat
-  - You can configure VRCX to launch other apps when you start VRChat.
-  - For example, you could have VRCX launch an OSC app or a voice changer app when VRChat opens up.
+    - You can configure VRCX to launch other apps when you start VRChat.
+    - For example, you could have VRCX launch an OSC app or a voice changer app when VRChat opens up.
 - :mag: Search for avatars, users, worlds, and groups
 - :earth_americas: Build a local, unrestricted world favorites list
 - :camera: Store world data in the pictures you take in-game, so you can remember that one world you took those cool pictures in like... 6 months ago!
 - :bell: Monitor/respond to notifications
-  - You can send/receive invites and friend requests from VRCX as well as see the instance info of invites that you receive.
+    - You can send/receive invites and friend requests from VRCX as well as see the instance info of invites that you receive.
 - :scroll: See stats/players for your current instance
 - :tv: See the links to videos and that are playing in the world you're in, as well as various other logged data.
 - :bar_chart: Improved Discord Rich Presence
-  - You can optionally display more information about your current instance in Discord.
-  - World integration for popular worlds like Popcorn Palace, PyPyDance, VRDancing and LSMedia.
-  - This includes the world thumbnail, name, instance ID, and player count, depending on your settings and whether the lobby is private. You can also add a join button for public lobbies!
+    - You can optionally display more information about your current instance in Discord.
+    - World integration for popular worlds like Popcorn Palace, PyPyDance, VRDancing and LSMedia.
+    - This includes the world thumbnail, name, instance ID, and player count, depending on your settings and whether the lobby is private. You can also add a join button for public lobbies!
 - :crystal_ball: VR Overlay with configurable live feed of all supported events/notifications
 - :outbox_tray: Upload avatar/world images without Unity
 - :page_facing_up: Manage and edit uploaded avatar/world details without Unity

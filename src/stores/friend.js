@@ -366,7 +366,6 @@ export const useFriendStore = defineStore('Friend', () => {
                 userRequest.getUser({
                     userId: id
                 });
-                return;
             }
         }
         if (typeof stateInput === 'undefined' || ctx.state === stateInput) {

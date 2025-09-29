@@ -18,7 +18,7 @@
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <Title>VRCX</Title>
     <Description>VRCX</Description>
-    <PackageIcon>..\VRCX.png</PackageIcon>
+    <PackageIcon>..\images\VRCX.png</PackageIcon>
     <RepositoryUrl>https://github.com/vrcx-team/VRCX</RepositoryUrl>
     <ResourceLanguages>en</ResourceLanguages>
     <SatelliteResourceLanguages>en-US;en</SatelliteResourceLanguages>
@@ -31,6 +31,7 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <!-- Fix fail fast exception -->
     <CETCompat>false</CETCompat>
+    <WarningLevel>0</WarningLevel>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
@@ -41,7 +42,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <ApplicationIcon>..\VRCX.ico</ApplicationIcon>
+    <ApplicationIcon>..\images\VRCX.ico</ApplicationIcon>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -80,10 +81,10 @@
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		  <TargetPath>openvr_api.dll</TargetPath>
 	  </None>
-    <Content Include="..\VRCX.ico">
+    <Content Include="..\images\VRCX.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\VRCX.png">
+    <Content Include="..\images\VRCX.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -112,7 +113,7 @@
   </Target>
   
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="&quot;$(ProjectDir)..\build-tools\Topten.nvpatch.exe&quot; --enable &quot;$(ProjectDir)..\build\Cef\VRCX.exe&quot;" />
+    <Exec Command="&quot;$(ProjectDir)..\Dotnet\build-tools\Topten.nvpatch.exe&quot; --enable &quot;$(ProjectDir)..\build\Cef\VRCX.exe&quot;" />
   </Target>
 
   <ItemGroup>
