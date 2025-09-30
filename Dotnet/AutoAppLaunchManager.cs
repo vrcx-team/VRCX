@@ -23,6 +23,8 @@ namespace VRCX
         public bool KillChildrenOnExit = true;
         public bool RunProcessOnce = true;
         public readonly string AppShortcutDirectory;
+        public readonly string AppShortcutDesktop;
+        public readonly string AppShortcutVR;
 
         private DateTime startTime = DateTime.Now;
         private Dictionary<string, HashSet<int>> startedProcesses = new Dictionary<string, HashSet<int>>();
@@ -66,11 +68,12 @@ namespace VRCX
         public AutoAppLaunchManager()
         {
             AppShortcutDirectory = Path.Join(Program.AppDataDirectory, "startup");
+            AppShortcutDesktop = Path.Join(AppShortcutDirectory, "desktop");
+            AppShortcutVR = Path.Join(AppShortcutDirectory, "vr");
 
-            if (!Directory.Exists(AppShortcutDirectory))
-            {
-                Directory.CreateDirectory(AppShortcutDirectory);
-            }
+            Directory.CreateDirectory(AppShortcutDirectory);
+            Directory.CreateDirectory(AppShortcutDesktop);
+            Directory.CreateDirectory(AppShortcutVR);
 
             ProcessMonitor.Instance.ProcessStarted += OnProcessStarted;
             ProcessMonitor.Instance.ProcessExited += OnProcessExited;
@@ -111,6 +114,7 @@ namespace VRCX
                     UpdateChildProcesses();
 
                 var shortcutFiles = FindShortcutFiles(AppShortcutDirectory);
+                shortcutFiles.AddRange(FindShortcutFiles(Program.AppApiInstance.IsSteamVRRunning() ? AppShortcutVR : AppShortcutDesktop));
                 foreach (var file in shortcutFiles)
                 {
                     if (RunProcessOnce && IsProcessRunning(file))
@@ -122,7 +126,7 @@ namespace VRCX
                     StartChildProcess(file);
                 }
 
-                if (shortcutFiles.Length == 0)
+                if (shortcutFiles.Count == 0)
                     return;
 
                 timerTicks = 0;
@@ -328,7 +332,7 @@ namespace VRCX
         /// </summary>
         /// <param name="folderPath">The folder path.</param>
         /// <returns>An array of shortcut paths. If none, then empty.</returns>
-        private static string[] FindShortcutFiles(string folderPath)
+        private static List<string> FindShortcutFiles(string folderPath)
         {
             DirectoryInfo directoryInfo = new DirectoryInfo(folderPath);
             FileInfo[] files = directoryInfo.GetFiles();
@@ -342,7 +346,7 @@ namespace VRCX
                 }
             }
 
-            return ret.ToArray();
+            return ret;
         }
 
         /// <summary>
