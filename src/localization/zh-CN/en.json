@@ -28,7 +28,7 @@
                 "username": "用户名或邮箱地址",
                 "password": "密码",
                 "saveCredentials": "保存登录数据",
-                "devEndpoint": "使用测试接口",
+                "devEndpoint": "自定义 API 接口",
                 "endpoint": "接口地址",
                 "websocket": "WebSocket"
             }
@@ -130,7 +130,7 @@
             "copy": "复制",
             "clear": "清除",
             "bulk_unfavorite": "批量取消收藏",
-            "refresh_tooltip": "刷新所有收藏",
+            "refresh_favorites_tooltip": "刷新所有收藏",
             "export": "导出",
             "import": "导入",
             "move_tooltip": "移动",
@@ -254,9 +254,9 @@
             "header": "工具",
             "redirect_message": "",
             "group": {
-                "header": "组织",
-                "calendar": "日历",
-                "calendar_description": "组织活动日历"
+                "header": "群组",
+                "calendar": "活动日历",
+                "calendar_description": "查看活动日历"
             },
             "image": {},
             "user": {},
@@ -275,10 +275,15 @@
                     "open_folder": "打开文件夹"
                 },
                 "header": "相册",
-                "screenshot": "截屏管理",
+                "screenshot": "截图管理",
                 "screenshot_description": "管理截图或查看截图元数据",
-                "inventory": "拍立得 & 库存管理",
-                "inventory_description": "管理拍立得 & 库存"
+                "inventory": "相册 & 库存管理",
+                "inventory_description": "管理相册与库存物品"
+            },
+            "user": {
+                "header": "用户",
+                "export_notes": "导出备注",
+                "export_notes_description": "导出备注到文本文件中"
             }
         },
         "profile": {
@@ -462,7 +467,7 @@
                     "header": "玩家信息",
                     "vrchat_notes": "显示 VRChat 备注",
                     "vrcx_memos": "显示本地备注",
-                    "export_vrcx_memos_into_vrchat_notes": "将本地备注导出成 VRChat 备注",
+                    "export_vrcx_memos_into_vrchat_notes": "将本地备注转换成 VRChat 备注",
                     "export_notes": "导出备注"
                 },
                 "user_colors": {
@@ -524,7 +529,7 @@
                     "steamvr_overlay": "SteamVR 叠加界面",
                     "wrist_feed_overlay": "手腕动态叠加界面",
                     "hide_private_worlds": "隐藏私人世界",
-                    "start_overlay_with": "随.....一并启动",
+                    "start_overlay_with": "随...一并启动",
                     "overlay_button": "叠加界面按键",
                     "overlay_button_grip": "握持",
                     "overlay_button_menu": "菜单",
@@ -575,7 +580,7 @@
                 "advanced": {
                     "header": "高级设置",
                     "launch_options": "启动选项",
-                    "screenshot_metadata": "照片元数据查看器",
+                    "screenshot_metadata": "图片元数据查看器",
                     "vrc_registry_backup": "VRC 设置数据备份工具",
                     "common_folders": "常用文件夹",
                     "primary_password": {
@@ -596,7 +601,7 @@
                     },
                     "self_invite": {
                         "header": "自我邀请",
-                        "description": "自我邀请，而不是在 VRChat 中打开房间"
+                        "description": "直接给自己发送邀请，而不是在游戏中打开房间页面"
                     },
                     "save_instance_prints_to_file": {
                         "header": "“拍立得”照片保存选项",
@@ -604,21 +609,21 @@
                         "description": "将生成的“拍立得”照片保存到 VRChat 图片文件夹中",
                         "crop": "自动裁剪“拍立得”照片的白边",
                         "crop_convert_old": "要同时为已保存的所有“拍立得”照片进行裁剪操作吗？",
-                        "crop_convert_old_confirm": "是",
-                        "crop_convert_old_cancel": "否"
+                        "crop_convert_old_confirm": "是，开始裁剪",
+                        "crop_convert_old_cancel": "否，我再想想"
                     },
                     "save_instance_stickers_to_file": {
                         "header": "保存“表情贴纸”至图片",
-                        "description": "将房间内的“表情贴纸”保存到 VRChat 的照片文件夹中"
+                        "description": "将房间内的“表情贴纸”保存到 VRChat 的图片文件夹中"
                     },
                     "save_instance_emoji_to_file": {
                         "header": "保存“表情贴纸”至文件",
-                        "description": "保存生成的“表情贴纸”到 VRChat 的照片文件夹中"
+                        "description": "保存生成的“表情贴纸”到 VRChat 的图片文件夹中"
                     },
                     "delete_all_screenshot_metadata": {
                         "button": "删除截图元数据",
                         "ask": "你确定要从 VRChat 图片文件夹中删除所有由 VRC 和 VRCX 添加的截图元数据吗？",
-                        "confirm": "删除截图元数据是一个非常破坏性的操作，无法撤销！这包括你的 VRChat 图片文件夹中的所有拍立得图片，如果这些照片的元数据信息对你很珍贵，请在继续之前进行备份。",
+                        "confirm": "删除截图元数据是一个非常破坏性的操作，无法撤销！这包括你的 VRChat 图片文件夹中的所有拍立得照片，如果这些照片的元数据信息对你很珍贵，请在继续之前进行备份。",
                         "confirm_yes": "是，确认删除",
                         "confirm_no": "否，我再想想"
                     },
@@ -648,7 +653,7 @@
                     },
                     "screenshot_helper": {
                         "header": "截图助手",
-                        "description": "在游戏拍摄的照片的元数据中添加世界 ID/世界名称",
+                        "description": "在拍摄的照片的元数据中添加世界 ID/世界名称",
                         "description_tooltip": "不幸的是，Windows 并不支持直接查看 PNG 元数据（很多东西都不支持查看这玩意），但你可以使用 exiftool 等命令行工具、png查看器或十六进制编辑器来查看它们。",
                         "enable": "启用",
                         "modify_filename": "同时修改文件名",
@@ -678,7 +683,7 @@
                         "avatar_name_cache": "模型名称缓存：",
                         "instance_cache": "房间信息缓存：",
                         "clear_cache": "清除缓存",
-                        "refresh_cache": "刷新缓存",
+                        "refresh_cache": "刷新",
                         "auto_clear_cache": "自动清理",
                         "show_console": "显示界面调试工具"
                     },
@@ -936,7 +941,7 @@
                 "share": "分享",
                 "new_instance": "创建新房间",
                 "new_instance_and_self_invite": "创建新房间并邀请自己",
-                "new_instance_and_open_in_vrchat": "创建新房间并在 VRChat 中打开",
+                "new_instance_and_open_ingame": "创建新房间并在 VRChat 中打开",
                 "make_home": "设为出生点",
                 "reset_home": "重置出生点为默认",
                 "show_previous_instances": "显示加入过的房间",
@@ -1138,7 +1143,7 @@
                 "header": "成员",
                 "all_members": "成员列表",
                 "friends_only": "成员列表（仅显示好友）",
-                "load_more": "载入更多……",
+                "load_more": "载入更多...",
                 "sort_by": "排序设置：",
                 "sorting": {
                     "joined_at_asc": "加入时间（顺序）",
@@ -1250,7 +1255,7 @@
             "legacy": "传统",
             "roles": "身份组",
             "open_ingame": "在 VRChat 中打开",
-            "display_name": "昵称 (VRC+)"
+            "display_name": "自定义房间名称 (需要 VRC+)"
         },
         "launch_options": {
             "header": "启动选项",
@@ -1353,7 +1358,7 @@
             "launch": "启动",
             "open_ingame": "在 VRChat 中打开",
             "self_invite": "自我邀请",
-            "game_running_warning": "你确定要启动第二个 VRChat 程序吗？",
+            "game_running_warning": "你确定要启动第二个 VRChat 客户端吗？",
             "confirm_yes": "是，确认启动",
             "confirm_no": "否，我再想想"
         },
@@ -1534,7 +1539,11 @@
             "flipbook_info": "选择一个 1024x1024 的 PNG 精灵表作为动画表情（最大 FPS 为64）",
             "note": "备注",
             "crop_print_border": "裁剪白边",
-            "consume_bundle": "拆开"
+            "consume_bundle": "拆开",
+            "item": "物品",
+            "sticker": "贴纸",
+            "drone_skin": "无人机皮肤",
+            "emoji": "Emoji（表情）"
         },
         "change_content_image": {
             "avatar": "更改模型封面",
@@ -1592,7 +1601,7 @@
             "name": "名称",
             "date": "日期",
             "action": "操作",
-            "auto_backup": "只要 VRCX 在运行，就会每周自动备份一次 VRChat 的设置数据，你也可以在这里手动备份和恢复你的设置数据",
+            "auto_backup": "开启自动备份（每三天备份一次，同时删除超过两周的备份）",
             "ask_to_restore": "当未检测到本地 VRC 设置数据时，询问是否恢复",
             "restore_prompt": "注意到你已启用 VRC 设置数据的自动备份，但这台计算机上没有发现任何备份。如果你想从备份中恢复数据，可以在此处进行恢复。"
         },
@@ -1674,16 +1683,16 @@
             "save": "保存"
         },
         "group_calendar": {
-            "header": "组织日历",
+            "header": "活动日历",
             "list_view": "列表视图",
             "calendar_view": "日历视图",
-            "no_events": "没有发现任何活动",
-            "search_placeholder": "搜索组织或活动...",
-            "search_no_matching": "没有找到任何活动",
-            "search_no_this_month": "这个月没有任何活动",
+            "no_events": "目前没有任何活动",
+            "search_placeholder": "搜索群组或活动...",
+            "search_no_matching": "没有找到任何符合条件的活动",
+            "search_no_this_month": "这个月没有活动举行",
             "event_card": {
                 "category": "类别",
-                "interested_user": "感兴趣的用户",
+                "interested_user": "感兴趣的人数",
                 "close_time": "结束后关闭房间",
                 "created": "创建日期",
                 "description": "描述"
@@ -1691,13 +1700,13 @@
         },
         "moderate_group": {
             "header": "管理群组成员",
-            "choose_group_placeholder": "选择群组....",
+            "choose_group_placeholder": "选择群组...",
             "groups_with_moderation_permission": "拥有管理权限的群组",
-            "moderation_tools": "管理工具"
+            "moderation_tools": "打开管理工具"
         },
         "fullscreen_image": {
-            "download_and_save_image": "下载并保存图像",
-            "copy_image_to_clipboard": "将图像复制到剪贴板"
+            "download_and_save_image": "下载并保存图片",
+            "copy_image_to_clipboard": "将图片复制到剪贴板"
         }
     },
     "confirm": {
@@ -1712,7 +1721,7 @@
             "failed_install": "无法安装更新",
             "checking_hash": "正在校验文件..."
         },
-        "api_headler": {
+        "api_handler": {
             "avatar_private_or_deleted": "这个模型是私人的，或其已被删除"
         },
         "badge": {
@@ -1880,7 +1889,7 @@
             "ok": "确定",
             "input_error": "请输入有效的名称",
             "message": {
-                "success": "已重命名模型"
+                "success": "模型名称更改成功"
             }
         },
         "change_avatar_description": {
@@ -1890,7 +1899,7 @@
             "ok": "确定",
             "input_error": "请输入有效的描述",
             "message": {
-                "success": "已更改模型的描述"
+                "success": "模型描述更改成功"
             }
         },
         "rename_world": {
@@ -1900,7 +1909,7 @@
             "ok": "确定",
             "input_error": "请输入有效的名称",
             "message": {
-                "success": "已重命名世界"
+                "success": "世界名称更改成功"
             }
         },
         "change_world_description": {
@@ -1910,7 +1919,7 @@
             "ok": "确定",
             "input_error": "请输入有效的描述",
             "message": {
-                "success": "已更改世界的描述"
+                "success": "世界描述更改成功"
             }
         },
         "change_world_capacity": {
@@ -1920,7 +1929,7 @@
             "ok": "确定",
             "input_error": "请输入有效的人数",
             "message": {
-                "success": "已更改世界的最大人数"
+                "success": "最大容纳人数更改成功"
             }
         },
         "change_world_recommended_capacity": {
@@ -1930,7 +1939,7 @@
             "ok": "确定",
             "input_error": "请输入有效的数字",
             "message": {
-                "success": "已更改推荐进入的人数"
+                "success": "推荐进入人数更改成功"
             }
         },
         "change_world_preview": {
@@ -1941,7 +1950,7 @@
             "input_error": "请输入有效的 Youtube 链接",
             "message": {
                 "error": "无效的 Youtube 链接",
-                "success": "已更改世界的 YouTube 预览"
+                "success": "世界的 YouTube 预览已成功更改"
             }
         },
         "change_table_size": {
@@ -2054,7 +2063,7 @@
             "action": "操作"
         },
         "friendList": {
-            "no": "No.",
+            "no": "序号",
             "avatar": "模型",
             "displayName": "昵称",
             "rank": "信誉等级",
