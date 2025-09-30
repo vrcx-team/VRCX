@@ -664,7 +664,7 @@
                     "app_launcher": {
                         "header": "App Launcher",
                         "folder": "Auto-Launch Folder",
-                        "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts in this folder.",
+                        "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts inside this folder, alteratively use the platform-specific subfolders",
                         "enable": "Enable",
                         "auto_close": "Auto close apps",
                         "run_process_once": "Open single instance of app"
