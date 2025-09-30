@@ -1037,7 +1037,7 @@ export const useUserStore = defineStore('User', () => {
                         userId: L.userId
                     })
                     .then((args) => {
-                        D.$location.user = args.ref;
+                        Object.assign(L.user, args.ref);
                     });
             } else {
                 L.user = ref;
