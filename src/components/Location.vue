@@ -12,20 +12,26 @@
             </span>
             <span v-if="groupName" :class="{ 'x-link': link }" @click="handleShowGroupDialog">({{ groupName }})</span>
             <span v-if="region" :class="['flags', 'inline-block', 'ml-5', region]"></span>
+            <el-tooltip v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
+                <el-icon :class="['inline-block', 'ml-5']" style="color: lightcoral"><WarnTriangleFilled /></el-icon>
+            </el-tooltip>
             <el-icon v-if="strict" :class="['inline-block', 'ml-5']"><Lock /></el-icon>
         </span>
     </div>
 </template>
 
 <script setup>
-    import { Loading, Lock } from '@element-plus/icons-vue';
+    import { Loading, Lock, WarnTriangleFilled } from '@element-plus/icons-vue';
     import { ref, watchEffect } from 'vue';
     import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
     import { useGroupStore, useInstanceStore, useSearchStore, useWorldStore } from '../stores';
+    import { instanceRequest } from '../api';
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n();
 
     const { cachedWorlds, showWorldDialog } = useWorldStore();
     const { showGroupDialog } = useGroupStore();
-    const { getInstanceName, showPreviousInstancesInfoDialog } = useInstanceStore();
+    const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { verifyShortName } = useSearchStore();
 
     const props = defineProps({
@@ -51,6 +57,7 @@
     const strict = ref(false);
     const isTraveling = ref(false);
     const groupName = ref('');
+    const isClosed = ref(false);
 
     watchEffect(() => {
         parse();
@@ -64,8 +71,13 @@
     }
 
     function parse() {
+        text.value = '';
+        region.value = '';
+        strict.value = false;
         isTraveling.value = false;
         groupName.value = '';
+        isClosed.value = false;
+
         let instanceId = props.location;
         if (typeof props.traveling !== 'undefined' && props.location === 'traveling') {
             instanceId = props.traveling;
@@ -73,10 +85,21 @@
         }
         const L = parseLocation(instanceId);
         setText(L, L.instanceName);
-        getInstanceName(instanceId)
-            .then((name) => {
-                if (name && currentInstanceId() === L.tag) {
-                    setText(L, name);
+        if (!L.isRealInstance) {
+            return;
+        }
+
+        instanceRequest
+            .getCachedInstance({ worldId: L.worldId, instanceId: L.instanceId })
+            .then((args) => {
+                if (currentInstanceId() === L.tag) {
+                    if (args.json.displayName) {
+                        setText(L, args.json.displayName);
+                    }
+                    if (args.json.closedAt) {
+                        isClosed.value = true;
+                    }
+                    console.log(args.json.closedAt);
                 }
             })
             .catch((e) => {
