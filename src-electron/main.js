@@ -696,7 +696,13 @@ async function createDesktopFile() {
             .map(([key, value]) => `${key}=${value}`)
             .join('\n');
     try {
-        // create/update the desktop file when needed
+        // Create the applications directory if it doesn't exist
+        const desktopDir = path.dirname(desktopFilePath);
+        if (!fs.existsSync(desktopDir)) {
+            fs.mkdirSync(desktopDir, { recursive: true });
+        }
+
+        // Create/update the desktop file when needed
         let existingDesktopFile = '';
         if (fs.existsSync(desktopFilePath)) {
             existingDesktopFile = fs.readFileSync(desktopFilePath, 'utf8');
