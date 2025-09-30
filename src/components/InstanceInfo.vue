@@ -8,7 +8,7 @@
                     /></span>
                     <template v-if="state.canCloseInstance">
                         <el-button
-                            :disabled="props.instance.closedAt"
+                            :disabled="!!props.instance.closedAt"
                             size="small"
                             type="primary"
                             @click="closeInstance(props.location)">
@@ -49,12 +49,6 @@
             style="margin-left: 5px; color: lightcoral"
             >{{ t('dialog.user.info.instance_full') }}</span
         >
-        <span v-if="props.instance.hardClose" style="margin-left: 5px; color: lightcoral">{{
-            t('dialog.user.info.instance_hard_closed')
-        }}</span>
-        <span v-else-if="props.instance.closedAt" style="margin-left: 5px; color: lightcoral">{{
-            t('dialog.user.info.instance_closed')
-        }}</span>
         <span v-if="props.instance.queueSize" style="margin-left: 5px"
             >{{ t('dialog.user.info.instance_queue') }} {{ props.instance.queueSize }}</span
         >

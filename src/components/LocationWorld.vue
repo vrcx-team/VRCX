@@ -1,24 +1,29 @@
 <template>
     <span>
         <span @click="showLaunchDialog" class="x-link">
-            <el-icon v-if="isUnlocked" style="display: inline-block; margin-right: 5px"><Unlock /></el-icon>
+            <el-icon v-if="isUnlocked" :class="['inline-block', 'mr-5']"><Unlock /></el-icon>
             <span>#{{ instanceName }} {{ accessTypeName }}</span>
         </span>
         <span v-if="groupName" @click="showGroupDialog" class="x-link">({{ groupName }})</span>
-        <span class="flags" :class="region" style="display: inline-block; margin-left: 5px"></span>
+        <span v-if="region" :class="['flags', 'inline-block', 'ml-5', region]"></span>
+        <el-tooltip v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
+            <el-icon :class="['inline-block', 'ml-5']" style="color: lightcoral"><WarnTriangleFilled /></el-icon>
+        </el-tooltip>
         <el-icon v-if="strict" style="display: inline-block; margin-left: 5px"><Lock /></el-icon>
     </span>
 </template>
 
 <script setup>
-    import { Lock, Unlock } from '@element-plus/icons-vue';
+    import { Lock, Unlock, WarnTriangleFilled } from '@element-plus/icons-vue';
     import { ref, watch } from 'vue';
     import { getGroupName, parseLocation } from '../shared/utils';
-    import { useGroupStore, useLaunchStore, useInstanceStore } from '../stores';
+    import { useGroupStore, useLaunchStore } from '../stores';
+    import { instanceRequest } from '../api';
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n();
 
     const launchStore = useLaunchStore();
     const groupStore = useGroupStore();
-    const { getInstanceName } = useInstanceStore();
 
     const props = defineProps({
         locationobject: Object,
@@ -38,6 +43,7 @@
     const isUnlocked = ref(false);
     const strict = ref(false);
     const groupName = ref('');
+    const isClosed = ref(false);
 
     function parse() {
         const locObj = props.locationobject;
@@ -53,10 +59,22 @@
         region.value = locObj.region || 'us';
 
         instanceName.value = locObj.instanceName;
-        getInstanceName(locObj.tag)
-            .then((name) => {
-                if (name && props.locationobject.tag === locObj.tag) {
-                    instanceName.value = name;
+
+        const L = parseLocation(locObj.tag);
+        if (!L.isRealInstance) {
+            return;
+        }
+
+        instanceRequest
+            .getCachedInstance({ worldId: L.worldId, instanceId: L.instanceId })
+            .then((args) => {
+                if (locObj.tag === L.tag) {
+                    if (args.json.displayName) {
+                        instanceName.value = args.json.displayName;
+                    }
+                    if (args.json.closedAt) {
+                        isClosed.value = true;
+                    }
                 }
             })
             .catch((e) => {
@@ -94,3 +112,17 @@
         groupStore.showGroupDialog(L.groupId);
     }
 </script>
+
+<style scoped>
+    .inline-block {
+        display: inline-block;
+    }
+
+    .ml-5 {
+        margin-left: 5px;
+    }
+
+    .mr-5 {
+        margin-right: 5px;
+    }
+</style>
