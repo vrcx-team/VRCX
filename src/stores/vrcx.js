@@ -317,7 +317,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         });
         instanceStore.cachedInstances.forEach((ref, id) => {
             if (
-                friendStore.friends.values().some((f) => f.$location.tag === id)
+                [...friendStore.friends.values()].some(
+                    (f) => f.$location.tag === id
+                )
             ) {
                 return;
             }
