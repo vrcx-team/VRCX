@@ -19,13 +19,14 @@
                     <span v-else v-text="favorite.ref.statusDescription"></span>
                 </div>
                 <div class="editing">
-                    <el-dropdown trigger="click" size="small" style="margin-left: 5px">
+                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px">
                         <div>
-                            <el-tooltip placement="left" :content="t('view.favorite.move_tooltip')">
-                                <el-button type="default" :icon="Back" size="small" circle></el-button>
-                            </el-tooltip>
+                            <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </div>
                         <template #dropdown>
+                            <span style="font-weight: bold; display: block; text-align: center">
+                                {{ t('view.favorite.move_tooltip') }}
+                            </span>
                             <el-dropdown-menu>
                                 <template v-for="groupAPI in favoriteFriendGroups" :key="groupAPI.name">
                                     <el-dropdown-item

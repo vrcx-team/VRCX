@@ -13,17 +13,14 @@
                     <span v-else class="extra">{{ localFavFakeRef.authorName }}</span>
                 </div>
                 <div class="editing">
-                    <el-dropdown trigger="click" size="small" style="margin-left: 5px">
+                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px">
                         <div>
-                            <el-tooltip
-                                placement="left"
-                                :content="
-                                    t(localFavFakeRef ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')
-                                ">
-                                <el-button type="default" :icon="Back" size="small" circle></el-button>
-                            </el-tooltip>
+                            <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </div>
                         <template #dropdown>
+                            <span style="font-weight: bold; display: block; text-align: center">
+                                {{ t(tooltipContent) }}
+                            </span>
                             <el-dropdown-menu>
                                 <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
                                     <el-dropdown-item
@@ -159,6 +156,9 @@
     });
 
     const localFavFakeRef = computed(() => (props.isLocalFavorite ? props.favorite : props.favorite.ref));
+    const tooltipContent = computed(() =>
+        t(props.isLocalFavorite ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')
+    );
 
     const smallThumbnail = computed(() => {
         const url = localFavFakeRef.value.thumbnailImageUrl.replace('256', '128');
