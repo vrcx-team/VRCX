@@ -99,7 +99,6 @@
                     if (args.json.closedAt) {
                         isClosed.value = true;
                     }
-                    console.log(args.json.closedAt);
                 }
             })
             .catch((e) => {
