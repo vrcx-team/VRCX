@@ -10,13 +10,14 @@
                     <span class="extra" v-text="localFavFakeRef.authorName"></span>
                 </div>
                 <div class="editing">
-                    <el-dropdown trigger="click" size="small" style="margin-left: 5px">
+                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px">
                         <div>
-                            <el-tooltip placement="top" :content="tooltipContent">
-                                <el-button type="default" :icon="Back" size="small" circle></el-button>
-                            </el-tooltip>
+                            <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </div>
                         <template #dropdown>
+                            <span style="font-weight: bold; display: block; text-align: center">
+                                {{ t(tooltipContent) }}
+                            </span>
                             <el-dropdown-menu>
                                 <template v-for="groupAPI in favoriteAvatarGroups" :key="groupAPI.name">
                                     <el-dropdown-item
