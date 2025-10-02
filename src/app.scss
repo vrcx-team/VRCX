@@ -1055,3 +1055,11 @@ i.x-status-icon.red {
 :root {
     --el-overlay-color-lighter: rgba(0, 0, 0, 0.15);
 }
+
+// fix fullscreen image viewer colors in dark mode
+.toolbar-icon,
+.el-image-viewer__actions,
+.el-image-viewer__close {
+    color: var(--el-color-info-dark-2);
+    background-color: var(--el-bg-color);
+}

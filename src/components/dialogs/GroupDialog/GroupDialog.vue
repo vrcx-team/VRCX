@@ -168,7 +168,13 @@
                         <div style="margin-top: 5px">
                             <pre
                                 v-show="groupDialog.ref.name !== groupDialog.ref.description"
-                                style="font-family: inherit; font-size: 12px; white-space: pre-wrap"
+                                style="
+                                    font-family: inherit;
+                                    font-size: 12px;
+                                    white-space: pre-wrap;
+                                    max-height: 40vh;
+                                    overflow-y: auto;
+                                "
                                 v-text="groupDialog.ref.description"></pre>
                         </div>
                     </div>

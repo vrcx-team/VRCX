@@ -674,7 +674,10 @@ export const useInstanceStore = defineStore('Instance', () => {
                             userId: L.userId
                         })
                         .then((args) => {
-                            Object.assign(L.user, args.ref);
+                            if (args.ref.id === L.userId) {
+                                Object.assign(L.user, args.ref);
+                                instance.$location = L;
+                            }
                         });
                 } else {
                     L.user = ref;
