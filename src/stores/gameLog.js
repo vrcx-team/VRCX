@@ -93,11 +93,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
         state.gameLogTable.filter = JSON.parse(
             await configRepository.getString('VRCX_gameLogTableFilters', '[]')
         );
-        // gameLog loads before favorites
-        // await configRepository.getBool(
-        //     'VRCX_gameLogTableVIPFilter',
-        //     false
-        // );
+        state.gameLogTable.vip = await configRepository.getBool(
+            'VRCX_gameLogTableVIPFilter',
+            false
+        );
     }
 
     init();
@@ -147,6 +146,15 @@ export const useGameLogStore = defineStore('GameLog', () => {
             }
         },
         { flush: 'sync' }
+    );
+
+    watch(
+        () => watchState.isFavoritesLoaded,
+        (isFavoritesLoaded) => {
+            if (isFavoritesLoaded && state.gameLogTable.vip) {
+                gameLogTableLookup(); // re-apply VIP filter after friends are loaded
+            }
+        }
     );
 
     watch(

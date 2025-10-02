@@ -79,6 +79,15 @@ export const useFeedStore = defineStore('Feed', () => {
         { flush: 'sync' }
     );
 
+    watch(
+        () => watchState.isFavoritesLoaded,
+        (isFavoritesLoaded) => {
+            if (isFavoritesLoaded && state.feedTable.vip) {
+                feedTableLookup(); // re-apply VIP filter after friends are loaded
+            }
+        }
+    );
+
     function feedSearch(row) {
         const value = state.feedTable.search.toUpperCase();
         if (!value) {

@@ -932,6 +932,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 refreshFavoriteGroups();
                 friendStore.updateLocalFavoriteFriends();
                 state.isFavoriteLoading = false;
+                watchState.isFavoritesLoaded = true;
             }
         });
     }

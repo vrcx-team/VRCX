@@ -190,11 +190,11 @@
                     "announcement": "Event Announcement"
                 },
                 "group": {
-                    "announcement": "Announcement",
-                    "informative": "Informative",
-                    "invite": "Invite",
-                    "joinRequest": "Join Request",
-                    "transfer": "Transfer",
+                    "announcement": "Group Announcement",
+                    "informative": "Group Informative",
+                    "invite": "Group Invite",
+                    "joinRequest": "Group Join Request",
+                    "transfer": "Group Transfer",
                     "queueReady": "Queue Ready"
                 },
                 "moderation": {
