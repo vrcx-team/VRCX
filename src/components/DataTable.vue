@@ -63,10 +63,6 @@
             layout: {
                 type: String,
                 default: 'table, pagination'
-            },
-            defaultSort: {
-                type: Object,
-                default: () => ({ prop: 'created_at', order: 'descending' })
             }
         },
         emits: [
@@ -84,8 +80,8 @@
             const internalCurrentPage = ref(currentPage.value);
             const internalPageSize = ref(pageSize.value);
             const sortData = ref({
-                prop: props.defaultSort?.prop || null,
-                order: props.defaultSort?.order || null
+                prop: props.tableProps.defaultSort?.prop || 'created_at',
+                order: props.tableProps.defaultSort?.order || 'descending'
             });
 
             const showPagination = computed(() => {
@@ -201,7 +197,7 @@
             });
 
             watch(
-                () => props.defaultSort,
+                () => props.tableProps.defaultSort,
                 (newSort) => {
                     if (newSort) {
                         sortData.value = {

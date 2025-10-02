@@ -80,6 +80,15 @@ export const useModerationStore = defineStore('Moderation', () => {
             userRef.$moderations = getUserModerations(ref.targetUserId);
         }
 
+        const array = state.playerModerationTable.data;
+        const { length } = array;
+        for (let i = 0; i < length; ++i) {
+            if (array[i].id === ref.id) {
+                array.splice(i, 1);
+                break;
+            }
+        }
+
         const D = userStore.userDialog;
         if (
             D.visible === false ||
@@ -98,15 +107,6 @@ export const useModerationStore = defineStore('Moderation', () => {
             D.isInteractOff = false;
         } else if (ref.type === 'muteChat') {
             D.isMuteChat = false;
-        }
-
-        const array = state.playerModerationTable.data;
-        const { length } = array;
-        for (let i = 0; i < length; ++i) {
-            if (array[i].id === ref.id) {
-                array.splice(i, 1);
-                break;
-            }
         }
     }
 
