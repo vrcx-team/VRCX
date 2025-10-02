@@ -186,6 +186,7 @@ export const useAuthStore = defineStore('Auth', () => {
         }
         watchState.isLoggedIn = false;
         watchState.isFriendsLoaded = false;
+        watchState.isFavoritesLoaded = false;
         notificationStore.notificationInitStatus = false;
         await updateStoredUser(userStore.currentUser);
         webApiService.clearCookies();
