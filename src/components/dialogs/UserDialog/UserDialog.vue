@@ -1736,8 +1736,8 @@
             v-model:sendInviteRequestDialogVisible="sendInviteRequestDialogVisible"
             v-model:sendInviteDialog="sendInviteDialog"
             @closeInviteDialog="closeInviteDialog" />
+        <PreviousInstancesUserDialog v-model:previous-instances-user-dialog="previousInstancesUserDialog" />
         <template v-if="userDialog.visible">
-            <PreviousInstancesUserDialog v-model:previous-instances-user-dialog="previousInstancesUserDialog" />
             <InviteGroupDialog />
             <SocialStatusDialog
                 :social-status-dialog="socialStatusDialog"
