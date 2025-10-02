@@ -58,6 +58,7 @@ declare global {
             onWindowStateChange: (
                 Function: (event: any, state: { windowState: any }) => void
             ) => void;
+            onBrowserFocus: (Function: (event: any) => void) => void;
             restartApp: () => Promise<void>;
             getWristOverlayWindow: () => Promise<boolean>;
             getHmdOverlayWindow: () => Promise<boolean>;

@@ -31,6 +31,7 @@ import { useVrStore } from './vr';
 import { useVrcxStore } from './vrcx';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
 import { useWorldStore } from './world';
+import { useVrcStatusStore } from './vrcStatus';
 
 import { createSentryPiniaPlugin } from '@sentry/vue';
 
@@ -70,7 +71,8 @@ export function createGlobalStores() {
         vrcx: useVrcxStore(),
         sharedFeed: useSharedFeedStore(),
         updateLoop: useUpdateLoopStore(),
-        auth: useAuthStore()
+        auth: useAuthStore(),
+        vrcStatus: useVrcStatusStore()
     };
 }
 
@@ -106,5 +108,6 @@ export {
     useVRCXUpdaterStore,
     useWorldStore,
     useSharedFeedStore,
-    useUpdateLoopStore
+    useUpdateLoopStore,
+    useVrcStatusStore
 };

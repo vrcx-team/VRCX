@@ -25,6 +25,7 @@ import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
+import { useVrcStatusStore } from './vrcStatus';
 import { useI18n } from 'vue-i18n';
 import Noty from 'noty';
 
@@ -45,6 +46,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     const avatarProviderStore = useAvatarProviderStore();
     const gameLogStore = useGameLogStore();
     const updateLoopStore = useUpdateLoopStore();
+    const vrcStatusStore = useVrcStatusStore();
     const { t } = useI18n();
 
     const state = reactive({
@@ -86,6 +88,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             window.electron.onWindowStateChange((event, newState) => {
                 state.windowState = newState.windowState;
                 debounce(saveVRCXWindowOption, 300)();
+            });
+
+            window.electron.onBrowserFocus(() => {
+                vrcStatusStore.onBrowserFocus();
             });
         }
 

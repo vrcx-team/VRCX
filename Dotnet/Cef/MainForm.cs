@@ -83,6 +83,11 @@ namespace VRCX
             {
                 logger.Debug(consoleMessageEventArgs.Message + " (" + consoleMessageEventArgs.Source + ":" + consoleMessageEventArgs.Line + ")");
             };
+            Browser.GotFocus += (_, _) =>
+            {
+                if (Browser != null && !Browser.IsLoading && Browser.CanExecuteJavascriptInMainFrame)
+                    Browser.ExecuteScriptAsync("$pinia.vrcStatus.onBrowserFocus()");
+            };
 
             JavascriptBindings.ApplyAppJavascriptBindings(Browser.JavascriptObjectRepository);
             Controls.Add(Browser);

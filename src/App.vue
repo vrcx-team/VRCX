@@ -1,6 +1,7 @@
 <template>
     <!DOCTYPE html>
     <el-config-provider :locale="currentLocale">
+        <VrcStatus></VrcStatus>
         <div
             id="x-app"
             class="x-app"
@@ -103,6 +104,8 @@
     import zhCN from 'element-plus/es/locale/lang/zh-cn';
     import zhTW from 'element-plus/es/locale/lang/zh-tw';
     import th from 'element-plus/es/locale/lang/th';
+
+    import VrcStatus from './components/VrcStatus.vue';
 
     import Login from './views/Login/Login.vue';
     import NavMenu from './components/NavMenu.vue';
