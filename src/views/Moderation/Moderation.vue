@@ -98,7 +98,7 @@
     import { storeToRefs } from 'pinia';
     import { playerModerationRequest } from '../../api';
     import configRepository from '../../service/config.js';
-    import { useUiStore, useModerationStore, useUserStore, useAppearanceSettingsStore } from '../../stores';
+    import { useUiStore, useModerationStore, useUserStore } from '../../stores';
     import { moderationTypes } from '../../shared/constants';
     import { formatDateFilter } from '../../shared/utils';
 
