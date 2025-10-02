@@ -396,6 +396,10 @@ function createWindow() {
     mainWindow.on('restore', () => {
         mainWindow.webContents.send('setWindowState', '0');
     });
+
+    mainWindow.on('focus', () => {
+        mainWindow.webContents.send('onBrowserFocus');
+    });
 }
 
 let wristOverlayWindow = undefined;

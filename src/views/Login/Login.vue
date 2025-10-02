@@ -1,26 +1,20 @@
 <template>
+    <div style="float: left; margin: 5px">
+        <el-tooltip placement="top" :content="t('view.login.updater')">
+            <el-button type="default" size="small" :icon="Download" circle @click="showVRCXUpdateDialog"></el-button>
+        </el-tooltip>
+        <el-tooltip placement="top" :content="t('view.login.proxy_settings')">
+            <el-button
+                type="default"
+                size="small"
+                :icon="Connection"
+                style="margin-left: 5px"
+                circle
+                @click="promptProxySettings"></el-button>
+        </el-tooltip>
+    </div>
     <div v-loading="loginForm.loading" class="x-login-container">
         <div class="x-login">
-            <div style="position: fixed; top: 0; left: 0; margin: 5px">
-                <el-tooltip placement="top" :content="t('view.login.updater')">
-                    <el-button
-                        type="default"
-                        size="small"
-                        :icon="Download"
-                        circle
-                        @click="showVRCXUpdateDialog"></el-button>
-                </el-tooltip>
-                <el-tooltip placement="top" :content="t('view.login.proxy_settings')">
-                    <el-button
-                        type="default"
-                        size="small"
-                        :icon="Connection"
-                        style="margin-left: 5px"
-                        circle
-                        @click="promptProxySettings"></el-button>
-                </el-tooltip>
-            </div>
-
             <div class="x-login-form-container">
                 <div>
                     <h2 style="font-weight: bold; text-align: center; margin: 0">{{ t('view.login.login') }}</h2>

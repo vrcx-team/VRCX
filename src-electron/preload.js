@@ -31,6 +31,7 @@ contextBridge.exposeInMainWorld('electron', {
         ipcRenderer.on('setWindowSize', callback),
     onWindowStateChange: (callback) =>
         ipcRenderer.on('setWindowState', callback),
+    onBrowserFocus: (callback) => ipcRenderer.on('onBrowserFocus', callback),
     desktopNotification: (title, body, icon) =>
         ipcRenderer.invoke('notification:showNotification', title, body, icon),
     restartApp: () => ipcRenderer.invoke('app:restart'),
