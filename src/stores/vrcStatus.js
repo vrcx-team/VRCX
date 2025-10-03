@@ -1,14 +1,22 @@
 import { defineStore } from 'pinia';
 import webApiService from '../service/webapi';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 export const useVrcStatusStore = defineStore('VrcStatus', () => {
     const vrcStatusApiUrl = 'https://status.vrchat.com/api/v2';
 
     const lastStatus = ref('');
+    const lastStatusSummary = ref('');
     const lastTimeFetched = ref(0);
     const isAlertClosed = ref(false);
     const pollingInterval = ref(0);
+
+    const statusText = computed(() => {
+        if (lastStatusSummary.value) {
+            return `${lastStatus.value}: ${lastStatusSummary.value}`;
+        }
+        return lastStatus.value;
+    });
 
     async function getVrcStatus() {
         const response = await webApiService.execute({
@@ -27,6 +35,28 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
         }
         lastStatus.value = data.status.description;
         pollingInterval.value = 2 * 60 * 1000; // 2 minutes
+        getVrcStatusSummary();
+    }
+
+    async function getVrcStatusSummary() {
+        const response = await webApiService.execute({
+            url: `${vrcStatusApiUrl}/summary.json`,
+            method: 'GET',
+            headers: {
+                Referer: 'https://vrcx.app'
+            }
+        });
+        const data = JSON.parse(response.data);
+        let summary = '';
+        for (const component of data.components) {
+            if (component.status !== 'operational') {
+                summary += `${component.name}, `;
+            }
+        }
+        if (summary.endsWith(', ')) {
+            summary = summary.slice(0, -2);
+        }
+        lastStatusSummary.value = summary;
     }
 
     // ran from Cef and Electron when browser is focused
@@ -51,7 +81,7 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
     init();
 
     return {
-        lastStatus,
+        statusText,
         isAlertClosed,
         onBrowserFocus,
         getVrcStatus
