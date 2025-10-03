@@ -81,7 +81,7 @@
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />
         <EditAndSendInviteDialog
-            :edit-and-send-invite-dialog="editAndSendInviteDialog"
+            v-model:edit-and-send-invite-dialog="editAndSendInviteDialog"
             :sendInviteDialog="sendInviteDialog"
             @update:sendInviteDialog="emit('update:sendInviteDialog', $event)"
             :invite-dialog="inviteDialog"
