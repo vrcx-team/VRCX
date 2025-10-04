@@ -7,20 +7,12 @@
         width="770px">
         <div v-loading="worldDialog.loading">
             <div style="display: flex">
-                <el-popover placement="right" :width="500" trigger="click">
-                    <template #reference>
-                        <img
-                            :src="worldDialog.ref.thumbnailImageUrl"
-                            class="x-link"
-                            style="flex: none; width: 160px; height: 120px; border-radius: 12px"
-                            loading="lazy" />
-                    </template>
-                    <img
-                        :src="worldDialog.ref.imageUrl"
-                        :class="['x-link', 'x-popover-image']"
-                        @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
-                        loading="lazy" />
-                </el-popover>
+                <img
+                    :src="worldDialog.ref.thumbnailImageUrl"
+                    class="x-link"
+                    style="flex: none; width: 160px; height: 120px; border-radius: 12px"
+                    @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
+                    loading="lazy" />
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div style="flex: 1">
                         <div>

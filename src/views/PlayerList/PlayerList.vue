@@ -2,20 +2,12 @@
     <div v-show="menuActiveIndex === 'playerList'" class="x-container" style="padding-top: 5px">
         <div style="display: flex; flex-direction: column; height: 100%">
             <div v-if="currentInstanceWorld.ref.id" style="display: flex">
-                <el-popover placement="right" :width="500" trigger="click" style="height: 120px">
-                    <template #reference>
-                        <img
-                            :src="currentInstanceWorld.ref.thumbnailImageUrl"
-                            class="x-link"
-                            style="flex: none; width: 160px; height: 120px; border-radius: 4px"
-                            loading="lazy" />
-                    </template>
-                    <img
-                        :src="currentInstanceWorld.ref.imageUrl"
-                        :class="['x-link', 'x-popover-image']"
-                        @click="showFullscreenImageDialog(currentInstanceWorld.ref.imageUrl)"
-                        loading="lazy" />
-                </el-popover>
+                <img
+                    :src="currentInstanceWorld.ref.thumbnailImageUrl"
+                    class="x-link"
+                    style="flex: none; width: 160px; height: 120px; border-radius: 4px"
+                    @click="showFullscreenImageDialog(currentInstanceWorld.ref.imageUrl)"
+                    loading="lazy" />
                 <div style="margin-left: 10px; display: flex; flex-direction: column; min-width: 320px; width: 100%">
                     <div>
                         <span

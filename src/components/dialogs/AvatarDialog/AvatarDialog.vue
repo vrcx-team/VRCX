@@ -7,35 +7,20 @@
         width="700px">
         <div v-loading="avatarDialog.loading">
             <div style="display: flex">
-                <el-popover placement="right" :width="500" trigger="click">
-                    <template #reference>
-                        <img
-                            :src="avatarDialog.ref.thumbnailImageUrl"
-                            class="x-link"
-                            style="flex: none; width: 160px; height: 120px; border-radius: 12px"
-                            loading="lazy" />
-                    </template>
-                    <img
-                        :src="avatarDialog.ref.imageUrl"
-                        :class="['x-link', 'x-popover-image']"
-                        @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)"
-                        loading="lazy" />
-                </el-popover>
+                <img
+                    :src="avatarDialog.ref.thumbnailImageUrl"
+                    class="x-link"
+                    @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)"
+                    style="flex: none; width: 160px; height: 120px; border-radius: 12px"
+                    loading="lazy" />
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div style="flex: 1">
                         <div>
-                            <el-popover placement="top" trigger="click">
-                                <template #reference>
-                                    <span
-                                        class="dialog-title"
-                                        style="margin-right: 5px; cursor: pointer"
-                                        v-text="avatarDialog.ref.name"
-                                        @click="copyToClipboard(avatarDialog.ref.name)"></span>
-                                </template>
-                                <span style="display: block; text-align: center; font-family: monospace">{{
-                                    textToHex(avatarDialog.ref.name)
-                                }}</span>
-                            </el-popover>
+                            <span
+                                class="dialog-title"
+                                style="margin-right: 5px; cursor: pointer"
+                                v-text="avatarDialog.ref.name"
+                                @click="copyToClipboard(avatarDialog.ref.name)"></span>
                         </div>
                         <div style="margin-top: 5px">
                             <span
@@ -625,8 +610,7 @@
         replaceVrcPackageUrl,
         timeToText,
         moveArrayItem,
-        formatDateFilter,
-        textToHex
+        formatDateFilter
     } from '../../../shared/utils';
     import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
