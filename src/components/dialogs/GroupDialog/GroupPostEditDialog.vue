@@ -61,25 +61,11 @@
                 <el-form-item :label="t('dialog.group_post_edit.image')">
                     <template v-if="gallerySelectDialog.selectedFileId">
                         <div style="display: inline-block; flex: none; margin-right: 5px">
-                            <el-popover placement="right" :width="500" trigger="click">
-                                <template #reference>
-                                    <img
-                                        :src="gallerySelectDialog.selectedImageUrl"
-                                        style="
-                                            flex: none;
-                                            width: 60px;
-                                            height: 60px;
-                                            border-radius: 4px;
-                                            object-fit: cover;
-                                        "
-                                        loading="lazy" />
-                                </template>
-                                <img
-                                    :src="gallerySelectDialog.selectedImageUrl"
-                                    :class="['x-link', 'x-popover-image']"
-                                    @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)"
-                                    loading="lazy" />
-                            </el-popover>
+                            <img
+                                :src="gallerySelectDialog.selectedImageUrl"
+                                style="flex: none; width: 60px; height: 60px; border-radius: 4px; object-fit: cover"
+                                @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)"
+                                loading="lazy" />
                             <el-button size="small" style="vertical-align: top" @click="clearImageGallerySelect">
                                 {{ t('dialog.invite_message.clear_selected_image') }}
                             </el-button>

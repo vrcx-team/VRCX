@@ -126,36 +126,20 @@
             <el-table-column :label="t('table.notification.photo')" width="100" prop="photo">
                 <template #default="scope">
                     <template v-if="scope.row.details && scope.row.details.imageUrl">
-                        <el-popover placement="right" :width="500" trigger="click">
-                            <template #reference>
-                                <img
-                                    class="x-link"
-                                    :src="getSmallThumbnailUrl(scope.row.details.imageUrl)"
-                                    style="flex: none; height: 50px; border-radius: 4px"
-                                    loading="lazy" />
-                            </template>
-                            <img
-                                :src="scope.row.details.imageUrl"
-                                :class="['x-link', 'x-popover-image']"
-                                @click="showFullscreenImageDialog(scope.row.details.imageUrl)"
-                                loading="lazy" />
-                        </el-popover>
+                        <img
+                            class="x-link"
+                            :src="getSmallThumbnailUrl(scope.row.details.imageUrl)"
+                            style="flex: none; height: 50px; border-radius: 4px"
+                            @click="showFullscreenImageDialog(scope.row.details.imageUrl)"
+                            loading="lazy" />
                     </template>
                     <template v-else-if="scope.row.imageUrl">
-                        <el-popover placement="right" :width="500" trigger="click">
-                            <template #reference>
-                                <img
-                                    class="x-link"
-                                    :src="getSmallThumbnailUrl(scope.row.imageUrl)"
-                                    style="flex: none; height: 50px; border-radius: 4px"
-                                    loading="lazy" />
-                            </template>
-                            <img
-                                :src="scope.row.imageUrl"
-                                :class="['x-link', 'x-popover-image']"
-                                @click="showFullscreenImageDialog(scope.row.imageUrl)"
-                                loading="lazy" />
-                        </el-popover>
+                        <img
+                            class="x-link"
+                            :src="getSmallThumbnailUrl(scope.row.imageUrl)"
+                            style="flex: none; height: 50px; border-radius: 4px"
+                            @click="showFullscreenImageDialog(scope.row.imageUrl)"
+                            loading="lazy" />
                     </template>
                 </template>
             </el-table-column>

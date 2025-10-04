@@ -7,35 +7,20 @@
         class="x-dialog x-group-dialog">
         <div v-loading="groupDialog.loading" class="group-body">
             <div style="display: flex">
-                <el-popover placement="right" :width="500" trigger="click">
-                    <template #reference>
-                        <img
-                            :src="groupDialog.ref.iconUrl"
-                            style="flex: none; width: 120px; height: 120px; border-radius: 12px"
-                            class="x-link"
-                            loading="lazy" />
-                    </template>
-                    <img
-                        :src="groupDialog.ref.iconUrl"
-                        :class="['x-link', 'x-popover-image']"
-                        @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)"
-                        loading="lazy" />
-                </el-popover>
+                <img
+                    :src="groupDialog.ref.iconUrl"
+                    style="flex: none; width: 120px; height: 120px; border-radius: 12px"
+                    class="x-link"
+                    @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)"
+                    loading="lazy" />
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div class="group-header" style="flex: 1">
                         <span v-if="groupDialog.ref.ownerId === currentUser.id" style="margin-right: 5px">👑</span>
-                        <el-popover placement="top" trigger="click">
-                            <template #reference>
-                                <span
-                                    class="dialog-title"
-                                    style="margin-right: 5px; cursor: pointer"
-                                    v-text="groupDialog.ref.name"
-                                    @click="copyToClipboard(groupDialog.ref.name)"></span>
-                            </template>
-                            <span style="display: block; text-align: center; font-family: monospace">{{
-                                textToHex(groupDialog.ref.name)
-                            }}</span>
-                        </el-popover>
+                        <span
+                            class="dialog-title"
+                            style="margin-right: 5px; cursor: pointer"
+                            v-text="groupDialog.ref.name"
+                            @click="copyToClipboard(groupDialog.ref.name)"></span>
                         <span
                             class="group-discriminator x-grey"
                             style="font-family: monospace; font-size: 12px; margin-right: 5px">
@@ -379,26 +364,12 @@
             <el-tabs v-model="groupDialogLastActiveTab" @tab-click="groupDialogTabClick">
                 <el-tab-pane name="Info" :label="t('dialog.group.info.header')">
                     <div class="group-banner-image-info">
-                        <el-popover placement="bottom" :width="1000" trigger="click">
-                            <template #reference>
-                                <img
-                                    :src="groupDialog.ref.bannerUrl"
-                                    class="x-link"
-                                    style="
-                                        flex: none;
-                                        width: 100%;
-                                        aspect-ratio: 6/1;
-                                        object-fit: cover;
-                                        border-radius: 4px;
-                                    "
-                                    loading="lazy" />
-                            </template>
-                            <img
-                                :src="groupDialog.ref.bannerUrl"
-                                :class="['x-link', 'x-popover-image']"
-                                @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)"
-                                loading="lazy" />
-                        </el-popover>
+                        <img
+                            :src="groupDialog.ref.bannerUrl"
+                            class="x-link"
+                            style="flex: none; width: 100%; aspect-ratio: 6/1; object-fit: cover; border-radius: 4px"
+                            @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)"
+                            loading="lazy" />
                     </div>
                     <div class="x-friend-list" style="max-height: none">
                         <span
@@ -459,26 +430,18 @@
                                 <div
                                     v-if="groupDialog.announcement.imageUrl"
                                     style="display: inline-block; margin-right: 5px">
-                                    <el-popover placement="right" :width="500" trigger="click">
-                                        <template #reference>
-                                            <img
-                                                :src="groupDialog.announcement.imageUrl"
-                                                class="x-link"
-                                                style="
-                                                    flex: none;
-                                                    width: 60px;
-                                                    height: 60px;
-                                                    border-radius: 4px;
-                                                    object-fit: cover;
-                                                "
-                                                loading="lazy" />
-                                        </template>
-                                        <img
-                                            :src="groupDialog.announcement.imageUrl"
-                                            :class="['x-link', 'x-popover-image']"
-                                            @click="showFullscreenImageDialog(groupDialog.announcement.imageUrl)"
-                                            loading="lazy" />
-                                    </el-popover>
+                                    <img
+                                        :src="groupDialog.announcement.imageUrl"
+                                        class="x-link"
+                                        style="
+                                            flex: none;
+                                            width: 60px;
+                                            height: 60px;
+                                            border-radius: 4px;
+                                            object-fit: cover;
+                                        "
+                                        @click="showFullscreenImageDialog(groupDialog.announcement.imageUrl)"
+                                        loading="lazy" />
                                 </div>
                                 <pre
                                     class="extra"
@@ -751,26 +714,18 @@
                                 <div class="detail">
                                     <span style="display: block" v-text="post.title" />
                                     <div v-if="post.imageUrl" style="display: inline-block; margin-right: 5px">
-                                        <el-popover placement="right" :width="500" trigger="click">
-                                            <template #reference>
-                                                <img
-                                                    :src="post.imageUrl"
-                                                    class="x-link"
-                                                    style="
-                                                        flex: none;
-                                                        width: 60px;
-                                                        height: 60px;
-                                                        border-radius: 4px;
-                                                        object-fit: cover;
-                                                    "
-                                                    loading="lazy" />
-                                            </template>
-                                            <img
-                                                :src="post.imageUrl"
-                                                :class="['x-link', 'x-popover-image']"
-                                                @click="showFullscreenImageDialog(post.imageUrl)"
-                                                loading="lazy" />
-                                        </el-popover>
+                                        <img
+                                            :src="post.imageUrl"
+                                            class="x-link"
+                                            style="
+                                                flex: none;
+                                                width: 60px;
+                                                height: 60px;
+                                                border-radius: 4px;
+                                                object-fit: cover;
+                                            "
+                                            @click="showFullscreenImageDialog(post.imageUrl)"
+                                            loading="lazy" />
                                     </div>
                                     <pre
                                         class="extra"
@@ -1213,7 +1168,6 @@
         userImage,
         userStatusClass,
         formatDateFilter,
-        textToHex,
         debounce
     } from '../../../shared/utils';
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
