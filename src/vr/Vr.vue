@@ -170,7 +170,7 @@
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <i class="ri-mail-send-line mr-5"></i>
-                                        <span class="name" v-text="feed.senderUsername"></span>
+                                        <span class="name mr-5" v-text="feed.senderUsername"></span>
                                         <VrLocation
                                             :location="feed.details.worldId"
                                             :hint="feed.details.worldName"
@@ -401,9 +401,8 @@
                                         <template v-if="feed.displayName">
                                             <i class="ri-bard-line mr-5"></i>
                                             <span
-                                                class="name"
+                                                class="name mr-5"
                                                 v-text="feed.displayName"
-                                                style="margin-right: 5px"
                                                 :style="{ color: feed.tagColour }"></span>
                                             <VrLocation
                                                 :location="feed.instanceId"
