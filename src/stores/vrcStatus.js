@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import webApiService from '../service/webapi';
 import { ref, computed } from 'vue';
+import { ElNotification } from 'element-plus';
+import { openExternalLink } from '../shared/utils';
 
 export const useVrcStatusStore = defineStore('VrcStatus', () => {
     const vrcStatusApiUrl = 'https://status.vrchat.com/api/v2';
@@ -8,15 +10,62 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
     const lastStatus = ref('');
     const lastStatusSummary = ref('');
     const lastTimeFetched = ref(0);
-    const isAlertClosed = ref(false);
     const pollingInterval = ref(0);
+    const alertRef = ref(null);
 
+    const lastStatusText = ref('');
     const statusText = computed(() => {
         if (lastStatusSummary.value) {
             return `${lastStatus.value}: ${lastStatusSummary.value}`;
         }
         return lastStatus.value;
     });
+
+    function updateAlert() {
+        if (lastStatusText.value === statusText.value) {
+            return;
+        }
+        lastStatusText.value = statusText.value;
+
+        if (!statusText.value) {
+            if (alertRef.value) {
+                alertRef.value.close();
+                alertRef.value = ElNotification({
+                    title: 'VRChat Status',
+                    message: 'All Systems Operational',
+                    type: 'success',
+                    duration: 0,
+                    showClose: true,
+                    onClick: () => {
+                        openStatusPage();
+                    },
+                    onClose: () => {
+                        alertRef.value = null;
+                    }
+                });
+            }
+            return;
+        }
+
+        alertRef.value?.close();
+        alertRef.value = ElNotification({
+            title: 'VRChat Status',
+            message: statusText.value,
+            type: 'warning',
+            duration: 0,
+            showClose: true,
+            onClick: () => {
+                openStatusPage();
+            },
+            onClose: () => {
+                alertRef.value = null;
+            }
+        });
+    }
+
+    function openStatusPage() {
+        openExternalLink('https://status.vrchat.com');
+    }
 
     async function getVrcStatus() {
         const response = await webApiService.execute({
@@ -31,10 +80,12 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
         if (data.status.description === 'All Systems Operational') {
             lastStatus.value = '';
             pollingInterval.value = 15 * 60 * 1000; // 15 minutes
+            updateAlert();
             return;
         }
         lastStatus.value = data.status.description;
         pollingInterval.value = 2 * 60 * 1000; // 2 minutes
+        updateAlert();
         getVrcStatusSummary();
     }
 
@@ -57,6 +108,7 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
             summary = summary.slice(0, -2);
         }
         lastStatusSummary.value = summary;
+        updateAlert();
     }
 
     // ran from Cef and Electron when browser is focused
@@ -69,9 +121,6 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
     function init() {
         getVrcStatus();
         setInterval(() => {
-            if (isAlertClosed.value) {
-                return;
-            }
             if (Date.now() - lastTimeFetched.value > pollingInterval.value) {
                 getVrcStatus();
             }
@@ -81,8 +130,8 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
     init();
 
     return {
+        lastStatus,
         statusText,
-        isAlertClosed,
         onBrowserFocus,
         getVrcStatus
     };
