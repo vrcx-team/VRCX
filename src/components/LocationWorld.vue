@@ -17,10 +17,10 @@
     import { Lock, Unlock, WarnTriangleFilled } from '@element-plus/icons-vue';
     import { ref, watch } from 'vue';
     import { getGroupName, parseLocation } from '../shared/utils';
-    import { useGroupStore, useLaunchStore } from '../stores';
-    import { instanceRequest } from '../api';
+    import { useGroupStore, useLaunchStore, useInstanceStore } from '../stores';
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n();
+    const { cachedInstances } = useInstanceStore();
 
     const launchStore = useLaunchStore();
     const groupStore = useGroupStore();
@@ -65,21 +65,15 @@
             return;
         }
 
-        instanceRequest
-            .getCachedInstance({ worldId: L.worldId, instanceId: L.instanceId })
-            .then((args) => {
-                if (locObj.tag === L.tag) {
-                    if (args.json.displayName) {
-                        instanceName.value = args.json.displayName;
-                    }
-                    if (args.json.closedAt) {
-                        isClosed.value = true;
-                    }
-                }
-            })
-            .catch((e) => {
-                console.error(e);
-            });
+        const instanceRef = cachedInstances.get(L.tag);
+        if (typeof instanceRef !== 'undefined') {
+            if (instanceRef.displayName) {
+                instanceName.value = instanceRef.displayName;
+            }
+            if (instanceRef.closedAt) {
+                isClosed.value = true;
+            }
+        }
 
         if (props.grouphint) {
             groupName.value = props.grouphint;

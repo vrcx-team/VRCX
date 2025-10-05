@@ -25,7 +25,6 @@
     import { ref, watchEffect } from 'vue';
     import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
     import { useGroupStore, useInstanceStore, useSearchStore, useWorldStore } from '../stores';
-    import { instanceRequest } from '../api';
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n();
 
@@ -33,6 +32,7 @@
     const { showGroupDialog } = useGroupStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { verifyShortName } = useSearchStore();
+    const { cachedInstances } = useInstanceStore();
 
     const props = defineProps({
         location: String,
@@ -89,21 +89,15 @@
             return;
         }
 
-        instanceRequest
-            .getCachedInstance({ worldId: L.worldId, instanceId: L.instanceId })
-            .then((args) => {
-                if (currentInstanceId() === L.tag) {
-                    if (args.json.displayName) {
-                        setText(L, args.json.displayName);
-                    }
-                    if (args.json.closedAt) {
-                        isClosed.value = true;
-                    }
-                }
-            })
-            .catch((e) => {
-                console.error(e);
-            });
+        const instanceRef = cachedInstances.get(L.tag);
+        if (typeof instanceRef !== 'undefined') {
+            if (instanceRef.displayName) {
+                setText(L, instanceRef.displayName);
+            }
+            if (instanceRef.closedAt) {
+                isClosed.value = true;
+            }
+        }
 
         if (props.grouphint) {
             groupName.value = props.grouphint;
