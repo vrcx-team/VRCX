@@ -4,9 +4,9 @@
             <span style="display: block; text-align: center">{{ t('dialog.favorite.vrchat_favorites') }}</span>
             <template v-if="favoriteDialog.currentGroup && favoriteDialog.currentGroup.key">
                 <el-button
-                    style="display: block; width: 100%; margin: 10px 0"
+                    style="display: block; width: 100%; margin: 10px 0; white-space: initial; height: auto"
                     @click="deleteFavoriteNoConfirm(favoriteDialog.objectId)">
-                    <el-icon><Check /></el-icon>
+                    <el-icon style="margin-right: 5px"><Check /></el-icon>
                     {{ favoriteDialog.currentGroup.displayName }} ({{ favoriteDialog.currentGroup.count }} /
                     {{ favoriteDialog.currentGroup.capacity }})
                 </el-button>
@@ -15,7 +15,7 @@
                 <el-button
                     v-for="group in groups"
                     :key="group.key"
-                    style="display: block; width: 100%; margin: 10px 0"
+                    style="display: block; width: 100%; margin: 10px 0; white-space: initial; height: auto"
                     @click="addFavorite(group)">
                     {{ group.displayName }} ({{ group.count }} / {{ group.capacity }})
                 </el-button>
@@ -26,14 +26,14 @@
             <template v-for="group in localWorldFavoriteGroups" :key="group">
                 <el-button
                     v-if="hasLocalWorldFavorite(favoriteDialog.objectId, group)"
-                    style="display: block; width: 100%; margin: 10px 0"
+                    style="display: block; width: 100%; margin: 10px 0; white-space: initial; height: auto"
                     @click="removeLocalWorldFavorite(favoriteDialog.objectId, group)">
-                    <el-icon><Check /></el-icon>
+                    <el-icon style="margin-right: 5px"><Check /></el-icon>
                     {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
                 </el-button>
                 <el-button
                     v-else
-                    style="display: block; width: 100%; margin: 10px 0"
+                    style="display: block; width: 100%; margin: 10px 0; white-space: initial; height: auto"
                     @click="addLocalWorldFavorite(favoriteDialog.objectId, group)">
                     {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
                 </el-button>
@@ -44,14 +44,14 @@
             <template v-for="group in localAvatarFavoriteGroups" :key="group">
                 <el-button
                     v-if="hasLocalAvatarFavorite(favoriteDialog.objectId, group)"
-                    style="display: block; width: 100%; margin: 10px 0"
+                    style="display: block; width: 100%; margin: 10px 0; white-space: initial; height: auto"
                     @click="removeLocalAvatarFavorite(favoriteDialog.objectId, group)">
-                    <el-icon><Check /></el-icon>
+                    <el-icon style="margin-right: 5px"><Check /></el-icon>
                     {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
                 </el-button>
                 <el-button
                     v-else
-                    style="display: block; width: 100%; margin: 10px 0"
+                    style="display: block; width: 100%; margin: 10px 0; white-space: initial; height: auto"
                     :disabled="!isLocalUserVrcplusSupporter"
                     @click="addLocalAvatarFavorite(favoriteDialog.objectId, group)">
                     {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
