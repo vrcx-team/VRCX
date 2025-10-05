@@ -647,6 +647,15 @@ export const useUserStore = defineStore('User', () => {
             }
         }
         if (
+            !instanceStore.cachedInstances.has(ref.$location.tag) &&
+            isRealInstance(ref.location)
+        ) {
+            instanceRequest.getInstance({
+                worldId: ref.$location.worldId,
+                instanceId: ref.$location.instanceId
+            });
+        }
+        if (
             ref.$isVRCPlus &&
             ref.badges &&
             ref.badges.every(
