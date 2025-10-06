@@ -195,3 +195,9 @@
     const { setAsideWidth } = appearanceStore;
     const { asideWidth, isSideBarTabShow } = storeToRefs(appearanceStore);
 </script>
+
+<style lang="scss" scoped>
+    :deep(.el-splitter-bar__dragger) {
+        width: 4px !important;
+    }
+</style>
