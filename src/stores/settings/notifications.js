@@ -14,7 +14,7 @@ export const useNotificationsSettingsStore = defineStore(
 
         const { t } = useI18n();
         const state = reactive({
-            overlayToast: true,
+            overlayToast: 'Game Running',
             openVR: false,
             overlayNotifications: true,
             xsNotifications: true,
@@ -172,21 +172,18 @@ export const useNotificationsSettingsStore = defineStore(
             state.notificationTTS = notificationTTS;
             state.notificationTTSNickName = notificationTTSNickName;
             state.sharedFeedFilters = JSON.parse(sharedFeedFilters);
-            state.notificationTTSVoice = notificationTTSVoice;
+            state.notificationTTSVoice = Number(notificationTTSVoice);
             state.TTSvoices = speechSynthesis.getVoices();
             state.notificationPosition = notificationPosition;
-            state.notificationTimeout = notificationTimeout;
+            state.notificationTimeout = Number(notificationTimeout);
 
             initSharedFeedFilters();
 
-            if (LINUX) {
-                setTimeout(() => {
-                    updateTTSVoices();
-                }, 5000);
-            }
+            setTimeout(() => {
+                // some workaround for failing to get voice list first run
+                updateTTSVoices();
+            }, 5000);
         }
-        // some workaround for failing to get voice list first run
-        speechSynthesis.getVoices();
 
         initNotificationsSettings();
 
@@ -361,7 +358,7 @@ export const useNotificationsSettingsStore = defineStore(
             state.notificationTTSVoice = index;
             configRepository.setString(
                 'VRCX_notificationTTSVoice',
-                state.notificationTTSVoice
+                state.notificationTTSVoice.toString()
             );
         }
 
@@ -467,7 +464,7 @@ export const useNotificationsSettingsStore = defineStore(
                         );
                         await configRepository.setString(
                             'VRCX_notificationTimeout',
-                            state.notificationTimeout
+                            state.notificationTimeout.toString()
                         );
                         vrStore.updateVRConfigVars();
                     }
