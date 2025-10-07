@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { instanceRequest, userRequest, worldRequest } from '../api';
 import configRepository from '../service/config';
@@ -81,6 +81,8 @@ export const useInstanceStore = defineStore('Instance', () => {
     });
 
     let cachedInstances = new Map();
+
+    const lastInstanceApplied = ref('');
 
     const currentInstanceWorld = computed({
         get: () => state.currentInstanceWorld,
@@ -417,6 +419,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 groupInstance.instance = ref;
             }
         }
+        lastInstanceApplied.value = ref.id;
         return ref;
     }
 
@@ -1230,6 +1233,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         state,
 
         cachedInstances,
+        lastInstanceApplied,
         currentInstanceWorld,
         currentInstanceLocation,
         queuedInstances,

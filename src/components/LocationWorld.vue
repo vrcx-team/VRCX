@@ -16,11 +16,13 @@
 <script setup>
     import { Lock, Unlock, WarnTriangleFilled } from '@element-plus/icons-vue';
     import { ref, watch } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { getGroupName, parseLocation } from '../shared/utils';
     import { useGroupStore, useLaunchStore, useInstanceStore } from '../stores';
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n();
     const { cachedInstances } = useInstanceStore();
+    const { lastInstanceApplied } = storeToRefs(useInstanceStore());
 
     const launchStore = useLaunchStore();
     const groupStore = useGroupStore();
@@ -94,6 +96,16 @@
     }
 
     watch(() => props.locationobject, parse, { immediate: true });
+
+    watch(
+        () => lastInstanceApplied.value,
+        (instanceId) => {
+            if (instanceId === location.value) {
+                parse();
+            }
+        },
+        { immediate: true }
+    );
 
     function showLaunchDialog() {
         launchStore.showLaunchDialog(location.value, shortName.value);

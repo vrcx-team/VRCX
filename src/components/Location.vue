@@ -22,7 +22,8 @@
 
 <script setup>
     import { Loading, Lock, WarnTriangleFilled } from '@element-plus/icons-vue';
-    import { ref, watchEffect } from 'vue';
+    import { ref, watchEffect, watch } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
     import { useGroupStore, useInstanceStore, useSearchStore, useWorldStore } from '../stores';
     import { useI18n } from 'vue-i18n';
@@ -33,6 +34,7 @@
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { verifyShortName } = useSearchStore();
     const { cachedInstances } = useInstanceStore();
+    const { lastInstanceApplied } = storeToRefs(useInstanceStore());
 
     const props = defineProps({
         location: String,
@@ -62,6 +64,16 @@
     watchEffect(() => {
         parse();
     });
+
+    watch(
+        () => lastInstanceApplied.value,
+        (instanceId) => {
+            if (instanceId === currentInstanceId()) {
+                parse();
+            }
+        },
+        { immediate: true }
+    );
 
     function currentInstanceId() {
         if (typeof props.traveling !== 'undefined' && props.location === 'traveling') {
