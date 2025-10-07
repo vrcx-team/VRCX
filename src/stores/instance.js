@@ -680,6 +680,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                             if (args.ref.id === L.userId) {
                                 Object.assign(L.user, args.ref);
                                 instance.$location = L;
+                                applyWorldDialogInstances();
                             }
                         });
                 } else {
