@@ -1049,6 +1049,7 @@ export const useUserStore = defineStore('User', () => {
                         if (args.ref.id === L.userId) {
                             Object.assign(L.user, args.ref);
                             D.$location = L;
+                            applyUserDialogLocation();
                         }
                     });
             } else {
