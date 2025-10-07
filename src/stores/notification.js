@@ -1,7 +1,12 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
-import { notificationRequest, userRequest, worldRequest } from '../api';
+import {
+    instanceRequest,
+    notificationRequest,
+    userRequest,
+    worldRequest
+} from '../api';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { AppDebug } from '../service/appConfig';
@@ -28,6 +33,7 @@ import { useWristOverlaySettingsStore } from './settings/wristOverlay';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
 import { useUserStore } from './user';
+import { useInstanceStore } from './instance';
 
 export const useNotificationStore = defineStore('Notification', () => {
     const generalSettingsStore = useGeneralSettingsStore();
@@ -42,6 +48,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     const uiStore = useUiStore();
     const gameStore = useGameStore();
     const sharedFeedStore = useSharedFeedStore();
+    const instanceStore = useInstanceStore();
     const state = reactive({
         notificationInitStatus: false,
         notificationTable: {
@@ -149,6 +156,19 @@ export const useNotificationStore = defineStore('Notification', () => {
                 database.addNotificationToDatabase(ref);
             }
             if (watchState.isFriendsLoaded && state.notificationInitStatus) {
+                if (
+                    ref.details?.worldId &&
+                    !instanceStore.cachedInstances.has(ref.details.worldId)
+                ) {
+                    // get instance name for invite
+                    const L = parseLocation(ref.details.worldId);
+                    if (L.isRealInstance) {
+                        instanceRequest.getInstance({
+                            worldId: L.worldId,
+                            instanceId: L.tag
+                        });
+                    }
+                }
                 if (
                     state.notificationTable.filters[0].value.length === 0 ||
                     state.notificationTable.filters[0].value.includes(ref.type)

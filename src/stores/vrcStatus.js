@@ -15,7 +15,7 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
 
     const lastStatusText = ref('');
     const statusText = computed(() => {
-        if (lastStatusSummary.value) {
+        if (lastStatus.value && lastStatusSummary.value) {
             return `${lastStatus.value}: ${lastStatusSummary.value}`;
         }
         return lastStatus.value;
@@ -38,9 +38,6 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
                     showClose: true,
                     onClick: () => {
                         openStatusPage();
-                    },
-                    onClose: () => {
-                        alertRef.value = null;
                     }
                 });
             }
@@ -56,9 +53,6 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
             showClose: true,
             onClick: () => {
                 openStatusPage();
-            },
-            onClose: () => {
-                alertRef.value = null;
             }
         });
     }
