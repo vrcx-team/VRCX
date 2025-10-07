@@ -37,11 +37,6 @@ jobs:
                   cat Version
             - name: Build Cef .NET Application
               run: dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
-            - name: Upload Cef dotnet artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: Cef-Release
-                  path: build/Cef
 
             - name: Sign Cef executables
               uses: azure/trusted-signing-action@v0
@@ -56,19 +51,25 @@ jobs:
                   timestamp-rfc3161: http://timestamp.acs.microsoft.com
                   timestamp-digest: SHA256
                   files: |
-                      build/Cef/CefSharp.BrowserSubprocess.Core.dll
-                      build/Cef/CefSharp.Core.dll
-                      build/Cef/CefSharp.Core.Runtime.dll
-                      build/Cef/CefSharp.dll
-                      build/Cef/CefSharp.OffScreen.dll
-                      build/Cef/CefSharp.WinForms.dll
-                      build/Cef/DiscordRPC.dll
-                      build/Cef/libcef.dll
-                      build/Cef/libEGL.dll
-                      build/Cef/libGLESv2.dll
-                      build/Cef/librsync.net.dll
-                      build/Cef/VRCX.dll
-                      build/Cef/VRCX.exe
+                      ${{ github.workspace }}\build\Cef\CefSharp.BrowserSubprocess.Core.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.Core.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.Core.Runtime.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.OffScreen.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.WinForms.dll
+                      ${{ github.workspace }}\build\Cef\DiscordRPC.dll
+                      ${{ github.workspace }}\build\Cef\libcef.dll
+                      ${{ github.workspace }}\build\Cef\libEGL.dll
+                      ${{ github.workspace }}\build\Cef\libGLESv2.dll
+                      ${{ github.workspace }}\build\Cef\librsync.net.dll
+                      ${{ github.workspace }}\build\Cef\VRCX.dll
+                      ${{ github.workspace }}\build\Cef\VRCX.exe
+
+            - name: Upload Cef dotnet artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: Cef-Release
+                  path: build/Cef
 
     build_dotnet_linux:
         runs-on: ubuntu-latest
