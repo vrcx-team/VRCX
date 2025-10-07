@@ -95,7 +95,7 @@
 
             const mergedPaginationProps = computed(() => ({
                 layout: 'sizes, prev, pager, next, total',
-                pageSizes: [20, 50, 100, 200],
+                pageSizes: [10, 15, 20, 25, 50, 100],
                 small: true,
                 ...paginationProps.value
             }));
