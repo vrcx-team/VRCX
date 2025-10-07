@@ -9,7 +9,7 @@ concurrency:
 
 permissions:
     id-token: write
-    contents: read
+    contents: write
 
 jobs:
     set_version:
