@@ -52,7 +52,7 @@
                 <el-button
                     v-else
                     style="display: block; width: 100%; margin: 10px 0; white-space: initial; height: auto"
-                    :disabled="!isLocalUserVrcplusSupporter"
+                    :disabled="!isLocalUserVrcPlusSupporter"
                     @click="addLocalAvatarFavorite(favoriteDialog.objectId, group)">
                     {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
                 </el-button>
@@ -94,7 +94,7 @@
         removeLocalWorldFavorite,
         deleteFavoriteNoConfirm
     } = favoriteStore;
-    const { currentUser } = storeToRefs(useUserStore());
+    const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 
     const favoriteDialogIndex = ref(2000);
     const groups = ref([]);
@@ -106,8 +106,6 @@
             favoriteDialog.value.visible = v;
         }
     });
-
-    const isLocalUserVrcplusSupporter = computed(() => currentUser.value.$isVRCPlus);
 
     watch(
         () => favoriteDialog.value.visible,

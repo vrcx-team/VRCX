@@ -35,7 +35,7 @@
                 >{{ t('dialog.screenshot_metadata.open_folder') }}</el-button
             >
             <el-button
-                v-if="currentUser.$isVRCPlus && screenshotMetadataDialog.metadata.filePath"
+                v-if="isLocalUserVrcPlusSupporter && screenshotMetadataDialog.metadata.filePath"
                 size="small"
                 :icon="Upload"
                 @click="uploadScreenshotToGallery"
@@ -167,7 +167,7 @@
 
     const { showFullscreenImageDialog, handleGalleryImageAdd } = useGalleryStore();
     const { currentlyDroppingFile } = storeToRefs(useVrcxStore());
-    const { currentUser } = storeToRefs(useUserStore());
+    const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 
     const { t } = useI18n();
 

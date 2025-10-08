@@ -86,7 +86,7 @@
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.display_name')">
                         <el-input
-                            :disabled="!isLocalUserVrcplusSupporter"
+                            :disabled="!isLocalUserVrcPlusSupporter"
                             v-model="newInstanceDialog.displayName"
                             size="small"
                             @click="$event.target.tagName === 'INPUT' && $event.target.select()"
@@ -515,7 +515,7 @@
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showLaunchDialog, tryOpenInstanceInVrc } = useLaunchStore();
     const { createNewInstance } = useInstanceStore();
-    const { currentUser } = storeToRefs(useUserStore());
+    const { currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { canOpenInstanceInGame } = useInviteStore();
 
     const newInstanceDialogIndex = ref(2000);
@@ -563,8 +563,6 @@
             initNewInstanceDialog(value);
         }
     );
-
-    const isLocalUserVrcplusSupporter = computed(() => currentUser.value.$isVRCPlus);
 
     initializeNewInstanceDialog();
 
@@ -627,7 +625,7 @@
         D.strict = false;
         D.shortName = '';
         D.secureOrShortName = '';
-        if (!isLocalUserVrcplusSupporter.value) {
+        if (!isLocalUserVrcPlusSupporter.value) {
             D.displayName = '';
         }
         const args = await groupRequest.getGroupPermissions({ userId: currentUser.value.id });

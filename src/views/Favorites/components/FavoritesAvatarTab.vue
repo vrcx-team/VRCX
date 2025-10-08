@@ -147,7 +147,7 @@
             </el-collapse-item>
             <span style="display: block; margin-top: 20px">{{ t('view.favorite.avatars.local_favorites') }}</span>
             <br />
-            <el-button size="small" :disabled="!isLocalUserVrcplusSupporter" @click="promptNewLocalAvatarFavoriteGroup">
+            <el-button size="small" :disabled="!isLocalUserVrcPlusSupporter" @click="promptNewLocalAvatarFavoriteGroup">
                 {{ t('view.favorite.avatars.new_group') }}
             </el-button>
             <el-button
@@ -256,7 +256,7 @@
     } = useFavoriteStore();
     const { avatarHistoryArray } = storeToRefs(useAvatarStore());
     const { promptClearAvatarHistory, showAvatarDialog } = useAvatarStore();
-    const { currentUser } = storeToRefs(useUserStore());
+    const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { t } = useI18n();
 
     const avatarExportDialogVisible = ref(false);
@@ -285,8 +285,6 @@
 
         return groupedByGroupKeyFavoriteAvatars;
     });
-
-    const isLocalUserVrcplusSupporter = computed(() => currentUser.value.$isVRCPlus);
 
     function searchAvatarFavorites() {
         let ref = null;

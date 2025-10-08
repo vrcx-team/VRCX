@@ -6,7 +6,7 @@
         width="800px"
         append-to-body
         @close="cancelSendInviteResponse">
-        <template v-if="currentUser.$isVRCPlus">
+        <template v-if="isLocalUserVrcPlusSupporter">
             <input class="inviteImageUploadButton" type="file" accept="image/*" @change="inviteImageUpload" />
         </template>
 
@@ -73,7 +73,7 @@
     const { inviteResponseMessageTable } = storeToRefs(inviteStore);
     const galleryStore = useGalleryStore();
     const { inviteImageUpload } = galleryStore;
-    const { currentUser } = storeToRefs(useUserStore());
+    const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 
     const props = defineProps({
         sendInviteResponseDialog: {
