@@ -287,6 +287,10 @@ export const useUserStore = defineStore('User', () => {
 
     const cachedUsers = new Map();
 
+    const isLocalUserVrcPlusSupporter = computed(
+        () => state.currentUser.$isVRCPlus
+    );
+
     const currentUser = computed({
         get: () => state.currentUser,
         set: (value) => {
@@ -2019,6 +2023,7 @@ export const useUserStore = defineStore('User', () => {
         showUserDialogHistory,
         customUserTags,
         cachedUsers,
+        isLocalUserVrcPlusSupporter,
         applyCurrentUser,
         applyUser,
         showUserDialog,

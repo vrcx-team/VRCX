@@ -1340,7 +1340,7 @@
                                     {{ userGroups.remainingGroups.length }}
                                     <template v-if="currentUser.id === userDialog.id">
                                         /
-                                        <template v-if="currentUser.$isVRCPlus">
+                                        <template v-if="isLocalUserVrcPlusSupporter">
                                             {{ cachedConfig?.constants?.GROUPS?.MAX_JOINED_PLUS }}
                                         </template>
                                         <template v-else>
@@ -1805,7 +1805,7 @@
 
     const { hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
-    const { userDialog, languageDialog, currentUser } = storeToRefs(useUserStore());
+    const { userDialog, languageDialog, currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { cachedUsers, showUserDialog, sortUserDialogAvatars, refreshUserDialogAvatars, refreshUserDialogTreeData } =
         useUserStore();
     const { favoriteLimits } = storeToRefs(useFavoriteStore());

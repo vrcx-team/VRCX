@@ -6,7 +6,7 @@
         width="800px"
         append-to-body
         @close="cancelSendInvite">
-        <template v-if="currentUser.$isVRCPlus">
+        <template v-if="isLocalUserVrcPlusSupporter">
             <!--            <template v-if="gallerySelectDialog.selectedFileId">-->
             <!--                <div style="display: inline-block; flex: none; margin-right: 5px">-->
             <!--                    <el-popover placement="right" :width="500px" trigger="click">-->
@@ -104,7 +104,7 @@
     const { refreshInviteMessageTableData } = useInviteStore();
     const { inviteMessageTable } = storeToRefs(useInviteStore());
     const { inviteImageUpload } = useGalleryStore();
-    const { currentUser } = storeToRefs(useUserStore());
+    const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 
     const props = defineProps({
         sendInviteDialogVisible: {

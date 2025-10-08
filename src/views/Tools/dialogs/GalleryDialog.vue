@@ -41,7 +41,7 @@
                         size="small"
                         @click="displayGalleryUpload"
                         :icon="Upload"
-                        :disabled="!currentUser.$isVRCPlus || isUploading">
+                        :disabled="!isLocalUserVrcPlusSupporter || isUploading">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
                     <el-button
@@ -115,7 +115,7 @@
                         size="small"
                         @click="displayVRCPlusIconUpload"
                         :icon="Upload"
-                        :disabled="!currentUser.$isVRCPlus || isUploading">
+                        :disabled="!isLocalUserVrcPlusSupporter || isUploading">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
                     <el-button
@@ -190,7 +190,7 @@
                             size="small"
                             @click="displayEmojiUpload"
                             :icon="Upload"
-                            :disabled="!currentUser.$isVRCPlus || isUploading">
+                            :disabled="!isLocalUserVrcPlusSupporter || isUploading">
                             {{ t('dialog.gallery_icons.upload') }}
                         </el-button>
                     </el-button-group>
@@ -338,7 +338,7 @@
                         size="small"
                         @click="displayStickerUpload"
                         :icon="Upload"
-                        :disabled="!currentUser.$isVRCPlus || isUploading">
+                        :disabled="!isLocalUserVrcPlusSupporter || isUploading">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
                 </el-button-group>
@@ -405,7 +405,7 @@
                             size="small"
                             @click="displayPrintUpload"
                             :icon="Upload"
-                            :disabled="!currentUser.$isVRCPlus || isUploading">
+                            :disabled="!isLocalUserVrcPlusSupporter || isUploading">
                             {{ t('dialog.gallery_icons.upload') }}
                         </el-button>
                     </el-button-group>
@@ -588,7 +588,7 @@
 
     const { currentUserInventory } = storeToRefs(useAdvancedSettingsStore());
     const { showFullscreenImageDialog } = useGalleryStore();
-    const { currentUser } = storeToRefs(useUserStore());
+    const { currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { cachedConfig } = storeToRefs(useAuthStore());
 
     const emojiAnimFps = ref(15);

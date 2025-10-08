@@ -26,7 +26,7 @@
                     type="default"
                     size="small"
                     :icon="Upload"
-                    :disabled="!currentUser.$isVRCPlus"
+                    :disabled="!isLocalUserVrcPlusSupporter"
                     @click="displayGalleryUpload"
                     >{{ t('dialog.gallery_select.upload') }}</el-button
                 >
@@ -66,7 +66,7 @@
 
     const { galleryTable } = storeToRefs(useGalleryStore());
     const { refreshGalleryTable, handleGalleryImageAdd } = useGalleryStore();
-    const { currentUser } = storeToRefs(useUserStore());
+    const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 
     const props = defineProps({
         gallerySelectDialog: {
