@@ -93,10 +93,6 @@
         ],
         "extraResources": [
             {
-                "from": "images/VRCX.png",
-                "to": "VRCX.png"
-            },
-            {
                 "from": "build/Electron/",
                 "to": "app.asar.unpacked/build/Electron/"
             },
@@ -129,7 +125,7 @@
             "target": [
                 "AppImage"
             ],
-            "icon": "VRCX.png",
+            "icon": "images/VRCX.png",
             "category": "Utility",
             "executableName": "vrcx",
             "desktop": {
@@ -150,7 +146,7 @@
             "target": [
                 "dmg"
             ],
-            "icon": "VRCX.png",
+            "icon": "images/VRCX.png",
             "category": "public.app-category.utilities",
             "executableName": "VRCX"
         }
