@@ -535,6 +535,11 @@ function createTray() {
             path.join(rootDir, 'images/VRCX.ico')
         );
         tray = new Tray(image.resize({ width: 16, height: 16 }));
+    } else if (process.platform === 'linux') {
+        const image = nativeImage.createFromPath(
+            path.join(rootDir, 'images/VRCX.ico')
+        );
+        tray = new Tray(image.resize({ width: 64, height: 64 }));
     } else {
         tray = new Tray(path.join(rootDir, 'images/VRCX.ico'));
     }

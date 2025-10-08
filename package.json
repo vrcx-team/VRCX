@@ -79,7 +79,7 @@
             "build/html/**/*",
             "src-electron/*",
             "images/VRCX.png",
-            "images/tray.png",
+            "images/VRCX.ico",
             "Version",
             "src-electron/libs/linux/libopenvr_api.so"
         ],
