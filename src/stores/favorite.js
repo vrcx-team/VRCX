@@ -65,14 +65,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         localWorldFavoriteGroups: [],
         localWorldFavoritesList: [],
         favoriteFriends_: [],
-        favoriteFriendsSorted: [],
         favoriteWorlds_: [],
-        favoriteWorldsSorted: [],
         favoriteAvatars_: [],
-        favoriteAvatarsSorted: [],
-        sortFavoriteFriends: false,
-        sortFavoriteWorlds: false,
-        sortFavoriteAvatars: false,
         cachedFavoritesByObjectId: new Map()
     });
 
@@ -92,36 +86,30 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     });
 
     const favoriteFriends = computed(() => {
-        if (state.sortFavoriteFriends) {
-            state.sortFavoriteFriends = false;
-            state.favoriteFriendsSorted.sort(compareByName);
-        }
         if (appearanceSettingsStore.sortFavorites) {
             return state.favoriteFriends_;
         }
-        return state.favoriteFriendsSorted;
+        const sorted = [...state.favoriteFriends_];
+        sorted.sort(compareByName);
+        return sorted;
     });
 
     const favoriteWorlds = computed(() => {
-        if (state.sortFavoriteWorlds) {
-            state.sortFavoriteWorlds = false;
-            state.favoriteWorldsSorted.sort(compareByName);
-        }
         if (appearanceSettingsStore.sortFavorites) {
             return state.favoriteWorlds_;
         }
-        return state.favoriteWorldsSorted;
+        const sorted = [...state.favoriteWorlds_];
+        sorted.sort(compareByName);
+        return sorted;
     });
 
     const favoriteAvatars = computed(() => {
-        if (state.sortFavoriteAvatars) {
-            state.sortFavoriteAvatars = false;
-            state.favoriteAvatarsSorted.sort(compareByName);
-        }
         if (appearanceSettingsStore.sortFavorites) {
             return state.favoriteAvatars_;
         }
-        return state.favoriteAvatarsSorted;
+        const sorted = [...state.favoriteAvatars_];
+        sorted.sort(compareByName);
+        return sorted;
     });
 
     const isFavoriteGroupLoading = computed({
@@ -330,14 +318,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             state.isFavoriteGroupLoading = false;
             state.favoriteObjects.clear();
             state.favoriteFriends_ = [];
-            state.favoriteFriendsSorted = [];
             state.favoriteWorlds_ = [];
-            state.favoriteWorldsSorted = [];
             state.favoriteAvatars_ = [];
-            state.favoriteAvatarsSorted = [];
-            state.sortFavoriteFriends = false;
-            state.sortFavoriteWorlds = false;
-            state.sortFavoriteAvatars = false;
             state.localAvatarFavoriteGroups = [];
             state.localAvatarFavoritesList = [];
             state.localAvatarFavorites = {};
@@ -497,11 +479,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         state.cachedFavoritesByObjectId.clear();
         state.favoriteObjects.clear();
         state.favoriteFriends_ = [];
-        state.favoriteFriendsSorted = [];
         state.favoriteWorlds_ = [];
-        state.favoriteWorldsSorted = [];
         state.favoriteAvatars_ = [];
-        state.favoriteAvatarsSorted = [];
     }
 
     function handleFavoriteAtDelete(args) {
@@ -598,13 +577,10 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                     isTypeChanged = true;
                     if (type === 'friend') {
                         removeFromArray(state.favoriteFriends_, ctx);
-                        removeFromArray(state.favoriteFriendsSorted, ctx);
                     } else if (type === 'world') {
                         removeFromArray(state.favoriteWorlds_, ctx);
-                        removeFromArray(state.favoriteWorldsSorted, ctx);
                     } else if (type === 'avatar') {
                         removeFromArray(state.favoriteAvatars_, ctx);
-                        removeFromArray(state.favoriteAvatarsSorted, ctx);
                     }
                 }
                 if (type === 'friend') {
@@ -615,7 +591,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                         }
                         if (ctx.name !== ref.displayName) {
                             ctx.name = ref.displayName;
-                            state.sortFavoriteFriends = true;
                         }
                     }
                     // else too bad
@@ -627,7 +602,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                         }
                         if (ctx.name !== ref.name) {
                             ctx.name = ref.name;
-                            state.sortFavoriteWorlds = true;
                         }
                     } else {
                         // try fetch from local world favorites
@@ -637,7 +611,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                             ctx.ref = world;
                             ctx.name = world.name;
                             ctx.deleted = true;
-                            state.sortFavoriteWorlds = true;
                         }
                         if (!world) {
                             // try fetch from local world history
@@ -648,7 +621,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                             if (worldName) {
                                 ctx.name = worldName;
                                 ctx.deleted = true;
-                                state.sortFavoriteWorlds = true;
                             }
                         }
                     }
@@ -660,7 +632,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                         }
                         if (ctx.name !== ref.name) {
                             ctx.name = ref.name;
-                            state.sortFavoriteAvatars = true;
                         }
                     } else {
                         // try fetch from local avatar history
@@ -670,7 +641,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                             ctx.ref = avatar;
                             ctx.name = avatar.name;
                             ctx.deleted = true;
-                            state.sortFavoriteAvatars = true;
                         }
                     }
                 }
@@ -679,42 +649,27 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 if (sortTop) {
                     if (type === 'friend') {
                         state.favoriteFriends_.unshift(ctx);
-                        state.favoriteFriendsSorted.push(ctx);
-                        state.sortFavoriteFriends = true;
                     } else if (type === 'world') {
                         state.favoriteWorlds_.unshift(ctx);
-                        state.favoriteWorldsSorted.push(ctx);
-                        state.sortFavoriteWorlds = true;
                     } else if (type === 'avatar') {
                         state.favoriteAvatars_.unshift(ctx);
-                        state.favoriteAvatarsSorted.push(ctx);
-                        state.sortFavoriteAvatars = true;
                     }
                 } else if (type === 'friend') {
                     state.favoriteFriends_.push(ctx);
-                    state.favoriteFriendsSorted.push(ctx);
-                    state.sortFavoriteFriends = true;
                 } else if (type === 'world') {
                     state.favoriteWorlds_.push(ctx);
-                    state.favoriteWorldsSorted.push(ctx);
-                    state.sortFavoriteWorlds = true;
                 } else if (type === 'avatar') {
                     state.favoriteAvatars_.push(ctx);
-                    state.favoriteAvatarsSorted.push(ctx);
-                    state.sortFavoriteAvatars = true;
                 }
             }
         } else if (typeof ctx !== 'undefined') {
             state.favoriteObjects.delete(objectId);
             if (type === 'friend') {
                 removeFromArray(state.favoriteFriends_, ctx);
-                removeFromArray(state.favoriteFriendsSorted, ctx);
             } else if (type === 'world') {
                 removeFromArray(state.favoriteWorlds_, ctx);
-                removeFromArray(state.favoriteWorldsSorted, ctx);
             } else if (type === 'avatar') {
                 removeFromArray(state.favoriteAvatars_, ctx);
-                removeFromArray(state.favoriteAvatarsSorted, ctx);
             }
         }
     }
@@ -1474,7 +1429,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             if (typeof ref === 'undefined') {
                 ref = { id: favorite.avatarId };
             }
-            localFavorites[favorite.groupName].push(ref);
+            localFavorites[favorite.groupName].unshift(ref);
         }
 
         let groupsArr = Array.from(localGroups);
@@ -1714,7 +1669,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             if (typeof ref === 'undefined') {
                 ref = { id: favorite.worldId };
             }
-            localFavorites[favorite.groupName].push(ref);
+            localFavorites[favorite.groupName].unshift(ref);
         }
 
         let groupsArr = Array.from(localGroups);
