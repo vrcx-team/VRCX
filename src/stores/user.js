@@ -1607,7 +1607,7 @@ export const useUserStore = defineStore('User', () => {
                 status: newStatus
             })
             .then(() => {
-                const text = `Status automaticly changed to ${newStatus}`;
+                const text = `Status automatically changed to ${newStatus}`;
                 if (AppDebug.errorNoty) {
                     AppDebug.errorNoty.close();
                 }
