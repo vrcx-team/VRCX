@@ -39,6 +39,12 @@ jobs:
               run: |
                   echo "${{ needs.set_version.outputs.version }}" > Version
                   cat Version
+            - uses: actions/cache@v4
+              with:
+                  path: ~/.nuget/packages
+                  key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Cef.csproj') }}
+                  restore-keys: |
+                      ${{ runner.os }}-nuget-
             - name: Build Cef .NET Application
               run: dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
 
@@ -94,6 +100,12 @@ jobs:
               run: |
                   echo "${{ needs.set_version.outputs.version }}" > Version
                   cat Version
+            - uses: actions/cache@v4
+              with:
+                  path: ~/.nuget/packages
+                  key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Electron.csproj') }}-${{ hashFiles('**/Dotnet/VRCX-Electron-arm64.csproj') }}
+                  restore-keys: |
+                      ${{ runner.os }}-nuget-
             - name: Build Electron x64 .NET Application
               run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64
             - name: Upload Electron x64 dotnet artifacts
@@ -101,9 +113,11 @@ jobs:
               with:
                   name: Electron-Release-Linux-x64
                   path: build/Electron
+
             - name: Cleanup
               run: |
                   rm -R build/Electron
+
             - name: Build Electron arm64 .NET Application
               run: dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64
             - name: Upload Electron arm64 dotnet artifacts
@@ -125,6 +139,12 @@ jobs:
               run: |
                   echo "${{ needs.set_version.outputs.version }}" > Version
                   cat Version
+            - uses: actions/cache@v4
+              with:
+                  path: ~/.nuget/packages
+                  key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Electron.csproj') }}-${{ hashFiles('**/Dotnet/VRCX-Electron-arm64.csproj') }}
+                  restore-keys: |
+                      ${{ runner.os }}-nuget-
             - name: Build Electron x64 .NET Application
               run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64
             - name: Upload Electron x64 .NET artifacts
@@ -132,9 +152,11 @@ jobs:
               with:
                   name: Electron-Release-macOS-x64
                   path: build/Electron
+
             - name: Cleanup
               run: |
                   rm -R build/Electron
+
             - name: Build Electron arm64 .NET Application
               run: dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64
             - name: Upload Electron arm64 dotnet artifacts
@@ -156,6 +178,17 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: lts/*
+            - name: Get npm cache directory
+              id: npm-cache-dir
+              shell: bash
+              run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+            - uses: actions/cache@v4
+              id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
+              with:
+                  path: ${{ steps.npm-cache-dir.outputs.dir }}
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-node-
             - name: Restore dependencies
               run: npm ci
             - name: Build Cef-html
@@ -209,8 +242,19 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: lts/*
+            - name: Get npm cache directory
+              id: npm-cache-dir
+              shell: bash
+              run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+            - uses: actions/cache@v4
+              id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
+              with:
+                  path: ${{ steps.npm-cache-dir.outputs.dir }}
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-node-
             - name: Restore dependencies
-              run: npm ci --arch=x64
+              run: npm ci
             - name: Build Electron-html
               run: npm run prod-linux --arch=x64
 
@@ -231,8 +275,6 @@ jobs:
               run: |
                   rm -R build/Electron
 
-            - name: Restore dependencies
-              run: npm ci --arch=arm64
             - name: Build Electron-html
               run: npm run prod-linux --arch=arm64
 
