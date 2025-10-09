@@ -51,32 +51,13 @@ jobs:
                       ${{ runner.os }}-nuget-
             - name: Build Cef .NET Application
               run: dotnet build Dotnet/VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
-
-            - name: Download Cef-html artifacts
-              uses: actions/download-artifact@v5
-              with:
-                  name: Cef-html
-                  path: build/Cef/html
-            - name: Install NSIS
-              run: choco install nsis -y
-            - name: Create NSIS installer
-              uses: joncloud/makensis-action@v4
-              with:
-                  script-file: Installer/installer.nsi
-                  additional-plugin-paths: Installer/Plugins
-            - name: Rename setup
-              run: |
-                  file_name="VRCX_${{ needs.set_version.outputs.version }}_Setup.exe"
-                  echo "Setup FileName: ${file_name}"
-                  mv Installer/VRCX_Setup.exe $file_name
-
             - name: Azure login
               uses: azure/login@v2
               with:
                   client-id: ${{ secrets.AZURE_CLIENT_ID }}
                   tenant-id: ${{ secrets.AZURE_TENANT_ID }}
                   subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-            - name: Sign Cef executables
+            - name: Sign Dotnet executables
               uses: azure/trusted-signing-action@v0
               with:
                   azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -102,6 +83,37 @@ jobs:
                       ${{ github.workspace }}\build\Cef\librsync.net.dll
                       ${{ github.workspace }}\build\Cef\VRCX.dll
                       ${{ github.workspace }}\build\Cef\VRCX.exe
+
+            - name: Download Cef-html artifacts
+              uses: actions/download-artifact@v5
+              with:
+                  name: Cef-html
+                  path: build/Cef/html
+            - name: Install NSIS
+              run: choco install nsis -y
+            - name: Create NSIS installer
+              uses: joncloud/makensis-action@v4
+              with:
+                  script-file: Installer/installer.nsi
+                  additional-plugin-paths: Installer/Plugins
+            - name: Rename setup
+              run: |
+                  file_name="VRCX_${{ needs.set_version.outputs.version }}_Setup.exe"
+                  echo "Setup FileName: ${file_name}"
+                  mv Installer/VRCX_Setup.exe $file_name
+            - name: Sign Cef setup
+              uses: azure/trusted-signing-action@v0
+              with:
+                  azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                  azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                  azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+                  endpoint: https://eus.codesigning.azure.net/
+                  trusted-signing-account-name: ${{ secrets.AZURE_ACCOUNT_NAME }}
+                  certificate-profile-name: ${{ secrets.AZURE_PROFILE_NAME }}
+                  file-digest: SHA256
+                  timestamp-rfc3161: http://timestamp.acs.microsoft.com
+                  timestamp-digest: SHA256
+                  files: |
                       ${{ github.workspace }}\VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
 
             - name: Upload Cef dotnet artifacts
