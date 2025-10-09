@@ -471,38 +471,32 @@ export const useGroupStore = defineStore('Group', () => {
                         groupId
                     });
                     D.isGetGroupDialogGroupLoading = true;
-                    if (D.inGroup) {
-                        groupRequest
-                            .getGroupInstances({
-                                groupId
-                            })
-                            .then((args) => {
-                                if (
-                                    state.groupDialog.id === args.params.groupId
-                                ) {
-                                    instanceStore.applyGroupDialogInstances(
-                                        args.json.instances
-                                    );
-                                }
-                                for (const json of args.json.instances) {
-                                    instanceStore.applyInstance(json);
-                                    worldRequest
-                                        .getCachedWorld({
-                                            worldId: json.world.id
-                                        })
-                                        .then((args1) => {
-                                            json.world = args1.ref;
-                                            return args1;
-                                        });
-                                    // get queue size etc
-                                    instanceRequest.getInstance({
-                                        worldId: json.worldId,
-                                        instanceId: json.instanceId
+                    groupRequest
+                        .getGroupInstances({
+                            groupId
+                        })
+                        .then((args) => {
+                            if (state.groupDialog.id === args.params.groupId) {
+                                instanceStore.applyGroupDialogInstances(
+                                    args.json.instances
+                                );
+                            }
+                            for (const json of args.json.instances) {
+                                instanceStore.applyInstance(json);
+                                worldRequest
+                                    .getCachedWorld({
+                                        worldId: json.world.id
+                                    })
+                                    .then((args1) => {
+                                        json.world = args1.ref;
                                     });
-                                }
-                                // });
-                            });
-                    }
+                                // get queue size etc
+                                instanceRequest.getInstance({
+                                    worldId: json.worldId,
+                                    instanceId: json.instanceId
+                                });
+                            }
+                        });
                 }
                 nextTick(() => (D.isGetGroupDialogGroupLoading = false));
                 return args;
