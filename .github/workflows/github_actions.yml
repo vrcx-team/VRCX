@@ -28,7 +28,10 @@ jobs:
 
     build_dotnet_windows:
         runs-on: windows-latest
-        needs: set_version
+        defaults:
+            run:
+                shell: bash
+        needs: [set_version, build_node]
         steps:
             - uses: actions/checkout@v4
             - name: Setup .NET 9
@@ -38,6 +41,7 @@ jobs:
             - name: Set version
               run: |
                   echo "${{ needs.set_version.outputs.version }}" > Version
+                  echo "!define PRODUCT_VERSION_FROM_FILE \"${{ needs.set_version.outputs.date }}.0\"" > Installer/version_define.nsh
                   cat Version
             - uses: actions/cache@v4
               with:
@@ -46,7 +50,25 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-nuget-
             - name: Build Cef .NET Application
-              run: dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
+              run: dotnet build Dotnet/VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
+
+            - name: Download Cef-html artifacts
+              uses: actions/download-artifact@v5
+              with:
+                  name: Cef-html
+                  path: build/Cef/html
+            - name: Install NSIS
+              run: choco install nsis -y
+            - name: Create NSIS installer
+              uses: joncloud/makensis-action@v4
+              with:
+                  script-file: Installer/installer.nsi
+                  additional-plugin-paths: Installer/Plugins
+            - name: Rename setup
+              run: |
+                  file_name="VRCX_${{ needs.set_version.outputs.version }}_Setup.exe"
+                  echo "Setup FileName: ${file_name}"
+                  mv Installer/VRCX_Setup.exe $file_name
 
             - name: Azure login
               uses: azure/login@v2
@@ -80,12 +102,18 @@ jobs:
                       ${{ github.workspace }}\build\Cef\librsync.net.dll
                       ${{ github.workspace }}\build\Cef\VRCX.dll
                       ${{ github.workspace }}\build\Cef\VRCX.exe
+                      ${{ github.workspace }}\VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
 
             - name: Upload Cef dotnet artifacts
               uses: actions/upload-artifact@v4
               with:
                   name: Cef-Release
                   path: build/Cef
+            - name: Upload setup artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: Cef-Setup
+                  path: VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
 
     build_dotnet_linux:
         runs-on: ubuntu-latest
@@ -204,7 +232,7 @@ jobs:
             - name: Build Electron-html
               run: npm run prod-linux
             - name: Download Electron x64 dotnet artifacts
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v5
               with:
                   name: Electron-Release-Linux-x64
                   path: build/Electron
@@ -217,7 +245,7 @@ jobs:
                   path: 'build/VRCX_${{ needs.set_version.outputs.version }}_x64.AppImage'
 
             - name: Download Electron arm64 dotnet artifacts
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v5
               with:
                   name: Electron-Release-Linux-arm64
                   path: build/Electron
@@ -259,7 +287,7 @@ jobs:
               run: npm run prod-linux --arch=x64
 
             - name: Download x64 Electron dotnet artifacts
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v5
               with:
                   name: Electron-Release-macOS-x64
                   path: build/Electron
@@ -279,7 +307,7 @@ jobs:
               run: npm run prod-linux --arch=arm64
 
             - name: Download arm64 Electron dotnet artifacts
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v5
               with:
                   name: Electron-Release-macOS-arm64
                   path: build/Electron
@@ -303,35 +331,21 @@ jobs:
                 build_macos
             ]
         steps:
-            - uses: actions/checkout@v4
-
-            - name: Set version
-              run: |
-                  echo "!define PRODUCT_VERSION_FROM_FILE \"${{ needs.set_version.outputs.date }}.0\"" > Installer/version_define.nsh
-            - name: Install 7-zip and makensis
-              run: sudo apt update && sudo apt install -y p7zip-full nsis nsis-pluginapi
-            - name: Set plugin permissions
-              run: sudo chown -R $(whoami) /usr/share/nsis/Plugins/
+            - name: Download Cef-Setup artifacts
+              uses: actions/download-artifact@v5
+              with:
+                  name: Cef-Setup
             - name: Download Cef dotnet artifacts
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v5
               with:
                   name: Cef-Release
                   path: build/Cef
             - name: Download Cef-html artifacts
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v5
               with:
                   name: Cef-html
                   path: build/Cef/html
-            - name: Create nsis installer
-              uses: joncloud/makensis-action@v4
-              with:
-                  script-file: Installer/installer.nsi
-                  additional-plugin-paths: Installer/Plugins
-            - name: Rename setup
-              run: |
-                  file_name="VRCX_${{ needs.set_version.outputs.version }}_Setup.exe"
-                  echo "Setup FileName: ${file_name}"
-                  mv Installer/VRCX_Setup.exe $file_name
+
             - name: Make zip
               run: |
                   file_name="VRCX_${{ needs.set_version.outputs.version }}.zip"
@@ -339,11 +353,6 @@ jobs:
                   7z a -tzip ${file_name} * -mx=7 -xr0!*.log
                   mv ${file_name} ../../${file_name}
                   echo "Zip FileName: ${file_name}"
-            - name: Upload Setup artifact
-              uses: actions/upload-artifact@v4
-              with:
-                  name: VRCX-Setup
-                  path: 'VRCX_${{ needs.set_version.outputs.version }}_Setup.exe'
             - name: Upload Zip artifact
               uses: actions/upload-artifact@v4
               with:
