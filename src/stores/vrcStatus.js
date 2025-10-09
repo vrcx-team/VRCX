@@ -2,12 +2,13 @@ import { defineStore } from 'pinia';
 import webApiService from '../service/webapi';
 import { ref, computed } from 'vue';
 import { ElNotification } from 'element-plus';
-import { openExternalLink } from '../shared/utils';
+import { openExternalLink, formatDateFilter } from '../shared/utils';
 
 export const useVrcStatusStore = defineStore('VrcStatus', () => {
     const vrcStatusApiUrl = 'https://status.vrchat.com/api/v2';
 
     const lastStatus = ref('');
+    const lastStatusTime = ref(null);
     const lastStatusSummary = ref('');
     const lastTimeFetched = ref(0);
     const pollingInterval = ref(0);
@@ -32,10 +33,11 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
                 alertRef.value.close();
                 alertRef.value = ElNotification({
                     title: 'VRChat Status',
-                    message: 'All Systems Operational',
+                    message: `${formatDateFilter(lastStatusTime.value, 'short')}: All Systems Operational`,
                     type: 'success',
-                    duration: 0,
+                    duration: 5000,
                     showClose: true,
+                    position: 'bottom-right',
                     onClick: () => {
                         openStatusPage();
                     }
@@ -47,10 +49,11 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
         alertRef.value?.close();
         alertRef.value = ElNotification({
             title: 'VRChat Status',
-            message: statusText.value,
+            message: `${formatDateFilter(lastStatusTime.value, 'short')}: ${statusText.value}`,
             type: 'warning',
             duration: 0,
             showClose: true,
+            position: 'bottom-right',
             onClick: () => {
                 openStatusPage();
             }
@@ -71,6 +74,7 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
         });
         lastTimeFetched.value = Date.now();
         const data = JSON.parse(response.data);
+        lastStatusTime.value = new Date(data.page.updated_at);
         if (data.status.description === 'All Systems Operational') {
             lastStatus.value = '';
             pollingInterval.value = 15 * 60 * 1000; // 15 minutes
