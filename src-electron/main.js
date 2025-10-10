@@ -364,6 +364,8 @@ function createWindow() {
         if (isCloseToTray && !appIsQuitting) {
             event.preventDefault();
             mainWindow.hide();
+        } else {
+            app.quit();
         }
     });
 
