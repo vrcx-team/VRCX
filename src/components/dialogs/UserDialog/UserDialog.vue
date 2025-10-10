@@ -607,7 +607,7 @@
                                         type="text"
                                         :icon="Delete"
                                         size="small"
-                                        style="margin-left: 5px"
+                                        style="margin-left: 5px; padding: 0"
                                         @click="deleteNote(userDialog.id)"></el-button>
                                 </div>
                             </div>
