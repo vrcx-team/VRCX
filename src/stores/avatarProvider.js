@@ -1,39 +1,47 @@
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
+import { ref, watch } from 'vue';
 import configRepository from '../service/config';
 import { watchState } from '../service/watchState';
 import { useAdvancedSettingsStore } from './settings/advanced';
 
 export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
-    const state = reactive({
-        isAvatarProviderDialogVisible: false,
 
-        avatarRemoteDatabaseProvider: '',
-        avatarRemoteDatabaseProviderList: [
-            'https://api.avtrdb.com/v2/avatar/search/vrcx',
-            'https://avtr.just-h.party/vrcx_search.php'
-        ]
-    });
+    const isAvatarProviderDialogVisible = ref(false);
+
+    const avatarRemoteDatabaseProvider = ref('');
+
+    const avatarRemoteDatabaseProviderList = ref([
+        'https://api.avtrdb.com/v2/avatar/search/vrcx',
+        'https://avtr.just-h.party/vrcx_search.php'
+    ]);
+
+    watch(
+        () => watchState.isLoggedIn,
+        () => {
+            isAvatarProviderDialogVisible.value = false;
+        },
+        { flush: 'sync' }
+    );
 
     async function initAvatarProviderState() {
-        state.avatarRemoteDatabaseProviderList = JSON.parse(
+        avatarRemoteDatabaseProviderList.value = JSON.parse(
             await configRepository.getString(
                 'VRCX_avatarRemoteDatabaseProviderList',
                 '[ "https://api.avtrdb.com/v2/avatar/search/vrcx", "https://avtr.just-h.party/vrcx_search.php" ]'
             )
         );
         if (
-            state.avatarRemoteDatabaseProviderList.length === 1 &&
-            state.avatarRemoteDatabaseProviderList[0] ===
+            avatarRemoteDatabaseProviderList.value.length === 1 &&
+            avatarRemoteDatabaseProviderList.value[0] ===
                 'https://avtr.just-h.party/vrcx_search.php'
         ) {
-            state.avatarRemoteDatabaseProviderList.unshift(
+            avatarRemoteDatabaseProviderList.value.unshift(
                 'https://api.avtrdb.com/v2/avatar/search/vrcx'
             );
             await configRepository.setString(
                 'VRCX_avatarRemoteDatabaseProviderList',
-                JSON.stringify(state.avatarRemoteDatabaseProviderList)
+                JSON.stringify(avatarRemoteDatabaseProviderList.value)
             );
         }
 
@@ -48,60 +56,25 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
                     'VRCX_avatarRemoteDatabaseProvider'
                 );
             if (
-                !state.avatarRemoteDatabaseProviderList.includes(
+                !avatarRemoteDatabaseProviderList.value.includes(
                     avatarRemoteDatabaseProvider
                 )
             ) {
-                state.avatarRemoteDatabaseProviderList.push(
+                avatarRemoteDatabaseProviderList.value.push(
                     avatarRemoteDatabaseProvider
                 );
             }
             await configRepository.remove('VRCX_avatarRemoteDatabaseProvider');
             await configRepository.setString(
                 'VRCX_avatarRemoteDatabaseProviderList',
-                JSON.stringify(state.avatarRemoteDatabaseProviderList)
+                JSON.stringify(avatarRemoteDatabaseProviderList.value)
             );
         }
-        if (state.avatarRemoteDatabaseProviderList.length > 0) {
-            state.avatarRemoteDatabaseProvider =
-                state.avatarRemoteDatabaseProviderList[0];
+        if (avatarRemoteDatabaseProviderList.value.length > 0) {
+            avatarRemoteDatabaseProvider.value =
+                avatarRemoteDatabaseProviderList.value[0];
         }
     }
-
-    const isAvatarProviderDialogVisible = computed({
-        get() {
-            return state.isAvatarProviderDialogVisible;
-        },
-        set(value) {
-            state.isAvatarProviderDialogVisible = value;
-        }
-    });
-
-    const avatarRemoteDatabaseProvider = computed({
-        get() {
-            return state.avatarRemoteDatabaseProvider;
-        },
-        set(value) {
-            state.avatarRemoteDatabaseProvider = value;
-        }
-    });
-
-    const avatarRemoteDatabaseProviderList = computed({
-        get() {
-            return state.avatarRemoteDatabaseProviderList;
-        },
-        set(value) {
-            state.avatarRemoteDatabaseProviderList = value;
-        }
-    });
-
-    watch(
-        () => watchState.isLoggedIn,
-        () => {
-            state.isAvatarProviderDialogVisible = false;
-        },
-        { flush: 'sync' }
-    );
 
     /**
      * @param {string} url
@@ -111,8 +84,8 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
             return;
         }
         showAvatarProviderDialog();
-        if (!state.avatarRemoteDatabaseProviderList.includes(url)) {
-            state.avatarRemoteDatabaseProviderList.push(url);
+        if (!avatarRemoteDatabaseProviderList.value.includes(url)) {
+            avatarRemoteDatabaseProviderList.value.push(url);
         }
         saveAvatarProviderList();
     }
@@ -121,52 +94,50 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
      * @param {string} url
      */
     function removeAvatarProvider(url) {
-        const length = state.avatarRemoteDatabaseProviderList.length;
+        const length = avatarRemoteDatabaseProviderList.value.length;
         for (let i = 0; i < length; ++i) {
-            if (state.avatarRemoteDatabaseProviderList[i] === url) {
-                state.avatarRemoteDatabaseProviderList.splice(i, 1);
+            if (avatarRemoteDatabaseProviderList.value[i] === url) {
+                avatarRemoteDatabaseProviderList.value.splice(i, 1);
             }
         }
         saveAvatarProviderList();
     }
 
     async function saveAvatarProviderList() {
-        const length = state.avatarRemoteDatabaseProviderList.length;
+        const length = avatarRemoteDatabaseProviderList.value.length;
         for (let i = 0; i < length; ++i) {
-            if (!state.avatarRemoteDatabaseProviderList[i]) {
-                state.avatarRemoteDatabaseProviderList.splice(i, 1);
+            if (!avatarRemoteDatabaseProviderList.value[i]) {
+                avatarRemoteDatabaseProviderList.value.splice(i, 1);
             }
         }
         await configRepository.setString(
             'VRCX_avatarRemoteDatabaseProviderList',
-            JSON.stringify(state.avatarRemoteDatabaseProviderList)
+            JSON.stringify(avatarRemoteDatabaseProviderList.value)
         );
-        if (state.avatarRemoteDatabaseProviderList.length > 0) {
-            state.avatarRemoteDatabaseProvider =
-                state.avatarRemoteDatabaseProviderList[0];
+        if (avatarRemoteDatabaseProviderList.value.length > 0) {
+            avatarRemoteDatabaseProvider.value =
+                avatarRemoteDatabaseProviderList.value[0];
             advancedSettingsStore.setAvatarRemoteDatabase(true);
         } else {
-            state.avatarRemoteDatabaseProvider = '';
+            avatarRemoteDatabaseProvider.value = '';
             advancedSettingsStore.setAvatarRemoteDatabase(false);
         }
     }
 
     function showAvatarProviderDialog() {
-        state.isAvatarProviderDialogVisible = true;
+        isAvatarProviderDialogVisible.value = true;
     }
 
     /**
      * @param {string} provider
      */
     function setAvatarProvider(provider) {
-        state.avatarRemoteDatabaseProvider = provider;
+        avatarRemoteDatabaseProvider.value = provider;
     }
 
     initAvatarProviderState();
 
     return {
-        state,
-
         isAvatarProviderDialogVisible,
         avatarRemoteDatabaseProvider,
         avatarRemoteDatabaseProviderList,

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, reactive, watch, ref } from 'vue';
+import { reactive, watch, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { instanceRequest, userRequest, worldRequest } from '../api';
 import configRepository from '../service/config';
@@ -47,36 +47,6 @@ export const useInstanceStore = defineStore('Instance', () => {
     const { t } = useI18n();
 
     const state = reactive({
-        currentInstanceWorld: {
-            ref: {},
-            instance: {},
-            isPC: false,
-            isQuest: false,
-            isIos: false,
-            avatarScalingDisabled: false,
-            focusViewDisabled: false,
-            inCache: false,
-            cacheSize: '',
-            bundleSizes: [],
-            lastUpdated: ''
-        },
-        currentInstanceLocation: {},
-        queuedInstances: new Map(),
-        previousInstancesInfoDialogVisible: false,
-        previousInstancesInfoDialogInstanceId: '',
-        instanceJoinHistory: new Map(),
-        currentInstanceUserList: {
-            data: [],
-            tableProps: {
-                stripe: true,
-                size: 'small',
-                defaultSort: {
-                    prop: 'timer',
-                    order: 'descending'
-                }
-            },
-            layout: 'table'
-        },
         updatePlayerListTimer: null,
         updatePlayerListPending: false
     });
@@ -85,63 +55,51 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     const lastInstanceApplied = ref('');
 
-    const currentInstanceWorld = computed({
-        get: () => state.currentInstanceWorld,
-        set: (value) => {
-            state.currentInstanceWorld = value;
-        }
+    const currentInstanceWorld = ref({
+        ref: {},
+        instance: {},
+        isPC: false,
+        isQuest: false,
+        isIos: false,
+        avatarScalingDisabled: false,
+        focusViewDisabled: false,
+        inCache: false,
+        cacheSize: '',
+        bundleSizes: [],
+        lastUpdated: ''
     });
 
-    const currentInstanceLocation = computed({
-        get: () => state.currentInstanceLocation,
-        set: (value) => {
-            state.currentInstanceLocation = value;
-        }
-    });
+    const currentInstanceLocation = ref({});
 
-    const queuedInstances = computed({
-        get: () => state.queuedInstances,
-        set: (value) => {
-            state.queuedInstances = value;
-        }
-    });
+    const queuedInstances = ref(new Map());
 
-    const previousInstancesInfoDialogVisible = computed({
-        get: () => state.previousInstancesInfoDialogVisible,
-        set: (value) => {
-            state.previousInstancesInfoDialogVisible = value;
-        }
-    });
+    const previousInstancesInfoDialogVisible = ref(false);
 
-    const previousInstancesInfoDialogInstanceId = computed({
-        get: () => state.previousInstancesInfoDialogInstanceId,
-        set: (value) => {
-            state.previousInstancesInfoDialogInstanceId = value;
-        }
-    });
+    const previousInstancesInfoDialogInstanceId = ref('');
 
-    const instanceJoinHistory = computed({
-        get: () => state.instanceJoinHistory,
-        set: (value) => {
-            state.instanceJoinHistory = value;
-        }
-    });
+    const instanceJoinHistory = ref(new Map());
 
-    const currentInstanceUserList = computed({
-        get: () => state.currentInstanceUserList,
-        set: (value) => {
-            state.currentInstanceUserList = value;
-        }
+    const currentInstanceUserList = ref({
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'small',
+            defaultSort: {
+                prop: 'timer',
+                order: 'descending'
+            }
+        },
+        layout: 'table'
     });
 
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            state.currentInstanceUserList.data = [];
-            state.instanceJoinHistory = new Map();
-            state.previousInstancesInfoDialogVisible = false;
+            currentInstanceUserList.value.data = [];
+            instanceJoinHistory.value = new Map();
+            previousInstancesInfoDialogVisible.value = false;
             cachedInstances.clear();
-            state.queuedInstances.clear();
+            queuedInstances.value.clear();
             if (isLoggedIn) {
                 getInstanceJoinHistory();
             }
@@ -150,7 +108,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     );
 
     async function getInstanceJoinHistory() {
-        state.instanceJoinHistory = await database.getInstanceJoinHistory();
+        instanceJoinHistory.value = await database.getInstanceJoinHistory();
     }
 
     function addInstanceJoinHistory(location, dateTime) {
@@ -158,17 +116,17 @@ export const useInstanceStore = defineStore('Instance', () => {
             return;
         }
 
-        if (state.instanceJoinHistory.has(location)) {
-            state.instanceJoinHistory.delete(location);
+        if (instanceJoinHistory.value.has(location)) {
+            instanceJoinHistory.value.delete(location);
         }
 
         const epoch = new Date(dateTime).getTime();
-        state.instanceJoinHistory.set(location, epoch);
+        instanceJoinHistory.value.set(location, epoch);
     }
 
     function showPreviousInstancesInfoDialog(instanceId) {
-        state.previousInstancesInfoDialogVisible = true;
-        state.previousInstancesInfoDialogInstanceId = instanceId;
+        previousInstancesInfoDialogVisible.value = true;
+        previousInstancesInfoDialogInstanceId.value = instanceId;
     }
 
     function updateCurrentInstanceWorld() {
@@ -178,7 +136,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             instanceId = locationStore.lastLocationDestination;
         }
         if (!instanceId) {
-            state.currentInstanceWorld = {
+            currentInstanceWorld.value = {
                 ref: {},
                 instance: {},
                 isPC: false,
@@ -191,9 +149,9 @@ export const useInstanceStore = defineStore('Instance', () => {
                 bundleSizes: [],
                 lastUpdated: ''
             };
-            state.currentInstanceLocation = {};
-        } else if (instanceId !== state.currentInstanceLocation.tag) {
-            state.currentInstanceWorld = {
+            currentInstanceLocation.value = {};
+        } else if (instanceId !== currentInstanceLocation.value.tag) {
+            currentInstanceWorld.value = {
                 ref: {},
                 instance: {},
                 isPC: false,
@@ -207,30 +165,30 @@ export const useInstanceStore = defineStore('Instance', () => {
                 lastUpdated: ''
             };
             L = parseLocation(instanceId);
-            state.currentInstanceLocation = L;
+            currentInstanceLocation.value = L;
             worldRequest
                 .getWorld({
                     worldId: L.worldId
                 })
                 .then((args) => {
-                    state.currentInstanceWorld.ref = args.ref;
+                    currentInstanceWorld.value.ref = args.ref;
                     const { isPC, isQuest, isIos } = getAvailablePlatforms(
                         args.ref.unityPackages
                     );
-                    state.currentInstanceWorld.isPC = isPC;
-                    state.currentInstanceWorld.isQuest = isQuest;
-                    state.currentInstanceWorld.isIos = isIos;
-                    state.currentInstanceWorld.avatarScalingDisabled =
+                    currentInstanceWorld.value.isPC = isPC;
+                    currentInstanceWorld.value.isQuest = isQuest;
+                    currentInstanceWorld.value.isIos = isIos;
+                    currentInstanceWorld.value.avatarScalingDisabled =
                         args.ref?.tags.includes(
                             'feature_avatar_scaling_disabled'
                         );
-                    state.currentInstanceWorld.focusViewDisabled =
+                    currentInstanceWorld.value.focusViewDisabled =
                         args.ref?.tags.includes('feature_focus_view_disabled');
                     checkVRChatCache(args.ref)
                         .then((cacheInfo) => {
                             if (cacheInfo.Item1 > 0) {
-                                state.currentInstanceWorld.inCache = true;
-                                state.currentInstanceWorld.cacheSize = `${(
+                                currentInstanceWorld.value.inCache = true;
+                                currentInstanceWorld.value.cacheSize = `${(
                                     cacheInfo.Item1 / 1048576
                                 ).toFixed(2)} MB`;
                             }
@@ -243,7 +201,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                         });
                     getBundleDateSize(args.ref)
                         .then((bundleSizes) => {
-                            state.currentInstanceWorld.bundleSizes =
+                            currentInstanceWorld.value.bundleSizes =
                                 bundleSizes;
                         })
                         .catch((error) => {
@@ -260,20 +218,20 @@ export const useInstanceStore = defineStore('Instance', () => {
         } else {
             worldRequest
                 .getCachedWorld({
-                    worldId: state.currentInstanceLocation.worldId
+                    worldId: currentInstanceLocation.value.worldId
                 })
                 .then((args) => {
-                    state.currentInstanceWorld.ref = args.ref;
+                    currentInstanceWorld.value.ref = args.ref;
                     const { isPC, isQuest, isIos } = getAvailablePlatforms(
                         args.ref.unityPackages
                     );
-                    state.currentInstanceWorld.isPC = isPC;
-                    state.currentInstanceWorld.isQuest = isQuest;
-                    state.currentInstanceWorld.isIos = isIos;
+                    currentInstanceWorld.value.isPC = isPC;
+                    currentInstanceWorld.value.isQuest = isQuest;
+                    currentInstanceWorld.value.isIos = isIos;
                     checkVRChatCache(args.ref).then((cacheInfo) => {
                         if (cacheInfo.Item1 > 0) {
-                            state.currentInstanceWorld.inCache = true;
-                            state.currentInstanceWorld.cacheSize = `${(
+                            currentInstanceWorld.value.inCache = true;
+                            currentInstanceWorld.value.cacheSize = `${(
                                 cacheInfo.Item1 / 1048576
                             ).toFixed(2)} MB`;
                         }
@@ -283,7 +241,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         if (isRealInstance(instanceId)) {
             const ref = cachedInstances.get(instanceId);
             if (typeof ref !== 'undefined') {
-                state.currentInstanceWorld.instance = ref;
+                currentInstanceWorld.value.instance = ref;
             } else {
                 L = parseLocation(instanceId);
                 if (L.isRealInstance) {
@@ -293,7 +251,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                             instanceId: L.instanceId
                         })
                         .then((args) => {
-                            state.currentInstanceWorld.instance = args.ref;
+                            currentInstanceWorld.value.instance = args.ref;
                         })
                         .catch((error) => {
                             console.error(
@@ -914,14 +872,14 @@ export const useInstanceStore = defineStore('Instance', () => {
     }
 
     function removeAllQueuedInstances() {
-        state.queuedInstances.forEach((ref) => {
+        queuedInstances.value.forEach((ref) => {
             ElMessage({
                 message: `Removed instance ${ref.$worldName} from queue`,
                 type: 'info'
             });
             ref.$msgBox?.close();
         });
-        state.queuedInstances.clear();
+        queuedInstances.value.clear();
     }
 
     /**
@@ -929,10 +887,10 @@ export const useInstanceStore = defineStore('Instance', () => {
      * @param {string} instanceId
      */
     function removeQueuedInstance(instanceId) {
-        const ref = state.queuedInstances.get(instanceId);
+        const ref = queuedInstances.value.get(instanceId);
         if (typeof ref !== 'undefined') {
             ref.$msgBox.close();
-            state.queuedInstances.delete(instanceId);
+            queuedInstances.value.delete(instanceId);
         }
     }
 
@@ -941,7 +899,7 @@ export const useInstanceStore = defineStore('Instance', () => {
      * @param {string} instanceId
      */
     function applyQueuedInstance(instanceId) {
-        state.queuedInstances.forEach((ref) => {
+        queuedInstances.value.forEach((ref) => {
             if (ref.location !== instanceId) {
                 ElMessage({
                     message: t('message.instance.removed_form_queue', {
@@ -950,13 +908,13 @@ export const useInstanceStore = defineStore('Instance', () => {
                     type: 'info'
                 });
                 ref.$msgBox?.close();
-                state.queuedInstances.delete(ref.location);
+                queuedInstances.value.delete(ref.location);
             }
         });
         if (!instanceId) {
             return;
         }
-        if (!state.queuedInstances.has(instanceId)) {
+        if (!queuedInstances.value.has(instanceId)) {
             const L = parseLocation(instanceId);
             if (L.isRealInstance) {
                 instanceRequest
@@ -989,10 +947,10 @@ export const useInstanceStore = defineStore('Instance', () => {
      * @param {string} instanceId
      */
     function instanceQueueReady(instanceId) {
-        const ref = state.queuedInstances.get(instanceId);
+        const ref = queuedInstances.value.get(instanceId);
         if (typeof ref !== 'undefined') {
             ref.$msgBox.close();
-            state.queuedInstances.delete(instanceId);
+            queuedInstances.value.delete(instanceId);
         }
         const L = parseLocation(instanceId);
         const group = groupStore.cachedGroups.get(L.groupId);
@@ -1033,7 +991,7 @@ export const useInstanceStore = defineStore('Instance', () => {
      * @returns {Promise<void>}
      */
     async function instanceQueueUpdate(instanceId, position, queueSize) {
-        let ref = state.queuedInstances.get(instanceId);
+        let ref = queuedInstances.value.get(instanceId);
         if (typeof ref === 'undefined') {
             ref = {
                 $msgBox: null,
@@ -1069,7 +1027,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             ref.$groupName
         );
         ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${location} `;
-        state.queuedInstances.set(instanceId, ref);
+        queuedInstances.value.set(instanceId, ref);
         // workerTimers.setTimeout(this.instanceQueueTimeout, 3600000);
     }
 
@@ -1224,14 +1182,14 @@ export const useInstanceStore = defineStore('Instance', () => {
                 }
             }
         }
-        state.currentInstanceUserList.data = users;
+        currentInstanceUserList.value.data = users;
     }
 
     // $app.methods.instanceQueueClear = function () {
     //     // remove all instances from queue
-    //     state.queuedInstances.forEach((ref) => {
+    //     queuedInstances.value.forEach((ref) => {
     //         ref.$msgBox.close();
-    //         state.queuedInstances.delete(ref.location);
+    //         queuedInstances.value.delete(ref.location);
     //     });
     // };
 

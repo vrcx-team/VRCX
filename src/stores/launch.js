@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, reactive, watch, nextTick } from 'vue';
+import { ref, watch, nextTick } from 'vue';
 import { ElMessage } from 'element-plus';
 import { instanceRequest } from '../api';
 import configRepository from '../service/config';
@@ -7,48 +7,25 @@ import { watchState } from '../service/watchState';
 import { parseLocation } from '../shared/utils';
 
 export const useLaunchStore = defineStore('Launch', () => {
-    const state = reactive({
-        isLaunchOptionsDialogVisible: false,
-        isOpeningInstance: false,
-        launchDialogData: {
-            visible: false,
-            loading: false,
-            tag: '',
-            shortName: ''
-        }
-    });
-
-    const isLaunchOptionsDialogVisible = computed({
-        get: () => state.isLaunchOptionsDialogVisible,
-        set: (value) => {
-            state.isLaunchOptionsDialogVisible = value;
-        }
-    });
-
-    const isOpeningInstance = computed({
-        get: () => state.isOpeningInstance,
-        set: (value) => {
-            state.isOpeningInstance = value;
-        }
-    });
-
-    const launchDialogData = computed({
-        get: () => state.launchDialogData,
-        set: (value) => {
-            state.launchDialogData = value;
-        }
+    const isLaunchOptionsDialogVisible = ref(false);
+    const isOpeningInstance = ref(false);
+    const launchDialogData = ref({
+        visible: false,
+        loading: false,
+        tag: '',
+        shortName: ''
     });
 
     watch(
         () => watchState.isLoggedIn,
         () => {
-            state.isLaunchOptionsDialogVisible = false;
+            isLaunchOptionsDialogVisible.value = false;
         },
         { flush: 'sync' }
     );
 
     function showLaunchOptions() {
-        state.isLaunchOptionsDialogVisible = true;
+        isLaunchOptionsDialogVisible.value = true;
     }
 
     /**
@@ -58,14 +35,14 @@ export const useLaunchStore = defineStore('Launch', () => {
      * @returns {Promise<void>}
      */
     async function showLaunchDialog(tag, shortName = null) {
-        state.launchDialogData = {
+        launchDialogData.value = {
             visible: true,
             // flag, use for trigger adjustDialogZ
             loading: true,
             tag,
             shortName
         };
-        nextTick(() => (state.launchDialogData.loading = false));
+        nextTick(() => (launchDialogData.value.loading = false));
     }
 
     /**
@@ -110,10 +87,10 @@ export const useLaunchStore = defineStore('Launch', () => {
      * @returns {Promise<void>}
      */
     async function tryOpenInstanceInVrc(location, shortName) {
-        if (state.isOpeningInstance) {
+        if (isOpeningInstance.value) {
             return;
         }
-        state.isOpeningInstance = true;
+        isOpeningInstance.value = true;
         let launchUrl = '';
         let result = false;
         try {
@@ -146,7 +123,7 @@ export const useLaunchStore = defineStore('Launch', () => {
             }
         }
         setTimeout(() => {
-            state.isOpeningInstance = false;
+            isOpeningInstance.value = false;
         }, 1000);
     }
 
@@ -209,8 +186,6 @@ export const useLaunchStore = defineStore('Launch', () => {
     }
 
     return {
-        state,
-
         isLaunchOptionsDialogVisible,
         isOpeningInstance,
         launchDialogData,

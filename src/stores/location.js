@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { ref } from 'vue';
 import { database } from '../service/database';
 import {
     getGroupName,
@@ -26,38 +26,15 @@ export const useLocationStore = defineStore('Location', () => {
     const photonStore = usePhotonStore();
     const gameLogStore = useGameLogStore();
 
-    const state = reactive({
-        lastLocation: {
-            date: null,
-            location: '',
-            name: '',
-            playerList: new Map(),
-            friendList: new Map()
-        },
-        lastLocationDestination: '',
-        lastLocationDestinationTime: 0
+    const lastLocation = ref({
+        date: null,
+        location: '',
+        name: '',
+        playerList: new Map(),
+        friendList: new Map()
     });
-
-    const lastLocation = computed({
-        get: () => state.lastLocation,
-        set: (value) => {
-            state.lastLocation = value;
-        }
-    });
-
-    const lastLocationDestination = computed({
-        get: () => state.lastLocationDestination,
-        set: (value) => {
-            state.lastLocationDestination = value;
-        }
-    });
-
-    const lastLocationDestinationTime = computed({
-        get: () => state.lastLocationDestinationTime,
-        set: (value) => {
-            state.lastLocationDestinationTime = value;
-        }
-    });
+    const lastLocationDestination = ref('');
+    const lastLocationDestinationTime = ref(0);
 
     function updateCurrentUserLocation() {
         const ref = userStore.cachedUsers.get(userStore.currentUser.id);
@@ -77,15 +54,15 @@ export const useLocationStore = defineStore('Location', () => {
         if (
             gameStore.isGameRunning &&
             !advancedSettingsStore.gameLogDisabled &&
-            state.lastLocation.location !== ''
+            lastLocation.value.location !== ''
         ) {
             // use gameLog instead of API when game is running
-            currentLocation = state.lastLocation.location;
-            if (state.lastLocation.location === 'traveling') {
-                currentLocation = state.lastLocationDestination;
+            currentLocation = lastLocation.value.location;
+            if (lastLocation.value.location === 'traveling') {
+                currentLocation = lastLocationDestination.value;
             }
-            ref.location = state.lastLocation.location;
-            ref.travelingToLocation = state.lastLocationDestination;
+            ref.location = lastLocation.value.location;
+            ref.travelingToLocation = lastLocationDestination.value;
         }
 
         ref.$online_for = userStore.currentUser.$online_for;
@@ -98,10 +75,10 @@ export const useLocationStore = defineStore('Location', () => {
             instanceStore.applyWorldDialogInstances();
             instanceStore.applyGroupDialogInstances();
         } else {
-            ref.$location_at = state.lastLocation.date;
-            ref.$travelingToTime = state.lastLocationDestinationTime;
+            ref.$location_at = lastLocation.value.date;
+            ref.$travelingToTime = lastLocationDestinationTime.value;
             userStore.currentUser.$travelingToTime =
-                state.lastLocationDestinationTime;
+                lastLocationDestinationTime.value;
         }
     }
 
@@ -117,26 +94,26 @@ export const useLocationStore = defineStore('Location', () => {
             // with the current state of things, lets not run this if we don't need to
             return;
         }
-        let lastLocation = '';
+        let lastLocationTemp = '';
         for (let i = gameLogStore.gameLogSessionTable.length - 1; i > -1; i--) {
             const item = gameLogStore.gameLogSessionTable[i];
             if (item.type === 'Location') {
-                lastLocation = item.location;
+                lastLocationTemp = item.location;
                 break;
             }
         }
-        if (lastLocation === location) {
+        if (lastLocationTemp === location) {
             return;
         }
-        state.lastLocationDestination = '';
-        state.lastLocationDestinationTime = 0;
+        lastLocationDestination.value = '';
+        lastLocationDestinationTime.value = 0;
 
         if (isRealInstance(location)) {
             const dt = new Date().toJSON();
             const L = parseLocation(location);
 
-            state.lastLocation.location = location;
-            state.lastLocation.date = Date.now();
+            lastLocation.value.location = location;
+            lastLocation.value.date = Date.now();
 
             const entry = {
                 created_at: dt,
@@ -156,8 +133,8 @@ export const useLocationStore = defineStore('Location', () => {
             instanceStore.applyWorldDialogInstances();
             instanceStore.applyGroupDialogInstances();
         } else {
-            state.lastLocation.location = '';
-            state.lastLocation.date = null;
+            lastLocation.value.location = '';
+            lastLocation.value.date = null;
         }
     }
 
@@ -186,14 +163,14 @@ export const useLocationStore = defineStore('Location', () => {
                 photonStore.photonEventTable.data;
             photonStore.photonEventTable.data = [];
         }
-        const playerList = Array.from(state.lastLocation.playerList.values());
+        const playerList = Array.from(lastLocation.value.playerList.values());
         const dataBaseEntries = [];
         for (const ref of playerList) {
             const entry = {
                 created_at: dateTime,
                 type: 'OnPlayerLeft',
                 displayName: ref.displayName,
-                location: state.lastLocation.location,
+                location: lastLocation.value.location,
                 userId: ref.userId,
                 time: dateTimeStamp - ref.joinTime
             };
@@ -201,16 +178,16 @@ export const useLocationStore = defineStore('Location', () => {
             gameLogStore.addGameLog(entry);
         }
         database.addGamelogJoinLeaveBulk(dataBaseEntries);
-        if (state.lastLocation.date !== null && state.lastLocation.date > 0) {
+        if (lastLocation.value.date !== null && lastLocation.value.date > 0) {
             const update = {
-                time: dateTimeStamp - state.lastLocation.date,
-                created_at: new Date(state.lastLocation.date).toJSON()
+                time: dateTimeStamp - lastLocation.value.date,
+                created_at: new Date(lastLocation.value.date).toJSON()
             };
             database.updateGamelogLocationTimeToDatabase(update);
         }
-        state.lastLocationDestination = '';
-        state.lastLocationDestinationTime = 0;
-        state.lastLocation = {
+        lastLocationDestination.value = '';
+        lastLocationDestinationTime.value = 0;
+        lastLocation.value = {
             date: 0,
             location: '',
             name: '',
@@ -229,8 +206,6 @@ export const useLocationStore = defineStore('Location', () => {
     }
 
     return {
-        state,
-
         lastLocation,
         lastLocationDestination,
         lastLocationDestinationTime,

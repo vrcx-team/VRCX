@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { ref } from 'vue';
 import { ElMessageBox } from 'element-plus';
 
 import { useI18n } from 'vue-i18n';
@@ -13,129 +13,128 @@ export const useNotificationsSettingsStore = defineStore(
         const vrStore = useVrStore();
 
         const { t } = useI18n();
-        const state = reactive({
-            overlayToast: 'Game Running',
-            openVR: false,
-            overlayNotifications: true,
-            xsNotifications: true,
-            ovrtHudNotifications: true,
-            ovrtWristNotifications: false,
-            imageNotifications: true,
-            desktopToast: 'Never',
-            afkDesktopToast: false,
-            notificationTTS: 'Never',
-            notificationTTSNickName: false,
-            sharedFeedFilters: {
-                noty: {
-                    Location: 'Off',
-                    OnPlayerJoined: 'VIP',
-                    OnPlayerLeft: 'VIP',
-                    OnPlayerJoining: 'VIP',
-                    Online: 'VIP',
-                    Offline: 'VIP',
-                    GPS: 'Off',
-                    Status: 'Off',
-                    invite: 'Friends',
-                    requestInvite: 'Friends',
-                    inviteResponse: 'Friends',
-                    requestInviteResponse: 'Friends',
-                    friendRequest: 'On',
-                    Friend: 'On',
-                    Unfriend: 'On',
-                    DisplayName: 'VIP',
-                    TrustLevel: 'VIP',
-                    boop: 'Off',
-                    groupChange: 'On',
-                    'group.announcement': 'On',
-                    'group.informative': 'On',
-                    'group.invite': 'On',
-                    'group.joinRequest': 'Off',
-                    'group.transfer': 'On',
-                    'group.queueReady': 'On',
-                    'instance.closed': 'On',
-                    PortalSpawn: 'Everyone',
-                    Event: 'On',
-                    External: 'On',
-                    VideoPlay: 'Off',
-                    BlockedOnPlayerJoined: 'Off',
-                    BlockedOnPlayerLeft: 'Off',
-                    MutedOnPlayerJoined: 'Off',
-                    MutedOnPlayerLeft: 'Off',
-                    AvatarChange: 'Off',
-                    ChatBoxMessage: 'Off',
-                    Blocked: 'Off',
-                    Unblocked: 'Off',
-                    Muted: 'Off',
-                    Unmuted: 'Off'
-                },
-                wrist: {
-                    Location: 'On',
-                    OnPlayerJoined: 'Everyone',
-                    OnPlayerLeft: 'Everyone',
-                    OnPlayerJoining: 'Friends',
-                    Online: 'Friends',
-                    Offline: 'Friends',
-                    GPS: 'Friends',
-                    Status: 'Friends',
-                    invite: 'Friends',
-                    requestInvite: 'Friends',
-                    inviteResponse: 'Friends',
-                    requestInviteResponse: 'Friends',
-                    friendRequest: 'On',
-                    Friend: 'On',
-                    Unfriend: 'On',
-                    DisplayName: 'Friends',
-                    TrustLevel: 'Friends',
-                    boop: 'On',
-                    groupChange: 'On',
-                    'group.announcement': 'On',
-                    'group.informative': 'On',
-                    'group.invite': 'On',
-                    'group.joinRequest': 'On',
-                    'group.transfer': 'On',
-                    'group.queueReady': 'On',
-                    'instance.closed': 'On',
-                    PortalSpawn: 'Everyone',
-                    Event: 'On',
-                    External: 'On',
-                    VideoPlay: 'On',
-                    BlockedOnPlayerJoined: 'Off',
-                    BlockedOnPlayerLeft: 'Off',
-                    MutedOnPlayerJoined: 'Off',
-                    MutedOnPlayerLeft: 'Off',
-                    AvatarChange: 'Everyone',
-                    ChatBoxMessage: 'Off',
-                    Blocked: 'On',
-                    Unblocked: 'On',
-                    Muted: 'On',
-                    Unmuted: 'On'
-                }
+
+        const overlayToast = ref('Game Running');
+        const openVR = ref(false);
+        const overlayNotifications = ref(true);
+        const xsNotifications = ref(true);
+        const ovrtHudNotifications = ref(true);
+        const ovrtWristNotifications = ref(false);
+        const imageNotifications = ref(true);
+        const desktopToast = ref('Never');
+        const afkDesktopToast = ref(false);
+        const notificationTTS = ref('Never');
+        const notificationTTSNickName = ref(false);
+        const sharedFeedFilters = ref({
+            noty: {
+                Location: 'Off',
+                OnPlayerJoined: 'VIP',
+                OnPlayerLeft: 'VIP',
+                OnPlayerJoining: 'VIP',
+                Online: 'VIP',
+                Offline: 'VIP',
+                GPS: 'Off',
+                Status: 'Off',
+                invite: 'Friends',
+                requestInvite: 'Friends',
+                inviteResponse: 'Friends',
+                requestInviteResponse: 'Friends',
+                friendRequest: 'On',
+                Friend: 'On',
+                Unfriend: 'On',
+                DisplayName: 'VIP',
+                TrustLevel: 'VIP',
+                boop: 'Off',
+                groupChange: 'On',
+                'group.announcement': 'On',
+                'group.informative': 'On',
+                'group.invite': 'On',
+                'group.joinRequest': 'Off',
+                'group.transfer': 'On',
+                'group.queueReady': 'On',
+                'instance.closed': 'On',
+                PortalSpawn: 'Everyone',
+                Event: 'On',
+                External: 'On',
+                VideoPlay: 'Off',
+                BlockedOnPlayerJoined: 'Off',
+                BlockedOnPlayerLeft: 'Off',
+                MutedOnPlayerJoined: 'Off',
+                MutedOnPlayerLeft: 'Off',
+                AvatarChange: 'Off',
+                ChatBoxMessage: 'Off',
+                Blocked: 'Off',
+                Unblocked: 'Off',
+                Muted: 'Off',
+                Unmuted: 'Off'
             },
-            isTestTTSVisible: false,
-            notificationTTSVoice: 0,
-            notificationTTSTest: '',
-            TTSvoices: [],
-            notificationPosition: 'topCenter',
-            notificationTimeout: 3000
+            wrist: {
+                Location: 'On',
+                OnPlayerJoined: 'Everyone',
+                OnPlayerLeft: 'Everyone',
+                OnPlayerJoining: 'Friends',
+                Online: 'Friends',
+                Offline: 'Friends',
+                GPS: 'Friends',
+                Status: 'Friends',
+                invite: 'Friends',
+                requestInvite: 'Friends',
+                inviteResponse: 'Friends',
+                requestInviteResponse: 'Friends',
+                friendRequest: 'On',
+                Friend: 'On',
+                Unfriend: 'On',
+                DisplayName: 'Friends',
+                TrustLevel: 'Friends',
+                boop: 'On',
+                groupChange: 'On',
+                'group.announcement': 'On',
+                'group.informative': 'On',
+                'group.invite': 'On',
+                'group.joinRequest': 'On',
+                'group.transfer': 'On',
+                'group.queueReady': 'On',
+                'instance.closed': 'On',
+                PortalSpawn: 'Everyone',
+                Event: 'On',
+                External: 'On',
+                VideoPlay: 'On',
+                BlockedOnPlayerJoined: 'Off',
+                BlockedOnPlayerLeft: 'Off',
+                MutedOnPlayerJoined: 'Off',
+                MutedOnPlayerLeft: 'Off',
+                AvatarChange: 'Everyone',
+                ChatBoxMessage: 'Off',
+                Blocked: 'On',
+                Unblocked: 'On',
+                Muted: 'On',
+                Unmuted: 'On'
+            }
         });
+        const isTestTTSVisible = ref(false);
+        const notificationTTSVoice = ref(0);
+        const TTSvoices = ref([]);
+        const notificationTTSTest = ref('');
+        const notificationPosition = ref('topCenter');
+        const notificationTimeout = ref(3000);
 
         async function initNotificationsSettings() {
             const [
-                overlayToast,
-                overlayNotifications,
-                openVR,
-                xsNotifications,
-                ovrtHudNotifications,
-                ovrtWristNotifications,
-                imageNotifications,
-                desktopToast,
-                afkDesktopToast,
-                notificationTTS,
-                notificationTTSNickName,
-                sharedFeedFilters,
-                notificationTTSVoice,
-                notificationPosition,
-                notificationTimeout
+                overlayToastConfig,
+                overlayNotificationsConfig,
+                openVRConfig,
+                xsNotificationsConfig,
+                ovrtHudNotificationsConfig,
+                ovrtWristNotificationsConfig,
+                imageNotificationsConfig,
+                desktopToastConfig,
+                afkDesktopToastConfig,
+                notificationTTSConfig,
+                notificationTTSNickNameConfig,
+                sharedFeedFiltersConfig,
+                notificationTTSVoiceConfig,
+                notificationPositionConfig,
+                notificationTimeoutConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_overlayToast', 'Game Running'),
                 configRepository.getBool('VRCX_overlayNotifications', true),
@@ -160,22 +159,22 @@ export const useNotificationsSettingsStore = defineStore(
                 configRepository.getString('VRCX_notificationTimeout', '3000')
             ]);
 
-            state.overlayToast = overlayToast;
-            state.openVR = openVR;
-            state.overlayNotifications = overlayNotifications;
-            state.xsNotifications = xsNotifications;
-            state.ovrtHudNotifications = ovrtHudNotifications;
-            state.ovrtWristNotifications = ovrtWristNotifications;
-            state.imageNotifications = imageNotifications;
-            state.desktopToast = desktopToast;
-            state.afkDesktopToast = afkDesktopToast;
-            state.notificationTTS = notificationTTS;
-            state.notificationTTSNickName = notificationTTSNickName;
-            state.sharedFeedFilters = JSON.parse(sharedFeedFilters);
-            state.notificationTTSVoice = Number(notificationTTSVoice);
-            state.TTSvoices = speechSynthesis.getVoices();
-            state.notificationPosition = notificationPosition;
-            state.notificationTimeout = Number(notificationTimeout);
+            overlayToast.value = overlayToastConfig;
+            openVR.value = openVRConfig;
+            overlayNotifications.value = overlayNotificationsConfig;
+            xsNotifications.value = xsNotificationsConfig;
+            ovrtHudNotifications.value = ovrtHudNotificationsConfig;
+            ovrtWristNotifications.value = ovrtWristNotificationsConfig;
+            imageNotifications.value = imageNotificationsConfig;
+            desktopToast.value = desktopToastConfig;
+            afkDesktopToast.value = afkDesktopToastConfig;
+            notificationTTS.value = notificationTTSConfig;
+            notificationTTSNickName.value = notificationTTSNickNameConfig;
+            sharedFeedFilters.value = JSON.parse(sharedFeedFiltersConfig);
+            notificationTTSVoice.value = Number(notificationTTSVoiceConfig);
+            TTSvoices.value = speechSynthesis.getVoices();
+            notificationPosition.value = notificationPositionConfig;
+            notificationTimeout.value = Number(notificationTimeoutConfig);
 
             initSharedFeedFilters();
 
@@ -187,96 +186,55 @@ export const useNotificationsSettingsStore = defineStore(
 
         initNotificationsSettings();
 
-        const overlayToast = computed(() => state.overlayToast);
-        const openVR = computed(() => state.openVR);
-        const overlayNotifications = computed(() => state.overlayNotifications);
-        const xsNotifications = computed(() => state.xsNotifications);
-        const ovrtHudNotifications = computed(() => state.ovrtHudNotifications);
-        const ovrtWristNotifications = computed(
-            () => state.ovrtWristNotifications
-        );
-        const imageNotifications = computed(() => state.imageNotifications);
-        const desktopToast = computed(() => state.desktopToast);
-        const afkDesktopToast = computed(() => state.afkDesktopToast);
-        const notificationTTS = computed(() => state.notificationTTS);
-        const notificationTTSNickName = computed(
-            () => state.notificationTTSNickName
-        );
-        const sharedFeedFilters = computed({
-            get: () => state.sharedFeedFilters,
-            set: (value) => (state.sharedFeedFilters = value)
-        });
-        const isTestTTSVisible = computed({
-            get: () => state.isTestTTSVisible,
-            set: (value) => (state.isTestTTSVisible = value)
-        });
-        const notificationTTSVoice = computed({
-            get: () => state.notificationTTSVoice,
-            set: (value) => (state.notificationTTSVoice = value)
-        });
-        const TTSvoices = computed({
-            get: () => state.TTSvoices,
-            set: (value) => (state.TTSvoices = value)
-        });
-        const notificationTTSTest = computed({
-            get: () => state.notificationTTSTest,
-            set: (value) => (state.notificationTTSTest = value)
-        });
-        const notificationPosition = computed(() => state.notificationPosition);
-        const notificationTimeout = computed({
-            get: () => state.notificationTimeout,
-            set: (value) => (state.notificationTimeout = value)
-        });
-
         function setOverlayToast(value) {
-            state.overlayToast = value;
+            overlayToast.value = value;
             configRepository.setString('VRCX_overlayToast', value);
         }
         function setOverlayNotifications() {
-            state.overlayNotifications = !state.overlayNotifications;
+            overlayNotifications.value = !overlayNotifications.value;
             configRepository.setBool(
                 'VRCX_overlayNotifications',
-                state.overlayNotifications
+                overlayNotifications.value
             );
         }
         function setOpenVR() {
-            state.openVR = !state.openVR;
-            configRepository.setBool('openVR', state.openVR);
+            openVR.value = !openVR.value;
+            configRepository.setBool('openVR', openVR.value);
         }
         function setXsNotifications() {
-            state.xsNotifications = !state.xsNotifications;
+            xsNotifications.value = !xsNotifications.value;
             configRepository.setBool(
                 'VRCX_xsNotifications',
-                state.xsNotifications
+                xsNotifications.value
             );
         }
         function setOvrtHudNotifications() {
-            state.ovrtHudNotifications = !state.ovrtHudNotifications;
+            ovrtHudNotifications.value = !ovrtHudNotifications.value;
             configRepository.setBool(
                 'VRCX_ovrtHudNotifications',
-                state.ovrtHudNotifications
+                ovrtHudNotifications.value
             );
         }
         function setOvrtWristNotifications() {
-            state.ovrtWristNotifications = !state.ovrtWristNotifications;
+            ovrtWristNotifications.value = !ovrtWristNotifications.value;
             configRepository.setBool(
                 'VRCX_ovrtWristNotifications',
-                state.ovrtWristNotifications
+                ovrtWristNotifications.value
             );
         }
         function setImageNotifications() {
-            state.imageNotifications = !state.imageNotifications;
+            imageNotifications.value = !imageNotifications.value;
             configRepository.setBool(
                 'VRCX_imageNotifications',
-                state.imageNotifications
+                imageNotifications.value
             );
         }
 
         function changeNotificationPosition(value) {
-            state.notificationPosition = value;
+            notificationPosition.value = value;
             configRepository.setString(
                 'VRCX_notificationPosition',
-                state.notificationPosition
+                notificationPosition.value
             );
             vrStore.updateVRConfigVars();
         }
@@ -284,81 +242,81 @@ export const useNotificationsSettingsStore = defineStore(
          * @param {string} value
          */
         function setDesktopToast(value) {
-            state.desktopToast = value;
+            desktopToast.value = value;
             configRepository.setString('VRCX_desktopToast', value);
         }
         function setAfkDesktopToast() {
-            state.afkDesktopToast = !state.afkDesktopToast;
+            afkDesktopToast.value = !afkDesktopToast.value;
             configRepository.setBool(
                 'VRCX_afkDesktopToast',
-                state.afkDesktopToast
+                afkDesktopToast.value
             );
         }
         /**
          * @param {string} value
          */
         function setNotificationTTS(value) {
-            state.notificationTTS = value;
+            notificationTTS.value = value;
             configRepository.setString('VRCX_notificationTTS', value);
         }
         function setNotificationTTSNickName() {
-            state.notificationTTSNickName = !state.notificationTTSNickName;
+            notificationTTSNickName.value = !notificationTTSNickName.value;
             configRepository.setBool(
                 'VRCX_notificationTTSNickName',
-                state.notificationTTSNickName
+                notificationTTSNickName.value
             );
         }
         function initSharedFeedFilters() {
-            if (!state.sharedFeedFilters.noty.Blocked) {
-                state.sharedFeedFilters.noty.Blocked = 'Off';
-                state.sharedFeedFilters.noty.Unblocked = 'Off';
-                state.sharedFeedFilters.noty.Muted = 'Off';
-                state.sharedFeedFilters.noty.Unmuted = 'Off';
-                state.sharedFeedFilters.wrist.Blocked = 'On';
-                state.sharedFeedFilters.wrist.Unblocked = 'On';
-                state.sharedFeedFilters.wrist.Muted = 'On';
-                state.sharedFeedFilters.wrist.Unmuted = 'On';
+            if (!sharedFeedFilters.value.noty.Blocked) {
+                sharedFeedFilters.value.noty.Blocked = 'Off';
+                sharedFeedFilters.value.noty.Unblocked = 'Off';
+                sharedFeedFilters.value.noty.Muted = 'Off';
+                sharedFeedFilters.value.noty.Unmuted = 'Off';
+                sharedFeedFilters.value.wrist.Blocked = 'On';
+                sharedFeedFilters.value.wrist.Unblocked = 'On';
+                sharedFeedFilters.value.wrist.Muted = 'On';
+                sharedFeedFilters.value.wrist.Unmuted = 'On';
             }
-            if (!state.sharedFeedFilters.noty['group.announcement']) {
-                state.sharedFeedFilters.noty['group.announcement'] = 'On';
-                state.sharedFeedFilters.noty['group.informative'] = 'On';
-                state.sharedFeedFilters.noty['group.invite'] = 'On';
-                state.sharedFeedFilters.noty['group.joinRequest'] = 'Off';
-                state.sharedFeedFilters.wrist['group.announcement'] = 'On';
-                state.sharedFeedFilters.wrist['group.informative'] = 'On';
-                state.sharedFeedFilters.wrist['group.invite'] = 'On';
-                state.sharedFeedFilters.wrist['group.joinRequest'] = 'On';
+            if (!sharedFeedFilters.value.noty['group.announcement']) {
+                sharedFeedFilters.value.noty['group.announcement'] = 'On';
+                sharedFeedFilters.value.noty['group.informative'] = 'On';
+                sharedFeedFilters.value.noty['group.invite'] = 'On';
+                sharedFeedFilters.value.noty['group.joinRequest'] = 'Off';
+                sharedFeedFilters.value.wrist['group.announcement'] = 'On';
+                sharedFeedFilters.value.wrist['group.informative'] = 'On';
+                sharedFeedFilters.value.wrist['group.invite'] = 'On';
+                sharedFeedFilters.value.wrist['group.joinRequest'] = 'On';
             }
-            if (!state.sharedFeedFilters.noty['group.queueReady']) {
-                state.sharedFeedFilters.noty['group.queueReady'] = 'On';
-                state.sharedFeedFilters.wrist['group.queueReady'] = 'On';
+            if (!sharedFeedFilters.value.noty['group.queueReady']) {
+                sharedFeedFilters.value.noty['group.queueReady'] = 'On';
+                sharedFeedFilters.value.wrist['group.queueReady'] = 'On';
             }
-            if (!state.sharedFeedFilters.noty['instance.closed']) {
-                state.sharedFeedFilters.noty['instance.closed'] = 'On';
-                state.sharedFeedFilters.wrist['instance.closed'] = 'On';
+            if (!sharedFeedFilters.value.noty['instance.closed']) {
+                sharedFeedFilters.value.noty['instance.closed'] = 'On';
+                sharedFeedFilters.value.wrist['instance.closed'] = 'On';
             }
-            if (!state.sharedFeedFilters.noty.External) {
-                state.sharedFeedFilters.noty.External = 'On';
-                state.sharedFeedFilters.wrist.External = 'On';
+            if (!sharedFeedFilters.value.noty.External) {
+                sharedFeedFilters.value.noty.External = 'On';
+                sharedFeedFilters.value.wrist.External = 'On';
             }
-            if (!state.sharedFeedFilters.noty.groupChange) {
-                state.sharedFeedFilters.noty.groupChange = 'On';
-                state.sharedFeedFilters.wrist.groupChange = 'On';
+            if (!sharedFeedFilters.value.noty.groupChange) {
+                sharedFeedFilters.value.noty.groupChange = 'On';
+                sharedFeedFilters.value.wrist.groupChange = 'On';
             }
-            if (!state.sharedFeedFilters.noty['group.transfer']) {
-                state.sharedFeedFilters.noty['group.transfer'] = 'On';
-                state.sharedFeedFilters.wrist['group.transfer'] = 'On';
+            if (!sharedFeedFilters.value.noty['group.transfer']) {
+                sharedFeedFilters.value.noty['group.transfer'] = 'On';
+                sharedFeedFilters.value.wrist['group.transfer'] = 'On';
             }
-            if (!state.sharedFeedFilters.noty.boop) {
-                state.sharedFeedFilters.noty.boop = 'Off';
-                state.sharedFeedFilters.wrist.boop = 'On';
+            if (!sharedFeedFilters.value.noty.boop) {
+                sharedFeedFilters.value.noty.boop = 'Off';
+                sharedFeedFilters.value.wrist.boop = 'On';
             }
         }
         function setNotificationTTSVoice(index) {
-            state.notificationTTSVoice = index;
+            notificationTTSVoice.value = index;
             configRepository.setString(
                 'VRCX_notificationTTSVoice',
-                state.notificationTTSVoice.toString()
+                notificationTTSVoice.value.toString()
             );
         }
 
@@ -367,15 +325,15 @@ export const useNotificationsSettingsStore = defineStore(
             if (WINDOWS) {
                 voices = speechSynthesis.getVoices();
             } else {
-                voices = state.TTSvoices;
+                voices = TTSvoices.value;
             }
             if (voices.length === 0) {
                 return '';
             }
-            if (state.notificationTTSVoice >= voices.length) {
+            if (notificationTTSVoice.value >= voices.length) {
                 setNotificationTTSVoice(0);
             }
-            return voices[state.notificationTTSVoice].name;
+            return voices[notificationTTSVoice.value].name;
         }
 
         async function changeTTSVoice(index) {
@@ -384,7 +342,7 @@ export const useNotificationsSettingsStore = defineStore(
             if (WINDOWS) {
                 voices = speechSynthesis.getVoices();
             } else {
-                voices = state.TTSvoices;
+                voices = TTSvoices.value;
             }
             if (voices.length === 0) {
                 return;
@@ -395,7 +353,7 @@ export const useNotificationsSettingsStore = defineStore(
         }
 
         function updateTTSVoices() {
-            state.TTSvoices = speechSynthesis.getVoices();
+            TTSvoices.value = speechSynthesis.getVoices();
             if (LINUX) {
                 const voices = speechSynthesis.getVoices();
                 let uniqueVoices = [];
@@ -407,7 +365,7 @@ export const useNotificationsSettingsStore = defineStore(
                 uniqueVoices = uniqueVoices.filter((v) =>
                     v.lang.startsWith('en')
                 );
-                state.TTSvoices = uniqueVoices;
+                TTSvoices.value = uniqueVoices;
             }
         }
         async function saveNotificationTTS(value) {
@@ -424,7 +382,7 @@ export const useNotificationsSettingsStore = defineStore(
 
         function testNotificationTTS() {
             speechSynthesis.cancel();
-            speak(state.notificationTTSTest);
+            speak(notificationTTSTest.value);
         }
 
         function speak(text) {
@@ -434,8 +392,8 @@ export const useNotificationsSettingsStore = defineStore(
                 return;
             }
             let index = 0;
-            if (state.notificationTTSVoice < voices.length) {
-                index = state.notificationTTSVoice;
+            if (notificationTTSVoice.value < voices.length) {
+                index = notificationTTSVoice.value;
             }
             tts.voice = voices[index];
             tts.text = text;
@@ -450,7 +408,7 @@ export const useNotificationsSettingsStore = defineStore(
                     distinguishCancelAndClose: true,
                     confirmButtonText: t('prompt.notification_timeout.ok'),
                     cancelButtonText: t('prompt.notification_timeout.cancel'),
-                    inputValue: state.notificationTimeout / 1000,
+                    inputValue: notificationTimeout.value / 1000,
                     inputPattern: /\d+$/,
                     inputErrorMessage: t(
                         'prompt.notification_timeout.input_error'
@@ -459,12 +417,12 @@ export const useNotificationsSettingsStore = defineStore(
             )
                 .then(async ({ value }) => {
                     if (value && !isNaN(value)) {
-                        state.notificationTimeout = Math.trunc(
+                        notificationTimeout.value = Math.trunc(
                             Number(value) * 1000
                         );
                         await configRepository.setString(
                             'VRCX_notificationTimeout',
-                            state.notificationTimeout.toString()
+                            notificationTimeout.value.toString()
                         );
                         vrStore.updateVRConfigVars();
                     }
@@ -473,8 +431,6 @@ export const useNotificationsSettingsStore = defineStore(
         }
 
         return {
-            state,
-
             overlayToast,
             openVR,
             overlayNotifications,

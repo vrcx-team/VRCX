@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import { instanceRequest, userRequest } from '../api';
 import { groupRequest } from '../api/';
@@ -25,33 +25,10 @@ export const useSearchStore = defineStore('Search', () => {
     const groupStore = useGroupStore();
     const { t } = useI18n();
 
-    const state = reactive({
-        searchText: '',
-        searchUserResults: [],
-        quickSearchItems: [],
-        friendsListSearch: ''
-    });
-
-    const searchText = computed({
-        get: () => state.searchText,
-        set: (value) => {
-            state.searchText = value;
-        }
-    });
-
-    const searchUserResults = computed({
-        get: () => state.searchUserResults,
-        set: (value) => {
-            state.searchUserResults = value;
-        }
-    });
-
-    const quickSearchItems = computed({
-        get: () => state.quickSearchItems,
-        set: (value) => {
-            state.quickSearchItems = value;
-        }
-    });
+    const searchText = ref('');
+    const searchUserResults = ref([]);
+    const quickSearchItems = ref([]);
+    const friendsListSearch = ref('');
 
     const stringComparer = computed(() =>
         Intl.Collator(appearanceSettingsStore.appLanguage.replace('_', '-'), {
@@ -60,25 +37,18 @@ export const useSearchStore = defineStore('Search', () => {
         })
     );
 
-    const friendsListSearch = computed({
-        get: () => state.friendsListSearch,
-        set: (value) => {
-            state.friendsListSearch = value;
-        }
-    });
-
     watch(
         () => watchState.isLoggedIn,
         () => {
-            state.searchText = '';
-            state.searchUserResults = [];
+            searchText.value = '';
+            searchUserResults.value = [];
         },
         { flush: 'sync' }
     );
 
     function clearSearch() {
-        state.searchText = '';
-        state.searchUserResults = [];
+        searchText.value = '';
+        searchUserResults.value = [];
     }
 
     async function searchUserByDisplayName(displayName) {
@@ -114,26 +84,26 @@ export const useSearchStore = defineStore('Search', () => {
                     map.set(ref.id, ref);
                 }
             }
-            state.searchUserResults = Array.from(map.values());
+            searchUserResults.value = Array.from(map.values());
             return args;
         });
     }
 
     function quickSearchRemoteMethod(query) {
         if (!query) {
-            state.quickSearchItems = quickSearchUserHistory();
+            quickSearchItems.value = quickSearchUserHistory();
             return;
         }
 
         if (query.length < 2) {
-            state.quickSearchItems = quickSearchUserHistory();
+            quickSearchItems.value = quickSearchUserHistory();
             return;
         }
 
         const results = [];
         const cleanQuery = removeWhitespace(query);
         if (!cleanQuery) {
-            state.quickSearchItems = quickSearchUserHistory();
+            quickSearchItems.value = quickSearchUserHistory();
             return;
         }
 
@@ -205,19 +175,19 @@ export const useSearchStore = defineStore('Search', () => {
             label: query
         });
 
-        state.quickSearchItems = results;
+        quickSearchItems.value = results;
     }
 
     function quickSearchChange(value) {
         if (value) {
             if (value.startsWith('search:')) {
                 const searchText = value.substr(7);
-                if (state.quickSearchItems.length > 1 && searchText.length) {
-                    state.friendsListSearch = searchText;
+                if (quickSearchItems.value.length > 1 && searchText.length) {
+                    friendsListSearch.value = searchText;
                     uiStore.menuActiveIndex = 'friendList';
                 } else {
                     uiStore.menuActiveIndex = 'search';
-                    state.searchText = searchText;
+                    searchText.value = searchText;
                     userStore.lookupUser({ displayName: searchText });
                 }
             } else {
@@ -409,8 +379,6 @@ export const useSearchStore = defineStore('Search', () => {
     }
 
     return {
-        state,
-
         searchText,
         searchUserResults,
         stringComparer,
