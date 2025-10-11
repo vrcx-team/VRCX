@@ -1,37 +1,35 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { ref } from 'vue';
 import configRepository from '../../service/config';
 
 export const useWristOverlaySettingsStore = defineStore(
     'WristOverlaySettings',
     () => {
-        const state = reactive({
-            overlayWrist: true,
-            hidePrivateFromFeed: false,
-            openVRAlways: false,
-            overlaybutton: false,
-            overlayHand: '0',
-            vrBackgroundEnabled: false,
-            minimalFeed: true,
-            hideDevicesFromFeed: false,
-            vrOverlayCpuUsage: false,
-            hideUptimeFromFeed: false,
-            pcUptimeOnFeed: false
-        });
+        const overlayWrist = ref(true);
+        const hidePrivateFromFeed = ref(false);
+        const openVRAlways = ref(false);
+        const overlaybutton = ref(false);
+        const overlayHand = ref('0');
+        const vrBackgroundEnabled = ref(false);
+        const minimalFeed = ref(true);
+        const hideDevicesFromFeed = ref(false);
+        const vrOverlayCpuUsage = ref(false);
+        const hideUptimeFromFeed = ref(false);
+        const pcUptimeOnFeed = ref(false);
 
         async function initWristOverlaySettings() {
             const [
-                overlayWrist,
-                hidePrivateFromFeed,
-                openVRAlways,
-                overlaybutton,
-                overlayHand,
-                vrBackgroundEnabled,
-                minimalFeed,
-                hideDevicesFromFeed,
-                vrOverlayCpuUsage,
-                hideUptimeFromFeed,
-                pcUptimeOnFeed
+                overlayWristConfig,
+                hidePrivateFromFeedConfig,
+                openVRAlwaysConfig,
+                overlaybuttonConfig,
+                overlayHandConfig,
+                vrBackgroundEnabledConfig,
+                minimalFeedConfig,
+                hideDevicesFromFeedConfig,
+                vrOverlayCpuUsageConfig,
+                hideUptimeFromFeedConfig,
+                pcUptimeOnFeedConfig
             ] = await Promise.all([
                 configRepository.getBool('VRCX_overlayWrist', false),
                 configRepository.getBool('VRCX_hidePrivateFromFeed', false),
@@ -46,55 +44,43 @@ export const useWristOverlaySettingsStore = defineStore(
                 configRepository.getBool('VRCX_pcUptimeOnFeed', false)
             ]);
 
-            state.overlayWrist = overlayWrist;
-            state.hidePrivateFromFeed = hidePrivateFromFeed;
-            state.openVRAlways = openVRAlways;
-            state.overlaybutton = overlaybutton;
-            state.overlayHand = String(overlayHand);
-            state.vrBackgroundEnabled = vrBackgroundEnabled;
-            state.minimalFeed = minimalFeed;
-            state.hideDevicesFromFeed = hideDevicesFromFeed;
-            state.vrOverlayCpuUsage = vrOverlayCpuUsage;
-            state.hideUptimeFromFeed = hideUptimeFromFeed;
-            state.pcUptimeOnFeed = pcUptimeOnFeed;
+            overlayWrist.value = overlayWristConfig;
+            hidePrivateFromFeed.value = hidePrivateFromFeedConfig;
+            openVRAlways.value = openVRAlwaysConfig;
+            overlaybutton.value = overlaybuttonConfig;
+            overlayHand.value = String(overlayHandConfig);
+            vrBackgroundEnabled.value = vrBackgroundEnabledConfig;
+            minimalFeed.value = minimalFeedConfig;
+            hideDevicesFromFeed.value = hideDevicesFromFeedConfig;
+            vrOverlayCpuUsage.value = vrOverlayCpuUsageConfig;
+            hideUptimeFromFeed.value = hideUptimeFromFeedConfig;
+            pcUptimeOnFeed.value = pcUptimeOnFeedConfig;
         }
-
-        const overlayWrist = computed(() => state.overlayWrist);
-        const hidePrivateFromFeed = computed(() => state.hidePrivateFromFeed);
-        const openVRAlways = computed(() => state.openVRAlways);
-        const overlaybutton = computed(() => state.overlaybutton);
-        const overlayHand = computed(() => state.overlayHand);
-        const vrBackgroundEnabled = computed(() => state.vrBackgroundEnabled);
-        const minimalFeed = computed(() => state.minimalFeed);
-        const hideDevicesFromFeed = computed(() => state.hideDevicesFromFeed);
-        const vrOverlayCpuUsage = computed(() => state.vrOverlayCpuUsage);
-        const hideUptimeFromFeed = computed(() => state.hideUptimeFromFeed);
-        const pcUptimeOnFeed = computed(() => state.pcUptimeOnFeed);
 
         function setOverlayWrist() {
-            state.overlayWrist = !state.overlayWrist;
-            configRepository.setBool('VRCX_overlayWrist', state.overlayWrist);
+            overlayWrist.value = !overlayWrist.value;
+            configRepository.setBool('VRCX_overlayWrist', overlayWrist.value);
         }
         function setHidePrivateFromFeed() {
-            state.hidePrivateFromFeed = !state.hidePrivateFromFeed;
+            hidePrivateFromFeed.value = !hidePrivateFromFeed.value;
             configRepository.setBool(
                 'VRCX_hidePrivateFromFeed',
-                state.hidePrivateFromFeed
+                hidePrivateFromFeed.value
             );
         }
         function setOpenVRAlways() {
-            state.openVRAlways = !state.openVRAlways;
-            configRepository.setBool('openVRAlways', state.openVRAlways);
+            openVRAlways.value = !openVRAlways.value;
+            configRepository.setBool('openVRAlways', openVRAlways.value);
         }
         function setOverlaybutton() {
-            state.overlaybutton = !state.overlaybutton;
-            configRepository.setBool('VRCX_overlaybutton', state.overlaybutton);
+            overlaybutton.value = !overlaybutton.value;
+            configRepository.setBool('VRCX_overlaybutton', overlaybutton.value);
         }
         /**
          * @param {string} value
          */
         function setOverlayHand(value) {
-            state.overlayHand = value;
+            overlayHand.value = value;
             let overlayHandInt = parseInt(value, 10);
             if (isNaN(overlayHandInt)) {
                 overlayHandInt = 0;
@@ -102,50 +88,48 @@ export const useWristOverlaySettingsStore = defineStore(
             configRepository.setInt('VRCX_overlayHand', overlayHandInt);
         }
         function setVrBackgroundEnabled() {
-            state.vrBackgroundEnabled = !state.vrBackgroundEnabled;
+            vrBackgroundEnabled.value = !vrBackgroundEnabled.value;
             configRepository.setBool(
                 'VRCX_vrBackgroundEnabled',
-                state.vrBackgroundEnabled
+                vrBackgroundEnabled.value
             );
         }
         function setMinimalFeed() {
-            state.minimalFeed = !state.minimalFeed;
-            configRepository.setBool('VRCX_minimalFeed', state.minimalFeed);
+            minimalFeed.value = !minimalFeed.value;
+            configRepository.setBool('VRCX_minimalFeed', minimalFeed.value);
         }
         function setHideDevicesFromFeed() {
-            state.hideDevicesFromFeed = !state.hideDevicesFromFeed;
+            hideDevicesFromFeed.value = !hideDevicesFromFeed.value;
             configRepository.setBool(
                 'VRCX_hideDevicesFromFeed',
-                state.hideDevicesFromFeed
+                hideDevicesFromFeed.value
             );
         }
         function setVrOverlayCpuUsage() {
-            state.vrOverlayCpuUsage = !state.vrOverlayCpuUsage;
+            vrOverlayCpuUsage.value = !vrOverlayCpuUsage.value;
             configRepository.setBool(
                 'VRCX_vrOverlayCpuUsage',
-                state.vrOverlayCpuUsage
+                vrOverlayCpuUsage.value
             );
         }
         function setHideUptimeFromFeed() {
-            state.hideUptimeFromFeed = !state.hideUptimeFromFeed;
+            hideUptimeFromFeed.value = !hideUptimeFromFeed.value;
             configRepository.setBool(
                 'VRCX_hideUptimeFromFeed',
-                state.hideUptimeFromFeed
+                hideUptimeFromFeed.value
             );
         }
         function setPcUptimeOnFeed() {
-            state.pcUptimeOnFeed = !state.pcUptimeOnFeed;
+            pcUptimeOnFeed.value = !pcUptimeOnFeed.value;
             configRepository.setBool(
                 'VRCX_pcUptimeOnFeed',
-                state.pcUptimeOnFeed
+                pcUptimeOnFeed.value
             );
         }
 
         initWristOverlaySettings();
 
         return {
-            state,
-
             overlayWrist,
             hidePrivateFromFeed,
             openVRAlways,

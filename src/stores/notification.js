@@ -1,6 +1,6 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
+import { ref, watch } from 'vue';
 import {
     instanceRequest,
     notificationRequest,
@@ -49,44 +49,56 @@ export const useNotificationStore = defineStore('Notification', () => {
     const gameStore = useGameStore();
     const sharedFeedStore = useSharedFeedStore();
     const instanceStore = useInstanceStore();
-    const state = reactive({
-        notificationInitStatus: false,
-        notificationTable: {
-            data: [],
-            filters: [
-                {
-                    prop: 'type',
-                    value: [],
-                    filterFn: (row, filter) =>
-                        filter.value.some((v) => v === row.type)
-                },
-                {
-                    prop: ['senderUsername', 'message'],
-                    value: ''
-                }
-            ],
-            tableProps: {
-                stripe: true,
-                size: 'small',
-                defaultSort: {
-                    prop: 'created_at',
-                    order: 'descending'
-                }
+
+    const notificationInitStatus = ref(false);
+    const notificationTable = ref({
+        data: [],
+        filters: [
+            {
+                prop: 'type',
+                value: [],
+                filterFn: (row, filter) =>
+                    filter.value.some((v) => v === row.type)
             },
-            pageSize: 15,
-            paginationProps: {
-                small: true,
-                layout: 'sizes,prev,pager,next,total',
-                pageSizes: [10, 15, 20, 25, 50, 100]
+            {
+                prop: ['senderUsername', 'message'],
+                value: ''
+            }
+        ],
+        tableProps: {
+            stripe: true,
+            size: 'small',
+            defaultSort: {
+                prop: 'created_at',
+                order: 'descending'
             }
         },
-        unseenNotifications: [],
-        isNotificationsLoading: false,
-        notyMap: []
+        pageSize: 15,
+        paginationProps: {
+            small: true,
+            layout: 'sizes,prev,pager,next,total',
+            pageSizes: [10, 15, 20, 25, 50, 100]
+        }
     });
+    const unseenNotifications = ref([]);
+    const isNotificationsLoading = ref(false);
+
+    const notyMap = ref([]);
+
+    watch(
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
+            isNotificationsLoading.value = false;
+            notificationTable.value.data = [];
+            if (isLoggedIn) {
+                initNotifications();
+            }
+        },
+        { flush: 'sync' }
+    );
 
     async function init() {
-        state.notificationTable.filters[0].value = JSON.parse(
+        notificationTable.value.filters[0].value = JSON.parse(
             await configRepository.getString(
                 'VRCX_notificationTableFilters',
                 '[]'
@@ -96,50 +108,10 @@ export const useNotificationStore = defineStore('Notification', () => {
 
     init();
 
-    const notificationInitStatus = computed({
-        get: () => state.notificationInitStatus,
-        set: (value) => {
-            state.notificationInitStatus = value;
-        }
-    });
-
-    const notificationTable = computed({
-        get: () => state.notificationTable,
-        set: (value) => {
-            state.notificationTable = value;
-        }
-    });
-
-    const unseenNotifications = computed({
-        get: () => state.unseenNotifications,
-        set: (value) => {
-            state.unseenNotifications = value;
-        }
-    });
-
-    const isNotificationsLoading = computed({
-        get: () => state.isNotificationsLoading,
-        set: (value) => {
-            state.isNotificationsLoading = value;
-        }
-    });
-
-    watch(
-        () => watchState.isLoggedIn,
-        (isLoggedIn) => {
-            state.isNotificationsLoading = false;
-            state.notificationTable.data = [];
-            if (isLoggedIn) {
-                initNotifications();
-            }
-        },
-        { flush: 'sync' }
-    );
-
     function handleNotification(args) {
         args.ref = applyNotification(args.json);
         const { ref } = args;
-        const array = state.notificationTable.data;
+        const array = notificationTable.value.data;
         const { length } = array;
         for (let i = 0; i < length; ++i) {
             if (array[i].id === ref.id) {
@@ -155,7 +127,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             ) {
                 database.addNotificationToDatabase(ref);
             }
-            if (watchState.isFriendsLoaded && state.notificationInitStatus) {
+            if (watchState.isFriendsLoaded && notificationInitStatus.value) {
                 if (
                     ref.details?.worldId &&
                     !instanceStore.cachedInstances.has(ref.details.worldId)
@@ -170,16 +142,16 @@ export const useNotificationStore = defineStore('Notification', () => {
                     }
                 }
                 if (
-                    state.notificationTable.filters[0].value.length === 0 ||
-                    state.notificationTable.filters[0].value.includes(ref.type)
+                    notificationTable.value.filters[0].value.length === 0 ||
+                    notificationTable.value.filters[0].value.includes(ref.type)
                 ) {
                     uiStore.notifyMenu('notification');
                 }
-                state.unseenNotifications.push(ref.id);
+                unseenNotifications.value.push(ref.id);
                 queueNotificationNoty(ref);
             }
         }
-        state.notificationTable.data.push(ref);
+        notificationTable.value.data.push(ref);
         sharedFeedStore.updateSharedFeed(true);
         const D = userStore.userDialog;
         if (
@@ -195,7 +167,7 @@ export const useNotificationStore = defineStore('Notification', () => {
 
     function handleNotificationHide(args) {
         let ref;
-        const array = state.notificationTable.data;
+        const array = notificationTable.value.data;
         for (let i = array.length - 1; i >= 0; i--) {
             if (array[i].id === args.params.notificationId) {
                 ref = array[i];
@@ -326,15 +298,15 @@ export const useNotificationStore = defineStore('Notification', () => {
 
     function handleNotificationSee(args) {
         const { notificationId } = args.params;
-        removeFromArray(state.unseenNotifications, notificationId);
-        if (state.unseenNotifications.length === 0) {
+        removeFromArray(unseenNotifications.value, notificationId);
+        if (unseenNotifications.value.length === 0) {
             uiStore.removeNotify('notification');
         }
     }
 
     function handleNotificationAccept(args) {
         let ref;
-        const array = state.notificationTable.data;
+        const array = notificationTable.value.data;
         for (let i = array.length - 1; i >= 0; i--) {
             if (array[i].id === args.params.notificationId) {
                 ref = array[i];
@@ -393,7 +365,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             json.message = replaceBioSymbols(json.message);
         }
         let ref;
-        const array = state.notificationTable.data;
+        const array = notificationTable.value.data;
         for (let i = array.length - 1; i >= 0; i--) {
             if (array[i].id === json.id) {
                 ref = array[i];
@@ -443,7 +415,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     function expireFriendRequestNotifications() {
-        const array = state.notificationTable.data;
+        const array = notificationTable.value.data;
         for (let i = array.length - 1; i >= 0; i--) {
             if (
                 array[i].type === 'friendRequest' ||
@@ -461,7 +433,7 @@ export const useNotificationStore = defineStore('Notification', () => {
      */
     function expireNotification(notificationId) {
         let ref;
-        const array = state.notificationTable.data;
+        const array = notificationTable.value.data;
         for (let i = array.length - 1; i >= 0; i--) {
             if (array[i].id === notificationId) {
                 ref = array[i];
@@ -502,7 +474,7 @@ export const useNotificationStore = defineStore('Notification', () => {
      * @returns {Promise<void>}
      */
     async function refreshNotifications() {
-        state.isNotificationsLoading = true;
+        isNotificationsLoading.value = true;
         let count;
         let params;
         try {
@@ -522,7 +494,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                         }
                     });
                 }
-                state.unseenNotifications = [];
+                unseenNotifications.value = [];
                 params.offset += 100;
                 if (args.json.length < 100) {
                     break;
@@ -552,7 +524,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                     });
                 }
 
-                state.unseenNotifications = [];
+                unseenNotifications.value = [];
                 params.offset += 100;
                 if (args.json.length < 100) {
                     break;
@@ -575,7 +547,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                         }
                     });
                 }
-                state.unseenNotifications = [];
+                unseenNotifications.value = [];
                 params.offset += 100;
                 if (args.json.length < 100) {
                     break;
@@ -584,8 +556,8 @@ export const useNotificationStore = defineStore('Notification', () => {
         } catch (err) {
             console.error(err);
         } finally {
-            state.isNotificationsLoading = false;
-            state.notificationInitStatus = true;
+            isNotificationsLoading.value = false;
+            notificationInitStatus.value = true;
         }
     }
 
@@ -628,12 +600,12 @@ export const useNotificationStore = defineStore('Notification', () => {
             // don't play noty twice
             const notyId = `${noty.type},${displayName}`;
             if (
-                state.notyMap[notyId] &&
-                state.notyMap[notyId] >= noty.created_at
+                notyMap.value[notyId] &&
+                notyMap.value[notyId] >= noty.created_at
             ) {
                 return;
             }
-            state.notyMap[notyId] = noty.created_at;
+            notyMap.value[notyId] = noty.created_at;
         }
         const bias = new Date(Date.now() - 60000).toJSON();
         if (noty.created_at < bias) {
@@ -1255,10 +1227,14 @@ export const useNotificationStore = defineStore('Notification', () => {
      */
     function displayXSNotification(noty, message, image) {
         const timeout = Math.floor(
-            parseInt(notificationsSettingsStore.notificationTimeout, 10) / 1000
+            parseInt(
+                notificationsSettingsStore.notificationTimeout.toString(),
+                10
+            ) / 1000
         );
         const opacity =
-            parseFloat(advancedSettingsStore.notificationOpacity) / 100;
+            parseFloat(advancedSettingsStore.notificationOpacity.toString()) /
+            100;
         switch (noty.type) {
             case 'OnPlayerJoined':
                 AppApi.XSNotification(
@@ -1655,10 +1631,14 @@ export const useNotificationStore = defineStore('Notification', () => {
         image
     ) {
         const timeout = Math.floor(
-            parseInt(notificationsSettingsStore.notificationTimeout, 10) / 1000
+            parseInt(
+                notificationsSettingsStore.notificationTimeout.toString(),
+                10
+            ) / 1000
         );
         const opacity =
-            parseFloat(advancedSettingsStore.notificationOpacity) / 100;
+            parseFloat(advancedSettingsStore.notificationOpacity.toString()) /
+            100;
         switch (noty.type) {
             case 'OnPlayerJoined':
                 AppApi.OVRTNotification(
@@ -2340,14 +2320,12 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     async function initNotifications() {
-        state.notificationInitStatus = false;
-        state.notificationTable.data = await database.getNotifications();
+        notificationInitStatus.value = false;
+        notificationTable.value.data = await database.getNotifications();
         refreshNotifications();
     }
 
     return {
-        state,
-
         notificationInitStatus,
         notificationTable,
         unseenNotifications,

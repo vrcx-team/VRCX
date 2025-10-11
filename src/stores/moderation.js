@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { avatarModerationRequest, playerModerationRequest } from '../api';
 import { watchState } from '../service/watchState';
 import { useAvatarStore } from './avatar';
@@ -9,51 +9,21 @@ export const useModerationStore = defineStore('Moderation', () => {
     const avatarStore = useAvatarStore();
     const userStore = useUserStore();
 
-    const state = reactive({
-        cachedPlayerModerations: new Map(),
-        cachedPlayerModerationsUserIds: new Set(),
-        isPlayerModerationsLoading: false,
-        playerModerationTable: {
-            data: [],
-            pageSize: 15
-        }
-    });
-
-    const cachedPlayerModerations = computed({
-        get: () => state.cachedPlayerModerations,
-        set: (value) => {
-            state.cachedPlayerModerations = value;
-        }
-    });
-
-    const cachedPlayerModerationsUserIds = computed({
-        get: () => state.cachedPlayerModerationsUserIds,
-        set: (value) => {
-            state.cachedPlayerModerationsUserIds = value;
-        }
-    });
-
-    const isPlayerModerationsLoading = computed({
-        get: () => state.isPlayerModerationsLoading,
-        set: (value) => {
-            state.isPlayerModerationsLoading = value;
-        }
-    });
-
-    const playerModerationTable = computed({
-        get: () => state.playerModerationTable,
-        set: (value) => {
-            state.playerModerationTable = value;
-        }
+    const cachedPlayerModerations = ref(new Map());
+    const cachedPlayerModerationsUserIds = ref(new Set());
+    const isPlayerModerationsLoading = ref(false);
+    const playerModerationTable = ref({
+        data: [],
+        pageSize: 15
     });
 
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            state.cachedPlayerModerations.clear();
-            state.cachedPlayerModerationsUserIds.clear();
-            state.isPlayerModerationsLoading = false;
-            state.playerModerationTable.data = [];
+            cachedPlayerModerations.value.clear();
+            cachedPlayerModerationsUserIds.value.clear();
+            isPlayerModerationsLoading.value = false;
+            playerModerationTable.value.data = [];
             if (isLoggedIn) {
                 refreshPlayerModerations();
             }
@@ -65,14 +35,14 @@ export const useModerationStore = defineStore('Moderation', () => {
         const { ref } = args;
 
         let hasModeration = false;
-        for (const ref of state.cachedPlayerModerations.values()) {
+        for (const ref of cachedPlayerModerations.value.values()) {
             if (ref.targetUserId === ref.targetUserId) {
                 hasModeration = true;
                 break;
             }
         }
         if (!hasModeration) {
-            state.cachedPlayerModerationsUserIds.delete(ref.targetUserId);
+            cachedPlayerModerationsUserIds.value.delete(ref.targetUserId);
         }
 
         const userRef = userStore.cachedUsers.get(ref.targetUserId);
@@ -80,7 +50,7 @@ export const useModerationStore = defineStore('Moderation', () => {
             userRef.$moderations = getUserModerations(ref.targetUserId);
         }
 
-        const array = state.playerModerationTable.data;
+        const array = playerModerationTable.value.data;
         const { length } = array;
         for (let i = 0; i < length; ++i) {
             if (array[i].id === ref.id) {
@@ -113,13 +83,13 @@ export const useModerationStore = defineStore('Moderation', () => {
     function handlePlayerModerationDelete(args) {
         let { type, moderated } = args.params;
         const userId = userStore.currentUser.id;
-        for (let ref of state.cachedPlayerModerations.values()) {
+        for (let ref of cachedPlayerModerations.value.values()) {
             if (
                 ref.type === type &&
                 ref.targetUserId === moderated &&
                 ref.sourceUserId === userId
             ) {
-                state.cachedPlayerModerations.delete(ref.id);
+                cachedPlayerModerations.value.delete(ref.id);
                 handlePlayerModerationAtDelete({
                     ref,
                     params: {
@@ -137,7 +107,7 @@ export const useModerationStore = defineStore('Moderation', () => {
      * @returns {object}
      */
     function applyPlayerModeration(json) {
-        let ref = state.cachedPlayerModerations.get(json.id);
+        let ref = cachedPlayerModerations.value.get(json.id);
         if (typeof ref === 'undefined') {
             ref = {
                 id: '',
@@ -152,15 +122,15 @@ export const useModerationStore = defineStore('Moderation', () => {
                 //
                 ...json
             };
-            state.cachedPlayerModerations.set(ref.id, ref);
+            cachedPlayerModerations.value.set(ref.id, ref);
         } else {
             Object.assign(ref, json);
             ref.$isExpired = false;
         }
         if (json.targetUserId) {
-            state.cachedPlayerModerationsUserIds.add(json.targetUserId);
+            cachedPlayerModerationsUserIds.value.add(json.targetUserId);
         }
-        const array = state.playerModerationTable.data;
+        const array = playerModerationTable.value.data;
         const index = array.findIndex((item) => item.id === ref.id);
         if (index !== -1) {
             array[index] = ref;
@@ -175,14 +145,14 @@ export const useModerationStore = defineStore('Moderation', () => {
     }
 
     function expirePlayerModerations() {
-        state.cachedPlayerModerationsUserIds.clear();
-        for (let ref of state.cachedPlayerModerations.values()) {
+        cachedPlayerModerationsUserIds.value.clear();
+        for (let ref of cachedPlayerModerations.value.values()) {
             ref.$isExpired = true;
         }
     }
 
     function deleteExpiredPlayerModerations() {
-        for (let ref of state.cachedPlayerModerations.values()) {
+        for (let ref of cachedPlayerModerations.value.values()) {
             if (!ref.$isExpired) {
                 continue;
             }
@@ -196,17 +166,17 @@ export const useModerationStore = defineStore('Moderation', () => {
     }
 
     async function refreshPlayerModerations() {
-        if (state.isPlayerModerationsLoading) {
+        if (isPlayerModerationsLoading.value) {
             return;
         }
-        state.isPlayerModerationsLoading = true;
+        isPlayerModerationsLoading.value = true;
         expirePlayerModerations();
         Promise.all([
             playerModerationRequest.getPlayerModerations(),
             avatarModerationRequest.getAvatarModerations()
         ])
             .finally(() => {
-                state.isPlayerModerationsLoading = false;
+                isPlayerModerationsLoading.value = false;
             })
             .then((res) => {
                 // TODO: compare with cachedAvatarModerations
@@ -247,7 +217,7 @@ export const useModerationStore = defineStore('Moderation', () => {
             isAvatarInteractionDisabled: false,
             isChatBoxMuted: false
         };
-        for (let ref of state.cachedPlayerModerations.values()) {
+        for (let ref of cachedPlayerModerations.value.values()) {
             if (ref.targetUserId !== userId) {
                 continue;
             }
@@ -270,8 +240,6 @@ export const useModerationStore = defineStore('Moderation', () => {
     }
 
     return {
-        state,
-
         cachedPlayerModerations,
         cachedPlayerModerationsUserIds,
         isPlayerModerationsLoading,

@@ -1,49 +1,32 @@
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { watchState } from '../service/watchState';
 import { useNotificationStore } from './notification';
 
 export const useUiStore = defineStore('Ui', () => {
     const notificationStore = useNotificationStore();
-    const state = reactive({
-        menuActiveIndex: 'feed',
-        notifiedMenus: [],
-        shiftHeld: false
-    });
 
     document.addEventListener('keydown', function (e) {
         if (e.shiftKey) {
-            state.shiftHeld = true;
+            shiftHeld.value = true;
         }
     });
 
     document.addEventListener('keyup', function (e) {
         if (!e.shiftKey) {
-            state.shiftHeld = false;
+            shiftHeld.value = false;
         }
     });
 
-    const shiftHeld = computed(() => state.shiftHeld);
-
-    const menuActiveIndex = computed({
-        get: () => state.menuActiveIndex,
-        set: (value) => {
-            state.menuActiveIndex = value;
-        }
-    });
-
-    const notifiedMenus = computed({
-        get: () => state.notifiedMenus,
-        set: (value) => {
-            state.notifiedMenus = value;
-        }
-    });
+    const menuActiveIndex = ref('feed');
+    const notifiedMenus = ref([]);
+    const shiftHeld = ref(false);
 
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
             if (isLoggedIn) {
-                state.menuActiveIndex = 'feed';
+                menuActiveIndex.value = 'feed';
             }
         },
         { flush: 'sync' }
@@ -51,15 +34,15 @@ export const useUiStore = defineStore('Ui', () => {
 
     function notifyMenu(index) {
         if (
-            index !== state.menuActiveIndex &&
-            !state.notifiedMenus.includes(index)
+            index !== menuActiveIndex.value &&
+            !notifiedMenus.value.includes(index)
         ) {
-            state.notifiedMenus.push(index);
+            notifiedMenus.value.push(index);
         }
     }
 
     function selectMenu(index) {
-        state.menuActiveIndex = index;
+        menuActiveIndex.value = index;
         removeNotify(index);
         if (index === 'notification') {
             notificationStore.unseenNotifications = [];
@@ -67,12 +50,10 @@ export const useUiStore = defineStore('Ui', () => {
     }
 
     function removeNotify(index) {
-        state.notifiedMenus = state.notifiedMenus.filter((i) => i !== index);
+        notifiedMenus.value = notifiedMenus.value.filter((i) => i !== index);
     }
 
     return {
-        state,
-
         menuActiveIndex,
         notifiedMenus,
         shiftHeld,

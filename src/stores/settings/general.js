@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { ref } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { ElMessageBox } from 'element-plus';
 
@@ -15,42 +15,41 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     const friendStore = useFriendStore();
 
     const { t } = useI18n();
-    const state = reactive({
-        isStartAtWindowsStartup: false,
-        isStartAsMinimizedState: false,
-        isCloseToTray: false,
-        disableGpuAcceleration: false,
-        disableVrOverlayGpuAcceleration: false,
-        localFavoriteFriendsGroups: [],
-        udonExceptionLogging: false,
-        logResourceLoad: false,
-        logEmptyAvatars: false,
-        autoStateChangeEnabled: false,
-        autoStateChangeAloneStatus: 'join me',
-        autoStateChangeCompanyStatus: 'busy',
-        autoStateChangeInstanceTypes: [],
-        autoStateChangeNoFriends: false,
-        autoAcceptInviteRequests: 'Off'
-    });
+
+    const isStartAtWindowsStartup = ref(false);
+    const isStartAsMinimizedState = ref(false);
+    const disableGpuAcceleration = ref(false);
+    const isCloseToTray = ref(false);
+    const disableVrOverlayGpuAcceleration = ref(false);
+    const localFavoriteFriendsGroups = ref([]);
+    const udonExceptionLogging = ref(false);
+    const logResourceLoad = ref(false);
+    const logEmptyAvatars = ref(false);
+    const autoStateChangeEnabled = ref(false);
+    const autoStateChangeAloneStatus = ref('join me');
+    const autoStateChangeCompanyStatus = ref('busy');
+    const autoStateChangeInstanceTypes = ref([]);
+    const autoStateChangeNoFriends = ref(false);
+    const autoAcceptInviteRequests = ref('Off');
 
     async function initGeneralSettings() {
         const [
-            isStartAtWindowsStartup,
-            isStartAsMinimizedState,
-            isCloseToTray,
-            isCloseToTrayConfigBool,
-            disableGpuAccelerationStr,
-            disableVrOverlayGpuAccelerationStr,
-            localFavoriteFriendsGroupsStr,
-            udonExceptionLogging,
-            logResourceLoad,
-            logEmptyAvatars,
-            autoStateChangeEnabled,
-            autoStateChangeAloneStatus,
-            autoStateChangeCompanyStatus,
-            autoStateChangeInstanceTypesStr,
-            autoStateChangeNoFriends,
-            autoAcceptInviteRequests
+            isStartAtWindowsStartupConfig,
+            isStartAsMinimizedStateConfig,
+            isCloseToTrayConfig,
+            isCloseToTrayConfigBoolConfig,
+            disableGpuAccelerationStrConfig,
+            disableVrOverlayGpuAccelerationStrConfig,
+            localFavoriteFriendsGroupsStrConfig,
+            udonExceptionLoggingConfig,
+            logResourceLoadConfig,
+            logEmptyAvatarsConfig,
+            autoStateChangeEnabledConfig,
+            autoStateChangeAloneStatusConfig,
+            autoStateChangeCompanyStatusConfig,
+            autoStateChangeInstanceTypesStrConfig,
+            autoStateChangeNoFriendsConfig,
+            autoAcceptInviteRequestsConfig
         ] = await Promise.all([
             configRepository.getBool('VRCX_StartAtWindowsStartup', false),
             VRCXStorage.Get('VRCX_StartAsMinimizedState'),
@@ -79,115 +78,83 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             configRepository.getString('VRCX_autoAcceptInviteRequests', 'Off')
         ]);
 
-        state.isStartAtWindowsStartup = isStartAtWindowsStartup;
-        state.isStartAsMinimizedState = isStartAsMinimizedState === 'true';
+        isStartAtWindowsStartup.value = isStartAtWindowsStartupConfig;
+        isStartAsMinimizedState.value =
+            isStartAsMinimizedStateConfig === 'true';
 
-        if (isCloseToTrayConfigBool) {
-            state.isCloseToTray = isCloseToTrayConfigBool;
+        if (isCloseToTrayConfigBoolConfig) {
+            isCloseToTray.value = isCloseToTrayConfigBoolConfig;
 
             await VRCXStorage.Set(
                 'VRCX_CloseToTray',
-                state.isCloseToTray.toString()
+                isCloseToTray.value.toString()
             );
             await configRepository.remove('VRCX_CloseToTray');
         } else {
-            state.isCloseToTray = isCloseToTray === 'true';
+            isCloseToTray.value = isCloseToTrayConfig === 'true';
         }
 
-        state.disableGpuAcceleration = disableGpuAccelerationStr === 'true';
-        state.disableVrOverlayGpuAcceleration =
-            disableVrOverlayGpuAccelerationStr === 'true';
-        state.localFavoriteFriendsGroups = JSON.parse(
-            localFavoriteFriendsGroupsStr
+        disableGpuAcceleration.value =
+            disableGpuAccelerationStrConfig === 'true';
+        disableVrOverlayGpuAcceleration.value =
+            disableVrOverlayGpuAccelerationStrConfig === 'true';
+        localFavoriteFriendsGroups.value = JSON.parse(
+            localFavoriteFriendsGroupsStrConfig
         );
-        state.udonExceptionLogging = udonExceptionLogging;
-        state.logResourceLoad = logResourceLoad;
-        state.logEmptyAvatars = logEmptyAvatars;
-        state.autoStateChangeEnabled = autoStateChangeEnabled;
-        state.autoStateChangeAloneStatus = autoStateChangeAloneStatus;
-        state.autoStateChangeCompanyStatus = autoStateChangeCompanyStatus;
-        state.autoStateChangeInstanceTypes = JSON.parse(
-            autoStateChangeInstanceTypesStr
+        udonExceptionLogging.value = udonExceptionLoggingConfig;
+        logResourceLoad.value = logResourceLoadConfig;
+        logEmptyAvatars.value = logEmptyAvatarsConfig;
+        autoStateChangeEnabled.value = autoStateChangeEnabledConfig;
+        autoStateChangeAloneStatus.value = autoStateChangeAloneStatusConfig;
+        autoStateChangeCompanyStatus.value = autoStateChangeCompanyStatusConfig;
+        autoStateChangeInstanceTypes.value = JSON.parse(
+            autoStateChangeInstanceTypesStrConfig
         );
-        state.autoStateChangeNoFriends = autoStateChangeNoFriends;
-        state.autoAcceptInviteRequests = autoAcceptInviteRequests;
+        autoStateChangeNoFriends.value = autoStateChangeNoFriendsConfig;
+        autoAcceptInviteRequests.value = autoAcceptInviteRequestsConfig;
     }
 
     initGeneralSettings();
 
-    const isStartAtWindowsStartup = computed(
-        () => state.isStartAtWindowsStartup
-    );
-    const isStartAsMinimizedState = computed(
-        () => state.isStartAsMinimizedState
-    );
-    const disableGpuAcceleration = computed(() => state.disableGpuAcceleration);
-    const isCloseToTray = computed(() => state.isCloseToTray);
-    const disableVrOverlayGpuAcceleration = computed(
-        () => state.disableVrOverlayGpuAcceleration
-    );
-    const localFavoriteFriendsGroups = computed(
-        () => state.localFavoriteFriendsGroups
-    );
-    const udonExceptionLogging = computed(() => state.udonExceptionLogging);
-    const logResourceLoad = computed(() => state.logResourceLoad);
-    const logEmptyAvatars = computed(() => state.logEmptyAvatars);
-    const autoStateChangeEnabled = computed(() => state.autoStateChangeEnabled);
-    const autoStateChangeAloneStatus = computed(
-        () => state.autoStateChangeAloneStatus
-    );
-    const autoStateChangeCompanyStatus = computed(
-        () => state.autoStateChangeCompanyStatus
-    );
-    const autoStateChangeInstanceTypes = computed(
-        () => state.autoStateChangeInstanceTypes
-    );
-    const autoStateChangeNoFriends = computed(
-        () => state.autoStateChangeNoFriends
-    );
-    const autoAcceptInviteRequests = computed(
-        () => state.autoAcceptInviteRequests
-    );
-
     function setIsStartAtWindowsStartup() {
-        state.isStartAtWindowsStartup = !state.isStartAtWindowsStartup;
+        isStartAtWindowsStartup.value = !isStartAtWindowsStartup.value;
         configRepository.setBool(
             'VRCX_StartAtWindowsStartup',
-            state.isStartAtWindowsStartup
+            isStartAtWindowsStartup.value
         );
-        AppApi.SetStartup(state.isStartAtWindowsStartup);
+        AppApi.SetStartup(isStartAtWindowsStartup.value);
     }
     function setIsStartAsMinimizedState() {
-        state.isStartAsMinimizedState = !state.isStartAsMinimizedState;
+        isStartAsMinimizedState.value = !isStartAsMinimizedState.value;
         VRCXStorage.Set(
             'VRCX_StartAsMinimizedState',
-            state.isStartAsMinimizedState.toString()
+            isStartAsMinimizedState.value.toString()
         );
     }
     function setIsCloseToTray() {
-        state.isCloseToTray = !state.isCloseToTray;
-        VRCXStorage.Set('VRCX_CloseToTray', state.isCloseToTray.toString());
+        isCloseToTray.value = !isCloseToTray.value;
+        VRCXStorage.Set('VRCX_CloseToTray', isCloseToTray.value.toString());
     }
     function setDisableGpuAcceleration() {
-        state.disableGpuAcceleration = !state.disableGpuAcceleration;
+        disableGpuAcceleration.value = !disableGpuAcceleration.value;
         VRCXStorage.Set(
             'VRCX_DisableGpuAcceleration',
-            state.disableGpuAcceleration.toString()
+            disableGpuAcceleration.value.toString()
         );
     }
     function setDisableVrOverlayGpuAcceleration() {
-        state.disableVrOverlayGpuAcceleration =
-            !state.disableVrOverlayGpuAcceleration;
+        disableVrOverlayGpuAcceleration.value =
+            !disableVrOverlayGpuAcceleration.value;
         VRCXStorage.Set(
             'VRCX_DisableVrOverlayGpuAcceleration',
-            state.disableVrOverlayGpuAcceleration.toString()
+            disableVrOverlayGpuAcceleration.value.toString()
         );
     }
     /**
      * @param {string[]} value
      */
     function setLocalFavoriteFriendsGroups(value) {
-        state.localFavoriteFriendsGroups = value;
+        localFavoriteFriendsGroups.value = value;
         configRepository.setString(
             'VRCX_localFavoriteFriendsGroups',
             JSON.stringify(value)
@@ -195,69 +162,69 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         friendStore.updateLocalFavoriteFriends();
     }
     function setUdonExceptionLogging() {
-        state.udonExceptionLogging = !state.udonExceptionLogging;
+        udonExceptionLogging.value = !udonExceptionLogging.value;
         configRepository.setBool(
             'VRCX_udonExceptionLogging',
-            state.udonExceptionLogging
+            udonExceptionLogging.value
         );
     }
     function setLogResourceLoad() {
-        state.logResourceLoad = !state.logResourceLoad;
-        configRepository.setBool('VRCX_logResourceLoad', state.logResourceLoad);
+        logResourceLoad.value = !logResourceLoad.value;
+        configRepository.setBool('VRCX_logResourceLoad', logResourceLoad.value);
     }
     function setLogEmptyAvatars() {
-        state.logEmptyAvatars = !state.logEmptyAvatars;
-        configRepository.setBool('VRCX_logEmptyAvatars', state.logEmptyAvatars);
+        logEmptyAvatars.value = !logEmptyAvatars.value;
+        configRepository.setBool('VRCX_logEmptyAvatars', logEmptyAvatars.value);
     }
     function setAutoStateChangeEnabled() {
-        state.autoStateChangeEnabled = !state.autoStateChangeEnabled;
+        autoStateChangeEnabled.value = !autoStateChangeEnabled.value;
         configRepository.setBool(
             'VRCX_autoStateChangeEnabled',
-            state.autoStateChangeEnabled
+            autoStateChangeEnabled.value
         );
     }
     /**
      * @param {string} value
      */
     function setAutoStateChangeAloneStatus(value) {
-        state.autoStateChangeAloneStatus = value;
+        autoStateChangeAloneStatus.value = value;
         configRepository.setString(
             'VRCX_autoStateChangeAloneStatus',
-            state.autoStateChangeAloneStatus
+            autoStateChangeAloneStatus.value
         );
     }
     /**
      * @param {string} value
      */
     function setAutoStateChangeCompanyStatus(value) {
-        state.autoStateChangeCompanyStatus = value;
+        autoStateChangeCompanyStatus.value = value;
         configRepository.setString(
             'VRCX_autoStateChangeCompanyStatus',
-            state.autoStateChangeCompanyStatus
+            autoStateChangeCompanyStatus.value
         );
     }
     function setAutoStateChangeInstanceTypes(value) {
-        state.autoStateChangeInstanceTypes = value;
+        autoStateChangeInstanceTypes.value = value;
         configRepository.setString(
             'VRCX_autoStateChangeInstanceTypes',
-            JSON.stringify(state.autoStateChangeInstanceTypes)
+            JSON.stringify(autoStateChangeInstanceTypes.value)
         );
     }
     function setAutoStateChangeNoFriends() {
-        state.autoStateChangeNoFriends = !state.autoStateChangeNoFriends;
+        autoStateChangeNoFriends.value = !autoStateChangeNoFriends.value;
         configRepository.setBool(
             'VRCX_autoStateChangeNoFriends',
-            state.autoStateChangeNoFriends
+            autoStateChangeNoFriends.value
         );
     }
     /**
      * @param {string} value
      */
     function setAutoAcceptInviteRequests(value) {
-        state.autoAcceptInviteRequests = value;
+        autoAcceptInviteRequests.value = value;
         configRepository.setString(
             'VRCX_autoAcceptInviteRequests',
-            state.autoAcceptInviteRequests
+            autoAcceptInviteRequests.value
         );
     }
 
@@ -303,8 +270,6 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     }
 
     return {
-        state,
-
         isStartAtWindowsStartup,
         isStartAsMinimizedState,
         isCloseToTray,

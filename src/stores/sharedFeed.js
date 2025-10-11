@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { groupRequest, worldRequest } from '../api';
 import { watchState } from '../service/watchState';
@@ -33,39 +33,33 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
     const photonStore = usePhotonStore();
 
     const state = reactive({
-        sharedFeed: {
-            gameLog: {
-                wrist: [],
-                lastEntryDate: ''
-            },
-            feedTable: {
-                wrist: [],
-                lastEntryDate: ''
-            },
-            notificationTable: {
-                wrist: [],
-                lastEntryDate: ''
-            },
-            friendLogTable: {
-                wrist: [],
-                lastEntryDate: ''
-            },
-            moderationAgainstTable: {
-                wrist: [],
-                lastEntryDate: ''
-            },
-            pendingUpdate: false
-        },
         updateSharedFeedTimer: null,
         updateSharedFeedPending: false,
         updateSharedFeedPendingForceUpdate: false
     });
 
-    const sharedFeed = computed({
-        get: () => state.sharedFeed,
-        set: (value) => {
-            state.sharedFeed = value;
-        }
+    const sharedFeed = ref({
+        gameLog: {
+            wrist: [],
+            lastEntryDate: ''
+        },
+        feedTable: {
+            wrist: [],
+            lastEntryDate: ''
+        },
+        notificationTable: {
+            wrist: [],
+            lastEntryDate: ''
+        },
+        friendLogTable: {
+            wrist: [],
+            lastEntryDate: ''
+        },
+        moderationAgainstTable: {
+            wrist: [],
+            lastEntryDate: ''
+        },
+        pendingUpdate: false
     });
 
     function updateSharedFeed(forceUpdate) {
@@ -107,7 +101,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         updateSharedFeedNotificationTable(forceUpdate);
         updateSharedFeedFriendLogTable(forceUpdate);
         updateSharedFeedModerationAgainstTable(forceUpdate);
-        const feeds = state.sharedFeed;
+        const feeds = sharedFeed.value;
         if (!feeds.pendingUpdate) {
             return;
         }
@@ -159,7 +153,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
                                     args.ref = groupStore.applyGroup(args.json);
                                     workerTimers.setTimeout(() => {
                                         // delay to allow for group cache to update
-                                        state.sharedFeed.pendingUpdate = true;
+                                        sharedFeed.value.pendingUpdate = true;
                                         updateSharedFeed(false);
                                     }, 100);
                                     return args;
@@ -170,7 +164,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
                         }
                     }
                     if (typeof worldRef !== 'undefined') {
-                        var feedEntry = {
+                        let feedEntry = {
                             created_at: ref.created_at,
                             type: 'GPS',
                             userId: ref.id,
@@ -194,7 +188,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
                             .then((args) => {
                                 workerTimers.setTimeout(() => {
                                     // delay to allow for world cache to update
-                                    state.sharedFeed.pendingUpdate = true;
+                                    sharedFeed.value.pendingUpdate = true;
                                     updateSharedFeed(false);
                                 }, 100);
                                 return args;
@@ -253,12 +247,12 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         if (i > 0) {
             if (
                 sessionTable[i - 1].created_at ===
-                    state.sharedFeed.gameLog.lastEntryDate &&
+                    sharedFeed.value.gameLog.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
             }
-            state.sharedFeed.gameLog.lastEntryDate =
+            sharedFeed.value.gameLog.lastEntryDate =
                 sessionTable[i - 1].created_at;
         } else {
             return;
@@ -302,8 +296,8 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
             if (ctx.type === 'Location') {
                 locationJoinTime = Date.parse(ctx.created_at);
                 const locationJoinTimeOffset = locationJoinTime + 20 * 1000;
-                for (var k = w - 1; k > -1; k--) {
-                    var feedItem = wristArr[k];
+                for (let k = w - 1; k > -1; k--) {
+                    let feedItem = wristArr[k];
                     if (
                         (feedItem.type === 'OnPlayerJoined' ||
                             feedItem.type === 'BlockedOnPlayerJoined' ||
@@ -360,10 +354,11 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
                         continue;
                     }
 
+                    let type = '';
                     if (ref.type === 'block') {
-                        var type = `Blocked${ctx.type}`;
+                        type = `Blocked${ctx.type}`;
                     } else if (ref.type === 'mute') {
-                        var type = `Muted${ctx.type}`;
+                        type = `Muted${ctx.type}`;
                     } else {
                         continue;
                     }
@@ -408,8 +403,8 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
                 ++w;
             }
         }
-        state.sharedFeed.gameLog.wrist = wristArr;
-        state.sharedFeed.pendingUpdate = true;
+        sharedFeed.value.gameLog.wrist = wristArr;
+        sharedFeed.value.pendingUpdate = true;
     }
 
     function updateSharedFeedFeedTable(forceUpdate) {
@@ -419,12 +414,12 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         if (i > 0) {
             if (
                 feedSession[i - 1].created_at ===
-                    state.sharedFeed.feedTable.lastEntryDate &&
+                    sharedFeed.value.feedTable.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
             }
-            state.sharedFeed.feedTable.lastEntryDate =
+            sharedFeed.value.feedTable.lastEntryDate =
                 feedSession[i - 1].created_at;
         } else {
             return;
@@ -433,7 +428,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         const wristArr = [];
         let w = 0;
         const wristFilter = notificationsSettingsStore.sharedFeedFilters.wrist;
-        for (var i = feedSession.length - 1; i > -1; i--) {
+        for (let i = feedSession.length - 1; i > -1; i--) {
             const ctx = feedSession[i];
             if (ctx.created_at < bias) {
                 break;
@@ -465,8 +460,8 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
                 ++w;
             }
         }
-        state.sharedFeed.feedTable.wrist = wristArr;
-        state.sharedFeed.pendingUpdate = true;
+        sharedFeed.value.feedTable.wrist = wristArr;
+        sharedFeed.value.pendingUpdate = true;
     }
 
     function updateSharedFeedNotificationTable(forceUpdate) {
@@ -476,12 +471,12 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         if (i > 0) {
             if (
                 notificationTable[i - 1].created_at ===
-                    state.sharedFeed.notificationTable.lastEntryDate &&
+                    sharedFeed.value.notificationTable.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
             }
-            state.sharedFeed.notificationTable.lastEntryDate =
+            sharedFeed.value.notificationTable.lastEntryDate =
                 notificationTable[i - 1].created_at;
         } else {
             return;
@@ -517,8 +512,8 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
                 ++w;
             }
         }
-        state.sharedFeed.notificationTable.wrist = wristArr;
-        state.sharedFeed.pendingUpdate = true;
+        sharedFeed.value.notificationTable.wrist = wristArr;
+        sharedFeed.value.pendingUpdate = true;
     }
 
     function updateSharedFeedFriendLogTable(forceUpdate) {
@@ -528,12 +523,12 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         if (i > 0) {
             if (
                 friendLog[i - 1].created_at ===
-                    state.sharedFeed.friendLogTable.lastEntryDate &&
+                    sharedFeed.value.friendLogTable.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
             }
-            state.sharedFeed.friendLogTable.lastEntryDate =
+            sharedFeed.value.friendLogTable.lastEntryDate =
                 friendLog[i - 1].created_at;
         } else {
             return;
@@ -542,7 +537,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         const wristArr = [];
         let w = 0;
         const wristFilter = notificationsSettingsStore.sharedFeedFilters.wrist;
-        for (var i = friendLog.length - 1; i > -1; i--) {
+        for (let i = friendLog.length - 1; i > -1; i--) {
             const ctx = friendLog[i];
             if (ctx.created_at < bias) {
                 break;
@@ -567,8 +562,8 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
                 ++w;
             }
         }
-        state.sharedFeed.friendLogTable.wrist = wristArr;
-        state.sharedFeed.pendingUpdate = true;
+        sharedFeed.value.friendLogTable.wrist = wristArr;
+        sharedFeed.value.pendingUpdate = true;
     }
 
     function updateSharedFeedModerationAgainstTable(forceUpdate) {
@@ -578,12 +573,12 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         if (i > 0) {
             if (
                 moderationAgainst[i - 1].created_at ===
-                    state.sharedFeed.moderationAgainstTable.lastEntryDate &&
+                    sharedFeed.value.moderationAgainstTable.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
             }
-            state.sharedFeed.moderationAgainstTable.lastEntryDate =
+            sharedFeed.value.moderationAgainstTable.lastEntryDate =
                 moderationAgainst[i - 1].created_at;
         } else {
             return;
@@ -592,7 +587,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         const wristArr = [];
         let w = 0;
         const wristFilter = notificationsSettingsStore.sharedFeedFilters.wrist;
-        for (var i = moderationAgainst.length - 1; i > -1; i--) {
+        for (let i = moderationAgainst.length - 1; i > -1; i--) {
             const ctx = moderationAgainst[i];
             if (ctx.created_at < bias) {
                 break;
@@ -619,8 +614,8 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
                 ++w;
             }
         }
-        state.sharedFeed.moderationAgainstTable.wrist = wristArr;
-        state.sharedFeed.pendingUpdate = true;
+        sharedFeed.value.moderationAgainstTable.wrist = wristArr;
+        sharedFeed.value.pendingUpdate = true;
     }
 
     return {

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { reactive, watch } from 'vue';
+import { watch } from 'vue';
 import { isRpcWorld } from '../shared/utils';
 import { watchState } from '../service/watchState';
 import { useFriendStore } from './friend';
@@ -26,8 +26,6 @@ export const useVrStore = defineStore('Vr', () => {
     const gameLogStore = useGameLogStore();
     const userStore = useUserStore();
     const sharedFeedStore = useSharedFeedStore();
-
-    const state = reactive({});
 
     watch(
         () => watchState.isFriendsLoaded,
@@ -178,8 +176,6 @@ export const useVrStore = defineStore('Vr', () => {
     }
 
     return {
-        state,
-
         vrInit,
         saveOpenVROption,
         updateVrNowPlaying,
