@@ -1,9 +1,13 @@
 <template>
     <!DOCTYPE html>
     <el-config-provider :locale="currentLocale">
+        <!-- macOS Custom Title Bar -->
+        <MacOSTitleBar></MacOSTitleBar>
+
         <div
             id="x-app"
             class="x-app"
+            :class="{ 'with-macos-titlebar': isMacOS }"
             ondragenter="event.preventDefault()"
             ondragover="event.preventDefault()"
             ondrop="event.preventDefault()">
@@ -106,6 +110,7 @@
 
     import Login from './views/Login/Login.vue';
     import NavMenu from './components/NavMenu.vue';
+    import MacOSTitleBar from './components/TitleBar/MacOSTitleBar.vue';
     import Sidebar from './views/Sidebar/Sidebar.vue';
     import Feed from './views/Feed/Feed.vue';
     import GameLog from './views/GameLog/GameLog.vue';
@@ -147,6 +152,11 @@
     import { initNoty } from './plugin/noty';
 
     console.log(`isLinux: ${LINUX}`);
+
+    // Simple macOS detection
+    const isMacOS = computed(() => {
+        return navigator.platform.indexOf('Mac') > -1;
+    });
 
     const { locale } = useI18n();
 
@@ -199,5 +209,10 @@
 <style lang="scss" scoped>
     :deep(.el-splitter-bar__dragger) {
         width: 4px !important;
+    }
+
+    /* Add title bar spacing for macOS */
+    .x-app.with-macos-titlebar {
+        padding-top: 28px;
     }
 </style>
