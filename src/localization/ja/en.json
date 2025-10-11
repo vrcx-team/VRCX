@@ -279,7 +279,7 @@
                 "inventory": "VRC+ インベントリの管理",
                 "inventory_description": "VRC+ ギャラリーとインベントリを管理"
             },
-            "redirect_message": "This feature is now available on this page."
+            "redirect_message": "この機能は、このページでご利用いただけます。"
         },
         "profile": {
             "profile": {
@@ -680,7 +680,7 @@
                         "clear_cache": "キャッシュを消去",
                         "auto_clear_cache": "キャッシュの自動消去",
                         "show_console": "コンソールを表示",
-                        "refresh_cache": "Refresh Cache"
+                        "refresh_cache": "キャッシュ情報の再読み込み"
                     },
                     "sqlite_table_size": {
                         "header": "SQLiteテーブル数",
@@ -1250,7 +1250,7 @@
             "legacy": "レガシー",
             "roles": "ロール",
             "open_ingame": "ゲーム内で開く",
-            "display_name": "Display Name (VRC+)"
+            "display_name": "インスタンス名 (VRC+)"
         },
         "launch_options": {
             "header": "VRChat 起動オプション",
@@ -1535,11 +1535,11 @@
             "note": "ノート",
             "crop_print_border": "プリントの外枠をトリミング",
             "consume_bundle": "バンドルを消費",
-            "item": "Item",
-            "sticker": "Sticker",
-            "drone_skin": "Drone Skin",
-            "emoji": "Emoji",
-            "redeem": "Redeem"
+            "item": "アイテム",
+            "sticker": "ステッカー",
+            "drone_skin": "ドローンスキン",
+            "emoji": "絵文字",
+            "redeem": "引き換え"
         },
         "change_content_image": {
             "avatar": "アバターの画像を変更",
