@@ -48,13 +48,13 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
 
         const [autoUpdateVRCX, vrcxId] = await Promise.all([
-            configRepository.getString('VRCX_autoUpdateVRCX', ''),
+            configRepository.getString('VRCX_autoUpdateVRCX', 'Auto Download'),
             configRepository.getString('VRCX_id', '')
         ]);
 
         if (autoUpdateVRCX === 'Auto Install') {
             state.autoUpdateVRCX = 'Auto Download';
-        } else if (autoUpdateVRCX !== '') {
+        } else {
             state.autoUpdateVRCX = autoUpdateVRCX;
         }
 
