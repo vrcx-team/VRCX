@@ -4,7 +4,7 @@ import amoled from '../../assets/scss/themes/theme.amoled.scss?url';
 // import darkvanillaold from '../../assets/scss/themes/theme.darkvanillaold.scss?url';
 // import darkvanilla from '../../assets/scss/themes/theme.darkvanilla.scss?url';
 // import pink from '../../assets/scss/themes/theme.pink.scss?url';
-// import material3 from '../../assets/scss/themes/theme.material3.scss?url';
+import material3 from '../../assets/scss/themes/theme.material3.scss?url';
 
 export const THEME_CONFIG = {
     system: {
@@ -27,7 +27,7 @@ export const THEME_CONFIG = {
         cssFile: amoled,
         isDark: true,
         name: 'Amoled'
-    }
+    },
     // darkvanillaold: {
     //     cssFile: darkvanillaold,
     //     isDark: true,
@@ -43,9 +43,9 @@ export const THEME_CONFIG = {
     //     isDark: true,
     //     name: 'Pink'
     // },
-    // material3: {
-    //     cssFile: material3,
-    //     isDark: true,
-    //     name: 'Material 3'
-    // }
+    material3: {
+        cssFile: material3,
+        isDark: true,
+        name: 'Material 3'
+    }
 };
