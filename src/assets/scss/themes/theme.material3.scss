@@ -939,7 +939,8 @@ input[type='number'],
     position: relative;
 }
 
-.el-button--small.is-circle {
+.el-button--small.is-circle,
+.el-button.is-circle {
     width: 40px !important;
 }
 
