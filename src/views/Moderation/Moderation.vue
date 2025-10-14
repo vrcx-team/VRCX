@@ -114,8 +114,7 @@
     const filters = ref([
         {
             prop: 'type',
-            value: [],
-            filterFn: (row, filter) => filter.value.some((v) => v === row.type)
+            value: []
         },
         {
             prop: ['sourceDisplayName', 'targetDisplayName'],

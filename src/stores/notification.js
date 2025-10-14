@@ -59,9 +59,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         filters: [
             {
                 prop: 'type',
-                value: [],
-                filterFn: (row, filter) =>
-                    filter.value.some((v) => v === row.type)
+                value: []
             },
             {
                 prop: ['senderUsername', 'message'],
