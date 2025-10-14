@@ -1,4 +1,4 @@
-import { reactive, ref, watch } from 'vue';
+import { reactive, watch, ref, computed } from 'vue';
 import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
 import { useI18n } from 'vue-i18n';
@@ -81,23 +81,28 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     const instanceJoinHistory = ref(new Map());
 
-    const currentInstanceUserList = ref({
-        data: [],
-        tableProps: {
-            stripe: true,
-            size: 'small',
-            defaultSort: {
-                prop: 'timer',
-                order: 'descending'
-            }
-        },
-        layout: 'table'
+    const currentInstanceUsersData = ref([]);
+    const currentInstanceUsersTable = computed(() => {
+        return reactive({
+            data: currentInstanceWorld.value.ref.id
+                ? currentInstanceUsersData.value
+                : [],
+            tableProps: {
+                stripe: true,
+                size: 'small',
+                defaultSort: {
+                    prop: 'timer',
+                    order: 'descending'
+                }
+            },
+            layout: 'table'
+        });
     });
 
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            currentInstanceUserList.value.data = [];
+            currentInstanceUsersTable.value.data = [];
             instanceJoinHistory.value = new Map();
             previousInstancesInfoDialogVisible.value = false;
             cachedInstances.clear();
@@ -1188,7 +1193,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 }
             }
         }
-        currentInstanceUserList.value.data = users;
+        currentInstanceUsersTable.value.data = users;
     }
 
     // $app.methods.instanceQueueClear = function () {
@@ -1210,7 +1215,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         previousInstancesInfoDialogVisible,
         previousInstancesInfoDialogInstanceId,
         instanceJoinHistory,
-        currentInstanceUserList,
+        currentInstanceUsersTable,
 
         applyInstance,
         updateCurrentInstanceWorld,
