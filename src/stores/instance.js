@@ -9,6 +9,7 @@ import { instanceContentSettings } from '../shared/constants';
 import {
     checkVRChatCache,
     compareByDisplayName,
+    compareById,
     compareByLocationAt,
     displayLocation,
     getAvailablePlatforms,
@@ -727,17 +728,21 @@ export const useInstanceStore = defineStore('Instance', () => {
                 return -1;
             }
             // sort by number of users when no friends in instance
-            if (a.users.length === 0 && b.users.length === 0) {
+            if (a.users.length === 0 && b.users.length === 0 && a.ref?.userCount !== b.ref?.userCount) {
                 if (a.ref?.userCount < b.ref?.userCount) {
                     return 1;
                 }
                 return -1;
             }
             // sort by number of friends in instance
-            if (a.users.length < b.users.length) {
-                return 1;
+            if (a.users.length !== b.users.length) {
+                if (a.users.length < b.users.length) {
+                    return 1;
+                }
+                return -1;
             }
-            return -1;
+            // sort by id
+            return compareById(a, b)
         });
         D.rooms = rooms;
     }

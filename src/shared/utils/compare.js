@@ -90,6 +90,22 @@ function compareByDisplayName(a, b) {
 }
 
 /**
+ * ascending
+ * @param {object} a
+ * @param {object} b
+ * @returns
+ */
+function compareById(a, b) {
+    if (
+        typeof a.id !== 'string' ||
+        typeof b.id !== 'string'
+    ) {
+        return 0;
+    }
+    return a.id.localeCompare(b.id);
+}
+
+/**
  *
  * @param {object} a
  * @param {object} b
@@ -252,6 +268,7 @@ export {
     compareByCreatedAtAscending,
     compareByUpdatedAt,
     compareByDisplayName,
+    compareById,
     compareByMemberCount,
     compareByPrivate,
     compareByStatus,
