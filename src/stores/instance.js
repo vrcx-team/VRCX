@@ -1017,15 +1017,6 @@ export const useInstanceStore = defineStore('Instance', () => {
         ref.position = position;
         ref.queueSize = queueSize;
         ref.updatedAt = Date.now();
-        if (!ref.$msgBox || ref.$msgBox.closed) {
-            ref.$msgBox = ElMessage({
-                message: '',
-                type: 'info',
-                duration: 0,
-                showClose: true,
-                customClass: 'vrc-instance-queue-message'
-            });
-        }
         if (!ref.$groupName) {
             ref.$groupName = await getGroupName(instanceId);
         }
@@ -1037,7 +1028,14 @@ export const useInstanceStore = defineStore('Instance', () => {
             ref.$worldName,
             ref.$groupName
         );
-        ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${location} `;
+        ref.$msgBox?.close();
+        ref.$msgBox = ElMessage({
+            message: `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${location} `,
+            type: 'info',
+            duration: 0,
+            showClose: true,
+            customClass: 'vrc-instance-queue-message'
+        });
         queuedInstances.value.set(instanceId, ref);
         // workerTimers.setTimeout(this.instanceQueueTimeout, 3600000);
     }
