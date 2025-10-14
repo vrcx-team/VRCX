@@ -98,9 +98,7 @@ export const usePhotonStore = defineStore('Photon', () => {
             },
             {
                 prop: 'type',
-                value: [],
-                filterFn: (row, filter) =>
-                    filter.value.some((v) => v === row.type)
+                value: []
             }
         ],
         tableProps: {
@@ -123,9 +121,7 @@ export const usePhotonStore = defineStore('Photon', () => {
             },
             {
                 prop: 'type',
-                value: [],
-                filterFn: (row, filter) =>
-                    filter.value.some((v) => v === row.type)
+                value: []
             }
         ],
         tableProps: {

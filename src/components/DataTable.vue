@@ -109,9 +109,8 @@
                 if (cellValue === undefined || cellValue === null) return false;
 
                 if (Array.isArray(filter.value)) {
-                    return filter.value.some((val) =>
-                        String(cellValue).toLowerCase().includes(String(val).toLowerCase())
-                    );
+                    // assume filter dropdown multi select
+                    return filter.value.some((val) => String(cellValue).toLowerCase() === String(val).toLowerCase());
                 } else {
                     return String(cellValue).toLowerCase().includes(String(filter.value).toLowerCase());
                 }
@@ -122,7 +121,12 @@
 
                 if (filters.value && Array.isArray(filters.value) && filters.value.length > 0) {
                     filters.value.forEach((filter) => {
-                        if (filter.value && (!Array.isArray(filter.value) || filter.value.length > 0)) {
+                        if (!filter.value) {
+                            return;
+                        }
+                        if (filter.filterFn) {
+                            result = result.filter((row) => filter.filterFn(row, filter));
+                        } else if (!Array.isArray(filter.value) || filter.value.length > 0) {
                             result = result.filter((row) => applyFilter(row, filter));
                         }
                     });

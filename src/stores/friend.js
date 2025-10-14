@@ -65,9 +65,7 @@ export const useFriendStore = defineStore('Friend', () => {
         filters: [
             {
                 prop: 'type',
-                value: [],
-                filterFn: (row, filter) =>
-                    filter.value.some((v) => v === row.type)
+                value: []
             },
             {
                 prop: 'displayName',
