@@ -189,7 +189,7 @@
 
             <div class="current-instance-table">
                 <DataTable
-                    v-bind="currentInstanceWorld.ref.id ? currentInstanceUserList : {}"
+                    v-bind="currentInstanceUsersTable"
                     style="margin-top: 10px; cursor: pointer"
                     @row-click="selectCurrentInstanceRow">
                     <el-table-column :label="t('table.playerList.avatar')" width="70" prop="photo">
@@ -439,7 +439,7 @@
     const { showWorldDialog } = useWorldStore();
     const { lastLocation } = storeToRefs(useLocationStore());
     const { currentInstanceLocation, currentInstanceWorld } = storeToRefs(useInstanceStore());
-    const { currentInstanceUserList, getCurrentInstanceUserList } = useInstanceStore();
+    const { currentInstanceUsersTable, getCurrentInstanceUserList } = useInstanceStore();
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { showFullscreenImageDialog } = useGalleryStore();
     const { currentUser } = storeToRefs(useUserStore());
