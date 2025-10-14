@@ -89,23 +89,23 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="139.0.280" />
-    <PackageReference Include="CefSharp.WinForms.NETCore" Version="139.0.280" />
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="140.1.140" />
+    <PackageReference Include="CefSharp.WinForms.NETCore" Version="140.1.140" />
     <PackageReference Include="DiscordRichPresence" Version="1.6.1.70" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NLog" Version="6.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="NLog" Version="6.0.5" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
     <PackageReference Include="SourceGear.sqlite3" Version="3.50.4.2" />
-    <PackageReference Include="System.Data.SQLite" Version="2.0.1" />
-	<PackageReference Include="System.Drawing.Common" Version="9.0.8" />
-	<PackageReference Include="System.Management" Version="9.0.8" />
-    <PackageReference Include="System.Text.Json" Version="9.0.8" />
+    <PackageReference Include="System.Data.SQLite" Version="2.0.2" />
+	<PackageReference Include="System.Drawing.Common" Version="9.0.9" />
+	<PackageReference Include="System.Management" Version="9.0.9" />
+    <PackageReference Include="System.Text.Json" Version="9.0.9" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageReference Include="Websocket.Client" Version="5.2.0" />
+    <PackageReference Include="Websocket.Client" Version="5.3.0" />
   </ItemGroup>
 
   <Target Name="CefSharpAfterBuildDebug" AfterTargets="AfterBuild">
