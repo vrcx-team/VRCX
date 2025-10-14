@@ -250,7 +250,6 @@ div[style*='margin: 0px 0px 10px;'] {
 .el-input-number--small,
 .el-input--small,
 .el-input__inner {
-    height: 45px !important;
     line-height: 45px !important;
 }
 
@@ -345,22 +344,30 @@ input[type='number'],
 .el-pagination button.btn-prev {
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
     padding-left: 12px;
     padding-right: 8px;
 }
 .el-pagination button.btn-prev::after {
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
 }
 .el-pagination button.btn-next {
     border-top-right-radius: 16px;
     border-bottom-right-radius: 16px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
     padding-left: 8px;
     padding-right: 8px;
 }
 .el-pagination button.btn-next::after {
     border-top-right-radius: 16px;
     border-bottom-right-radius: 16px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
 }
 .el-pager li,
 .el-pager li.btn-quicknext,
@@ -368,6 +375,7 @@ input[type='number'],
     position: relative;
     padding: 0 8px;
     font-weight: 500;
+    border-radius: 0px;
     background-color: rgb(var(--md-sys-color-secondary-container));
     color: rgb(var(--md-sys-color-on-surface-variant));
 }
@@ -654,7 +662,8 @@ input[type='number'],
     display: none;
 }
 .el-table__expand-icon {
-    margin: 0 4px;
+    display: flex;
+    height: 100%;
 }
 .el-table__expand-icon--expanded,
 .x-friend-group > .el-icon-arrow-right.rotate {
@@ -815,6 +824,13 @@ input[type='number'],
     transition: left 200ms cubic-bezier(0, 0.5, 0.5, 1.5);
 }
 
+// Fix the white toggle
+.el-switch__action {
+  background: transparent !important;
+  box-shadow: none !important;
+  display: none !important;
+}
+
 /* ---------- Segmented buttons ---------- */
 
 .el-radio-button__inner,
@@ -910,11 +926,24 @@ input[type='number'],
     background: rgb(93, 86, 107);
 }
 
+// Override all element-plus theme coloring
+.el-radio-button__inner {
+  --el-radio-button-checked-bg-color: rgb(var(--md-sys-color-secondary-container));
+  --el-radio-button-checked-text-color: rgb(var(--md-sys-color-on-secondary-container));
+  --el-radio-button-checked-border-color: rgb(var(--md-sys-color-outline));
+}
+
 /* ---------- Filled button ---------- */
 
 .el-button {
     position: relative;
 }
+
+.el-button--small.is-circle,
+.el-button.is-circle {
+    width: 40px !important;
+}
+
 .el-button::after {
     position: absolute;
     content: '';
@@ -1332,6 +1361,7 @@ img.x-link.el-popover__reference {
     font-size: 20px;
     line-height: 20px;
     vertical-align: bottom;
+    background-color: transparent !important;
     color: rgb(var(--md-sys-color-on-surface-variant));
     transition: color 0.1s ease-in-out;
     font-variation-settings: 'FILL' 0;
@@ -1420,7 +1450,7 @@ img.x-link.el-popover__reference {
     border-radius: 28px;
     padding: 24px;
     background: var(--md-sys-color-surface-3);
-    margin: auto !important;
+    margin-top: 3%;
 }
 .el-dialog__body {
     padding: 0 !important;
@@ -1563,6 +1593,13 @@ img.x-link.el-popover__reference {
 .color-picker {
     line-height: 32px;
     margin-right: 16px !important;
+    margin-left: 10px !important;
+}
+.el-color-picker {
+    padding: 5px;
+}
+.el-color-picker__trigger {
+    border: none;
 }
 .el-color-picker--small .el-color-picker__trigger {
     height: 32px;
@@ -1573,7 +1610,6 @@ img.x-link.el-popover__reference {
     border-radius: 4px;
 }
 .el-color-picker__color-inner {
-    margin: 2px;
     border-radius: 4px;
 }
 .el-color-picker__panel {
@@ -1588,6 +1624,11 @@ img.x-link.el-popover__reference {
 
 /* ---------- Menu ---------- */
 
+.el-popper.is-light {
+    border: 8px !important;
+    background: none !important;
+    border-radius: 8px !important;
+}
 .el-popper[x-placement^='top'],
 .el-popper[x-placement^='bottom'] {
     margin: 0;
@@ -1598,9 +1639,6 @@ img.x-link.el-popover__reference {
     border: none;
     border-radius: 8px;
     background: var(--md-sys-color-surface-2);
-    box-shadow:
-        0 3px 6px rgba(0, 0, 0, 0.16),
-        0 3px 6px rgba(0, 0, 0, 0.23);
     overflow: auto;
     max-height: 90%;
 }
@@ -2214,6 +2252,25 @@ div.x-friend-list
 
 .el-input__wrapper.is-focus {
     border-color: rgb(var(--md-sys-color-primary)) !important;
+}
+
+// Fix the height difference of search bar
+.el-select__wrapper,
+.el-input__wrapper {
+    height: 32px !important;
+    box-sizing: border-box !important;
+    padding: 0 8px !important;
+}
+.el-select__wrapper .el-input__inner,
+.el-input__wrapper .el-input__inner {
+    height: 100% !important;
+    line-height: 32px !important;
+}
+
+.el-input__inner {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .el-table {
