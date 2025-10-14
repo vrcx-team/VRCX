@@ -183,10 +183,8 @@
     const { t } = useI18n();
 
     watch(
-        () => {
-            return inviteGroupDialog.value.visible;
-        },
-        (value) => async () => {
+        () => inviteGroupDialog.value.visible,
+        async (value) => {
             if (value) {
                 inviteGroupDialog.value.groupId = await configRepository.getString('inviteGroupLastGroup', '');
                 initDialog();

@@ -1677,7 +1677,6 @@
             @closeInviteDialog="closeInviteDialog" />
         <PreviousInstancesUserDialog v-model:previous-instances-user-dialog="previousInstancesUserDialog" />
         <template v-if="userDialog.visible">
-            <InviteGroupDialog />
             <SocialStatusDialog
                 :social-status-dialog="socialStatusDialog"
                 :social-status-history-table="socialStatusHistoryTable" />
@@ -1790,7 +1789,6 @@
     import { database } from '../../../service/database';
     import { userDialogGroupSortingOptions } from '../../../shared/constants';
 
-    import InviteGroupDialog from '../InviteGroupDialog.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
 
     const BioDialog = defineAsyncComponent(() => import('./BioDialog.vue'));

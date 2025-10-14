@@ -1113,7 +1113,6 @@
             </el-tabs>
         </div>
         <GroupPostEditDialog :dialog-data="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
-        <InviteGroupDialog />
         <PreviousInstancesGroupDialog
             :previous-instances-group-dialog="previousInstancesGroupDialog"
             :current-user="currentUser" />
@@ -1172,7 +1171,6 @@
     import { groupRequest } from '../../../api';
 
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
-    import InviteGroupDialog from '../InviteGroupDialog.vue';
     import PreviousInstancesGroupDialog from '../PreviousInstancesDialog/PreviousInstancesGroupDialog.vue';
 
     import * as workerTimers from 'worker-timers';

@@ -1,7 +1,6 @@
 <template>
     <!DOCTYPE html>
     <el-config-provider :locale="currentLocale">
-        <!-- macOS Custom Title Bar -->
         <MacOSTitleBar></MacOSTitleBar>
 
         <div
@@ -63,6 +62,8 @@
                 <GroupDialog></GroupDialog>
 
                 <GroupMemberModerationDialog></GroupMemberModerationDialog>
+
+                <InviteGroupDialog></InviteGroupDialog>
 
                 <FullscreenImagePreview></FullscreenImagePreview>
 
@@ -144,6 +145,7 @@
     import Sidebar from './views/Sidebar/Sidebar.vue';
     import Tools from './views/Tools/Tools.vue';
     import UserDialog from './components/dialogs/UserDialog/UserDialog.vue';
+    import InviteGroupDialog from './components/dialogs/InviteGroupDialog.vue';
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
     import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
     import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';
@@ -153,7 +155,6 @@
 
     console.log(`isLinux: ${LINUX}`);
 
-    // Simple macOS detection
     const isMacOS = computed(() => {
         return navigator.platform.indexOf('Mac') > -1;
     });
