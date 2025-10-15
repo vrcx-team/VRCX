@@ -1,4 +1,4 @@
-import { reactive, watch, ref, computed } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
 import { useI18n } from 'vue-i18n';
@@ -83,7 +83,7 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     const currentInstanceUsersData = ref([]);
     const currentInstanceUsersTable = computed(() => {
-        return reactive({
+        return {
             data: currentInstanceWorld.value.ref.id
                 ? currentInstanceUsersData.value
                 : [],
@@ -96,13 +96,13 @@ export const useInstanceStore = defineStore('Instance', () => {
                 }
             },
             layout: 'table'
-        });
+        };
     });
 
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            currentInstanceUsersTable.value.data = [];
+            currentInstanceUsersData.value = [];
             instanceJoinHistory.value = new Map();
             previousInstancesInfoDialogVisible.value = false;
             cachedInstances.clear();
@@ -1191,7 +1191,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 }
             }
         }
-        currentInstanceUsersTable.value.data = users;
+        currentInstanceUsersData.value = users;
     }
 
     // $app.methods.instanceQueueClear = function () {
