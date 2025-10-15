@@ -400,6 +400,7 @@
         useInviteStore,
         useLocationStore,
         useNotificationStore,
+        useUiStore,
         useUserStore,
         useWorldStore
     } from '../../stores';
@@ -429,6 +430,7 @@
     const { isGameRunning } = storeToRefs(useGameStore());
     const { showFullscreenImageDialog } = useGalleryStore();
     const { currentUser } = storeToRefs(useUserStore());
+    const { shiftHeld } = storeToRefs(useUiStore());
 
     const { t } = useI18n();
 
