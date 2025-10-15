@@ -22,11 +22,13 @@
 
 <script setup>
     import { Loading, Lock, WarnTriangleFilled } from '@element-plus/icons-vue';
-    import { ref, watchEffect, watch } from 'vue';
+    import { ref, watch, watchEffect } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
-    import { useGroupStore, useInstanceStore, useSearchStore, useWorldStore } from '../stores';
     import { useI18n } from 'vue-i18n';
+
+    import { useGroupStore, useInstanceStore, useSearchStore, useWorldStore } from '../stores';
+    import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
+
     const { t } = useI18n();
 
     const { cachedWorlds, showWorldDialog } = useWorldStore();

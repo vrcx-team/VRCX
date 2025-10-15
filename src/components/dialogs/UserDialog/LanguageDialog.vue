@@ -45,9 +45,10 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { userRequest } from '../../../api';
+
     import { languageClass } from '../../../shared/utils';
     import { useUserStore } from '../../../stores';
+    import { userRequest } from '../../../api';
 
     const { t } = useI18n();
 

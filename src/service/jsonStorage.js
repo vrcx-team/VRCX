@@ -1,5 +1,5 @@
 import * as workerTimers from 'worker-timers';
-/* eslint-disable no-unused-vars */
+
 let VRCXStorage = {};
 
 export default class {

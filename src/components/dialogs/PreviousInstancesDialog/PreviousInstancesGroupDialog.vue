@@ -62,21 +62,21 @@
 </template>
 
 <script setup>
-    import { DataLine, Close } from '@element-plus/icons-vue';
-
+    import { computed, nextTick, reactive, ref, watch } from 'vue';
+    import { Close, DataLine } from '@element-plus/icons-vue';
     import { ElMessageBox } from 'element-plus';
-    import { ref, reactive, computed, watch, nextTick } from 'vue';
-    import {
-        parseLocation,
-        compareByCreatedAt,
-        timeToText,
-        removeFromArray,
-        formatDateFilter
-    } from '../../../shared/utils';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
-    import { database } from '../../../service/database';
     import { useI18n } from 'vue-i18n';
+
+    import {
+        compareByCreatedAt,
+        formatDateFilter,
+        parseLocation,
+        removeFromArray,
+        timeToText
+    } from '../../../shared/utils';
     import { useInstanceStore, useUiStore } from '../../../stores';
+    import { database } from '../../../service/database';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
 
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { shiftHeld } = useUiStore();

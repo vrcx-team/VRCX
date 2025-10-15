@@ -27,12 +27,11 @@
 </template>
 
 <script setup>
+    import { computed, ref, watch } from 'vue';
     import { Delete } from '@element-plus/icons-vue';
-
     import { ElMessage } from 'element-plus';
-
-    import { ref, computed, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
+
     import { worldRequest } from '../../../api';
 
     const props = defineProps({

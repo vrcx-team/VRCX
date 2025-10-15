@@ -96,10 +96,7 @@ function compareByDisplayName(a, b) {
  * @returns
  */
 function compareById(a, b) {
-    if (
-        typeof a.id !== 'string' ||
-        typeof b.id !== 'string'
-    ) {
+    if (typeof a.id !== 'string' || typeof b.id !== 'string') {
         return 0;
     }
     return a.id.localeCompare(b.id);

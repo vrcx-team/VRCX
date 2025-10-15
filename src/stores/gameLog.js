@@ -1,14 +1,9 @@
-import dayjs from 'dayjs';
+import { reactive, ref, watch } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
-import { reactive, watch, ref } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import * as workerTimers from 'worker-timers';
-import { userRequest } from '../api';
-import configRepository from '../service/config';
-import { database } from '../service/database';
-import { AppDebug } from '../service/appConfig';
-import gameLogService from '../service/gamelog.js';
-import { watchState } from '../service/watchState';
+
+import dayjs from 'dayjs';
+
 import {
     convertYoutubeTime,
     formatSeconds,
@@ -17,21 +12,30 @@ import {
     parseLocation,
     replaceBioSymbols
 } from '../shared/utils';
+import { AppDebug } from '../service/appConfig';
+import { database } from '../service/database';
+import { useAdvancedSettingsStore } from './settings/advanced';
+import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFriendStore } from './friend';
 import { useGalleryStore } from './gallery';
 import { useGameStore } from './game';
+import { useGeneralSettingsStore } from './settings/general';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
 import { useNotificationStore } from './notification';
 import { usePhotonStore } from './photon';
-import { useAdvancedSettingsStore } from './settings/advanced';
-import { useAppearanceSettingsStore } from './settings/appearance';
-import { useGeneralSettingsStore } from './settings/general';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { useVrStore } from './vr';
 import { useVrcxStore } from './vrcx';
+import { userRequest } from '../api';
+import { watchState } from '../service/watchState';
+
+import configRepository from '../service/config';
+import gameLogService from '../service/gamelog.js';
+
+import * as workerTimers from 'worker-timers';
 
 export const useGameLogStore = defineStore('GameLog', () => {
     const notificationStore = useNotificationStore();

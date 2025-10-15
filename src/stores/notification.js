@@ -1,16 +1,8 @@
-import Noty from 'noty';
-import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
-import {
-    instanceRequest,
-    notificationRequest,
-    userRequest,
-    worldRequest
-} from '../api';
-import configRepository from '../service/config';
-import { database } from '../service/database';
-import { AppDebug } from '../service/appConfig';
-import { watchState } from '../service/watchState';
+import { defineStore } from 'pinia';
+
+import Noty from 'noty';
+
 import {
     checkCanInvite,
     displayLocation,
@@ -21,19 +13,30 @@ import {
     removeFromArray,
     replaceBioSymbols
 } from '../shared/utils';
+import {
+    instanceRequest,
+    notificationRequest,
+    userRequest,
+    worldRequest
+} from '../api';
+import { AppDebug } from '../service/appConfig';
+import { database } from '../service/database';
+import { useAdvancedSettingsStore } from './settings/advanced';
+import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
 import { useGameStore } from './game';
-import { useLocationStore } from './location';
-import { useAdvancedSettingsStore } from './settings/advanced';
-import { useAppearanceSettingsStore } from './settings/appearance';
 import { useGeneralSettingsStore } from './settings/general';
+import { useInstanceStore } from './instance';
+import { useLocationStore } from './location';
 import { useNotificationsSettingsStore } from './settings/notifications';
-import { useWristOverlaySettingsStore } from './settings/wristOverlay';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
 import { useUserStore } from './user';
-import { useInstanceStore } from './instance';
+import { useWristOverlaySettingsStore } from './settings/wristOverlay';
+import { watchState } from '../service/watchState';
+
+import configRepository from '../service/config';
 
 export const useNotificationStore = defineStore('Notification', () => {
     const generalSettingsStore = useGeneralSettingsStore();

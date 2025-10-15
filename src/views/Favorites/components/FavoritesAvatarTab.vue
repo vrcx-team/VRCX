@@ -218,14 +218,15 @@
 </template>
 
 <script setup>
-    import { Loading, Edit, Delete } from '@element-plus/icons-vue';
-
+    import { Delete, Edit, Loading } from '@element-plus/icons-vue';
+    import { computed, ref } from 'vue';
     import { ElMessageBox } from 'element-plus';
-    import { ref, computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest } from '../../../api';
+
     import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useUserStore } from '../../../stores';
+    import { favoriteRequest } from '../../../api';
+
     import AvatarExportDialog from '../dialogs/AvatarExportDialog.vue';
     import FavoritesAvatarItem from './FavoritesAvatarItem.vue';
     import FavoritesAvatarLocalHistoryItem from './FavoritesAvatarLocalHistoryItem.vue';

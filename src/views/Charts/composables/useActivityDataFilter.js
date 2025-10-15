@@ -1,6 +1,11 @@
 import { computed } from 'vue';
 
-export function useActivityDataFilter(activityDetailData, isDetailVisible, isSoloInstanceVisible, isNoFriendInstanceVisible) {
+export function useActivityDataFilter(
+    activityDetailData,
+    isDetailVisible,
+    isSoloInstanceVisible,
+    isNoFriendInstanceVisible
+) {
     const filteredActivityDetailData = computed(() => {
         if (!isDetailVisible.value) {
             return [];

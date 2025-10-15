@@ -14,6 +14,7 @@
     import { defineAsyncComponent } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { useUiStore } from '../../stores';
 
     const InstanceActivity = defineAsyncComponent(() => import('./components/InstanceActivity.vue'));

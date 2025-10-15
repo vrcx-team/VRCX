@@ -1,7 +1,8 @@
-import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
-import { watchState } from '../service/watchState';
+import { defineStore } from 'pinia';
+
 import { useNotificationStore } from './notification';
+import { watchState } from '../service/watchState';
 
 export const useUiStore = defineStore('Ui', () => {
     const notificationStore = useNotificationStore();

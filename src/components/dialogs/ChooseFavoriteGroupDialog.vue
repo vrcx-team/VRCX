@@ -62,15 +62,16 @@
 </template>
 
 <script setup>
+    import { computed, nextTick, ref, watch } from 'vue';
     import { Check } from '@element-plus/icons-vue';
+    import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
 
     import Noty from 'noty';
-    import { storeToRefs } from 'pinia';
-    import { computed, nextTick, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n';
+
+    import { useFavoriteStore, useUserStore } from '../../stores';
     import { favoriteRequest } from '../../api';
     import { getNextDialogIndex } from '../../shared/utils/base/ui';
-    import { useFavoriteStore, useUserStore } from '../../stores';
 
     const { t } = useI18n();
 

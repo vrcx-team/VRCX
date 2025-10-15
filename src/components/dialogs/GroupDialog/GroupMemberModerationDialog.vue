@@ -861,18 +861,20 @@
 </template>
 
 <script setup>
-    import { Refresh, Delete, ArrowDown, Warning, Loading } from '@element-plus/icons-vue';
-    import { ElMessage } from 'element-plus';
-
-    import { storeToRefs } from 'pinia';
+    import { ArrowDown, Delete, Loading, Refresh, Warning } from '@element-plus/icons-vue';
     import { reactive, ref, watch } from 'vue';
+    import { ElMessage } from 'element-plus';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import * as workerTimers from 'worker-timers';
-    import { groupRequest, userRequest } from '../../../api';
-    import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
-    import { hasGroupPermission, userImage, userImageFull, formatDateFilter, debounce } from '../../../shared/utils';
+
+    import { debounce, formatDateFilter, hasGroupPermission, userImage, userImageFull } from '../../../shared/utils';
     import { useAppearanceSettingsStore, useGalleryStore, useGroupStore, useUserStore } from '../../../stores';
+    import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
+    import { groupRequest, userRequest } from '../../../api';
+
     import GroupMemberModerationExportDialog from './GroupMemberModerationExportDialog.vue';
+
+    import * as workerTimers from 'worker-timers';
 
     const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();

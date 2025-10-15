@@ -1,11 +1,8 @@
-import { defineStore } from 'pinia';
-import { reactive, watch, ref } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
-import { instanceRequest, userRequest, worldRequest } from '../api';
-import configRepository from '../service/config';
-import { database } from '../service/database';
-import { watchState } from '../service/watchState';
-import { instanceContentSettings } from '../shared/constants';
+import { defineStore } from 'pinia';
+import { useI18n } from 'vue-i18n';
+
 import {
     checkVRChatCache,
     compareByDisplayName,
@@ -21,17 +18,22 @@ import {
     parseLocation,
     replaceBioSymbols
 } from '../shared/utils';
+import { instanceRequest, userRequest, worldRequest } from '../api';
+import { database } from '../service/database';
+import { instanceContentSettings } from '../shared/constants';
+import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFriendStore } from './friend';
 import { useGroupStore } from './group';
 import { useLocationStore } from './location';
 import { useNotificationStore } from './notification';
 import { usePhotonStore } from './photon';
-import { useAppearanceSettingsStore } from './settings/appearance';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
-import { useI18n } from 'vue-i18n';
+import { watchState } from '../service/watchState';
+
+import configRepository from '../service/config';
 
 export const useInstanceStore = defineStore('Instance', () => {
     const locationStore = useLocationStore();
@@ -686,7 +688,11 @@ export const useInstanceStore = defineStore('Instance', () => {
                 return -1;
             }
             // sort by number of users when no friends in instance
-            if (a.users.length === 0 && b.users.length === 0 && a.ref?.userCount !== b.ref?.userCount) {
+            if (
+                a.users.length === 0 &&
+                b.users.length === 0 &&
+                a.ref?.userCount !== b.ref?.userCount
+            ) {
                 if (a.ref?.userCount < b.ref?.userCount) {
                     return 1;
                 }
@@ -700,7 +706,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 return -1;
             }
             // sort by id
-            return compareById(a, b)
+            return compareById(a, b);
         });
         D.rooms = rooms;
     }

@@ -485,26 +485,24 @@
 </template>
 
 <script setup>
+    import { ChatDotRound, Delete, Edit, Picture, Printer, Refresh, SwitchButton, User } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
-
-    import { SwitchButton, Picture, User, Refresh, Delete, Edit, ChatDotRound, Printer } from '@element-plus/icons-vue';
-
-    import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { authRequest, miscRequest, userRequest } from '../../api';
+
     import {
-        parseAvatarUrl,
         buildTreeData,
+        formatDateFilter,
         openExternalLink,
-        userImage,
+        parseAvatarUrl,
         parseUserUrl,
-        formatDateFilter
+        userImage
     } from '../../shared/utils';
+    import { useAvatarStore, useInviteStore, useSearchStore, useUiStore, useUserStore } from '../../stores';
+    import { authRequest, miscRequest, userRequest } from '../../api';
     import { redirectToToolsTab } from '../../shared/utils/base/ui';
     import { useAuthStore } from '../../stores';
-
-    import { useSearchStore, useUserStore, useAvatarStore, useInviteStore, useUiStore } from '../../stores';
 
     const { pastDisplayNameTable, currentUser } = storeToRefs(useUserStore());
     const { showUserDialog, lookupUser, getCurrentUser } = useUserStore();

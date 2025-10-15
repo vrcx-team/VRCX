@@ -1395,68 +1395,67 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
-
     import {
-        InfoFilled,
+        ArrowDown,
         ArrowRight,
-        Upload,
-        Folder,
-        User,
-        Tickets,
-        Refresh,
-        Operation,
-        Goods,
-        Document,
-        Connection,
-        ChatSquare,
         CaretRight,
+        ChatSquare,
+        Connection,
         DeleteFilled,
-        Timer,
-        Notebook,
+        Document,
         DocumentCopy,
-        Rank,
-        VideoPlay,
+        Folder,
+        Goods,
+        InfoFilled,
+        Notebook,
+        Operation,
         Paperclip,
-        ArrowDown
+        Rank,
+        Refresh,
+        Tickets,
+        Timer,
+        Upload,
+        User,
+        VideoPlay
     } from '@element-plus/icons-vue';
-
+    import { computed, defineAsyncComponent, reactive, ref } from 'vue';
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { ref, computed, defineAsyncComponent, reactive } from 'vue';
     import { useI18n } from 'vue-i18n';
+
     import {
-        useFavoriteStore,
-        useAppearanceSettingsStore,
-        useGeneralSettingsStore,
-        useVRCXUpdaterStore,
-        useNotificationsSettingsStore,
         useAdvancedSettingsStore,
-        useFriendStore,
+        useAppearanceSettingsStore,
+        useAuthStore,
         useAvatarProviderStore,
-        useWorldStore,
+        useAvatarStore,
+        useFavoriteStore,
+        useFriendStore,
+        useGameLogStore,
+        useGeneralSettingsStore,
+        useGroupStore,
+        useInstanceStore,
+        useLaunchStore,
+        useNotificationsSettingsStore,
+        usePhotonStore,
+        useUiStore,
+        useUserStore,
+        useVRCXUpdaterStore,
         useVrStore,
         useVrcxStore,
-        useAuthStore,
-        useUiStore,
-        useAvatarStore,
-        useLaunchStore,
-        useInstanceStore,
-        useGroupStore,
-        useGameLogStore,
-        useUserStore,
-        usePhotonStore
+        useWorldStore
     } from '../../stores';
-    import NotificationPositionDialog from './dialogs/NotificationPositionDialog.vue';
-    import RegistryBackupDialog from './dialogs/RegistryBackupDialog.vue';
-    import YouTubeApiDialog from './dialogs/YouTubeApiDialog.vue';
-    import ChangelogDialog from './dialogs/ChangelogDialog.vue';
-    import FeedFiltersDialog from './dialogs/FeedFiltersDialog.vue';
-    import AvatarProviderDialog from './dialogs/AvatarProviderDialog.vue';
+    import { THEME_CONFIG } from '../../shared/constants';
     import { openExternalLink } from '../../shared/utils';
     import { redirectToToolsTab } from '../../shared/utils/base/ui';
-    import { THEME_CONFIG } from '../../shared/constants';
 
+    import AvatarProviderDialog from './dialogs/AvatarProviderDialog.vue';
+    import ChangelogDialog from './dialogs/ChangelogDialog.vue';
+    import FeedFiltersDialog from './dialogs/FeedFiltersDialog.vue';
+    import NotificationPositionDialog from './dialogs/NotificationPositionDialog.vue';
+    import RegistryBackupDialog from './dialogs/RegistryBackupDialog.vue';
     import SimpleSwitch from './components/SimpleSwitch.vue';
+    import YouTubeApiDialog from './dialogs/YouTubeApiDialog.vue';
 
     const OpenSourceSoftwareNoticeDialog = defineAsyncComponent(
         () => import('./dialogs/OpenSourceSoftwareNoticeDialog.vue')

@@ -256,14 +256,14 @@
 </template>
 
 <script setup>
-    import { ElMessageBox } from 'element-plus';
-    import { Loading, Refresh, Close, RefreshLeft } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
     import { nextTick, onMounted, reactive, ref, watch } from 'vue';
+    import { Close, Loading, Refresh, RefreshLeft } from '@element-plus/icons-vue';
+    import { ElMessageBox } from 'element-plus';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { friendRequest, userRequest } from '../../api';
-    import removeConfusables, { removeWhitespace } from '../../service/confusables';
+
     import {
+        formatDateFilter,
         getFaviconUrl,
         languageClass,
         localeIncludes,
@@ -272,8 +272,7 @@
         statusClass,
         timeToText,
         userImage,
-        userImageFull,
-        formatDateFilter
+        userImageFull
     } from '../../shared/utils';
     import {
         useAppearanceSettingsStore,
@@ -283,6 +282,8 @@
         useUiStore,
         useUserStore
     } from '../../stores';
+    import { friendRequest, userRequest } from '../../api';
+    import removeConfusables, { removeWhitespace } from '../../service/confusables';
 
     const { t } = useI18n();
 

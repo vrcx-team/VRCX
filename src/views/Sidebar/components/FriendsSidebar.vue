@@ -169,13 +169,11 @@
 </template>
 
 <script setup>
-    import { ArrowRight } from '@element-plus/icons-vue';
     import { computed, ref } from 'vue';
+    import { ArrowRight } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import FriendItem from '../../../components/FriendItem.vue';
-    import configRepository from '../../../service/config';
-    import { isRealInstance, userImage, userStatusClass, getFriendsSortFunction } from '../../../shared/utils';
+
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
@@ -185,6 +183,11 @@
         useLocationStore,
         useUserStore
     } from '../../../stores';
+    import { getFriendsSortFunction, isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
+
+    import FriendItem from '../../../components/FriendItem.vue';
+    import configRepository from '../../../service/config';
+
     const emit = defineEmits(['confirm-delete-friend']);
     const { t } = useI18n();
 

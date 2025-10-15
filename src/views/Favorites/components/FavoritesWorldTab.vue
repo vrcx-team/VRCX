@@ -208,15 +208,17 @@
 </template>
 
 <script setup>
-    import { View, Edit, Delete, Loading } from '@element-plus/icons-vue';
+    import { Delete, Edit, Loading, View } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
     import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest } from '../../../api';
+
     import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../../stores';
-    import WorldExportDialog from '../dialogs/WorldExportDialog.vue';
+    import { favoriteRequest } from '../../../api';
+
     import FavoritesWorldItem from './FavoritesWorldItem.vue';
+    import WorldExportDialog from '../dialogs/WorldExportDialog.vue';
 
     defineProps({
         editFavoritesMode: {

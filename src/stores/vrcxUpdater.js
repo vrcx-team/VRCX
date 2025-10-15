@@ -1,13 +1,16 @@
-import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { ElMessage } from 'element-plus';
-import * as workerTimers from 'worker-timers';
-import configRepository from '../service/config';
+import { defineStore } from 'pinia';
+import { useI18n } from 'vue-i18n';
+
+import { AppDebug } from '../service/appConfig';
 import { branches } from '../shared/constants';
 import { changeLogRemoveLinks } from '../shared/utils';
 import { useUiStore } from './ui';
-import { useI18n } from 'vue-i18n';
-import { AppDebug } from '../service/appConfig';
+
+import configRepository from '../service/config';
+
+import * as workerTimers from 'worker-timers';
 
 export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     const uiStore = useUiStore();

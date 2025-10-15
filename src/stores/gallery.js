@@ -1,23 +1,26 @@
-import Noty from 'noty';
+import { reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
-import { ref, reactive, watch } from 'vue';
-import * as workerTimers from 'worker-timers';
+import { useI18n } from 'vue-i18n';
+
+import Noty from 'noty';
+
 import {
     inventoryRequest,
     userRequest,
     vrcPlusIconRequest,
     vrcPlusImageRequest
 } from '../api';
-import { AppDebug } from '../service/appConfig';
-import { watchState } from '../service/watchState';
 import {
     getEmojiFileName,
     getPrintFileName,
     getPrintLocalDate
 } from '../shared/utils';
+import { AppDebug } from '../service/appConfig';
 import { handleImageUploadInput } from '../shared/utils/imageUpload';
 import { useAdvancedSettingsStore } from './settings/advanced';
-import { useI18n } from 'vue-i18n';
+import { watchState } from '../service/watchState';
+
+import * as workerTimers from 'worker-timers';
 
 export const useGalleryStore = defineStore('Gallery', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();

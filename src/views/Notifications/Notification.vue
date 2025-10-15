@@ -376,33 +376,23 @@
 </template>
 
 <script setup>
-    import { ElMessage, ElMessageBox } from 'element-plus';
-
     import {
-        Refresh,
-        Check,
-        ChatLineSquare,
-        Close,
-        CircleClose,
         Bell,
+        ChatLineSquare,
+        Check,
+        CircleClose,
+        Close,
         CollectionTag,
-        Delete
+        Delete,
+        Refresh
     } from '@element-plus/icons-vue';
-
-    import { storeToRefs } from 'pinia';
+    import { ElMessage, ElMessageBox } from 'element-plus';
     import { ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { friendRequest, notificationRequest, worldRequest } from '../../api';
-    import {
-        checkCanInvite,
-        convertFileUrlToImageUrl,
-        escapeTag,
-        formatDateFilter,
-        parseLocation,
-        removeFromArray
-    } from '../../shared/utils';
-    import configRepository from '../../service/config';
-    import { database } from '../../service/database';
+
+    import Noty from 'noty';
+
     import {
         useGalleryStore,
         useGameStore,
@@ -414,9 +404,20 @@
         useUserStore,
         useWorldStore
     } from '../../stores';
+    import {
+        checkCanInvite,
+        convertFileUrlToImageUrl,
+        escapeTag,
+        formatDateFilter,
+        parseLocation,
+        removeFromArray
+    } from '../../shared/utils';
+    import { friendRequest, notificationRequest, worldRequest } from '../../api';
+    import { database } from '../../service/database';
+
     import SendInviteRequestResponseDialog from './dialogs/SendInviteRequestResponseDialog.vue';
     import SendInviteResponseDialog from './dialogs/SendInviteResponseDialog.vue';
-    import Noty from 'noty';
+    import configRepository from '../../service/config';
 
     const { showUserDialog } = useUserStore();
     const { showWorldDialog } = useWorldStore();

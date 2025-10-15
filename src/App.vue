@@ -91,8 +91,11 @@
 </template>
 
 <script setup>
-    import './app.scss';
+    import { computed, onBeforeMount, onMounted } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
 
+    import cs from 'element-plus/es/locale/lang/cs';
     import en from 'element-plus/es/locale/lang/en';
     import es from 'element-plus/es/locale/lang/es';
     import fr from 'element-plus/es/locale/lang/fr';
@@ -101,55 +104,52 @@
     import ko from 'element-plus/es/locale/lang/ko';
     import pl from 'element-plus/es/locale/lang/pl';
     import pt from 'element-plus/es/locale/lang/pt';
-    import cs from 'element-plus/es/locale/lang/cs';
     import ru from 'element-plus/es/locale/lang/ru';
+    import th from 'element-plus/es/locale/lang/th';
     import vi from 'element-plus/es/locale/lang/vi';
     import zhCN from 'element-plus/es/locale/lang/zh-cn';
     import zhTW from 'element-plus/es/locale/lang/zh-tw';
-    import th from 'element-plus/es/locale/lang/th';
 
-    import Login from './views/Login/Login.vue';
-    import NavMenu from './components/NavMenu.vue';
-    import MacOSTitleBar from './components/TitleBar/MacOSTitleBar.vue';
-    import Sidebar from './views/Sidebar/Sidebar.vue';
-    import Feed from './views/Feed/Feed.vue';
-    import GameLog from './views/GameLog/GameLog.vue';
-    import PlayerList from './views/PlayerList/PlayerList.vue';
-    import Search from './views/Search/Search.vue';
-    import Favorites from './views/Favorites/Favorites.vue';
-    import FriendLog from './views/FriendLog/FriendLog.vue';
-    import Moderation from './views/Moderation/Moderation.vue';
-    import Notification from './views/Notifications/Notification.vue';
-    import FriendList from './views/FriendList/FriendList.vue';
-    import Charts from './views/Charts/Charts.vue';
-    import Tools from './views/Tools/Tools.vue';
-    import Profile from './views/Profile/Profile.vue';
-    import Settings from './views/Settings/Settings.vue';
+    import { createGlobalStores, useAppearanceSettingsStore } from './stores';
+    import { initNoty } from './plugin/noty';
+    import { watchState } from './service/watchState';
 
-    import UserDialog from './components/dialogs/UserDialog/UserDialog.vue';
-    import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';
     import AvatarDialog from './components/dialogs/AvatarDialog/AvatarDialog.vue';
-    import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
-    import GroupMemberModerationDialog from './components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
-    import FullscreenImagePreview from './components/FullscreenImagePreview.vue';
-    import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
-    import LaunchDialog from './components/dialogs/LaunchDialog.vue';
-    import LaunchOptionsDialog from './views/Settings/dialogs/LaunchOptionsDialog.vue';
-    import FriendImportDialog from './views/Favorites/dialogs/FriendImportDialog.vue';
-    import WorldImportDialog from './views/Favorites/dialogs/WorldImportDialog.vue';
     import AvatarImportDialog from './views/Favorites/dialogs/AvatarImportDialog.vue';
+    import Charts from './views/Charts/Charts.vue';
     import ChooseFavoriteGroupDialog from './components/dialogs/ChooseFavoriteGroupDialog.vue';
     import EditInviteMessageDialog from './views/Profile/dialogs/EditInviteMessageDialog.vue';
+    import Favorites from './views/Favorites/Favorites.vue';
+    import Feed from './views/Feed/Feed.vue';
+    import FriendImportDialog from './views/Favorites/dialogs/FriendImportDialog.vue';
+    import FriendList from './views/FriendList/FriendList.vue';
+    import FriendLog from './views/FriendLog/FriendLog.vue';
+    import FullscreenImagePreview from './components/FullscreenImagePreview.vue';
+    import GameLog from './views/GameLog/GameLog.vue';
+    import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
+    import GroupMemberModerationDialog from './components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
+    import LaunchDialog from './components/dialogs/LaunchDialog.vue';
+    import LaunchOptionsDialog from './views/Settings/dialogs/LaunchOptionsDialog.vue';
+    import Login from './views/Login/Login.vue';
+    import MacOSTitleBar from './components/TitleBar/MacOSTitleBar.vue';
+    import Moderation from './views/Moderation/Moderation.vue';
+    import NavMenu from './components/NavMenu.vue';
+    import Notification from './views/Notifications/Notification.vue';
+    import PlayerList from './views/PlayerList/PlayerList.vue';
+    import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
+    import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
+    import Profile from './views/Profile/Profile.vue';
+    import Search from './views/Search/Search.vue';
+    import Settings from './views/Settings/Settings.vue';
+    import Sidebar from './views/Sidebar/Sidebar.vue';
+    import Tools from './views/Tools/Tools.vue';
+    import UserDialog from './components/dialogs/UserDialog/UserDialog.vue';
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
     import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
-    import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
+    import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';
+    import WorldImportDialog from './views/Favorites/dialogs/WorldImportDialog.vue';
 
-    import { onMounted, computed, onBeforeMount } from 'vue';
-    import { useI18n } from 'vue-i18n';
-    import { storeToRefs } from 'pinia';
-    import { createGlobalStores, useAppearanceSettingsStore } from './stores';
-    import { watchState } from './service/watchState';
-    import { initNoty } from './plugin/noty';
+    import './app.scss';
 
     console.log(`isLinux: ${LINUX}`);
 

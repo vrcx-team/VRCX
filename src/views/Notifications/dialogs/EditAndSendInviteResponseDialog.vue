@@ -32,9 +32,9 @@
 
 <script setup>
     import { ElMessage } from 'element-plus';
-
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { inviteMessagesRequest, notificationRequest } from '../../../api';
     import { useGalleryStore } from '../../../stores';
 

@@ -35,9 +35,10 @@
     import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { instanceRequest, inviteMessagesRequest, notificationRequest } from '../../../api';
-    import { parseLocation } from '../../../shared/utils';
     import { useGalleryStore, useUserStore } from '../../../stores';
+    import { parseLocation } from '../../../shared/utils';
 
     const { t } = useI18n();
     const { uploadImage } = storeToRefs(useGalleryStore());

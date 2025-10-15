@@ -5,9 +5,12 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 import { createApp } from 'vue';
-import { pinia } from './stores';
-import { initPlugins, i18n, initComponents, initSentry } from './plugin';
+
 import ElementPlus from 'element-plus';
+
+import { i18n, initComponents, initPlugins, initSentry } from './plugin';
+import { pinia } from './stores';
+
 import App from './App.vue';
 
 await initPlugins();

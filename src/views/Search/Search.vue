@@ -307,19 +307,11 @@
 </template>
 
 <script setup>
-    import { Delete, Back, Right, Refresh, ArrowDown, Check } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
+    import { ArrowDown, Back, Check, Delete, Refresh, Right } from '@element-plus/icons-vue';
     import { ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { groupRequest, worldRequest } from '../../api';
-    import {
-        compareByCreatedAt,
-        compareByName,
-        compareByUpdatedAt,
-        convertFileUrlToImageUrl,
-        replaceBioSymbols,
-        userImage
-    } from '../../shared/utils';
+
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
@@ -332,6 +324,15 @@
         useUserStore,
         useWorldStore
     } from '../../stores';
+    import {
+        compareByCreatedAt,
+        compareByName,
+        compareByUpdatedAt,
+        convertFileUrlToImageUrl,
+        replaceBioSymbols,
+        userImage
+    } from '../../shared/utils';
+    import { groupRequest, worldRequest } from '../../api';
 
     const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());

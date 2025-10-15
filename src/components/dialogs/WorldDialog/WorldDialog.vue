@@ -746,55 +746,51 @@
 
 <script setup>
     import {
-        HomeFilled,
+        ArrowDown,
+        Check,
+        CopyDocument,
+        DataLine,
         Delete,
+        Download,
+        Edit,
+        Flag,
+        HomeFilled,
+        Loading,
+        MagicStick,
+        Message,
         MoreFilled,
+        Picture,
         Refresh,
         Share,
-        Flag,
-        Message,
-        MagicStick,
-        Picture,
-        Upload,
-        Edit,
-        Download,
-        View,
-        DataLine,
-        CopyDocument,
-        Warning,
         Star,
         StarFilled,
+        Upload,
         User,
-        Check,
-        Loading,
-        ArrowDown,
-        UserFilled
+        UserFilled,
+        View,
+        Warning
     } from '@element-plus/icons-vue';
-
+    import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
-    import { computed, ref, watch, nextTick, defineAsyncComponent } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest, miscRequest, userRequest, worldRequest } from '../../../api';
-    import { database } from '../../../service/database.js';
+
     import {
         buildTreeData,
+        commaNumber,
+        copyToClipboard,
+        deleteVRChatCache,
         downloadAndSaveJson,
+        formatDateFilter,
         openExternalLink,
+        openFolderGeneric,
         refreshInstancePlayerCount,
         replaceVrcPackageUrl,
+        textToHex,
         timeToText,
         userImage,
-        userStatusClass,
-        openFolderGeneric,
-        deleteVRChatCache,
-        commaNumber,
-        formatDateFilter,
-        textToHex,
-        copyToClipboard
+        userStatusClass
     } from '../../../shared/utils';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
-
     import {
         useAppearanceSettingsStore,
         useFavoriteStore,
@@ -806,6 +802,9 @@
         useUserStore,
         useWorldStore
     } from '../../../stores';
+    import { favoriteRequest, miscRequest, userRequest, worldRequest } from '../../../api';
+    import { database } from '../../../service/database.js';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
 
     const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog.vue'));
     const PreviousInstancesWorldDialog = defineAsyncComponent(

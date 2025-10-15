@@ -58,9 +58,10 @@
 </template>
 
 <script setup>
-    import { storeToRefs } from 'pinia';
     import { nextTick, ref, watch } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { branches } from '../../shared/constants';
     import { getNextDialogIndex } from '../../shared/utils/base/ui';
     import { useVRCXUpdaterStore } from '../../stores';

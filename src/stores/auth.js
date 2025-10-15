@@ -1,23 +1,26 @@
-import Noty from 'noty';
+import { reactive, ref, watch } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
-import { ref, reactive, watch } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import { authRequest } from '../api';
 import { useI18n } from 'vue-i18n';
-import configRepository from '../service/config';
-import { database } from '../service/database';
-import { AppDebug } from '../service/appConfig';
-import { request } from '../service/request';
-import security from '../service/security';
-import webApiService from '../service/webapi';
+
+import Noty from 'noty';
+
 import { closeWebSocket, initWebsocket } from '../service/websocket';
-import { watchState } from '../service/watchState';
+import { AppDebug } from '../service/appConfig';
+import { authRequest } from '../api';
+import { database } from '../service/database';
 import { escapeTag } from '../shared/utils';
-import { useNotificationStore } from './notification';
+import { request } from '../service/request';
 import { useAdvancedSettingsStore } from './settings/advanced';
+import { useNotificationStore } from './notification';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
 import { useVrcxStore } from './vrcx';
+import { watchState } from '../service/watchState';
+
+import configRepository from '../service/config';
+import security from '../service/security';
+import webApiService from '../service/webapi';
 
 export const useAuthStore = defineStore('Auth', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();

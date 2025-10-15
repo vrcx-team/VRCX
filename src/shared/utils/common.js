@@ -1,15 +1,17 @@
-import Noty from 'noty';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { storeToRefs } from 'pinia';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import { miscRequest } from '../../api';
+
+import Noty from 'noty';
+
 import {
     useAvatarStore,
     useInstanceStore,
-    useWorldStore,
-    useSearchStore
+    useSearchStore,
+    useWorldStore
 } from '../../stores';
 import { compareUnityVersion } from './avatar';
 import { escapeTag } from './base/string';
+import { miscRequest } from '../../api';
 
 /**
  *

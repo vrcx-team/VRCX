@@ -165,15 +165,17 @@
 </template>
 
 <script setup>
+    import { computed, nextTick, ref, watch } from 'vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
-    import { ref, watch, nextTick, computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { groupRequest, userRequest } from '../../api';
-    import configRepository from '../../service/config';
+
     import { hasGroupPermission, userImage, userStatusClass } from '../../shared/utils';
-    import { getNextDialogIndex } from '../../shared/utils/base/ui';
+    import { groupRequest, userRequest } from '../../api';
     import { useFriendStore, useGroupStore } from '../../stores';
+    import { getNextDialogIndex } from '../../shared/utils/base/ui';
+
+    import configRepository from '../../service/config';
 
     const { vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
     const { currentUserGroups, inviteGroupDialog } = storeToRefs(useGroupStore());

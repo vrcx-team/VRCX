@@ -1,7 +1,7 @@
 import {
+    getEmojiFileName,
     getPrintFileName,
-    getPrintLocalDate,
-    getEmojiFileName
+    getPrintLocalDate
 } from '../gallery';
 
 describe('Gallery Utils', () => {

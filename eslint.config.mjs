@@ -1,7 +1,10 @@
+import { defineConfig } from 'eslint/config';
+
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import globals from 'globals';
 import js from '@eslint/js';
 import pluginVue from 'eslint-plugin-vue';
-import { defineConfig } from 'eslint/config';
-import globals from 'globals';
+import prettyImport from '@kamiya4047/eslint-plugin-pretty-import';
 
 export default defineConfig([
     {
@@ -69,5 +72,19 @@ export default defineConfig([
             'vue/no-v-text-v-html-on-component': 'off',
             'vue/no-use-v-if-with-v-for': 'warn'
         }
-    }
+    },
+    {
+        plugins: { 'pretty-import': prettyImport },
+        rules: {
+            'pretty-import/separate-type-imports': 'warn',
+            'pretty-import/sort-import-groups': [
+                'warn',
+                {
+                    groupStyleImports: true
+                }
+            ],
+            'pretty-import/sort-import-names': 'warn'
+        }
+    },
+    eslintPluginPrettierRecommended
 ]);

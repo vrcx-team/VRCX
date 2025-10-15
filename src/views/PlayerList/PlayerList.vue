@@ -401,30 +401,32 @@
 </template>
 
 <script setup>
-    import { Mute, Microphone, HomeFilled, CircleClose, Pointer, ChatLineRound } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
+    import { ChatLineRound, CircleClose, HomeFilled, Microphone, Mute, Pointer } from '@element-plus/icons-vue';
     import { defineAsyncComponent, ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import {
-        languageClass,
+        commaNumber,
+        formatDateFilter,
         getFaviconUrl,
+        languageClass,
         openExternalLink,
         statusClass,
         userImage,
-        userImageFull,
-        commaNumber,
-        formatDateFilter
+        userImageFull
     } from '../../shared/utils';
     import {
-        useLocationStore,
         useAppearanceSettingsStore,
-        usePhotonStore,
-        useUserStore,
-        useWorldStore,
+        useGalleryStore,
         useInstanceStore,
+        useLocationStore,
+        usePhotonStore,
         useUiStore,
-        useGalleryStore
+        useUserStore,
+        useWorldStore
     } from '../../stores';
+
     import ChatboxBlacklistDialog from './dialogs/ChatboxBlacklistDialog.vue';
 
     const PhotonEventTable = defineAsyncComponent(() => import('./components/PhotonEventTable.vue'));

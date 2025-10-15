@@ -1121,60 +1121,61 @@
 </template>
 
 <script setup>
-    import { ElMessage, ElMessageBox } from 'element-plus';
-
     import {
+        ArrowDown,
+        ChatLineSquare,
         Check,
-        View,
-        Star,
-        StarFilled,
-        Close,
-        Message,
-        MoreFilled,
-        Refresh,
-        Share,
-        Tickets,
-        Delete,
         CircleCheck,
         CircleClose,
-        Edit,
-        CopyDocument,
-        Download,
-        Operation,
-        Loading,
-        Warning,
-        ArrowDown,
+        Close,
         CollectionTag,
-        ChatLineSquare
+        CopyDocument,
+        Delete,
+        Download,
+        Edit,
+        Loading,
+        Message,
+        MoreFilled,
+        Operation,
+        Refresh,
+        Share,
+        Star,
+        StarFilled,
+        Tickets,
+        View,
+        Warning
     } from '@element-plus/icons-vue';
-
-    import { storeToRefs } from 'pinia';
     import { nextTick, reactive, ref, watch } from 'vue';
+    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import * as workerTimers from 'worker-timers';
-    import { groupRequest } from '../../../api';
-    import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
+
     import {
         buildTreeData,
         copyToClipboard,
+        debounce,
         downloadAndSaveJson,
+        formatDateFilter,
         getFaviconUrl,
-        hasGroupPermission,
         hasGroupModerationPermission,
+        hasGroupPermission,
         languageClass,
         openExternalLink,
         refreshInstancePlayerCount,
         removeFromArray,
         userImage,
-        userStatusClass,
-        formatDateFilter,
-        debounce
+        userStatusClass
     } from '../../../shared/utils';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useGalleryStore, useGroupStore, useLocationStore, useUserStore } from '../../../stores';
-    import InviteGroupDialog from '../InviteGroupDialog.vue';
+    import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
+    import { groupRequest } from '../../../api';
+
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
+    import InviteGroupDialog from '../InviteGroupDialog.vue';
     import PreviousInstancesGroupDialog from '../PreviousInstancesDialog/PreviousInstancesGroupDialog.vue';
+
+    import * as workerTimers from 'worker-timers';
 
     const { t } = useI18n();
 

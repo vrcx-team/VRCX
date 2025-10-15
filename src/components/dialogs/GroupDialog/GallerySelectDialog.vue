@@ -53,14 +53,13 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
-
     import { Close, Refresh, Upload } from '@element-plus/icons-vue';
-
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { vrcPlusImageRequest } from '../../../api';
+
     import { useGalleryStore, useUserStore } from '../../../stores';
+    import { vrcPlusImageRequest } from '../../../api';
 
     const { t } = useI18n();
 

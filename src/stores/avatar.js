@@ -1,11 +1,7 @@
-import { defineStore } from 'pinia';
-import { ref, watch, nextTick } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { avatarRequest, miscRequest } from '../api';
-import { database } from '../service/database';
-import { AppDebug } from '../service/appConfig';
-import webApiService from '../service/webapi';
-import { watchState } from '../service/watchState';
+import { defineStore } from 'pinia';
+
 import {
     checkVRChatCache,
     extractFileId,
@@ -15,11 +11,17 @@ import {
     replaceBioSymbols,
     storeAvatarImage
 } from '../shared/utils';
+import { avatarRequest, miscRequest } from '../api';
+import { AppDebug } from '../service/appConfig';
+import { database } from '../service/database';
+import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useFavoriteStore } from './favorite';
-import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
+import { watchState } from '../service/watchState';
+
+import webApiService from '../service/webapi';
 
 export const useAvatarStore = defineStore('Avatar', () => {
     const favoriteStore = useFavoriteStore();

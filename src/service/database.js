@@ -1,17 +1,17 @@
-import sqliteService from './sqlite.js';
-
-import { feed } from './database/feed.js';
-import { gameLog } from './database/gameLog.js';
-import { notifications } from './database/notifications.js';
-import { moderation } from './database/moderation.js';
-import { friendLogHistory } from './database/friendLogHistory.js';
-import { friendLogCurrent } from './database/friendLogCurrent.js';
-import { memos } from './database/memos.js';
 import { avatarFavorites } from './database/avatarFavorites.js';
-import { worldFavorites } from './database/worldFavorites.js';
+import { feed } from './database/feed.js';
+import { friendLogCurrent } from './database/friendLogCurrent.js';
+import { friendLogHistory } from './database/friendLogHistory.js';
+import { gameLog } from './database/gameLog.js';
+import { memos } from './database/memos.js';
+import { moderation } from './database/moderation.js';
+import { notifications } from './database/notifications.js';
 import { tableAlter } from './database/tableAlter.js';
 import { tableFixes } from './database/tableFixes.js';
 import { tableSize } from './database/tableSize.js';
+import { worldFavorites } from './database/worldFavorites.js';
+
+import sqliteService from './sqlite.js';
 
 const dbVars = {
     userId: '',

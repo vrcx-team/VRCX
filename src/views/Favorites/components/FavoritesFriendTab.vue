@@ -78,16 +78,17 @@
 </template>
 
 <script setup>
-    import { Edit, Delete } from '@element-plus/icons-vue';
-
+    import { Delete, Edit } from '@element-plus/icons-vue';
+    import { computed, ref } from 'vue';
     import { ElMessageBox } from 'element-plus';
-    import { ref, computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest } from '../../../api';
+
     import { useAppearanceSettingsStore, useFavoriteStore, useUserStore } from '../../../stores';
-    import FriendExportDialog from '../dialogs/FriendExportDialog.vue';
+    import { favoriteRequest } from '../../../api';
+
     import FavoritesFriendItem from './FavoritesFriendItem.vue';
+    import FriendExportDialog from '../dialogs/FriendExportDialog.vue';
 
     defineProps({
         editFavoritesMode: {

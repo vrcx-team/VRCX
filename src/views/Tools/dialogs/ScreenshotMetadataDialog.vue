@@ -156,14 +156,15 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
-    import { FolderOpened, Picture, CopyDocument, Folder, Upload, Delete } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
+    import { CopyDocument, Delete, Folder, FolderOpened, Picture, Upload } from '@element-plus/icons-vue';
     import { reactive, ref, watch } from 'vue';
+    import { ElMessage } from 'element-plus';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { vrcPlusImageRequest } from '../../../api';
+
     import { useGalleryStore, useUserStore, useVrcxStore } from '../../../stores';
     import { formatDateFilter } from '../../../shared/utils';
+    import { vrcPlusImageRequest } from '../../../api';
 
     const { showFullscreenImageDialog, handleGalleryImageAdd } = useGalleryStore();
     const { currentlyDroppingFile } = storeToRefs(useVrcxStore());
@@ -239,7 +240,7 @@
 
     async function getAndDisplayScreenshotFromFile() {
         let filePath = '';
-        // eslint-disable-next-line no-undef
+
         if (LINUX) {
             filePath = await window.electron.openFileDialog(); // PNG filter is applied in main.js
         } else {

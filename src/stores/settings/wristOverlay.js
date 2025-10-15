@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+
 import configRepository from '../../service/config';
 
 export const useWristOverlaySettingsStore = defineStore(

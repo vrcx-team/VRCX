@@ -25,9 +25,10 @@
     import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { instanceRequest, notificationRequest } from '../../../api';
-    import { parseLocation } from '../../../shared/utils';
     import { useGalleryStore, useUserStore } from '../../../stores';
+    import { parseLocation } from '../../../shared/utils';
 
     const { t } = useI18n();
 

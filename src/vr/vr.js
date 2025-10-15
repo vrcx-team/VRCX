@@ -5,8 +5,10 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 import { createApp } from 'vue';
-import { initPlugins } from '../plugin';
+
 import { i18n } from '../plugin/i18n';
+import { initPlugins } from '../plugin';
+
 import Vr from './Vr.vue';
 
 await initPlugins(true);
