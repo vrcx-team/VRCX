@@ -29,6 +29,8 @@
 <script>
     import { computed, ref, toRefs, watch } from 'vue';
 
+    import { useAppearanceSettingsStore } from '../stores';
+
     export default {
         name: 'DataTable',
         props: {
@@ -51,6 +53,10 @@
             pageSize: {
                 type: Number,
                 default: 20
+            },
+            pageSizeLinked: {
+                type: Boolean,
+                default: false
             },
             filters: {
                 type: [Array, Object],
@@ -75,6 +81,7 @@
             'filtered-data'
         ],
         setup(props, { emit }) {
+            const appearanceSettingsStore = useAppearanceSettingsStore();
             const { data, currentPage, pageSize, tableProps, paginationProps, filters } = toRefs(props);
 
             const internalCurrentPage = ref(currentPage.value);
@@ -185,6 +192,9 @@
             };
 
             const handleSizeChange = (size) => {
+                if (props.pageSizeLinked) {
+                    appearanceSettingsStore.setTablePageSize(size);
+                }
                 internalPageSize.value = size;
             };
 

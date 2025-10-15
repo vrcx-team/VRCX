@@ -15,7 +15,8 @@ export const useModerationStore = defineStore('Moderation', () => {
     const isPlayerModerationsLoading = ref(false);
     const playerModerationTable = ref({
         data: [],
-        pageSize: 15
+        pageSize: 15,
+        pageSizeLinked: true
     });
 
     watch(

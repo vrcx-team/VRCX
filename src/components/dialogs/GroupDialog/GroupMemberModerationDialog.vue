@@ -720,9 +720,13 @@
                 style="margin-top: 5px; width: 340px"
                 :placeholder="t('dialog.group_member_moderation.user_id_placeholder')"
                 clearable></el-input>
-            <el-button size="small" :disabled="!selectUserId" @click="selectGroupMemberUserId">{{
-                t('dialog.group_member_moderation.select_user')
-            }}</el-button>
+            <el-button
+                size="small"
+                style="margin-top: 5px; margin-left: 5px"
+                :disabled="!selectUserId"
+                @click="selectGroupMemberUserId"
+                >{{ t('dialog.group_member_moderation.select_user') }}</el-button
+            >
             <br />
             <br />
             <span class="name">{{ t('dialog.group_member_moderation.selected_users') }}</span>
@@ -1001,21 +1005,6 @@
         }
     });
 
-    async function initializePageSize() {
-        try {
-            const { tablePageSize } = storeToRefs(useAppearanceSettingsStore());
-
-            groupMemberModerationTable.pageSize = tablePageSize.value;
-            groupBansModerationTable.pageSize = tablePageSize.value;
-            groupLogsModerationTable.pageSize = tablePageSize.value;
-            groupInvitesModerationTable.pageSize = tablePageSize.value;
-            groupJoinRequestsModerationTable.pageSize = tablePageSize.value;
-            groupBlockedModerationTable.pageSize = tablePageSize.value;
-        } catch (error) {
-            console.error('Failed to initialize table page size:', error);
-        }
-    }
-
     function deselectGroupMember(userId) {
         const deselectInTable = (tableData) => {
             if (userId) {
@@ -1069,9 +1058,6 @@
             }
         }
     );
-
-    // created()
-    initializePageSize();
 
     function handleGroupMemberRoleChange(args) {
         if (groupDialog.value.id === args.params.groupId) {
