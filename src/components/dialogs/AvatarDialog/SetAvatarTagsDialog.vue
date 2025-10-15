@@ -92,11 +92,11 @@
 </template>
 
 <script setup>
-    import { Loading } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
-
-    import { watch } from 'vue';
+    import { Loading } from '@element-plus/icons-vue';
     import { useI18n } from 'vue-i18n';
+    import { watch } from 'vue';
+
     import { avatarRequest } from '../../../api';
     import { useAvatarStore } from '../../../stores';
 

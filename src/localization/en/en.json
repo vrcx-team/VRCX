@@ -431,8 +431,7 @@
                     "sort_instance_users_by": "Sort Instance Users by",
                     "sort_instance_users_by_time": "time",
                     "sort_instance_users_by_alphabet": "alphabetical",
-                    "table_max_size": "Table Max Size",
-                    "page_size": "Page Size:"
+                    "table_max_size": "Table Max Size"
                 },
                 "timedate": {
                     "header": "Time/Date",

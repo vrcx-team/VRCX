@@ -1,13 +1,14 @@
-import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
+import { defineStore } from 'pinia';
+
 import { instanceRequest, inviteMessagesRequest } from '../api';
-import { watchState } from '../service/watchState';
 import { parseLocation } from '../shared/utils';
-import { useInstanceStore } from './instance';
-import { useGameStore } from './game';
-import { useLaunchStore } from './launch';
 import { useAdvancedSettingsStore } from './settings/advanced';
+import { useGameStore } from './game';
+import { useInstanceStore } from './instance';
+import { useLaunchStore } from './launch';
+import { watchState } from '../service/watchState';
 
 export const useInviteStore = defineStore('Invite', () => {
     const instanceStore = useInstanceStore();

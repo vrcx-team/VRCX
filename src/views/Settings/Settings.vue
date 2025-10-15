@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'settings'" class="x-container">
+    <div class="x-container">
         <div class="options-container" style="margin-top: 0; padding: 5px">
             <span class="header">{{ t('view.settings.header') }}</span>
         </div>
@@ -412,23 +412,6 @@
                             @click="promptMaxTableSizeDialog"
                             >{{ t('view.settings.appearance.appearance.table_max_size') }}</el-button
                         >
-                        <el-dropdown trigger="click" size="small" @click.stop>
-                            <el-button size="small">
-                                <span
-                                    >{{ t('view.settings.appearance.appearance.page_size') }} {{ tablePageSize }}
-                                    <el-icon class="el-icon--right"><ArrowDown /></el-icon
-                                ></span>
-                            </el-button>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item
-                                        v-for="number in [10, 15, 20, 25, 50, 100]"
-                                        :key="number"
-                                        @click="handleSetTablePageSize(number)"
-                                        v-text="number" />
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
                     </div>
                     <div class="options-container-item" />
                 </div>
@@ -1395,68 +1378,66 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
-
     import {
-        InfoFilled,
+        ArrowDown,
         ArrowRight,
-        Upload,
-        Folder,
-        User,
-        Tickets,
-        Refresh,
-        Operation,
-        Goods,
-        Document,
-        Connection,
-        ChatSquare,
         CaretRight,
+        ChatSquare,
+        Connection,
         DeleteFilled,
-        Timer,
-        Notebook,
+        Document,
         DocumentCopy,
-        Rank,
-        VideoPlay,
+        Folder,
+        Goods,
+        InfoFilled,
+        Notebook,
+        Operation,
         Paperclip,
-        ArrowDown
+        Rank,
+        Refresh,
+        Tickets,
+        Timer,
+        Upload,
+        User,
+        VideoPlay
     } from '@element-plus/icons-vue';
-
+    import { computed, defineAsyncComponent, reactive, ref } from 'vue';
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { ref, computed, defineAsyncComponent, reactive } from 'vue';
     import { useI18n } from 'vue-i18n';
+
     import {
-        useFavoriteStore,
-        useAppearanceSettingsStore,
-        useGeneralSettingsStore,
-        useVRCXUpdaterStore,
-        useNotificationsSettingsStore,
         useAdvancedSettingsStore,
-        useFriendStore,
+        useAppearanceSettingsStore,
+        useAuthStore,
         useAvatarProviderStore,
-        useWorldStore,
+        useAvatarStore,
+        useFavoriteStore,
+        useGameLogStore,
+        useGeneralSettingsStore,
+        useGroupStore,
+        useInstanceStore,
+        useLaunchStore,
+        useNotificationsSettingsStore,
+        usePhotonStore,
+        useUiStore,
+        useUserStore,
+        useVRCXUpdaterStore,
         useVrStore,
         useVrcxStore,
-        useAuthStore,
-        useUiStore,
-        useAvatarStore,
-        useLaunchStore,
-        useInstanceStore,
-        useGroupStore,
-        useGameLogStore,
-        useUserStore,
-        usePhotonStore
+        useWorldStore
     } from '../../stores';
-    import NotificationPositionDialog from './dialogs/NotificationPositionDialog.vue';
-    import RegistryBackupDialog from './dialogs/RegistryBackupDialog.vue';
-    import YouTubeApiDialog from './dialogs/YouTubeApiDialog.vue';
-    import ChangelogDialog from './dialogs/ChangelogDialog.vue';
-    import FeedFiltersDialog from './dialogs/FeedFiltersDialog.vue';
-    import AvatarProviderDialog from './dialogs/AvatarProviderDialog.vue';
+    import { THEME_CONFIG } from '../../shared/constants';
     import { openExternalLink } from '../../shared/utils';
     import { redirectToToolsTab } from '../../shared/utils/base/ui';
-    import { THEME_CONFIG } from '../../shared/constants';
 
+    import AvatarProviderDialog from './dialogs/AvatarProviderDialog.vue';
+    import ChangelogDialog from './dialogs/ChangelogDialog.vue';
+    import FeedFiltersDialog from './dialogs/FeedFiltersDialog.vue';
+    import NotificationPositionDialog from './dialogs/NotificationPositionDialog.vue';
+    import RegistryBackupDialog from './dialogs/RegistryBackupDialog.vue';
     import SimpleSwitch from './components/SimpleSwitch.vue';
+    import YouTubeApiDialog from './dialogs/YouTubeApiDialog.vue';
 
     const OpenSourceSoftwareNoticeDialog = defineAsyncComponent(
         () => import('./dialogs/OpenSourceSoftwareNoticeDialog.vue')
@@ -1487,7 +1468,6 @@
     const { cachedWorlds } = useWorldStore();
     const { cachedInstances } = useInstanceStore();
     const { showLaunchOptions } = useLaunchStore();
-    const { menuActiveIndex } = storeToRefs(useUiStore());
     const { enablePrimaryPasswordChange } = useAuthStore();
     const { saveOpenVROption, updateVRLastLocation, updateOpenVR, updateVRConfigVars } = useVrStore();
     const { clearVRCXCache, showRegistryBackupDialog } = useVrcxStore();
@@ -1537,7 +1517,6 @@
         isAgeGatedInstancesVisible,
         sortFavorites,
         instanceUsersSortAlphabetical,
-        tablePageSize,
         dtHour12,
         dtIsoFormat,
         sidebarSortMethod1,
@@ -1571,7 +1550,6 @@
         updateTrustColor,
         saveThemeMode,
         changeAppLanguage,
-        handleSetTablePageSize,
         promptMaxTableSizeDialog
     } = appearanceSettingsStore;
 

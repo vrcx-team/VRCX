@@ -1,20 +1,19 @@
-import { defineStore } from 'pinia';
-import { ref, computed, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { computed, ref, watch } from 'vue';
 import { ElMessageBox } from 'element-plus';
+import { defineStore } from 'pinia';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 
-import configRepository from '../../service/config';
-import { database } from '../../service/database';
-import { watchState } from '../../service/watchState';
-import { getNameColour } from '../../shared/utils';
 import {
+    HueToHex,
     changeAppDarkStyle,
     changeAppThemeStyle,
-    HueToHex,
+    changeHtmlLangAttribute,
     systemIsDarkMode,
-    updateTrustColorClasses,
-    changeHtmlLangAttribute
+    updateTrustColorClasses
 } from '../../shared/utils/base/ui';
+import { database } from '../../service/database';
+import { getNameColour } from '../../shared/utils';
 import { useFeedStore } from '../feed';
 import { useFriendStore } from '../friend';
 import { useGameLogStore } from '../gameLog';
@@ -23,7 +22,9 @@ import { useNotificationStore } from '../notification';
 import { useUserStore } from '../user';
 import { useVrStore } from '../vr';
 import { useVrcxStore } from '../vrcx';
-import { useUiStore } from '../ui';
+import { watchState } from '../../service/watchState';
+
+import configRepository from '../../service/config';
 
 export const useAppearanceSettingsStore = defineStore(
     'AppearanceSettings',
@@ -37,7 +38,7 @@ export const useAppearanceSettingsStore = defineStore(
         const gameLogStore = useGameLogStore();
         const vrcxStore = useVrcxStore();
         const userStore = useUserStore();
-        const uiStore = useUiStore();
+        const router = useRouter();
 
         const { t, availableLocales, locale } = useI18n();
 
@@ -79,9 +80,10 @@ export const useAppearanceSettingsStore = defineStore(
         });
         const currentCulture = ref('');
         const isSideBarTabShow = computed(() => {
+            const currentRouteName = router.currentRoute.value?.name;
             return !(
-                uiStore.menuActiveIndex === 'friendList' ||
-                uiStore.menuActiveIndex === 'charts'
+                currentRouteName === 'friendList' ||
+                currentRouteName === 'charts'
             );
         });
 
@@ -186,7 +188,6 @@ export const useAppearanceSettingsStore = defineStore(
                 instanceUsersSortAlphabeticalConfig;
 
             setTablePageSize(tablePageSizeConfig);
-            handleSetTablePageSize(tablePageSize.value);
 
             dtHour12.value = dtHour12Config;
             dtIsoFormat.value = dtIsoFormatConfig;
@@ -450,6 +451,12 @@ export const useAppearanceSettingsStore = defineStore(
          * @param {number} size
          */
         function setTablePageSize(size) {
+            feedStore.feedTable.pageSize = size;
+            gameLogStore.gameLogTable.pageSize = size;
+            friendStore.friendLogTable.pageSize = size;
+            moderationStore.playerModerationTable.pageSize = size;
+            notificationStore.notificationTable.pageSize = size;
+
             tablePageSize.value = size;
             configRepository.setInt('VRCX_tablePageSize', size);
         }
@@ -635,15 +642,6 @@ export const useAppearanceSettingsStore = defineStore(
             }
         }
 
-        async function handleSetTablePageSize(pageSize) {
-            feedStore.feedTable.pageSize = pageSize;
-            gameLogStore.gameLogTable.pageSize = pageSize;
-            friendStore.friendLogTable.pageSize = pageSize;
-            moderationStore.playerModerationTable.pageSize = pageSize;
-            notificationStore.notificationTable.pageSize = pageSize;
-            setTablePageSize(pageSize);
-        }
-
         function promptMaxTableSizeDialog() {
             ElMessageBox.prompt(
                 t('prompt.change_table_size.description'),
@@ -742,7 +740,6 @@ export const useAppearanceSettingsStore = defineStore(
             userColourInit,
             applyUserTrustLevel,
             changeAppLanguage,
-            handleSetTablePageSize,
             promptMaxTableSizeDialog
         };
     }

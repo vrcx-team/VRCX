@@ -169,13 +169,14 @@
 
 <script setup>
     import { ElMessage, ElMessageBox } from 'element-plus';
-
-    import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { instanceRequest, notificationRequest } from '../../../api';
-    import { parseLocation, userImage, userStatusClass } from '../../../shared/utils';
+
     import { useFriendStore, useGalleryStore, useInviteStore, useUserStore } from '../../../stores';
+    import { parseLocation, userImage, userStatusClass } from '../../../shared/utils';
+    import { instanceRequest, notificationRequest } from '../../../api';
+
     import SendInviteDialog from './SendInviteDialog.vue';
 
     const { vipFriends, onlineFriends, activeFriends } = storeToRefs(useFriendStore());

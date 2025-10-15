@@ -128,11 +128,13 @@
 </template>
 
 <script setup>
+    import { Delete, Folder, FolderOpened, InfoFilled, Picture } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { Picture, Folder, FolderOpened, Delete, InfoFilled } from '@element-plus/icons-vue';
-    import { useAdvancedSettingsStore } from '../../../stores';
+
     import { redirectToToolsTab } from '../../../shared/utils/base/ui';
+    import { useAdvancedSettingsStore } from '../../../stores';
+
     import SimpleSwitch from './SimpleSwitch.vue';
 
     const { t } = useI18n();

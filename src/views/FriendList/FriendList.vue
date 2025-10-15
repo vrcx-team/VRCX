@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'friendList'" class="x-container">
+    <div class="x-container">
         <div style="padding: 0 10px 0 10px">
             <div style="display: flex; align-items: center; justify-content: space-between">
                 <span class="header">{{ t('view.friend_list.header') }}</span>
@@ -256,14 +256,15 @@
 </template>
 
 <script setup>
+    import { Close, Loading, Refresh, RefreshLeft } from '@element-plus/icons-vue';
+    import { nextTick, reactive, ref, watch } from 'vue';
     import { ElMessageBox } from 'element-plus';
-    import { Loading, Refresh, Close, RefreshLeft } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { nextTick, onMounted, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { friendRequest, userRequest } from '../../api';
-    import removeConfusables, { removeWhitespace } from '../../service/confusables';
+    import { useRoute } from 'vue-router';
+
     import {
+        formatDateFilter,
         getFaviconUrl,
         languageClass,
         localeIncludes,
@@ -272,17 +273,17 @@
         statusClass,
         timeToText,
         userImage,
-        userImageFull,
-        formatDateFilter
+        userImageFull
     } from '../../shared/utils';
     import {
         useAppearanceSettingsStore,
         useFriendStore,
         useGalleryStore,
         useSearchStore,
-        useUiStore,
         useUserStore
     } from '../../stores';
+    import { friendRequest, userRequest } from '../../api';
+    import removeConfusables, { removeWhitespace } from '../../service/confusables';
 
     const { t } = useI18n();
 
@@ -292,7 +293,6 @@
     const { getAllUserStats, confirmDeleteFriend, handleFriendDelete } = useFriendStore();
     const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
-    const { menuActiveIndex } = storeToRefs(useUiStore());
     const { stringComparer, friendsListSearch } = storeToRefs(useSearchStore());
     const { showFullscreenImageDialog } = useGalleryStore();
 
@@ -309,15 +309,19 @@
     const friendsListSearchFilterVIP = ref(false);
     const friendsListBulkUnfriendForceUpdate = ref(0);
 
-    watch(menuActiveIndex, (val) => {
-        if (val === 'friendList') nextTick(friendsListSearchChange);
-    });
+    const route = useRoute();
 
-    onMounted(() => {
-        friendsListSearchChange();
-    });
+    watch(
+        () => route.path,
+        (newPath, oldPath) => {
+            console.log('Route changed - FriendsList', newPath, oldPath);
+            nextTick(() => friendsListSearchChange());
+        },
+        { immediate: true }
+    );
 
     function friendsListSearchChange() {
+        console.log('Friends List Search Change');
         friendsListLoading.value = true;
         let query = '';
         let cleanedQuery = '';

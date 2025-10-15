@@ -1,24 +1,28 @@
 ﻿// Because this isn't a package (just a loose js file), we have to use require
 // statements
 
-const process = require("node:process")
+const process = require('node:process');
 const fs = require('node:fs');
 const path = require('node:path');
-const yargs = require("yargs/yargs");
-const { hideBin } = require("yargs/helpers")
+const yargs = require('yargs/yargs');
+const { hideBin } = require('yargs/helpers');
 
 const getLocalizationObjects = function* () {
     const localeFolder = './src/localization';
-    const folders = fs.readdirSync(localeFolder, { withFileTypes: true }).filter(file => file.isDirectory());
+    const folders = fs
+        .readdirSync(localeFolder, { withFileTypes: true })
+        .filter((file) => file.isDirectory());
     for (const folder of folders) {
-        const filePath = path.join(localeFolder, folder.name, "en.json");
+        const filePath = path.join(localeFolder, folder.name, 'en.json');
         const jsonStr = fs.readFileSync(filePath);
         yield [filePath, JSON.parse(jsonStr)];
     }
-}
+};
 
 const addKey = function (obj, objects, value, above_key) {
-    console.log(`Adding key to ${obj.language} at path '${objects.join('.')}' with value '${value}' above key '${above_key}'`);
+    console.log(
+        `Adding key to ${obj.language} at path '${objects.join('.')}' with value '${value}' above key '${above_key}'`
+    );
 
     let currentObj = obj;
     let i = 0;
@@ -32,12 +36,12 @@ const addKey = function (obj, objects, value, above_key) {
         currentObj = currentObj[objects[i]];
     }
     InsertKeyInObj(currentObj, objects[i], value, above_key);
-}
+};
 
 // Shamelessly stolen from https://stackoverflow.com/a/55017155/11030436
 const InsertKeyInObj = (obj, key, value, above_key) => {
     const keys = Object.keys(obj);
-    if (keys.length === 0 || !(Object.hasOwn(obj, above_key))) {
+    if (keys.length === 0 || !Object.hasOwn(obj, above_key)) {
         obj[key] = value;
         return obj;
     }
@@ -58,7 +62,7 @@ const InsertKeyInObj = (obj, key, value, above_key) => {
         }
 
         return newObj;
-    }, {})
+    }, {});
     delete ret.dummy;
 
     // Clear keys on old object
@@ -68,7 +72,7 @@ const InsertKeyInObj = (obj, key, value, above_key) => {
 
     // Assign new properties to old object
     Object.assign(obj, ret);
-}
+};
 
 const addLocalizationKey = (key, value, above_key) => {
     const objects = key.split('.');
@@ -79,11 +83,13 @@ const addLocalizationKey = (key, value, above_key) => {
     }
 
     console.log(`\`${key}:${value}\` added to every localization file!`);
-}
+};
 
 const removeKey = (obj, objects, i = 0) => {
-    console.log(`Removing key from ${obj.language} at path '${objects.join('.')}'`);
-    if (!(Object.hasOwn(obj, objects[i]))) {
+    console.log(
+        `Removing key from ${obj.language} at path '${objects.join('.')}'`
+    );
+    if (!Object.hasOwn(obj, objects[i])) {
         return;
     }
 
@@ -95,7 +101,7 @@ const removeKey = (obj, objects, i = 0) => {
             delete obj[objects[i]];
         }
     }
-}
+};
 
 const removeLocalizationKey = (key) => {
     const objects = key.split('.');
@@ -108,12 +114,14 @@ const removeLocalizationKey = (key) => {
     }
 
     console.log(`\`${key}\` removed from every localization file!`);
-}
+};
 
 // Yes this code is extremely slow, but it doesn't run very often so.
 const Validate = function () {
     const files = [...getLocalizationObjects()];
-    const enIndex = files.findIndex(file => path.dirname(file[0]).endsWith("en"));
+    const enIndex = files.findIndex((file) =>
+        path.dirname(file[0]).endsWith('en')
+    );
     const [_, enObj] = files.splice(enIndex, 1)[0];
 
     const traverse = function (obj, predicate, pathes = []) {
@@ -124,16 +132,16 @@ const Validate = function () {
                 traverse(obj[key], predicate, [...pathes, key]);
             }
         }
-    }
+    };
 
     let hasRemoved = false;
     for (const [_, localeObj] of files) {
-        toRemove = []
+        toRemove = [];
         traverse(localeObj, (_, key, pathes) => {
             let currObj = enObj;
             for (const pathSegment of pathes) {
                 if (Object.hasOwn(currObj, pathSegment)) {
-                    currObj = currObj[pathSegment]
+                    currObj = currObj[pathSegment];
                 } else {
                     toRemove.push([...pathes, key]);
                     return;
@@ -151,10 +159,14 @@ const Validate = function () {
         }
     }
 
-    toAdd = []
+    toAdd = [];
     traverse(enObj, (obj, key, pathes) => {
         // Add above_key to the toAdd entry
-        if (toAdd.length > 0 && typeof toAdd.at(-1)[3] === 'undefined' && toAdd.at(-1)[1].at(-2) === pathes.at(-1)) {
+        if (
+            toAdd.length > 0 &&
+            typeof toAdd.at(-1)[3] === 'undefined' &&
+            toAdd.at(-1)[1].at(-2) === pathes.at(-1)
+        ) {
             toAdd.at(-1)[3] = key;
         }
 
@@ -164,7 +176,12 @@ const Validate = function () {
                 if (Object.hasOwn(currObj, pathSegment)) {
                     currObj = currObj[pathSegment];
                 } else {
-                    toAdd.push([localeObj, [...pathes, key], obj[key], undefined]);
+                    toAdd.push([
+                        localeObj,
+                        [...pathes, key],
+                        obj[key],
+                        undefined
+                    ]);
                     return;
                 }
             }
@@ -181,20 +198,23 @@ const Validate = function () {
 
     if (toAdd.length > 0 || hasRemoved) {
         for (const [localePath, localeObj] of files) {
-            fs.writeFileSync(localePath, `${JSON.stringify(localeObj, null, 4)}\n`);
+            fs.writeFileSync(
+                localePath,
+                `${JSON.stringify(localeObj, null, 4)}\n`
+            );
         }
     } else {
-        console.log("validation passed!");
+        console.log('validation passed!');
     }
-
-}
+};
 
 const cliParser = yargs(hideBin(process.argv))
     .command({
         command: 'add <key> <value> [above_key]',
         aliases: ['a', 'replace', 'r'],
         desc: 'adds or replaces a key and value to all localization files above `above_key`',
-        handler: (argv) => addLocalizationKey(argv.key, argv.value, argv.above_key)
+        handler: (argv) =>
+            addLocalizationKey(argv.key, argv.value, argv.above_key)
     })
     .command({
         command: 'remove <key>',
@@ -205,17 +225,20 @@ const cliParser = yargs(hideBin(process.argv))
     .command({
         command: 'validate',
         aliases: [],
-        desc: 'removes keys from other languages that don\'t exist in the en translation and adds keys that don\'t exist in other languages',
+        desc: "removes keys from other languages that don't exist in the en translation and adds keys that don't exist in other languages",
         handler: Validate
     })
     .demandCommand(1)
     .example([
         ['$0 add foo.bar "I\'m adding a key!"', 'Adding a key as `foo.bar`'],
         ['$0 remove foo.bar', 'removes the foo.bar key'],
-        ['$0 add foo.bar "I\'m adding a key!" baz', 'Adding a key aboe the existing `foo.baz` key']
+        [
+            '$0 add foo.bar "I\'m adding a key!" baz',
+            'Adding a key aboe the existing `foo.baz` key'
+        ]
     ])
     .help(false)
-    .version(false)
+    .version(false);
 
 cliParser
     .wrap(cliParser.terminalWidth())
@@ -226,4 +249,4 @@ cliParser
         handler: () => cliParser.showHelp()
     })
     .fail(() => cliParser.showHelp())
-    .parse()
+    .parse();

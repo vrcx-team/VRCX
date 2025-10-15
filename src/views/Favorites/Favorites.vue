@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'favorite'" class="x-container">
+    <div class="x-container">
         <div
             style="
                 font-size: 13px;
@@ -66,12 +66,15 @@
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import * as workerTimers from 'worker-timers';
+
     import { avatarRequest, favoriteRequest, worldRequest } from '../../api';
-    import { useFavoriteStore, useUiStore, useAvatarStore } from '../../stores';
+    import { useAvatarStore, useFavoriteStore, useUiStore } from '../../stores';
+
     import FavoritesAvatarTab from './components/FavoritesAvatarTab.vue';
     import FavoritesFriendTab from './components/FavoritesFriendTab.vue';
     import FavoritesWorldTab from './components/FavoritesWorldTab.vue';
+
+    import * as workerTimers from 'worker-timers';
 
     const { t } = useI18n();
     const {
@@ -95,7 +98,6 @@
         showWorldImportDialog,
         showAvatarImportDialog
     } = useFavoriteStore();
-    const { menuActiveIndex } = storeToRefs(useUiStore());
     const { applyAvatar } = useAvatarStore();
 
     const editFavoritesMode = ref(false);

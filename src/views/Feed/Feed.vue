@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'feed'" class="x-container feed">
+    <div class="x-container feed">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
                 <el-tooltip placement="bottom" :content="t('view.feed.favorites_only_tooltip')">
@@ -312,13 +312,13 @@
     import { Right } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { useGalleryStore, useUserStore, useFeedStore, useUiStore } from '../../stores';
-    import { timeToText, statusClass, formatDateFilter } from '../../shared/utils';
+
+    import { useFeedStore, useGalleryStore, useUiStore, useUserStore } from '../../stores';
+    import { formatDateFilter, statusClass, timeToText } from '../../shared/utils';
 
     const { showUserDialog } = useUserStore();
     const { feedTable } = storeToRefs(useFeedStore());
     const { feedTableLookup } = useFeedStore();
-    const { menuActiveIndex } = storeToRefs(useUiStore());
     const { showFullscreenImageDialog } = useGalleryStore();
 
     const { t } = useI18n();

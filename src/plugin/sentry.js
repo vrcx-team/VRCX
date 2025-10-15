@@ -1,5 +1,6 @@
-import * as Sentry from '@sentry/vue';
 import configRepository from '../service/config';
+
+import * as Sentry from '@sentry/vue';
 
 export async function initSentry(app) {
     const enabled = await configRepository.getString(

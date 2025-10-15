@@ -148,10 +148,11 @@
 </template>
 
 <script setup>
-    import { Download, Delete, Connection } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
+    import { Connection, Delete, Download } from '@element-plus/icons-vue';
     import { onBeforeUnmount, ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { useAuthStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '../../stores';
     import { openExternalLink, userImage } from '../../shared/utils';
     import { AppDebug } from '../../service/appConfig';

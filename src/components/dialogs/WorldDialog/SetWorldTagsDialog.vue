@@ -85,11 +85,12 @@
 </template>
 
 <script setup>
-    import { ref, computed, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { ElMessage } from 'element-plus';
     import { useI18n } from 'vue-i18n';
-    import { worldRequest } from '../../../api';
+
     import { useWorldStore } from '../../../stores';
+    import { worldRequest } from '../../../api';
 
     const props = defineProps({
         oldTags: {

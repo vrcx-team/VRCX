@@ -84,9 +84,10 @@
     import { Back, Close, Star } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest } from '../../../api';
-    import { userImage, userStatusClass } from '../../../shared/utils';
+
     import { useFavoriteStore, useUiStore } from '../../../stores';
+    import { userImage, userStatusClass } from '../../../shared/utils';
+    import { favoriteRequest } from '../../../api';
 
     defineProps({
         favorite: { type: Object, required: true },

@@ -1,13 +1,14 @@
-import configRepository from '../service/config';
 import {
     changeAppDarkStyle,
     changeAppThemeStyle,
+    getThemeMode,
     refreshCustomCss,
     refreshCustomScript,
-    setLoginContainerStyle,
-    getThemeMode
+    setLoginContainerStyle
 } from '../shared/utils/base/ui';
 import { i18n } from './i18n';
+
+import configRepository from '../service/config';
 
 export async function initUi() {
     try {

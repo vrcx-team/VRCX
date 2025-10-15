@@ -1,8 +1,10 @@
-import { storeToRefs } from 'pinia';
-import { useAppearanceSettingsStore, useUiStore } from '../../../stores';
-import { THEME_CONFIG } from '../../constants';
 import { ElMessage } from 'element-plus';
+import { storeToRefs } from 'pinia';
+
+import { THEME_CONFIG } from '../../constants';
 import { i18n } from '../../../plugin/i18n';
+import { router } from '../../../plugin/router';
+import { useAppearanceSettingsStore } from '../../../stores';
 
 /**
  *
@@ -29,10 +31,12 @@ function changeAppThemeStyle(themeMode) {
         themeMode = systemIsDarkMode() ? 'dark' : 'light';
     }
 
-    const themeConfig = THEME_CONFIG[themeMode];
+    let themeConfig = THEME_CONFIG[themeMode];
     if (!themeConfig) {
         console.error('Invalid theme mode:', themeMode);
+        // load system theme as fallback
         themeMode = systemIsDarkMode() ? 'dark' : 'light';
+        themeConfig = THEME_CONFIG[themeMode];
     }
 
     let filePathPrefix = 'file://vrcx/';
@@ -270,8 +274,7 @@ async function getThemeMode(configRepository) {
 }
 
 function redirectToToolsTab() {
-    const uiStore = useUiStore();
-    uiStore.menuActiveIndex = 'tools';
+    router.push({ name: 'tools' });
     ElMessage({
         message: i18n.global.t('view.tools.redirect_message'),
         type: 'primary',

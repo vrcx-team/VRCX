@@ -14,7 +14,8 @@
 </template>
 
 <script setup>
-    import { ref, watch, onMounted } from 'vue';
+    import { onMounted, ref, watch } from 'vue';
+
     import { parseLocation } from '../../shared/utils/location';
 
     const props = defineProps({

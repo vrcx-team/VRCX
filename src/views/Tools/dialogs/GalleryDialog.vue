@@ -544,17 +544,18 @@
 </template>
 
 <script setup>
+    import { Close, Delete, Picture, Plus, Present, Refresh, Upload } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
-    import { Refresh, Upload, Close, Picture, Delete, Plus, Present } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
     import { computed, ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest, inventoryRequest } from '../../../api';
-    import { AppDebug } from '../../../service/appConfig';
-    import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../shared/constants';
+
+    import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../../api';
     import { extractFileId, formatDateFilter, getEmojiFileName, getPrintFileName } from '../../../shared/utils';
-    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
     import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../../stores';
+    import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../shared/constants';
+    import { AppDebug } from '../../../service/appConfig';
+    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
 
     const { t } = useI18n();
 

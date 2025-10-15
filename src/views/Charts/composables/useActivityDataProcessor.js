@@ -2,9 +2,9 @@ import { computed } from 'vue';
 
 export function useActivityDataProcessor(
     activityData,
-    activityDetailData, 
-    isDetailVisible, 
-    isSoloInstanceVisible, 
+    activityDetailData,
+    isDetailVisible,
+    isSoloInstanceVisible,
     isNoFriendInstanceVisible
 ) {
     const totalOnlineTime = computed(() => {

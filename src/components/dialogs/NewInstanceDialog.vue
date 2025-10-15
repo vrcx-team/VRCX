@@ -473,12 +473,11 @@
 </template>
 
 <script setup>
-    import { ref, watch, nextTick, computed } from 'vue';
+    import { computed, nextTick, ref, watch } from 'vue';
     import { ElMessage } from 'element-plus';
-    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
-    import { groupRequest, instanceRequest, worldRequest } from '../../api';
-    import configRepository from '../../service/config';
+    import { useI18n } from 'vue-i18n';
+
     import {
         copyToClipboard,
         getLaunchURL,
@@ -488,17 +487,20 @@
         userImage,
         userStatusClass
     } from '../../shared/utils';
-    import { getNextDialogIndex } from '../../shared/utils/base/ui';
     import {
         useFriendStore,
         useGroupStore,
         useInstanceStore,
+        useInviteStore,
         useLaunchStore,
         useLocationStore,
-        useUserStore,
-        useInviteStore
+        useUserStore
     } from '../../stores';
+    import { groupRequest, instanceRequest, worldRequest } from '../../api';
+    import { getNextDialogIndex } from '../../shared/utils/base/ui';
+
     import InviteDialog from './InviteDialog/InviteDialog.vue';
+    import configRepository from '../../service/config';
 
     const props = defineProps({
         newInstanceDialogLocationTag: {

@@ -1,18 +1,19 @@
-import { defineStore } from 'pinia';
-import { ref, computed, reactive, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
-import { favoriteRequest } from '../api';
-import { database } from '../service/database';
-import { processBulk } from '../service/request';
-import { watchState } from '../service/watchState';
+import { defineStore } from 'pinia';
+import { useI18n } from 'vue-i18n';
+
 import { compareByName, removeFromArray } from '../shared/utils';
+import { database } from '../service/database';
+import { favoriteRequest } from '../api';
+import { processBulk } from '../service/request';
+import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAvatarStore } from './avatar';
 import { useFriendStore } from './friend';
-import { useAppearanceSettingsStore } from './settings/appearance';
 import { useGeneralSettingsStore } from './settings/general';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
-import { useI18n } from 'vue-i18n';
+import { watchState } from '../service/watchState';
 
 export const useFavoriteStore = defineStore('Favorite', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();

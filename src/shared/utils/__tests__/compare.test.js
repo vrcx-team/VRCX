@@ -1,16 +1,16 @@
 import {
-    compareByName,
     compareByCreatedAt,
     compareByCreatedAtAscending,
-    compareByUpdatedAt,
     compareByDisplayName,
-    compareByMemberCount,
-    compareByPrivate,
-    compareByStatus,
     compareByLastActive,
     compareByLastSeen,
+    compareByLocation,
     compareByLocationAt,
-    compareByLocation
+    compareByMemberCount,
+    compareByName,
+    compareByPrivate,
+    compareByStatus,
+    compareByUpdatedAt
 } from '../compare';
 
 describe('Compare Functions', () => {

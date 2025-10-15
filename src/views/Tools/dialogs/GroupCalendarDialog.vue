@@ -10,7 +10,11 @@
             <div class="dialog-title-container">
                 <span>{{ t('dialog.group_calendar.header') }}</span>
                 <el-button @click="toggleViewMode" type="primary" size="small" class="view-toggle-btn">
-                    {{ viewMode === 'timeline' ? t('dialog.group_calendar.list_view') : t('dialog.group_calendar.calendar_view') }}
+                    {{
+                        viewMode === 'timeline'
+                            ? t('dialog.group_calendar.list_view')
+                            : t('dialog.group_calendar.calendar_view')
+                    }}
                 </el-button>
             </div>
         </template>
@@ -98,7 +102,11 @@
                             </div>
                         </div>
                         <div v-else class="no-events">
-                            {{ searchQuery ? t('dialog.group_calendar.search_no_matching') : t('dialog.group_calendar.search_no_this_month') }}
+                            {{
+                                searchQuery
+                                    ? t('dialog.group_calendar.search_no_matching')
+                                    : t('dialog.group_calendar.search_no_this_month')
+                            }}
                         </div>
                     </div>
                 </div>
@@ -108,14 +116,17 @@
 </template>
 
 <script setup>
+    import { computed, ref, watch } from 'vue';
     import { ArrowRight } from '@element-plus/icons-vue';
-    import { ref, watch, computed } from 'vue';
     import { useI18n } from 'vue-i18n';
+
     import dayjs from 'dayjs';
+
     import { groupRequest } from '../../../api';
-    import { useGroupStore } from '../../../stores';
-    import GroupCalendarEventCard from '../components/GroupCalendarEventCard.vue';
     import { replaceBioSymbols } from '../../../shared/utils';
+    import { useGroupStore } from '../../../stores';
+
+    import GroupCalendarEventCard from '../components/GroupCalendarEventCard.vue';
 
     const { cachedGroups } = useGroupStore();
 

@@ -91,11 +91,12 @@
 
 <script setup>
     import { Edit } from '@element-plus/icons-vue';
-
-    import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { useGalleryStore, useInviteStore, useUserStore } from '../../../stores';
+
     import EditAndSendInviteDialog from './EditAndSendInviteDialog.vue';
     import SendInviteConfirmDialog from './SendInviteConfirmDialog.vue';
 

@@ -13,12 +13,10 @@
 <script setup>
     import { computed, onMounted } from 'vue';
 
-    // Simple macOS detection
     const isMacOS = computed(() => {
         return navigator.platform.indexOf('Mac') > -1;
     });
 
-    // Make title bar draggable
     onMounted(() => {
         if (isMacOS.value) {
             const titleBar = document.querySelector('.macos-title-bar');

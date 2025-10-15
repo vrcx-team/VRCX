@@ -98,11 +98,13 @@
 </template>
 
 <script setup>
+    import { computed, ref } from 'vue';
     import { ElMessage } from 'element-plus';
-    import { ref, computed } from 'vue';
     import { useI18n } from 'vue-i18n';
+
     import { groupRequest, vrcPlusIconRequest } from '../../../api';
     import { useGalleryStore, useGroupStore } from '../../../stores';
+
     import GallerySelectDialog from './GallerySelectDialog.vue';
 
     const props = defineProps({

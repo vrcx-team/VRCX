@@ -1,11 +1,8 @@
-import { defineStore } from 'pinia';
-import { reactive, watch, ref } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
-import { instanceRequest, userRequest, worldRequest } from '../api';
-import configRepository from '../service/config';
-import { database } from '../service/database';
-import { watchState } from '../service/watchState';
-import { instanceContentSettings } from '../shared/constants';
+import { defineStore } from 'pinia';
+import { useI18n } from 'vue-i18n';
+
 import {
     checkVRChatCache,
     compareByDisplayName,
@@ -21,17 +18,22 @@ import {
     parseLocation,
     replaceBioSymbols
 } from '../shared/utils';
+import { instanceRequest, userRequest, worldRequest } from '../api';
+import { database } from '../service/database';
+import { instanceContentSettings } from '../shared/constants';
+import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFriendStore } from './friend';
 import { useGroupStore } from './group';
 import { useLocationStore } from './location';
 import { useNotificationStore } from './notification';
 import { usePhotonStore } from './photon';
-import { useAppearanceSettingsStore } from './settings/appearance';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
-import { useI18n } from 'vue-i18n';
+import { watchState } from '../service/watchState';
+
+import configRepository from '../service/config';
 
 export const useInstanceStore = defineStore('Instance', () => {
     const locationStore = useLocationStore();
@@ -79,23 +81,28 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     const instanceJoinHistory = ref(new Map());
 
-    const currentInstanceUserList = ref({
-        data: [],
-        tableProps: {
-            stripe: true,
-            size: 'small',
-            defaultSort: {
-                prop: 'timer',
-                order: 'descending'
-            }
-        },
-        layout: 'table'
+    const currentInstanceUsersData = ref([]);
+    const currentInstanceUsersTable = computed(() => {
+        return {
+            data: currentInstanceWorld.value.ref.id
+                ? currentInstanceUsersData.value
+                : [],
+            tableProps: {
+                stripe: true,
+                size: 'small',
+                defaultSort: {
+                    prop: 'timer',
+                    order: 'descending'
+                }
+            },
+            layout: 'table'
+        };
     });
 
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            currentInstanceUserList.value.data = [];
+            currentInstanceUsersData.value = [];
             instanceJoinHistory.value = new Map();
             previousInstancesInfoDialogVisible.value = false;
             cachedInstances.clear();
@@ -686,7 +693,11 @@ export const useInstanceStore = defineStore('Instance', () => {
                 return -1;
             }
             // sort by number of users when no friends in instance
-            if (a.users.length === 0 && b.users.length === 0 && a.ref?.userCount !== b.ref?.userCount) {
+            if (
+                a.users.length === 0 &&
+                b.users.length === 0 &&
+                a.ref?.userCount !== b.ref?.userCount
+            ) {
                 if (a.ref?.userCount < b.ref?.userCount) {
                     return 1;
                 }
@@ -700,7 +711,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 return -1;
             }
             // sort by id
-            return compareById(a, b)
+            return compareById(a, b);
         });
         D.rooms = rooms;
     }
@@ -1006,15 +1017,6 @@ export const useInstanceStore = defineStore('Instance', () => {
         ref.position = position;
         ref.queueSize = queueSize;
         ref.updatedAt = Date.now();
-        if (!ref.$msgBox || ref.$msgBox.closed) {
-            ref.$msgBox = ElMessage({
-                message: '',
-                type: 'info',
-                duration: 0,
-                showClose: true,
-                customClass: 'vrc-instance-queue-message'
-            });
-        }
         if (!ref.$groupName) {
             ref.$groupName = await getGroupName(instanceId);
         }
@@ -1026,7 +1028,14 @@ export const useInstanceStore = defineStore('Instance', () => {
             ref.$worldName,
             ref.$groupName
         );
-        ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${location} `;
+        ref.$msgBox?.close();
+        ref.$msgBox = ElMessage({
+            message: `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${location} `,
+            type: 'info',
+            duration: 0,
+            showClose: true,
+            customClass: 'vrc-instance-queue-message'
+        });
         queuedInstances.value.set(instanceId, ref);
         // workerTimers.setTimeout(this.instanceQueueTimeout, 3600000);
     }
@@ -1182,7 +1191,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 }
             }
         }
-        currentInstanceUserList.value.data = users;
+        currentInstanceUsersData.value = users;
     }
 
     // $app.methods.instanceQueueClear = function () {
@@ -1204,7 +1213,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         previousInstancesInfoDialogVisible,
         previousInstancesInfoDialogInstanceId,
         instanceJoinHistory,
-        currentInstanceUserList,
+        currentInstanceUsersTable,
 
         applyInstance,
         updateCurrentInstanceWorld,

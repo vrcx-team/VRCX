@@ -4,8 +4,10 @@
 
 <script setup>
     import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
-    import * as workerTimers from 'worker-timers';
+
     import { timeToText } from '../shared/utils';
+
+    import * as workerTimers from 'worker-timers';
 
     const props = defineProps({
         datetime: { type: String, default: '' },

@@ -1,10 +1,10 @@
 import {
+    changeLogRemoveLinks,
+    commaNumber,
     escapeTag,
     escapeTagRecursive,
-    textToHex,
-    commaNumber,
     localeIncludes,
-    changeLogRemoveLinks
+    textToHex
 } from '../string';
 
 describe('String Utils', () => {

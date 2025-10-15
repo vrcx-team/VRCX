@@ -1,9 +1,6 @@
+import amoled from '../../assets/scss/themes/theme.amoled.scss?url';
 import dark from '../../assets/scss/themes/theme.dark.scss?url';
 import darkblue from '../../assets/scss/themes/theme.darkblue.scss?url';
-import amoled from '../../assets/scss/themes/theme.amoled.scss?url';
-// import darkvanillaold from '../../assets/scss/themes/theme.darkvanillaold.scss?url';
-// import darkvanilla from '../../assets/scss/themes/theme.darkvanilla.scss?url';
-// import pink from '../../assets/scss/themes/theme.pink.scss?url';
 import material3 from '../../assets/scss/themes/theme.material3.scss?url';
 
 export const THEME_CONFIG = {

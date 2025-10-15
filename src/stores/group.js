@@ -1,26 +1,29 @@
-import { defineStore } from 'pinia';
-import { watch, nextTick, ref } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import * as workerTimers from 'worker-timers';
+import { defineStore } from 'pinia';
+
 import {
     groupRequest,
     instanceRequest,
     userRequest,
     worldRequest
 } from '../api';
-import configRepository from '../service/config';
-import { watchState } from '../service/watchState';
+import {
+    convertFileUrlToImageUrl,
+    hasGroupPermission,
+    replaceBioSymbols
+} from '../shared/utils';
 import { database } from '../service/database.js';
 import { groupDialogFilterOptions } from '../shared/constants/';
-import {
-    replaceBioSymbols,
-    convertFileUrlToImageUrl,
-    hasGroupPermission
-} from '../shared/utils';
 import { useGameStore } from './game';
 import { useInstanceStore } from './instance';
-import { useUserStore } from './user';
 import { useNotificationStore } from './notification';
+import { useUserStore } from './user';
+import { watchState } from '../service/watchState';
+
+import configRepository from '../service/config';
+
+import * as workerTimers from 'worker-timers';
 
 export const useGroupStore = defineStore('Group', () => {
     const instanceStore = useInstanceStore();

@@ -82,12 +82,12 @@
 </template>
 
 <script setup>
+    import { computed, ref, watch } from 'vue';
     import { ArrowDown } from '@element-plus/icons-vue';
-    import { ref, computed, watch } from 'vue';
     import { ElMessage } from 'element-plus';
-
-    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
+
     import { useFavoriteStore, useWorldStore } from '../../../stores';
 
     const props = defineProps({

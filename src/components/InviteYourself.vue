@@ -18,14 +18,15 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
     import { Loading, Message } from '@element-plus/icons-vue';
+    import { ElMessage } from 'element-plus';
     import { computed } from 'vue';
-    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
-    import { instanceRequest } from '../api';
+    import { useI18n } from 'vue-i18n';
+
     import { checkCanInviteSelf, parseLocation } from '../shared/utils';
     import { useInviteStore, useLaunchStore } from '../stores';
+    import { instanceRequest } from '../api';
 
     const props = defineProps({
         location: String,

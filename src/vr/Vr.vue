@@ -1407,19 +1407,23 @@
 </template>
 
 <script setup>
-    import './vr.scss';
-    import { onMounted, reactive, toRefs, nextTick } from 'vue';
-    import Noty from 'noty';
-    import * as workerTimers from 'worker-timers';
+    import { nextTick, onMounted, reactive, toRefs } from 'vue';
+    import { useI18n } from 'vue-i18n';
+
     import MarqueeText from 'vue-marquee-text-component';
-    import VrLocation from './components/VrLocation.vue';
-    import { displayLocation } from '../shared/utils/location';
+    import Noty from 'noty';
+
     import { escapeTag, escapeTagRecursive } from '../shared/utils/base/string';
+    import { changeHtmlLangAttribute } from '../shared/utils/base/ui';
+    import { displayLocation } from '../shared/utils/location';
     import { removeFromArray } from '../shared/utils/base/array';
     import { timeToText } from '../shared/utils/base/format';
-    import { changeHtmlLangAttribute } from '../shared/utils/base/ui';
 
-    import { useI18n } from 'vue-i18n';
+    import VrLocation from './components/VrLocation.vue';
+
+    import * as workerTimers from 'worker-timers';
+
+    import './vr.scss';
 
     defineOptions({
         name: 'vr'

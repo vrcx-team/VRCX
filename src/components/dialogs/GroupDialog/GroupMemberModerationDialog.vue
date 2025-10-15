@@ -720,9 +720,13 @@
                 style="margin-top: 5px; width: 340px"
                 :placeholder="t('dialog.group_member_moderation.user_id_placeholder')"
                 clearable></el-input>
-            <el-button size="small" :disabled="!selectUserId" @click="selectGroupMemberUserId">{{
-                t('dialog.group_member_moderation.select_user')
-            }}</el-button>
+            <el-button
+                size="small"
+                style="margin-top: 5px; margin-left: 5px"
+                :disabled="!selectUserId"
+                @click="selectGroupMemberUserId"
+                >{{ t('dialog.group_member_moderation.select_user') }}</el-button
+            >
             <br />
             <br />
             <span class="name">{{ t('dialog.group_member_moderation.selected_users') }}</span>
@@ -861,18 +865,20 @@
 </template>
 
 <script setup>
-    import { Refresh, Delete, ArrowDown, Warning, Loading } from '@element-plus/icons-vue';
-    import { ElMessage } from 'element-plus';
-
-    import { storeToRefs } from 'pinia';
+    import { ArrowDown, Delete, Loading, Refresh, Warning } from '@element-plus/icons-vue';
     import { reactive, ref, watch } from 'vue';
+    import { ElMessage } from 'element-plus';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import * as workerTimers from 'worker-timers';
-    import { groupRequest, userRequest } from '../../../api';
-    import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
-    import { hasGroupPermission, userImage, userImageFull, formatDateFilter, debounce } from '../../../shared/utils';
+
+    import { debounce, formatDateFilter, hasGroupPermission, userImage, userImageFull } from '../../../shared/utils';
     import { useAppearanceSettingsStore, useGalleryStore, useGroupStore, useUserStore } from '../../../stores';
+    import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
+    import { groupRequest, userRequest } from '../../../api';
+
     import GroupMemberModerationExportDialog from './GroupMemberModerationExportDialog.vue';
+
+    import * as workerTimers from 'worker-timers';
 
     const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
@@ -999,21 +1005,6 @@
         }
     });
 
-    async function initializePageSize() {
-        try {
-            const { tablePageSize } = storeToRefs(useAppearanceSettingsStore());
-
-            groupMemberModerationTable.pageSize = tablePageSize.value;
-            groupBansModerationTable.pageSize = tablePageSize.value;
-            groupLogsModerationTable.pageSize = tablePageSize.value;
-            groupInvitesModerationTable.pageSize = tablePageSize.value;
-            groupJoinRequestsModerationTable.pageSize = tablePageSize.value;
-            groupBlockedModerationTable.pageSize = tablePageSize.value;
-        } catch (error) {
-            console.error('Failed to initialize table page size:', error);
-        }
-    }
-
     function deselectGroupMember(userId) {
         const deselectInTable = (tableData) => {
             if (userId) {
@@ -1067,9 +1058,6 @@
             }
         }
     );
-
-    // created()
-    initializePageSize();
 
     function handleGroupMemberRoleChange(args) {
         if (groupDialog.value.id === args.params.groupId) {

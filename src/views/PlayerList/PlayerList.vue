@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'playerList'" class="x-container" style="padding-top: 5px">
+    <div class="x-container" style="padding-top: 5px">
         <div style="display: flex; flex-direction: column; height: 100%">
             <div v-if="currentInstanceWorld.ref.id" style="display: flex">
                 <img
@@ -189,7 +189,7 @@
 
             <div class="current-instance-table">
                 <DataTable
-                    v-bind="currentInstanceWorld.ref.id ? currentInstanceUserList : {}"
+                    v-bind="currentInstanceUsersTable"
                     style="margin-top: 10px; cursor: pointer"
                     @row-click="selectCurrentInstanceRow">
                     <el-table-column :label="t('table.playerList.avatar')" width="70" prop="photo">
@@ -401,30 +401,32 @@
 </template>
 
 <script setup>
-    import { Mute, Microphone, HomeFilled, CircleClose, Pointer, ChatLineRound } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
+    import { ChatLineRound, CircleClose, HomeFilled, Microphone, Mute, Pointer } from '@element-plus/icons-vue';
     import { defineAsyncComponent, ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import {
-        languageClass,
+        commaNumber,
+        formatDateFilter,
         getFaviconUrl,
+        languageClass,
         openExternalLink,
         statusClass,
         userImage,
-        userImageFull,
-        commaNumber,
-        formatDateFilter
+        userImageFull
     } from '../../shared/utils';
     import {
-        useLocationStore,
         useAppearanceSettingsStore,
-        usePhotonStore,
-        useUserStore,
-        useWorldStore,
+        useGalleryStore,
         useInstanceStore,
+        useLocationStore,
+        usePhotonStore,
         useUiStore,
-        useGalleryStore
+        useUserStore,
+        useWorldStore
     } from '../../stores';
+
     import ChatboxBlacklistDialog from './dialogs/ChatboxBlacklistDialog.vue';
 
     const PhotonEventTable = defineAsyncComponent(() => import('./components/PhotonEventTable.vue'));
@@ -437,8 +439,8 @@
     const { showWorldDialog } = useWorldStore();
     const { lastLocation } = storeToRefs(useLocationStore());
     const { currentInstanceLocation, currentInstanceWorld } = storeToRefs(useInstanceStore());
-    const { currentInstanceUserList, getCurrentInstanceUserList } = useInstanceStore();
-    const { menuActiveIndex } = storeToRefs(useUiStore());
+    const { getCurrentInstanceUserList } = useInstanceStore();
+    const { currentInstanceUsersTable } = storeToRefs(useInstanceStore());
     const { showFullscreenImageDialog } = useGalleryStore();
     const { currentUser } = storeToRefs(useUserStore());
 

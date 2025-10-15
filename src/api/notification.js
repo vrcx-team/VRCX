@@ -1,5 +1,5 @@
-import { request } from '../service/request';
 import { useGalleryStore, useNotificationStore } from '../stores';
+import { request } from '../service/request';
 
 /**
  * @returns {any}

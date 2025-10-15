@@ -571,50 +571,49 @@
 </template>
 
 <script setup>
-    import { ElMessage, ElMessageBox } from 'element-plus';
-
     import {
-        Delete,
-        Star,
-        StarFilled,
+        Back,
         Check,
-        MoreFilled,
-        Refresh,
-        Share,
         CircleCheck,
         CircleClose,
-        Picture,
-        User,
-        Edit,
-        Download,
-        Upload,
-        Back,
-        Right,
         CopyDocument,
+        Delete,
+        Download,
+        Edit,
+        MoreFilled,
+        Picture,
+        Refresh,
+        Right,
+        Share,
+        Star,
+        StarFilled,
+        Upload,
+        User,
         Warning
     } from '@element-plus/icons-vue';
-
-    import { storeToRefs } from 'pinia';
     import { computed, defineAsyncComponent, nextTick, reactive, ref, watch } from 'vue';
+    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { avatarModerationRequest, avatarRequest, favoriteRequest, miscRequest } from '../../../api';
-    import { database } from '../../../service/database';
+
     import {
         buildTreeData,
         commaNumber,
         copyToClipboard,
         downloadAndSaveJson,
         extractFileId,
+        formatDateFilter,
+        moveArrayItem,
         openExternalLink,
         openFolderGeneric,
         replaceVrcPackageUrl,
-        timeToText,
-        moveArrayItem,
-        formatDateFilter
+        timeToText
     } from '../../../shared/utils';
-    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useGameStore, useUserStore } from '../../../stores';
+    import { avatarModerationRequest, avatarRequest, favoriteRequest, miscRequest } from '../../../api';
+    import { database } from '../../../service/database';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
+    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
 
     const ChangeAvatarImageDialog = defineAsyncComponent(() => import('./ChangeAvatarImageDialog.vue'));
     const SetAvatarStylesDialog = defineAsyncComponent(() => import('./SetAvatarStylesDialog.vue'));

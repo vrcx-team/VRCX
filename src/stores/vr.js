@@ -1,18 +1,19 @@
 import { defineStore } from 'pinia';
 import { watch } from 'vue';
+
 import { isRpcWorld } from '../shared/utils';
-import { watchState } from '../service/watchState';
-import { useFriendStore } from './friend';
-import { useGameStore } from './game';
-import { useGameLogStore } from './gameLog';
-import { useLocationStore } from './location';
-import { usePhotonStore } from './photon';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAppearanceSettingsStore } from './settings/appearance';
+import { useFriendStore } from './friend';
+import { useGameLogStore } from './gameLog';
+import { useGameStore } from './game';
+import { useLocationStore } from './location';
 import { useNotificationsSettingsStore } from './settings/notifications';
-import { useWristOverlaySettingsStore } from './settings/wristOverlay';
+import { usePhotonStore } from './photon';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUserStore } from './user';
+import { useWristOverlaySettingsStore } from './settings/wristOverlay';
+import { watchState } from '../service/watchState';
 
 export const useVrStore = defineStore('Vr', () => {
     const friendStore = useFriendStore();

@@ -1,5 +1,5 @@
-import { request } from '../service/request';
 import { useFavoriteStore, useUserStore } from '../stores';
+import { request } from '../service/request';
 
 function getCurrentUserId() {
     return useUserStore().currentUser.id;

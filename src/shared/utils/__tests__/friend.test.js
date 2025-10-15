@@ -1,4 +1,4 @@
-import { sortStatus, isFriendOnline } from '../friend';
+import { isFriendOnline, sortStatus } from '../friend';
 
 describe('Friend Utils', () => {
     describe('sortStatus', () => {

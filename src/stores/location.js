@@ -1,18 +1,19 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { database } from '../service/database';
+
 import {
     getGroupName,
     getWorldName,
     isRealInstance,
     parseLocation
 } from '../shared/utils';
-import { useGameStore } from './game';
+import { database } from '../service/database';
+import { useAdvancedSettingsStore } from './settings/advanced';
 import { useGameLogStore } from './gameLog';
+import { useGameStore } from './game';
 import { useInstanceStore } from './instance';
 import { useNotificationStore } from './notification';
 import { usePhotonStore } from './photon';
-import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUserStore } from './user';
 import { useVrStore } from './vr';
 

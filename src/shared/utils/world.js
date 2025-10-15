@@ -1,6 +1,7 @@
-import { worldRequest } from '../../api';
 import { parseLocation } from './location';
 import { rpcWorlds } from '../constants';
+import { worldRequest } from '../../api';
+
 /**
  *
  * @param {string} location

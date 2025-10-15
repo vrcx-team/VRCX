@@ -47,7 +47,10 @@ export function handleImageUploadInput(event, options = {}) {
     const file = files[0];
     if (file.size >= maxSize) {
         if (tooLargeMessage) {
-            ElMessage({ message: resolveMessage(tooLargeMessage), type: 'error' });
+            ElMessage({
+                message: resolveMessage(tooLargeMessage),
+                type: 'error'
+            });
         }
         clearInput();
         return { file: null, clearInput };
@@ -55,12 +58,18 @@ export function handleImageUploadInput(event, options = {}) {
 
     let acceptRegex = null;
     if (acceptPattern) {
-        acceptRegex = acceptPattern instanceof RegExp ? acceptPattern : new RegExp(acceptPattern);
+        acceptRegex =
+            acceptPattern instanceof RegExp
+                ? acceptPattern
+                : new RegExp(acceptPattern);
     }
 
     if (acceptRegex && !acceptRegex.test(file.type)) {
         if (invalidTypeMessage) {
-            ElMessage({ message: resolveMessage(invalidTypeMessage), type: 'error' });
+            ElMessage({
+                message: resolveMessage(invalidTypeMessage),
+                type: 'error'
+            });
         }
         clearInput();
         return { file: null, clearInput };

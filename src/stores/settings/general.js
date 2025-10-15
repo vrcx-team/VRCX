@@ -1,13 +1,15 @@
+import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import * as workerTimers from 'worker-timers';
-import { ElMessageBox } from 'element-plus';
-
 import { useI18n } from 'vue-i18n';
-import configRepository from '../../service/config';
-import { useVrcxStore } from '../vrcx';
-import { useVRCXUpdaterStore } from '../vrcxUpdater';
+
 import { useFriendStore } from '../friend';
+import { useVRCXUpdaterStore } from '../vrcxUpdater';
+import { useVrcxStore } from '../vrcx';
+
+import configRepository from '../../service/config';
+
+import * as workerTimers from 'worker-timers';
 
 export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     const vrcxStore = useVrcxStore();

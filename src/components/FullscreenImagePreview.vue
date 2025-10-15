@@ -36,17 +36,16 @@
 </template>
 
 <script setup>
+    import { CopyDocument, Download, RefreshLeft, RefreshRight, ZoomIn, ZoomOut } from '@element-plus/icons-vue';
+    import { nextTick, ref, watch } from 'vue';
     import { ElMessage } from 'element-plus';
-    import { Download, CopyDocument, ZoomIn, ZoomOut, RefreshRight, RefreshLeft } from '@element-plus/icons-vue';
+    import { storeToRefs } from 'pinia';
 
     import Noty from 'noty';
-    import { storeToRefs } from 'pinia';
+
     import { escapeTag, extractFileId } from '../shared/utils';
-    import { useGalleryStore } from '../stores';
-
-    import { ref, nextTick, watch } from 'vue';
-
     import { getNextDialogIndex } from '../shared/utils/base/ui';
+    import { useGalleryStore } from '../stores';
 
     const galleryStore = useGalleryStore();
     const { fullscreenImageDialog } = storeToRefs(galleryStore);

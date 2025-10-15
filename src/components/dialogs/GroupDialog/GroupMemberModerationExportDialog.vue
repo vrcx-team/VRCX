@@ -32,6 +32,7 @@
 <script setup>
     import { ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
+
     import { copyToClipboard } from '../../../shared/utils';
 
     const { t } = useI18n();

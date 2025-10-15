@@ -1,9 +1,10 @@
-import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
+import { defineStore } from 'pinia';
+
 import { avatarModerationRequest, playerModerationRequest } from '../api';
-import { watchState } from '../service/watchState';
 import { useAvatarStore } from './avatar';
 import { useUserStore } from './user';
+import { watchState } from '../service/watchState';
 
 export const useModerationStore = defineStore('Moderation', () => {
     const avatarStore = useAvatarStore();
@@ -14,7 +15,8 @@ export const useModerationStore = defineStore('Moderation', () => {
     const isPlayerModerationsLoading = ref(false);
     const playerModerationTable = ref({
         data: [],
-        pageSize: 15
+        pageSize: 15,
+        pageSizeLinked: true
     });
 
     watch(
