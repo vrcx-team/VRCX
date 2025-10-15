@@ -1,13 +1,15 @@
-import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
-import configRepository from '../service/config';
+import { defineStore } from 'pinia';
+
 import { database } from '../service/database';
-import { watchState } from '../service/watchState';
 import { useFriendStore } from './friend';
 import { useNotificationStore } from './notification';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
 import { useVrcxStore } from './vrcx';
+import { watchState } from '../service/watchState';
+
+import configRepository from '../service/config';
 
 export const useFeedStore = defineStore('Feed', () => {
     const friendStore = useFriendStore();

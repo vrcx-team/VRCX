@@ -8,6 +8,7 @@
 
 <script setup>
     import { ref, watch } from 'vue';
+
     import { useAvatarStore } from '../stores';
 
     const avatarStore = useAvatarStore();

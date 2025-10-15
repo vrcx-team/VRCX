@@ -17,9 +17,11 @@
     import { Lock, Unlock, WarnTriangleFilled } from '@element-plus/icons-vue';
     import { ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { getGroupName, parseLocation } from '../shared/utils';
-    import { useGroupStore, useLaunchStore, useInstanceStore } from '../stores';
     import { useI18n } from 'vue-i18n';
+
+    import { useGroupStore, useInstanceStore, useLaunchStore } from '../stores';
+    import { getGroupName, parseLocation } from '../shared/utils';
+
     const { t } = useI18n();
     const { cachedInstances } = useInstanceStore();
     const { lastInstanceApplied } = storeToRefs(useInstanceStore());

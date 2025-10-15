@@ -58,11 +58,11 @@
 
 <script setup>
     import { ElMessage } from 'element-plus';
-
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { userRequest } from '../../../api';
+
     import { useUserStore } from '../../../stores';
+    import { userRequest } from '../../../api';
 
     const { t } = useI18n();
     const { currentUser } = storeToRefs(useUserStore());

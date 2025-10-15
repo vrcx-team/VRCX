@@ -1,8 +1,7 @@
-import { defineStore } from 'pinia';
 import { reactive, ref } from 'vue';
-import * as workerTimers from 'worker-timers';
+import { defineStore } from 'pinia';
+
 import { groupRequest, worldRequest } from '../api';
-import { watchState } from '../service/watchState';
 import { useFeedStore } from './feed';
 import { useFriendStore } from './friend';
 import { useGameLogStore } from './gameLog';
@@ -11,11 +10,14 @@ import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
 import { useModerationStore } from './moderation';
 import { useNotificationStore } from './notification';
-import { usePhotonStore } from './photon';
 import { useNotificationsSettingsStore } from './settings/notifications';
-import { useWristOverlaySettingsStore } from './settings/wristOverlay';
+import { usePhotonStore } from './photon';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
+import { useWristOverlaySettingsStore } from './settings/wristOverlay';
+import { watchState } from '../service/watchState';
+
+import * as workerTimers from 'worker-timers';
 
 export const useSharedFeedStore = defineStore('SharedFeed', () => {
     const friendStore = useFriendStore();

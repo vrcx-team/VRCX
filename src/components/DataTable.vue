@@ -27,7 +27,7 @@
 </template>
 
 <script>
-    import { computed, ref, watch, toRefs } from 'vue';
+    import { computed, ref, toRefs, watch } from 'vue';
 
     export default {
         name: 'DataTable',

@@ -1,7 +1,8 @@
+import { ElMessage } from 'element-plus';
 import { storeToRefs } from 'pinia';
+
 import { useAppearanceSettingsStore, useUiStore } from '../../../stores';
 import { THEME_CONFIG } from '../../constants';
-import { ElMessage } from 'element-plus';
 import { i18n } from '../../../plugin/i18n';
 
 /**

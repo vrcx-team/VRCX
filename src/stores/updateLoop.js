@@ -1,20 +1,22 @@
 import { defineStore } from 'pinia';
 import { watch } from 'vue';
-import * as workerTimers from 'worker-timers';
-import { groupRequest } from '../api';
+
 import { database } from '../service/database';
-import { watchState } from '../service/watchState';
+import { groupRequest } from '../api';
 import { useAuthStore } from './auth';
-import { useFriendStore } from './friend';
-import { useGameStore } from './game';
-import { useGameLogStore } from './gameLog';
-import { useModerationStore } from './moderation';
 import { useDiscordPresenceSettingsStore } from './settings/discordPresence';
-import { useUserStore } from './user';
-import { useVrcxStore } from './vrcx';
-import { useVRCXUpdaterStore } from './vrcxUpdater';
+import { useFriendStore } from './friend';
+import { useGameLogStore } from './gameLog';
+import { useGameStore } from './game';
 import { useGroupStore } from './group';
+import { useModerationStore } from './moderation';
+import { useUserStore } from './user';
+import { useVRCXUpdaterStore } from './vrcxUpdater';
 import { useVrStore } from './vr';
+import { useVrcxStore } from './vrcx';
+import { watchState } from '../service/watchState';
+
+import * as workerTimers from 'worker-timers';
 
 export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     const authStore = useAuthStore();

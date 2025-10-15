@@ -1,8 +1,10 @@
-import { defineStore } from 'pinia';
-import webApiService from '../service/webapi';
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 import { ElNotification } from 'element-plus';
-import { openExternalLink, formatDateFilter } from '../shared/utils';
+import { defineStore } from 'pinia';
+
+import { formatDateFilter, openExternalLink } from '../shared/utils';
+
+import webApiService from '../service/webapi';
 
 export const useVrcStatusStore = defineStore('VrcStatus', () => {
     const vrcStatusApiUrl = 'https://status.vrchat.com/api/v2';

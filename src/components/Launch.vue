@@ -10,6 +10,7 @@
     import { SwitchButton } from '@element-plus/icons-vue';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
+
     import { checkCanInviteSelf } from '../shared/utils';
     import { useLaunchStore } from '../stores';
 

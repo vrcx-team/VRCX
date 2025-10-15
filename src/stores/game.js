@@ -1,24 +1,27 @@
-import { defineStore } from 'pinia';
-import { reactive, ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import * as workerTimers from 'worker-timers';
-import configRepository from '../service/config.js';
-import { database } from '../service/database';
+import { reactive, ref } from 'vue';
+import { defineStore } from 'pinia';
+
 import {
     deleteVRChatCache as _deleteVRChatCache,
     isRealInstance
 } from '../shared/utils';
+import { database } from '../service/database';
+import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarStore } from './avatar';
 import { useGameLogStore } from './gameLog';
 import { useInstanceStore } from './instance';
 import { useLaunchStore } from './launch';
 import { useLocationStore } from './location';
 import { useNotificationStore } from './notification';
-import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
 import { useVrStore } from './vr';
 import { useWorldStore } from './world';
+
+import configRepository from '../service/config.js';
+
+import * as workerTimers from 'worker-timers';
 
 export const useGameStore = defineStore('Game', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();

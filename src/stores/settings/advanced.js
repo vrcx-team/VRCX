@@ -1,15 +1,17 @@
+import { reactive, ref, watch } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
-import { ref, reactive, watch } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
 import { useI18n } from 'vue-i18n';
-import configRepository from '../../service/config';
-import { database } from '../../service/database';
-import webApiService from '../../service/webapi';
-import { watchState } from '../../service/watchState';
-import { useGameStore } from '../game';
-import { useVrcxStore } from '../vrcx';
-import { useVRCXUpdaterStore } from '../vrcxUpdater';
+
 import { AppDebug } from '../../service/appConfig';
+import { database } from '../../service/database';
+import { useGameStore } from '../game';
+import { useVRCXUpdaterStore } from '../vrcxUpdater';
+import { useVrcxStore } from '../vrcx';
+import { watchState } from '../../service/watchState';
+
+import configRepository from '../../service/config';
+import webApiService from '../../service/webapi';
 
 export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const gameStore = useGameStore();

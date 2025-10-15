@@ -1,10 +1,12 @@
-import { defineStore } from 'pinia';
-import { ref, watch, nextTick } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
+import { defineStore } from 'pinia';
+
 import { instanceRequest } from '../api';
-import configRepository from '../service/config';
-import { watchState } from '../service/watchState';
 import { parseLocation } from '../shared/utils';
+import { watchState } from '../service/watchState';
+
+import configRepository from '../service/config';
 
 export const useLaunchStore = defineStore('Launch', () => {
     const isLaunchOptionsDialogVisible = ref(false);

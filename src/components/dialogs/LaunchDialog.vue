@@ -97,18 +97,19 @@
 </template>
 
 <script setup>
+    import { computed, nextTick, ref, watch } from 'vue';
     import { CopyDocument, Warning } from '@element-plus/icons-vue';
-
-    import { ref, computed, nextTick, watch } from 'vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { instanceRequest, worldRequest } from '../../api';
-    import configRepository from '../../service/config';
+
+    import { useFriendStore, useGameStore, useInviteStore, useLaunchStore, useLocationStore } from '../../stores';
     import { checkCanInvite, getLaunchURL, isRealInstance, parseLocation } from '../../shared/utils';
+    import { instanceRequest, worldRequest } from '../../api';
     import { getNextDialogIndex } from '../../shared/utils/base/ui';
-    import { useFriendStore, useInviteStore, useLaunchStore, useLocationStore, useGameStore } from '../../stores';
+
     import InviteDialog from './InviteDialog/InviteDialog.vue';
+    import configRepository from '../../service/config';
 
     const { t } = useI18n();
 

@@ -1,11 +1,12 @@
+import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { ElMessageBox } from 'element-plus';
-
 import { useI18n } from 'vue-i18n';
-import configRepository from '../../service/config';
+
 import { sharedFeedFiltersDefaults } from '../../shared/constants';
 import { useVrStore } from '../vr';
+
+import configRepository from '../../service/config';
 
 export const useNotificationsSettingsStore = defineStore(
     'NotificationsSettings',

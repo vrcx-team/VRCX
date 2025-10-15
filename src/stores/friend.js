@@ -1,13 +1,8 @@
-import { defineStore } from 'pinia';
-import { ref, computed, reactive, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import * as workerTimers from 'worker-timers';
-import { friendRequest, userRequest } from '../api';
-import configRepository from '../service/config';
-import { database } from '../service/database';
-import { AppDebug } from '../service/appConfig';
-import { reconnectWebSocket } from '../service/websocket';
-import { watchState } from '../service/watchState';
+import { defineStore } from 'pinia';
+import { useI18n } from 'vue-i18n';
+
 import {
     compareByCreatedAtAscending,
     getFriendsSortFunction,
@@ -15,21 +10,29 @@ import {
     getNameColour,
     getUserMemo,
     getWorldName,
-    migrateMemos,
-    isRealInstance
+    isRealInstance,
+    migrateMemos
 } from '../shared/utils';
+import { friendRequest, userRequest } from '../api';
+import { AppDebug } from '../service/appConfig';
+import { database } from '../service/database';
+import { reconnectWebSocket } from '../service/websocket';
+import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAuthStore } from './auth';
 import { useFavoriteStore } from './favorite';
 import { useFeedStore } from './feed';
+import { useGeneralSettingsStore } from './settings/general';
 import { useGroupStore } from './group';
 import { useNotificationStore } from './notification';
-import { useAppearanceSettingsStore } from './settings/appearance';
-import { useGeneralSettingsStore } from './settings/general';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
-import { useI18n } from 'vue-i18n';
+import { watchState } from '../service/watchState';
+
+import configRepository from '../service/config';
+
+import * as workerTimers from 'worker-timers';
 
 export const useFriendStore = defineStore('Friend', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();

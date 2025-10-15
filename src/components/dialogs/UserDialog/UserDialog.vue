@@ -1690,72 +1690,59 @@
 </template>
 
 <script setup>
-    import { ElMessage, ElMessageBox } from 'element-plus';
-
     import {
-        Delete,
+        ArrowDown,
+        Bottom,
+        CaretBottom,
+        ChatDotRound,
+        ChatLineRound,
         Check,
-        Star,
-        StarFilled,
-        MoreFilled,
-        Refresh,
-        Share,
-        Picture,
-        Edit,
-        SwitchButton,
-        Message,
-        Close,
-        Plus,
-        DataLine,
         CircleCheck,
         CircleClose,
-        User,
-        Flag,
-        CopyDocument,
-        Setting,
-        Download,
-        CaretBottom,
-        UserFilled,
-        Postcard,
-        Operation,
-        Microphone,
-        Mute,
-        ChatLineRound,
-        ChatDotRound,
-        Pointer,
-        Loading,
-        More,
-        Warning,
-        ArrowDown,
-        Top,
-        Bottom,
+        Close,
         CollectionTag,
-        View
+        CopyDocument,
+        DataLine,
+        Delete,
+        Download,
+        Edit,
+        Flag,
+        Loading,
+        Message,
+        Microphone,
+        More,
+        MoreFilled,
+        Mute,
+        Operation,
+        Picture,
+        Plus,
+        Pointer,
+        Postcard,
+        Refresh,
+        Setting,
+        Share,
+        Star,
+        StarFilled,
+        SwitchButton,
+        Top,
+        User,
+        UserFilled,
+        View,
+        Warning
     } from '@element-plus/icons-vue';
-
-    import { storeToRefs } from 'pinia';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
+    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import {
-        favoriteRequest,
-        friendRequest,
-        groupRequest,
-        miscRequest,
-        notificationRequest,
-        playerModerationRequest,
-        userRequest,
-        worldRequest
-    } from '../../../api';
-    import { database } from '../../../service/database';
-    import { processBulk, request } from '../../../service/request';
-    import { userDialogGroupSortingOptions } from '../../../shared/constants';
-    import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
+
     import {
         checkCanInvite,
         compareByMemberCount,
         compareByName,
         copyToClipboard,
         downloadAndSaveJson,
+        formatDateFilter,
+        getFaviconUrl,
         isFriendOnline,
         isRealInstance,
         languageClass,
@@ -1768,11 +1755,8 @@
         userImage,
         userOnlineFor,
         userOnlineForTimestamp,
-        userStatusClass,
-        formatDateFilter,
-        getFaviconUrl
+        userStatusClass
     } from '../../../shared/utils';
-    import { getNextDialogIndex, redirectToToolsTab } from '../../../shared/utils/base/ui';
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
@@ -1786,12 +1770,28 @@
         useInviteStore,
         useLocationStore,
         useModerationStore,
+        useUiStore,
         useUserStore,
-        useWorldStore,
-        useUiStore
+        useWorldStore
     } from '../../../stores';
-    import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
+    import {
+        favoriteRequest,
+        friendRequest,
+        groupRequest,
+        miscRequest,
+        notificationRequest,
+        playerModerationRequest,
+        userRequest,
+        worldRequest
+    } from '../../../api';
+    import { getNextDialogIndex, redirectToToolsTab } from '../../../shared/utils/base/ui';
+    import { processBulk, request } from '../../../service/request';
+    import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
+    import { database } from '../../../service/database';
+    import { userDialogGroupSortingOptions } from '../../../shared/constants';
+
     import InviteGroupDialog from '../InviteGroupDialog.vue';
+    import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
 
     const BioDialog = defineAsyncComponent(() => import('./BioDialog.vue'));
     const LanguageDialog = defineAsyncComponent(() => import('./LanguageDialog.vue'));

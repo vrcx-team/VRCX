@@ -1,18 +1,9 @@
-import Noty from 'noty';
-import { defineStore } from 'pinia';
-import { ref, computed, reactive, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
-import * as workerTimers from 'worker-timers';
-import {
-    avatarRequest,
-    groupRequest,
-    instanceRequest,
-    userRequest
-} from '../api';
-import { database } from '../service/database';
-import { AppDebug } from '../service/appConfig';
-import { processBulk, request } from '../service/request';
-import { watchState } from '../service/watchState';
+import { defineStore } from 'pinia';
+
+import Noty from 'noty';
+
 import {
     arraysMatch,
     buildTreeData,
@@ -30,12 +21,23 @@ import {
     removeEmojis,
     replaceBioSymbols
 } from '../shared/utils';
+import {
+    avatarRequest,
+    groupRequest,
+    instanceRequest,
+    userRequest
+} from '../api';
+import { processBulk, request } from '../service/request';
+import { AppDebug } from '../service/appConfig';
+import { database } from '../service/database';
+import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAuthStore } from './auth';
 import { useAvatarStore } from './avatar';
 import { useFavoriteStore } from './favorite';
 import { useFeedStore } from './feed';
 import { useFriendStore } from './friend';
 import { useGameStore } from './game';
+import { useGeneralSettingsStore } from './settings/general';
 import { useGroupStore } from './group';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
@@ -43,10 +45,11 @@ import { useModerationStore } from './moderation';
 import { useNotificationStore } from './notification';
 import { usePhotonStore } from './photon';
 import { useSearchStore } from './search';
-import { useAppearanceSettingsStore } from './settings/appearance';
-import { useGeneralSettingsStore } from './settings/general';
 import { useSharedFeedStore } from './sharedFeed';
 import { useWorldStore } from './world';
+import { watchState } from '../service/watchState';
+
+import * as workerTimers from 'worker-timers';
 
 export const useUserStore = defineStore('User', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();

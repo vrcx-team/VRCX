@@ -59,12 +59,14 @@
 
 <script setup>
     import { InfoFilled, Warning } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import configRepository from '../../../service/config';
-    import { feedFiltersOptions, sharedFeedFiltersDefaults } from '../../../shared/constants';
+
     import { useNotificationsSettingsStore, usePhotonStore, useSharedFeedStore } from '../../../stores';
+    import { feedFiltersOptions, sharedFeedFiltersDefaults } from '../../../shared/constants';
+
+    import configRepository from '../../../service/config';
 
     const { t } = useI18n();
 

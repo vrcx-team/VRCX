@@ -1,33 +1,36 @@
+import { reactive, ref, watch } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
-import { reactive, watch, ref } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import { worldRequest } from '../api';
-import configRepository from '../service/config';
-import { database } from '../service/database';
-import { AppDebug } from '../service/appConfig';
-import { failedGetRequests } from '../service/request';
-import { watchState } from '../service/watchState';
+import { useI18n } from 'vue-i18n';
+
+import Noty from 'noty';
+
 import { debounce, parseLocation } from '../shared/utils';
+import { AppDebug } from '../service/appConfig';
+import { database } from '../service/database';
+import { failedGetRequests } from '../service/request';
 import { refreshCustomCss } from '../shared/utils/base/ui';
-import { useAvatarStore } from './avatar';
+import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
+import { useAvatarStore } from './avatar';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
-import { useGameStore } from './game';
 import { useGameLogStore } from './gameLog';
+import { useGameStore } from './game';
 import { useGroupStore } from './group';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
 import { useNotificationStore } from './notification';
 import { usePhotonStore } from './photon';
 import { useSearchStore } from './search';
-import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
-import { useWorldStore } from './world';
 import { useVrcStatusStore } from './vrcStatus';
-import { useI18n } from 'vue-i18n';
-import Noty from 'noty';
+import { useWorldStore } from './world';
+import { watchState } from '../service/watchState';
+import { worldRequest } from '../api';
+
+import configRepository from '../service/config';
 
 export const useVrcxStore = defineStore('Vrcx', () => {
     const gameStore = useGameStore();

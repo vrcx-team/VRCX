@@ -45,9 +45,10 @@
 
 <script setup>
     import { Check, Star, StarFilled } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { useAvatarStore, useFavoriteStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();

@@ -1,7 +1,7 @@
+import { reactive, ref } from 'vue';
 import { defineStore } from 'pinia';
-import { ref, reactive } from 'vue';
-import { worldRequest } from '../../api';
-import configRepository from '../../service/config';
+import { useI18n } from 'vue-i18n';
+
 import {
     getGroupName,
     getLaunchURL,
@@ -9,16 +9,18 @@ import {
     isRpcWorld,
     parseLocation
 } from '../../shared/utils';
-import { useGameStore } from '../game';
-import { useGameLogStore } from '../gameLog';
-import { useLocationStore } from '../location';
-import { useUpdateLoopStore } from '../updateLoop';
-import { useUserStore } from '../user';
 import {
     ActivityType,
     StatusDisplayType
 } from '../../shared/constants/discord';
-import { useI18n } from 'vue-i18n';
+import { useGameLogStore } from '../gameLog';
+import { useGameStore } from '../game';
+import { useLocationStore } from '../location';
+import { useUpdateLoopStore } from '../updateLoop';
+import { useUserStore } from '../user';
+import { worldRequest } from '../../api';
+
+import configRepository from '../../service/config';
 
 export const useDiscordPresenceSettingsStore = defineStore(
     'DiscordPresenceSettings',

@@ -123,16 +123,16 @@
 </template>
 
 <script setup>
-    import { Close, Loading, ArrowDown } from '@element-plus/icons-vue';
+    import { ArrowDown, Close, Loading } from '@element-plus/icons-vue';
+    import { computed, ref, watch } from 'vue';
     import { ElMessage } from 'element-plus';
-
-    import { ref, computed, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest, userRequest } from '../../../api';
+
     import { removeFromArray, userImage, userImageFull } from '../../../shared/utils';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
+    import { favoriteRequest, userRequest } from '../../../api';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
 
     const { t } = useI18n();
 

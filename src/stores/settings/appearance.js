@@ -1,29 +1,30 @@
-import { defineStore } from 'pinia';
-import { ref, computed, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { computed, ref, watch } from 'vue';
 import { ElMessageBox } from 'element-plus';
+import { defineStore } from 'pinia';
+import { useI18n } from 'vue-i18n';
 
-import configRepository from '../../service/config';
-import { database } from '../../service/database';
-import { watchState } from '../../service/watchState';
-import { getNameColour } from '../../shared/utils';
 import {
+    HueToHex,
     changeAppDarkStyle,
     changeAppThemeStyle,
-    HueToHex,
+    changeHtmlLangAttribute,
     systemIsDarkMode,
-    updateTrustColorClasses,
-    changeHtmlLangAttribute
+    updateTrustColorClasses
 } from '../../shared/utils/base/ui';
+import { database } from '../../service/database';
+import { getNameColour } from '../../shared/utils';
 import { useFeedStore } from '../feed';
 import { useFriendStore } from '../friend';
 import { useGameLogStore } from '../gameLog';
 import { useModerationStore } from '../moderation';
 import { useNotificationStore } from '../notification';
+import { useUiStore } from '../ui';
 import { useUserStore } from '../user';
 import { useVrStore } from '../vr';
 import { useVrcxStore } from '../vrcx';
-import { useUiStore } from '../ui';
+import { watchState } from '../../service/watchState';
+
+import configRepository from '../../service/config';
 
 export const useAppearanceSettingsStore = defineStore(
     'AppearanceSettings',

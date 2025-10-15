@@ -1,8 +1,7 @@
+import { ElMessage, ElMessageBox } from 'element-plus';
+
 import Noty from 'noty';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import { i18n } from '../plugin/i18n';
-import { statusCodes } from '../shared/constants/api.js';
-import { escapeTag } from '../shared/utils';
+
 import {
     useAuthStore,
     useAvatarStore,
@@ -11,8 +10,12 @@ import {
     useUserStore
 } from '../stores';
 import { AppDebug } from './appConfig.js';
-import webApiService from './webapi.js';
+import { escapeTag } from '../shared/utils';
+import { i18n } from '../plugin/i18n';
+import { statusCodes } from '../shared/constants/api.js';
 import { watchState } from './watchState';
+
+import webApiService from './webapi.js';
 
 const pendingGetRequests = new Map();
 export let failedGetRequests = new Map();

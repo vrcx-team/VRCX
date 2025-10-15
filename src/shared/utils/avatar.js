@@ -1,5 +1,5 @@
-import { useAuthStore } from '../../stores';
 import { replaceBioSymbols } from './common';
+import { useAuthStore } from '../../stores';
 
 /**
  *

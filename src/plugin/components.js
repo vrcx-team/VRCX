@@ -1,5 +1,6 @@
 import AvatarInfo from '../components/AvatarInfo.vue';
 import CountdownTimer from '../components/CountdownTimer.vue';
+import DataTable from '../components/DataTable.vue';
 import DisplayName from '../components/DisplayName.vue';
 import InstanceInfo from '../components/InstanceInfo.vue';
 import InviteYourself from '../components/InviteYourself.vue';
@@ -8,7 +9,6 @@ import Launch from '../components/Launch.vue';
 import Location from '../components/Location.vue';
 import LocationWorld from '../components/LocationWorld.vue';
 import Timer from '../components/Timer.vue';
-import DataTable from '../components/DataTable.vue';
 
 export function initComponents(app) {
     app.component('Location', Location);

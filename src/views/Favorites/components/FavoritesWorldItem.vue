@@ -128,13 +128,14 @@
 </template>
 
 <script setup>
+    import { Back, Close, Message, Star, Warning } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
-    import { Warning, Back, Message, Close, Star } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest } from '../../../api';
+
     import { useFavoriteStore, useInviteStore, useUiStore } from '../../../stores';
+    import { favoriteRequest } from '../../../api';
 
     const props = defineProps({
         group: [Object, String],

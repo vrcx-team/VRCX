@@ -60,9 +60,10 @@
 </template>
 
 <script setup>
-    import { ref, watch, nextTick, computed } from 'vue';
+    import { computed, nextTick, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { groupRequest, userRequest } from '../../api';
     import { hasGroupModerationPermission, userImage } from '../../shared/utils';
     import { getNextDialogIndex } from '../../shared/utils/base/ui';

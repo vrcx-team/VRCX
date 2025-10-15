@@ -1,12 +1,8 @@
+import { computed, reactive, ref } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
-import { ref, reactive, computed } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import * as workerTimers from 'worker-timers';
-import { instanceRequest, userRequest } from '../api';
-import configRepository from '../service/config';
-import { database } from '../service/database';
-import { AppDebug } from '../service/appConfig';
-import { photonEventType } from '../shared/constants/photon';
+import { useI18n } from 'vue-i18n';
+
 import {
     checkVRChatCache,
     displayLocation,
@@ -17,6 +13,10 @@ import {
     replaceBioSymbols,
     timeToText
 } from '../shared/utils';
+import { instanceRequest, userRequest } from '../api';
+import { AppDebug } from '../service/appConfig';
+import { database } from '../service/database';
+import { photonEventType } from '../shared/constants/photon';
 import { useAvatarStore } from './avatar';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
@@ -27,7 +27,10 @@ import { useNotificationStore } from './notification';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUserStore } from './user';
 import { useVrStore } from './vr';
-import { useI18n } from 'vue-i18n';
+
+import configRepository from '../service/config';
+
+import * as workerTimers from 'worker-timers';
 
 export const usePhotonStore = defineStore('Photon', () => {
     const vrStore = useVrStore();

@@ -93,11 +93,13 @@
 </template>
 
 <script setup>
+    import { Timer } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { Timer } from '@element-plus/icons-vue';
+
     import { useNotificationsSettingsStore, usePhotonStore } from '../../../stores';
     import { photonEventTableTypeFilterList } from '../../../shared/constants/photon';
+
     import SimpleSwitch from './SimpleSwitch.vue';
 
     const { t } = useI18n();

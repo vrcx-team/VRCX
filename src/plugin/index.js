@@ -1,5 +1,5 @@
-import { initInteropApi } from './interopApi';
 import { initDayjs } from './dayjs';
+import { initInteropApi } from './interopApi';
 import { initNoty } from './noty';
 import { initUi } from './ui';
 

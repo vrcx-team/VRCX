@@ -180,12 +180,13 @@
 </template>
 
 <script setup>
+    import { computed, defineAsyncComponent, ref } from 'vue';
     import { ArrowRight } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
-    import { ref, defineAsyncComponent, computed } from 'vue';
-    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
-    import { useUiStore, useGalleryStore, useFriendStore } from '../../stores';
+    import { useI18n } from 'vue-i18n';
+
+    import { useFriendStore, useGalleryStore, useUiStore } from '../../stores';
 
     const GroupCalendarDialog = defineAsyncComponent(() => import('./dialogs/GroupCalendarDialog.vue'));
     const ScreenshotMetadataDialog = defineAsyncComponent(() => import('./dialogs/ScreenshotMetadataDialog.vue'));

@@ -59,13 +59,14 @@
 </template>
 
 <script setup>
-    import { ref, watch, nextTick } from 'vue';
+    import { nextTick, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { database } from '../../../service/database';
-    import { compareByCreatedAt, parseLocation, timeToText, formatDateFilter } from '../../../shared/utils';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
+
+    import { compareByCreatedAt, formatDateFilter, parseLocation, timeToText } from '../../../shared/utils';
     import { useGameLogStore, useInstanceStore, useUserStore } from '../../../stores';
+    import { database } from '../../../service/database';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
 
     const { lookupUser } = useUserStore();
     const { previousInstancesInfoDialogVisible, previousInstancesInfoDialogInstanceId } =
