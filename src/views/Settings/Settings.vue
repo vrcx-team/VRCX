@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'settings'" class="x-container">
+    <div class="x-container">
         <div class="options-container" style="margin-top: 0; padding: 5px">
             <span class="header">{{ t('view.settings.header') }}</span>
         </div>
@@ -1413,7 +1413,6 @@
         useAvatarProviderStore,
         useAvatarStore,
         useFavoriteStore,
-        useFriendStore,
         useGameLogStore,
         useGeneralSettingsStore,
         useGroupStore,
@@ -1469,7 +1468,6 @@
     const { cachedWorlds } = useWorldStore();
     const { cachedInstances } = useInstanceStore();
     const { showLaunchOptions } = useLaunchStore();
-    const { menuActiveIndex } = storeToRefs(useUiStore());
     const { enablePrimaryPasswordChange } = useAuthStore();
     const { saveOpenVROption, updateVRLastLocation, updateOpenVR, updateVRConfigVars } = useVrStore();
     const { clearVRCXCache, showRegistryBackupDialog } = useVrcxStore();
@@ -1519,7 +1517,6 @@
         isAgeGatedInstancesVisible,
         sortFavorites,
         instanceUsersSortAlphabetical,
-        tablePageSize,
         dtHour12,
         dtIsoFormat,
         sidebarSortMethod1,

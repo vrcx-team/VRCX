@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'notification'" v-loading="isNotificationsLoading" class="x-container">
+    <div v-loading="isNotificationsLoading" class="x-container">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <el-select
                 v-model="notificationTable.filters[0].value"
@@ -400,7 +400,6 @@
         useInviteStore,
         useLocationStore,
         useNotificationStore,
-        useUiStore,
         useUserStore,
         useWorldStore
     } from '../../stores';
@@ -427,7 +426,6 @@
     const { clearInviteImageUpload } = useGalleryStore();
     const { notificationTable, isNotificationsLoading } = storeToRefs(useNotificationStore());
     const { refreshNotifications, handleNotificationHide } = useNotificationStore();
-    const { menuActiveIndex, shiftHeld } = storeToRefs(useUiStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { showFullscreenImageDialog } = useGalleryStore();
     const { currentUser } = storeToRefs(useUserStore());

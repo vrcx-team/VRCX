@@ -1,5 +1,4 @@
 <template>
-    <!DOCTYPE html>
     <el-config-provider :locale="currentLocale">
         <MacOSTitleBar></MacOSTitleBar>
 
@@ -18,39 +17,17 @@
             <template v-if="watchState.isLoggedIn">
                 <NavMenu></NavMenu>
 
-                <el-splitter @resize-end="setAsideWidth" v-show="isSideBarTabShow">
+                <RouterView v-if="requiresFullScreen"></RouterView>
+
+                <el-splitter v-else @resize-end="setAsideWidth" v-show="isSideBarTabShow">
                     <el-splitter-panel>
-                        <Feed></Feed>
-
-                        <GameLog></GameLog>
-
-                        <PlayerList></PlayerList>
-
-                        <Search></Search>
-
-                        <Favorites></Favorites>
-
-                        <FriendLog></FriendLog>
-
-                        <Moderation></Moderation>
-
-                        <Notification></Notification>
-
-                        <Tools></Tools>
-
-                        <Profile></Profile>
-
-                        <Settings></Settings>
+                        <RouterView></RouterView>
                     </el-splitter-panel>
 
                     <el-splitter-panel :min="200" :max="700" :size="asideWidth">
                         <Sidebar></Sidebar>
                     </el-splitter-panel>
                 </el-splitter>
-
-                <FriendList></FriendList>
-
-                <Charts></Charts>
 
                 <!-- ## Dialogs ## -->
                 <UserDialog></UserDialog>
@@ -95,6 +72,7 @@
     import { computed, onBeforeMount, onMounted } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+    import { useRoute } from 'vue-router';
 
     import cs from 'element-plus/es/locale/lang/cs';
     import en from 'element-plus/es/locale/lang/en';
@@ -117,16 +95,10 @@
 
     import AvatarDialog from './components/dialogs/AvatarDialog/AvatarDialog.vue';
     import AvatarImportDialog from './views/Favorites/dialogs/AvatarImportDialog.vue';
-    import Charts from './views/Charts/Charts.vue';
     import ChooseFavoriteGroupDialog from './components/dialogs/ChooseFavoriteGroupDialog.vue';
     import EditInviteMessageDialog from './views/Profile/dialogs/EditInviteMessageDialog.vue';
-    import Favorites from './views/Favorites/Favorites.vue';
-    import Feed from './views/Feed/Feed.vue';
     import FriendImportDialog from './views/Favorites/dialogs/FriendImportDialog.vue';
-    import FriendList from './views/FriendList/FriendList.vue';
-    import FriendLog from './views/FriendLog/FriendLog.vue';
     import FullscreenImagePreview from './components/FullscreenImagePreview.vue';
-    import GameLog from './views/GameLog/GameLog.vue';
     import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
     import GroupMemberModerationDialog from './components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
     import InviteGroupDialog from './components/dialogs/InviteGroupDialog.vue';
@@ -134,17 +106,10 @@
     import LaunchOptionsDialog from './views/Settings/dialogs/LaunchOptionsDialog.vue';
     import Login from './views/Login/Login.vue';
     import MacOSTitleBar from './components/TitleBar/MacOSTitleBar.vue';
-    import Moderation from './views/Moderation/Moderation.vue';
     import NavMenu from './components/NavMenu.vue';
-    import Notification from './views/Notifications/Notification.vue';
-    import PlayerList from './views/PlayerList/PlayerList.vue';
     import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
     import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
-    import Profile from './views/Profile/Profile.vue';
-    import Search from './views/Search/Search.vue';
-    import Settings from './views/Settings/Settings.vue';
     import Sidebar from './views/Sidebar/Sidebar.vue';
-    import Tools from './views/Tools/Tools.vue';
     import UserDialog from './components/dialogs/UserDialog/UserDialog.vue';
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
     import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
@@ -152,6 +117,12 @@
     import WorldImportDialog from './views/Favorites/dialogs/WorldImportDialog.vue';
 
     import './app.scss';
+
+    const route = useRoute();
+
+    const requiresFullScreen = computed(() => {
+        return route.meta.fullScreen;
+    });
 
     console.log(`isLinux: ${LINUX}`);
 

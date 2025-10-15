@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'friendLog'" class="x-container">
+    <div class="x-container">
         <!-- 工具栏 -->
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <el-select
@@ -105,7 +105,6 @@
     const { showUserDialog } = useUserStore();
     const { friendLogTable } = storeToRefs(useFriendStore());
     const { shiftHeld } = storeToRefs(useUiStore());
-    const { menuActiveIndex } = storeToRefs(useUiStore());
 
     watch(
         () => hideUnfriends.value,

@@ -1,5 +1,5 @@
 <template>
-    <div id="chart" class="x-container" v-show="isShowToolsTab">
+    <div id="chart" class="x-container">
         <div class="options-container" style="margin-top: 0">
             <span class="header">{{ t('view.tools.header') }}</span>
 
@@ -157,7 +157,7 @@
                 </div>
             </div>
         </div>
-        <template v-if="isShowToolsTab">
+        <template v-if="isToolsTabVisible">
             <GroupCalendarDialog
                 :visible="isGroupCalendarDialogVisible"
                 @close="isGroupCalendarDialogVisible = false" />
@@ -180,13 +180,14 @@
 </template>
 
 <script setup>
-    import { computed, defineAsyncComponent, ref } from 'vue';
+    import { computed, defineAsyncComponent, ref, watch } from 'vue';
     import { ArrowRight } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+    import { useRoute } from 'vue-router';
 
-    import { useFriendStore, useGalleryStore, useUiStore } from '../../stores';
+    import { useFriendStore, useGalleryStore } from '../../stores';
 
     const GroupCalendarDialog = defineAsyncComponent(() => import('./dialogs/GroupCalendarDialog.vue'));
     const ScreenshotMetadataDialog = defineAsyncComponent(() => import('./dialogs/ScreenshotMetadataDialog.vue'));
@@ -199,9 +200,7 @@
 
     const { t } = useI18n();
 
-    const uiStore = useUiStore();
     const { showGalleryDialog } = useGalleryStore();
-    const { menuActiveIndex } = storeToRefs(uiStore);
     const { friends } = storeToRefs(useFriendStore());
 
     const categoryCollapsed = ref({
@@ -216,8 +215,9 @@
     const isExportDiscordNamesDialogVisible = ref(false);
     const isExportFriendsListDialogVisible = ref(false);
     const isExportAvatarsListDialogVisible = ref(false);
-
-    const isShowToolsTab = computed(() => menuActiveIndex.value === 'tools');
+    const isToolsTabVisible = computed(() => {
+        return useRoute().name === 'tools';
+    });
 
     const showGroupCalendarDialog = () => {
         isGroupCalendarDialogVisible.value = true;

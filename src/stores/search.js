@@ -2,6 +2,7 @@ import { computed, ref, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 
 import { compareByName, localeIncludes } from '../shared/utils';
 import { instanceRequest, userRequest } from '../api';
@@ -11,14 +12,13 @@ import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAvatarStore } from './avatar';
 import { useFriendStore } from './friend';
 import { useGroupStore } from './group';
-import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
 import { watchState } from '../service/watchState';
 
 export const useSearchStore = defineStore('Search', () => {
     const userStore = useUserStore();
-    const uiStore = useUiStore();
+    const router = useRouter();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const friendStore = useFriendStore();
     const worldStore = useWorldStore();
@@ -180,20 +180,22 @@ export const useSearchStore = defineStore('Search', () => {
     }
 
     function quickSearchChange(value) {
-        if (value) {
-            if (value.startsWith('search:')) {
-                const searchText = value.substr(7);
-                if (quickSearchItems.value.length > 1 && searchText.length) {
-                    friendsListSearch.value = searchText;
-                    uiStore.menuActiveIndex = 'friendList';
-                } else {
-                    uiStore.menuActiveIndex = 'search';
-                    searchText.value = searchText;
-                    userStore.lookupUser({ displayName: searchText });
-                }
+        if (!value) {
+            return;
+        }
+
+        if (value.startsWith('search:')) {
+            const searchTerm = value.slice(7);
+            if (quickSearchItems.value.length > 1 && searchTerm.length) {
+                friendsListSearch.value = searchTerm;
+                router.push({ name: 'friendList' });
             } else {
-                userStore.showUserDialog(value);
+                router.push({ name: 'search' });
+                searchText.value = searchTerm;
+                userStore.lookupUser({ displayName: searchTerm });
             }
+        } else {
+            userStore.showUserDialog(value);
         }
     }
 

@@ -2,6 +2,7 @@ import { computed, ref, watch } from 'vue';
 import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 
 import {
     HueToHex,
@@ -18,7 +19,6 @@ import { useFriendStore } from '../friend';
 import { useGameLogStore } from '../gameLog';
 import { useModerationStore } from '../moderation';
 import { useNotificationStore } from '../notification';
-import { useUiStore } from '../ui';
 import { useUserStore } from '../user';
 import { useVrStore } from '../vr';
 import { useVrcxStore } from '../vrcx';
@@ -38,7 +38,7 @@ export const useAppearanceSettingsStore = defineStore(
         const gameLogStore = useGameLogStore();
         const vrcxStore = useVrcxStore();
         const userStore = useUserStore();
-        const uiStore = useUiStore();
+        const router = useRouter();
 
         const { t, availableLocales, locale } = useI18n();
 
@@ -80,9 +80,10 @@ export const useAppearanceSettingsStore = defineStore(
         });
         const currentCulture = ref('');
         const isSideBarTabShow = computed(() => {
+            const currentRouteName = router.currentRoute.value?.name;
             return !(
-                uiStore.menuActiveIndex === 'friendList' ||
-                uiStore.menuActiveIndex === 'charts'
+                currentRouteName === 'friendList' ||
+                currentRouteName === 'charts'
             );
         });
 

@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'favorite'" class="x-container">
+    <div class="x-container">
         <div
             style="
                 font-size: 13px;
@@ -98,7 +98,6 @@
         showWorldImportDialog,
         showAvatarImportDialog
     } = useFavoriteStore();
-    const { menuActiveIndex } = storeToRefs(useUiStore());
     const { applyAvatar } = useAvatarStore();
 
     const editFavoritesMode = ref(false);

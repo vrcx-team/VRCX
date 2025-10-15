@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'profile'" class="x-container">
+    <div class="x-container">
         <div class="options-container" style="margin-top: 0">
             <span class="header">{{ t('view.profile.profile.header') }}</span>
             <div class="x-friend-list" style="margin-top: 10px">
@@ -514,7 +514,6 @@
         inviteRequestMessageTable,
         inviteRequestResponseMessageTable
     } = storeToRefs(useInviteStore());
-    const { menuActiveIndex } = storeToRefs(useUiStore());
     const { directAccessWorld } = useSearchStore();
     const { logout } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());

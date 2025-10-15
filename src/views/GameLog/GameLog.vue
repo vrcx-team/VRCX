@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'gameLog'" class="x-container">
+    <div class="x-container">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
                 <el-tooltip placement="bottom" :content="t('view.feed.favorites_only_tooltip')">
@@ -204,7 +204,7 @@
     const { showWorldDialog } = useWorldStore();
     const { lookupUser } = useUserStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
-    const { menuActiveIndex, shiftHeld } = storeToRefs(useUiStore());
+    const { shiftHeld } = storeToRefs(useUiStore());
     const { gameLogIsFriend, gameLogIsFavorite, gameLogTableLookup } = useGameLogStore();
     const { gameLogTable } = storeToRefs(useGameLogStore());
     const { updateSharedFeed } = useSharedFeedStore();

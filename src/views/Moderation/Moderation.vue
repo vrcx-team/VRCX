@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'moderation'" class="x-container">
+    <div class="x-container">
         <!-- 工具栏 -->
         <div class="tool-slot">
             <el-select
@@ -108,7 +108,7 @@
     const { showUserDialog } = useUserStore();
     const { isPlayerModerationsLoading, playerModerationTable } = storeToRefs(useModerationStore());
     const { refreshPlayerModerations, handlePlayerModerationDelete } = useModerationStore();
-    const { menuActiveIndex, shiftHeld } = storeToRefs(useUiStore());
+    const { shiftHeld } = storeToRefs(useUiStore());
     const { currentUser } = storeToRefs(useUserStore());
 
     const filters = ref([
