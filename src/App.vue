@@ -129,6 +129,7 @@
     import GameLog from './views/GameLog/GameLog.vue';
     import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
     import GroupMemberModerationDialog from './components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
+    import InviteGroupDialog from './components/dialogs/InviteGroupDialog.vue';
     import LaunchDialog from './components/dialogs/LaunchDialog.vue';
     import LaunchOptionsDialog from './views/Settings/dialogs/LaunchOptionsDialog.vue';
     import Login from './views/Login/Login.vue';
@@ -145,7 +146,6 @@
     import Sidebar from './views/Sidebar/Sidebar.vue';
     import Tools from './views/Tools/Tools.vue';
     import UserDialog from './components/dialogs/UserDialog/UserDialog.vue';
-    import InviteGroupDialog from './components/dialogs/InviteGroupDialog.vue';
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
     import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
     import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';

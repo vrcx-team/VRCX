@@ -33,6 +33,7 @@ export const useFeedStore = defineStore('Feed', () => {
             }
         },
         pageSize: 15,
+        pageSizeLinked: true,
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',

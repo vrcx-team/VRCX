@@ -75,6 +75,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             }
         },
         pageSize: 15,
+        pageSizeLinked: true,
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',

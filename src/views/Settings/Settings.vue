@@ -412,23 +412,6 @@
                             @click="promptMaxTableSizeDialog"
                             >{{ t('view.settings.appearance.appearance.table_max_size') }}</el-button
                         >
-                        <el-dropdown trigger="click" size="small" @click.stop>
-                            <el-button size="small">
-                                <span
-                                    >{{ t('view.settings.appearance.appearance.page_size') }} {{ tablePageSize }}
-                                    <el-icon class="el-icon--right"><ArrowDown /></el-icon
-                                ></span>
-                            </el-button>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item
-                                        v-for="number in [10, 15, 20, 25, 50, 100]"
-                                        :key="number"
-                                        @click="handleSetTablePageSize(number)"
-                                        v-text="number" />
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
                     </div>
                     <div class="options-container-item" />
                 </div>
@@ -1570,7 +1553,6 @@
         updateTrustColor,
         saveThemeMode,
         changeAppLanguage,
-        handleSetTablePageSize,
         promptMaxTableSizeDialog
     } = appearanceSettingsStore;
 

@@ -87,6 +87,7 @@ export const useFriendStore = defineStore('Friend', () => {
             }
         },
         pageSize: 15,
+        pageSizeLinked: true,
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',

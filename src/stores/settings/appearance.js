@@ -187,7 +187,6 @@ export const useAppearanceSettingsStore = defineStore(
                 instanceUsersSortAlphabeticalConfig;
 
             setTablePageSize(tablePageSizeConfig);
-            handleSetTablePageSize(tablePageSize.value);
 
             dtHour12.value = dtHour12Config;
             dtIsoFormat.value = dtIsoFormatConfig;
@@ -451,6 +450,12 @@ export const useAppearanceSettingsStore = defineStore(
          * @param {number} size
          */
         function setTablePageSize(size) {
+            feedStore.feedTable.pageSize = size;
+            gameLogStore.gameLogTable.pageSize = size;
+            friendStore.friendLogTable.pageSize = size;
+            moderationStore.playerModerationTable.pageSize = size;
+            notificationStore.notificationTable.pageSize = size;
+
             tablePageSize.value = size;
             configRepository.setInt('VRCX_tablePageSize', size);
         }
@@ -636,15 +641,6 @@ export const useAppearanceSettingsStore = defineStore(
             }
         }
 
-        async function handleSetTablePageSize(pageSize) {
-            feedStore.feedTable.pageSize = pageSize;
-            gameLogStore.gameLogTable.pageSize = pageSize;
-            friendStore.friendLogTable.pageSize = pageSize;
-            moderationStore.playerModerationTable.pageSize = pageSize;
-            notificationStore.notificationTable.pageSize = pageSize;
-            setTablePageSize(pageSize);
-        }
-
         function promptMaxTableSizeDialog() {
             ElMessageBox.prompt(
                 t('prompt.change_table_size.description'),
@@ -743,7 +739,6 @@ export const useAppearanceSettingsStore = defineStore(
             userColourInit,
             applyUserTrustLevel,
             changeAppLanguage,
-            handleSetTablePageSize,
             promptMaxTableSizeDialog
         };
     }
