@@ -243,7 +243,7 @@
 
 <style scoped>
     .data-table-wrapper {
-        width: 100%;
+        margin: 0 3px;
     }
 
     .pagination-wrapper {
