@@ -140,7 +140,7 @@
             })
             .then(() => {
                 isVisible.value = false;
-                new Noty({ type: 'success', text: 'favorite added!' }).show();
+                new Noty({ type: 'success', text: 'Favorite added!' }).show();
             })
             .finally(() => {
                 loading.value = false;
