@@ -439,7 +439,8 @@
     const { showWorldDialog } = useWorldStore();
     const { lastLocation } = storeToRefs(useLocationStore());
     const { currentInstanceLocation, currentInstanceWorld } = storeToRefs(useInstanceStore());
-    const { currentInstanceUsersTable, getCurrentInstanceUserList } = useInstanceStore();
+    const { getCurrentInstanceUserList } = useInstanceStore();
+    const { currentInstanceUsersTable } = storeToRefs(useInstanceStore());
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { showFullscreenImageDialog } = useGalleryStore();
     const { currentUser } = storeToRefs(useUserStore());
