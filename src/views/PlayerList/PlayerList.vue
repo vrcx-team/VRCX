@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'playerList'" class="x-container" style="padding-top: 5px">
+    <div class="x-container" style="padding-top: 5px">
         <div style="display: flex; flex-direction: column; height: 100%">
             <div v-if="currentInstanceWorld.ref.id" style="display: flex">
                 <img
@@ -441,7 +441,6 @@
     const { currentInstanceLocation, currentInstanceWorld } = storeToRefs(useInstanceStore());
     const { getCurrentInstanceUserList } = useInstanceStore();
     const { currentInstanceUsersTable } = storeToRefs(useInstanceStore());
-    const { menuActiveIndex } = storeToRefs(useUiStore());
     const { showFullscreenImageDialog } = useGalleryStore();
     const { currentUser } = storeToRefs(useUserStore());
 

@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'search'" class="x-container">
+    <div class="x-container">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <el-input
                 :model-value="searchText"
@@ -320,7 +320,6 @@
         useAvatarStore,
         useGroupStore,
         useSearchStore,
-        useUiStore,
         useUserStore,
         useWorldStore
     } from '../../stores';
@@ -343,7 +342,6 @@
     const { showAvatarDialog, lookupAvatars, cachedAvatars } = useAvatarStore();
     const { cachedWorlds, showWorldDialog } = useWorldStore();
     const { showGroupDialog, applyGroup } = useGroupStore();
-    const { menuActiveIndex } = storeToRefs(useUiStore());
     const { searchText, searchUserResults } = storeToRefs(useSearchStore());
     const { clearSearch, moreSearchUser } = useSearchStore();
     const { cachedConfig } = storeToRefs(useAuthStore());

@@ -8,7 +8,13 @@ import { createApp } from 'vue';
 
 import ElementPlus from 'element-plus';
 
-import { i18n, initComponents, initPlugins, initSentry } from './plugin';
+import {
+    i18n,
+    initComponents,
+    initPlugins,
+    initRouter,
+    initSentry
+} from './plugin';
 import { pinia } from './stores';
 
 import App from './App.vue';
@@ -19,10 +25,9 @@ await initPlugins();
 
 const app = createApp(App);
 
-app.use(pinia);
-app.use(i18n);
-app.use(ElementPlus);
+app.use(pinia).use(i18n).use(ElementPlus);
 initComponents(app);
+initRouter(app);
 await initSentry(app);
 
 app.mount('#root');

@@ -1,9 +1,10 @@
 import { ElMessage } from 'element-plus';
 import { storeToRefs } from 'pinia';
 
-import { useAppearanceSettingsStore, useUiStore } from '../../../stores';
 import { THEME_CONFIG } from '../../constants';
 import { i18n } from '../../../plugin/i18n';
+import { router } from '../../../plugin/router';
+import { useAppearanceSettingsStore } from '../../../stores';
 
 /**
  *
@@ -273,8 +274,7 @@ async function getThemeMode(configRepository) {
 }
 
 function redirectToToolsTab() {
-    const uiStore = useUiStore();
-    uiStore.menuActiveIndex = 'tools';
+    router.push({ name: 'tools' });
     ElMessage({
         message: i18n.global.t('view.tools.redirect_message'),
         type: 'primary',

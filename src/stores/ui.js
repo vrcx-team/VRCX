@@ -1,11 +1,13 @@
 import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
+import { useRouter } from 'vue-router';
 
 import { useNotificationStore } from './notification';
 import { watchState } from '../service/watchState';
 
 export const useUiStore = defineStore('Ui', () => {
     const notificationStore = useNotificationStore();
+    const router = useRouter();
 
     document.addEventListener('keydown', function (e) {
         if (e.shiftKey) {
@@ -19,7 +21,6 @@ export const useUiStore = defineStore('Ui', () => {
         }
     });
 
-    const menuActiveIndex = ref('feed');
     const notifiedMenus = ref([]);
     const shiftHeld = ref(false);
 
@@ -27,40 +28,43 @@ export const useUiStore = defineStore('Ui', () => {
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
             if (isLoggedIn) {
-                menuActiveIndex.value = 'feed';
+                router.push({ name: 'feed' });
             }
         },
         { flush: 'sync' }
     );
 
     function notifyMenu(index) {
+        const currentRouteName = router.currentRoute.value?.name;
         if (
-            index !== menuActiveIndex.value &&
+            index !== currentRouteName &&
             !notifiedMenus.value.includes(index)
         ) {
             notifiedMenus.value.push(index);
         }
     }
 
-    function selectMenu(index) {
-        menuActiveIndex.value = index;
-        removeNotify(index);
-        if (index === 'notification') {
-            notificationStore.unseenNotifications = [];
+    watch(
+        () => router.currentRoute.value.name,
+        (routeName) => {
+            if (routeName) {
+                removeNotify(routeName);
+                if (routeName === 'notification') {
+                    notificationStore.unseenNotifications = [];
+                }
+            }
         }
-    }
+    );
 
     function removeNotify(index) {
         notifiedMenus.value = notifiedMenus.value.filter((i) => i !== index);
     }
 
     return {
-        menuActiveIndex,
         notifiedMenus,
         shiftHeld,
 
         notifyMenu,
-        selectMenu,
         removeNotify
     };
 });

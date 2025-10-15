@@ -15,3 +15,4 @@ export async function initPlugins(isVrOverlay = false) {
 export * from './i18n';
 export * from './components';
 export * from './sentry';
+export * from './router';
