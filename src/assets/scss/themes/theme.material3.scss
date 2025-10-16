@@ -944,9 +944,14 @@ input[type='number'],
     position: relative;
 }
 
-.el-button--small.is-circle,
-.el-button.is-circle {
+.el-button {
     width: 40px !important;
+    height: 40px !important;
+}
+
+.el-button--small{
+    width: 30px !important;
+    height: 30px !important;
 }
 
 .el-button::after {
