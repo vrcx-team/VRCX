@@ -250,12 +250,9 @@
                                         @click="showBioDialog"></el-button>
                                 </div>
                                 <div v-if="userDialog.id !== currentUser.id" style="float: right">
-                                    <el-button
-                                        type="text"
-                                        :icon="Comment"
-                                        size="small"
-                                        style="margin-left: 5px"
-                                        @click="translateBio"><v-icon name="bi-translate" /></el-button>
+                                    <el-button type="text" size="small" style="margin-left: 5px" @click="translateBio"
+                                        ><i class="ri-translate-2"></i
+                                    ></el-button>
                                 </div>
                                 <div style="margin-top: 5px">
                                     <el-tooltip v-for="(link, index) in userDialog.ref.bioLinks" :key="index">
@@ -1222,9 +1219,9 @@
         ArrowDown,
         Bottom,
         Check,
-        Comment,
         Close,
         CollectionTag,
+        Comment,
         CopyDocument,
         Delete,
         Download,
@@ -2269,45 +2266,41 @@
         D.visible = true;
     }
 
-
     const bioCache = ref({
         userID: null,
         original: null,
         translated: null,
         showingTranslated: false
-    })
+    });
     async function translateBio() {
-        const bio = userDialog.value.ref.bio
-        if (!bio || bio === '-' || !advancedSettingsStore.translationApi) return
+        const bio = userDialog.value.ref.bio;
+        if (!bio || bio === '-' || !advancedSettingsStore.translationApi) return;
 
         const targetLang = bioLanguage.value;
 
         if (bioCache.value.userID !== userDialog.value.id) {
-            bioCache.value.userID = userDialog.value.id
-            bioCache.value.original = null
-            bioCache.value.translated = null
-            bioCache.value.showingTranslated = false
+            bioCache.value.userID = userDialog.value.id;
+            bioCache.value.original = null;
+            bioCache.value.translated = null;
+            bioCache.value.showingTranslated = false;
         }
 
-        if (!bioCache.value.original) bioCache.value.original = bio
+        if (!bioCache.value.original) bioCache.value.original = bio;
 
         if (bioCache.value.showingTranslated) {
-            userDialog.value.ref.bio = bioCache.value.original
-            bioCache.value.showingTranslated = false
-            return
+            userDialog.value.ref.bio = bioCache.value.original;
+            bioCache.value.showingTranslated = false;
+            return;
         }
 
         if (bioCache.value.translated) {
-            userDialog.value.ref.bio = bioCache.value.translated
-            bioCache.value.showingTranslated = true
-            return
+            userDialog.value.ref.bio = bioCache.value.translated;
+            bioCache.value.showingTranslated = true;
+            return;
         }
 
         try {
-            const translated = await advancedSettingsStore.translateText(
-                bio + "\n\nTranslated by Google",
-                targetLang
-            );
+            const translated = await advancedSettingsStore.translateText(bio + '\n\nTranslated by Google', targetLang);
 
             if (!translated) throw new Error('No translation returned');
 
