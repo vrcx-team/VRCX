@@ -2780,7 +2780,7 @@
     })
     async function translateBio() {
         const bio = userDialog.value.ref.bio
-        if (!bio || bio === '-') return
+        if (!bio || bio === '-' || !advancedSettingsStore.translationApi) return
 
         const targetLang = bioLanguage.value;
 
