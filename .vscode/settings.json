@@ -13,5 +13,12 @@
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "explicit"
     },
-    "eslint.validate": ["javascript", "vue", "html"]
+    "eslint.validate": [
+        "javascript",
+        "vue",
+        "html"
+    ],
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    }
 }

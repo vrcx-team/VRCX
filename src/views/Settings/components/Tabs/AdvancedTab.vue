@@ -383,8 +383,8 @@
     import PhotonSettings from '../PhotonSettings.vue';
     import RegistryBackupDialog from '../../dialogs/RegistryBackupDialog.vue';
     import SimpleSwitch from '../SimpleSwitch.vue';
-    import YouTubeApiDialog from '../../dialogs/YouTubeApiDialog.vue';
     import TranslationApiDialog from '../../dialogs/TranslationApiDialog.vue';
+    import YouTubeApiDialog from '../../dialogs/YouTubeApiDialog.vue';
 
     const { t } = useI18n();
 

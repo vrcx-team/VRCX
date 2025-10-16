@@ -27,20 +27,19 @@
                 <span class="name">{{ t('view.settings.appearance.appearance.bio_language') }}</span>
                 <el-dropdown trigger="click" size="small" @click.stop>
                     <el-button size="small">
-                    <span>
-                        {{ messages[bioLanguage]?.language || bioLanguage }}
-                        <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                    </span>
+                        <span>
+                            {{ messages[bioLanguage]?.language || bioLanguage }}
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
+                        </span>
                     </el-button>
                     <template #dropdown>
-                    <el-dropdown-menu>
-                        <el-dropdown-item
-                        v-for="(obj, language) in messages"
-                        :key="language"
-                        @click="setBioLanguage(language)"
-                        v-text="obj.language"
-                        />
-                    </el-dropdown-menu>
+                        <el-dropdown-menu>
+                            <el-dropdown-item
+                                v-for="(obj, language) in messages"
+                                :key="language"
+                                @click="setBioLanguage(language)"
+                                v-text="obj.language" />
+                        </el-dropdown-menu>
                     </template>
                 </el-dropdown>
             </div>

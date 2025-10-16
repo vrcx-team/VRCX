@@ -126,8 +126,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             ),
             configRepository.getBool('VRCX_youtubeAPI', false),
             configRepository.getBool('VRCX_translationAPI', false),
-            configRepository.getString('VRCX_translationAPIKey', ''),
             configRepository.getString('VRCX_youtubeAPIKey', ''),
+            configRepository.getString('VRCX_translationAPIKey', ''),
             configRepository.getBool('VRCX_progressPie', false),
             configRepository.getBool('VRCX_progressPieFilter', true),
             configRepository.getBool(
@@ -403,10 +403,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     async function checkSentryConsent() {
         ElMessageBox.confirm(
             'Help improve VRCX by allowing anonymous error reporting?</br></br>' +
-                '• Only collects crash and error information.</br>' +
-                '• No personal data or VRChat information is collected.</br>' +
-                '• Only enabled in nightly builds.</br>' +
-                '• Can be disabled at anytime in Advanced Settings.',
+            '• Only collects crash and error information.</br>' +
+            '• No personal data or VRChat information is collected.</br>' +
+            '• Only enabled in nightly builds.</br>' +
+            '• Can be disabled at anytime in Advanced Settings.',
             'Anonymous Error Reporting',
             {
                 type: 'warning',
@@ -470,7 +470,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             .then(() => {
                 VRCXUpdaterStore.restartVRCX(false);
             })
-            .catch(() => {});
+            .catch(() => { });
     }
 
     async function getSqliteTableSizes() {
@@ -568,26 +568,29 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     async function translateText(text, targetLang) {
-    if (!translationApiKey.value) return null
+        if (!translationApiKey.value) return null;
 
-    try {
-        const res = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${translationApiKey.value}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                q: text,
-                target: targetLang,
-                format: 'text'
-            })
-        })
-        const data = await res.json()
+        try {
+            const res = await fetch(
+                `https://translation.googleapis.com/language/translate/v2?key=${translationApiKey.value}`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        q: text,
+                        target: targetLang,
+                        format: 'text'
+                    })
+                }
+            );
+            const data = await res.json();
 
-        if (data.error) return null
-        return data.data.translations[0].translatedText
-    } catch (err) {
-        return null
+            if (data.error) return null;
+            return data.data.translations[0].translatedText;
+        } catch (err) {
+            return null;
+        }
     }
-}
 
     function cropPrintsChanged() {
         if (!cropInstancePrints.value) return;
@@ -763,7 +766,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                     );
                 }
             })
-            .catch(() => {});
+            .catch(() => { });
     }
 
     return {

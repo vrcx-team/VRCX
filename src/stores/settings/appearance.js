@@ -43,7 +43,7 @@ export const useAppearanceSettingsStore = defineStore(
         const { t, availableLocales, locale } = useI18n();
 
         const appLanguage = ref('en');
-        const bioLanguage = ref('en')
+        const bioLanguage = ref('en');
         const themeMode = ref('');
         const isDarkMode = ref(false);
         const displayVRCPlusIconsAsAvatar = ref(false);
@@ -179,12 +179,14 @@ export const useAppearanceSettingsStore = defineStore(
                 changeAppLanguage(appLanguageConfig);
             }
 
-            if (!bioLanguageConfig || !availableLocales.includes(bioLanguageConfig)) {
-                bioLanguage.value = appLanguage.value || 'en' // Default to the app language
+            if (
+                !bioLanguageConfig ||
+                !availableLocales.includes(bioLanguageConfig)
+            ) {
+                bioLanguage.value = appLanguage.value || 'en'; // Default to the app language
             } else {
-                bioLanguage.value = bioLanguageConfig
+                bioLanguage.value = bioLanguageConfig;
             }
-
 
             themeMode.value = themeModeConfig;
             applyThemeMode();
@@ -266,8 +268,8 @@ export const useAppearanceSettingsStore = defineStore(
 
         function setBioLanguage(language) {
             console.log('Bio language changed:', language);
-            bioLanguage.value = language
-            configRepository.setString('VRCX_bioLanguage', language)
+            bioLanguage.value = language;
+            configRepository.setString('VRCX_bioLanguage', language);
         }
 
         /**
@@ -687,7 +689,7 @@ export const useAppearanceSettingsStore = defineStore(
                         gameLogStore.gameLogTableLookup();
                     }
                 })
-                .catch(() => {});
+                .catch(() => { });
         }
 
         async function tryInitUserColours() {
