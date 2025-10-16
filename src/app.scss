@@ -841,20 +841,20 @@ i.x-status-icon.red {
 //     border: 0.5px solid #999;
 // }
 
-// .el-button--success {
-//     background-color: #67c23a !important;
-//     border-color: #67c23a !important;
-// }
+.x-dialog .el-button--success {
+    background-color: #67c23a !important;
+    border-color: #67c23a !important;
+}
 
-// .x-dialog .el-button--danger {
-//     background-color: #f56c6c !important;
-//     border-color: #f56c6c !important;
-// }
+.x-dialog .el-button--danger {
+    background-color: #f56c6c !important;
+    border-color: #f56c6c !important;
+}
 
-// .el-button--warning {
-//     background-color: #e6a23c !important;
-//     border-color: #e6a23c !important;
-// }
+.x-dialog .el-button--warning {
+    background-color: #e6a23c !important;
+    border-color: #e6a23c !important;
+}
 
 .avatar-info {
     cursor: pointer;
