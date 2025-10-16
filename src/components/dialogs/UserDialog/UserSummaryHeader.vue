@@ -71,139 +71,26 @@
                 </div>
                 <div style="margin-top: 5px" v-show="!userDialog.loading">
                     <el-tag
-                        v-if="userDialog.ref.$extraFav === 'pinned'"
                         type="info"
                         effect="plain"
                         size="small"
-                        class="x-tag-favorite"
+                        class="name"
+                        :class="userDialog.ref.$trustClass"
                         style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.pinned_favorite') }}
+                        {{ userDialog.ref.$trustLevel }}
                     </el-tag>
                     <el-tag
-                        v-if="userDialog.ref.$favoriteGroupName"
+                        v-if="userDialog.isFriend && userDialog.friend"
                         type="info"
                         effect="plain"
                         size="small"
-                        class="x-tag-favorite"
+                        class="x-tag-friend"
                         style="margin-right: 5px; margin-top: 5px">
-                        {{ userDialog.ref.$favoriteGroupName }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isModerator"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-moderator"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.vrchat_moderator') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isStaff"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-staff"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.vrchat_staff') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isFriendsPlusSupporter"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-friends-plus"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.vrchat_friends_plus') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isTrustUpdated"
-                        type="warning"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-user trust"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.updated_trust') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isGuardians"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-guardians"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.guardians') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isSupporter"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-supporter"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.supporter') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isQuestPatron"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-quest-patron"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.quest_patron') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isVrcPlus"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-vrcplus"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.vrchat_plus') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isLegend"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-legend"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.legend') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isTrusted"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-trusted"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.trusted') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isNewUser"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-new-user"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.new_user') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isKnownUser"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-known-user"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.known_user') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isTrustedUser"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-trusted-user"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.trusted_user') }}
+                        {{
+                            t('dialog.user.tags.friend_no', {
+                                number: userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : ''
+                            })
+                        }}
                     </el-tag>
                     <el-tag
                         v-if="userDialog.ref.$isTroll"
@@ -212,55 +99,19 @@
                         size="small"
                         class="x-tag-troll"
                         style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.troll') }}
+                        Nuisance
                     </el-tag>
                     <el-tag
-                        v-if="userDialog.ref.$isNegative"
+                        v-if="userDialog.ref.$isProbableTroll"
                         type="info"
                         effect="plain"
                         size="small"
-                        class="x-tag-negative"
+                        class="x-tag-troll"
                         style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.negative') }}
+                        Almost Nuisance
                     </el-tag>
                     <el-tag
-                        v-if="userDialog.ref.$isNuisance"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-nuisance"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.nuisance') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isVRCXStaff"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-vrcx-staff"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.vrcx_staff') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isSupporterBadge"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-supporter"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.supporter_badge') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isTeam"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-team"
-                        style="margin-right: 5px; margin-top: 5px">
-                        {{ t('dialog.user.tags.team') }}
-                    </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.$isVip"
+                        v-if="userDialog.ref.$isModerator"
                         type="info"
                         effect="plain"
                         size="small"
@@ -292,9 +143,9 @@
                         effect="plain"
                         size="small"
                         class="x-tag-platform-ios"
-                        style="margin-right: 5px; margin-top: 5px">
-                        iOS
-                    </el-tag>
+                        style="margin-right: 5px; margin-top: 5px"
+                        >iOS</el-tag
+                    >
                     <el-tag
                         v-else-if="userDialog.ref.$platform"
                         type="info"
