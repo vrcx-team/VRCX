@@ -39,13 +39,12 @@ export async function initSentry(app) {
             replaysSessionSampleRate: 0,
             replaysOnErrorSampleRate: 1.0,
             tracesSampleRate: 0.05,
-            beforeSend(event, hint) {
+            beforeSend(event) {
                 if (
-                    event.request?.status &&
-                    (event.request.status === 404 ||
-                        event.request.status === 403)
+                    event.request?.status !== 404 &&
+                    event.request?.status !== 403
                 ) {
-                    return null;
+                    return event;
                 }
             },
             integrations: [
