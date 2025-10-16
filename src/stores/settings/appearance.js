@@ -90,7 +90,6 @@ export const useAppearanceSettingsStore = defineStore(
         async function initAppearanceSettings() {
             const [
                 appLanguageConfig,
-                bioLanguageConfig,
                 themeModeConfig,
                 displayVRCPlusIconsAsAvatarConfig,
                 hideNicknamesConfig,
@@ -112,7 +111,6 @@ export const useAppearanceSettingsStore = defineStore(
                 trustColorConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_appLanguage'),
-                configRepository.getString('VRCX_bioLanguage'),
                 configRepository.getString('VRCX_ThemeMode', 'system'),
                 configRepository.getBool('displayVRCPlusIconsAsAvatar', true),
                 configRepository.getBool('VRCX_hideNicknames', false),
@@ -176,15 +174,6 @@ export const useAppearanceSettingsStore = defineStore(
                 });
             } else {
                 changeAppLanguage(appLanguageConfig);
-            }
-
-            if (
-                !bioLanguageConfig ||
-                !availableLocales.includes(bioLanguageConfig)
-            ) {
-                bioLanguage.value = appLanguage.value || 'en'; // Default to the app language
-            } else {
-                bioLanguage.value = bioLanguageConfig;
             }
 
             themeMode.value = themeModeConfig;

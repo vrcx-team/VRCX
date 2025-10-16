@@ -18,7 +18,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const vrcxStore = useVrcxStore();
     const VRCXUpdaterStore = useVRCXUpdaterStore();
 
-    const { t } = useI18n();
+    const { availableLocales, t } = useI18n();
 
     const state = reactive({
         folderSelectorDialogVisible: false
@@ -71,6 +71,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     async function initAdvancedSettings() {
         const [
             enablePrimaryPasswordConfig,
+            bioLanguageConfig,
             relaunchVRChatAfterCrashConfig,
             vrcQuitFixConfig,
             autoSweepVRChatCacheConfig,
@@ -102,6 +103,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             sentryErrorReportingConfig
         ] = await Promise.all([
             configRepository.getBool('enablePrimaryPassword', false),
+            configRepository.getString('VRCX_bioLanguage'),
             configRepository.getBool('VRCX_relaunchVRChatAfterCrash', false),
             configRepository.getBool('VRCX_vrcQuitFix', true),
             configRepository.getBool('VRCX_autoSweepVRChatCache', false),
@@ -144,6 +146,15 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getBool('VRCX_vrcRegistryAskRestore', true),
             configRepository.getString('VRCX_SentryEnabled', '')
         ]);
+
+        if (
+            !bioLanguageConfig ||
+            !availableLocales.includes(bioLanguageConfig)
+        ) {
+            bioLanguage.value = 'en';
+        } else {
+            bioLanguage.value = bioLanguageConfig;
+        }
 
         enablePrimaryPassword.value = enablePrimaryPasswordConfig;
         relaunchVRChatAfterCrash.value = relaunchVRChatAfterCrashConfig;

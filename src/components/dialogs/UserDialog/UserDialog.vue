@@ -1307,8 +1307,8 @@
 
     const advancedSettingsStore = useAdvancedSettingsStore();
 
-    const { bioLanguage, hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
-    const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
+    const { hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
+    const { bioLanguage, avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
     const { userDialog, languageDialog, currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { cachedUsers, showUserDialog, sortUserDialogAvatars, refreshUserDialogAvatars, refreshUserDialogTreeData } =
         useUserStore();
