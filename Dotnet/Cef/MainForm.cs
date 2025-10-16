@@ -204,7 +204,7 @@ namespace VRCX
             VRCXStorage.Instance.Set("VRCX_SizeWidth", LastSizeWidth.ToString());
             VRCXStorage.Instance.Set("VRCX_SizeHeight", LastSizeHeight.ToString());
             VRCXStorage.Instance.Set("VRCX_WindowState", ((int)LastWindowStateToRestore).ToString());
-            VRCXStorage.Instance.Flush();
+            VRCXStorage.Instance.Save();
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)

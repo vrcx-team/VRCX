@@ -90,7 +90,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             });
 
             window.electron.onWindowStateChange((event, newState) => {
-                state.windowState = newState.windowState;
+                state.windowState = newState.toString();
                 debounce(saveVRCXWindowOption, 300)();
             });
 
@@ -364,7 +364,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             VRCXStorage.Set('VRCX_SizeWidth', state.sizeWidth.toString());
             VRCXStorage.Set('VRCX_SizeHeight', state.sizeHeight.toString());
             VRCXStorage.Set('VRCX_WindowState', state.windowState);
-            VRCXStorage.Flush();
         }
     }
 
