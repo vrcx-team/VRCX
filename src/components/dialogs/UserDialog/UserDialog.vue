@@ -2777,7 +2777,7 @@
         showingTranslated: false
     })
     async function translateBio() {
-        const bio = userDialog.value.ref.bio + '\n\nTranslated by Google'
+        const bio = userDialog.value.ref.bio
         if (!bio || bio === '-') return
 
         const targetLang = bioLanguage.value;
@@ -2805,7 +2805,7 @@
 
         try {
             const res = await fetch(
-            `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(bio)}`
+            `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(bio + '\n\nTranslated by Google')}`
             )
             const data = await res.json()
             const translated = data[0]?.map(chunk => chunk[0]).join('') || bio
