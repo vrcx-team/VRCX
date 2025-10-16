@@ -242,7 +242,11 @@
                             @change="buildLegacyInstance"></el-input>
                     </el-form-item>
                     <el-form-item
-                        v-if="newInstanceDialog.accessType !== 'public' && newInstanceDialog.accessType !== 'group'"
+                        v-if="
+                            newInstanceDialog.selectedTab === 'Legacy' &&
+                            newInstanceDialog.accessType !== 'public' &&
+                            newInstanceDialog.accessType !== 'group'
+                        "
                         :label="t('dialog.new_instance.instance_creator')">
                         <el-select
                             v-model="newInstanceDialog.userId"
