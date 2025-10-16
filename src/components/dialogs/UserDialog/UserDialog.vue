@@ -6,491 +6,12 @@
         :show-close="false"
         width="770px">
         <div v-loading="userDialog.loading">
-            <div style="display: flex">
-                <img
-                    v-if="
-                        !userDialog.loading &&
-                        (userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride)
-                    "
-                    class="x-link"
-                    :src="userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride"
-                    style="flex: none; height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover"
-                    @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)"
-                    loading="lazy" />
-                <img
-                    v-else-if="!userDialog.loading"
-                    class="x-link"
-                    :src="userDialog.ref.currentAvatarThumbnailImageUrl"
-                    style="flex: none; height: 120px; width: 160px; border-radius: 12px; object-fit: cover"
-                    @click="showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)"
-                    loading="lazy" />
-
-                <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
-                    <div style="flex: 1">
-                        <div>
-                            <el-tooltip v-if="userDialog.ref.status" placement="top">
-                                <template #content>
-                                    <span>{{ getUserStateText(userDialog.ref) }}</span>
-                                </template>
-                                <i class="x-user-status" :class="userStatusClass(userDialog.ref)"></i>
-                            </el-tooltip>
-                            <template v-if="userDialog.previousDisplayNames.length > 0">
-                                <el-tooltip placement="bottom">
-                                    <template #content>
-                                        <span>{{ t('dialog.user.previous_display_names') }}</span>
-                                        <div
-                                            v-for="displayName in userDialog.previousDisplayNames"
-                                            :key="displayName"
-                                            placement="top">
-                                            <span v-text="displayName"></span>
-                                        </div>
-                                    </template>
-                                    <el-icon><CaretBottom /></el-icon>
-                                </el-tooltip>
-                            </template>
-                            <span
-                                class="dialog-title"
-                                style="margin-left: 5px; margin-right: 5px; cursor: pointer"
-                                v-text="userDialog.ref.displayName"
-                                @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
-                            <el-tooltip
-                                v-if="userDialog.ref.pronouns"
-                                placement="top"
-                                :content="t('dialog.user.pronouns')">
-                                <span
-                                    class="x-grey"
-                                    style="margin-right: 5px; font-family: monospace; font-size: 12px"
-                                    v-text="userDialog.ref.pronouns"></span>
-                            </el-tooltip>
-                            <el-tooltip v-for="item in userDialog.ref.$languages" :key="item.key" placement="top">
-                                <template #content>
-                                    <span>{{ item.value }} ({{ item.key }})</span>
-                                </template>
-                                <span
-                                    class="flags"
-                                    :class="languageClass(item.key)"
-                                    style="display: inline-block; margin-right: 5px"></span>
-                            </el-tooltip>
-                            <template v-if="userDialog.ref.id === currentUser.id">
-                                <br />
-                                <span
-                                    class="x-grey"
-                                    style="margin-right: 10px; font-family: monospace; font-size: 12px; cursor: pointer"
-                                    v-text="currentUser.username"
-                                    @click="copyUserDisplayName(currentUser.username)"></span>
-                            </template>
-                        </div>
-                        <div style="margin-top: 5px" v-show="!userDialog.loading">
-                            <el-tag
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                class="name"
-                                :class="userDialog.ref.$trustClass"
-                                style="margin-right: 5px; margin-top: 5px">
-                                {{ userDialog.ref.$trustLevel }}
-                            </el-tag>
-                            <el-tag
-                                v-if="userDialog.isFriend && userDialog.friend"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                class="x-tag-friend"
-                                style="margin-right: 5px; margin-top: 5px">
-                                {{
-                                    t('dialog.user.tags.friend_no', {
-                                        number: userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : ''
-                                    })
-                                }}
-                            </el-tag>
-                            <el-tag
-                                v-if="userDialog.ref.$isTroll"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                class="x-tag-troll"
-                                style="margin-right: 5px; margin-top: 5px">
-                                Nuisance
-                            </el-tag>
-                            <el-tag
-                                v-if="userDialog.ref.$isProbableTroll"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                class="x-tag-troll"
-                                style="margin-right: 5px; margin-top: 5px">
-                                Almost Nuisance
-                            </el-tag>
-                            <el-tag
-                                v-if="userDialog.ref.$isModerator"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                class="x-tag-vip"
-                                style="margin-right: 5px; margin-top: 5px">
-                                {{ t('dialog.user.tags.vrchat_team') }}
-                            </el-tag>
-                            <el-tag
-                                v-if="userDialog.ref.$platform === 'standalonewindows'"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                class="x-tag-platform-pc"
-                                style="margin-right: 5px; margin-top: 5px">
-                                PC
-                            </el-tag>
-                            <el-tag
-                                v-else-if="userDialog.ref.$platform === 'android'"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                class="x-tag-platform-quest"
-                                style="margin-right: 5px; margin-top: 5px">
-                                Android
-                            </el-tag>
-                            <el-tag
-                                v-else-if="userDialog.ref.$platform === 'ios'"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                class="x-tag-platform-ios"
-                                style="margin-right: 5px; margin-top: 5px"
-                                >iOS</el-tag
-                            >
-                            <el-tag
-                                v-else-if="userDialog.ref.$platform"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                class="x-tag-platform-other"
-                                style="margin-right: 5px; margin-top: 5px">
-                                {{ userDialog.ref.$platform }}
-                            </el-tag>
-                            <el-tag
-                                v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                class="x-tag-age-verification"
-                                style="margin-right: 5px; margin-top: 5px">
-                                <template v-if="userDialog.ref.ageVerificationStatus === '18+'">
-                                    {{ t('dialog.user.tags.18_plus_verified') }}
-                                </template>
-                                <template v-else>
-                                    {{ t('dialog.user.tags.age_verified') }}
-                                </template>
-                            </el-tag>
-                            <el-tag
-                                v-if="userDialog.ref.$customTag"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                class="name"
-                                :style="{
-                                    color: userDialog.ref.$customTagColour,
-                                    'border-color': userDialog.ref.$customTagColour
-                                }"
-                                style="margin-right: 5px; margin-top: 5px"
-                                >{{ userDialog.ref.$customTag }}</el-tag
-                            >
-                            <br />
-                            <el-tooltip v-for="badge in userDialog.ref.badges" :key="badge.badgeId" placement="top">
-                                <template #content>
-                                    <span>{{ badge.badgeName }}</span>
-                                    <span v-if="badge.hidden">&nbsp;(Hidden)</span>
-                                </template>
-                                <div style="display: inline-block">
-                                    <el-popover placement="bottom" :width="300" trigger="click">
-                                        <template #reference>
-                                            <img
-                                                class="x-link x-user-badge"
-                                                :src="badge.badgeImageUrl"
-                                                style="
-                                                    flex: none;
-                                                    height: 32px;
-                                                    width: 32px;
-                                                    border-radius: 3px;
-                                                    object-fit: cover;
-                                                    margin-top: 5px;
-                                                    margin-right: 5px;
-                                                "
-                                                :class="{ 'x-user-badge-hidden': badge.hidden }"
-                                                loading="lazy" />
-                                        </template>
-                                        <img
-                                            :src="badge.badgeImageUrl"
-                                            :class="['x-link', 'x-popover-image']"
-                                            @click="showFullscreenImageDialog(badge.badgeImageUrl)"
-                                            loading="lazy" />
-                                        <br />
-                                        <div style="display: block; width: 300px; word-break: normal">
-                                            <span>{{ badge.badgeName }}</span>
-                                            <br />
-                                            <span class="x-grey" style="font-size: 12px">{{
-                                                badge.badgeDescription
-                                            }}</span>
-                                            <br />
-                                            <span
-                                                v-if="badge.assignedAt"
-                                                class="x-grey"
-                                                style="font-family: monospace; font-size: 12px">
-                                                {{ t('dialog.user.badges.assigned') }}:
-                                                {{ formatDateFilter(badge.assignedAt, 'long') }}
-                                            </span>
-                                            <template v-if="userDialog.id === currentUser.id">
-                                                <br />
-                                                <el-checkbox
-                                                    v-model="badge.hidden"
-                                                    style="margin-top: 5px"
-                                                    @change="toggleBadgeVisibility(badge)">
-                                                    {{ t('dialog.user.badges.hidden') }}
-                                                </el-checkbox>
-                                                <br />
-                                                <el-checkbox
-                                                    v-model="badge.showcased"
-                                                    @change="toggleBadgeShowcased(badge)">
-                                                    {{ t('dialog.user.badges.showcased') }}
-                                                </el-checkbox>
-                                            </template>
-                                        </div>
-                                    </el-popover>
-                                </div>
-                            </el-tooltip>
-                        </div>
-                        <div style="margin-top: 5px">
-                            <span style="font-size: 12px" v-text="userDialog.ref.statusDescription"></span>
-                        </div>
-                    </div>
-
-                    <div v-if="userDialog.ref.userIcon" style="flex: none; margin-right: 10px">
-                        <img
-                            class="x-link"
-                            :src="userImage(userDialog.ref, true, '256', true)"
-                            style="flex: none; width: 120px; height: 120px; border-radius: 12px; object-fit: cover"
-                            @click="showFullscreenImageDialog(userDialog.ref.userIcon)"
-                            loading="lazy" />
-                    </div>
-
-                    <div style="flex: none">
-                        <template
-                            v-if="
-                                (currentUser.id !== userDialog.ref.id && userDialog.isFriend) || userDialog.isFavorite
-                            ">
-                            <el-tooltip
-                                v-if="userDialog.isFavorite"
-                                placement="top"
-                                :content="t('dialog.user.actions.unfavorite_tooltip')">
-                                <el-button
-                                    type="warning"
-                                    :icon="StarFilled"
-                                    size="large"
-                                    circle
-                                    @click="userDialogCommand('Add Favorite')"></el-button>
-                            </el-tooltip>
-                            <el-tooltip v-else placement="top" :content="t('dialog.user.actions.favorite_tooltip')">
-                                <el-button
-                                    type="default"
-                                    :icon="Star"
-                                    size="large"
-                                    circle
-                                    @click="userDialogCommand('Add Favorite')"></el-button>
-                            </el-tooltip>
-                        </template>
-                        <el-dropdown trigger="click" size="small" @command="userDialogCommand">
-                            <el-button
-                                :type="
-                                    userDialog.incomingRequest || userDialog.outgoingRequest
-                                        ? 'success'
-                                        : userDialog.isBlock || userDialog.isMute
-                                          ? 'danger'
-                                          : 'default'
-                                "
-                                :icon="MoreFilled"
-                                size="large"
-                                circle
-                                style="margin-left: 5px"></el-button>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item :icon="Refresh" command="Refresh">{{
-                                        t('dialog.user.actions.refresh')
-                                    }}</el-dropdown-item>
-                                    <el-dropdown-item :icon="Share" command="Share">{{
-                                        t('dialog.user.actions.share')
-                                    }}</el-dropdown-item>
-                                    <template v-if="userDialog.ref.id === currentUser.id">
-                                        <el-dropdown-item :icon="Picture" command="Manage Gallery" divided>{{
-                                            t('dialog.user.actions.manage_gallery_inventory_icon')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="UserFilled" command="Show Avatar Author">{{
-                                            t('dialog.user.actions.show_avatar_author')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="UserFilled" command="Show Fallback Avatar Details">{{
-                                            t('dialog.user.actions.show_fallback_avatar')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="Edit" command="Edit Social Status" divided>{{
-                                            t('dialog.user.actions.edit_status')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="Edit" command="Edit Language">{{
-                                            t('dialog.user.actions.edit_language')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="Edit" command="Edit Bio">{{
-                                            t('dialog.user.actions.edit_bio')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="Edit" command="Edit Pronouns">{{
-                                            t('dialog.user.actions.edit_pronouns')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="SwitchButton" command="Logout" divided>{{
-                                            t('dialog.user.actions.logout')
-                                        }}</el-dropdown-item>
-                                    </template>
-                                    <template v-else>
-                                        <template v-if="userDialog.isFriend">
-                                            <el-dropdown-item :icon="Postcard" command="Request Invite" divided>{{
-                                                t('dialog.user.actions.request_invite')
-                                            }}</el-dropdown-item>
-                                            <el-dropdown-item :icon="Postcard" command="Request Invite Message">{{
-                                                t('dialog.user.actions.request_invite_with_message')
-                                            }}</el-dropdown-item>
-                                            <template v-if="isGameRunning">
-                                                <el-dropdown-item
-                                                    :disabled="!checkCanInvite(lastLocation.location)"
-                                                    :icon="Message"
-                                                    command="Invite"
-                                                    >{{ t('dialog.user.actions.invite') }}</el-dropdown-item
-                                                >
-                                                <el-dropdown-item
-                                                    :disabled="!checkCanInvite(lastLocation.location)"
-                                                    :icon="Message"
-                                                    command="Invite Message"
-                                                    >{{
-                                                        t('dialog.user.actions.invite_with_message')
-                                                    }}</el-dropdown-item
-                                                >
-                                            </template>
-                                        </template>
-                                        <template v-else-if="userDialog.incomingRequest">
-                                            <el-dropdown-item :icon="Check" command="Accept Friend Request">{{
-                                                t('dialog.user.actions.accept_friend_request')
-                                            }}</el-dropdown-item>
-                                            <el-dropdown-item :icon="Close" command="Decline Friend Request">{{
-                                                t('dialog.user.actions.decline_friend_request')
-                                            }}</el-dropdown-item>
-                                        </template>
-                                        <el-dropdown-item
-                                            v-else-if="userDialog.outgoingRequest"
-                                            :icon="Close"
-                                            command="Cancel Friend Request">
-                                            {{ t('dialog.user.actions.cancel_friend_request') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item v-else :icon="Plus" command="Send Friend Request">{{
-                                            t('dialog.user.actions.send_friend_request')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="Message" command="Invite To Group">{{
-                                            t('dialog.user.actions.invite_to_group')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="Operation" command="Group Moderation">{{
-                                            t('dialog.user.actions.group_moderation')
-                                        }}</el-dropdown-item>
-                                        <!--//- el-dropdown-item(:icon="Thumb" command="Send Boop" :disabled="!currentUser.isBoopingEnabled") {{ t('dialog.user.actions.send_boop') }}-->
-                                        <el-dropdown-item :icon="UserFilled" command="Show Avatar Author" divided>{{
-                                            t('dialog.user.actions.show_avatar_author')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="UserFilled" command="Show Fallback Avatar Details">{{
-                                            t('dialog.user.actions.show_fallback_avatar')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="DataLine" command="Previous Instances">{{
-                                            t('dialog.user.actions.show_previous_instances')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item
-                                            v-if="userDialog.isBlock"
-                                            :icon="CircleCheck"
-                                            command="Moderation Unblock"
-                                            divided
-                                            style="color: #f56c6c">
-                                            {{ t('dialog.user.actions.moderation_unblock') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
-                                            v-else
-                                            :icon="CircleClose"
-                                            command="Moderation Block"
-                                            divided
-                                            :disabled="userDialog.ref.$isModerator">
-                                            {{ t('dialog.user.actions.moderation_block') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
-                                            v-if="userDialog.isMute"
-                                            :icon="Microphone"
-                                            command="Moderation Unmute"
-                                            style="color: #f56c6c">
-                                            {{ t('dialog.user.actions.moderation_unmute') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
-                                            v-else
-                                            :icon="Mute"
-                                            command="Moderation Mute"
-                                            :disabled="userDialog.ref.$isModerator">
-                                            {{ t('dialog.user.actions.moderation_mute') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
-                                            v-if="userDialog.isMuteChat"
-                                            :icon="ChatLineRound"
-                                            command="Moderation Enable Chatbox"
-                                            style="color: #f56c6c">
-                                            {{ t('dialog.user.actions.moderation_enable_chatbox') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
-                                            v-else
-                                            :icon="ChatDotRound"
-                                            command="Moderation Disable Chatbox">
-                                            {{ t('dialog.user.actions.moderation_disable_chatbox') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item :icon="User" command="Show Avatar">
-                                            <el-icon v-if="userDialog.isShowAvatar" style="margin-right: 5px"
-                                                ><Check
-                                            /></el-icon>
-                                            <span>{{ t('dialog.user.actions.moderation_show_avatar') }}</span>
-                                        </el-dropdown-item>
-                                        <el-dropdown-item :icon="User" command="Hide Avatar">
-                                            <el-icon v-if="userDialog.isHideAvatar" style="margin-right: 5px"
-                                                ><Check
-                                            /></el-icon>
-                                            <span>{{ t('dialog.user.actions.moderation_hide_avatar') }}</span>
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
-                                            v-if="userDialog.isInteractOff"
-                                            :icon="Pointer"
-                                            command="Moderation Enable Avatar Interaction"
-                                            style="color: #f56c6c">
-                                            {{ t('dialog.user.actions.moderation_enable_avatar_interaction') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
-                                            v-else
-                                            :icon="CircleClose"
-                                            command="Moderation Disable Avatar Interaction">
-                                            {{ t('dialog.user.actions.moderation_disable_avatar_interaction') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
-                                            :icon="Flag"
-                                            command="Report Hacking"
-                                            :disabled="userDialog.ref.$isModerator">
-                                            {{ t('dialog.user.actions.report_hacking') }}
-                                        </el-dropdown-item>
-                                        <template v-if="userDialog.isFriend">
-                                            <el-dropdown-item
-                                                :icon="Delete"
-                                                command="Unfriend"
-                                                divided
-                                                style="color: #f56c6c">
-                                                {{ t('dialog.user.actions.unfriend') }}
-                                            </el-dropdown-item>
-                                        </template>
-                                    </template>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
-                    </div>
-                </div>
-            </div>
+            <UserSummaryHeader
+                :get-user-state-text="getUserStateText"
+                :copy-user-display-name="copyUserDisplayName"
+                :toggle-badge-visibility="toggleBadgeVisibility"
+                :toggle-badge-showcased="toggleBadgeShowcased"
+                :user-dialog-command="userDialogCommand" />
 
             <el-tabs v-model="userDialogLastActiveTab" @tab-click="userDialogTabClick">
                 <el-tab-pane name="Info" :label="t('dialog.user.info.header')">
@@ -1692,40 +1213,19 @@
     import {
         ArrowDown,
         Bottom,
-        CaretBottom,
-        ChatDotRound,
-        ChatLineRound,
         Check,
-        CircleCheck,
-        CircleClose,
         Close,
         CollectionTag,
         CopyDocument,
-        DataLine,
         Delete,
         Download,
         Edit,
-        Flag,
         Loading,
-        Message,
-        Microphone,
         More,
         MoreFilled,
-        Mute,
-        Operation,
-        Picture,
-        Plus,
-        Pointer,
-        Postcard,
         Refresh,
         Setting,
-        Share,
-        Star,
-        StarFilled,
-        SwitchButton,
         Top,
-        User,
-        UserFilled,
         View,
         Warning
     } from '@element-plus/icons-vue';
@@ -1735,7 +1235,6 @@
     import { useI18n } from 'vue-i18n';
 
     import {
-        checkCanInvite,
         compareByMemberCount,
         compareByName,
         copyToClipboard,
@@ -1744,7 +1243,6 @@
         getFaviconUrl,
         isFriendOnline,
         isRealInstance,
-        languageClass,
         openExternalLink,
         parseLocation,
         refreshInstancePlayerCount,
@@ -1764,7 +1262,6 @@
         useFavoriteStore,
         useFriendStore,
         useGalleryStore,
-        useGameStore,
         useGroupStore,
         useInviteStore,
         useLocationStore,
@@ -1790,6 +1287,7 @@
     import { userDialogGroupSortingOptions } from '../../../shared/constants';
 
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
+    import UserSummaryHeader from './UserSummaryHeader.vue';
 
     const BioDialog = defineAsyncComponent(() => import('./BioDialog.vue'));
     const LanguageDialog = defineAsyncComponent(() => import('./LanguageDialog.vue'));
@@ -1828,7 +1326,7 @@
     const { friendLogTable } = storeToRefs(useFriendStore());
     const { getFriendRequest, handleFriendDelete } = useFriendStore();
     const { clearInviteImageUpload, showFullscreenImageDialog } = useGalleryStore();
-    const { isGameRunning } = storeToRefs(useGameStore());
+
     const { logout } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
     const { applyPlayerModeration, handlePlayerModerationDelete } = useModerationStore();
@@ -2567,7 +2065,7 @@
 
     async function sortCurrentUserGroups() {
         const D = userDialog.value;
-        let sortMethod = (a, b) => 0;
+        let sortMethod = () => 0;
 
         switch (D.groupSorting.value) {
             case 'alphabetical':
