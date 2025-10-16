@@ -43,7 +43,6 @@ export const useAppearanceSettingsStore = defineStore(
         const { t, availableLocales, locale } = useI18n();
 
         const appLanguage = ref('en');
-        const bioLanguage = ref('en');
         const themeMode = ref('');
         const isDarkMode = ref(false);
         const displayVRCPlusIconsAsAvatar = ref(false);
@@ -264,12 +263,6 @@ export const useAppearanceSettingsStore = defineStore(
             configRepository.setString('VRCX_appLanguage', language);
             locale.value = appLanguage.value;
             changeHtmlLangAttribute(language);
-        }
-
-        function setBioLanguage(language) {
-            console.log('Bio language changed:', language);
-            bioLanguage.value = language;
-            configRepository.setString('VRCX_bioLanguage', language);
         }
 
         /**
@@ -689,7 +682,7 @@ export const useAppearanceSettingsStore = defineStore(
                         gameLogStore.gameLogTableLookup();
                     }
                 })
-                .catch(() => { });
+                .catch(() => {});
         }
 
         async function tryInitUserColours() {
@@ -703,7 +696,6 @@ export const useAppearanceSettingsStore = defineStore(
 
         return {
             appLanguage,
-            bioLanguage,
             themeMode,
             isDarkMode,
             displayVRCPlusIconsAsAvatar,
@@ -731,7 +723,6 @@ export const useAppearanceSettingsStore = defineStore(
             isSideBarTabShow,
 
             setAppLanguage,
-            setBioLanguage,
             setDisplayVRCPlusIconsAsAvatar,
             setHideNicknames,
             setIsAgeGatedInstancesVisible,

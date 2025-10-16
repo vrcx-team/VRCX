@@ -25,6 +25,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     });
 
     const enablePrimaryPassword = ref(false);
+    const bioLanguage = ref('en');
     const relaunchVRChatAfterCrash = ref(false);
     const vrcQuitFix = ref(true);
     const autoSweepVRChatCache = ref(false);
@@ -328,6 +329,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             translationApiKey.value
         );
     }
+    function setBioLanguage(language) {
+        bioLanguage.value = language;
+        configRepository.setString('VRCX_bioLanguage', language);
+    }
     async function setProgressPie() {
         progressPie.value = !progressPie.value;
         await configRepository.setBool('VRCX_progressPie', progressPie.value);
@@ -403,10 +408,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     async function checkSentryConsent() {
         ElMessageBox.confirm(
             'Help improve VRCX by allowing anonymous error reporting?</br></br>' +
-            '• Only collects crash and error information.</br>' +
-            '• No personal data or VRChat information is collected.</br>' +
-            '• Only enabled in nightly builds.</br>' +
-            '• Can be disabled at anytime in Advanced Settings.',
+                '• Only collects crash and error information.</br>' +
+                '• No personal data or VRChat information is collected.</br>' +
+                '• Only enabled in nightly builds.</br>' +
+                '• Can be disabled at anytime in Advanced Settings.',
             'Anonymous Error Reporting',
             {
                 type: 'warning',
@@ -470,7 +475,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             .then(() => {
                 VRCXUpdaterStore.restartVRCX(false);
             })
-            .catch(() => { });
+            .catch(() => {});
     }
 
     async function getSqliteTableSizes() {
@@ -766,12 +771,13 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                     );
                 }
             })
-            .catch(() => { });
+            .catch(() => {});
     }
 
     return {
         state,
 
+        bioLanguage,
         enablePrimaryPassword,
         relaunchVRChatAfterCrash,
         vrcQuitFix,
@@ -807,6 +813,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         sentryErrorReporting,
 
         setEnablePrimaryPasswordConfigRepository,
+        setBioLanguage,
         setRelaunchVRChatAfterCrash,
         setVrcQuitFix,
         setAutoSweepVRChatCache,
