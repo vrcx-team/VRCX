@@ -248,7 +248,7 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
                     'VRCX_ProxyServer',
                     vrcxStore.proxyServer
                 );
-                await VRCXStorage.Flush();
+                await VRCXStorage.Save();
                 await new Promise((resolve) => {
                     workerTimers.setTimeout(resolve, 100);
                 });
@@ -263,7 +263,7 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
                         'VRCX_ProxyServer',
                         vrcxStore.proxyServer
                     );
-                    await VRCXStorage.Flush();
+                    await VRCXStorage.Save();
                     await new Promise((resolve) => {
                         workerTimers.setTimeout(resolve, 100);
                     });
