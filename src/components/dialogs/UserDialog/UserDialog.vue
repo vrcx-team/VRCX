@@ -1810,6 +1810,8 @@
 
     const { t } = useI18n();
 
+    const advancedSettingsStore = useAdvancedSettingsStore();
+
     const { bioLanguage, hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
     const { userDialog, languageDialog, currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
@@ -2804,17 +2806,18 @@
         }
 
         try {
-            const res = await fetch(
-            `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(bio + '\n\nTranslated by Google')}`
-            )
-            const data = await res.json()
-            const translated = data[0]?.map(chunk => chunk[0]).join('') || bio
+            const translated = await advancedSettingsStore.translateText(
+                bio + "\n\nTranslated by Google",
+                targetLang
+            );
 
-            bioCache.value.translated = translated
-            bioCache.value.showingTranslated = true
-            userDialog.value.ref.bio = translated
+            if (!translated) throw new Error('No translation returned');
+
+            bioCache.value.translated = translated;
+            bioCache.value.showingTranslated = true;
+            userDialog.value.ref.bio = translated;
         } catch (err) {
-            console.error('Translation failed:', err)
+            console.error('Translation failed:', err);
         }
     }
 

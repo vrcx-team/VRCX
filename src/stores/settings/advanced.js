@@ -40,7 +40,9 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const screenshotHelperModifyFilename = ref(false);
     const screenshotHelperCopyToClipboard = ref(false);
     const youTubeApi = ref(false);
+    const translationApi = ref(false);
     const youTubeApiKey = ref('');
+    const translationApiKey = ref('');
     const progressPie = ref(false);
     const progressPieFilter = ref(true);
     const showConfirmationOnSwitchAvatar = ref(false);
@@ -83,7 +85,9 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             screenshotHelperModifyFilenameConfig,
             screenshotHelperCopyToClipboardConfig,
             youTubeApiConfig,
+            translationApiConfig,
             youTubeApiKeyConfig,
+            translationApiKeyConfig,
             progressPieConfig,
             progressPieFilterConfig,
             showConfirmationOnSwitchAvatarConfig,
@@ -121,6 +125,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 false
             ),
             configRepository.getBool('VRCX_youtubeAPI', false),
+            configRepository.getBool('VRCX_translationAPI', false),
+            configRepository.getString('VRCX_translationAPIKey', ''),
             configRepository.getString('VRCX_youtubeAPIKey', ''),
             configRepository.getBool('VRCX_progressPie', false),
             configRepository.getBool('VRCX_progressPieFilter', true),
@@ -157,7 +163,9 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         screenshotHelperCopyToClipboard.value =
             screenshotHelperCopyToClipboardConfig;
         youTubeApi.value = youTubeApiConfig;
+        translationApi.value = translationApiConfig;
         youTubeApiKey.value = youTubeApiKeyConfig;
+        translationApiKey.value = translationApiKeyConfig;
         progressPie.value = progressPieConfig;
         progressPieFilter.value = progressPieFilterConfig;
         showConfirmationOnSwitchAvatar.value =
@@ -299,6 +307,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         youTubeApi.value = !youTubeApi.value;
         await configRepository.setBool('VRCX_youtubeAPI', youTubeApi.value);
     }
+    async function setTranslationApi() {
+        translationApi.value = !translationApi.value;
+        await configRepository.setBool('VRCX_translationAPI', youTubeApi.value);
+    }
     /**
      * @param {string} value
      */
@@ -307,6 +319,13 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         await configRepository.setString(
             'VRCX_youtubeAPIKey',
             youTubeApiKey.value
+        );
+    }
+    async function setTranslationApiKey(value) {
+        translationApiKey.value = value;
+        await configRepository.setString(
+            'VRCX_translationAPIKey',
+            translationApiKey.value
         );
     }
     async function setProgressPie() {
@@ -548,6 +567,28 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         return data;
     }
 
+    async function translateText(text, targetLang) {
+    if (!translationApiKey.value) return null
+
+    try {
+        const res = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${translationApiKey.value}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                q: text,
+                target: targetLang,
+                format: 'text'
+            })
+        })
+        const data = await res.json()
+
+        if (data.error) return null
+        return data.data.translations[0].translatedText
+    } catch (err) {
+        return null
+    }
+}
+
     function cropPrintsChanged() {
         if (!cropInstancePrints.value) return;
         ElMessageBox.confirm(
@@ -744,7 +785,9 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         screenshotHelperModifyFilename,
         screenshotHelperCopyToClipboard,
         youTubeApi,
+        translationApi,
         youTubeApiKey,
+        translationApiKey,
         progressPie,
         progressPieFilter,
         showConfirmationOnSwitchAvatar,
@@ -776,7 +819,9 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         setScreenshotHelperModifyFilename,
         setScreenshotHelperCopyToClipboard,
         setYouTubeApi,
+        setTranslationApi,
         setYouTubeApiKey,
+        setTranslationApiKey,
         setProgressPie,
         setProgressPieFilter,
         setShowConfirmationOnSwitchAvatar,
@@ -788,6 +833,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         getSqliteTableSizes,
         handleSetAppLauncherSettings,
         lookupYouTubeVideo,
+        translateText,
         resetUGCFolder,
         openUGCFolder,
         openUGCFolderSelector,

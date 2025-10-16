@@ -1188,6 +1188,21 @@
                         }}</el-button>
                     </div>
                 </div>
+                <!--//- Advanced | YouTube API-->
+                <div class="options-container">
+                    <span class="header">{{ t('view.settings.advanced.advanced.translation_api.header') }}</span>
+                    <simple-switch
+                        :label="t('view.settings.advanced.advanced.translation_api.enable')"
+                        :value="translationApi"
+                        :tooltip="t('view.settings.advanced.advanced.translation_api.enable_tooltip')"
+                        :long-label="true"
+                        @change="changeTranslationAPI('VRCX_translationAPI')" />
+                    <div class="options-container-item">
+                        <el-button size="small" :icon="CaretRight" @click="showTranslationApiDialog">{{
+                            t('view.settings.advanced.advanced.translation_api.translation_api_key')
+                        }}</el-button>
+                    </div>
+                </div>
                 <!--//- Advanced | Video Progress Pie-->
                 <div class="options-container">
                     <span class="header">{{ t('view.settings.advanced.advanced.video_progress_pie.header') }}</span>
@@ -1390,6 +1405,7 @@
         <NotificationPositionDialog v-model:isNotificationPositionDialogVisible="isNotificationPositionDialogVisible" />
         <RegistryBackupDialog />
         <YouTubeApiDialog v-model:isYouTubeApiDialogVisible="isYouTubeApiDialogVisible" />
+        <TranslationApiDialog v-model:isTranslationApiDialogVisible="isTranslationApiDialogVisible" />
         <FeedFiltersDialog v-model:feedFiltersDialogMode="feedFiltersDialogMode" />
         <ChangelogDialog />
         <AvatarProviderDialog v-model:isAvatarProviderDialogVisible="isAvatarProviderDialogVisible" />
@@ -1459,6 +1475,7 @@
     import RegistryBackupDialog from './dialogs/RegistryBackupDialog.vue';
     import SimpleSwitch from './components/SimpleSwitch.vue';
     import YouTubeApiDialog from './dialogs/YouTubeApiDialog.vue';
+    import TranslationApiDialog from './dialogs/TranslationApiDialog.vue';
 
     const OpenSourceSoftwareNoticeDialog = defineAsyncComponent(
         () => import('./dialogs/OpenSourceSoftwareNoticeDialog.vue')
@@ -1625,6 +1642,7 @@
         progressPie,
         progressPieFilter,
         showConfirmationOnSwitchAvatar,
+        translationApi,
         gameLogDisabled,
         sqliteTableSizes,
         notificationOpacity,
@@ -1664,6 +1682,7 @@
     const isNotificationPositionDialogVisible = ref(false);
 
     const isYouTubeApiDialogVisible = ref(false);
+    const isTranslationApiDialogVisible = ref(false);
 
     const zoomLevel = ref(100);
 
@@ -1776,11 +1795,19 @@
         updateVRLastLocation();
         updateOpenVR();
     }
+    async function changeTranslationAPI(configKey = '') {
+        if (configKey === 'VRCX_translationAPI') {
+            advancedSettingsStore.setTranslationApi();
+        }
+    }
     function openShortcutFolder() {
         AppApi.OpenShortcutFolder();
     }
     function showYouTubeApiDialog() {
         isYouTubeApiDialogVisible.value = true;
+    }
+    function showTranslationApiDialog() {
+        isTranslationApiDialogVisible.value = true;
     }
     function openOSSDialog() {
         ossDialog.value = true;
