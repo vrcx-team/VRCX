@@ -728,6 +728,14 @@
                                         style="margin-left: 5px"
                                         @click="showBioDialog"></el-button>
                                 </div>
+                                <div v-if="userDialog.id !== currentUser.id" style="float: right">
+                                    <el-button
+                                        type="text"
+                                        :icon="Comment"
+                                        size="small"
+                                        style="margin-left: 5px"
+                                        @click="translateBio"><v-icon name="bi-translate" /></el-button>
+                                </div>
                                 <div style="margin-top: 5px">
                                     <el-tooltip v-for="(link, index) in userDialog.ref.bioLinks" :key="index">
                                         <template #content>
@@ -1698,6 +1706,7 @@
         Check,
         CircleCheck,
         CircleClose,
+        Comment,
         Close,
         CollectionTag,
         CopyDocument,
@@ -1801,7 +1810,7 @@
 
     const { t } = useI18n();
 
-    const { hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
+    const { bioLanguage, hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
     const { userDialog, languageDialog, currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { cachedUsers, showUserDialog, sortUserDialogAvatars, refreshUserDialogAvatars, refreshUserDialogTreeData } =
@@ -2758,6 +2767,55 @@
         D.bio = currentUser.value.bio;
         D.bioLinks = currentUser.value.bioLinks.slice();
         D.visible = true;
+    }
+
+
+    const bioCache = ref({
+        userID: null,
+        original: null,
+        translated: null,
+        showingTranslated: false
+    })
+    async function translateBio() {
+        const bio = userDialog.value.ref.bio
+        if (!bio || bio === '-') return
+
+        const targetLang = bioLanguage.value;
+
+        if (bioCache.value.userID !== userDialog.value.id) {
+            bioCache.value.userID = userDialog.value.id
+            bioCache.value.original = null
+            bioCache.value.translated = null
+            bioCache.value.showingTranslated = false
+        }
+
+        if (!bioCache.value.original) bioCache.value.original = bio
+
+        if (bioCache.value.showingTranslated) {
+            userDialog.value.ref.bio = bioCache.value.original
+            bioCache.value.showingTranslated = false
+            return
+        }
+
+        if (bioCache.value.translated) {
+            userDialog.value.ref.bio = bioCache.value.translated
+            bioCache.value.showingTranslated = true
+            return
+        }
+
+        try {
+            const res = await fetch(
+            `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(bio)}`
+            )
+            const data = await res.json()
+            const translated = data[0]?.map(chunk => chunk[0]).join('') || bio
+
+            bioCache.value.translated = translated
+            bioCache.value.showingTranslated = true
+            userDialog.value.ref.bio = translated
+        } catch (err) {
+            console.error('Translation failed:', err)
+        }
     }
 
     function showPreviousInstancesUserDialog(userRef) {

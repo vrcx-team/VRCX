@@ -43,6 +43,7 @@ export const useAppearanceSettingsStore = defineStore(
         const { t, availableLocales, locale } = useI18n();
 
         const appLanguage = ref('en');
+        const bioLanguage = ref('en')
         const themeMode = ref('');
         const isDarkMode = ref(false);
         const displayVRCPlusIconsAsAvatar = ref(false);
@@ -90,6 +91,7 @@ export const useAppearanceSettingsStore = defineStore(
         async function initAppearanceSettings() {
             const [
                 appLanguageConfig,
+                bioLanguageConfig,
                 themeModeConfig,
                 displayVRCPlusIconsAsAvatarConfig,
                 hideNicknamesConfig,
@@ -111,6 +113,7 @@ export const useAppearanceSettingsStore = defineStore(
                 trustColorConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_appLanguage'),
+                configRepository.getString('VRCX_bioLanguage'),
                 configRepository.getString('VRCX_ThemeMode', 'system'),
                 configRepository.getBool('displayVRCPlusIconsAsAvatar', true),
                 configRepository.getBool('VRCX_hideNicknames', false),
@@ -175,6 +178,13 @@ export const useAppearanceSettingsStore = defineStore(
             } else {
                 changeAppLanguage(appLanguageConfig);
             }
+
+            if (!bioLanguageConfig || !availableLocales.includes(bioLanguageConfig)) {
+                bioLanguage.value = appLanguage.value || 'en' // Default to the app language
+            } else {
+                bioLanguage.value = bioLanguageConfig
+            }
+
 
             themeMode.value = themeModeConfig;
             applyThemeMode();
@@ -252,6 +262,12 @@ export const useAppearanceSettingsStore = defineStore(
             configRepository.setString('VRCX_appLanguage', language);
             locale.value = appLanguage.value;
             changeHtmlLangAttribute(language);
+        }
+
+        function setBioLanguage(language) {
+            console.log('Bio language changed:', language);
+            bioLanguage.value = language
+            configRepository.setString('VRCX_bioLanguage', language)
         }
 
         /**
@@ -685,6 +701,7 @@ export const useAppearanceSettingsStore = defineStore(
 
         return {
             appLanguage,
+            bioLanguage,
             themeMode,
             isDarkMode,
             displayVRCPlusIconsAsAvatar,
@@ -712,6 +729,7 @@ export const useAppearanceSettingsStore = defineStore(
             isSideBarTabShow,
 
             setAppLanguage,
+            setBioLanguage,
             setDisplayVRCPlusIconsAsAvatar,
             setHideNicknames,
             setIsAgeGatedInstancesVisible,
