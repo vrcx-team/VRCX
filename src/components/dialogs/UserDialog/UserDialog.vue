@@ -2808,7 +2808,7 @@
             `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(bio)}`
             )
             const data = await res.json()
-            const translated = data[0]?.map(chunk => chunk[0]).join('') || bio
+            const translated = (data[0]?.map(chunk => chunk[0]).join('') || bio) + '\n\nTranslated by Google'
 
             bioCache.value.translated = translated
             bioCache.value.showingTranslated = true
