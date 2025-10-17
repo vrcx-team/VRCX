@@ -111,7 +111,7 @@
                                 <div class="detail">
                                     <span class="name" v-text="user.user.displayName"></span>
                                     <span class="extra" v-text="user.user.username"></span>
-                                    <span class="extra" v-text="user.loginParmas.endpoint"></span>
+                                    <span class="extra" v-text="user.loginParams.endpoint"></span>
                                 </div>
                                 <el-button
                                     type="default"
