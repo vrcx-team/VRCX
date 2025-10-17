@@ -71,7 +71,7 @@ export const useAuthStore = defineStore('Auth', () => {
         }
     });
 
-    const saveCredentials = ref(null);
+    const credentialsToSave = ref(null);
 
     const twoFactorAuthDialogVisible = ref(false);
 
@@ -112,25 +112,33 @@ export const useAuthStore = defineStore('Auth', () => {
     async function init() {
         const [savedCredentials, lastUserLoggedIn, enableCustomEndpoint] =
             await Promise.all([
-                configRepository.getString('savedCredentials'),
-                configRepository.getString('lastUserLoggedIn'),
+                configRepository.getString('savedCredentials', '{}'),
+                configRepository.getString('lastUserLoggedIn', ''),
                 configRepository.getBool('VRCX_enableCustomEndpoint', false)
             ]);
+        loginForm.value.lastUserLoggedIn = lastUserLoggedIn;
         try {
-            loginForm.value = {
-                ...loginForm.value,
-                savedCredentials: savedCredentials
-                    ? JSON.parse(savedCredentials)
-                    : {},
-                lastUserLoggedIn
-            };
+            const credentials = JSON.parse(savedCredentials || '{}');
+            // fix goofy typo
+            let edited = false;
+            for (const userId in credentials) {
+                if (credentials[userId].loginParmas) {
+                    credentials[userId].loginParams =
+                        credentials[userId].loginParmas;
+                    delete credentials[userId].loginParmas;
+                    edited = true;
+                }
+            }
+            if (edited) {
+                await configRepository.setString(
+                    'savedCredentials',
+                    JSON.stringify(credentials)
+                );
+            }
+            loginForm.value.savedCredentials = credentials;
         } catch (error) {
             console.error('Failed to parse savedCredentials:', error);
-            loginForm.value = {
-                ...loginForm.value,
-                savedCredentials: {},
-                lastUserLoggedIn
-            };
+            loginForm.value.savedCredentials = {};
         }
         state.enableCustomEndpoint = enableCustomEndpoint;
     }
@@ -146,6 +154,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 )}</strong>!`
             }).show();
         }
+        userStore.userDialog.visible = false;
         watchState.isLoggedIn = false;
         watchState.isFriendsLoaded = false;
         watchState.isFavoritesLoaded = false;
@@ -173,9 +182,9 @@ export const useAuthStore = defineStore('Auth', () => {
                 loginForm.value.savedCredentials[
                     loginForm.value.lastUserLoggedIn
                 ];
-            if (user?.loginParmas?.endpoint) {
-                AppDebug.endpointDomain = user.loginParmas.endpoint;
-                AppDebug.websocketDomain = user.loginParmas.websocket;
+            if (user?.loginParams?.endpoint) {
+                AppDebug.endpointDomain = user.loginParams.endpoint;
+                AppDebug.websocketDomain = user.loginParams.websocket;
             }
             // login at startup
             loginForm.value.loading = true;
@@ -259,14 +268,14 @@ export const useAuthStore = defineStore('Auth', () => {
                         security
                             .decrypt(
                                 loginForm.value.savedCredentials[userId]
-                                    .loginParmas.password,
+                                    .loginParams.password,
                                 value
                             )
                             .then(async (pt) => {
-                                saveCredentials.value = {
+                                credentialsToSave.value = {
                                     username:
                                         loginForm.value.savedCredentials[userId]
-                                            .loginParmas.username,
+                                            .loginParams.username,
                                     password: pt
                                 };
                                 await updateStoredUser(
@@ -305,15 +314,15 @@ export const useAuthStore = defineStore('Auth', () => {
             for (const userId in loginForm.value.savedCredentials) {
                 security
                     .encrypt(
-                        loginForm.value.savedCredentials[userId].loginParmas
+                        loginForm.value.savedCredentials[userId].loginParams
                             .password,
                         key
                     )
                     .then((ct) => {
-                        saveCredentials.value = {
+                        credentialsToSave.value = {
                             username:
                                 loginForm.value.savedCredentials[userId]
-                                    .loginParmas.username,
+                                    .loginParams.username,
                             password: ct
                         };
                         updateStoredUser(
@@ -331,13 +340,18 @@ export const useAuthStore = defineStore('Auth', () => {
                 await configRepository.getString('savedCredentials')
             );
         }
-        if (saveCredentials.value) {
-            const credentialsToSave = {
+        if (credentialsToSave.value) {
+            savedCredentials[user.id] = {
                 user,
-                loginParmas: saveCredentials.value
+                loginParams: {
+                    username: '',
+                    password: '',
+                    endpoint: '',
+                    websocket: '',
+                    ...credentialsToSave.value
+                }
             };
-            savedCredentials[user.id] = credentialsToSave;
-            saveCredentials.value = null;
+            credentialsToSave.value = null;
         } else if (typeof savedCredentials[user.id] !== 'undefined') {
             savedCredentials[user.id].user = user;
             savedCredentials[user.id].cookies =
@@ -426,14 +440,14 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     async function relogin(user) {
-        const { loginParmas } = user;
+        const { loginParams } = user;
         if (user.cookies) {
             await webApiService.setCookies(user.cookies);
         }
         loginForm.value.lastUserLoggedIn = user.user.id; // for resend email 2fa
-        if (loginParmas.endpoint) {
-            AppDebug.endpointDomain = loginParmas.endpoint;
-            AppDebug.websocketDomain = loginParmas.websocket;
+        if (loginParams.endpoint) {
+            AppDebug.endpointDomain = loginParams.endpoint;
+            AppDebug.websocketDomain = loginParams.websocket;
         } else {
             AppDebug.endpointDomain = AppDebug.endpointDomainVrchat;
             AppDebug.websocketDomain = AppDebug.websocketDomainVrchat;
@@ -441,7 +455,7 @@ export const useAuthStore = defineStore('Auth', () => {
         return new Promise((resolve, reject) => {
             loginForm.value.loading = true;
             if (advancedSettingsStore.enablePrimaryPassword) {
-                checkPrimaryPassword(loginParmas)
+                checkPrimaryPassword(loginParams)
                     .then((pwd) => {
                         return authRequest
                             .getConfig()
@@ -450,11 +464,11 @@ export const useAuthStore = defineStore('Auth', () => {
                             })
                             .then(() => {
                                 authLogin({
-                                    username: loginParmas.username,
+                                    username: loginParams.username,
                                     password: pwd,
-                                    cipher: loginParmas.password,
-                                    endpoint: loginParmas.endpoint,
-                                    websocket: loginParmas.websocket
+                                    cipher: loginParams.password,
+                                    endpoint: loginParams.endpoint,
+                                    websocket: loginParams.websocket
                                 })
                                     .catch((err2) => {
                                         reject(err2);
@@ -479,10 +493,10 @@ export const useAuthStore = defineStore('Auth', () => {
                     })
                     .then(() => {
                         authLogin({
-                            username: loginParmas.username,
-                            password: loginParmas.password,
-                            endpoint: loginParmas.endpoint,
-                            websocket: loginParmas.websocket
+                            username: loginParams.username,
+                            password: loginParams.password,
+                            endpoint: loginParams.endpoint,
+                            websocket: loginParams.websocket
                         })
                             .catch((err2) => {
                                 handleLogoutEvent();
@@ -557,7 +571,7 @@ export const useAuthStore = defineStore('Auth', () => {
                                     ];
                                 security
                                     .decrypt(
-                                        saveCredential.loginParmas.password,
+                                        saveCredential.loginParams.password,
                                         value
                                     )
                                     .then(() => {
@@ -731,21 +745,32 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     /**
-     * @param {{ username: string, password: string, saveCredentials: any, cipher: string }} params credential to login
+     * @param {{ username: string, password: string, endpoint: string, websocket: string, saveCredentials?: any, cipher?: string }} params credential to login
      * @returns {Promise<{origin: boolean, json: any}>}
      */
     function authLogin(params) {
-        let { username, password, saveCredentials, cipher } = params;
-        username = encodeURIComponent(username);
-        password = encodeURIComponent(password);
-        const auth = btoa(`${username}:${password}`);
+        let {
+            username,
+            password,
+            endpoint,
+            websocket,
+            saveCredentials,
+            cipher
+        } = params;
+        const auth = btoa(
+            `${encodeURIComponent(username)}:${encodeURIComponent(password)}`
+        );
         if (saveCredentials) {
-            delete params.saveCredentials;
+            params.saveCredentials = false;
             if (cipher) {
-                params.password = cipher;
-                delete params.cipher;
+                password = cipher;
             }
-            saveCredentials.value = params;
+            credentialsToSave.value = {
+                username,
+                password,
+                endpoint,
+                websocket
+            };
         }
         return request('auth/user', {
             method: 'GET',
@@ -852,7 +877,7 @@ export const useAuthStore = defineStore('Auth', () => {
 
         loginForm,
         enablePrimaryPasswordDialog,
-        saveCredentials,
+        credentialsToSave,
         twoFactorAuthDialogVisible,
         cachedConfig,
         enableCustomEndpoint,
