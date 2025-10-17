@@ -409,7 +409,7 @@
                 "appearance": {
                     "header": "Appearance",
                     "language": "Language",
-                    "bio_language": "Bio Translation Language",
+                    "bio_language": "Target Language",
                     "theme_mode": "Theme",
                     "theme_mode_system": "System",
                     "theme_mode_light": "Light",
