@@ -423,11 +423,17 @@
                                     }}</span>
                                 </div>
                             </div>
-                            <!--//- .x-friend-item(@click="toggleAllowBooping")-->
-                            <!--//-     .detail-->
-                            <!--//-         span.name {{ t('dialog.user.info.booping') }}-->
-                            <!--//-         span.extra(v-if="currentUser.isBoopingEnabled" style="color:#67C23A") {{ t('dialog.user.info.avatar_cloning_allow') }}-->
-                            <!--//-         span.extra(v-else style="color:#F56C6C") {{ t('dialog.user.info.avatar_cloning_deny') }}-->
+                            <div class="x-friend-item" @click="toggleAllowBooping">
+                                <div class="detail">
+                                    <span class="name">{{ t('dialog.user.info.booping') }}</span>
+                                    <span v-if="currentUser.isBoopingEnabled" class="extra" style="color: #67c23a">{{
+                                        t('dialog.user.info.avatar_cloning_allow')
+                                    }}</span>
+                                    <span v-else class="extra" style="color: #f56c6c">{{
+                                        t('dialog.user.info.avatar_cloning_deny')
+                                    }}</span>
+                                </div>
+                            </div>
                         </template>
                         <template v-else>
                             <div class="x-friend-item" style="cursor: default">
@@ -1302,8 +1308,14 @@
     const { hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
     const { userDialog, languageDialog, currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
-    const { cachedUsers, showUserDialog, sortUserDialogAvatars, refreshUserDialogAvatars, refreshUserDialogTreeData } =
-        useUserStore();
+    const {
+        cachedUsers,
+        showUserDialog,
+        sortUserDialogAvatars,
+        refreshUserDialogAvatars,
+        refreshUserDialogTreeData,
+        showSendBoopDialog
+    } = useUserStore();
     const { favoriteLimits } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog, handleFavoriteWorldList } = useFavoriteStore();
     const { showAvatarDialog, lookupAvatars, showAvatarAuthorDialog } = useAvatarStore();
@@ -1749,8 +1761,8 @@
             redirectToToolsTab();
         } else if (command === 'Invite To Group') {
             showInviteGroupDialog('', D.id);
-            // } else if (command === 'Send Boop') {
-            //     this.showSendBoopDialog(D.id);
+        } else if (command === 'Send Boop') {
+            showSendBoopDialog(D.id);
         } else if (command === 'Group Moderation') {
             showModerateGroupDialog(D.id);
         } else if (command === 'Hide Avatar') {
@@ -2270,6 +2282,12 @@
     function toggleAvatarCopying() {
         userRequest.saveCurrentUser({
             allowAvatarCopying: !currentUser.value.allowAvatarCopying
+        });
+    }
+
+    function toggleAllowBooping() {
+        userRequest.saveCurrentUser({
+            isBoopingEnabled: !currentUser.value.isBoopingEnabled
         });
     }
 
