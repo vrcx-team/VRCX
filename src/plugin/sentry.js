@@ -1,3 +1,5 @@
+import { router } from './router';
+
 import configRepository from '../service/config';
 
 import * as Sentry from '@sentry/vue';
@@ -52,7 +54,7 @@ export async function initSentry(app) {
                     maskAllText: true,
                     blockAllMedia: true
                 }),
-                Sentry.browserTracingIntegration(),
+                Sentry.browserTracingIntegration({ router }),
                 Sentry.vueIntegration({
                     tracingOptions: {
                         trackComponents: true
