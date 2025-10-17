@@ -313,8 +313,7 @@
 
     watch(
         () => route.path,
-        (newPath, oldPath) => {
-            console.log('Route changed - FriendsList', newPath, oldPath);
+        () => {
             nextTick(() => friendsListSearchChange());
         },
         { immediate: true }
