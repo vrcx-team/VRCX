@@ -409,6 +409,7 @@
                 "appearance": {
                     "header": "Appearance",
                     "language": "Language",
+                    "bio_language": "Target Language",
                     "theme_mode": "Theme",
                     "theme_mode_system": "System",
                     "theme_mode_light": "Light",
@@ -637,6 +638,12 @@
                         "enable": "Enable",
                         "youtube_api_key": "YouTube API Key",
                         "enable_tooltip": "Fetches video titles for use with gameLog and duration for overlay progress bar"
+                    },
+                    "translation_api": {
+                        "header": "Translation API",
+                        "enable": "Enable",
+                        "translation_api_key": "Translation API Key",
+                        "enable_tooltip": "Translates user bios using a button on the bottom right"
                     },
                     "video_progress_pie": {
                         "header": "Progress pie overlay for videos",
@@ -1295,6 +1302,13 @@
             "description": "Enter your YouTube API Key (optional)",
             "placeholder": "YouTube API Key",
             "guide": "Guide",
+            "save": "Save"
+        },
+        "translation_api": {
+            "header": "Translation API",
+            "description": "Enter your Translation API Key (optional)",
+            "placeholder": "Translation API Key",
+            "guide": "Guide (skip the restrict usage part)",
             "save": "Save"
         },
         "set_world_tags": {
