@@ -186,17 +186,18 @@
         await updateRegistryBackupDialog();
     }
 
-    async function promptVrcRegistryBackupName() {
-        try {
-            const { value } = await ElMessageBox.prompt('Enter a name for the backup', 'Backup Name', {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                inputPattern: /\S+/,
-                inputErrorMessage: 'Name is required',
-                inputValue: 'Backup'
-            });
-            await handleBackupVrcRegistry(value);
-        } catch (error) {}
+    function promptVrcRegistryBackupName() {
+        ElMessageBox.prompt('Enter a name for the backup', 'Backup Name', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            inputPattern: /\S+/,
+            inputErrorMessage: 'Name is required',
+            inputValue: 'Backup'
+        })
+            .then(({ value }) => {
+                handleBackupVrcRegistry(value);
+            })
+            .catch(() => {});
     }
 
     async function openJsonFileSelectorDialogElectron() {

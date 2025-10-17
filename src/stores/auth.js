@@ -604,7 +604,8 @@ export const useAuthStore = defineStore('Auth', () => {
                             })
                             .finally(() => {
                                 loginForm.value.loading = false;
-                            });
+                            })
+                            .catch(() => {});
                         return args;
                     }
                     authLogin({
@@ -645,21 +646,23 @@ export const useAuthStore = defineStore('Auth', () => {
                     done();
                 }
             }
-        ).then(({ value, action }) => {
-            if (action === 'confirm') {
-                authRequest
-                    .verifyTOTP({
-                        code: value.trim()
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                        clearCookiesTryLogin();
-                    })
-                    .then(() => {
-                        userStore.getCurrentUser();
-                    });
-            }
-        });
+        )
+            .then(({ value, action }) => {
+                if (action === 'confirm') {
+                    authRequest
+                        .verifyTOTP({
+                            code: value.trim()
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            clearCookiesTryLogin();
+                        })
+                        .then(() => {
+                            userStore.getCurrentUser();
+                        });
+                }
+            })
+            .catch(() => {});
     }
 
     function promptOTP() {
@@ -685,21 +688,23 @@ export const useAuthStore = defineStore('Auth', () => {
                     done();
                 }
             }
-        ).then(({ value, action }) => {
-            if (action === 'confirm') {
-                authRequest
-                    .verifyOTP({
-                        code: value.trim()
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                        clearCookiesTryLogin();
-                    })
-                    .then(() => {
-                        userStore.getCurrentUser();
-                    });
-            }
-        });
+        )
+            .then(({ value, action }) => {
+                if (action === 'confirm') {
+                    authRequest
+                        .verifyOTP({
+                            code: value.trim()
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            clearCookiesTryLogin();
+                        })
+                        .then(() => {
+                            userStore.getCurrentUser();
+                        });
+                }
+            })
+            .catch(() => {});
     }
 
     function promptEmailOTP() {
@@ -727,21 +732,23 @@ export const useAuthStore = defineStore('Auth', () => {
                     done();
                 }
             }
-        ).then(({ value, action }) => {
-            if (action === 'confirm') {
-                authRequest
-                    .verifyEmailOTP({
-                        code: value.trim()
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                        promptEmailOTP();
-                    })
-                    .then(() => {
-                        userStore.getCurrentUser();
-                    });
-            }
-        });
+        )
+            .then(({ value, action }) => {
+                if (action === 'confirm') {
+                    authRequest
+                        .verifyEmailOTP({
+                            code: value.trim()
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            promptEmailOTP();
+                        })
+                        .then(() => {
+                            userStore.getCurrentUser();
+                        });
+                }
+            })
+            .catch(() => {});
     }
 
     /**

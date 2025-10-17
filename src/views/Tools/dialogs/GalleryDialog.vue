@@ -1131,8 +1131,6 @@
                         });
                 }
             })
-            .catch(() => {
-                // on cancel
-            });
+            .catch(() => {});
     }
 </script>
