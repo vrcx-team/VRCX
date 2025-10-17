@@ -320,7 +320,6 @@
     );
 
     function friendsListSearchChange() {
-        console.log('Friends List Search Change');
         friendsListLoading.value = true;
         let query = '';
         let cleanedQuery = '';

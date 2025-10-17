@@ -173,6 +173,7 @@ export const useFeedStore = defineStore('Feed', () => {
     function addFeed(feed) {
         notificationStore.queueFeedNoty(feed);
         feedSessionTable.value.push(feed);
+        feedSessionTable.value.shift();
         sharedFeedStore.updateSharedFeed(false);
         if (
             feedTable.value.filter.length > 0 &&
@@ -221,7 +222,14 @@ export const useFeedStore = defineStore('Feed', () => {
         feedTable.value.loading = true;
 
         feedTableLookup();
-        feedSessionTable.value = await database.getFeedDatabase();
+
+        const getFeedDatabaseResult = await database.getFeedDatabase();
+        if (getFeedDatabaseResult && getFeedDatabaseResult.length > 0) {
+            // rough, maybe 100 is enough
+            feedSessionTable.value = getFeedDatabaseResult.slice(-100);
+        } else {
+            feedSessionTable.value = [];
+        }
     }
 
     return {
