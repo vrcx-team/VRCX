@@ -339,17 +339,21 @@ export const useSearchStore = defineStore('Search', () => {
                 inputPattern: /\S+/,
                 inputErrorMessage: t('prompt.direct_access_omni.input_error')
             }
-        ).then(({ value, action }) => {
-            if (action === 'confirm' && value) {
-                const input = value.trim();
-                if (!directAccessParse(input)) {
-                    ElMessage({
-                        message: t('prompt.direct_access_omni.message.error'),
-                        type: 'error'
-                    });
+        )
+            .then(({ value, action }) => {
+                if (action === 'confirm' && value) {
+                    const input = value.trim();
+                    if (!directAccessParse(input)) {
+                        ElMessage({
+                            message: t(
+                                'prompt.direct_access_omni.message.error'
+                            ),
+                            type: 'error'
+                        });
+                    }
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function showGroupDialogShortCode(shortCode) {

@@ -417,14 +417,16 @@ export const usePhotonStore = defineStore('Photon', () => {
                     'prompt.overlay_message_timeout.input_error'
                 )
             }
-        ).then(({ value, action }) => {
-            if (action === 'confirm' && value && !isNaN(Number(value))) {
-                state.photonOverlayMessageTimeout = Math.trunc(
-                    Number(value) * 1000
-                );
-                vrStore.updateVRConfigVars();
-            }
-        });
+        )
+            .then(({ value, action }) => {
+                if (action === 'confirm' && value && !isNaN(Number(value))) {
+                    state.photonOverlayMessageTimeout = Math.trunc(
+                        Number(value) * 1000
+                    );
+                    vrStore.updateVRConfigVars();
+                }
+            })
+            .catch(() => {});
     }
 
     function promptPhotonLobbyTimeoutThreshold() {
@@ -441,13 +443,15 @@ export const usePhotonStore = defineStore('Photon', () => {
                 inputPattern: /\d+$/,
                 inputErrorMessage: t('prompt.photon_lobby_timeout.input_error')
             }
-        ).then(({ value, action }) => {
-            if (action === 'confirm' && value && !isNaN(Number(value))) {
-                state.photonLobbyTimeoutThreshold = Math.trunc(
-                    Number(value) * 1000
-                );
-            }
-        });
+        )
+            .then(({ value, action }) => {
+                if (action === 'confirm' && value && !isNaN(Number(value))) {
+                    state.photonLobbyTimeoutThreshold = Math.trunc(
+                        Number(value) * 1000
+                    );
+                }
+            })
+            .catch(() => {});
     }
 
     function startLobbyWatcherLoop() {
