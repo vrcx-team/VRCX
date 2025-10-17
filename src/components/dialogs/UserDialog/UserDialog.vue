@@ -2041,7 +2041,7 @@
         }
         if (userId === currentUser.value.id) {
             userDialog.value.groupSorting = userDialogGroupSortingOptions.inGame;
-        } else if (userDialog.value.groupSorting === userDialogGroupSortingOptions.inGame) {
+        } else if (userDialog.value.groupSorting.value === userDialogGroupSortingOptions.inGame.value) {
             userDialog.value.groupSorting = userDialogGroupSortingOptions.alphabetical;
         }
         await sortCurrentUserGroups();
