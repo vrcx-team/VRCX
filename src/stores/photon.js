@@ -1115,7 +1115,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                 } else if (type === 1) {
                     emojiName = 'Custom';
                     var fileId = data.Parameters[245][1];
-                    imageUrl = `https://api.vrchat.cloud/api/1/file/${fileId}/1/`;
+                    imageUrl = `${AppDebug.endpointDomain}/file/${fileId}/1/`;
                 }
                 addEntryPhotonEvent({
                     photonId,

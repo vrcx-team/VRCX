@@ -63,6 +63,8 @@
                 <VRChatConfigDialog></VRChatConfigDialog>
 
                 <PrimaryPasswordDialog></PrimaryPasswordDialog>
+
+                <SendBoopDialog></SendBoopDialog>
             </template>
         </div>
     </el-config-provider>
@@ -109,6 +111,7 @@
     import NavMenu from './components/NavMenu.vue';
     import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
     import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
+    import SendBoopDialog from './components/dialogs/SendBoopDialog.vue';
     import Sidebar from './views/Sidebar/Sidebar.vue';
     import UserDialog from './components/dialogs/UserDialog/UserDialog.vue';
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';

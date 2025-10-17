@@ -125,7 +125,16 @@
 
             <el-table-column :label="t('table.notification.photo')" width="100" prop="photo">
                 <template #default="scope">
-                    <template v-if="scope.row.details && scope.row.details.imageUrl">
+                    <template v-if="scope.row.type === 'boop'">
+                        <img
+                            v-if="!scope.row.details.imageUrl.startsWith('default_')"
+                            class="x-link"
+                            :src="getSmallThumbnailUrl(scope.row.details.imageUrl)"
+                            style="flex: none; height: 50px; border-radius: 4px"
+                            @click="showFullscreenImageDialog(scope.row.details.imageUrl)"
+                            loading="lazy" />
+                    </template>
+                    <template v-else-if="scope.row.details && scope.row.details.imageUrl">
                         <img
                             class="x-link"
                             :src="getSmallThumbnailUrl(scope.row.details.imageUrl)"
@@ -224,7 +233,14 @@
                             <template v-for="response in scope.row.responses" :key="response.text">
                                 <el-tooltip placement="top" :content="response.text">
                                     <el-button
-                                        v-if="response.icon === 'check'"
+                                        v-if="response.type === 'link'"
+                                        type="text"
+                                        :icon="Link"
+                                        size="small"
+                                        :class="['button-pd-0', 'ml-5']"
+                                        @click="openNotificationLink(response.data)" />
+                                    <el-button
+                                        v-else-if="response.icon === 'check'"
                                         type="text"
                                         :icon="Check"
                                         size="small"
@@ -259,13 +275,13 @@
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
                                         " />
-                                    <!--//el-button(-->
-                                    <!--//    v-else-if='response.icon === "reply" && scope.row.type === "boop"'-->
-                                    <!--//    type='text'-->
-                                    <!--//    icon='el-icon-chat-line-square'-->
-                                    <!--//    size='mini'-->
-                                    <!--//    style='margin-left: 5px'-->
-                                    <!--//    @click='showSendBoopDialog(scope.row.senderUserId)')-->
+                                    <el-button
+                                        v-else-if="response.icon === 'reply' && scope.row.type === 'boop'"
+                                        type="text"
+                                        :icon="ChatLineSquare"
+                                        size="small"
+                                        :class="['button-pd-0', 'ml-5']"
+                                        @click="showSendBoopDialog(scope.row.senderUserId)" />
                                     <el-button
                                         v-else-if="response.icon === 'reply'"
                                         type="text"
@@ -384,6 +400,7 @@
         Close,
         CollectionTag,
         Delete,
+        Link,
         Refresh
     } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
@@ -419,7 +436,7 @@
     import SendInviteResponseDialog from './dialogs/SendInviteResponseDialog.vue';
     import configRepository from '../../service/config';
 
-    const { showUserDialog } = useUserStore();
+    const { showUserDialog, showSendBoopDialog } = useUserStore();
     const { showWorldDialog } = useWorldStore();
     const { showGroupDialog } = useGroupStore();
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());

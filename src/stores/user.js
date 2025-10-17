@@ -269,6 +269,10 @@ export const useUserStore = defineStore('User', () => {
         languageChoice: false,
         languages: []
     });
+    const sendBoopDialog = ref({
+        visible: false,
+        userId: ''
+    });
     const pastDisplayNameTable = ref({
         data: [],
         tableProps: {
@@ -1960,6 +1964,11 @@ export const useUserStore = defineStore('User', () => {
         return ref;
     }
 
+    function showSendBoopDialog(userId) {
+        sendBoopDialog.value.userId = userId;
+        sendBoopDialog.value.visible = true;
+    }
+
     return {
         state,
 
@@ -1968,6 +1977,7 @@ export const useUserStore = defineStore('User', () => {
         userDialog,
         subsetOfLanguages,
         languageDialog,
+        sendBoopDialog,
         pastDisplayNameTable,
         showUserDialogHistory,
         customUserTags,
@@ -1986,7 +1996,7 @@ export const useUserStore = defineStore('User', () => {
         initUserNotes,
         getCurrentUser,
         handleConfig,
-
+        showSendBoopDialog,
         checkNote
     };
 });

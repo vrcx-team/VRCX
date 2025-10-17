@@ -54,4 +54,34 @@ function getEmojiFileName(emoji) {
     }
 }
 
-export { getPrintLocalDate, getPrintFileName, getEmojiFileName };
+/**
+ * @param {string} url
+ * @param {number} fps
+ * @param {number} frameCount
+ * @param {string} loopStyle
+ */
+function generateEmojiStyle(url, fps, frameCount, loopStyle) {
+    let framesPerLine = 2;
+    if (frameCount > 4) framesPerLine = 4;
+    if (frameCount > 16) framesPerLine = 8;
+    const animationDurationMs = (1000 / fps) * frameCount;
+    const frameSize = 1024 / framesPerLine;
+    const scale = 100 / (frameSize / 200);
+    const animStyle = loopStyle === 'pingpong' ? 'alternate' : 'none';
+    const style = `
+            transform: scale(${scale / 100});
+            transform-origin: top left;
+            width: ${frameSize}px;
+            height: ${frameSize}px;
+            background: url('${url}') 0 0;
+            animation: ${animationDurationMs}ms steps(1) 0s infinite ${animStyle} running animated-emoji-${frameCount};
+        `;
+    return style;
+}
+
+export {
+    getPrintLocalDate,
+    getPrintFileName,
+    getEmojiFileName,
+    generateEmojiStyle
+};
