@@ -1221,7 +1221,6 @@
         Check,
         Close,
         CollectionTag,
-        Comment,
         CopyDocument,
         Delete,
         Download,
