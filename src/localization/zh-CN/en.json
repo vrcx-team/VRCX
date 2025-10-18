@@ -252,38 +252,39 @@
         },
         "tools": {
             "header": "工具",
-            "redirect_message": "",
             "group": {
                 "header": "群组",
                 "calendar": "活动日历",
                 "calendar_description": "查看活动日历"
             },
             "image": {},
-            "user": {},
+            "user": {
+                "discord_names_description": "查找好友的 Discord 名称（如果他们有写上去的话）",
+                "export_friend_list_description": "从 VRChat 导出你的好友列表",
+                "export_own_avatars_description": "从 VRChat 中导出你创建的模型的 ID 列表"
+            },
             "export": {
                 "header": "导出",
                 "export_notes": "导出备注",
                 "export_notes_description": "导出好友备注到文本文件",
-                "discord_names": "查看好友的 Discord 名称",
+                "discord_names": "查找好友的 Discord 名称",
                 "export_friend_list": "导出好友列表",
                 "export_own_avatars": "导出自己创建的模型 ID 列表"
             },
+            "redirect_message": "此类功能现在将在本页面提供",
             "pictures": {
                 "pictures": {
                     "vrc_photos": "VRChat 截图",
                     "steam_screenshots": "Steam 截图",
-                    "open_folder": "打开文件夹"
+                    "open_folder": "打开文件夹",
+                    "vrc_photos_description": "打开你的 VRChat 照片文件夹",
+                    "steam_screenshots_description": "打开你的 Steam 截图文件夹"
                 },
                 "header": "相册",
                 "screenshot": "截图管理",
                 "screenshot_description": "管理截图或查看截图元数据",
                 "inventory": "相册 & 库存管理",
                 "inventory_description": "管理相册与库存物品"
-            },
-            "user": {
-                "header": "用户",
-                "export_notes": "导出备注",
-                "export_notes_description": "导出备注到文本文件中"
             }
         },
         "profile": {
@@ -430,8 +431,7 @@
                     "sort_instance_users_by": "房间玩家排序规则",
                     "sort_instance_users_by_time": "时间",
                     "sort_instance_users_by_alphabet": "字母顺序",
-                    "table_max_size": "最大显示记录",
-                    "page_size": "页面大小："
+                    "table_max_size": "最大显示记录"
                 },
                 "timedate": {
                     "header": "时间 / 日期",
@@ -788,7 +788,7 @@
                 "request_invite_with_message": "发送带消息的加入申请",
                 "invite_to_group": "邀请加入群组",
                 "group_moderation": "群组管理",
-                "send_boop": "Send Boop",
+                "send_boop": "发送戳一戳",
                 "manage_gallery_inventory_icon": "管理相册与库存",
                 "accept_friend_request": "接受好友申请",
                 "decline_friend_request": "拒绝好友申请",
@@ -848,7 +848,7 @@
                 "friended": "添加为好友的时间",
                 "unfriended": "删除好友的时间",
                 "avatar_cloning": "是否允许克隆模型",
-                "booping": "Booping",
+                "booping": "是否允许戳一戳",
                 "avatar_cloning_allow": "允许",
                 "avatar_cloning_deny": "不允许",
                 "home_location": "出生点",
@@ -1368,7 +1368,7 @@
             "json": "JSON"
         },
         "export_own_avatars": {
-            "header": "导出自己创建的模型"
+            "header": "导出自己创建的模型的 ID"
         },
         "discord_names": {
             "header": "Discord 名称",
@@ -1543,7 +1543,8 @@
             "item": "物品",
             "sticker": "贴纸",
             "drone_skin": "无人机皮肤",
-            "emoji": "Emoji（表情）"
+            "emoji": "Emoji（表情）",
+            "redeem": "兑换码兑换"
         },
         "change_content_image": {
             "avatar": "更改模型封面",
@@ -1669,7 +1670,7 @@
             "edit_post": "编辑帖子"
         },
         "boop_dialog": {
-            "header": "Boop",
+            "header": "戳一戳",
             "emoji_manager": "表情管理",
             "select_emoji": "选择表情",
             "my_emojis": "我的表情",
@@ -2007,6 +2008,15 @@
             "placeholder": "127.0.0.1:8080",
             "close": "关闭",
             "restart": "保存并重启"
+        },
+        "redeem": {
+            "header": "兑换码兑换",
+            "description": "输入你的兑换码",
+            "cancel": "取消",
+            "redeem": "兑换",
+            "input_placeholder": "输入兑换码",
+            "input_error": "请输入兑换码，兑换码不得为空",
+            "success": "兑换成功!"
         }
     },
     "table": {
