@@ -41,7 +41,7 @@
                         size="small"
                         @click="displayGalleryUpload"
                         :icon="Upload"
-                        :disabled="!currentUser.$isVRCPlus || isUploading">
+                        :disabled="!isLocalUserVrcPlusSupporter || isUploading">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
                     <el-button
@@ -115,7 +115,7 @@
                         size="small"
                         @click="displayVRCPlusIconUpload"
                         :icon="Upload"
-                        :disabled="!currentUser.$isVRCPlus || isUploading">
+                        :disabled="!isLocalUserVrcPlusSupporter || isUploading">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
                     <el-button
@@ -190,7 +190,7 @@
                             size="small"
                             @click="displayEmojiUpload"
                             :icon="Upload"
-                            :disabled="!currentUser.$isVRCPlus || isUploading">
+                            :disabled="!isLocalUserVrcPlusSupporter || isUploading">
                             {{ t('dialog.gallery_icons.upload') }}
                         </el-button>
                     </el-button-group>
@@ -338,7 +338,7 @@
                         size="small"
                         @click="displayStickerUpload"
                         :icon="Upload"
-                        :disabled="!currentUser.$isVRCPlus || isUploading">
+                        :disabled="!isLocalUserVrcPlusSupporter || isUploading">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
                 </el-button-group>
@@ -405,7 +405,7 @@
                             size="small"
                             @click="displayPrintUpload"
                             :icon="Upload"
-                            :disabled="!currentUser.$isVRCPlus || isUploading">
+                            :disabled="!isLocalUserVrcPlusSupporter || isUploading">
                             {{ t('dialog.gallery_icons.upload') }}
                         </el-button>
                     </el-button-group>
@@ -544,17 +544,24 @@
 </template>
 
 <script setup>
+    import { Close, Delete, Picture, Plus, Present, Refresh, Upload } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
-    import { Refresh, Upload, Close, Picture, Delete, Plus, Present } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
     import { computed, ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest, inventoryRequest } from '../../../api';
-    import { AppDebug } from '../../../service/appConfig';
-    import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../shared/constants';
-    import { extractFileId, formatDateFilter, getEmojiFileName, getPrintFileName } from '../../../shared/utils';
-    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
+
+    import {
+        extractFileId,
+        formatDateFilter,
+        generateEmojiStyle,
+        getEmojiFileName,
+        getPrintFileName
+    } from '../../../shared/utils';
+    import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../../api';
     import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../../stores';
+    import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../shared/constants';
+    import { AppDebug } from '../../../service/appConfig';
+    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
 
     const { t } = useI18n();
 
@@ -588,7 +595,7 @@
 
     const { currentUserInventory } = storeToRefs(useAdvancedSettingsStore());
     const { showFullscreenImageDialog } = useGalleryStore();
-    const { currentUser } = storeToRefs(useUserStore());
+    const { currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { cachedConfig } = storeToRefs(useAuthStore());
 
     const emojiAnimFps = ref(15);
@@ -904,25 +911,6 @@
         document.getElementById('EmojiUploadButton').click();
     }
 
-    function generateEmojiStyle(url, fps, frameCount, loopStyle) {
-        let framesPerLine = 2;
-        if (frameCount > 4) framesPerLine = 4;
-        if (frameCount > 16) framesPerLine = 8;
-        const animationDurationMs = (1000 / fps) * frameCount;
-        const frameSize = 1024 / framesPerLine;
-        const scale = 100 / (frameSize / 200);
-        const animStyle = loopStyle === 'pingpong' ? 'alternate' : 'none';
-        const style = `
-            transform: scale(${scale / 100});
-            transform-origin: top left;
-            width: ${frameSize}px;
-            height: ${frameSize}px;
-            background: url('${url}') 0 0;
-            animation: ${animationDurationMs}ms steps(1) 0s infinite ${animStyle} running animated-emoji-${frameCount};
-        `;
-        return style;
-    }
-
     function deleteEmoji(fileId) {
         miscRequest.deleteFile(fileId).then((args) => {
             const array = emojiTable.value;
@@ -1130,8 +1118,6 @@
                         });
                 }
             })
-            .catch(() => {
-                // on cancel
-            });
+            .catch(() => {});
     }
 </script>

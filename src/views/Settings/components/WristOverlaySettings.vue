@@ -42,9 +42,7 @@
                 saveOpenVROption();
             " />
         <div class="options-container-item" style="min-width: 118px">
-            <span class="name">{{
-                t('view.settings.wrist_overlay.steamvr_wrist_overlay.start_overlay_with')
-            }}</span>
+            <span class="name">{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.start_overlay_with') }}</span>
             <el-radio-group
                 :model-value="openVRAlways"
                 :disabled="!openVR"
@@ -74,9 +72,7 @@
             </el-radio-group>
         </div>
         <div class="options-container-item">
-            <span class="name">{{
-                t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on')
-            }}</span>
+            <span class="name">{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on') }}</span>
             <el-radio-group
                 :model-value="overlayHand"
                 size="small"
@@ -147,14 +143,12 @@
 </template>
 
 <script setup>
+    import { Files } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { Files } from '@element-plus/icons-vue';
-    import {
-        useNotificationsSettingsStore,
-        useWristOverlaySettingsStore,
-        useVrStore
-    } from '../../../stores';
+
+    import { useNotificationsSettingsStore, useVrStore, useWristOverlaySettingsStore } from '../../../stores';
+
     import SimpleSwitch from './SimpleSwitch.vue';
 
     const emit = defineEmits(['open-feed-filters']);
@@ -179,9 +173,7 @@
         pcUptimeOnFeed
     } = storeToRefs(wristOverlaySettingsStore);
 
-    const {
-        setOpenVR
-    } = notificationsSettingsStore;
+    const { setOpenVR } = notificationsSettingsStore;
 
     const {
         setOverlayWrist,

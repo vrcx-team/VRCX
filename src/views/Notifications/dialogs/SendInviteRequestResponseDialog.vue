@@ -6,7 +6,7 @@
         width="800px"
         append-to-body
         @close="cancelSendInviteRequestResponse">
-        <template v-if="currentUser.$isVRCPlus">
+        <template v-if="isLocalUserVrcPlusSupporter">
             <input class="inviteImageUploadButton" type="file" accept="image/*" @change="inviteImageUpload" />
         </template>
 
@@ -62,11 +62,12 @@
 
 <script setup>
     import { Edit } from '@element-plus/icons-vue';
-
-    import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { useGalleryStore, useInviteStore, useUserStore } from '../../../stores';
+
     import EditAndSendInviteResponseDialog from './EditAndSendInviteResponseDialog.vue';
     import SendInviteResponseConfirmDialog from './SendInviteResponseConfirmDialog.vue';
 
@@ -76,7 +77,7 @@
     const { inviteRequestResponseMessageTable } = storeToRefs(inviteStore);
     const galleryStore = useGalleryStore();
     const { inviteImageUpload } = galleryStore;
-    const { currentUser } = storeToRefs(useUserStore());
+    const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 
     const props = defineProps({
         sendInviteResponseDialog: {

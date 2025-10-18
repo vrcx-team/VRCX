@@ -44,12 +44,13 @@
 
 <script setup>
     import { Delete } from '@element-plus/icons-vue';
-
-    import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import configRepository from '../../../service/config';
+
     import { usePhotonStore } from '../../../stores';
+
+    import configRepository from '../../../service/config';
 
     const { t } = useI18n();
 

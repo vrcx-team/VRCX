@@ -26,7 +26,7 @@
                     type="default"
                     size="small"
                     :icon="Upload"
-                    :disabled="!currentUser.$isVRCPlus"
+                    :disabled="!isLocalUserVrcPlusSupporter"
                     @click="displayGalleryUpload"
                     >{{ t('dialog.gallery_select.upload') }}</el-button
                 >
@@ -53,20 +53,19 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
-
     import { Close, Refresh, Upload } from '@element-plus/icons-vue';
-
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { vrcPlusImageRequest } from '../../../api';
+
     import { useGalleryStore, useUserStore } from '../../../stores';
+    import { vrcPlusImageRequest } from '../../../api';
 
     const { t } = useI18n();
 
     const { galleryTable } = storeToRefs(useGalleryStore());
     const { refreshGalleryTable, handleGalleryImageAdd } = useGalleryStore();
-    const { currentUser } = storeToRefs(useUserStore());
+    const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 
     const props = defineProps({
         gallerySelectDialog: {

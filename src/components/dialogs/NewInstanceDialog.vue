@@ -84,14 +84,14 @@
                             "
                             @change="buildInstance"></el-checkbox>
                     </el-form-item>
-                    <!-- <el-form-item :label="t('dialog.new_instance.display_name')">
+                    <el-form-item :label="t('dialog.new_instance.display_name')">
                         <el-input
-                            :disabled="!isLocalUserVrcplusSupporter"
+                            :disabled="!isLocalUserVrcPlusSupporter"
                             v-model="newInstanceDialog.displayName"
                             size="small"
                             @click="$event.target.tagName === 'INPUT' && $event.target.select()"
                             @change="buildInstance"></el-input>
-                    </el-form-item> -->
+                    </el-form-item>
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
                         :label="t('dialog.new_instance.group_id')">
@@ -242,7 +242,11 @@
                             @change="buildLegacyInstance"></el-input>
                     </el-form-item>
                     <el-form-item
-                        v-if="newInstanceDialog.accessType !== 'public' && newInstanceDialog.accessType !== 'group'"
+                        v-if="
+                            newInstanceDialog.selectedTab === 'Legacy' &&
+                            newInstanceDialog.accessType !== 'public' &&
+                            newInstanceDialog.accessType !== 'group'
+                        "
                         :label="t('dialog.new_instance.instance_creator')">
                         <el-select
                             v-model="newInstanceDialog.userId"
@@ -473,12 +477,11 @@
 </template>
 
 <script setup>
-    import { ref, watch, nextTick, computed } from 'vue';
+    import { computed, nextTick, ref, watch } from 'vue';
     import { ElMessage } from 'element-plus';
-    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
-    import { groupRequest, instanceRequest, worldRequest } from '../../api';
-    import configRepository from '../../service/config';
+    import { useI18n } from 'vue-i18n';
+
     import {
         copyToClipboard,
         getLaunchURL,
@@ -488,17 +491,20 @@
         userImage,
         userStatusClass
     } from '../../shared/utils';
-    import { getNextDialogIndex } from '../../shared/utils/base/ui';
     import {
         useFriendStore,
         useGroupStore,
         useInstanceStore,
+        useInviteStore,
         useLaunchStore,
         useLocationStore,
-        useUserStore,
-        useInviteStore
+        useUserStore
     } from '../../stores';
+    import { groupRequest, instanceRequest, worldRequest } from '../../api';
+    import { getNextDialogIndex } from '../../shared/utils/base/ui';
+
     import InviteDialog from './InviteDialog/InviteDialog.vue';
+    import configRepository from '../../service/config';
 
     const props = defineProps({
         newInstanceDialogLocationTag: {
@@ -515,7 +521,7 @@
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showLaunchDialog, tryOpenInstanceInVrc } = useLaunchStore();
     const { createNewInstance } = useInstanceStore();
-    const { currentUser } = storeToRefs(useUserStore());
+    const { currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { canOpenInstanceInGame } = useInviteStore();
 
     const newInstanceDialogIndex = ref(2000);
@@ -563,8 +569,6 @@
             initNewInstanceDialog(value);
         }
     );
-
-    const isLocalUserVrcplusSupporter = computed(() => currentUser.value.$isVRCPlus);
 
     initializeNewInstanceDialog();
 
@@ -627,7 +631,7 @@
         D.strict = false;
         D.shortName = '';
         D.secureOrShortName = '';
-        if (!isLocalUserVrcplusSupporter.value) {
+        if (!isLocalUserVrcPlusSupporter.value) {
             D.displayName = '';
         }
         const args = await groupRequest.getGroupPermissions({ userId: currentUser.value.id });

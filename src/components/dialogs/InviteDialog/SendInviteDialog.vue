@@ -6,7 +6,7 @@
         width="800px"
         append-to-body
         @close="cancelSendInvite">
-        <template v-if="currentUser.$isVRCPlus">
+        <template v-if="isLocalUserVrcPlusSupporter">
             <!--            <template v-if="gallerySelectDialog.selectedFileId">-->
             <!--                <div style="display: inline-block; flex: none; margin-right: 5px">-->
             <!--                    <el-popover placement="right" :width="500px" trigger="click">-->
@@ -81,7 +81,7 @@
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />
         <EditAndSendInviteDialog
-            :edit-and-send-invite-dialog="editAndSendInviteDialog"
+            v-model:edit-and-send-invite-dialog="editAndSendInviteDialog"
             :sendInviteDialog="sendInviteDialog"
             @update:sendInviteDialog="emit('update:sendInviteDialog', $event)"
             :invite-dialog="inviteDialog"
@@ -91,11 +91,12 @@
 
 <script setup>
     import { Edit } from '@element-plus/icons-vue';
-
-    import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { useGalleryStore, useInviteStore, useUserStore } from '../../../stores';
+
     import EditAndSendInviteDialog from './EditAndSendInviteDialog.vue';
     import SendInviteConfirmDialog from './SendInviteConfirmDialog.vue';
 
@@ -104,7 +105,7 @@
     const { refreshInviteMessageTableData } = useInviteStore();
     const { inviteMessageTable } = storeToRefs(useInviteStore());
     const { inviteImageUpload } = useGalleryStore();
-    const { currentUser } = storeToRefs(useUserStore());
+    const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 
     const props = defineProps({
         sendInviteDialogVisible: {

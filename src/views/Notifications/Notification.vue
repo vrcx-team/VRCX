@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'notification'" v-loading="isNotificationsLoading" class="x-container">
+    <div v-loading="isNotificationsLoading" class="x-container">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <el-select
                 v-model="notificationTable.filters[0].value"
@@ -125,37 +125,30 @@
 
             <el-table-column :label="t('table.notification.photo')" width="100" prop="photo">
                 <template #default="scope">
-                    <template v-if="scope.row.details && scope.row.details.imageUrl">
-                        <el-popover placement="right" :width="500" trigger="click">
-                            <template #reference>
-                                <img
-                                    class="x-link"
-                                    :src="getSmallThumbnailUrl(scope.row.details.imageUrl)"
-                                    style="flex: none; height: 50px; border-radius: 4px"
-                                    loading="lazy" />
-                            </template>
-                            <img
-                                :src="scope.row.details.imageUrl"
-                                :class="['x-link', 'x-popover-image']"
-                                @click="showFullscreenImageDialog(scope.row.details.imageUrl)"
-                                loading="lazy" />
-                        </el-popover>
+                    <template v-if="scope.row.type === 'boop'">
+                        <img
+                            v-if="!scope.row.details.imageUrl.startsWith('default_')"
+                            class="x-link"
+                            :src="getSmallThumbnailUrl(scope.row.details.imageUrl)"
+                            style="flex: none; height: 50px; border-radius: 4px"
+                            @click="showFullscreenImageDialog(scope.row.details.imageUrl)"
+                            loading="lazy" />
+                    </template>
+                    <template v-else-if="scope.row.details && scope.row.details.imageUrl">
+                        <img
+                            class="x-link"
+                            :src="getSmallThumbnailUrl(scope.row.details.imageUrl)"
+                            style="flex: none; height: 50px; border-radius: 4px"
+                            @click="showFullscreenImageDialog(scope.row.details.imageUrl)"
+                            loading="lazy" />
                     </template>
                     <template v-else-if="scope.row.imageUrl">
-                        <el-popover placement="right" :width="500" trigger="click">
-                            <template #reference>
-                                <img
-                                    class="x-link"
-                                    :src="getSmallThumbnailUrl(scope.row.imageUrl)"
-                                    style="flex: none; height: 50px; border-radius: 4px"
-                                    loading="lazy" />
-                            </template>
-                            <img
-                                :src="scope.row.imageUrl"
-                                :class="['x-link', 'x-popover-image']"
-                                @click="showFullscreenImageDialog(scope.row.imageUrl)"
-                                loading="lazy" />
-                        </el-popover>
+                        <img
+                            class="x-link"
+                            :src="getSmallThumbnailUrl(scope.row.imageUrl)"
+                            style="flex: none; height: 50px; border-radius: 4px"
+                            @click="showFullscreenImageDialog(scope.row.imageUrl)"
+                            loading="lazy" />
                     </template>
                 </template>
             </el-table-column>
@@ -240,7 +233,14 @@
                             <template v-for="response in scope.row.responses" :key="response.text">
                                 <el-tooltip placement="top" :content="response.text">
                                     <el-button
-                                        v-if="response.icon === 'check'"
+                                        v-if="response.type === 'link'"
+                                        type="text"
+                                        :icon="Link"
+                                        size="small"
+                                        :class="['button-pd-0', 'ml-5']"
+                                        @click="openNotificationLink(response.data)" />
+                                    <el-button
+                                        v-else-if="response.icon === 'check'"
                                         type="text"
                                         :icon="Check"
                                         size="small"
@@ -275,13 +275,13 @@
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
                                         " />
-                                    <!--//el-button(-->
-                                    <!--//    v-else-if='response.icon === "reply" && scope.row.type === "boop"'-->
-                                    <!--//    type='text'-->
-                                    <!--//    icon='el-icon-chat-line-square'-->
-                                    <!--//    size='mini'-->
-                                    <!--//    style='margin-left: 5px'-->
-                                    <!--//    @click='showSendBoopDialog(scope.row.senderUserId)')-->
+                                    <el-button
+                                        v-else-if="response.icon === 'reply' && scope.row.type === 'boop'"
+                                        type="text"
+                                        :icon="ChatLineSquare"
+                                        size="small"
+                                        :class="['button-pd-0', 'ml-5']"
+                                        @click="showSendBoopDialog(scope.row.senderUserId)" />
                                     <el-button
                                         v-else-if="response.icon === 'reply'"
                                         type="text"
@@ -392,33 +392,24 @@
 </template>
 
 <script setup>
-    import { ElMessage, ElMessageBox } from 'element-plus';
-
     import {
-        Refresh,
-        Check,
-        ChatLineSquare,
-        Close,
-        CircleClose,
         Bell,
+        ChatLineSquare,
+        Check,
+        CircleClose,
+        Close,
         CollectionTag,
-        Delete
+        Delete,
+        Link,
+        Refresh
     } from '@element-plus/icons-vue';
-
-    import { storeToRefs } from 'pinia';
+    import { ElMessage, ElMessageBox } from 'element-plus';
     import { ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { friendRequest, notificationRequest, worldRequest } from '../../api';
-    import {
-        checkCanInvite,
-        convertFileUrlToImageUrl,
-        escapeTag,
-        formatDateFilter,
-        parseLocation,
-        removeFromArray
-    } from '../../shared/utils';
-    import configRepository from '../../service/config';
-    import { database } from '../../service/database';
+
+    import Noty from 'noty';
+
     import {
         useGalleryStore,
         useGameStore,
@@ -430,11 +421,22 @@
         useUserStore,
         useWorldStore
     } from '../../stores';
+    import {
+        checkCanInvite,
+        convertFileUrlToImageUrl,
+        escapeTag,
+        formatDateFilter,
+        parseLocation,
+        removeFromArray
+    } from '../../shared/utils';
+    import { friendRequest, notificationRequest, worldRequest } from '../../api';
+    import { database } from '../../service/database';
+
     import SendInviteRequestResponseDialog from './dialogs/SendInviteRequestResponseDialog.vue';
     import SendInviteResponseDialog from './dialogs/SendInviteResponseDialog.vue';
-    import Noty from 'noty';
+    import configRepository from '../../service/config';
 
-    const { showUserDialog } = useUserStore();
+    const { showUserDialog, showSendBoopDialog } = useUserStore();
     const { showWorldDialog } = useWorldStore();
     const { showGroupDialog } = useGroupStore();
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
@@ -442,10 +444,10 @@
     const { clearInviteImageUpload } = useGalleryStore();
     const { notificationTable, isNotificationsLoading } = storeToRefs(useNotificationStore());
     const { refreshNotifications, handleNotificationHide } = useNotificationStore();
-    const { menuActiveIndex, shiftHeld } = storeToRefs(useUiStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { showFullscreenImageDialog } = useGalleryStore();
     const { currentUser } = storeToRefs(useUserStore());
+    const { shiftHeld } = storeToRefs(useUiStore());
 
     const { t } = useI18n();
 

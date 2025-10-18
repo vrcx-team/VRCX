@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'search'" class="x-container">
+    <div class="x-container">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <el-input
                 :model-value="searchText"
@@ -307,19 +307,11 @@
 </template>
 
 <script setup>
-    import { Delete, Back, Right, Refresh, ArrowDown, Check } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
+    import { ArrowDown, Back, Check, Delete, Refresh, Right } from '@element-plus/icons-vue';
     import { ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { groupRequest, worldRequest } from '../../api';
-    import {
-        compareByCreatedAt,
-        compareByName,
-        compareByUpdatedAt,
-        convertFileUrlToImageUrl,
-        replaceBioSymbols,
-        userImage
-    } from '../../shared/utils';
+
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
@@ -328,10 +320,18 @@
         useAvatarStore,
         useGroupStore,
         useSearchStore,
-        useUiStore,
         useUserStore,
         useWorldStore
     } from '../../stores';
+    import {
+        compareByCreatedAt,
+        compareByName,
+        compareByUpdatedAt,
+        convertFileUrlToImageUrl,
+        replaceBioSymbols,
+        userImage
+    } from '../../shared/utils';
+    import { groupRequest, worldRequest } from '../../api';
 
     const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
@@ -342,7 +342,6 @@
     const { showAvatarDialog, lookupAvatars, cachedAvatars } = useAvatarStore();
     const { cachedWorlds, showWorldDialog } = useWorldStore();
     const { showGroupDialog, applyGroup } = useGroupStore();
-    const { menuActiveIndex } = storeToRefs(useUiStore());
     const { searchText, searchUserResults } = storeToRefs(useSearchStore());
     const { clearSearch, moreSearchUser } = useSearchStore();
     const { cachedConfig } = storeToRefs(useAuthStore());

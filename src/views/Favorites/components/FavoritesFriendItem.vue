@@ -18,14 +18,15 @@
                         :link="false" />
                     <span v-else v-text="favorite.ref.statusDescription"></span>
                 </div>
-                <template v-if="editFavoritesMode">
-                    <el-dropdown trigger="click" size="small" style="margin-left: 5px">
+                <div class="editing">
+                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px">
                         <div>
-                            <el-tooltip placement="left" :content="t('view.favorite.move_tooltip')">
-                                <el-button type="default" :icon="Back" size="small" circle></el-button>
-                            </el-tooltip>
+                            <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </div>
                         <template #dropdown>
+                            <span style="font-weight: bold; display: block; text-align: center">
+                                {{ t('view.favorite.move_tooltip') }}
+                            </span>
                             <el-dropdown-menu>
                                 <template v-for="groupAPI in favoriteFriendGroups" :key="groupAPI.name">
                                     <el-dropdown-item
@@ -42,8 +43,8 @@
                     <el-button type="text" size="small" style="margin-left: 5px" @click.stop>
                         <el-checkbox v-model="favorite.$selected"></el-checkbox>
                     </el-button>
-                </template>
-                <template v-else>
+                </div>
+                <div class="default">
                     <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')">
                         <el-button
                             v-if="shiftHeld"
@@ -61,7 +62,7 @@
                             style="margin-left: 5px"
                             @click.stop="showFavoriteDialog('friend', favorite.id)"></el-button>
                     </el-tooltip>
-                </template>
+                </div>
             </template>
             <template v-else>
                 <div class="avatar"></div>
@@ -83,14 +84,14 @@
     import { Back, Close, Star } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest } from '../../../api';
-    import { userImage, userStatusClass } from '../../../shared/utils';
+
     import { useFavoriteStore, useUiStore } from '../../../stores';
+    import { userImage, userStatusClass } from '../../../shared/utils';
+    import { favoriteRequest } from '../../../api';
 
     defineProps({
         favorite: { type: Object, required: true },
-        group: { type: Object, required: true },
-        editFavoritesMode: Boolean
+        group: { type: Object, required: true }
     });
 
     defineEmits(['click']);

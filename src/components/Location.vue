@@ -12,21 +12,31 @@
             </span>
             <span v-if="groupName" :class="{ 'x-link': link }" @click="handleShowGroupDialog">({{ groupName }})</span>
             <span v-if="region" :class="['flags', 'inline-block', 'ml-5', region]"></span>
+            <el-tooltip v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
+                <el-icon :class="['inline-block', 'ml-5']" style="color: lightcoral"><WarnTriangleFilled /></el-icon>
+            </el-tooltip>
             <el-icon v-if="strict" :class="['inline-block', 'ml-5']"><Lock /></el-icon>
         </span>
     </div>
 </template>
 
 <script setup>
-    import { Loading, Lock } from '@element-plus/icons-vue';
-    import { ref, watchEffect } from 'vue';
-    import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
+    import { Loading, Lock, WarnTriangleFilled } from '@element-plus/icons-vue';
+    import { ref, watch, watchEffect } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
+
     import { useGroupStore, useInstanceStore, useSearchStore, useWorldStore } from '../stores';
+    import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
+
+    const { t } = useI18n();
 
     const { cachedWorlds, showWorldDialog } = useWorldStore();
     const { showGroupDialog } = useGroupStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { verifyShortName } = useSearchStore();
+    const { cachedInstances } = useInstanceStore();
+    const { lastInstanceApplied } = storeToRefs(useInstanceStore());
 
     const props = defineProps({
         location: String,
@@ -51,59 +61,71 @@
     const strict = ref(false);
     const isTraveling = ref(false);
     const groupName = ref('');
+    const isClosed = ref(false);
 
     watchEffect(() => {
         parse();
     });
 
+    watch(
+        () => lastInstanceApplied.value,
+        (instanceId) => {
+            if (instanceId === currentInstanceId()) {
+                parse();
+            }
+        },
+        { immediate: true }
+    );
+
+    function currentInstanceId() {
+        if (typeof props.traveling !== 'undefined' && props.location === 'traveling') {
+            return props.traveling;
+        }
+        return props.location;
+    }
+
     function parse() {
+        text.value = '';
+        region.value = '';
+        strict.value = false;
         isTraveling.value = false;
         groupName.value = '';
+        isClosed.value = false;
+
         let instanceId = props.location;
         if (typeof props.traveling !== 'undefined' && props.location === 'traveling') {
             instanceId = props.traveling;
             isTraveling.value = true;
         }
         const L = parseLocation(instanceId);
-        if (L.isOffline) {
-            text.value = 'Offline';
-        } else if (L.isPrivate) {
-            text.value = 'Private';
-        } else if (L.isTraveling) {
-            text.value = 'Traveling';
-        } else if (typeof props.hint === 'string' && props.hint !== '') {
-            if (L.instanceId) {
-                text.value = `${props.hint} #${L.instanceName} ${L.accessTypeName}`;
-            } else {
-                text.value = props.hint;
+        setText(L, L.instanceName);
+        if (!L.isRealInstance) {
+            return;
+        }
+
+        const instanceRef = cachedInstances.get(L.tag);
+        if (typeof instanceRef !== 'undefined') {
+            if (instanceRef.displayName) {
+                setText(L, instanceRef.displayName);
             }
-        } else if (L.worldId) {
-            const ref = cachedWorlds.get(L.worldId);
-            if (typeof ref === 'undefined') {
-                getWorldName(L.worldId).then((worldName) => {
-                    if (L.tag === instanceId) {
-                        if (L.instanceId) {
-                            text.value = `${worldName} #${L.instanceName} ${L.accessTypeName}`;
-                        } else {
-                            text.value = worldName;
-                        }
-                    }
-                });
-            } else if (L.instanceId) {
-                text.value = `${ref.name} #${L.instanceName} ${L.accessTypeName}`;
-            } else {
-                text.value = ref.name;
+            if (instanceRef.closedAt) {
+                isClosed.value = true;
             }
         }
+
         if (props.grouphint) {
             groupName.value = props.grouphint;
         } else if (L.groupId) {
             groupName.value = L.groupId;
-            getGroupName(instanceId).then((name) => {
-                if (L.tag === instanceId) {
-                    groupName.value = name;
-                }
-            });
+            getGroupName(instanceId)
+                .then((name) => {
+                    if (name && currentInstanceId() === L.tag) {
+                        groupName.value = name;
+                    }
+                })
+                .catch((e) => {
+                    console.error(e);
+                });
         }
         region.value = '';
         if (!L.isOffline && !L.isPrivate && !L.isTraveling) {
@@ -115,12 +137,51 @@
         strict.value = L.strict;
     }
 
+    function setText(L, instanceName) {
+        if (L.isOffline) {
+            text.value = 'Offline';
+        } else if (L.isPrivate) {
+            text.value = 'Private';
+        } else if (L.isTraveling) {
+            text.value = 'Traveling';
+        } else if (typeof props.hint === 'string' && props.hint !== '') {
+            if (L.instanceId) {
+                text.value = `${props.hint} #${instanceName} ${L.accessTypeName}`;
+            } else {
+                text.value = props.hint;
+            }
+        } else if (L.worldId) {
+            if (L.instanceId) {
+                text.value = `${L.worldId} #${instanceName} ${L.accessTypeName}`;
+            } else {
+                text.value = L.worldId;
+            }
+            const ref = cachedWorlds.get(L.worldId);
+            if (typeof ref === 'undefined') {
+                getWorldName(L.worldId)
+                    .then((name) => {
+                        if (name && currentInstanceId() === L.tag) {
+                            if (L.instanceId) {
+                                text.value = `${name} #${instanceName} ${L.accessTypeName}`;
+                            } else {
+                                text.value = name;
+                            }
+                        }
+                    })
+                    .catch((e) => {
+                        console.error(e);
+                    });
+            } else if (L.instanceId) {
+                text.value = `${ref.name} #${instanceName} ${L.accessTypeName}`;
+            } else {
+                text.value = ref.name;
+            }
+        }
+    }
+
     function handleShowWorldDialog() {
         if (props.link) {
-            let instanceId = props.location;
-            if (props.traveling && props.location === 'traveling') {
-                instanceId = props.traveling;
-            }
+            let instanceId = currentInstanceId();
             if (!instanceId && props.hint.length === 8) {
                 verifyShortName('', props.hint);
                 return;
@@ -134,10 +195,7 @@
     }
 
     function handleShowGroupDialog() {
-        let location = props.location;
-        if (isTraveling.value) {
-            location = props.traveling;
-        }
+        let location = currentInstanceId();
         if (!location || !props.link) {
             return;
         }

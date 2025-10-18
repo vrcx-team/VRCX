@@ -27,7 +27,9 @@
 </template>
 
 <script>
-    import { computed, ref, watch, toRefs } from 'vue';
+    import { computed, ref, toRefs, watch } from 'vue';
+
+    import { useAppearanceSettingsStore } from '../stores';
 
     export default {
         name: 'DataTable',
@@ -52,6 +54,10 @@
                 type: Number,
                 default: 20
             },
+            pageSizeLinked: {
+                type: Boolean,
+                default: false
+            },
             filters: {
                 type: [Array, Object],
                 default: () => []
@@ -63,10 +69,6 @@
             layout: {
                 type: String,
                 default: 'table, pagination'
-            },
-            defaultSort: {
-                type: Object,
-                default: () => ({ prop: 'created_at', order: 'descending' })
             }
         },
         emits: [
@@ -79,13 +81,14 @@
             'filtered-data'
         ],
         setup(props, { emit }) {
+            const appearanceSettingsStore = useAppearanceSettingsStore();
             const { data, currentPage, pageSize, tableProps, paginationProps, filters } = toRefs(props);
 
             const internalCurrentPage = ref(currentPage.value);
             const internalPageSize = ref(pageSize.value);
             const sortData = ref({
-                prop: props.defaultSort?.prop || null,
-                order: props.defaultSort?.order || null
+                prop: props.tableProps.defaultSort?.prop || 'created_at',
+                order: props.tableProps.defaultSort?.order || 'descending'
             });
 
             const showPagination = computed(() => {
@@ -99,7 +102,7 @@
 
             const mergedPaginationProps = computed(() => ({
                 layout: 'sizes, prev, pager, next, total',
-                pageSizes: [20, 50, 100, 200],
+                pageSizes: [10, 15, 20, 25, 50, 100],
                 small: true,
                 ...paginationProps.value
             }));
@@ -113,9 +116,8 @@
                 if (cellValue === undefined || cellValue === null) return false;
 
                 if (Array.isArray(filter.value)) {
-                    return filter.value.some((val) =>
-                        String(cellValue).toLowerCase().includes(String(val).toLowerCase())
-                    );
+                    // assume filter dropdown multi select
+                    return filter.value.some((val) => String(cellValue).toLowerCase() === String(val).toLowerCase());
                 } else {
                     return String(cellValue).toLowerCase().includes(String(filter.value).toLowerCase());
                 }
@@ -126,7 +128,12 @@
 
                 if (filters.value && Array.isArray(filters.value) && filters.value.length > 0) {
                     filters.value.forEach((filter) => {
-                        if (filter.value && (!Array.isArray(filter.value) || filter.value.length > 0)) {
+                        if (!filter.value) {
+                            return;
+                        }
+                        if (filter.filterFn) {
+                            result = result.filter((row) => filter.filterFn(row, filter));
+                        } else if (!Array.isArray(filter.value) || filter.value.length > 0) {
                             result = result.filter((row) => applyFilter(row, filter));
                         }
                     });
@@ -185,6 +192,9 @@
             };
 
             const handleSizeChange = (size) => {
+                if (props.pageSizeLinked) {
+                    appearanceSettingsStore.setTablePageSize(size);
+                }
                 internalPageSize.value = size;
             };
 
@@ -201,7 +211,7 @@
             });
 
             watch(
-                () => props.defaultSort,
+                () => props.tableProps.defaultSort,
                 (newSort) => {
                     if (newSort) {
                         sortData.value = {
@@ -233,7 +243,7 @@
 
 <style scoped>
     .data-table-wrapper {
-        width: 100%;
+        margin: 0 3px;
     }
 
     .pagination-wrapper {

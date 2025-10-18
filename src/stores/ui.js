@@ -1,84 +1,70 @@
+import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
-import { watchState } from '../service/watchState';
+import { useRouter } from 'vue-router';
+
 import { useNotificationStore } from './notification';
+import { watchState } from '../service/watchState';
 
 export const useUiStore = defineStore('Ui', () => {
     const notificationStore = useNotificationStore();
-    const state = reactive({
-        menuActiveIndex: 'feed',
-        notifiedMenus: [],
-        shiftHeld: false
-    });
+    const router = useRouter();
 
     document.addEventListener('keydown', function (e) {
         if (e.shiftKey) {
-            state.shiftHeld = true;
+            shiftHeld.value = true;
         }
     });
 
     document.addEventListener('keyup', function (e) {
         if (!e.shiftKey) {
-            state.shiftHeld = false;
+            shiftHeld.value = false;
         }
     });
 
-    const shiftHeld = computed(() => state.shiftHeld);
-
-    const menuActiveIndex = computed({
-        get: () => state.menuActiveIndex,
-        set: (value) => {
-            state.menuActiveIndex = value;
-        }
-    });
-
-    const notifiedMenus = computed({
-        get: () => state.notifiedMenus,
-        set: (value) => {
-            state.notifiedMenus = value;
-        }
-    });
+    const notifiedMenus = ref([]);
+    const shiftHeld = ref(false);
 
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
             if (isLoggedIn) {
-                state.menuActiveIndex = 'feed';
+                router.push({ name: 'feed' });
             }
         },
         { flush: 'sync' }
     );
 
     function notifyMenu(index) {
+        const currentRouteName = router.currentRoute.value?.name;
         if (
-            index !== state.menuActiveIndex &&
-            !state.notifiedMenus.includes(index)
+            index !== currentRouteName &&
+            !notifiedMenus.value.includes(index)
         ) {
-            state.notifiedMenus.push(index);
+            notifiedMenus.value.push(index);
         }
     }
 
-    function selectMenu(index) {
-        state.menuActiveIndex = index;
-        removeNotify(index);
-        if (index === 'notification') {
-            notificationStore.unseenNotifications = [];
+    watch(
+        () => router.currentRoute.value.name,
+        (routeName) => {
+            if (routeName) {
+                removeNotify(routeName);
+                if (routeName === 'notification') {
+                    notificationStore.unseenNotifications = [];
+                }
+            }
         }
-    }
+    );
 
     function removeNotify(index) {
-        state.notifiedMenus = state.notifiedMenus.filter((i) => i !== index);
+        notifiedMenus.value = notifiedMenus.value.filter((i) => i !== index);
     }
 
     return {
-        state,
-
-        menuActiveIndex,
         notifiedMenus,
         shiftHeld,
 
         notifyMenu,
-        selectMenu,
         removeNotify
     };
 });

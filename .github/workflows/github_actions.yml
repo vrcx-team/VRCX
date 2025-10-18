@@ -7,6 +7,10 @@ concurrency:
     group: ${{ github.ref }}
     cancel-in-progress: true
 
+permissions:
+    id-token: write
+    contents: write
+
 jobs:
     set_version:
         runs-on: ubuntu-latest
@@ -24,7 +28,10 @@ jobs:
 
     build_dotnet_windows:
         runs-on: windows-latest
-        needs: set_version
+        defaults:
+            run:
+                shell: bash
+        needs: [set_version, build_node]
         steps:
             - uses: actions/checkout@v4
             - name: Setup .NET 9
@@ -34,14 +41,91 @@ jobs:
             - name: Set version
               run: |
                   echo "${{ needs.set_version.outputs.version }}" > Version
+                  echo "!define PRODUCT_VERSION_FROM_FILE \"${{ needs.set_version.outputs.date }}.0\"" > Installer/version_define.nsh
                   cat Version
+            - uses: actions/cache@v4
+              with:
+                  path: ~/.nuget/packages
+                  key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Cef.csproj') }}
+                  restore-keys: |
+                      ${{ runner.os }}-nuget-
             - name: Build Cef .NET Application
-              run: dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
+              run: dotnet build Dotnet/VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
+            - name: Azure login
+              uses: azure/login@v2
+              with:
+                  client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                  tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                  subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+            - name: Sign Dotnet executables
+              uses: azure/trusted-signing-action@v0
+              with:
+                  azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                  azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                  azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+                  endpoint: https://eus.codesigning.azure.net/
+                  trusted-signing-account-name: ${{ secrets.AZURE_ACCOUNT_NAME }}
+                  certificate-profile-name: ${{ secrets.AZURE_PROFILE_NAME }}
+                  file-digest: SHA256
+                  timestamp-rfc3161: http://timestamp.acs.microsoft.com
+                  timestamp-digest: SHA256
+                  files: |
+                      ${{ github.workspace }}\build\Cef\CefSharp.BrowserSubprocess.Core.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.Core.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.Core.Runtime.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.OffScreen.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.WinForms.dll
+                      ${{ github.workspace }}\build\Cef\DiscordRPC.dll
+                      ${{ github.workspace }}\build\Cef\libcef.dll
+                      ${{ github.workspace }}\build\Cef\libEGL.dll
+                      ${{ github.workspace }}\build\Cef\libGLESv2.dll
+                      ${{ github.workspace }}\build\Cef\librsync.net.dll
+                      ${{ github.workspace }}\build\Cef\VRCX.dll
+                      ${{ github.workspace }}\build\Cef\VRCX.exe
+
+            - name: Download Cef-html artifacts
+              uses: actions/download-artifact@v5
+              with:
+                  name: Cef-html
+                  path: build/Cef/html
+            - name: Install NSIS
+              run: choco install nsis -y
+            - name: Create NSIS installer
+              uses: joncloud/makensis-action@v4
+              with:
+                  script-file: Installer/installer.nsi
+                  additional-plugin-paths: Installer/Plugins
+            - name: Rename setup
+              run: |
+                  file_name="VRCX_${{ needs.set_version.outputs.version }}_Setup.exe"
+                  echo "Setup FileName: ${file_name}"
+                  mv Installer/VRCX_Setup.exe $file_name
+            - name: Sign Cef setup
+              uses: azure/trusted-signing-action@v0
+              with:
+                  azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                  azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                  azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+                  endpoint: https://eus.codesigning.azure.net/
+                  trusted-signing-account-name: ${{ secrets.AZURE_ACCOUNT_NAME }}
+                  certificate-profile-name: ${{ secrets.AZURE_PROFILE_NAME }}
+                  file-digest: SHA256
+                  timestamp-rfc3161: http://timestamp.acs.microsoft.com
+                  timestamp-digest: SHA256
+                  files: |
+                      ${{ github.workspace }}\VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
+
             - name: Upload Cef dotnet artifacts
               uses: actions/upload-artifact@v4
               with:
                   name: Cef-Release
                   path: build/Cef
+            - name: Upload setup artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: Cef-Setup
+                  path: VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
 
     build_dotnet_linux:
         runs-on: ubuntu-latest
@@ -56,6 +140,12 @@ jobs:
               run: |
                   echo "${{ needs.set_version.outputs.version }}" > Version
                   cat Version
+            - uses: actions/cache@v4
+              with:
+                  path: ~/.nuget/packages
+                  key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Electron.csproj') }}-${{ hashFiles('**/Dotnet/VRCX-Electron-arm64.csproj') }}
+                  restore-keys: |
+                      ${{ runner.os }}-nuget-
             - name: Build Electron x64 .NET Application
               run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64
             - name: Upload Electron x64 dotnet artifacts
@@ -63,9 +153,11 @@ jobs:
               with:
                   name: Electron-Release-Linux-x64
                   path: build/Electron
+
             - name: Cleanup
               run: |
                   rm -R build/Electron
+
             - name: Build Electron arm64 .NET Application
               run: dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64
             - name: Upload Electron arm64 dotnet artifacts
@@ -87,6 +179,12 @@ jobs:
               run: |
                   echo "${{ needs.set_version.outputs.version }}" > Version
                   cat Version
+            - uses: actions/cache@v4
+              with:
+                  path: ~/.nuget/packages
+                  key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Electron.csproj') }}-${{ hashFiles('**/Dotnet/VRCX-Electron-arm64.csproj') }}
+                  restore-keys: |
+                      ${{ runner.os }}-nuget-
             - name: Build Electron x64 .NET Application
               run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64
             - name: Upload Electron x64 .NET artifacts
@@ -94,9 +192,11 @@ jobs:
               with:
                   name: Electron-Release-macOS-x64
                   path: build/Electron
+
             - name: Cleanup
               run: |
                   rm -R build/Electron
+
             - name: Build Electron arm64 .NET Application
               run: dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64
             - name: Upload Electron arm64 dotnet artifacts
@@ -118,6 +218,17 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: lts/*
+            - name: Get npm cache directory
+              id: npm-cache-dir
+              shell: bash
+              run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+            - uses: actions/cache@v4
+              id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
+              with:
+                  path: ${{ steps.npm-cache-dir.outputs.dir }}
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-node-
             - name: Restore dependencies
               run: npm ci
             - name: Build Cef-html
@@ -133,7 +244,7 @@ jobs:
             - name: Build Electron-html
               run: npm run prod-linux
             - name: Download Electron x64 dotnet artifacts
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v5
               with:
                   name: Electron-Release-Linux-x64
                   path: build/Electron
@@ -146,7 +257,7 @@ jobs:
                   path: 'build/VRCX_${{ needs.set_version.outputs.version }}_x64.AppImage'
 
             - name: Download Electron arm64 dotnet artifacts
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v5
               with:
                   name: Electron-Release-Linux-arm64
                   path: build/Electron
@@ -171,13 +282,24 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: lts/*
+            - name: Get npm cache directory
+              id: npm-cache-dir
+              shell: bash
+              run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+            - uses: actions/cache@v4
+              id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
+              with:
+                  path: ${{ steps.npm-cache-dir.outputs.dir }}
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-node-
             - name: Restore dependencies
-              run: npm ci --arch=x64
+              run: npm ci
             - name: Build Electron-html
               run: npm run prod-linux --arch=x64
 
             - name: Download x64 Electron dotnet artifacts
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v5
               with:
                   name: Electron-Release-macOS-x64
                   path: build/Electron
@@ -193,13 +315,11 @@ jobs:
               run: |
                   rm -R build/Electron
 
-            - name: Restore dependencies
-              run: npm ci --arch=arm64
             - name: Build Electron-html
               run: npm run prod-linux --arch=arm64
 
             - name: Download arm64 Electron dotnet artifacts
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v5
               with:
                   name: Electron-Release-macOS-arm64
                   path: build/Electron
@@ -223,35 +343,21 @@ jobs:
                 build_macos
             ]
         steps:
-            - uses: actions/checkout@v4
-
-            - name: Set version
-              run: |
-                  echo "!define PRODUCT_VERSION_FROM_FILE \"${{ needs.set_version.outputs.date }}.0\"" > Installer/version_define.nsh
-            - name: Install 7-zip and makensis
-              run: sudo apt update && sudo apt install -y p7zip-full nsis nsis-pluginapi
-            - name: Set plugin permissions
-              run: sudo chown -R $(whoami) /usr/share/nsis/Plugins/
+            - name: Download Cef-Setup artifacts
+              uses: actions/download-artifact@v5
+              with:
+                  name: Cef-Setup
             - name: Download Cef dotnet artifacts
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v5
               with:
                   name: Cef-Release
                   path: build/Cef
             - name: Download Cef-html artifacts
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v5
               with:
                   name: Cef-html
                   path: build/Cef/html
-            - name: Create nsis installer
-              uses: joncloud/makensis-action@v4
-              with:
-                  script-file: Installer/installer.nsi
-                  additional-plugin-paths: Installer/Plugins
-            - name: Rename setup
-              run: |
-                  file_name="VRCX_${{ needs.set_version.outputs.version }}_Setup.exe"
-                  echo "Setup FileName: ${file_name}"
-                  mv Installer/VRCX_Setup.exe $file_name
+
             - name: Make zip
               run: |
                   file_name="VRCX_${{ needs.set_version.outputs.version }}.zip"
@@ -259,11 +365,6 @@ jobs:
                   7z a -tzip ${file_name} * -mx=7 -xr0!*.log
                   mv ${file_name} ../../${file_name}
                   echo "Zip FileName: ${file_name}"
-            - name: Upload Setup artifact
-              uses: actions/upload-artifact@v4
-              with:
-                  name: VRCX-Setup
-                  path: 'VRCX_${{ needs.set_version.outputs.version }}_Setup.exe'
             - name: Upload Zip artifact
               uses: actions/upload-artifact@v4
               with:

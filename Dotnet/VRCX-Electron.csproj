@@ -18,7 +18,7 @@
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <Title>VRCX</Title>
     <Description>VRCX</Description>
-    <PackageIcon>..\VRCX.png</PackageIcon>
+    <PackageIcon>..\images\VRCX.png</PackageIcon>
     <RepositoryUrl>https://github.com/vrcx-team/VRCX</RepositoryUrl>
     <ResourceLanguages>en</ResourceLanguages>
     <SatelliteResourceLanguages>en-US;en</SatelliteResourceLanguages>
@@ -27,6 +27,7 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <WarningLevel>0</WarningLevel>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 
@@ -51,7 +52,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <ApplicationIcon>..\VRCX.ico</ApplicationIcon>
+    <ApplicationIcon>..\images\VRCX.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -65,10 +66,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>openvr_api.dll</TargetPath>
     </None>
-    <Content Include="..\VRCX.ico">
+    <Content Include="..\images\VRCX.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\VRCX.png">
+    <Content Include="..\images\VRCX.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -76,17 +77,17 @@
     <PackageReference Include="Microsoft.JavaScript.NodeApi" Version="0.9.15" />
     <PackageReference Include="Microsoft.JavaScript.NodeApi.Generator" Version="0.9.15" />
     <PackageReference Include="DiscordRichPresence" Version="1.6.1.70" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NLog" Version="6.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="NLog" Version="6.0.5" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
     <PackageReference Include="SourceGear.sqlite3" Version="3.50.4.2" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.8" />
-    <PackageReference Include="System.Management" Version="9.0.8" />
-    <PackageReference Include="System.Text.Json" Version="9.0.8" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.9" />
+    <PackageReference Include="System.Management" Version="9.0.9" />
+    <PackageReference Include="System.Text.Json" Version="9.0.9" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageReference Include="Websocket.Client" Version="5.2.0" />
+    <PackageReference Include="Websocket.Client" Version="5.3.0" />
   </ItemGroup>
 
   <ItemGroup>

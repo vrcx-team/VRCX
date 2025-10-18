@@ -316,6 +316,7 @@ function createWindow() {
         height,
         icon: path.join(rootDir, 'VRCX.png'),
         autoHideMenuBar: true,
+        titleBarStyle: 'hiddenInset',
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
@@ -364,6 +365,8 @@ function createWindow() {
         if (isCloseToTray && !appIsQuitting) {
             event.preventDefault();
             mainWindow.hide();
+        } else {
+            app.quit();
         }
     });
 
@@ -395,6 +398,10 @@ function createWindow() {
 
     mainWindow.on('restore', () => {
         mainWindow.webContents.send('setWindowState', '0');
+    });
+
+    mainWindow.on('focus', () => {
+        mainWindow.webContents.send('onBrowserFocus');
     });
 }
 
@@ -528,11 +535,16 @@ function createTray() {
     let tray = null;
     if (process.platform === 'darwin') {
         const image = nativeImage.createFromPath(
-            path.join(rootDir, 'images/tray.png')
+            path.join(rootDir, 'images/VRCX.png')
         );
         tray = new Tray(image.resize({ width: 16, height: 16 }));
+    } else if (process.platform === 'linux') {
+        const image = nativeImage.createFromPath(
+            path.join(rootDir, 'images/VRCX.png')
+        );
+        tray = new Tray(image.resize({ width: 64, height: 64 }));
     } else {
-        tray = new Tray(path.join(rootDir, 'images/tray.png'));
+        tray = new Tray(path.join(rootDir, 'images/VRCX.ico'));
     }
     const contextMenu = Menu.buildFromTemplate([
         {
@@ -696,7 +708,13 @@ async function createDesktopFile() {
             .map(([key, value]) => `${key}=${value}`)
             .join('\n');
     try {
-        // create/update the desktop file when needed
+        // Create the applications directory if it doesn't exist
+        const desktopDir = path.dirname(desktopFilePath);
+        if (!fs.existsSync(desktopDir)) {
+            fs.mkdirSync(desktopDir, { recursive: true });
+        }
+
+        // Create/update the desktop file when needed
         let existingDesktopFile = '';
         if (fs.existsSync(desktopFilePath)) {
             existingDesktopFile = fs.readFileSync(desktopFilePath, 'utf8');

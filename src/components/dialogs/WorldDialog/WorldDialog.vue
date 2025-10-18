@@ -7,20 +7,12 @@
         width="770px">
         <div v-loading="worldDialog.loading">
             <div style="display: flex">
-                <el-popover placement="right" :width="500" trigger="click">
-                    <template #reference>
-                        <img
-                            :src="worldDialog.ref.thumbnailImageUrl"
-                            class="x-link"
-                            style="flex: none; width: 160px; height: 120px; border-radius: 12px"
-                            loading="lazy" />
-                    </template>
-                    <img
-                        :src="worldDialog.ref.imageUrl"
-                        :class="['x-link', 'x-popover-image']"
-                        @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
-                        loading="lazy" />
-                </el-popover>
+                <img
+                    :src="worldDialog.ref.thumbnailImageUrl"
+                    class="x-link"
+                    style="flex: none; width: 160px; height: 120px; border-radius: 12px"
+                    @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
+                    loading="lazy" />
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div style="flex: 1">
                         <div>
@@ -746,7 +738,7 @@
                 :new-instance-dialog-location-tag="newInstanceDialogLocationTag"
                 :last-location="lastLocation" />
             <ChangeWorldImageDialog
-                :change-world-image-dialog-visible="changeWorldImageDialogVisible"
+                v-model:change-world-image-dialog-visible="changeWorldImageDialogVisible"
                 v-model:previousImageUrl="previousImageUrl" />
         </template>
     </el-dialog>
@@ -754,55 +746,51 @@
 
 <script setup>
     import {
-        HomeFilled,
+        ArrowDown,
+        Check,
+        CopyDocument,
+        DataLine,
         Delete,
+        Download,
+        Edit,
+        Flag,
+        HomeFilled,
+        Loading,
+        MagicStick,
+        Message,
         MoreFilled,
+        Picture,
         Refresh,
         Share,
-        Flag,
-        Message,
-        MagicStick,
-        Picture,
-        Upload,
-        Edit,
-        Download,
-        View,
-        DataLine,
-        CopyDocument,
-        Warning,
         Star,
         StarFilled,
+        Upload,
         User,
-        Check,
-        Loading,
-        ArrowDown,
-        UserFilled
+        UserFilled,
+        View,
+        Warning
     } from '@element-plus/icons-vue';
-
+    import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
-    import { computed, ref, watch, nextTick, defineAsyncComponent } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest, miscRequest, userRequest, worldRequest } from '../../../api';
-    import { database } from '../../../service/database.js';
+
     import {
         buildTreeData,
+        commaNumber,
+        copyToClipboard,
+        deleteVRChatCache,
         downloadAndSaveJson,
+        formatDateFilter,
         openExternalLink,
+        openFolderGeneric,
         refreshInstancePlayerCount,
         replaceVrcPackageUrl,
+        textToHex,
         timeToText,
         userImage,
-        userStatusClass,
-        openFolderGeneric,
-        deleteVRChatCache,
-        commaNumber,
-        formatDateFilter,
-        textToHex,
-        copyToClipboard
+        userStatusClass
     } from '../../../shared/utils';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
-
     import {
         useAppearanceSettingsStore,
         useFavoriteStore,
@@ -814,6 +802,9 @@
         useUserStore,
         useWorldStore
     } from '../../../stores';
+    import { favoriteRequest, miscRequest, userRequest, worldRequest } from '../../../api';
+    import { database } from '../../../service/database.js';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
 
     const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog.vue'));
     const PreviousInstancesWorldDialog = defineAsyncComponent(

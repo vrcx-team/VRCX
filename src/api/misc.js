@@ -194,28 +194,29 @@ const miscReq = {
             };
             return args;
         });
-    }
+    },
 
-    // /**
-    //  * @params {{
-    //  userId: string,
-    //  emojiId: string
-    //  }} params
-    //  * @returns {Promise<{json: any, params}>}
-    //  */
-    // sendBoop(params) {
-    //     return request(`users/${params.userId}/boop`, {
-    //         method: 'POST',
-    //         params
-    //     }).then((json) => {
-    //         const args = {
-    //             json,
-    //             params
-    //         };
-    //         this.$emit('BOOP:SEND', args);
-    //         return args;
-    //     });
-    // }
+    /**
+     * @params {{
+        userId: string,
+        emojiId: string
+     }} params
+     * @returns {Promise<{json: any, params}>}
+     */
+    sendBoop(params) {
+        return request(`users/${params.userId}/boop`, {
+            method: 'POST',
+            params: {
+                emojiId: params.emojiId
+            }
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    }
 };
 
 export default miscReq;

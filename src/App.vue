@@ -1,9 +1,11 @@
 <template>
-    <!DOCTYPE html>
     <el-config-provider :locale="currentLocale">
+        <MacOSTitleBar></MacOSTitleBar>
+
         <div
             id="x-app"
             class="x-app"
+            :class="{ 'with-macos-titlebar': isMacOS }"
             ondragenter="event.preventDefault()"
             ondragover="event.preventDefault()"
             ondrop="event.preventDefault()">
@@ -15,39 +17,17 @@
             <template v-if="watchState.isLoggedIn">
                 <NavMenu></NavMenu>
 
-                <el-splitter @resize-end="setAsideWidth" v-show="isSideBarTabShow">
+                <RouterView v-if="requiresFullScreen"></RouterView>
+
+                <el-splitter v-else @resize-end="setAsideWidth" v-show="isSideBarTabShow">
                     <el-splitter-panel>
-                        <Feed></Feed>
-
-                        <GameLog></GameLog>
-
-                        <PlayerList></PlayerList>
-
-                        <Search></Search>
-
-                        <Favorites></Favorites>
-
-                        <FriendLog></FriendLog>
-
-                        <Moderation></Moderation>
-
-                        <Notification></Notification>
-
-                        <Tools></Tools>
-
-                        <Profile></Profile>
-
-                        <Settings></Settings>
+                        <RouterView></RouterView>
                     </el-splitter-panel>
 
                     <el-splitter-panel :min="200" :max="700" :size="asideWidth">
                         <Sidebar></Sidebar>
                     </el-splitter-panel>
                 </el-splitter>
-
-                <FriendList></FriendList>
-
-                <Charts></Charts>
 
                 <!-- ## Dialogs ## -->
                 <UserDialog></UserDialog>
@@ -59,6 +39,8 @@
                 <GroupDialog></GroupDialog>
 
                 <GroupMemberModerationDialog></GroupMemberModerationDialog>
+
+                <InviteGroupDialog></InviteGroupDialog>
 
                 <FullscreenImagePreview></FullscreenImagePreview>
 
@@ -81,14 +63,20 @@
                 <VRChatConfigDialog></VRChatConfigDialog>
 
                 <PrimaryPasswordDialog></PrimaryPasswordDialog>
+
+                <SendBoopDialog></SendBoopDialog>
             </template>
         </div>
     </el-config-provider>
 </template>
 
 <script setup>
-    import './app.scss';
+    import { computed, onBeforeMount, onMounted } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
+    import { useRoute } from 'vue-router';
 
+    import cs from 'element-plus/es/locale/lang/cs';
     import en from 'element-plus/es/locale/lang/en';
     import es from 'element-plus/es/locale/lang/es';
     import fr from 'element-plus/es/locale/lang/fr';
@@ -97,56 +85,53 @@
     import ko from 'element-plus/es/locale/lang/ko';
     import pl from 'element-plus/es/locale/lang/pl';
     import pt from 'element-plus/es/locale/lang/pt';
-    import cs from 'element-plus/es/locale/lang/cs';
     import ru from 'element-plus/es/locale/lang/ru';
+    import th from 'element-plus/es/locale/lang/th';
     import vi from 'element-plus/es/locale/lang/vi';
     import zhCN from 'element-plus/es/locale/lang/zh-cn';
     import zhTW from 'element-plus/es/locale/lang/zh-tw';
-    import th from 'element-plus/es/locale/lang/th';
 
-    import Login from './views/Login/Login.vue';
-    import NavMenu from './components/NavMenu.vue';
-    import Sidebar from './views/Sidebar/Sidebar.vue';
-    import Feed from './views/Feed/Feed.vue';
-    import GameLog from './views/GameLog/GameLog.vue';
-    import PlayerList from './views/PlayerList/PlayerList.vue';
-    import Search from './views/Search/Search.vue';
-    import Favorites from './views/Favorites/Favorites.vue';
-    import FriendLog from './views/FriendLog/FriendLog.vue';
-    import Moderation from './views/Moderation/Moderation.vue';
-    import Notification from './views/Notifications/Notification.vue';
-    import FriendList from './views/FriendList/FriendList.vue';
-    import Charts from './views/Charts/Charts.vue';
-    import Tools from './views/Tools/Tools.vue';
-    import Profile from './views/Profile/Profile.vue';
-    import Settings from './views/Settings/Settings.vue';
+    import { createGlobalStores, useAppearanceSettingsStore } from './stores';
+    import { initNoty } from './plugin/noty';
+    import { watchState } from './service/watchState';
 
-    import UserDialog from './components/dialogs/UserDialog/UserDialog.vue';
-    import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';
     import AvatarDialog from './components/dialogs/AvatarDialog/AvatarDialog.vue';
-    import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
-    import GroupMemberModerationDialog from './components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
-    import FullscreenImagePreview from './components/FullscreenImagePreview.vue';
-    import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
-    import LaunchDialog from './components/dialogs/LaunchDialog.vue';
-    import LaunchOptionsDialog from './views/Settings/dialogs/LaunchOptionsDialog.vue';
-    import FriendImportDialog from './views/Favorites/dialogs/FriendImportDialog.vue';
-    import WorldImportDialog from './views/Favorites/dialogs/WorldImportDialog.vue';
     import AvatarImportDialog from './views/Favorites/dialogs/AvatarImportDialog.vue';
     import ChooseFavoriteGroupDialog from './components/dialogs/ChooseFavoriteGroupDialog.vue';
     import EditInviteMessageDialog from './views/Profile/dialogs/EditInviteMessageDialog.vue';
+    import FriendImportDialog from './views/Favorites/dialogs/FriendImportDialog.vue';
+    import FullscreenImagePreview from './components/FullscreenImagePreview.vue';
+    import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
+    import GroupMemberModerationDialog from './components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
+    import InviteGroupDialog from './components/dialogs/InviteGroupDialog.vue';
+    import LaunchDialog from './components/dialogs/LaunchDialog.vue';
+    import LaunchOptionsDialog from './views/Settings/dialogs/LaunchOptionsDialog.vue';
+    import Login from './views/Login/Login.vue';
+    import MacOSTitleBar from './components/TitleBar/MacOSTitleBar.vue';
+    import NavMenu from './components/NavMenu.vue';
+    import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
+    import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
+    import SendBoopDialog from './components/dialogs/SendBoopDialog.vue';
+    import Sidebar from './views/Sidebar/Sidebar.vue';
+    import UserDialog from './components/dialogs/UserDialog/UserDialog.vue';
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
     import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
-    import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
+    import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';
+    import WorldImportDialog from './views/Favorites/dialogs/WorldImportDialog.vue';
 
-    import { onMounted, computed, onBeforeMount } from 'vue';
-    import { useI18n } from 'vue-i18n';
-    import { storeToRefs } from 'pinia';
-    import { createGlobalStores, useAppearanceSettingsStore } from './stores';
-    import { watchState } from './service/watchState';
-    import { initNoty } from './plugin/noty';
+    import './app.scss';
+
+    const route = useRoute();
+
+    const requiresFullScreen = computed(() => {
+        return route.meta.fullScreen;
+    });
 
     console.log(`isLinux: ${LINUX}`);
+
+    const isMacOS = computed(() => {
+        return navigator.platform.indexOf('Mac') > -1;
+    });
 
     const { locale } = useI18n();
 
@@ -195,3 +180,14 @@
     const { setAsideWidth } = appearanceStore;
     const { asideWidth, isSideBarTabShow } = storeToRefs(appearanceStore);
 </script>
+
+<style lang="scss" scoped>
+    :deep(.el-splitter-bar__dragger) {
+        width: 4px !important;
+    }
+
+    /* Add title bar spacing for macOS */
+    .x-app.with-macos-titlebar {
+        padding-top: 28px;
+    }
+</style>

@@ -30,11 +30,11 @@ const worldReq = {
             if (typeof ref === 'undefined') {
                 worldReq
                     .getWorld(params)
-                    .catch(reject)
                     .then((args) => {
                         args.ref = worldStore.applyWorld(args.json);
                         resolve(args);
-                    });
+                    })
+                    .catch(reject);
             } else {
                 resolve({
                     cache: true,

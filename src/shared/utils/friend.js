@@ -40,6 +40,16 @@ function getFriendsSortFunction(sortMethods) {
                     ) {
                         return 0;
                     }
+                    // sort pending offline to bottom
+                    if (a.pendingOffline && !b.pendingOffline) {
+                        return 1;
+                    }
+                    if (a.pendingOffline && b.pendingOffline) {
+                        return 0;
+                    }
+                    if (!a.pendingOffline && b.pendingOffline) {
+                        return -1;
+                    }
                     if (a.state !== 'online' || b.state !== 'online') {
                         return 0;
                     }

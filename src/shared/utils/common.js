@@ -1,15 +1,18 @@
-import Noty from 'noty';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { storeToRefs } from 'pinia';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import { miscRequest } from '../../api';
+
+import Noty from 'noty';
+
 import {
     useAvatarStore,
     useInstanceStore,
-    useWorldStore,
-    useSearchStore
+    useSearchStore,
+    useWorldStore
 } from '../../stores';
+import { AppDebug } from '../../service/appConfig.js';
 import { compareUnityVersion } from './avatar';
 import { escapeTag } from './base/string';
+import { miscRequest } from '../../api';
 
 /**
  *
@@ -211,7 +214,7 @@ function convertFileUrlToImageUrl(url, resolution = 128) {
     if (match) {
         const fileId = match[1];
         const version = match[2];
-        return `https://api.vrchat.cloud/api/1/image/file_${fileId}/${version}/${resolution}`;
+        return `${AppDebug.endpointDomain}/image/file_${fileId}/${version}/${resolution}`;
     }
     // no match return origin url
     return url;

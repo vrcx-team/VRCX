@@ -190,11 +190,11 @@
                     "announcement": "Event Announcement"
                 },
                 "group": {
-                    "announcement": "Announcement",
-                    "informative": "Informative",
-                    "invite": "Invite",
-                    "joinRequest": "Join Request",
-                    "transfer": "Transfer",
+                    "announcement": "Group Announcement",
+                    "informative": "Group Informative",
+                    "invite": "Group Invite",
+                    "joinRequest": "Group Join Request",
+                    "transfer": "Group Transfer",
                     "queueReady": "Queue Ready"
                 },
                 "moderation": {
@@ -431,8 +431,7 @@
                     "sort_instance_users_by": "Sort Instance Users by",
                     "sort_instance_users_by_time": "time",
                     "sort_instance_users_by_alphabet": "alphabetical",
-                    "table_max_size": "Table Max Size",
-                    "page_size": "Page Size:"
+                    "table_max_size": "Table Max Size"
                 },
                 "timedate": {
                     "header": "Time/Date",
@@ -664,7 +663,7 @@
                     "app_launcher": {
                         "header": "App Launcher",
                         "folder": "Auto-Launch Folder",
-                        "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts in this folder.",
+                        "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts inside this folder, alteratively use the platform-specific subfolders",
                         "enable": "Enable",
                         "auto_close": "Auto close apps",
                         "run_process_once": "Open single instance of app"
@@ -861,8 +860,8 @@
                 "vrcplus_hides_avatar": "When a VRC+ profile photo is set, avatar info is hidden. This also hides avatar changes in the feed",
                 "accuracy_notice": "Info from local database may not be accurate",
                 "instance_full": "full",
-                "instance_closed": "closed",
-                "instance_hard_closed": "hard closed",
+                "instance_closed": "Instance closed",
+                "instance_hard_closed": "Instance hard closed",
                 "close_instance": "Close Instance",
                 "instance_age_gated": "age gated",
                 "open_previous_instance": "Open Previous Instances"

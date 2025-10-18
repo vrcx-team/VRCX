@@ -35,7 +35,7 @@
         <template v-else-if="!friend.ref && !isRefreshFriendsLoading">
             <span>{{ friend.name || friend.id }}</span>
             <el-button
-                ttype="text"
+                type="text"
                 :icon="Close"
                 size="small"
                 style="margin-left: 5px"
@@ -58,12 +58,13 @@
 </template>
 
 <script setup>
-    import { WarningFilled, Close, Loading } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
+    import { Close, Loading, WarningFilled } from '@element-plus/icons-vue';
     import { computed } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { userImage, userStatusClass } from '../shared/utils';
+
     import { useAppearanceSettingsStore, useFriendStore } from '../stores';
+    import { userImage, userStatusClass } from '../shared/utils';
 
     const props = defineProps({
         friend: { type: Object, required: true },

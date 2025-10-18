@@ -1,10 +1,10 @@
-import { useAvatarStore, useWorldStore } from '../../../stores';
-import { compareUnityVersion } from '../avatar';
 import {
     extractFileId,
     extractFileVersion,
     extractVariantVersion
 } from '../common';
+import { useAvatarStore, useWorldStore } from '../../../stores';
+import { compareUnityVersion } from '../avatar';
 
 /**
  *

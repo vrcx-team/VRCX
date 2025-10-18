@@ -3,7 +3,7 @@
         <div v-if="updateInProgress" class="pending-update" @click="showVRCXUpdateDialog">
             <el-progress
                 type="circle"
-                width="50"
+                :width="50"
                 :stroke-width="3"
                 :percentage="updateProgress"
                 :format="updateProgressText"></el-progress>
@@ -17,12 +17,7 @@
                 style="font-size: 14px; height: 50px; width: 50px"
                 @click="showVRCXUpdateDialog" />
         </div>
-        <el-menu
-            ref="navRef"
-            collapse
-            :default-active="menuActiveIndex"
-            :collapse-transition="false"
-            @select="selectMenu">
+        <el-menu ref="navRef" collapse router default-active="feed" :collapse-transition="false">
             <el-menu-item
                 v-for="item in navItems"
                 :key="item.index"
@@ -41,6 +36,7 @@
     import { Download } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { useUiStore, useVRCXUpdaterStore } from '../stores';
 
     const { t } = useI18n();
@@ -50,11 +46,11 @@
         { index: 'gameLog', icon: 'ri-history-line', tooltip: 'nav_tooltip.game_log' },
         { index: 'playerList', icon: 'ri-group-3-line', tooltip: 'nav_tooltip.player_list' },
         { index: 'search', icon: 'ri-search-line', tooltip: 'nav_tooltip.search' },
-        { index: 'favorite', icon: 'ri-star-line', tooltip: 'nav_tooltip.favorites' },
-        { index: 'friendLog', icon: 'ri-contacts-book-3-line', tooltip: 'nav_tooltip.friend_log' },
+        { index: 'favorites', icon: 'ri-star-line', tooltip: 'nav_tooltip.favorites' },
+        { index: 'friendLog', icon: 'ri-contacts-line', tooltip: 'nav_tooltip.friend_log' },
         { index: 'moderation', icon: 'ri-user-forbid-line', tooltip: 'nav_tooltip.moderation' },
         { index: 'notification', icon: 'ri-notification-2-line', tooltip: 'nav_tooltip.notification' },
-        { index: 'friendList', icon: 'ri-contacts-book-2-line', tooltip: 'nav_tooltip.friend_list' },
+        { index: 'friendList', icon: 'ri-contacts-book-3-line', tooltip: 'nav_tooltip.friend_list' },
         { index: 'charts', icon: 'ri-bar-chart-line', tooltip: 'nav_tooltip.charts' },
         { index: 'tools', icon: 'ri-tools-line', tooltip: 'nav_tooltip.tools' },
         { index: 'profile', icon: 'ri-user-line', tooltip: 'nav_tooltip.profile' },
@@ -65,8 +61,7 @@
     const { pendingVRCXUpdate, pendingVRCXInstall, updateInProgress, updateProgress } = storeToRefs(VRCXUpdaterStore);
     const { showVRCXUpdateDialog, updateProgressText } = VRCXUpdaterStore;
     const uiStore = useUiStore();
-    const { menuActiveIndex, notifiedMenus } = storeToRefs(uiStore);
-    const { selectMenu } = uiStore;
+    const { notifiedMenus } = storeToRefs(uiStore);
 </script>
 
 <style scoped>

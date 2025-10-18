@@ -7,35 +7,20 @@
         width="700px">
         <div v-loading="avatarDialog.loading">
             <div style="display: flex">
-                <el-popover placement="right" :width="500" trigger="click">
-                    <template #reference>
-                        <img
-                            :src="avatarDialog.ref.thumbnailImageUrl"
-                            class="x-link"
-                            style="flex: none; width: 160px; height: 120px; border-radius: 12px"
-                            loading="lazy" />
-                    </template>
-                    <img
-                        :src="avatarDialog.ref.imageUrl"
-                        :class="['x-link', 'x-popover-image']"
-                        @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)"
-                        loading="lazy" />
-                </el-popover>
+                <img
+                    :src="avatarDialog.ref.thumbnailImageUrl"
+                    class="x-link"
+                    @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)"
+                    style="flex: none; width: 160px; height: 120px; border-radius: 12px"
+                    loading="lazy" />
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div style="flex: 1">
                         <div>
-                            <el-popover placement="top" trigger="click">
-                                <template #reference>
-                                    <span
-                                        class="dialog-title"
-                                        style="margin-right: 5px; cursor: pointer"
-                                        v-text="avatarDialog.ref.name"
-                                        @click="copyToClipboard(avatarDialog.ref.name)"></span>
-                                </template>
-                                <span style="display: block; text-align: center; font-family: monospace">{{
-                                    textToHex(avatarDialog.ref.name)
-                                }}</span>
-                            </el-popover>
+                            <span
+                                class="dialog-title"
+                                style="margin-right: 5px; cursor: pointer"
+                                v-text="avatarDialog.ref.name"
+                                @click="copyToClipboard(avatarDialog.ref.name)"></span>
                         </div>
                         <div style="margin-top: 5px">
                             <span
@@ -586,51 +571,50 @@
 </template>
 
 <script setup>
-    import { ElMessage, ElMessageBox } from 'element-plus';
-
     import {
-        Delete,
-        Star,
-        StarFilled,
+        Back,
         Check,
-        MoreFilled,
-        Refresh,
-        Share,
         CircleCheck,
         CircleClose,
-        Picture,
-        User,
-        Edit,
-        Download,
-        Upload,
-        Back,
-        Right,
         CopyDocument,
+        Delete,
+        Download,
+        Edit,
+        MoreFilled,
+        Picture,
+        Refresh,
+        Right,
+        Share,
+        Star,
+        StarFilled,
+        Upload,
+        User,
         Warning
     } from '@element-plus/icons-vue';
-
-    import { storeToRefs } from 'pinia';
     import { computed, defineAsyncComponent, nextTick, reactive, ref, watch } from 'vue';
+    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { avatarModerationRequest, avatarRequest, favoriteRequest, miscRequest } from '../../../api';
-    import { database } from '../../../service/database';
+
     import {
         buildTreeData,
         commaNumber,
         copyToClipboard,
         downloadAndSaveJson,
         extractFileId,
+        formatDateFilter,
+        moveArrayItem,
         openExternalLink,
         openFolderGeneric,
         replaceVrcPackageUrl,
-        timeToText,
-        moveArrayItem,
-        formatDateFilter,
-        textToHex
+        timeToText
     } from '../../../shared/utils';
-    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useGameStore, useUserStore } from '../../../stores';
+    import { avatarModerationRequest, avatarRequest, favoriteRequest, miscRequest } from '../../../api';
+    import { AppDebug } from '../../../service/appConfig.js';
+    import { database } from '../../../service/database';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
+    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
 
     const ChangeAvatarImageDialog = defineAsyncComponent(() => import('./ChangeAvatarImageDialog.vue'));
     const SetAvatarStylesDialog = defineAsyncComponent(() => import('./SetAvatarStylesDialog.vue'));
@@ -744,7 +728,7 @@
     }
 
     function getImageUrlFromImageId(imageId) {
-        return `https://api.vrchat.cloud/api/1/file/${imageId}/1/`;
+        return `${AppDebug.endpointDomain}/file/${imageId}/1/`;
     }
 
     function handleDialogOpen() {

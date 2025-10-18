@@ -35,11 +35,12 @@
 </template>
 
 <script setup>
+    import { defineAsyncComponent } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { openExternalLink } from '../../../shared/utils';
     import { useVRCXUpdaterStore } from '../../../stores';
-    import { defineAsyncComponent } from 'vue';
 
     const VueShowdown = defineAsyncComponent(() => import('vue-showdown').then((module) => module.VueShowdown));
 

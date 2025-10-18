@@ -12,6 +12,7 @@
         "notification": "Уведомления",
         "friend_list": "Список друзей",
         "charts": "Диаграммы",
+        "tools": "Инструменты",
         "profile": "Профиль",
         "settings": "Настройки"
     },
@@ -134,7 +135,6 @@
             "import": "Импорт",
             "move_tooltip": "Переместить",
             "copy_tooltip": "Копировать",
-            "self_invite_tooltip": "Пригласить себя",
             "unfavorite_tooltip": "Удалить из избранного",
             "visibility_tooltip": "Изменить видимость",
             "rename_tooltip": "Переименовать",
@@ -186,6 +186,9 @@
                 "message": "Сообщение",
                 "boop": "Буп",
                 "groupChange": "Изменение группы",
+                "event": {
+                    "announcement": "Анонс мероприятия"
+                },
                 "group": {
                     "announcement": "Объявление",
                     "informative": "Информативное сообщение",
@@ -247,6 +250,43 @@
                 }
             }
         },
+        "tools": {
+            "header": "Инструменты",
+            "group": {
+                "header": "Группа",
+                "calendar": "Календарь",
+                "calendar_description": "Календарь групповых мероприятий"
+            },
+            "image": {},
+            "user": {
+                "discord_names_description": "Найти имена пользователей Discord ваших друзей из VRChat",
+                "export_friend_list_description": "Экспорт списка друзей из VRChat",
+                "export_own_avatars_description": "Экспорт личных аватаров из VRChat"
+            },
+            "export": {
+                "header": "Экпорт",
+                "export_notes": "Экспорт заметок пользователя",
+                "export_notes_description": "Экспорт заметок пользователя VRCX в заметки VRChat",
+                "discord_names": "Имена Discord",
+                "export_friend_list": "Экспорт списка друзей",
+                "export_own_avatars": "Экспорт собственных аватаров"
+            },
+            "redirect_message": "Эта функция теперь доступна на этой странице.",
+            "pictures": {
+                "pictures": {
+                    "vrc_photos": "Фотографии VRChat",
+                    "steam_screenshots": "Скриншоты из Steam",
+                    "open_folder": "Открыть папку",
+                    "vrc_photos_description": "Открывает папку с фотографиями VRChat",
+                    "steam_screenshots_description": "Открывает папку с вашими скриншотами из Steam."
+                },
+                "header": "Фотографии",
+                "screenshot": "Управление скриншотами",
+                "screenshot_description": "Управление скриншотами и просмотр метаданных",
+                "inventory": "VRC+ Управление изображениями и инвентарем",
+                "inventory_description": "Управление изображениями и инвентарем VRC+"
+            }
+        },
         "profile": {
             "profile": {
                 "header": "Профиль",
@@ -295,6 +335,7 @@
                 "notifications": "Уведомления",
                 "wrist_overlay": "Оверлей запястья",
                 "discord_presence": "Отображение в Discord",
+                "pictures": "Фотографии",
                 "advanced": "Расширенные"
             },
             "general": {
@@ -324,7 +365,8 @@
                     "disable_gpu_acceleration_tooltip": "Изменяйте этот параметр только в том случае, если вы знаете, что делаете. Нарушает оверлей SteamVR, может исправить проблемы с пользовательским интерфейсом, требует перезапуска VRCX.",
                     "disable_vr_overlay_gpu_acceleration": "Отключить аппаратное ускорение VR оверлея",
                     "disable_vr_overlay_gpu_acceleration_tooltip": "Аппаратное ускорени VR оверлея может привести к сбою VRCX или утечке памяти видеопаняти, требуется перезапуск VRCX",
-                    "proxy": "Настройки прокси-сервера"
+                    "proxy": "Настройки прокси-сервера",
+                    "startup_linux": "Добавьте аргумент \"--startup\" в файл VRCX.desktop, чтобы запускать VRCX в свернутом виде при запуске системы."
                 },
                 "favorites": {
                     "header": "Избранные друзья",
@@ -371,6 +413,9 @@
                     "theme_mode_system": "Системная",
                     "theme_mode_light": "Светлая",
                     "theme_mode_dark": "Тёмная",
+                    "theme_mode_blue": "Blue",
+                    "theme_mode_darkblue": "Dark Blue",
+                    "theme_mode_amoled": "Amoled",
                     "theme_mode_darkvanillaold": "Dark Vanilla (old)",
                     "theme_mode_darkvanilla": "Dark Vanilla",
                     "theme_mode_pink": "Pink",
@@ -378,6 +423,7 @@
                     "zoom": "Масштаб",
                     "vrcplus_profile_icons": "Иконки профиля VRCPlus",
                     "tooltips": "Подсказки",
+                    "age_gated_instances": "Ограниченые по возросту Инстансы",
                     "nicknames": "Заметки имени",
                     "sort_favorite_by": "Сортировать избранное по",
                     "sort_favorite_by_name": "имени",
@@ -448,11 +494,12 @@
                         "ovrtoolkit_hud_notifications": "OVR Toolkit Уведомления в HUD",
                         "ovrtoolkit_wrist_notifications": "OVR Toolkit Уведомления на запястье",
                         "user_images": "Иконка пользователя (медленнее)",
+                        "notification_opacity": "Прозрачность уведомлений",
                         "notification_timeout": "Время показа уведомлений"
                     },
                     "conditions": {
                         "never": "Никогда",
-                        "desktop": "Режим настольного ПК",
+                        "desktop": "Десктоп‑режим",
                         "inside_vr": "В VR",
                         "outside_vr": "Вне VR",
                         "inside_vrchat": "Внутри VRChat",
@@ -460,9 +507,9 @@
                         "always": "Всегда"
                     },
                     "desktop_notifications": {
-                        "header": "Уведомления на рабочем столе",
+                        "header": "Уведомления в Десктоп‑режим",
                         "when_to_display": "Когда отображать",
-                        "desktop_notification_while_afk": "Уведомления на рабочем столе при AFK"
+                        "desktop_notification_while_afk": "Уведомления в Десктоп‑режиме при AFK"
                     },
                     "text_to_speech": {
                         "header": "Преобразование текста в речь",
@@ -509,157 +556,185 @@
                     "instance_type_player_count": "Тип инстанса / количество игроков",
                     "join_button": "Кнопка Присоединиться (только для публичных)",
                     "show_details_in_private": "Показывать детали мира в приватном режиме",
-                    "show_images": "Показывать изображение мира"
+                    "show_images": "Показывать изображение мира",
+                    "show_current_platform": "Показать текущую платформу",
+                    "world_integration": "Интеграция с миром",
+                    "world_integration_tooltip": "Показать \"Смотрит/Слушает\" для Popcorn Palace, PyPyDance, VRDancing и LS Media",
+                    "display_world_name_as_discord_status": "Отображать название мира как статус Discord"
+                },
+                "rpc": {
+                    "vr": "VR",
+                    "desktop": "Десктоп‑режим",
+                    "join_button": "Присоединиться",
+                    "powered_by_vrcx": "Powered by VRCX",
+                    "private_world": "Приватный мир"
                 }
             },
-            "advanced": {
-                "advanced": {
-                    "header": "Расширенные",
-                    "launch_options": "Параметры запуска",
-                    "screenshot_metadata": "Метаданные скриншота",
-                    "vrc_registry_backup": "Резервное копирование реестра VRC",
-                    "common_folders": "Общие папки",
-                    "primary_password": {
-                        "header": "Основной пароль",
-                        "description": "Шифровать пароль (отключает автоматический вход)"
-                    },
-                    "relaunch_vrchat": {
-                        "header": "Перезапускать VRChat после сбоя",
-                        "description": "Зайти в последней инстанс после сбоя VRChat"
-                    },
-                    "vrchat_quit_fix": {
-                        "header": "Исправить остановку процесса VRChat",
-                        "description": "Завершить процесс VRChat после выхода из игры"
-                    },
-                    "auto_cache_management": {
-                        "header": "Автоматически управлять кэшем при закрытии VRChat",
-                        "description": "Автоматически удалять старые версии из кэша"
-                    },
-                    "save_instance_prints_to_file": {
-                        "header": "Сохранить снимки инстанса в файл",
-                        "header_tooltip": "Требуется \"--enable-sdk-log-levels\" опция запуска VRC.",
-                        "description": "Сохраните созданные принты в папке «Изображения VRChat».",
-                        "crop": "Автоматически удаляйте белую рамку при печати",
-                        "crop_convert_old": "Хотите обрезать все принты, которые уже были сохранены?",
-                        "crop_convert_old_confirm": "Да",
-                        "crop_convert_old_cancel": "Нет"
-                    },
-                    "save_instance_stickers_to_file": {
-                        "header": "Сохранить стикеры инстанса в файл",
-                        "description": "Сохраните размещенные наклейки в папке «Изображения VRChat»."
-                    },
-                    "remote_database": {
-                        "header": "Удаленная база данных аватаров",
-                        "enable": "Включить",
-                        "avatar_database_provider": "Провайдер базы данных аватаров"
-                    },
-                    "youtube_api": {
-                        "header": "Youtube API",
-                        "enable": "Включить",
-                        "youtube_api_key": "API ключ YouTube",
-                        "enable_tooltip": "Получать названия видео и его продолжительность для использования с журналом игры для наложения прогресс-бара"
-                    },
-                    "video_progress_pie": {
-                        "header": "Наложение диаграммы прогресса для видео",
-                        "enable": "Включить",
-                        "enable_tooltip": "Требуется включённый оверлей SteamVR",
-                        "dance_world_only": "Только поддерживаемый мир"
-                    },
-                    "launch_commands": {
-                        "header": "Команды запуска (глубокие ссылки)",
-                        "docs": "Запуск «Командных документов»",
-                        "show_confirmation_on_switch_avatar_enable": "Показывать диалог подтверждения перед сменой аватара",
-                        "show_confirmation_on_switch_avatar_tooltip": "При отключении VRCX не будет выходить на передний план при переключении аватаров и запрашивать подтверждение",
-                        "website_userscript": "VRC Пользовательский скрипт веб-сайта"
-                    },
-                    "screenshot_helper": {
-                        "header": "Помощник скриншота",
-                        "description": "Будет храниться ID мира, имя мира и игроков, в метаданных файла, любых фотографий, которые вы делаете в игре.",
-                        "description_tooltip": "К сожалению, Windows (за некоторыми исключениями) не поддерживает просмотр EXIF информации PNG, поэтому вы можете посмотреть ее с помощью инструмента командной строки, такого как EXIFTool, инспектора PNG или HEX-редактора.",
-                        "enable": "Включить",
-                        "modify_filename": "Изменить имя файла",
-                        "modify_filename_tooltip": "Добавит World ID к имени файла скриншота в дополнение к метаданным файла.",
-                        "copy_to_clipboard": "Скопировать в буфер обмена"
-                    },
-                    "app_launcher": {
-                        "header": "Панель запуска приложений",
-                        "folder": "Автозапуск из папки",
-                        "folder_tooltip": "Чтобы автоматически запускать приложения с помощью VRChat, поместите ярлыки в эту папку.",
-                        "enable": "Включить",
-                        "auto_close": "Автоматически закрывать приложения"
-                    },
-                    "cache_debug": {
-                        "header": "VRCX Кэш/Отладка инстанса",
-                        "udon_exception_logging": "Логирование исключений Udon",
-                        "gpu_fix": "SteamVR фикс GPU оверлея",
-                        "gpu_fix_notice": "(требует перезапуск)",
-                        "gpu_fix_warning": "Включите эту опцию, только если оверлей SteamVR не работает и у вас два GPU",
-                        "disable_gamelog": "Отключить журнал игры",
-                        "disable_gamelog_notice": "(вероятно все сломается)",
-                        "user_cache": "Пользовательский кэш:",
-                        "world_cache": "Кэш мира:",
-                        "avatar_cache": "Кэш аватаров:",
-                        "group_cache": "Кэш групп:",
-                        "avatar_name_cache": "Кэш имен аватаров:",
-                        "instance_cache": "Кэш инстансов:",
-                        "clear_cache": "Очистить кэш",
-                        "auto_clear_cache": "Автоочистка кэша",
-                        "show_console": "Открыть консоль"
-                    },
-                    "sqlite_table_size": {
-                        "header": "Размер таблицы SQLite",
-                        "refresh": "Обновить",
-                        "gps": "GPS:",
-                        "status": "Статус:",
-                        "bio": "Био:",
-                        "avatar": "Аватары:",
-                        "online_offline": "Онлайн/офлайн:",
-                        "friend_log_history": "История записей друзей:",
-                        "notification": "Уведомления:",
-                        "location": "Местоположение:",
-                        "join_leave": "Присоединиия/выход:",
-                        "portal_spawn": "Создание порталов:",
-                        "video_play": "Проигрывание видео:",
-                        "event": "События:"
-                    },
-                    "user_generated_content": {
-                        "header": "Пользовательский контент",
-                        "folder": "Открыть папку",
-                        "description": "Откройте или укажите папку, где хранится контент, такой как 'Принты' и 'Стикеры'.",
-                        "set_folder": "Указать папку",
-                        "reset_override": "Сбросить"
-                    }
-                },
-                "photon": {
-                    "header": "Журнал Photon оверлея",
-                    "event_hud": {
-                        "header": "Событие интерфейса Photon",
-                        "enable": "Включить",
-                        "enable_tooltip": "Требуется включённый оверлей SteamVR",
-                        "filter": "Фильтр",
-                        "filter_favorites": "Избранное",
-                        "filter_friends": "Друзья",
-                        "filter_everyone": "Все",
-                        "message_timeout": "Таймаут сообщения"
-                    },
-                    "timeout_hud": {
-                        "header": "Таймаут интерфейса пользователя",
-                        "enable": "Включить",
-                        "enable_tooltip": "Требуется включённый оверлей SteamVR",
-                        "filter": "Фильтр",
-                        "filter_favorites": "Избранное",
-                        "filter_friends": "Друзья",
-                        "filter_everyone": "Все",
-                        "timeout_threshold": "Порог таймаута"
-                    }
+            "pictures": {
+                "pictures": {
+                    "header": "Фотографии",
+                    "auto_delete_old_prints": "Автоматическое удаление старых фотографий",
+                    "auto_delete_prints_from_vrc": "Удалять старые фотографии из VRC по достижении лимита фотографий"
                 }
             }
         },
-        "tools": {
-            "export": {
-                "discord_names": "Имена Discord",
-                "export_friend_list": "Экспорт списка друзей",
-                "export_own_avatars": "Экспортировать свои аватары"
+        "advanced": {
+            "advanced": {
+                "header": "Расширенные",
+                "launch_options": "Параметры запуска",
+                "screenshot_metadata": "Метаданные скриншота",
+                "vrc_registry_backup": "Резервное копирование реестра VRC",
+                "common_folders": "Общие папки",
+                "primary_password": {
+                    "header": "Основной пароль",
+                    "description": "Шифровать пароль (отключает автоматический вход)"
+                },
+                "relaunch_vrchat": {
+                    "header": "Перезапускать VRChat после сбоя",
+                    "description": "Зайти в последней инстанс после сбоя VRChat"
+                },
+                "vrchat_quit_fix": {
+                    "header": "Исправить остановку процесса VRChat",
+                    "description": "Завершить процесс VRChat после выхода из игры"
+                },
+                "auto_cache_management": {
+                    "header": "Автоматически управлять кэшем при закрытии VRChat",
+                    "description": "Автоматически удалять старые версии из кэша"
+                },
+                "self_invite": {
+                    "header": "Самоприглашение",
+                    "description": "самоприглашение в место открылия инстанса в VRChat"
+                },
+                "save_instance_prints_to_file": {
+                    "header": "Сохранить снимки инстанса в файл",
+                    "header_tooltip": "Требуется \"--enable-sdk-log-levels\" опция запуска VRC.",
+                    "description": "Сохраните созданные принты в папке «Изображения VRChat».",
+                    "crop": "Автоматически удаляйте белую рамку при печати",
+                    "crop_convert_old": "Хотите обрезать все принты, которые уже были сохранены?",
+                    "crop_convert_old_confirm": "Да",
+                    "crop_convert_old_cancel": "Нет"
+                },
+                "save_instance_stickers_to_file": {
+                    "header": "Сохранить стикеры инстанса в файл",
+                    "description": "Сохранить размещенные наклейки в папке «Изображения VRChat»."
+                },
+                "save_instance_emoji_to_file": {
+                    "header": "Сохранить эмодзи инстанса в файл",
+                    "description": "Сохраните размещенные эмодзи в папке «Изображения VRChat»"
+                },
+                "delete_all_screenshot_metadata": {
+                    "button": "Удалить метаданные скриншота",
+                    "ask": "Вы уверены, что хотите удалить все метаданные скриншотов VRC и VRCX из папки «Изображения VRChat»?",
+                    "confirm": "Удаление всех метаданных скриншотов является очень разрушительным действием и не может быть отменено! Это включает все распечатки, подпапки и другие несвязанные изображения в папке «Изображения VRChat». Если эти фотографии ценны для вас, пожалуйста, сделайте резервную копию перед продолжением.",
+                    "confirm_yes": "Yes",
+                    "confirm_no": "No"
+                },
+                "remote_database": {
+                    "header": "Удаленная база данных аватаров",
+                    "enable": "Включить",
+                    "avatar_database_provider": "Провайдер базы данных аватаров"
+                },
+                "youtube_api": {
+                    "header": "Youtube API",
+                    "enable": "Включить",
+                    "youtube_api_key": "API ключ YouTube",
+                    "enable_tooltip": "Получать названия видео и его продолжительность для использования с журналом игры для наложения прогресс-бара"
+                },
+                "video_progress_pie": {
+                    "header": "Наложение диаграммы прогресса для видео",
+                    "enable": "Включить",
+                    "enable_tooltip": "Требуется включённый оверлей SteamVR",
+                    "dance_world_only": "Только поддерживаемый мир"
+                },
+                "launch_commands": {
+                    "header": "Команды запуска (Deep Links)",
+                    "docs": "Справка по командам запуска»",
+                    "show_confirmation_on_switch_avatar_enable": "Показывать диалог подтверждения перед сменой аватара",
+                    "show_confirmation_on_switch_avatar_tooltip": "При отключении VRCX не будет выходить на передний план при переключении аватаров и запрашивать подтверждение",
+                    "website_userscript": "VRC Пользовательский скрипт веб-сайта"
+                },
+                "screenshot_helper": {
+                    "header": "Помощник скриншота",
+                    "description": "Будет храниться ID мира, имя мира и игроков, в метаданных файла, любых фотографий, которые вы делаете в игре.",
+                    "description_tooltip": "К сожалению, Windows (за некоторыми исключениями) не поддерживает просмотр EXIF информации PNG, поэтому вы можете посмотреть ее с помощью инструмента командной строки, такого как EXIFTool, инспектора PNG или HEX-редактора.",
+                    "enable": "Включить",
+                    "modify_filename": "Изменить имя файла",
+                    "modify_filename_tooltip": "Добавит World ID к имени файла скриншота в дополнение к метаданным файла.",
+                    "copy_to_clipboard": "Скопировать в буфер обмена"
+                },
+                "app_launcher": {
+                    "header": "Панель запуска приложений",
+                    "folder": "Автозапуск из папки",
+                    "folder_tooltip": "Чтобы автоматически запускать приложения с помощью VRChat, поместите ярлыки в эту папку.",
+                    "enable": "Включить",
+                    "auto_close": "Автоматически закрывать приложения",
+                    "run_process_once": "Открыть один инстанс приложения"
+                },
+                "cache_debug": {
+                    "header": "VRCX Кэш/Отладка инстанса",
+                    "udon_exception_logging": "Логирование исключений Udon",
+                    "gpu_fix": "SteamVR фикс GPU оверлея",
+                    "gpu_fix_notice": "(требует перезапуск)",
+                    "gpu_fix_warning": "Включите эту опцию, только если оверлей SteamVR не работает и у вас два GPU",
+                    "disable_gamelog": "Отключить журнал игры",
+                    "disable_gamelog_notice": "(вероятно все сломается)",
+                    "user_cache": "Пользовательский кэш:",
+                    "world_cache": "Кэш мира:",
+                    "avatar_cache": "Кэш аватаров:",
+                    "group_cache": "Кэш групп:",
+                    "avatar_name_cache": "Кэш имен аватаров:",
+                    "instance_cache": "Кэш инстансов:",
+                    "clear_cache": "Очистить кэш",
+                    "refresh_cache": "Обновить кеш",
+                    "auto_clear_cache": "Автоочистка кэша",
+                    "show_console": "Открыть консоль"
+                },
+                "sqlite_table_size": {
+                    "header": "Размер таблицы SQLite",
+                    "refresh": "Обновить",
+                    "gps": "GPS:",
+                    "status": "Статус:",
+                    "bio": "Био:",
+                    "avatar": "Аватары:",
+                    "online_offline": "Онлайн/офлайн:",
+                    "friend_log_history": "История записей друзей:",
+                    "notification": "Уведомления:",
+                    "location": "Местоположение:",
+                    "join_leave": "Присоединиия/выход:",
+                    "portal_spawn": "Создание порталов:",
+                    "video_play": "Проигрывание видео:",
+                    "event": "События:"
+                },
+                "user_generated_content": {
+                    "header": "Пользовательский контент",
+                    "folder": "Открыть папку",
+                    "description": "Откройте или укажите папку, где хранится контент, такой как 'Принты' и 'Стикеры'.",
+                    "set_folder": "Указать папку",
+                    "reset_override": "Сбросить"
+                }
+            },
+            "photon": {
+                "header": "Журнал Photon оверлея",
+                "event_hud": {
+                    "header": "Событие интерфейса Photon",
+                    "enable": "Включить",
+                    "enable_tooltip": "Требуется включённый оверлей SteamVR",
+                    "filter": "Фильтр",
+                    "filter_favorites": "Избранное",
+                    "filter_friends": "Друзья",
+                    "filter_everyone": "Все",
+                    "message_timeout": "Таймаут сообщения"
+                },
+                "timeout_hud": {
+                    "header": "Таймаут интерфейса пользователя",
+                    "enable": "Включить",
+                    "enable_tooltip": "Требуется включённый оверлей SteamVR",
+                    "filter": "Фильтр",
+                    "filter_favorites": "Избранное",
+                    "filter_friends": "Друзья",
+                    "filter_everyone": "Все",
+                    "timeout_threshold": "Порог таймаута"
+                }
             }
         }
     },
@@ -694,7 +769,9 @@
             "pronouns": "Местоимение",
             "tags": {
                 "friend_no": "Друг №{number}",
-                "vrchat_team": "Команда VRChat"
+                "vrchat_team": "Команда VRChat",
+                "18_plus_verified": "18+ Подтверждено",
+                "age_verified": "Возраст подтвержден"
             },
             "badges": {
                 "assigned": "Назначен",
@@ -711,6 +788,7 @@
                 "request_invite": "Запросить приглашение",
                 "request_invite_with_message": "Запросить приглашение с сообщением",
                 "invite_to_group": "Пригласить в группу",
+                "group_moderation": "Модерация группы",
                 "send_boop": "Отправить Буп",
                 "manage_gallery_inventory_icon": "Настроить Фото/Иконки/Эмодзи",
                 "accept_friend_request": "Принять запрос в друзья",
@@ -743,6 +821,7 @@
                 "header": "Информация",
                 "launch_invite_tooltip": "Запустить/Пригласить",
                 "self_invite_tooltip": "Пригласить себя",
+                "open_in_vrchat_tooltip": "Открыть в VRChat",
                 "refresh_instance_info": "Обновить информацию об инстансе",
                 "instance_queue": "Очередь:",
                 "instance_users": "Пользователи:",
@@ -864,10 +943,10 @@
                 "share": "Поделиться",
                 "new_instance": "Новый инстанс",
                 "new_instance_and_self_invite": "Новый инстанс и самоприглашение",
+                "new_instance_and_open_ingame": "Новый инстанс и Открыть в Игре",
                 "make_home": "Сделать Домом",
                 "reset_home": "Сбросить домашний мир",
                 "show_previous_instances": "Показать предыдущие инстансы",
-                "show_previous_images": "Показать предыдущие изображения",
                 "rename": "Переименовать",
                 "change_description": "Изменить описание",
                 "change_capacity": "Изменить вместимость",
@@ -954,12 +1033,12 @@
                 "select_fallback": "Выбрать fallback аватар",
                 "block": "Заблокировать аватар",
                 "unblock": "Разблокировать аватар",
-                "show_previous_images": "Показать предыдущие изображения",
                 "make_public": "Сделать общедоступным",
                 "make_private": "Сделать приватным",
                 "rename": "Переименовать",
                 "change_description": "Изменить описание",
                 "change_content_tags": "Изменить теги содержимого",
+                "change_styles_author_tags": "Изменение стилей и тегов автора",
                 "change_image": "Изменить изображение",
                 "download_package": "Скачать пакет Unity",
                 "delete": "Удалить",
@@ -979,7 +1058,9 @@
                 "platform": "Платформа",
                 "time_spent": "Проведенное время",
                 "memo": "Заметка VRCX",
-                "memo_placeholder": "Нажмите, чтобы добавить заметку"
+                "memo_placeholder": "Нажмите, чтобы добавить заметку",
+                "listings": "Списки ",
+                "gallery": "Галерея"
             },
             "json": {
                 "header": "JSON",
@@ -1015,6 +1096,9 @@
                 "unsubscribe": "Отписаться от объявлений",
                 "subscribe": "Подписаться на объявления",
                 "invite_to_group": "Пригласить в группу",
+                "manage_selected": "Управление выбранными группами",
+                "select_all": "Выбрать все",
+                "deselect_all": "Отменить выделение",
                 "visibility_everyone": "Видимость: все",
                 "visibility_friends": "Видимость: Только друзья",
                 "visibility_hidden": "Видимость: Только я",
@@ -1151,6 +1235,7 @@
             "content_pedestals": "Пьедесталы",
             "content_prints": "Принты",
             "content_drones": "Дроны",
+            "content_items": "Предметы",
             "world_id": "ID Мира",
             "instance_id": "ID инстанса",
             "instance_id_placeholder": "Случайный",
@@ -1171,7 +1256,9 @@
             "normal": "Обычный",
             "group": "Группа",
             "legacy": "Устаревший",
-            "roles": "Роли"
+            "roles": "Роли",
+            "open_ingame": "Открыть в игре",
+            "display_name": "Отображаемое имя (VRC+)"
         },
         "launch_options": {
             "header": "Параметры запуска VRChat",
@@ -1244,6 +1331,16 @@
             "cancel": "Отмена",
             "save": "Сохранить"
         },
+        "set_avatar_styles": {
+            "header": "Установить стили аватара",
+            "primary_style": "Основной стиль",
+            "secondary_style": "Дополнительный стиль",
+            "select_style": "Выбрать стиль",
+            "save_success": "Стиль аватара выбран успешно",
+            "save_failed": "Не удалось изменить стили аватара",
+            "cancel": "Отмена",
+            "save": "Сохранить"
+        },
         "vrcx_updater": {
             "header": "Обновление VRCX",
             "latest_version": "У вас установлена актуальная версия VRCX.",
@@ -1259,9 +1356,14 @@
             "short_url_notice": "Срок действия короткого URL истечет через заданный период времени",
             "location": "Местоположение",
             "copy_tooltip": "Копировать в буфер обмена",
-            "start_as_desktop": "Запускать на рабочем столе (без VR)",
+            "start_as_desktop": "Запускать в Десктоп‑режиме (без VR)",
             "invite": "Пригласить",
-            "launch": "Запустить"
+            "launch": "Запустить",
+            "open_ingame": "Открыть в игре",
+            "self_invite": "Самоприглошение",
+            "game_running_warning": "Вы уверены, что хотите запустить второй инстанс VRChat?",
+            "confirm_yes": "Да",
+            "confirm_no": "Нет"
         },
         "export_friends_list": {
             "header": "Экспорт списка друзей",
@@ -1427,6 +1529,7 @@
             "emojis": "Эмодзи",
             "stickers": "Стикеры",
             "prints": "Снимки",
+            "inventory": "Инвентарь",
             "refresh": "Обновить",
             "upload": "Загрузить",
             "clear": "Очистить",
@@ -1436,17 +1539,20 @@
             "emoji_animation_frame_count": "Количество кадров:",
             "emoji_loop_pingpong": "Зацикленный PingPong",
             "flipbook_info": "Выберите спрайт-лист PNG размером 1024x1024 для использования в качестве анимированного эмодзи, доступные размеры сетки кадров: 4, 16 или 64 (максимальный FPS 64, максимальное количество кадров 64)",
-            "note": "Заметка"
+            "note": "Заметка",
+            "crop_print_border": "Обрзать рамку прита",
+            "consume_bundle": "Использовать",
+            "item": "Предмет",
+            "sticker": "Стикер",
+            "drone_skin": "Скин Дрона",
+            "emoji": "Эмодзи",
+            "redeem": "Погасить"
         },
         "change_content_image": {
             "avatar": "Изменить изображение аватара",
             "world": "Изменить изображение мира",
             "description": "Рекомендуемый размер изображения: 1200x900px (4:3)",
-            "refresh": "Обновить",
             "upload": "Загрузить изображение"
-        },
-        "previous_images": {
-            "header": "Предыдущее изображение"
         },
         "previous_instances": {
             "header": "Предыдущие инстансы",
@@ -1484,6 +1590,7 @@
             "last_screenshot": "Последний скриншот",
             "copy_image": "Скопировать изображение",
             "open_folder": "Открыть папку",
+            "delete_metadata": "Удалить метаданные",
             "upload": "Загрузить"
         },
         "registry_backup": {
@@ -1498,6 +1605,7 @@
             "date": "Дата",
             "action": "Действие",
             "auto_backup": "Еженедельное автоматическое резервное копирование",
+            "ask_to_restore": "Запросить восстановление, если настройки реестра VRC отсутствуют",
             "restore_prompt": "VRCX заметил, что автоматическое резервное копирование настроек реестра VRC включено, но на данном компьютере его нет, если вы хотите восстановить из резервной копии, вы можете сделать это отсюда."
         },
         "group_member_moderation": {
@@ -1542,6 +1650,7 @@
             "select_user": "Выберите пользователя",
             "selected_users": "Выбранные пользователи",
             "select_all": "Выбрать все",
+            "user_isnt_in_group": "Пользователь не состоит в группе",
             "cancel": "Отмена",
             "choose_roles_placeholder": "Выбор ролей",
             "selected_roles": "Выбранные роли",
@@ -1575,6 +1684,32 @@
             "header": "Разрешенные домены видеоплеера",
             "add_domain": "Добавить домен",
             "save": "Сохранить"
+        },
+        "group_calendar": {
+            "header": "Календарь группы",
+            "list_view": "Просмотр списком",
+            "calendar_view": "Просмотр календаря",
+            "no_events": "Событий не найдено",
+            "search_placeholder": "Поиск групп или событий...",
+            "search_no_matching": "Соответствующих событий не найдено",
+            "search_no_this_month": "В этом месяце нет событий",
+            "event_card": {
+                "category": "Категория",
+                "interested_user": "Заинтересованный пользователь",
+                "close_time": "Закрыть инстанс после завершения",
+                "created": "Дата создания",
+                "description": "Описание"
+            }
+        },
+        "moderate_group": {
+            "header": "Модерация участников группы",
+            "choose_group_placeholder": "Выберите группу",
+            "groups_with_moderation_permission": "Группы с правом модерации",
+            "moderation_tools": "Инструменты модерации"
+        },
+        "fullscreen_image": {
+            "download_and_save_image": "Скачать и сохранить изображение",
+            "copy_image_to_clipboard": "Копировать изображение в буфер обмена"
         }
     },
     "confirm": {
@@ -1622,6 +1757,15 @@
             "uploaded": "Изображение галереи загружено",
             "failed": "Не удалось загрузить изображение галереи"
         },
+        "avatar_gallery": {
+            "uploaded": "Изображение галереи аватара загружено",
+            "failed": "Не удалось загрузить изображение галереи аватара",
+            "deleted": "Изображение галереи аватара удалено",
+            "not_found": "Файл галереи аватара не найден",
+            "already_first": "Это уже первое изображение",
+            "already_last": "Это уже последнее изображение",
+            "reordered": "Порядок изображений галереи аватара изменён"
+        },
         "world": {
             "image_changed": "Изображение мира изменено",
             "image_invalid": "Текущее изображение мира недействительно"
@@ -1634,6 +1778,10 @@
         },
         "friend": {
             "load_failed": "Не удалось загрузить список друзей, выход из системы"
+        },
+        "screenshot_metadata": {
+            "deleted": "Метаданные скриншота удалены",
+            "delete_failed": "Не удалось удалить метаданные скриншота"
         }
     },
     "prompt": {
@@ -1862,6 +2010,15 @@
             "placeholder": "127.0.0.1:8080",
             "close": "Закрыть",
             "restart": "Перезапустить"
+        },
+        "redeem": {
+            "header": "Погасить код",
+            "description": "Enter your code to redeem",
+            "cancel": "Отмена",
+            "redeem": "Погасить",
+            "input_placeholder": "Код",
+            "input_error": "Код обязателен",
+            "success": "Код покашен успешно"
         }
     },
     "table": {
@@ -1890,6 +2047,7 @@
             "rank": "Ранг",
             "language": "Язык",
             "bioLink": "Био Ссылки",
+            "note": "Заметка",
             "date": "Дата",
             "user": "Пользователь",
             "type": "Тип",

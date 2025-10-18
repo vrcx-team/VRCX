@@ -169,13 +169,11 @@
 </template>
 
 <script setup>
-    import { ArrowRight } from '@element-plus/icons-vue';
     import { computed, ref } from 'vue';
+    import { ArrowRight } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import FriendItem from '../../../components/FriendItem.vue';
-    import configRepository from '../../../service/config';
-    import { isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
+
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
@@ -185,11 +183,16 @@
         useLocationStore,
         useUserStore
     } from '../../../stores';
+    import { getFriendsSortFunction, isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
+
+    import FriendItem from '../../../components/FriendItem.vue';
+    import configRepository from '../../../service/config';
+
     const emit = defineEmits(['confirm-delete-friend']);
     const { t } = useI18n();
 
     const { vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
-    const { isSidebarGroupByInstance, isHideFriendsInSameInstance, isSidebarDivideByFriendGroup } =
+    const { isSidebarGroupByInstance, isHideFriendsInSameInstance, isSidebarDivideByFriendGroup, sidebarSortMethods } =
         storeToRefs(useAppearanceSettingsStore());
     const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
     const { showUserDialog } = useUserStore();
@@ -234,7 +237,7 @@
         const sortedFriendsList = [];
         for (const group of Object.values(friendsList)) {
             if (group.length > 1) {
-                sortedFriendsList.push(group.sort((a, b) => a.ref?.$location_at - b.ref?.$location_at));
+                sortedFriendsList.push(group.sort(getFriendsSortFunction(sidebarSortMethods.value)));
             }
         }
 

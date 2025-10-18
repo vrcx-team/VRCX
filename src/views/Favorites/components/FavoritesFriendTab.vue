@@ -46,13 +46,16 @@
                             @click.stop="clearFavoriteGroup(group)"></el-button>
                     </el-tooltip>
                 </template>
-                <div v-if="group.count" class="x-friend-list" style="margin-top: 10px">
+                <div
+                    v-if="group.count"
+                    class="x-friend-list"
+                    :class="{ 'is-editing': editFavoritesMode }"
+                    style="margin-top: 10px">
                     <FavoritesFriendItem
                         v-for="favorite in groupedByGroupKeyFavoriteFriends[group.key]"
                         :key="favorite.id"
                         style="display: inline-block; width: 300px; margin-right: 15px"
                         :favorite="favorite"
-                        :edit-favorites-mode="editFavoritesMode"
                         :group="group"
                         @click="showUserDialog(favorite.id)" />
                 </div>
@@ -75,16 +78,17 @@
 </template>
 
 <script setup>
-    import { Edit, Delete } from '@element-plus/icons-vue';
-
+    import { Delete, Edit } from '@element-plus/icons-vue';
+    import { computed, ref } from 'vue';
     import { ElMessageBox } from 'element-plus';
-    import { ref, computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest } from '../../../api';
+
     import { useAppearanceSettingsStore, useFavoriteStore, useUserStore } from '../../../stores';
-    import FriendExportDialog from '../dialogs/FriendExportDialog.vue';
+    import { favoriteRequest } from '../../../api';
+
     import FavoritesFriendItem from './FavoritesFriendItem.vue';
+    import FriendExportDialog from '../dialogs/FriendExportDialog.vue';
 
     defineProps({
         editFavoritesMode: {
@@ -99,7 +103,7 @@
     const { setSortFavorites } = useAppearanceSettingsStore();
     const { showUserDialog } = useUserStore();
     const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends } = storeToRefs(useFavoriteStore());
-    const { showFriendImportDialog, saveSortFavoritesOption } = useFavoriteStore();
+    const { showFriendImportDialog } = useFavoriteStore();
     const { t } = useI18n();
 
     const friendExportDialogVisible = ref(false);
@@ -138,3 +142,15 @@
         emit('change-favorite-group-name', group);
     }
 </script>
+
+<style scoped>
+    .x-friend-list :deep(.editing) {
+        display: none;
+    }
+    .x-friend-list.is-editing :deep(.editing) {
+        display: block;
+    }
+    .x-friend-list.is-editing :deep(.default) {
+        display: none;
+    }
+</style>

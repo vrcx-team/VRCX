@@ -53,8 +53,8 @@
 ;--------------------------------
 ;Icons
 
-    !define MUI_ICON "../VRCX.ico"
-    !define MUI_UNICON "../VRCX.ico"
+    !define MUI_ICON "../images/VRCX.ico"
+    !define MUI_UNICON "../images/VRCX.ico"
 
 ;--------------------------------
 ;Pages

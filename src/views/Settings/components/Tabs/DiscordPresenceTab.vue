@@ -78,8 +78,10 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { useDiscordPresenceSettingsStore, useAdvancedSettingsStore } from '../../../stores';
-    import SimpleSwitch from './SimpleSwitch.vue';
+
+    import { useAdvancedSettingsStore, useDiscordPresenceSettingsStore } from '../../../../stores';
+
+    import SimpleSwitch from '../SimpleSwitch.vue';
 
     const { t } = useI18n();
 

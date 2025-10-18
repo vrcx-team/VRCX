@@ -1,4 +1,5 @@
-import { ref, nextTick } from 'vue';
+import { nextTick, ref } from 'vue';
+
 import configRepository from '../../../service/config';
 
 export function useInstanceActivitySettings() {

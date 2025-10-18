@@ -1,32 +1,36 @@
+import { reactive, ref, watch } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import { worldRequest } from '../api';
-import configRepository from '../service/config';
-import { database } from '../service/database';
-import { AppDebug } from '../service/appConfig';
-import { failedGetRequests } from '../service/request';
-import { watchState } from '../service/watchState';
+import { useI18n } from 'vue-i18n';
+
+import Noty from 'noty';
+
 import { debounce, parseLocation } from '../shared/utils';
+import { AppDebug } from '../service/appConfig';
+import { database } from '../service/database';
+import { failedGetRequests } from '../service/request';
 import { refreshCustomCss } from '../shared/utils/base/ui';
-import { useAvatarStore } from './avatar';
+import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
+import { useAvatarStore } from './avatar';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
-import { useGameStore } from './game';
 import { useGameLogStore } from './gameLog';
+import { useGameStore } from './game';
 import { useGroupStore } from './group';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
 import { useNotificationStore } from './notification';
 import { usePhotonStore } from './photon';
 import { useSearchStore } from './search';
-import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
+import { useVrcStatusStore } from './vrcStatus';
 import { useWorldStore } from './world';
-import { useI18n } from 'vue-i18n';
-import Noty from 'noty';
+import { watchState } from '../service/watchState';
+import { worldRequest } from '../api';
+
+import configRepository from '../service/config';
 
 export const useVrcxStore = defineStore('Vrcx', () => {
     const gameStore = useGameStore();
@@ -45,23 +49,25 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     const avatarProviderStore = useAvatarProviderStore();
     const gameLogStore = useGameLogStore();
     const updateLoopStore = useUpdateLoopStore();
+    const vrcStatusStore = useVrcStatusStore();
     const { t } = useI18n();
 
     const state = reactive({
         databaseVersion: 0,
-        clearVRCXCacheFrequency: 172800,
-        proxyServer: '',
         locationX: 0,
         locationY: 0,
         sizeWidth: 800,
         sizeHeight: 600,
         windowState: '',
-        maxTableSize: 1000,
-        ipcEnabled: false,
-        externalNotifierVersion: 0,
-        currentlyDroppingFile: null,
-        isRegistryBackupDialogVisible: false
+        externalNotifierVersion: 0
     });
+
+    const currentlyDroppingFile = ref(null);
+    const isRegistryBackupDialogVisible = ref(false);
+    const ipcEnabled = ref(false);
+    const clearVRCXCacheFrequency = ref(172800);
+    const maxTableSize = ref(1000);
+    const proxyServer = ref('');
 
     async function init() {
         if (LINUX) {
@@ -84,8 +90,12 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             });
 
             window.electron.onWindowStateChange((event, newState) => {
-                state.windowState = newState.windowState;
+                state.windowState = newState.toString();
                 debounce(saveVRCXWindowOption, 300)();
+            });
+
+            window.electron.onBrowserFocus(() => {
+                vrcStatusStore.onBrowserFocus();
             });
         }
 
@@ -94,7 +104,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             0
         );
 
-        state.clearVRCXCacheFrequency = await configRepository.getInt(
+        clearVRCXCacheFrequency.value = await configRepository.getInt(
             'VRCX_clearVRCXCacheFrequency',
             172800
         );
@@ -117,7 +127,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 'false'
             );
         }
-        state.proxyServer = await VRCXStorage.Get('VRCX_ProxyServer');
+        proxyServer.value = await VRCXStorage.Get('VRCX_ProxyServer');
         state.locationX = parseInt(await VRCXStorage.Get('VRCX_LocationX'), 10);
         state.locationY = parseInt(await VRCXStorage.Get('VRCX_LocationY'), 10);
         state.sizeWidth = parseInt(await VRCXStorage.Get('VRCX_SizeWidth'), 10);
@@ -127,59 +137,17 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         );
         state.windowState = await VRCXStorage.Get('VRCX_WindowState');
 
-        state.maxTableSize = await configRepository.getInt(
+        maxTableSize.value = await configRepository.getInt(
             'VRCX_maxTableSize',
             1000
         );
-        if (state.maxTableSize > 10000) {
-            state.maxTableSize = 1000;
+        if (maxTableSize.value > 10000) {
+            maxTableSize.value = 1000;
         }
-        database.setMaxTableSize(state.maxTableSize);
+        database.setMaxTableSize(maxTableSize.value);
     }
 
     init();
-
-    const currentlyDroppingFile = computed({
-        get: () => state.currentlyDroppingFile,
-        set: (value) => {
-            state.currentlyDroppingFile = value;
-        }
-    });
-
-    const isRegistryBackupDialogVisible = computed({
-        get: () => state.isRegistryBackupDialogVisible,
-        set: (value) => {
-            state.isRegistryBackupDialogVisible = value;
-        }
-    });
-
-    const ipcEnabled = computed({
-        get: () => state.ipcEnabled,
-        set: (value) => {
-            state.ipcEnabled = value;
-        }
-    });
-
-    const clearVRCXCacheFrequency = computed({
-        get: () => state.clearVRCXCacheFrequency,
-        set: (value) => {
-            state.clearVRCXCacheFrequency = value;
-        }
-    });
-
-    const maxTableSize = computed({
-        get: () => state.maxTableSize,
-        set: (value) => {
-            state.maxTableSize = value;
-        }
-    });
-
-    const proxyServer = computed({
-        get: () => state.proxyServer,
-        set: async (value) => {
-            state.proxyServer = value;
-        }
-    });
 
     // Make sure file drops outside of the screenshot manager don't navigate to the file path dropped.
     // This issue persists on prompts created with prompt(), unfortunately. Not sure how to fix that.
@@ -316,6 +284,13 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             }
         });
         instanceStore.cachedInstances.forEach((ref, id) => {
+            if (
+                [...friendStore.friends.values()].some(
+                    (f) => f.$location?.tag === id
+                )
+            ) {
+                return;
+            }
             // delete instances over an hour old
             if (Date.parse(ref.$fetchedAt) < Date.now() - 3600000) {
                 instanceStore.cachedInstances.delete(id);
@@ -389,7 +364,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             VRCXStorage.Set('VRCX_SizeWidth', state.sizeWidth.toString());
             VRCXStorage.Set('VRCX_SizeHeight', state.sizeHeight.toString());
             VRCXStorage.Set('VRCX_WindowState', state.windowState);
-            VRCXStorage.Flush();
         }
     }
 
@@ -432,7 +406,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     // use in C# side
-    // eslint-disable-next-line no-unused-vars
     function ipcEvent(json) {
         if (!watchState.isLoggedIn) {
             return;
@@ -516,7 +489,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 if (!photonStore.photonLoggingEnabled) {
                     photonStore.setPhotonLoggingEnabled();
                 }
-                state.ipcEnabled = true;
+                ipcEnabled.value = true;
                 updateLoopStore.ipcTimeout = 60; // 30secs
                 break;
             case 'MsgPing':
@@ -537,15 +510,14 @@ export const useVrcxStore = defineStore('Vrcx', () => {
      * This function is called by .NET(CefCustomDragHandler#CefCustomDragHandler) when a file is dragged over a drop zone in the app window.
      * @param {string} filePath - The full path to the file being dragged into the window
      */
-    // eslint-disable-next-line no-unused-vars
     function dragEnterCef(filePath) {
-        state.currentlyDroppingFile = filePath;
+        currentlyDroppingFile.value = filePath;
     }
 
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            state.isRegistryBackupDialogVisible = false;
+            isRegistryBackupDialogVisible.value = false;
             if (isLoggedIn) {
                 startupLaunchCommand();
             }
@@ -715,7 +687,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     function showRegistryBackupDialog() {
-        state.isRegistryBackupDialogVisible = true;
+        isRegistryBackupDialogVisible.value = true;
     }
 
     async function tryAutoBackupVrcRegistry() {

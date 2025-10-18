@@ -92,13 +92,15 @@
 
 <script setup>
     import { Close, Loading } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
     import { ref, watch } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import * as workerTimers from 'worker-timers';
-    import { miscRequest } from '../../../api';
+
     import { removeFromArray, userImage, userImageFull } from '../../../shared/utils';
     import { useFriendStore, useGalleryStore, useUserStore } from '../../../stores';
+    import { miscRequest } from '../../../api';
+
+    import * as workerTimers from 'worker-timers';
 
     const { t } = useI18n();
 

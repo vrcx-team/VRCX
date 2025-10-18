@@ -21,7 +21,7 @@ async function downloadFile(url, targetPath) {
                 if (response.statusCode !== 200) {
                     reject(
                         new Error(
-                            `Failed to download, status code: ${response.statusCode}`
+                            `Failed to download, url: ${url} status code: ${response.statusCode}`
                         )
                     );
                     return;
@@ -68,7 +68,10 @@ async function downloadDotnetRuntime(arch, platform) {
     } else if (platform === 'darwin') {
         dotnetPlatform = 'osx';
     } else if (platform === 'win32') {
-        dotnetPlatform = 'win';
+        // Windows is a zip file instead of tar.gz, which we do not handle here, skip
+        console.log('Skipping .NET runtime download on Windows');
+        return;
+        // dotnetPlatform = 'win';
     } else {
         throw new Error(`Unsupported platform: ${platform}`);
     }

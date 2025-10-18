@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'moderation'" class="x-container">
+    <div class="x-container">
         <!-- 工具栏 -->
         <div class="tool-slot">
             <el-select
@@ -91,29 +91,30 @@
 </template>
 
 <script setup>
+    import { Close, Refresh } from '@element-plus/icons-vue';
     import { ElMessageBox } from 'element-plus';
-    import { Refresh, Close } from '@element-plus/icons-vue';
     import { ref } from 'vue';
-    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
-    import { playerModerationRequest } from '../../api';
-    import configRepository from '../../service/config.js';
-    import { useUiStore, useModerationStore, useUserStore, useAppearanceSettingsStore } from '../../stores';
-    import { moderationTypes } from '../../shared/constants';
+    import { useI18n } from 'vue-i18n';
+
+    import { useModerationStore, useUiStore, useUserStore } from '../../stores';
     import { formatDateFilter } from '../../shared/utils';
+    import { moderationTypes } from '../../shared/constants';
+    import { playerModerationRequest } from '../../api';
+
+    import configRepository from '../../service/config.js';
 
     const { t } = useI18n();
     const { showUserDialog } = useUserStore();
     const { isPlayerModerationsLoading, playerModerationTable } = storeToRefs(useModerationStore());
     const { refreshPlayerModerations, handlePlayerModerationDelete } = useModerationStore();
-    const { menuActiveIndex, shiftHeld } = storeToRefs(useUiStore());
+    const { shiftHeld } = storeToRefs(useUiStore());
     const { currentUser } = storeToRefs(useUserStore());
 
     const filters = ref([
         {
             prop: 'type',
-            value: [],
-            filterFn: (row, filter) => filter.value.some((v) => v === row.type)
+            value: []
         },
         {
             prop: ['sourceDisplayName', 'targetDisplayName'],

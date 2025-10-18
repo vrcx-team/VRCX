@@ -23,6 +23,7 @@
                                             :location="feed.location"
                                             :hint="feed.worldName"
                                             :grouphint="feed.groupName"
+                                            :instancedisplayname="feed.instanceDisplayName"
                                             style="margin-left: 5px"></VrLocation>
                                     </span>
                                 </div>
@@ -54,6 +55,7 @@
                                                 :location="feed.location"
                                                 :hint="feed.worldName"
                                                 :grouphint="feed.groupName"
+                                                :instancedisplayname="feed.instanceDisplayName"
                                                 style="margin-left: 5px"></VrLocation>
                                         </template>
                                     </span>
@@ -86,7 +88,7 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        ▶️
+                                        <i class="ri-play-large-line"></i>
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -101,7 +103,7 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        ◀️
+                                        <i class="ri-play-reverse-large-line"></i>
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -116,8 +118,9 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="spin">▶️</span>
-                                        <span class="name" v-text="feed.displayName" style="margin-left: 30px"></span>
+                                        <i class="ri-play-large-line"></i>
+                                        <i class="ri-loader-line is-loading mr-5"></i>
+                                        <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
                             </div>
@@ -131,7 +134,8 @@
                                         <VrLocation
                                             :location="feed.location"
                                             :hint="feed.worldName"
-                                            :grouphint="feed.groupName"></VrLocation>
+                                            :grouphint="feed.groupName"
+                                            :instancedisplayname="feed.instanceDisplayName"></VrLocation>
                                     </span>
                                 </div>
                             </div>
@@ -142,7 +146,7 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        🎵
+                                        <i class="ri-youtube-line mr-5"></i>
                                         <span
                                             v-if="feed.displayName"
                                             class="name"
@@ -165,10 +169,12 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        📨 <span class="name" v-text="feed.senderUsername"></span>
+                                        <i class="ri-mail-send-line mr-5"></i>
+                                        <span class="name mr-5" v-text="feed.senderUsername"></span>
                                         <VrLocation
                                             :location="feed.details.worldId"
-                                            :hint="feed.details.worldName"></VrLocation>
+                                            :hint="feed.details.worldName"
+                                            :instancedisplayname="feed.instanceDisplayName"></VrLocation>
                                         <span v-text="feed.details.inviteMessage"></span>
                                     </span>
                                 </div>
@@ -180,7 +186,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        📩 <span class="name" v-text="feed.senderUsername"></span>
+                                        <i class="ri-mail-send-line mr-5"></i>
+                                        <span class="name" v-text="feed.senderUsername"></span>
                                         <span v-text="feed.details.requestMessage"></span>
                                     </span>
                                 </div>
@@ -192,7 +199,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        💬 <span class="name" v-text="feed.senderUsername"></span>
+                                        <i class="ri-mail-send-line mr-5"></i>
+                                        <span class="name" v-text="feed.senderUsername"></span>
                                         <span v-text="feed.details.responseMessage"></span>
                                     </span>
                                 </div>
@@ -204,7 +212,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        💬 <span class="name" v-text="feed.senderUsername"></span>
+                                        <i class="ri-mail-send-line mr-5"></i>
+                                        <span class="name" v-text="feed.senderUsername"></span>
                                         <span v-text="feed.details.responseMessage"></span>
                                     </span>
                                 </div>
@@ -216,7 +225,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        💚 <span class="name" v-text="feed.senderUsername"></span>
+                                        <i class="ri-heart-add-line mr-5"></i>
+                                        <span class="name" v-text="feed.senderUsername"></span>
                                     </span>
                                 </div>
                             </div>
@@ -227,7 +237,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        💖 <span class="name" v-text="feed.displayName"></span>
+                                        <i class="ri-hearts-line mr-5"></i>
+                                        <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
                             </div>
@@ -238,7 +249,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        💔 <span class="name" v-text="feed.displayName"></span>
+                                        <i class="ri-dislike-line mr-5"></i>
+                                        <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
                             </div>
@@ -249,8 +261,9 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        📃 <span class="name" v-text="feed.previousDisplayName"></span>
-                                        <i class="ri-arrow-right-fill"></i>
+                                        <i class="ri-file-edit-fill mr-5"></i>
+                                        <span class="name" v-text="feed.previousDisplayName"></span>
+                                        <i class="ri-arrow-right-fill mr-5"></i>
                                         <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
@@ -262,13 +275,14 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        🤝 <span class="name" v-text="feed.displayName"></span>
+                                        <i class="ri-graduation-cap-line mr-5"></i
+                                        ><span class="name" v-text="feed.displayName"></span>
                                         {{ feed.previousTrustLevel }} <i class="ri-arrow-right-fill"></i>
                                         {{ feed.trustLevel }}
                                     </span>
                                 </div>
                             </div>
-                            <div
+                            <!-- <div
                                 v-else-if="feed.type === 'boop'"
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
@@ -279,7 +293,7 @@
                                         <span v-text="feed.message"></span>
                                     </span>
                                 </div>
-                            </div>
+                            </div> -->
                             <div
                                 v-else-if="feed.type === 'groupChange'"
                                 class="x-friend-item"
@@ -287,7 +301,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        🏷️ <span class="name" v-text="feed.senderUsername"></span>
+                                        <i class="ri-price-tag-3-line mr-5"></i>
+                                        <span class="name" v-text="feed.senderUsername"></span>
                                         <span v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -299,7 +314,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        🏷️ <span class="name" v-text="feed.message"></span>
+                                        <i class="ri-megaphone-line mr-5"></i>
+                                        <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
                             </div>
@@ -310,7 +326,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        🏷️ <span class="name" v-text="feed.message"></span>
+                                        <i class="ri-megaphone-line mr-5"></i>
+                                        <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
                             </div>
@@ -321,7 +338,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        🏷️ <span class="name" v-text="feed.message"></span>
+                                        <i class="ri-price-tag-3-line mr-5"></i>
+                                        <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
                             </div>
@@ -332,7 +350,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        🏷️ <span class="name" v-text="feed.message"></span>
+                                        <i class="ri-price-tag-3-line mr-5"></i>
+                                        <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
                             </div>
@@ -343,7 +362,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        🏷️ <span class="name" v-text="feed.message"></span>
+                                        <i class="ri-price-tag-3-line mr-5"></i>
+                                        <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
                             </div>
@@ -354,7 +374,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        📨 <span class="name" v-text="feed.message"></span>
+                                        <i class="ri-mail-send-line mr-5"></i>
+                                        <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
                             </div>
@@ -365,7 +386,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        📫 <span class="name" v-text="feed.message"></span>
+                                        <i class="ri-close-circle-line mr-5"></i>
+                                        <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
                             </div>
@@ -377,18 +399,19 @@
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <template v-if="feed.displayName">
-                                            ✨
+                                            <i class="ri-bard-line mr-5"></i>
                                             <span
-                                                class="name"
+                                                class="name mr-5"
                                                 v-text="feed.displayName"
-                                                style="margin-right: 5px"
                                                 :style="{ color: feed.tagColour }"></span>
                                             <VrLocation
                                                 :location="feed.instanceId"
                                                 :hint="feed.worldName"
                                                 :grouphint="feed.groupName"></VrLocation>
                                         </template>
-                                        <template v-else> ✨ User has spawned a portal </template>
+                                        <template v-else
+                                            ><i class="ri-bard-line"></i> User has spawned a portal
+                                        </template>
                                     </span>
                                 </div>
                             </div>
@@ -399,7 +422,7 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        🧍
+                                        <i class="ri-walk-line mr-5"></i>
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -425,7 +448,7 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        💬
+                                        <i class="ri-chat-1-fill mr-5"></i>
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -438,7 +461,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        🛑 <span class="name" v-text="feed.data"></span>
+                                        <i class="ri-alert-line mr-5"></i>
+                                        <span class="name" v-text="feed.data"></span>
                                     </span>
                                 </div>
                             </div>
@@ -446,7 +470,7 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        🟠
+                                        <i class="ri-information-line mr-5"></i>
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -462,7 +486,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        ▶️ 🚫 <span class="name" v-text="feed.displayName"></span>
+                                        <i class="ri-play-large-line"></i><i class="ri-prohibited-line mr-5"></i>
+                                        <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
                             </div>
@@ -473,7 +498,9 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        ◀️ 🚫 <span class="name" v-text="feed.displayName"></span>
+                                        <i class="ri-play-reverse-large-line"></i
+                                        ><i class="ri-prohibited-line mr-5"></i>
+                                        <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
                             </div>
@@ -484,7 +511,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        ▶️ 🔇 <span class="name" v-text="feed.displayName"></span>
+                                        <i class="ri-play-large-line"></i><i class="ri-volume-mute-line mr-5"></i>
+                                        <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
                             </div>
@@ -495,7 +523,9 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        ◀️ 🔇 <span class="name" v-text="feed.displayName"></span>
+                                        <i class="ri-play-reverse-large-line"></i
+                                        ><i class="ri-volume-mute-line mr-5"></i>
+                                        <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
                             </div>
@@ -506,7 +536,7 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        🚫
+                                        <i class="ri-prohibited-line mr-5"></i>
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -521,7 +551,7 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        ⭕
+                                        <i class="ri-checkbox-blank-circle-line mr-5"></i>
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -536,7 +566,7 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        🔇
+                                        <i class="ri-volume-mute-line mr-5"></i>
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -551,7 +581,7 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        🎤
+                                        <i class="ri-volume-up-line mr-5"></i>
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -577,14 +607,16 @@
                                             <VrLocation
                                                 :location="feed.location"
                                                 :hint="feed.worldName"
-                                                :grouphint="feed.groupName"></VrLocation>
+                                                :grouphint="feed.groupName"
+                                                :instancedisplayname="feed.instanceDisplayName"></VrLocation>
                                         </template>
                                         <template v-else>
                                             <span class="name" v-text="feed.displayName"></span> is in
                                             <VrLocation
                                                 :location="feed.location"
                                                 :hint="feed.worldName"
-                                                :grouphint="feed.groupName"></VrLocation>
+                                                :grouphint="feed.groupName"
+                                                :instancedisplayname="feed.instanceDisplayName"></VrLocation>
                                         </template>
                                     </span>
                                 </div>
@@ -615,7 +647,8 @@
                                             <VrLocation
                                                 :location="feed.location"
                                                 :hint="feed.worldName"
-                                                :grouphint="feed.groupName"></VrLocation>
+                                                :grouphint="feed.groupName"
+                                                :instancedisplayname="feed.instanceDisplayName"></VrLocation>
                                         </template>
                                     </span>
                                 </div>
@@ -691,7 +724,8 @@
                                         <VrLocation
                                             :location="feed.location"
                                             :hint="feed.worldName"
-                                            :grouphint="feed.groupName"></VrLocation>
+                                            :grouphint="feed.groupName"
+                                            :instancedisplayname="feed.instanceDisplayName"></VrLocation>
                                     </span>
                                 </div>
                             </div>
@@ -726,7 +760,8 @@
                                         <span class="name" v-text="feed.senderUsername"></span> has invited you to
                                         <VrLocation
                                             :location="feed.details.worldId"
-                                            :hint="feed.details.worldName"></VrLocation>
+                                            :hint="feed.details.worldName"
+                                            :instancedisplayname="feed.instanceDisplayName"></VrLocation>
                                         <span v-text="feed.details.inviteMessage"></span>
                                     </span>
                                 </div>
@@ -1372,19 +1407,23 @@
 </template>
 
 <script setup>
-    import './vr.scss';
-    import { onMounted, reactive, toRefs, nextTick } from 'vue';
-    import Noty from 'noty';
-    import * as workerTimers from 'worker-timers';
+    import { nextTick, onMounted, reactive, toRefs } from 'vue';
+    import { useI18n } from 'vue-i18n';
+
     import MarqueeText from 'vue-marquee-text-component';
-    import VrLocation from './components/VrLocation.vue';
-    import { displayLocation } from '../shared/utils/location';
+    import Noty from 'noty';
+
     import { escapeTag, escapeTagRecursive } from '../shared/utils/base/string';
+    import { changeHtmlLangAttribute } from '../shared/utils/base/ui';
+    import { displayLocation } from '../shared/utils/location';
     import { removeFromArray } from '../shared/utils/base/array';
     import { timeToText } from '../shared/utils/base/format';
-    import { changeHtmlLangAttribute } from '../shared/utils/base/ui';
 
-    import { useI18n } from 'vue-i18n';
+    import VrLocation from './components/VrLocation.vue';
+
+    import * as workerTimers from 'worker-timers';
+
+    import './vr.scss';
 
     defineOptions({
         name: 'vr'
@@ -2022,5 +2061,9 @@
 <style scoped>
     .ml-5 {
         margin-left: 5px;
+    }
+
+    .mr-5 {
+        margin-right: 5px;
     }
 </style>

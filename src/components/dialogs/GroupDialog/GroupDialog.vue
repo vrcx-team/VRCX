@@ -7,35 +7,20 @@
         class="x-dialog x-group-dialog">
         <div v-loading="groupDialog.loading" class="group-body">
             <div style="display: flex">
-                <el-popover placement="right" :width="500" trigger="click">
-                    <template #reference>
-                        <img
-                            :src="groupDialog.ref.iconUrl"
-                            style="flex: none; width: 120px; height: 120px; border-radius: 12px"
-                            class="x-link"
-                            loading="lazy" />
-                    </template>
-                    <img
-                        :src="groupDialog.ref.iconUrl"
-                        :class="['x-link', 'x-popover-image']"
-                        @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)"
-                        loading="lazy" />
-                </el-popover>
+                <img
+                    :src="groupDialog.ref.iconUrl"
+                    style="flex: none; width: 120px; height: 120px; border-radius: 12px"
+                    class="x-link"
+                    @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)"
+                    loading="lazy" />
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div class="group-header" style="flex: 1">
                         <span v-if="groupDialog.ref.ownerId === currentUser.id" style="margin-right: 5px">👑</span>
-                        <el-popover placement="top" trigger="click">
-                            <template #reference>
-                                <span
-                                    class="dialog-title"
-                                    style="margin-right: 5px; cursor: pointer"
-                                    v-text="groupDialog.ref.name"
-                                    @click="copyToClipboard(groupDialog.ref.name)"></span>
-                            </template>
-                            <span style="display: block; text-align: center; font-family: monospace">{{
-                                textToHex(groupDialog.ref.name)
-                            }}</span>
-                        </el-popover>
+                        <span
+                            class="dialog-title"
+                            style="margin-right: 5px; cursor: pointer"
+                            v-text="groupDialog.ref.name"
+                            @click="copyToClipboard(groupDialog.ref.name)"></span>
                         <span
                             class="group-discriminator x-grey"
                             style="font-family: monospace; font-size: 12px; margin-right: 5px">
@@ -165,11 +150,17 @@
                                 </el-tag>
                             </template>
                         </div>
-                        <div class="group-description" style="margin-top: 5px">
-                            <span
+                        <div style="margin-top: 5px">
+                            <pre
                                 v-show="groupDialog.ref.name !== groupDialog.ref.description"
-                                style="font-size: 12px"
-                                v-text="groupDialog.ref.description"></span>
+                                style="
+                                    font-family: inherit;
+                                    font-size: 12px;
+                                    white-space: pre-wrap;
+                                    max-height: 40vh;
+                                    overflow-y: auto;
+                                "
+                                v-text="groupDialog.ref.description"></pre>
                         </div>
                     </div>
                     <div style="flex: none; margin-left: 10px">
@@ -373,26 +364,12 @@
             <el-tabs v-model="groupDialogLastActiveTab" @tab-click="groupDialogTabClick">
                 <el-tab-pane name="Info" :label="t('dialog.group.info.header')">
                     <div class="group-banner-image-info">
-                        <el-popover placement="bottom" :width="1000" trigger="click">
-                            <template #reference>
-                                <img
-                                    :src="groupDialog.ref.bannerUrl"
-                                    class="x-link"
-                                    style="
-                                        flex: none;
-                                        width: 100%;
-                                        aspect-ratio: 6/1;
-                                        object-fit: cover;
-                                        border-radius: 4px;
-                                    "
-                                    loading="lazy" />
-                            </template>
-                            <img
-                                :src="groupDialog.ref.bannerUrl"
-                                :class="['x-link', 'x-popover-image']"
-                                @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)"
-                                loading="lazy" />
-                        </el-popover>
+                        <img
+                            :src="groupDialog.ref.bannerUrl"
+                            class="x-link"
+                            style="flex: none; width: 100%; aspect-ratio: 6/1; object-fit: cover; border-radius: 4px"
+                            @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)"
+                            loading="lazy" />
                     </div>
                     <div class="x-friend-list" style="max-height: none">
                         <span
@@ -453,26 +430,18 @@
                                 <div
                                     v-if="groupDialog.announcement.imageUrl"
                                     style="display: inline-block; margin-right: 5px">
-                                    <el-popover placement="right" :width="500" trigger="click">
-                                        <template #reference>
-                                            <img
-                                                :src="groupDialog.announcement.imageUrl"
-                                                class="x-link"
-                                                style="
-                                                    flex: none;
-                                                    width: 60px;
-                                                    height: 60px;
-                                                    border-radius: 4px;
-                                                    object-fit: cover;
-                                                "
-                                                loading="lazy" />
-                                        </template>
-                                        <img
-                                            :src="groupDialog.announcement.imageUrl"
-                                            :class="['x-link', 'x-popover-image']"
-                                            @click="showFullscreenImageDialog(groupDialog.announcement.imageUrl)"
-                                            loading="lazy" />
-                                    </el-popover>
+                                    <img
+                                        :src="groupDialog.announcement.imageUrl"
+                                        class="x-link"
+                                        style="
+                                            flex: none;
+                                            width: 60px;
+                                            height: 60px;
+                                            border-radius: 4px;
+                                            object-fit: cover;
+                                        "
+                                        @click="showFullscreenImageDialog(groupDialog.announcement.imageUrl)"
+                                        loading="lazy" />
                                 </div>
                                 <pre
                                     class="extra"
@@ -545,7 +514,7 @@
                                                 type="text"
                                                 :icon="Edit"
                                                 size="small"
-                                                style="margin-left: 5px"
+                                                style="margin-left: 5px; padding: 0"
                                                 @click="
                                                     showGroupPostEditDialog(groupDialog.id, groupDialog.announcement)
                                                 " />
@@ -555,7 +524,7 @@
                                                 type="text"
                                                 :icon="Delete"
                                                 size="small"
-                                                style="margin-left: 5px"
+                                                style="margin-left: 5px; padding: 0"
                                                 @click="confirmDeleteGroupPost(groupDialog.announcement)" />
                                         </el-tooltip>
                                     </template>
@@ -745,26 +714,18 @@
                                 <div class="detail">
                                     <span style="display: block" v-text="post.title" />
                                     <div v-if="post.imageUrl" style="display: inline-block; margin-right: 5px">
-                                        <el-popover placement="right" :width="500" trigger="click">
-                                            <template #reference>
-                                                <img
-                                                    :src="post.imageUrl"
-                                                    class="x-link"
-                                                    style="
-                                                        flex: none;
-                                                        width: 60px;
-                                                        height: 60px;
-                                                        border-radius: 4px;
-                                                        object-fit: cover;
-                                                    "
-                                                    loading="lazy" />
-                                            </template>
-                                            <img
-                                                :src="post.imageUrl"
-                                                :class="['x-link', 'x-popover-image']"
-                                                @click="showFullscreenImageDialog(post.imageUrl)"
-                                                loading="lazy" />
-                                        </el-popover>
+                                        <img
+                                            :src="post.imageUrl"
+                                            class="x-link"
+                                            style="
+                                                flex: none;
+                                                width: 60px;
+                                                height: 60px;
+                                                border-radius: 4px;
+                                                object-fit: cover;
+                                            "
+                                            @click="showFullscreenImageDialog(post.imageUrl)"
+                                            loading="lazy" />
                                     </div>
                                     <pre
                                         class="extra"
@@ -1152,7 +1113,6 @@
             </el-tabs>
         </div>
         <GroupPostEditDialog :dialog-data="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
-        <InviteGroupDialog />
         <PreviousInstancesGroupDialog
             :previous-instances-group-dialog="previousInstancesGroupDialog"
             :current-user="currentUser" />
@@ -1160,61 +1120,60 @@
 </template>
 
 <script setup>
-    import { ElMessage, ElMessageBox } from 'element-plus';
-
     import {
+        ArrowDown,
+        ChatLineSquare,
         Check,
-        View,
-        Star,
-        StarFilled,
-        Close,
-        Message,
-        MoreFilled,
-        Refresh,
-        Share,
-        Tickets,
-        Delete,
         CircleCheck,
         CircleClose,
-        Edit,
-        CopyDocument,
-        Download,
-        Operation,
-        Loading,
-        Warning,
-        ArrowDown,
+        Close,
         CollectionTag,
-        ChatLineSquare
+        CopyDocument,
+        Delete,
+        Download,
+        Edit,
+        Loading,
+        Message,
+        MoreFilled,
+        Operation,
+        Refresh,
+        Share,
+        Star,
+        StarFilled,
+        Tickets,
+        View,
+        Warning
     } from '@element-plus/icons-vue';
-
-    import { storeToRefs } from 'pinia';
     import { nextTick, reactive, ref, watch } from 'vue';
+    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import * as workerTimers from 'worker-timers';
-    import { groupRequest } from '../../../api';
-    import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
+
     import {
         buildTreeData,
         copyToClipboard,
+        debounce,
         downloadAndSaveJson,
+        formatDateFilter,
         getFaviconUrl,
-        hasGroupPermission,
         hasGroupModerationPermission,
+        hasGroupPermission,
         languageClass,
         openExternalLink,
         refreshInstancePlayerCount,
         removeFromArray,
         userImage,
-        userStatusClass,
-        formatDateFilter,
-        textToHex,
-        debounce
+        userStatusClass
     } from '../../../shared/utils';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useGalleryStore, useGroupStore, useLocationStore, useUserStore } from '../../../stores';
-    import InviteGroupDialog from '../InviteGroupDialog.vue';
+    import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
+    import { groupRequest } from '../../../api';
+
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
     import PreviousInstancesGroupDialog from '../PreviousInstancesDialog/PreviousInstancesGroupDialog.vue';
+
+    import * as workerTimers from 'worker-timers';
 
     const { t } = useI18n();
 

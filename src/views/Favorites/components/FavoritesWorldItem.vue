@@ -12,18 +12,15 @@
                     </span>
                     <span v-else class="extra">{{ localFavFakeRef.authorName }}</span>
                 </div>
-                <template v-if="editFavoritesMode">
-                    <el-dropdown trigger="click" size="small" style="margin-left: 5px">
+                <div class="editing">
+                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px">
                         <div>
-                            <el-tooltip
-                                placement="left"
-                                :content="
-                                    t(localFavFakeRef ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')
-                                ">
-                                <el-button type="default" :icon="Back" size="small" circle></el-button>
-                            </el-tooltip>
+                            <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </div>
                         <template #dropdown>
+                            <span style="font-weight: bold; display: block; text-align: center">
+                                {{ t(tooltipContent) }}
+                            </span>
                             <el-dropdown-menu>
                                 <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
                                     <el-dropdown-item
@@ -40,8 +37,8 @@
                     <el-button v-if="!isLocalFavorite" type="text" size="small" @click.stop style="margin-left: 5px">
                         <el-checkbox v-model="isSelected"></el-checkbox>
                     </el-button>
-                </template>
-                <template v-else>
+                </div>
+                <div class="default">
                     <el-tooltip
                         v-if="!isLocalFavorite && favorite.deleted"
                         placement="left"
@@ -89,7 +86,7 @@
                             type="default"
                             @click.stop="showFavoriteDialog('world', favorite.id)"></el-button>
                     </el-tooltip>
-                </template>
+                </div>
                 <el-tooltip v-if="isLocalFavorite" placement="right" :content="t('view.favorite.unfavorite_tooltip')">
                     <el-button
                         v-if="shiftHeld"
@@ -131,18 +128,18 @@
 </template>
 
 <script setup>
+    import { Back, Close, Message, Star, Warning } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
-    import { Warning, Back, Message, Close, Star } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest } from '../../../api';
+
     import { useFavoriteStore, useInviteStore, useUiStore } from '../../../stores';
+    import { favoriteRequest } from '../../../api';
 
     const props = defineProps({
         group: [Object, String],
         favorite: Object,
-        editFavoritesMode: Boolean,
         isLocalFavorite: { type: Boolean, default: false }
     });
 
@@ -160,6 +157,9 @@
     });
 
     const localFavFakeRef = computed(() => (props.isLocalFavorite ? props.favorite : props.favorite.ref));
+    const tooltipContent = computed(() =>
+        t(props.isLocalFavorite ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')
+    );
 
     const smallThumbnail = computed(() => {
         const url = localFavFakeRef.value.thumbnailImageUrl.replace('256', '128');

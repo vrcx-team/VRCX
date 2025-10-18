@@ -108,13 +108,16 @@
                         </el-tooltip>
                     </div>
                 </template>
-                <div v-if="group.count" class="x-friend-list" style="margin-top: 10px">
+                <div
+                    v-if="group.count"
+                    class="x-friend-list"
+                    :class="{ 'is-editing': editFavoritesMode }"
+                    style="margin-top: 10px">
                     <FavoritesWorldItem
                         v-for="favorite in groupedByGroupKeyFavoriteWorlds[group.key]"
                         :key="favorite.id"
                         :group="group"
                         :favorite="favorite"
-                        :edit-favorites-mode="editFavoritesMode"
                         @click="showWorldDialog(favorite.id)"
                         @handle-select="favorite.$selected = $event" />
                 </div>
@@ -172,14 +175,17 @@
                             @click.stop="promptLocalWorldFavoriteGroupDelete(group)" />
                     </el-tooltip>
                 </template>
-                <div v-if="localWorldFavorites[group].length" class="x-friend-list" style="margin-top: 10px">
+                <div
+                    v-if="localWorldFavorites[group].length"
+                    class="x-friend-list"
+                    :class="{ 'is-editing': editFavoritesMode }"
+                    style="margin-top: 10px">
                     <FavoritesWorldItem
                         v-for="favorite in localWorldFavorites[group]"
                         :key="favorite.id"
                         is-local-favorite
                         :group="group"
                         :favorite="favorite"
-                        :edit-favorites-mode="editFavoritesMode"
                         @click="showWorldDialog(favorite.id)"
                         @remove-local-world-favorite="removeLocalWorldFavorite" />
                 </div>
@@ -202,15 +208,17 @@
 </template>
 
 <script setup>
-    import { View, Edit, Delete, Loading } from '@element-plus/icons-vue';
+    import { Delete, Edit, Loading, View } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
     import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest } from '../../../api';
+
     import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../../stores';
-    import WorldExportDialog from '../dialogs/WorldExportDialog.vue';
+    import { favoriteRequest } from '../../../api';
+
     import FavoritesWorldItem from './FavoritesWorldItem.vue';
+    import WorldExportDialog from '../dialogs/WorldExportDialog.vue';
 
     defineProps({
         editFavoritesMode: {
@@ -440,10 +448,16 @@
     function refreshLocalWorldFavorite() {
         emit('refresh-local-world-favorite');
     }
-
-    function saveSortFavoritesOption() {
-        emit('save-sort-favorites-option');
-    }
 </script>
 
-<style scoped></style>
+<style scoped>
+    .x-friend-list :deep(.editing) {
+        display: none;
+    }
+    .x-friend-list.is-editing :deep(.editing) {
+        display: block;
+    }
+    .x-friend-list.is-editing :deep(.default) {
+        display: none;
+    }
+</style>

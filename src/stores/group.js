@@ -1,26 +1,29 @@
-import { defineStore } from 'pinia';
-import { computed, reactive, watch, nextTick } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import * as workerTimers from 'worker-timers';
+import { defineStore } from 'pinia';
+
 import {
     groupRequest,
     instanceRequest,
     userRequest,
     worldRequest
 } from '../api';
-import configRepository from '../service/config';
-import { watchState } from '../service/watchState';
+import {
+    convertFileUrlToImageUrl,
+    hasGroupPermission,
+    replaceBioSymbols
+} from '../shared/utils';
 import { database } from '../service/database.js';
 import { groupDialogFilterOptions } from '../shared/constants/';
-import {
-    replaceBioSymbols,
-    convertFileUrlToImageUrl,
-    hasGroupPermission
-} from '../shared/utils';
 import { useGameStore } from './game';
 import { useInstanceStore } from './instance';
-import { useUserStore } from './user';
 import { useNotificationStore } from './notification';
+import { useUserStore } from './user';
+import { watchState } from '../service/watchState';
+
+import configRepository from '../service/config';
+
+import * as workerTimers from 'worker-timers';
 
 export const useGroupStore = defineStore('Group', () => {
     const instanceStore = useInstanceStore();
@@ -28,138 +31,87 @@ export const useGroupStore = defineStore('Group', () => {
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
 
-    const state = reactive({
-        groupDialog: {
-            visible: false,
-            loading: false,
-            isGetGroupDialogGroupLoading: false,
-            treeData: [],
-            id: '',
-            inGroup: false,
-            ownerDisplayName: '',
-            ref: {},
-            announcement: {},
-            posts: [],
-            postsFiltered: [],
-            members: [],
-            memberSearch: '',
-            memberSearchResults: [],
-            instances: [],
-            memberRoles: [],
-            lastVisit: '',
-            memberFilter: {
-                name: 'dialog.group.members.filters.everyone',
-                id: null
-            },
-            memberSortOrder: {
-                name: 'dialog.group.members.sorting.joined_at_desc',
-                value: 'joinedAt:desc'
-            },
-            postsSearch: '',
-            galleries: {}
-        },
-        currentUserGroups: new Map(),
-        inviteGroupDialog: {
-            visible: false,
-            loading: false,
-            groupId: '',
-            groupName: '',
-            userId: '',
-            userIds: [],
-            userObject: {
-                id: '',
-                displayName: '',
-                $userColour: ''
-            }
-        },
-        moderateGroupDialog: {
-            visible: false,
-            groupId: '',
-            groupName: '',
-            userId: '',
-            userObject: {}
-        },
-        groupMemberModeration: {
-            visible: false,
-            loading: false,
-            id: '',
-            groupRef: {},
-            auditLogTypes: [],
-            openWithUserId: ''
-        },
-        inGameGroupOrder: [],
-        groupInstances: [],
-        currentUserGroupsInit: false
-    });
-
     let cachedGroups = new Map();
 
-    const groupDialog = computed({
-        get: () => state.groupDialog,
-        set: (value) => {
-            state.groupDialog = value;
+    const groupDialog = ref({
+        visible: false,
+        loading: false,
+        isGetGroupDialogGroupLoading: false,
+        treeData: [],
+        id: '',
+        inGroup: false,
+        ownerDisplayName: '',
+        ref: {},
+        announcement: {},
+        posts: [],
+        postsFiltered: [],
+        members: [],
+        memberSearch: '',
+        memberSearchResults: [],
+        instances: [],
+        memberRoles: [],
+        lastVisit: '',
+        memberFilter: {
+            name: 'dialog.group.members.filters.everyone',
+            id: null
+        },
+        memberSortOrder: {
+            name: 'dialog.group.members.sorting.joined_at_desc',
+            value: 'joinedAt:desc'
+        },
+        postsSearch: '',
+        galleries: {}
+    });
+
+    const currentUserGroups = ref(new Map());
+
+    const inviteGroupDialog = ref({
+        visible: false,
+        loading: false,
+        groupId: '',
+        groupName: '',
+        userId: '',
+        userIds: [],
+        userObject: {
+            id: '',
+            displayName: '',
+            $userColour: ''
         }
     });
 
-    const currentUserGroups = computed({
-        get: () => state.currentUserGroups,
-        set: (value) => {
-            state.currentUserGroups = value;
-        }
+    const moderateGroupDialog = ref({
+        visible: false,
+        groupId: '',
+        groupName: '',
+        userId: '',
+        userObject: {}
     });
 
-    const inviteGroupDialog = computed({
-        get: () => state.inviteGroupDialog,
-        set: (value) => {
-            state.inviteGroupDialog = value;
-        }
+    const groupMemberModeration = ref({
+        visible: false,
+        loading: false,
+        id: '',
+        groupRef: {},
+        auditLogTypes: [],
+        openWithUserId: ''
     });
 
-    const moderateGroupDialog = computed({
-        get: () => state.moderateGroupDialog,
-        set: (value) => {
-            state.moderateGroupDialog = value;
-        }
-    });
+    const inGameGroupOrder = ref([]);
 
-    const groupMemberModeration = computed({
-        get: () => state.groupMemberModeration,
-        set: (value) => {
-            state.groupMemberModeration = value;
-        }
-    });
+    const groupInstances = ref([]);
 
-    const inGameGroupOrder = computed({
-        get: () => state.inGameGroupOrder,
-        set: (value) => {
-            state.inGameGroupOrder = value;
-        }
-    });
-
-    const groupInstances = computed({
-        get: () => state.groupInstances,
-        set: (value) => {
-            state.groupInstances = value;
-        }
-    });
-
-    const currentUserGroupsInit = computed({
-        get: () => state.currentUserGroupsInit,
-        set: (value) => {
-            state.currentUserGroupsInit = value;
-        }
-    });
+    const currentUserGroupsInit = ref(false);
 
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            state.groupDialog.visible = false;
-            state.inviteGroupDialog.visible = false;
-            state.moderateGroupDialog.visible = false;
-            state.groupMemberModeration.visible = false;
-            state.currentUserGroupsInit = false;
+            groupDialog.value.visible = false;
+            inviteGroupDialog.value.visible = false;
+            moderateGroupDialog.value.visible = false;
+            groupMemberModeration.value.visible = false;
+            currentUserGroupsInit.value = false;
             cachedGroups.clear();
-            state.currentUserGroups.clear();
+            currentUserGroups.value.clear();
             if (isLoggedIn) {
                 initUserGroups();
             }
@@ -171,7 +123,7 @@ export const useGroupStore = defineStore('Group', () => {
         if (!groupId) {
             return;
         }
-        const D = state.groupDialog;
+        const D = groupDialog.value;
         D.visible = true;
         D.loading = true;
         D.id = groupId;
@@ -251,7 +203,7 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     function groupChange(ref, message) {
-        if (!state.currentUserGroupsInit) {
+        if (!currentUserGroupsInit.value) {
             return;
         }
         // oh the level of cursed for compibility
@@ -279,11 +231,11 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     function saveCurrentUserGroups() {
-        if (!state.currentUserGroupsInit) {
+        if (!currentUserGroupsInit.value) {
             return;
         }
         const groups = [];
-        for (const ref of state.currentUserGroups.values()) {
+        for (const ref of currentUserGroups.value.values()) {
             groups.push({
                 id: ref.id,
                 name: ref.name,
@@ -340,7 +292,7 @@ export const useGroupStore = defineStore('Group', () => {
      * @param {object} ref
      */
     function applyPresenceGroups(ref) {
-        if (!state.currentUserGroupsInit) {
+        if (!currentUserGroupsInit.value) {
             // wait for init before diffing
             return;
         }
@@ -356,11 +308,11 @@ export const useGroupStore = defineStore('Group', () => {
 
         // update group list
         for (const groupId of groups) {
-            if (!state.currentUserGroups.has(groupId)) {
+            if (!currentUserGroups.value.has(groupId)) {
                 onGroupJoined(groupId);
             }
         }
-        for (const groupId of state.currentUserGroups.keys()) {
+        for (const groupId of currentUserGroups.value.keys()) {
             if (!groups.includes(groupId)) {
                 onGroupLeft(groupId);
             }
@@ -372,8 +324,8 @@ export const useGroupStore = defineStore('Group', () => {
      * @param {string} groupId
      */
     function onGroupJoined(groupId) {
-        if (!state.currentUserGroups.has(groupId)) {
-            state.currentUserGroups.set(groupId, {
+        if (!currentUserGroups.value.has(groupId)) {
+            currentUserGroups.value.set(groupId, {
                 id: groupId,
                 name: '',
                 iconUrl: ''
@@ -393,11 +345,11 @@ export const useGroupStore = defineStore('Group', () => {
      * @param {string} groupId
      */
     function onGroupLeft(groupId) {
-        if (state.groupDialog.visible && state.groupDialog.id === groupId) {
+        if (groupDialog.value.visible && groupDialog.value.id === groupId) {
             showGroupDialog(groupId);
         }
-        if (state.currentUserGroups.has(groupId)) {
-            state.currentUserGroups.delete(groupId);
+        if (currentUserGroups.value.has(groupId)) {
+            currentUserGroups.value.delete(groupId);
             groupRequest.getCachedGroup({ groupId }).then((args) => {
                 groupChange(args.ref, 'Left group');
             });
@@ -428,7 +380,7 @@ export const useGroupStore = defineStore('Group', () => {
             posts,
             params
         };
-        const D = state.groupDialog;
+        const D = groupDialog.value;
         if (D.id === args.params.groupId) {
             for (const post of args.json.posts) {
                 post.title = replaceBioSymbols(post.title);
@@ -445,7 +397,7 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     function getGroupDialogGroup(groupId) {
-        const D = state.groupDialog;
+        const D = groupDialog.value;
         D.isGetGroupDialogGroupLoading = false;
         return groupRequest
             .getGroup({ groupId, includeRoles: true })
@@ -471,38 +423,32 @@ export const useGroupStore = defineStore('Group', () => {
                         groupId
                     });
                     D.isGetGroupDialogGroupLoading = true;
-                    if (D.inGroup) {
-                        groupRequest
-                            .getGroupInstances({
-                                groupId
-                            })
-                            .then((args) => {
-                                if (
-                                    state.groupDialog.id === args.params.groupId
-                                ) {
-                                    instanceStore.applyGroupDialogInstances(
-                                        args.json.instances
-                                    );
-                                }
-                                for (const json of args.json.instances) {
-                                    instanceStore.applyInstance(json);
-                                    worldRequest
-                                        .getCachedWorld({
-                                            worldId: json.world.id
-                                        })
-                                        .then((args1) => {
-                                            json.world = args1.ref;
-                                            return args1;
-                                        });
-                                    // get queue size etc
-                                    instanceRequest.getInstance({
-                                        worldId: json.worldId,
-                                        instanceId: json.instanceId
+                    groupRequest
+                        .getGroupInstances({
+                            groupId
+                        })
+                        .then((args) => {
+                            if (groupDialog.value.id === args.params.groupId) {
+                                instanceStore.applyGroupDialogInstances(
+                                    args.json.instances
+                                );
+                            }
+                            for (const json of args.json.instances) {
+                                instanceStore.applyInstance(json);
+                                worldRequest
+                                    .getCachedWorld({
+                                        worldId: json.world.id
+                                    })
+                                    .then((args1) => {
+                                        json.world = args1.ref;
                                     });
-                                }
-                                // });
-                            });
-                    }
+                                // get queue size etc
+                                instanceRequest.getInstance({
+                                    worldId: json.worldId,
+                                    instanceId: json.instanceId
+                                });
+                            }
+                        });
                 }
                 nextTick(() => (D.isGetGroupDialogGroupLoading = false));
                 return args;
@@ -510,7 +456,7 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     async function updateInGameGroupOrder() {
-        state.inGameGroupOrder = [];
+        inGameGroupOrder.value = [];
         try {
             const json = await gameStore.getVRChatRegistryKey(
                 `VRC_GROUP_ORDER_${userStore.currentUser.id}`
@@ -518,15 +464,15 @@ export const useGroupStore = defineStore('Group', () => {
             if (!json) {
                 return;
             }
-            state.inGameGroupOrder = JSON.parse(json);
+            inGameGroupOrder.value = JSON.parse(json);
         } catch (err) {
             console.error(err);
         }
     }
 
     function sortGroupInstancesByInGame(a, b) {
-        const aIndex = state.inGameGroupOrder.indexOf(a?.group?.id);
-        const bIndex = state.inGameGroupOrder.indexOf(b?.group?.id);
+        const aIndex = inGameGroupOrder.value.indexOf(a?.group?.id);
+        const bIndex = inGameGroupOrder.value.indexOf(b?.group?.id);
         if (aIndex === -1 && bIndex === -1) {
             return 0;
         }
@@ -547,10 +493,10 @@ export const useGroupStore = defineStore('Group', () => {
             .then((args) => {
                 const groupId = args.params.groupId;
                 if (
-                    state.groupDialog.visible &&
-                    state.groupDialog.id === groupId
+                    groupDialog.value.visible &&
+                    groupDialog.value.id === groupId
                 ) {
-                    state.groupDialog.inGroup = false;
+                    groupDialog.value.inGroup = false;
                     getGroupDialogGroup(groupId);
                 }
                 if (
@@ -580,7 +526,7 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     function updateGroupPostSearch() {
-        const D = state.groupDialog;
+        const D = groupDialog.value;
         const search = D.postsSearch.toLowerCase();
         D.postsFiltered = D.posts.filter((post) => {
             if (search === '') {
@@ -687,7 +633,7 @@ export const useGroupStore = defineStore('Group', () => {
             };
             cachedGroups.set(ref.id, ref);
         } else {
-            if (state.currentUserGroups.has(ref.id)) {
+            if (currentUserGroups.value.has(ref.id)) {
                 // compare group props
                 if (
                     ref.ownerId &&
@@ -749,12 +695,12 @@ export const useGroupStore = defineStore('Group', () => {
         ref.$url = `https://vrc.group/${ref.shortCode}.${ref.discriminator}`;
         applyGroupLanguage(ref);
 
-        const currentUserGroupRef = state.currentUserGroups.get(ref.id);
+        const currentUserGroupRef = currentUserGroups.value.get(ref.id);
         if (currentUserGroupRef) {
-            state.currentUserGroups.set(ref.id, ref);
+            currentUserGroups.value.set(ref.id, ref);
         }
 
-        const D = state.groupDialog;
+        const D = groupDialog.value;
         if (D.visible && D.id === ref.id) {
             D.inGroup = ref.membershipStatus === 'member';
             D.ref = ref;
@@ -799,11 +745,11 @@ export const useGroupStore = defineStore('Group', () => {
             json.$memberId = json.id;
             json.id = json.groupId;
             if (
-                state.groupDialog.visible &&
-                state.groupDialog.id === json.groupId
+                groupDialog.value.visible &&
+                groupDialog.value.id === json.groupId
             ) {
-                state.groupDialog.ref.myMember.visibility = json.visibility;
-                state.groupDialog.ref.myMember.isSubscribedToAnnouncements =
+                groupDialog.value.ref.myMember.visibility = json.visibility;
+                groupDialog.value.ref.myMember.isSubscribedToAnnouncements =
                     json.isSubscribedToAnnouncements;
             }
             if (
@@ -820,17 +766,17 @@ export const useGroupStore = defineStore('Group', () => {
             });
         }
         let member;
-        if (state.groupDialog.id === args.json.groupId) {
+        if (groupDialog.value.id === args.json.groupId) {
             let i;
-            for (i = 0; i < state.groupDialog.members.length; ++i) {
-                member = state.groupDialog.members[i];
+            for (i = 0; i < groupDialog.value.members.length; ++i) {
+                member = groupDialog.value.members[i];
                 if (member.userId === args.json.userId) {
                     Object.assign(member, applyGroupMember(args.json));
                     break;
                 }
             }
-            for (i = 0; i < state.groupDialog.memberSearchResults.length; ++i) {
-                member = state.groupDialog.memberSearchResults[i];
+            for (i = 0; i < groupDialog.value.memberSearchResults.length; ++i) {
+                member = groupDialog.value.memberSearchResults[i];
                 if (member.userId === args.json.userId) {
                     Object.assign(member, applyGroupMember(args.json));
                     break;
@@ -857,7 +803,7 @@ export const useGroupStore = defineStore('Group', () => {
      * @param {object} args
      */
     function handleGroupPost(args) {
-        const D = state.groupDialog;
+        const D = groupDialog.value;
         if (D.id !== args.params.groupId) {
             return;
         }
@@ -890,7 +836,7 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     async function handleGroupUserInstances(args) {
-        state.groupInstances = [];
+        groupInstances.value = [];
         for (const json of args.json.instances) {
             if (args.json.fetchedAt) {
                 // tack on fetchedAt
@@ -907,7 +853,7 @@ export const useGroupStore = defineStore('Group', () => {
                 }
                 return;
             }
-            state.groupInstances.push({
+            groupInstances.value.push({
                 group: groupRef,
                 instance: instanceRef
             });
@@ -982,7 +928,7 @@ export const useGroupStore = defineStore('Group', () => {
             )
         );
         cachedGroups.clear();
-        state.currentUserGroups.clear();
+        currentUserGroups.value.clear();
         for (const group of savedGroups) {
             const json = {
                 id: group.id,
@@ -995,7 +941,7 @@ export const useGroupStore = defineStore('Group', () => {
                 }
             };
             const ref = applyGroup(json);
-            state.currentUserGroups.set(group.id, ref);
+            currentUserGroups.value.set(group.id, ref);
         }
 
         if (groups) {
@@ -1016,7 +962,7 @@ export const useGroupStore = defineStore('Group', () => {
                         includeRoles: true
                     });
                     const ref = applyGroup(args.json);
-                    state.currentUserGroups.set(groupId, ref);
+                    currentUserGroups.value.set(groupId, ref);
                 } catch (err) {
                     console.error(err);
                 }
@@ -1025,7 +971,7 @@ export const useGroupStore = defineStore('Group', () => {
             await Promise.allSettled(promises);
         }
 
-        state.currentUserGroupsInit = true;
+        currentUserGroupsInit.value = true;
         getCurrentUserGroups();
     }
 
@@ -1034,11 +980,11 @@ export const useGroupStore = defineStore('Group', () => {
             userId: userStore.currentUser.id
         });
         handleGroupList(args);
-        state.currentUserGroups.clear();
+        currentUserGroups.value.clear();
         for (const group of args.json) {
             const ref = applyGroup(group);
-            if (!state.currentUserGroups.has(group.id)) {
-                state.currentUserGroups.set(group.id, ref);
+            if (!currentUserGroups.value.has(group.id)) {
+                currentUserGroups.value.set(group.id, ref);
             }
         }
         const args1 = await groupRequest.getGroupPermissions({
@@ -1068,14 +1014,14 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     function showModerateGroupDialog(userId) {
-        const D = state.moderateGroupDialog;
+        const D = moderateGroupDialog.value;
         D.userId = userId;
         D.userObject = {};
         D.visible = true;
     }
 
     function showGroupMemberModerationDialog(groupId, userId = '') {
-        const D = state.groupMemberModeration;
+        const D = groupMemberModeration.value;
         D.id = groupId;
         D.openWithUserId = userId;
 
@@ -1096,8 +1042,6 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     return {
-        state,
-
         groupDialog,
         currentUserGroups,
         inviteGroupDialog,

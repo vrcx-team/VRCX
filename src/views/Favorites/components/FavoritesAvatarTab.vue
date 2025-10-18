@@ -82,13 +82,16 @@
                             @click.stop="clearFavoriteGroup(group)" />
                     </el-tooltip>
                 </template>
-                <div v-if="group.count" class="x-friend-list" style="margin-top: 10px">
+                <div
+                    v-if="group.count"
+                    class="x-friend-list"
+                    :class="{ 'is-editing': editFavoritesMode }"
+                    style="margin-top: 10px">
                     <FavoritesAvatarItem
                         v-for="favorite in groupedByGroupKeyFavoriteAvatars[group.key]"
                         :key="favorite.id"
                         :favorite="favorite"
                         :group="group"
-                        :edit-favorites-mode="editFavoritesMode"
                         style="display: inline-block; width: 300px; margin-right: 15px"
                         @handle-select="favorite.$selected = $event"
                         @click="showAvatarDialog(favorite.id)" />
@@ -144,7 +147,7 @@
             </el-collapse-item>
             <span style="display: block; margin-top: 20px">{{ t('view.favorite.avatars.local_favorites') }}</span>
             <br />
-            <el-button size="small" :disabled="!isLocalUserVrcplusSupporter" @click="promptNewLocalAvatarFavoriteGroup">
+            <el-button size="small" :disabled="!isLocalUserVrcPlusSupporter" @click="promptNewLocalAvatarFavoriteGroup">
                 {{ t('view.favorite.avatars.new_group') }}
             </el-button>
             <el-button
@@ -181,7 +184,11 @@
                             @click.stop="promptLocalAvatarFavoriteGroupDelete(group)"></el-button>
                     </el-tooltip>
                 </template>
-                <div v-if="localAvatarFavorites[group].length" class="x-friend-list" :style="{ marginTop: '10px' }">
+                <div
+                    v-if="localAvatarFavorites[group].length"
+                    class="x-friend-list"
+                    :class="{ 'is-editing': editFavoritesMode }"
+                    :style="{ marginTop: '10px' }">
                     <FavoritesAvatarItem
                         v-for="favorite in localAvatarFavorites[group]"
                         :key="favorite.id"
@@ -189,7 +196,6 @@
                         :style="{ display: 'inline-block', width: '300px', marginRight: '15px' }"
                         :favorite="favorite"
                         :group="group"
-                        :edit-favorites-mode="editFavoritesMode"
                         @handle-select="favorite.$selected = $event"
                         @click="showAvatarDialog(favorite.id)" />
                 </div>
@@ -212,14 +218,15 @@
 </template>
 
 <script setup>
-    import { Loading, Edit, Delete } from '@element-plus/icons-vue';
-
+    import { Delete, Edit, Loading } from '@element-plus/icons-vue';
+    import { computed, ref } from 'vue';
     import { ElMessageBox } from 'element-plus';
-    import { ref, computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest } from '../../../api';
+
     import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useUserStore } from '../../../stores';
+    import { favoriteRequest } from '../../../api';
+
     import AvatarExportDialog from '../dialogs/AvatarExportDialog.vue';
     import FavoritesAvatarItem from './FavoritesAvatarItem.vue';
     import FavoritesAvatarLocalHistoryItem from './FavoritesAvatarLocalHistoryItem.vue';
@@ -246,12 +253,11 @@
         getLocalAvatarFavoriteGroupLength,
         deleteLocalAvatarFavoriteGroup,
         renameLocalAvatarFavoriteGroup,
-        newLocalAvatarFavoriteGroup,
-        saveSortFavoritesOption
+        newLocalAvatarFavoriteGroup
     } = useFavoriteStore();
     const { avatarHistoryArray } = storeToRefs(useAvatarStore());
     const { promptClearAvatarHistory, showAvatarDialog } = useAvatarStore();
-    const { currentUser } = storeToRefs(useUserStore());
+    const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { t } = useI18n();
 
     const avatarExportDialogVisible = ref(false);
@@ -280,8 +286,6 @@
 
         return groupedByGroupKeyFavoriteAvatars;
     });
-
-    const isLocalUserVrcplusSupporter = computed(() => currentUser.value.$isVRCPlus);
 
     function searchAvatarFavorites() {
         let ref = null;
@@ -419,3 +423,15 @@
             .catch(() => {});
     }
 </script>
+
+<style scoped>
+    .x-friend-list :deep(.editing) {
+        display: none;
+    }
+    .x-friend-list.is-editing :deep(.editing) {
+        display: block;
+    }
+    .x-friend-list.is-editing :deep(.default) {
+        display: none;
+    }
+</style>
