@@ -1368,7 +1368,7 @@
             "json": "JSON"
         },
         "export_own_avatars": {
-            "header": "导出自己创建的模型 ID 列表"
+            "header": "导出自己创建的模型的 ID"
         },
         "discord_names": {
             "header": "Discord 名称",
