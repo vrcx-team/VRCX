@@ -184,7 +184,6 @@
                 message: 'Group post edited',
                 type: 'success'
             });
-            return args;
         });
         D.visible = false;
     }
@@ -210,12 +209,11 @@
             params.imageId = gallerySelectDialog.value.selectedFileId;
         }
         groupRequest.createGroupPost(params).then((args) => {
-            handleGroupPost();
+            handleGroupPost(args);
             ElMessage({
                 message: 'Group post created',
                 type: 'success'
             });
-            return args;
         });
         D.visible = false;
     }

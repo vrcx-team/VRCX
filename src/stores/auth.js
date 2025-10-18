@@ -119,13 +119,22 @@ export const useAuthStore = defineStore('Auth', () => {
         loginForm.value.lastUserLoggedIn = lastUserLoggedIn;
         try {
             const credentials = JSON.parse(savedCredentials || '{}');
-            // fix goofy typo
             let edited = false;
             for (const userId in credentials) {
+                // fix goofy typo
                 if (credentials[userId].loginParmas) {
                     credentials[userId].loginParams =
                         credentials[userId].loginParmas;
                     delete credentials[userId].loginParmas;
+                    edited = true;
+                }
+                // fix missing fields
+                if (!credentials[userId].loginParams.endpoint) {
+                    credentials[userId].loginParams.endpoint = '';
+                    edited = true;
+                }
+                if (!credentials[userId].loginParams.websocket) {
+                    credentials[userId].loginParams.websocket = '';
                     edited = true;
                 }
             }

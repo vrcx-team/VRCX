@@ -44,7 +44,8 @@ export async function initSentry(app) {
             beforeSend(event) {
                 if (
                     event.request?.status !== 404 &&
-                    event.request?.status !== 403
+                    event.request?.status !== 403 &&
+                    event.request?.status !== -1
                 ) {
                     return event;
                 }

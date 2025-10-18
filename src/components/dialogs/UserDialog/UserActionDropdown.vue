@@ -90,6 +90,12 @@
                                     >{{ t('dialog.user.actions.invite_with_message') }}</el-dropdown-item
                                 >
                             </template>
+                            <el-dropdown-item
+                                :disabled="!currentUser.isBoopingEnabled"
+                                :icon="Pointer"
+                                command="Send Boop"
+                                >{{ t('dialog.user.actions.send_boop') }}</el-dropdown-item
+                            >
                         </template>
                         <template v-else-if="userDialog.incomingRequest">
                             <el-dropdown-item :icon="Check" command="Accept Friend Request">{{
@@ -108,12 +114,6 @@
                         <el-dropdown-item v-else :icon="Plus" command="Send Friend Request">{{
                             t('dialog.user.actions.send_friend_request')
                         }}</el-dropdown-item>
-                        <el-dropdown-item
-                            :disabled="!currentUser.isBoopingEnabled"
-                            :icon="Pointer"
-                            command="Send Boop"
-                            >{{ t('dialog.user.actions.send_boop') }}</el-dropdown-item
-                        >
                         <el-dropdown-item :icon="Message" command="Invite To Group">{{
                             t('dialog.user.actions.invite_to_group')
                         }}</el-dropdown-item>

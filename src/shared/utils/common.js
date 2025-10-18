@@ -431,6 +431,9 @@ async function getBundleDateSize(ref) {
     const bundleJson = [];
     for (let i = ref.unityPackages.length - 1; i > -1; i--) {
         const unityPackage = ref.unityPackages[i];
+        if (!unityPackage) {
+            continue;
+        }
         if (
             unityPackage.variant &&
             unityPackage.variant !== 'standard' &&
