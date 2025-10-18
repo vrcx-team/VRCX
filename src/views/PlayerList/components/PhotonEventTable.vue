@@ -1,12 +1,12 @@
 <template>
     <div class="photon-event-table">
-        <div style="position: absolute; width: 600px; margin-left: 215px; z-index: 1">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap">
             <el-select
                 v-model="photonEventTableTypeFilter"
                 multiple
                 clearable
                 collapse-tags
-                style="flex: 1; width: 220px"
+                style="width: 220px"
                 :placeholder="t('view.player_list.photon.filter_placeholder')"
                 @change="photonEventTableFilterChange">
                 <el-option
@@ -19,19 +19,17 @@
                 v-model="photonEventTableFilter"
                 :placeholder="t('view.player_list.photon.search_placeholder')"
                 clearable
-                style="width: 150px; margin-left: 10px"
+                style="width: 150px"
                 @input="photonEventTableFilterChange"></el-input>
-            <el-button style="margin-left: 10px" @click="emitShowChatboxBlacklist">{{
+            <el-button @click="emitShowChatboxBlacklist">{{
                 t('view.player_list.photon.chatbox_blacklist')
             }}</el-button>
             <el-tooltip placement="bottom" :content="t('view.player_list.photon.status_tooltip')">
                 <div
                     style="
-                        display: inline-block;
-                        margin-left: 15px;
+                        display: inline-flex;
+                        align-items: center;
                         font-size: 14px;
-                        vertical-align: text-top;
-                        margin-top: 1px;
                     ">
                     <span v-if="ipcEnabled && !photonEventIcon">🟢</span>
                     <span v-else-if="ipcEnabled">⚪</span>

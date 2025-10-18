@@ -16,7 +16,7 @@ import {
 import { instanceRequest, userRequest } from '../api';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
-import { photonEventType } from '../shared/constants/photon';
+import { photonEmojis, photonEventType } from '../shared/constants/photon';
 import { useAvatarStore } from './avatar';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
@@ -136,6 +136,17 @@ export const usePhotonStore = defineStore('Photon', () => {
         }
     });
     const chatboxUserBlacklist = ref(new Map());
+    // Keyword-based chatbox blacklist (array of strings)
+    const chatboxBlacklist = ref([
+        'NP: ',
+        'Now Playing',
+        'Now playing',
+        "▶️ '",
+        '( ▶️ ',
+        "' - '",
+        "' by '",
+        '[Spotify] '
+    ]);
     const photonEventTableFilter = ref('');
     const moderationAgainstTable = ref([]);
     const photonEventTableTypeFilter = ref([]);
@@ -150,7 +161,8 @@ export const usePhotonStore = defineStore('Photon', () => {
             photonLobbyTimeoutThresholdConfig,
             photonOverlayMessageTimeoutConfig,
             photonEventTableTypeFilterConfig,
-            chatboxUserBlacklistConfig
+            chatboxUserBlacklistConfig,
+            chatboxKeywordBlacklistConfig
         ] = await Promise.all([
             configRepository.getBool('VRCX_PhotonEventOverlay', false),
             configRepository.getString(
@@ -172,7 +184,8 @@ export const usePhotonStore = defineStore('Photon', () => {
                 (6000).toString()
             ),
             configRepository.getString('VRCX_photonEventTypeFilter', '[]'),
-            configRepository.getString('VRCX_chatboxUserBlacklist')
+            configRepository.getString('VRCX_chatboxUserBlacklist'),
+            configRepository.getString('VRCX_chatboxBlacklist')
         ]);
 
         photonEventOverlay.value = photonEventOverlayConfig;
@@ -198,6 +211,18 @@ export const usePhotonStore = defineStore('Photon', () => {
         chatboxUserBlacklist.value = new Map(
             Object.entries(JSON.parse(chatboxUserBlacklistConfig || '{}'))
         );
+
+        // Initialize keyword blacklist
+        try {
+            if (chatboxKeywordBlacklistConfig) {
+                const arr = JSON.parse(chatboxKeywordBlacklistConfig);
+                if (Array.isArray(arr)) {
+                    chatboxBlacklist.value = arr;
+                }
+            }
+        } catch (err) {
+            // ignore parse error and keep defaults
+        }
     }
 
     initPhotonStates();
@@ -348,10 +373,12 @@ export const usePhotonStore = defineStore('Photon', () => {
     }
 
     function checkChatboxBlacklist(msg) {
-        for (let i = 0; i < this.chatboxBlacklist.length; ++i) {
-            if (msg.includes(this.chatboxBlacklist[i])) {
-                return true;
-            }
+        if (typeof msg !== 'string') return false;
+        const list = chatboxBlacklist.value || [];
+        for (let i = 0; i < list.length; ++i) {
+            const kw = list[i];
+            if (!kw) continue;
+            if (msg.includes(kw)) return true;
         }
         return false;
     }
@@ -360,6 +387,13 @@ export const usePhotonStore = defineStore('Photon', () => {
         await configRepository.setString(
             'VRCX_chatboxUserBlacklist',
             JSON.stringify(Object.fromEntries(chatboxUserBlacklist.value))
+        );
+    }
+
+    async function saveChatboxBlacklist() {
+        await configRepository.setString(
+            'VRCX_chatboxBlacklist',
+            JSON.stringify(chatboxBlacklist.value)
         );
     }
 
@@ -1028,66 +1062,66 @@ export const usePhotonStore = defineStore('Photon', () => {
             case 70:
                 // Portal Spawn
                 if (data.Parameters[245][0] === 20) {
-                    var portalId = data.Parameters[245][1];
-                    var userId = data.Parameters[245][2];
-                    var shortName = data.Parameters[245][5];
-                    var worldName = data.Parameters[245][8].name;
+                    const portalId = data.Parameters[245][1];
+                    const portalUserId = data.Parameters[245][2];
+                    const shortName = data.Parameters[245][5];
+                    const portalWorldName = data.Parameters[245][8].name;
                     addPhotonPortalSpawn(
                         gameLogDate,
-                        userId,
+                        portalUserId,
                         shortName,
-                        worldName
+                        portalWorldName
                     );
                     photonLobbyActivePortals.value.set(portalId, {
-                        userId,
+                        userId: portalUserId,
                         shortName,
-                        worldName,
+                        worldName: portalWorldName,
                         created_at: Date.parse(gameLogDate),
                         playerCount: 0,
                         pendingLeave: 0
                     });
                 } else if (data.Parameters[245][0] === 21) {
-                    var portalId = data.Parameters[245][1];
-                    var userId = data.Parameters[245][2];
-                    var playerCount = data.Parameters[245][3];
-                    var shortName = data.Parameters[245][5];
-                    var worldName = '';
+                    const portalId = data.Parameters[245][1];
+                    const portalUserId = data.Parameters[245][2];
+                    const playerCount = data.Parameters[245][3];
+                    const shortName = data.Parameters[245][5];
+                    const portalWorldName = '';
                     addPhotonPortalSpawn(
                         gameLogDate,
-                        userId,
+                        portalUserId,
                         shortName,
-                        worldName
+                        portalWorldName
                     );
                     photonLobbyActivePortals.value.set(portalId, {
-                        userId,
+                        userId: portalUserId,
                         shortName,
-                        worldName,
+                        worldName: portalWorldName,
                         created_at: Date.parse(gameLogDate),
                         playerCount: 0,
                         pendingLeave: 0
                     });
                 } else if (data.Parameters[245][0] === 22) {
-                    var portalId = data.Parameters[245][1];
-                    var text = 'DeletedPortal';
-                    var ref = photonLobbyActivePortals.value.get(portalId);
+                    const portalId = data.Parameters[245][1];
+                    let portalText = 'DeletedPortal';
+                    const ref = photonLobbyActivePortals.value.get(portalId);
                     if (typeof ref !== 'undefined') {
-                        var worldName = ref.worldName;
-                        var playerCount = ref.playerCount;
+                        const portalWorldName = ref.worldName;
+                        const playerCount = ref.playerCount;
                         const time = timeToText(
                             Date.parse(gameLogDate) - ref.created_at
                         );
-                        text = `DeletedPortal after ${time} with ${playerCount} players to "${worldName}"`;
+                        portalText = `DeletedPortal after ${time} with ${playerCount} players to "${portalWorldName}"`;
                     }
                     addEntryPhotonEvent({
-                        text,
+                        text: portalText,
                         type: 'DeletedPortal',
                         created_at: gameLogDate
                     });
                     photonLobbyActivePortals.value.delete(portalId);
                 } else if (data.Parameters[245][0] === 23) {
-                    var portalId = data.Parameters[245][1];
-                    var playerCount = data.Parameters[245][3];
-                    var ref = photonLobbyActivePortals.value.get(portalId);
+                    const portalId = data.Parameters[245][1];
+                    const playerCount = data.Parameters[245][3];
+                    const ref = photonLobbyActivePortals.value.get(portalId);
                     if (typeof ref !== 'undefined') {
                         ref.pendingLeave++;
                         ref.playerCount = playerCount;
@@ -1749,6 +1783,7 @@ export const usePhotonStore = defineStore('Photon', () => {
         photonEventTable,
         photonEventTablePrevious,
         chatboxUserBlacklist,
+    chatboxBlacklist,
         photonEventTableFilter,
         photonLobby,
         photonLobbyMaster,
@@ -1777,6 +1812,7 @@ export const usePhotonStore = defineStore('Photon', () => {
         saveEventOverlay,
         checkChatboxBlacklist,
         saveChatboxUserBlacklist,
+    saveChatboxBlacklist,
         photonEventTableFilterChange,
         showUserFromPhotonId,
         promptPhotonOverlayMessageTimeout,
