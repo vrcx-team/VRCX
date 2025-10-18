@@ -1544,7 +1544,7 @@
             "sticker": "贴纸",
             "drone_skin": "无人机皮肤",
             "emoji": "Emoji（表情）",
-            "redeem": "Redeem"
+            "redeem": "兑换码兑换"
         },
         "change_content_image": {
             "avatar": "更改模型封面",
@@ -2010,7 +2010,7 @@
             "restart": "保存并重启"
         },
         "redeem": {
-            "header": "兑换码",
+            "header": "兑换码兑换",
             "description": "输入你的兑换码",
             "cancel": "取消",
             "redeem": "兑换",
