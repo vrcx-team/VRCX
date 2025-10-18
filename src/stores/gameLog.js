@@ -597,7 +597,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     console.error('Missing userId:', gameLog.displayName);
                 } else if (userId === userStore.currentUser.id) {
                     // skip
-                } else if (friendStore.friends.has(userId)) {
+                } else if (
+                    friendStore.friends.has(userId) &&
+                    typeof ref !== 'undefined'
+                ) {
                     locationStore.lastLocation.friendList.set(userId, userMap);
                     if (
                         ref.location !== locationStore.lastLocation.location &&

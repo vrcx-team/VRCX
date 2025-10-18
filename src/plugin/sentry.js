@@ -1,3 +1,5 @@
+import { router } from './router';
+
 import configRepository from '../service/config';
 
 import * as Sentry from '@sentry/vue';
@@ -42,7 +44,8 @@ export async function initSentry(app) {
             beforeSend(event) {
                 if (
                     event.request?.status !== 404 &&
-                    event.request?.status !== 403
+                    event.request?.status !== 403 &&
+                    event.request?.status !== -1
                 ) {
                     return event;
                 }
@@ -52,7 +55,7 @@ export async function initSentry(app) {
                     maskAllText: true,
                     blockAllMedia: true
                 }),
-                Sentry.browserTracingIntegration(),
+                Sentry.browserTracingIntegration({ router }),
                 Sentry.vueIntegration({
                     tracingOptions: {
                         trackComponents: true

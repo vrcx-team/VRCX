@@ -364,7 +364,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
         if (
             userStore.userDialog.visible &&
-            userStore.userDialog.ref.$location.tag === ref.id
+            userStore.userDialog.ref?.$location.tag === ref.id
         ) {
             userStore.applyUserDialogLocation();
         }

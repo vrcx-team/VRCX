@@ -26,14 +26,12 @@ const routes = [
     {
         path: '/friendlist',
         name: 'friendList',
-        component: FriendList,
-        meta: { fullScreen: true }
+        component: FriendList
     },
     {
         path: '/charts',
         name: 'charts',
-        component: Charts,
-        meta: { fullScreen: true }
+        component: Charts
     },
     { path: '/tools', name: 'tools', component: Tools },
     { path: '/profile', name: 'profile', component: Profile },
