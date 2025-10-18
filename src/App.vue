@@ -116,16 +116,15 @@
     import UserDialog from './components/dialogs/UserDialog/UserDialog.vue';
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
     import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
-    import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';
-    import WorldImportDialog from './views/Favorites/dialogs/WorldImportDialog.vue';
+    import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
 
-    import './app.scss';
-
-    const route = useRoute();
-
-    const requiresFullScreen = computed(() => {
-        return route.meta.fullScreen;
-    });
+    import { onMounted, computed, onBeforeMount } from 'vue';
+    import { useI18n } from 'vue-i18n';
+    import { storeToRefs } from 'pinia';
+    import { createGlobalStores, useAppearanceSettingsStore } from './stores';
+    import { watchState } from './service/watchState';
+    import { initNoty } from './plugin/noty';
+    import { drainPreInitQueues } from './service/queueDrainer';
 
     console.log(`isLinux: ${LINUX}`);
 
@@ -162,6 +161,7 @@
 
     if (typeof window !== 'undefined') {
         window.$pinia = store;
+        drainPreInitQueues(store);
     }
 
     onBeforeMount(() => {

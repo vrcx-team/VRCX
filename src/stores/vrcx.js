@@ -489,7 +489,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 if (!photonStore.photonLoggingEnabled) {
                     photonStore.setPhotonLoggingEnabled();
                 }
-                ipcEnabled.value = true;
+                state.ipcEnabled = true;
                 updateLoopStore.ipcTimeout = 60; // 30secs
                 break;
             case 'MsgPing':

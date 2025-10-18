@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
-import { watch } from 'vue';
-
+import { watch, reactive, computed } from 'vue';
+import * as workerTimers from 'worker-timers';
+import { groupRequest } from '../api';
 import { database } from '../service/database';
 import { groupRequest } from '../api';
 import { useAuthStore } from './auth';
@@ -30,7 +31,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     const vrcxUpdaterStore = useVRCXUpdaterStore();
     const groupStore = useGroupStore();
     const vrStore = useVrStore();
-    const state = {
+    const state = reactive({
         nextCurrentUserRefresh: 300,
         nextFriendsRefresh: 3600,
         nextGroupInstanceRefresh: 0,
@@ -42,7 +43,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         nextGetLogCheck: 0,
         nextGameRunningCheck: 0,
         nextDatabaseOptimize: 3600
-    };
+    });
 
     watch(
         () => watchState.isLoggedIn,
@@ -54,13 +55,33 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         { flush: 'sync' }
     );
 
-    const nextGroupInstanceRefresh = state.nextGroupInstanceRefresh;
-
-    const nextCurrentUserRefresh = state.nextCurrentUserRefresh;
-
-    const nextDiscordUpdate = state.nextDiscordUpdate;
-
-    const ipcTimeout = state.ipcTimeout;
+    const nextGroupInstanceRefresh = computed({
+        get: () => state.nextGroupInstanceRefresh,
+        set: (value) => {
+            state.nextGroupInstanceRefresh = value;
+        }
+    });
+    
+    const nextCurrentUserRefresh = computed({
+        get: () => state.nextCurrentUserRefresh,
+        set: (value) => {
+            state.nextCurrentUserRefresh = value;
+        }
+    });
+    
+    const nextDiscordUpdate = computed({
+        get: () => state.nextDiscordUpdate,
+        set: (value) => {
+            state.nextDiscordUpdate = value;
+        }
+    });
+    
+    const ipcTimeout = computed({
+        get: () => state.ipcTimeout,
+        set: (value) => {
+            state.ipcTimeout = value;
+        }
+    });
 
     async function updateLoop() {
         try {
@@ -94,6 +115,9 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                     vrcxStore.tryAutoBackupVrcRegistry();
                 }
                 if (--state.ipcTimeout <= 0) {
+                    if (vrcxStore.ipcEnabled) {
+                        console.log('IPC connection timed out');
+                    }
                     vrcxStore.ipcEnabled = false;
                 }
                 if (

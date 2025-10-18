@@ -392,11 +392,16 @@
                     </el-table-column>
                 </DataTable>
             </div>
+            
+            <PhotonEventTable v-if="photonLoggingEnabled" @show-chatbox-blacklist="showChatboxBlacklistDialog">
+                <template #default>
+                    <div style="margin: 20px 0; border-bottom: 1px solid #e4e7ed;"></div>
+                </template>
+            </PhotonEventTable>
         </div>
         <ChatboxBlacklistDialog
             :chatbox-blacklist-dialog="chatboxBlacklistDialog"
             @delete-chatbox-user-blacklist="deleteChatboxUserBlacklist" />
-        <PhotonEventTable v-if="photonLoggingEnabled" @show-chatbox-blacklist="showChatboxBlacklistDialog" />
     </div>
 </template>
 
@@ -470,14 +475,20 @@
         }
     }
 
+
     async function deleteChatboxUserBlacklist(userId) {
         chatboxUserBlacklist.value.delete(userId);
+        // Update chatboxBlacklist array to reflect current Map keys
+        photonStore.chatboxBlacklist = Array.from(chatboxUserBlacklist.value.keys());
         await saveChatboxUserBlacklist();
         getCurrentInstanceUserList();
     }
 
+
     async function addChatboxUserBlacklist(user) {
         chatboxUserBlacklist.value.set(user.id, user.displayName);
+        // Update chatboxBlacklist array to reflect current Map keys
+        photonStore.chatboxBlacklist = Array.from(chatboxUserBlacklist.value.keys());
         await saveChatboxUserBlacklist();
         getCurrentInstanceUserList();
     }

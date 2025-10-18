@@ -26,7 +26,7 @@ namespace VRCX
         private readonly MemoryStream memoryStream;
         private readonly byte[] packetBuffer = new byte[1024 * 1024];
         private readonly Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
-        private string _currentPacket;
+        private string _currentPacket = string.Empty;
 
         public IPCClient(NamedPipeServerStream ipcServer)
         {
@@ -79,22 +79,36 @@ namespace VRCX
 
                 _currentPacket += Encoding.UTF8.GetString(_recvBuffer, 0, bytesRead);
 
-                if (_currentPacket[_currentPacket.Length - 1] == (char)0x00)
+                int delimiterIdx;
+                while ((delimiterIdx = _currentPacket.IndexOf((char)0x00)) != -1)
                 {
-                    var packets = _currentPacket.Split((char)0x00);
+                    var packet = _currentPacket.Substring(0, delimiterIdx);
+                    _currentPacket = _currentPacket.Substring(delimiterIdx + 1);
 
-                    foreach (var packet in packets)
-                    {
-                        if (string.IsNullOrEmpty(packet))
-                            continue;
+                    if (string.IsNullOrEmpty(packet))
+                        continue;
 
 #if !LINUX
-                        if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-                            MainForm.Instance.Browser.ExecuteScriptAsync("$pinia.vrcx.ipcEvent", packet);
+                    var browser = MainForm.Instance?.Browser;
+                    if (browser == null || browser.IsLoading || !browser.CanExecuteJavascriptInMainFrame) continue;
+                    // Dispatch IPC packet to the web app or queue if not ready.
+                    const string script = 
+                        """
+                            (function(packet){
+                                try {
+                                    if (window?.$pinia?.vrcx) {
+                                        window.$pinia.vrcx.ipcEvent(packet);
+                                    } else {
+                                        window.__ipcQueue = window.__ipcQueue ?? [];
+                                        window.__ipcQueue.push(packet);
+                                    }
+                                } catch (e) {
+                                    console.error('IPC dispatch error:', e);
+                                }
+                            })
+                        """;
+                    browser.ExecuteScriptAsync(script, packet);
 #endif
-                    }
-
-                    _currentPacket = string.Empty;
                 }
             }
             catch (Exception e)
