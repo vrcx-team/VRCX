@@ -561,7 +561,7 @@ export const useUserStore = defineStore('User', () => {
                 }
             }
             for (const prop in json) {
-                if (typeof ref[prop] !== 'undefined') {
+                if (typeof json[prop] !== 'undefined') {
                     ref[prop] = json[prop];
                 }
             }
@@ -1732,7 +1732,7 @@ export const useUserStore = defineStore('User', () => {
                 }
             }
             for (const prop in json) {
-                if (typeof ref[prop] !== 'undefined') {
+                if (typeof json[prop] !== 'undefined') {
                     ref[prop] = json[prop];
                 }
             }

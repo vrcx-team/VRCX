@@ -127,7 +127,7 @@
                 <template #default="scope">
                     <template v-if="scope.row.type === 'boop'">
                         <img
-                            v-if="!scope.row.details.imageUrl.startsWith('default_')"
+                            v-if="scope.row.details?.imageUrl && !scope.row.details.imageUrl.startsWith('default_')"
                             class="x-link"
                             :src="getSmallThumbnailUrl(scope.row.details.imageUrl)"
                             style="flex: none; height: 50px; border-radius: 4px"
