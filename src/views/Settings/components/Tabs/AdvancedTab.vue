@@ -138,6 +138,20 @@
             </div>
         </div>
         <div class="options-container">
+            <span class="header">{{ t('view.settings.advanced.advanced.translation_api.header') }}</span>
+            <simple-switch
+                :label="t('view.settings.advanced.advanced.translation_api.enable')"
+                :value="translationApi"
+                :tooltip="t('view.settings.advanced.advanced.translation_api.enable_tooltip')"
+                :long-label="true"
+                @change="changeTranslationAPI('VRCX_translationAPI')" />
+            <div class="options-container-item">
+                <el-button size="small" :icon="CaretRight" @click="showTranslationApiDialog">{{
+                    t('view.settings.advanced.advanced.translation_api.translation_api_key')
+                }}</el-button>
+            </div>
+        </div>
+        <div class="options-container">
             <span class="header">{{ t('view.settings.advanced.advanced.video_progress_pie.header') }}</span>
             <simple-switch
                 :label="t('view.settings.advanced.advanced.video_progress_pie.enable')"
@@ -323,6 +337,7 @@
 
         <RegistryBackupDialog />
         <YouTubeApiDialog v-model:isYouTubeApiDialogVisible="isYouTubeApiDialogVisible" />
+        <TranslationApiDialog v-model:isTranslationApiDialogVisible="isTranslationApiDialogVisible" />
         <AvatarProviderDialog v-model:isAvatarProviderDialogVisible="isAvatarProviderDialogVisible" />
         <PhotonSettings v-if="photonLoggingEnabled" />
     </div>
@@ -368,6 +383,7 @@
     import PhotonSettings from '../PhotonSettings.vue';
     import RegistryBackupDialog from '../../dialogs/RegistryBackupDialog.vue';
     import SimpleSwitch from '../SimpleSwitch.vue';
+    import TranslationApiDialog from '../../dialogs/TranslationApiDialog.vue';
     import YouTubeApiDialog from '../../dialogs/YouTubeApiDialog.vue';
 
     const { t } = useI18n();
@@ -400,6 +416,7 @@
         enableAppLauncherAutoClose,
         enableAppLauncherRunProcessOnce,
         youTubeApi,
+        translationApi,
         progressPie,
         progressPieFilter,
         showConfirmationOnSwitchAvatar,
@@ -428,6 +445,7 @@
     const { showAvatarProviderDialog } = useAvatarProviderStore();
 
     const isYouTubeApiDialogVisible = ref(false);
+    const isTranslationApiDialogVisible = ref(false);
 
     const cacheSize = reactive({
         cachedUsers: 0,
@@ -496,6 +514,10 @@
         isYouTubeApiDialogVisible.value = true;
     }
 
+    function showTranslationApiDialog() {
+        isTranslationApiDialogVisible.value = true;
+    }
+
     function refreshCacheSize() {
         cacheSize.cachedUsers = cachedUsers.size;
         cacheSize.cachedWorlds = cachedWorlds.size;
@@ -515,5 +537,11 @@
         }
         updateVRLastLocation();
         updateOpenVR();
+    }
+
+    async function changeTranslationAPI(configKey = '') {
+        if (configKey === 'VRCX_translationAPI') {
+            advancedSettingsStore.setTranslationApi();
+        }
     }
 </script>
