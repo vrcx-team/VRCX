@@ -8,23 +8,21 @@ using CefSharp;
 using CefSharp.Enums;
 using CefSharp.OffScreen;
 using CefSharp.Structs;
-using SharpDX.Direct3D11;
 using System;
 using System.Threading;
 using NLog;
-using SharpDX.Direct3D;
-using SharpDX.Mathematics.Interop;
+using Silk.NET.Core.Native;
+using Silk.NET.Direct3D11;
 using Range = CefSharp.Structs.Range;
 
 namespace VRCX
 {
     public class OffScreenBrowser : ChromiumWebBrowser, IRenderHandler
     {
-        private Device _device;
-        private Device1 _device1;
-        private DeviceMultithread _deviceMultithread;
-        private Query _query;
-        private Texture2D _renderTarget;
+        private ComPtr<ID3D11Device1> _device1;
+        private ComPtr<ID3D11DeviceContext> _deviceContext;
+        private ComPtr<ID3D11Query> _query;
+        private ComPtr<ID3D11Texture2D> _renderTarget;
 
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -52,23 +50,19 @@ namespace VRCX
             JavascriptBindings.ApplyVrJavascriptBindings(JavascriptObjectRepository);
         }
 
-        public void UpdateRender(Device device, Texture2D renderTarget)
+        public void UpdateRender(ComPtr<ID3D11Device> device, ComPtr<ID3D11DeviceContext> deviceContext, ComPtr<ID3D11Texture2D> renderTarget)
         {
-            _device = device;
-            _device1 = _device.QueryInterface<Device1>();
-
-            _deviceMultithread?.Dispose();
-            _deviceMultithread = _device.QueryInterfaceOrNull<DeviceMultithread>();
-            _deviceMultithread?.SetMultithreadProtected(true);
-
+            _device1.Dispose();
+            _device1 = device.QueryInterface<ID3D11Device1>();
+            _deviceContext = deviceContext;
             _renderTarget = renderTarget;
 
-            _query?.Dispose();
-            _query = new Query(_device, new QueryDescription
+            _query.Dispose();
+            device.CreateQuery(new QueryDesc
             {
-                Type = QueryType.Event,
-                Flags = QueryFlags.None
-            });
+                Query = Query.Event,
+                MiscFlags = 0
+            }, ref _query);
         }
 
         public new void Dispose()
@@ -102,29 +96,31 @@ namespace VRCX
             if (type != PaintElementType.View)
                 return;
 
-            if (_device == null)
-                return;
-
-            try
+            unsafe
             {
-                using Texture2D cefTexture = _device1.OpenSharedResource1<Texture2D>(paintInfo.SharedTextureHandle);
-                _device.ImmediateContext.CopyResource(cefTexture, _renderTarget);
-                _device.ImmediateContext.End(_query);
-                _device.ImmediateContext.Flush();
-            }
-            catch (Exception e)
-            {
-                logger.Error(e);
-                _device = null;
-                return;
-            }
-
-            RawBool q = _device.ImmediateContext.GetData<RawBool>(_query, AsynchronousFlags.DoNotFlush);
-
-            while (!q)
-            {
-                Thread.Yield();
-                q = _device.ImmediateContext.GetData<RawBool>(_query, AsynchronousFlags.DoNotFlush);
+                if ((IntPtr)_device1.Handle == IntPtr.Zero)
+                    return;
+                
+                if ((IntPtr)_deviceContext.Handle == IntPtr.Zero)
+                    return;
+                
+                if ((IntPtr)_query.Handle == IntPtr.Zero)
+                    return;
+                
+                if ((IntPtr)_renderTarget.Handle == IntPtr.Zero)
+                    return;
+                
+                _deviceContext.Begin(_query);
+                using ComPtr<ID3D11Texture2D> cefTexture =
+                    _device1.OpenSharedResource1<ID3D11Texture2D>(paintInfo.SharedTextureHandle.ToPointer());
+                _deviceContext.CopyResource(_renderTarget, cefTexture);
+                _deviceContext.End(_query);
+                _deviceContext.Flush();
+                
+                while (_deviceContext.GetData(_query, IntPtr.Zero.ToPointer(), 0, 0) == 1)
+                {
+                    Thread.Yield();
+                }
             }
         }
 
