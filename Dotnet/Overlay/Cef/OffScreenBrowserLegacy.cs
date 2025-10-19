@@ -8,10 +8,11 @@ using CefSharp;
 using CefSharp.Enums;
 using CefSharp.OffScreen;
 using CefSharp.Structs;
-using SharpDX.Direct3D11;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Silk.NET.Core.Native;
+using Silk.NET.Direct3D11;
 using Range = CefSharp.Structs.Range;
 
 namespace VRCX
@@ -61,11 +62,14 @@ namespace VRCX
             _paintBufferLock.Dispose();
         }
 
-        public void RenderToTexture(Texture2D texture)
+        public void RenderToTexture(ComPtr<ID3D11DeviceContext> deviceContext, ComPtr<ID3D11Texture2D> texture)
         {
             // Safeguard against uninitialized texture
-            if (texture == null)
-                return;
+            unsafe
+            {
+                if ((IntPtr)texture.Handle == IntPtr.Zero)
+                    return;
+            }
 
             _paintBufferLock.EnterReadLock();
             try
@@ -73,42 +77,41 @@ namespace VRCX
                 if (_width > 0 &&
                     _height > 0)
                 {
-                    var context = texture.Device.ImmediateContext;
-                    var dataBox = context.MapSubresource(
-                        texture,
-                        0,
-                        MapMode.WriteDiscard,
-                        MapFlags.None
-                    );
-                    if (dataBox.IsEmpty == false)
+                    MappedSubresource mappedSubresource = default;
+                    deviceContext.Map(texture, 0, Map.WriteDiscard, 0, ref mappedSubresource);
+                    unsafe
                     {
-                        var sourcePtr = _paintBuffer.AddrOfPinnedObject();
-                        var destinationPtr = dataBox.DataPointer;
-                        var pitch = _width * 4;
-                        var rowPitch = dataBox.RowPitch;
-                        if (pitch == rowPitch)
+                        if ((IntPtr)mappedSubresource.PData != IntPtr.Zero)
                         {
-                            WinApi.RtlCopyMemory(
-                                destinationPtr,
-                                sourcePtr,
-                                (uint)(_width * _height * 4)
-                            );
-                        }
-                        else
-                        {
-                            for (var y = _height; y > 0; --y)
+                            var sourcePtr = _paintBuffer.AddrOfPinnedObject();
+                            var destinationPtr = (IntPtr)mappedSubresource.PData;
+                            var pitch = _width * 4;
+                            var rowPitch = mappedSubresource.RowPitch;
+                            if (pitch == rowPitch)
                             {
                                 WinApi.RtlCopyMemory(
                                     destinationPtr,
                                     sourcePtr,
-                                    (uint)pitch
+                                    (uint)(_width * _height * 4)
                                 );
-                                sourcePtr += pitch;
-                                destinationPtr += rowPitch;
+                            }
+                            else
+                            {
+                                for (var y = _height; y > 0; --y)
+                                {
+                                    WinApi.RtlCopyMemory(
+                                        destinationPtr,
+                                        sourcePtr,
+                                        (uint)pitch
+                                    );
+                                    sourcePtr += pitch;
+                                    destinationPtr += (IntPtr)rowPitch;
+                                }
                             }
                         }
+
+                        deviceContext.Unmap(texture, 0);
                     }
-                    context.UnmapSubresource(texture, 0);
                 }
             }
             finally
