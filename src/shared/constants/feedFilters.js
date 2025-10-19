@@ -76,6 +76,11 @@ function feedFiltersOptions() {
             options: getOptions(['Off', 'VIP', 'Friends'])
         },
         {
+            key: 'boop',
+            name: 'Boop',
+            options: getOptions(['Off', 'VIP', 'Friends'])
+        },
+        {
             key: 'friendRequest',
             name: 'Friend Request',
             options: getOptions(['Off', 'On'])
@@ -247,12 +252,12 @@ const sharedFeedFiltersDefaults = {
         requestInvite: 'Friends',
         inviteResponse: 'Friends',
         requestInviteResponse: 'Friends',
+        boop: 'Friends',
         friendRequest: 'On',
         Friend: 'On',
         Unfriend: 'On',
         DisplayName: 'VIP',
         TrustLevel: 'VIP',
-        boop: 'Off',
         groupChange: 'On',
         'group.announcement': 'On',
         'group.informative': 'On',
@@ -289,12 +294,12 @@ const sharedFeedFiltersDefaults = {
         requestInvite: 'Friends',
         inviteResponse: 'Friends',
         requestInviteResponse: 'Friends',
+        boop: 'Friends',
         friendRequest: 'On',
         Friend: 'On',
         Unfriend: 'On',
         DisplayName: 'Friends',
         TrustLevel: 'Friends',
-        boop: 'On',
         groupChange: 'On',
         'group.announcement': 'On',
         'group.informative': 'On',

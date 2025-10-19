@@ -343,7 +343,7 @@ function buildTreeData(json) {
  * @returns {string}
  */
 function replaceBioSymbols(text) {
-    if (!text) {
+    if (typeof text !== 'string') {
         return '';
     }
     const symbolList = {
