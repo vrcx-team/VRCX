@@ -41,8 +41,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const screenshotHelperModifyFilename = ref(false);
     const screenshotHelperCopyToClipboard = ref(false);
     const youTubeApi = ref(false);
-    const translationApi = ref(false);
     const youTubeApiKey = ref('');
+    const translationApi = ref(false);
     const translationApiKey = ref('');
     const progressPie = ref(false);
     const progressPieFilter = ref(true);
@@ -87,8 +87,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             screenshotHelperModifyFilenameConfig,
             screenshotHelperCopyToClipboardConfig,
             youTubeApiConfig,
-            translationApiConfig,
             youTubeApiKeyConfig,
+            translationApiConfig,
             translationApiKeyConfig,
             progressPieConfig,
             progressPieFilterConfig,
@@ -128,8 +128,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 false
             ),
             configRepository.getBool('VRCX_youtubeAPI', false),
-            configRepository.getBool('VRCX_translationAPI', false),
             configRepository.getString('VRCX_youtubeAPIKey', ''),
+            configRepository.getBool('VRCX_translationAPI', false),
             configRepository.getString('VRCX_translationAPIKey', ''),
             configRepository.getBool('VRCX_progressPie', false),
             configRepository.getBool('VRCX_progressPieFilter', true),
@@ -175,8 +175,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         screenshotHelperCopyToClipboard.value =
             screenshotHelperCopyToClipboardConfig;
         youTubeApi.value = youTubeApiConfig;
-        translationApi.value = translationApiConfig;
         youTubeApiKey.value = youTubeApiKeyConfig;
+        translationApi.value = translationApiConfig;
         translationApiKey.value = translationApiKeyConfig;
         progressPie.value = progressPieConfig;
         progressPieFilter.value = progressPieFilterConfig;
@@ -584,26 +584,43 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     async function translateText(text, targetLang) {
-        if (!translationApiKey.value) return null;
+        if (!translationApiKey.value) {
+            ElMessage({
+                message: 'No Translation API key configured',
+                type: 'warning'
+            });
+            return null;
+        }
 
         try {
-            const res = await fetch(
-                `https://translation.googleapis.com/language/translate/v2?key=${translationApiKey.value}`,
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        q: text,
-                        target: targetLang,
-                        format: 'text'
-                    })
-                }
-            );
-            const data = await res.json();
-
-            if (data.error) return null;
+            const response = await webApiService.execute({
+                url: `https://translation.googleapis.com/language/translate/v2?key=${translationApiKey.value}`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Referer: 'https://vrcx.app'
+                },
+                body: JSON.stringify({
+                    q: text,
+                    target: targetLang,
+                    format: 'text'
+                })
+            });
+            if (response.status !== 200) {
+                throw new Error(
+                    `Translation API error: ${response.status} - ${response.data}`
+                );
+            }
+            const data = JSON.parse(response.data);
+            if (AppDebug.debugWebRequests) {
+                console.log(data, response);
+            }
             return data.data.translations[0].translatedText;
         } catch (err) {
+            ElMessage({
+                message: `Translation failed: ${err.message}`,
+                type: 'error'
+            });
             return null;
         }
     }

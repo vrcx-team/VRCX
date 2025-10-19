@@ -146,9 +146,10 @@
                 :long-label="true"
                 @change="changeTranslationAPI('VRCX_translationAPI')" />
             <div class="options-container-item">
-                <el-button size="small" :icon="CaretRight" @click="showTranslationApiDialog">{{
-                    t('view.settings.advanced.advanced.translation_api.translation_api_key')
-                }}</el-button>
+                <el-button size="small" @click="showTranslationApiDialog"
+                    ><i class="ri-translate-2" style="margin-right: 5px"></i
+                    >{{ t('view.settings.advanced.advanced.translation_api.translation_api_key') }}</el-button
+                >
             </div>
         </div>
         <div class="options-container">

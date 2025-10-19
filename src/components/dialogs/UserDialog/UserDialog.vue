@@ -249,7 +249,7 @@
                                         style="margin-left: 5px"
                                         @click="showBioDialog"></el-button>
                                 </div>
-                                <div v-if="userDialog.id !== currentUser.id" style="float: right">
+                                <div v-if="translationApi" style="float: right">
                                     <el-button type="text" size="small" style="margin-left: 5px" @click="translateBio"
                                         ><i class="ri-translate-2"></i
                                     ></el-button>
@@ -1310,10 +1310,9 @@
 
     const { t } = useI18n();
 
-    const advancedSettingsStore = useAdvancedSettingsStore();
-
     const { hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
-    const { bioLanguage, avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
+    const { bioLanguage, avatarRemoteDatabase, translationApi } = storeToRefs(useAdvancedSettingsStore());
+    const { translateText } = useAdvancedSettingsStore();
     const { userDialog, languageDialog, currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const {
         cachedUsers,
@@ -1425,6 +1424,13 @@
         visible: false,
         loading: false,
         pronouns: ''
+    });
+
+    const bioCache = ref({
+        userId: null,
+        original: null,
+        translated: null,
+        showingTranslated: false
     });
 
     const userDialogAvatars = computed(() => {
@@ -2277,26 +2283,24 @@
         D.visible = true;
     }
 
-    const bioCache = ref({
-        userID: null,
-        original: null,
-        translated: null,
-        showingTranslated: false
-    });
     async function translateBio() {
         const bio = userDialog.value.ref.bio;
-        if (!bio || bio === '-' || !advancedSettingsStore.translationApi) return;
+        if (!bio) {
+            return;
+        }
 
         const targetLang = bioLanguage.value;
 
-        if (bioCache.value.userID !== userDialog.value.id) {
-            bioCache.value.userID = userDialog.value.id;
+        if (bioCache.value.userId !== userDialog.value.id) {
+            bioCache.value.userId = userDialog.value.id;
             bioCache.value.original = null;
             bioCache.value.translated = null;
             bioCache.value.showingTranslated = false;
         }
 
-        if (!bioCache.value.original) bioCache.value.original = bio;
+        if (!bioCache.value.original) {
+            bioCache.value.original = bio;
+        }
 
         if (bioCache.value.showingTranslated) {
             userDialog.value.ref.bio = bioCache.value.original;
@@ -2311,9 +2315,10 @@
         }
 
         try {
-            const translated = await advancedSettingsStore.translateText(bio + '\n\nTranslated by Google', targetLang);
-
-            if (!translated) throw new Error('No translation returned');
+            const translated = await translateText(bio + '\n\nTranslated by Google', targetLang);
+            if (!translated) {
+                throw new Error('No translation returned');
+            }
 
             bioCache.value.translated = translated;
             bioCache.value.showingTranslated = true;

@@ -3,11 +3,11 @@
         class="x-dialog"
         :model-value="isTranslationApiDialogVisible"
         :title="t('dialog.translation_api.header')"
-        width="400px"
+        width="450px"
         @close="closeDialog">
         <div class="options-container-item">
             <span class="name">{{ t('view.settings.appearance.appearance.bio_language') }}</span>
-            <el-dropdown trigger="click" size="small" @click.stop>
+            <el-dropdown trigger="click" size="small" style="float: right" @click.stop>
                 <el-button size="small">
                     <span>
                         {{ messages[bioLanguage]?.language || bioLanguage }}
@@ -25,6 +25,7 @@
                 </template>
             </el-dropdown>
         </div>
+        <br />
         <div style="font-size: 12px">{{ t('dialog.translation_api.description') }} <br /></div>
 
         <el-input
