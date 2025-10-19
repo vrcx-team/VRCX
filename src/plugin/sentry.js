@@ -41,14 +41,18 @@ export async function initSentry(app) {
             replaysSessionSampleRate: 0,
             replaysOnErrorSampleRate: 1.0,
             tracesSampleRate: 0.05,
-            beforeSend(event) {
-                if (
-                    event.request?.status !== 404 &&
-                    event.request?.status !== 403 &&
-                    event.request?.status !== -1
-                ) {
+            beforeSend(event, hint) {
+                const error = hint.originalException;
+                if (error && typeof error.message === 'string') {
+                    if (
+                        error.message.includes('403') ||
+                        error.message.includes('404')
+                    ) {
+                        return null;
+                    }
                     return event;
                 }
+                return event;
             },
             integrations: [
                 Sentry.replayIntegration({
