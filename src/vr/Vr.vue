@@ -88,7 +88,7 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <i class="ri-play-large-line"></i>
+                                        <i class="ri-play-large-line mr-5"></i>
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -103,7 +103,7 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <i class="ri-play-reverse-large-line"></i>
+                                        <i class="ri-play-reverse-large-line mr-5"></i>
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -187,7 +187,7 @@
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <i class="ri-mail-send-line mr-5"></i>
-                                        <span class="name" v-text="feed.senderUsername"></span>
+                                        <span class="name mr-5" v-text="feed.senderUsername"></span>
                                         <span v-text="feed.details.requestMessage"></span>
                                     </span>
                                 </div>
@@ -200,7 +200,7 @@
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <i class="ri-mail-send-line mr-5"></i>
-                                        <span class="name" v-text="feed.senderUsername"></span>
+                                        <span class="name mr-5" v-text="feed.senderUsername"></span>
                                         <span v-text="feed.details.responseMessage"></span>
                                     </span>
                                 </div>
@@ -213,7 +213,7 @@
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <i class="ri-mail-send-line mr-5"></i>
-                                        <span class="name" v-text="feed.senderUsername"></span>
+                                        <span class="name mr-5" v-text="feed.senderUsername"></span>
                                         <span v-text="feed.details.responseMessage"></span>
                                     </span>
                                 </div>
@@ -282,18 +282,19 @@
                                     </span>
                                 </div>
                             </div>
-                            <!-- <div
+                            <div
                                 v-else-if="feed.type === 'boop'"
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        👉 <span class="name" v-text="feed.senderUsername"></span>
+                                        <i class="ri-hand-heart-fill mr-5"></i>
+                                        <span class="name mr-5" v-text="feed.senderUsername"></span>
                                         <span v-text="feed.message"></span>
                                     </span>
                                 </div>
-                            </div> -->
+                            </div>
                             <div
                                 v-else-if="feed.type === 'groupChange'"
                                 class="x-friend-item"
@@ -302,7 +303,7 @@
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <i class="ri-price-tag-3-line mr-5"></i>
-                                        <span class="name" v-text="feed.senderUsername"></span>
+                                        <span class="name mr-5" v-text="feed.senderUsername"></span>
                                         <span v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -424,9 +425,8 @@
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <i class="ri-walk-line mr-5"></i>
                                         <span
-                                            class="name"
+                                            class="name mr-5"
                                             v-text="feed.displayName"
-                                            style="margin-right: 5px"
                                             :style="{ color: feed.tagColour }"></span>
                                         <template v-if="feed.releaseStatus === 'public'">
                                             <i class="x-user-status online"></i>&nbsp;
@@ -472,7 +472,7 @@
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <i class="ri-information-line mr-5"></i>
                                         <span
-                                            class="name"
+                                            class="name mr-5"
                                             v-text="feed.displayName"
                                             :style="{ color: feed.tagColour }"></span>
                                         <span class="name" v-text="feed.message"></span>

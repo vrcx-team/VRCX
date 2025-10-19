@@ -40,12 +40,12 @@ export const useNotificationsSettingsStore = defineStore(
                 requestInvite: 'Friends',
                 inviteResponse: 'Friends',
                 requestInviteResponse: 'Friends',
+                boop: 'Friends',
                 friendRequest: 'On',
                 Friend: 'On',
                 Unfriend: 'On',
                 DisplayName: 'VIP',
                 TrustLevel: 'VIP',
-                boop: 'Off',
                 groupChange: 'On',
                 'group.announcement': 'On',
                 'group.informative': 'On',
@@ -82,12 +82,12 @@ export const useNotificationsSettingsStore = defineStore(
                 requestInvite: 'Friends',
                 inviteResponse: 'Friends',
                 requestInviteResponse: 'Friends',
+                boop: 'Friends',
                 friendRequest: 'On',
                 Friend: 'On',
                 Unfriend: 'On',
                 DisplayName: 'Friends',
                 TrustLevel: 'Friends',
-                boop: 'On',
                 groupChange: 'On',
                 'group.announcement': 'On',
                 'group.informative': 'On',
@@ -308,9 +308,17 @@ export const useNotificationsSettingsStore = defineStore(
                 sharedFeedFilters.value.noty['group.transfer'] = 'On';
                 sharedFeedFilters.value.wrist['group.transfer'] = 'On';
             }
-            if (!sharedFeedFilters.value.noty.boop) {
-                sharedFeedFilters.value.noty.boop = 'Off';
-                sharedFeedFilters.value.wrist.boop = 'On';
+            if (
+                !sharedFeedFilters.value.noty.boop ||
+                sharedFeedFilters.value.noty.boop === 'On'
+            ) {
+                sharedFeedFilters.value.noty.boop = 'Friends';
+            }
+            if (
+                !sharedFeedFilters.value.wrist.boop ||
+                sharedFeedFilters.value.wrist.boop === 'On'
+            ) {
+                sharedFeedFilters.value.wrist.boop = 'Friends';
             }
         }
         function setNotificationTTSVoice(index) {

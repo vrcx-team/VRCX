@@ -242,6 +242,8 @@ jobs:
                   path: build/html
 
             - name: Build Electron-html
+              env:
+                  SENTRY_AUTH_TOKEN: ${{ secrets.SentryAuthToken }}
               run: npm run prod-linux
             - name: Download Electron x64 dotnet artifacts
               uses: actions/download-artifact@v5
