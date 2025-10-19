@@ -3,7 +3,7 @@
         class="x-dialog"
         :model-value="isYouTubeApiDialogVisible"
         :title="t('dialog.youtube_api.header')"
-        width="400px"
+        width="450px"
         @close="closeDialog">
         <div style="font-size: 12px">{{ t('dialog.youtube_api.description') }} <br /></div>
 
