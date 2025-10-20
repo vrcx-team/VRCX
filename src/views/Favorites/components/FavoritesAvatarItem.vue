@@ -170,7 +170,7 @@
         t(props.isLocalFavorite ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')
     );
     const smallThumbnail = computed(
-        () => localFavFakeRef.value.thumbnailImageUrl.replace('256', '128') || localFavFakeRef.value.thumbnailImageUrl
+        () => localFavFakeRef.value.thumbnailImageUrl?.replace('256', '128') || localFavFakeRef.value.thumbnailImageUrl
     );
     const favoriteGroupName = computed(() => {
         if (typeof props.group === 'string') {

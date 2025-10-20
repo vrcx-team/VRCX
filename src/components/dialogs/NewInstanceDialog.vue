@@ -594,7 +594,7 @@
                 const friendsInCurrentInstance = lastLocation.value.friendList;
                 for (const friend of friendsInCurrentInstance.values()) {
                     const ctx = friends.value.get(friend.userId);
-                    if (typeof ctx.ref === 'undefined') {
+                    if (typeof ctx?.ref === 'undefined') {
                         continue;
                     }
                     D.friendsInInstance.push(ctx);

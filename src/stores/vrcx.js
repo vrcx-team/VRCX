@@ -397,6 +397,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 location.worldId,
                 advancedSettingsStore.screenshotHelperModifyFilename
             );
+            if (!newPath) {
+                console.error('Failed to add screenshot metadata', path);
+                return;
+            }
             console.log('Screenshot metadata added', newPath);
         }
         if (advancedSettingsStore.screenshotHelperCopyToClipboard) {
@@ -618,11 +622,16 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
     async function backupVrcRegistry(name) {
         let regJson;
-        if (WINDOWS) {
-            regJson = await AppApi.GetVRChatRegistry();
-        } else {
-            regJson = await AppApi.GetVRChatRegistryJson();
-            regJson = JSON.parse(regJson);
+        try {
+            if (WINDOWS) {
+                regJson = await AppApi.GetVRChatRegistry();
+            } else {
+                regJson = await AppApi.GetVRChatRegistryJson();
+                regJson = JSON.parse(regJson);
+            }
+        } catch (e) {
+            console.error('Failed to get VRChat registry for backup:', e);
+            return;
         }
         const newBackup = {
             name,

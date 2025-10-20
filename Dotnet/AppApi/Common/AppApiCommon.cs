@@ -14,7 +14,6 @@ namespace VRCX
     public partial class AppApi
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        private static readonly MD5 _hasher = MD5.Create();
 
         public void Init()
         {
@@ -30,7 +29,8 @@ namespace VRCX
 
         public int GetColourFromUserID(string userId)
         {
-            var hash = _hasher.ComputeHash(Encoding.UTF8.GetBytes(userId));
+            using var hasher = MD5.Create();
+            var hash = hasher.ComputeHash(Encoding.UTF8.GetBytes(userId));
             return (hash[3] << 8) | hash[4];
         }
 

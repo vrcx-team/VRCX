@@ -143,7 +143,7 @@ namespace VRCX
             var output = new Dictionary<string, Dictionary<string, object>>();
             using var regKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\VRChat\VRChat");
             if (regKey == null)
-                throw new Exception("Nothing to backup.");
+                throw new Exception("Failed to get VRC registry data");
 
             var keys = regKey.GetValueNames();
 
