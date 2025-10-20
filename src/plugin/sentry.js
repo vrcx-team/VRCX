@@ -46,7 +46,8 @@ export async function initSentry(app) {
                 if (error && typeof error.message === 'string') {
                     if (
                         error.message.includes('403') ||
-                        error.message.includes('404')
+                        error.message.includes('404') ||
+                        error.message.includes('500')
                     ) {
                         return null;
                     }
