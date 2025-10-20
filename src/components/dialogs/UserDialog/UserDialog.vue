@@ -249,7 +249,7 @@
                                         style="margin-left: 5px"
                                         @click="showBioDialog"></el-button>
                                 </div>
-                                <div v-if="translationApi" style="float: right">
+                                <div v-if="translationApi && userDialog.ref.bio" style="float: right">
                                     <el-button type="text" size="small" style="margin-left: 5px" @click="translateBio"
                                         ><i class="ri-translate-2"></i
                                     ></el-button>

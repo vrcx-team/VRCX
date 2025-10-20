@@ -670,7 +670,7 @@
     }
 
     function setProfilePicOverride(fileId) {
-        if (!currentUser.value.$isVRCPlus) {
+        if (!isLocalUserVrcPlusSupporter.value) {
             ElMessage({
                 message: 'VRCPlus required',
                 type: 'error'
@@ -773,7 +773,7 @@
     }
 
     function setVRCPlusIcon(fileId) {
-        if (!currentUser.value.$isVRCPlus) {
+        if (!isLocalUserVrcPlusSupporter.value) {
             ElMessage({
                 message: 'VRCPlus required',
                 type: 'error'

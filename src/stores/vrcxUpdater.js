@@ -200,6 +200,15 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         } finally {
             checkingForVRCXUpdate.value = false;
         }
+        if (response.status !== 200) {
+            ElMessage({
+                message: t('message.vrcx_updater.failed', {
+                    message: `${response.status} ${response.data}`
+                }),
+                type: 'error'
+            });
+            return;
+        }
         pendingVRCXUpdate.value = false;
         const json = JSON.parse(response.data);
         if (AppDebug.debugWebRequests) {
@@ -262,6 +271,15 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             });
         } finally {
             checkingForVRCXUpdate.value = false;
+        }
+        if (response.status !== 200) {
+            ElMessage({
+                message: t('message.vrcx_updater.failed', {
+                    message: `${response.status} ${response.data}`
+                }),
+                type: 'error'
+            });
+            return;
         }
         const json = JSON.parse(response.data);
         if (AppDebug.debugWebRequests) {

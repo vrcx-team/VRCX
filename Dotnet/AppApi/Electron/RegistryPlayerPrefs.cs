@@ -611,10 +611,10 @@ namespace VRCX
         public string GetVRChatRegistryJson()
         {
             var registry = new Dictionary<string, Dictionary<string, object>>();
-            string regCommand = "query \"HKEY_CURRENT_USER\\SOFTWARE\\VRChat\\VRChat\"";
+            const string regCommand = "query \"HKEY_CURRENT_USER\\SOFTWARE\\VRChat\\VRChat\"";
             var queryResult = GetWineRegCommand(regCommand);
             if (queryResult == null)
-                return null;
+                throw new Exception("Failed to get VRC registry data");
 
             var lines = queryResult.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                 .Where(line => 

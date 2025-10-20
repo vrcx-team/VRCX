@@ -162,7 +162,7 @@
     );
 
     const smallThumbnail = computed(() => {
-        const url = localFavFakeRef.value.thumbnailImageUrl.replace('256', '128');
+        const url = localFavFakeRef.value.thumbnailImageUrl?.replace('256', '128');
         return url || localFavFakeRef.value.thumbnailImageUrl;
     });
 
