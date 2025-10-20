@@ -110,7 +110,6 @@ namespace VRCX
                 if ((IntPtr)_renderTarget.Handle == IntPtr.Zero)
                     return;
                 
-                _deviceContext.Begin(_query);
                 using ComPtr<ID3D11Texture2D> cefTexture =
                     _device1.OpenSharedResource1<ID3D11Texture2D>(paintInfo.SharedTextureHandle.ToPointer());
                 _deviceContext.CopyResource(_renderTarget, cefTexture);

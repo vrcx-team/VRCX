@@ -139,37 +139,43 @@ namespace VRCX
                 _device.SetInfoQueueCallback(msg => logger.Info(SilkMarshal.PtrToString((nint)msg.PDescription)!));
 
                 _texture1.Dispose();
-                _device.CreateTexture2D(new Texture2DDesc
-                {
-                    Width = 512,
-                    Height = 512,
-                    MipLevels = 1,
-                    ArraySize = 1,
-                    Format = Format.FormatB8G8R8A8Unorm,
-                    SampleDesc = new SampleDesc
+                SilkMarshal.ThrowHResult
+                (
+                    _device.CreateTexture2D(new Texture2DDesc
                     {
-                        Count = 1,
-                        Quality = 0
-                    },
-                    BindFlags = (uint)BindFlag.ShaderResource
-                }, null, ref _texture1);
+                        Width = 512,
+                        Height = 512,
+                        MipLevels = 1,
+                        ArraySize = 1,
+                        Format = Format.FormatB8G8R8A8Unorm,
+                        SampleDesc = new SampleDesc
+                        {
+                            Count = 1,
+                            Quality = 0
+                        },
+                        BindFlags = (uint)BindFlag.ShaderResource
+                    }, null, ref _texture1)
+                );
                 _wristOverlay?.UpdateRender(_device, _deviceContext, _texture1);
 
                 _texture2.Dispose();
-                _device.CreateTexture2D(new Texture2DDesc
-                {
-                    Width = 1024,
-                    Height = 1024,
-                    MipLevels = 1,
-                    ArraySize = 1,
-                    Format = Format.FormatB8G8R8A8Unorm,
-                    SampleDesc = new SampleDesc
+                SilkMarshal.ThrowHResult
+                (
+                    _device.CreateTexture2D(new Texture2DDesc
                     {
-                        Count = 1,
-                        Quality = 0
-                    },
-                    BindFlags = (uint)BindFlag.ShaderResource
-                }, null, ref _texture2);
+                        Width = 1024,
+                        Height = 1024,
+                        MipLevels = 1,
+                        ArraySize = 1,
+                        Format = Format.FormatB8G8R8A8Unorm,
+                        SampleDesc = new SampleDesc
+                        {
+                            Count = 1,
+                            Quality = 0
+                        },
+                        BindFlags = (uint)BindFlag.ShaderResource
+                    }, null, ref _texture2)
+                );
                 _hmdOverlay?.UpdateRender(_device, _deviceContext, _texture2);
             }
         }
