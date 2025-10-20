@@ -885,7 +885,6 @@ export const useAuthStore = defineStore('Auth', () => {
         await database.initUserTables(userStore.currentUser.id);
         watchState.isLoggedIn = true;
         AppApi.CheckGameRunning(); // restore state from hot-reload
-        vrcxStore.updateDatabaseVersion();
     }
 
     return {

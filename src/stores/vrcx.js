@@ -103,6 +103,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             'VRCX_databaseVersion',
             0
         );
+        updateDatabaseVersion();
 
         clearVRCXCacheFrequency.value = await configRepository.getInt(
             'VRCX_clearVRCXCacheFrequency',
@@ -193,7 +194,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
     async function updateDatabaseVersion() {
         // requires dbVars.userPrefix to be already set
-        const databaseVersion = 12;
+        const databaseVersion = 13;
         let msgBox;
         if (state.databaseVersion < databaseVersion) {
             if (state.databaseVersion) {

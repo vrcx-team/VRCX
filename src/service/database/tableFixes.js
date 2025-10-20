@@ -4,11 +4,17 @@ import sqliteService from '../sqlite.js';
 
 const tableFixes = {
     async cleanLegendFromFriendLog() {
-        await sqliteService.executeNonQuery(
-            `DELETE FROM ${dbVars.userPrefix}_friend_log_history
-            WHERE type = 'TrustLevel' AND created_at > '2022-05-04T01:00:00.000Z'
-            AND ((trust_level = 'Veteran User' AND previous_trust_level = 'Trusted User') OR (trust_level = 'Trusted User' AND previous_trust_level = 'Veteran User'))`
-        );
+        var tables = [];
+        await sqliteService.execute((dbRow) => {
+            tables.push(dbRow[0]);
+        }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_friend_log_history'`);
+        for (var tableName of tables) {
+            await sqliteService.executeNonQuery(
+                `DELETE FROM ${tableName}
+                WHERE type = 'TrustLevel' AND created_at > '2022-05-04T01:00:00.000Z'
+                AND ((trust_level = 'Veteran User' AND previous_trust_level = 'Trusted User') OR (trust_level = 'Trusted User' AND previous_trust_level = 'Veteran User'))`
+            );
+        }
     },
 
     async fixGameLogTraveling() {
@@ -111,21 +117,39 @@ const tableFixes = {
     },
 
     async fixBrokenNotifications() {
-        await sqliteService.executeNonQuery(
-            `DELETE FROM ${dbVars.userPrefix}_notifications WHERE (created_at is null or created_at = '')`
-        );
+        var tables = [];
+        await sqliteService.execute((dbRow) => {
+            tables.push(dbRow[0]);
+        }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_notifications'`);
+        for (var tableName of tables) {
+            await sqliteService.executeNonQuery(
+                `DELETE FROM ${tableName} WHERE (created_at is null or created_at = '')`
+            );
+        }
     },
 
     async fixBrokenGroupChange() {
-        await sqliteService.executeNonQuery(
-            `DELETE FROM ${dbVars.userPrefix}_notifications WHERE type = 'groupChange' AND created_at < '2024-04-23T03:00:00.000Z'`
-        );
+        var tables = [];
+        await sqliteService.execute((dbRow) => {
+            tables.push(dbRow[0]);
+        }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_notifications'`);
+        for (var tableName of tables) {
+            await sqliteService.executeNonQuery(
+                `DELETE FROM ${tableName} WHERE type = 'groupChange' AND created_at < '2024-04-23T03:00:00.000Z'`
+            );
+        }
     },
 
     async fixCancelFriendRequestTypo() {
-        await sqliteService.executeNonQuery(
-            `UPDATE ${dbVars.userPrefix}_friend_log_history SET type = 'CancelFriendRequest' WHERE type = 'CancelFriendRequst'`
-        );
+        var tables = [];
+        await sqliteService.execute((dbRow) => {
+            tables.push(dbRow[0]);
+        }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_friend_log_history'`);
+        for (var tableName of tables) {
+            await sqliteService.executeNonQuery(
+                `UPDATE ${tableName} SET type = 'CancelFriendRequest' WHERE type = 'CancelFriendRequst'`
+            );
+        }
     },
 
     async getBrokenGameLogDisplayNames() {
