@@ -44,17 +44,16 @@
 
 <script setup>
     import { Delete } from '@element-plus/icons-vue';
-    import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { usePhotonStore } from '../../../stores';
 
-    import configRepository from '../../../service/config';
-
     const { t } = useI18n();
 
-    const { chatboxUserBlacklist } = storeToRefs(usePhotonStore());
+    const photonStore = usePhotonStore();
+    const { chatboxUserBlacklist, chatboxBlacklist } = storeToRefs(photonStore);
+    const { saveChatboxBlacklist } = photonStore;
 
     defineProps({
         chatboxBlacklistDialog: {
@@ -63,30 +62,8 @@
         }
     });
 
-    const chatboxBlacklist = ref([
-        'NP: ',
-        'Now Playing',
-        'Now playing',
-        "▶️ '",
-        '( ▶️ ',
-        "' - '",
-        "' by '",
-        '[Spotify] '
-    ]);
-
     const emit = defineEmits(['deleteChatboxUserBlacklist']);
 
-    initChatboxBlacklist();
-
-    async function initChatboxBlacklist() {
-        if (await configRepository.getString('VRCX_chatboxBlacklist')) {
-            chatboxBlacklist.value = JSON.parse(await configRepository.getString('VRCX_chatboxBlacklist'));
-        }
-    }
-
-    async function saveChatboxBlacklist() {
-        await configRepository.setString('VRCX_chatboxBlacklist', JSON.stringify(chatboxBlacklist.value));
-    }
 
     function deleteChatboxUserBlacklist(userId) {
         emit('deleteChatboxUserBlacklist', userId);
