@@ -86,7 +86,7 @@ namespace VRCX
             Browser.GotFocus += (_, _) =>
             {
                 if (Browser != null && !Browser.IsLoading && Browser.CanExecuteJavascriptInMainFrame)
-                    Browser.ExecuteScriptAsync("$pinia.vrcStatus.onBrowserFocus()");
+                    Browser.ExecuteScriptAsync("window?.$pinia.vrcStatus.onBrowserFocus");
             };
 
             JavascriptBindings.ApplyAppJavascriptBindings(Browser.JavascriptObjectRepository);
