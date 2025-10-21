@@ -92,12 +92,8 @@ namespace VRCX
                     Arguments = $"-applaunch 438100 {arguments}",
                     UseShellExecute = false,
                 });
-                if (process?.ExitCode == 0)
-                {
-                    process.Dispose();
-                    return true;
-                }
                 process?.Dispose();
+                return true; // Steam accepted launch command (no exception thrown)
             }
             catch (Exception e)
             {
@@ -125,7 +121,7 @@ namespace VRCX
                     FileName = steamExecutable,
                     Arguments = $"-applaunch 438100 {arguments}",
                     UseShellExecute = false,
-                })?.Close();
+                })?.Dispose();
 
                 return true;
             }
