@@ -123,7 +123,7 @@ namespace VRCX
                         _adapter,
                         D3DDriverType.Unknown,
                         Software: default,
-                        (uint)(CreateDeviceFlag.BgraSupport | CreateDeviceFlag.Debug),
+                        (uint)(CreateDeviceFlag.BgraSupport | (Program.LaunchDebug ? CreateDeviceFlag.Debug : 0)),
                         null,
                         0,
                         D3D11.SdkVersion,
@@ -136,7 +136,8 @@ namespace VRCX
                 _multithread = _device.QueryInterface<ID3D11Multithread>();
                 _multithread.SetMultithreadProtected(true);
 
-                _device.SetInfoQueueCallback(msg => logger.Info(SilkMarshal.PtrToString((nint)msg.PDescription)!));
+                if (Program.LaunchDebug)
+                    _device.SetInfoQueueCallback(msg => logger.Info(SilkMarshal.PtrToString((nint)msg.PDescription)!));
 
                 _texture1.Dispose();
                 SilkMarshal.ThrowHResult
