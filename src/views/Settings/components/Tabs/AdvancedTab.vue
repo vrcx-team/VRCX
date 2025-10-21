@@ -367,6 +367,7 @@
         useAuthStore,
         useAvatarProviderStore,
         useAvatarStore,
+        useGameLogStore,
         useGroupStore,
         useInstanceStore,
         useLaunchStore,
@@ -395,6 +396,7 @@
     const { showLaunchOptions } = useLaunchStore();
     const { enablePrimaryPasswordChange } = useAuthStore();
     const { showConsole, clearVRCXCache, showRegistryBackupDialog } = useVrcxStore();
+    const { disableGameLogDialog } = useGameLogStore();
 
     const { cachedUsers } = useUserStore();
     const { cachedWorlds } = useWorldStore();

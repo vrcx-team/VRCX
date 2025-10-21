@@ -60,7 +60,7 @@ namespace VRCX
             }
             catch
             {
-                IPCServer.Clients.Remove(this);
+                IPCServer.Clients.TryRemove(this, out _);
             }
         }
 
@@ -72,7 +72,7 @@ namespace VRCX
 
                 if (bytesRead <= 0)
                 {
-                    IPCServer.Clients.Remove(this);
+                    IPCServer.Clients.TryRemove(this, out _);
                     _ipcServer.Close();
                     return;
                 }
@@ -90,7 +90,7 @@ namespace VRCX
 
 #if !LINUX
                         if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-                            MainForm.Instance.Browser.ExecuteScriptAsync("$pinia.vrcx.ipcEvent", packet);
+                            MainForm.Instance.Browser.ExecuteScriptAsync("window?.$pinia.vrcx.ipcEvent", packet);
 #endif
                     }
 

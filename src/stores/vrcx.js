@@ -422,7 +422,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             console.log(`IPC invalid JSON, ${json}`);
             return;
         }
-          
+
         switch (data.type) {
             case 'OnEvent':
                 if (!gameStore.isGameRunning) {
