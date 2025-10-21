@@ -14,9 +14,9 @@ import {
     timeToText
 } from '../shared/utils';
 import { instanceRequest, userRequest } from '../api';
+import { photonEmojis, photonEventType } from '../shared/constants/photon';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
-import { photonEmojis, photonEventType } from '../shared/constants/photon';
 import { useAvatarStore } from './avatar';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
@@ -136,7 +136,6 @@ export const usePhotonStore = defineStore('Photon', () => {
         }
     });
     const chatboxUserBlacklist = ref(new Map());
-    // Keyword-based chatbox blacklist (array of strings)
     const chatboxBlacklist = ref([
         'NP: ',
         'Now Playing',
@@ -220,7 +219,10 @@ export const usePhotonStore = defineStore('Photon', () => {
                 }
             }
         } catch (err) {
-            console.error('Failed to parse chatbox keyword blacklist config', err);
+            console.error(
+                'Failed to parse chatbox keyword blacklist config',
+                err
+            );
         }
     }
 
@@ -353,7 +355,8 @@ export const usePhotonStore = defineStore('Photon', () => {
                             );
                         }
                         let hasInstantiated = false;
-                        const lobbyJointime = photonLobbyJointime.value.get(idNum);
+                        const lobbyJointime =
+                            photonLobbyJointime.value.get(idNum);
                         if (typeof lobbyJointime !== 'undefined') {
                             hasInstantiated = lobbyJointime.hasInstantiated;
                         }
@@ -756,7 +759,8 @@ export const usePhotonStore = defineStore('Photon', () => {
                             );
                         }
                         var hasInstantiated = false;
-                        var lobbyJointime = photonLobbyJointime.value.get(idNum);
+                        var lobbyJointime =
+                            photonLobbyJointime.value.get(idNum);
                         if (typeof lobbyJointime !== 'undefined') {
                             hasInstantiated = lobbyJointime.hasInstantiated;
                         }
@@ -1825,7 +1829,7 @@ export const usePhotonStore = defineStore('Photon', () => {
         photonEventTable,
         photonEventTablePrevious,
         chatboxUserBlacklist,
-    chatboxBlacklist,
+        chatboxBlacklist,
         photonEventTableFilter,
         photonLobby,
         photonLobbyMaster,
@@ -1854,7 +1858,7 @@ export const usePhotonStore = defineStore('Photon', () => {
         saveEventOverlay,
         checkChatboxBlacklist,
         saveChatboxUserBlacklist,
-    saveChatboxBlacklist,
+        saveChatboxBlacklist,
         photonEventTableFilterChange,
         showUserFromPhotonId,
         promptPhotonOverlayMessageTimeout,

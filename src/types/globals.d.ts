@@ -83,6 +83,7 @@ declare global {
         debugGameLog: boolean;
         debugWebRequests: boolean;
         debugFriendState: boolean;
+        debugIPC: boolean;
         errorNoty: any;
         dontLogMeOut: boolean;
         endpointDomain: string;
