@@ -896,6 +896,7 @@
                             </div>
                             <el-input
                                 v-model="groupDialog.memberSearch"
+                                :disabled="!hasGroupPermission(groupDialog.ref, 'group-members-manage')"
                                 clearable
                                 size="small"
                                 :placeholder="t('dialog.group.members.search')"

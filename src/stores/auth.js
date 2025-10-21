@@ -846,6 +846,7 @@ export const useAuthStore = defineStore('Auth', () => {
             );
             attemptingAutoLogin.value = false;
             handleLogoutEvent();
+            AppApi.FlashWindow();
             return;
         }
         state.autoLoginAttempts.add(new Date().getTime());
