@@ -16,7 +16,7 @@ import {
 import { instanceRequest, userRequest } from '../api';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
-import { photonEventType } from '../shared/constants/photon';
+import { photonEmojis, photonEventType } from '../shared/constants/photon';
 import { useAvatarStore } from './avatar';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
@@ -136,6 +136,17 @@ export const usePhotonStore = defineStore('Photon', () => {
         }
     });
     const chatboxUserBlacklist = ref(new Map());
+    // Keyword-based chatbox blacklist (array of strings)
+    const chatboxBlacklist = ref([
+        'NP: ',
+        'Now Playing',
+        'Now playing',
+        "▶️ '",
+        '( ▶️ ',
+        "' - '",
+        "' by '",
+        '[Spotify] '
+    ]);
     const photonEventTableFilter = ref('');
     const moderationAgainstTable = ref([]);
     const photonEventTableTypeFilter = ref([]);
@@ -150,7 +161,8 @@ export const usePhotonStore = defineStore('Photon', () => {
             photonLobbyTimeoutThresholdConfig,
             photonOverlayMessageTimeoutConfig,
             photonEventTableTypeFilterConfig,
-            chatboxUserBlacklistConfig
+            chatboxUserBlacklistConfig,
+            chatboxKeywordBlacklistConfig
         ] = await Promise.all([
             configRepository.getBool('VRCX_PhotonEventOverlay', false),
             configRepository.getString(
@@ -172,7 +184,8 @@ export const usePhotonStore = defineStore('Photon', () => {
                 (6000).toString()
             ),
             configRepository.getString('VRCX_photonEventTypeFilter', '[]'),
-            configRepository.getString('VRCX_chatboxUserBlacklist')
+            configRepository.getString('VRCX_chatboxUserBlacklist'),
+            configRepository.getString('VRCX_chatboxBlacklist')
         ]);
 
         photonEventOverlay.value = photonEventOverlayConfig;
@@ -198,6 +211,17 @@ export const usePhotonStore = defineStore('Photon', () => {
         chatboxUserBlacklist.value = new Map(
             Object.entries(JSON.parse(chatboxUserBlacklistConfig || '{}'))
         );
+
+        try {
+            if (chatboxKeywordBlacklistConfig) {
+                const arr = JSON.parse(chatboxKeywordBlacklistConfig);
+                if (Array.isArray(arr)) {
+                    chatboxBlacklist.value = arr;
+                }
+            }
+        } catch (err) {
+            console.error('Failed to parse chatbox keyword blacklist config', err);
+        }
     }
 
     initPhotonStates();
@@ -303,29 +327,37 @@ export const usePhotonStore = defineStore('Photon', () => {
                 }
                 if (typeof data.Parameters[249] !== 'undefined') {
                     for (const i in data.Parameters[249]) {
-                        const id = parseInt(i, 10);
+                        const idNum = safeParseInt(i);
+                        if (idNum === null) continue;
                         const user = data.Parameters[249][i];
-                        parsePhotonUser(id, user.user, dateTime);
-                        parsePhotonAvatarChange(
-                            id,
-                            user.user,
-                            user.avatarDict,
-                            dateTime
-                        );
-                        parsePhotonGroupChange(
-                            id,
-                            user.user,
-                            user.groupOnNameplate,
-                            dateTime
-                        );
-                        parsePhotonAvatar(user.avatarDict);
-                        parsePhotonAvatar(user.favatarDict);
+                        if (!user || !user.user) continue;
+                        parsePhotonUser(idNum, user.user, dateTime);
+                        if (user.avatarDict) {
+                            parsePhotonAvatarChange(
+                                idNum,
+                                user.user,
+                                user.avatarDict,
+                                dateTime
+                            );
+                            parsePhotonAvatar(user.avatarDict);
+                        }
+                        if (user.favatarDict) {
+                            parsePhotonAvatar(user.favatarDict);
+                        }
+                        if (typeof user.groupOnNameplate !== 'undefined') {
+                            parsePhotonGroupChange(
+                                idNum,
+                                user.user,
+                                user.groupOnNameplate,
+                                dateTime
+                            );
+                        }
                         let hasInstantiated = false;
-                        const lobbyJointime = photonLobbyJointime.value.get(id);
+                        const lobbyJointime = photonLobbyJointime.value.get(idNum);
                         if (typeof lobbyJointime !== 'undefined') {
                             hasInstantiated = lobbyJointime.hasInstantiated;
                         }
-                        photonLobbyJointime.value.set(id, {
+                        photonLobbyJointime.value.set(idNum, {
                             joinTime: Date.parse(dateTime),
                             hasInstantiated,
                             inVRMode: user.inVRMode,
@@ -348,10 +380,12 @@ export const usePhotonStore = defineStore('Photon', () => {
     }
 
     function checkChatboxBlacklist(msg) {
-        for (let i = 0; i < this.chatboxBlacklist.length; ++i) {
-            if (msg.includes(this.chatboxBlacklist[i])) {
-                return true;
-            }
+        if (typeof msg !== 'string') return false;
+        const list = chatboxBlacklist.value || [];
+        for (let i = 0; i < list.length; ++i) {
+            const kw = list[i];
+            if (!kw) continue;
+            if (msg.includes(kw)) return true;
         }
         return false;
     }
@@ -360,6 +394,13 @@ export const usePhotonStore = defineStore('Photon', () => {
         await configRepository.setString(
             'VRCX_chatboxUserBlacklist',
             JSON.stringify(Object.fromEntries(chatboxUserBlacklist.value))
+        );
+    }
+
+    async function saveChatboxBlacklist() {
+        await configRepository.setString(
+            'VRCX_chatboxBlacklist',
+            JSON.stringify(chatboxBlacklist.value)
         );
     }
 
@@ -689,29 +730,37 @@ export const usePhotonStore = defineStore('Photon', () => {
                 // SetUserProperties
                 if (data.Parameters[253] === -1) {
                     for (let i in data.Parameters[251]) {
-                        var id = parseInt(i, 10);
-                        var user = data.Parameters[251][i];
-                        parsePhotonUser(id, user.user, gameLogDate);
-                        parsePhotonAvatarChange(
-                            id,
-                            user.user,
-                            user.avatarDict,
-                            gameLogDate
-                        );
-                        parsePhotonGroupChange(
-                            id,
-                            user.user,
-                            user.groupOnNameplate,
-                            gameLogDate
-                        );
-                        parsePhotonAvatar(user.avatarDict);
-                        parsePhotonAvatar(user.favatarDict);
+                        const idNum = safeParseInt(i);
+                        if (idNum === null) continue;
+                        const user = data.Parameters[251][i];
+                        if (!user || !user.user) continue;
+                        parsePhotonUser(idNum, user.user, gameLogDate);
+                        if (user.avatarDict) {
+                            parsePhotonAvatarChange(
+                                idNum,
+                                user.user,
+                                user.avatarDict,
+                                gameLogDate
+                            );
+                            parsePhotonAvatar(user.avatarDict);
+                        }
+                        if (user.favatarDict) {
+                            parsePhotonAvatar(user.favatarDict);
+                        }
+                        if (typeof user.groupOnNameplate !== 'undefined') {
+                            parsePhotonGroupChange(
+                                idNum,
+                                user.user,
+                                user.groupOnNameplate,
+                                gameLogDate
+                            );
+                        }
                         var hasInstantiated = false;
-                        var lobbyJointime = photonLobbyJointime.value.get(id);
+                        var lobbyJointime = photonLobbyJointime.value.get(idNum);
                         if (typeof lobbyJointime !== 'undefined') {
                             hasInstantiated = lobbyJointime.hasInstantiated;
                         }
-                        photonLobbyJointime.value.set(id, {
+                        photonLobbyJointime.value.set(idNum, {
                             joinTime: Date.parse(gameLogDate),
                             hasInstantiated,
                             inVRMode: user.inVRMode,
@@ -723,33 +772,41 @@ export const usePhotonStore = defineStore('Photon', () => {
                             useImpostorAsFallback: user.useImpostorAsFallback,
                             platform: user.platform
                         });
-                        photonUserJoin(id, user, gameLogDate);
+                        photonUserJoin(idNum, user, gameLogDate);
                     }
                 } else {
                     console.log('oldSetUserProps', data);
-                    var id = parseInt(data.Parameters[253], 10);
-                    var user = data.Parameters[251];
-                    parsePhotonUser(id, user.user, gameLogDate);
-                    parsePhotonAvatarChange(
-                        id,
-                        user.user,
-                        user.avatarDict,
-                        gameLogDate
-                    );
-                    parsePhotonGroupChange(
-                        id,
-                        user.user,
-                        user.groupOnNameplate,
-                        gameLogDate
-                    );
-                    parsePhotonAvatar(user.avatarDict);
-                    parsePhotonAvatar(user.favatarDict);
+                    const idNum = safeParseInt(data.Parameters[253]);
+                    if (idNum === null) break;
+                    const user = data.Parameters[251];
+                    if (!user || !user.user) break;
+                    parsePhotonUser(idNum, user.user, gameLogDate);
+                    if (user.avatarDict) {
+                        parsePhotonAvatarChange(
+                            idNum,
+                            user.user,
+                            user.avatarDict,
+                            gameLogDate
+                        );
+                        parsePhotonAvatar(user.avatarDict);
+                    }
+                    if (user.favatarDict) {
+                        parsePhotonAvatar(user.favatarDict);
+                    }
+                    if (typeof user.groupOnNameplate !== 'undefined') {
+                        parsePhotonGroupChange(
+                            idNum,
+                            user.user,
+                            user.groupOnNameplate,
+                            gameLogDate
+                        );
+                    }
                     var hasInstantiated = false;
-                    var lobbyJointime = photonLobbyJointime.value.get(id);
+                    var lobbyJointime = photonLobbyJointime.value.get(idNum);
                     if (typeof lobbyJointime !== 'undefined') {
                         hasInstantiated = lobbyJointime.hasInstantiated;
                     }
-                    photonLobbyJointime.value.set(id, {
+                    photonLobbyJointime.value.set(idNum, {
                         joinTime: Date.parse(gameLogDate),
                         hasInstantiated,
                         inVRMode: user.inVRMode,
@@ -761,97 +818,109 @@ export const usePhotonStore = defineStore('Photon', () => {
                         useImpostorAsFallback: user.useImpostorAsFallback,
                         platform: user.platform
                     });
-                    photonUserJoin(id, user, gameLogDate);
+                    photonUserJoin(idNum, user, gameLogDate);
                 }
                 break;
             case 42:
                 // SetUserProperties
-                var id = parseInt(data.Parameters[254], 10);
-                var user = data.Parameters[245];
-                parsePhotonUser(id, user.user, gameLogDate);
-                parsePhotonAvatarChange(
-                    id,
-                    user.user,
-                    user.avatarDict,
-                    gameLogDate
-                );
-                parsePhotonGroupChange(
-                    id,
-                    user.user,
-                    user.groupOnNameplate,
-                    gameLogDate
-                );
-                parsePhotonAvatar(user.avatarDict);
-                parsePhotonAvatar(user.favatarDict);
-                var lobbyJointime = photonLobbyJointime.value.get(id);
-                photonLobbyJointime.value.set(id, {
+                var id42 = safeParseInt(data.Parameters[254]);
+                var user42 = data.Parameters[245];
+                if (id42 === null || !user42 || !user42.user) break;
+                parsePhotonUser(id42, user42.user, gameLogDate);
+                if (user42.avatarDict) {
+                    parsePhotonAvatarChange(
+                        id42,
+                        user42.user,
+                        user42.avatarDict,
+                        gameLogDate
+                    );
+                    parsePhotonAvatar(user42.avatarDict);
+                }
+                if (user42.favatarDict) {
+                    parsePhotonAvatar(user42.favatarDict);
+                }
+                if (typeof user42.groupOnNameplate !== 'undefined') {
+                    parsePhotonGroupChange(
+                        id42,
+                        user42.user,
+                        user42.groupOnNameplate,
+                        gameLogDate
+                    );
+                }
+                var lobbyJointime = photonLobbyJointime.value.get(id42);
+                photonLobbyJointime.value.set(id42, {
                     hasInstantiated: true,
                     ...lobbyJointime,
-                    inVRMode: user.inVRMode,
-                    avatarEyeHeight: user.avatarEyeHeight,
-                    canModerateInstance: user.canModerateInstance,
-                    groupOnNameplate: user.groupOnNameplate,
-                    showGroupBadgeToOthers: user.showGroupBadgeToOthers,
-                    showSocialRank: user.showSocialRank,
-                    useImpostorAsFallback: user.useImpostorAsFallback,
-                    platform: user.platform
+                    inVRMode: user42.inVRMode,
+                    avatarEyeHeight: user42.avatarEyeHeight,
+                    canModerateInstance: user42.canModerateInstance,
+                    groupOnNameplate: user42.groupOnNameplate,
+                    showGroupBadgeToOthers: user42.showGroupBadgeToOthers,
+                    showSocialRank: user42.showSocialRank,
+                    useImpostorAsFallback: user42.useImpostorAsFallback,
+                    platform: user42.platform
                 });
                 break;
             case 255:
                 // Join
+                const id255 = safeParseInt(data.Parameters[254]);
+                if (id255 === null) break;
                 if (typeof data.Parameters[249] !== 'undefined') {
-                    parsePhotonUser(
-                        data.Parameters[254],
-                        data.Parameters[249].user,
-                        gameLogDate
-                    );
-                    parsePhotonAvatarChange(
-                        data.Parameters[254],
-                        data.Parameters[249].user,
-                        data.Parameters[249].avatarDict,
-                        gameLogDate
-                    );
-                    parsePhotonGroupChange(
-                        data.Parameters[254],
-                        data.Parameters[249].user,
-                        data.Parameters[249].groupOnNameplate,
-                        gameLogDate
-                    );
-                    parsePhotonAvatar(data.Parameters[249].avatarDict);
-                    parsePhotonAvatar(data.Parameters[249].favatarDict);
+                    const u255 = data.Parameters[249];
+                    if (u255 && u255.user) {
+                        parsePhotonUser(id255, u255.user, gameLogDate);
+                        if (u255.avatarDict) {
+                            parsePhotonAvatarChange(
+                                id255,
+                                u255.user,
+                                u255.avatarDict,
+                                gameLogDate
+                            );
+                            parsePhotonAvatar(u255.avatarDict);
+                        }
+                        if (u255.favatarDict) {
+                            parsePhotonAvatar(u255.favatarDict);
+                        }
+                        if (typeof u255.groupOnNameplate !== 'undefined') {
+                            parsePhotonGroupChange(
+                                id255,
+                                u255.user,
+                                u255.groupOnNameplate,
+                                gameLogDate
+                            );
+                        }
+                    }
                 }
                 parsePhotonLobbyIds(data.Parameters[252]);
                 var hasInstantiated = false;
-                if (photonLobbyCurrentUser.value === data.Parameters[254]) {
+                if (photonLobbyCurrentUser.value === id255) {
                     // fix current user
                     hasInstantiated = true;
                 }
-                var ref = photonLobbyCurrent.value.get(data.Parameters[254]);
+                var ref = photonLobbyCurrent.value.get(id255);
                 if (typeof ref !== 'undefined') {
                     // fix for join event firing twice
                     // fix instantiation happening out of order before join event
                     hasInstantiated = ref.hasInstantiated;
                 }
-                photonLobbyJointime.value.set(data.Parameters[254], {
-                    joinTime: Date.parse(gameLogDate),
-                    hasInstantiated,
-                    inVRMode: data.Parameters[249].inVRMode,
-                    avatarEyeHeight: data.Parameters[249].avatarEyeHeight,
-                    canModerateInstance:
-                        data.Parameters[249].canModerateInstance,
-                    groupOnNameplate: data.Parameters[249].groupOnNameplate,
-                    showGroupBadgeToOthers:
-                        data.Parameters[249].showGroupBadgeToOthers,
-                    showSocialRank: data.Parameters[249].showSocialRank,
-                    useImpostorAsFallback:
-                        data.Parameters[249].useImpostorAsFallback,
-                    platform: data.Parameters[249].platform
-                });
-                photonUserJoin(
-                    data.Parameters[254],
-                    data.Parameters[249],
-                    gameLogDate
-                );
+                if (data.Parameters[249]) {
+                    photonLobbyJointime.value.set(id255, {
+                        joinTime: Date.parse(gameLogDate),
+                        hasInstantiated,
+                        inVRMode: data.Parameters[249].inVRMode,
+                        avatarEyeHeight: data.Parameters[249].avatarEyeHeight,
+                        canModerateInstance:
+                            data.Parameters[249].canModerateInstance,
+                        groupOnNameplate: data.Parameters[249].groupOnNameplate,
+                        showGroupBadgeToOthers:
+                            data.Parameters[249].showGroupBadgeToOthers,
+                        showSocialRank: data.Parameters[249].showSocialRank,
+                        useImpostorAsFallback:
+                            data.Parameters[249].useImpostorAsFallback,
+                        platform: data.Parameters[249].platform
+                    });
+                    photonUserJoin(id255, data.Parameters[249], gameLogDate);
+                }
                 startLobbyWatcherLoop();
                 break;
             case 254:
@@ -1028,66 +1097,65 @@ export const usePhotonStore = defineStore('Photon', () => {
             case 70:
                 // Portal Spawn
                 if (data.Parameters[245][0] === 20) {
-                    var portalId = data.Parameters[245][1];
-                    var userId = data.Parameters[245][2];
-                    var shortName = data.Parameters[245][5];
-                    var worldName = data.Parameters[245][8].name;
+                    const portalId = data.Parameters[245][1];
+                    const portalUserId = data.Parameters[245][2];
+                    const shortName = data.Parameters[245][5];
+                    const portalWorldName = data.Parameters[245][8].name;
                     addPhotonPortalSpawn(
                         gameLogDate,
-                        userId,
+                        portalUserId,
                         shortName,
-                        worldName
+                        portalWorldName
                     );
                     photonLobbyActivePortals.value.set(portalId, {
-                        userId,
+                        userId: portalUserId,
                         shortName,
-                        worldName,
+                        worldName: portalWorldName,
                         created_at: Date.parse(gameLogDate),
-                        playerCount: 0,
                         pendingLeave: 0
                     });
                 } else if (data.Parameters[245][0] === 21) {
-                    var portalId = data.Parameters[245][1];
-                    var userId = data.Parameters[245][2];
-                    var playerCount = data.Parameters[245][3];
-                    var shortName = data.Parameters[245][5];
-                    var worldName = '';
+                    const portalId = data.Parameters[245][1];
+                    const portalUserId = data.Parameters[245][2];
+                    const playerCount = data.Parameters[245][3];
+                    const shortName = data.Parameters[245][5];
+                    const portalWorldName = '';
                     addPhotonPortalSpawn(
                         gameLogDate,
-                        userId,
+                        portalUserId,
                         shortName,
-                        worldName
+                        portalWorldName
                     );
                     photonLobbyActivePortals.value.set(portalId, {
-                        userId,
+                        userId: portalUserId,
                         shortName,
-                        worldName,
+                        worldName: portalWorldName,
                         created_at: Date.parse(gameLogDate),
                         playerCount: 0,
                         pendingLeave: 0
                     });
                 } else if (data.Parameters[245][0] === 22) {
-                    var portalId = data.Parameters[245][1];
-                    var text = 'DeletedPortal';
-                    var ref = photonLobbyActivePortals.value.get(portalId);
+                    const portalId = data.Parameters[245][1];
+                    let portalText = 'DeletedPortal';
+                    const ref = photonLobbyActivePortals.value.get(portalId);
                     if (typeof ref !== 'undefined') {
-                        var worldName = ref.worldName;
-                        var playerCount = ref.playerCount;
+                        const portalWorldName = ref.worldName;
+                        const playerCount = ref.playerCount;
                         const time = timeToText(
                             Date.parse(gameLogDate) - ref.created_at
                         );
-                        text = `DeletedPortal after ${time} with ${playerCount} players to "${worldName}"`;
+                        portalText = `DeletedPortal after ${time} with ${playerCount} players to "${portalWorldName}"`;
                     }
                     addEntryPhotonEvent({
-                        text,
+                        text: portalText,
                         type: 'DeletedPortal',
                         created_at: gameLogDate
                     });
                     photonLobbyActivePortals.value.delete(portalId);
                 } else if (data.Parameters[245][0] === 23) {
-                    var portalId = data.Parameters[245][1];
-                    var playerCount = data.Parameters[245][3];
-                    var ref = photonLobbyActivePortals.value.get(portalId);
+                    const portalId = data.Parameters[245][1];
+                    const playerCount = data.Parameters[245][3];
+                    const ref = photonLobbyActivePortals.value.get(portalId);
                     if (typeof ref !== 'undefined') {
                         ref.pendingLeave++;
                         ref.playerCount = playerCount;
@@ -1299,6 +1367,9 @@ export const usePhotonStore = defineStore('Photon', () => {
     }
 
     function parsePhotonLobbyIds(lobbyIds) {
+        if (!Array.isArray(lobbyIds)) {
+            return;
+        }
         lobbyIds.forEach((id) => {
             if (!photonLobby.value.has(id)) {
                 photonLobby.value.set(id);
@@ -1692,7 +1763,7 @@ export const usePhotonStore = defineStore('Photon', () => {
 
     function parsePhotonAvatar(avatar) {
         if (typeof avatar === 'undefined' || typeof avatar.id === 'undefined') {
-            console.error('PhotonAvatar: avatar is undefined');
+            console.warn('PhotonAvatar: avatar is undefined');
             return;
         }
         let tags = [];
@@ -1733,6 +1804,11 @@ export const usePhotonStore = defineStore('Photon', () => {
         });
     }
 
+    function safeParseInt(val) {
+        const n = parseInt(val, 10);
+        return Number.isFinite(n) ? n : null;
+    }
+
     return {
         state,
 
@@ -1749,6 +1825,7 @@ export const usePhotonStore = defineStore('Photon', () => {
         photonEventTable,
         photonEventTablePrevious,
         chatboxUserBlacklist,
+    chatboxBlacklist,
         photonEventTableFilter,
         photonLobby,
         photonLobbyMaster,
@@ -1777,6 +1854,7 @@ export const usePhotonStore = defineStore('Photon', () => {
         saveEventOverlay,
         checkChatboxBlacklist,
         saveChatboxUserBlacklist,
+    saveChatboxBlacklist,
         photonEventTableFilterChange,
         showUserFromPhotonId,
         promptPhotonOverlayMessageTimeout,
