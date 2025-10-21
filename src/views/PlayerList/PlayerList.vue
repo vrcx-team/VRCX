@@ -187,6 +187,10 @@
                 </div>
             </div>
 
+            <div v-if="photonLoggingEnabled" style="margin-bottom: 10px">
+                <PhotonEventTable @show-chatbox-blacklist="showChatboxBlacklistDialog" />
+            </div>
+
             <div class="current-instance-table">
                 <DataTable
                     v-bind="currentInstanceUsersTable"
@@ -396,7 +400,6 @@
         <ChatboxBlacklistDialog
             :chatbox-blacklist-dialog="chatboxBlacklistDialog"
             @delete-chatbox-user-blacklist="deleteChatboxUserBlacklist" />
-        <PhotonEventTable v-if="photonLoggingEnabled" @show-chatbox-blacklist="showChatboxBlacklistDialog" />
     </div>
 </template>
 

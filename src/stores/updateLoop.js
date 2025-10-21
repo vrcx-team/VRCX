@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { watch } from 'vue';
+import { watch, computed } from 'vue';
 
 import { database } from '../service/database';
 import { groupRequest } from '../api';
@@ -60,7 +60,12 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
 
     const nextDiscordUpdate = state.nextDiscordUpdate;
 
-    const ipcTimeout = state.ipcTimeout;
+    const ipcTimeout = computed({
+        get: () => state.ipcTimeout,
+        set: (seconds) => {
+            state.ipcTimeout = Number(seconds) || 0;
+        }
+    });
 
     async function updateLoop() {
         try {
