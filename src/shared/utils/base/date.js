@@ -36,9 +36,13 @@ function formatDateFilter(dateStr, format) {
         return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
     }
 
+    let dateFormat = 'en-gb';
+    if (!isoFormat && currentCulture) {
+        dateFormat = currentCulture;
+    }
     function toLocalShort(date) {
         return date
-            .toLocaleDateString(isoFormat ? 'en-nz' : currentCulture, {
+            .toLocaleDateString(dateFormat, {
                 month: '2-digit',
                 day: '2-digit',
                 hour: 'numeric',
@@ -59,7 +63,7 @@ function formatDateFilter(dateStr, format) {
         }
     } else {
         if (format === 'long') {
-            return dt.toLocaleDateString(currentCulture, {
+            return dt.toLocaleDateString(dateFormat, {
                 month: '2-digit',
                 day: '2-digit',
                 year: 'numeric',

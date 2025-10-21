@@ -74,8 +74,12 @@ export const useGameStore = defineStore('Game', () => {
     }
 
     async function sweepVRChatCache() {
-        const output = await AssetBundleManager.SweepCache();
-        console.log('SweepCache', output);
+        try {
+            const output = await AssetBundleManager.SweepCache();
+            console.log('SweepCache', output);
+        } catch (e) {
+            console.error('SweepCache failed', e);
+        }
         if (advancedSettingsStore.isVRChatConfigDialogVisible) {
             getVRChatCacheSize();
         }
@@ -170,7 +174,7 @@ export const useGameStore = defineStore('Game', () => {
                 avatarStore.addAvatarWearTime(
                     userStore.currentUser.currentAvatar
                 );
-                userStore.currentUser.$previousAvatarSwapTime = '';
+                userStore.currentUser.$previousAvatarSwapTime = null;
             }
             locationStore.lastLocationReset();
             gameLogStore.clearNowPlaying();

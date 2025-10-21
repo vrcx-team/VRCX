@@ -413,7 +413,8 @@ div.x-friend-list
     color: $--theme-text-2;
 }
 
-.el-input.is-disabled .el-input__inner {
+.el-input.is-disabled .el-input__inner,
+.el-input.is-disabled .el-input__wrapper {
     background-color: hsl($--theme-hue, $--theme-saturation, 23%);
 }
 
