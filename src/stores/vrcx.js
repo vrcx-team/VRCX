@@ -417,16 +417,19 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             console.log(`IPC invalid JSON, ${json}`);
             return;
         }
+          
         switch (data.type) {
             case 'OnEvent':
                 if (!gameStore.isGameRunning) {
                     console.log('Game closed, skipped event', data);
                     return;
                 }
-                if (AppDebug.debugPhotonLogging) {
+                if (AppDebug.debugPhotonLogging || AppDebug.debugIPC) {
                     console.log(
                         'OnEvent',
                         data.OnEventData.Code,
+                        'Param[254]:',
+                        data.OnEventData.Parameters?.[254],
                         data.OnEventData
                     );
                 }
@@ -438,10 +441,12 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     console.log('Game closed, skipped event', data);
                     return;
                 }
-                if (AppDebug.debugPhotonLogging) {
+                if (AppDebug.debugPhotonLogging || AppDebug.debugIPC) {
                     console.log(
                         'OnOperationResponse',
                         data.OnOperationResponseData.OperationCode,
+                        'Param[254]:',
+                        data.OnOperationResponseData.Parameters?.[254],
                         data.OnOperationResponseData
                     );
                 }
@@ -456,7 +461,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     console.log('Game closed, skipped event', data);
                     return;
                 }
-                if (AppDebug.debugPhotonLogging) {
+                if (AppDebug.debugPhotonLogging || AppDebug.debugIPC) {
                     console.log(
                         'OnOperationRequest',
                         data.OnOperationRequestData.OperationCode,
@@ -469,10 +474,16 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     console.log('Game closed, skipped event', data);
                     return;
                 }
+                if (AppDebug.debugIPC) {
+                    console.log('VRCEvent:', data);
+                }
                 photonStore.parseVRCEvent(data);
                 photonStore.photonEventPulse();
                 break;
             case 'Event7List':
+                if (AppDebug.debugIPC) {
+                    console.log('Event7List:', data);
+                }
                 photonStore.photonEvent7List.clear();
                 for (const [id, dt] of Object.entries(data.Event7List)) {
                     photonStore.photonEvent7List.set(parseInt(id, 10), dt);
@@ -480,12 +491,15 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 photonStore.photonLastEvent7List = Date.parse(data.dt);
                 break;
             case 'VrcxMessage':
-                if (AppDebug.debugPhotonLogging) {
+                if (AppDebug.debugPhotonLogging || AppDebug.debugIPC) {
                     console.log('VrcxMessage:', data);
                 }
                 eventVrcxMessage(data);
                 break;
             case 'Ping':
+                if (AppDebug.debugIPC) {
+                    console.log('IPC Ping');
+                }
                 if (!photonStore.photonLoggingEnabled) {
                     photonStore.setPhotonLoggingEnabled();
                 }
@@ -493,6 +507,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 updateLoopStore.ipcTimeout = 60; // 30 seconds
                 break;
             case 'MsgPing':
+                if (AppDebug.debugIPC) {
+                    console.log('MsgPing:', data);
+                }
                 state.externalNotifierVersion = data.version;
                 break;
             case 'LaunchCommand':
