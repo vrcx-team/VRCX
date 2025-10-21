@@ -113,13 +113,15 @@
                     class="x-friend-list"
                     :class="{ 'is-editing': editFavoritesMode }"
                     style="margin-top: 10px">
-                    <FavoritesWorldItem
-                        v-for="favorite in groupedByGroupKeyFavoriteWorlds[group.key]"
-                        :key="favorite.id"
-                        :group="group"
-                        :favorite="favorite"
-                        @click="showWorldDialog(favorite.id)"
-                        @handle-select="favorite.$selected = $event" />
+                    <el-scrollbar height="700px" @end-reached="worldFavoritesLoadMore">
+                        <FavoritesWorldItem
+                            v-for="favorite in sliceWorldFavorites(group.key)"
+                            :key="favorite.id"
+                            :group="group"
+                            :favorite="favorite"
+                            @click="showWorldDialog(favorite.id)"
+                            @handle-select="favorite.$selected = $event" />
+                    </el-scrollbar>
                 </div>
                 <div
                     v-else
@@ -153,7 +155,7 @@
         </el-button>
         <el-collapse style="border: 0">
             <el-collapse-item v-for="group in localWorldFavoriteGroups" :key="group">
-                <template #title v-if="localWorldFavorites[group]">
+                <template #title>
                     <span style="font-weight: bold; font-size: 14px; margin-left: 10px" v-text="group" />
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">{{
                         getLocalWorldFavoriteGroupLength(group)
@@ -180,14 +182,15 @@
                     class="x-friend-list"
                     :class="{ 'is-editing': editFavoritesMode }"
                     style="margin-top: 10px">
-                    <FavoritesWorldItem
-                        v-for="favorite in localWorldFavorites[group]"
-                        :key="favorite.id"
-                        is-local-favorite
-                        :group="group"
-                        :favorite="favorite"
-                        @click="showWorldDialog(favorite.id)"
-                        @remove-local-world-favorite="removeLocalWorldFavorite" />
+                    <el-scrollbar height="700px" @end-reached="localWorldFavoritesLoadMore">
+                        <FavoritesWorldLocalItem
+                            v-for="favorite in sliceLocalWorldFavorites(group)"
+                            :key="favorite.id"
+                            :group="group"
+                            :favorite="favorite"
+                            @click="showWorldDialog(favorite.id)"
+                            @remove-local-world-favorite="removeLocalWorldFavorite"
+                    /></el-scrollbar>
                 </div>
                 <div
                     v-else
@@ -218,6 +221,7 @@
     import { favoriteRequest } from '../../../api';
 
     import FavoritesWorldItem from './FavoritesWorldItem.vue';
+    import FavoritesWorldLocalItem from './FavoritesWorldLocalItem.vue';
     import WorldExportDialog from '../dialogs/WorldExportDialog.vue';
 
     defineProps({
@@ -257,6 +261,8 @@
     const worldExportDialogVisible = ref(false);
     const worldFavoriteSearch = ref('');
     const worldFavoriteSearchResults = ref([]);
+    const sliceLocalWorldFavoritesLoadMoreNumber = ref(60);
+    const sliceWorldFavoritesLoadMoreNumber = ref(60);
 
     const groupedByGroupKeyFavoriteWorlds = computed(() => {
         const groupedByGroupKeyFavoriteWorlds = {};
@@ -273,6 +279,18 @@
         return groupedByGroupKeyFavoriteWorlds;
     });
 
+    const sliceLocalWorldFavorites = computed(() => {
+        return (group) => {
+            return localWorldFavorites.value[group].slice(0, sliceLocalWorldFavoritesLoadMoreNumber.value);
+        };
+    });
+
+    const sliceWorldFavorites = computed(() => {
+        return (group) => {
+            return groupedByGroupKeyFavoriteWorlds.value[group].slice(0, sliceWorldFavoritesLoadMoreNumber.value);
+        };
+    });
+
     const sortFav = computed({
         get() {
             return sortFavorites.value;
@@ -281,6 +299,18 @@
             setSortFavorites();
         }
     });
+
+    function localWorldFavoritesLoadMore(direction) {
+        if (direction === 'bottom') {
+            sliceLocalWorldFavoritesLoadMoreNumber.value += 20;
+        }
+    }
+
+    function worldFavoritesLoadMore(direction) {
+        if (direction === 'bottom') {
+            sliceWorldFavoritesLoadMoreNumber.value += 20;
+        }
+    }
 
     function showExportDialog() {
         worldExportDialogVisible.value = true;
