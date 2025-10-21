@@ -586,10 +586,10 @@ export const useUserStore = defineStore('User', () => {
                 !currentTravelers.value.has(ref.id) &&
                 ref.travelingToLocation
             ) {
-                const travelRef = {
+                const travelRef = reactive({
                     created_at: new Date().toJSON(),
                     ...ref
-                };
+                });
                 currentTravelers.value.set(ref.id, travelRef);
                 sharedFeedStore.sharedFeed.pendingUpdate = true;
                 sharedFeedStore.updateSharedFeed(false);
@@ -1737,7 +1737,7 @@ export const useUserStore = defineStore('User', () => {
                 }
             }
         } else {
-            ref = reactive({
+            ref = {
                 acceptedPrivacyVersion: 0,
                 acceptedTOSVersion: 0,
                 accountDeletionDate: null,
@@ -1841,7 +1841,7 @@ export const useUserStore = defineStore('User', () => {
                 $locationTag: '',
                 $travelingToLocation: '',
                 ...json
-            });
+            };
             if (gameStore.isGameRunning) {
                 ref.$previousAvatarSwapTime = Date.now();
             }
