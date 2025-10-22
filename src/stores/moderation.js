@@ -12,11 +12,35 @@ export const useModerationStore = defineStore('Moderation', () => {
 
     const cachedPlayerModerations = ref(new Map());
     const cachedPlayerModerationsUserIds = ref(new Set());
-    const isPlayerModerationsLoading = ref(false);
     const playerModerationTable = ref({
         data: [],
+        search: '',
+        loading: false,
+        filters: [
+            {
+                prop: 'type',
+                value: []
+            },
+            {
+                prop: ['sourceDisplayName', 'targetDisplayName'],
+                value: ''
+            }
+        ],
+        tableProps: {
+            stripe: true,
+            size: 'small',
+            defaultSort: {
+                prop: 'created',
+                order: 'descending'
+            }
+        },
         pageSize: 15,
-        pageSizeLinked: true
+        pageSizeLinked: true,
+        paginationProps: {
+            small: true,
+            layout: 'sizes,prev,pager,next,total',
+            pageSizes: [10, 15, 20, 25, 50, 100]
+        }
     });
 
     watch(
@@ -24,7 +48,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         (isLoggedIn) => {
             cachedPlayerModerations.value.clear();
             cachedPlayerModerationsUserIds.value.clear();
-            isPlayerModerationsLoading.value = false;
+            playerModerationTable.value.loading = false;
             playerModerationTable.value.data = [];
             if (isLoggedIn) {
                 refreshPlayerModerations();
@@ -168,17 +192,17 @@ export const useModerationStore = defineStore('Moderation', () => {
     }
 
     async function refreshPlayerModerations() {
-        if (isPlayerModerationsLoading.value) {
+        if (playerModerationTable.value.loading) {
             return;
         }
-        isPlayerModerationsLoading.value = true;
+        playerModerationTable.value.loading = true;
         expirePlayerModerations();
         Promise.all([
             playerModerationRequest.getPlayerModerations(),
             avatarModerationRequest.getAvatarModerations()
         ])
             .finally(() => {
-                isPlayerModerationsLoading.value = false;
+                playerModerationTable.value.loading = false;
             })
             .then((res) => {
                 // TODO: compare with cachedAvatarModerations
@@ -244,7 +268,6 @@ export const useModerationStore = defineStore('Moderation', () => {
     return {
         cachedPlayerModerations,
         cachedPlayerModerationsUserIds,
-        isPlayerModerationsLoading,
         playerModerationTable,
 
         refreshPlayerModerations,

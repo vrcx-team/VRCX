@@ -74,11 +74,13 @@
         emits: [
             'update:currentPage',
             'update:pageSize',
+            'update:tableProps',
             'size-change',
             'current-change',
             'selection-change',
             'row-click',
-            'filtered-data'
+            'filtered-data',
+            'sort-change'
         ],
         setup(props, { emit }) {
             const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -180,7 +182,14 @@
             });
 
             const handleSortChange = ({ prop, order }) => {
+                if (props.tableProps.defaultSort) {
+                    const { tableProps } = props;
+                    tableProps.defaultSort.prop = prop;
+                    tableProps.defaultSort.order = order;
+                    emit('update:tableProps', tableProps);
+                }
                 sortData.value = { prop, order };
+                emit('sort-change', sortData.value);
             };
 
             const handleSelectionChange = (selection) => {
