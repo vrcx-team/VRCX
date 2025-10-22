@@ -31,32 +31,44 @@ namespace VRCX
 
         public override bool IsGameRunning()
         {
-            var isGameRunning = false;
-            var processes = Process.GetProcesses();
+            var processes = Process.GetProcessesByName("VRChat");
+            var isGameRunning = processes.Length > 0;
+
             foreach (var process in processes)
-            {
-                if (process.ProcessName == "VRChat.exe")
-                {
-                    isGameRunning = true;
-                    break;
-                }
-            }
+                process.Dispose();
             return isGameRunning;
         }
 
         public override bool IsSteamVRRunning()
         {
-            var isSteamVRRunning = false;
-            var processes = Process.GetProcesses();
-            foreach (var process in processes)
+            // Check exact matches (fast - no full process scan needed)
+            var processNames = new[] { "vrmonitor", "monado-service" };
+            foreach (var name in processNames)
             {
-                if (process.ProcessName == "vrmonitor" || process.ProcessName == "monado-service" || process.ProcessName.EndsWith("wivrn-server"))
+                var processes = Process.GetProcessesByName(name);
+                var isSteamVRRunning = processes.Length > 0;
+
+                foreach (var process in processes)
+                    process.Dispose();
+                if (isSteamVRRunning)
+                    return true;
+            }
+            
+            // Check for wivrn-server (requires full scan)
+            var allProcesses = Process.GetProcesses();
+            var isRunning = false;
+            foreach (var process in allProcesses)
+            {
+                if (process.ProcessName.EndsWith("wivrn-server"))
                 {
-                    isSteamVRRunning = true;
+                    isRunning = true;
                     break;
                 }
             }
-            return isSteamVRRunning;
+
+            foreach (var process in allProcesses)
+                process.Dispose();
+            return isRunning;
         }
 
         public override int QuitGame()
@@ -65,6 +77,8 @@ namespace VRCX
             if (processes.Length == 1)
                 processes[0].Kill();
 
+            foreach (var process in processes)
+                process.Dispose();
             return processes.Length;
         }
 
@@ -78,12 +92,8 @@ namespace VRCX
                     Arguments = $"-applaunch 438100 {arguments}",
                     UseShellExecute = false,
                 });
-                if (process?.ExitCode == 0)
-                {
-                    process.Close();
-                    return true;
-                }
-                process?.Close();
+                process?.Dispose();
+                return true; // Steam accepted launch command (no exception thrown)
             }
             catch (Exception e)
             {
@@ -111,7 +121,7 @@ namespace VRCX
                     FileName = steamExecutable,
                     Arguments = $"-applaunch 438100 {arguments}",
                     UseShellExecute = false,
-                })?.Close();
+                })?.Dispose();
 
                 return true;
             }
