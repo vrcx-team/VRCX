@@ -65,6 +65,8 @@
                 <PrimaryPasswordDialog></PrimaryPasswordDialog>
 
                 <SendBoopDialog></SendBoopDialog>
+
+                <ChangelogDialog></ChangelogDialog>
             </template>
         </div>
     </el-config-provider>
@@ -96,6 +98,7 @@
 
     import AvatarDialog from './components/dialogs/AvatarDialog/AvatarDialog.vue';
     import AvatarImportDialog from './views/Favorites/dialogs/AvatarImportDialog.vue';
+    import ChangelogDialog from './views/Settings/dialogs/ChangelogDialog.vue';
     import ChooseFavoriteGroupDialog from './components/dialogs/ChooseFavoriteGroupDialog.vue';
     import EditInviteMessageDialog from './views/Profile/dialogs/EditInviteMessageDialog.vue';
     import FriendImportDialog from './views/Favorites/dialogs/FriendImportDialog.vue';

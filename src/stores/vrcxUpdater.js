@@ -175,6 +175,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             currentVersion.value === 'VRCX Nightly Build' ||
             currentVersion.value === 'VRCX Build'
         ) {
+            changeLogDialog.value.changeLog = '-';
             // ignore custom builds
             return;
         }

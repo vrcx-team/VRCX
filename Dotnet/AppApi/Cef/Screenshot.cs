@@ -37,7 +37,7 @@ namespace VRCX
                         break;
                     }
                 }
-                catch (IOException)
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
                 {
                     Thread.Sleep(1000);
                 }
