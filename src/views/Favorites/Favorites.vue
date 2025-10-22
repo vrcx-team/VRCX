@@ -36,7 +36,7 @@
                     "></el-button>
             </el-tooltip>
         </div>
-        <el-tabs v-model="currentTabName" v-loading="isFavoriteLoading" type="card" style="height: 100%">
+        <el-tabs v-model="currentFavoriteTab" v-loading="isFavoriteLoading" type="card" style="height: 100%">
             <el-tab-pane name="friend" :label="t('view.favorite.friends.header')">
                 <FavoritesFriendTab
                     :edit-favorites-mode="editFavoritesMode"
@@ -86,7 +86,8 @@
         localWorldFavoritesList,
         avatarImportDialogInput,
         worldImportDialogInput,
-        friendImportDialogInput
+        friendImportDialogInput,
+        currentFavoriteTab
     } = storeToRefs(useFavoriteStore());
     const {
         refreshFavorites,
@@ -102,7 +103,6 @@
 
     const editFavoritesMode = ref(false);
     const refreshingLocalFavorites = ref(false);
-    const currentTabName = ref('friend');
 
     function showBulkUnfavoriteSelectionConfirm() {
         const elementsTicked = [];
@@ -192,7 +192,7 @@
 
     function handleBulkCopyFavoriteSelection() {
         let idList = '';
-        switch (currentTabName.value) {
+        switch (currentFavoriteTab.value) {
             case 'friend':
                 for (const ctx of favoriteFriends.value) {
                     if (ctx.$selected) {
