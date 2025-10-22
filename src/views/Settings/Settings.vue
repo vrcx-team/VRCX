@@ -26,7 +26,6 @@
                 <AdvancedTab />
             </el-tab-pane>
         </el-tabs>
-        <ChangelogDialog />
     </div>
 </template>
 
@@ -35,7 +34,6 @@
 
     import AdvancedTab from './components/Tabs/AdvancedTab.vue';
     import AppearanceTab from './components/Tabs/AppearanceTab.vue';
-    import ChangelogDialog from './dialogs/ChangelogDialog.vue';
     import DiscordPresenceTab from './components/Tabs/DiscordPresenceTab.vue';
     import GeneralTab from './components/Tabs/GeneralTab.vue';
     import NotificationsTab from './components/Tabs/NotificationsTab.vue';

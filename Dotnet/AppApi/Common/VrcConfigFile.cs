@@ -43,6 +43,7 @@ namespace VRCX
         public void WriteConfigFile(string json)
         {
             var path = GetVRChatAppDataLocation();
+            Directory.CreateDirectory(path);
             var configFile = Path.Join(path, "config.json");
             File.WriteAllText(configFile, json);
         }
