@@ -78,8 +78,7 @@ namespace VRCX
                         FileName = $"{path}\\steam.exe",
                         UseShellExecute = false,
                         Arguments = $"-applaunch 438100 {arguments}"
-                    })
-                    ?.Close();
+                    })?.Dispose();
                     return true;
                 }
             }
@@ -122,7 +121,7 @@ namespace VRCX
                 FileName = path,
                 UseShellExecute = false,
                 Arguments = arguments
-            })?.Close();
+            })?.Dispose();
             return true;
         }
     }
