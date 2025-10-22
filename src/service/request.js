@@ -206,6 +206,10 @@ export function request(endpoint, options) {
             if (status === 404 && endpoint.endsWith('/persist/exists')) {
                 return false;
             }
+            if (status === 404 && endpoint.endsWith('/respond')) {
+                // ignore when responding to expired notification
+                return null;
+            }
             if (
                 init.method === 'GET' &&
                 (status === 404 || status === 403) &&

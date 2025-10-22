@@ -759,6 +759,10 @@ i.x-status-icon.red {
     max-height: 100%;
 }
 
+.el-card.x-image-selected {
+    border-color: var(--el-color-primary) !important;
+}
+
 // .el-tree-node {
 //     white-space: normal;
 // }
@@ -975,10 +979,6 @@ i.x-status-icon.red {
 //     height: 14px;
 //     left: 8px;
 //     top: 2px;
-// }
-
-// .max-height-el-select .el-select-dropdown__wrap {
-//     max-height: 83vh;
 // }
 
 // .el-pagination .el-input .el-input__icon {

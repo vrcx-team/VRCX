@@ -110,43 +110,7 @@
             clearable
             :placeholder="t('dialog.boop_dialog.select_emoji')"
             size="small"
-            style="width: 100%"
-            popper-class="max-height-el-select">
-            <el-option-group :label="t('dialog.boop_dialog.my_emojis')">
-                <el-option
-                    v-for="image in emojiTable"
-                    :key="image.id"
-                    :value="image.id"
-                    style="width: 100%; height: 100%">
-                    <div
-                        v-if="
-                            image.versions &&
-                            image.versions.length > 0 &&
-                            image.versions[image.versions.length - 1].file.url
-                        "
-                        class="vrcplus-icon"
-                        style="overflow: hidden; width: 200px; height: 200px; padding: 10px">
-                        <template v-if="image.frames">
-                            <div
-                                class="avatar"
-                                :style="
-                                    generateEmojiStyle(
-                                        image.versions[image.versions.length - 1].file.url,
-                                        image.framesOverTime,
-                                        image.frames,
-                                        image.loopStyle
-                                    )
-                                "></div>
-                        </template>
-                        <template v-else>
-                            <img
-                                :src="image.versions[image.versions.length - 1].file.url"
-                                class="avatar"
-                                style="width: 200px; height: 200px" />
-                        </template>
-                    </div>
-                </el-option>
-            </el-option-group>
+            style="width: 100%">
             <el-option-group :label="t('dialog.boop_dialog.default_emojis')">
                 <el-option
                     v-for="emojiName in photonEmojis"
@@ -157,6 +121,56 @@
                 </el-option>
             </el-option-group>
         </el-select>
+
+        <br />
+        <br />
+
+        <div
+            v-if="isLocalUserVrcPlusSupporter"
+            style="
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 15px;
+                margin-top: 10px;
+                max-height: 600px;
+                overflow-y: auto;
+            ">
+            <el-card
+                v-for="image in emojiTable"
+                :key="image.id"
+                :body-style="{ padding: '0' }"
+                :class="image.id === fileId ? 'x-image-selected' : ''"
+                style="cursor: pointer"
+                @click="fileId = image.id"
+                shadow="hover">
+                <div
+                    v-if="
+                        image.versions &&
+                        image.versions.length > 0 &&
+                        image.versions[image.versions.length - 1].file.url
+                    "
+                    class="x-popover-image"
+                    style="overflow: hidden; width: 100px; height: 100px; padding: 8px">
+                    <div
+                        v-if="image.frames"
+                        class="avatar"
+                        :style="
+                            generateEmojiStyle(
+                                image.versions[image.versions.length - 1].file.url,
+                                image.framesOverTime,
+                                image.frames,
+                                image.loopStyle,
+                                100
+                            )
+                        "></div>
+                    <img
+                        v-else
+                        :src="image.versions[image.versions.length - 1].file.url"
+                        class="avatar"
+                        style="width: 100px; height: 100px" />
+                </div>
+            </el-card>
+        </div>
 
         <template #footer>
             <el-button
@@ -197,6 +211,7 @@
     const { showGalleryDialog, refreshEmojiTable } = useGalleryStore();
     const { emojiTable } = storeToRefs(useGalleryStore());
     const { vipFriends, onlineFriends, activeFriends, offlineFriends } = useFriendStore();
+    const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 
     const fileId = ref('');
 
