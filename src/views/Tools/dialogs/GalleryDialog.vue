@@ -194,7 +194,9 @@
                             {{ t('dialog.gallery_icons.upload') }}
                         </el-button>
                     </el-button-group>
-                    <el-select v-model="emojiAnimationStyle" popper-class="max-height-el-select">
+                    <br />
+                    <br />
+                    <el-select v-model="emojiAnimationStyle">
                         <el-option-group>
                             {{ t('dialog.gallery_icons.emoji_animation_styles') }}
                             <el-option
@@ -213,7 +215,7 @@
                             </el-option>
                         </el-option-group>
                     </el-select>
-                    <el-checkbox v-model="emojiAnimType" style="margin-left: 10px; margin-right: 10px">
+                    <el-checkbox v-model="emojiAnimType">
                         <span>{{ t('dialog.gallery_icons.emoji_animation_type') }}</span>
                     </el-checkbox>
                     <template v-if="emojiAnimType">
@@ -266,7 +268,8 @@
                                             image.versions[image.versions.length - 1].file.url,
                                             image.framesOverTime,
                                             image.frames,
-                                            image.loopStyle
+                                            image.loopStyle,
+                                            200
                                         )
                                     "></div>
                             </template>

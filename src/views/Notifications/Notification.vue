@@ -592,6 +592,9 @@
         notificationRequest
             .sendNotificationResponse(params)
             .then((json) => {
+                if (!json) {
+                    return;
+                }
                 const args = {
                     json,
                     params
