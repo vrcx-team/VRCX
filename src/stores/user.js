@@ -297,7 +297,7 @@ export const useUserStore = defineStore('User', () => {
     const cachedUsers = new Map();
 
     const isLocalUserVrcPlusSupporter = computed(
-        () => currentUser.value.$isVRCPlus
+        () => currentUser.value.$isVRCPlus || AppDebug.debugVrcPlus
     );
 
     watch(
