@@ -86,7 +86,7 @@ const favoriteReq = {
 
     /**
      *
-     * @param {{ type: string, group: string, displayName: string, visibility: string }} params group is a name
+     * @param {{ type: string, group: string, displayName?: string, visibility?: string }} params group is a name
      * @return { Promise<{json: any, params}> }
      */
     saveFavoriteGroup(params) {

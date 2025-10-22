@@ -34,6 +34,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     let cachedFavorites = new Map();
 
+    const currentFavoriteTab = ref('friend');
+
     const cachedFavoriteGroups = ref(new Map());
     const cachedFavoriteGroupsByTypeName = ref(new Map());
 
@@ -1609,6 +1611,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         cachedFavoritesByObjectId,
         localWorldFavoriteGroups,
         groupedByGroupKeyFavoriteFriends,
+        currentFavoriteTab,
 
         initFavorites,
         applyFavorite,
