@@ -60,6 +60,17 @@ pinia.use(
                 // @ts-ignore
                 ...state.Notification,
                 notificationTable: null
+            },
+            Moderation: {
+                // @ts-ignore
+                ...state.Moderation,
+                playerModerationTable: null
+            },
+            Photon: null,
+            SharedFeed: {
+                // @ts-ignore
+                ...state.SharedFeed,
+                sharedFeed: null
             }
         })
     })
