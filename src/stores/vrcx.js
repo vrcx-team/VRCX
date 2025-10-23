@@ -701,7 +701,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             ElMessageBox.alert(
                 t('dialog.registry_backup.restore_prompt'),
                 t('dialog.registry_backup.header')
-            );
+            ).catch(() => {});
             showRegistryBackupDialog();
             await AppApi.FocusWindow();
             await configRepository.setString(

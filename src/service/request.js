@@ -187,7 +187,7 @@ export function request(endpoint, options) {
                 ElMessageBox.alert(
                     t('api.error.message.vpn_in_use'),
                     `403 ${t('api.error.message.login_error')}`
-                );
+                ).catch(() => {});
                 authStore.handleLogoutEvent();
                 $throw(403, endpoint);
             }

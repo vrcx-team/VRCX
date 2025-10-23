@@ -223,14 +223,14 @@ export const useGameStore = defineStore('Game', () => {
                 ElMessageBox.alert(
                     'VRCX has noticed VRChat debug logging is disabled. VRCX requires debug logging in order to function correctly. Please enable debug logging in VRChat quick menu settings > debug > enable debug logging, then rejoin the instance or restart VRChat.',
                     'Enable debug logging'
-                );
+                ).catch(() => {});
                 console.error('Failed to enable debug logging', result);
                 return;
             }
             ElMessageBox.alert(
                 'VRCX has noticed VRChat debug logging is disabled and automatically re-enabled it. VRCX requires debug logging in order to function correctly.',
                 'Enabled debug logging'
-            );
+            ).catch(() => {});
             console.log('Enabled debug logging');
         } catch (e) {
             console.error(e);

@@ -641,30 +641,32 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 type: 'info',
                 showInput: false
             }
-        ).then(async ({ action }) => {
-            if (action === 'confirm') {
-                const msgBox = ElMessage({
-                    message: 'Batch print cropping in progress...',
-                    type: 'warning',
-                    duration: 0
-                });
-                try {
-                    await AppApi.CropAllPrints(ugcFolderPath.value);
-                    ElMessage({
-                        message: 'Batch print cropping complete',
-                        type: 'success'
+        )
+            .then(async ({ action }) => {
+                if (action === 'confirm') {
+                    const msgBox = ElMessage({
+                        message: 'Batch print cropping in progress...',
+                        type: 'warning',
+                        duration: 0
                     });
-                } catch (err) {
-                    console.error(err);
-                    ElMessage({
-                        message: `Batch print cropping failed: ${err}`,
-                        type: 'error'
-                    });
-                } finally {
-                    msgBox.close();
+                    try {
+                        await AppApi.CropAllPrints(ugcFolderPath.value);
+                        ElMessage({
+                            message: 'Batch print cropping complete',
+                            type: 'success'
+                        });
+                    } catch (err) {
+                        console.error(err);
+                        ElMessage({
+                            message: `Batch print cropping failed: ${err}`,
+                            type: 'error'
+                        });
+                    } finally {
+                        msgBox.close();
+                    }
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function askDeleteAllScreenshotMetadata() {
@@ -682,11 +684,13 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 type: 'warning',
                 showInput: false
             }
-        ).then(({ action }) => {
-            if (action === 'confirm') {
-                deleteAllScreenshotMetadata();
-            }
-        });
+        )
+            .then(({ action }) => {
+                if (action === 'confirm') {
+                    deleteAllScreenshotMetadata();
+                }
+            })
+            .catch(() => {});
     }
 
     function deleteAllScreenshotMetadata() {
@@ -704,30 +708,32 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 type: 'warning',
                 showInput: false
             }
-        ).then(async ({ action }) => {
-            if (action === 'confirm') {
-                const msgBox = ElMessage({
-                    message: 'Batch metadata removal in progress...',
-                    type: 'warning',
-                    duration: 0
-                });
-                try {
-                    await AppApi.DeleteAllScreenshotMetadata();
-                    ElMessage({
-                        message: 'Batch metadata removal complete',
-                        type: 'success'
+        )
+            .then(async ({ action }) => {
+                if (action === 'confirm') {
+                    const msgBox = ElMessage({
+                        message: 'Batch metadata removal in progress...',
+                        type: 'warning',
+                        duration: 0
                     });
-                } catch (err) {
-                    console.error(err);
-                    ElMessage({
-                        message: `Batch metadata removal failed: ${err}`,
-                        type: 'error'
-                    });
-                } finally {
-                    msgBox.close();
+                    try {
+                        await AppApi.DeleteAllScreenshotMetadata();
+                        ElMessage({
+                            message: 'Batch metadata removal complete',
+                            type: 'success'
+                        });
+                    } catch (err) {
+                        console.error(err);
+                        ElMessage({
+                            message: `Batch metadata removal failed: ${err}`,
+                            type: 'error'
+                        });
+                    } finally {
+                        msgBox.close();
+                    }
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function resetUGCFolder() {
