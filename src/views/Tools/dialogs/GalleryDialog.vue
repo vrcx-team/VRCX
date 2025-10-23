@@ -260,25 +260,7 @@
                                     getEmojiFileName(image)
                                 )
                             ">
-                            <template v-if="image.frames">
-                                <div
-                                    class="avatar"
-                                    :style="
-                                        generateEmojiStyle(
-                                            image.versions[image.versions.length - 1].file.url,
-                                            image.framesOverTime,
-                                            image.frames,
-                                            image.loopStyle,
-                                            200
-                                        )
-                                    "></div>
-                            </template>
-                            <template v-else>
-                                <img
-                                    class="avatar"
-                                    :src="image.versions[image.versions.length - 1].file.url"
-                                    loading="lazy" />
-                            </template>
+                            <Emoji :imageUrl="image.versions[image.versions.length - 1].file.url" :size="200"></Emoji>
                         </div>
                         <div style="display: inline-block; margin: 5px">
                             <span v-if="image.loopStyle === 'pingpong'">
@@ -553,18 +535,14 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import {
-        extractFileId,
-        formatDateFilter,
-        generateEmojiStyle,
-        getEmojiFileName,
-        getPrintFileName
-    } from '../../../shared/utils';
     import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../../api';
+    import { extractFileId, formatDateFilter, getEmojiFileName, getPrintFileName } from '../../../shared/utils';
     import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../../stores';
     import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../shared/constants';
     import { AppDebug } from '../../../service/appConfig';
     import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
+
+    import Emoji from '../../../components/Emoji.vue';
 
     const { t } = useI18n();
 

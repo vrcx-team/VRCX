@@ -126,13 +126,12 @@
             <el-table-column :label="t('table.notification.photo')" width="100" prop="photo">
                 <template #default="scope">
                     <template v-if="scope.row.type === 'boop'">
-                        <img
-                            v-if="scope.row.details?.imageUrl && !scope.row.details.imageUrl.startsWith('default_')"
+                        <Emoji
                             class="x-link"
-                            :src="getSmallThumbnailUrl(scope.row.details.imageUrl)"
-                            style="flex: none; height: 50px; border-radius: 4px"
                             @click="showFullscreenImageDialog(scope.row.details.imageUrl)"
-                            loading="lazy" />
+                            v-if="scope.row.details?.imageUrl && !scope.row.details.imageUrl.startsWith('default_')"
+                            :imageUrl="scope.row.details.imageUrl"
+                            :size="50"></Emoji>
                     </template>
                     <template v-else-if="scope.row.details && scope.row.details.imageUrl">
                         <img
@@ -432,6 +431,7 @@
     import { friendRequest, notificationRequest, worldRequest } from '../../api';
     import { database } from '../../service/database';
 
+    import Emoji from '../../components/Emoji.vue';
     import SendInviteRequestResponseDialog from './dialogs/SendInviteRequestResponseDialog.vue';
     import SendInviteResponseDialog from './dialogs/SendInviteResponseDialog.vue';
     import configRepository from '../../service/config';

@@ -20,6 +20,8 @@ import { handleImageUploadInput } from '../shared/utils/imageUpload';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { watchState } from '../service/watchState';
 
+import miscReq from '../api/misc';
+
 import * as workerTimers from 'worker-timers';
 
 export const useGalleryStore = defineStore('Gallery', () => {
@@ -34,6 +36,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
         instanceInventoryQueue: [],
         instanceInventoryQueueWorker: null
     });
+
+    const cachedEmoji = new Map();
 
     const galleryTable = ref([]);
 
@@ -78,6 +82,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
+            cachedEmoji.clear();
             galleryTable.value = [];
             VRCPlusIconsTable.value = [];
             stickerTable.value = [];
@@ -500,6 +505,23 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
     }
 
+    async function getCachedEmoji(fileId) {
+        return new Promise((resolve, reject) => {
+            let ref = cachedEmoji.get(fileId);
+            if (typeof ref !== 'undefined') {
+                resolve(ref);
+                return;
+            }
+            miscReq
+                .getFile({ fileId })
+                .then((args) => {
+                    cachedEmoji.set(fileId, args.json);
+                    resolve(args.json);
+                })
+                .catch(reject);
+        });
+    }
+
     return {
         state,
 
@@ -521,6 +543,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         emojiTable,
         inventoryTable,
         fullscreenImageDialog,
+        cachedEmoji,
 
         showGalleryDialog,
         refreshGalleryTable,
@@ -538,6 +561,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         handleStickerAdd,
         handleGalleryImageAdd,
         handleFilesList,
-        queueCheckInstanceInventory
+        queueCheckInstanceInventory,
+        getCachedEmoji
     };
 });

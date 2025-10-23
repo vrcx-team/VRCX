@@ -150,24 +150,8 @@
                         image.versions[image.versions.length - 1].file.url
                     "
                     class="x-popover-image"
-                    style="overflow: hidden; width: 100px; height: 100px; padding: 8px">
-                    <div
-                        v-if="image.frames"
-                        class="avatar"
-                        :style="
-                            generateEmojiStyle(
-                                image.versions[image.versions.length - 1].file.url,
-                                image.framesOverTime,
-                                image.frames,
-                                image.loopStyle,
-                                100
-                            )
-                        "></div>
-                    <img
-                        v-else
-                        :src="image.versions[image.versions.length - 1].file.url"
-                        class="avatar"
-                        style="width: 100px; height: 100px" />
+                    style="padding: 8px">
+                    <Emoji :imageUrl="image.versions[image.versions.length - 1].file.url" :size="100"></Emoji>
                 </div>
             </el-card>
         </div>
@@ -194,7 +178,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { generateEmojiStyle, userImage, userStatusClass } from '../../shared/utils';
+    import { userImage, userStatusClass } from '../../shared/utils';
     import { miscRequest } from '../../api';
     import { notificationRequest } from '../../api';
     import { photonEmojis } from '../../shared/constants/photon.js';
@@ -203,6 +187,8 @@
     import { useGalleryStore } from '../../stores';
     import { useNotificationStore } from '../../stores';
     import { useUserStore } from '../../stores/user.js';
+
+    import Emoji from '../Emoji.vue';
 
     const { t } = useI18n();
 
