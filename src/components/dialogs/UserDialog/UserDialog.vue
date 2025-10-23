@@ -241,18 +241,22 @@
                                     "
                                     >{{ userDialog.ref.bio || '-' }}</pre
                                 >
-                                <div v-if="userDialog.id === currentUser.id" style="float: right">
+                                <div style="float: right">
                                     <el-button
+                                        v-if="translationApi && userDialog.ref.bio"
+                                        type="text"
+                                        size="small"
+                                        style="margin-left: 5px; padding: 0"
+                                        @click="translateBio"
+                                        ><i class="ri-translate-2"></i
+                                    ></el-button>
+                                    <el-button
+                                        v-if="userDialog.id === currentUser.id"
                                         type="text"
                                         :icon="Edit"
                                         size="small"
-                                        style="margin-left: 5px"
+                                        style="margin-left: 5px; padding: 0"
                                         @click="showBioDialog"></el-button>
-                                </div>
-                                <div v-if="translationApi && userDialog.ref.bio" style="float: right">
-                                    <el-button type="text" size="small" style="margin-left: 5px" @click="translateBio"
-                                        ><i class="ri-translate-2"></i
-                                    ></el-button>
                                 </div>
                                 <div style="margin-top: 5px">
                                     <el-tooltip v-for="(link, index) in userDialog.ref.bioLinks" :key="index">
