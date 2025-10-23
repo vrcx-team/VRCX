@@ -297,7 +297,7 @@ namespace VRCX
                     m_LogQueue.Enqueue(logLine);
 #else
                     if (MainForm.Instance != null && MainForm.Instance.Browser != null)
-                        MainForm.Instance.Browser.ExecuteScriptAsync("window?.$pinia.gameLog.addGameLogEvent", logLine);
+                        MainForm.Instance.Browser.ExecuteScriptAsync("window?.$pinia?.gameLog.addGameLogEvent", logLine);
 #endif
                 }
 
@@ -729,7 +729,7 @@ namespace VRCX
                 return false;
 
             var data = line.Substring(offset + 13);
-            
+
             // PWI, deprecated
             logger.Info("VRCX-World data: {0}", data);
             return true;
