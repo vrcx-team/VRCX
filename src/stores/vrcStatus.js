@@ -75,7 +75,6 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
             }
         });
         lastTimeFetched.value = Date.now();
-        const data = JSON.parse(response.data);
         if (response.status !== 200) {
             console.error('Failed to fetch VRChat status', response);
             lastStatus.value = 'Failed to fetch VRC status';
@@ -83,6 +82,7 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
             updateAlert();
             return;
         }
+        const data = JSON.parse(response.data);
         lastStatusTime.value = new Date(data.page.updated_at);
         if (data.status.description === 'All Systems Operational') {
             lastStatus.value = '';

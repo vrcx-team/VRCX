@@ -296,7 +296,10 @@
 
     const sliceWorldFavorites = computed(() => {
         return (group) => {
-            return groupedByGroupKeyFavoriteWorlds.value[group].slice(0, sliceWorldFavoritesLoadMoreNumber.value);
+            if (groupedByGroupKeyFavoriteWorlds.value[group]) {
+                return groupedByGroupKeyFavoriteWorlds.value[group].slice(0, sliceWorldFavoritesLoadMoreNumber.value);
+            }
+            return [];
         };
     });
 

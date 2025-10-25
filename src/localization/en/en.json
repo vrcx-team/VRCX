@@ -1686,7 +1686,7 @@
         "boop_dialog": {
             "header": "Boop",
             "emoji_manager": "Emoji Manager",
-            "select_emoji": "Select Emoji",
+            "select_default_emoji": "Select Default Emoji",
             "my_emojis": "My Emojis",
             "default_emojis": "Default Emojis",
             "cancel": "Cancel",
