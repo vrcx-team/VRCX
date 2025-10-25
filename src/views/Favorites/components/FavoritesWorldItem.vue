@@ -13,7 +13,7 @@
                     <span v-else class="extra">{{ props.favorite.ref.authorName }}</span>
                 </div>
                 <div class="editing">
-                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px">
+                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px" :persistent="false">
                         <div>
                             <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </div>
@@ -42,16 +42,18 @@
                     <el-tooltip
                         v-if="favorite.deleted"
                         placement="left"
-                        :content="t('view.favorite.unavailable_tooltip')">
+                        :content="t('view.favorite.unavailable_tooltip')"
+                        :teleported="false">
                         <el-icon><Warning /></el-icon>
                     </el-tooltip>
                     <el-tooltip
                         v-if="favorite.ref.releaseStatus === 'private'"
                         placement="left"
-                        :content="t('view.favorite.private')">
+                        :content="t('view.favorite.private')"
+                        :teleported="false">
                         <el-icon><Warning /></el-icon>
                     </el-tooltip>
-                    <el-tooltip placement="left">
+                    <el-tooltip placement="left" :teleported="false">
                         <template #content>
                             {{
                                 canOpenInstanceInGame()
@@ -66,7 +68,7 @@
                             @click.stop="newInstanceSelfInvite(favorite.id)"
                             circle></el-button>
                     </el-tooltip>
-                    <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')">
+                    <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')" :teleported="false">
                         <el-button
                             v-if="shiftHeld"
                             size="small"
@@ -92,7 +94,8 @@
                     <el-tooltip
                         v-if="favorite.deleted"
                         placement="left"
-                        :content="t('view.favorite.unavailable_tooltip')">
+                        :content="t('view.favorite.unavailable_tooltip')"
+                        :teleported="false">
                         <el-icon><Warning /></el-icon>
                     </el-tooltip>
                     <el-button

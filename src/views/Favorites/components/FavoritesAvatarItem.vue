@@ -10,7 +10,7 @@
                     <span class="extra" v-text="localFavFakeRef.authorName"></span>
                 </div>
                 <div class="editing">
-                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px">
+                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px" :persistent="false">
                         <div>
                             <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </div>
@@ -40,19 +40,22 @@
                         <el-tooltip
                             v-if="favorite.deleted"
                             placement="left"
-                            :content="t('view.favorite.unavailable_tooltip')">
+                            :content="t('view.favorite.unavailable_tooltip')"
+                            :teleported="false">
                             <el-icon><Warning /></el-icon>
                         </el-tooltip>
                         <el-tooltip
                             v-if="favorite.ref.releaseStatus === 'private'"
                             placement="left"
-                            :content="t('view.favorite.private')">
+                            :content="t('view.favorite.private')"
+                            :teleported="false">
                             <el-icon><Warning /></el-icon>
                         </el-tooltip>
                         <el-tooltip
                             v-if="favorite.ref.releaseStatus !== 'private' && !favorite.deleted"
                             placement="left"
-                            :content="t('view.favorite.select_avatar_tooltip')">
+                            :content="t('view.favorite.select_avatar_tooltip')"
+                            :teleported="false">
                             <el-button
                                 :disabled="currentUser.currentAvatar === favorite.id"
                                 size="small"
@@ -61,7 +64,10 @@
                                 style="margin-left: 5px"
                                 @click.stop="selectAvatarWithConfirmation(favorite.id)"></el-button>
                         </el-tooltip>
-                        <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')">
+                        <el-tooltip
+                            placement="right"
+                            :content="t('view.favorite.unfavorite_tooltip')"
+                            :teleported="false">
                             <el-button
                                 v-if="shiftHeld"
                                 size="small"
@@ -80,7 +86,10 @@
                         </el-tooltip>
                     </template>
                     <template v-else>
-                        <el-tooltip placement="left" :content="t('view.favorite.select_avatar_tooltip')">
+                        <el-tooltip
+                            placement="left"
+                            :content="t('view.favorite.select_avatar_tooltip')"
+                            :teleported="false">
                             <el-button
                                 :disabled="currentUser.currentAvatar === favorite.id"
                                 size="small"
@@ -93,7 +102,8 @@
                     <el-tooltip
                         v-if="isLocalFavorite"
                         placement="right"
-                        :content="t('view.favorite.unfavorite_tooltip')">
+                        :content="t('view.favorite.unfavorite_tooltip')"
+                        :teleported="false">
                         <el-button
                             v-if="shiftHeld"
                             size="small"
