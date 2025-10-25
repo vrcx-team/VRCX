@@ -58,12 +58,21 @@ export async function initSentry(app) {
                 }
                 return event;
             },
+            beforeSendSpan(span) {
+                span.data = {
+                    ...span.data,
+                    // @ts-ignore
+                    memory_usage: window.performance.memory.usedJSHeapSize
+                };
+                return span;
+            },
             integrations: [
                 Sentry.replayIntegration({
                     maskAllText: true,
                     blockAllMedia: true
                 }),
                 Sentry.browserTracingIntegration({ router }),
+                Sentry.browserProfilingIntegration(),
                 Sentry.vueIntegration({
                     tracingOptions: {
                         trackComponents: true
