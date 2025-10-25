@@ -5,101 +5,7 @@
         :title="t('dialog.boop_dialog.header')"
         width="450px"
         @close="closeDialog">
-        <el-select
-            v-if="sendBoopDialog.visible"
-            v-model="sendBoopDialog.userId"
-            :placeholder="t('dialog.new_instance.instance_creator_placeholder')"
-            filterable
-            style="width: 100%">
-            <el-option-group v-if="vipFriends.length" :label="t('side_panel.favorite')">
-                <el-option
-                    v-for="friend in vipFriends"
-                    :key="friend.id"
-                    :label="friend.name"
-                    :value="friend.id"
-                    style="height: auto"
-                    class="x-friend-item">
-                    <template v-if="friend.ref">
-                        <div class="avatar" :class="userStatusClass(friend.ref)">
-                            <img :src="userImage(friend.ref)" loading="lazy" />
-                        </div>
-                        <div class="detail">
-                            <span
-                                class="name"
-                                :style="{ color: friend.ref.$userColour }"
-                                v-text="friend.ref.displayName"></span>
-                        </div>
-                    </template>
-                    <span v-else v-text="friend.id"></span>
-                </el-option>
-            </el-option-group>
-            <el-option-group v-if="onlineFriends.length" :label="t('side_panel.online')">
-                <el-option
-                    v-for="friend in onlineFriends"
-                    :key="friend.id"
-                    :label="friend.name"
-                    :value="friend.id"
-                    style="height: auto"
-                    class="x-friend-item">
-                    <template v-if="friend.ref">
-                        <div class="avatar" :class="userStatusClass(friend.ref)">
-                            <img :src="userImage(friend.ref)" loading="lazy" />
-                        </div>
-                        <div class="detail">
-                            <span
-                                class="name"
-                                :style="{ color: friend.ref.$userColour }"
-                                v-text="friend.ref.displayName"></span>
-                        </div>
-                    </template>
-                    <span v-else v-text="friend.id"></span>
-                </el-option>
-            </el-option-group>
-            <el-option-group v-if="activeFriends.length" :label="t('side_panel.active')">
-                <el-option
-                    v-for="friend in activeFriends"
-                    :key="friend.id"
-                    :label="friend.name"
-                    :value="friend.id"
-                    style="height: auto"
-                    class="x-friend-item">
-                    <template v-if="friend.ref">
-                        <div class="avatar">
-                            <img :src="userImage(friend.ref)" loading="lazy" />
-                        </div>
-                        <div class="detail">
-                            <span
-                                class="name"
-                                :style="{ color: friend.ref.$userColour }"
-                                v-text="friend.ref.displayName"></span>
-                        </div>
-                    </template>
-                    <span v-else v-text="friend.id"></span>
-                </el-option>
-            </el-option-group>
-            <el-option-group v-if="offlineFriends.length" :label="t('side_panel.offline')">
-                <el-option
-                    v-for="friend in offlineFriends"
-                    :key="friend.id"
-                    :label="friend.name"
-                    :value="friend.id"
-                    style="height: auto"
-                    class="x-friend-item">
-                    <template v-if="friend.ref">
-                        <div class="avatar">
-                            <img :src="userImage(friend.ref)" loading="lazy" />
-                        </div>
-                        <div class="detail">
-                            <span
-                                class="name"
-                                :style="{ color: friend.ref.$userColour }"
-                                v-text="friend.ref.displayName"></span>
-                        </div>
-                    </template>
-                    <span v-else v-text="friend.id"></span>
-                </el-option>
-            </el-option-group>
-        </el-select>
+        <span>{{ displayName }}</span>
 
         <br />
         <br />
@@ -108,7 +14,7 @@
             v-if="sendBoopDialog.visible"
             v-model="fileId"
             clearable
-            :placeholder="t('dialog.boop_dialog.select_emoji')"
+            :placeholder="t('dialog.boop_dialog.select_default_emoji')"
             size="small"
             style="width: 100%">
             <el-option-group :label="t('dialog.boop_dialog.default_emojis')">
@@ -178,12 +84,10 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { userImage, userStatusClass } from '../../shared/utils';
+    import { notificationRequest, userRequest } from '../../api';
     import { miscRequest } from '../../api';
-    import { notificationRequest } from '../../api';
     import { photonEmojis } from '../../shared/constants/photon.js';
     import { redirectToToolsTab } from '../../shared/utils/base/ui';
-    import { useFriendStore } from '../../stores';
     import { useGalleryStore } from '../../stores';
     import { useNotificationStore } from '../../stores';
     import { useUserStore } from '../../stores/user.js';
@@ -196,15 +100,21 @@
     const { notificationTable } = storeToRefs(useNotificationStore());
     const { showGalleryDialog, refreshEmojiTable } = useGalleryStore();
     const { emojiTable } = storeToRefs(useGalleryStore());
-    const { vipFriends, onlineFriends, activeFriends, offlineFriends } = useFriendStore();
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 
     const fileId = ref('');
+    const displayName = ref('');
 
     watch(
         () => sendBoopDialog.value.visible,
         (visible) => {
-            if (visible && emojiTable.value.length === 0) {
+            if (visible) {
+                displayName.value = '';
+                userRequest.getCachedUser({ userId: sendBoopDialog.value.userId }).then((user) => {
+                    displayName.value = user.ref.displayName;
+                });
+            }
+            if (visible && isLocalUserVrcPlusSupporter && emojiTable.value.length === 0) {
                 refreshEmojiTable();
             }
         }
