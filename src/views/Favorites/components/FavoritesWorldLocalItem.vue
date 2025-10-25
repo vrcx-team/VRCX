@@ -13,7 +13,7 @@
                     <span v-else class="extra">{{ props.favorite.authorName }}</span>
                 </div>
                 <div class="editing">
-                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px">
+                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px" :persistent="false">
                         <div>
                             <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </div>
@@ -51,7 +51,7 @@
                             circle></el-button>
                     </el-tooltip>
                 </div>
-                <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')">
+                <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')" :teleported="false">
                     <el-button
                         v-if="shiftHeld"
                         size="small"

@@ -29,7 +29,7 @@
                     <span style="color: #909399; font-size: 12px; margin-left: 10px"
                         >{{ group.count }}/{{ group.capacity }}</span
                     >
-                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
+                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :teleported="false">
                         <el-button
                             size="small"
                             :icon="Edit"
@@ -37,7 +37,7 @@
                             style="margin-left: 10px"
                             @click.stop="changeFavoriteGroupName(group)"></el-button>
                     </el-tooltip>
-                    <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')">
+                    <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')" :teleported="false">
                         <el-button
                             size="small"
                             :icon="Delete"

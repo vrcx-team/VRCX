@@ -17,14 +17,12 @@
             <template v-if="watchState.isLoggedIn">
                 <NavMenu></NavMenu>
 
-                <RouterView v-show="!isSideBarTabShow"></RouterView>
-
-                <el-splitter v-show="isSideBarTabShow" @resize-end="setAsideWidth">
+                <el-splitter @resize-end="setAsideWidth">
                     <el-splitter-panel>
                         <RouterView></RouterView>
                     </el-splitter-panel>
 
-                    <el-splitter-panel :min="250" :max="700" :size="asideWidth" collapsible>
+                    <el-splitter-panel v-if="isSideBarTabShow" :min="250" :max="700" :size="asideWidth" collapsible>
                         <Sidebar></Sidebar>
                     </el-splitter-panel>
                 </el-splitter>
