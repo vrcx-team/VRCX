@@ -52,6 +52,7 @@ export default defineConfig(() => ({
         reportCompressedSize: false,
         chunkSizeWarningLimit: 5000,
         modulePreload: { polyfill: false },
+        assetsInlineLimit: 0,
         rollupOptions: {
             input: {
                 index: resolve(__dirname, 'index.html'),
