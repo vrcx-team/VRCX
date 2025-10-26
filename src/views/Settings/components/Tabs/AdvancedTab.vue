@@ -83,6 +83,20 @@
             </div>
         </div>
         <div class="options-container">
+            <span class="header">{{ t('view.profile.game_info.header') }}</span>
+            <div class="x-friend-list" style="margin-top: 10px">
+                <div class="x-friend-item">
+                    <div class="detail" @click="getVisits">
+                        <span class="name">{{ t('view.profile.game_info.online_users') }}</span>
+                        <span v-if="visits" class="extra">{{
+                            t('view.profile.game_info.user_online', { count: visits })
+                        }}</span>
+                        <span v-else class="extra">{{ t('view.profile.game_info.refresh') }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="options-container">
             <span class="header">{{ t('view.settings.advanced.advanced.remote_database.header') }}</span>
             <simple-switch
                 :label="t('view.settings.advanced.advanced.remote_database.enable')"
@@ -336,6 +350,38 @@
             </div>
         </div>
 
+        <div class="options-container">
+            <div class="header-bar">
+                <span class="header">{{ t('view.profile.config_json') }}</span>
+                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')">
+                    <el-button
+                        type="default"
+                        size="small"
+                        :icon="Refresh"
+                        circle
+                        style="margin-left: 5px"
+                        @click="refreshConfigTreeData()"></el-button>
+                </el-tooltip>
+                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')">
+                    <el-button
+                        type="default"
+                        size="small"
+                        :icon="Delete"
+                        circle
+                        style="margin-left: 5px"
+                        @click="configTreeData = []"></el-button>
+                </el-tooltip>
+            </div>
+            <el-tree v-if="configTreeData.length > 0" :data="configTreeData" style="margin-top: 10px; font-size: 12px">
+                <template #default="scope">
+                    <span>
+                        <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key"></span>
+                        <span v-if="!scope.data.children" v-text="scope.data.value"></span>
+                    </span>
+                </template>
+            </el-tree>
+        </div>
+
         <RegistryBackupDialog />
         <YouTubeApiDialog v-model:isYouTubeApiDialogVisible="isYouTubeApiDialogVisible" />
         <TranslationApiDialog v-model:isTranslationApiDialogVisible="isTranslationApiDialogVisible" />
@@ -347,6 +393,7 @@
 <script setup>
     import {
         CaretRight,
+        Delete,
         DeleteFilled,
         Folder,
         Goods,
@@ -379,6 +426,8 @@
         useVrcxStore,
         useWorldStore
     } from '../../../../stores';
+    import { authRequest, miscRequest } from '../../../../api';
+    import { buildTreeData } from '../../../../shared/utils/common';
     import { openExternalLink } from '../../../../shared/utils';
 
     import AvatarProviderDialog from '../../dialogs/AvatarProviderDialog.vue';
@@ -395,6 +444,7 @@
     const { saveOpenVROption, updateVRLastLocation, updateOpenVR } = useVrStore();
     const { showLaunchOptions } = useLaunchStore();
     const { enablePrimaryPasswordChange } = useAuthStore();
+    const { cachedConfig } = storeToRefs(useAuthStore());
     const { showConsole, clearVRCXCache, showRegistryBackupDialog } = useVrcxStore();
     const { disableGameLogDialog } = useGameLogStore();
 
@@ -449,6 +499,8 @@
 
     const isYouTubeApiDialogVisible = ref(false);
     const isTranslationApiDialogVisible = ref(false);
+    const configTreeData = ref([]);
+    const visits = ref(0);
 
     const cacheSize = reactive({
         cachedUsers: 0,
@@ -546,5 +598,16 @@
         if (configKey === 'VRCX_translationAPI') {
             advancedSettingsStore.setTranslationApi();
         }
+    }
+
+    async function refreshConfigTreeData() {
+        await authRequest.getConfig();
+        configTreeData.value = buildTreeData(cachedConfig.value);
+    }
+
+    function getVisits() {
+        miscRequest.getVisits().then((args) => {
+            visits.value = args.json;
+        });
     }
 </script>

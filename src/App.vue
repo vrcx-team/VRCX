@@ -56,8 +56,6 @@
 
                 <ChooseFavoriteGroupDialog></ChooseFavoriteGroupDialog>
 
-                <EditInviteMessageDialog></EditInviteMessageDialog>
-
                 <VRChatConfigDialog></VRChatConfigDialog>
 
                 <PrimaryPasswordDialog></PrimaryPasswordDialog>
@@ -98,7 +96,6 @@
     import AvatarImportDialog from './views/Favorites/dialogs/AvatarImportDialog.vue';
     import ChangelogDialog from './views/Settings/dialogs/ChangelogDialog.vue';
     import ChooseFavoriteGroupDialog from './components/dialogs/ChooseFavoriteGroupDialog.vue';
-    import EditInviteMessageDialog from './views/Profile/dialogs/EditInviteMessageDialog.vue';
     import FriendImportDialog from './views/Favorites/dialogs/FriendImportDialog.vue';
     import FullscreenImagePreview from './components/FullscreenImagePreview.vue';
     import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';

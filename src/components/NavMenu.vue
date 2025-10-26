@@ -44,11 +44,8 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { useRouter } from 'vue-router';
 
     import { useSearchStore, useUiStore, useVRCXUpdaterStore } from '../stores';
-
-    const route = useRouter();
 
     const { t } = useI18n();
 
@@ -64,7 +61,6 @@
         { index: 'friendList', icon: 'ri-contacts-book-3-line', tooltip: 'nav_tooltip.friend_list' },
         { index: 'charts', icon: 'ri-bar-chart-line', tooltip: 'nav_tooltip.charts' },
         { index: 'tools', icon: 'ri-tools-line', tooltip: 'nav_tooltip.tools' },
-        { index: 'profile', icon: 'ri-user-line', tooltip: 'nav_tooltip.profile' },
         { index: 'settings', icon: 'ri-settings-3-line', tooltip: 'nav_tooltip.settings' }
     ];
 
