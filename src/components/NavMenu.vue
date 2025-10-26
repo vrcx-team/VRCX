@@ -34,6 +34,10 @@
         </div>
 
         <div class="nav-menu-container-bottom">
+            <el-tooltip v-if="branch === 'Nightly'" :content="'Feedback'" placement="right"
+                ><div class="direct-access" id="feedback">
+                    <i class="ri-feedback-line"></i></div
+            ></el-tooltip>
             <el-tooltip :content="t('prompt.direct_access_omni.header')" placement="right"
                 ><div class="direct-access" @click="directAccessPaste"><i class="ri-compass-3-line"></i></div
             ></el-tooltip>
@@ -42,10 +46,13 @@
 </template>
 
 <script setup>
+    import { onMounted } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { useSearchStore, useUiStore, useVRCXUpdaterStore } from '../stores';
+
+    import * as Sentry from '@sentry/vue';
 
     const { t } = useI18n();
 
@@ -65,11 +72,17 @@
     ];
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
-    const { pendingVRCXUpdate, pendingVRCXInstall, updateInProgress, updateProgress } = storeToRefs(VRCXUpdaterStore);
+    const { pendingVRCXUpdate, pendingVRCXInstall, updateInProgress, updateProgress, branch } =
+        storeToRefs(VRCXUpdaterStore);
     const { showVRCXUpdateDialog, updateProgressText } = VRCXUpdaterStore;
     const uiStore = useUiStore();
     const { notifiedMenus } = storeToRefs(uiStore);
     const { directAccessPaste } = useSearchStore();
+
+    onMounted(() => {
+        const feedback = Sentry.getFeedback();
+        feedback?.attachTo(document.getElementById('feedback'));
+    });
 </script>
 
 <style scoped>

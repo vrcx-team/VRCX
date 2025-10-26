@@ -77,6 +77,14 @@ export async function initSentry(app) {
                     tracingOptions: {
                         trackComponents: true
                     }
+                }),
+                Sentry.feedbackIntegration({
+                    showBranding: false,
+                    autoInject: false,
+                    enableScreenshot: false,
+                    buttonLabel: 'Feedback',
+                    submitButtonLabel: 'Send Feedback',
+                    formTitle: 'Send Feedback'
                 })
             ]
         });
