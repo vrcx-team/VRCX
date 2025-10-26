@@ -40,19 +40,29 @@
                     </div>
                 </el-option>
             </el-select>
-            <el-tooltip placement="bottom" :content="t('side_panel.direct_access_tooltip')">
-                <el-button type="default" size="small" :icon="Compass" circle @click="directAccessPaste"></el-button>
-            </el-tooltip>
-            <el-tooltip placement="bottom" :content="t('side_panel.refresh_tooltip')">
-                <el-button
-                    type="default"
-                    :loading="isRefreshFriendsLoading"
-                    size="small"
-                    :icon="Refresh"
-                    circle
-                    style="margin-right: 10px"
-                    @click="refreshFriendsList" />
-            </el-tooltip>
+            <div>
+                <el-tooltip placement="bottom" :content="t('side_panel.refresh_tooltip')">
+                    <el-button
+                        type="default"
+                        :loading="isRefreshFriendsLoading"
+                        size="small"
+                        :icon="Refresh"
+                        circle
+                        style="margin-right: 10px"
+                        @click="refreshFriendsList"></el-button>
+                </el-tooltip>
+                <el-tooltip placement="bottom" :content="t('view.profile.profile.logout')">
+                    <el-button
+                        type="danger"
+                        :icon="SwitchButton"
+                        plain
+                        size="small"
+                        circle
+                        @click="logout"
+                        style="margin: 0 10px 0 0">
+                    </el-button>
+                </el-tooltip>
+            </div>
         </div>
         <el-tabs class="zero-margin-tabs" stretch style="height: calc(100% - 60px); margin-top: 5px">
             <el-tab-pane>
@@ -79,11 +89,11 @@
 </template>
 
 <script setup>
-    import { Compass, Refresh } from '@element-plus/icons-vue';
+    import { Refresh, SwitchButton } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useFriendStore, useGroupStore, useSearchStore } from '../../stores';
+    import { useAuthStore, useFriendStore, useGroupStore, useSearchStore } from '../../stores';
     import { userImage } from '../../shared/utils';
 
     import FriendsSidebar from './components/FriendsSidebar.vue';
@@ -94,6 +104,7 @@
     const { quickSearchRemoteMethod, quickSearchChange, directAccessPaste } = useSearchStore();
     const { quickSearchItems } = storeToRefs(useSearchStore());
     const { inGameGroupOrder, groupInstances } = storeToRefs(useGroupStore());
+    const { logout } = useAuthStore();
     const { t } = useI18n();
 </script>
 
