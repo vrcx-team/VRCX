@@ -37,10 +37,6 @@
             <el-tooltip :content="t('prompt.direct_access_omni.header')" placement="right"
                 ><div class="direct-access" @click="directAccessPaste"><i class="ri-compass-3-line"></i></div
             ></el-tooltip>
-            <el-tooltip :content="t('nav_tooltip.settings')" placement="right"
-                ><div class="direct-access" @click="route.push({ name: 'settings' })">
-                    <i class="ri-settings-3-line"></i></div
-            ></el-tooltip>
         </div>
     </div>
 </template>
@@ -68,7 +64,8 @@
         { index: 'friendList', icon: 'ri-contacts-book-3-line', tooltip: 'nav_tooltip.friend_list' },
         { index: 'charts', icon: 'ri-bar-chart-line', tooltip: 'nav_tooltip.charts' },
         { index: 'tools', icon: 'ri-tools-line', tooltip: 'nav_tooltip.tools' },
-        { index: 'profile', icon: 'ri-user-line', tooltip: 'nav_tooltip.profile' }
+        { index: 'profile', icon: 'ri-user-line', tooltip: 'nav_tooltip.profile' },
+        { index: 'settings', icon: 'ri-settings-3-line', tooltip: 'nav_tooltip.settings' }
     ];
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
