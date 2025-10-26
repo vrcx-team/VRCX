@@ -262,10 +262,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             return;
         }
         args.ref = ref;
-        if (ref.$groupRef !== null) {
-            ref.$groupRef.displayName = ref.displayName;
-            ref.$groupRef.visibility = ref.visibility;
-        }
     }
 
     function handleFavoriteGroupClear(args) {
@@ -316,10 +312,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     function handleFavoriteAtDelete(args) {
-        const { ref } = args;
-        if (ref.$groupRef !== null) {
-            --ref.$groupRef.count;
-        }
         applyFavorite(args.ref.type, args.ref.favoriteId);
         friendStore.updateFriend(args.ref.favoriteId);
         const userDialog = userStore.userDialog;
@@ -332,7 +324,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             userDialog.isFavorite = false;
         }
 
-        const favoriteStore = useFavoriteStore();
         const worldDialog = worldStore.worldDialog;
         if (
             !(
@@ -340,8 +331,9 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 worldDialog.id !== args.ref.favoriteId
             )
         ) {
-            worldDialog.isFavorite =
-                favoriteStore.localWorldFavoritesList.includes(worldDialog.id);
+            worldDialog.isFavorite = localWorldFavoritesList.value.includes(
+                worldDialog.id
+            );
         }
 
         const avatarDialog = avatarStore.avatarDialog;
@@ -625,7 +617,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                         group.displayName = ref.displayName;
                     }
                     group.visibility = ref.visibility;
-                    ref.$groupRef = group;
                     assigns.add(ref.id);
                     break;
                 }
@@ -646,7 +637,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                     group.key = `${group.type}:${ref.name}`;
                     group.name = ref.name;
                     group.displayName = ref.displayName;
-                    ref.$groupRef = group;
                     assigns.add(ref.id);
                     break;
                 }
@@ -660,7 +650,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             }
         }
         for (ref of cachedFavorites.values()) {
-            ref.$groupRef = null;
             if (ref.$isDeleted) {
                 continue;
             }
@@ -668,7 +657,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             if (typeof group === 'undefined') {
                 continue;
             }
-            ref.$groupRef = group;
             ++group.count;
         }
     }
@@ -744,7 +732,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 // VRCX
                 $isDeleted: false,
                 $isExpired: false,
-                $groupRef: null,
                 //
                 ...json
             };
@@ -773,7 +760,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 $isDeleted: false,
                 $isExpired: false,
                 $groupKey: '',
-                $groupRef: null,
                 //
                 ...json
             };
@@ -795,12 +781,11 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
         ref.$groupKey = `${ref.type}:${String(ref.tags[0])}`;
 
-        if (ref.$isDeleted === false && ref.$groupRef === null) {
+        if (ref.$isDeleted === false) {
             const group = cachedFavoriteGroupsByTypeName.value.get(
                 ref.$groupKey
             );
             if (typeof group !== 'undefined') {
-                ref.$groupRef = group;
                 ++group.count;
             }
         }
@@ -1579,6 +1564,10 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         refreshFavorites();
         getLocalWorldFavorites();
         getLocalAvatarFavorites();
+
+        setTimeout(() => {
+            console.log(cachedFavorites);
+        }, 2000);
     }
 
     return {
@@ -1618,7 +1607,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         refreshFavoriteGroups,
         refreshFavorites,
         applyFavoriteGroup,
-        applyFavoriteCached,
         refreshFavoriteAvatars,
         clearBulkFavoriteSelection,
         showWorldImportDialog,
