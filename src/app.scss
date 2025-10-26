@@ -318,11 +318,6 @@ hr.x-vertical-divider {
     background: #f8f8f8;
 }
 
-.x-menu-container > .el-menu {
-    background: 0;
-    border: 0;
-}
-
 .el-menu-item i {
     color: #000;
 }
@@ -359,9 +354,8 @@ hr.x-vertical-divider {
 }
 
 .pending-update {
-    margin: 7px;
-    height: 50px;
-    width: 50px;
+    height: 56px;
+    width: 64px;
     cursor: pointer;
 }
 
