@@ -135,6 +135,22 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         return groupedByGroupKeyFavoriteFriends;
     });
 
+    const localWorldFavGroupLength = computed(() => (group) => {
+        const favoriteGroup = localWorldFavorites.value[group];
+        if (!favoriteGroup) {
+            return 0;
+        }
+        return favoriteGroup.length;
+    });
+
+    const localAvatarFavGroupLength = computed(() => (group) => {
+        const favoriteGroup = localAvatarFavorites.value[group];
+        if (!favoriteGroup) {
+            return 0;
+        }
+        return favoriteGroup.length;
+    });
+
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
@@ -907,19 +923,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param {string} group
-     * @returns {*|number}
-     */
-    function getLocalWorldFavoriteGroupLength(group) {
-        const favoriteGroup = localWorldFavorites.value[group];
-        if (!favoriteGroup) {
-            return 0;
-        }
-        return favoriteGroup.length;
-    }
-
-    /**
-     *
      * @param {string} worldId
      * @param {string} group
      */
@@ -1038,19 +1041,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             }
         }
         return false;
-    }
-
-    /**
-     *
-     * @param {string} group
-     * @returns {*|number}
-     */
-    function getLocalAvatarFavoriteGroupLength(group) {
-        const favoriteGroup = localAvatarFavorites.value[group];
-        if (!favoriteGroup) {
-            return 0;
-        }
-        return favoriteGroup.length;
     }
 
     function updateFavoriteDialog(objectId) {
@@ -1608,12 +1598,12 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         showWorldImportDialog,
         showAvatarImportDialog,
         showFriendImportDialog,
-        getLocalWorldFavoriteGroupLength,
+        localWorldFavGroupLength,
         addLocalWorldFavorite,
         hasLocalWorldFavorite,
         hasLocalAvatarFavorite,
         addLocalAvatarFavorite,
-        getLocalAvatarFavoriteGroupLength,
+        localAvatarFavGroupLength,
         updateFavoriteDialog,
         deleteLocalAvatarFavoriteGroup,
         renameLocalAvatarFavoriteGroup,

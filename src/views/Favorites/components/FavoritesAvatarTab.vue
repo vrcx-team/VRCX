@@ -165,7 +165,7 @@
                 <template #title v-if="localAvatarFavorites[group]">
                     <span :style="{ fontWeight: 'bold', fontSize: '14px', marginLeft: '10px' }">{{ group }}</span>
                     <span :style="{ color: '#909399', fontSize: '12px', marginLeft: '10px' }">{{
-                        getLocalAvatarFavoriteGroupLength(group)
+                        localAvatarFavGroupLength(group)
                     }}</span>
                     <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :teleported="false">
                         <el-button
@@ -253,7 +253,7 @@
     } = storeToRefs(useFavoriteStore());
     const {
         showAvatarImportDialog,
-        getLocalAvatarFavoriteGroupLength,
+        localAvatarFavGroupLength,
         deleteLocalAvatarFavoriteGroup,
         renameLocalAvatarFavoriteGroup,
         newLocalAvatarFavoriteGroup

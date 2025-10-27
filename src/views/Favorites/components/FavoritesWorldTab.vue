@@ -161,7 +161,7 @@
                 <template #title>
                     <span style="font-weight: bold; font-size: 14px; margin-left: 10px" v-text="group" />
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">{{
-                        getLocalWorldFavoriteGroupLength(group)
+                        localWorldFavGroupLength(group)
                     }}</span>
                     <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :teleported="false">
                         <el-button
@@ -254,7 +254,7 @@
     } = storeToRefs(useFavoriteStore());
     const {
         showWorldImportDialog,
-        getLocalWorldFavoriteGroupLength,
+        localWorldFavGroupLength,
         deleteLocalWorldFavoriteGroup,
         renameLocalWorldFavoriteGroup,
         removeLocalWorldFavorite,
