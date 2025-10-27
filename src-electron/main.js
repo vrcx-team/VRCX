@@ -120,7 +120,13 @@ let mainWindow = undefined;
 const VRCXStorage = interopApi.getDotNetObject('VRCXStorage');
 const hasAskedToMoveAppImage =
     VRCXStorage.Get('VRCX_HasAskedToMoveAppImage') === 'true';
-let isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';
+
+function getCloseToTray() {
+    if (process.platform === 'darwin') {
+        return true;
+    }
+    return VRCXStorage.Get('VRCX_CloseToTray') === 'true';
+}
 
 const gotTheLock = app.requestSingleInstanceLock();
 const strip_vrcx_prefix_regex = new RegExp('^' + VRCX_URI_PREFIX + '://');
@@ -361,8 +367,7 @@ function createWindow() {
     mainWindow.webContents.setVisualZoomLevelLimits(1, 5);
 
     mainWindow.on('close', (event) => {
-        isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';
-        if (isCloseToTray && !appIsQuitting) {
+        if (getCloseToTray() && !appIsQuitting) {
             event.preventDefault();
             mainWindow.hide();
         } else {
@@ -872,7 +877,7 @@ function tryCopyFromWinePrefix() {
 
 function applyWindowState() {
     if (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true' && startup) {
-        if (isCloseToTray) {
+        if (getCloseToTray()) {
             mainWindow.hide();
             return;
         }
