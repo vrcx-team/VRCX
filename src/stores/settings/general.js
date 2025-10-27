@@ -18,7 +18,7 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     const state = reactive({
         isStartAtWindowsStartup: false,
         isStartAsMinimizedState: false,
-        isCloseToTray: false,
+        isCloseToTray: process.platform === 'darwin' ? true : false,
         disableGpuAcceleration: false,
         disableVrOverlayGpuAcceleration: false,
         localFavoriteFriendsGroups: [],
