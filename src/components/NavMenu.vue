@@ -35,7 +35,7 @@
 
         <div class="nav-menu-container-bottom">
             <el-tooltip v-if="branch === 'Nightly'" :content="'Feedback'" placement="right"
-                ><div class="direct-access" id="feedback" @click="setSentryErrorReporting">
+                ><div class="direct-access" id="feedback" @click="!sentryErrorReporting && setSentryErrorReporting()">
                     <i class="ri-feedback-line"></i></div
             ></el-tooltip>
             <el-tooltip :content="t('prompt.direct_access_omni.header')" placement="right"
