@@ -37,7 +37,25 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     const currentFavoriteTab = ref('friend');
 
     const cachedFavoriteGroups = ref(new Map());
-    const cachedFavoriteGroupsByTypeName = ref(new Map());
+
+    const cachedFavoriteGroupsByTypeName = computed(() => {
+        const group = {};
+
+        for (const k in favoriteFriendGroups.value) {
+            const element = favoriteFriendGroups.value[k];
+            group[element.key] = element;
+        }
+        for (const k in favoriteWorldGroups.value) {
+            const element = favoriteWorldGroups.value[k];
+            group[element.key] = element;
+        }
+        for (const k in favoriteAvatarGroups.value) {
+            const element = favoriteAvatarGroups.value[k];
+            group[element.key] = element;
+        }
+
+        return group;
+    });
 
     const favoriteFriends = computed(() => {
         if (appearanceSettingsStore.sortFavorites) {
@@ -104,10 +122,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     const localAvatarFavorites = ref({});
 
-    const localAvatarFavoritesList = ref([]);
-
-    const localAvatarFavoriteGroups = ref([]);
-
     const favoriteDialog = ref({
         visible: false,
         loading: false,
@@ -116,11 +130,27 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         currentGroup: {}
     });
 
-    const localWorldFavoritesList = ref([]);
-
     const cachedFavoritesByObjectId = ref(new Map());
 
-    const localWorldFavoriteGroups = ref([]);
+    const localAvatarFavoriteGroups = computed(() =>
+        Object.keys(localAvatarFavorites.value).sort()
+    );
+
+    const localWorldFavoriteGroups = computed(() =>
+        Object.keys(localWorldFavorites.value).sort()
+    );
+
+    const localWorldFavoritesList = computed(() =>
+        Object.values(localWorldFavorites.value)
+            .flat()
+            .map((fav) => fav.id)
+    );
+
+    const localAvatarFavoritesList = computed(() =>
+        Object.values(localAvatarFavorites.value)
+            .flat()
+            .map((fav) => fav.id)
+    );
 
     const groupedByGroupKeyFavoriteFriends = computed(() => {
         const groupedByGroupKeyFavoriteFriends = {};
@@ -158,7 +188,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             cachedFavorites.clear();
             cachedFavoritesByObjectId.value.clear();
             cachedFavoriteGroups.value.clear();
-            cachedFavoriteGroupsByTypeName.value.clear();
             favoriteFriendGroups.value = [];
             favoriteWorldGroups.value = [];
             favoriteAvatarGroups.value = [];
@@ -168,8 +197,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             state.favoriteFriends_ = [];
             state.favoriteWorlds_ = [];
             state.favoriteAvatars_ = [];
-            localAvatarFavoriteGroups.value = [];
-            localAvatarFavoritesList.value = [];
             localAvatarFavorites.value = {};
             favoriteDialog.value.visible = false;
             worldImportDialogVisible.value = false;
@@ -659,17 +686,12 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             }
         }
         // update favorites
-        cachedFavoriteGroupsByTypeName.value.clear();
-        for (const type in types) {
-            for (group of types[type]) {
-                cachedFavoriteGroupsByTypeName.value.set(group.key, group);
-            }
-        }
+
         for (ref of cachedFavorites.values()) {
             if (ref.$isDeleted) {
                 continue;
             }
-            group = cachedFavoriteGroupsByTypeName.value.get(ref.$groupKey);
+            group = cachedFavoriteGroupsByTypeName.value[ref.$groupKey];
             if (typeof group === 'undefined') {
                 continue;
             }
@@ -696,7 +718,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             console.error(err);
         }
         expireFavorites();
-        cachedFavoriteGroupsByTypeName.value.clear();
         processBulk({
             fn: favoriteRequest.getFavorites,
             N: -1,
@@ -798,9 +819,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         ref.$groupKey = `${ref.type}:${String(ref.tags[0])}`;
 
         if (ref.$isDeleted === false) {
-            const group = cachedFavoriteGroupsByTypeName.value.get(
-                ref.$groupKey
-            );
+            const group = cachedFavoriteGroupsByTypeName.value[ref.$groupKey];
             if (typeof group !== 'undefined') {
                 ++group.count;
             }
@@ -934,15 +953,10 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         if (typeof ref === 'undefined') {
             return;
         }
-        if (!localWorldFavoritesList.value.includes(worldId)) {
-            localWorldFavoritesList.value.push(worldId);
-        }
         if (!localWorldFavorites.value[group]) {
             localWorldFavorites.value[group] = [];
         }
-        if (!localWorldFavoriteGroups.value.includes(group)) {
-            localWorldFavoriteGroups.value.push(group);
-        }
+
         localWorldFavorites.value[group].unshift(ref);
         database.addWorldToCache(ref);
         database.addWorldToFavorites(worldId, group);
@@ -995,14 +1009,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         if (typeof ref === 'undefined') {
             return;
         }
-        if (!localAvatarFavoritesList.value.includes(avatarId)) {
-            localAvatarFavoritesList.value.push(avatarId);
-        }
         if (!localAvatarFavorites.value[group]) {
             localAvatarFavorites.value[group] = [];
-        }
-        if (!localAvatarFavoriteGroups.value.includes(group)) {
-            localAvatarFavoriteGroups.value.push(group);
         }
         localAvatarFavorites.value[group].unshift(ref);
         database.addAvatarToCache(ref);
@@ -1086,7 +1094,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             avatarIdRemoveList.add(favoriteGroup[i].id);
         }
 
-        removeFromArray(localAvatarFavoriteGroups.value, group);
         delete localAvatarFavorites.value[group];
         database.deleteAvatarFavoriteGroup(group);
 
@@ -1137,7 +1144,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 }
             }
             if (!avatarInFavorites) {
-                removeFromArray(localAvatarFavoritesList.value, id);
                 if (!avatarStore.avatarHistory.has(id)) {
                     database.removeAvatarFromCache(id);
                 }
@@ -1146,7 +1152,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     function sortLocalAvatarFavorites() {
-        localAvatarFavoriteGroups.value.sort();
         if (!appearanceSettingsStore.sortFavorites) {
             for (let i = 0; i < localAvatarFavoriteGroups.value.length; ++i) {
                 const group = localAvatarFavoriteGroups.value[i];
@@ -1172,10 +1177,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             });
             return;
         }
-        localAvatarFavoriteGroups.value.push(newName);
         localAvatarFavorites.value[newName] = localAvatarFavorites.value[group];
 
-        removeFromArray(localAvatarFavoriteGroups.value, group);
         delete localAvatarFavorites.value[group];
         database.renameAvatarFavoriteGroup(newName, group);
         sortLocalAvatarFavorites();
@@ -1197,9 +1200,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
         if (!localAvatarFavorites.value[group]) {
             localAvatarFavorites.value[group] = [];
-        }
-        if (!localAvatarFavoriteGroups.value.includes(group)) {
-            localAvatarFavoriteGroups.value.push(group);
         }
         sortLocalAvatarFavorites();
     }
@@ -1246,8 +1246,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             groupsArr = ['Favorites'];
         }
 
-        localAvatarFavoriteGroups.value = groupsArr;
-        localAvatarFavoritesList.value = Array.from(localListSet);
         localAvatarFavorites.value = localFavorites;
 
         sortLocalAvatarFavorites();
@@ -1287,7 +1285,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             }
         }
         if (!avatarInFavorites) {
-            removeFromArray(localAvatarFavoritesList.value, avatarId);
             if (!avatarStore.avatarHistory.has(avatarId)) {
                 database.removeAvatarFromCache(avatarId);
             }
@@ -1324,7 +1321,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             worldIdRemoveList.add(favoriteGroup[i].id);
         }
 
-        removeFromArray(localWorldFavoriteGroups.value, group);
         delete localWorldFavorites.value[group];
         database.deleteWorldFavoriteGroup(group);
 
@@ -1347,13 +1343,11 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
 
         worldIdRemoveList.forEach((id) => {
-            removeFromArray(localWorldFavoritesList.value, id);
             database.removeWorldFromCache(id);
         });
     }
 
     function sortLocalWorldFavorites() {
-        localWorldFavoriteGroups.value.sort();
         if (!appearanceSettingsStore.sortFavorites) {
             for (let i = 0; i < localWorldFavoriteGroups.value.length; ++i) {
                 const group = localWorldFavoriteGroups.value[i];
@@ -1379,10 +1373,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             });
             return;
         }
-        localWorldFavoriteGroups.value.push(newName);
         localWorldFavorites.value[newName] = localWorldFavorites.value[group];
 
-        removeFromArray(localWorldFavoriteGroups.value, group);
         delete localWorldFavorites.value[group];
         database.renameWorldFavoriteGroup(newName, group);
         sortLocalWorldFavorites();
@@ -1422,7 +1414,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             }
         }
         if (!worldInFavorites) {
-            removeFromArray(localWorldFavoritesList.value, worldId);
             database.removeWorldFromCache(worldId);
         }
         database.removeWorldFromFavorites(worldId, group);
@@ -1486,8 +1477,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             groupsArr = ['Favorites'];
         }
 
-        localWorldFavoriteGroups.value = groupsArr;
-        localWorldFavoritesList.value = Array.from(localListSet);
         localWorldFavorites.value = localFavorites;
 
         sortLocalWorldFavorites();
@@ -1587,6 +1576,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         localWorldFavoriteGroups,
         groupedByGroupKeyFavoriteFriends,
         currentFavoriteTab,
+        localWorldFavGroupLength,
+        localAvatarFavGroupLength,
 
         initFavorites,
         applyFavorite,
@@ -1598,12 +1589,10 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         showWorldImportDialog,
         showAvatarImportDialog,
         showFriendImportDialog,
-        localWorldFavGroupLength,
         addLocalWorldFavorite,
         hasLocalWorldFavorite,
         hasLocalAvatarFavorite,
         addLocalAvatarFavorite,
-        localAvatarFavGroupLength,
         updateFavoriteDialog,
         deleteLocalAvatarFavoriteGroup,
         renameLocalAvatarFavoriteGroup,

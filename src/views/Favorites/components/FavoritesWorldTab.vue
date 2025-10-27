@@ -245,13 +245,7 @@
     const { t } = useI18n();
     const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
-    const {
-        favoriteWorlds,
-        favoriteWorldGroups,
-        localWorldFavorites,
-        localWorldFavoriteGroups,
-        localWorldFavoritesList
-    } = storeToRefs(useFavoriteStore());
+    const { favoriteWorlds, favoriteWorldGroups, localWorldFavorites } = storeToRefs(useFavoriteStore());
     const {
         showWorldImportDialog,
         localWorldFavGroupLength,
@@ -259,7 +253,9 @@
         renameLocalWorldFavoriteGroup,
         removeLocalWorldFavorite,
         newLocalWorldFavoriteGroup,
-        handleFavoriteGroup
+        handleFavoriteGroup,
+        localWorldFavoritesList,
+        localWorldFavoriteGroups
     } = useFavoriteStore();
     const { showWorldDialog } = useWorldStore();
 
@@ -440,8 +436,8 @@
         }
 
         const results = [];
-        for (let i = 0; i < localWorldFavoriteGroups.value.length; ++i) {
-            const group = localWorldFavoriteGroups.value[i];
+        for (let i = 0; i < localWorldFavoriteGroups.length; ++i) {
+            const group = localWorldFavoriteGroups[i];
             if (!localWorldFavorites.value[group]) {
                 continue;
             }
@@ -498,7 +494,7 @@
         };
         refreshCancelToken.value = token;
         try {
-            for (const worldId of localWorldFavoritesList.value) {
+            for (const worldId of localWorldFavoritesList) {
                 if (token.cancelled) {
                     break;
                 }

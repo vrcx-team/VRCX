@@ -76,14 +76,8 @@
     const { t } = useI18n();
 
     const favoriteStore = useFavoriteStore();
-    const {
-        favoriteFriendGroups,
-        favoriteAvatarGroups,
-        favoriteWorldGroups,
-        localAvatarFavoriteGroups,
-        favoriteDialog,
-        localWorldFavoriteGroups
-    } = storeToRefs(favoriteStore);
+    const { favoriteFriendGroups, favoriteAvatarGroups, favoriteWorldGroups, favoriteDialog } =
+        storeToRefs(favoriteStore);
     const {
         localWorldFavGroupLength,
         addLocalWorldFavorite,
@@ -93,7 +87,9 @@
         localAvatarFavGroupLength,
         removeLocalAvatarFavorite,
         removeLocalWorldFavorite,
-        deleteFavoriteNoConfirm
+        deleteFavoriteNoConfirm,
+        localWorldFavoriteGroups,
+        localAvatarFavoriteGroups
     } = favoriteStore;
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 

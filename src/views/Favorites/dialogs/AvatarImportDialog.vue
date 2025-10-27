@@ -190,9 +190,9 @@
     const emit = defineEmits(['update:avatarImportDialogInput']);
     const { t } = useI18n();
     const { showUserDialog } = useUserStore();
-    const { favoriteAvatarGroups, avatarImportDialogInput, avatarImportDialogVisible, localAvatarFavoriteGroups } =
+    const { favoriteAvatarGroups, avatarImportDialogInput, avatarImportDialogVisible } =
         storeToRefs(useFavoriteStore());
-    const { addLocalAvatarFavorite, localAvatarFavGroupLength } = useFavoriteStore();
+    const { addLocalAvatarFavorite, localAvatarFavGroupLength, localAvatarFavoriteGroups } = useFavoriteStore();
     const { showAvatarDialog, applyAvatar } = useAvatarStore();
     const { showFullscreenImageDialog } = useGalleryStore();
 

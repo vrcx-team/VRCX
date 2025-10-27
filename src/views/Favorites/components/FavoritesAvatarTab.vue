@@ -244,19 +244,15 @@
 
     const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
-    const {
-        favoriteAvatars,
-        favoriteAvatarGroups,
-        localAvatarFavorites,
-        localAvatarFavoriteGroups,
-        localAvatarFavoritesList
-    } = storeToRefs(useFavoriteStore());
+    const { favoriteAvatars, favoriteAvatarGroups, localAvatarFavorites } = storeToRefs(useFavoriteStore());
     const {
         showAvatarImportDialog,
         localAvatarFavGroupLength,
         deleteLocalAvatarFavoriteGroup,
         renameLocalAvatarFavoriteGroup,
-        newLocalAvatarFavoriteGroup
+        newLocalAvatarFavoriteGroup,
+        localAvatarFavoritesList,
+        localAvatarFavoriteGroups
     } = useFavoriteStore();
     const { avatarHistoryArray } = storeToRefs(useAvatarStore());
     const { promptClearAvatarHistory, showAvatarDialog, applyAvatar } = useAvatarStore();
@@ -302,8 +298,8 @@
         }
 
         const results = [];
-        for (let i = 0; i < localAvatarFavoriteGroups.value.length; ++i) {
-            const group = localAvatarFavoriteGroups.value[i];
+        for (let i = 0; i < localAvatarFavoriteGroups.length; ++i) {
+            const group = localAvatarFavoriteGroups[i];
             if (!localAvatarFavorites.value[group]) {
                 continue;
             }
@@ -436,7 +432,7 @@
         };
         refreshCancelToken.value = token;
         try {
-            for (const avatarId of localAvatarFavoritesList.value) {
+            for (const avatarId of localAvatarFavoritesList) {
                 if (token.cancelled) {
                     break;
                 }
