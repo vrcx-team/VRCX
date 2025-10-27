@@ -42,7 +42,7 @@
             <el-button size="small">
                 <span v-if="avatarExportLocalFavoriteGroup">
                     {{ avatarExportLocalFavoriteGroup }} ({{
-                        getLocalAvatarFavoriteGroupLength(avatarExportLocalFavoriteGroup)
+                        localAvatarFavGroupLength(avatarExportLocalFavoriteGroup)
                     }})
                     <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
@@ -62,7 +62,7 @@
                         <el-dropdown-item
                             style="display: block; margin: 10px 0"
                             @click="selectAvatarExportLocalGroup(group)">
-                            {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                            {{ group }} ({{ localAvatarFavGroupLength(group) }})
                         </el-dropdown-item>
                     </template>
                 </el-dropdown-menu>
@@ -109,7 +109,7 @@
         localAvatarFavoritesList,
         localAvatarFavoriteGroups
     } = storeToRefs(favoriteStore);
-    const { getLocalAvatarFavoriteGroupLength } = favoriteStore;
+    const { localAvatarFavGroupLength } = favoriteStore;
     const { cachedAvatars } = useAvatarStore();
 
     const avatarExportContent = ref('');

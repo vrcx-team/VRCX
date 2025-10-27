@@ -61,7 +61,7 @@
                     <el-button size="small">
                         <span v-if="worldImportDialog.worldImportLocalFavoriteGroup">
                             {{ worldImportDialog.worldImportLocalFavoriteGroup }}
-                            ({{ getLocalWorldFavoriteGroupLength(worldImportDialog.worldImportLocalFavoriteGroup) }})
+                            ({{ localWorldFavGroupLength(worldImportDialog.worldImportLocalFavoriteGroup) }})
                             <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                         <span v-else>
@@ -75,7 +75,7 @@
                                 <el-dropdown-item
                                     style="display: block; margin: 10px 0"
                                     @click="selectWorldImportLocalGroup(group)">
-                                    {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
+                                    {{ group }} ({{ localWorldFavGroupLength(group) }})
                                 </el-dropdown-item>
                             </template>
                         </el-dropdown-menu>
@@ -186,7 +186,7 @@
     const { showUserDialog } = useUserStore();
     const { favoriteWorldGroups, worldImportDialogInput, worldImportDialogVisible, localWorldFavoriteGroups } =
         storeToRefs(useFavoriteStore());
-    const { getLocalWorldFavoriteGroupLength, addLocalWorldFavorite } = useFavoriteStore();
+    const { localWorldFavGroupLength, addLocalWorldFavorite } = useFavoriteStore();
     const { showWorldDialog } = useWorldStore();
     const { showFullscreenImageDialog } = useGalleryStore();
 

@@ -29,13 +29,13 @@
                     style="display: block; width: 100%; margin: 10px 0; white-space: initial; height: auto"
                     @click="removeLocalWorldFavorite(favoriteDialog.objectId, group)">
                     <el-icon style="margin-right: 5px"><Check /></el-icon>
-                    {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
+                    {{ group }} ({{ localWorldFavGroupLength(group) }})
                 </el-button>
                 <el-button
                     v-else
                     style="display: block; width: 100%; margin: 10px 0; white-space: initial; height: auto"
                     @click="addLocalWorldFavorite(favoriteDialog.objectId, group)">
-                    {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
+                    {{ group }} ({{ localWorldFavGroupLength(group) }})
                 </el-button>
             </template>
         </div>
@@ -47,14 +47,14 @@
                     style="display: block; width: 100%; margin: 10px 0; white-space: initial; height: auto"
                     @click="removeLocalAvatarFavorite(favoriteDialog.objectId, group)">
                     <el-icon style="margin-right: 5px"><Check /></el-icon>
-                    {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                    {{ group }} ({{ localAvatarFavGroupLength(group) }})
                 </el-button>
                 <el-button
                     v-else
                     style="display: block; width: 100%; margin: 10px 0; white-space: initial; height: auto"
                     :disabled="!isLocalUserVrcPlusSupporter"
                     @click="addLocalAvatarFavorite(favoriteDialog.objectId, group)">
-                    {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                    {{ group }} ({{ localAvatarFavGroupLength(group) }})
                 </el-button>
             </template>
         </div>
@@ -85,12 +85,12 @@
         localWorldFavoriteGroups
     } = storeToRefs(favoriteStore);
     const {
-        getLocalWorldFavoriteGroupLength,
+        localWorldFavGroupLength,
         addLocalWorldFavorite,
         hasLocalWorldFavorite,
         hasLocalAvatarFavorite,
         addLocalAvatarFavorite,
-        getLocalAvatarFavoriteGroupLength,
+        localAvatarFavGroupLength,
         removeLocalAvatarFavorite,
         removeLocalWorldFavorite,
         deleteFavoriteNoConfirm

@@ -41,9 +41,7 @@
         <el-dropdown trigger="click" size="small" style="margin-left: 10px">
             <el-button size="small">
                 <span v-if="worldExportLocalFavoriteGroup">
-                    {{ worldExportLocalFavoriteGroup }} ({{
-                        getLocalWorldFavoriteGroupLength(worldExportLocalFavoriteGroup)
-                    }})
+                    {{ worldExportLocalFavoriteGroup }} ({{ localWorldFavGroupLength(worldExportLocalFavoriteGroup) }})
                     <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
                 <span v-else>
@@ -109,7 +107,7 @@
         localWorldFavoriteGroups,
         localWorldFavoritesList
     } = storeToRefs(favoriteStore);
-    const { getLocalWorldFavoriteGroupLength } = favoriteStore;
+    const { localWorldFavGroupLength } = favoriteStore;
     const { cachedWorlds } = useWorldStore();
 
     const worldExportContent = ref('');
