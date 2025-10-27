@@ -913,6 +913,11 @@ app.whenReady().then(() => {
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow();
+        } else {
+            // Ensure main window shows when clicking Dock icon (critical for macOS)
+            if (mainWindow && !mainWindow.isVisible()) {
+                mainWindow.show();
+            }
         }
     });
 });
@@ -940,6 +945,8 @@ function disposeOverlay() {
 }
 
 app.on('before-quit', function () {
+    // Mark it as a quitting state to make macOS Dock's "Quit" action take effect.
+    appIsQuitting = true;
     disposeOverlay();
 });
 
