@@ -21,7 +21,7 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     const isStartAtWindowsStartup = ref(false);
     const isStartAsMinimizedState = ref(false);
     const disableGpuAcceleration = ref(false);
-    const isCloseToTray = ref(false);
+    const isCloseToTray = ref(process.platform === 'darwin' ? true : false);
     const disableVrOverlayGpuAcceleration = ref(false);
     const localFavoriteFriendsGroups = ref([]);
     const udonExceptionLogging = ref(false);
