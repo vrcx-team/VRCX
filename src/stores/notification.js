@@ -137,9 +137,9 @@ export const useNotificationStore = defineStore('Notification', () => {
                     // get instance name for invite
                     const L = parseLocation(ref.details.worldId);
                     if (L.isRealInstance) {
-                        instanceRequest.getInstance({
+                        instanceRequest.getCachedInstance({
                             worldId: L.worldId,
-                            instanceId: L.tag
+                            instanceId: L.instanceId
                         });
                     }
                 }
