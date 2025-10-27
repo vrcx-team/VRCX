@@ -1564,10 +1564,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         refreshFavorites();
         getLocalWorldFavorites();
         getLocalAvatarFavorites();
-
-        setTimeout(() => {
-            console.log(cachedFavorites);
-        }, 2000);
     }
 
     return {
