@@ -467,12 +467,6 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             return;
         }
 
-        sentryErrorReporting.value = !sentryErrorReporting.value;
-        await configRepository.setString(
-            'VRCX_SentryEnabled',
-            sentryErrorReporting.value ? 'true' : 'false'
-        );
-
         ElMessageBox.confirm(
             'Error reporting setting has been disabled. Would you like to restart VRCX now for the change to take effect?',
             'Restart Required',
@@ -483,7 +477,12 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 center: true
             }
         )
-            .then(() => {
+            .then(async () => {
+                sentryErrorReporting.value = !sentryErrorReporting.value;
+                await configRepository.setString(
+                    'VRCX_SentryEnabled',
+                    sentryErrorReporting.value ? 'true' : 'false'
+                );
                 VRCXUpdaterStore.restartVRCX(false);
             })
             .catch(() => {});

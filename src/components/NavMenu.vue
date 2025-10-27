@@ -35,7 +35,7 @@
 
         <div class="nav-menu-container-bottom">
             <el-tooltip v-if="branch === 'Nightly'" :content="'Feedback'" placement="right"
-                ><div class="direct-access" id="feedback">
+                ><div class="direct-access" id="feedback" @click="setSentryErrorReporting">
                     <i class="ri-feedback-line"></i></div
             ></el-tooltip>
             <el-tooltip :content="t('prompt.direct_access_omni.header')" placement="right"
@@ -50,7 +50,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useSearchStore, useUiStore, useVRCXUpdaterStore } from '../stores';
+    import { useAdvancedSettingsStore, useSearchStore, useUiStore, useVRCXUpdaterStore } from '../stores';
 
     import * as Sentry from '@sentry/vue';
 
@@ -78,8 +78,11 @@
     const uiStore = useUiStore();
     const { notifiedMenus } = storeToRefs(uiStore);
     const { directAccessPaste } = useSearchStore();
+    const { sentryErrorReporting } = storeToRefs(useAdvancedSettingsStore());
+    const { setSentryErrorReporting } = useAdvancedSettingsStore();
 
     onMounted(() => {
+        if (!sentryErrorReporting.value) return;
         const feedback = Sentry.getFeedback();
         feedback?.attachTo(document.getElementById('feedback'));
     });
