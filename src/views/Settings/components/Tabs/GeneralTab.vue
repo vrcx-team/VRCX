@@ -81,6 +81,7 @@
                 :tooltip="t('view.settings.general.application.startup_linux')"
                 @change="setIsStartAsMinimizedState" />
             <simple-switch
+                v-if="!isMacOS"
                 :label="t('view.settings.general.application.tray')"
                 :value="isCloseToTray"
                 @change="setIsCloseToTray" />
@@ -364,6 +365,9 @@
 
     const ossDialog = ref(false);
     const isLinux = computed(() => LINUX);
+    const isMacOS = computed(() => {
+        return navigator.platform.indexOf('Mac') > -1;
+    });
 
     const OpenSourceSoftwareNoticeDialog = defineAsyncComponent(
         () => import('../../dialogs/OpenSourceSoftwareNoticeDialog.vue')
