@@ -176,16 +176,16 @@
 </template>
 
 <script setup>
-    import { Close, Loading, ArrowDown } from '@element-plus/icons-vue';
+    import { ArrowDown, Close, Loading } from '@element-plus/icons-vue';
+    import { computed, ref, watch } from 'vue';
     import { ElMessage } from 'element-plus';
-
-    import { ref, computed, watch } from 'vue';
-    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
-    import { avatarRequest, favoriteRequest } from '../../../api';
-    import { removeFromArray } from '../../../shared/utils';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
+    import { useI18n } from 'vue-i18n';
+
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
+    import { avatarRequest, favoriteRequest } from '../../../api';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
+    import { removeFromArray } from '../../../shared/utils';
 
     const emit = defineEmits(['update:avatarImportDialogInput']);
     const { t } = useI18n();

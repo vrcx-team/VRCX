@@ -1,23 +1,26 @@
-import Noty from 'noty';
+import { reactive, ref, watch } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import { authRequest } from '../api';
 import { useI18n } from 'vue-i18n';
-import configRepository from '../service/config';
-import { database } from '../service/database';
-import { AppDebug } from '../service/appConfig';
-import { request } from '../service/request';
-import security from '../service/security';
-import webApiService from '../service/webapi';
+
+import Noty from 'noty';
+
 import { closeWebSocket, initWebsocket } from '../service/websocket';
-import { watchState } from '../service/watchState';
+import { AppDebug } from '../service/appConfig';
+import { authRequest } from '../api';
+import { database } from '../service/database';
 import { escapeTag } from '../shared/utils';
-import { useNotificationStore } from './notification';
+import { request } from '../service/request';
 import { useAdvancedSettingsStore } from './settings/advanced';
+import { useNotificationStore } from './notification';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
 import { useVrcxStore } from './vrcx';
+import { watchState } from '../service/watchState';
+
+import configRepository from '../service/config';
+import security from '../service/security';
+import webApiService from '../service/webapi';
 
 export const useAuthStore = defineStore('Auth', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
@@ -28,129 +31,60 @@ export const useAuthStore = defineStore('Auth', () => {
 
     const { t } = useI18n();
     const state = reactive({
-        attemptingAutoLogin: false,
         autoLoginAttempts: new Set(),
-        loginForm: {
-            loading: false,
-            username: '',
-            password: '',
-            endpoint: '',
-            websocket: '',
-            saveCredentials: false,
-            savedCredentials: {},
-            lastUserLoggedIn: '',
-            rules: {
-                username: [
-                    {
-                        required: true,
-                        trigger: 'blur'
-                    }
-                ],
-                password: [
-                    {
-                        required: true,
-                        trigger: 'blur'
-                    }
-                ]
-            }
-        },
-        enablePrimaryPasswordDialog: {
-            visible: false,
-            password: '',
-            rePassword: '',
-            beforeClose(done) {
-                // $app._data.enablePrimaryPassword = false;
-                done();
-            }
-        },
-        saveCredentials: null,
-        // it's a flag
-        twoFactorAuthDialogVisible: false,
         enableCustomEndpoint: false,
         cachedConfig: {}
     });
 
-    async function init() {
-        const [savedCredentials, lastUserLoggedIn, enableCustomEndpoint] =
-            await Promise.all([
-                configRepository.getString('savedCredentials'),
-                configRepository.getString('lastUserLoggedIn'),
-                configRepository.getBool('VRCX_enableCustomEndpoint', false)
-            ]);
-        try {
-            state.loginForm = {
-                ...state.loginForm,
-                savedCredentials: savedCredentials
-                    ? JSON.parse(savedCredentials)
-                    : {},
-                lastUserLoggedIn
-            };
-        } catch (error) {
-            console.error('Failed to parse savedCredentials:', error);
-            state.loginForm = {
-                ...state.loginForm,
-                savedCredentials: {},
-                lastUserLoggedIn
-            };
-        }
-        state.enableCustomEndpoint = enableCustomEndpoint;
-    }
-
-    init();
-
-    const loginForm = computed({
-        get: () => state.loginForm,
-        set: (value) => {
-            state.loginForm = value;
+    const loginForm = ref({
+        loading: false,
+        username: '',
+        password: '',
+        endpoint: '',
+        websocket: '',
+        saveCredentials: false,
+        savedCredentials: {},
+        lastUserLoggedIn: '',
+        rules: {
+            username: [
+                {
+                    required: true,
+                    trigger: 'blur'
+                }
+            ],
+            password: [
+                {
+                    required: true,
+                    trigger: 'blur'
+                }
+            ]
         }
     });
 
-    const enablePrimaryPasswordDialog = computed({
-        get: () => state.enablePrimaryPasswordDialog,
-        set: (value) => {
-            state.enablePrimaryPasswordDialog = value;
+    const enablePrimaryPasswordDialog = ref({
+        visible: false,
+        password: '',
+        rePassword: '',
+        beforeClose(done) {
+            // $app._data.enablePrimaryPassword = false;
+            done();
         }
     });
 
-    const saveCredentials = computed({
-        get: () => state.saveCredentials,
-        set: (value) => {
-            state.saveCredentials = value;
-        }
-    });
+    const credentialsToSave = ref(null);
 
-    const twoFactorAuthDialogVisible = computed({
-        get: () => state.twoFactorAuthDialogVisible,
-        set: (value) => {
-            state.twoFactorAuthDialogVisible = value;
-        }
-    });
+    const twoFactorAuthDialogVisible = ref(false);
 
-    const cachedConfig = computed({
-        get: () => state.cachedConfig,
-        set: (value) => {
-            state.cachedConfig = value;
-        }
-    });
+    const cachedConfig = ref({});
 
-    const enableCustomEndpoint = computed({
-        get: () => state.enableCustomEndpoint,
-        set: (value) => {
-            state.enableCustomEndpoint = value;
-        }
-    });
+    const enableCustomEndpoint = ref(false);
 
-    const attemptingAutoLogin = computed({
-        get: () => state.attemptingAutoLogin,
-        set: (value) => {
-            state.attemptingAutoLogin = value;
-        }
-    });
+    const attemptingAutoLogin = ref(false);
 
     watch(
         [() => watchState.isLoggedIn, () => userStore.currentUser],
         ([isLoggedIn, currentUser]) => {
-            state.twoFactorAuthDialogVisible = false;
+            twoFactorAuthDialogVisible.value = false;
             if (isLoggedIn) {
                 updateStoredUser(currentUser);
                 new Noty({
@@ -175,6 +109,51 @@ export const useAuthStore = defineStore('Auth', () => {
         { flush: 'sync' }
     );
 
+    async function init() {
+        const [savedCredentials, lastUserLoggedIn, enableCustomEndpoint] =
+            await Promise.all([
+                configRepository.getString('savedCredentials', '{}'),
+                configRepository.getString('lastUserLoggedIn', ''),
+                configRepository.getBool('VRCX_enableCustomEndpoint', false)
+            ]);
+        loginForm.value.lastUserLoggedIn = lastUserLoggedIn;
+        try {
+            const credentials = JSON.parse(savedCredentials || '{}');
+            let edited = false;
+            for (const userId in credentials) {
+                // fix goofy typo
+                if (credentials[userId].loginParmas) {
+                    credentials[userId].loginParams =
+                        credentials[userId].loginParmas;
+                    delete credentials[userId].loginParmas;
+                    edited = true;
+                }
+                // fix missing fields
+                if (!credentials[userId].loginParams.endpoint) {
+                    credentials[userId].loginParams.endpoint = '';
+                    edited = true;
+                }
+                if (!credentials[userId].loginParams.websocket) {
+                    credentials[userId].loginParams.websocket = '';
+                    edited = true;
+                }
+            }
+            if (edited) {
+                await configRepository.setString(
+                    'savedCredentials',
+                    JSON.stringify(credentials)
+                );
+            }
+            loginForm.value.savedCredentials = credentials;
+        } catch (error) {
+            console.error('Failed to parse savedCredentials:', error);
+            loginForm.value.savedCredentials = {};
+        }
+        state.enableCustomEndpoint = enableCustomEndpoint;
+    }
+
+    init();
+
     async function handleLogoutEvent() {
         if (watchState.isLoggedIn) {
             new Noty({
@@ -184,16 +163,17 @@ export const useAuthStore = defineStore('Auth', () => {
                 )}</strong>!`
             }).show();
         }
+        userStore.userDialog.visible = false;
         watchState.isLoggedIn = false;
         watchState.isFriendsLoaded = false;
         watchState.isFavoritesLoaded = false;
         notificationStore.notificationInitStatus = false;
         await updateStoredUser(userStore.currentUser);
         webApiService.clearCookies();
-        state.loginForm.lastUserLoggedIn = '';
+        loginForm.value.lastUserLoggedIn = '';
         await configRepository.remove('lastUserLoggedIn');
         // workerTimers.setTimeout(() => location.reload(), 500);
-        state.attemptingAutoLogin = false;
+        attemptingAutoLogin.value = false;
         state.autoLoginAttempts.clear();
         closeWebSocket();
     }
@@ -208,26 +188,26 @@ export const useAuthStore = defineStore('Auth', () => {
             (await configRepository.getString('lastUserLoggedIn')) !== null
         ) {
             const user =
-                state.loginForm.savedCredentials[
-                    state.loginForm.lastUserLoggedIn
+                loginForm.value.savedCredentials[
+                    loginForm.value.lastUserLoggedIn
                 ];
-            if (user?.loginParmas?.endpoint) {
-                AppDebug.endpointDomain = user.loginParmas.endpoint;
-                AppDebug.websocketDomain = user.loginParmas.websocket;
+            if (user?.loginParams?.endpoint) {
+                AppDebug.endpointDomain = user.loginParams.endpoint;
+                AppDebug.websocketDomain = user.loginParams.websocket;
             }
             // login at startup
-            state.loginForm.loading = true;
+            loginForm.value.loading = true;
             authRequest
                 .getConfig()
                 .catch((err) => {
-                    state.loginForm.loading = false;
+                    loginForm.value.loading = false;
                     throw err;
                 })
                 .then(() => {
                     userStore
                         .getCurrentUser()
                         .finally(() => {
-                            state.loginForm.loading = false;
+                            loginForm.value.loading = false;
                         })
                         .catch((err) => {
                             updateLoopStore.nextCurrentUserRefresh = 60; // 1min
@@ -239,10 +219,10 @@ export const useAuthStore = defineStore('Auth', () => {
 
     async function clearCookiesTryLogin() {
         await webApiService.clearCookies();
-        if (state.loginForm.lastUserLoggedIn) {
+        if (loginForm.value.lastUserLoggedIn) {
             const user =
-                state.loginForm.savedCredentials[
-                    state.loginForm.lastUserLoggedIn
+                loginForm.value.savedCredentials[
+                    loginForm.value.lastUserLoggedIn
                 ];
             if (typeof user !== 'undefined') {
                 delete user.cookies;
@@ -252,10 +232,10 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     async function resendEmail2fa() {
-        if (state.loginForm.lastUserLoggedIn) {
+        if (loginForm.value.lastUserLoggedIn) {
             const user =
-                state.loginForm.savedCredentials[
-                    state.loginForm.lastUserLoggedIn
+                loginForm.value.savedCredentials[
+                    loginForm.value.lastUserLoggedIn
                 ];
             if (typeof user !== 'undefined') {
                 await webApiService.clearCookies();
@@ -279,10 +259,10 @@ export const useAuthStore = defineStore('Auth', () => {
         advancedSettingsStore.enablePrimaryPassword =
             !advancedSettingsStore.enablePrimaryPassword;
 
-        state.enablePrimaryPasswordDialog.password = '';
-        state.enablePrimaryPasswordDialog.rePassword = '';
+        enablePrimaryPasswordDialog.value.password = '';
+        enablePrimaryPasswordDialog.value.rePassword = '';
         if (advancedSettingsStore.enablePrimaryPassword) {
-            state.enablePrimaryPasswordDialog.visible = true;
+            enablePrimaryPasswordDialog.value.visible = true;
         } else {
             ElMessageBox.prompt(
                 t('prompt.primary_password.description'),
@@ -293,22 +273,22 @@ export const useAuthStore = defineStore('Auth', () => {
                 }
             )
                 .then(({ value }) => {
-                    for (const userId in state.loginForm.savedCredentials) {
+                    for (const userId in loginForm.value.savedCredentials) {
                         security
                             .decrypt(
-                                state.loginForm.savedCredentials[userId]
-                                    .loginParmas.password,
+                                loginForm.value.savedCredentials[userId]
+                                    .loginParams.password,
                                 value
                             )
                             .then(async (pt) => {
-                                state.saveCredentials = {
+                                credentialsToSave.value = {
                                     username:
-                                        state.loginForm.savedCredentials[userId]
-                                            .loginParmas.username,
+                                        loginForm.value.savedCredentials[userId]
+                                            .loginParams.username,
                                     password: pt
                                 };
                                 await updateStoredUser(
-                                    state.loginForm.savedCredentials[userId]
+                                    loginForm.value.savedCredentials[userId]
                                         .user
                                 );
                                 await configRepository.setBool(
@@ -337,25 +317,25 @@ export const useAuthStore = defineStore('Auth', () => {
             'enablePrimaryPassword',
             advancedSettingsStore.enablePrimaryPassword
         );
-        state.enablePrimaryPasswordDialog.visible = false;
+        enablePrimaryPasswordDialog.value.visible = false;
         if (advancedSettingsStore.enablePrimaryPassword) {
-            const key = state.enablePrimaryPasswordDialog.password;
-            for (const userId in state.loginForm.savedCredentials) {
+            const key = enablePrimaryPasswordDialog.value.password;
+            for (const userId in loginForm.value.savedCredentials) {
                 security
                     .encrypt(
-                        state.loginForm.savedCredentials[userId].loginParmas
+                        loginForm.value.savedCredentials[userId].loginParams
                             .password,
                         key
                     )
                     .then((ct) => {
-                        state.saveCredentials = {
+                        credentialsToSave.value = {
                             username:
-                                state.loginForm.savedCredentials[userId]
-                                    .loginParmas.username,
+                                loginForm.value.savedCredentials[userId]
+                                    .loginParams.username,
                             password: ct
                         };
                         updateStoredUser(
-                            state.loginForm.savedCredentials[userId].user
+                            loginForm.value.savedCredentials[userId].user
                         );
                     });
             }
@@ -369,25 +349,30 @@ export const useAuthStore = defineStore('Auth', () => {
                 await configRepository.getString('savedCredentials')
             );
         }
-        if (state.saveCredentials) {
-            const credentialsToSave = {
+        if (credentialsToSave.value) {
+            savedCredentials[user.id] = {
                 user,
-                loginParmas: state.saveCredentials
+                loginParams: {
+                    username: '',
+                    password: '',
+                    endpoint: '',
+                    websocket: '',
+                    ...credentialsToSave.value
+                }
             };
-            savedCredentials[user.id] = credentialsToSave;
-            state.saveCredentials = null;
+            credentialsToSave.value = null;
         } else if (typeof savedCredentials[user.id] !== 'undefined') {
             savedCredentials[user.id].user = user;
             savedCredentials[user.id].cookies =
                 await webApiService.getCookies();
         }
-        state.loginForm.savedCredentials = savedCredentials;
+        loginForm.value.savedCredentials = savedCredentials;
         const jsonCredentialsArray = JSON.stringify(savedCredentials);
         await configRepository.setString(
             'savedCredentials',
             jsonCredentialsArray
         );
-        state.loginForm.lastUserLoggedIn = user.id;
+        loginForm.value.lastUserLoggedIn = user.id;
         await configRepository.setString('lastUserLoggedIn', user.id);
     }
 
@@ -439,8 +424,8 @@ export const useAuthStore = defineStore('Auth', () => {
             'VRCX_enableCustomEndpoint',
             state.enableCustomEndpoint
         );
-        state.loginForm.endpoint = '';
-        state.loginForm.websocket = '';
+        loginForm.value.endpoint = '';
+        loginForm.value.websocket = '';
     }
 
     function logout() {
@@ -464,22 +449,22 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     async function relogin(user) {
-        const { loginParmas } = user;
+        const { loginParams } = user;
         if (user.cookies) {
             await webApiService.setCookies(user.cookies);
         }
-        state.loginForm.lastUserLoggedIn = user.user.id; // for resend email 2fa
-        if (loginParmas.endpoint) {
-            AppDebug.endpointDomain = loginParmas.endpoint;
-            AppDebug.websocketDomain = loginParmas.websocket;
+        loginForm.value.lastUserLoggedIn = user.user.id; // for resend email 2fa
+        if (loginParams.endpoint) {
+            AppDebug.endpointDomain = loginParams.endpoint;
+            AppDebug.websocketDomain = loginParams.websocket;
         } else {
             AppDebug.endpointDomain = AppDebug.endpointDomainVrchat;
             AppDebug.websocketDomain = AppDebug.websocketDomainVrchat;
         }
         return new Promise((resolve, reject) => {
-            state.loginForm.loading = true;
+            loginForm.value.loading = true;
             if (advancedSettingsStore.enablePrimaryPassword) {
-                checkPrimaryPassword(loginParmas)
+                checkPrimaryPassword(loginParams)
                     .then((pwd) => {
                         return authRequest
                             .getConfig()
@@ -488,11 +473,11 @@ export const useAuthStore = defineStore('Auth', () => {
                             })
                             .then(() => {
                                 authLogin({
-                                    username: loginParmas.username,
+                                    username: loginParams.username,
                                     password: pwd,
-                                    cipher: loginParmas.password,
-                                    endpoint: loginParmas.endpoint,
-                                    websocket: loginParmas.websocket
+                                    cipher: loginParams.password,
+                                    endpoint: loginParams.endpoint,
+                                    websocket: loginParams.websocket
                                 })
                                     .catch((err2) => {
                                         reject(err2);
@@ -517,10 +502,10 @@ export const useAuthStore = defineStore('Auth', () => {
                     })
                     .then(() => {
                         authLogin({
-                            username: loginParmas.username,
-                            password: loginParmas.password,
-                            endpoint: loginParmas.endpoint,
-                            websocket: loginParmas.websocket
+                            username: loginParams.username,
+                            password: loginParams.password,
+                            endpoint: loginParams.endpoint,
+                            websocket: loginParams.websocket
                         })
                             .catch((err2) => {
                                 handleLogoutEvent();
@@ -531,7 +516,7 @@ export const useAuthStore = defineStore('Auth', () => {
                             });
                     });
             }
-        }).finally(() => (state.loginForm.loading = false));
+        }).finally(() => (loginForm.value.loading = false));
     }
 
     async function deleteSavedLogin(userId) {
@@ -546,7 +531,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 false
             );
         }
-        state.loginForm.savedCredentials = savedCredentials;
+        loginForm.value.savedCredentials = savedCredentials;
         const jsonCredentials = JSON.stringify(savedCredentials);
         await configRepository.setString('savedCredentials', jsonCredentials);
         new Noty({
@@ -558,11 +543,11 @@ export const useAuthStore = defineStore('Auth', () => {
     async function login() {
         // TODO: remove/refactor saveCredentials & primaryPassword (security)
         await webApiService.clearCookies();
-        if (!state.loginForm.loading) {
-            state.loginForm.loading = true;
-            if (state.loginForm.endpoint) {
-                AppDebug.endpointDomain = state.loginForm.endpoint;
-                AppDebug.websocketDomain = state.loginForm.websocket;
+        if (!loginForm.value.loading) {
+            loginForm.value.loading = true;
+            if (loginForm.value.endpoint) {
+                AppDebug.endpointDomain = loginForm.value.endpoint;
+                AppDebug.websocketDomain = loginForm.value.websocket;
             } else {
                 AppDebug.endpointDomain = AppDebug.endpointDomainVrchat;
                 AppDebug.websocketDomain = AppDebug.websocketDomainVrchat;
@@ -570,12 +555,12 @@ export const useAuthStore = defineStore('Auth', () => {
             authRequest
                 .getConfig()
                 .catch((err) => {
-                    state.loginForm.loading = false;
+                    loginForm.value.loading = false;
                     throw err;
                 })
                 .then((args) => {
                     if (
-                        state.loginForm.saveCredentials &&
+                        loginForm.value.saveCredentials &&
                         advancedSettingsStore.enablePrimaryPassword
                     ) {
                         ElMessageBox.prompt(
@@ -588,38 +573,38 @@ export const useAuthStore = defineStore('Auth', () => {
                         )
                             .then(({ value }) => {
                                 const saveCredential =
-                                    state.loginForm.savedCredentials[
+                                    loginForm.value.savedCredentials[
                                         Object.keys(
-                                            state.loginForm.savedCredentials
+                                            loginForm.value.savedCredentials
                                         )[0]
                                     ];
                                 security
                                     .decrypt(
-                                        saveCredential.loginParmas.password,
+                                        saveCredential.loginParams.password,
                                         value
                                     )
                                     .then(() => {
                                         security
                                             .encrypt(
-                                                state.loginForm.password,
+                                                loginForm.value.password,
                                                 value
                                             )
                                             .then((pwd) => {
                                                 authLogin({
                                                     username:
-                                                        state.loginForm
+                                                        loginForm.value
                                                             .username,
                                                     password:
-                                                        state.loginForm
+                                                        loginForm.value
                                                             .password,
                                                     endpoint:
-                                                        state.loginForm
+                                                        loginForm.value
                                                             .endpoint,
                                                     websocket:
-                                                        state.loginForm
+                                                        loginForm.value
                                                             .websocket,
                                                     saveCredentials:
-                                                        state.loginForm
+                                                        loginForm.value
                                                             .saveCredentials,
                                                     cipher: pwd
                                                 });
@@ -627,18 +612,19 @@ export const useAuthStore = defineStore('Auth', () => {
                                     });
                             })
                             .finally(() => {
-                                state.loginForm.loading = false;
-                            });
+                                loginForm.value.loading = false;
+                            })
+                            .catch(() => {});
                         return args;
                     }
                     authLogin({
-                        username: state.loginForm.username,
-                        password: state.loginForm.password,
-                        endpoint: state.loginForm.endpoint,
-                        websocket: state.loginForm.websocket,
-                        saveCredentials: state.loginForm.saveCredentials
+                        username: loginForm.value.username,
+                        password: loginForm.value.password,
+                        endpoint: loginForm.value.endpoint,
+                        websocket: loginForm.value.websocket,
+                        saveCredentials: loginForm.value.saveCredentials
                     }).finally(() => {
-                        state.loginForm.loading = false;
+                        loginForm.value.loading = false;
                     });
                     return args;
                 });
@@ -646,11 +632,11 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     function promptTOTP() {
-        if (state.twoFactorAuthDialogVisible) {
+        if (twoFactorAuthDialogVisible.value) {
             return;
         }
         AppApi.FlashWindow();
-        state.twoFactorAuthDialogVisible = true;
+        twoFactorAuthDialogVisible.value = true;
         ElMessageBox.prompt(
             t('prompt.totp.description'),
             t('prompt.totp.header'),
@@ -662,35 +648,37 @@ export const useAuthStore = defineStore('Auth', () => {
                 inputPattern: /^[0-9]{6}$/,
                 inputErrorMessage: t('prompt.totp.input_error'),
                 beforeClose: (action, instance, done) => {
-                    state.twoFactorAuthDialogVisible = false;
+                    twoFactorAuthDialogVisible.value = false;
                     if (action === 'cancel') {
                         promptOTP();
                     }
                     done();
                 }
             }
-        ).then(({ value, action }) => {
-            if (action === 'confirm') {
-                authRequest
-                    .verifyTOTP({
-                        code: value.trim()
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                        clearCookiesTryLogin();
-                    })
-                    .then(() => {
-                        userStore.getCurrentUser();
-                    });
-            }
-        });
+        )
+            .then(({ value, action }) => {
+                if (action === 'confirm') {
+                    authRequest
+                        .verifyTOTP({
+                            code: value.trim()
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            clearCookiesTryLogin();
+                        })
+                        .then(() => {
+                            userStore.getCurrentUser();
+                        });
+                }
+            })
+            .catch(() => {});
     }
 
     function promptOTP() {
-        if (state.twoFactorAuthDialogVisible) {
+        if (twoFactorAuthDialogVisible.value) {
             return;
         }
-        state.twoFactorAuthDialogVisible = true;
+        twoFactorAuthDialogVisible.value = true;
         ElMessageBox.prompt(
             t('prompt.otp.description'),
             t('prompt.otp.header'),
@@ -702,36 +690,38 @@ export const useAuthStore = defineStore('Auth', () => {
                 inputPattern: /^[a-z0-9]{4}-[a-z0-9]{4}$/,
                 inputErrorMessage: t('prompt.otp.input_error'),
                 beforeClose: (action, instance, done) => {
-                    state.twoFactorAuthDialogVisible = false;
+                    twoFactorAuthDialogVisible.value = false;
                     if (action === 'cancel') {
                         promptTOTP();
                     }
                     done();
                 }
             }
-        ).then(({ value, action }) => {
-            if (action === 'confirm') {
-                authRequest
-                    .verifyOTP({
-                        code: value.trim()
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                        clearCookiesTryLogin();
-                    })
-                    .then(() => {
-                        userStore.getCurrentUser();
-                    });
-            }
-        });
+        )
+            .then(({ value, action }) => {
+                if (action === 'confirm') {
+                    authRequest
+                        .verifyOTP({
+                            code: value.trim()
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            clearCookiesTryLogin();
+                        })
+                        .then(() => {
+                            userStore.getCurrentUser();
+                        });
+                }
+            })
+            .catch(() => {});
     }
 
     function promptEmailOTP() {
-        if (state.twoFactorAuthDialogVisible) {
+        if (twoFactorAuthDialogVisible.value) {
             return;
         }
         AppApi.FlashWindow();
-        state.twoFactorAuthDialogVisible = true;
+        twoFactorAuthDialogVisible.value = true;
         ElMessageBox.prompt(
             t('prompt.email_otp.description'),
             t('prompt.email_otp.header'),
@@ -743,7 +733,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 inputPattern: /^[0-9]{6}$/,
                 inputErrorMessage: t('prompt.email_otp.input_error'),
                 beforeClose: (action, instance, done) => {
-                    state.twoFactorAuthDialogVisible = false;
+                    twoFactorAuthDialogVisible.value = false;
                     if (action === 'cancel') {
                         resendEmail2fa();
                         return;
@@ -751,39 +741,52 @@ export const useAuthStore = defineStore('Auth', () => {
                     done();
                 }
             }
-        ).then(({ value, action }) => {
-            if (action === 'confirm') {
-                authRequest
-                    .verifyEmailOTP({
-                        code: value.trim()
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                        promptEmailOTP();
-                    })
-                    .then(() => {
-                        userStore.getCurrentUser();
-                    });
-            }
-        });
+        )
+            .then(({ value, action }) => {
+                if (action === 'confirm') {
+                    authRequest
+                        .verifyEmailOTP({
+                            code: value.trim()
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            promptEmailOTP();
+                        })
+                        .then(() => {
+                            userStore.getCurrentUser();
+                        });
+                }
+            })
+            .catch(() => {});
     }
 
     /**
-     * @param {{ username: string, password: string, saveCredentials: any, cipher: string }} params credential to login
+     * @param {{ username: string, password: string, endpoint: string, websocket: string, saveCredentials?: any, cipher?: string }} params credential to login
      * @returns {Promise<{origin: boolean, json: any}>}
      */
     function authLogin(params) {
-        let { username, password, saveCredentials, cipher } = params;
-        username = encodeURIComponent(username);
-        password = encodeURIComponent(password);
-        const auth = btoa(`${username}:${password}`);
+        let {
+            username,
+            password,
+            endpoint,
+            websocket,
+            saveCredentials,
+            cipher
+        } = params;
+        const auth = btoa(
+            `${encodeURIComponent(username)}:${encodeURIComponent(password)}`
+        );
         if (saveCredentials) {
-            delete params.saveCredentials;
+            params.saveCredentials = false;
             if (cipher) {
-                params.password = cipher;
-                delete params.cipher;
+                password = cipher;
             }
-            state.saveCredentials = params;
+            credentialsToSave.value = {
+                username,
+                password,
+                endpoint,
+                websocket
+            };
         }
         return request('auth/user', {
             method: 'GET',
@@ -816,21 +819,21 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     function handleAutoLogin() {
-        if (state.attemptingAutoLogin) {
+        if (attemptingAutoLogin.value) {
             return;
         }
-        state.attemptingAutoLogin = true;
+        attemptingAutoLogin.value = true;
         const user =
-            state.loginForm.savedCredentials[state.loginForm.lastUserLoggedIn];
+            loginForm.value.savedCredentials[loginForm.value.lastUserLoggedIn];
         if (typeof user === 'undefined') {
-            state.attemptingAutoLogin = false;
+            attemptingAutoLogin.value = false;
             return;
         }
         if (advancedSettingsStore.enablePrimaryPassword) {
             console.error(
                 'Primary password is enabled, this disables auto login.'
             );
-            state.attemptingAutoLogin = false;
+            attemptingAutoLogin.value = false;
             handleLogoutEvent();
             return;
         }
@@ -841,8 +844,9 @@ export const useAuthStore = defineStore('Auth', () => {
             console.error(
                 'More than 3 auto login attempts within the past hour, logging out instead of attempting auto login.'
             );
-            state.attemptingAutoLogin = false;
+            attemptingAutoLogin.value = false;
             handleLogoutEvent();
+            AppApi.FlashWindow();
             return;
         }
         state.autoLoginAttempts.add(new Date().getTime());
@@ -882,7 +886,6 @@ export const useAuthStore = defineStore('Auth', () => {
         await database.initUserTables(userStore.currentUser.id);
         watchState.isLoggedIn = true;
         AppApi.CheckGameRunning(); // restore state from hot-reload
-        vrcxStore.updateDatabaseVersion();
     }
 
     return {
@@ -890,7 +893,7 @@ export const useAuthStore = defineStore('Auth', () => {
 
         loginForm,
         enablePrimaryPasswordDialog,
-        saveCredentials,
+        credentialsToSave,
         twoFactorAuthDialogVisible,
         cachedConfig,
         enableCustomEndpoint,

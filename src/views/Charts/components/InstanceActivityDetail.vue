@@ -15,13 +15,15 @@
 </template>
 
 <script setup>
-    import { ref, watch, computed, onDeactivated, onMounted, nextTick } from 'vue';
-    import dayjs from 'dayjs';
+    import { computed, nextTick, onDeactivated, onMounted, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
 
+    import dayjs from 'dayjs';
+
+    import { useAppearanceSettingsStore, useUserStore } from '../../../stores';
     import { timeToText } from '../../../shared/utils';
+
     import * as echarts from 'echarts';
-    import { useUserStore, useAppearanceSettingsStore } from '../../../stores';
 
     const { isDarkMode, dtHour12 } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();

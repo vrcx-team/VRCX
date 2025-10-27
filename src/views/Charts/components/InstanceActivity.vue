@@ -124,21 +124,25 @@
 </template>
 
 <script setup>
-    import { WarningFilled, InfoFilled, Refresh, Setting, ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
-    import { ref, onDeactivated, watch, onMounted, onBeforeMount, onActivated, nextTick } from 'vue';
-    import dayjs from 'dayjs';
+    import { nextTick, onActivated, onBeforeMount, onDeactivated, onMounted, ref, watch } from 'vue';
+    import { ArrowLeft, ArrowRight, InfoFilled, Refresh, Setting, WarningFilled } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { parseLocation, timeToText } from '../../../shared/utils';
-    import * as echarts from 'echarts';
+
+    import dayjs from 'dayjs';
+
     import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
-    import InstanceActivityDetail from './InstanceActivityDetail.vue';
-    import { useInstanceActivitySettings } from '../composables/useInstanceActivitySettings';
-    import { useInstanceActivityData } from '../composables/useInstanceActivityData';
+    import { parseLocation, timeToText } from '../../../shared/utils';
     import { useActivityDataProcessor } from '../composables/useActivityDataProcessor';
-    import { useIntersectionObserver } from '../composables/useIntersectionObserver';
     import { useChartHelpers } from '../composables/useChartHelpers';
     import { useDateNavigation } from '../composables/useDateNavigation';
+    import { useInstanceActivityData } from '../composables/useInstanceActivityData';
+    import { useInstanceActivitySettings } from '../composables/useInstanceActivitySettings';
+    import { useIntersectionObserver } from '../composables/useIntersectionObserver';
+
+    import InstanceActivityDetail from './InstanceActivityDetail.vue';
+
+    import * as echarts from 'echarts';
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const friendStore = useFriendStore();

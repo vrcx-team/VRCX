@@ -242,7 +242,11 @@
                             @change="buildLegacyInstance"></el-input>
                     </el-form-item>
                     <el-form-item
-                        v-if="newInstanceDialog.accessType !== 'public' && newInstanceDialog.accessType !== 'group'"
+                        v-if="
+                            newInstanceDialog.selectedTab === 'Legacy' &&
+                            newInstanceDialog.accessType !== 'public' &&
+                            newInstanceDialog.accessType !== 'group'
+                        "
                         :label="t('dialog.new_instance.instance_creator')">
                         <el-select
                             v-model="newInstanceDialog.userId"
@@ -473,12 +477,11 @@
 </template>
 
 <script setup>
-    import { ref, watch, nextTick, computed } from 'vue';
+    import { computed, nextTick, ref, watch } from 'vue';
     import { ElMessage } from 'element-plus';
-    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
-    import { groupRequest, instanceRequest, worldRequest } from '../../api';
-    import configRepository from '../../service/config';
+    import { useI18n } from 'vue-i18n';
+
     import {
         copyToClipboard,
         getLaunchURL,
@@ -488,17 +491,20 @@
         userImage,
         userStatusClass
     } from '../../shared/utils';
-    import { getNextDialogIndex } from '../../shared/utils/base/ui';
     import {
         useFriendStore,
         useGroupStore,
         useInstanceStore,
+        useInviteStore,
         useLaunchStore,
         useLocationStore,
-        useUserStore,
-        useInviteStore
+        useUserStore
     } from '../../stores';
+    import { groupRequest, instanceRequest, worldRequest } from '../../api';
+    import { getNextDialogIndex } from '../../shared/utils/base/ui';
+
     import InviteDialog from './InviteDialog/InviteDialog.vue';
+    import configRepository from '../../service/config';
 
     const props = defineProps({
         newInstanceDialogLocationTag: {
@@ -588,7 +594,7 @@
                 const friendsInCurrentInstance = lastLocation.value.friendList;
                 for (const friend of friendsInCurrentInstance.values()) {
                     const ctx = friends.value.get(friend.userId);
-                    if (typeof ctx.ref === 'undefined') {
+                    if (typeof ctx?.ref === 'undefined') {
                         continue;
                     }
                     D.friendsInInstance.push(ctx);

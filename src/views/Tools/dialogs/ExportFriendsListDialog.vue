@@ -28,9 +28,9 @@
 </template>
 
 <script setup>
-    import { ref, computed, watch } from 'vue';
-    import { useI18n } from 'vue-i18n';
+    import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
 
     import { useUserStore } from '../../../stores';
 

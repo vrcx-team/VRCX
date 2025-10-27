@@ -1,5 +1,3 @@
-import * as workerTimers from 'worker-timers';
-/* eslint-disable no-unused-vars */
 let VRCXStorage = {};
 
 export default class {
@@ -40,12 +38,5 @@ export default class {
         VRCXStorage.SetObject = function (key, value) {
             this.Set(key, JSON.stringify(value));
         };
-
-        workerTimers.setInterval(
-            () => {
-                VRCXStorage.Flush();
-            },
-            5 * 60 * 1000
-        );
     }
 }

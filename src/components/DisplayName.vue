@@ -4,8 +4,9 @@
 
 <script setup>
     import { ref, watch } from 'vue';
-    import { userRequest } from '../api';
+
     import { useUserStore } from '../stores';
+    import { userRequest } from '../api';
 
     const userStore = useUserStore();
 

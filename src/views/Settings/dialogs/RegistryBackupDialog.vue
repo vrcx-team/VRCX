@@ -76,15 +76,16 @@
 </template>
 
 <script setup>
+    import { Delete, Download, Upload } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
-    import { Upload, Download, Delete } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
     import { ref, watch } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import configRepository from '../../../service/config';
-    import { downloadAndSaveJson, removeFromArray, formatDateFilter } from '../../../shared/utils';
 
-    import { useVrcxStore, useAdvancedSettingsStore } from '../../../stores';
+    import { downloadAndSaveJson, formatDateFilter, removeFromArray } from '../../../shared/utils';
+    import { useAdvancedSettingsStore, useVrcxStore } from '../../../stores';
+
+    import configRepository from '../../../service/config';
 
     const { backupVrcRegistry } = useVrcxStore();
     const { isRegistryBackupDialogVisible } = storeToRefs(useVrcxStore());
@@ -185,17 +186,18 @@
         await updateRegistryBackupDialog();
     }
 
-    async function promptVrcRegistryBackupName() {
-        try {
-            const { value } = await ElMessageBox.prompt('Enter a name for the backup', 'Backup Name', {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                inputPattern: /\S+/,
-                inputErrorMessage: 'Name is required',
-                inputValue: 'Backup'
-            });
-            await handleBackupVrcRegistry(value);
-        } catch (error) {}
+    function promptVrcRegistryBackupName() {
+        ElMessageBox.prompt('Enter a name for the backup', 'Backup Name', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            inputPattern: /\S+/,
+            inputErrorMessage: 'Name is required',
+            inputValue: 'Backup'
+        })
+            .then(({ value }) => {
+                handleBackupVrcRegistry(value);
+            })
+            .catch(() => {});
     }
 
     async function openJsonFileSelectorDialogElectron() {

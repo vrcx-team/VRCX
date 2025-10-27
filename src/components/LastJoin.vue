@@ -10,10 +10,11 @@
 </template>
 
 <script setup>
+    import { ref, watch } from 'vue';
     import { Location } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
+
     import { useInstanceStore } from '../stores';
 
     const { instanceJoinHistory } = storeToRefs(useInstanceStore());

@@ -21,6 +21,7 @@
 
 <script setup>
     import { useI18n } from 'vue-i18n';
+
     import { openSourceSoftwareLicenses } from '../../../shared/constants/ossLicenses';
 
     const { t } = useI18n();

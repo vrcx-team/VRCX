@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'friendLog'" class="x-container">
+    <div class="x-container">
         <!-- 工具栏 -->
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <el-select
@@ -89,21 +89,22 @@
 </template>
 
 <script setup>
-    import { ElMessageBox } from 'element-plus';
     import { Close, Delete, Right } from '@element-plus/icons-vue';
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { watch } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import configRepository from '../../service/config';
+    import { watch } from 'vue';
+
+    import { useAppearanceSettingsStore, useFriendStore, useUiStore, useUserStore } from '../../stores';
+    import { formatDateFilter, removeFromArray } from '../../shared/utils';
     import { database } from '../../service/database';
-    import { removeFromArray, formatDateFilter } from '../../shared/utils';
-    import { useAppearanceSettingsStore, useUiStore, useFriendStore, useUserStore } from '../../stores';
+
+    import configRepository from '../../service/config';
 
     const { hideUnfriends } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { friendLogTable } = storeToRefs(useFriendStore());
     const { shiftHeld } = storeToRefs(useUiStore());
-    const { menuActiveIndex } = storeToRefs(useUiStore());
 
     watch(
         () => hideUnfriends.value,

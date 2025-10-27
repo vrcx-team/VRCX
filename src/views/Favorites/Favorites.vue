@@ -1,15 +1,6 @@
 <template>
-    <div v-show="menuActiveIndex === 'favorite'" class="x-container">
-        <div
-            style="
-                font-size: 13px;
-                position: absolute;
-                display: flex;
-                align-items: center;
-                right: 0;
-                z-index: 1;
-                margin-right: 15px;
-            ">
+    <div class="x-container">
+        <div class="header">
             <div v-if="editFavoritesMode" style="display: inline-block; margin-right: 10px">
                 <el-button size="small" @click="clearBulkFavoriteSelection">{{ t('view.favorite.clear') }}</el-button>
                 <el-button size="small" @click="handleBulkCopyFavoriteSelection">{{
@@ -23,7 +14,7 @@
                 <span class="name">{{ t('view.favorite.edit_mode') }}</span>
                 <el-switch v-model="editFavoritesMode" style="margin-left: 5px"></el-switch>
             </div>
-            <el-tooltip placement="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
+            <el-tooltip placement="bottom" :content="t('view.favorite.refresh_favorites_tooltip')" :teleported="false">
                 <el-button
                     type="default"
                     :loading="isFavoriteLoading"
@@ -36,7 +27,7 @@
                     "></el-button>
             </el-tooltip>
         </div>
-        <el-tabs v-model="currentTabName" v-loading="isFavoriteLoading" type="card" style="height: 100%">
+        <el-tabs v-model="currentFavoriteTab" v-loading="isFavoriteLoading" type="card" style="height: 100%">
             <el-tab-pane name="friend" :label="t('view.favorite.friends.header')">
                 <FavoritesFriendTab
                     :edit-favorites-mode="editFavoritesMode"
@@ -45,16 +36,12 @@
             <el-tab-pane name="world" :label="t('view.favorite.worlds.header')" lazy>
                 <FavoritesWorldTab
                     :edit-favorites-mode="editFavoritesMode"
-                    :refresh-local-world-favorites="refreshLocalWorldFavorites"
-                    @change-favorite-group-name="changeFavoriteGroupName"
-                    @refresh-local-world-favorite="refreshLocalWorldFavorites" />
+                    @change-favorite-group-name="changeFavoriteGroupName" />
             </el-tab-pane>
             <el-tab-pane name="avatar" :label="t('view.favorite.avatars.header')" lazy>
                 <FavoritesAvatarTab
                     :edit-favorites-mode="editFavoritesMode"
-                    :refreshing-local-favorites="refreshingLocalFavorites"
-                    @change-favorite-group-name="changeFavoriteGroupName"
-                    @refresh-local-avatar-favorites="refreshLocalAvatarFavorites" />
+                    @change-favorite-group-name="changeFavoriteGroupName" />
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -66,9 +53,10 @@
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import * as workerTimers from 'worker-timers';
-    import { avatarRequest, favoriteRequest, worldRequest } from '../../api';
-    import { useFavoriteStore, useUiStore, useAvatarStore } from '../../stores';
+
+    import { favoriteRequest } from '../../api';
+    import { useFavoriteStore } from '../../stores';
+
     import FavoritesAvatarTab from './components/FavoritesAvatarTab.vue';
     import FavoritesFriendTab from './components/FavoritesFriendTab.vue';
     import FavoritesWorldTab from './components/FavoritesWorldTab.vue';
@@ -79,11 +67,10 @@
         favoriteWorlds,
         favoriteAvatars,
         isFavoriteLoading,
-        localAvatarFavoritesList,
-        localWorldFavoritesList,
         avatarImportDialogInput,
         worldImportDialogInput,
-        friendImportDialogInput
+        friendImportDialogInput,
+        currentFavoriteTab
     } = storeToRefs(useFavoriteStore());
     const {
         refreshFavorites,
@@ -95,12 +82,8 @@
         showWorldImportDialog,
         showAvatarImportDialog
     } = useFavoriteStore();
-    const { menuActiveIndex } = storeToRefs(useUiStore());
-    const { applyAvatar } = useAvatarStore();
 
     const editFavoritesMode = ref(false);
-    const refreshingLocalFavorites = ref(false);
-    const currentTabName = ref('friend');
 
     function showBulkUnfavoriteSelectionConfirm() {
         const elementsTicked = [];
@@ -190,7 +173,7 @@
 
     function handleBulkCopyFavoriteSelection() {
         let idList = '';
-        switch (currentTabName.value) {
+        switch (currentFavoriteTab.value) {
             case 'friend':
                 for (const ctx of favoriteFriends.value) {
                     if (ctx.$selected) {
@@ -230,50 +213,16 @@
 
         console.log('Favorite selection\n', idList);
     }
-
-    async function refreshLocalAvatarFavorites() {
-        if (refreshingLocalFavorites.value) {
-            return;
-        }
-        refreshingLocalFavorites.value = true;
-        for (const avatarId of localAvatarFavoritesList.value) {
-            if (!refreshingLocalFavorites.value) {
-                break;
-            }
-            try {
-                const args = await avatarRequest.getAvatar({
-                    avatarId
-                });
-                applyAvatar(args.json);
-            } catch (err) {
-                console.error(err);
-            }
-            await new Promise((resolve) => {
-                workerTimers.setTimeout(resolve, 1000);
-            });
-        }
-        refreshingLocalFavorites.value = false;
-    }
-    async function refreshLocalWorldFavorites() {
-        if (refreshingLocalFavorites.value) {
-            return;
-        }
-        refreshingLocalFavorites.value = true;
-        for (const worldId of localWorldFavoritesList.value) {
-            if (!refreshingLocalFavorites.value) {
-                break;
-            }
-            try {
-                await worldRequest.getWorld({
-                    worldId
-                });
-            } catch (err) {
-                console.error(err);
-            }
-            await new Promise((resolve) => {
-                workerTimers.setTimeout(resolve, 1000);
-            });
-        }
-        refreshingLocalFavorites.value = false;
-    }
 </script>
+
+<style scoped>
+    .header {
+        font-size: 13px;
+        position: absolute;
+        display: flex;
+        align-items: center;
+        right: 0;
+        z-index: 1;
+        margin-right: 15px;
+    }
+</style>

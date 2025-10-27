@@ -26,6 +26,79 @@
 @use 'noty/lib/noty.css';
 @use 'remixicon/fonts/remixicon.css';
 
+:root {
+    text-autospace: normal;
+}
+
+@font-face {
+    font-family: 'ellipsis-font';
+    src: local('Times New Roman');
+    unicode-range: U+2026;
+}
+
+html {
+    overflow: hidden;
+}
+
+body {
+    font-family:
+        'ellipsis-font', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC',
+        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+    margin: 0;
+}
+
+html[lang='ja'] body,
+html[lang='ja'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC',
+        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+}
+
+html[lang='ko'] body,
+html[lang='ko'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans TC',
+        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+}
+
+html[lang='zh-CN'] body,
+html[lang='zh-CN'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans SC', 'Noto Sans TC', 'Noto Sans JP',
+        'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+}
+
+html[lang='zh-TW'] body,
+html[lang='zh-TW'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans TC', 'Noto Sans SC', 'Noto Sans JP',
+        'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+}
+
+a {
+    color: #409eff;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+}
+
 .color-palettes {
     background: #409eff;
     background: #67c23a;
@@ -142,75 +215,6 @@
 
 .el-dialog__footer > .el-button + .el-button {
     margin-left: 5px;
-}
-
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 16px;
-}
-
-@font-face {
-    font-family: 'ellipsis-font';
-    src: local('Times New Roman');
-    unicode-range: U+2026;
-}
-
-html {
-    overflow: hidden;
-}
-
-body {
-    font-family:
-        'ellipsis-font', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC',
-        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
-        sans-serif;
-    margin: 0;
-}
-
-html[lang='ja'] body,
-html[lang='ja'] * {
-    font-family:
-        'ellipsis-font', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC',
-        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
-        sans-serif;
-}
-
-html[lang='ko'] body,
-html[lang='ko'] * {
-    font-family:
-        'ellipsis-font', 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans TC',
-        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
-        sans-serif;
-}
-
-html[lang='zh-CN'] body,
-html[lang='zh-CN'] * {
-    font-family:
-        'ellipsis-font', 'Noto Sans SC', 'Noto Sans TC', 'Noto Sans JP',
-        'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
-        sans-serif;
-}
-
-html[lang='zh-TW'] body,
-html[lang='zh-TW'] * {
-    font-family:
-        'ellipsis-font', 'Noto Sans TC', 'Noto Sans SC', 'Noto Sans JP',
-        'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
-        sans-serif;
-}
-
-a {
-    color: #409eff;
 }
 
 .x-link {
@@ -755,6 +759,10 @@ i.x-status-icon.red {
     max-height: 100%;
 }
 
+.el-card.x-image-selected {
+    border-color: var(--el-color-primary) !important;
+}
+
 // .el-tree-node {
 //     white-space: normal;
 // }
@@ -841,20 +849,20 @@ i.x-status-icon.red {
 //     border: 0.5px solid #999;
 // }
 
-// .el-button--success {
-//     background-color: #67c23a !important;
-//     border-color: #67c23a !important;
-// }
+.x-dialog .el-button--success {
+    background-color: #67c23a !important;
+    border-color: #67c23a !important;
+}
 
-// .x-dialog .el-button--danger {
-//     background-color: #f56c6c !important;
-//     border-color: #f56c6c !important;
-// }
+.x-dialog .el-button--danger {
+    background-color: #f56c6c !important;
+    border-color: #f56c6c !important;
+}
 
-// .el-button--warning {
-//     background-color: #e6a23c !important;
-//     border-color: #e6a23c !important;
-// }
+.x-dialog .el-button--warning {
+    background-color: #e6a23c !important;
+    border-color: #e6a23c !important;
+}
 
 .avatar-info {
     cursor: pointer;
@@ -971,10 +979,6 @@ i.x-status-icon.red {
 //     height: 14px;
 //     left: 8px;
 //     top: 2px;
-// }
-
-// .max-height-el-select .el-select-dropdown__wrap {
-//     max-height: 83vh;
 // }
 
 // .el-pagination .el-input .el-input__icon {

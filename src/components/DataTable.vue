@@ -27,7 +27,9 @@
 </template>
 
 <script>
-    import { computed, ref, watch, toRefs } from 'vue';
+    import { computed, ref, toRefs, watch } from 'vue';
+
+    import { useAppearanceSettingsStore } from '../stores';
 
     export default {
         name: 'DataTable',
@@ -52,6 +54,10 @@
                 type: Number,
                 default: 20
             },
+            pageSizeLinked: {
+                type: Boolean,
+                default: false
+            },
             filters: {
                 type: [Array, Object],
                 default: () => []
@@ -68,13 +74,16 @@
         emits: [
             'update:currentPage',
             'update:pageSize',
+            'update:tableProps',
             'size-change',
             'current-change',
             'selection-change',
             'row-click',
-            'filtered-data'
+            'filtered-data',
+            'sort-change'
         ],
         setup(props, { emit }) {
+            const appearanceSettingsStore = useAppearanceSettingsStore();
             const { data, currentPage, pageSize, tableProps, paginationProps, filters } = toRefs(props);
 
             const internalCurrentPage = ref(currentPage.value);
@@ -109,9 +118,8 @@
                 if (cellValue === undefined || cellValue === null) return false;
 
                 if (Array.isArray(filter.value)) {
-                    return filter.value.some((val) =>
-                        String(cellValue).toLowerCase().includes(String(val).toLowerCase())
-                    );
+                    // assume filter dropdown multi select
+                    return filter.value.some((val) => String(cellValue).toLowerCase() === String(val).toLowerCase());
                 } else {
                     return String(cellValue).toLowerCase().includes(String(filter.value).toLowerCase());
                 }
@@ -122,7 +130,12 @@
 
                 if (filters.value && Array.isArray(filters.value) && filters.value.length > 0) {
                     filters.value.forEach((filter) => {
-                        if (filter.value && (!Array.isArray(filter.value) || filter.value.length > 0)) {
+                        if (!filter.value) {
+                            return;
+                        }
+                        if (filter.filterFn) {
+                            result = result.filter((row) => filter.filterFn(row, filter));
+                        } else if (!Array.isArray(filter.value) || filter.value.length > 0) {
                             result = result.filter((row) => applyFilter(row, filter));
                         }
                     });
@@ -169,7 +182,14 @@
             });
 
             const handleSortChange = ({ prop, order }) => {
+                if (props.tableProps.defaultSort) {
+                    const { tableProps } = props;
+                    tableProps.defaultSort.prop = prop;
+                    tableProps.defaultSort.order = order;
+                    emit('update:tableProps', tableProps);
+                }
                 sortData.value = { prop, order };
+                emit('sort-change', sortData.value);
             };
 
             const handleSelectionChange = (selection) => {
@@ -181,6 +201,9 @@
             };
 
             const handleSizeChange = (size) => {
+                if (props.pageSizeLinked) {
+                    appearanceSettingsStore.setTablePageSize(size);
+                }
                 internalPageSize.value = size;
             };
 
@@ -229,7 +252,7 @@
 
 <style scoped>
     .data-table-wrapper {
-        width: 100%;
+        margin: 0 3px;
     }
 
     .pagination-wrapper {

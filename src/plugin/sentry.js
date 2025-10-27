@@ -1,5 +1,8 @@
-import * as Sentry from '@sentry/vue';
+import { router } from './router';
+
 import configRepository from '../service/config';
+
+import * as Sentry from '@sentry/vue';
 
 export async function initSentry(app) {
     const enabled = await configRepository.getString(
@@ -39,20 +42,37 @@ export async function initSentry(app) {
             replaysOnErrorSampleRate: 1.0,
             tracesSampleRate: 0.05,
             beforeSend(event, hint) {
-                if (
-                    event.request?.status &&
-                    (event.request.status === 404 ||
-                        event.request.status === 403)
-                ) {
-                    return null;
+                const error = hint.originalException;
+                if (error && typeof error.message === 'string') {
+                    if (
+                        error.message.includes('401') ||
+                        error.message.includes('403') ||
+                        error.message.includes('404') ||
+                        error.message.includes('500') ||
+                        error.message.includes('503') ||
+                        error.message.includes('database or disk is full')
+                    ) {
+                        return null;
+                    }
+                    return event;
                 }
+                return event;
+            },
+            beforeSendSpan(span) {
+                span.data = {
+                    ...span.data,
+                    // @ts-ignore
+                    memory_usage: window.performance.memory.usedJSHeapSize
+                };
+                return span;
             },
             integrations: [
                 Sentry.replayIntegration({
                     maskAllText: true,
                     blockAllMedia: true
                 }),
-                Sentry.browserTracingIntegration(),
+                Sentry.browserTracingIntegration({ router }),
+                Sentry.browserProfilingIntegration(),
                 Sentry.vueIntegration({
                     tracingOptions: {
                         trackComponents: true

@@ -8,7 +8,7 @@
                 <span class="name" v-text="favorite.name"></span>
                 <span class="extra" v-text="favorite.authorName"></span>
             </div>
-            <el-tooltip placement="left" :content="t('view.favorite.select_avatar_tooltip')">
+            <el-tooltip placement="left" :content="t('view.favorite.select_avatar_tooltip')" :teleported="false">
                 <el-button
                     :disabled="currentUser.currentAvatar === favorite.id"
                     size="small"
@@ -18,7 +18,7 @@
                     @click.stop="selectAvatarWithConfirmation(favorite.id)"></el-button>
             </el-tooltip>
             <template v-if="cachedFavoritesByObjectId.has(favorite.id)">
-                <el-tooltip placement="right" content="Favorite">
+                <el-tooltip placement="right" content="Favorite" :teleported="false">
                     <el-button
                         type="default"
                         :icon="Star"
@@ -29,7 +29,7 @@
                 </el-tooltip>
             </template>
             <template v-else>
-                <el-tooltip placement="right" content="Favorite">
+                <el-tooltip placement="right" content="Favorite" :teleported="false">
                     <el-button
                         type="default"
                         :icon="StarFilled"
@@ -45,9 +45,10 @@
 
 <script setup>
     import { Check, Star, StarFilled } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { useAvatarStore, useFavoriteStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();
@@ -67,6 +68,6 @@
     defineEmits(['click']);
 
     const smallThumbnail = computed(() => {
-        return props.favorite.thumbnailImageUrl.replace('256', '128') || props.favorite.thumbnailImageUrl;
+        return props.favorite.thumbnailImageUrl?.replace('256', '128') || props.favorite.thumbnailImageUrl;
     });
 </script>

@@ -1,6 +1,6 @@
 {
     "language": "日本語 (ja)",
-    "translator": "Assault1892, Yuu198, paralleltree, kazu3jp, Cayahuanca",
+    "translator": "Assault1892, Yuu198, paralleltree, kazu3jp, Cayahuanca, ecto0310",
     "nav_tooltip": {
         "feed": "フィード",
         "game_log": "ゲームログ",
@@ -278,7 +278,8 @@
                 "screenshot_description": "スクリーンショットの管理、メタデータを表示",
                 "inventory": "VRC+ インベントリの管理",
                 "inventory_description": "VRC+ ギャラリーとインベントリを管理"
-            }
+            },
+            "redirect_message": "この機能は、このページでご利用いただけます。"
         },
         "profile": {
             "profile": {
@@ -678,7 +679,8 @@
                         "instance_cache": "インスタンスキャッシュ:",
                         "clear_cache": "キャッシュを消去",
                         "auto_clear_cache": "キャッシュの自動消去",
-                        "show_console": "コンソールを表示"
+                        "show_console": "コンソールを表示",
+                        "refresh_cache": "キャッシュ情報の再読み込み"
                     },
                     "sqlite_table_size": {
                         "header": "SQLiteテーブル数",
@@ -790,7 +792,6 @@
                 "show_avatar_author": "アバター制作者を表示",
                 "show_fallback_avatar": "フォールバックアバターの詳細を表示",
                 "show_previous_instances": "以前のインスタンス",
-                "show_previous_images": "以前の画像",
                 "moderation_block": "ブロック",
                 "moderation_unblock": "ブロック解除",
                 "moderation_mute": "ミュート",
@@ -939,7 +940,6 @@
                 "make_home": "ホームに設定",
                 "reset_home": "ホームをリセット",
                 "show_previous_instances": "以前のインスタンス",
-                "show_previous_images": "以前の画像",
                 "rename": "名前を変更",
                 "change_description": "説明を変更",
                 "change_capacity": "最大人数を変更",
@@ -1026,7 +1026,6 @@
                 "select_fallback": "フォールバックアバターを使用",
                 "block": "アバターをブロック",
                 "unblock": "アバターをブロック解除",
-                "show_previous_images": "以前の画像",
                 "make_public": "アバターを公開化",
                 "make_private": "アバターを非公開化",
                 "rename": "名前を変更",
@@ -1142,7 +1141,6 @@
                 "load_more": "更に表示",
                 "sort_by": "ソート順:",
                 "sorting": {
-                    "user_id": "ユーザーID (登順)",
                     "joined_at_asc": "参加順 (昇順)",
                     "joined_at_desc": "参加順 (降順)"
                 },
@@ -1251,7 +1249,8 @@
             "group": "グループ",
             "legacy": "レガシー",
             "roles": "ロール",
-            "open_ingame": "ゲーム内で開く"
+            "open_ingame": "ゲーム内で開く",
+            "display_name": "インスタンス名 (VRC+)"
         },
         "launch_options": {
             "header": "VRChat 起動オプション",
@@ -1353,7 +1352,7 @@
             "invite": "招待",
             "launch": "起動",
             "open_ingame": "ゲーム内で開く",
-            "self_invite": "自己招待",
+            "self_invite": "自分を招待",
             "game_running_warning": "本当に2つ目のVRChatインスタンスを起動しますか？",
             "confirm_yes": "はい",
             "confirm_no": "いいえ"
@@ -1535,17 +1534,18 @@
             "flipbook_info": "アニメーション絵文字として使用する1024x1024pxのPNGスプライトシート画像を選択 (最大 64FPS)",
             "note": "ノート",
             "crop_print_border": "プリントの外枠をトリミング",
-            "consume_bundle": "バンドルを消費"
+            "consume_bundle": "バンドルを消費",
+            "item": "アイテム",
+            "sticker": "ステッカー",
+            "drone_skin": "ドローンスキン",
+            "emoji": "絵文字",
+            "redeem": "引き換え"
         },
         "change_content_image": {
             "avatar": "アバターの画像を変更",
             "world": "ワールドの画像を変更",
             "description": "推奨画像サイズ: 1200x900px (4:3)",
-            "refresh": "更新",
             "upload": "画像をアップロード"
-        },
-        "previous_images": {
-            "header": "以前の画像"
         },
         "previous_instances": {
             "header": "以前のインスタンス",

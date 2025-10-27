@@ -1,4 +1,5 @@
 import { createI18n } from 'vue-i18n';
+
 import * as localizedStrings from '../localization/localizedStrings';
 
 const i18n = createI18n({

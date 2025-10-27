@@ -60,13 +60,13 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
+    import { useI18n } from 'vue-i18n';
     import { watch } from 'vue';
 
-    import { useI18n } from 'vue-i18n';
     import { arraysMatch } from '../../../shared/utils';
     import { avatarRequest } from '../../../api';
     import { useAvatarStore } from '../../../stores';
-    import { ElMessage } from 'element-plus';
 
     const { t } = useI18n();
     const { applyAvatar } = useAvatarStore();

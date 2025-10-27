@@ -1,5 +1,6 @@
-import sqliteService from '../sqlite.js';
 import { dbVars } from '../database';
+
+import sqliteService from '../sqlite.js';
 
 const moderation = {
     async getModeration(userId) {

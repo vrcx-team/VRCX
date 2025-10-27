@@ -409,6 +409,7 @@
                 "appearance": {
                     "header": "Appearance",
                     "language": "Language",
+                    "bio_language": "Target Language",
                     "theme_mode": "Theme",
                     "theme_mode_system": "System",
                     "theme_mode_light": "Light",
@@ -431,8 +432,7 @@
                     "sort_instance_users_by": "Sort Instance Users by",
                     "sort_instance_users_by_time": "time",
                     "sort_instance_users_by_alphabet": "alphabetical",
-                    "table_max_size": "Table Max Size",
-                    "page_size": "Page Size:"
+                    "table_max_size": "Table Max Size"
                 },
                 "timedate": {
                     "header": "Time/Date",
@@ -638,6 +638,12 @@
                         "enable": "Enable",
                         "youtube_api_key": "YouTube API Key",
                         "enable_tooltip": "Fetches video titles for use with gameLog and duration for overlay progress bar"
+                    },
+                    "translation_api": {
+                        "header": "Google Translate API",
+                        "enable": "Enable",
+                        "translation_api_key": "Google Translate API Key",
+                        "enable_tooltip": "Translate user bios"
                     },
                     "video_progress_pie": {
                         "header": "Progress pie overlay for videos",
@@ -1298,6 +1304,13 @@
             "guide": "Guide",
             "save": "Save"
         },
+        "translation_api": {
+            "header": "Google Translate API",
+            "description": "Enter your Google translate API Key",
+            "placeholder": "Google Translate API Key",
+            "guide": "Guide",
+            "save": "Save"
+        },
         "set_world_tags": {
             "header": "Set World Tags",
             "avatar_scaling_disabled": "Disable avatar scaling",
@@ -1673,7 +1686,7 @@
         "boop_dialog": {
             "header": "Boop",
             "emoji_manager": "Emoji Manager",
-            "select_emoji": "Select Emoji",
+            "select_default_emoji": "Select Default Emoji",
             "my_emojis": "My Emojis",
             "default_emojis": "Default Emojis",
             "cancel": "Cancel",

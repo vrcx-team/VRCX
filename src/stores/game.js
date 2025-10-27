@@ -1,24 +1,27 @@
-import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import * as workerTimers from 'worker-timers';
-import configRepository from '../service/config.js';
-import { database } from '../service/database';
+import { reactive, ref } from 'vue';
+import { defineStore } from 'pinia';
+
 import {
     deleteVRChatCache as _deleteVRChatCache,
     isRealInstance
 } from '../shared/utils';
+import { database } from '../service/database';
+import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarStore } from './avatar';
 import { useGameLogStore } from './gameLog';
 import { useInstanceStore } from './instance';
 import { useLaunchStore } from './launch';
 import { useLocationStore } from './location';
 import { useNotificationStore } from './notification';
-import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
 import { useVrStore } from './vr';
 import { useWorldStore } from './world';
+
+import configRepository from '../service/config.js';
+
+import * as workerTimers from 'worker-timers';
 
 export const useGameStore = defineStore('Game', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
@@ -34,70 +37,28 @@ export const useGameStore = defineStore('Game', () => {
     const updateLoopStore = useUpdateLoopStore();
 
     const state = reactive({
-        lastCrashedTime: null,
-        VRChatUsedCacheSize: '',
-        VRChatTotalCacheSize: 0,
-        VRChatCacheSizeLoading: false,
-        isGameRunning: false,
-        isGameNoVR: true,
-        isSteamVRRunning: false,
-        isHmdAfk: false
+        lastCrashedTime: null
     });
 
+    const VRChatUsedCacheSize = ref('');
+
+    const VRChatTotalCacheSize = ref(0);
+
+    const VRChatCacheSizeLoading = ref(false);
+
+    const isGameRunning = ref(false);
+
+    const isGameNoVR = ref(true);
+
+    const isSteamVRRunning = ref(false);
+
+    const isHmdAfk = ref(false);
+
     async function init() {
-        state.isGameNoVR = await configRepository.getBool('isGameNoVR');
+        isGameNoVR.value = await configRepository.getBool('isGameNoVR');
     }
 
     init();
-
-    const VRChatUsedCacheSize = computed({
-        get: () => state.VRChatUsedCacheSize,
-        set: (value) => {
-            state.VRChatUsedCacheSize = value;
-        }
-    });
-
-    const VRChatTotalCacheSize = computed({
-        get: () => state.VRChatTotalCacheSize,
-        set: (value) => {
-            state.VRChatTotalCacheSize = value;
-        }
-    });
-
-    const VRChatCacheSizeLoading = computed({
-        get: () => state.VRChatCacheSizeLoading,
-        set: (value) => {
-            state.VRChatCacheSizeLoading = value;
-        }
-    });
-
-    const isGameRunning = computed({
-        get: () => state.isGameRunning,
-        set: (value) => {
-            state.isGameRunning = value;
-        }
-    });
-
-    const isGameNoVR = computed({
-        get: () => state.isGameNoVR,
-        set: (value) => {
-            state.isGameNoVR = value;
-        }
-    });
-
-    const isSteamVRRunning = computed({
-        get: () => state.isSteamVRRunning,
-        set: (value) => {
-            state.isSteamVRRunning = value;
-        }
-    });
-
-    const isHmdAfk = computed({
-        get: () => state.isHmdAfk,
-        set: (value) => {
-            state.isHmdAfk = value;
-        }
-    });
 
     async function deleteVRChatCache(ref) {
         await _deleteVRChatCache(ref);
@@ -113,8 +74,12 @@ export const useGameStore = defineStore('Game', () => {
     }
 
     async function sweepVRChatCache() {
-        const output = await AssetBundleManager.SweepCache();
-        console.log('SweepCache', output);
+        try {
+            const output = await AssetBundleManager.SweepCache();
+            console.log('SweepCache', output);
+        } catch (e) {
+            console.error('SweepCache failed', e);
+        }
         if (advancedSettingsStore.isVRChatConfigDialogVisible) {
             getVRChatCacheSize();
         }
@@ -140,7 +105,7 @@ export const useGameStore = defineStore('Game', () => {
             state.lastCrashedTime = new Date();
             // wait a bit for SteamVR to potentially close before deciding to relaunch
             let restartDelay = 8000;
-            if (state.isGameNoVR) {
+            if (isGameNoVR.value) {
                 // wait for game to close before relaunching
                 restartDelay = 2000;
             }
@@ -152,7 +117,7 @@ export const useGameStore = defineStore('Game', () => {
     }
 
     function restartCrashedGame(location) {
-        if (!state.isGameNoVR && !state.isSteamVRRunning) {
+        if (!isGameNoVR.value && !isSteamVRRunning.value) {
             console.log("SteamVR isn't running, not relaunching VRChat");
             return;
         }
@@ -170,36 +135,36 @@ export const useGameStore = defineStore('Game', () => {
         database.addGamelogEventToDatabase(entry);
         notificationStore.queueGameLogNoty(entry);
         gameLogStore.addGameLog(entry);
-        launchStore.launchGame(location, '', state.isGameNoVR);
+        launchStore.launchGame(location, '', isGameNoVR.value);
     }
 
     async function getVRChatCacheSize() {
-        state.VRChatCacheSizeLoading = true;
+        VRChatCacheSizeLoading.value = true;
         const totalCacheSize = 30;
-        state.VRChatTotalCacheSize = totalCacheSize;
+        VRChatTotalCacheSize.value = totalCacheSize;
         const usedCacheSize = await AssetBundleManager.GetCacheSize();
-        state.VRChatUsedCacheSize = (usedCacheSize / 1073741824).toFixed(2);
-        state.VRChatCacheSizeLoading = false;
+        VRChatUsedCacheSize.value = (usedCacheSize / 1073741824).toFixed(2);
+        VRChatCacheSizeLoading.value = false;
     }
 
     // use in C#
     async function updateIsGameRunning(
-        isGameRunning,
-        isSteamVRRunning,
-        isHmdAfk
+        isGameRunningArg,
+        isSteamVRRunningArg,
+        isHmdAfkArg
     ) {
         const avatarStore = useAvatarStore();
         if (advancedSettingsStore.gameLogDisabled) {
             return;
         }
-        if (isGameRunning !== state.isGameRunning) {
-            state.isGameRunning = isGameRunning;
-            if (isGameRunning) {
+        if (isGameRunningArg !== isGameRunning.value) {
+            isGameRunning.value = isGameRunningArg;
+            if (isGameRunningArg) {
                 userStore.currentUser.$online_for = Date.now();
                 userStore.currentUser.$offline_for = '';
                 userStore.currentUser.$previousAvatarSwapTime = Date.now();
             } else {
-                await configRepository.setBool('isGameNoVR', state.isGameNoVR);
+                await configRepository.setBool('isGameNoVR', isGameNoVR.value);
                 userStore.currentUser.$online_for = 0;
                 userStore.currentUser.$offline_for = Date.now();
                 instanceStore.removeAllQueuedInstances();
@@ -209,23 +174,23 @@ export const useGameStore = defineStore('Game', () => {
                 avatarStore.addAvatarWearTime(
                     userStore.currentUser.currentAvatar
                 );
-                userStore.currentUser.$previousAvatarSwapTime = '';
+                userStore.currentUser.$previousAvatarSwapTime = null;
             }
             locationStore.lastLocationReset();
             gameLogStore.clearNowPlaying();
             vrStore.updateVRLastLocation();
             workerTimers.setTimeout(() => checkVRChatDebugLogging(), 60000);
             updateLoopStore.nextDiscordUpdate = 0;
-            console.log(new Date(), 'isGameRunning', isGameRunning);
+            console.log(new Date(), 'isGameRunning', isGameRunningArg);
         }
 
-        if (isSteamVRRunning !== state.isSteamVRRunning) {
-            state.isSteamVRRunning = isSteamVRRunning;
-            console.log('isSteamVRRunning:', isSteamVRRunning);
+        if (isSteamVRRunningArg !== isSteamVRRunning.value) {
+            isSteamVRRunning.value = isSteamVRRunningArg;
+            console.log('isSteamVRRunning:', isSteamVRRunningArg);
         }
-        if (isHmdAfk !== state.isHmdAfk) {
-            state.isHmdAfk = isHmdAfk;
-            console.log('isHmdAfk:', isHmdAfk);
+        if (isHmdAfkArg !== isHmdAfk.value) {
+            isHmdAfk.value = isHmdAfkArg;
+            console.log('isHmdAfk:', isHmdAfkArg);
         }
         vrStore.updateOpenVR();
     }
@@ -258,14 +223,14 @@ export const useGameStore = defineStore('Game', () => {
                 ElMessageBox.alert(
                     'VRCX has noticed VRChat debug logging is disabled. VRCX requires debug logging in order to function correctly. Please enable debug logging in VRChat quick menu settings > debug > enable debug logging, then rejoin the instance or restart VRChat.',
                     'Enable debug logging'
-                );
+                ).catch(() => {});
                 console.error('Failed to enable debug logging', result);
                 return;
             }
             ElMessageBox.alert(
                 'VRCX has noticed VRChat debug logging is disabled and automatically re-enabled it. VRCX requires debug logging in order to function correctly.',
                 'Enabled debug logging'
-            );
+            ).catch(() => {});
             console.log('Enabled debug logging');
         } catch (e) {
             console.error(e);

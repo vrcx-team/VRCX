@@ -1,196 +1,95 @@
-import Noty from 'noty';
+import { reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
-import * as workerTimers from 'worker-timers';
+import { useI18n } from 'vue-i18n';
+
+import Noty from 'noty';
+
 import {
     inventoryRequest,
     userRequest,
     vrcPlusIconRequest,
     vrcPlusImageRequest
 } from '../api';
-import { AppDebug } from '../service/appConfig';
-import { watchState } from '../service/watchState';
 import {
     getEmojiFileName,
     getPrintFileName,
     getPrintLocalDate
 } from '../shared/utils';
+import { AppDebug } from '../service/appConfig';
 import { handleImageUploadInput } from '../shared/utils/imageUpload';
 import { useAdvancedSettingsStore } from './settings/advanced';
-import { useI18n } from 'vue-i18n';
+import { watchState } from '../service/watchState';
+
+import miscReq from '../api/misc';
+
+import * as workerTimers from 'worker-timers';
 
 export const useGalleryStore = defineStore('Gallery', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
     const { t } = useI18n();
 
     const state = reactive({
-        galleryTable: [],
-        // galleryDialog: {},
-        galleryDialogVisible: false,
-        galleryDialogGalleryLoading: false,
-        galleryDialogIconsLoading: false,
-        galleryDialogEmojisLoading: false,
-        galleryDialogStickersLoading: false,
-        galleryDialogPrintsLoading: false,
-        galleryDialogInventoryLoading: false,
-        uploadImage: '',
-        VRCPlusIconsTable: [],
-        printUploadNote: '',
-        printCropBorder: true,
         printCache: [],
         printQueue: [],
         printQueueWorker: null,
-        stickerTable: [],
-        instanceStickersCache: [],
-        printTable: [],
-        emojiTable: [],
-        inventoryTable: [],
-        fullscreenImageDialog: {
-            visible: false,
-            imageUrl: '',
-            fileName: ''
-        },
         instanceInventoryCache: [],
         instanceInventoryQueue: [],
         instanceInventoryQueueWorker: null
     });
 
-    const galleryTable = computed({
-        get: () => state.galleryTable,
-        set: (value) => {
-            state.galleryTable = value;
-        }
-    });
+    const cachedEmoji = new Map();
 
-    const galleryDialogVisible = computed({
-        get: () => state.galleryDialogVisible,
-        set: (value) => {
-            state.galleryDialogVisible = value;
-        }
-    });
+    const galleryTable = ref([]);
 
-    const galleryDialogGalleryLoading = computed({
-        get: () => state.galleryDialogGalleryLoading,
-        set: (value) => {
-            state.galleryDialogGalleryLoading = value;
-        }
-    });
+    const galleryDialogVisible = ref(false);
 
-    const galleryDialogIconsLoading = computed({
-        get: () => state.galleryDialogIconsLoading,
-        set: (value) => {
-            state.galleryDialogIconsLoading = value;
-        }
-    });
+    const galleryDialogGalleryLoading = ref(false);
 
-    const galleryDialogEmojisLoading = computed({
-        get: () => state.galleryDialogEmojisLoading,
-        set: (value) => {
-            state.galleryDialogEmojisLoading = value;
-        }
-    });
+    const galleryDialogIconsLoading = ref(false);
 
-    const galleryDialogStickersLoading = computed({
-        get: () => state.galleryDialogStickersLoading,
-        set: (value) => {
-            state.galleryDialogStickersLoading = value;
-        }
-    });
+    const galleryDialogEmojisLoading = ref(false);
 
-    const galleryDialogPrintsLoading = computed({
-        get: () => state.galleryDialogPrintsLoading,
-        set: (value) => {
-            state.galleryDialogPrintsLoading = value;
-        }
-    });
+    const galleryDialogStickersLoading = ref(false);
 
-    const galleryDialogInventoryLoading = computed({
-        get: () => state.galleryDialogInventoryLoading,
-        set: (value) => {
-            state.galleryDialogInventoryLoading = value;
-        }
-    });
+    const galleryDialogPrintsLoading = ref(false);
 
-    const uploadImage = computed({
-        get: () => state.uploadImage,
-        set: (value) => {
-            state.uploadImage = value;
-        }
-    });
+    const galleryDialogInventoryLoading = ref(false);
 
-    const VRCPlusIconsTable = computed({
-        get: () => state.VRCPlusIconsTable,
-        set: (value) => {
-            state.VRCPlusIconsTable = value;
-        }
-    });
+    const uploadImage = ref('');
 
-    const printUploadNote = computed({
-        get: () => state.printUploadNote,
-        set: (value) => {
-            state.printUploadNote = value;
-        }
-    });
+    const VRCPlusIconsTable = ref([]);
 
-    const printCropBorder = computed({
-        get: () => state.printCropBorder,
-        set: (value) => {
-            state.printCropBorder = value;
-        }
-    });
+    const printUploadNote = ref('');
 
-    const stickerTable = computed({
-        get: () => state.stickerTable,
-        set: (value) => {
-            state.stickerTable = value;
-        }
-    });
+    const printCropBorder = ref(true);
 
-    const instanceStickersCache = computed({
-        get: () => state.instanceStickersCache,
-        set: (value) => {
-            state.instanceStickersCache = value;
-        }
-    });
+    const stickerTable = ref([]);
 
-    const printTable = computed({
-        get: () => state.printTable,
-        set: (value) => {
-            state.printTable = value;
-        }
-    });
+    const instanceStickersCache = ref([]);
 
-    const emojiTable = computed({
-        get: () => state.emojiTable,
-        set: (value) => {
-            state.emojiTable = value;
-        }
-    });
+    const printTable = ref([]);
 
-    const inventoryTable = computed({
-        get: () => state.inventoryTable,
-        set: (value) => {
-            state.inventoryTable = value;
-        }
-    });
+    const emojiTable = ref([]);
 
-    const fullscreenImageDialog = computed({
-        get: () => state.fullscreenImageDialog,
-        set: (value) => {
-            state.fullscreenImageDialog = value;
-        }
+    const inventoryTable = ref([]);
+
+    const fullscreenImageDialog = ref({
+        visible: false,
+        imageUrl: '',
+        fileName: ''
     });
 
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            state.galleryTable = [];
-            state.VRCPlusIconsTable = [];
-            state.stickerTable = [];
-            state.printTable = [];
-            state.emojiTable = [];
-            state.galleryDialogVisible = false;
-            state.fullscreenImageDialog.visible = false;
+            cachedEmoji.clear();
+            galleryTable.value = [];
+            VRCPlusIconsTable.value = [];
+            stickerTable.value = [];
+            printTable.value = [];
+            emojiTable.value = [];
+            galleryDialogVisible.value = false;
+            fullscreenImageDialog.value.visible = false;
             if (isLoggedIn) {
                 tryDeleteOldPrints();
             }
@@ -200,29 +99,29 @@ export const useGalleryStore = defineStore('Gallery', () => {
 
     function handleFilesList(args) {
         if (args.params.tag === 'gallery') {
-            state.galleryTable = args.json.reverse();
+            galleryTable.value = args.json.reverse();
         }
         if (args.params.tag === 'icon') {
-            state.VRCPlusIconsTable = args.json.reverse();
+            VRCPlusIconsTable.value = args.json.reverse();
         }
         if (args.params.tag === 'sticker') {
-            state.stickerTable = args.json.reverse();
-            state.galleryDialogStickersLoading = false;
+            stickerTable.value = args.json.reverse();
+            galleryDialogStickersLoading.value = false;
         }
         if (args.params.tag === 'emoji') {
-            state.emojiTable = args.json.reverse();
-            state.galleryDialogEmojisLoading = false;
+            emojiTable.value = args.json.reverse();
+            galleryDialogEmojisLoading.value = false;
         }
     }
 
     function handleGalleryImageAdd(args) {
-        if (Object.keys(state.galleryTable).length !== 0) {
-            state.galleryTable.unshift(args.json);
+        if (Object.keys(galleryTable.value).length !== 0) {
+            galleryTable.value.unshift(args.json);
         }
     }
 
     function showGalleryDialog() {
-        state.galleryDialogVisible = true;
+        galleryDialogVisible.value = true;
         refreshGalleryTable();
         refreshVRCPlusIconsTable();
         refreshEmojiTable();
@@ -232,7 +131,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
     }
 
     function refreshGalleryTable() {
-        state.galleryDialogGalleryLoading = true;
+        galleryDialogGalleryLoading.value = true;
         const params = {
             n: 100,
             tag: 'gallery'
@@ -244,12 +143,12 @@ export const useGalleryStore = defineStore('Gallery', () => {
                 console.error('Error fetching gallery files:', error);
             })
             .finally(() => {
-                state.galleryDialogGalleryLoading = false;
+                galleryDialogGalleryLoading.value = false;
             });
     }
 
     function refreshVRCPlusIconsTable() {
-        state.galleryDialogIconsLoading = true;
+        galleryDialogIconsLoading.value = true;
         const params = {
             n: 100,
             tag: 'icon'
@@ -261,7 +160,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
                 console.error('Error fetching VRC Plus icons:', error);
             })
             .finally(() => {
-                state.galleryDialogIconsLoading = false;
+                galleryDialogIconsLoading.value = false;
             });
     }
 
@@ -277,7 +176,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
         const r = new FileReader();
         r.onload = function () {
-            state.uploadImage = btoa(r.result);
+            uploadImage.value = btoa(r.result);
         };
         r.readAsBinaryString(file);
     }
@@ -287,11 +186,11 @@ export const useGalleryStore = defineStore('Gallery', () => {
             '.inviteImageUploadButton'
         );
         buttonList.forEach((button) => (button.value = ''));
-        state.uploadImage = '';
+        uploadImage.value = '';
     }
 
     function refreshStickerTable() {
-        state.galleryDialogStickersLoading = true;
+        galleryDialogStickersLoading.value = true;
         const params = {
             n: 100,
             tag: 'sticker'
@@ -303,23 +202,23 @@ export const useGalleryStore = defineStore('Gallery', () => {
                 console.error('Error fetching stickers:', error);
             })
             .finally(() => {
-                state.galleryDialogStickersLoading = false;
+                galleryDialogStickersLoading.value = false;
             });
     }
 
     function handleStickerAdd(args) {
-        if (Object.keys(state.stickerTable).length !== 0) {
-            state.stickerTable.unshift(args.json);
+        if (Object.keys(stickerTable.value).length !== 0) {
+            stickerTable.value.unshift(args.json);
         }
     }
 
     async function trySaveStickerToFile(displayName, userId, inventoryId) {
-        if (state.instanceStickersCache.includes(inventoryId)) {
+        if (instanceStickersCache.value.includes(inventoryId)) {
             return;
         }
-        state.instanceStickersCache.push(inventoryId);
-        if (state.instanceStickersCache.size > 100) {
-            state.instanceStickersCache.shift();
+        instanceStickersCache.value.push(inventoryId);
+        if (instanceStickersCache.value.size > 100) {
+            instanceStickersCache.value.shift();
         }
         const args = await inventoryRequest.getUserInventoryItem({
             inventoryId,
@@ -353,7 +252,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
     }
 
     async function refreshPrintTable() {
-        state.galleryDialogPrintsLoading = true;
+        galleryDialogPrintsLoading.value = true;
         const params = {
             n: 100
         };
@@ -362,11 +261,11 @@ export const useGalleryStore = defineStore('Gallery', () => {
             args.json.sort((a, b) => {
                 return new Date(b.timestamp) - new Date(a.timestamp);
             });
-            state.printTable = args.json;
+            printTable.value = args.json;
         } catch (error) {
             console.error('Error fetching prints:', error);
         } finally {
-            state.galleryDialogPrintsLoading = false;
+            galleryDialogPrintsLoading.value = false;
         }
     }
 
@@ -437,7 +336,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
     // #region | Emoji
 
     function refreshEmojiTable() {
-        state.galleryDialogEmojisLoading = true;
+        galleryDialogEmojisLoading.value = true;
         const params = {
             n: 100,
             tag: 'emoji'
@@ -449,19 +348,19 @@ export const useGalleryStore = defineStore('Gallery', () => {
                 console.error('Error fetching emojis:', error);
             })
             .finally(() => {
-                state.galleryDialogEmojisLoading = false;
+                galleryDialogEmojisLoading.value = false;
             });
     }
 
     async function getInventory() {
-        state.inventoryTable = [];
+        inventoryTable.value = [];
         advancedSettingsStore.currentUserInventory.clear();
         const params = {
             n: 100,
             offset: 0,
             order: 'newest'
         };
-        state.galleryDialogInventoryLoading = true;
+        galleryDialogInventoryLoading.value = true;
         try {
             for (let i = 0; i < 100; i++) {
                 params.offset = i * params.n;
@@ -472,7 +371,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
                         item
                     );
                     if (!item.flags.includes('ugc')) {
-                        state.inventoryTable.push(item);
+                        inventoryTable.value.push(item);
                     }
                 }
                 if (args.json.data.length === 0) {
@@ -482,7 +381,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         } catch (error) {
             console.error('Error fetching inventory items:', error);
         } finally {
-            state.galleryDialogInventoryLoading = false;
+            galleryDialogInventoryLoading.value = false;
         }
     }
 
@@ -492,7 +391,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
         await refreshPrintTable();
         const printLimit = 64 - 2; // 2 reserved for new prints
-        const printCount = state.printTable.length;
+        const printCount = printTable.value.length;
         if (printCount <= printLimit) {
             return;
         }
@@ -502,7 +401,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
         const idList = [];
         for (let i = 0; i < deleteCount; i++) {
-            const print = state.printTable[printCount - 1 - i];
+            const print = printTable.value[printCount - 1 - i];
             idList.push(print.id);
         }
         console.log(`Deleting ${deleteCount} old prints`, idList);
@@ -528,7 +427,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         if (!imageUrl) {
             return;
         }
-        const D = state.fullscreenImageDialog;
+        const D = fullscreenImageDialog.value;
         D.imageUrl = imageUrl;
         D.fileName = fileName;
         D.visible = true;
@@ -537,7 +436,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
     function queueCheckInstanceInventory(inventoryId, userId) {
         if (
             state.instanceInventoryCache.includes(inventoryId) ||
-            state.instanceStickersCache.includes(inventoryId)
+            instanceStickersCache.value.includes(inventoryId)
         ) {
             return;
         }
@@ -606,6 +505,23 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
     }
 
+    async function getCachedEmoji(fileId) {
+        return new Promise((resolve, reject) => {
+            let ref = cachedEmoji.get(fileId);
+            if (typeof ref !== 'undefined') {
+                resolve(ref);
+                return;
+            }
+            miscReq
+                .getFile({ fileId })
+                .then((args) => {
+                    cachedEmoji.set(fileId, args.json);
+                    resolve(args.json);
+                })
+                .catch(reject);
+        });
+    }
+
     return {
         state,
 
@@ -627,6 +543,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         emojiTable,
         inventoryTable,
         fullscreenImageDialog,
+        cachedEmoji,
 
         showGalleryDialog,
         refreshGalleryTable,
@@ -644,6 +561,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         handleStickerAdd,
         handleGalleryImageAdd,
         handleFilesList,
-        queueCheckInstanceInventory
+        queueCheckInstanceInventory,
+        getCachedEmoji
     };
 });

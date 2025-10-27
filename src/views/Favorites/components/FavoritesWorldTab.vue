@@ -71,8 +71,11 @@
                         >
                         <span style="color: #909399; font-size: 12px; margin-left: 10px"
                             >{{ group.count }}/{{ group.capacity }}</span
-                        ><el-tooltip placement="top" :content="t('view.favorite.visibility_tooltip')">
-                            <el-dropdown trigger="click" size="small" style="margin-left: 10px">
+                        ><el-tooltip
+                            placement="top"
+                            :content="t('view.favorite.visibility_tooltip')"
+                            :teleported="false">
+                            <el-dropdown trigger="click" size="small" style="margin-left: 10px" :persistent="false">
                                 <el-button type="default" :icon="View" size="small" circle @click.stop />
                                 <template #dropdown>
                                     <el-dropdown-menu>
@@ -90,7 +93,7 @@
                                 </template>
                             </el-dropdown>
                         </el-tooltip>
-                        <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
+                        <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :teleported="false">
                             <el-button
                                 size="small"
                                 :icon="Edit"
@@ -98,7 +101,7 @@
                                 style="margin-left: 5px"
                                 @click.stop="changeFavoriteGroupName(group)" />
                         </el-tooltip>
-                        <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')">
+                        <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')" :teleported="false">
                             <el-button
                                 size="small"
                                 :icon="Delete"
@@ -113,13 +116,15 @@
                     class="x-friend-list"
                     :class="{ 'is-editing': editFavoritesMode }"
                     style="margin-top: 10px">
-                    <FavoritesWorldItem
-                        v-for="favorite in groupedByGroupKeyFavoriteWorlds[group.key]"
-                        :key="favorite.id"
-                        :group="group"
-                        :favorite="favorite"
-                        @click="showWorldDialog(favorite.id)"
-                        @handle-select="favorite.$selected = $event" />
+                    <el-scrollbar height="700px" @end-reached="worldFavoritesLoadMore">
+                        <FavoritesWorldItem
+                            v-for="favorite in sliceWorldFavorites(group.key)"
+                            :key="favorite.id"
+                            :group="group"
+                            :favorite="favorite"
+                            @click="showWorldDialog(favorite.id)"
+                            @handle-select="favorite.$selected = $event" />
+                    </el-scrollbar>
                 </div>
                 <div
                     v-else
@@ -144,21 +149,21 @@
             v-if="!refreshingLocalFavorites"
             size="small"
             style="margin-left: 5px"
-            @click="refreshLocalWorldFavorite"
+            @click="refreshLocalWorldFavorites"
             >{{ t('view.favorite.worlds.refresh') }}</el-button
         >
-        <el-button v-else size="small" style="margin-left: 5px" @click="refreshingLocalFavorites = false">
+        <el-button v-else size="small" style="margin-left: 5px" @click="cancelLocalWorldRefresh">
             <el-icon style="margin-right: 5px"><Loading /></el-icon>
             <span>{{ t('view.favorite.worlds.cancel_refresh') }}</span>
         </el-button>
         <el-collapse style="border: 0">
             <el-collapse-item v-for="group in localWorldFavoriteGroups" :key="group">
-                <template #title v-if="localWorldFavorites[group]">
+                <template #title>
                     <span style="font-weight: bold; font-size: 14px; margin-left: 10px" v-text="group" />
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">{{
                         getLocalWorldFavoriteGroupLength(group)
                     }}</span>
-                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
+                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :teleported="false">
                         <el-button
                             size="small"
                             :icon="Edit"
@@ -166,7 +171,7 @@
                             style="margin-left: 10px"
                             @click.stop="promptLocalWorldFavoriteGroupRename(group)" />
                     </el-tooltip>
-                    <el-tooltip placement="right" :content="t('view.favorite.delete_tooltip')">
+                    <el-tooltip placement="right" :content="t('view.favorite.delete_tooltip')" :teleported="false">
                         <el-button
                             size="small"
                             :icon="Delete"
@@ -180,14 +185,15 @@
                     class="x-friend-list"
                     :class="{ 'is-editing': editFavoritesMode }"
                     style="margin-top: 10px">
-                    <FavoritesWorldItem
-                        v-for="favorite in localWorldFavorites[group]"
-                        :key="favorite.id"
-                        is-local-favorite
-                        :group="group"
-                        :favorite="favorite"
-                        @click="showWorldDialog(favorite.id)"
-                        @remove-local-world-favorite="removeLocalWorldFavorite" />
+                    <el-scrollbar height="700px" @end-reached="localWorldFavoritesLoadMore">
+                        <FavoritesWorldLocalItem
+                            v-for="favorite in sliceLocalWorldFavorites(group)"
+                            :key="favorite.id"
+                            :group="group"
+                            :favorite="favorite"
+                            @click="showWorldDialog(favorite.id)"
+                            @remove-local-world-favorite="removeLocalWorldFavorite"
+                    /></el-scrollbar>
                 </div>
                 <div
                     v-else
@@ -208,22 +214,23 @@
 </template>
 
 <script setup>
-    import { View, Edit, Delete, Loading } from '@element-plus/icons-vue';
+    import { Delete, Edit, Loading, View } from '@element-plus/icons-vue';
+    import { computed, onBeforeUnmount, ref } from 'vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
-    import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest } from '../../../api';
+
     import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../../stores';
-    import WorldExportDialog from '../dialogs/WorldExportDialog.vue';
+    import { favoriteRequest, worldRequest } from '../../../api';
+
     import FavoritesWorldItem from './FavoritesWorldItem.vue';
+    import FavoritesWorldLocalItem from './FavoritesWorldLocalItem.vue';
+    import WorldExportDialog from '../dialogs/WorldExportDialog.vue';
+
+    import * as workerTimers from 'worker-timers';
 
     defineProps({
         editFavoritesMode: {
-            type: Boolean,
-            default: false
-        },
-        refreshingLocalFavorites: {
             type: Boolean,
             default: false
         }
@@ -238,8 +245,13 @@
     const { t } = useI18n();
     const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
-    const { favoriteWorlds, favoriteWorldGroups, localWorldFavorites, localWorldFavoriteGroups } =
-        storeToRefs(useFavoriteStore());
+    const {
+        favoriteWorlds,
+        favoriteWorldGroups,
+        localWorldFavorites,
+        localWorldFavoriteGroups,
+        localWorldFavoritesList
+    } = storeToRefs(useFavoriteStore());
     const {
         showWorldImportDialog,
         getLocalWorldFavoriteGroupLength,
@@ -255,6 +267,11 @@
     const worldExportDialogVisible = ref(false);
     const worldFavoriteSearch = ref('');
     const worldFavoriteSearchResults = ref([]);
+    const sliceLocalWorldFavoritesLoadMoreNumber = ref(60);
+    const sliceWorldFavoritesLoadMoreNumber = ref(60);
+    const refreshingLocalFavorites = ref(false);
+    const worker = ref(null);
+    const refreshCancelToken = ref(null);
 
     const groupedByGroupKeyFavoriteWorlds = computed(() => {
         const groupedByGroupKeyFavoriteWorlds = {};
@@ -271,6 +288,21 @@
         return groupedByGroupKeyFavoriteWorlds;
     });
 
+    const sliceLocalWorldFavorites = computed(() => {
+        return (group) => {
+            return localWorldFavorites.value[group].slice(0, sliceLocalWorldFavoritesLoadMoreNumber.value);
+        };
+    });
+
+    const sliceWorldFavorites = computed(() => {
+        return (group) => {
+            if (groupedByGroupKeyFavoriteWorlds.value[group]) {
+                return groupedByGroupKeyFavoriteWorlds.value[group].slice(0, sliceWorldFavoritesLoadMoreNumber.value);
+            }
+            return [];
+        };
+    });
+
     const sortFav = computed({
         get() {
             return sortFavorites.value;
@@ -279,6 +311,18 @@
             setSortFavorites();
         }
     });
+
+    function localWorldFavoritesLoadMore(direction) {
+        if (direction === 'bottom') {
+            sliceLocalWorldFavoritesLoadMoreNumber.value += 20;
+        }
+    }
+
+    function worldFavoritesLoadMore(direction) {
+        if (direction === 'bottom') {
+            sliceWorldFavoritesLoadMoreNumber.value += 20;
+        }
+    }
 
     function showExportDialog() {
         worldExportDialogVisible.value = true;
@@ -443,9 +487,71 @@
         emit('change-favorite-group-name', group);
     }
 
-    function refreshLocalWorldFavorite() {
-        emit('refresh-local-world-favorite');
+    async function refreshLocalWorldFavorites() {
+        if (refreshingLocalFavorites.value) {
+            return;
+        }
+        refreshingLocalFavorites.value = true;
+        const token = {
+            cancelled: false,
+            resolve: null
+        };
+        refreshCancelToken.value = token;
+        try {
+            for (const worldId of localWorldFavoritesList.value) {
+                if (token.cancelled) {
+                    break;
+                }
+                try {
+                    await worldRequest.getWorld({
+                        worldId
+                    });
+                } catch (err) {
+                    console.error(err);
+                }
+                if (token.cancelled) {
+                    break;
+                }
+                await new Promise((resolve) => {
+                    token.resolve = resolve;
+                    worker.value = workerTimers.setTimeout(() => {
+                        worker.value = null;
+                        resolve();
+                    }, 1000);
+                });
+            }
+        } finally {
+            if (worker.value) {
+                workerTimers.clearTimeout(worker.value);
+                worker.value = null;
+            }
+            if (refreshCancelToken.value === token) {
+                refreshCancelToken.value = null;
+            }
+            refreshingLocalFavorites.value = false;
+        }
     }
+
+    function cancelLocalWorldRefresh() {
+        if (!refreshingLocalFavorites.value) {
+            return;
+        }
+        if (refreshCancelToken.value) {
+            refreshCancelToken.value.cancelled = true;
+            if (typeof refreshCancelToken.value.resolve === 'function') {
+                refreshCancelToken.value.resolve();
+            }
+        }
+        if (worker.value) {
+            workerTimers.clearTimeout(worker.value);
+            worker.value = null;
+        }
+        refreshingLocalFavorites.value = false;
+    }
+
+    onBeforeUnmount(() => {
+        cancelLocalWorldRefresh();
+    });
 </script>
 
 <style scoped>

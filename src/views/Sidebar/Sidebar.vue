@@ -79,11 +79,13 @@
 </template>
 
 <script setup>
-    import { Refresh, Compass } from '@element-plus/icons-vue';
+    import { Compass, Refresh } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { userImage } from '../../shared/utils';
+
     import { useFriendStore, useGroupStore, useSearchStore } from '../../stores';
+    import { userImage } from '../../shared/utils';
+
     import FriendsSidebar from './components/FriendsSidebar.vue';
     import GroupsSidebar from './components/GroupsSidebar.vue';
 

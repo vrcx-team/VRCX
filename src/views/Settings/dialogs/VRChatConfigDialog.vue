@@ -181,11 +181,12 @@
 </template>
 
 <script setup>
-    import { ElMessage, ElMessageBox } from 'element-plus';
-    import { Refresh, Delete, FolderOpened, FolderDelete, ArrowDown } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
+    import { ArrowDown, Delete, FolderDelete, FolderOpened, Refresh } from '@element-plus/icons-vue';
     import { computed, ref, watch } from 'vue';
+    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { VRChatCameraResolutions, VRChatScreenshotResolutions } from '../../../shared/constants';
     import { getVRChatResolution, openExternalLink } from '../../../shared/utils';
     import { useAdvancedSettingsStore, useGameStore } from '../../../stores';

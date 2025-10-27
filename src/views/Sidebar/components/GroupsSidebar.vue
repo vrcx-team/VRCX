@@ -41,11 +41,12 @@
 </template>
 
 <script setup>
+    import { computed, ref } from 'vue';
     import { ArrowRight } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { computed, ref } from 'vue';
-    import { convertFileUrlToImageUrl } from '../../../shared/utils';
+
     import { useAppearanceSettingsStore, useGroupStore } from '../../../stores';
+    import { convertFileUrlToImageUrl } from '../../../shared/utils';
 
     const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
     const { showGroupDialog, sortGroupInstancesByInGame } = useGroupStore();

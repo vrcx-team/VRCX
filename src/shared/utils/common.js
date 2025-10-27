@@ -1,15 +1,18 @@
-import Noty from 'noty';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { storeToRefs } from 'pinia';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import { miscRequest } from '../../api';
+
+import Noty from 'noty';
+
 import {
     useAvatarStore,
     useInstanceStore,
-    useWorldStore,
-    useSearchStore
+    useSearchStore,
+    useWorldStore
 } from '../../stores';
+import { AppDebug } from '../../service/appConfig.js';
 import { compareUnityVersion } from './avatar';
 import { escapeTag } from './base/string';
+import { miscRequest } from '../../api';
 
 /**
  *
@@ -211,7 +214,7 @@ function convertFileUrlToImageUrl(url, resolution = 128) {
     if (match) {
         const fileId = match[1];
         const version = match[2];
-        return `https://api.vrchat.cloud/api/1/image/file_${fileId}/${version}/${resolution}`;
+        return `${AppDebug.endpointDomain}/image/file_${fileId}/${version}/${resolution}`;
     }
     // no match return origin url
     return url;
@@ -340,7 +343,7 @@ function buildTreeData(json) {
  * @returns {string}
  */
 function replaceBioSymbols(text) {
-    if (!text) {
+    if (typeof text !== 'string') {
         return '';
     }
     const symbolList = {
@@ -428,6 +431,9 @@ async function getBundleDateSize(ref) {
     const bundleJson = [];
     for (let i = ref.unityPackages.length - 1; i > -1; i--) {
         const unityPackage = ref.unityPackages[i];
+        if (!unityPackage) {
+            continue;
+        }
         if (
             unityPackage.variant &&
             unityPackage.variant !== 'standard' &&

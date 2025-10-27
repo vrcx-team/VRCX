@@ -194,7 +194,9 @@
                             {{ t('dialog.gallery_icons.upload') }}
                         </el-button>
                     </el-button-group>
-                    <el-select v-model="emojiAnimationStyle" popper-class="max-height-el-select">
+                    <br />
+                    <br />
+                    <el-select v-model="emojiAnimationStyle">
                         <el-option-group>
                             {{ t('dialog.gallery_icons.emoji_animation_styles') }}
                             <el-option
@@ -213,7 +215,7 @@
                             </el-option>
                         </el-option-group>
                     </el-select>
-                    <el-checkbox v-model="emojiAnimType" style="margin-left: 10px; margin-right: 10px">
+                    <el-checkbox v-model="emojiAnimType">
                         <span>{{ t('dialog.gallery_icons.emoji_animation_type') }}</span>
                     </el-checkbox>
                     <template v-if="emojiAnimType">
@@ -258,24 +260,7 @@
                                     getEmojiFileName(image)
                                 )
                             ">
-                            <template v-if="image.frames">
-                                <div
-                                    class="avatar"
-                                    :style="
-                                        generateEmojiStyle(
-                                            image.versions[image.versions.length - 1].file.url,
-                                            image.framesOverTime,
-                                            image.frames,
-                                            image.loopStyle
-                                        )
-                                    "></div>
-                            </template>
-                            <template v-else>
-                                <img
-                                    class="avatar"
-                                    :src="image.versions[image.versions.length - 1].file.url"
-                                    loading="lazy" />
-                            </template>
+                            <Emoji :imageUrl="image.versions[image.versions.length - 1].file.url" :size="200"></Emoji>
                         </div>
                         <div style="display: inline-block; margin: 5px">
                             <span v-if="image.loopStyle === 'pingpong'">
@@ -544,17 +529,20 @@
 </template>
 
 <script setup>
+    import { Close, Delete, Picture, Plus, Present, Refresh, Upload } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
-    import { Refresh, Upload, Close, Picture, Delete, Plus, Present } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
     import { computed, ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest, inventoryRequest } from '../../../api';
-    import { AppDebug } from '../../../service/appConfig';
-    import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../shared/constants';
+
+    import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../../api';
     import { extractFileId, formatDateFilter, getEmojiFileName, getPrintFileName } from '../../../shared/utils';
-    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
     import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../../stores';
+    import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../shared/constants';
+    import { AppDebug } from '../../../service/appConfig';
+    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
+
+    import Emoji from '../../../components/Emoji.vue';
 
     const { t } = useI18n();
 
@@ -663,7 +651,7 @@
     }
 
     function setProfilePicOverride(fileId) {
-        if (!currentUser.value.$isVRCPlus) {
+        if (!isLocalUserVrcPlusSupporter.value) {
             ElMessage({
                 message: 'VRCPlus required',
                 type: 'error'
@@ -766,7 +754,7 @@
     }
 
     function setVRCPlusIcon(fileId) {
-        if (!currentUser.value.$isVRCPlus) {
+        if (!isLocalUserVrcPlusSupporter.value) {
             ElMessage({
                 message: 'VRCPlus required',
                 type: 'error'
@@ -902,25 +890,6 @@
 
     function displayEmojiUpload() {
         document.getElementById('EmojiUploadButton').click();
-    }
-
-    function generateEmojiStyle(url, fps, frameCount, loopStyle) {
-        let framesPerLine = 2;
-        if (frameCount > 4) framesPerLine = 4;
-        if (frameCount > 16) framesPerLine = 8;
-        const animationDurationMs = (1000 / fps) * frameCount;
-        const frameSize = 1024 / framesPerLine;
-        const scale = 100 / (frameSize / 200);
-        const animStyle = loopStyle === 'pingpong' ? 'alternate' : 'none';
-        const style = `
-            transform: scale(${scale / 100});
-            transform-origin: top left;
-            width: ${frameSize}px;
-            height: ${frameSize}px;
-            background: url('${url}') 0 0;
-            animation: ${animationDurationMs}ms steps(1) 0s infinite ${animStyle} running animated-emoji-${frameCount};
-        `;
-        return style;
     }
 
     function deleteEmoji(fileId) {
@@ -1130,8 +1099,6 @@
                         });
                 }
             })
-            .catch(() => {
-                // on cancel
-            });
+            .catch(() => {});
     }
 </script>

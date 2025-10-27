@@ -1,5 +1,5 @@
+import { useGroupStore, useUserStore } from '../stores';
 import { request } from '../service/request';
-import { useUserStore, useGroupStore } from '../stores';
 
 function getCurrentUserId() {
     return useUserStore().currentUser.id;

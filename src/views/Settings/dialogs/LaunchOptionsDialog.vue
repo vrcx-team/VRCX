@@ -54,13 +54,15 @@
 </template>
 
 <script setup>
+    import { computed, ref } from 'vue';
     import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { computed, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import configRepository from '../../../service/config';
+
     import { openExternalLink } from '../../../shared/utils';
     import { useLaunchStore } from '../../../stores';
+
+    import configRepository from '../../../service/config';
 
     const { t } = useI18n();
 

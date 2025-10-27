@@ -1,7 +1,5 @@
 import Noty from 'noty';
-import * as workerTimers from 'worker-timers';
-import { groupRequest } from '../api';
-import { escapeTag, parseLocation } from '../shared/utils';
+
 import {
     useFriendStore,
     useGalleryStore,
@@ -13,9 +11,13 @@ import {
     useUiStore,
     useUserStore
 } from '../stores';
+import { escapeTag, parseLocation } from '../shared/utils';
 import { AppDebug } from './appConfig';
+import { groupRequest } from '../api';
 import { request } from './request';
 import { watchState } from './watchState';
+
+import * as workerTimers from 'worker-timers';
 
 let webSocket = null;
 let lastWebSocketMessage = '';

@@ -1,9 +1,9 @@
 <template>
-    <div v-show="menuActiveIndex === 'moderation'" class="x-container">
+    <div class="x-container">
         <!-- 工具栏 -->
         <div class="tool-slot">
             <el-select
-                v-model="filters[0].value"
+                v-model="playerModerationTable.filters[0].value"
                 @change="saveTableFilters()"
                 multiple
                 clearable
@@ -16,26 +16,20 @@
                     :value="item" />
             </el-select>
             <el-input
-                v-model="filters[1].value"
+                v-model="playerModerationTable.filters[1].value"
                 :placeholder="t('view.moderation.search_placeholder')"
                 class="filter-input" />
             <el-tooltip placement="bottom" :content="t('view.moderation.refresh_tooltip')">
                 <el-button
                     type="default"
-                    :loading="isPlayerModerationsLoading"
+                    :loading="playerModerationTable.loading"
                     @click="refreshPlayerModerations()"
                     :icon="Refresh"
                     circle />
             </el-tooltip>
         </div>
 
-        <DataTable
-            :data="playerModerationTable.data"
-            :pageSize="playerModerationTable.pageSize"
-            :filters="filters"
-            :tableProps="tableProps"
-            :paginationProps="paginationProps"
-            v-loading="isPlayerModerationsLoading">
+        <DataTable v-bind="playerModerationTable">
             <el-table-column :label="t('table.moderation.date')" prop="created" :sortable="true" width="130">
                 <template #default="scope">
                     <el-tooltip placement="right">
@@ -91,53 +85,27 @@
 </template>
 
 <script setup>
+    import { Close, Refresh } from '@element-plus/icons-vue';
     import { ElMessageBox } from 'element-plus';
-    import { Refresh, Close } from '@element-plus/icons-vue';
-    import { ref } from 'vue';
-    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
-    import { playerModerationRequest } from '../../api';
-    import configRepository from '../../service/config.js';
-    import { useUiStore, useModerationStore, useUserStore } from '../../stores';
-    import { moderationTypes } from '../../shared/constants';
+    import { useI18n } from 'vue-i18n';
+
+    import { useModerationStore, useUiStore, useUserStore } from '../../stores';
     import { formatDateFilter } from '../../shared/utils';
+    import { moderationTypes } from '../../shared/constants';
+    import { playerModerationRequest } from '../../api';
+
+    import configRepository from '../../service/config.js';
 
     const { t } = useI18n();
     const { showUserDialog } = useUserStore();
-    const { isPlayerModerationsLoading, playerModerationTable } = storeToRefs(useModerationStore());
+    const { playerModerationTable } = storeToRefs(useModerationStore());
     const { refreshPlayerModerations, handlePlayerModerationDelete } = useModerationStore();
-    const { menuActiveIndex, shiftHeld } = storeToRefs(useUiStore());
+    const { shiftHeld } = storeToRefs(useUiStore());
     const { currentUser } = storeToRefs(useUserStore());
 
-    const filters = ref([
-        {
-            prop: 'type',
-            value: [],
-            filterFn: (row, filter) => filter.value.some((v) => v === row.type)
-        },
-        {
-            prop: ['sourceDisplayName', 'targetDisplayName'],
-            value: ''
-        }
-    ]);
-
-    const tableProps = ref({
-        stripe: true,
-        size: 'small',
-        defaultSort: {
-            prop: 'created',
-            order: 'descending'
-        }
-    });
-
-    const paginationProps = ref({
-        small: true,
-        layout: 'sizes,prev,pager,next,total',
-        pageSizes: [10, 15, 20, 25, 50, 100]
-    });
-
     async function init() {
-        filters.value[0].value = JSON.parse(
+        playerModerationTable.value.filters[0].value = JSON.parse(
             await configRepository.getString('VRCX_playerModerationTableFilters', '[]')
         );
     }
@@ -145,7 +113,10 @@
     init();
 
     function saveTableFilters() {
-        configRepository.setString('VRCX_playerModerationTableFilters', JSON.stringify(filters.value[0].value));
+        configRepository.setString(
+            'VRCX_playerModerationTableFilters',
+            JSON.stringify(playerModerationTable.value.filters[0].value)
+        );
     }
 
     async function deletePlayerModeration(row) {

@@ -1,19 +1,19 @@
 <template>
     <div class="fav-world-item" @click="$emit('click')">
         <div class="x-friend-item">
-            <template v-if="isLocalFavorite ? favorite.name : favorite.ref">
+            <template v-if="favorite.ref">
                 <div class="avatar" v-once>
                     <img :src="smallThumbnail" loading="lazy" decoding="async" fetchpriority="low" />
                 </div>
                 <div class="detail" v-once>
-                    <span class="name">{{ localFavFakeRef.name }}</span>
-                    <span v-if="localFavFakeRef.occupants" class="extra">
-                        {{ localFavFakeRef.authorName }} ({{ localFavFakeRef.occupants }})
+                    <span class="name">{{ props.favorite.ref.name }}</span>
+                    <span v-if="props.favorite.ref.occupants" class="extra">
+                        {{ props.favorite.ref.authorName }} ({{ props.favorite.ref.occupants }})
                     </span>
-                    <span v-else class="extra">{{ localFavFakeRef.authorName }}</span>
+                    <span v-else class="extra">{{ props.favorite.ref.authorName }}</span>
                 </div>
                 <div class="editing">
-                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px">
+                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px" :persistent="false">
                         <div>
                             <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </div>
@@ -24,7 +24,7 @@
                             <el-dropdown-menu>
                                 <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
                                     <el-dropdown-item
-                                        v-if="isLocalFavorite || groupAPI.name !== group.name"
+                                        v-if="groupAPI.name !== group.name"
                                         style="display: block; margin: 10px 0"
                                         :disabled="groupAPI.count >= groupAPI.capacity"
                                         @click="handleDropdownItemClick(groupAPI)">
@@ -34,24 +34,26 @@
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
-                    <el-button v-if="!isLocalFavorite" type="text" size="small" @click.stop style="margin-left: 5px">
+                    <el-button type="text" size="small" @click.stop style="margin-left: 5px">
                         <el-checkbox v-model="isSelected"></el-checkbox>
                     </el-button>
                 </div>
                 <div class="default">
                     <el-tooltip
-                        v-if="!isLocalFavorite && favorite.deleted"
+                        v-if="favorite.deleted"
                         placement="left"
-                        :content="t('view.favorite.unavailable_tooltip')">
+                        :content="t('view.favorite.unavailable_tooltip')"
+                        :teleported="false">
                         <el-icon><Warning /></el-icon>
                     </el-tooltip>
                     <el-tooltip
-                        v-if="!isLocalFavorite && favorite.ref.releaseStatus === 'private'"
+                        v-if="favorite.ref.releaseStatus === 'private'"
                         placement="left"
-                        :content="t('view.favorite.private')">
+                        :content="t('view.favorite.private')"
+                        :teleported="false">
                         <el-icon><Warning /></el-icon>
                     </el-tooltip>
-                    <el-tooltip placement="left">
+                    <el-tooltip placement="left" :teleported="false">
                         <template #content>
                             {{
                                 canOpenInstanceInGame()
@@ -66,10 +68,7 @@
                             @click.stop="newInstanceSelfInvite(favorite.id)"
                             circle></el-button>
                     </el-tooltip>
-                    <el-tooltip
-                        v-if="!isLocalFavorite"
-                        placement="right"
-                        :content="t('view.favorite.unfavorite_tooltip')">
+                    <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')" :teleported="false">
                         <el-button
                             v-if="shiftHeld"
                             size="small"
@@ -87,32 +86,16 @@
                             @click.stop="showFavoriteDialog('world', favorite.id)"></el-button>
                     </el-tooltip>
                 </div>
-                <el-tooltip v-if="isLocalFavorite" placement="right" :content="t('view.favorite.unfavorite_tooltip')">
-                    <el-button
-                        v-if="shiftHeld"
-                        size="small"
-                        :icon="Close"
-                        circle
-                        style="color: #f56c6c; margin-left: 5px"
-                        @click.stop="$emit('remove-local-world-favorite', favorite.id, group)"></el-button>
-                    <el-button
-                        v-else
-                        :icon="Star"
-                        size="small"
-                        circle
-                        style="margin-left: 5px"
-                        type="default"
-                        @click.stop="showFavoriteDialog('world', favorite.id)"></el-button>
-                </el-tooltip>
             </template>
             <template v-else>
                 <div class="avatar"></div>
                 <div class="detail" v-once>
                     <span>{{ favorite.name || favorite.id }}</span>
                     <el-tooltip
-                        v-if="!isLocalFavorite && favorite.deleted"
+                        v-if="favorite.deleted"
                         placement="left"
-                        :content="t('view.favorite.unavailable_tooltip')">
+                        :content="t('view.favorite.unavailable_tooltip')"
+                        :teleported="false">
                         <el-icon><Warning /></el-icon>
                     </el-tooltip>
                     <el-button
@@ -128,13 +111,14 @@
 </template>
 
 <script setup>
+    import { Back, Close, Message, Star, Warning } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
-    import { Warning, Back, Message, Close, Star } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest } from '../../../api';
+
     import { useFavoriteStore, useInviteStore, useUiStore } from '../../../stores';
+    import { favoriteRequest } from '../../../api';
 
     const props = defineProps({
         group: [Object, String],
@@ -155,21 +139,20 @@
         set: (value) => emit('handle-select', value)
     });
 
-    const localFavFakeRef = computed(() => (props.isLocalFavorite ? props.favorite : props.favorite.ref));
     const tooltipContent = computed(() =>
         t(props.isLocalFavorite ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')
     );
 
     const smallThumbnail = computed(() => {
-        const url = localFavFakeRef.value.thumbnailImageUrl.replace('256', '128');
-        return url || localFavFakeRef.value.thumbnailImageUrl;
+        const url = props.favorite.ref.thumbnailImageUrl?.replace('256', '128');
+        return url || props.favorite.ref.thumbnailImageUrl;
     });
 
     function handleDropdownItemClick(groupAPI) {
         if (props.isLocalFavorite) {
-            addFavoriteWorld(localFavFakeRef.value, groupAPI, true);
+            addFavoriteWorld(props.favorite.ref, groupAPI, true);
         } else {
-            moveFavorite(localFavFakeRef.value, groupAPI, 'world');
+            moveFavorite(props.favorite.ref, groupAPI, 'world');
         }
     }
 
@@ -216,5 +199,6 @@
         display: inline-block;
         width: 300px;
         margin-right: 15px;
+        height: 53px;
     }
 </style>

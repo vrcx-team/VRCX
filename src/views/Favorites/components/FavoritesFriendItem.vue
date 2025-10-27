@@ -19,7 +19,7 @@
                     <span v-else v-text="favorite.ref.statusDescription"></span>
                 </div>
                 <div class="editing">
-                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px">
+                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px" :persistent="false">
                         <div>
                             <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </div>
@@ -45,7 +45,7 @@
                     </el-button>
                 </div>
                 <div class="default">
-                    <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')">
+                    <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')" :teleported="false">
                         <el-button
                             v-if="shiftHeld"
                             size="small"
@@ -84,9 +84,10 @@
     import { Back, Close, Star } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest } from '../../../api';
-    import { userImage, userStatusClass } from '../../../shared/utils';
+
     import { useFavoriteStore, useUiStore } from '../../../stores';
+    import { userImage, userStatusClass } from '../../../shared/utils';
+    import { favoriteRequest } from '../../../api';
 
     defineProps({
         favorite: { type: Object, required: true },

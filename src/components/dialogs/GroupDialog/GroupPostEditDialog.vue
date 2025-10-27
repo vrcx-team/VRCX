@@ -98,11 +98,13 @@
 </template>
 
 <script setup>
+    import { computed, ref } from 'vue';
     import { ElMessage } from 'element-plus';
-    import { ref, computed } from 'vue';
     import { useI18n } from 'vue-i18n';
+
     import { groupRequest, vrcPlusIconRequest } from '../../../api';
     import { useGalleryStore, useGroupStore } from '../../../stores';
+
     import GallerySelectDialog from './GallerySelectDialog.vue';
 
     const props = defineProps({
@@ -182,7 +184,6 @@
                 message: 'Group post edited',
                 type: 'success'
             });
-            return args;
         });
         D.visible = false;
     }
@@ -208,12 +209,11 @@
             params.imageId = gallerySelectDialog.value.selectedFileId;
         }
         groupRequest.createGroupPost(params).then((args) => {
-            handleGroupPost();
+            handleGroupPost(args);
             ElMessage({
                 message: 'Group post created',
                 type: 'success'
             });
-            return args;
         });
         D.visible = false;
     }

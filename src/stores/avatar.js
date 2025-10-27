@@ -1,11 +1,7 @@
-import { defineStore } from 'pinia';
-import { computed, reactive, watch, nextTick } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { avatarRequest, miscRequest } from '../api';
-import { database } from '../service/database';
-import { AppDebug } from '../service/appConfig';
-import webApiService from '../service/webapi';
-import { watchState } from '../service/watchState';
+import { defineStore } from 'pinia';
+
 import {
     checkVRChatCache,
     extractFileId,
@@ -15,11 +11,17 @@ import {
     replaceBioSymbols,
     storeAvatarImage
 } from '../shared/utils';
+import { avatarRequest, miscRequest } from '../api';
+import { AppDebug } from '../service/appConfig';
+import { database } from '../service/database';
+import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useFavoriteStore } from './favorite';
-import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
+import { watchState } from '../service/watchState';
+
+import webApiService from '../service/webapi';
 
 export const useAvatarStore = defineStore('Avatar', () => {
     const favoriteStore = useFavoriteStore();
@@ -28,63 +30,47 @@ export const useAvatarStore = defineStore('Avatar', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
     const userStore = useUserStore();
 
-    const state = reactive({
-        avatarDialog: {
-            visible: false,
-            loading: false,
-            id: '',
-            memo: '',
-            ref: {},
-            isFavorite: false,
-            isBlocked: false,
-            isQuestFallback: false,
-            hasImposter: false,
-            imposterVersion: '',
-            isPC: false,
-            isQuest: false,
-            isIos: false,
-            bundleSizes: [],
-            platformInfo: {},
-            galleryImages: [],
-            galleryLoading: false,
-            lastUpdated: '',
-            inCache: false,
-            cacheSize: '',
-            cacheLocked: false,
-            cachePath: '',
-            fileAnalysis: []
-        },
-        avatarHistory: new Set(),
-        avatarHistoryArray: []
-    });
-
     let cachedAvatarModerations = new Map();
     let cachedAvatars = new Map();
     let cachedAvatarNames = new Map();
 
-    const avatarDialog = computed({
-        get: () => state.avatarDialog,
-        set: (value) => {
-            state.avatarDialog = value;
-        }
+    const avatarDialog = ref({
+        visible: false,
+        loading: false,
+        id: '',
+        memo: '',
+        ref: {},
+        isFavorite: false,
+        isBlocked: false,
+        isQuestFallback: false,
+        hasImposter: false,
+        imposterVersion: '',
+        isPC: false,
+        isQuest: false,
+        isIos: false,
+        bundleSizes: [],
+        platformInfo: {},
+        galleryImages: [],
+        galleryLoading: false,
+        lastUpdated: '',
+        inCache: false,
+        cacheSize: '',
+        cacheLocked: false,
+        cachePath: '',
+        fileAnalysis: []
     });
-    const avatarHistory = state.avatarHistory;
-    const avatarHistoryArray = computed({
-        get: () => state.avatarHistoryArray,
-        set: (value) => {
-            state.avatarHistoryArray = value;
-        }
-    });
+    const avatarHistory = ref(new Set());
+    const avatarHistoryArray = ref([]);
 
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            state.avatarDialog.visible = false;
+            avatarDialog.value.visible = false;
             cachedAvatars.clear();
             cachedAvatarNames.clear();
             cachedAvatarModerations.clear();
-            state.avatarHistory.clear();
-            state.avatarHistoryArray = [];
+            avatarHistory.value.clear();
+            avatarHistoryArray.value = [];
             if (isLoggedIn) {
                 getAvatarHistory();
             }
@@ -183,7 +169,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
      * @returns
      */
     function showAvatarDialog(avatarId) {
-        const D = state.avatarDialog;
+        const D = avatarDialog.value;
         D.visible = true;
         D.loading = true;
         D.id = avatarId;
@@ -266,7 +252,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
      * @returns {Promise<string[]>}
      */
     async function getAvatarGallery(avatarId) {
-        const D = state.avatarDialog;
+        const D = avatarDialog.value;
         const args = await avatarRequest
             .getAvatarGallery(avatarId)
             .finally(() => {
@@ -318,7 +304,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         }
 
         // update avatar dialog
-        const D = state.avatarDialog;
+        const D = avatarDialog.value;
         if (
             D.visible &&
             ref.avatarModerationType === 'block' &&
@@ -331,7 +317,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     function updateVRChatAvatarCache() {
-        const D = state.avatarDialog;
+        const D = avatarDialog.value;
         if (D.visible) {
             D.inCache = false;
             D.cacheSize = '';
@@ -353,7 +339,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
      * @returns {Promise<void>}
      */
     async function getAvatarHistory() {
-        state.avatarHistory = new Set();
+        avatarHistory.value = new Set();
         const historyArray = await database.getAvatarHistory(
             userStore.currentUser.id
         );
@@ -363,9 +349,9 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 continue;
             }
             applyAvatar(avatar);
-            state.avatarHistory.add(avatar.id);
+            avatarHistory.value.add(avatar.id);
         }
-        state.avatarHistoryArray = historyArray;
+        avatarHistoryArray.value = historyArray;
     }
 
     /**
@@ -384,16 +370,16 @@ export const useAvatarStore = defineStore('Avatar', () => {
                     return;
                 }
 
-                const historyArray = state.avatarHistoryArray;
+                const historyArray = avatarHistoryArray.value;
                 for (let i = 0; i < historyArray.length; ++i) {
                     if (historyArray[i].id === ref.id) {
                         historyArray.splice(i, 1);
                     }
                 }
 
-                state.avatarHistoryArray.unshift(ref);
-                state.avatarHistory.delete(ref.id);
-                state.avatarHistory.add(ref.id);
+                avatarHistoryArray.value.unshift(ref);
+                avatarHistory.value.delete(ref.id);
+                avatarHistory.value.add(ref.id);
             })
             .catch((err) => {
                 console.error('Failed to add avatar to history:', err);
@@ -401,8 +387,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     function clearAvatarHistory() {
-        state.avatarHistory = new Set();
-        state.avatarHistoryArray = [];
+        avatarHistory.value = new Set();
+        avatarHistoryArray.value = [];
         database.clearAvatarHistory();
     }
 
@@ -687,8 +673,6 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     return {
-        state,
-
         avatarDialog,
         avatarHistory,
         avatarHistoryArray,

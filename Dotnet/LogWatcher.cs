@@ -297,7 +297,7 @@ namespace VRCX
                     m_LogQueue.Enqueue(logLine);
 #else
                     if (MainForm.Instance != null && MainForm.Instance.Browser != null)
-                        MainForm.Instance.Browser.ExecuteScriptAsync("$pinia.gameLog.addGameLogEvent", logLine);
+                        MainForm.Instance.Browser.ExecuteScriptAsync("window?.$pinia?.gameLog.addGameLogEvent", logLine);
 #endif
                 }
 
@@ -631,8 +631,8 @@ namespace VRCX
             // 2024.07.31 23:04:15 Error      -  [AVProVideo] Error: Loading failed.  File not found, codec not supported, video resolution too high or insufficient system resources.
 
             // 2025.05.04 22:38:12 Error      -  Attempted to play an untrusted URL (Domain: localhost) that is not allowlisted for public instances. If this URL is needed for the world to work, the domain needs to be added to the world's Video Player Allowed Domains list on the website.
-            const string youtubeBotError = "Sign in to confirm you’re not a bot";
-            const string youtubeBotErrorFixUrl = "[VRCX]: We've made a program to help with this error, you can grab it from here: https://github.com/EllyVR/VRCVideoCacher";
+            const string youtubeBotError = "Sign in to confirm";
+            const string youtubeBotErrorFixUrl = "[VRCX] Fix error with this: https://github.com/EllyVR/VRCVideoCacher";
 
             if (line.Contains("[Video Playback] ERROR: "))
             {
@@ -729,7 +729,7 @@ namespace VRCX
                 return false;
 
             var data = line.Substring(offset + 13);
-            
+
             // PWI, deprecated
             logger.Info("VRCX-World data: {0}", data);
             return true;

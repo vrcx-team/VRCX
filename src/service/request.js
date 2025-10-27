@@ -1,8 +1,7 @@
+import { ElMessage, ElMessageBox } from 'element-plus';
+
 import Noty from 'noty';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import { i18n } from '../plugin/i18n';
-import { statusCodes } from '../shared/constants/api.js';
-import { escapeTag } from '../shared/utils';
+
 import {
     useAuthStore,
     useAvatarStore,
@@ -11,8 +10,12 @@ import {
     useUserStore
 } from '../stores';
 import { AppDebug } from './appConfig.js';
-import webApiService from './webapi.js';
+import { escapeTag } from '../shared/utils';
+import { i18n } from '../plugin/i18n';
+import { statusCodes } from '../shared/constants/api.js';
 import { watchState } from './watchState';
+
+import webApiService from './webapi.js';
 
 const pendingGetRequests = new Map();
 export let failedGetRequests = new Map();
@@ -184,7 +187,7 @@ export function request(endpoint, options) {
                 ElMessageBox.alert(
                     t('api.error.message.vpn_in_use'),
                     `403 ${t('api.error.message.login_error')}`
-                );
+                ).catch(() => {});
                 authStore.handleLogoutEvent();
                 $throw(403, endpoint);
             }
@@ -202,6 +205,10 @@ export function request(endpoint, options) {
             }
             if (status === 404 && endpoint.endsWith('/persist/exists')) {
                 return false;
+            }
+            if (status === 404 && endpoint.endsWith('/respond')) {
+                // ignore when responding to expired notification
+                return null;
             }
             if (
                 init.method === 'GET' &&

@@ -1,8 +1,10 @@
-import { defineStore } from 'pinia';
-import webApiService from '../service/webapi';
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 import { ElNotification } from 'element-plus';
-import { openExternalLink, formatDateFilter } from '../shared/utils';
+import { defineStore } from 'pinia';
+
+import { formatDateFilter, openExternalLink } from '../shared/utils';
+
+import webApiService from '../service/webapi';
 
 export const useVrcStatusStore = defineStore('VrcStatus', () => {
     const vrcStatusApiUrl = 'https://status.vrchat.com/api/v2';
@@ -73,6 +75,13 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
             }
         });
         lastTimeFetched.value = Date.now();
+        if (response.status !== 200) {
+            console.error('Failed to fetch VRChat status', response);
+            lastStatus.value = 'Failed to fetch VRC status';
+            pollingInterval.value = 2 * 60 * 1000; // 2 minutes
+            updateAlert();
+            return;
+        }
         const data = JSON.parse(response.data);
         lastStatusTime.value = new Date(data.page.updated_at);
         if (data.status.description === 'All Systems Operational') {
@@ -95,6 +104,10 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
                 Referer: 'https://vrcx.app'
             }
         });
+        if (response.status !== 200) {
+            console.error('Failed to fetch VRChat status summary', response);
+            return;
+        }
         const data = JSON.parse(response.data);
         let summary = '';
         for (const component of data.components) {

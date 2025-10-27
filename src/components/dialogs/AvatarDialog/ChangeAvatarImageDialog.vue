@@ -44,15 +44,16 @@
 <script setup>
     import { ElMessage } from 'element-plus';
     import { Upload } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
     import { avatarRequest, imageRequest } from '../../../api';
-    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
-    import { useAvatarStore } from '../../../stores';
     import { $throw } from '../../../service/request';
     import { AppDebug } from '../../../service/appConfig';
     import { extractFileId } from '../../../shared/utils';
+    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
+    import { useAvatarStore } from '../../../stores';
 
     const { t } = useI18n();
 

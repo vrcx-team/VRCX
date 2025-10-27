@@ -1,5 +1,7 @@
 import { reactive } from 'vue';
+
 import dayjs from 'dayjs';
+
 import * as utils from '../shared/utils';
 
 const AppDebug = reactive({
@@ -10,6 +12,8 @@ const AppDebug = reactive({
     debugGameLog: false,
     debugWebRequests: false,
     debugFriendState: false,
+    debugIPC: false,
+    debugVrcPlus: false,
     errorNoty: null,
     dontLogMeOut: false,
     endpointDomain: 'https://api.vrchat.cloud/api/1',

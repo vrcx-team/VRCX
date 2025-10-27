@@ -1,10 +1,5 @@
-// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
-// All rights reserved.
-//
-// This work is licensed under the terms of the MIT license.
-// For a copy, see <https://opensource.org/licenses/MIT>.
-
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -15,127 +10,72 @@ namespace VRCX
     public class VRCXStorage
     {
         public static readonly VRCXStorage Instance;
-        private static readonly ReaderWriterLockSlim m_Lock = new ReaderWriterLockSlim();
-        private static Dictionary<string, string> m_Storage = new Dictionary<string, string>();
-        private static readonly string m_JsonPath = Path.Join(Program.AppDataDirectory, "VRCX.json");
-        private static bool m_Dirty;
+
+        private static ConcurrentDictionary<string, string> _storage = new ConcurrentDictionary<string, string>();
+        private static readonly string JsonPath = Path.Join(Program.AppDataDirectory, "VRCX.json");
+
+        private static readonly TimeSpan SaveDebounce = TimeSpan.FromMilliseconds(500);
+        private static readonly Timer SaveTimer;
+        private static readonly Lock SaveLock = new Lock();
 
         static VRCXStorage()
         {
             Instance = new VRCXStorage();
+            SaveTimer = new Timer(_ => Instance.Save(), null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
         }
 
         public void Load()
         {
-            m_Lock.EnterWriteLock();
-            try
-            {
-                JsonFileSerializer.Deserialize(m_JsonPath, ref m_Storage);
-                m_Dirty = false;
-            }
-            finally
-            {
-                m_Lock.ExitWriteLock();
-            }
+            var tmp = new Dictionary<string, string>();
+            JsonFileSerializer.Deserialize(JsonPath, ref tmp);
+            _storage = new ConcurrentDictionary<string, string>(tmp);
         }
 
         public void Save()
         {
-            m_Lock.EnterReadLock();
-            try
+            lock (SaveLock)
             {
-                if (m_Dirty)
-                {
-                    JsonFileSerializer.Serialize(m_JsonPath, m_Storage);
-                    m_Dirty = false;
-                }
+                var snapshot = new Dictionary<string, string>(_storage);
+                JsonFileSerializer.Serialize(JsonPath, snapshot);
             }
-            finally
-            {
-                m_Lock.ExitReadLock();
-            }
-        }
-
-        public void Flush()
-        {
-            Save();
         }
 
         public void Clear()
         {
-            m_Lock.EnterWriteLock();
-            try
+            if (!_storage.IsEmpty)
             {
-                if (m_Storage.Count > 0)
-                {
-                    m_Storage.Clear();
-                    m_Dirty = true;
-                }
-            }
-            finally
-            {
-                m_Lock.ExitWriteLock();
+                _storage.Clear();
+                ScheduleSave();
             }
         }
 
         public bool Remove(string key)
         {
-            m_Lock.EnterWriteLock();
-            try
-            {
-                var result = m_Storage.Remove(key);
-                if (result)
-                {
-                    m_Dirty = true;
-                }
-                return result;
-            }
-            finally
-            {
-                m_Lock.ExitWriteLock();
-            }
+            var result = _storage.TryRemove(key, out _);
+            if (result)
+                ScheduleSave();
+            return result;
         }
 
         public string Get(string key)
         {
-            m_Lock.EnterReadLock();
-            try
-            {
-                return m_Storage.TryGetValue(key, out string value)
-                    ? value
-                    : string.Empty;
-            }
-            finally
-            {
-                m_Lock.ExitReadLock();
-            }
+            return _storage.TryGetValue(key, out var value) ? value : string.Empty;
         }
 
         public void Set(string key, string value)
         {
-            m_Lock.EnterWriteLock();
-            try
-            {
-                m_Storage[key] = value;
-                m_Dirty = true;
-            }
-            finally
-            {
-                m_Lock.ExitWriteLock();
-            }
+            _storage[key] = value;
+            ScheduleSave();
         }
 
         public string GetAll()
         {
-            m_Lock.EnterReadLock();
-            try
-            {
-                return JsonSerializer.Serialize(m_Storage);
-            }
-            finally
-            {
-                m_Lock.ExitReadLock();
-            }
+            return JsonSerializer.Serialize(new Dictionary<string, string>(_storage));
+        }
+
+        private static void ScheduleSave()
+        {
+            SaveTimer.Change(SaveDebounce, Timeout.InfiniteTimeSpan);
         }
     }
 }
