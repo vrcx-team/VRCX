@@ -184,9 +184,8 @@
     import { removeFromArray } from '../../../shared/utils';
 
     const { showUserDialog } = useUserStore();
-    const { favoriteWorldGroups, worldImportDialogInput, worldImportDialogVisible, localWorldFavoriteGroups } =
-        storeToRefs(useFavoriteStore());
-    const { localWorldFavGroupLength, addLocalWorldFavorite } = useFavoriteStore();
+    const { favoriteWorldGroups, worldImportDialogInput, worldImportDialogVisible } = storeToRefs(useFavoriteStore());
+    const { localWorldFavGroupLength, addLocalWorldFavorite, localWorldFavoriteGroups } = useFavoriteStore();
     const { showWorldDialog } = useWorldStore();
     const { showFullscreenImageDialog } = useGalleryStore();
 
