@@ -224,7 +224,7 @@
                                     </el-dropdown-item>
                                     <el-dropdown-item :icon="Message" command="New Instance and Self Invite">
                                         {{
-                                            canOpenInstanceInGame()
+                                            canOpenInstanceInGame
                                                 ? t('dialog.world.actions.new_instance_and_open_ingame')
                                                 : t('dialog.world.actions.new_instance_and_self_invite')
                                         }}

@@ -417,7 +417,7 @@
                     @click="showInviteDialog(newInstanceDialog.location)"
                     >{{ t('dialog.new_instance.invite') }}</el-button
                 >
-                <template v-if="canOpenInstanceInGame()">
+                <template v-if="canOpenInstanceInGame">
                     <el-button @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)">{{
                         t('dialog.new_instance.launch')
                     }}</el-button>
@@ -454,7 +454,7 @@
                 @click="showInviteDialog(newInstanceDialog.location)"
                 >{{ t('dialog.new_instance.invite') }}</el-button
             >
-            <template v-if="canOpenInstanceInGame()">
+            <template v-if="canOpenInstanceInGame">
                 <el-button @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)">{{
                     t('dialog.new_instance.launch')
                 }}</el-button>

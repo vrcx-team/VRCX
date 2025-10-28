@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
 
@@ -71,6 +71,14 @@ export const useInviteStore = defineStore('Invite', () => {
         { flush: 'sync' }
     );
 
+    const canOpenInstanceInGame = computed(() => {
+        return (
+            !LINUX &&
+            gameStore.isGameRunning &&
+            !advancedSettingsStore.selfInviteOverride
+        );
+    });
+
     /**
      *
      * @param {'message' | 'request' | 'response' | 'requestResponse'} mode
@@ -99,14 +107,6 @@ export const useInviteStore = defineStore('Invite', () => {
             });
     }
 
-    function canOpenInstanceInGame() {
-        return (
-            !LINUX &&
-            gameStore.isGameRunning &&
-            !advancedSettingsStore.selfInviteOverride
-        );
-    }
-
     function newInstanceSelfInvite(worldId) {
         instanceStore.createNewInstance(worldId).then((args) => {
             const location = args?.json?.location;
@@ -122,7 +122,7 @@ export const useInviteStore = defineStore('Invite', () => {
             if (!L.isRealInstance) {
                 return;
             }
-            if (canOpenInstanceInGame()) {
+            if (canOpenInstanceInGame.value) {
                 const secureOrShortName =
                     args.json.shortName || args.json.secureName;
                 launchStore.tryOpenInstanceInVrc(location, secureOrShortName);

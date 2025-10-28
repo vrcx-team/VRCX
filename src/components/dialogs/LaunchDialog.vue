@@ -65,7 +65,7 @@
                 @click="showInviteDialog(launchDialog.location)">
                 {{ t('dialog.launch.invite') }}
             </el-button>
-            <template v-if="canOpenInstanceInGame()">
+            <template v-if="canOpenInstanceInGame">
                 <el-button
                     :disabled="!launchDialog.secureOrShortName"
                     @click="handleLaunchGame(launchDialog.location, launchDialog.shortName, launchDialog.desktop)">
