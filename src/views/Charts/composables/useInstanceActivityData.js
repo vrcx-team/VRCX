@@ -1,4 +1,4 @@
-import { nextTick, ref } from 'vue';
+import { nextTick, reactive, ref } from 'vue';
 
 import dayjs from 'dayjs';
 
@@ -8,7 +8,7 @@ import { getWorldName } from '../../../shared/utils';
 export function useInstanceActivityData() {
     const activityData = ref([]);
     const activityDetailData = ref([]);
-    const allDateOfActivity = ref(new Set());
+    let allDateOfActivity = reactive(new Set());
     const worldNameArray = ref([]);
 
     async function getAllDateOfActivity() {
@@ -24,7 +24,7 @@ export function useInstanceActivityData() {
             uniqueDates.add(formattedDate);
         }
 
-        allDateOfActivity.value = uniqueDates;
+        allDateOfActivity = reactive(uniqueDates);
     }
 
     async function getWorldNameData() {

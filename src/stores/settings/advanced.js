@@ -52,7 +52,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const ugcFolderPath = ref('');
     const autoDeleteOldPrints = ref(false);
     const notificationOpacity = ref(100);
-    const currentUserInventory = ref(new Map());
+    const currentUserInventory = reactive(new Map());
     const isVRChatConfigDialogVisible = ref(false);
     const saveInstanceEmoji = ref(false);
     const vrcRegistryAutoBackup = ref(true);
@@ -62,7 +62,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     watch(
         () => watchState.isLoggedIn,
         () => {
-            currentUserInventory.value.clear();
+            currentUserInventory.clear();
             isVRChatConfigDialogVisible.value = false;
         },
         { flush: 'sync' }
