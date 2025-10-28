@@ -241,9 +241,8 @@ export const useFriendStore = defineStore('Friend', () => {
 
     function updateLocalFavoriteFriends() {
         const favoriteStore = useFavoriteStore();
-        const { cachedFavorites } = favoriteStore;
         localFavoriteFriends.value.clear();
-        for (const ref of cachedFavorites.values()) {
+        for (const ref of favoriteStore.cachedFavorites.values()) {
             if (
                 !ref.$isDeleted &&
                 ref.type === 'friend' &&

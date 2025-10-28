@@ -32,11 +32,11 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         favoriteAvatars_: []
     });
 
-    let cachedFavorites = new Map();
+    const cachedFavorites = ref(new Map());
 
     const currentFavoriteTab = ref('friend');
 
-    const cachedFavoriteGroups = ref(new Map());
+    const cachedFavoriteGroups = ref({});
 
     const cachedFavoriteGroupsByTypeName = computed(() => {
         const group = {};
@@ -185,9 +185,9 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
             friendStore.localFavoriteFriends.clear();
-            cachedFavorites.clear();
+            cachedFavorites.value.clear();
             cachedFavoritesByObjectId.value.clear();
-            cachedFavoriteGroups.value.clear();
+            cachedFavoriteGroups.value = {};
             favoriteFriendGroups.value = [];
             favoriteWorldGroups.value = [];
             favoriteAvatarGroups.value = [];
@@ -309,7 +309,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     function handleFavoriteGroupClear(args) {
         const key = `${args.params.type}:${args.params.group}`;
-        for (const ref of cachedFavorites.values()) {
+        for (const ref of cachedFavorites.value.values()) {
             if (ref.$isDeleted || ref.$groupKey !== key) {
                 continue;
             }
@@ -346,7 +346,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     function expireFavorites() {
         friendStore.localFavoriteFriends.clear();
-        cachedFavorites.clear();
+        cachedFavorites.value.clear();
         cachedFavoritesByObjectId.value.clear();
         state.favoriteObjects.clear();
         state.favoriteFriends_ = [];
@@ -412,7 +412,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                     name: '',
                     $selected: false
                 };
-                state.favoriteObjects.set(objectId, ctx);
                 if (type === 'friend') {
                     ref = userStore.cachedUsers.get(objectId);
                     if (typeof ref === 'undefined') {
@@ -437,6 +436,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                         ctx.name = ref.name;
                     }
                 }
+                state.favoriteObjects.set(objectId, ctx);
                 isTypeChanged = true;
             } else {
                 if (ctx.type !== type) {
@@ -575,13 +575,14 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     function expireFavoriteGroups() {
-        for (const ref of cachedFavoriteGroups.value.values()) {
-            ref.$isExpired = true;
+        for (const key in cachedFavoriteGroups.value) {
+            cachedFavoriteGroups.value[key].$isExpired = true;
         }
     }
 
     function deleteExpiredFavoriteGroups() {
-        for (const ref of cachedFavoriteGroups.value.values()) {
+        for (const key in cachedFavoriteGroups.value) {
+            const ref = cachedFavoriteGroups.value[key];
             if (ref.$isDeleted || ref.$isExpired === false) {
                 continue;
             }
@@ -645,7 +646,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         };
         const assigns = new Set();
         // assign the same name first
-        for (ref of cachedFavoriteGroups.value.values()) {
+        for (const key in cachedFavoriteGroups.value) {
+            const ref = cachedFavoriteGroups.value[key];
             if (ref.$isDeleted) {
                 continue;
             }
@@ -666,7 +668,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             }
         }
 
-        for (ref of cachedFavoriteGroups.value.values()) {
+        for (const key in cachedFavoriteGroups.value) {
+            const ref = cachedFavoriteGroups.value[key];
             if (ref.$isDeleted || assigns.has(ref.id)) {
                 continue;
             }
@@ -687,7 +690,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
         // update favorites
 
-        for (ref of cachedFavorites.values()) {
+        for (ref of cachedFavorites.value.values()) {
             if (ref.$isDeleted) {
                 continue;
             }
@@ -755,7 +758,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      * @returns {any}
      */
     function applyFavoriteGroup(json) {
-        let ref = cachedFavoriteGroups.value.get(json.id);
+        let ref = cachedFavoriteGroups.value[json.id];
         if (typeof ref === 'undefined') {
             ref = {
                 id: '',
@@ -772,7 +775,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 //
                 ...json
             };
-            cachedFavoriteGroups.value.set(ref.id, ref);
+            cachedFavoriteGroups.value[ref.id] = ref;
         } else {
             Object.assign(ref, json);
             ref.$isExpired = false;
@@ -786,7 +789,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      * @returns {any}
      */
     function applyFavoriteCached(json) {
-        let ref = cachedFavorites.get(json.id);
+        let ref = cachedFavorites.value.get(json.id);
         if (typeof ref === 'undefined') {
             ref = {
                 id: '',
@@ -800,7 +803,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 //
                 ...json
             };
-            cachedFavorites.set(ref.id, ref);
+            cachedFavorites.value.set(ref.id, ref);
             cachedFavoritesByObjectId.value.set(ref.favoriteId, ref);
             if (
                 ref.type === 'friend' &&
@@ -831,7 +834,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      *
      */
     function deleteExpiredFavorites() {
-        for (const ref of cachedFavorites.values()) {
+        for (const ref of cachedFavorites.value.values()) {
             if (ref.$isDeleted || ref.$isExpired === false) {
                 continue;
             }
@@ -869,7 +872,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             avatar: [0, favoriteRequest.getFavoriteAvatars]
         };
         const tags = [];
-        for (const ref of cachedFavorites.values()) {
+        for (const ref of cachedFavorites.value.values()) {
             if (ref.$isDeleted) {
                 continue;
             }
