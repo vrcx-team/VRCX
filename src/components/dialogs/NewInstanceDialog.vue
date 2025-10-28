@@ -252,6 +252,7 @@
                             v-model="newInstanceDialog.userId"
                             clearable
                             :placeholder="t('dialog.new_instance.instance_creator_placeholder')"
+                            :persistent="false"
                             filterable
                             style="width: 100%"
                             @change="buildLegacyInstance">
