@@ -31,10 +31,13 @@
                             <template #content>
                                 <span>{{ t('dialog.user.previous_display_names') }}</span>
                                 <div
-                                    v-for="displayName in userDialog.previousDisplayNames"
-                                    :key="displayName"
+                                    v-for="data in userDialog.previousDisplayNames"
+                                    :key="data.displayName"
                                     placement="top">
-                                    <span v-text="displayName"></span>
+                                    <span>{{ data.displayName }}</span>
+                                    <span v-if="data.updated_at">
+                                        &horbar; {{ formatDateFilter(data.updated_at, 'long') }}</span
+                                    >
                                 </div>
                             </template>
                             <el-icon><CaretBottom /></el-icon>

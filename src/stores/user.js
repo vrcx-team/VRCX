@@ -273,17 +273,6 @@ export const useUserStore = defineStore('User', () => {
         visible: false,
         userId: ''
     });
-    const pastDisplayNameTable = ref({
-        data: [],
-        tableProps: {
-            stripe: true,
-            size: 'small',
-            defaultSort: {
-                prop: 'updated_at',
-                order: 'descending'
-            }
-        }
-    });
     const showUserDialogHistory = reactive(new Set());
     const customUserTags = reactive(new Map());
 
@@ -309,7 +298,6 @@ export const useUserStore = defineStore('User', () => {
                 state.instancePlayerCount.clear();
                 customUserTags.clear();
                 state.notes.clear();
-                pastDisplayNameTable.value.data = [];
                 subsetOfLanguages.value = [];
             }
         },
@@ -903,13 +891,13 @@ export const useUserStore = defineStore('User', () => {
                                             }
                                         }
                                     );
-                                    const displayNameMapSorted = new Map(
-                                        [...displayNameMap.entries()].sort(
-                                            (a, b) => b[1] - a[1]
-                                        )
-                                    );
-                                    D.previousDisplayNames = Array.from(
-                                        displayNameMapSorted.keys()
+                                    displayNameMap.forEach(
+                                        (updated_at, displayName) => {
+                                            D.previousDisplayNames.push({
+                                                displayName,
+                                                updated_at
+                                            });
+                                        }
                                     );
                                 });
                             AppApi.GetVRChatUserModeration(
@@ -924,6 +912,8 @@ export const useUserStore = defineStore('User', () => {
                                 }
                             });
                         } else {
+                            D.previousDisplayNames =
+                                currentUser.value.pastDisplayNames;
                             database
                                 .getUserStats(D.ref, inCurrentWorld)
                                 .then((ref1) => {
@@ -1867,9 +1857,6 @@ export const useUserStore = defineStore('User', () => {
                 );
             }
         }
-        if (ref.pastDisplayNames) {
-            pastDisplayNameTable.value.data = ref.pastDisplayNames;
-        }
 
         // when isGameRunning use gameLog instead of API
         const $location = parseLocation(locationStore.lastLocation.location);
@@ -1976,7 +1963,6 @@ export const useUserStore = defineStore('User', () => {
         subsetOfLanguages,
         languageDialog,
         sendBoopDialog,
-        pastDisplayNameTable,
         showUserDialogHistory,
         customUserTags,
         cachedUsers,
