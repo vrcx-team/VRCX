@@ -392,7 +392,7 @@
                 inputValue: pending.join('\r\n')
             }
         )
-            .then((action) => {
+            .then(({ action }) => {
                 if (action === 'confirm') {
                     bulkUnfriendSelection();
                 }
@@ -402,8 +402,10 @@
 
     function bulkUnfriendSelection() {
         friendsListTable.data.forEach((item) => {
-            if (item.$selected)
+            if (item.$selected) {
+                console.log(`Unfriending ${item.displayName} (${item.id})`);
                 friendRequest.deleteFriend({ userId: item.id }).then((args) => handleFriendDelete(args));
+            }
         });
     }
 
