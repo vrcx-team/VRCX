@@ -259,35 +259,38 @@
                         sortable
                         :sort-method="sortInstanceIcon">
                         <template #default="scope">
+                            <span></span>
                             <el-tooltip v-if="scope.row.isMaster" placement="left" content="Instance Master">
                                 <span>👑</span>
                             </el-tooltip>
-                            <el-tooltip v-else-if="scope.row.isModerator" placement="left" content="Moderator">
+                            <el-tooltip v-if="scope.row.isModerator" placement="left" content="Moderator">
                                 <span>⚔️</span>
                             </el-tooltip>
-                            <el-tooltip v-else-if="scope.row.isFriend" placement="left" content="Friend">
+                            <el-tooltip v-if="scope.row.isFriend" placement="left" content="Friend">
                                 <span>💚</span>
                             </el-tooltip>
-                            <el-tooltip v-else-if="scope.row.isBlocked" placement="left" content="Blocked">
+                            <el-tooltip v-if="scope.row.isBlocked" placement="left" content="Blocked">
                                 <el-icon style="color: red"><CircleClose /></el-icon>
                             </el-tooltip>
-                            <el-tooltip v-else-if="scope.row.isMuted" placement="left" content="Muted">
+                            <el-tooltip v-if="scope.row.isMuted" placement="left" content="Muted">
                                 <el-icon style="color: orange"><Mute /></el-icon>
                             </el-tooltip>
                             <el-tooltip
-                                v-else-if="scope.row.isAvatarInteractionDisabled"
+                                v-if="scope.row.isAvatarInteractionDisabled"
                                 placement="left"
                                 content="Avatar Interaction Disabled
                                     ">
                                 <el-icon style="color: orange"><Pointer /></el-icon>
                             </el-tooltip>
-                            <el-tooltip v-else-if="scope.row.isChatBoxMuted" placement="left" content="Chatbox Muted">
+                            <el-tooltip v-if="scope.row.isChatBoxMuted" placement="left" content="Chatbox Muted">
                                 <el-icon style="color: orange"><ChatLineRound /></el-icon>
                             </el-tooltip>
-                            <el-tooltip v-else-if="scope.row.timeoutTime" placement="left" content="Timeout">
+                            <el-tooltip v-if="scope.row.timeoutTime" placement="left" content="Timeout">
                                 <span style="color: red">🔴{{ scope.row.timeoutTime }}s</span>
                             </el-tooltip>
-                            <span v-else></span>
+                            <el-tooltip v-if="scope.row.ageVerified" placement="left" content="18+ Verified">
+                                <i class="ri-id-card-line"></i>
+                            </el-tooltip>
                         </template>
                     </el-table-column>
                     <el-table-column :label="t('table.playerList.platform')" prop="inVRMode" width="90">
