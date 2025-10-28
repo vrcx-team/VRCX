@@ -262,7 +262,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         });
         worldStore.cachedWorlds.forEach((ref, id) => {
             if (
-                !favoriteStore.cachedFavoritesByObjectId.has(id) &&
+                !favoriteStore.cachedFavoritesByObjectId(id) &&
                 ref.authorId !== userStore.currentUser.id &&
                 !favoriteStore.localWorldFavoritesList.includes(id)
             ) {
@@ -271,7 +271,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         });
         avatarStore.cachedAvatars.forEach((ref, id) => {
             if (
-                !favoriteStore.cachedFavoritesByObjectId.has(id) &&
+                !favoriteStore.cachedFavoritesByObjectId(id) &&
                 ref.authorId !== userStore.currentUser.id &&
                 !favoriteStore.localAvatarFavoritesList.includes(id) &&
                 !avatarStore.avatarHistory.has(id)

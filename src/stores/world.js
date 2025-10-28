@@ -142,7 +142,7 @@ export const useWorldStore = defineStore('World', () => {
                 if (D.id === args.ref.id) {
                     D.loading = false;
                     D.ref = args.ref;
-                    D.isFavorite = favoriteStore.cachedFavoritesByObjectId.has(
+                    D.isFavorite = favoriteStore.cachedFavoritesByObjectId(
                         D.id
                     );
                     if (!D.isFavorite) {
