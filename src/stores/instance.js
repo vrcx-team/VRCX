@@ -1082,6 +1082,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             let isMuted = false;
             let isAvatarInteractionDisabled = false;
             let isChatBoxMuted = false;
+            let ageVerified = false;
             photonStore.photonLobbyCurrent.forEach((ref1, id) => {
                 if (typeof ref1 !== 'undefined') {
                     if (
@@ -1143,6 +1144,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 isAvatarInteractionDisabled =
                     ref.$moderations.isAvatarInteractionDisabled;
                 isChatBoxMuted = ref.$moderations.isChatBoxMuted;
+                ageVerified = ref.ageVerificationStatus === '18+';
             }
             users.push({
                 ref,
@@ -1155,7 +1157,12 @@ export const useInstanceStore = defineStore('Instance', () => {
                 inVRMode,
                 groupOnNameplate,
                 isFriend,
-                timeoutTime
+                timeoutTime,
+                isBlocked,
+                isMuted,
+                isAvatarInteractionDisabled,
+                isChatBoxMuted,
+                ageVerified
             });
             // get block, mute
         };
