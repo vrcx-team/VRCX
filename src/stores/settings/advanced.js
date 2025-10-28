@@ -549,7 +549,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
      * @param {string} videoId
      */
     async function lookupYouTubeVideo(videoId) {
-        if (!youTubeApi.value) {
+        if (!youTubeApiKey.value) {
             console.warn('no Youtube API key configured');
             return null;
         }

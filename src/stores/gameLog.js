@@ -1399,11 +1399,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 confirmButtonText: 'Confirm',
                 cancelButtonText: 'Cancel',
                 type: 'info'
-            }).then(({ action }) => {
-                if (action === 'confirm') {
-                    advancedSettingsStore.setGameLogDisabled();
-                }
-            });
+            })
+                .then(({ action }) => {
+                    if (action === 'confirm') {
+                        advancedSettingsStore.setGameLogDisabled();
+                    }
+                })
+                .catch(() => {});
         } else {
             advancedSettingsStore.setGameLogDisabled();
         }

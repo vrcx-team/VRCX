@@ -288,6 +288,7 @@ export function $throw(code, error, endpoint) {
     let ignoreError = false;
     if (
         (code === 404 || code === -1) &&
+        typeof endpoint === 'string' &&
         endpoint.split('/').length === 2 &&
         (endpoint.startsWith('users/') ||
             endpoint.startsWith('worlds/') ||
@@ -299,11 +300,11 @@ export function $throw(code, error, endpoint) {
     }
     if (
         (code === 403 || code === 404 || code === -1) &&
-        endpoint.startsWith('instances/')
+        endpoint?.startsWith('instances/')
     ) {
         ignoreError = true;
     }
-    if (endpoint.startsWith('analysis/')) {
+    if (endpoint?.startsWith('analysis/')) {
         ignoreError = true;
     }
     if (text.length && !ignoreError) {
