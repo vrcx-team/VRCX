@@ -12,7 +12,7 @@
                     </span>
                     <span v-else class="extra">{{ props.favorite.ref.authorName }}</span>
                 </div>
-                <div class="editing">
+                <div v-if="editFavoritesMode">
                     <FavoritesMoveDropdown
                         :favoriteGroup="favoriteWorldGroups"
                         :currentFavorite="props.favorite"
@@ -22,7 +22,7 @@
                         <el-checkbox v-model="isSelected"></el-checkbox>
                     </el-button>
                 </div>
-                <div class="default">
+                <template v-else>
                     <el-tooltip
                         v-if="favorite.deleted"
                         placement="left"
@@ -69,7 +69,7 @@
                             type="default"
                             @click.stop="showFavoriteDialog('world', favorite.id)"></el-button>
                     </el-tooltip>
-                </div>
+                </template>
             </template>
             <template v-else>
                 <div class="avatar"></div>
@@ -112,7 +112,7 @@
     });
 
     const emit = defineEmits(['handle-select', 'remove-local-world-favorite', 'click']);
-    const { favoriteWorldGroups } = storeToRefs(useFavoriteStore());
+    const { favoriteWorldGroups, editFavoritesMode } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
     const { newInstanceSelfInvite } = useInviteStore();
     const { shiftHeld } = storeToRefs(useUiStore());

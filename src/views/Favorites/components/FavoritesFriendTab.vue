@@ -46,11 +46,7 @@
                             @click.stop="clearFavoriteGroup(group)"></el-button>
                     </el-tooltip>
                 </template>
-                <div
-                    v-if="group.count"
-                    class="x-friend-list"
-                    :class="{ 'is-editing': editFavoritesMode }"
-                    style="margin-top: 10px">
+                <div v-if="group.count" class="x-friend-list" style="margin-top: 10px">
                     <FavoritesFriendItem
                         v-for="favorite in groupedByGroupKeyFavoriteFriends[group.key]"
                         :key="favorite.id"
@@ -89,13 +85,6 @@
 
     import FavoritesFriendItem from './FavoritesFriendItem.vue';
     import FriendExportDialog from '../dialogs/FriendExportDialog.vue';
-
-    defineProps({
-        editFavoritesMode: {
-            type: Boolean,
-            default: false
-        }
-    });
 
     const emit = defineEmits(['change-favorite-group-name']);
 
@@ -142,15 +131,3 @@
         emit('change-favorite-group-name', group);
     }
 </script>
-
-<style scoped>
-    .x-friend-list :deep(.editing) {
-        display: none;
-    }
-    .x-friend-list.is-editing :deep(.editing) {
-        display: block;
-    }
-    .x-friend-list.is-editing :deep(.default) {
-        display: none;
-    }
-</style>

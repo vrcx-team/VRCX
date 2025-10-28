@@ -29,19 +29,13 @@
         </div>
         <el-tabs v-model="currentFavoriteTab" v-loading="isFavoriteLoading" type="card" style="height: 100%">
             <el-tab-pane name="friend" :label="t('view.favorite.friends.header')">
-                <FavoritesFriendTab
-                    :edit-favorites-mode="editFavoritesMode"
-                    @change-favorite-group-name="changeFavoriteGroupName" />
+                <FavoritesFriendTab @change-favorite-group-name="changeFavoriteGroupName" />
             </el-tab-pane>
             <el-tab-pane name="world" :label="t('view.favorite.worlds.header')" lazy>
-                <FavoritesWorldTab
-                    :edit-favorites-mode="editFavoritesMode"
-                    @change-favorite-group-name="changeFavoriteGroupName" />
+                <FavoritesWorldTab @change-favorite-group-name="changeFavoriteGroupName" />
             </el-tab-pane>
             <el-tab-pane name="avatar" :label="t('view.favorite.avatars.header')" lazy>
-                <FavoritesAvatarTab
-                    :edit-favorites-mode="editFavoritesMode"
-                    @change-favorite-group-name="changeFavoriteGroupName" />
+                <FavoritesAvatarTab @change-favorite-group-name="changeFavoriteGroupName" />
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -50,7 +44,6 @@
 <script setup>
     import { ElMessage, ElMessageBox } from 'element-plus';
     import { Refresh } from '@element-plus/icons-vue';
-    import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -70,7 +63,8 @@
         avatarImportDialogInput,
         worldImportDialogInput,
         friendImportDialogInput,
-        currentFavoriteTab
+        currentFavoriteTab,
+        editFavoritesMode
     } = storeToRefs(useFavoriteStore());
     const {
         refreshFavorites,
@@ -82,8 +76,6 @@
         showWorldImportDialog,
         showAvatarImportDialog
     } = useFavoriteStore();
-
-    const editFavoritesMode = ref(false);
 
     function showBulkUnfavoriteSelectionConfirm() {
         const elementsTicked = [];

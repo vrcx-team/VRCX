@@ -12,14 +12,13 @@
                     </span>
                     <span v-else class="extra">{{ props.favorite.authorName }}</span>
                 </div>
-                <div class="editing">
-                    <FavoritesMoveDropdown
-                        :favoriteGroup="favoriteWorldGroups"
-                        :currentFavorite="props.favorite"
-                        isLocalFavorite
-                        type="world" />
-                </div>
-                <div class="default">
+                <FavoritesMoveDropdown
+                    v-if="editFavoritesMode"
+                    :favoriteGroup="favoriteWorldGroups"
+                    :currentFavorite="props.favorite"
+                    isLocalFavorite
+                    type="world" />
+                <template v-else>
                     <el-tooltip placement="left">
                         <template #content>
                             {{
@@ -35,24 +34,24 @@
                             @click.stop="newInstanceSelfInvite(favorite.id)"
                             circle></el-button>
                     </el-tooltip>
-                </div>
-                <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')" :teleported="false">
-                    <el-button
-                        v-if="shiftHeld"
-                        size="small"
-                        :icon="Close"
-                        circle
-                        style="color: #f56c6c; margin-left: 5px"
-                        @click.stop="$emit('remove-local-world-favorite', favorite.id, group)"></el-button>
-                    <el-button
-                        v-else
-                        :icon="Star"
-                        size="small"
-                        circle
-                        style="margin-left: 5px"
-                        type="default"
-                        @click.stop="showFavoriteDialog('world', favorite.id)"></el-button>
-                </el-tooltip>
+                    <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')" :teleported="false">
+                        <el-button
+                            v-if="shiftHeld"
+                            size="small"
+                            :icon="Close"
+                            circle
+                            style="color: #f56c6c; margin-left: 5px"
+                            @click.stop="$emit('remove-local-world-favorite', favorite.id, group)"></el-button>
+                        <el-button
+                            v-else
+                            :icon="Star"
+                            size="small"
+                            circle
+                            style="margin-left: 5px"
+                            type="default"
+                            @click.stop="showFavoriteDialog('world', favorite.id)"></el-button>
+                    </el-tooltip>
+                </template>
             </template>
             <template v-else>
                 <div class="avatar"></div>
@@ -86,7 +85,7 @@
     });
 
     const emit = defineEmits(['handle-select', 'remove-local-world-favorite', 'click']);
-    const { favoriteWorldGroups } = storeToRefs(useFavoriteStore());
+    const { favoriteWorldGroups, editFavoritesMode } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
     const { newInstanceSelfInvite } = useInviteStore();
     const { shiftHeld } = storeToRefs(useUiStore());

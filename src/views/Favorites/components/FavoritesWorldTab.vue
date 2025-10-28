@@ -111,11 +111,7 @@
                         </el-tooltip>
                     </div>
                 </template>
-                <div
-                    v-if="group.count"
-                    class="x-friend-list"
-                    :class="{ 'is-editing': editFavoritesMode }"
-                    style="margin-top: 10px">
+                <div v-if="group.count" class="x-friend-list" style="margin-top: 10px">
                     <el-scrollbar height="700px" @end-reached="worldFavoritesLoadMore">
                         <FavoritesWorldItem
                             v-for="favorite in sliceWorldFavorites(group.key)"
@@ -180,11 +176,7 @@
                             @click.stop="promptLocalWorldFavoriteGroupDelete(group)" />
                     </el-tooltip>
                 </template>
-                <div
-                    v-if="localWorldFavorites[group].length"
-                    class="x-friend-list"
-                    :class="{ 'is-editing': editFavoritesMode }"
-                    style="margin-top: 10px">
+                <div v-if="localWorldFavorites[group].length" class="x-friend-list" style="margin-top: 10px">
                     <el-scrollbar height="700px" @end-reached="localWorldFavoritesLoadMore">
                         <FavoritesWorldLocalItem
                             v-for="favorite in sliceLocalWorldFavorites(group)"
@@ -228,13 +220,6 @@
     import WorldExportDialog from '../dialogs/WorldExportDialog.vue';
 
     import * as workerTimers from 'worker-timers';
-
-    defineProps({
-        editFavoritesMode: {
-            type: Boolean,
-            default: false
-        }
-    });
 
     const emit = defineEmits([
         'change-favorite-group-name',
@@ -549,15 +534,3 @@
         cancelLocalWorldRefresh();
     });
 </script>
-
-<style scoped>
-    .x-friend-list :deep(.editing) {
-        display: none;
-    }
-    .x-friend-list.is-editing :deep(.editing) {
-        display: block;
-    }
-    .x-friend-list.is-editing :deep(.default) {
-        display: none;
-    }
-</style>

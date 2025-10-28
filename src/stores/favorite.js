@@ -122,6 +122,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     const localAvatarFavorites = ref({});
 
+    const editFavoritesMode = ref(false);
+
     const favoriteDialog = ref({
         visible: false,
         loading: false,
@@ -1583,6 +1585,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         currentFavoriteTab,
         localWorldFavGroupLength,
         localAvatarFavGroupLength,
+        editFavoritesMode,
 
         initFavorites,
         applyFavorite,
