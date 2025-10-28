@@ -35,11 +35,15 @@
 
         <div class="nav-menu-container-bottom">
             <el-tooltip v-if="branch === 'Nightly'" :content="'Feedback'" placement="right"
-                ><div class="direct-access" id="feedback" @click="!sentryErrorReporting && setSentryErrorReporting()">
+                ><div class="bottom-button" id="feedback" @click="!sentryErrorReporting && setSentryErrorReporting()">
                     <i class="ri-feedback-line"></i></div
             ></el-tooltip>
             <el-tooltip :content="t('prompt.direct_access_omni.header')" placement="right"
-                ><div class="direct-access" @click="directAccessPaste"><i class="ri-compass-3-line"></i></div
+                ><div class="bottom-button" @click="directAccessPaste"><i class="ri-compass-3-line"></i></div
+            ></el-tooltip>
+            <el-tooltip :content="t('nav_tooltip.settings')" placement="right"
+                ><div class="bottom-button" @click="route.push({ name: 'settings' })">
+                    <i class="ri-settings-3-line"></i></div
             ></el-tooltip>
         </div>
     </div>
@@ -49,12 +53,14 @@
     import { onMounted } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+    import { useRouter } from 'vue-router';
 
     import { useAdvancedSettingsStore, useSearchStore, useUiStore, useVRCXUpdaterStore } from '../stores';
 
     import * as Sentry from '@sentry/vue';
 
     const { t } = useI18n();
+    const route = useRouter();
 
     const navItems = [
         { index: 'feed', icon: 'ri-rss-line', tooltip: 'nav_tooltip.feed' },
@@ -67,8 +73,7 @@
         { index: 'notification', icon: 'ri-notification-2-line', tooltip: 'nav_tooltip.notification' },
         { index: 'friendList', icon: 'ri-contacts-book-3-line', tooltip: 'nav_tooltip.friend_list' },
         { index: 'charts', icon: 'ri-bar-chart-line', tooltip: 'nav_tooltip.charts' },
-        { index: 'tools', icon: 'ri-tools-line', tooltip: 'nav_tooltip.tools' },
-        { index: 'settings', icon: 'ri-settings-3-line', tooltip: 'nav_tooltip.settings' }
+        { index: 'tools', icon: 'ri-tools-line', tooltip: 'nav_tooltip.tools' }
     ];
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
@@ -110,7 +115,7 @@
             text-align: center;
             vertical-align: middle;
         }
-        .direct-access {
+        .bottom-button {
             font-size: 19px;
             width: 64px;
             height: 56px;
@@ -120,7 +125,7 @@
             text-align: center;
             vertical-align: middle;
         }
-        .direct-access:hover {
+        .bottom-button:hover {
             background-color: var(--el-menu-hover-bg-color);
             cursor: pointer;
             transition:
