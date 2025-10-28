@@ -117,13 +117,13 @@
                     :class="{ 'is-editing': editFavoritesMode }"
                     style="margin-top: 10px">
                     <el-scrollbar height="700px" @end-reached="worldFavoritesLoadMore">
-                        <!-- <FavoritesWorldItem
+                        <FavoritesWorldItem
                             v-for="favorite in sliceWorldFavorites(group.key)"
                             :key="favorite.id"
                             :group="group"
                             :favorite="favorite"
                             @click="showWorldDialog(favorite.id)"
-                            @handle-select="favorite.$selected = $event" /> -->
+                            @handle-select="favorite.$selected = $event" />
                     </el-scrollbar>
                 </div>
                 <div
