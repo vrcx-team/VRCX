@@ -38,7 +38,7 @@
                     <el-tooltip placement="left">
                         <template #content>
                             {{
-                                canOpenInstanceInGame()
+                                canOpenInstanceInGame
                                     ? t('dialog.world.actions.new_instance_and_open_ingame')
                                     : t('dialog.world.actions.new_instance_and_self_invite')
                             }}
