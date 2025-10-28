@@ -1,4 +1,4 @@
-import { nextTick, ref, watch } from 'vue';
+import { nextTick, reactive, ref, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 
@@ -59,7 +59,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         cachePath: '',
         fileAnalysis: []
     });
-    const avatarHistory = ref(new Set());
+    const avatarHistory = reactive(new Set());
     const avatarHistoryArray = ref([]);
 
     watch(
@@ -69,7 +69,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             cachedAvatars.clear();
             cachedAvatarNames.clear();
             cachedAvatarModerations.clear();
-            avatarHistory.value.clear();
+            avatarHistory.clear();
             avatarHistoryArray.value = [];
             if (isLoggedIn) {
                 getAvatarHistory();
@@ -339,7 +339,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
      * @returns {Promise<void>}
      */
     async function getAvatarHistory() {
-        avatarHistory.value = new Set();
+        avatarHistory.clear();
         const historyArray = await database.getAvatarHistory(
             userStore.currentUser.id
         );
@@ -349,7 +349,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 continue;
             }
             applyAvatar(avatar);
-            avatarHistory.value.add(avatar.id);
+            avatarHistory.add(avatar.id);
         }
         avatarHistoryArray.value = historyArray;
     }
@@ -378,8 +378,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 }
 
                 avatarHistoryArray.value.unshift(ref);
-                avatarHistory.value.delete(ref.id);
-                avatarHistory.value.add(ref.id);
+                avatarHistory.delete(ref.id);
+                avatarHistory.add(ref.id);
             })
             .catch((err) => {
                 console.error('Failed to add avatar to history:', err);
@@ -387,7 +387,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     function clearAvatarHistory() {
-        avatarHistory.value = new Set();
+        avatarHistory.clear();
         avatarHistoryArray.value = [];
         database.clearAvatarHistory();
     }

@@ -261,7 +261,7 @@ export const useUserStore = defineStore('User', () => {
         dateFriendedInfo: []
     });
 
-    const currentTravelers = ref(new Map());
+    const currentTravelers = reactive(new Map());
     const subsetOfLanguages = ref([]);
     const languageDialog = ref({
         visible: false,
@@ -284,8 +284,8 @@ export const useUserStore = defineStore('User', () => {
             }
         }
     });
-    const showUserDialogHistory = ref(new Set());
-    const customUserTags = ref(new Map());
+    const showUserDialogHistory = reactive(new Set());
+    const customUserTags = reactive(new Map());
 
     const state = reactive({
         instancePlayerCount: new Map(),
@@ -304,10 +304,10 @@ export const useUserStore = defineStore('User', () => {
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
             if (!isLoggedIn) {
-                currentTravelers.value.clear();
-                showUserDialogHistory.value.clear();
+                currentTravelers.clear();
+                showUserDialogHistory.clear();
                 state.instancePlayerCount.clear();
-                customUserTags.value.clear();
+                customUserTags.clear();
                 state.notes.clear();
                 pastDisplayNameTable.value.data = [];
                 subsetOfLanguages.value = [];
@@ -511,7 +511,7 @@ export const useUserStore = defineStore('User', () => {
                 newCount++;
                 state.instancePlayerCount.set(ref.location, newCount);
             }
-            const tag = customUserTags.value.get(json.id);
+            const tag = customUserTags.get(json.id);
             if (tag) {
                 ref.$customTag = tag.tag;
                 ref.$customTagColour = tag.colour;
@@ -582,23 +582,20 @@ export const useUserStore = defineStore('User', () => {
         // traveling
         if (ref.location === 'traveling') {
             ref.$location = parseLocation(ref.travelingToLocation);
-            if (
-                !currentTravelers.value.has(ref.id) &&
-                ref.travelingToLocation
-            ) {
+            if (!currentTravelers.has(ref.id) && ref.travelingToLocation) {
                 const travelRef = reactive({
                     created_at: new Date().toJSON(),
                     ...ref
                 });
-                currentTravelers.value.set(ref.id, travelRef);
+                currentTravelers.set(ref.id, travelRef);
                 sharedFeedStore.sharedFeed.pendingUpdate = true;
                 sharedFeedStore.updateSharedFeed(false);
                 onPlayerTraveling(travelRef);
             }
         } else {
             ref.$location = parseLocation(ref.location);
-            if (currentTravelers.value.has(ref.id)) {
-                currentTravelers.value.delete(ref.id);
+            if (currentTravelers.has(ref.id)) {
+                currentTravelers.delete(ref.id);
                 sharedFeedStore.sharedFeed.pendingUpdate = true;
                 sharedFeedStore.updateSharedFeed(false);
             }
@@ -946,8 +943,8 @@ export const useUserStore = defineStore('User', () => {
                     });
                 }
             });
-        showUserDialogHistory.value.delete(userId);
-        showUserDialogHistory.value.add(userId);
+        showUserDialogHistory.delete(userId);
+        showUserDialogHistory.add(userId);
         searchStore.quickSearchItems = searchStore.quickSearchUserHistory();
     }
 
@@ -1576,12 +1573,12 @@ export const useUserStore = defineStore('User', () => {
 
     function addCustomTag(data) {
         if (data.Tag) {
-            customUserTags.value.set(data.UserId, {
+            customUserTags.set(data.UserId, {
                 tag: data.Tag,
                 colour: data.TagColour
             });
         } else {
-            customUserTags.value.delete(data.UserId);
+            customUserTags.delete(data.UserId);
         }
         const feedUpdate = {
             userId: data.UserId,

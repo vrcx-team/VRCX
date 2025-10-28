@@ -1,4 +1,4 @@
-import { nextTick, ref, watch } from 'vue';
+import { nextTick, reactive, ref, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 
@@ -63,7 +63,7 @@ export const useGroupStore = defineStore('Group', () => {
         galleries: {}
     });
 
-    const currentUserGroups = ref(new Map());
+    const currentUserGroups = reactive(new Map());
 
     const inviteGroupDialog = ref({
         visible: false,
@@ -111,7 +111,7 @@ export const useGroupStore = defineStore('Group', () => {
             groupMemberModeration.value.visible = false;
             currentUserGroupsInit.value = false;
             cachedGroups.clear();
-            currentUserGroups.value.clear();
+            currentUserGroups.clear();
             if (isLoggedIn) {
                 initUserGroups();
             }
@@ -235,7 +235,7 @@ export const useGroupStore = defineStore('Group', () => {
             return;
         }
         const groups = [];
-        for (const ref of currentUserGroups.value.values()) {
+        for (const ref of currentUserGroups.values()) {
             groups.push({
                 id: ref.id,
                 name: ref.name,
@@ -308,11 +308,11 @@ export const useGroupStore = defineStore('Group', () => {
 
         // update group list
         for (const groupId of groups) {
-            if (!currentUserGroups.value.has(groupId)) {
+            if (!currentUserGroups.has(groupId)) {
                 onGroupJoined(groupId);
             }
         }
-        for (const groupId of currentUserGroups.value.keys()) {
+        for (const groupId of currentUserGroups.keys()) {
             if (!groups.includes(groupId)) {
                 onGroupLeft(groupId);
             }
@@ -324,8 +324,8 @@ export const useGroupStore = defineStore('Group', () => {
      * @param {string} groupId
      */
     function onGroupJoined(groupId) {
-        if (!currentUserGroups.value.has(groupId)) {
-            currentUserGroups.value.set(groupId, {
+        if (!currentUserGroups.has(groupId)) {
+            currentUserGroups.set(groupId, {
                 id: groupId,
                 name: '',
                 iconUrl: ''
@@ -348,8 +348,8 @@ export const useGroupStore = defineStore('Group', () => {
         if (groupDialog.value.visible && groupDialog.value.id === groupId) {
             showGroupDialog(groupId);
         }
-        if (currentUserGroups.value.has(groupId)) {
-            currentUserGroups.value.delete(groupId);
+        if (currentUserGroups.has(groupId)) {
+            currentUserGroups.delete(groupId);
             groupRequest.getCachedGroup({ groupId }).then((args) => {
                 groupChange(args.ref, 'Left group');
             });
@@ -633,7 +633,7 @@ export const useGroupStore = defineStore('Group', () => {
             };
             cachedGroups.set(ref.id, ref);
         } else {
-            if (currentUserGroups.value.has(ref.id)) {
+            if (currentUserGroups.has(ref.id)) {
                 // compare group props
                 if (
                     ref.ownerId &&
@@ -695,9 +695,9 @@ export const useGroupStore = defineStore('Group', () => {
         ref.$url = `https://vrc.group/${ref.shortCode}.${ref.discriminator}`;
         applyGroupLanguage(ref);
 
-        const currentUserGroupRef = currentUserGroups.value.get(ref.id);
+        const currentUserGroupRef = currentUserGroups.get(ref.id);
         if (currentUserGroupRef) {
-            currentUserGroups.value.set(ref.id, ref);
+            currentUserGroups.set(ref.id, ref);
         }
 
         const D = groupDialog.value;
@@ -928,7 +928,7 @@ export const useGroupStore = defineStore('Group', () => {
             )
         );
         cachedGroups.clear();
-        currentUserGroups.value.clear();
+        currentUserGroups.clear();
         for (const group of savedGroups) {
             const json = {
                 id: group.id,
@@ -941,7 +941,7 @@ export const useGroupStore = defineStore('Group', () => {
                 }
             };
             const ref = applyGroup(json);
-            currentUserGroups.value.set(group.id, ref);
+            currentUserGroups.set(group.id, ref);
         }
 
         if (groups) {
@@ -962,7 +962,7 @@ export const useGroupStore = defineStore('Group', () => {
                         includeRoles: true
                     });
                     const ref = applyGroup(args.json);
-                    currentUserGroups.value.set(groupId, ref);
+                    currentUserGroups.set(groupId, ref);
                 } catch (err) {
                     console.error(err);
                 }
@@ -980,11 +980,11 @@ export const useGroupStore = defineStore('Group', () => {
             userId: userStore.currentUser.id
         });
         handleGroupList(args);
-        currentUserGroups.value.clear();
+        currentUserGroups.clear();
         for (const group of args.json) {
             const ref = applyGroup(group);
-            if (!currentUserGroups.value.has(group.id)) {
-                currentUserGroups.value.set(group.id, ref);
+            if (!currentUserGroups.has(group.id)) {
+                currentUserGroups.set(group.id, ref);
             }
         }
         const args1 = await groupRequest.getGroupPermissions({
