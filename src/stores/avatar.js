@@ -190,7 +190,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         D.galleryImages = [];
         D.galleryLoading = true;
         D.isFavorite =
-            favoriteStore.cachedFavoritesByObjectId.has(avatarId) ||
+            favoriteStore.cachedFavoritesByObjectId(avatarId) ||
             (userStore.isLocalUserVrcPlusSupporter &&
                 favoriteStore.localAvatarFavoritesList.includes(avatarId));
         D.isBlocked = cachedAvatarModerations.has(avatarId);

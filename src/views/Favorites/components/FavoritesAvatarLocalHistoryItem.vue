@@ -17,7 +17,7 @@
                     style="margin-left: 5px"
                     @click.stop="selectAvatarWithConfirmation(favorite.id)"></el-button>
             </el-tooltip>
-            <template v-if="cachedFavoritesByObjectId.has(favorite.id)">
+            <template v-if="cachedFavoritesByObjectId(favorite.id)">
                 <el-tooltip placement="right" content="Favorite" :teleported="false">
                     <el-button
                         type="default"
@@ -53,8 +53,7 @@
 
     const { t } = useI18n();
 
-    const { cachedFavoritesByObjectId } = storeToRefs(useFavoriteStore());
-    const { showFavoriteDialog } = useFavoriteStore();
+    const { showFavoriteDialog, cachedFavoritesByObjectId } = useFavoriteStore();
     const { selectAvatarWithConfirmation } = useAvatarStore();
     const { currentUser } = storeToRefs(useUserStore());
 
