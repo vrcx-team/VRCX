@@ -19,27 +19,11 @@
                     <span v-else v-text="favorite.ref.statusDescription"></span>
                 </div>
                 <div class="editing">
-                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px" :persistent="false">
-                        <div>
-                            <el-button type="default" :icon="Back" size="small" circle></el-button>
-                        </div>
-                        <template #dropdown>
-                            <span style="font-weight: bold; display: block; text-align: center">
-                                {{ t('view.favorite.move_tooltip') }}
-                            </span>
-                            <el-dropdown-menu>
-                                <template v-for="groupAPI in favoriteFriendGroups" :key="groupAPI.name">
-                                    <el-dropdown-item
-                                        v-if="groupAPI.name !== group.name"
-                                        style="display: block; margin: 10px 0"
-                                        :disabled="groupAPI.count >= groupAPI.capacity"
-                                        @click="moveFavorite(favorite.ref, groupAPI, 'friend')">
-                                        {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
-                                    </el-dropdown-item>
-                                </template>
-                            </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
+                    <FavoritesMoveDropdown
+                        :favoriteGroup="favoriteFriendGroups"
+                        :currentGroup="group"
+                        :currentFavorite="favorite"
+                        type="friend" />
                     <el-button type="text" size="small" style="margin-left: 5px" @click.stop>
                         <el-checkbox v-model="favorite.$selected"></el-checkbox>
                     </el-button>
@@ -81,13 +65,15 @@
 </template>
 
 <script setup>
-    import { Back, Close, Star } from '@element-plus/icons-vue';
+    import { Close, Star } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { useFavoriteStore, useUiStore } from '../../../stores';
     import { userImage, userStatusClass } from '../../../shared/utils';
     import { favoriteRequest } from '../../../api';
+
+    import FavoritesMoveDropdown from './FavoritesMoveDropdown.vue';
 
     defineProps({
         favorite: { type: Object, required: true },
@@ -100,16 +86,6 @@
     const { showFavoriteDialog } = useFavoriteStore();
     const { shiftHeld } = storeToRefs(useUiStore());
     const { t } = useI18n();
-
-    function moveFavorite(ref, group, type) {
-        favoriteRequest.deleteFavorite({ objectId: ref.id }).then(() => {
-            favoriteRequest.addFavorite({
-                type,
-                favoriteId: ref.id,
-                tags: group.name
-            });
-        });
-    }
 
     function deleteFavorite(objectId) {
         favoriteRequest.deleteFavorite({ objectId });
