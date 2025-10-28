@@ -30,6 +30,7 @@
 </template>
 
 <script setup>
+    import { onBeforeMount } from 'vue';
     import { useI18n } from 'vue-i18n';
 
     import AdvancedTab from './components/Tabs/AdvancedTab.vue';
@@ -41,4 +42,12 @@
     import WristOverlayTab from './components/Tabs/WristOverlayTab.vue';
 
     const { t } = useI18n();
+
+    onBeforeMount(() => {
+        const menuItem = document.querySelector('li[role="menuitem"].is-active');
+
+        if (menuItem) {
+            menuItem.classList.remove('is-active');
+        }
+    });
 </script>
