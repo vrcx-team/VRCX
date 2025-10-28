@@ -82,11 +82,7 @@
                             @click.stop="clearFavoriteGroup(group)" />
                     </el-tooltip>
                 </template>
-                <div
-                    v-if="group.count"
-                    class="x-friend-list"
-                    :class="{ 'is-editing': editFavoritesMode }"
-                    style="margin-top: 10px">
+                <div v-if="group.count" class="x-friend-list" style="margin-top: 10px">
                     <FavoritesAvatarItem
                         v-for="favorite in groupedByGroupKeyFavoriteAvatars[group.key]"
                         :key="favorite.id"
@@ -184,11 +180,7 @@
                             @click.stop="promptLocalAvatarFavoriteGroupDelete(group)"></el-button>
                     </el-tooltip>
                 </template>
-                <div
-                    v-if="localAvatarFavorites[group].length"
-                    class="x-friend-list"
-                    :class="{ 'is-editing': editFavoritesMode }"
-                    :style="{ marginTop: '10px' }">
+                <div v-if="localAvatarFavorites[group].length" class="x-friend-list" :style="{ marginTop: '10px' }">
                     <FavoritesAvatarItem
                         v-for="favorite in localAvatarFavorites[group]"
                         :key="favorite.id"
@@ -232,13 +224,6 @@
     import FavoritesAvatarLocalHistoryItem from './FavoritesAvatarLocalHistoryItem.vue';
 
     import * as workerTimers from 'worker-timers';
-
-    defineProps({
-        editFavoritesMode: {
-            type: Boolean,
-            default: false
-        }
-    });
 
     const emit = defineEmits(['change-favorite-group-name', 'refresh-local-avatar-favorites']);
 
@@ -488,15 +473,3 @@
         cancelLocalAvatarRefresh();
     });
 </script>
-
-<style scoped>
-    .x-friend-list :deep(.editing) {
-        display: none;
-    }
-    .x-friend-list.is-editing :deep(.editing) {
-        display: block;
-    }
-    .x-friend-list.is-editing :deep(.default) {
-        display: none;
-    }
-</style>

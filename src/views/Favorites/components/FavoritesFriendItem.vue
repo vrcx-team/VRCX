@@ -18,7 +18,7 @@
                         :link="false" />
                     <span v-else v-text="favorite.ref.statusDescription"></span>
                 </div>
-                <div class="editing">
+                <div v-if="editFavoritesMode">
                     <FavoritesMoveDropdown
                         :favoriteGroup="favoriteFriendGroups"
                         :currentGroup="group"
@@ -28,7 +28,8 @@
                         <el-checkbox v-model="favorite.$selected"></el-checkbox>
                     </el-button>
                 </div>
-                <div class="default">
+
+                <template v-else>
                     <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')" :teleported="false">
                         <el-button
                             v-if="shiftHeld"
@@ -46,7 +47,7 @@
                             style="margin-left: 5px"
                             @click.stop="showFavoriteDialog('friend', favorite.id)"></el-button>
                     </el-tooltip>
-                </div>
+                </template>
             </template>
             <template v-else>
                 <div class="avatar"></div>
@@ -82,7 +83,7 @@
 
     defineEmits(['click']);
 
-    const { favoriteFriendGroups } = storeToRefs(useFavoriteStore());
+    const { favoriteFriendGroups, editFavoritesMode } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
     const { shiftHeld } = storeToRefs(useUiStore());
     const { t } = useI18n();
