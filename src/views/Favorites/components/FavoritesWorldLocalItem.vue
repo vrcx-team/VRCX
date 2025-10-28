@@ -13,26 +13,11 @@
                     <span v-else class="extra">{{ props.favorite.authorName }}</span>
                 </div>
                 <div class="editing">
-                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px" :persistent="false">
-                        <div>
-                            <el-button type="default" :icon="Back" size="small" circle></el-button>
-                        </div>
-                        <template #dropdown>
-                            <span style="font-weight: bold; display: block; text-align: center">
-                                {{ t(tooltipContent) }}
-                            </span>
-                            <el-dropdown-menu>
-                                <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
-                                    <el-dropdown-item
-                                        style="display: block; margin: 10px 0"
-                                        :disabled="groupAPI.count >= groupAPI.capacity"
-                                        @click="handleDropdownItemClick(groupAPI)">
-                                        {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
-                                    </el-dropdown-item>
-                                </template>
-                            </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
+                    <FavoritesMoveDropdown
+                        :favoriteGroup="favoriteWorldGroups"
+                        :currentFavorite="props.favorite"
+                        isLocalFavorite
+                        type="world" />
                 </div>
                 <div class="default">
                     <el-tooltip placement="left">
@@ -86,14 +71,14 @@
 </template>
 
 <script setup>
-    import { Back, Close, Message, Star } from '@element-plus/icons-vue';
-    import { ElMessage } from 'element-plus';
+    import { Close, Message, Star } from '@element-plus/icons-vue';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { useFavoriteStore, useInviteStore, useUiStore } from '../../../stores';
-    import { favoriteRequest } from '../../../api';
+
+    import FavoritesMoveDropdown from './FavoritesMoveDropdown.vue';
 
     const props = defineProps({
         group: [Object, String],
@@ -108,34 +93,13 @@
     const { t } = useI18n();
     const { canOpenInstanceInGame } = useInviteStore();
 
-    const tooltipContent = computed(() => t('view.favorite.copy_tooltip'));
-
     const smallThumbnail = computed(() => {
         const url = props.favorite.thumbnailImageUrl?.replace('256', '128');
         return url || props.favorite.thumbnailImageUrl;
     });
 
-    function handleDropdownItemClick(groupAPI) {
-        addFavoriteWorld(props.favorite, groupAPI, true);
-    }
-
     function handleDeleteFavorite() {
         emit('remove-local-world-favorite', props.favorite.id, props.group);
-    }
-
-    function addFavoriteWorld(refObj, group, message) {
-        return favoriteRequest
-            .addFavorite({
-                type: 'world',
-                favoriteId: refObj.id,
-                tags: group.name
-            })
-            .then((args) => {
-                if (message) {
-                    ElMessage({ message: 'World added to favorites', type: 'success' });
-                }
-                return args;
-            });
     }
 </script>
 

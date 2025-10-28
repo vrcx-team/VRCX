@@ -10,27 +10,11 @@
                     <span class="extra" v-text="localFavFakeRef.authorName"></span>
                 </div>
                 <div class="editing">
-                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px" :persistent="false">
-                        <div>
-                            <el-button type="default" :icon="Back" size="small" circle></el-button>
-                        </div>
-                        <template #dropdown>
-                            <span style="font-weight: bold; display: block; text-align: center">
-                                {{ t(tooltipContent) }}
-                            </span>
-                            <el-dropdown-menu>
-                                <template v-for="groupAPI in favoriteAvatarGroups" :key="groupAPI.name">
-                                    <el-dropdown-item
-                                        v-if="isLocalFavorite || groupAPI.name !== group.name"
-                                        style="display: block; margin: 10px 0"
-                                        :disabled="groupAPI.count >= groupAPI.capacity"
-                                        @click="handleDropdownItemClick(groupAPI)">
-                                        {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
-                                    </el-dropdown-item>
-                                </template>
-                            </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
+                    <FavoritesMoveDropdown
+                        :favoriteGroup="favoriteAvatarGroups"
+                        :currentFavorite="props.favorite"
+                        :currentGroup="group"
+                        type="avatar" />
                     <el-button v-if="!isLocalFavorite" type="text" size="small" style="margin-left: 5px" @click.stop>
                         <el-checkbox v-model="isSelected"></el-checkbox>
                     </el-button>
@@ -147,14 +131,15 @@
 </template>
 
 <script setup>
-    import { Back, Check, Close, Star, Warning } from '@element-plus/icons-vue';
-    import { ElMessage } from 'element-plus';
+    import { Check, Close, Star, Warning } from '@element-plus/icons-vue';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { useAvatarStore, useFavoriteStore, useUiStore, useUserStore } from '../../../stores';
     import { favoriteRequest } from '../../../api';
+
+    import FavoritesMoveDropdown from './FavoritesMoveDropdown.vue';
 
     const props = defineProps({
         favorite: Object,
@@ -176,9 +161,7 @@
         set: (value) => emit('handle-select', value)
     });
     const localFavFakeRef = computed(() => (props.isLocalFavorite ? props.favorite : props.favorite.ref));
-    const tooltipContent = computed(() =>
-        t(props.isLocalFavorite ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')
-    );
+
     const smallThumbnail = computed(
         () => localFavFakeRef.value.thumbnailImageUrl?.replace('256', '128') || localFavFakeRef.value.thumbnailImageUrl
     );
@@ -190,41 +173,7 @@
         }
     });
 
-    function moveFavorite(ref, group, type) {
-        favoriteRequest.deleteFavorite({ objectId: ref.id }).then(() => {
-            favoriteRequest.addFavorite({
-                type,
-                favoriteId: ref.id,
-                tags: group.name
-            });
-        });
-    }
-
     function deleteFavorite(objectId) {
         favoriteRequest.deleteFavorite({ objectId });
-    }
-
-    function addFavoriteAvatar(groupAPI) {
-        return favoriteRequest
-            .addFavorite({
-                type: 'avatar',
-                favoriteId: props.favorite.id,
-                tags: groupAPI.name
-            })
-            .then((args) => {
-                ElMessage({
-                    message: 'Avatar added to favorites',
-                    type: 'success'
-                });
-                return args;
-            });
-    }
-
-    function handleDropdownItemClick(groupAPI) {
-        if (props.isLocalFavorite) {
-            addFavoriteAvatar(groupAPI);
-        } else {
-            moveFavorite(props.favorite.ref, groupAPI, 'avatar');
-        }
     }
 </script>

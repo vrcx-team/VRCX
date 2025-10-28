@@ -13,27 +13,11 @@
                     <span v-else class="extra">{{ props.favorite.ref.authorName }}</span>
                 </div>
                 <div class="editing">
-                    <el-dropdown trigger="hover" size="small" style="margin-left: 5px" :persistent="false">
-                        <div>
-                            <el-button type="default" :icon="Back" size="small" circle></el-button>
-                        </div>
-                        <template #dropdown>
-                            <span style="font-weight: bold; display: block; text-align: center">
-                                {{ t(tooltipContent) }}
-                            </span>
-                            <el-dropdown-menu>
-                                <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
-                                    <el-dropdown-item
-                                        v-if="groupAPI.name !== group.name"
-                                        style="display: block; margin: 10px 0"
-                                        :disabled="groupAPI.count >= groupAPI.capacity"
-                                        @click="handleDropdownItemClick(groupAPI)">
-                                        {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
-                                    </el-dropdown-item>
-                                </template>
-                            </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
+                    <FavoritesMoveDropdown
+                        :favoriteGroup="favoriteWorldGroups"
+                        :currentFavorite="props.favorite"
+                        :currentGroup="group"
+                        type="world" />
                     <el-button type="text" size="small" @click.stop style="margin-left: 5px">
                         <el-checkbox v-model="isSelected"></el-checkbox>
                     </el-button>
@@ -111,14 +95,15 @@
 </template>
 
 <script setup>
-    import { Back, Close, Message, Star, Warning } from '@element-plus/icons-vue';
-    import { ElMessage } from 'element-plus';
+    import { Close, Message, Star, Warning } from '@element-plus/icons-vue';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { useFavoriteStore, useInviteStore, useUiStore } from '../../../stores';
     import { favoriteRequest } from '../../../api';
+
+    import FavoritesMoveDropdown from './FavoritesMoveDropdown.vue';
 
     const props = defineProps({
         group: [Object, String],
@@ -139,22 +124,10 @@
         set: (value) => emit('handle-select', value)
     });
 
-    const tooltipContent = computed(() =>
-        t(props.isLocalFavorite ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')
-    );
-
     const smallThumbnail = computed(() => {
         const url = props.favorite.ref.thumbnailImageUrl?.replace('256', '128');
         return url || props.favorite.ref.thumbnailImageUrl;
     });
-
-    function handleDropdownItemClick(groupAPI) {
-        if (props.isLocalFavorite) {
-            addFavoriteWorld(props.favorite.ref, groupAPI, true);
-        } else {
-            moveFavorite(props.favorite.ref, groupAPI, 'world');
-        }
-    }
 
     function handleDeleteFavorite() {
         if (props.isLocalFavorite) {
@@ -164,33 +137,8 @@
         }
     }
 
-    function moveFavorite(refObj, group, type) {
-        favoriteRequest.deleteFavorite({ objectId: refObj.id }).then(() => {
-            favoriteRequest.addFavorite({
-                type,
-                favoriteId: refObj.id,
-                tags: group.name
-            });
-        });
-    }
-
     function deleteFavorite(objectId) {
         favoriteRequest.deleteFavorite({ objectId });
-    }
-
-    function addFavoriteWorld(refObj, group, message) {
-        return favoriteRequest
-            .addFavorite({
-                type: 'world',
-                favoriteId: refObj.id,
-                tags: group.name
-            })
-            .then((args) => {
-                if (message) {
-                    ElMessage({ message: 'World added to favorites', type: 'success' });
-                }
-                return args;
-            });
     }
 </script>
 
