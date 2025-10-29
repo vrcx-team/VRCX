@@ -1026,10 +1026,10 @@ i.x-status-icon.red {
     -webkit-line-clamp: unset;
 }
 
-// .el-carousel__mask {
-//     // looks bad
-//     display: none;
-// }
+.el-carousel__mask {
+    // looks bad
+    display: none;
+}
 
 // FIXME
 // Something changed the CSS of element-ui

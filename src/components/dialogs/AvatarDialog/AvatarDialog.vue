@@ -381,7 +381,7 @@
                                         loading="lazy" />
                                     <div
                                         v-if="avatarDialog.ref.authorId === currentUser.id"
-                                        style="position: absolute; bottom: 5px; left: 33.3%">
+                                        style="position: absolute; bottom: 35px; left: 38%">
                                         <el-button
                                             size="small"
                                             :icon="Back"
