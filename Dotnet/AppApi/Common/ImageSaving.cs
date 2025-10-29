@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -213,7 +214,31 @@ namespace VRCX
             oldPngFile.Dispose();
             newPngFile.Dispose();
 
-            File.Move(tempPath, path, true);
+            // check if file is in use and we have permission to write
+            for (var i = 0; i < 10; i++)
+            {
+                try
+                {
+                    await using (File.Open(path, FileMode.Append, FileAccess.Write, FileShare.None))
+                    {
+                        break;
+                    }
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                    await Task.Delay(1000);
+                }
+            }
+            try
+            {
+                File.Move(tempPath, path, true);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to replace cropped print image");
+                return false;
+            }
+
             return true;
         }
         

@@ -94,15 +94,19 @@ namespace VRCX
         {
             List<OvrtMessage> messages = [];
 
-            byte[] imageBytes;
-            if(!string.IsNullOrWhiteSpace(image) && File.Exists(image))
+            byte[] imageBytes = null;
+            try
             {
-                imageBytes = File.ReadAllBytes(image);
+                if (!string.IsNullOrWhiteSpace(image) && File.Exists(image))
+                {
+                    imageBytes = File.ReadAllBytes(image);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                imageBytes = _vrcxIcon;
+                logger.Error(ex, "Failed to read OVRT notification image");
             }
+            imageBytes ??= _vrcxIcon;
 
             if (wristNotification)
             {
