@@ -147,7 +147,7 @@
                                             v-if="randomUserColours"
                                             :style="{ color: scope.row.user.$userColour }"
                                             v-text="scope.row.user.displayName"></span>
-                                        <span v-else v-text="scope.row.user.displayName"></span>
+                                        <span v-else v-text="scope.row.user?.displayName"></span>
                                     </span>
                                 </template>
                             </el-table-column>
@@ -264,7 +264,7 @@
                                             v-if="randomUserColours"
                                             :style="{ color: scope.row.user.$userColour }"
                                             v-text="scope.row.user.displayName"></span>
-                                        <span v-else v-text="scope.row.user.displayName"></span>
+                                        <span v-else v-text="scope.row.user?.displayName"></span>
                                     </span>
                                 </template>
                             </el-table-column>
@@ -380,7 +380,7 @@
                                                     v-if="randomUserColours"
                                                     :style="{ color: scope.row.user.$userColour }"
                                                     v-text="scope.row.user.displayName"></span>
-                                                <span v-else v-text="scope.row.user.displayName"></span>
+                                                <span v-else v-text="scope.row.user?.displayName"></span>
                                             </span>
                                         </template>
                                     </el-table-column>
@@ -465,7 +465,7 @@
                                                     v-if="randomUserColours"
                                                     :style="{ color: scope.row.user.$userColour }"
                                                     v-text="scope.row.user.displayName"></span>
-                                                <span v-else v-text="scope.row.user.displayName"></span>
+                                                <span v-else v-text="scope.row.user?.displayName"></span>
                                             </span>
                                         </template>
                                     </el-table-column>
@@ -576,7 +576,7 @@
                                                     v-if="randomUserColours"
                                                     :style="{ color: scope.row.user.$userColour }"
                                                     v-text="scope.row.user.displayName"></span>
-                                                <span v-else v-text="scope.row.user.displayName"></span>
+                                                <span v-else v-text="scope.row.user?.displayName"></span>
                                             </span>
                                         </template>
                                     </el-table-column>
