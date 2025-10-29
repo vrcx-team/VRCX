@@ -496,9 +496,6 @@ input[type='number'],
 }
 
 /* ---------- Navigation rail ----------*/
-.pending-update {
-    margin: 15px !important;
-}
 .x-menu-container {
     background: var(--md-sys-color-surface-2);
     /* display: flex; */
@@ -513,7 +510,6 @@ input[type='number'],
     display: grid;
 }
 .x-menu-container > div > .el-menu > .el-menu-item {
-    width: 94px;
     height: 56px;
 }
 .x-menu-container > div > .el-menu > .el-menu-item > div {
@@ -1047,10 +1043,15 @@ input[type='number'],
 .pending-update button {
     border-radius: 10px !important;
     height: 44px !important;
+    margin: 14px !important;
 }
 
 .pending-update button::after {
     border-radius: 10px !important;
+}
+
+.pending-update {
+    height: 70px;
 }
 
 .el-button:not(.el-button--text, .el-button--primary, .is-disabled),
