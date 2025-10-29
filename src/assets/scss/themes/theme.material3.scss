@@ -504,23 +504,21 @@ input[type='number'],
 }
 .x-menu-container,
 .el-menu--collapse {
-    width: 65px;
+    width: 70px;
 }
-.x-menu-container > .el-menu {
+.x-menu-container > div > .el-menu {
     margin: auto 0;
     display: grid;
 }
-.x-menu-container > .el-menu > .el-menu-item {
-    width: 56px;
+.x-menu-container > div > .el-menu > .el-menu-item {
+    width: 94px;
     height: 56px;
-    margin: 2px 12px;
-    border-radius: 28px;
 }
-.x-menu-container > .el-menu > .el-menu-item > div {
+.x-menu-container > div > .el-menu > .el-menu-item > div {
     position: relative !important;
     padding: 0 !important;
 }
-.x-menu-container > .el-menu > .el-menu-item > div > i {
+.x-menu-container > div > .el-menu > .el-menu-item > div > i {
     position: absolute;
     left: 50%;
     top: 14px;
@@ -539,6 +537,9 @@ input[type='number'],
         0.08
     ) !important;
 }
+.bottom-button {
+    width: 70px !important;
+}
 .el-menu-item.is-active::before {
     width: 56px;
     height: 56px;
@@ -548,13 +549,13 @@ input[type='number'],
     background-color: rgb(var(--md-sys-color-secondary-container));
 }
 .el-menu-item {
-    color: rgb(var(--md-sys-color-on-surface-variant));
+    color: rgb(var(--md-sys-color-on-surface-variant)) !important;
 }
 .el-menu-item i {
-    color: rgv(var(--md-sys-color-on-surface-variant));
+    color: rgv(var(--md-sys-color-on-surface-variant)) !important;
 }
-.x-menu-container > .el-menu > .el-menu-item.is-active > div > i {
-    color: rgb(var(--md-sys-color-primary));
+.x-menu-container > div > .el-menu > .el-menu-item.is-active > div > i {
+    color: rgb(var(--md-sys-color-primary)) !important;
 }
 .el-menu-item.notify::after {
     background: rgb(var(--md-sys-color-error));
@@ -1044,6 +1045,10 @@ input[type='number'],
 .pending-update button {
     border-radius: 10px !important;
     height: 44px !important;
+}
+
+.pending-update button::after {
+    border-radius: 10px !important;
 }
 
 .el-button:not(.el-button--text, .el-button--primary, .is-disabled),
@@ -1753,6 +1758,9 @@ i.x-user-status {
 /* ---------- Flags ---------- */
 
 /* Navigation rail */
+.pending-update {
+    margin: 15px !important;
+}
 .el-icon-news::before {
     content: 'feed';
     font-family: 'Material Symbols Rounded';
@@ -2217,7 +2225,9 @@ div.x-friend-list
 
 .el-calendar {
     background: var(--md-sys-color-surface-3) !important;
-    --el-calendar-selected-bg-color: rgb(56 50 71) !important;
+    --el-calendar-selected-bg-color: rgb(
+        var(--md-sys-color-secondary-container)
+    ) !important;
 }
 
 .el-calendar__title {
@@ -2225,11 +2235,11 @@ div.x-friend-list
 }
 
 .el-calendar-table td.is-selected {
-    background-color: rgb(56 50 71) !important;
+    background-color: rgb(var(--md-sys-color-secondary-container));
 }
 
 .el-calendar-table td.is-today {
-    color: #8c4abd;
+    color: rgb(var(--md-sys-color-primary));
 }
 
 .el-card {
