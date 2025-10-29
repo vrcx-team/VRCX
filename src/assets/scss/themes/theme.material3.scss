@@ -496,7 +496,9 @@ input[type='number'],
 }
 
 /* ---------- Navigation rail ----------*/
-
+.pending-update {
+    margin: 15px !important;
+}
 .x-menu-container {
     background: var(--md-sys-color-surface-2);
     /* display: flex; */
@@ -1758,9 +1760,6 @@ i.x-user-status {
 /* ---------- Flags ---------- */
 
 /* Navigation rail */
-.pending-update {
-    margin: 15px !important;
-}
 .el-icon-news::before {
     content: 'feed';
     font-family: 'Material Symbols Rounded';
