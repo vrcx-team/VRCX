@@ -510,7 +510,7 @@
 
         D.metadata = metadata;
 
-        const regex = metadata.fileName.match(
+        const regex = metadata.fileName?.match(
             /VRChat_((\d{3,})x(\d{3,})_(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})\.(\d{1,})|(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})\.(\d{3})_(\d{3,})x(\d{3,}))/
         );
         if (regex) {
