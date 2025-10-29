@@ -23,6 +23,7 @@ export const useUiStore = defineStore('Ui', () => {
 
     const notifiedMenus = ref([]);
     const shiftHeld = ref(false);
+    const trayIconNotify = ref(false);
 
     watch(
         () => watchState.isLoggedIn,
@@ -41,6 +42,7 @@ export const useUiStore = defineStore('Ui', () => {
             !notifiedMenus.value.includes(index)
         ) {
             notifiedMenus.value.push(index);
+            updateTrayIconNotify();
         }
     }
 
@@ -58,6 +60,22 @@ export const useUiStore = defineStore('Ui', () => {
 
     function removeNotify(index) {
         notifiedMenus.value = notifiedMenus.value.filter((i) => i !== index);
+        updateTrayIconNotify();
+    }
+
+    function updateTrayIconNotify() {
+        const newState =
+            notifiedMenus.value.includes('notification') ||
+            notifiedMenus.value.includes('friendLog');
+
+        if (trayIconNotify.value !== newState) {
+            trayIconNotify.value = newState;
+            if (LINUX) {
+                window.electron.setTrayIconNotification(trayIconNotify.value);
+                return;
+            }
+            AppApi.SetTrayIconNotification(trayIconNotify.value);
+        }
     }
 
     return {

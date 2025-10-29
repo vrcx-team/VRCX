@@ -143,5 +143,9 @@ namespace VRCX
         public override void SetUserAgent()
         {
         }
+
+        public override void SetTrayIconNotification(bool notify)
+        {
+        }
     }
 }

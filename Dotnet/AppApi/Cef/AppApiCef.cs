@@ -216,5 +216,10 @@ namespace VRCX
             using var client = MainForm.Instance.Browser.GetDevToolsClient();
             _ = client.Network.SetUserAgentOverrideAsync(Program.Version);
         }
+        
+        public override void SetTrayIconNotification(bool notify)
+        {
+            MainForm.Instance.BeginInvoke(new MethodInvoker(() => { MainForm.Instance.SetTrayIconNotification(notify); }));
+        }
     }
 }
