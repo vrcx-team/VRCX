@@ -161,28 +161,6 @@ if (!gotTheLock) {
     });
 }
 
-ipcMain.handle('getArch', () => {
-    return process.arch.toString();
-});
-
-ipcMain.handle('applyWindowSettings', (event, position, size, state) => {
-    if (position) {
-        mainWindow.setPosition(parseInt(position.x), parseInt(position.y));
-    }
-    if (size) {
-        mainWindow.setSize(parseInt(size.width), parseInt(size.height));
-    }
-    if (state) {
-        if (state === '0') {
-            mainWindow.restore();
-        } else if (state === '1') {
-            mainWindow.restore();
-        } else if (state === '2') {
-            mainWindow.maximize();
-        }
-    }
-});
-
 ipcMain.handle('dialog:openFile', async () => {
     const result = await dialog.showOpenDialog(mainWindow, {
         properties: ['openFile'],
@@ -277,6 +255,14 @@ ipcMain.handle(
         }
     }
 );
+
+ipcMain.handle('app:getArch', () => {
+    return process.arch.toString();
+});
+
+ipcMain.handle('app:setTrayIconNotification', (event, notify) => {
+    setTrayIconNotification(notify);
+});
 
 function tryRelaunchWithArgs(args) {
     if (
@@ -536,21 +522,35 @@ function destroyHmdOverlayWindow() {
     hmdOverlayWindow = undefined;
 }
 
+let tray = null;
+let trayIcon = null;
+let trayIconNotify = null;
 function createTray() {
-    let tray = null;
     if (process.platform === 'darwin') {
         const image = nativeImage.createFromPath(
             path.join(rootDir, 'images/VRCX.png')
         );
-        tray = new Tray(image.resize({ width: 16, height: 16 }));
+        trayIcon = image.resize({ width: 16, height: 16 });
+
+        const imageNotify = nativeImage.createFromPath(
+            path.join(rootDir, 'images/VRCX_notify.png')
+        );
+        trayIconNotify = imageNotify.resize({ width: 16, height: 16 });
     } else if (process.platform === 'linux') {
         const image = nativeImage.createFromPath(
             path.join(rootDir, 'images/VRCX.png')
         );
-        tray = new Tray(image.resize({ width: 64, height: 64 }));
+        trayIcon = image.resize({ width: 64, height: 64 });
+
+        const imageNotify = nativeImage.createFromPath(
+            path.join(rootDir, 'images/VRCX_notify.png')
+        );
+        trayIconNotify = imageNotify.resize({ width: 64, height: 64 });
     } else {
-        tray = new Tray(path.join(rootDir, 'images/VRCX.ico'));
+        trayIcon = path.join(rootDir, 'images/VRCX.ico');
+        trayIconNotify = path.join(rootDir, 'images/VRCX_notify.ico');
     }
+    tray = new Tray(trayIcon);
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'Open',
@@ -581,6 +581,10 @@ function createTray() {
     tray.on('click', () => {
         mainWindow.show();
     });
+}
+
+function setTrayIconNotification(notify) {
+    tray.setImage(notify ? trayIconNotify : trayIcon);
 }
 
 async function installVRCX() {

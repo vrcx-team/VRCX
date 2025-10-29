@@ -83,6 +83,8 @@
             "src-electron/*",
             "images/VRCX.png",
             "images/VRCX.ico",
+            "images/VRCX_notify.png",
+            "images/VRCX_notify.ico",
             "Version",
             "src-electron/libs/linux/libopenvr_api.so"
         ],

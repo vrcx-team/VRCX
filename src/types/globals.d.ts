@@ -36,6 +36,7 @@ declare global {
         };
         electron: {
             getArch: () => Promise<string>;
+            setTrayIconNotification: (notify: boolean) => Promise<void>;
             openFileDialog: () => Promise<string>;
             openDirectoryDialog: () => Promise<string>;
             desktopNotification: (
@@ -187,6 +188,7 @@ declare global {
         CopyImageToClipboard(path: string): Promise<void>;
         FlashWindow(): Promise<void>;
         SetUserAgent(): Promise<void>;
+        SetTrayIconNotification(notify: boolean): Promise<void>;
 
         // Common Functions
         GetColourFromUserID(userId: string): Promise<number>;

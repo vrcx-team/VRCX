@@ -85,6 +85,9 @@
     <Content Include="..\images\VRCX.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\images\VRCX_notify.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\images\VRCX.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -100,7 +103,7 @@
     <PackageReference Include="Silk.NET.Direct3D11" Version="2.22.0" />
     <PackageReference Include="Silk.NET.DXGI" Version="2.22.0" />
     <PackageReference Include="Silk.NET.Windowing" Version="2.22.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
     <PackageReference Include="SourceGear.sqlite3" Version="3.50.4.2" />
     <PackageReference Include="System.Data.SQLite" Version="2.0.2" />
