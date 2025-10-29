@@ -351,6 +351,13 @@ export const useGroupStore = defineStore('Group', () => {
         if (currentUserGroups.has(groupId)) {
             currentUserGroups.delete(groupId);
             groupRequest.getCachedGroup({ groupId }).then((args) => {
+                if (args.ref?.ownerId === userStore.currentUser.id) {
+                    // Issue #1455
+                    console.log(
+                        `Not sending left group notification for owned group ${groupId}`
+                    );
+                    return;
+                }
                 groupChange(args.ref, 'Left group');
             });
         }
