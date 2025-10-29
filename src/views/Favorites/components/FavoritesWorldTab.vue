@@ -254,21 +254,6 @@
     const worker = ref(null);
     const refreshCancelToken = ref(null);
 
-    const groupedByGroupKeyFavoriteWorlds = computed(() => {
-        const groupedByGroupKeyFavoriteWorlds = {};
-
-        favoriteWorlds.value.forEach((world) => {
-            if (world.groupKey) {
-                if (!groupedByGroupKeyFavoriteWorlds[world.groupKey]) {
-                    groupedByGroupKeyFavoriteWorlds[world.groupKey] = [];
-                }
-                groupedByGroupKeyFavoriteWorlds[world.groupKey].push(world);
-            }
-        });
-
-        return groupedByGroupKeyFavoriteWorlds;
-    });
-
     const sliceLocalWorldFavorites = computed(() => {
         return (group) => {
             return localWorldFavorites.value[group].slice(0, sliceLocalWorldFavoritesLoadMoreNumber.value);
@@ -277,8 +262,19 @@
 
     const sliceWorldFavorites = computed(() => {
         return (group) => {
-            if (groupedByGroupKeyFavoriteWorlds.value[group]) {
-                return groupedByGroupKeyFavoriteWorlds.value[group].slice(0, sliceWorldFavoritesLoadMoreNumber.value);
+            const groupedByGroupKeyFavoriteWorlds = {};
+
+            favoriteWorlds.value.forEach((world) => {
+                if (world.groupKey) {
+                    if (!groupedByGroupKeyFavoriteWorlds[world.groupKey]) {
+                        groupedByGroupKeyFavoriteWorlds[world.groupKey] = [];
+                    }
+                    groupedByGroupKeyFavoriteWorlds[world.groupKey].push(world);
+                }
+            });
+
+            if (groupedByGroupKeyFavoriteWorlds[group]) {
+                return groupedByGroupKeyFavoriteWorlds[group].slice(0, sliceWorldFavoritesLoadMoreNumber.value);
             }
             return [];
         };

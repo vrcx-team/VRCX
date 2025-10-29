@@ -49,7 +49,12 @@ pinia.use(
                 // @ts-ignore
                 ...state.User,
                 currentUser: null,
-                subsetOfLanguages: null
+                subsetOfLanguages: null,
+                languageDialog: {
+                    // @ts-ignore
+                    ...state.User.languageDialog,
+                    languages: null
+                }
             },
             GameLog: {
                 // @ts-ignore
@@ -71,6 +76,12 @@ pinia.use(
                 // @ts-ignore
                 ...state.SharedFeed,
                 sharedFeed: null
+            },
+            Group: {
+                // @ts-ignore
+                ...state.Group,
+                groupInstances: null,
+                inGameGroupOrder: null
             }
         })
     })
