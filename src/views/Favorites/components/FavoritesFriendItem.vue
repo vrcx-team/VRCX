@@ -32,14 +32,6 @@
                 <template v-else>
                     <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')" :teleported="false">
                         <el-button
-                            v-if="shiftHeld"
-                            size="small"
-                            :icon="Close"
-                            circle
-                            style="color: #f56c6c; margin-left: 5px"
-                            @click.stop="deleteFavorite(favorite.id)"></el-button>
-                        <el-button
-                            v-else
                             type="default"
                             :icon="Star"
                             size="small"
@@ -70,9 +62,9 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useFavoriteStore, useUiStore } from '../../../stores';
     import { userImage, userStatusClass } from '../../../shared/utils';
     import { favoriteRequest } from '../../../api';
+    import { useFavoriteStore } from '../../../stores';
 
     import FavoritesMoveDropdown from './FavoritesMoveDropdown.vue';
 
@@ -85,7 +77,6 @@
 
     const { favoriteFriendGroups, editFavoritesMode } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
-    const { shiftHeld } = storeToRefs(useUiStore());
     const { t } = useI18n();
 
     function deleteFavorite(objectId) {

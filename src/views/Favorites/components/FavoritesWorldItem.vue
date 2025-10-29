@@ -54,14 +54,6 @@
                     </el-tooltip>
                     <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')" :teleported="false">
                         <el-button
-                            v-if="shiftHeld"
-                            size="small"
-                            :icon="Close"
-                            circle
-                            style="color: #f56c6c; margin-left: 5px"
-                            @click.stop="deleteFavorite(favorite.id)"></el-button>
-                        <el-button
-                            v-else
                             :icon="Star"
                             size="small"
                             circle
@@ -100,7 +92,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useFavoriteStore, useInviteStore, useUiStore } from '../../../stores';
+    import { useFavoriteStore, useInviteStore } from '../../../stores';
     import { favoriteRequest } from '../../../api';
 
     import FavoritesMoveDropdown from './FavoritesMoveDropdown.vue';
@@ -115,7 +107,6 @@
     const { favoriteWorldGroups, editFavoritesMode } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
     const { newInstanceSelfInvite } = useInviteStore();
-    const { shiftHeld } = storeToRefs(useUiStore());
     const { t } = useI18n();
     const { canOpenInstanceInGame } = useInviteStore();
 
