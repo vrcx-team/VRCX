@@ -227,6 +227,9 @@ function userImage(
  * @returns {string|*}
  */
 function userImageFull(user) {
+    if (!user) {
+        return '';
+    }
     const appAppearanceSettingsStore = useAppearanceSettingsStore();
     if (
         appAppearanceSettingsStore.displayVRCPlusIconsAsAvatar &&
