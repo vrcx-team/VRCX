@@ -280,14 +280,14 @@
                                         <template v-if="groupDialog.ref.myMember">
                                             <el-dropdown-item
                                                 v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements"
-                                                :icon="Close"
+                                                :icon="MuteNotification"
                                                 command="Unsubscribe To Announcements"
                                                 divided>
                                                 {{ t('dialog.group.actions.unsubscribe') }}
                                             </el-dropdown-item>
                                             <el-dropdown-item
                                                 v-else
-                                                :icon="Check"
+                                                :icon="Bell"
                                                 command="Subscribe To Announcements"
                                                 divided>
                                                 {{ t('dialog.group.actions.subscribe') }}
@@ -1123,6 +1123,7 @@
 <script setup>
     import {
         ArrowDown,
+        Bell,
         ChatLineSquare,
         Check,
         CircleCheck,
@@ -1136,6 +1137,7 @@
         Loading,
         Message,
         MoreFilled,
+        MuteNotification,
         Operation,
         Refresh,
         Share,
@@ -1187,9 +1189,9 @@
         showGroupDialog,
         leaveGroupPrompt,
         setGroupVisibility,
+        setGroupSubscription,
         applyGroupMember,
         handleGroupMember,
-        handleGroupMemberProps,
         showGroupMemberModerationDialog
     } = useGroupStore();
 
@@ -1447,21 +1449,6 @@
                 setGroupSubscription(D.id, false);
                 break;
         }
-    }
-
-    function setGroupSubscription(groupId, subscribe) {
-        return groupRequest
-            .setGroupMemberProps(currentUser.value.id, groupId, {
-                isSubscribedToAnnouncements: subscribe
-            })
-            .then((args) => {
-                handleGroupMemberProps(args);
-                ElMessage({
-                    message: 'Group subscription updated',
-                    type: 'success'
-                });
-                return args;
-            });
     }
 
     function blockGroup(groupId) {

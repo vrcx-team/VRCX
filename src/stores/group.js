@@ -564,6 +564,21 @@ export const useGroupStore = defineStore('Group', () => {
             });
     }
 
+    function setGroupSubscription(groupId, subscribe) {
+        return groupRequest
+            .setGroupMemberProps(userStore.currentUser.id, groupId, {
+                isSubscribedToAnnouncements: subscribe
+            })
+            .then((args) => {
+                handleGroupMemberProps(args);
+                ElMessage({
+                    message: 'Group subscription updated',
+                    type: 'success'
+                });
+                return args;
+            });
+    }
+
     /**
      *
      * @param {object} json
@@ -1070,6 +1085,7 @@ export const useGroupStore = defineStore('Group', () => {
         leaveGroupPrompt,
         updateGroupPostSearch,
         setGroupVisibility,
+        setGroupSubscription,
         applyGroupMember,
         loadCurrentUserGroups,
         handleGroupPost,

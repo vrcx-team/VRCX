@@ -708,9 +708,8 @@
                                         :disabled="group.privacy !== 'default'"
                                         trigger="click"
                                         size="small"
-                                        style="margin-right: 5px"
-                                        @click.stop>
-                                        <el-button size="small">
+                                        style="margin-right: 5px">
+                                        <el-button @click.stop size="small">
                                             <span v-if="group.myMember.visibility === 'visible'">{{
                                                 t('dialog.group.tags.visible')
                                             }}</span>
@@ -749,15 +748,20 @@
                                         </template>
                                     </el-dropdown>
                                     <!--//- JSON is missing isSubscribedToAnnouncements, can't be implemented-->
-                                    <!--//- el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px")-->
-                                    <!--//-     el-tooltip(placement="top")-->
-                                    <!--//-         template(#content)-->
-                                    <!--//-             span(v-if="group.myMember.isSubscribedToAnnouncements") {{ t('dialog.group.actions.unsubscribe') }}-->
-                                    <!--//-             span(v-else) {{ t('dialog.group.actions.subscribe') }}-->
-                                    <!--//-         el-button(v-if="group.myMember.isSubscribedToAnnouncements" @click.stop="setGroupSubscription(group.id, false)" circle size="small")-->
-                                    <!--//-             i.el-icon-chat-line-square-->
-                                    <!--//-         el-button(v-else circle @click.stop="setGroupSubscription(group.id, true)" size="small")-->
-                                    <!--//-             i.el-icon-chat-square(style="color:#f56c6c")-->
+                                    <!-- <el-button
+                                        @click.stop="
+                                            setGroupSubscription(group.id, !group.myMember.isSubscribedToAnnouncements)
+                                        "
+                                        size="small">
+                                        <span v-if="group.myMember.isSubscribedToAnnouncements"
+                                            ><el-icon style="margin-left: 5px"><MuteNotification /></el-icon>
+                                            {{ t('dialog.group.tags.subscribed') }}</span
+                                        >
+                                        <span v-else
+                                            ><el-icon style="margin-left: 5px"><Bell /></el-icon>
+                                            {{ t('dialog.group.tags.unsubscribed') }}</span
+                                        >
+                                    </el-button> -->
                                     <el-tooltip
                                         placement="right"
                                         :content="t('dialog.user.groups.leave_group_tooltip')">
@@ -1339,6 +1343,7 @@
         leaveGroup,
         leaveGroupPrompt,
         setGroupVisibility,
+        setGroupSubscription,
         handleGroupList,
         showModerateGroupDialog
     } = useGroupStore();
