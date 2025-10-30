@@ -1,5 +1,5 @@
+import { useFriendStore, useUserStore } from '../../stores';
 import { database } from '../../service/database.js';
-import { useFriendStore } from '../../stores';
 
 /**
  * @returns {Promise<void>}
@@ -43,6 +43,7 @@ async function getUserMemo(userId) {
  */
 async function saveUserMemo(id, memo) {
     const friendStore = useFriendStore();
+    const userStore = useUserStore();
     if (memo) {
         await database.setUserMemo({
             userId: id,
@@ -61,6 +62,7 @@ async function saveUserMemo(id, memo) {
         } else {
             ref.$nickName = '';
         }
+        userStore.userDialog.memo = memo;
     }
 }
 

@@ -83,17 +83,28 @@
                         {{ userDialog.ref.$trustLevel }}
                     </el-tag>
                     <el-tag
+                        v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
+                        type="info"
+                        effect="plain"
+                        size="small"
+                        class="x-tag-age-verification"
+                        style="margin-right: 5px; margin-top: 5px">
+                        <template v-if="userDialog.ref.ageVerificationStatus === '18+'">
+                            <i class="ri-info-card-line"></i> 18+
+                        </template>
+                        <template v-else>
+                            <i class="ri-info-card-line"></i>
+                        </template>
+                    </el-tag>
+                    <el-tag
                         v-if="userDialog.isFriend && userDialog.friend"
                         type="info"
                         effect="plain"
                         size="small"
                         class="x-tag-friend"
                         style="margin-right: 5px; margin-top: 5px">
-                        {{
-                            t('dialog.user.tags.friend_no', {
-                                number: userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : ''
-                            })
-                        }}
+                        <i class="ri-user-add-line"></i>
+                        {{ userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : '' }}
                     </el-tag>
                     <el-tag
                         v-if="userDialog.ref.$isTroll"
@@ -122,6 +133,7 @@
                         style="margin-right: 5px; margin-top: 5px">
                         {{ t('dialog.user.tags.vrchat_team') }}
                     </el-tag>
+
                     <el-tag
                         v-if="userDialog.ref.$platform === 'standalonewindows'"
                         type="info"
@@ -129,7 +141,7 @@
                         size="small"
                         class="x-tag-platform-pc"
                         style="margin-right: 5px; margin-top: 5px">
-                        PC
+                        <i class="ri-computer-line"></i>
                     </el-tag>
                     <el-tag
                         v-else-if="userDialog.ref.$platform === 'android'"
@@ -138,7 +150,7 @@
                         size="small"
                         class="x-tag-platform-quest"
                         style="margin-right: 5px; margin-top: 5px">
-                        Android
+                        <i class="ri-android-line"></i>
                     </el-tag>
                     <el-tag
                         v-else-if="userDialog.ref.$platform === 'ios'"
@@ -147,8 +159,8 @@
                         size="small"
                         class="x-tag-platform-ios"
                         style="margin-right: 5px; margin-top: 5px"
-                        >iOS</el-tag
-                    >
+                        ><i class="ri-apple-line"></i
+                    ></el-tag>
                     <el-tag
                         v-else-if="userDialog.ref.$platform"
                         type="info"
@@ -158,20 +170,7 @@
                         style="margin-right: 5px; margin-top: 5px">
                         {{ userDialog.ref.$platform }}
                     </el-tag>
-                    <el-tag
-                        v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-age-verification"
-                        style="margin-right: 5px; margin-top: 5px">
-                        <template v-if="userDialog.ref.ageVerificationStatus === '18+'">
-                            {{ t('dialog.user.tags.18_plus_verified') }}
-                        </template>
-                        <template v-else>
-                            {{ t('dialog.user.tags.age_verified') }}
-                        </template>
-                    </el-tag>
+
                     <el-tag
                         v-if="userDialog.ref.$customTag"
                         type="info"

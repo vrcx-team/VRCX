@@ -1,13 +1,13 @@
 <template>
     <div @click="confirm" class="avatar-info">
         <span style="margin-right: 5px">{{ avatarName }}</span>
-        <span v-if="avatarType" :class="color" style="margin-right: 5px">{{ avatarType }}</span>
+        <span v-if="avatarType" :class="color" style="margin-right: 5px"><i :class="avatarTypeIcons" /></span>
         <span v-if="avatarTags" style="color: #909399; font-family: monospace; font-size: 12px">{{ avatarTags }}</span>
     </div>
 </template>
 
 <script setup>
-    import { ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
 
     import { useAvatarStore } from '../stores';
 
@@ -27,6 +27,14 @@
     const color = ref('');
     let ownerId = '';
 
+    const avatarTypeIcons = computed(() => {
+        return avatarType.value === '(own)'
+            ? 'ri-lock-line'
+            : avatarType.value === '(public)'
+              ? 'ri-lock-unlock-line'
+              : '';
+    });
+
     const parse = async () => {
         ownerId = '';
         avatarName.value = '';
@@ -35,7 +43,7 @@
         avatarTags.value = '';
 
         if (!props.imageurl) {
-            avatarName.value = '-';
+            avatarName.value = '';
         } else if (props.hintownerid) {
             avatarName.value = props.hintavatarname;
             ownerId = props.hintownerid;
