@@ -71,7 +71,7 @@
                             effect="plain"
                             size="small"
                             style="margin-right: 5px"
-                            >PC
+                            ><i class="ri-computer-line"></i>
                             <span
                                 v-if="currentInstanceWorld.bundleSizes['standalonewindows']"
                                 :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
@@ -85,7 +85,7 @@
                             effect="plain"
                             size="small"
                             style="margin-right: 5px"
-                            >Android
+                            ><i class="ri-android-line"></i>
                             <span
                                 v-if="currentInstanceWorld.bundleSizes['android']"
                                 :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
@@ -99,7 +99,7 @@
                             effect="plain"
                             size="small"
                             style="margin-right: 5px"
-                            >iOS
+                            ><i class="ri-apple-line"></i>
                             <span
                                 v-if="currentInstanceWorld.bundleSizes['ios']"
                                 :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']"
@@ -297,10 +297,14 @@
                         <template #default="scope">
                             <template v-if="scope.row.ref.$platform">
                                 <span v-if="scope.row.ref.$platform === 'standalonewindows'" style="color: #409eff"
-                                    >PC</span
-                                >
-                                <span v-else-if="scope.row.ref.$platform === 'android'" style="color: #67c23a">A</span>
-                                <span v-else-if="scope.row.ref.$platform === 'ios'" style="color: #c7c7ce">iOS</span>
+                                    ><i class="ri-computer-line"></i
+                                ></span>
+                                <span v-else-if="scope.row.ref.$platform === 'android'" style="color: #67c23a"
+                                    ><i class="ri-android-line"></i
+                                ></span>
+                                <span v-else-if="scope.row.ref.$platform === 'ios'" style="color: #c7c7ce"
+                                    ><i class="ri-apple-line"></i
+                                ></span>
                                 <span v-else>{{ scope.row.ref.$platform }}</span>
                             </template>
                             <template v-if="scope.row.inVRMode !== null">
