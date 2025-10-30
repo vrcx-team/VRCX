@@ -53,7 +53,10 @@
             type: Boolean,
             default: true
         },
-        isOpenPreviousInstanceInfoDialog: Boolean
+        isOpenPreviousInstanceInfoDialog: {
+            type: Boolean,
+            default: false
+        }
     });
 
     const text = ref('');

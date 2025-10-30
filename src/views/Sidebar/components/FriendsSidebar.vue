@@ -183,16 +183,19 @@
         useLocationStore,
         useUserStore
     } from '../../../stores';
-    import { getFriendsSortFunction, isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
+    import { isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
+    import { getFriendsLocations } from '../../../shared/utils/location.js';
 
-    import FriendItem from '../../../components/FriendItem.vue';
+    import FriendItem from './FriendItem.vue';
     import configRepository from '../../../service/config';
 
     const emit = defineEmits(['confirm-delete-friend']);
     const { t } = useI18n();
 
-    const { vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
-    const { isSidebarGroupByInstance, isHideFriendsInSameInstance, isSidebarDivideByFriendGroup, sidebarSortMethods } =
+    const friendStore = useFriendStore();
+    const { vipFriends, onlineFriends, activeFriends, offlineFriends, friendsInSameInstance } =
+        storeToRefs(friendStore);
+    const { isSidebarGroupByInstance, isHideFriendsInSameInstance, isSidebarDivideByFriendGroup } =
         storeToRefs(useAppearanceSettingsStore());
     const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
     const { showUserDialog } = useUserStore();
@@ -209,40 +212,6 @@
     const isSidebarGroupByInstanceCollapsed = ref(false);
 
     loadFriendsGroupStates();
-
-    const friendsInSameInstance = computed(() => {
-        const friendsList = {};
-
-        const allFriends = [...vipFriends.value, ...onlineFriends.value];
-        allFriends.forEach((friend) => {
-            if (!friend.ref?.$location) {
-                return;
-            }
-
-            let locationTag = friend.ref.$location.tag;
-            if (!friend.ref.$location.isRealInstance && lastLocation.value.friendList.has(friend.id)) {
-                locationTag = lastLocation.value.location;
-            }
-            const isReal = isRealInstance(locationTag);
-            if (!isReal) {
-                return;
-            }
-
-            if (!friendsList[locationTag]) {
-                friendsList[locationTag] = [];
-            }
-            friendsList[locationTag].push(friend);
-        });
-
-        const sortedFriendsList = [];
-        for (const group of Object.values(friendsList)) {
-            if (group.length > 1) {
-                sortedFriendsList.push(group.sort(getFriendsSortFunction(sidebarSortMethods.value)));
-            }
-        }
-
-        return sortedFriendsList.sort((a, b) => b.length - a.length);
-    });
 
     const sameInstanceFriendId = computed(() => {
         const sameInstanceFriendId = new Set();
@@ -330,29 +299,6 @@
     function toggleSwitchGroupByInstanceCollapsed() {
         isSidebarGroupByInstanceCollapsed.value = !isSidebarGroupByInstanceCollapsed.value;
         configRepository.setBool('VRCX_sidebarGroupByInstanceCollapsed', isSidebarGroupByInstanceCollapsed.value);
-    }
-
-    function getFriendsLocations(friendsArr) {
-        // prevent the instance title display as "Traveling".
-        if (!friendsArr?.length) {
-            return '';
-        }
-        for (const friend of friendsArr) {
-            if (isRealInstance(friend.ref?.location)) {
-                return friend.ref.location;
-            }
-        }
-        for (const friend of friendsArr) {
-            if (isRealInstance(friend.ref?.travelingToLocation)) {
-                return friend.ref.travelingToLocation;
-            }
-        }
-        for (const friend of friendsArr) {
-            if (lastLocation.value.friendList.has(friend.id)) {
-                return lastLocation.value.location;
-            }
-        }
-        return friendsArr[0].ref?.location;
     }
 
     function confirmDeleteFriend(friend) {

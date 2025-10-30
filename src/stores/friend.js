@@ -23,6 +23,7 @@ import { useFavoriteStore } from './favorite';
 import { useFeedStore } from './feed';
 import { useGeneralSettingsStore } from './settings/general';
 import { useGroupStore } from './group';
+import { useLocationStore } from './location';
 import { useNotificationStore } from './notification';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
@@ -45,6 +46,7 @@ export const useFriendStore = defineStore('Friend', () => {
     const sharedFeedStore = useSharedFeedStore();
     const updateLoopStore = useUpdateLoopStore();
     const authStore = useAuthStore();
+    const locationStore = useLocationStore();
     const { t } = useI18n();
 
     const state = reactive({
@@ -133,6 +135,49 @@ export const useFriendStore = defineStore('Friend', () => {
                     appearanceSettingsStore.sidebarSortMethods
                 )
             );
+    });
+
+    const friendsInSameInstance = computed(() => {
+        const friendsList = {};
+
+        const allFriends = [...vipFriends.value, ...onlineFriends.value];
+        allFriends.forEach((friend) => {
+            if (!friend.ref?.$location) {
+                return;
+            }
+
+            let locationTag = friend.ref.$location.tag;
+            if (
+                !friend.ref.$location.isRealInstance &&
+                locationStore.lastLocation.friendList.has(friend.id)
+            ) {
+                locationTag = locationStore.lastLocation.location;
+            }
+            const isReal = isRealInstance(locationTag);
+            if (!isReal) {
+                return;
+            }
+
+            if (!friendsList[locationTag]) {
+                friendsList[locationTag] = [];
+            }
+            friendsList[locationTag].push(friend);
+        });
+
+        const sortedFriendsList = [];
+        for (const group of Object.values(friendsList)) {
+            if (group.length > 1) {
+                sortedFriendsList.push(
+                    group.sort(
+                        getFriendsSortFunction(
+                            appearanceSettingsStore.sidebarSortMethods
+                        )
+                    )
+                );
+            }
+        }
+
+        return sortedFriendsList.sort((a, b) => b.length - a.length);
     });
 
     watch(
@@ -1570,6 +1615,7 @@ export const useFriendStore = defineStore('Friend', () => {
         onlineFriends,
         activeFriends,
         offlineFriends,
+        friendsInSameInstance,
 
         localFavoriteFriends,
         isRefreshFriendsLoading,

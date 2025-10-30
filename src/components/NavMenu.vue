@@ -64,6 +64,7 @@
 
     const navItems = [
         { index: 'feed', icon: 'ri-rss-line', tooltip: 'nav_tooltip.feed' },
+        { index: 'friend', icon: 'ri-group-line', tooltip: 'nav_tooltip.friend' },
         { index: 'gameLog', icon: 'ri-history-line', tooltip: 'nav_tooltip.game_log' },
         { index: 'playerList', icon: 'ri-group-3-line', tooltip: 'nav_tooltip.player_list' },
         { index: 'search', icon: 'ri-search-line', tooltip: 'nav_tooltip.search' },
