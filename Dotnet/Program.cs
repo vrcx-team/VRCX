@@ -284,7 +284,6 @@ namespace VRCX
                 logger.Info("Launch Command: {0}", StartupArgs.LaunchArguments.LaunchCommand);
 
             AppApiInstance = new AppApiElectron();
-            // ProcessMonitor.Instance.Init();
 
             VRCXVRInstance = new VRCXVRElectron();
             VRCXVRInstance.Init();

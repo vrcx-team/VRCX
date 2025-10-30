@@ -432,13 +432,8 @@ namespace VRCX
                         if (!success)
                             break; // this fails while SteamVR overlay is open
 
-                        var prox = state.ulButtonPressed & (1UL << ((int)EVRButtonId.k_EButton_ProximitySensor));
-                        var isHmdAfk = prox == 0;
-                        if (isHmdAfk != IsHmdAfk)
-                        {
-                            IsHmdAfk = isHmdAfk;
-                            Program.AppApiInstance.CheckGameRunning();
-                        }
+                        // var prox = state.ulButtonPressed & (1UL << ((int)EVRButtonId.k_EButton_ProximitySensor));
+                        // var isHmdAfk = prox == 0;
 
                         var headsetErr = ETrackedPropertyError.TrackedProp_Success;
                         var headsetBatteryPercentage = system.GetFloatTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_DeviceBatteryPercentage_Float, ref headsetErr);
