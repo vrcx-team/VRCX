@@ -4,7 +4,8 @@
         class="x-dialog x-user-dialog"
         v-model="userDialog.visible"
         :show-close="false"
-        width="770px">
+        top="10vh"
+        width="940px">
         <div v-loading="userDialog.loading">
             <UserSummaryHeader
                 :get-user-state-text="getUserStateText"
@@ -99,53 +100,19 @@
                     </template>
 
                     <div class="x-friend-list" style="max-height: none">
-                        <div v-if="!hideUserNotes" class="x-friend-item" style="width: 100%; cursor: default">
-                            <div class="detail">
+                        <div v-if="!hideUserNotes" class="x-friend-item" style="width: 100%; cursor: pointer">
+                            <div class="detail" v-if="userDialog.note" @click="isEditNoteAndMemoDialogVisible = true">
                                 <span class="name">{{ t('dialog.user.info.note') }}</span>
-                                <el-input
-                                    v-model="userDialog.note"
-                                    class="extra"
-                                    type="textarea"
-                                    maxlength="256"
-                                    :rows="2"
-                                    :autosize="{ minRows: 1, maxRows: 20 }"
-                                    :placeholder="t('dialog.user.info.note_placeholder')"
-                                    size="small"
-                                    resize="none"
-                                    @change="checkNote(userDialog.ref, userDialog.note)"
-                                    @input="cleanNote(userDialog.note)"></el-input>
-                                <div style="float: right">
-                                    <el-icon v-if="userDialog.noteSaving" class="is-loading" style="margin-left: 5px"
-                                        ><Loading
-                                    /></el-icon>
-                                    <el-icon
-                                        v-else-if="userDialog.note !== userDialog.ref.note"
-                                        style="margin-left: 5px"
-                                        ><More
-                                    /></el-icon>
-                                    <el-button
-                                        v-if="userDialog.note"
-                                        type="text"
-                                        :icon="Delete"
-                                        size="small"
-                                        style="margin-left: 5px; padding: 0"
-                                        @click="deleteNote(userDialog.id)"></el-button>
-                                </div>
+                                <div>{{ userDialog.note }}</div>
                             </div>
                         </div>
-                        <div v-if="!hideUserMemos" class="x-friend-item" style="width: 100%; cursor: default">
-                            <div class="detail">
+                        <div
+                            v-if="userDialog.memo && !hideUserMemos"
+                            class="x-friend-item"
+                            style="width: 100%; cursor: pointer">
+                            <div class="detail" @click="isEditNoteAndMemoDialogVisible = true">
                                 <span class="name">{{ t('dialog.user.info.memo') }}</span>
-                                <el-input
-                                    v-model="userDialog.memo"
-                                    class="extra"
-                                    type="textarea"
-                                    :rows="2"
-                                    :autosize="{ minRows: 1, maxRows: 20 }"
-                                    :placeholder="t('dialog.user.info.memo_placeholder')"
-                                    size="small"
-                                    resize="none"
-                                    @change="onUserMemoChange"></el-input>
+                                <div>{{ userDialog.memo }}</div>
                             </div>
                         </div>
                         <div class="x-friend-item" style="width: 100%; cursor: default">
@@ -236,7 +203,7 @@
                                         font-size: 12px;
                                         white-space: pre-wrap;
                                         margin: 0 0.5em 0 0;
-                                        max-height: 40vh;
+                                        max-height: 210px;
                                         overflow-y: auto;
                                     "
                                     >{{ userDialog.ref.bio || '-' }}</pre
@@ -1216,15 +1183,14 @@
             v-model:sendInviteDialog="sendInviteDialog"
             @closeInviteDialog="closeInviteDialog" />
         <PreviousInstancesUserDialog v-model:previous-instances-user-dialog="previousInstancesUserDialog" />
-        <template v-if="userDialog.visible">
-            <SocialStatusDialog
-                :social-status-dialog="socialStatusDialog"
-                :social-status-history-table="socialStatusHistoryTable" />
-            <LanguageDialog />
-            <BioDialog :bio-dialog="bioDialog" />
-            <PronounsDialog :pronouns-dialog="pronounsDialog" />
-            <ModerateGroupDialog
-        /></template>
+        <SocialStatusDialog
+            :social-status-dialog="socialStatusDialog"
+            :social-status-history-table="socialStatusHistoryTable" />
+        <LanguageDialog />
+        <BioDialog :bio-dialog="bioDialog" />
+        <PronounsDialog :pronouns-dialog="pronounsDialog" />
+        <ModerateGroupDialog />
+        <EditNoteAndMemoDialog v-model:visible="isEditNoteAndMemoDialogVisible" />
     </el-dialog>
 </template>
 
@@ -1240,7 +1206,6 @@
         Download,
         Edit,
         Loading,
-        More,
         MoreFilled,
         Refresh,
         Setting,
@@ -1265,8 +1230,6 @@
         openExternalLink,
         parseLocation,
         refreshInstancePlayerCount,
-        replaceBioSymbols,
-        saveUserMemo,
         timeToText,
         userImage,
         userOnlineFor,
@@ -1315,6 +1278,7 @@
     const SendInviteRequestDialog = defineAsyncComponent(() => import('./SendInviteRequestDialog.vue'));
     const SocialStatusDialog = defineAsyncComponent(() => import('./SocialStatusDialog.vue'));
     const ModerateGroupDialog = defineAsyncComponent(() => import('../ModerateGroupDialog.vue'));
+    const EditNoteAndMemoDialog = defineAsyncComponent(() => import('./EditNoteAndMemoDialog.vue'));
 
     const { t } = useI18n();
 
@@ -1343,7 +1307,6 @@
         leaveGroup,
         leaveGroupPrompt,
         setGroupVisibility,
-        setGroupSubscription,
         handleGroupList,
         showModerateGroupDialog
     } = useGroupStore();
@@ -1442,6 +1405,8 @@
         showingTranslated: false
     });
 
+    const isEditNoteAndMemoDialogVisible = ref(false);
+
     const userDialogAvatars = computed(() => {
         const { avatars, avatarReleaseStatus } = userDialog.value;
         if (avatarReleaseStatus === 'public' || avatarReleaseStatus === 'private') {
@@ -1491,11 +1456,6 @@
             return t('dialog.user.status.busy');
         }
         return t('dialog.user.status.offline');
-    }
-
-    function cleanNote(note) {
-        // remove newlines because they aren't supported
-        userDialog.value.note = note.replace(/[\r\n]/g, '');
     }
 
     function handleUserDialogTab(tabName) {
@@ -1799,6 +1759,8 @@
             } else {
                 setPlayerModeration(D.id, 5);
             }
+        } else if (command === 'Edit Note Memo') {
+            isEditNoteAndMemoDialogVisible.value = true;
         } else {
             const i18nPreFix = 'dialog.user.actions.';
             const formattedCommand = command.toLowerCase().replace(/ /g, '_');
@@ -2226,63 +2188,6 @@
         }
         userFavoriteWorlds.value = worldLists;
         userDialog.value.isFavoriteWorldsLoading = false;
-    }
-
-    function checkNote(ref, note) {
-        if (ref.note !== note) {
-            addNote(ref.id, note);
-        }
-    }
-
-    async function addNote(userId, note) {
-        if (userDialog.value.id === userId) {
-            userDialog.value.noteSaving = true;
-        }
-        const args = await miscRequest.saveNote({
-            targetUserId: userId,
-            note
-        });
-        handleNoteChange(args);
-    }
-
-    function handleNoteChange(args) {
-        let _note = '';
-        let targetUserId = '';
-        if (typeof args.json !== 'undefined') {
-            _note = replaceBioSymbols(args.json.note);
-        }
-        if (typeof args.params !== 'undefined') {
-            targetUserId = args.params.targetUserId;
-        }
-        if (targetUserId === userDialog.value.id) {
-            if (_note === args.params.note) {
-                userDialog.value.noteSaving = false;
-                userDialog.value.note = _note;
-            } else {
-                // response is cached sadge :<
-                userRequest.getUser({ userId: targetUserId });
-            }
-        }
-        const ref = cachedUsers.get(targetUserId);
-        if (typeof ref !== 'undefined') {
-            ref.note = _note;
-        }
-    }
-
-    async function deleteNote(userId) {
-        if (userDialog.value.id === userId) {
-            userDialog.value.noteSaving = true;
-        }
-        const args = await miscRequest.saveNote({
-            targetUserId: userId,
-            note: ''
-        });
-        handleNoteChange(args);
-    }
-
-    function onUserMemoChange() {
-        const D = userDialog.value;
-        saveUserMemo(D.id, D.memo);
     }
 
     function showBioDialog() {

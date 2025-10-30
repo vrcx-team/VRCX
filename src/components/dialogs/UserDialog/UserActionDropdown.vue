@@ -120,6 +120,7 @@
                         <el-dropdown-item :icon="Operation" command="Group Moderation">{{
                             t('dialog.user.actions.group_moderation')
                         }}</el-dropdown-item>
+                        <el-dropdown-item :icon="Edit" command="Edit Note Memo"> Edit Note and Memo </el-dropdown-item>
                         <el-dropdown-item :icon="UserFilled" command="Show Avatar Author" divided>{{
                             t('dialog.user.actions.show_avatar_author')
                         }}</el-dropdown-item>
