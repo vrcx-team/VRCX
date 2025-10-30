@@ -59,7 +59,8 @@ pinia.use(
             GameLog: {
                 // @ts-ignore
                 ...state.GameLog,
-                gameLogTable: null
+                gameLogTable: null,
+                gameLogSessionTable: null
             },
             Notification: {
                 // @ts-ignore
@@ -69,7 +70,9 @@ pinia.use(
             Moderation: {
                 // @ts-ignore
                 ...state.Moderation,
-                playerModerationTable: null
+                playerModerationTable: null,
+                cachedPlayerModerations: null,
+                cachedPlayerModerationsUserIds: null
             },
             Photon: null,
             SharedFeed: {
@@ -87,6 +90,17 @@ pinia.use(
                 // @ts-ignore
                 ...state.Avatar,
                 avatarHistory: null
+            },
+            Gallery: {
+                // @ts-ignore
+                ...state.Gallery,
+                emojiTable: null,
+                galleryTable: null,
+                instanceStickersCache: null,
+                inventoryTable: null,
+                printTable: null,
+                stickerTable: null,
+                VRCPlusIconsTable: null
             }
         })
     })
