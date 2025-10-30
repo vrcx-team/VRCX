@@ -1,3 +1,6 @@
+import { isRealInstance } from './instance.js';
+import { useLocationStore } from '../../stores/location.js';
+
 /**
  *
  * @param {string} location
@@ -141,4 +144,28 @@ function parseLocation(tag) {
     return ctx;
 }
 
-export { parseLocation, displayLocation };
+function getFriendsLocations(friendsArr) {
+    const locaationStore = useLocationStore();
+    // prevent the instance title display as "Traveling".
+    if (!friendsArr?.length) {
+        return '';
+    }
+    for (const friend of friendsArr) {
+        if (isRealInstance(friend.ref?.location)) {
+            return friend.ref.location;
+        }
+    }
+    for (const friend of friendsArr) {
+        if (isRealInstance(friend.ref?.travelingToLocation)) {
+            return friend.ref.travelingToLocation;
+        }
+    }
+    for (const friend of friendsArr) {
+        if (locaationStore.lastLocation.friendList.has(friend.id)) {
+            return locaationStore.lastLocation.location;
+        }
+    }
+    return friendsArr[0].ref?.location;
+}
+
+export { parseLocation, displayLocation, getFriendsLocations };

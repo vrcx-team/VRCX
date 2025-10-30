@@ -104,7 +104,7 @@
     import LaunchDialog from './components/dialogs/LaunchDialog.vue';
     import LaunchOptionsDialog from './views/Settings/dialogs/LaunchOptionsDialog.vue';
     import Login from './views/Login/Login.vue';
-    import MacOSTitleBar from './components/TitleBar/MacOSTitleBar.vue';
+    import MacOSTitleBar from './components/MacOSTitleBar.vue';
     import NavMenu from './components/NavMenu.vue';
     import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
     import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';

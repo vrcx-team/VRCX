@@ -2,6 +2,7 @@
     "language": "English (en)",
     "translator": "-",
     "nav_tooltip": {
+        "friend": "Friend",
         "feed": "Feed",
         "game_log": "Game Log",
         "player_list": "Player List",

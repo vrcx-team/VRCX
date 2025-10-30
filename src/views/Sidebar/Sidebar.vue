@@ -101,7 +101,7 @@
 
     const { friends, isRefreshFriendsLoading, onlineFriendCount } = storeToRefs(useFriendStore());
     const { refreshFriendsList, confirmDeleteFriend } = useFriendStore();
-    const { quickSearchRemoteMethod, quickSearchChange, directAccessPaste } = useSearchStore();
+    const { quickSearchRemoteMethod, quickSearchChange } = useSearchStore();
     const { quickSearchItems } = storeToRefs(useSearchStore());
     const { inGameGroupOrder, groupInstances } = storeToRefs(useGroupStore());
     const { logout } = useAuthStore();

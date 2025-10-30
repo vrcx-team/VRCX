@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import Charts from './../views/Charts/Charts.vue';
 import Favorites from './../views/Favorites/Favorites.vue';
 import Feed from './../views/Feed/Feed.vue';
+import Friend from './../views/Friend/Friend.vue';
 import FriendList from './../views/FriendList/FriendList.vue';
 import FriendLog from './../views/FriendLog/FriendLog.vue';
 import GameLog from './../views/GameLog/GameLog.vue';
@@ -14,6 +15,7 @@ import Settings from './../views/Settings/Settings.vue';
 import Tools from './../views/Tools/Tools.vue';
 
 const routes = [
+    { path: '/friend', name: 'friend', component: Friend },
     { path: '/feed', name: 'feed', component: Feed },
     { path: '/gamelog', name: 'gameLog', component: GameLog },
     { path: '/playerlist', name: 'playerList', component: PlayerList },

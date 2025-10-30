@@ -63,8 +63,8 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useAppearanceSettingsStore, useFriendStore } from '../stores';
-    import { userImage, userStatusClass } from '../shared/utils';
+    import { useAppearanceSettingsStore, useFriendStore } from '../../../stores';
+    import { userImage, userStatusClass } from '../../../shared/utils';
 
     const props = defineProps({
         friend: { type: Object, required: true },
