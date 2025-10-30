@@ -109,7 +109,7 @@
                 <template #title>
                     <span style="font-weight: bold; font-size: 14px; margin-left: 10px">Local History</span>
                     <span style="color: #909399; font-size: 12px; margin-left: 10px"
-                        >{{ avatarHistoryArray.length }}/100</span
+                        >{{ avatarHistory.length }}/100</span
                     >
                     <el-tooltip placement="right" content="Clear" :teleported="false">
                         <el-button
@@ -120,9 +120,9 @@
                             @click.stop="promptClearAvatarHistory"></el-button>
                     </el-tooltip>
                 </template>
-                <div v-if="avatarHistoryArray.length" class="x-friend-list" style="margin-top: 10px">
+                <div v-if="avatarHistory.length" class="x-friend-list" style="margin-top: 10px">
                     <FavoritesAvatarLocalHistoryItem
-                        v-for="favorite in avatarHistoryArray"
+                        v-for="favorite in avatarHistory"
                         :key="favorite.id"
                         style="display: inline-block; width: 300px; margin-right: 15px"
                         :favorite="favorite"
@@ -239,7 +239,7 @@
         localAvatarFavoritesList,
         localAvatarFavoriteGroups
     } = useFavoriteStore();
-    const { avatarHistoryArray } = storeToRefs(useAvatarStore());
+    const { avatarHistory } = storeToRefs(useAvatarStore());
     const { promptClearAvatarHistory, showAvatarDialog, applyAvatar } = useAvatarStore();
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { t } = useI18n();

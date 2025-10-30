@@ -82,6 +82,11 @@ pinia.use(
                 ...state.Group,
                 groupInstances: null,
                 inGameGroupOrder: null
+            },
+            Avatar: {
+                // @ts-ignore
+                ...state.Avatar,
+                avatarHistory: null
             }
         })
     })
