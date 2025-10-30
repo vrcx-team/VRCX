@@ -321,7 +321,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
     async function setTranslationApi() {
         translationApi.value = !translationApi.value;
-        await configRepository.setBool('VRCX_translationAPI', youTubeApi.value);
+        await configRepository.setBool(
+            'VRCX_translationAPI',
+            translationApi.value
+        );
     }
     /**
      * @param {string} value
