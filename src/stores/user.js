@@ -182,7 +182,6 @@ export const useUserStore = defineStore('User', () => {
         friend: {},
         isFriend: false,
         note: '',
-        noteSaving: false,
         incomingRequest: false,
         outgoingRequest: false,
         isBlock: false,
@@ -670,7 +669,6 @@ export const useUserStore = defineStore('User', () => {
         if (D.visible && D.id === ref.id) {
             D.ref = ref;
             D.note = String(ref.note || '');
-            D.noteSaving = false;
             D.incomingRequest = false;
             D.outgoingRequest = false;
             if (D.ref.friendRequestStatus === 'incoming') {
@@ -715,7 +713,6 @@ export const useUserStore = defineStore('User', () => {
         D.treeData = [];
         D.memo = '';
         D.note = '';
-        D.noteSaving = false;
         getUserMemo(userId).then((memo) => {
             if (memo.userId === userId) {
                 D.memo = memo.memo;
