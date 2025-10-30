@@ -65,8 +65,7 @@
 
     const emit = defineEmits(['update:friendExportDialogVisible']);
 
-    const favoriteStore = useFavoriteStore();
-    const { favoriteFriends, favoriteFriendGroups } = storeToRefs(favoriteStore);
+    const { favoriteFriends, favoriteFriendGroups } = storeToRefs(useFavoriteStore());
 
     const friendExportFavoriteGroup = ref(null);
     const friendExportContent = ref('');
