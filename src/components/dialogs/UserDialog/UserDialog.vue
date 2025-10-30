@@ -103,7 +103,18 @@
                         <div v-if="!hideUserNotes" class="x-friend-item" style="width: 100%; cursor: pointer">
                             <div class="detail" v-if="userDialog.note" @click="isEditNoteAndMemoDialogVisible = true">
                                 <span class="name">{{ t('dialog.user.info.note') }}</span>
-                                <div>{{ userDialog.note }}</div>
+                                <pre
+                                    class="extra"
+                                    style="
+                                        font-family: inherit;
+                                        font-size: 12px;
+                                        white-space: pre-wrap;
+                                        margin: 0 0.5em 0 0;
+                                        max-height: 210px;
+                                        overflow-y: auto;
+                                    "
+                                    >{{ userDialog.note }}</pre
+                                >
                             </div>
                         </div>
                         <div
@@ -112,7 +123,18 @@
                             style="width: 100%; cursor: pointer">
                             <div class="detail" @click="isEditNoteAndMemoDialogVisible = true">
                                 <span class="name">{{ t('dialog.user.info.memo') }}</span>
-                                <div>{{ userDialog.memo }}</div>
+                                <pre
+                                    class="extra"
+                                    style="
+                                        font-family: inherit;
+                                        font-size: 12px;
+                                        white-space: pre-wrap;
+                                        margin: 0 0.5em 0 0;
+                                        max-height: 210px;
+                                        overflow-y: auto;
+                                    "
+                                    >{{ userDialog.memo }}</pre
+                                >
                             </div>
                         </div>
                         <div class="x-friend-item" style="width: 100%; cursor: default">
