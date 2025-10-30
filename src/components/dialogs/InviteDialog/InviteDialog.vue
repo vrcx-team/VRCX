@@ -34,7 +34,6 @@
                 :placeholder="t('dialog.invite.select_placeholder')"
                 filterable
                 :disabled="inviteDialog.loading"
-                :persistent="false"
                 style="width: 100%; margin-top: 15px">
                 <template v-if="currentUser">
                     <el-option-group :label="t('side_panel.me')">

@@ -99,9 +99,14 @@
 
     const { t } = useI18n();
 
-    const favoriteStore = useFavoriteStore();
-    const { favoriteWorlds, favoriteWorldGroups, localWorldFavorites } = storeToRefs(favoriteStore);
-    const { localWorldFavGroupLength, localWorldFavoritesList, localWorldFavoriteGroups } = favoriteStore;
+    const {
+        favoriteWorlds,
+        favoriteWorldGroups,
+        localWorldFavorites,
+        localWorldFavoritesList,
+        localWorldFavoriteGroups
+    } = storeToRefs(useFavoriteStore());
+    const { localWorldFavGroupLength } = useFavoriteStore();
     const { cachedWorlds } = useWorldStore();
 
     const worldExportContent = ref('');

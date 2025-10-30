@@ -101,9 +101,14 @@
 
     const emit = defineEmits(['update:avatarExportDialogVisible']);
 
-    const favoriteStore = useFavoriteStore();
-    const { favoriteAvatars, favoriteAvatarGroups, localAvatarFavorites } = storeToRefs(favoriteStore);
-    const { localAvatarFavGroupLength, localAvatarFavoritesList, localAvatarFavoriteGroups } = favoriteStore;
+    const {
+        favoriteAvatars,
+        favoriteAvatarGroups,
+        localAvatarFavorites,
+        localAvatarFavoritesList,
+        localAvatarFavoriteGroups
+    } = storeToRefs(useFavoriteStore());
+    const { localAvatarFavGroupLength } = useFavoriteStore();
     const { cachedAvatars } = useAvatarStore();
 
     const avatarExportContent = ref('');
