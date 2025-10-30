@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div @click="$emit('click')">
         <div class="x-friend-item">
             <div class="avatar">
                 <img :src="smallThumbnail" loading="lazy" />
