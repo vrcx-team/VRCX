@@ -53,9 +53,11 @@ namespace VRCX
 
         public override int QuitGame()
         {
-            var processes = Process.GetProcessesByName("vrchat");
+            var processes = Process.GetProcessesByName("VRChat");
             if (processes.Length == 1)
                 processes[0].Kill();
+            foreach (var process in processes)
+                process.Dispose();
 
             return processes.Length;
         }

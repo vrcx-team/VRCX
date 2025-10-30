@@ -288,7 +288,12 @@ namespace VRCX
             try
             {
                 var processName = Path.GetFileNameWithoutExtension(filePath);
-                return Process.GetProcessesByName(processName).Length != 0;
+                var processes = Process.GetProcessesByName(processName);
+                var isProcessRunning = processes.Length != 0;
+                foreach (var process in processes)
+                    process.Dispose();
+
+                return isProcessRunning;
             }
             catch (Exception ex)
             {
