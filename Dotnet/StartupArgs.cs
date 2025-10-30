@@ -121,6 +121,7 @@ namespace VRCX
         private static bool IsDuplicateProcessRunning(VrcxLaunchArguments launchArguments)
         {
             var processes = Process.GetProcessesByName("VRCX");
+            var isDuplicateProcessRunning = false;
             foreach (var process in processes)
             {
                 if (process.Id == Environment.ProcessId)
@@ -145,10 +146,15 @@ namespace VRCX
 
                 var processArguments = ParseArgs(commandLine.Split(' '));
                 if (processArguments.ConfigDirectory == launchArguments.ConfigDirectory)
-                    return true;
+                {
+                    isDuplicateProcessRunning = true;
+                    break;
+                }
             }
+            foreach (var process in processes)
+                process.Dispose();
 
-            return false;
+            return isDuplicateProcessRunning;
         }
 
         private static void IPCToMain()

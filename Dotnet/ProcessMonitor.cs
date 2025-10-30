@@ -120,7 +120,14 @@ namespace VRCX
                 return false;
 
             if (ensureCheck && process.Process == null)
-                return Process.GetProcessesByName(processName).FirstOrDefault() != null;
+            {
+                var processes = Process.GetProcessesByName(processName);
+                var isProcessRunning = processes.Length > 0;
+                foreach (var proc in processes)
+                    proc.Dispose();
+
+                return isProcessRunning;
+            }
 
             return process.IsRunning;
 
