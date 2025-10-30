@@ -1,5 +1,5 @@
 <template>
-    <div class="fav-world-item">
+    <div class="fav-world-item" @click="$emit('click')">
         <div class="x-friend-item">
             <template v-if="favorite.ref">
                 <div class="avatar" v-once>
