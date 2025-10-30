@@ -94,9 +94,6 @@
     }
 
     async function addNote(userId, note) {
-        if (userDialog.value.id === userId) {
-            userDialog.value.noteSaving = true;
-        }
         const args = await miscRequest.saveNote({
             targetUserId: userId,
             note
@@ -115,7 +112,6 @@
         }
         if (targetUserId === userDialog.value.id) {
             if (_note === args.params.note) {
-                userDialog.value.noteSaving = false;
                 userDialog.value.note = _note;
             } else {
                 // response is cached sadge :<

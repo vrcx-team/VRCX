@@ -8,7 +8,7 @@ import { getWorldName } from '../../../shared/utils';
 export function useInstanceActivityData() {
     const activityData = ref([]);
     const activityDetailData = ref([]);
-    let allDateOfActivity = reactive(new Set());
+    const allDateOfActivity = ref(new Set());
     const worldNameArray = ref([]);
 
     async function getAllDateOfActivity() {
@@ -24,7 +24,7 @@ export function useInstanceActivityData() {
             uniqueDates.add(formattedDate);
         }
 
-        allDateOfActivity = reactive(uniqueDates);
+        allDateOfActivity.value = reactive(uniqueDates);
     }
 
     async function getWorldNameData() {
