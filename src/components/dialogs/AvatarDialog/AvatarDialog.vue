@@ -53,7 +53,7 @@
                                 effect="plain"
                                 size="small"
                                 style="margin-right: 5px; margin-top: 5px"
-                                >PC
+                                ><i class="ri-computer-line"></i>
                                 <span
                                     v-if="avatarDialog.platformInfo.pc"
                                     :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
@@ -72,7 +72,7 @@
                                 effect="plain"
                                 size="small"
                                 style="margin-right: 5px; margin-top: 5px"
-                                >Android
+                                ><i class="ri-android-line"></i>
                                 <span
                                     v-if="avatarDialog.platformInfo.android"
                                     :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
@@ -91,7 +91,7 @@
                                 effect="plain"
                                 size="small"
                                 style="margin-right: 5px; margin-top: 5px"
-                                >iOS
+                                ><i class="ri-apple-line"></i>
                                 <span
                                     v-if="avatarDialog.platformInfo.ios"
                                     :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']"
