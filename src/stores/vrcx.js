@@ -274,7 +274,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 !favoriteStore.cachedFavoritesByObjectId(id) &&
                 ref.authorId !== userStore.currentUser.id &&
                 !favoriteStore.localAvatarFavoritesList.includes(id) &&
-                !avatarStore.avatarHistory.has(id)
+                !avatarStore.avatarHistory.includes(id)
             ) {
                 avatarStore.cachedAvatars.delete(id);
             }

@@ -1151,7 +1151,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 }
             }
             if (!avatarInFavorites) {
-                if (!avatarStore.avatarHistory.has(id)) {
+                if (!avatarStore.avatarHistory.includes(id)) {
                     database.removeAvatarFromCache(id);
                 }
             }
@@ -1292,7 +1292,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             }
         }
         if (!avatarInFavorites) {
-            if (!avatarStore.avatarHistory.has(avatarId)) {
+            if (!avatarStore.avatarHistory.includes(avatarId)) {
                 database.removeAvatarFromCache(avatarId);
             }
         }

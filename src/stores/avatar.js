@@ -1,4 +1,4 @@
-import { nextTick, reactive, ref, watch } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 
@@ -59,8 +59,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         cachePath: '',
         fileAnalysis: []
     });
-    const avatarHistory = reactive(new Set());
-    const avatarHistoryArray = ref([]);
+    const avatarHistory = ref([]);
 
     watch(
         () => watchState.isLoggedIn,
@@ -69,8 +68,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             cachedAvatars.clear();
             cachedAvatarNames.clear();
             cachedAvatarModerations.clear();
-            avatarHistory.clear();
-            avatarHistoryArray.value = [];
+            avatarHistory.value = [];
             if (isLoggedIn) {
                 getAvatarHistory();
             }
@@ -339,7 +337,6 @@ export const useAvatarStore = defineStore('Avatar', () => {
      * @returns {Promise<void>}
      */
     async function getAvatarHistory() {
-        avatarHistory.clear();
         const historyArray = await database.getAvatarHistory(
             userStore.currentUser.id
         );
@@ -349,9 +346,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 continue;
             }
             applyAvatar(avatar);
-            avatarHistory.add(avatar.id);
         }
-        avatarHistoryArray.value = historyArray;
+        avatarHistory.value = historyArray;
     }
 
     /**
@@ -370,16 +366,14 @@ export const useAvatarStore = defineStore('Avatar', () => {
                     return;
                 }
 
-                const historyArray = avatarHistoryArray.value;
+                const historyArray = avatarHistory.value;
                 for (let i = 0; i < historyArray.length; ++i) {
                     if (historyArray[i].id === ref.id) {
                         historyArray.splice(i, 1);
                     }
                 }
 
-                avatarHistoryArray.value.unshift(ref);
-                avatarHistory.delete(ref.id);
-                avatarHistory.add(ref.id);
+                avatarHistory.value.unshift(ref);
             })
             .catch((err) => {
                 console.error('Failed to add avatar to history:', err);
@@ -387,8 +381,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     function clearAvatarHistory() {
-        avatarHistory.clear();
-        avatarHistoryArray.value = [];
+        avatarHistory.value = [];
         database.clearAvatarHistory();
     }
 
@@ -675,7 +668,6 @@ export const useAvatarStore = defineStore('Avatar', () => {
     return {
         avatarDialog,
         avatarHistory,
-        avatarHistoryArray,
         cachedAvatarModerations,
         cachedAvatars,
         cachedAvatarNames,
