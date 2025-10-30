@@ -92,19 +92,19 @@
                     >
                 </div>
 
-                <hr v-if="Object.keys(loginForm.savedCredentials).length !== 0" class="x-vertical-divider" />
+                <hr v-if="Object.keys(savedCredentials).length !== 0" class="x-vertical-divider" />
 
-                <div v-if="Object.keys(loginForm.savedCredentials).length !== 0">
+                <div v-if="Object.keys(savedCredentials).length !== 0">
                     <h2 style="font-weight: bold; text-align: center; margin: 0">
                         {{ t('view.login.savedAccounts') }}
                     </h2>
                     <div class="x-scroll-wrapper" style="margin-top: 10px">
                         <div class="x-saved-account-list">
                             <div
-                                v-for="user in loginForm.savedCredentials"
+                                v-for="user in savedCredentials"
                                 :key="user.user.id"
                                 class="x-friend-item"
-                                @click="relogin(user)">
+                                @click="clickSavedLogin(user)">
                                 <div class="avatar">
                                     <img :src="userImage(user.user)" loading="lazy" />
                                 </div>
@@ -119,7 +119,7 @@
                                     :icon="Delete"
                                     style="margin-left: 10px"
                                     circle
-                                    @click.stop="deleteSavedLogin(user.user.id)"></el-button>
+                                    @click.stop="clickDeleteSavedLogin(user.user.id)"></el-button>
                             </div>
                         </div>
                     </div>
@@ -149,13 +149,16 @@
 
 <script setup>
     import { Connection, Delete, Download } from '@element-plus/icons-vue';
-    import { onBeforeUnmount, ref } from 'vue';
+    import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { useAuthStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '../../stores';
     import { openExternalLink, userImage } from '../../shared/utils';
     import { AppDebug } from '../../service/appConfig';
+    import { watchState } from '../../service/watchState';
+
+    import configRepository from '../../service/config';
 
     const { showVRCXUpdateDialog } = useVRCXUpdaterStore();
     const { loginForm, enableCustomEndpoint } = storeToRefs(useAuthStore());
@@ -165,18 +168,49 @@
     const { t } = useI18n();
 
     const loginFormRef = ref(null);
+    const savedCredentials = ref({});
+
+    async function clickDeleteSavedLogin(userId) {
+        await deleteSavedLogin(userId);
+        await updateSavedCredentials();
+    }
+
+    async function clickSavedLogin(user) {
+        await relogin(user);
+        await updateSavedCredentials();
+    }
 
     function handleLogin() {
         if (loginFormRef.value) {
-            loginFormRef.value.validate((valid) => {
-                valid && login();
+            loginFormRef.value.validate(async (valid) => {
+                if (valid) {
+                    await login();
+                    await updateSavedCredentials();
+                }
             });
         }
     }
+
+    async function updateSavedCredentials() {
+        if (watchState.isLoggedIn) {
+            return;
+        }
+        try {
+            savedCredentials.value = JSON.parse(await configRepository.getString('savedCredentials')) || {};
+        } catch (e) {
+            console.error('Failed to parse saved credentials:', e);
+            savedCredentials.value = {};
+        }
+    }
+
+    onBeforeMount(async () => {
+        updateSavedCredentials();
+    });
 
     onBeforeUnmount(() => {
         if (loginFormRef.value) {
             loginFormRef.value.resetFields();
         }
+        savedCredentials.value = {};
     });
 </script>
