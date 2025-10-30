@@ -13,17 +13,15 @@ namespace VRCX
         }
 
         /// <summary>
-        /// Checks if the VRChat game and SteamVR are currently running and updates the browser's JavaScript function $app.updateIsGameRunning with the results.
+        /// for Cef only, checks if VRChat and SteamVR are currently running and updates the browser using JavaScript with the results.
         /// </summary>
         public override void CheckGameRunning()
         {
-            ProcessMonitor.Instance.IsProcessRunning("VRChat");
-            ProcessMonitor.Instance.IsProcessRunning("vrserver");
         }
 
         public override bool IsGameRunning()
         {
-            var processes = Process.GetProcessesByName("VRChat");
+            var processes = Process.GetProcessesByName("VRChat.exe");
             var isGameRunning = processes.Length > 0;
             foreach (var process in processes)
                 process.Dispose();
@@ -56,7 +54,7 @@ namespace VRCX
 
         public override int QuitGame()
         {
-            var processes = Process.GetProcessesByName("vrchat");
+            var processes = Process.GetProcessesByName("VRChat.exe");
             if (processes.Length == 1)
                 processes[0].Kill();
             foreach (var process in processes)
