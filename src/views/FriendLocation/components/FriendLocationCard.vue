@@ -81,7 +81,6 @@
 <style scoped lang="scss">
     .friend-card {
         --card-scale: 1;
-        --friend-card-width: 300px;
         position: relative;
         display: grid;
         gap: calc(14px * var(--card-scale));
@@ -92,8 +91,9 @@
         transition:
             box-shadow 0.2s ease,
             transform 0.2s ease;
-        width: 220px;
-        max-width: 100%;
+        width: 100%;
+        max-width: var(--friend-card-target-width, 220px);
+        min-width: var(--friend-card-min-width, 220px);
 
         &:hover {
             box-shadow: 0 calc(10px * var(--card-scale)) calc(24px * var(--card-scale)) rgba(15, 23, 42, 0.07);
