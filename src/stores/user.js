@@ -389,6 +389,49 @@ export const useUserStore = defineStore('User', () => {
     }
 
     const robotUrl = `${AppDebug.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
+
+    /**
+     *
+     * @param {Map<string, any>} userCache
+     * @param {Map<string, any>} friendMap
+     */
+    function cleanupUserCache(userCache, friendMap) {
+        const bufferSize = 200;
+
+        const currentFriendCount = friendMap.size;
+        const currentTotalSize = userCache.size;
+
+        const effectiveMaxSize = currentFriendCount + bufferSize;
+
+        if (currentTotalSize <= effectiveMaxSize) {
+            return;
+        }
+
+        const targetDeleteCount = currentTotalSize - effectiveMaxSize;
+        let deletedCount = 0;
+        const keysToDelete = [];
+
+        for (const userId of userCache.keys()) {
+            if (friendMap.has(userId)) {
+                continue;
+            }
+
+            if (deletedCount >= targetDeleteCount) {
+                break;
+            }
+
+            keysToDelete.push(userId);
+            deletedCount++;
+        }
+
+        for (const id of keysToDelete) {
+            userCache.delete(id);
+        }
+
+        console.log(
+            `User cache cleanup: Deleted ${deletedCount}. Current cache size: ${userCache.size}`
+        );
+    }
     /**
      *
      * @param {import('../types/api/user').GetUserResponse} json
@@ -506,6 +549,7 @@ export const useUserStore = defineStore('User', () => {
                 ref.$customTag = '';
                 ref.$customTagColour = '';
             }
+            cleanupUserCache(cachedUsers, friendStore.friends);
             cachedUsers.set(ref.id, ref);
             friendStore.updateFriend(ref.id);
         } else {
