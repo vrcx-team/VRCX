@@ -158,11 +158,9 @@
     import { AppDebug } from '../../service/appConfig';
     import { watchState } from '../../service/watchState';
 
-    import configRepository from '../../service/config';
-
     const { showVRCXUpdateDialog } = useVRCXUpdaterStore();
     const { loginForm, enableCustomEndpoint } = storeToRefs(useAuthStore());
-    const { toggleCustomEndpoint, relogin, deleteSavedLogin, login } = useAuthStore();
+    const { toggleCustomEndpoint, relogin, deleteSavedLogin, login, getAllSavedCredentials } = useAuthStore();
     const { promptProxySettings } = useGeneralSettingsStore();
 
     const { t } = useI18n();
@@ -195,12 +193,7 @@
         if (watchState.isLoggedIn) {
             return;
         }
-        try {
-            savedCredentials.value = JSON.parse(await configRepository.getString('savedCredentials')) || {};
-        } catch (e) {
-            console.error('Failed to parse saved credentials:', e);
-            savedCredentials.value = {};
-        }
+        savedCredentials.value = await getAllSavedCredentials();
     }
 
     onBeforeMount(async () => {
