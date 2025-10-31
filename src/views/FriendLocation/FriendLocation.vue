@@ -37,7 +37,7 @@
                             <span class="friend-view__instance-count">{{ group.friends.length }}</span>
                         </header>
                         <div class="friend-view__grid" :style="gridStyle">
-                            <FriendCard
+                            <FriendLocationCard
                                 v-for="friend in group.friends"
                                 :key="friend.id ?? friend.userId ?? friend.displayName"
                                 :friend="friend"
@@ -49,7 +49,7 @@
             </template>
             <template v-else>
                 <div v-if="visibleFriends.length" class="friend-view__grid" :style="gridStyle">
-                    <FriendCard
+                    <FriendLocationCard
                         v-for="entry in visibleFriends"
                         :key="entry.id ?? entry.friend.id ?? entry.friend.displayName"
                         :friend="entry.friend"
@@ -75,7 +75,7 @@
     import { getFriendsLocations } from '../../shared/utils/location.js';
     import { useFriendStore } from '../../stores';
 
-    import FriendCard from './components/FriendCard.vue';
+    import FriendLocationCard from './components/FriendLocationCard.vue';
 
     const friendStore = useFriendStore();
     const { onlineFriends, vipFriends, activeFriends, offlineFriends, friendsInSameInstance } =
