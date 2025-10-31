@@ -492,7 +492,12 @@
         D.metadata.creationDate = '';
         D.metadata.application = '';
 
-        const metadata = JSON.parse(json);
+        let metadata = null;
+        try {
+            metadata = JSON.parse(json);
+        } catch (e) {
+            console.error('Error parsing screenshot metadata JSON:', e);
+        }
         if (!metadata?.sourceFile) {
             D.metadata = {};
             D.metadata.error = 'Invalid file selected. Please select a valid VRChat screenshot.';
