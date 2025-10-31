@@ -42,7 +42,7 @@
                 ><div class="bottom-button" @click="directAccessPaste"><i class="ri-compass-3-line"></i></div
             ></el-tooltip>
             <el-tooltip :content="t('nav_tooltip.settings')" placement="right"
-                ><div class="bottom-button" @click="route.push({ name: 'settings' })">
+                ><div class="bottom-button" @click="router.push({ name: 'settings' })">
                     <i class="ri-settings-3-line"></i></div
             ></el-tooltip>
         </div>
@@ -60,7 +60,7 @@
     import * as Sentry from '@sentry/vue';
 
     const { t } = useI18n();
-    const route = useRouter();
+    const router = useRouter();
 
     const navItems = [
         { index: 'feed', icon: 'ri-rss-line', tooltip: 'nav_tooltip.feed' },

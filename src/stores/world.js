@@ -1,4 +1,4 @@
-import { reactive, watch } from 'vue';
+import { reactive, shallowReactive, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
 
@@ -53,7 +53,7 @@ export const useWorldStore = defineStore('World', () => {
         hasPersistData: false
     });
 
-    let cachedWorlds = new Map();
+    const cachedWorlds = shallowReactive(new Map());
 
     watch(
         () => watchState.isLoggedIn,
