@@ -1,4 +1,4 @@
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, reactive, ref, shallowReactive, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
 
@@ -282,7 +282,7 @@ export const useUserStore = defineStore('User', () => {
         notes: new Map()
     });
 
-    const cachedUsers = new Map();
+    const cachedUsers = shallowReactive(new Map());
 
     const isLocalUserVrcPlusSupporter = computed(
         () => currentUser.value.$isVRCPlus || AppDebug.debugVrcPlus
@@ -413,7 +413,7 @@ export const useUserStore = defineStore('User', () => {
             delete json.currentAvatarThumbnailImageUrl;
         }
         if (typeof ref === 'undefined') {
-            ref = reactive({
+            ref = {
                 ageVerificationStatus: '',
                 ageVerified: false,
                 allowAvatarCopying: false,
@@ -480,7 +480,7 @@ export const useUserStore = defineStore('User', () => {
                 $moderations: {},
                 //
                 ...json
-            });
+            };
             if (locationStore.lastLocation.playerList.has(json.id)) {
                 // update $location_at from instance join time
                 const player = locationStore.lastLocation.playerList.get(
