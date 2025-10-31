@@ -413,7 +413,7 @@ export const useUserStore = defineStore('User', () => {
             delete json.currentAvatarThumbnailImageUrl;
         }
         if (typeof ref === 'undefined') {
-            ref = {
+            ref = reactive({
                 ageVerificationStatus: '',
                 ageVerified: false,
                 allowAvatarCopying: false,
@@ -480,7 +480,7 @@ export const useUserStore = defineStore('User', () => {
                 $moderations: {},
                 //
                 ...json
-            };
+            });
             if (locationStore.lastLocation.playerList.has(json.id)) {
                 // update $location_at from instance join time
                 const player = locationStore.lastLocation.playerList.get(
