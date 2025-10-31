@@ -100,8 +100,11 @@
                     </template>
 
                     <div class="x-friend-list" style="max-height: none">
-                        <div v-if="!hideUserNotes" class="x-friend-item" style="width: 100%; cursor: pointer">
-                            <div class="detail" v-if="userDialog.note" @click="isEditNoteAndMemoDialogVisible = true">
+                        <div
+                            v-if="userDialog.note && !hideUserNotes"
+                            class="x-friend-item"
+                            style="width: 100%; cursor: pointer">
+                            <div class="detail" @click="isEditNoteAndMemoDialogVisible = true">
                                 <span class="name">{{ t('dialog.user.info.note') }}</span>
                                 <pre
                                     class="extra"

@@ -50,7 +50,10 @@ export async function initSentry(app) {
                         error.message.includes('404') ||
                         error.message.includes('500') ||
                         error.message.includes('503') ||
-                        error.message.includes('database or disk is full')
+                        error.message.includes('database or disk is full') ||
+                        error.message.includes(
+                            'There is not enough space on the disk.'
+                        )
                     ) {
                         return null;
                     }
