@@ -31,12 +31,10 @@
                         :key="group.instanceId"
                         class="friend-view__instance">
                         <header class="friend-view__instance-header">
-                            <span class="friend-view__instance-id" :title="group.instanceId">{{
-                                group.instanceId
-                            }}</span>
+                            <Location class="extra" :location="group.instanceId" style="display: inline" />
                             <span class="friend-view__instance-count">{{ group.friends.length }}</span>
                         </header>
-                        <div class="friend-view__grid" :style="gridStyle">
+                        <div class="friend-view__grid" :style="gridStyle(group.friends.length)">
                             <FriendLocationCard
                                 v-for="friend in group.friends"
                                 :key="friend.id ?? friend.userId ?? friend.displayName"
@@ -48,7 +46,7 @@
                 <div v-else class="friend-view__empty">No matching friends</div>
             </template>
             <template v-else>
-                <div v-if="visibleFriends.length" class="friend-view__grid" :style="gridStyle">
+                <div v-if="visibleFriends.length" class="friend-view__grid" :style="gridStyle(visibleFriends.length)">
                     <FriendLocationCard
                         v-for="entry in visibleFriends"
                         :key="entry.id ?? entry.friend.id ?? entry.friend.displayName"
@@ -68,7 +66,7 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, onMounted, ref, watch } from 'vue';
+    import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { Loading, Search } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
 
@@ -98,6 +96,58 @@
     const itemsToShow = ref(PAGE_SIZE);
     const isLoadingMore = ref(false);
     const scrollbarRef = ref();
+    const gridWidth = ref(0);
+    let resizeObserver;
+    let cleanupResize;
+
+    const updateGridWidth = () => {
+        const wrap = scrollbarRef.value?.wrapRef;
+        if (!wrap) {
+            return;
+        }
+
+        gridWidth.value = wrap.clientWidth ?? 0;
+    };
+
+    const setupResizeHandling = () => {
+        if (cleanupResize) {
+            cleanupResize();
+            cleanupResize = undefined;
+        }
+
+        const wrap = scrollbarRef.value?.wrapRef;
+        if (!wrap) {
+            return;
+        }
+
+        updateGridWidth();
+
+        if (typeof ResizeObserver !== 'undefined') {
+            resizeObserver = new ResizeObserver((entries) => {
+                if (!entries || entries.length === 0) {
+                    return;
+                }
+                const [entry] = entries;
+                gridWidth.value = entry.contentRect?.width ?? wrap.clientWidth ?? 0;
+            });
+            resizeObserver.observe(wrap);
+            cleanupResize = () => {
+                resizeObserver?.disconnect();
+                resizeObserver = undefined;
+            };
+            return;
+        }
+
+        if (typeof window !== 'undefined') {
+            const handleResize = () => {
+                updateGridWidth();
+            };
+            window.addEventListener('resize', handleResize, { passive: true });
+            cleanupResize = () => {
+                window.removeEventListener('resize', handleResize);
+            };
+        }
+    };
 
     const normalizedSearchTerm = computed(() => searchTerm.value.trim().toLowerCase());
 
@@ -112,24 +162,19 @@
 
     const sameInstanceGroups = computed(() => {
         const source = friendsInSameInstance?.value;
+        if (!Array.isArray(source) || source.length === 0) return [];
 
-        if (!Array.isArray(source) || source.length === 0) {
-            return [];
-        }
-
-        return source.map((group, index) => {
-            if (!Array.isArray(group) || group.length === 0) {
-                return null;
-            }
-
-            const friends = group;
-
-            const instanceId = getFriendsLocations(friends) || `instance-${index + 1}`;
-            return {
-                instanceId: String(instanceId),
-                friends
-            };
-        });
+        return source
+            .map((group, index) => {
+                if (!Array.isArray(group) || group.length === 0) return null;
+                const friends = group;
+                const instanceId = getFriendsLocations(friends) || `instance-${index + 1}`;
+                return {
+                    instanceId: String(instanceId),
+                    friends
+                };
+            })
+            .filter(Boolean);
     });
 
     const sameInstanceEntries = computed(() =>
@@ -213,16 +258,43 @@
     const gridStyle = computed(() => {
         const baseWidth = 220;
         const baseGap = 14;
-        const cardWidth = baseWidth * cardScale.value;
-        const gap = baseGap + (cardScale.value - 1) * 10;
-        return {
-            '--friend-card-min-width': `${Math.round(cardWidth)}px`,
-            '--friend-card-gap': `${gap.toFixed(0)}px`
+        const scale = cardScale.value;
+        const minWidth = baseWidth * scale;
+        const gap = baseGap + (scale - 1) * 10;
+
+        return (count = 1) => {
+            const containerWidth = Math.max(gridWidth.value ?? 0, 0);
+            const itemCount = Math.max(Number(count) || 0, 1);
+            const maxColumns = Math.max(1, Math.floor((containerWidth + gap) / (minWidth + gap)));
+            const columns = Math.max(1, Math.min(itemCount, maxColumns));
+            const shouldStretch = itemCount >= maxColumns;
+
+            let cardWidth = minWidth;
+
+            if (shouldStretch) {
+                const columnsWidth = containerWidth - gap * (columns - 1);
+                const rawWidth = columnsWidth > 0 ? columnsWidth / columns : minWidth;
+
+                if (Number.isFinite(rawWidth) && rawWidth > 0) {
+                    cardWidth = Math.max(minWidth, rawWidth);
+                }
+            }
+
+            return {
+                '--friend-card-min-width': `${Math.round(minWidth)}px`,
+                '--friend-card-gap': `${Math.round(gap)}px`,
+                '--friend-card-target-width': `${Math.round(cardWidth)}px`,
+                '--friend-grid-columns': `${columns}`
+            };
         };
     });
 
     const handleScroll = () => {
-        if (isLoadingMore.value || filteredFriends.value.length === 0) {
+        if (
+            isLoadingMore.value ||
+            filteredFriends.value.length === 0 ||
+            itemsToShow.value >= filteredFriends.value.length
+        ) {
             return;
         }
 
@@ -240,7 +312,7 @@
     };
 
     function loadMoreFriends() {
-        if (isLoadingMore.value) {
+        if (isLoadingMore.value || itemsToShow.value >= filteredFriends.value.length) {
             return;
         }
 
@@ -277,7 +349,10 @@
 
     watch([searchTerm, activeSegment], () => {
         itemsToShow.value = PAGE_SIZE;
-        maybeFillViewport();
+        nextTick(() => {
+            updateGridWidth();
+            maybeFillViewport();
+        });
     });
 
     watch(
@@ -286,19 +361,33 @@
             if (itemsToShow.value > length) {
                 itemsToShow.value = length;
             }
-            maybeFillViewport();
+            nextTick(() => {
+                updateGridWidth();
+                maybeFillViewport();
+            });
         }
     );
 
     watch(cardScale, () => {
         nextTick(() => {
             scrollbarRef.value?.update?.();
+            updateGridWidth();
             maybeFillViewport();
         });
     });
 
     onMounted(() => {
-        maybeFillViewport();
+        nextTick(() => {
+            setupResizeHandling();
+            maybeFillViewport();
+        });
+    });
+
+    onBeforeUnmount(() => {
+        if (cleanupResize) {
+            cleanupResize();
+            cleanupResize = undefined;
+        }
     });
 </script>
 
@@ -314,7 +403,7 @@
         gap: 20px;
         align-items: center;
         justify-content: space-between;
-        padding: 6px 2px 0 2px;
+        padding: 6px 10px 0 2px;
     }
 
     .friend-view__segmented :deep(.el-segmented) {
@@ -353,14 +442,18 @@
     }
 
     .friend-view__scroll {
-        padding: 2px;
+        padding: 2px 10px 2px 2px;
     }
 
     .friend-view__grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(var(--friend-card-min-width, 200px), max-content));
+        grid-template-columns: repeat(
+            var(--friend-grid-columns, 1),
+            minmax(var(--friend-card-min-width, 200px), var(--friend-card-target-width, 1fr))
+        );
         gap: var(--friend-card-gap, 18px);
         justify-content: start;
+        padding-right: 2px;
     }
 
     .friend-view__instances {
