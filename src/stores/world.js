@@ -215,6 +215,23 @@ export const useWorldStore = defineStore('World', () => {
         }
     }
 
+    function cleanupWorldCache(WorldCache) {
+        const maxCacheSize = 10000;
+
+        if (WorldCache.size <= maxCacheSize) {
+            return;
+        }
+
+        const deletedCount = WorldCache.size - maxCacheSize;
+        while (WorldCache.size > maxCacheSize) {
+            const deletedKey = WorldCache.keys().next().value;
+            WorldCache.delete(deletedKey);
+        }
+        console.log(
+            `World cache cleanup: Deleted ${deletedCount}. Current cache size: ${WorldCache.size}`
+        );
+    }
+
     /**
      *
      * @param {object} json
@@ -270,6 +287,7 @@ export const useWorldStore = defineStore('World', () => {
                 //
                 ...json
             };
+            cleanupWorldCache(cachedWorlds);
             cachedWorlds.set(ref.id, ref);
         } else {
             Object.assign(ref, json);
