@@ -64,15 +64,15 @@
 
     const navItems = [
         { index: 'feed', icon: 'ri-rss-line', tooltip: 'nav_tooltip.feed' },
-        { index: 'friend', icon: 'ri-group-line', tooltip: 'nav_tooltip.friend' },
-        { index: 'gameLog', icon: 'ri-history-line', tooltip: 'nav_tooltip.game_log' },
-        { index: 'playerList', icon: 'ri-group-3-line', tooltip: 'nav_tooltip.player_list' },
+        { index: 'friend-location', icon: 'ri-group-line', tooltip: 'nav_tooltip.friend_location' },
+        { index: 'game-log', icon: 'ri-history-line', tooltip: 'nav_tooltip.game_log' },
+        { index: 'player-list', icon: 'ri-group-3-line', tooltip: 'nav_tooltip.player_list' },
         { index: 'search', icon: 'ri-search-line', tooltip: 'nav_tooltip.search' },
         { index: 'favorites', icon: 'ri-star-line', tooltip: 'nav_tooltip.favorites' },
-        { index: 'friendLog', icon: 'ri-contacts-line', tooltip: 'nav_tooltip.friend_log' },
+        { index: 'friend-log', icon: 'ri-contacts-line', tooltip: 'nav_tooltip.friend_log' },
         { index: 'moderation', icon: 'ri-user-forbid-line', tooltip: 'nav_tooltip.moderation' },
         { index: 'notification', icon: 'ri-notification-2-line', tooltip: 'nav_tooltip.notification' },
-        { index: 'friendList', icon: 'ri-contacts-book-3-line', tooltip: 'nav_tooltip.friend_list' },
+        { index: 'friend-list', icon: 'ri-contacts-book-3-line', tooltip: 'nav_tooltip.friend_list' },
         { index: 'charts', icon: 'ri-bar-chart-line', tooltip: 'nav_tooltip.charts' },
         { index: 'tools', icon: 'ri-tools-line', tooltip: 'nav_tooltip.tools' }
     ];

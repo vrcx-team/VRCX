@@ -3,8 +3,8 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import Charts from './../views/Charts/Charts.vue';
 import Favorites from './../views/Favorites/Favorites.vue';
 import Feed from './../views/Feed/Feed.vue';
-import Friend from './../views/Friend/Friend.vue';
 import FriendList from './../views/FriendList/FriendList.vue';
+import FriendLocation from './../views/FriendLocation/FriendLocation.vue';
 import FriendLog from './../views/FriendLog/FriendLog.vue';
 import GameLog from './../views/GameLog/GameLog.vue';
 import Moderation from './../views/Moderation/Moderation.vue';
@@ -15,17 +15,21 @@ import Settings from './../views/Settings/Settings.vue';
 import Tools from './../views/Tools/Tools.vue';
 
 const routes = [
-    { path: '/friend', name: 'friend', component: Friend },
     { path: '/feed', name: 'feed', component: Feed },
-    { path: '/gamelog', name: 'gameLog', component: GameLog },
-    { path: '/playerlist', name: 'playerList', component: PlayerList },
+    {
+        path: '/friend-location',
+        name: 'friendLocation',
+        component: FriendLocation
+    },
+    { path: '/game-log', name: 'gameLog', component: GameLog },
+    { path: '/player-list', name: 'playerList', component: PlayerList },
     { path: '/search', name: 'search', component: Search },
     { path: '/favorites', name: 'favorites', component: Favorites },
-    { path: '/friendlog', name: 'friendLog', component: FriendLog },
+    { path: '/friend-log', name: 'friendLog', component: FriendLog },
     { path: '/moderation', name: 'moderation', component: Moderation },
     { path: '/notification', name: 'notification', component: Notification },
     {
-        path: '/friendlist',
+        path: '/friend-list',
         name: 'friendList',
         component: FriendList
     },
