@@ -92,7 +92,7 @@
         transition:
             box-shadow 0.2s ease,
             transform 0.2s ease;
-        width: var(--friend-card-width, auto);
+        width: 220px;
         max-width: 100%;
 
         &:hover {
@@ -183,7 +183,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: calc(36px * var(--card-scale));
+        height: calc(40px * var(--card-scale));
         padding: calc(6px * var(--card-scale)) calc(10px * var(--card-scale));
         border-radius: calc(12px * var(--card-scale));
         background: rgba(148, 163, 184, 0.18);
@@ -191,11 +191,10 @@
         font-size: calc(12px * var(--card-scale));
         line-height: 1.3;
         box-sizing: border-box;
-        max-width: 100%;
     }
 
     .friend-card__location {
-        display: block;
+        display: flex;
         width: 100%;
         max-height: calc(36px * var(--card-scale));
         overflow: hidden;
@@ -230,5 +229,10 @@
 
     .friend-card__location :deep(.x-location__meta) {
         display: none;
+    }
+
+    .friend-card__location :deep(.flags) {
+        scale: calc(1 * var(--card-scale));
+        filter: brightness(1.05);
     }
 </style>

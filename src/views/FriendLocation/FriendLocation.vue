@@ -12,8 +12,8 @@
                     v-model="cardScale"
                     class="friend-view__slider"
                     :min="0.6"
-                    :max="1.2"
-                    :step="0.05"
+                    :max="1.0"
+                    :step="0.01"
                     :show-tooltip="false" />
                 <el-input
                     v-model="searchTerm"
@@ -358,11 +358,9 @@
 
     .friend-view__grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(var(--friend-card-min-width, 200px), 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(var(--friend-card-min-width, 200px), max-content));
         gap: var(--friend-card-gap, 18px);
-        padding: 6px;
-        box-sizing: border-box;
-        width: 100%;
+        justify-content: start;
     }
 
     .friend-view__instances {
