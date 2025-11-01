@@ -158,7 +158,6 @@ export const useNotificationStore = defineStore('Notification', () => {
         const D = userStore.userDialog;
         if (
             D.visible === false ||
-            ref.$isDeleted ||
             ref.type !== 'friendRequest' ||
             ref.senderUserId !== D.id
         ) {
