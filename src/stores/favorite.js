@@ -291,19 +291,11 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         if (typeof ref === 'undefined') {
             return;
         }
-        friendStore.localFavoriteFriends.delete(args.params.objectId);
-        friendStore.updateSidebarFriendsList();
-        if (ref.$isDeleted) {
-            return;
-        }
+        // if (ref.$isDeleted) {
+        //     return;
+        // }
         args.ref = ref;
-        ref.$isDeleted = true;
-        handleFavoriteAtDelete({
-            ref,
-            params: {
-                favoriteId: ref.id
-            }
-        });
+        handleFavoriteAtDelete(ref);
     }
 
     function handleFavoriteGroup(args) {
@@ -320,15 +312,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             if (ref.$isDeleted || ref.$groupKey !== key) {
                 continue;
             }
-            friendStore.localFavoriteFriends.delete(ref.favoriteId);
-            friendStore.updateSidebarFriendsList();
-            ref.$isDeleted = true;
-            handleFavoriteAtDelete({
-                ref,
-                params: {
-                    favoriteId: ref.id
-                }
-            });
+            handleFavoriteAtDelete(ref);
         }
     }
 
@@ -359,15 +343,16 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         state.favoriteAvatars_ = [];
     }
 
-    function handleFavoriteAtDelete(args) {
-        applyFavorite(args.ref.type, args.ref.favoriteId);
-        friendStore.updateFriend(args.ref.favoriteId);
+    function handleFavoriteAtDelete(ref) {
+        ref.$isDeleted = true;
+        cachedFavorites.delete(ref.id);
+        friendStore.localFavoriteFriends.delete(ref.favoriteId);
+        applyFavorite(ref.type, ref.favoriteId);
+        friendStore.updateFriend(ref.favoriteId);
+        friendStore.updateSidebarFavorites();
         const userDialog = userStore.userDialog;
         if (
-            !(
-                userDialog.visible === false ||
-                userDialog.id !== args.ref.favoriteId
-            )
+            !(userDialog.visible === false || userDialog.id !== ref.favoriteId)
         ) {
             userDialog.isFavorite = false;
         }
@@ -376,7 +361,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         if (
             !(
                 worldDialog.visible === false ||
-                worldDialog.id !== args.ref.favoriteId
+                worldDialog.id !== ref.favoriteId
             )
         ) {
             worldDialog.isFavorite = localWorldFavoritesList.value.includes(
@@ -388,7 +373,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         if (
             !(
                 avatarDialog.visible === false ||
-                avatarDialog.id !== args.ref.favoriteId
+                avatarDialog.id !== ref.favoriteId
             )
         ) {
             avatarDialog.isFavorite = false;
@@ -534,7 +519,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                     state.favoriteAvatars_.push(ctx);
                 }
             }
-        } else if (typeof ctx !== 'undefined') {
+        }
+        if (typeof favorite === 'undefined' && typeof ctx !== 'undefined') {
             state.favoriteObjects.delete(objectId);
             if (type === 'friend') {
                 removeFromArray(state.favoriteFriends_, ctx);
@@ -817,7 +803,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                     ))
             ) {
                 friendStore.localFavoriteFriends.add(ref.favoriteId);
-                friendStore.updateSidebarFriendsList();
+                friendStore.updateSidebarFavorites();
             }
         } else {
             Object.assign(ref, json);
@@ -839,16 +825,10 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      */
     function deleteExpiredFavorites() {
         for (const ref of cachedFavorites.values()) {
-            if (ref.$isDeleted || ref.$isExpired === false) {
+            if (ref.$isDeleted || !ref.$isExpired) {
                 continue;
             }
-            ref.$isDeleted = true;
-            handleFavoriteAtDelete({
-                ref,
-                params: {
-                    favoriteId: ref.id
-                }
-            });
+            handleFavoriteAtDelete(ref);
         }
     }
 

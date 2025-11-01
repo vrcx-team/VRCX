@@ -208,6 +208,7 @@ const miscReq = {
             method: 'POST',
             params: {
                 emojiId: params.emojiId
+                // inventoryItemId
             }
         }).then((json) => {
             const args = {

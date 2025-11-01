@@ -63,12 +63,12 @@ export const useUiStore = defineStore('Ui', () => {
         updateTrayIconNotify();
     }
 
-    function updateTrayIconNotify() {
+    function updateTrayIconNotify(force = false) {
         const newState =
             notifiedMenus.value.includes('notification') ||
             notifiedMenus.value.includes('friendLog');
 
-        if (trayIconNotify.value !== newState) {
+        if (trayIconNotify.value !== newState || force) {
             trayIconNotify.value = newState;
             if (LINUX) {
                 window.electron.setTrayIconNotification(trayIconNotify.value);
@@ -77,6 +77,7 @@ export const useUiStore = defineStore('Ui', () => {
             AppApi.SetTrayIconNotification(trayIconNotify.value);
         }
     }
+    updateTrayIconNotify(true);
 
     return {
         notifiedMenus,
