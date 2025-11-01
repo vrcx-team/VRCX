@@ -453,6 +453,15 @@
                             </div>
                         </template>
                         <div
+                            v-if="userDialog.ref.id === currentUser.id"
+                            class="x-friend-item"
+                            @click="getVRChatCredits()">
+                            <div class="detail">
+                                <span class="name">{{ t('view.profile.profile.vrchat_credits') }}</span>
+                                <span class="extra">{{ vrchatCredit ?? t('view.profile.profile.refresh') }}</span>
+                            </div>
+                        </div>
+                        <div
                             v-if="userDialog.ref.id === currentUser.id && currentUser.homeLocation"
                             class="x-friend-item"
                             style="width: 100%"
@@ -1431,6 +1440,7 @@
     });
 
     const isEditNoteAndMemoDialogVisible = ref(false);
+    const vrchatCredit = ref(null);
 
     const userDialogAvatars = computed(() => {
         const { avatars, avatarReleaseStatus } = userDialog.value;
@@ -1485,7 +1495,11 @@
 
     function handleUserDialogTab(tabName) {
         const userId = userDialog.value.id;
-        if (tabName === 'Groups') {
+        if (tabName === 'Info') {
+            if (vrchatCredit.value === null) {
+                getVRChatCredits();
+            }
+        } else if (tabName === 'Groups') {
             if (userDialogLastGroup.value !== userId) {
                 userDialogLastGroup.value = userId;
                 getUserGroups(userId);
@@ -2466,5 +2480,9 @@
 
     function closeInviteDialog() {
         clearInviteImageUpload();
+    }
+
+    function getVRChatCredits() {
+        miscRequest.getVRChatCredits().then((args) => (vrchatCredit.value = args.json?.balance));
     }
 </script>
