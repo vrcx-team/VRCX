@@ -127,6 +127,90 @@ button {
     background-color: hsl($--theme-hue, $--theme-saturation, 18%);
 }
 
+.friend-view {
+    color: $--theme-text-2;
+
+    .friend-view__toolbar,
+    .friend-view__loading-text,
+    .friend-view__slider-label,
+    .friend-view__settings-label {
+        color: $--theme-text-2;
+    }
+
+    .friend-view__search :deep(.el-input__wrapper) {
+        background: $--theme-bg-4;
+        box-shadow: inset 0 0 0 1px $--theme-border-2;
+    }
+
+    .friend-view__instances {
+        background: none;
+    }
+
+    .friend-view__instance {
+        background: hsla($--theme-hue, $--theme-saturation, 18%, 0.28);
+        border-radius: 14px;
+        border: 1px solid hsla($--theme-hue, $--theme-saturation, 42%, 0.15);
+        box-sizing: border-box;
+    }
+
+    .friend-view__instance-header,
+    .friend-view__divider {
+        color: $--theme-text-1;
+    }
+
+    .friend-view__instance-count {
+        color: rgba($--theme-text-1, 0.6);
+    }
+
+    .friend-view__divider::before,
+    .friend-view__divider::after {
+        background: hsla($--theme-hue, $--theme-saturation, 48%, 0.15);
+    }
+
+    .friend-view__empty {
+        color: rgba($--theme-text-1, 0.45);
+    }
+
+    .friend-view__loading {
+        color: $--theme-text-2;
+    }
+}
+
+.friend-view .friend-card {
+    background: hsla($--theme-hue, $--theme-saturation, 18%, 0.72) !important;
+    border: 1px solid hsla($--theme-hue, $--theme-saturation, 50%, 0.18) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+
+    &:hover {
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
+    }
+
+    .friend-card__name {
+        color: $--theme-text-1;
+    }
+
+    .friend-card__signature {
+        color: rgba($--theme-text-1, 0.65);
+    }
+
+    .friend-card__world {
+        background: hsla($--theme-hue, $--theme-saturation, 44%, 0.22);
+        color: rgba($--theme-text-1, 0.8);
+    }
+
+    .friend-card__location {
+        color: rgba($--theme-text-1, 0.85);
+    }
+
+    .friend-card__status-dot {
+        border: 2px solid rgba(0, 0, 0, 0.55);
+    }
+
+    .friend-card__avatar {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.55);
+    }
+}
+
 .el-pagination .btn-next,
 .el-pagination .btn-prev {
     color: $--theme-text-2;

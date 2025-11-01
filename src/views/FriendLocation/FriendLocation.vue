@@ -722,7 +722,6 @@
     .friend-view__instances {
         display: grid;
         gap: 18px;
-        padding: 6px;
         box-sizing: border-box;
     }
 
