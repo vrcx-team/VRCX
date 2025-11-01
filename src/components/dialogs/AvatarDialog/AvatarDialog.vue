@@ -646,8 +646,7 @@
         visible: false,
         loading: false,
         ownAvatars: [],
-        selectedCount: 0,
-        forceUpdate: 0,
+        selectedAvatarIds: [],
         selectedTags: [],
         selectedTagsCsv: '',
         contentHorror: false,
@@ -732,6 +731,7 @@
     }
 
     function handleDialogOpen() {
+        setAvatarTagsDialog.value.visible = false;
         memo.value = '';
         treeData.value = [];
         getAvatarTimeSpent();
@@ -1057,10 +1057,10 @@
 
     function showSetAvatarTagsDialog(avatarId) {
         const D = setAvatarTagsDialog.value;
+        D.selectedAvatarIds = [avatarId];
         D.visible = true;
         D.loading = true;
         D.ownAvatars = [];
-        D.forceUpdate = 0;
         D.selectedTags = [];
         D.selectedTagsCsv = '';
         D.contentHorror = false;
@@ -1095,25 +1095,6 @@
         });
         for (const ref of cachedAvatars.values()) {
             if (ref.authorId === currentUser.value.id) {
-                ref.$selected = false;
-                ref.$tagString = '';
-                if (avatarId === ref.id) {
-                    ref.$selected = true;
-                    const conentTags = [];
-                    ref.tags.forEach((tag) => {
-                        if (tag.startsWith('content_')) {
-                            conentTags.push(tag.substring(8));
-                        }
-                    });
-                    for (let i = 0; i < conentTags.length; ++i) {
-                        const tag = conentTags[i];
-                        if (i < conentTags.length - 1) {
-                            ref.$tagString += `${tag}, `;
-                        } else {
-                            ref.$tagString += tag;
-                        }
-                    }
-                }
                 D.ownAvatars.push(ref);
             }
         }

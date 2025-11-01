@@ -35,7 +35,8 @@
                 :placeholder="t('dialog.set_avatar_tags.custom_tags_placeholder')"
                 style="margin-top: 10px"
                 @input="updateInputAvatarTags"></el-input>
-            <template v-if="setAvatarTagsDialog.ownAvatars.length === setAvatarTagsDialog.selectedCount">
+            <template
+                v-if="setAvatarTagsDialog.ownAvatars.length === props.setAvatarTagsDialog.selectedAvatarIds.length">
                 <el-button size="small" @click="setAvatarTagsSelectToggle">{{
                     t('dialog.set_avatar_tags.select_none')
                 }}</el-button>
@@ -46,7 +47,8 @@
                 }}</el-button>
             </template>
             <span style="margin-left: 5px"
-                >{{ setAvatarTagsDialog.selectedCount }} / {{ setAvatarTagsDialog.ownAvatars.length }}</span
+                >{{ props.setAvatarTagsDialog.selectedAvatarIds.length }} /
+                {{ setAvatarTagsDialog.ownAvatars.length }}</span
             >
             <el-icon v-if="setAvatarTagsDialog.loading" class="is-loading" style="margin-left: 5px"
                 ><Loading
@@ -74,10 +76,12 @@
                             style="color: #f56c6c"
                             v-text="avatar.releaseStatus"></span>
                         <span v-else class="extra" v-text="avatar.releaseStatus"></span>
-                        <span class="extra" v-text="avatar.$tagString"></span>
+                        <span class="extra" v-text="avatarTagStrings.get(avatar.id)"></span>
                     </div>
                     <el-button type="text" size="small" style="margin-left: 5px" @click.stop>
-                        <el-checkbox v-model="avatar.$selected" @change="updateAvatarTagsSelection"></el-checkbox>
+                        <el-checkbox
+                            :model-value="props.setAvatarTagsDialog.selectedAvatarIds.includes(avatar.id)"
+                            @click="toggleAvatarSelection(avatar.id)"></el-checkbox>
                     </el-button>
                 </div>
             </div>
@@ -98,9 +102,11 @@
     import { watch } from 'vue';
 
     import { avatarRequest } from '../../../api';
+    import { removeFromArray } from '../../../shared/utils';
     import { useAvatarStore } from '../../../stores';
 
     const { showAvatarDialog, applyAvatar } = useAvatarStore();
+    const { cachedAvatars } = useAvatarStore();
 
     const { t } = useI18n();
     const props = defineProps({
@@ -109,6 +115,7 @@
             required: true
         }
     });
+    const avatarTagStrings = new Map();
 
     const emit = defineEmits(['update:setAvatarTagsDialog']);
 
@@ -116,7 +123,7 @@
         () => props.setAvatarTagsDialog.visible,
         (newVal) => {
             if (newVal) {
-                updateAvatarTagsSelection();
+                updateAvatarTagsString();
                 updateSelectedAvatarTags();
                 updateInputAvatarTags();
             }
@@ -171,14 +178,22 @@
         D.selectedTagsCsv = D.selectedTags.join(',').replace(/content_/g, '');
     }
 
-    function updateAvatarTagsSelection() {
+    function toggleAvatarSelection(avatarId) {
         const D = props.setAvatarTagsDialog;
-        D.selectedCount = 0;
+        if (D.selectedAvatarIds.includes(avatarId)) {
+            removeFromArray(D.selectedAvatarIds, avatarId);
+        } else {
+            D.selectedAvatarIds.push(avatarId);
+        }
+    }
+
+    function updateAvatarTagsString() {
+        const D = props.setAvatarTagsDialog;
         for (const ref of D.ownAvatars) {
-            if (ref.$selected) {
-                D.selectedCount++;
+            if (!ref) {
+                continue;
             }
-            ref.$tagString = '';
+            let tagString = '';
             const contentTags = [];
             ref.tags.forEach((tag) => {
                 if (tag.startsWith('content_')) {
@@ -188,21 +203,27 @@
             for (let i = 0; i < contentTags.length; ++i) {
                 const tag = contentTags[i];
                 if (i < contentTags.length - 1) {
-                    ref.$tagString += `${tag}, `;
+                    tagString += `${tag}, `;
                 } else {
-                    ref.$tagString += tag;
+                    tagString += tag;
                 }
             }
+            avatarTagStrings.set(ref.id, tagString);
         }
     }
 
     function setAvatarTagsSelectToggle() {
         const D = props.setAvatarTagsDialog;
-        const allSelected = D.ownAvatars.length === D.selectedCount;
+        const allSelected = D.ownAvatars.length === D.selectedAvatarIds.length;
         for (const ref of D.ownAvatars) {
-            ref.$selected = !allSelected;
+            if (!allSelected) {
+                if (!D.selectedAvatarIds.includes(ref.id)) {
+                    D.selectedAvatarIds.push(ref.id);
+                }
+            } else {
+                removeFromArray(D.selectedAvatarIds, ref.id);
+            }
         }
-        updateAvatarTagsSelection();
     }
 
     async function saveSetAvatarTagsDialog() {
@@ -212,13 +233,12 @@
         }
         D.loading = true;
         try {
-            for (let i = D.ownAvatars.length - 1; i >= 0; --i) {
-                const ref = D.ownAvatars[i];
-                if (!D.visible) {
+            for (const avatarId of D.selectedAvatarIds) {
+                console.log('Saving tags for avatar', avatarId);
+                const ref = cachedAvatars.get(avatarId);
+                if (!D.visible || !ref) {
+                    console.error('Aborting avatar tag save, dialog closed or avatar not found', avatarId);
                     break;
-                }
-                if (!ref.$selected) {
-                    continue;
                 }
                 const tags = [...D.selectedTags];
                 for (const tag of ref.tags) {
@@ -231,7 +251,6 @@
                     tags
                 });
                 applyAvatar(args.json);
-                D.selectedCount--;
             }
         } catch (err) {
             console.error(err);
