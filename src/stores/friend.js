@@ -200,7 +200,7 @@ export const useFriendStore = defineStore('Friend', () => {
         () => watchState.isFriendsLoaded,
         (isFriendsLoaded) => {
             if (isFriendsLoaded) {
-                updateOnlineFriendCoutner();
+                updateOnlineFriendCounter();
             }
         },
         { flush: 'sync' }
@@ -219,7 +219,7 @@ export const useFriendStore = defineStore('Friend', () => {
         if (watchState.isFriendsLoaded) {
             refreshFriendsStatus(ref);
         }
-        updateOnlineFriendCoutner();
+        updateOnlineFriendCounter();
 
         if (appearanceSettingsStore.randomUserColours) {
             getNameColour(userStore.currentUser.id).then((colour) => {
@@ -300,10 +300,10 @@ export const useFriendStore = defineStore('Friend', () => {
                 localFavoriteFriends.add(ref.favoriteId);
             }
         }
-        updateSidebarFriendsList();
+        updateSidebarFavorites();
     }
 
-    function updateSidebarFriendsList() {
+    function updateSidebarFavorites() {
         for (const ctx of friends.values()) {
             const isVIP = localFavoriteFriends.has(ctx.id);
             if (ctx.isVIP === isVIP) {
@@ -548,7 +548,7 @@ export const useFriendStore = defineStore('Friend', () => {
         }
         if (ctx.state !== newState) {
             ctx.state = newState;
-            updateOnlineFriendCoutner();
+            updateOnlineFriendCounter();
         }
         if (ref?.displayName) {
             ctx.name = ref.displayName;
@@ -843,7 +843,7 @@ export const useFriendStore = defineStore('Friend', () => {
         reconnectWebSocket();
     }
 
-    function updateOnlineFriendCoutner() {
+    function updateOnlineFriendCounter() {
         const onlineFriendCounts =
             vipFriends.value.length + onlineFriends.value.length;
         if (onlineFriendCounts !== onlineFriendCount.value) {
@@ -1625,14 +1625,14 @@ export const useFriendStore = defineStore('Friend', () => {
 
         initFriendsList,
         updateLocalFavoriteFriends,
-        updateSidebarFriendsList,
+        updateSidebarFavorites,
         updateFriend,
         deleteFriend,
         refreshFriendsStatus,
         addFriend,
         refreshFriends,
         refreshFriendsList,
-        updateOnlineFriendCoutner,
+        updateOnlineFriendCounter,
         getAllUserStats,
         initFriendLog,
         migrateFriendLog,

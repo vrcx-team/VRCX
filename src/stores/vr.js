@@ -46,7 +46,7 @@ export const useVrStore = defineStore('Vr', () => {
         // run these methods again to send data to the overlay
         sharedFeedStore.updateSharedFeed(true);
         friendStore.onlineFriendCount = 0; // force an update
-        friendStore.updateOnlineFriendCoutner();
+        friendStore.updateOnlineFriendCounter();
     }
 
     async function saveOpenVROption() {
