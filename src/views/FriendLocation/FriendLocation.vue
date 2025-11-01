@@ -1,11 +1,7 @@
 <template>
     <div class="friend-view x-container">
         <div class="friend-view__toolbar">
-            <el-segmented
-                v-model="activeSegment"
-                class="friend-view__segmented"
-                :options="segmentedOptions"
-                size="small" />
+            <el-segmented v-model="activeSegment" class="friend-view__segmented" :options="segmentedOptions" />
             <div class="friend-view__actions">
                 <span class="friend-view__slider-label">Card Scale</span>
                 <el-slider
@@ -34,7 +30,14 @@
                             <Location class="extra" :location="group.instanceId" style="display: inline" />
                             <span class="friend-view__instance-count">{{ group.friends.length }}</span>
                         </header>
-                        <div class="friend-view__grid" :style="gridStyle(group.friends.length)">
+                        <div
+                            class="friend-view__grid"
+                            :style="
+                                gridStyle(group.friends.length, {
+                                    preferredColumns: sameInstanceColumnTarget,
+                                    forceStretch: true
+                                })
+                            ">
                             <FriendLocationCard
                                 v-for="friend in group.friends"
                                 :key="friend.id ?? friend.userId ?? friend.displayName"
@@ -255,6 +258,22 @@
             }));
     });
 
+    const sameInstanceColumnTarget = computed(() => {
+        if (!isSameInstanceView.value) {
+            return null;
+        }
+
+        let maxCount = 0;
+        for (const group of visibleSameInstanceGroups.value) {
+            const size = Array.isArray(group?.friends) ? group.friends.length : 0;
+            if (size > maxCount) {
+                maxCount = size;
+            }
+        }
+
+        return maxCount > 0 ? maxCount : null;
+    });
+
     const gridStyle = computed(() => {
         const baseWidth = 220;
         const baseGap = 14;
@@ -262,16 +281,21 @@
         const minWidth = baseWidth * scale;
         const gap = baseGap + (scale - 1) * 10;
 
-        return (count = 1) => {
+        return (count = 1, options = {}) => {
             const containerWidth = Math.max(gridWidth.value ?? 0, 0);
             const itemCount = Math.max(Number(count) || 0, 1);
-            const maxColumns = Math.max(1, Math.floor((containerWidth + gap) / (minWidth + gap)));
-            const columns = Math.max(1, Math.min(itemCount, maxColumns));
-            const shouldStretch = itemCount >= maxColumns;
+            const maxColumns = Math.max(1, Math.floor((containerWidth + gap) / (minWidth + gap)) || 1);
+            const preferredColumns = options?.preferredColumns;
+            const targetColumns = preferredColumns
+                ? Math.max(1, Math.min(Math.round(preferredColumns), maxColumns))
+                : Math.min(itemCount, maxColumns);
+            const columns = Math.max(1, targetColumns || 1);
+            const forceStretch = Boolean(options?.forceStretch);
+            const shouldStretch = forceStretch || itemCount >= maxColumns;
 
             let cardWidth = minWidth;
 
-            if (shouldStretch) {
+            if (shouldStretch && columns > 0) {
                 const columnsWidth = containerWidth - gap * (columns - 1);
                 const rawWidth = columnsWidth > 0 ? columnsWidth / columns : minWidth;
 
@@ -406,18 +430,6 @@
         padding: 6px 10px 0 2px;
     }
 
-    .friend-view__segmented :deep(.el-segmented) {
-        background: #fff;
-        border-radius: 16px;
-        border: 1px solid rgba(148, 163, 184, 0.22);
-        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-    }
-
-    .friend-view__segmented :deep(.el-segmented__item) {
-        padding: 10px 16px;
-        font-weight: 600;
-    }
-
     .friend-view__actions {
         display: flex;
         align-items: center;
@@ -435,6 +447,7 @@
 
     .friend-view__slider {
         width: 160px;
+        margin-right: 12px;
     }
 
     .friend-view__search {
