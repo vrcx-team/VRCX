@@ -82,30 +82,38 @@
                         style="margin-right: 5px; margin-top: 5px">
                         {{ userDialog.ref.$trustLevel }}
                     </el-tag>
-                    <el-tag
+                    <el-tooltip
                         v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-age-verification"
-                        style="margin-right: 5px; margin-top: 5px">
-                        <template v-if="userDialog.ref.ageVerificationStatus === '18+'">
-                            <i class="ri-info-card-line"></i> 18+
-                        </template>
-                        <template v-else>
-                            <i class="ri-info-card-line"></i>
-                        </template>
-                    </el-tag>
-                    <el-tag
+                        placement="top"
+                        :content="t('dialog.user.tags.age_verified')">
+                        <el-tag
+                            type="info"
+                            effect="plain"
+                            size="small"
+                            class="x-tag-age-verification"
+                            style="margin-right: 5px; margin-top: 5px">
+                            <template v-if="userDialog.ref.ageVerificationStatus === '18+'">
+                                <i class="ri-info-card-line"></i> 18+
+                            </template>
+                            <template v-else>
+                                <i class="ri-info-card-line"></i>
+                            </template>
+                        </el-tag>
+                    </el-tooltip>
+                    <el-tooltip
                         v-if="userDialog.isFriend && userDialog.friend"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-friend"
-                        style="margin-right: 5px; margin-top: 5px">
-                        <i class="ri-user-add-line"></i>
-                        {{ userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : '' }}
-                    </el-tag>
+                        placement="top"
+                        :content="t('dialog.user.tags.friend_number')">
+                        <el-tag
+                            type="info"
+                            effect="plain"
+                            size="small"
+                            class="x-tag-friend"
+                            style="margin-right: 5px; margin-top: 5px">
+                            <i class="ri-user-add-line"></i>
+                            {{ userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : '' }}
+                        </el-tag>
+                    </el-tooltip>
                     <el-tag
                         v-if="userDialog.ref.$isTroll"
                         type="info"
@@ -134,33 +142,36 @@
                         {{ t('dialog.user.tags.vrchat_team') }}
                     </el-tag>
 
-                    <el-tag
-                        v-if="userDialog.ref.$platform === 'standalonewindows'"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-platform-pc"
-                        style="margin-right: 5px; margin-top: 5px">
-                        <i class="ri-computer-line"></i>
-                    </el-tag>
-                    <el-tag
-                        v-else-if="userDialog.ref.$platform === 'android'"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-platform-quest"
-                        style="margin-right: 5px; margin-top: 5px">
-                        <i class="ri-android-line"></i>
-                    </el-tag>
-                    <el-tag
-                        v-else-if="userDialog.ref.$platform === 'ios'"
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="x-tag-platform-ios"
-                        style="margin-right: 5px; margin-top: 5px"
-                        ><i class="ri-apple-line"></i
-                    ></el-tag>
+                    <el-tooltip v-if="userDialog.ref.$platform === 'standalonewindows'" placement="top" content="PC">
+                        <el-tag
+                            type="info"
+                            effect="plain"
+                            size="small"
+                            class="x-tag-platform-pc"
+                            style="margin-right: 5px; margin-top: 5px">
+                            <i class="ri-computer-line"></i>
+                        </el-tag>
+                    </el-tooltip>
+                    <el-tooltip v-else-if="userDialog.ref.$platform === 'android'" placement="top" content="Quest">
+                        <el-tag
+                            type="info"
+                            effect="plain"
+                            size="small"
+                            class="x-tag-platform-quest"
+                            style="margin-right: 5px; margin-top: 5px">
+                            <i class="ri-android-line"></i>
+                        </el-tag>
+                    </el-tooltip>
+                    <el-tooltip v-else-if="userDialog.ref.$platform === 'ios'" placement="top" content="iOS">
+                        <el-tag
+                            type="info"
+                            effect="plain"
+                            size="small"
+                            class="x-tag-platform-ios"
+                            style="margin-right: 5px; margin-top: 5px"
+                            ><i class="ri-apple-line"></i
+                        ></el-tag>
+                    </el-tooltip>
                     <el-tag
                         v-else-if="userDialog.ref.$platform"
                         type="info"
