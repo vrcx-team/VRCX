@@ -1,16 +1,34 @@
 <template>
     <div class="friend-view x-container">
-        <div class="friend-view__toolbar">
+        <div v-if="settingsReady" class="friend-view__toolbar">
             <el-segmented v-model="activeSegment" class="friend-view__segmented" :options="segmentedOptions" />
             <div class="friend-view__actions">
-                <span class="friend-view__slider-label">Card Scale</span>
-                <el-slider
-                    v-model="cardScale"
-                    class="friend-view__slider"
-                    :min="0.6"
-                    :max="1.0"
-                    :step="0.01"
-                    :show-tooltip="false" />
+                <el-popover placement="bottom" trigger="click" :width="300">
+                    <template #reference>
+                        <div>
+                            <el-tooltip :content="t('view.charts.instance_activity.settings.header')" placement="top">
+                                <el-button style="margin-right: 5px" circle
+                                    ><i class="ri-settings-3-line"></i
+                                ></el-button>
+                            </el-tooltip>
+                        </div>
+                    </template>
+                    <div style="display: flex; justify-content: space-between; align-items: center">
+                        <span class="friend-view__settings-label">Show Same Instance</span>
+                        <el-switch v-model="showSameInstance" />
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center">
+                        <span class="friend-view__settings-label">Scale</span>
+                        <el-slider
+                            v-model="cardScale"
+                            class="friend-view__slider"
+                            :min="0.6"
+                            :max="1.0"
+                            :step="0.01"
+                            :show-tooltip="false" />
+                    </div>
+                </el-popover>
+
                 <el-input
                     v-model="searchTerm"
                     class="friend-view__search"
@@ -19,7 +37,10 @@
                     placeholder="Search Friend"></el-input>
             </div>
         </div>
-        <el-scrollbar ref="scrollbarRef" class="friend-view__scroll" @scroll="handleScroll">
+        <div v-else class="friend-view__toolbar friend-view__toolbar--loading">
+            <span class="friend-view__loading-text">Loading preferences...</span>
+        </div>
+        <el-scrollbar v-if="settingsReady" ref="scrollbarRef" class="friend-view__scroll" @scroll="handleScroll">
             <template v-if="isSameInstanceView">
                 <div v-if="visibleSameInstanceGroups.length" class="friend-view__instances">
                     <section
@@ -35,7 +56,8 @@
                             :style="
                                 gridStyle(group.friends.length, {
                                     preferredColumns: sameInstanceColumnTarget,
-                                    forceStretch: true
+                                    disableAutoStretch: true,
+                                    matchMaxColumnWidth: true
                                 })
                             ">
                             <FriendLocationCard
@@ -47,6 +69,50 @@
                     </section>
                 </div>
                 <div v-else class="friend-view__empty">No matching friends</div>
+            </template>
+            <template v-else-if="shouldMergeSameInstance">
+                <div v-if="mergedSameInstanceGroups.length" class="friend-view__instances">
+                    <section
+                        v-for="group in mergedSameInstanceGroups"
+                        :key="group.instanceId"
+                        class="friend-view__instance">
+                        <header class="friend-view__instance-header">
+                            <Location class="extra" :location="group.instanceId" style="display: inline" />
+                            <span class="friend-view__instance-count">{{ group.friends.length }}</span>
+                        </header>
+                        <div
+                            class="friend-view__grid"
+                            :style="
+                                gridStyle(group.friends.length, {
+                                    preferredColumns: sameInstanceColumnTarget,
+                                    disableAutoStretch: true,
+                                    matchMaxColumnWidth: true
+                                })
+                            ">
+                            <FriendLocationCard
+                                v-for="friend in group.friends"
+                                :key="friend.id ?? friend.userId ?? friend.displayName"
+                                :friend="friend"
+                                :card-scale="cardScale" />
+                        </div>
+                    </section>
+                </div>
+                <div v-if="mergedSameInstanceGroups.length && mergedOnlineEntries.length" class="friend-view__divider">
+                    <span class="friend-view__divider-text">Online Friends</span>
+                </div>
+                <div
+                    v-if="mergedOnlineEntries.length"
+                    class="friend-view__grid"
+                    :style="gridStyle(mergedOnlineEntries.length)">
+                    <FriendLocationCard
+                        v-for="entry in mergedOnlineEntries"
+                        :key="entry.id ?? entry.friend.id ?? entry.friend.displayName"
+                        :friend="entry.friend"
+                        :card-scale="cardScale" />
+                </div>
+                <div v-if="!mergedSameInstanceGroups.length && !mergedOnlineEntries.length" class="friend-view__empty">
+                    No matching friends
+                </div>
             </template>
             <template v-else>
                 <div v-if="visibleFriends.length" class="friend-view__grid" :style="gridStyle(visibleFriends.length)">
@@ -65,24 +131,33 @@
                 <span>Loading more...</span>
             </div>
         </el-scrollbar>
+        <div v-else class="friend-view__initial-loading">
+            <el-icon class="friend-view__loading-icon" :size="22">
+                <Loading />
+            </el-icon>
+        </div>
     </div>
 </template>
 
 <script setup>
-    import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+    import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { Loading, Search } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
 
     import { getFriendsLocations } from '../../shared/utils/location.js';
     import { useFriendStore } from '../../stores';
 
     import FriendLocationCard from './components/FriendLocationCard.vue';
+    import configRepository from '../../service/config.js';
+
+    const { t } = useI18n();
 
     const friendStore = useFriendStore();
     const { onlineFriends, vipFriends, activeFriends, offlineFriends, friendsInSameInstance } =
         storeToRefs(friendStore);
 
-    const segmentedOptions = [
+    const SEGMENTED_BASE_OPTIONS = [
         { label: 'Online', value: 'online' },
         { label: 'Favorite', value: 'favorite' },
         { label: 'Same Instance', value: 'same-instance' },
@@ -90,12 +165,40 @@
         { label: 'Offline', value: 'offline' }
     ];
 
+    const segmentedOptions = computed(() =>
+        showSameInstance.value
+            ? SEGMENTED_BASE_OPTIONS
+            : SEGMENTED_BASE_OPTIONS.filter((option) => option.value !== 'same-instance')
+    );
+
+    const cardScaleBase = ref(1);
+
+    const cardScale = computed({
+        get: () => cardScaleBase.value,
+        set: (value) => {
+            cardScaleBase.value = value;
+            configRepository.setString('VRCX_FriendLocationCardScale', value);
+        }
+    });
+
+    const showSameInstanceBase = ref(false);
+
+    const showSameInstance = computed({
+        get: () => showSameInstanceBase.value,
+        set: (value) => {
+            showSameInstanceBase.value = value;
+            configRepository.setBool('VRCX_FriendLocationShowSameInstance', value);
+        }
+    });
+
+    const settingsReady = ref(false);
+
     const PAGE_SIZE = 18;
     const VIEWPORT_BUFFER = 32;
 
     const activeSegment = ref('online');
     const searchTerm = ref('');
-    const cardScale = ref(1);
+
     const itemsToShow = ref(PAGE_SIZE);
     const isLoadingMore = ref(false);
     const scrollbarRef = ref();
@@ -216,8 +319,36 @@
         }
 
         switch (activeSegment.value) {
-            case 'online':
+            case 'online': {
+                if (!showSameInstance.value) {
+                    const sameEntries = sameInstanceEntries.value.map((entry) => ({
+                        ...entry,
+                        section: 'same-instance'
+                    }));
+
+                    const seenIds = new Set(
+                        sameEntries
+                            .map((entry) => entry.id)
+                            .filter((id) => typeof id === 'string' || typeof id === 'number')
+                    );
+
+                    const remainingOnline = toEntries(onlineFriends.value)
+                        .filter((entry) => {
+                            if (!entry?.id) {
+                                return true;
+                            }
+                            return !seenIds.has(entry.id);
+                        })
+                        .map((entry) => ({
+                            ...entry,
+                            section: 'online'
+                        }));
+
+                    return [...sameEntries, ...remainingOnline];
+                }
+
                 return toEntries(onlineFriends.value);
+            }
             case 'favorite':
                 return toEntries(vipFriends.value);
             case 'same-instance':
@@ -233,17 +364,26 @@
 
     const visibleFriends = computed(() => filteredFriends.value.slice(0, itemsToShow.value));
 
-    const isSameInstanceView = computed(() => activeSegment.value === 'same-instance' && !normalizedSearchTerm.value);
+    const isSameInstanceView = computed(
+        () => showSameInstance.value && activeSegment.value === 'same-instance' && !normalizedSearchTerm.value
+    );
 
-    const visibleSameInstanceGroups = computed(() => {
-        if (!isSameInstanceView.value) {
+    const shouldMergeSameInstance = computed(
+        () => !showSameInstance.value && activeSegment.value === 'online' && !normalizedSearchTerm.value
+    );
+
+    const buildSameInstanceGroups = (entries = []) => {
+        if (!Array.isArray(entries) || entries.length === 0) {
             return [];
         }
 
         const grouped = new Map();
 
-        for (const entry of visibleFriends.value) {
-            const bucketId = entry.instanceId ?? 'instance';
+        for (const entry of entries) {
+            const bucketId = entry.instanceId ?? entry.friend?.ref?.location ?? null;
+            if (!bucketId) {
+                continue;
+            }
             if (!grouped.has(bucketId)) {
                 grouped.set(bucketId, []);
             }
@@ -256,15 +396,49 @@
                 instanceId: group.instanceId,
                 friends: grouped.get(group.instanceId) ?? []
             }));
+    };
+
+    const visibleSameInstanceGroups = computed(() => {
+        if (!isSameInstanceView.value) {
+            return [];
+        }
+
+        return buildSameInstanceGroups(visibleFriends.value);
+    });
+
+    const mergedSameInstanceEntries = computed(() => {
+        if (!shouldMergeSameInstance.value) {
+            return [];
+        }
+
+        return visibleFriends.value.filter((entry) => entry.section === 'same-instance');
+    });
+
+    const mergedOnlineEntries = computed(() => {
+        if (!shouldMergeSameInstance.value) {
+            return [];
+        }
+
+        return visibleFriends.value.filter((entry) => entry.section !== 'same-instance');
+    });
+
+    const mergedSameInstanceGroups = computed(() => {
+        if (!shouldMergeSameInstance.value) {
+            return [];
+        }
+
+        return buildSameInstanceGroups(mergedSameInstanceEntries.value);
     });
 
     const sameInstanceColumnTarget = computed(() => {
-        if (!isSameInstanceView.value) {
-            return null;
-        }
+        const groups = isSameInstanceView.value
+            ? visibleSameInstanceGroups.value
+            : shouldMergeSameInstance.value
+              ? mergedSameInstanceGroups.value
+              : [];
 
         let maxCount = 0;
-        for (const group of visibleSameInstanceGroups.value) {
+        for (const group of groups) {
             const size = Array.isArray(group?.friends) ? group.friends.length : 0;
             if (size > maxCount) {
                 maxCount = size;
@@ -283,17 +457,21 @@
 
         return (count = 1, options = {}) => {
             const containerWidth = Math.max(gridWidth.value ?? 0, 0);
-            const itemCount = Math.max(Number(count) || 0, 1);
+            const itemCount = Math.max(Number(count) || 0, 0);
+            const safeCount = itemCount > 0 ? itemCount : 1;
             const maxColumns = Math.max(1, Math.floor((containerWidth + gap) / (minWidth + gap)) || 1);
             const preferredColumns = options?.preferredColumns;
-            const targetColumns = preferredColumns
+            const requestedColumns = preferredColumns
                 ? Math.max(1, Math.min(Math.round(preferredColumns), maxColumns))
-                : Math.min(itemCount, maxColumns);
-            const columns = Math.max(1, targetColumns || 1);
+                : maxColumns;
+            const columns = Math.max(1, Math.min(safeCount, requestedColumns));
             const forceStretch = Boolean(options?.forceStretch);
-            const shouldStretch = forceStretch || itemCount >= maxColumns;
+            const disableAutoStretch = Boolean(options?.disableAutoStretch);
+            const matchMaxColumnWidth = Boolean(options?.matchMaxColumnWidth);
+            const shouldStretch = !disableAutoStretch && (forceStretch || itemCount >= maxColumns);
 
             let cardWidth = minWidth;
+            const maxColumnWidth = maxColumns > 0 ? (containerWidth - gap * (maxColumns - 1)) / maxColumns : minWidth;
 
             if (shouldStretch && columns > 0) {
                 const columnsWidth = containerWidth - gap * (columns - 1);
@@ -302,6 +480,8 @@
                 if (Number.isFinite(rawWidth) && rawWidth > 0) {
                     cardWidth = Math.max(minWidth, rawWidth);
                 }
+            } else if (matchMaxColumnWidth && Number.isFinite(maxColumnWidth) && maxColumnWidth > 0) {
+                cardWidth = Math.max(minWidth, maxColumnWidth);
             }
 
             return {
@@ -393,8 +573,27 @@
     );
 
     watch(cardScale, () => {
+        if (!settingsReady.value) {
+            return;
+        }
         nextTick(() => {
             scrollbarRef.value?.update?.();
+            updateGridWidth();
+            maybeFillViewport();
+        });
+    });
+
+    watch(showSameInstance, (value) => {
+        if (!settingsReady.value) {
+            return;
+        }
+        if (!value && activeSegment.value === 'same-instance') {
+            activeSegment.value = 'online';
+        }
+
+        itemsToShow.value = PAGE_SIZE;
+
+        nextTick(() => {
             updateGridWidth();
             maybeFillViewport();
         });
@@ -413,6 +612,38 @@
             cleanupResize = undefined;
         }
     });
+
+    async function loadInitialSettings() {
+        try {
+            const [storedScale, storedShowSameInstance] = await Promise.all([
+                configRepository.getString('VRCX_FriendLocationCardScale', '1'),
+                configRepository.getBool('VRCX_FriendLocationShowSameInstance', null)
+            ]);
+
+            const parsedScale = parseFloat(storedScale);
+            if (!Number.isNaN(parsedScale) && parsedScale > 0) {
+                cardScaleBase.value = parsedScale;
+            }
+
+            if (storedShowSameInstance !== null && storedShowSameInstance !== undefined) {
+                showSameInstanceBase.value = Boolean(storedShowSameInstance);
+            }
+        } catch (error) {
+            console.error('Failed to load Friend Location preferences', error);
+        } finally {
+            settingsReady.value = true;
+            nextTick(() => {
+                setupResizeHandling();
+                scrollbarRef.value?.update?.();
+                updateGridWidth();
+                maybeFillViewport();
+            });
+        }
+    }
+
+    onBeforeMount(() => {
+        loadInitialSettings();
+    });
 </script>
 
 <style scoped lang="scss">
@@ -430,6 +661,17 @@
         padding: 6px 10px 0 2px;
     }
 
+    .friend-view__toolbar--loading {
+        justify-content: flex-end;
+        color: rgba(15, 23, 42, 0.55);
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .friend-view__loading-text {
+        padding-right: 12px;
+    }
+
     .friend-view__actions {
         display: flex;
         align-items: center;
@@ -440,9 +682,10 @@
         color: rgba(15, 23, 42, 0.65);
     }
 
-    .friend-view__slider-label {
+    .friend-view__settings-label {
         font-size: 13px;
         font-weight: 500;
+        margin-right: 8px;
     }
 
     .friend-view__slider {
@@ -456,6 +699,13 @@
 
     .friend-view__scroll {
         padding: 2px 10px 2px 2px;
+    }
+
+    .friend-view__initial-loading {
+        display: grid;
+        place-items: center;
+        min-height: 240px;
+        color: rgba(15, 23, 42, 0.45);
     }
 
     .friend-view__grid {
@@ -489,6 +739,28 @@
         font-weight: 600;
         font-size: 13px;
         color: rgba(15, 23, 42, 0.75);
+    }
+
+    .friend-view__divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 16px 4px;
+        color: rgba(15, 23, 42, 0.6);
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .friend-view__divider::before,
+    .friend-view__divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(148, 163, 184, 0.35);
+    }
+
+    .friend-view__divider-text {
+        flex: none;
     }
 
     .friend-view__instance-id {
