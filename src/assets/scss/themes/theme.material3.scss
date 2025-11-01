@@ -496,11 +496,6 @@ input[type='number'],
 }
 
 /* ---------- Navigation rail ----------*/
-
-.pending-update {
-    margin: 15px !important;
-}
-
 .x-menu-container {
     background: var(--md-sys-color-surface-2);
     /* display: flex; */
@@ -508,23 +503,20 @@ input[type='number'],
 }
 .x-menu-container,
 .el-menu--collapse {
-    width: 80px;
+    width: 70px;
 }
-.x-menu-container > .el-menu {
+.x-menu-container > div > .el-menu {
     margin: auto 0;
     display: grid;
 }
-.x-menu-container > .el-menu > .el-menu-item {
-    width: 56px;
+.x-menu-container > div > .el-menu > .el-menu-item {
     height: 56px;
-    margin: 2px 12px;
-    border-radius: 28px;
 }
-.x-menu-container > .el-menu > .el-menu-item > div {
+.x-menu-container > div > .el-menu > .el-menu-item > div {
     position: relative !important;
     padding: 0 !important;
 }
-.x-menu-container > .el-menu > .el-menu-item > div > i {
+.x-menu-container > div > .el-menu > .el-menu-item > div > i {
     position: absolute;
     left: 50%;
     top: 14px;
@@ -536,8 +528,15 @@ input[type='number'],
     display: none;
 }
 .el-menu-item:focus,
-.el-menu-item:hover {
-    background-color: rgba(var(--md-sys-color-on-surface-variant), 0.08);
+.el-menu-item:hover,
+.bottom-button:hover {
+    background-color: rgba(
+        var(--md-sys-color-on-surface-variant),
+        0.08
+    ) !important;
+}
+.bottom-button {
+    width: 70px !important;
 }
 .el-menu-item.is-active::before {
     width: 56px;
@@ -548,10 +547,13 @@ input[type='number'],
     background-color: rgb(var(--md-sys-color-secondary-container));
 }
 .el-menu-item {
-    color: rgb(var(--md-sys-color-on-surface-variant));
+    color: rgb(var(--md-sys-color-on-surface-variant)) !important;
 }
-.x-menu-container > .el-menu > .el-menu-item.is-active > div > i {
-    color: rgb(var(--md-sys-color-primary));
+.el-menu-item i {
+    color: rgv(var(--md-sys-color-on-surface-variant)) !important;
+}
+.x-menu-container > div > .el-menu > .el-menu-item.is-active > div > i {
+    color: rgb(var(--md-sys-color-primary)) !important;
 }
 .el-menu-item.notify::after {
     background: rgb(var(--md-sys-color-error));
@@ -764,7 +766,9 @@ input[type='number'],
     left: -1px;
 }
 
-.el-switch.is-checked.is-active input:not(:disabled) + .el-switch__core::before {
+.el-switch.is-checked.is-active
+    input:not(:disabled)
+    + .el-switch__core::before {
     padding: 1px;
     margin: 0px;
     top: -1px;
@@ -772,7 +776,9 @@ input[type='number'],
 }
 
 /* active click thumb */
-.el-switch.is-checked.is-active input:not(:disabled) + .el-switch__core::before {
+.el-switch.is-checked.is-active
+    input:not(:disabled)
+    + .el-switch__core::before {
     background-color: rgb(var(--md-sys-color-primary-container));
 }
 
@@ -831,9 +837,9 @@ input[type='number'],
 
 // Fix the white toggle
 .el-switch__action {
-  background: transparent !important;
-  box-shadow: none !important;
-  display: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    display: none !important;
 }
 
 /* ---------- Segmented buttons ---------- */
@@ -933,9 +939,13 @@ input[type='number'],
 
 // Override all element-plus theme coloring
 .el-radio-button__inner {
-  --el-radio-button-checked-bg-color: rgb(var(--md-sys-color-secondary-container));
-  --el-radio-button-checked-text-color: rgb(var(--md-sys-color-on-secondary-container));
-  --el-radio-button-checked-border-color: rgb(var(--md-sys-color-outline));
+    --el-radio-button-checked-bg-color: rgb(
+        var(--md-sys-color-secondary-container)
+    );
+    --el-radio-button-checked-text-color: rgb(
+        var(--md-sys-color-on-secondary-container)
+    );
+    --el-radio-button-checked-border-color: rgb(var(--md-sys-color-outline));
 }
 
 /* ---------- Filled button ---------- */
@@ -1029,6 +1039,21 @@ input[type='number'],
         background-color 0.1s ease-in-out,
         color 0.1s ease-in-out;
 }
+
+.pending-update button {
+    border-radius: 10px !important;
+    height: 44px !important;
+    margin: 14px !important;
+}
+
+.pending-update button::after {
+    border-radius: 10px !important;
+}
+
+.pending-update {
+    height: 70px;
+}
+
 .el-button:not(.el-button--text, .el-button--primary, .is-disabled),
 .el-button:not(.el-button--text, .el-button--primary, .is-disabled):hover,
 .el-button:not(.el-button--text, .el-button--primary, .is-disabled):focus,
@@ -2200,7 +2225,9 @@ div.x-friend-list
 
 .el-calendar {
     background: var(--md-sys-color-surface-3) !important;
-    --el-calendar-selected-bg-color: rgb(56 50 71) !important;
+    --el-calendar-selected-bg-color: rgb(
+        var(--md-sys-color-secondary-container)
+    ) !important;
 }
 
 .el-calendar__title {
@@ -2208,11 +2235,11 @@ div.x-friend-list
 }
 
 .el-calendar-table td.is-selected {
-    background-color: rgb(56 50 71) !important;
+    background-color: rgb(var(--md-sys-color-secondary-container));
 }
 
 .el-calendar-table td.is-today {
-    color: #8c4abd;
+    color: rgb(var(--md-sys-color-primary));
 }
 
 .el-card {
@@ -2284,9 +2311,9 @@ div.x-friend-list
 }
 
 .el-input__inner {
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
 .el-table {
@@ -2311,14 +2338,15 @@ div.x-friend-list
     background-color: rgba(var(--md-sys-color-primary), 0.05) !important;
 }
 
-.category-title {
-    color: var(--el-text-color-primary) imporant !important;
+.category-title,
+.tool-name {
+    color: rgv(var(--md-sys-color-on-surface-variant)) !important;
 }
 
 .tool-icon {
-    background-color: rgba(var(--md-sys-color-primary), .05) !important;
+    background-color: rgba(var(--md-sys-color-primary), 0.05) !important;
 }
 
 .tool-icon > * {
-    color: var(--el-text-color-primary) !important;
+    color: rgv(var(--md-sys-color-on-surface-variant)) !important;
 }
