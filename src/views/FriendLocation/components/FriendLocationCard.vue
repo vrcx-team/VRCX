@@ -19,7 +19,7 @@
                 <i v-if="friend.ref?.statusDescription" class="ri-pencil-line" style="opacity: 0.7"></i>
                 {{ friend.ref?.statusDescription || '&nbsp;' }}
             </div>
-            <div class="friend-card__world" :title="friend.worldName">
+            <div v-if="displayInstanceInfo" class="friend-card__world" :title="friend.worldName">
                 <Location
                     class="friend-card__location"
                     :location="friend.ref?.location"
@@ -46,6 +46,10 @@
         cardScale: {
             type: Number,
             default: 1
+        },
+        displayInstanceInfo: {
+            type: Boolean,
+            default: true
         }
     });
 

@@ -14,7 +14,7 @@
                         </div>
                     </template>
                     <div style="display: flex; justify-content: space-between; align-items: center">
-                        <span class="friend-view__settings-label">Show Same Instance</span>
+                        <span class="friend-view__settings-label">Separate Same Instance</span>
                         <el-switch v-model="showSameInstance" />
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center">
@@ -93,7 +93,8 @@
                                 v-for="friend in group.friends"
                                 :key="friend.id ?? friend.userId ?? friend.displayName"
                                 :friend="friend"
-                                :card-scale="cardScale" />
+                                :card-scale="cardScale"
+                                :display-instance-info="false" />
                         </div>
                     </section>
                 </div>
@@ -735,6 +736,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 4px 2px;
+        margin: 5px 10px;
         font-weight: 600;
         font-size: 13px;
         color: rgba(15, 23, 42, 0.75);
