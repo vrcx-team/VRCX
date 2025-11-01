@@ -289,7 +289,6 @@ export const useFriendStore = defineStore('Friend', () => {
         localFavoriteFriends.clear();
         for (const ref of favoriteStore.cachedFavorites.values()) {
             if (
-                !ref.$isDeleted &&
                 ref.type === 'friend' &&
                 (generalSettingsStore.localFavoriteFriendsGroups.includes(
                     ref.$groupKey
