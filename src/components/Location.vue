@@ -4,13 +4,15 @@
         <span v-show="text">
             <span
                 :class="{ 'x-link': link && location !== 'private' && location !== 'offline' }"
-                @click="handleShowWorldDialog">
+                @click.stop="handleShowWorldDialog">
                 <el-icon :class="['is-loading', 'inline-block']" style="margin-right: 3px" v-if="isTraveling"
                     ><Loading
                 /></el-icon>
                 <span>{{ text }}</span>
             </span>
-            <span v-if="groupName" :class="{ 'x-link': link }" @click="handleShowGroupDialog">({{ groupName }})</span>
+            <span v-if="groupName" :class="{ 'x-link': link }" @click.stop="handleShowGroupDialog"
+                >({{ groupName }})</span
+            >
             <span v-if="region" :class="['flags', 'inline-block', 'ml-5', region]"></span>
             <el-tooltip v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
                 <el-icon :class="['inline-block', 'ml-5']" style="color: lightcoral"><WarnTriangleFilled /></el-icon>

@@ -24,7 +24,7 @@
                     class="friend-card__location"
                     :location="friend.ref?.location"
                     :traveling="friend.ref?.travelingToLocation"
-                    :link="false" />
+                    link />
             </div>
         </div>
     </el-card>
