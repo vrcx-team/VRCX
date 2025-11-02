@@ -398,7 +398,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
         gameLogTable.value.data.push(entry);
         sweepGameLog();
-        uiStore.notifyMenu('gameLog');
+        uiStore.notifyMenu('game-log');
     }
 
     async function addGamelogLocationToDatabase(input) {

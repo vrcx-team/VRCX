@@ -66,7 +66,7 @@ export const useUiStore = defineStore('Ui', () => {
     function updateTrayIconNotify(force = false) {
         const newState =
             notifiedMenus.value.includes('notification') ||
-            notifiedMenus.value.includes('friendLog');
+            notifiedMenus.value.includes('friend-log');
 
         if (trayIconNotify.value !== newState || force) {
             trayIconNotify.value = newState;

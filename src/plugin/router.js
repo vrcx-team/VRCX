@@ -21,16 +21,16 @@ const routes = [
         name: 'friendLocation',
         component: FriendLocation
     },
-    { path: '/game-log', name: 'gameLog', component: GameLog },
-    { path: '/player-list', name: 'playerList', component: PlayerList },
+    { path: '/game-log', name: 'game-log', component: GameLog },
+    { path: '/player-list', name: 'player-list', component: PlayerList },
     { path: '/search', name: 'search', component: Search },
     { path: '/favorites', name: 'favorites', component: Favorites },
-    { path: '/friend-log', name: 'friendLog', component: FriendLog },
+    { path: '/friend-log', name: 'friend-log', component: FriendLog },
     { path: '/moderation', name: 'moderation', component: Moderation },
     { path: '/notification', name: 'notification', component: Notification },
     {
         path: '/friend-list',
-        name: 'friendList',
+        name: 'friend-list',
         component: FriendList
     },
     {
