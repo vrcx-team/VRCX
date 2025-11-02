@@ -979,7 +979,7 @@ export const useFriendStore = defineStore('Friend', () => {
                     };
                     friendLog.set(id, friendLogCurrent);
                     database.setFriendLogCurrent(friendLogCurrent);
-                    uiStore.notifyMenu('friendLog');
+                    uiStore.notifyMenu('friend-log');
                     deleteFriendRequest(id);
                     sharedFeedStore.updateSharedFeed(true);
                     userRequest
@@ -1048,7 +1048,7 @@ export const useFriendStore = defineStore('Friend', () => {
                     friendLog.delete(id);
                     database.deleteFriendLogCurrent(id);
                     if (!appearanceSettingsStore.hideUnfriends) {
-                        uiStore.notifyMenu('friendLog');
+                        uiStore.notifyMenu('friend-log');
                     }
                     sharedFeedStore.updateSharedFeed(true);
                     deleteFriend(id);
@@ -1116,7 +1116,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 friendLog.set(ref.id, friendLogCurrent);
                 database.setFriendLogCurrent(friendLogCurrent);
                 ctx.displayName = ref.displayName;
-                uiStore.notifyMenu('friendLog');
+                uiStore.notifyMenu('friend-log');
                 sharedFeedStore.updateSharedFeed(true);
             }
         }
@@ -1161,7 +1161,7 @@ export const useFriendStore = defineStore('Friend', () => {
             };
             friendLog.set(ref.id, friendLogCurrent2);
             database.setFriendLogCurrent(friendLogCurrent2);
-            uiStore.notifyMenu('friendLog');
+            uiStore.notifyMenu('friend-log');
             sharedFeedStore.updateSharedFeed(true);
         }
         ctx.trustLevel = ref.$trustLevel;
