@@ -64,48 +64,51 @@
                             style="margin-right: 5px"
                             >{{ t('dialog.world.tags.private') }}</el-tag
                         >
-                        <el-tag
-                            v-if="currentInstanceWorld.isPC"
-                            class="x-tag-platform-pc"
-                            type="info"
-                            effect="plain"
-                            size="small"
-                            style="margin-right: 5px"
-                            ><i class="ri-computer-line"></i>
-                            <span
-                                v-if="currentInstanceWorld.bundleSizes['standalonewindows']"
-                                :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
-                                >{{ currentInstanceWorld.bundleSizes['standalonewindows'].fileSize }}</span
-                            >
-                        </el-tag>
-                        <el-tag
-                            v-if="currentInstanceWorld.isQuest"
-                            class="x-tag-platform-quest"
-                            type="info"
-                            effect="plain"
-                            size="small"
-                            style="margin-right: 5px"
-                            ><i class="ri-android-line"></i>
-                            <span
-                                v-if="currentInstanceWorld.bundleSizes['android']"
-                                :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
-                                >{{ currentInstanceWorld.bundleSizes['android'].fileSize }}</span
-                            >
-                        </el-tag>
-                        <el-tag
-                            v-if="currentInstanceWorld.isIos"
-                            class="x-tag-platform-ios"
-                            type="info"
-                            effect="plain"
-                            size="small"
-                            style="margin-right: 5px"
-                            ><i class="ri-apple-line"></i>
-                            <span
-                                v-if="currentInstanceWorld.bundleSizes['ios']"
-                                :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']"
-                                >{{ currentInstanceWorld.bundleSizes['ios'].fileSize }}</span
-                            >
-                        </el-tag>
+                        <el-tooltip v-if="currentInstanceWorld.isPC" placement="top" content="PC">
+                            <el-tag
+                                class="x-tag-platform-pc"
+                                type="info"
+                                effect="plain"
+                                size="small"
+                                style="margin-right: 5px"
+                                ><i class="ri-computer-line"></i>
+                                <span
+                                    v-if="currentInstanceWorld.bundleSizes['standalonewindows']"
+                                    :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
+                                    >{{ currentInstanceWorld.bundleSizes['standalonewindows'].fileSize }}</span
+                                >
+                            </el-tag>
+                        </el-tooltip>
+                        <el-tooltip v-if="currentInstanceWorld.isQuest" placement="top" content="Android">
+                            <el-tag
+                                class="x-tag-platform-quest"
+                                type="info"
+                                effect="plain"
+                                size="small"
+                                style="margin-right: 5px"
+                                ><i class="ri-android-line"></i>
+                                <span
+                                    v-if="currentInstanceWorld.bundleSizes['android']"
+                                    :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
+                                    >{{ currentInstanceWorld.bundleSizes['android'].fileSize }}</span
+                                >
+                            </el-tag>
+                        </el-tooltip>
+                        <el-tooltip v-if="currentInstanceWorld.isIos" placement="top" content="iOS">
+                            <el-tag
+                                class="x-tag-platform-ios"
+                                type="info"
+                                effect="plain"
+                                size="small"
+                                style="margin-right: 5px"
+                                ><i class="ri-apple-line"></i>
+                                <span
+                                    v-if="currentInstanceWorld.bundleSizes['ios']"
+                                    :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']"
+                                    >{{ currentInstanceWorld.bundleSizes['ios'].fileSize }}</span
+                                >
+                            </el-tag>
+                        </el-tooltip>
                         <el-tag
                             v-if="currentInstanceWorld.avatarScalingDisabled"
                             type="warning"

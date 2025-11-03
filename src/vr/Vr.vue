@@ -1358,7 +1358,7 @@
                             >
                             <span v-else-if="feed.platform === 'VR'" style="color: #409eff; margin-left: 10px">VR</span>
                             <span v-else-if="feed.platform === 'Quest'" style="color: #67c23a; margin-left: 10px"
-                                >Quest</span
+                                >Android</span
                             >
                             <span v-else-if="feed.platform === 'iOS'" style="color: #c7c7ce; margin-left: 10px"
                                 >iOS</span

@@ -70,50 +70,53 @@
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.private') }}
                             </el-tag>
-                            <el-tag
-                                v-if="worldDialog.isPC"
-                                class="x-tag-platform-pc"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                style="margin-right: 5px; margin-top: 5px">
-                                <i class="ri-computer-line"></i
-                                ><span
-                                    v-if="worldDialog.bundleSizes['standalonewindows']"
-                                    :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']">
-                                    {{ worldDialog.bundleSizes['standalonewindows'].fileSize }}
-                                </span>
-                            </el-tag>
+                            <el-tooltip v-if="worldDialog.isPC" placement="top" content="PC">
+                                <el-tag
+                                    class="x-tag-platform-pc"
+                                    type="info"
+                                    effect="plain"
+                                    size="small"
+                                    style="margin-right: 5px; margin-top: 5px">
+                                    <i class="ri-computer-line"></i
+                                    ><span
+                                        v-if="worldDialog.bundleSizes['standalonewindows']"
+                                        :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']">
+                                        {{ worldDialog.bundleSizes['standalonewindows'].fileSize }}
+                                    </span>
+                                </el-tag>
+                            </el-tooltip>
 
-                            <el-tag
-                                v-if="worldDialog.isQuest"
-                                class="x-tag-platform-quest"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                style="margin-right: 5px; margin-top: 5px">
-                                <i class="ri-android-line"></i
-                                ><span
-                                    v-if="worldDialog.bundleSizes['android']"
-                                    :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']">
-                                    {{ worldDialog.bundleSizes['android'].fileSize }}
-                                </span>
-                            </el-tag>
+                            <el-tooltip v-if="worldDialog.isQuest" placement="top" content="Quest">
+                                <el-tag
+                                    class="x-tag-platform-quest"
+                                    type="info"
+                                    effect="plain"
+                                    size="small"
+                                    style="margin-right: 5px; margin-top: 5px">
+                                    <i class="ri-android-line"></i
+                                    ><span
+                                        v-if="worldDialog.bundleSizes['android']"
+                                        :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']">
+                                        {{ worldDialog.bundleSizes['android'].fileSize }}
+                                    </span>
+                                </el-tag>
+                            </el-tooltip>
 
-                            <el-tag
-                                v-if="worldDialog.isIos"
-                                class="x-tag-platform-ios"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                style="margin-right: 5px; margin-top: 5px">
-                                <i class="ri-apple-line"></i
-                                ><span
-                                    v-if="worldDialog.bundleSizes['ios']"
-                                    :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']">
-                                    {{ worldDialog.bundleSizes['ios'].fileSize }}
-                                </span>
-                            </el-tag>
+                            <el-tooltip v-if="worldDialog.isIos" placement="top" content="iOS">
+                                <el-tag
+                                    class="x-tag-platform-ios"
+                                    type="info"
+                                    effect="plain"
+                                    size="small"
+                                    style="margin-right: 5px; margin-top: 5px">
+                                    <i class="ri-apple-line"></i
+                                    ><span
+                                        v-if="worldDialog.bundleSizes['ios']"
+                                        :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']">
+                                        {{ worldDialog.bundleSizes['ios'].fileSize }}
+                                    </span>
+                                </el-tag>
+                            </el-tooltip>
 
                             <el-tag
                                 v-if="worldDialog.avatarScalingDisabled"
