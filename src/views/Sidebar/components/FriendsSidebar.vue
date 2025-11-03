@@ -169,7 +169,7 @@
 </template>
 
 <script setup>
-    import { computed, ref } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { ArrowRight } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -185,6 +185,7 @@
     } from '../../../stores';
     import { isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
     import { getFriendsLocations } from '../../../shared/utils/location.js';
+    import { watchState } from '../../../service/watchState';
 
     import FriendItem from './FriendItem.vue';
     import configRepository from '../../../service/config';
@@ -208,8 +209,17 @@
     const isVIPFriends = ref(true);
     const isOnlineFriends = ref(true);
     const isActiveFriends = ref(false);
-    const isOfflineFriends = computed(() => (offlineFriends.value.length < 10 ? true : false));
+    const isOfflineFriends = ref(false);
     const isSidebarGroupByInstanceCollapsed = ref(false);
+
+    watch(
+        () => watchState.isFriendsLoaded,
+        (isFriendsLoaded) => {
+            if (isFriendsLoaded) {
+                isOfflineFriends.value = offlineFriends.value.length < 10 ? true : false;
+            }
+        }
+    );
 
     loadFriendsGroupStates();
 
