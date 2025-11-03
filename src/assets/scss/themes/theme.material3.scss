@@ -1421,7 +1421,7 @@ img.x-link.el-popover__reference {
     color: rgb(var(--md-sys-color-on-primary-container)) !important;
 }
 .el-segmented__item:first-child,
-/* Select second child because for some reason first child of el-segmented is the "-selected with a translate that moves it", I guess that's so it can be animated well */
+/* Select second child because for some reason first child of el-segmented is the "-selected" with a translate that moves it, I guess that's so it can be animated well */
 .el-segmented__item:nth-child(2):hover,
 .el-segmented__item-selected[style*='translateX(0px)'] {
     border-top-left-radius: 16px !important;
