@@ -208,7 +208,7 @@
     const isVIPFriends = ref(true);
     const isOnlineFriends = ref(true);
     const isActiveFriends = ref(false);
-    const isOfflineFriends = ref(false);
+    const isOfflineFriends = computed(() => (offlineFriends.value.length < 10 ? true : false));
     const isSidebarGroupByInstanceCollapsed = ref(false);
 
     loadFriendsGroupStates();
@@ -281,7 +281,6 @@
         configRepository.setBool('VRCX_isFriendsGroupFavorites', isVIPFriends.value);
         configRepository.setBool('VRCX_isFriendsGroupOnline', isOnlineFriends.value);
         configRepository.setBool('VRCX_isFriendsGroupActive', isActiveFriends.value);
-        configRepository.setBool('VRCX_isFriendsGroupOffline', isOfflineFriends.value);
     }
 
     async function loadFriendsGroupStates() {
@@ -289,7 +288,6 @@
         isVIPFriends.value = await configRepository.getBool('VRCX_isFriendsGroupFavorites', true);
         isOnlineFriends.value = await configRepository.getBool('VRCX_isFriendsGroupOnline', true);
         isActiveFriends.value = await configRepository.getBool('VRCX_isFriendsGroupActive', false);
-        isOfflineFriends.value = await configRepository.getBool('VRCX_isFriendsGroupOffline', false);
         isSidebarGroupByInstanceCollapsed.value = await configRepository.getBool(
             'VRCX_sidebarGroupByInstanceCollapsed',
             false
