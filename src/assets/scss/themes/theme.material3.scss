@@ -1388,7 +1388,8 @@ img.x-link.el-popover__reference {
     color: rgb(var(--md-sys-color-on-secondary-container));
 }
 .x-friend-item > .detail > .extra,
-.extra {
+.extra,
+.friend-view__divider-text {
     color: rgb(var(--md-sys-color-on-background));
 }
 .friend-card__status-dot {
