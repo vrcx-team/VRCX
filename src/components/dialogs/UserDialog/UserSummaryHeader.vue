@@ -73,15 +73,17 @@
                     </template>
                 </div>
                 <div style="margin-top: 5px" v-show="!userDialog.loading">
-                    <el-tag
-                        type="info"
-                        effect="plain"
-                        size="small"
-                        class="name"
-                        :class="userDialog.ref.$trustClass"
-                        style="margin-right: 5px; margin-top: 5px">
-                        <i class="ri-shield-line"></i>{{ userDialog.ref.$trustLevel }}
-                    </el-tag>
+                    <el-tooltip placement="top" :content="t('dialog.user.tags.trust_level')">
+                        <el-tag
+                            type="info"
+                            effect="plain"
+                            size="small"
+                            class="name"
+                            :class="userDialog.ref.$trustClass"
+                            style="margin-right: 5px; margin-top: 5px">
+                            <i class="ri-shield-line"></i>{{ userDialog.ref.$trustLevel }}
+                        </el-tag>
+                    </el-tooltip>
                     <el-tooltip
                         v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
                         placement="top"
@@ -152,7 +154,7 @@
                             <i class="ri-computer-line"></i>
                         </el-tag>
                     </el-tooltip>
-                    <el-tooltip v-else-if="userDialog.ref.$platform === 'android'" placement="top" content="Quest">
+                    <el-tooltip v-else-if="userDialog.ref.$platform === 'android'" placement="top" content="Android">
                         <el-tag
                             type="info"
                             effect="plain"
