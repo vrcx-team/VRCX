@@ -176,7 +176,7 @@
                             @click.stop="promptLocalWorldFavoriteGroupDelete(group)" />
                     </el-tooltip>
                 </template>
-                <div v-if="localWorldFavorites[group].length" class="x-friend-list" style="margin-top: 10px">
+                <div v-if="localWorldFavorites[group]?.length" class="x-friend-list" style="margin-top: 10px">
                     <el-scrollbar height="700px" @end-reached="localWorldFavoritesLoadMore">
                         <FavoritesWorldLocalItem
                             v-for="favorite in sliceLocalWorldFavorites(group)"

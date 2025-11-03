@@ -1046,7 +1046,7 @@ export const useUserStore = defineStore('User', () => {
         let friendCount = 0;
         const playersInInstance = locationStore.lastLocation.playerList;
         const cachedCurrentUser = cachedUsers.get(currentUser.value.id);
-        const currentLocation = cachedCurrentUser.$location.tag;
+        const currentLocation = cachedCurrentUser?.$location?.tag;
         if (!L.isOffline && currentLocation === L.tag) {
             ref = cachedUsers.get(currentUser.value.id);
             if (typeof ref !== 'undefined') {
