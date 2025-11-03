@@ -1375,6 +1375,9 @@ img.x-link.el-popover__reference {
 .friend-card__name {
     color: rgb(var(--md-sys-color-on-primary-container)) !important;
 }
+.friend-card__avatar {
+    border: 1px solid rgb(var(--md-sys-color-outline-variant)) !important;
+}
 .friend-card__signature {
     color: rgb(var(--md-sys-color-on-surface-variant)) !important;
 }
