@@ -180,7 +180,7 @@
                             @click.stop="promptLocalAvatarFavoriteGroupDelete(group)"></el-button>
                     </el-tooltip>
                 </template>
-                <div v-if="localAvatarFavorites[group].length" class="x-friend-list" :style="{ marginTop: '10px' }">
+                <div v-if="localAvatarFavorites[group]?.length" class="x-friend-list" :style="{ marginTop: '10px' }">
                     <FavoritesAvatarItem
                         v-for="favorite in localAvatarFavorites[group]"
                         :key="favorite.id"

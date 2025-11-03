@@ -190,6 +190,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         const url = branches[branch.value].urlLatest;
         checkingForVRCXUpdate.value = true;
         let response;
+        let json;
         try {
             response = await webApiService.execute({
                 url,
@@ -198,6 +199,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                     'VRCX-ID': vrcxId.value
                 }
             });
+            json = JSON.parse(response.data);
         } finally {
             checkingForVRCXUpdate.value = false;
         }
@@ -211,7 +213,6 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             return;
         }
         pendingVRCXUpdate.value = false;
-        const json = JSON.parse(response.data);
         if (AppDebug.debugWebRequests) {
             console.log(json, response);
         }
@@ -262,6 +263,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         const url = branches[branch.value].urlReleases;
         checkingForVRCXUpdate.value = true;
         let response;
+        let json;
         try {
             response = await webApiService.execute({
                 url,
@@ -270,6 +272,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                     'VRCX-ID': vrcxId.value
                 }
             });
+            json = JSON.parse(response.data);
         } finally {
             checkingForVRCXUpdate.value = false;
         }
@@ -282,7 +285,6 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             });
             return;
         }
-        const json = JSON.parse(response.data);
         if (AppDebug.debugWebRequests) {
             console.log(json, response);
         }
