@@ -80,7 +80,7 @@
                         class="name"
                         :class="userDialog.ref.$trustClass"
                         style="margin-right: 5px; margin-top: 5px">
-                        {{ userDialog.ref.$trustLevel }}
+                        <i class="ri-shield-line"></i>{{ userDialog.ref.$trustLevel }}
                     </el-tag>
                     <el-tooltip
                         v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
