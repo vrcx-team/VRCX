@@ -1396,6 +1396,10 @@ img.x-link.el-popover__reference {
     border: calc(2px * var(--card-scale)) solid
         rgb(var(--md-sys-color-outline-variant)) !important;
 }
+.friend-view__divider:before,
+.friend-view__divider:after {
+    background: rgb(var(--md-sys-color-outline-variant)) !important;
+}
 
 /* ---------- Segmented Item -------- */
 
