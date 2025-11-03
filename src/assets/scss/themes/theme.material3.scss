@@ -1402,12 +1402,15 @@ img.x-link.el-popover__reference {
     background: rgb(var(--md-sys-color-secondary-container)) !important;
     border-radius: 16px !important;
     overflow: hidden;
+    padding: unset;
 }
 .el-segmented__item {
     color: rgb(var(--md-sys-color-on-surface-variant));
+    border-radius: 0px;
 }
 .el-segmented__item-selected {
     background: rgba(var(--md-sys-color-on-secondary-container), 0.12);
+    border-radius: 0px;
 }
 .el-segmented__item.is-selected {
     color: rgb(var(--md-sys-color-primary));
