@@ -2,16 +2,18 @@
     "language": "繁體中文 (zh-TW)",
     "translator": "Kamiya,XoF_eLtTiL",
     "nav_tooltip": {
+        "friend_location": "好友位置",
         "feed": "動態",
         "game_log": "遊戲紀錄",
-        "player_list": "玩家列表",
+        "player_list": "用戶列表",
         "search": "搜尋",
         "favorites": "收藏",
         "friend_log": "好友紀錄",
-        "moderation": "玩家處置",
+        "moderation": "用戶處置",
         "notification": "通知",
         "friend_list": "好友列表",
         "charts": "圖表",
+        "tools": "工具",
         "profile": "個人檔案",
         "settings": "設定"
     },
@@ -24,7 +26,7 @@
             "updater": "更新器",
             "proxy_settings": "代理設定",
             "field": {
-                "username": "玩家名稱或電子信箱",
+                "username": "使用者名稱或電子信箱",
                 "password": "密碼",
                 "saveCredentials": "儲存登入資料",
                 "devEndpoint": "開發介面",
@@ -50,8 +52,8 @@
             "search_placeholder": "搜尋遊戲紀錄",
             "filters": {
                 "Location": "地點",
-                "OnPlayerJoined": "玩家加入",
-                "OnPlayerLeft": "玩家離開",
+                "OnPlayerJoined": "用戶加入",
+                "OnPlayerLeft": "用戶離開",
                 "PortalSpawn": "開啟傳送門",
                 "VideoPlay": "影片播放",
                 "Event": "事件",
@@ -74,7 +76,7 @@
             "search_placeholder": "搜尋",
             "clear_results_tooltip": "清除搜尋結果",
             "user": {
-                "header": "玩家",
+                "header": "用戶",
                 "search_by_bio": "依自介搜尋",
                 "sort_by_last_logged_in": "依最近上線時間排序"
             },
@@ -134,7 +136,6 @@
             "import": "匯入",
             "move_tooltip": "移動",
             "copy_tooltip": "複製",
-            "self_invite_tooltip": "自我邀請",
             "unfavorite_tooltip": "解除收藏",
             "visibility_tooltip": "變更可見度",
             "rename_tooltip": "重新命名",
@@ -158,8 +159,8 @@
             }
         },
         "moderation": {
-            "filter_placeholder": "篩選玩家處置",
-            "search_placeholder": "搜尋玩家處置",
+            "filter_placeholder": "篩選用戶處置",
+            "search_placeholder": "搜尋用戶處置",
             "refresh_tooltip": "重新整理",
             "filters": {
                 "block": "封鎖",
@@ -250,6 +251,43 @@
                 }
             }
         },
+        "tools": {
+            "header": "工具",
+            "group": {
+                "header": "群組",
+                "calendar": "行事曆",
+                "calendar_description": "群組活動行事曆"
+            },
+            "image": {},
+            "user": {
+                "discord_names_description": "尋找你 VRChat 好友的 Discord 使用者名稱",
+                "export_friend_list_description": "匯出你的 VRChat 好友列表",
+                "export_own_avatars_description": "匯出你的個人 VRChat 化身"
+            },
+            "export": {
+                "header": "匯出",
+                "export_notes": "匯出使用者備註",
+                "export_notes_description": "將 VRCX 使用者備註匯出至 VRChat 備註",
+                "discord_names": "Discord 名稱",
+                "export_friend_list": "匯出好友列表",
+                "export_own_avatars": "匯出個人化身"
+            },
+            "redirect_message": "此功能現在已可在此頁面使用。",
+            "pictures": {
+                "pictures": {
+                    "vrc_photos": "VRChat 照片",
+                    "steam_screenshots": "Steam 截圖",
+                    "open_folder": "開啟資料夾",
+                    "vrc_photos_description": "開啟你的 VRChat 照片資料夾",
+                    "steam_screenshots_description": "開啟你的 Steam 截圖資料夾"
+                },
+                "header": "圖片",
+                "screenshot": "截圖管理",
+                "screenshot_description": "管理截圖並檢視中繼資料",
+                "inventory": "VRC+ 圖片與物品管理",
+                "inventory_description": "管理 VRC+ 圖片與物品"
+            }
+        },
         "profile": {
             "profile": {
                 "header": "個人檔案",
@@ -265,8 +303,8 @@
             },
             "game_info": {
                 "header": "遊戲資訊",
-                "online_users": "線上玩家",
-                "user_online": "{count} 位玩家在線上",
+                "online_users": "線上用戶",
+                "user_online": "{count} 位用戶在線上",
                 "refresh": "點擊以重新整理"
             },
             "vrc_sdk_downloads": {
@@ -274,8 +312,8 @@
             },
             "direct_access": {
                 "header": "直接存取",
-                "username": "玩家名稱",
-                "user_id": "玩家 ID",
+                "username": "使用者名稱",
+                "user_id": "用戶 ID",
                 "world_instance": "世界 / 房間",
                 "avatar": "角色"
             },
@@ -285,7 +323,7 @@
             "invite_request_response_messages": "邀請請求回覆訊息",
             "past_display_names": "過去顯示名稱",
             "config_json": "JSON 資料",
-            "current_user_json": "目前玩家的 JSON 資料",
+            "current_user_json": "目前用戶的 JSON 資料",
             "feedback": "回饋",
             "refresh_tooltip": "重新整理",
             "clear_results_tooltip": "清除結果"
@@ -296,7 +334,7 @@
                 "general": "一般",
                 "appearance": "外觀",
                 "notifications": "通知",
-                "wrist_overlay": "手腕疊層",
+                "wrist_overlay": "手腕嵌入介面",
                 "discord_presence": "Discord 遊戲動態",
                 "pictures": "照片",
                 "advanced": "進階"
@@ -325,9 +363,9 @@
                     "minimized": "以最小化啟動",
                     "tray": "最小化到系統列",
                     "disable_gpu_acceleration": "停用 GPU 加速",
-                    "disable_gpu_acceleration_tooltip": "僅在你確切知道自己在做什麼的情況下更改此選項，可能會導致 SteamVR 疊層無法正常運作，但可能可以解決 UI 問題，需要重新啟動 VRCX",
-                    "disable_vr_overlay_gpu_acceleration": "停用 VR 疊層 GPU 加速",
-                    "disable_vr_overlay_gpu_acceleration_tooltip": "VR 疊層 GPU 加速可能會導致 VRCX 崩潰或造成 VRAM 記憶體洩漏，需要重新啟動 VRCX",
+                    "disable_gpu_acceleration_tooltip": "僅在你確切知道自己在做什麼的情況下更改此選項，可能會導致 SteamVR 嵌入介面無法正常運作，但可能可以解決 UI 問題，需要重新啟動 VRCX",
+                    "disable_vr_overlay_gpu_acceleration": "停用 VR 嵌入介面 GPU 加速",
+                    "disable_vr_overlay_gpu_acceleration_tooltip": "VR 嵌入介面 GPU 加速可能會導致 VRCX 崩潰或造成 VRAM 記憶體洩漏，需要重新啟動 VRCX",
                     "proxy": "代理設定",
                     "startup_linux": "在啟動 VRCX.desktop 檔案中加入「--startup/」命令，以在系統啟動時最小化啟動 VRCX"
                 },
@@ -371,7 +409,8 @@
             "appearance": {
                 "appearance": {
                     "header": "外觀",
-                    "language": "語言 (Language)",
+                    "language": "語言",
+                    "bio_language": "目標語言",
                     "theme_mode": "主題",
                     "theme_mode_system": "系統",
                     "theme_mode_light": "淺色",
@@ -391,11 +430,10 @@
                     "sort_favorite_by": "收藏排序依據",
                     "sort_favorite_by_name": "名稱",
                     "sort_favorite_by_date": "時間",
-                    "sort_instance_users_by": "房間玩家排序依據",
+                    "sort_instance_users_by": "房間用戶排序依據",
                     "sort_instance_users_by_time": "時間",
                     "sort_instance_users_by_alphabet": "字母順序",
-                    "table_max_size": "表格大小",
-                    "page_size": "頁面大小："
+                    "table_max_size": "表格大小"
                 },
                 "timedate": {
                     "header": "時間 / 日期",
@@ -425,18 +463,18 @@
                     "hide_friends_in_same_instance": "隱藏同房間好友",
                     "hide_friends_in_same_instance_tooltip": "當好友在同一房間時，將其從好友列表中隱藏。",
                     "split_favorite_friends": "分類收藏好友",
-                    "split_favorite_friends_tooltip": "將收藏的朋友依照分組別類。"
+                    "split_favorite_friends_tooltip": "將收藏的好友依照分組別類。"
                 },
                 "user_dialog": {
-                    "header": "玩家資訊",
+                    "header": "用戶資訊",
                     "vrchat_notes": "VRChat 備註",
                     "vrcx_memos": "VRCX 備註",
                     "export_vrcx_memos_into_vrchat_notes": "將 VRCX 備忘錄匯出成 VRChat 備註",
                     "export_notes": "匯出備註"
                 },
                 "user_colors": {
-                    "header": "玩家名稱顏色",
-                    "random_colors_from_user_id": "從玩家 ID 隨機挑選顏色"
+                    "header": "使用者名稱顏色",
+                    "random_colors_from_user_id": "從用戶 ID 隨機挑選顏色"
                 },
                 "friend_log": {
                     "header": "好友紀錄",
@@ -449,14 +487,14 @@
                     "notification_filter": "通知篩選器",
                     "steamvr_notifications": {
                         "header": "SteamVR 通知",
-                        "steamvr_overlay": "SteamVR 疊層",
-                        "overlay_notifications": "疊層通知",
+                        "steamvr_overlay": "SteamVR 嵌入介面",
+                        "overlay_notifications": "嵌入介面通知",
                         "notification_position": "通知位置",
                         "xsoverlay_notifications": "XSOverlay 通知",
                         "wlxoverlay_notifications": "WlxOverlay 通知",
                         "ovrtoolkit_hud_notifications": "OVR Toolkit HUD 通知",
                         "ovrtoolkit_wrist_notifications": "OVR Toolkit 手腕通知",
-                        "user_images": "玩家照片（較慢）",
+                        "user_images": "用戶照片（較慢）",
                         "notification_opacity": "通知不透明度",
                         "notification_timeout": "通知時長"
                     },
@@ -486,18 +524,18 @@
             },
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
-                    "header": "SteamVR 手腕疊層",
+                    "header": "SteamVR 手腕嵌入介面",
                     "description": "* 當 VRChat 啟動時後自動執行",
                     "grip": "握持：Vive 或其它控制器的握持鍵、Oculus X/A 按鍵",
                     "menu": "選單：Vive 選單鍵、Index B、Oculus Y/B 按鍵",
-                    "steamvr_overlay": "SteamVR 疊層",
-                    "wrist_feed_overlay": "手腕動態疊層",
+                    "steamvr_overlay": "SteamVR 嵌入介面",
+                    "wrist_feed_overlay": "手腕動態嵌入介面",
                     "hide_private_worlds": "隱藏私人世界",
                     "start_overlay_with": "啟動時一併啟動",
-                    "overlay_button": "疊層按鍵",
+                    "overlay_button": "嵌入介面按鍵",
                     "overlay_button_grip": "握持",
                     "overlay_button_menu": "選單",
-                    "display_overlay_on": "疊層顯示位置",
+                    "display_overlay_on": "嵌入介面顯示位置",
                     "display_overlay_on_left": "左手",
                     "display_overlay_on_right": "右手",
                     "display_overlay_on_both": "雙手",
@@ -516,10 +554,14 @@
                     "description": "* 當 VRChat 啟動時才會啟用",
                     "enable": "啟用",
                     "enable_tooltip": "建議在 VRChat config.json 中停用原生 Discord 遊戲動態來防止衝突",
-                    "instance_type_player_count": "房間種類 / 玩家人數",
+                    "instance_type_player_count": "房間種類 / 用戶人數",
                     "join_button": "加入按鈕（僅限公開房間）",
                     "show_details_in_private": "顯示在私人房間時的世界資訊",
-                    "show_images": "顯示世界圖片"
+                    "show_images": "顯示世界圖片",
+                    "show_current_platform": "顯示目前平台",
+                    "world_integration": "世界整合",
+                    "world_integration_tooltip": "在 Popcorn Palace、PyPyDance、VRDancing 和 LS Media 顯示「正在觀看／正在聆聽」狀態",
+                    "display_world_name_as_discord_status": "將世界名稱顯示為 Discord 狀態"
                 },
                 "rpc": {
                     "vr": "VR 模式",
@@ -559,6 +601,10 @@
                         "header": "關閉 VRChat 時自動管理快取",
                         "description": "自動從快取中刪除舊版本"
                     },
+                    "self_invite": {
+                        "header": "自我邀請",
+                        "description": "以自我邀請方式進入房間，而非在 VRChat 中開啟房間"
+                    },
                     "save_instance_prints_to_file": {
                         "header": "將房間拍立得保存到檔案",
                         "header_tooltip": "需要 \"--enable-sdk-log-levels\" VRC 啟動選項",
@@ -594,10 +640,16 @@
                         "youtube_api_key": "YouTube API 金鑰",
                         "enable_tooltip": "擷取影片標題，以便與 GameLog 搭配使用，並擷取時間長度，以便覆蓋進度條"
                     },
-                    "video_progress_pie": {
-                        "header": "影片進度圓餅疊層",
+                    "translation_api": {
+                        "header": "Google 翻譯 API",
                         "enable": "啟用",
-                        "enable_tooltip": "需要啟用 SteamVR 疊層選項",
+                        "translation_api_key": "Google 翻譯 API 金鑰",
+                        "enable_tooltip": "翻譯使用者個人簡介"
+                    },
+                    "video_progress_pie": {
+                        "header": "影片進度圓餅嵌入介面",
+                        "enable": "啟用",
+                        "enable_tooltip": "需要啟用 SteamVR 嵌入介面選項",
                         "dance_world_only": "僅限跳舞世界"
                     },
                     "launch_commands": {
@@ -609,7 +661,7 @@
                     },
                     "screenshot_helper": {
                         "header": "螢幕截圖助理",
-                        "description": "當你在遊戲中拍照時，VRCX 會將一些額外的資訊自動保存到照片檔案中，包括你所在的遊戲世界 ID、世界名稱以及當時遊戲中的玩家數量。",
+                        "description": "當你在遊戲中拍照時，VRCX 會將一些額外的資訊自動保存到照片檔案中，包括你所在的遊戲世界 ID、世界名稱以及當時遊戲中的用戶數量。",
                         "description_tooltip": "不幸的是，Windows 沒有本身支援查看 PNG 圖片的文字塊（很少有程式支援），但你可以使用命令列工具如 exiftool、PNG 文字塊檢查器或十六進位編輯器來查看。",
                         "enable": "啟用",
                         "modify_filename": "修改檔案名稱",
@@ -621,23 +673,25 @@
                         "folder": "自動啟動資料夾",
                         "folder_tooltip": "要用 VRChat 自動啟動應用程式，請將捷徑放在這個文件夾中",
                         "enable": "啟用",
-                        "auto_close": "自動關閉應用程式"
+                        "auto_close": "自動關閉應用程式",
+                        "run_process_once": "開啟應用程式的單一執行個體"
                     },
                     "cache_debug": {
                         "header": "VRCX 世界快取/除錯",
                         "udon_exception_logging": "Udon 異常紀錄",
-                        "gpu_fix": "SteamVR 疊層 GPU 修復",
+                        "gpu_fix": "SteamVR 嵌入介面 GPU 修復",
                         "gpu_fix_notice": "(需要重新啟動)",
-                        "gpu_fix_warning": "只有在 SteamVR 疊層不工作並且你有 2 個 GPU 的情況下才會啟用這個選項",
+                        "gpu_fix_warning": "只有在 SteamVR 嵌入介面不工作並且你有 2 個 GPU 的情況下才會啟用這個選項",
                         "disable_gamelog": "關閉遊戲紀錄",
                         "disable_gamelog_notice": "（可能會弄壞很多東西）",
-                        "user_cache": "玩家快取：",
+                        "user_cache": "用戶快取：",
                         "world_cache": "世界快取：",
                         "avatar_cache": "角色快取：",
                         "group_cache": "群組快取：",
                         "avatar_name_cache": "角色名稱快取：",
                         "instance_cache": "房間快取：",
                         "clear_cache": "清除快取",
+                        "refresh_cache": "刷新快取",
                         "auto_clear_cache": "自動清除快取",
                         "show_console": "顯示主控台"
                     },
@@ -658,7 +712,7 @@
                         "event": "事件："
                     },
                     "user_generated_content": {
-                        "header": "玩家生成內容",
+                        "header": "用戶生成內容",
                         "folder": "開啟資料夾",
                         "description": "開啟或設定儲存「拍立得」和「貼紙」等內容的資料夾。",
                         "set_folder": "設定資料夾",
@@ -666,11 +720,11 @@
                     }
                 },
                 "photon": {
-                    "header": "Photon 紀錄疊層",
+                    "header": "Photon 紀錄嵌入介面",
                     "event_hud": {
                         "header": "Photon 事件 HUD",
                         "enable": "啟用",
-                        "enable_tooltip": "需要啟用 SteamVR 疊層選項",
+                        "enable_tooltip": "需要啟用 SteamVR 嵌入介面選項",
                         "filter": "篩選器",
                         "filter_favorites": "收藏",
                         "filter_friends": "好友",
@@ -678,29 +732,15 @@
                         "message_timeout": "訊息時長"
                     },
                     "timeout_hud": {
-                        "header": "玩家愈時 HUD",
+                        "header": "用戶愈時 HUD",
                         "enable": "啟用",
-                        "enable_tooltip": "需要啟用 SteamVR 疊層選項",
+                        "enable_tooltip": "需要啟用 SteamVR 嵌入介面選項",
                         "filter": "篩選器",
                         "filter_favorites": "收藏",
                         "filter_friends": "好友",
                         "filter_everyone": "所有人",
                         "timeout_threshold": "超時閾值"
                     }
-                }
-            }
-        },
-        "tools": {
-            "export": {
-                "discord_names": "Discord 名稱",
-                "export_friend_list": "匯出好友列表",
-                "export_own_avatars": "匯出私有角色"
-            },
-            "pictures": {
-                "pictures": {
-                    "vrc_photos": "VRChat 照片",
-                    "steam_screenshots": "Steam 截圖",
-                    "open_folder": "開啟資料夾"
                 }
             }
         }
@@ -755,7 +795,8 @@
                 "request_invite": "請求邀請",
                 "request_invite_with_message": "請求邀請（訊息）",
                 "invite_to_group": "邀情到群組",
-                "send_boop": "Send Boop",
+                "group_moderation": "群組管理",
+                "send_boop": "戳一下",
                 "manage_gallery_inventory_icon": "管理相簿 / 圖示",
                 "accept_friend_request": "接受好友邀請",
                 "decline_friend_request": "回絕好友邀請",
@@ -764,7 +805,6 @@
                 "show_avatar_author": "顯示角色作者",
                 "show_fallback_avatar": "顯示備用角色資訊",
                 "show_previous_instances": "顯示過去的房間",
-                "show_previous_images": "顯示角色以前的圖片",
                 "moderation_block": "封鎖",
                 "moderation_unblock": "解除封鎖",
                 "moderation_mute": "靜音",
@@ -787,9 +827,10 @@
                 "header": "資訊",
                 "launch_invite_tooltip": "啟動 / 邀請",
                 "self_invite_tooltip": "自我邀請",
+                "open_in_vrchat_tooltip": "在 VRChat 中開啟",
                 "refresh_instance_info": "重新整理房間資訊",
                 "instance_queue": "佇列：",
-                "instance_users": "玩家：",
+                "instance_users": "用戶：",
                 "instance_game_version": "遊戲版本：",
                 "last_join": "最後加入:",
                 "instance_queuing_enabled": "排隊開啟",
@@ -815,11 +856,11 @@
                 "friended": "好友",
                 "unfriended": "解除好友",
                 "avatar_cloning": "角色複製",
-                "booping": "Booping",
+                "booping": "正在戳",
                 "avatar_cloning_allow": "允許",
                 "avatar_cloning_deny": "不允許",
                 "home_location": "家點",
-                "id": "玩家 ID",
+                "id": "用戶 ID",
                 "id_tooltip": "複製到剪貼簿",
                 "copy_id": "複製 ID",
                 "copy_url": "複製連結",
@@ -908,13 +949,13 @@
                 "share": "分享",
                 "new_instance": "新房間",
                 "new_instance_and_self_invite": "開啟新房間並自我邀請",
+                "new_instance_and_open_ingame": "開啟新房間並於遊戲中開啟",
                 "make_home": "設為家點",
                 "reset_home": "重設家點",
                 "show_previous_instances": "顯示過去的房間",
-                "show_previous_images": "顯示過去的圖片",
                 "rename": "重新命名",
                 "change_description": "變更敘述",
-                "change_capacity": "變更最大玩家上限",
+                "change_capacity": "變更最大用戶上限",
                 "change_recommended_capacity": "變更建立人數",
                 "change_preview": "變更 YouTube 預覽",
                 "change_warnings_settings_tags": "變更內容警告、設定和標籤",
@@ -930,7 +971,7 @@
                 "header": "房間",
                 "public_count": "公開 {count}",
                 "private_count": "私人 {count}",
-                "capacity_count": "玩家上限 {count} ({max})",
+                "capacity_count": "用戶上限 {count} ({max})",
                 "self_invite_tooltip": "自我邀請",
                 "refresh_instance_info": "重新整理房間資訊",
                 "instance_full": "已滿",
@@ -947,10 +988,10 @@
                 "copy_name": "複製名稱",
                 "youtube_preview": "YouTube 預覽",
                 "author_tags": "作者標籤",
-                "players": "玩家人數",
+                "players": "用戶人數",
                 "favorites": "收藏次數",
                 "visits": "總拜訪次數",
-                "capacity": "最大玩家上限",
+                "capacity": "最大用戶上限",
                 "heat": "熱度",
                 "popularity": "熱門度",
                 "created_at": "創建時間",
@@ -998,7 +1039,6 @@
                 "select_fallback": "選擇為備用角色",
                 "block": "封鎖角色",
                 "unblock": "解除封鎖角色",
-                "show_previous_images": "顯示過去的圖片",
                 "make_public": "設為公開",
                 "make_private": "設為私人",
                 "rename": "重新命名",
@@ -1114,14 +1154,13 @@
                 "load_more": "載入更多……",
                 "sort_by": "排序方式：",
                 "sorting": {
-                    "user_id": "玩家 ID（升序）",
                     "joined_at_asc": "加入時間（升序）",
                     "joined_at_desc": "加入時間（降序）"
                 },
                 "filter": "過濾器：",
                 "filters": {
                     "everyone": "所有人",
-                    "users_with_no_role": "沒有身分的玩家"
+                    "users_with_no_role": "沒有身分的用戶"
                 },
                 "unsubscribed_announcements": "取消訂閱公告",
                 "visibility": "可見度：",
@@ -1143,7 +1182,7 @@
             "local_avatar_favorites": "本地收藏 (需要 VRC+)"
         },
         "invite": {
-            "header": "邀請玩家",
+            "header": "邀請用戶",
             "select_placeholder": "選擇好友",
             "add_self": "新增自己",
             "add_friends_in_instance": "新增房間內的好友",
@@ -1206,7 +1245,7 @@
             "instance_id": "房間 ID",
             "instance_id_placeholder": "亂數",
             "instance_creator": "房間建立者",
-            "instance_creator_placeholder": "選擇玩家",
+            "instance_creator_placeholder": "選擇用戶",
             "group_placeholder": "選擇群組",
             "role_placeholder": "選擇身分",
             "group_id": "群組 ID",
@@ -1222,11 +1261,13 @@
             "normal": "一般",
             "group": "群組",
             "legacy": "舊版",
-            "roles": "身分"
+            "roles": "身分",
+            "open_ingame": "於遊戲中開啟",
+            "display_name": "顯示名稱（VRC+）"
         },
         "launch_options": {
             "header": "啟動選項",
-            "description": "這些選項僅適用於高級玩家。",
+            "description": "這些選項僅適用於高級用戶。",
             "example": "變更 FPS 限制：--fps=<N> 例：",
             "path_override": "VRChat 位置覆蓋",
             "vrchat_docs": "VRChat 文件",
@@ -1235,7 +1276,7 @@
         },
         "config_json": {
             "header": "VRChat JSON 設定檔",
-            "description1": "這些選項僅適用於高級玩家。",
+            "description1": "這些選項僅適用於高級用戶。",
             "description2": "將輸入框留白來設為預設值，設定需要重新啟動遊戲才會套用。",
             "cache_size": "快取大小：",
             "refresh": "重新整理",
@@ -1262,6 +1303,13 @@
             "description": "輸入你的 YouTube API 金鑰（選擇性）",
             "placeholder": "YouTube API 金鑰",
             "guide": "教學",
+            "save": "儲存"
+        },
+        "translation_api": {
+            "header": "Google 翻譯 API",
+            "description": "輸入你的 Google 翻譯 API 金鑰",
+            "placeholder": "Google 翻譯 API 金鑰",
+            "guide": "使用指南",
             "save": "儲存"
         },
         "set_world_tags": {
@@ -1322,7 +1370,12 @@
             "copy_tooltip": "複製到剪貼簿",
             "start_as_desktop": "以桌面模式啟動（無 VR）",
             "invite": "邀請",
-            "launch": "啟動"
+            "launch": "啟動",
+            "open_ingame": "於遊戲中開啟",
+            "self_invite": "自我邀請",
+            "game_running_warning": "你確定要啟動第二個 VRChat 房間嗎？",
+            "confirm_yes": "是",
+            "confirm_no": "否"
         },
         "export_friends_list": {
             "header": "匯出好友列表",
@@ -1390,7 +1443,7 @@
         },
         "friend_import": {
             "header": "好友收藏匯入",
-            "description": "輸入玩家 ID 列表",
+            "description": "輸入用戶 ID 列表",
             "process_list": "讀取列表",
             "process_progress": "進度：",
             "select_group_placeholder": "選擇群組",
@@ -1408,27 +1461,28 @@
         "chatbox_blacklist": {
             "header": "聊天框黑名單",
             "keyword_blacklist": "關鍵字黑名單",
-            "user_blacklist": "玩家黑名單",
+            "user_blacklist": "用戶黑名單",
             "add_item": "新增項目"
         },
         "invite_to_group": {
             "header": "邀請到群組",
-            "description": "別一直刷邀請玩家，你會被速率限制",
+            "description": "別一直刷邀請用戶，你會被速率限制",
             "choose_group_placeholder": "選擇群組",
             "groups": "群組",
             "choose_friends_placeholder": "選擇好友",
-            "selected_users": "已選擇的玩家"
+            "selected_users": "已選擇的用戶",
+            "invite": "邀請"
         },
         "note_export": {
             "header": "備註匯出",
-            "description1": "這個過程將匯出你所有的 VRCX 備忘錄並將它們匯入到 VRChat 備註中。",
+            "description1": "此程序會將你所有的 VRCX 備忘錄匯出，並匯入至 VRChat 備註中。",
             "description2": "請注意以下限制：",
-            "description3": "- API 介面有速率限制，每個請求之間會有很大的延遲。",
-            "description4": "- 每個備註的字數限制為 256 個字元。",
-            "description5": "- 髒話過濾器（沒有樂趣）。",
-            "description6": "- 不能換行（將會被替換成空格）。",
-            "description7": "- 這將會覆蓋這些玩家現有的任何 VRChat 備註。",
-            "description8": "- 在這裡所做的任何編輯都不會影響 VRCX 備忘錄，但會在匯出後會影響 VRChat 備註。",
+            "description3": "- API 端點有速率限制，請求之間需要長時間延遲。",
+            "description4": "- 每則備註最多 256 個字元。",
+            "description5": "- 含有髒話的內容將被過濾（禁止不雅用語）。",
+            "description6": "- 不支援換行（將以空格取代）。",
+            "description7": "- 這將覆蓋這些使用者現有的 VRChat 備註。",
+            "description8": "- 在此所做的編輯不會影響 VRCX 備忘錄，但匯出後會影響 VRChat 備註。",
             "refresh": "重新整理",
             "export": "匯出",
             "cancel": "取消",
@@ -1500,17 +1554,18 @@
             "flipbook_info": "選擇一個 1024x1024 PNG spritesheet 來當作動態表情符號，可用的幀格大小： 4、16 或 64 (最大 FPS 64、最大畫格 64)",
             "note": "備註",
             "crop_print_border": "裁剪拍立得邊框",
-            "consume_bundle": "消費"
+            "consume_bundle": "消費",
+            "item": "物品",
+            "sticker": "貼紙",
+            "drone_skin": "無人機外觀",
+            "emoji": "表情符號",
+            "redeem": "兌換"
         },
         "change_content_image": {
             "avatar": "變更角色圖片",
             "world": "變更世界圖片",
             "description": "推薦圖片尺寸：1200 像素 x 900 像素 (4:3)",
-            "refresh": "重新整理",
             "upload": "上傳圖片"
-        },
-        "previous_images": {
-            "header": "過去的圖片"
         },
         "previous_instances": {
             "header": "過去的房間",
@@ -1603,11 +1658,12 @@
             "data": "數據",
             "note": "備註",
             "roles": "身分",
-            "user_id": "玩家 ID",
-            "user_id_placeholder": "輸入玩家 ID",
-            "select_user": "選擇玩家",
-            "selected_users": "已選擇的玩家",
+            "user_id": "用戶 ID",
+            "user_id_placeholder": "輸入用戶 ID",
+            "select_user": "選擇用戶",
+            "selected_users": "已選擇的用戶",
             "select_all": "全選",
+            "user_isnt_in_group": "用戶不在群組中",
             "cancel": "取消",
             "choose_roles_placeholder": "選擇身分",
             "selected_roles": "已選擇身分",
@@ -1643,7 +1699,30 @@
             "save": "保存"
         },
         "group_calendar": {
-            "header": "群組行事曆"
+            "header": "群組行事曆",
+            "list_view": "清單檢視",
+            "calendar_view": "行事曆檢視",
+            "no_events": "找不到任何活動",
+            "search_placeholder": "搜尋群組或活動...",
+            "search_no_matching": "沒有符合的活動",
+            "search_no_this_month": "本月沒有活動",
+            "event_card": {
+                "category": "類別",
+                "interested_user": "感興趣的使用者",
+                "close_time": "在結束後關閉房間",
+                "created": "建立日期",
+                "description": "描述"
+            }
+        },
+        "moderate_group": {
+            "header": "管理群組成員",
+            "choose_group_placeholder": "選擇群組",
+            "groups_with_moderation_permission": "具有管理權限的群組",
+            "moderation_tools": "管理工具"
+        },
+        "fullscreen_image": {
+            "download_and_save_image": "下載並儲存圖片",
+            "copy_image_to_clipboard": "複製圖片到剪貼簿"
         }
     },
     "confirm": {
@@ -1695,7 +1774,7 @@
             "uploaded": "角色圖庫圖片上傳成功",
             "failed": "上傳角色圖庫圖片失敗",
             "deleted": "角色圖庫圖片刪除成功",
-            "not_found": "角色圖庫fileId未找到",
+            "not_found": "角色圖庫 fileId 未找到",
             "already_first": "已是第一張圖片",
             "already_last": "已是最後一張圖片",
             "reordered": "成功重新排列角色圖庫圖片"
@@ -1708,7 +1787,7 @@
             "uploaded": "圖示已上傳"
         },
         "user": {
-            "moderated": "玩家已進行審核"
+            "moderated": "用戶已進行審核"
         },
         "friend": {
             "load_failed": "載入好友清單失敗，正在登出"
@@ -1760,20 +1839,20 @@
         },
         "direct_access_user_id": {
             "header": "直接存取",
-            "description": "輸入玩家連結或玩家 ID (UUID)",
+            "description": "輸入用戶連結或用戶 ID (UUID)",
             "cancel": "取消",
             "ok": "確定",
-            "input_error": "需要玩家連結 / 玩家 ID",
+            "input_error": "需要用戶連結 / 用戶 ID",
             "message": {
                 "error": "無效的連結或 ID"
             }
         },
         "direct_access_username": {
             "header": "直接存取",
-            "description": "輸入玩家名稱",
+            "description": "輸入使用者名稱",
             "cancel": "取消",
             "ok": "確定",
-            "input_error": "需要玩家名稱"
+            "input_error": "需要使用者名稱"
         },
         "direct_access_world_id": {
             "header": "直接存取",
@@ -1797,7 +1876,7 @@
         },
         "direct_access_omni": {
             "header": "直接存取",
-            "description": "輸入玩家 / 世界 / 房間 / 角色連結 或 ID (UUID)",
+            "description": "輸入用戶 / 世界 / 房間 / 角色連結 或 ID (UUID)",
             "cancel": "取消",
             "ok": "確定",
             "input_error": "需要連結或 ID",
@@ -1813,7 +1892,7 @@
             "input_error": "請輸入有效的秒數"
         },
         "overlay_message_timeout": {
-            "header": "訊息疊層顯示時間",
+            "header": "訊息嵌入介面顯示時間",
             "description": "輸入秒數",
             "cancel": "取消",
             "ok": "確定",
@@ -1898,7 +1977,7 @@
             "input_error": "請輸入有效的行數"
         },
         "photon_lobby_timeout": {
-            "header": "玩家超時閾值",
+            "header": "用戶超時閾值",
             "description": "輸入秒數（預設：3）",
             "cancel": "取消",
             "ok": "確定",
@@ -1933,7 +2012,7 @@
         },
         "pending_offline_delay": {
             "header": "待確認離線",
-            "description": "設定將玩家標記為離線之前的延遲秒數（預設：110）",
+            "description": "設定將用戶標記為離線之前的延遲秒數（預設：110）",
             "cancel": "取消",
             "save": "儲存",
             "input_error": "請輸入有效的秒數"
@@ -1944,20 +2023,29 @@
             "placeholder": "127.0.0.1:8080",
             "close": "關閉",
             "restart": "重新啟動"
+        },
+        "redeem": {
+            "header": "兌換代碼",
+            "description": "輸入你的代碼以進行兌換",
+            "cancel": "取消",
+            "redeem": "兌換",
+            "input_placeholder": "代碼",
+            "input_error": "必須輸入代碼",
+            "success": "代碼兌換成功"
         }
     },
     "table": {
         "feed": {
             "date": "時間",
             "type": "類型",
-            "user": "玩家",
+            "user": "用戶",
             "detail": "詳細"
         },
         "gameLog": {
             "date": "時間",
             "type": "類型",
             "icon": "角色",
-            "user": "玩家",
+            "user": "用戶",
             "detail": "詳細",
             "action": "動作"
         },
@@ -1974,14 +2062,14 @@
             "bioLink": "社交連結",
             "note": "備註",
             "date": "時間",
-            "user": "玩家",
+            "user": "用戶",
             "type": "種類",
             "detail": "詳細"
         },
         "friendLog": {
             "date": "時間",
             "type": "類型",
-            "user": "玩家",
+            "user": "用戶",
             "action": "動作"
         },
         "moderation": {
@@ -1994,7 +2082,7 @@
         "notification": {
             "date": "時間",
             "type": "類型",
-            "user_group": "玩家/群組",
+            "user_group": "用戶/群組",
             "photo": "照片",
             "message": "訊息",
             "action": "動作"
@@ -2061,7 +2149,7 @@
     "vr": {
         "status": {
             "timer": "時長：",
-            "players": "玩家人數：",
+            "players": "用戶人數：",
             "cpu": "CPU：",
             "online": "線上："
         }
