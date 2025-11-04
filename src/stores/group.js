@@ -344,22 +344,25 @@ export const useGroupStore = defineStore('Group', () => {
      *
      * @param {string} groupId
      */
-    function onGroupLeft(groupId) {
+    async function onGroupLeft(groupId) {
+        const args = await groupRequest.getGroup({ groupId });
+        const ref = applyGroup(args.json);
+        if (ref.membershipStatus === 'member') {
+            // wtf, not trusting presence
+            console.error(
+                `onGroupLeft: presence lied, still a member of ${groupId}`
+            );
+            return;
+        }
         if (groupDialog.value.visible && groupDialog.value.id === groupId) {
             showGroupDialog(groupId);
         }
         if (currentUserGroups.has(groupId)) {
             currentUserGroups.delete(groupId);
-            groupRequest.getCachedGroup({ groupId }).then((args) => {
-                if (args.ref?.ownerId === userStore.currentUser.id) {
-                    // Issue #1455
-                    console.log(
-                        `Not sending left group notification for owned group ${groupId}`
-                    );
-                    return;
-                }
-                groupChange(args.ref, 'Left group');
-            });
+            groupChange(ref, 'Left group');
+
+            // delay to wait for json to be assigned to ref
+            workerTimers.setTimeout(saveCurrentUserGroups, 100);
         }
     }
 
@@ -1096,6 +1099,7 @@ export const useGroupStore = defineStore('Group', () => {
         handleGroupList,
         handleGroupRepresented,
         showModerateGroupDialog,
-        showGroupMemberModerationDialog
+        showGroupMemberModerationDialog,
+        onGroupLeft
     };
 });

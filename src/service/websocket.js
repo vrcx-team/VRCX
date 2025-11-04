@@ -423,8 +423,7 @@ function handlePipeline(args) {
             break;
 
         case 'group-left':
-            // var groupId = content.groupId;
-            // $app.onGroupLeft(groupId);
+            groupStore.onGroupLeft(content.groupId);
             break;
 
         case 'group-role-updated':
