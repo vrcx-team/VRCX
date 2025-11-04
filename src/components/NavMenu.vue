@@ -43,21 +43,71 @@
             ></el-tooltip>
 
             <el-popover
+                v-model:visible="supportMenuVisible"
+                placement="right"
+                trigger="click"
+                popper-style="padding:4px;border-radius:8px;"
+                :offset="4"
+                :show-arrow="false"
+                :width="200"
+                :hide-after="0">
+                <div class="nav-menu-support nav-menu-settings">
+                    <div class="nav-menu-support__section">
+                        <button type="button" class="nav-menu-settings__item" @click="showChangeLogDialog">
+                            <span>{{ t('nav_menu.whats_new') }}</span>
+                        </button>
+                    </div>
+                    <el-divider></el-divider>
+                    <div class="nav-menu-support__section">
+                        <span class="nav-menu-support__title">{{ t('nav_menu.resources') }}</span>
+                        <button type="button" class="nav-menu-settings__item" @click="handleSupportLink('wiki')">
+                            <span>{{ t('nav_menu.wiki') }}</span>
+                        </button>
+                    </div>
+                    <el-divider></el-divider>
+                    <div class="nav-menu-support__section">
+                        <span class="nav-menu-support__title">{{ t('nav_menu.get_help') }}</span>
+                        <button type="button" class="nav-menu-settings__item" @click="handleSupportLink('github')">
+                            <span>{{ t('nav_menu.github') }}</span>
+                        </button>
+                        <button type="button" class="nav-menu-settings__item" @click="handleSupportLink('discord')">
+                            <span>{{ t('nav_menu.discord') }}</span>
+                        </button>
+                    </div>
+                    <el-divider></el-divider>
+                </div>
+                <template #reference>
+                    <div>
+                        <el-tooltip :content="t('nav_tooltip.help_support')" placement="right">
+                            <div class="bottom-button">
+                                <i class="ri-question-line"></i>
+                            </div>
+                        </el-tooltip>
+                    </div>
+                </template>
+            </el-popover>
+
+            <el-popover
                 v-model:visible="settingsMenuVisible"
                 placement="right"
                 trigger="click"
                 popper-style="padding:4px;border-radius:8px;"
                 :offset="4"
                 :show-arrow="false"
-                :width="200">
+                :width="200"
+                :hide-after="0">
                 <div class="nav-menu-settings">
                     <div class="nav-menu-settings__header">
                         <img class="nav-menu-settings__logo" :src="vrcxLogo" alt="VRCX" @click="openGithub" />
                         <div class="nav-menu-settings__meta">
-                            <span class="nav-menu-settings__title" @click="openGithub">VRCX💚</span>
+                            <span class="nav-menu-settings__title" @click="openGithub"
+                                >VRCX
+                                <i class="ri-heart-3-fill" style="color: #64cd8a; font-size: 14px"></i>
+                            </span>
                             <span class="nav-menu-settings__version">{{ version }}</span>
                         </div>
                     </div>
+                    <el-divider></el-divider>
                     <button type="button" class="nav-menu-settings__item" @click="handleSettingsClick">
                         <span>{{ t('nav_tooltip.settings') }}</span>
                     </button>
@@ -83,7 +133,7 @@
                         </div>
                         <template #reference>
                             <button type="button" class="nav-menu-settings__item" @click.prevent>
-                                <span>Theme</span>
+                                <span>{{ t('view.settings.appearance.appearance.theme_mode') }}</span>
                                 <span class="nav-menu-settings__arrow">›</span>
                             </button>
                         </template>
@@ -129,7 +179,7 @@
 
     const navItems = [
         { index: 'feed', icon: 'ri-rss-line', tooltip: 'nav_tooltip.feed' },
-        { index: 'friend-location', icon: 'ri-map-pin-user-line', tooltip: 'nav_tooltip.friend_location' },
+        { index: 'friend-location', icon: 'ri-user-location-line', tooltip: 'nav_tooltip.friend_location' },
         { index: 'game-log', icon: 'ri-history-line', tooltip: 'nav_tooltip.game_log' },
         { index: 'player-list', icon: 'ri-group-3-line', tooltip: 'nav_tooltip.player_list' },
         { index: 'search', icon: 'ri-search-line', tooltip: 'nav_tooltip.search' },
@@ -145,7 +195,7 @@
     const VRCXUpdaterStore = useVRCXUpdaterStore();
     const { pendingVRCXUpdate, pendingVRCXInstall, updateInProgress, updateProgress, branch, appVersion } =
         storeToRefs(VRCXUpdaterStore);
-    const { showVRCXUpdateDialog, updateProgressText } = VRCXUpdaterStore;
+    const { showVRCXUpdateDialog, updateProgressText, showChangeLogDialog } = VRCXUpdaterStore;
     const uiStore = useUiStore();
     const { notifiedMenus } = storeToRefs(uiStore);
     const { directAccessPaste } = useSearchStore();
@@ -157,6 +207,7 @@
 
     const settingsMenuVisible = ref(false);
     const themeMenuVisible = ref(false);
+    const supportMenuVisible = ref(false);
 
     const version = computed(() => appVersion.value?.split('VRCX ')?.[1] || '-');
     const vrcxLogo = new URL('../../images/VRCX.png', import.meta.url).href;
@@ -167,6 +218,7 @@
 
     const handleSettingsClick = () => {
         themeMenuVisible.value = false;
+        supportMenuVisible.value = false;
         settingsMenuVisible.value = false;
         router.push({ name: 'settings' });
     };
@@ -187,10 +239,32 @@
     };
 
     watch(settingsMenuVisible, (visible) => {
-        if (!visible) {
+        if (visible) {
+            supportMenuVisible.value = false;
+        } else {
             themeMenuVisible.value = false;
         }
     });
+
+    watch(supportMenuVisible, (visible) => {
+        if (visible) {
+            settingsMenuVisible.value = false;
+        }
+    });
+
+    const supportLinks = {
+        wiki: 'https://github.com/vrcx-team/VRCX/wiki',
+        github: 'https://github.com/vrcx-team/VRCX',
+        discord: 'https://vrcx.app/discord'
+    };
+
+    const handleSupportLink = (id) => {
+        supportMenuVisible.value = false;
+        const target = supportLinks[id];
+        if (target) {
+            openExternalLink(target);
+        }
+    };
 
     onMounted(() => {
         if (!sentryErrorReporting.value) return;
@@ -200,6 +274,9 @@
 </script>
 
 <style scoped>
+    :deep(.el-divider) {
+        margin: 0;
+    }
     .nav-menu-container {
         position: relative;
         height: 100%;
@@ -254,8 +331,6 @@
             align-items: center;
             gap: 10px;
             padding: 8px 8px 10px;
-            border-bottom: 1px solid var(--el-border-color-light);
-            margin-bottom: 4px;
             .nav-menu-settings__logo {
                 width: 24px;
                 height: 24px;
@@ -272,7 +347,10 @@
                 line-height: 1.2;
             }
             .nav-menu-settings__title {
+                display: flex;
+                align-items: center;
                 font-weight: 600;
+                font-size: 14px;
                 color: var(--el-text-color-regular);
                 cursor: pointer;
             }
@@ -306,6 +384,48 @@
 
         .nav-menu-settings__item--danger {
             color: var(--el-color-danger);
+        }
+
+        .nav-menu-settings__item--danger:hover {
+            background-color: rgba(245, 108, 108, 0.18);
+        }
+    }
+
+    .nav-menu-support {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .nav-menu-support__search {
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: var(--el-fill-color-light);
+            color: var(--el-text-color-secondary);
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        .nav-menu-support__heading {
+            padding: 4px 12px 0;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--el-text-color-primary);
+        }
+
+        .nav-menu-support__section {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-menu-support__title {
+            padding: 0 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--el-text-color-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
     }
 

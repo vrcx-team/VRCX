@@ -14,8 +14,18 @@
         "friend_list": "Friend List",
         "charts": "Charts",
         "tools": "Tools",
+        "about": "About",
         "profile": "Profile",
-        "settings": "Settings"
+        "settings": "Settings",
+        "help_support": "Help & Support"
+    },
+    "nav_menu": {
+        "resources": "RESOURCES",
+        "wiki": "Wiki",
+        "get_help": "GET HELP",
+        "github": "VRCX on GitHub",
+        "discord": "Join our Discord",
+        "whats_new": "What's New?"
     },
     "view": {
         "login": {
