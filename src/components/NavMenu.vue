@@ -74,7 +74,6 @@
                             <span>{{ t('nav_menu.discord') }}</span>
                         </button>
                     </div>
-                    <el-divider></el-divider>
                 </div>
                 <template #reference>
                     <div>
