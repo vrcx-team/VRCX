@@ -38,11 +38,11 @@
                 <el-button size="small" :icon="Document" @click="showChangeLogDialog">{{
                     t('view.settings.general.vrcx_updater.change_log')
                 }}</el-button>
-                <el-button size="small" :icon="Upload" @click="showVRCXUpdateDialog()">{{
+                <el-button v-if="!noUpdater" size="small" :icon="Upload" @click="showVRCXUpdateDialog()">{{
                     t('view.settings.general.vrcx_updater.change_build')
                 }}</el-button>
             </div>
-            <div class="options-container-item">
+            <div v-if="!noUpdater" class="options-container-item">
                 <span class="name">{{ t('view.settings.general.vrcx_updater.update_action') }}</span>
                 <br />
                 <el-radio-group
@@ -60,6 +60,9 @@
                         t('view.settings.general.vrcx_updater.auto_update_download')
                     }}</el-radio-button>
                 </el-radio-group>
+            </div>
+            <div v-else class="options-container-item">
+                <span>{{ t('view.settings.general.vrcx_updater.updater_disabled') }}</span>
             </div>
         </div>
         <div class="options-container">
@@ -349,7 +352,7 @@
 
     const { favoriteFriendGroups } = storeToRefs(favoriteStore);
 
-    const { appVersion, autoUpdateVRCX, latestAppVersion } = storeToRefs(vrcxUpdaterStore);
+    const { appVersion, autoUpdateVRCX, latestAppVersion, noUpdater } = storeToRefs(vrcxUpdaterStore);
     const { setAutoUpdateVRCX, checkForVRCXUpdate, showVRCXUpdateDialog, showChangeLogDialog } = vrcxUpdaterStore;
 
     const instanceTypes = ref([

@@ -54,6 +54,7 @@ const noInstall = args.includes('--no-install');
 const x11 = args.includes('--x11');
 const noDesktop = args.includes('--no-desktop');
 const startup = args.includes('--startup');
+const noUpdater = args.includes('--no-updater');
 if (process.defaultApp) {
     if (process.argv.length >= 2) {
         app.setAsDefaultProtocolClient(VRCX_URI_PREFIX, process.execPath, [
@@ -258,6 +259,10 @@ ipcMain.handle(
 
 ipcMain.handle('app:getArch', () => {
     return process.arch.toString();
+});
+
+ipcMain.handle('app:getNoUpdater', () => {
+    return noUpdater;
 });
 
 ipcMain.handle('app:setTrayIconNotification', (event, notify) => {
