@@ -572,7 +572,9 @@ export const usePhotonStore = defineStore('Photon', () => {
                     hudTimeout.forEach((item) => {
                         if (
                             timeoutHudOverlayFilter.value === 'VIP' &&
-                            favoriteStore.cachedFavoritesByObjectId(item.userId)
+                            favoriteStore.getCachedFavoritesByObjectId(
+                                item.userId
+                            )
                         ) {
                             filteredHudTimeout.push(item);
                         } else if (
