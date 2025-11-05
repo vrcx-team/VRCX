@@ -382,7 +382,7 @@ input[type='number'],
     font-weight: 500;
     border-radius: 0px;
     background-color: rgb(var(--md-sys-color-secondary-container));
-    color: rgb(var(--md-sys-color-on-surface-variant));
+    color: rgb(var(--md-sys-color-on-secondary-container));
 }
 .el-pager li::after,
 .el-pagination button.btn-prev::after,
@@ -1370,6 +1370,80 @@ img.x-link.el-popover__reference {
     background: var(--md-sys-color-surface-3);
 }
 
+/* ---------- Friend Locations --------  */
+
+.friend-card__name {
+    color: rgb(var(--md-sys-color-on-primary-container)) !important;
+}
+.friend-card__avatar {
+    border: 1px solid rgb(var(--md-sys-color-outline-variant)) !important;
+}
+.friend-card__signature {
+    color: rgb(var(--md-sys-color-on-surface-variant)) !important;
+}
+.friend-card__world {
+    background: rgb(var(--md-sys-color-secondary-container)) !important;
+}
+.friend-card__location {
+    color: rgb(var(--md-sys-color-on-secondary-container));
+}
+.x-friend-item > .detail > .extra,
+.extra,
+.friend-view__divider-text {
+    color: rgb(var(--md-sys-color-on-background));
+}
+.friend-card__status-dot {
+    border: calc(2px * var(--card-scale)) solid
+        rgb(var(--md-sys-color-outline-variant)) !important;
+}
+.friend-view__divider:before,
+.friend-view__divider:after {
+    background: rgb(var(--md-sys-color-outline-variant)) !important;
+}
+
+/* ---------- Segmented Item -------- */
+
+.el-segmented {
+    background: rgb(var(--md-sys-color-secondary-container)) !important;
+    border-radius: 16px !important;
+    overflow: hidden;
+    padding: unset;
+}
+.el-segmented__item {
+    color: rgb(var(--md-sys-color-on-surface-variant));
+    border-radius: 0px;
+}
+.el-segmented__item-selected {
+    background: rgba(var(--md-sys-color-on-secondary-container), 0.12);
+    border-radius: 0px;
+}
+.el-segmented__item.is-selected {
+    color: rgb(var(--md-sys-color-primary));
+    border-radius: 0px;
+}
+.el-segmented__item.is-selected:hover {
+    color: rgb(var(--md-sys-color-on-primary-container));
+}
+.el-segmented__item:not(.is-selected):hover {
+    background-color: rgba(
+        var(--md-sys-color-on-secondary-container),
+        0.08
+    ) !important;
+    color: rgb(var(--md-sys-color-on-primary-container)) !important;
+}
+.el-segmented__item:first-child,
+/* Select second child because for some reason first child of el-segmented is the "-selected" with a translate that moves it, I guess that's so it can be animated well */
+.el-segmented__item:nth-child(2):hover,
+.el-segmented__item-selected[style*='translateX(0px)'] {
+    border-top-left-radius: 16px !important;
+    border-bottom-left-radius: 16px !important;
+}
+.el-segmented__item:last-child,
+.el-segmented__item-selected[style*='translateX(197px)'] {
+    border-top-right-radius: 16px !important;
+    border-bottom-right-radius: 16px !important;
+}
+
 /* ---------- Radio Button -------- */
 
 .el-radio__inner,
@@ -1656,7 +1730,7 @@ img.x-link.el-popover__reference {
 
 .el-popper.is-light {
     border: 8px !important;
-    background: none !important;
+    background: rgb(var(--md-sys-color-surface)) !important;
     border-radius: 8px !important;
 }
 .el-popper[x-placement^='top'],
