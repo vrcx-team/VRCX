@@ -18,7 +18,7 @@ const routes = [
     { path: '/feed', name: 'feed', component: Feed },
     {
         path: '/friend-location',
-        name: 'friendLocation',
+        name: 'friend-location',
         component: FriendLocation
     },
     { path: '/game-log', name: 'game-log', component: GameLog },
@@ -53,9 +53,10 @@ export function initRouter(app) {
 
 router.beforeEach((to, from) => {
     if (to.path == '/') {
-        return { name: 'feed' };
+        router.push({ name: 'feed' });
+        return false;
     }
-    if (to.path === '/social' || to.path === '/social/social') {
+    if (to.path === '/social') {
         return false;
     }
     return true;

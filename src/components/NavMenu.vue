@@ -19,14 +19,14 @@
                 ></el-button>
             </div>
 
-            <el-menu collapse router default-active="feed" :collapse-transition="false" ref="navMenuRef">
+            <el-menu collapse default-active="feed" :collapse-transition="false" ref="navMenuRef">
                 <el-popover
                     v-for="item in navItems"
                     :disabled="!item.entries?.length"
                     :key="item.index"
                     placement="right-start"
                     trigger="hover"
-                    :hide-after="isSteamVRRunning ? 800 : 150"
+                    :hide-after="isSteamVRRunning ? 600 : 150"
                     :show-arrow="false"
                     :offset="0"
                     :width="navPopoverWidth"
@@ -50,7 +50,7 @@
                                 <span class="nav-menu-popover__menu-label"
                                     >{{ t(entry.label)
                                     }}<span
-                                        v-if="route.path === entry.path"
+                                        v-if="notifiedMenus.includes(entry.path.split('/').pop())"
                                         class="nav-menu-popover__menu-label-dot"></span
                                 ></span>
                             </button>
@@ -64,7 +64,8 @@
                                 notify:
                                     notifiedMenus.includes(item.index) ||
                                     (notifiedMenus.includes('friend-log') && item.index === 'social')
-                            }">
+                            }"
+                            @click="handleRouteChange(item.index)">
                             <i :class="item.icon"></i>
                             <template #title v-if="item.tooltip">
                                 <span>{{ t(item.tooltip) }}</span>
@@ -198,7 +199,7 @@
 </template>
 
 <script setup>
-    import { computed, onMounted, ref, watch } from 'vue';
+    import { computed, h, onMounted, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -369,6 +370,11 @@
         settingsMenuVisible.value = false;
         supportMenuVisible.value = false;
         themeMenuVisible.value = false;
+    };
+
+    const handleRouteChange = (index) => {
+        router.push({ name: index });
+        navMenuRef.value?.updateActiveIndex(index);
     };
 
     watch(settingsMenuVisible, (visible) => {
