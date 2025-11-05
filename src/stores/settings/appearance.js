@@ -124,7 +124,7 @@ export const useAppearanceSettingsStore = defineStore(
                     'VRCX_instanceUsersSortAlphabetical',
                     false
                 ),
-                configRepository.getInt('VRCX_tablePageSize', 15),
+                configRepository.getInt('VRCX_tablePageSize', 20),
                 configRepository.getBool('VRCX_dtHour12', false),
                 configRepository.getBool('VRCX_dtIsoFormat', false),
                 configRepository.getString(
