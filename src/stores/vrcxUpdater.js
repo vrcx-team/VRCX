@@ -17,6 +17,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     const { t } = useI18n();
 
     const arch = ref('x64');
+    const noUpdater = ref(false);
 
     const appVersion = ref('');
     const autoUpdateVRCX = ref('Auto Download');
@@ -43,9 +44,9 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
 
     async function initVRCXUpdaterSettings() {
         if (!WINDOWS) {
-            const archResult = await window.electron.getArch();
-            console.log('Architecture:', archResult);
-            arch.value = archResult;
+            arch.value = await window.electron.getArch();
+            noUpdater.value = await window.electron.getNoUpdater();
+            console.log('Architecture:', arch.value);
         }
 
         const [VRCX_autoUpdateVRCX, VRCX_id] = await Promise.all([
@@ -57,6 +58,9 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             autoUpdateVRCX.value = 'Auto Download';
         } else {
             autoUpdateVRCX.value = VRCX_autoUpdateVRCX;
+        }
+        if (noUpdater.value) {
+            autoUpdateVRCX.value = 'Off';
         }
 
         appVersion.value = await AppApi.GetVersion();
@@ -222,6 +226,9 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             const releaseName = json.name;
             setLatestAppVersion(releaseName);
             VRCXUpdateDialog.value.updatePendingIsLatest = false;
+            if (autoUpdateVRCX.value === 'Off') {
+                return;
+            }
             if (releaseName === pendingVRCXInstall.value) {
                 // update already downloaded
                 VRCXUpdateDialog.value.updatePendingIsLatest = true;
@@ -404,6 +411,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         pendingVRCXInstall,
         updateInProgress,
         updateProgress,
+        noUpdater,
 
         setAutoUpdateVRCX,
         setBranch,
