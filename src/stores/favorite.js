@@ -1,4 +1,4 @@
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, reactive, ref, toRaw, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
 import { useI18n } from 'vue-i18n';
@@ -342,6 +342,9 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         let ref;
         const favorite = getCachedFavoritesByObjectId(objectId);
         let ctx = state.favoriteObjects.get(objectId);
+        if (ctx) {
+            ctx = toRaw(ctx);
+        }
         if (typeof favorite !== 'undefined') {
             let isTypeChanged = false;
             if (typeof ctx === 'undefined') {

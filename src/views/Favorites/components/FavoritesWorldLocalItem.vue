@@ -21,11 +21,7 @@
                 <template v-else>
                     <el-tooltip placement="left">
                         <template #content>
-                            {{
-                                canOpenInstanceInGame
-                                    ? t('dialog.world.actions.new_instance_and_open_ingame')
-                                    : t('dialog.world.actions.new_instance_and_self_invite')
-                            }}
+                            {{ inviteOrLaunchText }}
                         </template>
                         <el-button
                             size="small"
@@ -34,23 +30,24 @@
                             @click.stop="newInstanceSelfInvite(favorite.id)"
                             circle></el-button>
                     </el-tooltip>
-                    <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')" :teleported="false">
-                        <el-button
-                            v-if="shiftHeld"
-                            size="small"
-                            :icon="Close"
-                            circle
-                            style="color: #f56c6c; margin-left: 5px"
-                            @click.stop="$emit('remove-local-world-favorite', favorite.id, group)"></el-button>
-                        <el-button
-                            v-else
-                            :icon="Star"
-                            size="small"
-                            circle
-                            style="margin-left: 5px"
-                            type="default"
-                            @click.stop="showFavoriteDialog('world', favorite.id)"></el-button>
-                    </el-tooltip>
+                    <el-button
+                        v-if="shiftHeld"
+                        size="small"
+                        :icon="Close"
+                        circle
+                        style="color: #f56c6c; margin-left: 5px"
+                        @click.stop="$emit('remove-local-world-favorite', favorite.id, group)"
+                        ><i class="ri-delete-bin-line"></i
+                    ></el-button>
+                    <el-button
+                        v-else
+                        size="small"
+                        circle
+                        style="margin-left: 5px"
+                        type="default"
+                        @click.stop="showFavoriteDialog('world', favorite.id)"
+                        ><i class="ri-delete-bin-line"></i
+                    ></el-button>
                 </template>
             </template>
             <template v-else>
@@ -70,7 +67,7 @@
 </template>
 
 <script setup>
-    import { Close, Message, Star } from '@element-plus/icons-vue';
+    import { Close, Message } from '@element-plus/icons-vue';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -95,6 +92,12 @@
     const smallThumbnail = computed(() => {
         const url = props.favorite.thumbnailImageUrl?.replace('256', '128');
         return url || props.favorite.thumbnailImageUrl;
+    });
+
+    const inviteOrLaunchText = computed(() => {
+        return canOpenInstanceInGame
+            ? t('dialog.world.actions.new_instance_and_open_ingame')
+            : t('dialog.world.actions.new_instance_and_self_invite');
     });
 
     function handleDeleteFavorite() {
