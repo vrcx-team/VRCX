@@ -96,12 +96,12 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     });
 
     const favoriteWorlds = computed(() => {
-        // if (appearanceSettingsStore.sortFavorites) {
-        return state.favoriteWorlds_;
-        // }
-        // const sorted = [...state.favoriteWorlds_];
-        // sorted.sort(compareByName);
-        // return sorted;
+        if (appearanceSettingsStore.sortFavorites) {
+            return state.favoriteWorlds_;
+        }
+        const sorted = [...state.favoriteWorlds_];
+        sorted.sort(compareByName);
+        return sorted;
     });
 
     const favoriteAvatars = computed(() => {
