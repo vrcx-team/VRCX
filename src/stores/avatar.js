@@ -566,7 +566,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             .catch(() => {});
     }
 
-    function selectAvatarWithoutConfirmation(id) {
+    async function selectAvatarWithoutConfirmation(id) {
         if (userStore.currentUser.currentAvatar === id) {
             ElMessage({
                 message: 'Avatar already selected',
