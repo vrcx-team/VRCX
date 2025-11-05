@@ -39,6 +39,7 @@
                             <i :class="item.icon"></i>
                             <span>{{ t(item.title || '') }}</span>
                         </div>
+
                         <div class="nav-menu-popover__menu">
                             <button
                                 v-for="entry in item.entries"
@@ -46,12 +47,21 @@
                                 type="button"
                                 class="nav-menu-popover__menu-item"
                                 @click="handleSubmenuClick(entry.path, item.index)">
-                                <span class="nav-menu-popover__menu-label">{{ t(entry.label) }}</span>
+                                <span class="nav-menu-popover__menu-label"
+                                    >{{ t(entry.label) }}<span class="nav-menu-popover__menu-label-dot"></span
+                                ></span>
                             </button>
                         </div>
+                        >
                     </div>
                     <template #reference>
-                        <el-menu-item :index="item.index" :class="{ notify: notifiedMenus.includes(item.index) }">
+                        <el-menu-item
+                            :index="item.index"
+                            :class="{
+                                notify:
+                                    notifiedMenus.includes(item.index) ||
+                                    (notifiedMenus.includes('friend-log') && item.index === 'social')
+                            }">
                             <i :class="item.icon"></i>
                             <template #title v-if="item.tooltip">
                                 <span>{{ t(item.tooltip) }}</span>
@@ -244,9 +254,9 @@
             tooltip: '',
             title: 'nav_tooltip.social',
             entries: [
-                { label: 'nav_tooltip.friend_log', path: '/friend-log' },
-                { label: 'nav_tooltip.friend_list', path: '/friend-list' },
-                { label: 'nav_tooltip.moderation', path: '/moderation' }
+                { label: 'nav_tooltip.friend_log', path: '/social/friend-log' },
+                { label: 'nav_tooltip.friend_list', path: '/social/friend-list' },
+                { label: 'nav_tooltip.moderation', path: '/social/moderation' }
             ]
         },
 
@@ -508,6 +518,16 @@
 
         .nav-menu-popover__menu-label {
             font-weight: 600;
+            position: relative;
+        }
+
+        .nav-menu-popover__menu-label-dot {
+            position: absolute;
+            right: -4px;
+            width: 4px;
+            height: 4px;
+            background: #303133;
+            border-radius: 50%;
         }
     }
 
