@@ -23,28 +23,16 @@
                     </el-button>
                 </div>
                 <template v-else>
-                    <el-tooltip
+                    <i
                         v-if="favorite.deleted"
-                        placement="left"
-                        :content="t('view.favorite.unavailable_tooltip')"
-                        :teleported="false">
-                        <el-icon><Warning /></el-icon>
-                    </el-tooltip>
-                    <el-tooltip
+                        :title="t('view.favorite.unavailable_tooltip')"
+                        class="ri-error-warning-line"></i>
+                    <i
                         v-if="favorite.ref.releaseStatus === 'private'"
-                        placement="left"
-                        :content="t('view.favorite.private')"
-                        :teleported="false">
-                        <el-icon><Warning /></el-icon>
-                    </el-tooltip>
+                        :title="t('view.favorite.private')"
+                        class="ri-lock-line"></i>
                     <el-tooltip placement="left" :teleported="false">
-                        <template #content>
-                            {{
-                                canOpenInstanceInGame
-                                    ? t('dialog.world.actions.new_instance_and_open_ingame')
-                                    : t('dialog.world.actions.new_instance_and_self_invite')
-                            }}
-                        </template>
+                        <template #content> {{ inviteOrLaunchText }} </template>
                         <el-button
                             size="small"
                             :icon="Message"
@@ -52,34 +40,27 @@
                             @click.stop="newInstanceSelfInvite(favorite.id)"
                             circle></el-button>
                     </el-tooltip>
-                    <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')" :teleported="false">
-                        <el-button
-                            :icon="Star"
-                            size="small"
-                            circle
-                            style="margin-left: 5px"
-                            type="default"
-                            @click.stop="showFavoriteDialog('world', favorite.id)"></el-button>
-                    </el-tooltip>
+                    <el-button
+                        size="small"
+                        circle
+                        style="margin-left: 5px"
+                        type="default"
+                        @click.stop="showFavoriteDialog('world', favorite.id)"
+                        ><i class="ri-delete-bin-line"></i
+                    ></el-button>
                 </template>
             </template>
             <template v-else>
                 <div class="avatar"></div>
                 <div class="detail" v-once>
                     <span>{{ favorite.name || favorite.id }}</span>
-                    <el-tooltip
+                    <i
                         v-if="favorite.deleted"
-                        placement="left"
-                        :content="t('view.favorite.unavailable_tooltip')"
-                        :teleported="false">
-                        <el-icon><Warning /></el-icon>
-                    </el-tooltip>
-                    <el-button
-                        type="text"
-                        :icon="Close"
-                        size="small"
-                        style="margin-left: 5px"
-                        @click.stop="handleDeleteFavorite"></el-button>
+                        :title="t('view.favorite.unavailable_tooltip')"
+                        class="ri-error-warning-line"></i>
+                    <el-button type="text" size="small" style="margin-left: 5px" @click.stop="handleDeleteFavorite"
+                        ><i class="ri-delete-bin-line"></i
+                    ></el-button>
                 </div>
             </template>
         </div>
@@ -87,7 +68,7 @@
 </template>
 
 <script setup>
-    import { Close, Message, Star, Warning } from '@element-plus/icons-vue';
+    import { Message } from '@element-plus/icons-vue';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -118,6 +99,12 @@
     const smallThumbnail = computed(() => {
         const url = props.favorite.ref.thumbnailImageUrl?.replace('256', '128');
         return url || props.favorite.ref.thumbnailImageUrl;
+    });
+
+    const inviteOrLaunchText = computed(() => {
+        return canOpenInstanceInGame
+            ? t('dialog.world.actions.new_instance_and_open_ingame')
+            : t('dialog.world.actions.new_instance_and_self_invite');
     });
 
     function handleDeleteFavorite() {
