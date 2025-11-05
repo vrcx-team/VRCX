@@ -25,11 +25,11 @@ const routes = [
     { path: '/player-list', name: 'player-list', component: PlayerList },
     { path: '/search', name: 'search', component: Search },
     { path: '/favorites', name: 'favorites', component: Favorites },
-    { path: '/friend-log', name: 'friend-log', component: FriendLog },
-    { path: '/moderation', name: 'moderation', component: Moderation },
+    { path: '/social/friend-log', name: 'friend-log', component: FriendLog },
+    { path: '/social/moderation', name: 'moderation', component: Moderation },
     { path: '/notification', name: 'notification', component: Notification },
     {
-        path: '/friend-list',
+        path: '/social/friend-list',
         name: 'friend-list',
         component: FriendList
     },
@@ -51,9 +51,13 @@ export function initRouter(app) {
     app.use(router);
 }
 
-router.beforeEach((to, from) => {
-    if (to.path === '/social') {
+router.beforeEach((to, from, next) => {
+    if (to.path == '/') {
+        next('/feed');
+        return;
+    }
+    if (to.path === '/social' || to.path === '/social/social') {
         return false;
     }
-    return true;
+    next();
 });
