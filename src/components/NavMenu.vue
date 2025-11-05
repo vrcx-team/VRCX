@@ -19,18 +19,48 @@
                 ></el-button>
             </div>
 
-            <el-menu ref="navRef" collapse router default-active="feed" :collapse-transition="false">
-                <el-menu-item
+            <el-menu collapse router default-active="feed" :collapse-transition="false" ref="navMenuRef">
+                <el-popover
                     v-for="item in navItems"
+                    :disabled="!item.entries?.length"
                     :key="item.index"
-                    :index="item.index"
-                    :class="{ notify: notifiedMenus.includes(item.index) }">
-                    <i :class="item.icon"></i>
-                    <template #title>
-                        <span>{{ t(item.tooltip) }}</span>
+                    placement="right-start"
+                    trigger="hover"
+                    :hide-after="0"
+                    :show-arrow="false"
+                    :offset="0"
+                    :width="navPopoverWidth"
+                    transition="null"
+                    @before-enter="handleSubMenuBeforeEnter()"
+                    :popper-style="navPopoverStyle"
+                    popper-class="nav-menu-popover-popper">
+                    <div class="nav-menu-popover">
+                        <div class="nav-menu-popover__header">
+                            <i :class="item.icon"></i>
+                            <span>{{ t(item.title || '') }}</span>
+                        </div>
+                        <div class="nav-menu-popover__menu">
+                            <button
+                                v-for="entry in item.entries"
+                                :key="entry.label"
+                                type="button"
+                                class="nav-menu-popover__menu-item"
+                                @click="handleSubmenuClick(entry.path, item.index)">
+                                <span class="nav-menu-popover__menu-label">{{ t(entry.label) }}</span>
+                            </button>
+                        </div>
+                    </div>
+                    <template #reference>
+                        <el-menu-item :index="item.index" :class="{ notify: notifiedMenus.includes(item.index) }">
+                            <i :class="item.icon"></i>
+                            <template #title v-if="item.tooltip">
+                                <span>{{ t(item.tooltip) }}</span>
+                            </template>
+                        </el-menu-item>
                     </template>
-                </el-menu-item>
+                </el-popover>
             </el-menu>
+            <el-divider style="width: calc(100% - 18px); margin-left: 9px"></el-divider>
             <el-tooltip :content="t('prompt.direct_access_omni.header')" placement="right"
                 ><div class="bottom-button" @click="directAccessPaste"><i class="ri-compass-3-line"></i></div
             ></el-tooltip>
@@ -177,19 +207,79 @@
     const router = useRouter();
 
     const navItems = [
-        { index: 'feed', icon: 'ri-rss-line', tooltip: 'nav_tooltip.feed' },
-        { index: 'friend-location', icon: 'ri-user-location-line', tooltip: 'nav_tooltip.friend_location' },
-        { index: 'game-log', icon: 'ri-history-line', tooltip: 'nav_tooltip.game_log' },
-        { index: 'player-list', icon: 'ri-group-3-line', tooltip: 'nav_tooltip.player_list' },
-        { index: 'search', icon: 'ri-search-line', tooltip: 'nav_tooltip.search' },
-        { index: 'favorites', icon: 'ri-star-line', tooltip: 'nav_tooltip.favorites' },
-        { index: 'friend-log', icon: 'ri-contacts-line', tooltip: 'nav_tooltip.friend_log' },
-        { index: 'moderation', icon: 'ri-user-forbid-line', tooltip: 'nav_tooltip.moderation' },
-        { index: 'notification', icon: 'ri-notification-2-line', tooltip: 'nav_tooltip.notification' },
-        { index: 'friend-list', icon: 'ri-contacts-book-3-line', tooltip: 'nav_tooltip.friend_list' },
-        { index: 'charts', icon: 'ri-bar-chart-line', tooltip: 'nav_tooltip.charts' },
-        { index: 'tools', icon: 'ri-tools-line', tooltip: 'nav_tooltip.tools' }
+        {
+            index: 'feed',
+            icon: 'ri-rss-line',
+            tooltip: 'nav_tooltip.feed'
+        },
+        {
+            index: 'friend-location',
+            icon: 'ri-user-location-line',
+            tooltip: 'nav_tooltip.friend_location'
+        },
+        {
+            index: 'game-log',
+            icon: 'ri-history-line',
+            tooltip: 'nav_tooltip.game_log'
+        },
+        {
+            index: 'player-list',
+            icon: 'ri-group-3-line',
+            tooltip: 'nav_tooltip.player_list'
+        },
+        {
+            index: 'search',
+            icon: 'ri-search-line',
+            tooltip: 'nav_tooltip.search'
+        },
+        {
+            index: 'favorites',
+            icon: 'ri-star-line',
+            tooltip: 'nav_tooltip.favorites'
+        },
+        {
+            index: 'social',
+            icon: 'ri-group-line',
+            tooltip: '',
+            title: 'nav_tooltip.social',
+            entries: [
+                { label: 'nav_tooltip.friend_log', path: '/friend-log' },
+                { label: 'nav_tooltip.friend_list', path: '/friend-list' },
+                { label: 'nav_tooltip.moderation', path: '/moderation' }
+            ]
+        },
+
+        {
+            index: 'notification',
+            icon: 'ri-notification-2-line',
+            tooltip: 'nav_tooltip.notification'
+        },
+
+        {
+            index: 'charts',
+            icon: 'ri-bar-chart-line',
+            tooltip: 'nav_tooltip.charts'
+        },
+        {
+            index: 'tools',
+            icon: 'ri-tools-line',
+            tooltip: 'nav_tooltip.tools'
+        }
     ];
+
+    const navPopoverWidth = 250;
+    const navPopoverStyle = {
+        zIndex: 500,
+        borderRadius: '0',
+        border: '1px solid var(--el-border-color)',
+        borderLeft: 'none',
+        borderBottom: 'none',
+        borderTop: 'none',
+        boxShadow: '0 8px 20px rgba(0,0,0,0.05)',
+        padding: '0',
+        background: 'var(--el-bg-color)',
+        height: '100vh'
+    };
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
     const { pendingVRCXUpdate, pendingVRCXInstall, updateInProgress, updateProgress, branch, appVersion } =
@@ -207,6 +297,7 @@
     const settingsMenuVisible = ref(false);
     const themeMenuVisible = ref(false);
     const supportMenuVisible = ref(false);
+    const navMenuRef = ref(null);
 
     const version = computed(() => appVersion.value?.split('VRCX ')?.[1] || '-');
     const vrcxLogo = new URL('../../images/VRCX.png', import.meta.url).href;
@@ -237,20 +328,6 @@
         openExternalLink('https://github.com/vrcx-team/VRCX');
     };
 
-    watch(settingsMenuVisible, (visible) => {
-        if (visible) {
-            supportMenuVisible.value = false;
-        } else {
-            themeMenuVisible.value = false;
-        }
-    });
-
-    watch(supportMenuVisible, (visible) => {
-        if (visible) {
-            settingsMenuVisible.value = false;
-        }
-    });
-
     const supportLinks = {
         wiki: 'https://github.com/vrcx-team/VRCX/wiki',
         github: 'https://github.com/vrcx-team/VRCX',
@@ -264,6 +341,33 @@
             openExternalLink(target);
         }
     };
+
+    const handleSubmenuClick = (path, index) => {
+        if (path) {
+            router.push(path);
+            navMenuRef.value?.updateActiveIndex(index);
+        }
+    };
+
+    const handleSubMenuBeforeEnter = () => {
+        settingsMenuVisible.value = false;
+        supportMenuVisible.value = false;
+        themeMenuVisible.value = false;
+    };
+
+    watch(settingsMenuVisible, (visible) => {
+        if (visible) {
+            supportMenuVisible.value = false;
+        } else {
+            themeMenuVisible.value = false;
+        }
+    });
+
+    watch(supportMenuVisible, (visible) => {
+        if (visible) {
+            settingsMenuVisible.value = false;
+        }
+    });
 
     onMounted(() => {
         if (!sentryErrorReporting.value) return;
@@ -283,6 +387,10 @@
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
+        z-index: 600;
+        background-color: var(--el-bg-color);
+        border-right: 1px solid var(--el-border-color);
+        box-shadow: none;
         .el-menu {
             background: 0;
             border: 0;
@@ -318,6 +426,86 @@
         .nav-menu-container-bottom {
             display: flex;
             flex-direction: column;
+        }
+    }
+
+    .nav-menu-popover {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-width: 240px;
+        background-color: var(--el-bg-color);
+        border-left: 1px solid var(--el-border-color);
+        overflow: hidden;
+
+        .nav-menu-popover__header {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 52px;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--el-border-color-light, var(--el-border-color));
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--el-text-color-primary);
+        }
+
+        .nav-menu-popover__header i {
+            font-size: 18px;
+            color: var(--el-color-primary);
+        }
+
+        .nav-menu-popover__menu {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            gap: 6px;
+            padding: 12px 12px 16px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+        .nav-menu-popover__menu::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .nav-menu-popover__menu::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.18);
+            border-radius: 3px;
+        }
+
+        .nav-menu-popover__menu::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .nav-menu-popover__menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+            width: 100%;
+            padding: 10px 12px;
+            border: none;
+            background: transparent;
+            text-align: left;
+            color: var(--el-text-color-primary);
+            font-size: 13px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color var(--el-transition-duration);
+        }
+
+        .nav-menu-popover__menu-item:hover {
+            background-color: var(--el-menu-hover-bg-color);
+        }
+
+        .nav-menu-popover__menu-item:focus-visible {
+            outline: 2px solid var(--el-color-primary);
+            outline-offset: 2px;
+        }
+
+        .nav-menu-popover__menu-label {
+            font-weight: 600;
         }
     }
 

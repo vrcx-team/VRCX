@@ -50,3 +50,10 @@ export const router = createRouter({
 export function initRouter(app) {
     app.use(router);
 }
+
+router.beforeEach((to, from) => {
+    if (to.path === '/social') {
+        return false;
+    }
+    return true;
+});
