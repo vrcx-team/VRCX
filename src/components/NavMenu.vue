@@ -26,7 +26,7 @@
                     :key="item.index"
                     placement="right-start"
                     trigger="hover"
-                    :hide-after="isSteamVRRunning ? 800 : 0"
+                    :hide-after="isSteamVRRunning ? 800 : 150"
                     :show-arrow="false"
                     :offset="0"
                     :width="navPopoverWidth"
