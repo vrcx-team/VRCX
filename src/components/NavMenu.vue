@@ -26,7 +26,7 @@
                     :key="item.index"
                     placement="right-start"
                     trigger="hover"
-                    :hide-after="0"
+                    :hide-after="isSteamVRRunning ? 800 : 0"
                     :show-arrow="false"
                     :offset="0"
                     :width="navPopoverWidth"
@@ -194,6 +194,7 @@
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
         useAuthStore,
+        useGameStore,
         useSearchStore,
         useUiStore,
         useVRCXUpdaterStore
@@ -293,6 +294,7 @@
     const { logout } = useAuthStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { themeMode } = storeToRefs(appearanceSettingsStore);
+    const { isSteamVRRunning } = storeToRefs(useGameStore());
 
     const settingsMenuVisible = ref(false);
     const themeMenuVisible = ref(false);
