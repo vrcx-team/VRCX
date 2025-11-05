@@ -861,9 +861,8 @@ export const useUserStore = defineStore('User', () => {
                                 }
                             }
                         }
-                        D.isFavorite = favoriteStore.cachedFavoritesByObjectId(
-                            D.id
-                        );
+                        D.isFavorite =
+                            favoriteStore.getCachedFavoritesByObjectId(D.id);
                         if (D.ref.friendRequestStatus === 'incoming') {
                             D.incomingRequest = true;
                         } else if (D.ref.friendRequestStatus === 'outgoing') {

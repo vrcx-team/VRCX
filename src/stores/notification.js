@@ -242,7 +242,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         if (
             generalSettingsStore.autoAcceptInviteRequests === 'All Favorites' &&
-            !favoriteStore.favoriteFriends.some(
+            !favoriteStore.state.favoriteFriends_.some(
                 (x) => x.id === ref.senderUserId
             )
         ) {

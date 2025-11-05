@@ -51,13 +51,12 @@ export function initRouter(app) {
     app.use(router);
 }
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
     if (to.path == '/') {
-        next('/feed');
-        return;
+        return { name: 'feed' };
     }
     if (to.path === '/social' || to.path === '/social/social') {
         return false;
     }
-    next();
+    return true;
 });

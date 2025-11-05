@@ -48,7 +48,10 @@
                                 class="nav-menu-popover__menu-item"
                                 @click="handleSubmenuClick(entry.path, item.index)">
                                 <span class="nav-menu-popover__menu-label"
-                                    >{{ t(entry.label) }}<span class="nav-menu-popover__menu-label-dot"></span
+                                    >{{ t(entry.label)
+                                    }}<span
+                                        v-if="route.path === entry.path"
+                                        class="nav-menu-popover__menu-label-dot"></span
                                 ></span>
                             </button>
                         </div>
@@ -196,9 +199,9 @@
 
 <script setup>
     import { computed, onMounted, ref, watch } from 'vue';
+    import { useRoute, useRouter } from 'vue-router';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { useRouter } from 'vue-router';
 
     import {
         useAdvancedSettingsStore,
@@ -216,6 +219,7 @@
 
     const { t } = useI18n();
     const router = useRouter();
+    const route = useRoute();
 
     const navItems = [
         {

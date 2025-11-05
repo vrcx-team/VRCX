@@ -124,6 +124,7 @@
         }
         editFavoritesMode.value = false;
     }
+
     function changeFavoriteGroupName(ctx) {
         ElMessageBox.prompt(
             t('prompt.change_favorite_group_name.description'),
