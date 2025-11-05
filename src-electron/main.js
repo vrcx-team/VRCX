@@ -46,6 +46,7 @@ if (!isDotNetInstalled()) {
 const VRCX_URI_PREFIX = 'vrcx';
 let isOverlayActive = false;
 let appIsQuitting = false;
+const rootDir = app.getAppPath();
 
 // Get launch arguments
 let appImagePath = process.env.APPIMAGE;
@@ -54,7 +55,9 @@ const noInstall = args.includes('--no-install');
 const x11 = args.includes('--x11');
 const noDesktop = args.includes('--no-desktop');
 const startup = args.includes('--startup');
-const noUpdater = args.includes('--no-updater');
+const noUpdater =
+    args.includes('--no-updater') ||
+    fs.existsSync(path.join(rootDir, '.no-updater'));
 if (process.defaultApp) {
     if (process.argv.length >= 2) {
         app.setAsDefaultProtocolClient(VRCX_URI_PREFIX, process.execPath, [
@@ -69,7 +72,6 @@ const homePath = getHomePath();
 tryRelaunchWithArgs(args);
 tryCopyFromWinePrefix();
 
-const rootDir = app.getAppPath();
 const armPath = path.join(rootDir, 'build/Electron/VRCX-Electron-arm64.cjs');
 if (fs.existsSync(armPath)) {
     require(armPath);
@@ -311,7 +313,7 @@ function createWindow() {
         y,
         width,
         height,
-        icon: path.join(rootDir, 'VRCX.png'),
+        icon: path.join(rootDir, 'images/VRCX.png'),
         autoHideMenuBar: true,
         titleBarStyle: 'hiddenInset',
         webPreferences: {
@@ -418,7 +420,7 @@ function createWristOverlayWindowOffscreen() {
         y,
         width,
         height,
-        icon: path.join(rootDir, 'VRCX.png'),
+        icon: path.join(rootDir, 'images/VRCX.png'),
         autoHideMenuBar: true,
         transparent: true,
         frame: false,
@@ -481,7 +483,7 @@ function createHmdOverlayWindowOffscreen() {
         y,
         width,
         height,
-        icon: path.join(rootDir, 'VRCX.png'),
+        icon: path.join(rootDir, 'images/VRCX.png'),
         autoHideMenuBar: true,
         transparent: true,
         frame: false,
