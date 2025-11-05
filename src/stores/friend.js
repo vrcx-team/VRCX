@@ -88,7 +88,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 order: 'descending'
             }
         },
-        pageSize: 15,
+        pageSize: 20,
         pageSizeLinked: true,
         paginationProps: {
             small: true,

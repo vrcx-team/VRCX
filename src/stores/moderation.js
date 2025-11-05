@@ -34,7 +34,7 @@ export const useModerationStore = defineStore('Moderation', () => {
                 order: 'descending'
             }
         },
-        pageSize: 15,
+        pageSize: 20,
         pageSizeLinked: true,
         paginationProps: {
             small: true,
