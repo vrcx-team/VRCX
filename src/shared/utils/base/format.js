@@ -33,6 +33,8 @@ function timeToText(sec, isNeedSeconds = false) {
         n %= 60;
     }
     if (isNeedSeconds || (arr.length === 0 && n < 60)) {
+        // round to 5 seconds
+        n = Math.floor((n + 2.5) / 5) * 5;
         arr.push(`${n}s`);
     }
     return arr.join(' ');

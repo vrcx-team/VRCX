@@ -1721,10 +1721,12 @@
             "search_no_this_month": "No events this month",
             "event_card": {
                 "category": "Category",
-                "interested_user": "Interested User",
+                "interested_user": "Users Interested",
                 "close_time": "Close Instance After End",
                 "created": "Created Date",
-                "description": "Description"
+                "description": "Description",
+                "export_to_calendar": "Export to Calendar",
+                "download_ics": "Download .ics"
             }
         },
         "moderate_group": {

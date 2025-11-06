@@ -28,6 +28,7 @@ namespace VRCX
         public abstract void CopyImageToClipboard(string path);
         public abstract void FlashWindow();
         public abstract void SetUserAgent();
+        public abstract void OpenCalendarFile(string icsContent);
 
         // Folders
         public abstract string GetVRChatAppDataLocation();

@@ -147,5 +147,9 @@ namespace VRCX
         public override void SetTrayIconNotification(bool notify)
         {
         }
+
+        public override void OpenCalendarFile(string icsContent)
+        {
+        }
     }
 }

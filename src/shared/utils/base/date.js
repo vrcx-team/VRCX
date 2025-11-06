@@ -1,8 +1,64 @@
 import { useAppearanceSettingsStore } from '../../../stores';
 
+function padZero(num) {
+    return String(num).padStart(2, '0');
+}
+
+function toIsoLong(date) {
+    const y = date.getFullYear();
+    const m = padZero(date.getMonth() + 1);
+    const d = padZero(date.getDate());
+    const hh = padZero(date.getHours());
+    const mm = padZero(date.getMinutes());
+    const ss = padZero(date.getSeconds());
+    return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
+}
+
+function toLocalShort(date, dateFormat, hour12) {
+    return date
+        .toLocaleDateString(dateFormat, {
+            month: '2-digit',
+            day: '2-digit',
+            hour: 'numeric',
+            minute: 'numeric',
+            hourCycle: hour12 ? 'h12' : 'h23'
+        })
+        .replace(' AM', 'am')
+        .replace(' PM', 'pm')
+        .replace(',', '');
+}
+
+function toLocalLong(date, dateFormat, hour12) {
+    return date.toLocaleDateString(dateFormat, {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hourCycle: hour12 ? 'h12' : 'h23'
+    });
+}
+
+function toLocalTime(date, dateFormat, hour12) {
+    return date.toLocaleTimeString(dateFormat, {
+        hour: 'numeric',
+        minute: 'numeric',
+        hourCycle: hour12 ? 'h12' : 'h23'
+    });
+}
+
+function toLocalDate(date, dateFormat) {
+    return date.toLocaleDateString(dateFormat, {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric'
+    });
+}
+
 /**
  * @param {string} dateStr
- * @param {'long'|'short'} format
+ * @param {'long'|'short'|'time'|'date'} format
  * @returns {string}
  */
 function formatDateFilter(dateStr, format) {
@@ -22,60 +78,23 @@ function formatDateFilter(dateStr, format) {
         return '-';
     }
 
-    function padZero(num) {
-        return String(num).padStart(2, '0');
-    }
-
-    function toIsoLong(date) {
-        const y = date.getFullYear();
-        const m = padZero(date.getMonth() + 1);
-        const d = padZero(date.getDate());
-        const hh = padZero(date.getHours());
-        const mm = padZero(date.getMinutes());
-        const ss = padZero(date.getSeconds());
-        return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
-    }
-
     let dateFormat = 'en-gb';
     if (!isoFormat && currentCulture) {
         dateFormat = currentCulture;
     }
-    function toLocalShort(date) {
-        return date
-            .toLocaleDateString(dateFormat, {
-                month: '2-digit',
-                day: '2-digit',
-                hour: 'numeric',
-                minute: 'numeric',
-                hourCycle: hour12 ? 'h12' : 'h23'
-            })
-            .replace(' AM', 'am')
-            .replace(' PM', 'pm')
-            .replace(',', '');
-    }
 
-    if (isoFormat) {
-        if (format === 'long') {
-            return toIsoLong(dt);
-        }
-        if (format === 'short') {
-            return toLocalShort(dt);
-        }
+    if (isoFormat && format === 'long') {
+        return toIsoLong(dt);
+    } else if (format === 'long') {
+        return toLocalLong(dt, dateFormat, hour12);
+    } else if (format === 'short') {
+        return toLocalShort(dt, dateFormat, hour12);
+    } else if (format === 'time') {
+        return toLocalTime(dt, dateFormat, hour12);
+    } else if (format === 'date') {
+        return toLocalDate(dt, dateFormat);
     } else {
-        if (format === 'long') {
-            return dt.toLocaleDateString(dateFormat, {
-                month: '2-digit',
-                day: '2-digit',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric',
-                hourCycle: hour12 ? 'h12' : 'h23'
-            });
-        }
-        if (format === 'short') {
-            return toLocalShort(dt);
-        }
+        console.warn(`Unknown date format: ${format}`);
     }
 
     return '-';

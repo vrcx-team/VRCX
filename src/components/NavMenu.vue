@@ -7,7 +7,8 @@
                     :width="50"
                     :stroke-width="3"
                     :percentage="updateProgress"
-                    :format="updateProgressText"></el-progress>
+                    :format="updateProgressText"
+                    style="padding: 7px"></el-progress>
             </div>
             <div v-else-if="pendingVRCXUpdate || pendingVRCXInstall" class="pending-update">
                 <el-button
