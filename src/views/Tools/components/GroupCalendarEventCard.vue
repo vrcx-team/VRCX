@@ -14,6 +14,16 @@
                             </div>
                         </template>
 
+                        <el-descriptions-item>
+                            <el-button type="default" :icon="Calendar" size="small" @click="openCalendarEvent(event)">{{
+                                t('dialog.group_calendar.event_card.export_to_calendar')
+                            }}</el-button>
+                        </el-descriptions-item>
+                        <el-descriptions-item>
+                            <el-button type="default" :icon="Download" size="small" @click="downloadEventIcs(event)">{{
+                                t('dialog.group_calendar.event_card.download_ics')
+                            }}</el-button>
+                        </el-descriptions-item>
                         <el-descriptions-item :label="t('dialog.group_calendar.event_card.category')">
                             {{ capitalizeFirst(event.category) }}
                         </el-descriptions-item>
@@ -24,7 +34,7 @@
                             {{ event.closeInstanceAfterEndMinutes + ' min' }}
                         </el-descriptions-item>
                         <el-descriptions-item :label="t('dialog.group_calendar.event_card.created')">
-                            {{ dayjs(event.createdAt).format('YYYY-MM-DD HH:mm') }}
+                            {{ formatDateFilter(event.createdAt, 'long') }}
                         </el-descriptions-item>
                         <el-descriptions-item :label="t('dialog.group_calendar.event_card.description')">
                             {{ event.description }}
@@ -53,12 +63,13 @@
 </template>
 
 <script setup>
-    import { Check } from '@element-plus/icons-vue';
+    import { Calendar, Check, Download } from '@element-plus/icons-vue';
+    import { ElMessage } from 'element-plus';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
 
-    import dayjs from 'dayjs';
-
+    import { AppDebug } from '../../../service/appConfig';
+    import { formatDateFilter } from '../../../shared/utils';
     import { useGroupStore } from '../../../stores';
 
     const { t } = useI18n();
@@ -107,12 +118,51 @@
         if (props.mode === 'timeline') {
             return formatTimeRange(props.event.startsAt, props.event.endsAt);
         } else {
-            return `${dayjs(props.event.startsAt).format('MM-DD ddd HH:mm')} - ${dayjs(props.event.endsAt).format('HH:mm')}`;
+            return `${formatDateFilter(props.event.startsAt, 'short')} - ${formatDateFilter(props.event.endsAt, 'short')}`;
         }
     });
 
+    async function openCalendarEvent(event) {
+        const content = await getCalendarIcs(event);
+        if (!content) return;
+        await AppApi.OpenCalendarFile(content);
+    }
+
+    async function getCalendarIcs(event) {
+        const url = `${AppDebug.endpointDomain}/calendar/${event.ownerId}/${event.id}.ics`;
+        try {
+            const response = await webApiService.execute({
+                url,
+                method: 'GET'
+            });
+            if (response.status !== 200) {
+                throw new Error(`Error: ${response.data}`);
+            }
+            return response.data;
+        } catch (error) {
+            ElMessage({
+                message: `Failed to download .ics file, ${error.message}`,
+                type: 'error'
+            });
+            console.error('Failed to download .ics file:', error);
+        }
+    }
+
+    async function downloadEventIcs(event) {
+        const content = await getCalendarIcs(event);
+        if (!content) return;
+        const blob = new Blob([content], { type: 'text/calendar' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${event.id}.ics`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+    }
+
     const formatTimeRange = (startsAt, endsAt) =>
-        `${dayjs(startsAt).format('HH:mm')} - ${dayjs(endsAt).format('HH:mm')}`;
+        `${formatDateFilter(startsAt, 'time')} - ${formatDateFilter(endsAt, 'time')}`;
 
     const capitalizeFirst = (str) => str?.charAt(0).toUpperCase() + str?.slice(1);
 

@@ -122,6 +122,7 @@
 
     import dayjs from 'dayjs';
 
+    import { formatDateFilter } from '../../../shared/utils';
     import { groupRequest } from '../../../api';
     import { replaceBioSymbols } from '../../../shared/utils';
     import { useGroupStore } from '../../../stores';
@@ -297,7 +298,7 @@
         const timeGroups = {};
 
         eventsForDay.forEach((event) => {
-            const startTimeKey = dayjs(event.startsAt).format('HH:mm');
+            const startTimeKey = formatDateFilter(event.startsAt, 'time');
             if (!timeGroups[startTimeKey]) {
                 timeGroups[startTimeKey] = [];
             }
@@ -314,7 +315,7 @@
             .sort((a, b) => dayjs(a.startsAt).diff(dayjs(b.startsAt)));
     });
 
-    const formatDateKey = (date) => dayjs(date).format('YYYY-MM-DD');
+    const formatDateKey = (date) => formatDateFilter(date, 'date');
 
     function getGroupName(event) {
         if (!event) return '';

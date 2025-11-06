@@ -221,5 +221,28 @@ namespace VRCX
         {
             MainForm.Instance.BeginInvoke(new MethodInvoker(() => { MainForm.Instance.SetTrayIconNotification(notify); }));
         }
+
+        public override void OpenCalendarFile(string icsContent)
+        {
+            // validate content
+            if (!icsContent.StartsWith("BEGIN:VCALENDAR") ||
+                !icsContent.EndsWith("END:VCALENDAR"))
+                throw new Exception("Invalid calendar file");
+
+            try
+            {
+                var tempPath = Path.Combine(Program.AppDataDirectory, "event.ics");
+                File.WriteAllText(tempPath, icsContent);
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = tempPath,
+                    UseShellExecute = true
+                })?.Dispose();
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to open calendar file");
+            }
+        }
     }
 }

@@ -190,6 +190,7 @@ declare global {
         FlashWindow(): Promise<void>;
         SetUserAgent(): Promise<void>;
         SetTrayIconNotification(notify: boolean): Promise<void>;
+        OpenCalendarFile(icsContent: string): Promise<void>;
 
         // Common Functions
         GetColourFromUserID(userId: string): Promise<number>;
