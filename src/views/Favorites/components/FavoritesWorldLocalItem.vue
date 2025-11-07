@@ -19,10 +19,7 @@
                     isLocalFavorite
                     type="world" />
                 <template v-else>
-                    <el-tooltip placement="left">
-                        <template #content>
-                            {{ inviteOrLaunchText }}
-                        </template>
+                    <el-tooltip placement="left" :content="inviteOrLaunchText" :teleported="false">
                         <el-button
                             size="small"
                             :icon="Message"

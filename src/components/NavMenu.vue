@@ -27,7 +27,7 @@
                     :key="item.index"
                     placement="right-start"
                     trigger="hover"
-                    :hide-after="isSteamVRRunning ? 600 : 150"
+                    :hide-after="isSteamVRRunning ? 400 : 150"
                     :show-arrow="false"
                     :offset="0"
                     :width="navPopoverWidth"
@@ -56,7 +56,6 @@
                                 ></span>
                             </button>
                         </div>
-                        >
                     </div>
                     <template #reference>
                         <el-menu-item
@@ -200,10 +199,10 @@
 </template>
 
 <script setup>
-    import { computed, h, onMounted, ref, watch } from 'vue';
-    import { useRoute, useRouter } from 'vue-router';
+    import { computed, onMounted, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+    import { useRouter } from 'vue-router';
 
     import {
         useAdvancedSettingsStore,
@@ -221,7 +220,6 @@
 
     const { t } = useI18n();
     const router = useRouter();
-    const route = useRoute();
 
     const navItems = [
         {
@@ -232,7 +230,7 @@
         {
             index: 'friend-location',
             icon: 'ri-user-location-line',
-            tooltip: 'nav_tooltip.friend_location'
+            tooltip: 'nav_tooltip.friends_locations'
         },
         {
             index: 'game-log',

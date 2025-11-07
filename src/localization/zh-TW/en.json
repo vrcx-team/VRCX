@@ -2,7 +2,7 @@
     "language": "繁體中文 (zh-TW)",
     "translator": "Kamiya,XoF_eLtTiL",
     "nav_tooltip": {
-        "friend_location": "好友位置",
+        "friends_locations": "好友位置",
         "feed": "動態",
         "game_log": "遊戲紀錄",
         "player_list": "用戶列表",
