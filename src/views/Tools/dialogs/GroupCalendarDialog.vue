@@ -35,7 +35,8 @@
                                         :event="value"
                                         mode="timeline"
                                         :is-following="isEventFollowing(value.id)"
-                                        :card-class="{ 'grouped-card': timeGroup.events.length > 1 }" />
+                                        :card-class="{ 'grouped-card': timeGroup.events.length > 1 }"
+                                        @update-following-calendar-data="updateFollowingCalendarData" />
                                 </div>
                             </el-timeline-item>
                         </el-timeline>
@@ -97,6 +98,7 @@
                                         :event="event"
                                         mode="grid"
                                         :is-following="isEventFollowing(event.id)"
+                                        @update-following-calendar-data="updateFollowingCalendarData"
                                         card-class="grid-card" />
                                 </div>
                             </div>
@@ -345,6 +347,16 @@
             followingCalendar.value = response.results;
         } catch (error) {
             console.error('Error fetching following calendars:', error);
+        }
+    }
+
+    function updateFollowingCalendarData(updatedEvent) {
+        const index = followingCalendar.value.findIndex((item) => item.id === updatedEvent.id);
+        if (index !== -1) {
+            followingCalendar.value.splice(index, 1);
+        }
+        if (updatedEvent.userInterest?.isFollowing) {
+            followingCalendar.value.push(updatedEvent);
         }
     }
 

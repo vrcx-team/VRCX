@@ -277,7 +277,18 @@
     }
 
     async function deleteAllVRChatCache() {
-        await AssetBundleManager.DeleteAllCache();
+        try {
+            await AssetBundleManager.DeleteAllCache();
+            ElMessage({
+                message: 'All VRChat cache deleted',
+                type: 'success'
+            });
+        } catch (error) {
+            ElMessage({
+                message: `Error deleting VRChat cache: ${error.message}`,
+                type: 'error'
+            });
+        }
         getVRChatCacheSize();
     }
 
