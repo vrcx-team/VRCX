@@ -348,7 +348,8 @@
                     "auto_update_off": "何もしない",
                     "auto_update_notify": "通知のみ",
                     "auto_update_download": "自動ダウンロード",
-                    "change_log": "更新履歴"
+                    "change_log": "更新履歴",
+                    "updater_disabled": "アップデーターは無効化されています。 更新はパッケージマネージャにより管理されています。"
                 },
                 "application": {
                     "header": "アプリケーション",
