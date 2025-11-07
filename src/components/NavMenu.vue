@@ -374,6 +374,9 @@
     };
 
     const handleRouteChange = (index) => {
+        if (index === 'social') {
+            index = 'friend-log';
+        }
         router.push({ name: index });
         navMenuRef.value?.updateActiveIndex(index);
     };
@@ -534,11 +537,15 @@
 
         .nav-menu-popover__menu-label-dot {
             position: absolute;
-            right: -4px;
+            right: -8px;
             width: 4px;
             height: 4px;
             background: #303133;
             border-radius: 50%;
+        }
+        :global(html.dark),
+        .nav-menu-popover__menu-label-dot {
+            background: #ffffff;
         }
     }
 
