@@ -31,8 +31,7 @@
                         v-if="favorite.ref.releaseStatus === 'private'"
                         :title="t('view.favorite.private')"
                         class="ri-lock-line"></i>
-                    <el-tooltip placement="left" :teleported="false">
-                        <template #content> {{ inviteOrLaunchText }} </template>
+                    <el-tooltip placement="left" :content="inviteOrLaunchText" :teleported="false">
                         <el-button
                             size="small"
                             :icon="Message"

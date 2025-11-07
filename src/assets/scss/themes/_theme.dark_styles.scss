@@ -328,6 +328,12 @@ div.x-friend-list
     color: $--theme-info;
 }
 
+.nav-menu-container {
+    .bottom-button {
+        color: $--theme-info;
+    }
+}
+
 .el-menu-item.notify::after {
     background: hsl($--theme-hue, 0%, 92%);
 }
