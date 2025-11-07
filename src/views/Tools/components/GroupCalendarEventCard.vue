@@ -56,20 +56,24 @@
                 </div>
             </div>
         </div>
-        <div v-if="isFollowing" class="following-badge">
-            <el-icon><Check /></el-icon>
+        <div v-if="isFollowing" @click="toggleEventFollow(event)" class="following-badge is-following">
+            <el-icon><Star /></el-icon>
+        </div>
+        <div v-else @click="toggleEventFollow(event)" class="following-badge">
+            <el-icon><StarFilled /></el-icon>
         </div>
     </el-card>
 </template>
 
 <script setup>
-    import { Calendar, Check, Download } from '@element-plus/icons-vue';
+    import { Calendar, Download, Star, StarFilled } from '@element-plus/icons-vue';
+    import { computed, defineEmits } from 'vue';
     import { ElMessage } from 'element-plus';
-    import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
 
     import { AppDebug } from '../../../service/appConfig';
     import { formatDateFilter } from '../../../shared/utils';
+    import { groupRequest } from '../../../api';
     import { useGroupStore } from '../../../stores';
 
     const { t } = useI18n();
@@ -95,6 +99,8 @@
             default: ''
         }
     });
+
+    const emit = defineEmits(['update-following-calendar-data']);
 
     const showGroupName = computed(() => props.mode === 'timeline');
 
@@ -161,6 +167,15 @@
         URL.revokeObjectURL(link.href);
     }
 
+    async function toggleEventFollow(event) {
+        const args = await groupRequest.followGroupEvent({
+            groupId: event.ownerId,
+            eventId: event.id,
+            isFollowing: !props.isFollowing
+        });
+        emit('update-following-calendar-data', args.json);
+    }
+
     const formatTimeRange = (startsAt, endsAt) =>
         `${formatDateFilter(startsAt, 'time')} - ${formatDateFilter(endsAt, 'time')}`;
 
@@ -209,7 +224,7 @@
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background-color: var(--group-calendar-badge-following, #67c23a);
+            background-color: var(--el-text-color-regular);
             color: #ffffff;
             display: flex;
             align-items: center;
@@ -217,6 +232,10 @@
             font-size: 14px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             z-index: 10;
+            cursor: pointer;
+        }
+        .is-following {
+            background-color: var(--group-calendar-badge-following, #67c23a);
         }
         .event-content {
             font-size: 12px;
