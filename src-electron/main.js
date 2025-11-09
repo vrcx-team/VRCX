@@ -58,7 +58,7 @@ const startup = args.includes('--startup');
 const noUpdater =
     args.includes('--no-updater') ||
     fs.existsSync(path.join(rootDir, '.no-updater'));
-if (process.defaultApp) {
+if (process.defaultApp && process.platform !== 'win32') {
     if (process.argv.length >= 2) {
         app.setAsDefaultProtocolClient(VRCX_URI_PREFIX, process.execPath, [
             path.resolve(process.argv[1])

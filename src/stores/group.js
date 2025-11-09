@@ -273,16 +273,18 @@ export const useGroupStore = defineStore('Group', () => {
                 groupChange(ref, `Role ${roleName} removed`);
             }
         }
-        for (const roleId of newRoleIds) {
-            if (!oldRoleIds.includes(roleId)) {
-                let roleName = '';
-                const role = newRoles.find(
-                    (fineRole) => fineRole.id === roleId
-                );
-                if (role) {
-                    roleName = role.name;
+        if (typeof newRoles !== 'undefined') {
+            for (const roleId of newRoleIds) {
+                if (!oldRoleIds.includes(roleId)) {
+                    let roleName = '';
+                    const role = newRoles.find(
+                        (fineRole) => fineRole.id === roleId
+                    );
+                    if (role) {
+                        roleName = role.name;
+                    }
+                    groupChange(ref, `Role ${roleName} added`);
                 }
-                groupChange(ref, `Role ${roleName} added`);
             }
         }
     }

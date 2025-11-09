@@ -565,7 +565,12 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         let shouldFocusWindow = true;
         switch (command) {
             case 'world':
-                searchStore.directAccessWorld(input.replace('world/', ''));
+                if (
+                    !searchStore.directAccessWorld(input.replace('world/', ''))
+                ) {
+                    // fallback for mangled world ids
+                    worldStore.showWorldDialog(commandArg);
+                }
                 break;
             case 'avatar':
                 avatarStore.showAvatarDialog(commandArg);
