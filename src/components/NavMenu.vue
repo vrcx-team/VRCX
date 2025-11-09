@@ -227,7 +227,7 @@
             tooltip: 'nav_tooltip.feed'
         },
         {
-            index: 'friend-location',
+            index: 'friends-locations',
             icon: 'ri-user-location-line',
             tooltip: 'nav_tooltip.friends_locations'
         },
