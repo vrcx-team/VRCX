@@ -25,6 +25,7 @@
                     v-for="item in navItems"
                     :disabled="!item.entries?.length"
                     :key="item.index"
+                    :ref="(el) => setNavPopoverRef(el, item.index)"
                     placement="right-start"
                     trigger="hover"
                     :hide-after="isSteamVRRunning ? 400 : 150"
@@ -159,8 +160,6 @@
                         placement="right-start"
                         trigger="hover"
                         popper-style="padding:4px;border-radius:8px;"
-                        :offset="4"
-                        :show-arrow="false"
                         :width="200">
                         <div class="nav-menu-theme">
                             <button
@@ -344,6 +343,7 @@
     const themeMenuVisible = ref(false);
     const supportMenuVisible = ref(false);
     const navMenuRef = ref(null);
+    const navPopoverRefs = new Map();
 
     const version = computed(() => appVersion.value?.split('VRCX ')?.[1] || '-');
     const vrcxLogo = new URL('../../images/VRCX.png', import.meta.url).href;
@@ -388,6 +388,21 @@
         }
     };
 
+    const setNavPopoverRef = (el, index) => {
+        if (!index) {
+            return;
+        }
+        if (el) {
+            navPopoverRefs.set(index, el);
+        } else {
+            navPopoverRefs.delete(index);
+        }
+    };
+
+    const closeNavPopover = (index) => {
+        navPopoverRefs.get(index)?.hide?.();
+    };
+
     const handleSubmenuClick = (entry, index) => {
         if (!entry) {
             return;
@@ -398,6 +413,7 @@
             router.push(entry.path);
         }
         navMenuRef.value?.updateActiveIndex(index);
+        closeNavPopover(index);
     };
 
     const handleSubMenuBeforeEnter = () => {
