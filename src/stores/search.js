@@ -266,7 +266,10 @@ export const useSearchStore = defineStore('Search', () => {
         ) {
             userStore.showUserDialog(input);
             return true;
-        } else if (input.substring(0, 5) === 'avtr_') {
+        } else if (
+            input.substring(0, 5) === 'avtr_' ||
+            input.substring(0, 2) === 'b_'
+        ) {
             avatarStore.showAvatarDialog(input);
             return true;
         } else if (input.substring(0, 4) === 'grp_') {
@@ -316,7 +319,11 @@ export const useSearchStore = defineStore('Search', () => {
                     return true;
                 }
             }
-        } else if (input.substring(0, 5) === 'wrld_') {
+        } else if (
+            input.substring(0, 5) === 'wrld_' ||
+            input.substring(0, 4) === 'wld_' ||
+            input.substring(0, 2) === 'o_'
+        ) {
             // a bit hacky, but supports weird malformed inputs cut out from url, why not
             if (input.indexOf('&instanceId=') >= 0) {
                 input = `https://vrchat.com/home/launch?worldId=${input}`;

@@ -204,6 +204,9 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 }
             });
             json = JSON.parse(response.data);
+        } catch (error) {
+            console.error('Failed to check for VRCX update', error);
+            return;
         } finally {
             checkingForVRCXUpdate.value = false;
         }
@@ -280,6 +283,9 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 }
             });
             json = JSON.parse(response.data);
+        } catch (error) {
+            console.error('Failed to check for VRCX update', error);
+            return;
         } finally {
             checkingForVRCXUpdate.value = false;
         }

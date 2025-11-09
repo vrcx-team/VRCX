@@ -145,7 +145,7 @@ function parseLocation(tag) {
 }
 
 function getFriendsLocations(friendsArr) {
-    const locaationStore = useLocationStore();
+    const locationStore = useLocationStore();
     // prevent the instance title display as "Traveling".
     if (!friendsArr?.length) {
         return '';
@@ -161,8 +161,8 @@ function getFriendsLocations(friendsArr) {
         }
     }
     for (const friend of friendsArr) {
-        if (locaationStore.lastLocation.friendList.has(friend.id)) {
-            return locaationStore.lastLocation.location;
+        if (locationStore.lastLocation.friendList.has(friend.id)) {
+            return locationStore.lastLocation.location;
         }
     }
     return friendsArr[0].ref?.location;
