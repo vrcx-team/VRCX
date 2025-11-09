@@ -221,7 +221,7 @@
                             :content="t('dialog.avatar.actions.favorite_tooltip')">
                             <el-button
                                 type="warning"
-                                :icon="Star"
+                                :icon="StarFilled"
                                 size="large"
                                 circle
                                 style="margin-left: 5px"
@@ -230,7 +230,7 @@
                         <el-tooltip v-else placement="top" :content="t('dialog.avatar.actions.favorite_tooltip')">
                             <el-button
                                 type="default"
-                                :icon="StarFilled"
+                                :icon="Star"
                                 size="large"
                                 circle
                                 style="margin-left: 5px"
