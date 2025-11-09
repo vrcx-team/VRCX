@@ -6,8 +6,8 @@ import FavoritesFriend from './../views/Favorites/FavoritesFriend.vue';
 import FavoritesWorld from './../views/Favorites/FavoritesWorld.vue';
 import Feed from './../views/Feed/Feed.vue';
 import FriendList from './../views/FriendList/FriendList.vue';
-import FriendLocation from './../views/FriendLocation/FriendLocation.vue';
 import FriendLog from './../views/FriendLog/FriendLog.vue';
+import FriendsLocations from './../views/FriendsLocations/FriendsLocations.vue';
 import GameLog from './../views/GameLog/GameLog.vue';
 import Moderation from './../views/Moderation/Moderation.vue';
 import Notification from './../views/Notifications/Notification.vue';
@@ -19,9 +19,9 @@ import Tools from './../views/Tools/Tools.vue';
 const routes = [
     { path: '/feed', name: 'feed', component: Feed },
     {
-        path: '/friend-location',
-        name: 'friend-location',
-        component: FriendLocation
+        path: '/friends-locations',
+        name: 'friends-locations',
+        component: FriendsLocations
     },
     { path: '/game-log', name: 'game-log', component: GameLog },
     { path: '/player-list', name: 'player-list', component: PlayerList },

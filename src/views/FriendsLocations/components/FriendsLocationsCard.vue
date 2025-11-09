@@ -90,7 +90,7 @@
         gap: calc(14px * var(--card-scale));
         border-radius: calc(8px * var(--card-scale));
         background: #fff;
-        border: 1px solid rgba(148, 163, 184, 0.32);
+        border: 1px solid var(--el-border-color);
         box-shadow: 0 calc(6px * var(--card-scale)) calc(16px * var(--card-scale)) rgba(15, 23, 42, 0.04);
         transition:
             box-shadow 0.2s ease,

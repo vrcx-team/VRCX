@@ -149,7 +149,7 @@
     import { getFriendsLocations } from '../../shared/utils/location.js';
     import { useFriendStore } from '../../stores';
 
-    import FriendLocationCard from './components/FriendLocationCard.vue';
+    import FriendLocationCard from './components/FriendsLocationsCard.vue';
     import configRepository from '../../service/config.js';
 
     const { t } = useI18n();
