@@ -188,7 +188,7 @@ export const useSearchStore = defineStore('Search', () => {
             const searchTerm = value.slice(7);
             if (quickSearchItems.value.length > 1 && searchTerm.length) {
                 friendsListSearch.value = searchTerm;
-                router.push({ name: 'friendList' });
+                router.push({ name: 'friend-list' });
             } else {
                 router.push({ name: 'search' });
                 searchText.value = searchTerm;
