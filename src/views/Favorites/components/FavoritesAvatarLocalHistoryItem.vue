@@ -1,44 +1,41 @@
 <template>
-    <div @click="$emit('click')">
-        <div class="x-friend-item">
-            <div class="avatar">
-                <img :src="smallThumbnail" loading="lazy" />
+    <div :class="cardClasses" @click="$emit('click')">
+        <div class="favorites-search-card__content">
+            <div class="favorites-search-card__avatar" :class="{ 'is-empty': !favorite.thumbnailImageUrl }">
+                <img v-if="favorite.thumbnailImageUrl" :src="smallThumbnail" loading="lazy" />
             </div>
-            <div class="detail">
-                <span class="name" v-text="favorite.name"></span>
-                <span class="extra" v-text="favorite.authorName"></span>
+            <div class="favorites-search-card__detail">
+                <div class="favorites-search-card__title">
+                    <span class="name">{{ favorite.name }}</span>
+                </div>
+                <span class="extra">{{ favorite.authorName }}</span>
             </div>
-            <el-tooltip placement="left" :content="t('view.favorite.select_avatar_tooltip')" :teleported="false">
-                <el-button
-                    :disabled="currentUser.currentAvatar === favorite.id"
-                    size="small"
-                    :icon="Check"
-                    circle
-                    style="margin-left: 5px"
-                    @click.stop="selectAvatarWithConfirmation(favorite.id)"></el-button>
-            </el-tooltip>
-            <template v-if="getCachedFavoritesByObjectId(favorite.id)">
-                <el-tooltip placement="right" content="Favorite" :teleported="false">
-                    <el-button
-                        type="default"
-                        :icon="Star"
-                        size="small"
-                        circle
-                        style="margin-left: 5px"
-                        @click.stop="showFavoriteDialog('avatar', favorite.id)"></el-button>
-                </el-tooltip>
-            </template>
-            <template v-else>
-                <el-tooltip placement="right" content="Favorite" :teleported="false">
-                    <el-button
-                        type="default"
-                        :icon="StarFilled"
-                        size="small"
-                        circle
-                        style="margin-left: 5px"
-                        @click.stop="showFavoriteDialog('avatar', favorite.id)"></el-button>
-                </el-tooltip>
-            </template>
+        </div>
+        <div class="favorites-search-card__actions">
+            <div class="favorites-search-card__action-group">
+                <div class="favorites-search-card__action">
+                    <el-tooltip placement="top" :content="t('view.favorite.select_avatar_tooltip')">
+                        <el-button
+                            :disabled="currentUser.currentAvatar === favorite.id"
+                            size="small"
+                            :icon="Check"
+                            circle
+                            class="favorites-search-card__action-btn"
+                            @click.stop="selectAvatarWithConfirmation(favorite.id)" />
+                    </el-tooltip>
+                </div>
+                <div class="favorites-search-card__action">
+                    <el-tooltip placement="bottom" :content="t('view.favorite.favorite_tooltip')">
+                        <el-button
+                            type="default"
+                            :icon="favoriteExists ? Star : StarFilled"
+                            size="small"
+                            circle
+                            class="favorites-search-card__action-btn"
+                            @click.stop="showFavoriteDialog('avatar', favorite.id)" />
+                    </el-tooltip>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -66,7 +63,14 @@
 
     defineEmits(['click']);
 
+    const favoriteExists = computed(() => Boolean(getCachedFavoritesByObjectId(props.favorite.id)));
+
+    const cardClasses = computed(() => ['favorites-search-card', 'favorites-search-card--avatar']);
+
     const smallThumbnail = computed(() => {
-        return props.favorite.thumbnailImageUrl?.replace('256', '128') || props.favorite.thumbnailImageUrl;
+        if (!props.favorite.thumbnailImageUrl) {
+            return '';
+        }
+        return props.favorite.thumbnailImageUrl.replace('256', '128');
     });
 </script>

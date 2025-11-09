@@ -1,7 +1,9 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 
 import Charts from './../views/Charts/Charts.vue';
-import Favorites from './../views/Favorites/Favorites.vue';
+import FavoritesAvatar from './../views/Favorites/FavoritesAvatar.vue';
+import FavoritesFriend from './../views/Favorites/FavoritesFriend.vue';
+import FavoritesWorld from './../views/Favorites/FavoritesWorld.vue';
 import Feed from './../views/Feed/Feed.vue';
 import FriendList from './../views/FriendList/FriendList.vue';
 import FriendLocation from './../views/FriendLocation/FriendLocation.vue';
@@ -24,7 +26,21 @@ const routes = [
     { path: '/game-log', name: 'game-log', component: GameLog },
     { path: '/player-list', name: 'player-list', component: PlayerList },
     { path: '/search', name: 'search', component: Search },
-    { path: '/favorites', name: 'favorites', component: Favorites },
+    {
+        path: '/favorites/friends',
+        name: 'favorite-friends',
+        component: FavoritesFriend
+    },
+    {
+        path: '/favorites/worlds',
+        name: 'favorite-worlds',
+        component: FavoritesWorld
+    },
+    {
+        path: '/favorites/avatars',
+        name: 'favorite-avatars',
+        component: FavoritesAvatar
+    },
     { path: '/social/friend-log', name: 'friend-log', component: FriendLog },
     { path: '/social/moderation', name: 'moderation', component: Moderation },
     { path: '/notification', name: 'notification', component: Notification },

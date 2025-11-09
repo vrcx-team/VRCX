@@ -24,6 +24,14 @@ export const useUiStore = defineStore('Ui', () => {
     const notifiedMenus = ref([]);
     const shiftHeld = ref(false);
     const trayIconNotify = ref(false);
+    const socialRouteNames = ['friend-log', 'friend-list', 'moderation'];
+    const favoriteRouteNames = [
+        'favorite-friends',
+        'favorite-worlds',
+        'favorite-avatars'
+    ];
+    const lastVisitedSocialRoute = ref(socialRouteNames[0]);
+    const lastVisitedFavoritesRoute = ref(favoriteRouteNames[0]);
 
     watch(
         () => watchState.isLoggedIn,
@@ -50,9 +58,15 @@ export const useUiStore = defineStore('Ui', () => {
         () => router.currentRoute.value.name,
         (routeName) => {
             if (routeName) {
-                removeNotify(routeName);
-                if (routeName === 'notification') {
+                const name = String(routeName);
+                removeNotify(name);
+                if (name === 'notification') {
                     notificationStore.unseenNotifications = [];
+                }
+                if (socialRouteNames.includes(name)) {
+                    lastVisitedSocialRoute.value = name;
+                } else if (favoriteRouteNames.includes(name)) {
+                    lastVisitedFavoritesRoute.value = name;
                 }
             }
         }
@@ -82,6 +96,8 @@ export const useUiStore = defineStore('Ui', () => {
     return {
         notifiedMenus,
         shiftHeld,
+        lastVisitedSocialRoute,
+        lastVisitedFavoritesRoute,
 
         notifyMenu,
         removeNotify

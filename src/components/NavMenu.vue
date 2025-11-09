@@ -47,11 +47,11 @@
                                 :key="entry.label"
                                 type="button"
                                 class="nav-menu-popover__menu-item"
-                                @click="handleSubmenuClick(entry.path, item.index)">
+                                @click="handleSubmenuClick(entry, item.index)">
                                 <span class="nav-menu-popover__menu-label"
                                     >{{ t(entry.label)
                                     }}<span
-                                        v-if="notifiedMenus.includes(entry.path.split('/').pop())"
+                                        v-if="notifiedMenus.includes(entry.routeName || entry.path.split('/').pop())"
                                         class="nav-menu-popover__menu-label-dot"></span
                                 ></span>
                             </button>
@@ -250,7 +250,25 @@
         {
             index: 'favorites',
             icon: 'ri-star-line',
-            tooltip: 'nav_tooltip.favorites'
+            tooltip: '',
+            title: 'nav_tooltip.favorites',
+            entries: [
+                {
+                    label: 'view.favorite.friends.header',
+                    path: '/favorites/friends',
+                    routeName: 'favorite-friends'
+                },
+                {
+                    label: 'view.favorite.worlds.header',
+                    path: '/favorites/worlds',
+                    routeName: 'favorite-worlds'
+                },
+                {
+                    label: 'view.favorite.avatars.header',
+                    path: '/favorites/avatars',
+                    routeName: 'favorite-avatars'
+                }
+            ]
         },
         {
             index: 'social',
@@ -258,9 +276,21 @@
             tooltip: '',
             title: 'nav_tooltip.social',
             entries: [
-                { label: 'nav_tooltip.friend_log', path: '/social/friend-log' },
-                { label: 'nav_tooltip.friend_list', path: '/social/friend-list' },
-                { label: 'nav_tooltip.moderation', path: '/social/moderation' }
+                {
+                    label: 'nav_tooltip.friend_log',
+                    path: '/social/friend-log',
+                    routeName: 'friend-log'
+                },
+                {
+                    label: 'nav_tooltip.friend_list',
+                    path: '/social/friend-list',
+                    routeName: 'friend-list'
+                },
+                {
+                    label: 'nav_tooltip.moderation',
+                    path: '/social/moderation',
+                    routeName: 'moderation'
+                }
             ]
         },
 
@@ -301,7 +331,7 @@
         storeToRefs(VRCXUpdaterStore);
     const { showVRCXUpdateDialog, updateProgressText, showChangeLogDialog } = VRCXUpdaterStore;
     const uiStore = useUiStore();
-    const { notifiedMenus } = storeToRefs(uiStore);
+    const { notifiedMenus, lastVisitedSocialRoute, lastVisitedFavoritesRoute } = storeToRefs(uiStore);
     const { directAccessPaste } = useSearchStore();
     const { sentryErrorReporting } = storeToRefs(useAdvancedSettingsStore());
     const { setSentryErrorReporting } = useAdvancedSettingsStore();
@@ -358,11 +388,16 @@
         }
     };
 
-    const handleSubmenuClick = (path, index) => {
-        if (path) {
-            router.push(path);
-            navMenuRef.value?.updateActiveIndex(index);
+    const handleSubmenuClick = (entry, index) => {
+        if (!entry) {
+            return;
         }
+        if (entry.routeName) {
+            router.push({ name: entry.routeName });
+        } else if (entry.path) {
+            router.push(entry.path);
+        }
+        navMenuRef.value?.updateActiveIndex(index);
     };
 
     const handleSubMenuBeforeEnter = () => {
@@ -372,10 +407,13 @@
     };
 
     const handleRouteChange = (index) => {
+        let targetName = index;
         if (index === 'social') {
-            index = 'friend-log';
+            targetName = lastVisitedSocialRoute.value || 'friend-log';
+        } else if (index === 'favorites') {
+            targetName = lastVisitedFavoritesRoute.value || 'favorite-friends';
         }
-        router.push({ name: index });
+        router.push({ name: targetName });
         navMenuRef.value?.updateActiveIndex(index);
     };
 
