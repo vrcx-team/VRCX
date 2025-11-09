@@ -1302,7 +1302,7 @@
 
     .group-item__top {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
         margin-bottom: 4px;
         font-size: 13px;
@@ -1315,6 +1315,7 @@
     .group-item__right {
         display: flex;
         align-items: center;
+        flex-direction: column;
         gap: 6px;
     }
 
@@ -1645,7 +1646,7 @@
 
     :deep(.favorites-search-card__action) {
         display: flex;
-        justify-content: center;
+        justify-content: flex-end;
         width: 100%;
     }
 
