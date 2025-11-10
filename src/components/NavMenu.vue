@@ -198,7 +198,7 @@
 </template>
 
 <script setup>
-    import { computed, onMounted, ref, watch } from 'vue';
+    import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { useRouter } from 'vue-router';
@@ -374,6 +374,13 @@
         openExternalLink('https://github.com/vrcx-team/VRCX');
     };
 
+    function handleKeydown(e) {
+        if (e.ctrlKey && e.key === 'd') {
+            e.preventDefault();
+            directAccessPaste();
+        }
+    }
+
     const supportLinks = {
         wiki: 'https://github.com/vrcx-team/VRCX/wiki',
         github: 'https://github.com/vrcx-team/VRCX',
@@ -451,6 +458,11 @@
         if (!sentryErrorReporting.value) return;
         const feedback = Sentry.getFeedback();
         feedback?.attachTo(document.getElementById('feedback'));
+        window.addEventListener('keydown', handleKeydown);
+    });
+
+    onUnmounted(() => {
+        window.removeEventListener('keydown', handleKeydown);
     });
 </script>
 
