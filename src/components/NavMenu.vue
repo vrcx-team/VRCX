@@ -32,7 +32,7 @@
                     :show-arrow="false"
                     :offset="0"
                     :width="navPopoverWidth"
-                    transition="null"
+                    transition="nav-menu-slide"
                     @before-enter="handleSubMenuBeforeEnter()"
                     :popper-style="navPopoverStyle"
                     popper-class="nav-menu-popover-popper">
@@ -746,5 +746,19 @@
         .nav-menu-theme__item.is-active {
             background-color: var(--el-menu-hover-bg-color);
         }
+    }
+
+    :global(.nav-menu-slide-enter-active),
+    :global(.nav-menu-slide-leave-active) {
+        transition:
+            opacity var(--el-transition-duration) ease,
+            transform var(--el-transition-duration) ease;
+        transform-origin: left center;
+    }
+
+    :global(.nav-menu-slide-enter-from),
+    :global(.nav-menu-slide-leave-to) {
+        opacity: 0;
+        transform: translateX(-12px);
     }
 </style>
