@@ -31,16 +31,16 @@
                         setOverlayToast($event);
                         saveOpenVROption();
                     ">
-                    <el-radio-button label="Never">{{
+                    <el-radio-button value="Never">{{
                         t('view.settings.notifications.notifications.conditions.never')
                     }}</el-radio-button>
-                    <el-radio-button label="Game Running">{{
+                    <el-radio-button value="Game Running">{{
                         t('view.settings.notifications.notifications.conditions.inside_vrchat')
                     }}</el-radio-button>
-                    <el-radio-button label="Game Closed">{{
+                    <el-radio-button value="Game Closed">{{
                         t('view.settings.notifications.notifications.conditions.outside_vrchat')
                     }}</el-radio-button>
-                    <el-radio-button label="Always">{{
+                    <el-radio-button value="Always">{{
                         t('view.settings.notifications.notifications.conditions.always')
                     }}</el-radio-button>
                 </el-radio-group>
@@ -166,25 +166,25 @@
                         setDesktopToast($event);
                         saveOpenVROption();
                     ">
-                    <el-radio-button label="Never">{{
+                    <el-radio-button value="Never">{{
                         t('view.settings.notifications.notifications.conditions.never')
                     }}</el-radio-button>
-                    <el-radio-button label="Desktop Mode">{{
+                    <el-radio-button value="Desktop Mode">{{
                         t('view.settings.notifications.notifications.conditions.desktop')
                     }}</el-radio-button>
-                    <el-radio-button label="Inside VR">{{
+                    <el-radio-button value="Inside VR">{{
                         t('view.settings.notifications.notifications.conditions.inside_vr')
                     }}</el-radio-button>
-                    <el-radio-button label="Outside VR">{{
+                    <el-radio-button value="Outside VR">{{
                         t('view.settings.notifications.notifications.conditions.outside_vr')
                     }}</el-radio-button>
-                    <el-radio-button label="Game Running">{{
+                    <el-radio-button value="Game Running">{{
                         t('view.settings.notifications.notifications.conditions.inside_vrchat')
                     }}</el-radio-button>
-                    <el-radio-button label="Game Closed">{{
+                    <el-radio-button value="Game Closed">{{
                         t('view.settings.notifications.notifications.conditions.outside_vrchat')
                     }}</el-radio-button>
-                    <el-radio-button label="Always">{{
+                    <el-radio-button value="Always">{{
                         t('view.settings.notifications.notifications.conditions.always')
                     }}</el-radio-button>
                 </el-radio-group>
@@ -211,19 +211,19 @@
                     size="small"
                     style="margin-top: 5px"
                     @change="saveNotificationTTS">
-                    <el-radio-button label="Never">{{
+                    <el-radio-button value="Never">{{
                         t('view.settings.notifications.notifications.conditions.never')
                     }}</el-radio-button>
-                    <el-radio-button label="Inside VR">{{
+                    <el-radio-button value="Inside VR">{{
                         t('view.settings.notifications.notifications.conditions.inside_vr')
                     }}</el-radio-button>
-                    <el-radio-button label="Game Running">{{
+                    <el-radio-button value="Game Running">{{
                         t('view.settings.notifications.notifications.conditions.inside_vrchat')
                     }}</el-radio-button>
-                    <el-radio-button label="Game Closed">{{
+                    <el-radio-button value="Game Closed">{{
                         t('view.settings.notifications.notifications.conditions.outside_vrchat')
                     }}</el-radio-button>
-                    <el-radio-button label="Always">{{
+                    <el-radio-button value="Always">{{
                         t('view.settings.notifications.notifications.conditions.always')
                     }}</el-radio-button>
                 </el-radio-group>

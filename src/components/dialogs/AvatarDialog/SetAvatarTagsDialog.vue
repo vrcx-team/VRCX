@@ -78,7 +78,7 @@
                         <span v-else class="extra" v-text="avatar.releaseStatus"></span>
                         <span class="extra" v-text="avatarTagStrings.get(avatar.id)"></span>
                     </div>
-                    <el-button type="text" size="small" style="margin-left: 5px" @click.stop>
+                    <el-button text size="small" style="margin-left: 5px" @click.stop>
                         <el-checkbox
                             :model-value="props.setAvatarTagsDialog.selectedAvatarIds.includes(avatar.id)"
                             @click="toggleAvatarSelection(avatar.id)"></el-checkbox>

@@ -23,7 +23,7 @@
                     v-model="currentSharedFeedFilters[setting.key]"
                     size="small"
                     @change="saveSharedFeedFilters">
-                    <el-radio-button v-for="option in setting.options" :key="option.label" :label="option.label">
+                    <el-radio-button v-for="option in setting.options" :key="option.label" :value="option.label">
                         {{ t(option.textKey) }}
                     </el-radio-button>
                 </el-radio-group>
@@ -40,7 +40,7 @@
                         v-model="currentSharedFeedFilters[setting.key]"
                         size="small"
                         @change="saveSharedFeedFilters">
-                        <el-radio-button v-for="option in setting.options" :key="option.label" :label="option.label">
+                        <el-radio-button v-for="option in setting.options" :key="option.label" :value="option.label">
                             {{ t(option.textKey) }}
                         </el-radio-button>
                     </el-radio-group>

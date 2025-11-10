@@ -236,7 +236,7 @@
                                 <div style="float: right">
                                     <el-button
                                         v-if="translationApi && userDialog.ref.bio"
-                                        type="text"
+                                        text
                                         size="small"
                                         style="margin-left: 5px; padding: 0"
                                         @click="translateBio"
@@ -244,7 +244,7 @@
                                     ></el-button>
                                     <el-button
                                         v-if="userDialog.id === currentUser.id"
-                                        type="text"
+                                        text
                                         :icon="Edit"
                                         size="small"
                                         style="margin-left: 5px; padding: 0"

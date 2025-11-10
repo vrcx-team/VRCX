@@ -176,7 +176,7 @@
                                 @click.stop="refreshLocalWorldFavorites"
                                 :icon="Refresh"
                                 circle />
-                            <el-button v-else size="small" type="text" @click.stop="cancelLocalWorldRefresh">
+                            <el-button v-else size="small" text @click.stop="cancelLocalWorldRefresh">
                                 <el-icon class="is-loading"><Loading /></el-icon>
                                 {{ t('view.favorite.worlds.cancel_refresh') }}
                             </el-button>

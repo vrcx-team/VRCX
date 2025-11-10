@@ -16,6 +16,7 @@
 
         <div v-if="showPagination" class="pagination-wrapper">
             <el-pagination
+                size="small"
                 :current-page="internalCurrentPage"
                 :page-size="internalPageSize"
                 :total="filteredData.length"
@@ -105,7 +106,6 @@
             const mergedPaginationProps = computed(() => ({
                 layout: 'sizes, prev, pager, next, total',
                 pageSizes: [10, 15, 20, 25, 50, 100],
-                small: true,
                 ...paginationProps.value
             }));
 

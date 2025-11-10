@@ -118,7 +118,6 @@
         },
         pageSize: 10,
         paginationProps: {
-            small: true,
             layout: 'sizes,prev,pager,next,total',
             pageSizes: [10, 25, 50, 100]
         }

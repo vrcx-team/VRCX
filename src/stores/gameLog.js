@@ -74,7 +74,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
         pageSize: 20,
         pageSizeLinked: true,
         paginationProps: {
-            small: true,
             layout: 'sizes,prev,pager,next,total',
             pageSizes: [10, 15, 20, 25, 50, 100]
         },

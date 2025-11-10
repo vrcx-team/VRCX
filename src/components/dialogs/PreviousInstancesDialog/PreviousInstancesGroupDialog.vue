@@ -38,20 +38,20 @@
             <el-table-column :label="t('table.previous_instances.action')" width="90" align="right">
                 <template #default="scope">
                     <el-button
-                        type="text"
+                        text
                         :icon="DataLine"
                         size="small"
                         @click="showPreviousInstancesInfoDialog(scope.row.location)" />
                     <el-button
                         v-if="shiftHeld"
                         style="color: #f56c6c"
-                        type="text"
+                        text
                         :icon="Close"
                         size="small"
                         @click="deleteGameLogGroupInstance(scope.row)" />
                     <el-button
                         v-else
-                        type="text"
+                        text
                         :icon="Close"
                         size="small"
                         @click="deleteGameLogGroupInstancePrompt(scope.row)" />
@@ -94,7 +94,7 @@
             defaultSort: { prop: 'created_at', order: 'descending' }
         },
         pageSize: 10,
-        paginationProps: { small: true, layout: 'sizes,prev,pager,next,total', pageSizes: [10, 25, 50, 100] }
+        paginationProps: { layout: 'sizes,prev,pager,next,total', pageSizes: [10, 25, 50, 100] }
     });
 
     const props = defineProps({

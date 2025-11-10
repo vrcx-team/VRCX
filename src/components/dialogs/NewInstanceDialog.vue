@@ -10,22 +10,22 @@
                 <el-form :model="newInstanceDialog" label-width="150px">
                     <el-form-item :label="t('dialog.new_instance.access_type')">
                         <el-radio-group v-model="newInstanceDialog.accessType" size="small" @change="buildInstance">
-                            <el-radio-button label="public">{{
+                            <el-radio-button value="public">{{
                                 t('dialog.new_instance.access_type_public')
                             }}</el-radio-button>
-                            <el-radio-button label="group">{{
+                            <el-radio-button value="group">{{
                                 t('dialog.new_instance.access_type_group')
                             }}</el-radio-button>
-                            <el-radio-button label="friends+">{{
+                            <el-radio-button value="friends+">{{
                                 t('dialog.new_instance.access_type_friend_plus')
                             }}</el-radio-button>
-                            <el-radio-button label="friends">{{
+                            <el-radio-button value="friends">{{
                                 t('dialog.new_instance.access_type_friend')
                             }}</el-radio-button>
-                            <el-radio-button label="invite+">{{
+                            <el-radio-button value="invite+">{{
                                 t('dialog.new_instance.access_type_invite_plus')
                             }}</el-radio-button>
-                            <el-radio-button label="invite">{{
+                            <el-radio-button value="invite">{{
                                 t('dialog.new_instance.access_type_invite')
                             }}</el-radio-button>
                         </el-radio-group>
@@ -38,21 +38,21 @@
                             size="small"
                             @change="buildInstance">
                             <el-radio-button
-                                label="members"
+                                value="members"
                                 :disabled="
                                     !hasGroupPermission(newInstanceDialog.groupRef, 'group-instance-open-create')
                                 "
                                 >{{ t('dialog.new_instance.group_access_type_members') }}</el-radio-button
                             >
                             <el-radio-button
-                                label="plus"
+                                value="plus"
                                 :disabled="
                                     !hasGroupPermission(newInstanceDialog.groupRef, 'group-instance-plus-create')
                                 "
                                 >{{ t('dialog.new_instance.group_access_type_plus') }}</el-radio-button
                             >
                             <el-radio-button
-                                label="public"
+                                value="public"
                                 :disabled="
                                     !hasGroupPermission(newInstanceDialog.groupRef, 'group-instance-public-create') ||
                                     newInstanceDialog.groupRef.privacy === 'private'
@@ -63,10 +63,10 @@
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.region')">
                         <el-radio-group v-model="newInstanceDialog.region" size="small" @change="buildInstance">
-                            <el-radio-button label="US West">{{ t('dialog.new_instance.region_usw') }}</el-radio-button>
-                            <el-radio-button label="US East">{{ t('dialog.new_instance.region_use') }}</el-radio-button>
-                            <el-radio-button label="Europe">{{ t('dialog.new_instance.region_eu') }}</el-radio-button>
-                            <el-radio-button label="Japan">{{ t('dialog.new_instance.region_jp') }}</el-radio-button>
+                            <el-radio-button value="US West">{{ t('dialog.new_instance.region_usw') }}</el-radio-button>
+                            <el-radio-button value="US East">{{ t('dialog.new_instance.region_use') }}</el-radio-button>
+                            <el-radio-button value="Europe">{{ t('dialog.new_instance.region_eu') }}</el-radio-button>
+                            <el-radio-button value="Japan">{{ t('dialog.new_instance.region_jp') }}</el-radio-button>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item
@@ -176,22 +176,22 @@
                             v-model="newInstanceDialog.accessType"
                             size="small"
                             @change="buildLegacyInstance">
-                            <el-radio-button label="public">{{
+                            <el-radio-button value="public">{{
                                 t('dialog.new_instance.access_type_public')
                             }}</el-radio-button>
-                            <el-radio-button label="group">{{
+                            <el-radio-button value="group">{{
                                 t('dialog.new_instance.access_type_group')
                             }}</el-radio-button>
-                            <el-radio-button label="friends+">{{
+                            <el-radio-button value="friends+">{{
                                 t('dialog.new_instance.access_type_friend_plus')
                             }}</el-radio-button>
-                            <el-radio-button label="friends">{{
+                            <el-radio-button value="friends">{{
                                 t('dialog.new_instance.access_type_friend')
                             }}</el-radio-button>
-                            <el-radio-button label="invite+">{{
+                            <el-radio-button value="invite+">{{
                                 t('dialog.new_instance.access_type_invite_plus')
                             }}</el-radio-button>
-                            <el-radio-button label="invite">{{
+                            <el-radio-button value="invite">{{
                                 t('dialog.new_instance.access_type_invite')
                             }}</el-radio-button>
                         </el-radio-group>
@@ -203,23 +203,23 @@
                             v-model="newInstanceDialog.groupAccessType"
                             size="small"
                             @change="buildLegacyInstance">
-                            <el-radio-button label="members">{{
+                            <el-radio-button value="members">{{
                                 t('dialog.new_instance.group_access_type_members')
                             }}</el-radio-button>
-                            <el-radio-button label="plus">{{
+                            <el-radio-button value="plus">{{
                                 t('dialog.new_instance.group_access_type_plus')
                             }}</el-radio-button>
-                            <el-radio-button label="public">{{
+                            <el-radio-button value="public">{{
                                 t('dialog.new_instance.group_access_type_public')
                             }}</el-radio-button>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.region')">
                         <el-radio-group v-model="newInstanceDialog.region" size="small" @change="buildLegacyInstance">
-                            <el-radio-button label="US West">{{ t('dialog.new_instance.region_usw') }}</el-radio-button>
-                            <el-radio-button label="US East">{{ t('dialog.new_instance.region_use') }}</el-radio-button>
-                            <el-radio-button label="Europe">{{ t('dialog.new_instance.region_eu') }}</el-radio-button>
-                            <el-radio-button label="Japan">{{ t('dialog.new_instance.region_jp') }}</el-radio-button>
+                            <el-radio-button value="US West">{{ t('dialog.new_instance.region_usw') }}</el-radio-button>
+                            <el-radio-button value="US East">{{ t('dialog.new_instance.region_use') }}</el-radio-button>
+                            <el-radio-button value="Europe">{{ t('dialog.new_instance.region_eu') }}</el-radio-button>
+                            <el-radio-button value="Japan">{{ t('dialog.new_instance.region_jp') }}</el-radio-button>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item
@@ -478,7 +478,7 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, ref, watch } from 'vue';
+    import { nextTick, ref, watch } from 'vue';
     import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
