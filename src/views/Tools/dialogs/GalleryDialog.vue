@@ -219,6 +219,14 @@
                         <span>{{ t('dialog.gallery_icons.emoji_animation_type') }}</span>
                     </el-checkbox>
                     <template v-if="emojiAnimType">
+                        <el-button
+                            type="default"
+                            size="small"
+                            :icon="Link"
+                            style="margin-right: 10px"
+                            @click="openExternalLink('https://vrcemoji.com')">
+                            {{ t('dialog.gallery_icons.create_animated_emoji') }}
+                        </el-button>
                         <span style="margin-right: 10px">{{ t('dialog.gallery_icons.emoji_animation_fps') }}</span>
                         <el-input-number
                             size="small"
@@ -529,14 +537,20 @@
 </template>
 
 <script setup>
-    import { Close, Delete, Picture, Plus, Present, Refresh, Upload } from '@element-plus/icons-vue';
+    import { Close, Delete, Link, Picture, Plus, Present, Refresh, Upload } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
     import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import {
+        extractFileId,
+        formatDateFilter,
+        getEmojiFileName,
+        getPrintFileName,
+        openExternalLink
+    } from '../../../shared/utils';
     import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../../api';
-    import { extractFileId, formatDateFilter, getEmojiFileName, getPrintFileName } from '../../../shared/utils';
     import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../../stores';
     import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../shared/constants';
     import { AppDebug } from '../../../service/appConfig';

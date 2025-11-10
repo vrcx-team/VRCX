@@ -1572,7 +1572,8 @@
             "sticker": "Sticker",
             "drone_skin": "Drone Skin",
             "emoji": "Emoji",
-            "redeem": "Redeem"
+            "redeem": "Redeem",
+            "create_animated_emoji": "Animated Emoji Generator"
         },
         "change_content_image": {
             "avatar": "Change Avatar Image",
