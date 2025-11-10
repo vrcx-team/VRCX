@@ -1713,10 +1713,10 @@
                         const fullFunctionName = item[0];
                         const jsonArg = item[1];
 
-                        if (typeof window.$app === 'object' && typeof window.$app[fullFunctionName] === 'function') {
-                            window.$app[fullFunctionName](jsonArg);
+                        if (typeof window.$vr === 'object' && typeof window.$vr[fullFunctionName] === 'function') {
+                            window.$vr[fullFunctionName](jsonArg);
                         } else {
-                            console.error(`$app.${fullFunctionName} is not defined or is not a function`);
+                            console.error(`$vr.${fullFunctionName} is not defined or is not a function`);
                         }
                     });
                 }
@@ -1728,10 +1728,10 @@
                         const fullFunctionName = item[0];
                         const jsonArg = item[1];
 
-                        if (typeof window.$app === 'object' && typeof window.$app[fullFunctionName] === 'function') {
-                            window.$app[fullFunctionName](jsonArg);
+                        if (typeof window.$vr === 'object' && typeof window.$vr[fullFunctionName] === 'function') {
+                            window.$vr[fullFunctionName](jsonArg);
                         } else {
-                            console.error(`$app.${fullFunctionName} is not defined or is not a function`);
+                            console.error(`$vr.${fullFunctionName} is not defined or is not a function`);
                         }
                     });
                 }
