@@ -16,7 +16,8 @@ import {
     hasGroupPermission,
     isRealInstance,
     parseLocation,
-    replaceBioSymbols
+    replaceBioSymbols,
+    replaceReactiveObject
 } from '../shared/utils';
 import { instanceRequest, userRequest, worldRequest } from '../api';
 import { database } from '../service/database';
@@ -79,7 +80,7 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     const previousInstancesInfoDialogInstanceId = ref('');
 
-    let instanceJoinHistory = reactive(new Map());
+    const instanceJoinHistory = reactive(new Map());
 
     const currentInstanceUsersData = ref([]);
     const currentInstanceUsersTable = computed(() => {
@@ -116,9 +117,8 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     async function getInstanceJoinHistory() {
         try {
-            instanceJoinHistory = reactive(
-                await database.getInstanceJoinHistory()
-            );
+            const data = await database.getInstanceJoinHistory();
+            replaceReactiveObject(instanceJoinHistory, data);
         } catch (error) {
             console.error('Failed to get instance join history:', error);
         }
