@@ -1,5 +1,5 @@
 <template>
-    <div style="float: left; margin: 5px">
+    <div style="float: left; margin: 5px; z-index: 3000">
         <el-tooltip placement="top" :content="t('view.login.updater')">
             <el-button type="default" size="small" :icon="Download" circle @click="showVRCXUpdateDialog"></el-button>
         </el-tooltip>
