@@ -42,7 +42,7 @@
             <el-table-column :label="t('table.previous_instances.action')" width="90" align="right">
                 <template #default="scope">
                     <el-button
-                        type="text"
+                        text
                         :icon="DataLine"
                         size="small"
                         class="button-pd-0"
@@ -50,14 +50,14 @@
                     <el-button
                         v-if="shiftHeld"
                         style="color: #f56c6c"
-                        type="text"
+                        text
                         :icon="Close"
                         size="small"
                         class="button-pd-0"
                         @click="deleteGameLogWorldInstance(scope.row)"></el-button>
                     <el-button
                         v-else
-                        type="text"
+                        text
                         :icon="Close"
                         size="small"
                         class="button-pd-0"
@@ -110,7 +110,6 @@
         },
         pageSize: 10,
         paginationProps: {
-            small: true,
             layout: 'sizes,prev,pager,next,total',
             pageSizes: [10, 25, 50, 100]
         }

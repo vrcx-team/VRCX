@@ -70,14 +70,14 @@
                     <el-button
                         v-if="shiftHeld"
                         style="color: #f56c6c"
-                        type="text"
+                        text
                         :icon="Close"
                         size="small"
                         class="button-pd-0"
                         @click="deleteFriendLog(scope.row)"></el-button>
                     <el-button
                         v-else
-                        type="text"
+                        text
                         :icon="Delete"
                         size="small"
                         class="button-pd-0"

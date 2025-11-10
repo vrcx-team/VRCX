@@ -176,9 +176,9 @@
                             size="small"
                             style="margin: 5px; display: block"
                             @change="searchAvatar">
-                            <el-radio label="all">{{ t('view.search.avatar.all') }}</el-radio>
-                            <el-radio label="public">{{ t('view.search.avatar.public') }}</el-radio>
-                            <el-radio label="private">{{ t('view.search.avatar.private') }}</el-radio>
+                            <el-radio value="all">{{ t('view.search.avatar.all') }}</el-radio>
+                            <el-radio value="public">{{ t('view.search.avatar.public') }}</el-radio>
+                            <el-radio value="private">{{ t('view.search.avatar.private') }}</el-radio>
                         </el-radio-group>
                         <el-divider direction="vertical"></el-divider>
                         <el-radio-group
@@ -186,9 +186,9 @@
                             size="small"
                             style="margin: 5px; display: block"
                             @change="searchAvatar">
-                            <el-radio label="all">{{ t('view.search.avatar.all') }}</el-radio>
-                            <el-radio label="local">{{ t('view.search.avatar.local') }}</el-radio>
-                            <el-radio label="remote" :disabled="!avatarRemoteDatabase">{{
+                            <el-radio value="all">{{ t('view.search.avatar.all') }}</el-radio>
+                            <el-radio value="local">{{ t('view.search.avatar.local') }}</el-radio>
+                            <el-radio value="remote" :disabled="!avatarRemoteDatabase">{{
                                 t('view.search.avatar.remote')
                             }}</el-radio>
                         </el-radio-group>
@@ -201,9 +201,9 @@
                         size="small"
                         style="margin: 5px; display: block"
                         @change="searchAvatar">
-                        <el-radio label="name">{{ t('view.search.avatar.sort_name') }}</el-radio>
-                        <el-radio label="update">{{ t('view.search.avatar.sort_update') }}</el-radio>
-                        <el-radio label="created">{{ t('view.search.avatar.sort_created') }}</el-radio>
+                        <el-radio value="name">{{ t('view.search.avatar.sort_name') }}</el-radio>
+                        <el-radio value="update">{{ t('view.search.avatar.sort_update') }}</el-radio>
+                        <el-radio value="created">{{ t('view.search.avatar.sort_created') }}</el-radio>
                     </el-radio-group>
                 </div>
                 <div class="x-friend-list" style="margin-top: 20px; min-height: 500px">

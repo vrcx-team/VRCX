@@ -33,7 +33,7 @@
                     <template #default="scope">
                         <el-tooltip placement="top" :content="t('dialog.registry_backup.restore')">
                             <el-button
-                                type="text"
+                                text
                                 :icon="Upload"
                                 size="small"
                                 class="button-pd-0"
@@ -41,7 +41,7 @@
                         </el-tooltip>
                         <el-tooltip placement="top" :content="t('dialog.registry_backup.save_to_file')">
                             <el-button
-                                type="text"
+                                text
                                 :icon="Download"
                                 size="small"
                                 class="button-pd-0"
@@ -49,7 +49,7 @@
                         </el-tooltip>
                         <el-tooltip placement="top" :content="t('dialog.registry_backup.delete')">
                             <el-button
-                                type="text"
+                                text
                                 :icon="Delete"
                                 size="small"
                                 class="button-pd-0"

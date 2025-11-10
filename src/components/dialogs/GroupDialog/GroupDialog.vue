@@ -511,7 +511,7 @@
                                     <template v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
                                         <el-tooltip placement="top" :content="t('dialog.group.posts.edit_tooltip')">
                                             <el-button
-                                                type="text"
+                                                text
                                                 :icon="Edit"
                                                 size="small"
                                                 style="margin-left: 5px; padding: 0"
@@ -521,7 +521,7 @@
                                         </el-tooltip>
                                         <el-tooltip placement="top" :content="t('dialog.group.posts.delete_tooltip')">
                                             <el-button
-                                                type="text"
+                                                text
                                                 :icon="Delete"
                                                 size="small"
                                                 style="margin-left: 5px; padding: 0"
@@ -784,7 +784,7 @@
                                             v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
                                             <el-tooltip placement="top" :content="t('dialog.group.posts.edit_tooltip')">
                                                 <el-button
-                                                    type="text"
+                                                    text
                                                     :icon="Edit"
                                                     size="small"
                                                     style="margin-left: 5px"
@@ -794,7 +794,7 @@
                                                 placement="top"
                                                 :content="t('dialog.group.posts.delete_tooltip')">
                                                 <el-button
-                                                    type="text"
+                                                    text
                                                     :icon="Delete"
                                                     size="small"
                                                     style="margin-left: 5px"

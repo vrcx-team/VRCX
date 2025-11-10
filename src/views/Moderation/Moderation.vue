@@ -67,13 +67,13 @@
                         <el-button
                             v-if="shiftHeld"
                             style="color: #f56c6c"
-                            type="text"
+                            text
                             :icon="Close"
                             size="small"
                             @click="deletePlayerModeration(scope.row)"></el-button>
                         <el-button
                             v-else
-                            type="text"
+                            text
                             :icon="Close"
                             size="small"
                             @click="deletePlayerModerationPrompt(scope.row)"></el-button>

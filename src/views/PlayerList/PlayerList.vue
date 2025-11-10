@@ -154,7 +154,7 @@
                                     currentInstanceWorld.ref.description.length > 50 &&
                                     !currentInstanceWorldDescriptionExpanded
                                 "
-                                type="text"
+                                text
                                 size="small"
                                 @click="currentInstanceWorldDescriptionExpanded = true"
                                 >{{ !currentInstanceWorldDescriptionExpanded && 'Show more' }}</el-button
@@ -234,7 +234,7 @@
                             <template v-if="chatboxUserBlacklist.has(scope.row.ref.id)">
                                 <el-tooltip placement="left" content="Unblock chatbox messages">
                                     <el-button
-                                        type="text"
+                                        text
                                         :icon="Mute"
                                         size="small"
                                         style="color: red; margin-right: 5px"
@@ -244,7 +244,7 @@
                             <template v-else>
                                 <el-tooltip placement="left" content="Block chatbox messages">
                                     <el-button
-                                        type="text"
+                                        text
                                         :icon="Microphone"
                                         size="small"
                                         style="margin-right: 5px"

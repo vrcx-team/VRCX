@@ -179,7 +179,7 @@
                                     circle
                                     @click.stop="refreshLocalAvatarFavorites" />
                             </template>
-                            <el-button v-else size="small" type="text" @click.stop="cancelLocalAvatarRefresh">
+                            <el-button v-else size="small" text @click.stop="cancelLocalAvatarRefresh">
                                 <el-icon class="is-loading"><Loading /></el-icon>
                                 {{ t('view.favorite.avatars.cancel_refresh') }}
                             </el-button>

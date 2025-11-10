@@ -50,13 +50,13 @@
                     size="small"
                     style="margin-top: 5px"
                     @change="setAutoUpdateVRCX">
-                    <el-radio-button label="Off">{{
+                    <el-radio-button value="Off">{{
                         t('view.settings.general.vrcx_updater.auto_update_off')
                     }}</el-radio-button>
-                    <el-radio-button label="Notify">{{
+                    <el-radio-button value="Notify">{{
                         t('view.settings.general.vrcx_updater.auto_update_notify')
                     }}</el-radio-button>
-                    <el-radio-button label="Auto Download">{{
+                    <el-radio-button value="Auto Download">{{
                         t('view.settings.general.vrcx_updater.auto_update_download')
                     }}</el-radio-button>
                 </el-radio-group>
@@ -230,8 +230,8 @@
                     :model-value="autoStateChangeNoFriends"
                     :disabled="!autoStateChangeEnabled"
                     @change="setAutoStateChangeNoFriends">
-                    <el-radio :label="false">{{ t('view.settings.general.automation.alone') }}</el-radio>
-                    <el-radio :label="true">{{ t('view.settings.general.automation.no_friends') }}</el-radio>
+                    <el-radio :value="false">{{ t('view.settings.general.automation.alone') }}</el-radio>
+                    <el-radio :value="true">{{ t('view.settings.general.automation.no_friends') }}</el-radio>
                 </el-radio-group>
             </div>
             <div class="options-container-item">
@@ -250,13 +250,13 @@
                     size="small"
                     style="margin-top: 5px"
                     @change="setAutoAcceptInviteRequests">
-                    <el-radio-button label="Off">{{
+                    <el-radio-button value="Off">{{
                         t('view.settings.general.automation.auto_invite_request_accept_off')
                     }}</el-radio-button>
-                    <el-radio-button label="All Favorites">{{
+                    <el-radio-button value="All Favorites">{{
                         t('view.settings.general.automation.auto_invite_request_accept_favs')
                     }}</el-radio-button>
-                    <el-radio-button label="Selected Favorites">{{
+                    <el-radio-button value="Selected Favorites">{{
                         t('view.settings.general.automation.auto_invite_request_accept_selected_favs')
                     }}</el-radio-button>
                 </el-radio-group>

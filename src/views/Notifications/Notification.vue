@@ -187,7 +187,7 @@
                         <template v-if="scope.row.type === 'friendRequest'">
                             <el-tooltip placement="top" content="Accept">
                                 <el-button
-                                    type="text"
+                                    text
                                     :icon="Check"
                                     style="color: #67c23a"
                                     size="small"
@@ -198,7 +198,7 @@
                         <template v-else-if="scope.row.type === 'invite'">
                             <el-tooltip placement="top" content="Decline with message">
                                 <el-button
-                                    type="text"
+                                    text
                                     :icon="ChatLineSquare"
                                     size="small"
                                     class="button-pd-0"
@@ -210,7 +210,7 @@
                                 v-if="lastLocation.location && isGameRunning && checkCanInvite(lastLocation.location)">
                                 <el-tooltip placement="top" content="Invite">
                                     <el-button
-                                        type="text"
+                                        text
                                         :icon="Check"
                                         style="color: #67c23a"
                                         size="small"
@@ -220,7 +220,7 @@
                             </template>
                             <el-tooltip placement="top" content="Decline with message">
                                 <el-button
-                                    type="text"
+                                    text
                                     :icon="ChatLineSquare"
                                     size="small"
                                     :class="['button-pd-0', 'ml-5']"
@@ -233,14 +233,14 @@
                                 <el-tooltip placement="top" :content="response.text">
                                     <el-button
                                         v-if="response.type === 'link'"
-                                        type="text"
+                                        text
                                         :icon="Link"
                                         size="small"
                                         :class="['button-pd-0', 'ml-5']"
                                         @click="openNotificationLink(response.data)" />
                                     <el-button
                                         v-else-if="response.icon === 'check'"
-                                        type="text"
+                                        text
                                         :icon="Check"
                                         size="small"
                                         :class="['button-pd-0', 'ml-5']"
@@ -249,7 +249,7 @@
                                         " />
                                     <el-button
                                         v-else-if="response.icon === 'cancel'"
-                                        type="text"
+                                        text
                                         :icon="Close"
                                         size="small"
                                         :class="['button-pd-0', 'ml-5']"
@@ -258,7 +258,7 @@
                                         " />
                                     <el-button
                                         v-else-if="response.icon === 'ban'"
-                                        type="text"
+                                        text
                                         :icon="CircleClose"
                                         size="small"
                                         :class="['button-pd-0', 'ml-5']"
@@ -267,7 +267,7 @@
                                         " />
                                     <el-button
                                         v-else-if="response.icon === 'bell-slash'"
-                                        type="text"
+                                        text
                                         :icon="Bell"
                                         size="small"
                                         :class="['button-pd-0', 'ml-5']"
@@ -276,14 +276,14 @@
                                         " />
                                     <el-button
                                         v-else-if="response.icon === 'reply' && scope.row.type === 'boop'"
-                                        type="text"
+                                        text
                                         :icon="ChatLineSquare"
                                         size="small"
                                         :class="['button-pd-0', 'ml-5']"
                                         @click="showSendBoopDialog(scope.row.senderUserId)" />
                                     <el-button
                                         v-else-if="response.icon === 'reply'"
-                                        type="text"
+                                        text
                                         :icon="ChatLineSquare"
                                         size="small"
                                         :class="['button-pd-0', 'ml-5']"
@@ -292,7 +292,7 @@
                                         " />
                                     <el-button
                                         v-else
-                                        type="text"
+                                        text
                                         :icon="CollectionTag"
                                         size="small"
                                         :class="['button-pd-0', 'ml-5']"
@@ -318,14 +318,14 @@
                                 <el-button
                                     v-if="shiftHeld"
                                     style="color: #f56c6c"
-                                    type="text"
+                                    text
                                     :icon="Close"
                                     size="small"
                                     :class="['button-pd-0', 'ml-5']"
                                     @click="hideNotification(scope.row)" />
                                 <el-button
                                     v-else
-                                    type="text"
+                                    text
                                     :icon="Close"
                                     size="small"
                                     :class="['button-pd-0', 'ml-5']"
@@ -338,14 +338,14 @@
                             <el-button
                                 v-if="shiftHeld"
                                 style="color: #f56c6c"
-                                type="text"
+                                text
                                 :icon="Delete"
                                 size="small"
                                 :class="['button-pd-0', 'ml-5']"
                                 @click="deleteNotificationLog(scope.row)" />
                             <el-button
                                 v-else
-                                type="text"
+                                text
                                 :icon="Delete"
                                 size="small"
                                 :class="['button-pd-0', 'ml-5']"
@@ -364,14 +364,14 @@
                             <el-button
                                 v-if="shiftHeld"
                                 style="color: #f56c6c; margin-left: 5px"
-                                type="text"
+                                text
                                 :icon="Close"
                                 size="small"
                                 class="button-pd-0"
                                 @click="deleteNotificationLog(scope.row)" />
                             <el-button
                                 v-else
-                                type="text"
+                                text
                                 :icon="Delete"
                                 size="small"
                                 :class="['button-pd-0', 'ml-5']"

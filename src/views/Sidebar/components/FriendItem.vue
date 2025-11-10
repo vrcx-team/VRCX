@@ -35,7 +35,7 @@
         <template v-else-if="!friend.ref && !isRefreshFriendsLoading">
             <span>{{ friend.name || friend.id }}</span>
             <el-button
-                type="text"
+                text
                 :icon="Close"
                 size="small"
                 style="margin-left: 5px"

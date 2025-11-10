@@ -79,11 +79,7 @@
 
             <el-table-column :label="t('table.import.skip_export')" width="90" align="right">
                 <template #default="{ row }">
-                    <el-button
-                        type="text"
-                        :icon="Close"
-                        size="small"
-                        @click="removeFromNoteExportTable(row)"></el-button>
+                    <el-button text :icon="Close" size="small" @click="removeFromNoteExportTable(row)"></el-button>
                 </template>
             </el-table-column>
         </DataTable>

@@ -6,7 +6,7 @@
         width="90vw"
         height="80vh"
         @close="closeDialog">
-        <template #title>
+        <template #header>
             <div class="dialog-title-container">
                 <span>{{ t('dialog.group_calendar.header') }}</span>
                 <el-button @click="toggleViewMode" type="primary" size="small" class="view-toggle-btn">

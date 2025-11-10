@@ -106,7 +106,7 @@
                             style="margin-top: 10px">
                             <el-table-column width="55" prop="$selected">
                                 <template #default="scope">
-                                    <el-button type="text" size="small" @click.stop>
+                                    <el-button text size="small" @click.stop>
                                         <el-checkbox
                                             v-model="scope.row.$selected"
                                             @change="
@@ -223,7 +223,7 @@
                         <DataTable v-bind="groupBansModerationTable" style="margin-top: 10px">
                             <el-table-column width="55" prop="$selected">
                                 <template #default="scope">
-                                    <el-button type="text" size="small" @click.stop>
+                                    <el-button text size="small" @click.stop>
                                         <el-checkbox
                                             v-model="scope.row.$selected"
                                             @change="
@@ -339,7 +339,7 @@
                                 <DataTable v-bind="groupInvitesModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
-                                            <el-button type="text" size="small" @click.stop>
+                                            <el-button text size="small" @click.stop>
                                                 <el-checkbox
                                                     v-model="scope.row.$selected"
                                                     @change="
@@ -424,7 +424,7 @@
                                 <DataTable v-bind="groupJoinRequestsModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
-                                            <el-button type="text" size="small" @click.stop>
+                                            <el-button text size="small" @click.stop>
                                                 <el-checkbox
                                                     v-model="scope.row.$selected"
                                                     @change="
@@ -535,7 +535,7 @@
                                 <DataTable v-bind="groupBlockedModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
-                                            <el-button type="text" size="small" @click.stop>
+                                            <el-button text size="small" @click.stop>
                                                 <el-checkbox
                                                     v-model="scope.row.$selected"
                                                     @change="
@@ -947,7 +947,6 @@
         tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
-            small: true,
             layout: 'sizes,prev,pager,next,total',
             pageSizes: [10, 15, 20, 25, 50, 100]
         }
@@ -957,7 +956,6 @@
         tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
-            small: true,
             layout: 'sizes,prev,pager,next,total',
             pageSizes: [10, 15, 20, 25, 50, 100]
         }
@@ -978,7 +976,6 @@
         tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
-            small: true,
             layout: 'sizes,prev,pager,next,total',
             pageSizes: [10, 15, 20, 25, 50, 100]
         }
@@ -989,7 +986,6 @@
         tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
-            small: true,
             layout: 'sizes,prev,pager,next,total',
             pageSizes: [10, 15, 20, 25, 50, 100]
         }
@@ -999,7 +995,6 @@
         tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
-            small: true,
             layout: 'sizes,prev,pager,next,total',
             pageSizes: [10, 15, 20, 25, 50, 100]
         }

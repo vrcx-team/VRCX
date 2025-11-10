@@ -75,10 +75,10 @@
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.sort_favorite_by') }}</span>
                 <el-radio-group :model-value="sortFavorites" @change="saveSortFavoritesOption">
-                    <el-radio :label="false">{{
+                    <el-radio :value="false">{{
                         t('view.settings.appearance.appearance.sort_favorite_by_name')
                     }}</el-radio>
-                    <el-radio :label="true">{{
+                    <el-radio :value="true">{{
                         t('view.settings.appearance.appearance.sort_favorite_by_date')
                     }}</el-radio>
                 </el-radio-group>
@@ -86,10 +86,10 @@
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.sort_instance_users_by') }}</span>
                 <el-radio-group :model-value="instanceUsersSortAlphabetical" @change="setInstanceUsersSortAlphabetical">
-                    <el-radio :label="false">{{
+                    <el-radio :value="false">{{
                         t('view.settings.appearance.appearance.sort_instance_users_by_time')
                     }}</el-radio>
-                    <el-radio :label="true">{{
+                    <el-radio :value="true">{{
                         t('view.settings.appearance.appearance.sort_instance_users_by_alphabet')
                     }}</el-radio>
                 </el-radio-group>
@@ -111,8 +111,8 @@
                         setDtHour12();
                         updateVRConfigVars();
                     ">
-                    <el-radio :label="true">{{ t('view.settings.appearance.timedate.time_format_12') }}</el-radio>
-                    <el-radio :label="false">{{ t('view.settings.appearance.timedate.time_format_24') }}</el-radio>
+                    <el-radio :value="true">{{ t('view.settings.appearance.timedate.time_format_12') }}</el-radio>
+                    <el-radio :value="false">{{ t('view.settings.appearance.timedate.time_format_24') }}</el-radio>
                 </el-radio-group>
             </div>
             <simple-switch

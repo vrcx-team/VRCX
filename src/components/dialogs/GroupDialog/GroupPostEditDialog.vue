@@ -29,10 +29,10 @@
                 </el-form-item>
                 <el-form-item :label="t('dialog.group_post_edit.post_visibility')">
                     <el-radio-group v-model="groupPostEditDialog.visibility" size="small">
-                        <el-radio label="public">
+                        <el-radio value="public">
                             {{ t('dialog.group_post_edit.visibility_public') }}
                         </el-radio>
-                        <el-radio label="group">
+                        <el-radio value="group">
                             {{ t('dialog.group_post_edit.visibility_group') }}
                         </el-radio>
                     </el-radio-group>

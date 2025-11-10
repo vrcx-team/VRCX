@@ -58,7 +58,7 @@
             <el-table-column :label="t('table.profile.invite_messages.action')" width="70" align="right">
                 <template #default="scope">
                     <el-button
-                        type="text"
+                        text
                         :icon="Edit"
                         size="small"
                         @click.stop="showEditAndSendInviteDialog(scope.row)"></el-button>

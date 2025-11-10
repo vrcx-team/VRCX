@@ -162,14 +162,14 @@
                         <el-button
                             v-if="shiftHeld"
                             style="color: #f56c6c"
-                            type="text"
+                            text
                             :icon="Close"
                             size="small"
                             class="small-button"
                             @click="deleteGameLogEntry(scope.row)"></el-button>
                         <el-button
                             v-else
-                            type="text"
+                            text
                             :icon="Delete"
                             size="small"
                             class="small-button"
@@ -178,7 +178,7 @@
                     <el-tooltip placement="top" :content="t('dialog.previous_instances.info')">
                         <el-button
                             v-if="scope.row.type === 'Location'"
-                            type="text"
+                            text
                             :icon="DataLine"
                             size="small"
                             class="small-button"

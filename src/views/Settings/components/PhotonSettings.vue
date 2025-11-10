@@ -20,13 +20,13 @@
                     setPhotonEventOverlayFilter($event);
                     saveEventOverlay();
                 ">
-                <el-radio-button label="VIP">{{
+                <el-radio-button value="VIP">{{
                     t('view.settings.advanced.photon.event_hud.filter_favorites')
                 }}</el-radio-button>
-                <el-radio-button label="Friends">{{
+                <el-radio-button value="Friends">{{
                     t('view.settings.advanced.photon.event_hud.filter_friends')
                 }}</el-radio-button>
-                <el-radio-button label="Everyone">{{
+                <el-radio-button value="Everyone">{{
                     t('view.settings.advanced.photon.event_hud.filter_everyone')
                 }}</el-radio-button>
             </el-radio-group>

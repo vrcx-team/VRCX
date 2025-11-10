@@ -92,7 +92,7 @@
                     width="55"
                     prop="$selected">
                     <template #default="{ row }">
-                        <el-button type="text" size="small" @click.stop>
+                        <el-button text size="small" @click.stop>
                             <el-checkbox
                                 v-model="row.$selected"
                                 @change="friendsListBulkUnfriendForceUpdate++"></el-checkbox>
@@ -243,7 +243,7 @@
                 <el-table-column :label="t('table.friendList.unfriend')" width="100" align="center">
                     <template #default="{ row }">
                         <el-button
-                            type="text"
+                            text
                             :icon="Close"
                             style="color: #f56c6c"
                             size="small"
@@ -301,7 +301,7 @@
         data: [],
         tableProps: { stripe: true, size: 'small', defaultSort: { prop: '$friendNumber', order: 'descending' } },
         pageSize: 100,
-        paginationProps: { small: true, layout: 'sizes,prev,pager,next,total', pageSizes: [50, 100, 250, 500] }
+        paginationProps: { layout: 'sizes,prev,pager,next,total', pageSizes: [50, 100, 250, 500] }
     });
     const friendsListBulkUnfriendMode = ref(false);
     const friendsListLoading = ref(false);

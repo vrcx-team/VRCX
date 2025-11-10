@@ -50,8 +50,8 @@
                     setOpenVRAlways();
                     saveOpenVROption();
                 ">
-                <el-radio :label="false">{{ 'VRChat' }}</el-radio>
-                <el-radio :label="true">{{ 'SteamVR' }}</el-radio>
+                <el-radio :value="false">{{ 'VRChat' }}</el-radio>
+                <el-radio :value="true">{{ 'SteamVR' }}</el-radio>
             </el-radio-group>
         </div>
         <div class="options-container-item">
@@ -63,10 +63,10 @@
                     setOverlaybutton();
                     saveOpenVROption();
                 ">
-                <el-radio :label="false">{{
+                <el-radio :value="false">{{
                     t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button_grip')
                 }}</el-radio>
-                <el-radio :label="true">{{
+                <el-radio :value="true">{{
                     t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button_menu')
                 }}</el-radio>
             </el-radio-group>
@@ -80,13 +80,13 @@
                     setOverlayHand($event);
                     saveOpenVROption();
                 ">
-                <el-radio-button label="1">{{
+                <el-radio-button value="1">{{
                     t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_left')
                 }}</el-radio-button>
-                <el-radio-button label="2">{{
+                <el-radio-button value="2">{{
                     t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_right')
                 }}</el-radio-button>
-                <el-radio-button label="0">{{
+                <el-radio-button value="0">{{
                     t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_both')
                 }}</el-radio-button>
             </el-radio-group>

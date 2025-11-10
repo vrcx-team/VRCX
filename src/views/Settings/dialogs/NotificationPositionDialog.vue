@@ -24,15 +24,15 @@
             <rect style="fill: #c4c4c4" x="5" y="5" width="290" height="158.75" rx="2.5" />
         </svg>
         <el-radio-group :model-value="notificationPosition" size="small" @change="changeNotificationPosition">
-            <el-radio label="topLeft" style="margin: 0; position: absolute; left: 35px; top: 120px">‎</el-radio>
-            <el-radio label="top" style="margin: 0; position: absolute; left: 195px; top: 120px">‎</el-radio>
-            <el-radio label="topRight" style="margin: 0; position: absolute; right: 25px; top: 120px">‎</el-radio>
-            <el-radio label="centerLeft" style="margin: 0; position: absolute; left: 35px; top: 200px">‎</el-radio>
-            <el-radio label="center" style="margin: 0; position: absolute; left: 195px; top: 200px">‎</el-radio>
-            <el-radio label="centerRight" style="margin: 0; position: absolute; right: 25px; top: 200px">‎</el-radio>
-            <el-radio label="bottomLeft" style="margin: 0; position: absolute; left: 35px; top: 280px">‎</el-radio>
-            <el-radio label="bottom" style="margin: 0; position: absolute; left: 195px; top: 280px">‎</el-radio>
-            <el-radio label="bottomRight" style="margin: 0; position: absolute; right: 25px; top: 280px">‎</el-radio>
+            <el-radio value="topLeft" style="margin: 0; position: absolute; left: 35px; top: 120px">‎</el-radio>
+            <el-radio value="top" style="margin: 0; position: absolute; left: 195px; top: 120px">‎</el-radio>
+            <el-radio value="topRight" style="margin: 0; position: absolute; right: 25px; top: 120px">‎</el-radio>
+            <el-radio value="centerLeft" style="margin: 0; position: absolute; left: 35px; top: 200px">‎</el-radio>
+            <el-radio value="center" style="margin: 0; position: absolute; left: 195px; top: 200px">‎</el-radio>
+            <el-radio value="centerRight" style="margin: 0; position: absolute; right: 25px; top: 200px">‎</el-radio>
+            <el-radio value="bottomLeft" style="margin: 0; position: absolute; left: 35px; top: 280px">‎</el-radio>
+            <el-radio value="bottom" style="margin: 0; position: absolute; left: 195px; top: 280px">‎</el-radio>
+            <el-radio value="bottomRight" style="margin: 0; position: absolute; right: 25px; top: 280px">‎</el-radio>
         </el-radio-group>
 
         <template #footer>
