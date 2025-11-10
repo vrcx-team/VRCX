@@ -249,6 +249,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             'VRCX_cropInstancePrints',
             cropInstancePrints.value
         );
+        cropPrintsChanged();
     }
     function setSaveInstanceStickers() {
         saveInstanceStickers.value = !saveInstanceStickers.value;
