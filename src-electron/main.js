@@ -11,6 +11,7 @@ const {
     nativeImage
 } = require('electron');
 const { spawn, spawnSync } = require('child_process');
+const { clipboard } = require('electron');
 const fs = require('fs');
 const https = require('https');
 
@@ -261,6 +262,9 @@ ipcMain.handle(
 
 ipcMain.handle('app:getArch', () => {
     return process.arch.toString();
+});
+ipcMain.handle('app:getClipboardText', () => {
+    return clipboard.readText();
 });
 
 ipcMain.handle('app:getNoUpdater', () => {

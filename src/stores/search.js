@@ -219,12 +219,21 @@ export const useSearchStore = defineStore('Search', () => {
         return results;
     }
 
-    function directAccessPaste() {
-        AppApi.GetClipboard().then((clipboard) => {
-            if (!directAccessParse(clipboard.trim())) {
-                promptOmniDirectDialog();
-            }
-        });
+    async function directAccessPaste() {
+        let cbText = '';
+        if (LINUX) {
+            cbText = await window.electron.getClipboardText();
+        } else {
+            cbText = await AppApi.GetClipboard().catch((e) => {
+                console.log(e);
+                return '';
+            });
+        }
+
+        let trimemd = cbText.trim();
+        if (!directAccessParse(trimemd)) {
+            promptOmniDirectDialog();
+        }
     }
 
     function directAccessParse(input) {
@@ -355,15 +364,15 @@ export const useSearchStore = defineStore('Search', () => {
         try {
             const { value, action } = await directAccessPrompt.value;
 
-                if (action === 'confirm' && value) {
-                    const input = value.trim();
-                    if (!directAccessParse(input)) {
-                        ElMessage({
+            if (action === 'confirm' && value) {
+                const input = value.trim();
+                if (!directAccessParse(input)) {
+                    ElMessage({
                         message: t('prompt.direct_access_omni.message.error'),
-                            type: 'error'
-                        });
-                    }
+                        type: 'error'
+                    });
                 }
+            }
         } catch {
         } finally {
             directAccessPrompt.value = null;
