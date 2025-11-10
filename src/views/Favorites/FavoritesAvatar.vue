@@ -17,14 +17,27 @@
                     class="favorites-toolbar__search"
                     :placeholder="t('view.favorite.avatars.search')"
                     @input="searchAvatarFavorites" />
-                <el-dropdown trigger="click" :hide-on-click="true">
+                <el-dropdown ref="avatarToolbarMenuRef" trigger="click" :hide-on-click="false">
                     <el-button :icon="MoreFilled" size="small" circle />
                     <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item @click="showAvatarImportDialog">
+                        <el-dropdown-menu class="favorites-dropdown">
+                            <li class="favorites-dropdown__scale" @click.stop>
+                                <div class="favorites-dropdown__scale-header">
+                                    <span>Scale</span>
+                                    <span class="favorites-dropdown__scale-value">{{ avatarCardScalePercent }}%</span>
+                                </div>
+                                <el-slider
+                                    v-model="avatarCardScale"
+                                    class="favorites-dropdown__slider"
+                                    :min="avatarCardScaleSlider.min"
+                                    :max="avatarCardScaleSlider.max"
+                                    :step="avatarCardScaleSlider.step"
+                                    :show-tooltip="false" />
+                            </li>
+                            <el-dropdown-item @click="handleAvatarImportClick">
                                 {{ t('view.favorite.import') }}
                             </el-dropdown-item>
-                            <el-dropdown-item divided @click="showAvatarExportDialog">
+                            <el-dropdown-item divided @click="handleAvatarExportClick">
                                 {{ t('view.favorite.export') }}
                             </el-dropdown-item>
                         </el-dropdown-menu>
@@ -32,8 +45,8 @@
                 </el-dropdown>
             </div>
         </div>
-        <el-splitter class="favorites-splitter">
-            <el-splitter-panel :size="260" :min="0" :max="360" collapsible>
+        <el-splitter class="favorites-splitter" @resize-end="handleAvatarSplitterResize">
+            <el-splitter-panel :size="avatarSplitterSize" :min="0" :max="360" collapsible>
                 <div class="favorites-groups-panel">
                     <div class="group-section">
                         <div class="group-section__header">
@@ -94,7 +107,6 @@
                                                     <span>{{ t('view.favorite.rename_tooltip') }}</span>
                                                 </button>
                                                 <el-popover
-                                                    popper-class="favorites-group-menu__popover"
                                                     placement="right"
                                                     trigger="hover"
                                                     :width="180"
@@ -344,10 +356,13 @@
                             </el-button>
                         </div>
                     </div>
-                    <div class="favorites-content__list">
+                    <div ref="avatarFavoritesContainerRef" class="favorites-content__list">
                         <template v-if="isSearchActive">
                             <div class="favorites-content__scroll favorites-content__scroll--native">
-                                <div v-if="avatarFavoriteSearchResults.length" class="favorites-search-grid">
+                                <div
+                                    v-if="avatarFavoriteSearchResults.length"
+                                    class="favorites-search-grid"
+                                    :style="avatarFavoritesGridStyle(avatarFavoriteSearchResults.length)">
                                     <div
                                         v-for="favorite in avatarFavoriteSearchResults"
                                         :key="favorite.id"
@@ -377,7 +392,9 @@
                         <template v-else-if="activeRemoteGroup">
                             <div class="favorites-content__scroll favorites-content__scroll--native">
                                 <template v-if="currentRemoteFavorites.length">
-                                    <div class="favorites-card-list">
+                                    <div
+                                        class="favorites-card-list"
+                                        :style="avatarFavoritesGridStyle(currentRemoteFavorites.length)">
                                         <FavoritesAvatarItem
                                             v-for="favorite in currentRemoteFavorites"
                                             :key="favorite.id"
@@ -394,21 +411,13 @@
                         </template>
                         <template v-else-if="!remoteAvatarGroupsResolved">
                             <div class="favorites-content__scroll favorites-content__scroll--native">
-                                <div class="favorites-card-list favorites-card-list--placeholder">
+                                <div
+                                    class="favorites-card-list"
+                                    :style="avatarFavoritesGridStyle(avatarGroupPlaceholders.length)">
                                     <div
                                         v-for="group in avatarGroupPlaceholders"
                                         :key="group.key"
                                         class="favorites-card-placeholder-box"></div>
-                                </div>
-                            </div>
-                        </template>
-                        <template v-else-if="!remoteAvatarGroupsResolved">
-                            <div class="favorites-content__scroll favorites-content__scroll--native">
-                                <div class="favorites-card-list">
-                                    <div
-                                        v-for="group in avatarGroupPlaceholders"
-                                        :key="group.key"
-                                        class="favorites-card-list__placeholder"></div>
                                 </div>
                             </div>
                         </template>
@@ -418,7 +427,9 @@
                                 class="favorites-content__scroll"
                                 @scroll="handleLocalAvatarScroll">
                                 <template v-if="currentLocalFavorites.length">
-                                    <div class="favorites-card-list">
+                                    <div
+                                        class="favorites-card-list"
+                                        :style="avatarFavoritesGridStyle(currentLocalFavorites.length)">
                                         <FavoritesAvatarItem
                                             v-for="favorite in currentLocalFavorites"
                                             :key="favorite.id"
@@ -435,7 +446,9 @@
                         <template v-else-if="isHistorySelected">
                             <div class="favorites-content__scroll favorites-content__scroll--native">
                                 <template v-if="avatarHistory.length">
-                                    <div class="favorites-card-list">
+                                    <div
+                                        class="favorites-card-list"
+                                        :style="avatarFavoritesGridStyle(avatarHistory.length)">
                                         <FavoritesAvatarLocalHistoryItem
                                             v-for="favorite in avatarHistory"
                                             :key="favorite.id"
@@ -458,7 +471,7 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+    import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { Loading, MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
@@ -466,10 +479,12 @@
 
     import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useUserStore } from '../../stores';
     import { avatarRequest, favoriteRequest } from '../../api';
+    import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
 
     import AvatarExportDialog from './dialogs/AvatarExportDialog.vue';
     import FavoritesAvatarItem from './components/FavoritesAvatarItem.vue';
     import FavoritesAvatarLocalHistoryItem from './components/FavoritesAvatarLocalHistoryItem.vue';
+    import configRepository from '../../service/config.js';
 
     import * as workerTimers from 'worker-timers';
 
@@ -484,6 +499,7 @@
 
     const avatarGroupVisibilityOptions = ref(['public', 'friends', 'private']);
     const historyGroupKey = 'local-history';
+    const avatarSplitterSize = ref(260);
 
     const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
@@ -513,12 +529,27 @@
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { t } = useI18n();
 
+    const {
+        cardScale: avatarCardScale,
+        slider: avatarCardScaleSlider,
+        containerRef: avatarFavoritesContainerRef,
+        gridStyle: avatarFavoritesGridStyle
+    } = useFavoritesCardScaling({
+        configKey: 'VRCX_FavoritesAvatarCardScale',
+        min: 0.6,
+        max: 1,
+        step: 0.01
+    });
+
+    const avatarCardScalePercent = computed(() => Math.round(avatarCardScale.value * 100));
+
     const avatarExportDialogVisible = ref(false);
     const avatarFavoriteSearch = ref('');
     const avatarFavoriteSearchResults = ref([]);
     const avatarEditMode = ref(false);
     const selectedGroup = ref(null);
     const activeGroupMenu = ref(null);
+    const avatarToolbarMenuRef = ref();
     const isCreatingLocalGroup = ref(false);
     const newLocalGroupName = ref('');
     const newLocalGroupInput = ref(null);
@@ -551,6 +582,43 @@
     const remoteGroupMenuKey = (key) => `remote:${key}`;
     const localGroupMenuKey = (key) => `local:${key}`;
     const historyGroupMenuKey = 'history';
+
+    const closeAvatarToolbarMenu = () => {
+        avatarToolbarMenuRef.value?.handleClose?.();
+    };
+
+    function handleAvatarImportClick() {
+        closeAvatarToolbarMenu();
+        showAvatarImportDialog();
+    }
+
+    function handleAvatarExportClick() {
+        closeAvatarToolbarMenu();
+        showAvatarExportDialog();
+    }
+
+    onBeforeMount(() => {
+        loadAvatarSplitterPreferences();
+    });
+
+    async function loadAvatarSplitterPreferences() {
+        const storedSize = await configRepository.getString('VRCX_FavoritesAvatarSplitter', '260');
+        if (typeof storedSize === 'string' && !Number.isNaN(Number(storedSize)) && Number(storedSize) > 0) {
+            avatarSplitterSize.value = Number(storedSize);
+        }
+    }
+
+    function handleAvatarSplitterResize(panelIndex, sizes) {
+        if (!Array.isArray(sizes) || !sizes.length) {
+            return;
+        }
+        const nextSize = sizes[0];
+        if (nextSize <= 0) {
+            return;
+        }
+        avatarSplitterSize.value = nextSize;
+        configRepository.setString('VRCX_FavoritesAvatarSplitter', nextSize.toString());
+    }
 
     const groupedAvatarFavorites = computed(() => {
         const grouped = {};
@@ -1264,6 +1332,10 @@
         gap: 12px;
     }
 
+    .favorites-dropdown {
+        padding: 10px;
+    }
+
     .group-section {
         display: flex;
         flex-direction: column;
@@ -1518,15 +1590,23 @@
 
     .favorites-search-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 12px;
+        grid-template-columns: repeat(
+            var(--favorites-grid-columns, 1),
+            minmax(var(--favorites-card-min-width, 240px), var(--favorites-card-target-width, 1fr))
+        );
+        gap: var(--favorites-card-gap, 12px);
+        justify-content: start;
         padding-bottom: 12px;
     }
 
     .favorites-card-list {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 12px;
+        grid-template-columns: repeat(
+            var(--favorites-grid-columns, 1),
+            minmax(var(--favorites-card-min-width, 260px), var(--favorites-card-target-width, 1fr))
+        );
+        gap: var(--favorites-card-gap, 12px);
+        justify-content: start;
         padding: 4px 2px 12px 2px;
     }
 
@@ -1535,22 +1615,26 @@
     }
 
     :deep(.favorites-search-card--avatar) {
-        flex: 0 1 280px;
-        min-width: 240px;
+        min-width: var(--favorites-card-min-width, 240px);
+        max-width: var(--favorites-card-target-width, 320px);
     }
 
     :deep(.favorites-search-card) {
         display: flex;
         align-items: center;
+        box-sizing: border-box;
         border: 1px solid var(--el-border-color);
-        border-radius: 8px;
-        padding: 8px 10px;
+        border-radius: calc(8px * var(--favorites-card-scale, 1));
+        padding: calc(8px * var(--favorites-card-scale, 1)) calc(10px * var(--favorites-card-scale, 1));
         cursor: pointer;
         background: var(--el-bg-color);
         transition:
             border-color 0.2s ease,
             box-shadow 0.2s ease;
         box-shadow: 0 0 6px rgba(15, 23, 42, 0.04);
+        width: 100%;
+        min-width: var(--favorites-card-min-width, 240px);
+        max-width: var(--favorites-card-target-width, 320px);
     }
 
     :deep(.favorites-search-card:hover) {
@@ -1566,15 +1650,15 @@
     :deep(.favorites-search-card__content) {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: calc(10px * var(--favorites-card-scale, 1));
         flex: 1;
         min-width: 0;
     }
 
     :deep(.favorites-search-card__avatar) {
-        width: 48px;
-        height: 48px;
-        border-radius: 6px;
+        width: calc(48px * var(--favorites-card-scale, 1));
+        height: calc(48px * var(--favorites-card-scale, 1));
+        border-radius: calc(6px * var(--favorites-card-scale, 1));
         overflow: hidden;
         background: var(--el-fill-color-lighter);
         flex-shrink: 0;
@@ -1600,7 +1684,7 @@
         display: flex;
         flex-direction: column;
         gap: 4px;
-        font-size: 13px;
+        font-size: calc(13px * var(--favorites-card-scale, 1));
         min-width: 0;
     }
 
@@ -1612,7 +1696,7 @@
     }
 
     :deep(.favorites-search-card__detail .extra) {
-        font-size: 12px;
+        font-size: calc(12px * var(--favorites-card-scale, 1));
         color: var(--el-text-color-secondary);
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1685,5 +1769,36 @@
         color: var(--el-text-color-secondary);
         font-size: 13px;
         height: 100%;
+    }
+
+    .favorites-dropdown__scale {
+        list-style: none;
+        padding: 12px 16px 8px;
+        border-bottom: 1px solid var(--el-border-color-lighter);
+        min-width: 220px;
+        cursor: default;
+    }
+
+    .favorites-dropdown__scale-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--el-text-color-primary);
+        margin-bottom: 6px;
+    }
+
+    .favorites-dropdown__scale-value {
+        font-size: 12px;
+        color: var(--el-text-color-secondary);
+    }
+
+    .favorites-dropdown__slider {
+        padding: 0 4px 4px;
+    }
+
+    .favorites-dropdown__slider :deep(.el-slider__runway) {
+        margin: 0;
     }
 </style>

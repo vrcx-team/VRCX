@@ -17,14 +17,27 @@
                     class="favorites-toolbar__search"
                     :placeholder="t('view.favorite.worlds.search')"
                     @input="searchWorldFavorites" />
-                <el-dropdown trigger="click" :hide-on-click="true">
+                <el-dropdown ref="worldToolbarMenuRef" trigger="click" :hide-on-click="false">
                     <el-button :icon="MoreFilled" size="small" circle />
                     <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item @click="showWorldImportDialog">
+                        <el-dropdown-menu class="favorites-dropdown">
+                            <li class="favorites-dropdown__scale" @click.stop>
+                                <div class="favorites-dropdown__scale-header">
+                                    <span>Scale</span>
+                                    <span class="favorites-dropdown__scale-value">{{ worldCardScalePercent }}%</span>
+                                </div>
+                                <el-slider
+                                    v-model="worldCardScale"
+                                    class="favorites-dropdown__slider"
+                                    :min="worldCardScaleSlider.min"
+                                    :max="worldCardScaleSlider.max"
+                                    :step="worldCardScaleSlider.step"
+                                    :show-tooltip="false" />
+                            </li>
+                            <el-dropdown-item @click="handleWorldImportClick">
                                 {{ t('view.favorite.import') }}
                             </el-dropdown-item>
-                            <el-dropdown-item divided @click="showExportDialog">
+                            <el-dropdown-item divided @click="handleWorldExportClick">
                                 {{ t('view.favorite.export') }}
                             </el-dropdown-item>
                         </el-dropdown-menu>
@@ -32,8 +45,8 @@
                 </el-dropdown>
             </div>
         </div>
-        <el-splitter class="favorites-splitter">
-            <el-splitter-panel :size="260" :min="0" :max="360" collapsible>
+        <el-splitter class="favorites-splitter" @resize-end="handleWorldSplitterResize">
+            <el-splitter-panel :size="worldSplitterSize" :min="0" :max="360" collapsible>
                 <div class="favorites-groups-panel">
                     <div class="group-section">
                         <div class="group-section__header">
@@ -282,10 +295,13 @@
                             </el-button>
                         </div>
                     </div>
-                    <div class="favorites-content__list">
+                    <div ref="worldFavoritesContainerRef" class="favorites-content__list">
                         <template v-if="isSearchActive">
                             <div class="favorites-content__scroll favorites-content__scroll--native">
-                                <div v-if="worldFavoriteSearchResults.length" class="favorites-search-grid">
+                                <div
+                                    v-if="worldFavoriteSearchResults.length"
+                                    class="favorites-search-grid"
+                                    :style="worldFavoritesGridStyle(worldFavoriteSearchResults.length)">
                                     <div
                                         v-for="favorite in worldFavoriteSearchResults"
                                         :key="favorite.id"
@@ -320,7 +336,9 @@
                                 v-if="activeRemoteGroup && isRemoteGroupSelected"
                                 class="favorites-content__scroll favorites-content__scroll--native">
                                 <template v-if="currentRemoteFavorites.length">
-                                    <div class="favorites-card-list">
+                                    <div
+                                        class="favorites-card-list"
+                                        :style="worldFavoritesGridStyle(currentRemoteFavorites.length)">
                                         <FavoritesWorldItem
                                             v-for="favorite in currentRemoteFavorites"
                                             :key="favorite.id"
@@ -340,7 +358,9 @@
                                 class="favorites-content__scroll"
                                 @scroll="handleLocalFavoritesScroll">
                                 <template v-if="currentLocalFavorites.length">
-                                    <div class="favorites-card-list">
+                                    <div
+                                        class="favorites-card-list"
+                                        :style="worldFavoritesGridStyle(currentLocalFavorites.length)">
                                         <FavoritesWorldLocalItem
                                             v-for="favorite in currentLocalFavorites"
                                             :key="favorite.id"
@@ -364,7 +384,7 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+    import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { Loading, MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
@@ -372,10 +392,12 @@
 
     import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../stores';
     import { favoriteRequest, worldRequest } from '../../api';
+    import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
 
     import FavoritesWorldItem from './components/FavoritesWorldItem.vue';
     import FavoritesWorldLocalItem from './components/FavoritesWorldLocalItem.vue';
     import WorldExportDialog from './dialogs/WorldExportDialog.vue';
+    import configRepository from '../../service/config.js';
 
     import * as workerTimers from 'worker-timers';
 
@@ -415,7 +437,22 @@
     } = favoriteStore;
     const { showWorldDialog } = useWorldStore();
 
+    const {
+        cardScale: worldCardScale,
+        slider: worldCardScaleSlider,
+        containerRef: worldFavoritesContainerRef,
+        gridStyle: worldFavoritesGridStyle
+    } = useFavoritesCardScaling({
+        configKey: 'VRCX_FavoritesWorldCardScale',
+        min: 0.6,
+        max: 1,
+        step: 0.01
+    });
+
+    const worldCardScalePercent = computed(() => Math.round(worldCardScale.value * 100));
+
     const worldGroupVisibilityOptions = ref(['public', 'friends', 'private']);
+    const worldSplitterSize = ref(260);
     const worldExportDialogVisible = ref(false);
     const worldFavoriteSearch = ref('');
     const worldFavoriteSearchResults = ref([]);
@@ -433,6 +470,7 @@
     const worldEditMode = ref(false);
     const activeGroupMenu = ref(null);
     const localFavoritesScrollbarRef = ref(null);
+    const worldToolbarMenuRef = ref();
     const localFavoritesLoadingMore = ref(false);
     const hasWorldSelection = computed(() => selectedFavoriteWorlds.value.length > 0);
     const hasSearchInput = computed(() => worldFavoriteSearch.value.trim().length > 0);
@@ -441,6 +479,43 @@
     const isLocalGroupSelected = computed(() => selectedGroup.value?.type === 'local');
     const remoteGroupMenuKey = (key) => `remote:${key}`;
     const localGroupMenuKey = (key) => `local:${key}`;
+
+    const closeWorldToolbarMenu = () => {
+        worldToolbarMenuRef.value?.handleClose?.();
+    };
+
+    function handleWorldImportClick() {
+        closeWorldToolbarMenu();
+        showWorldImportDialog();
+    }
+
+    function handleWorldExportClick() {
+        closeWorldToolbarMenu();
+        showExportDialog();
+    }
+
+    onBeforeMount(() => {
+        loadWorldSplitterPreferences();
+    });
+
+    async function loadWorldSplitterPreferences() {
+        const storedSize = await configRepository.getString('VRCX_FavoritesWorldSplitter', '260');
+        if (typeof storedSize === 'string' && !Number.isNaN(Number(storedSize)) && Number(storedSize) > 0) {
+            worldSplitterSize.value = Number(storedSize);
+        }
+    }
+
+    function handleWorldSplitterResize(panelIndex, sizes) {
+        if (!Array.isArray(sizes) || !sizes.length) {
+            return;
+        }
+        const nextSize = sizes[0];
+        if (nextSize <= 0) {
+            return;
+        }
+        worldSplitterSize.value = nextSize;
+        configRepository.setString('VRCX_FavoritesWorldSplitter', nextSize.toString());
+    }
 
     const groupedWorldFavorites = computed(() => {
         const grouped = {};
@@ -1118,6 +1193,10 @@
         min-height: 0;
     }
 
+    .favorites-dropdown {
+        padding: 10px;
+    }
+
     .favorites-groups-panel {
         height: 100%;
         padding-right: 8px;
@@ -1374,15 +1453,23 @@
 
     .favorites-search-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 12px;
+        grid-template-columns: repeat(
+            var(--favorites-grid-columns, 1),
+            minmax(var(--favorites-card-min-width, 240px), var(--favorites-card-target-width, 1fr))
+        );
+        gap: var(--favorites-card-gap, 12px);
+        justify-content: start;
         padding-bottom: 12px;
     }
 
     .favorites-card-list {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 12px;
+        grid-template-columns: repeat(
+            var(--favorites-grid-columns, 1),
+            minmax(var(--favorites-card-min-width, 260px), var(--favorites-card-target-width, 1fr))
+        );
+        gap: var(--favorites-card-gap, 12px);
+        justify-content: start;
         padding: 4px 2px 12px 2px;
     }
 
@@ -1391,22 +1478,26 @@
     }
 
     :deep(.favorites-search-card--world) {
-        flex: 0 1 280px;
-        min-width: 240px;
+        min-width: var(--favorites-card-min-width, 240px);
+        max-width: var(--favorites-card-target-width, 320px);
     }
 
     :deep(.favorites-search-card) {
         display: flex;
         align-items: center;
+        box-sizing: border-box;
         border: 1px solid var(--el-border-color);
-        border-radius: 8px;
-        padding: 8px 10px;
+        border-radius: calc(8px * var(--favorites-card-scale, 1));
+        padding: calc(8px * var(--favorites-card-scale, 1)) calc(10px * var(--favorites-card-scale, 1));
         cursor: pointer;
         background: var(--el-bg-color);
         transition:
             border-color 0.2s ease,
             box-shadow 0.2s ease;
         box-shadow: 0 0 6px rgba(15, 23, 42, 0.04);
+        width: 100%;
+        min-width: var(--favorites-card-min-width, 240px);
+        max-width: var(--favorites-card-target-width, 320px);
     }
 
     :deep(.favorites-search-card:hover) {
@@ -1422,15 +1513,15 @@
     :deep(.favorites-search-card__content) {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: calc(10px * var(--favorites-card-scale, 1));
         flex: 1;
         min-width: 0;
     }
 
     :deep(.favorites-search-card__avatar) {
-        width: 48px;
-        height: 48px;
-        border-radius: 6px;
+        width: calc(48px * var(--favorites-card-scale, 1));
+        height: calc(48px * var(--favorites-card-scale, 1));
+        border-radius: calc(6px * var(--favorites-card-scale, 1));
         overflow: hidden;
         background: var(--el-fill-color-lighter);
         flex-shrink: 0;
@@ -1456,7 +1547,7 @@
         display: flex;
         flex-direction: column;
         gap: 4px;
-        font-size: 13px;
+        font-size: calc(13px * var(--favorites-card-scale, 1));
         min-width: 0;
     }
 
@@ -1468,7 +1559,7 @@
     }
 
     :deep(.favorites-search-card__detail .extra) {
-        font-size: 12px;
+        font-size: calc(12px * var(--favorites-card-scale, 1));
         color: var(--el-text-color-secondary);
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1541,5 +1632,36 @@
         color: var(--el-text-color-secondary);
         font-size: 13px;
         height: 100%;
+    }
+
+    .favorites-dropdown__scale {
+        list-style: none;
+        padding: 12px 16px 8px;
+        border-bottom: 1px solid var(--el-border-color-lighter);
+        min-width: 220px;
+        cursor: default;
+    }
+
+    .favorites-dropdown__scale-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--el-text-color-primary);
+        margin-bottom: 6px;
+    }
+
+    .favorites-dropdown__scale-value {
+        font-size: 12px;
+        color: var(--el-text-color-secondary);
+    }
+
+    .favorites-dropdown__slider {
+        padding: 0 4px 4px;
+    }
+
+    .favorites-dropdown__slider :deep(.el-slider__runway) {
+        margin: 0;
     }
 </style>
