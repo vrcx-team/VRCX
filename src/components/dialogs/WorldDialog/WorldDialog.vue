@@ -342,42 +342,44 @@
                         <template
                             v-if="isAgeGatedInstancesVisible || !(room.ageGate || room.location?.includes('~ageGate'))">
                             <div style="margin: 5px 0">
-                                <LocationWorld
-                                    :locationobject="room.$location"
-                                    :currentuserid="currentUser.id"
-                                    :worlddialogshortname="worldDialog.$location.shortName" />
-                                <Launch :location="room.tag" style="margin-left: 5px" />
-                                <InviteYourself
-                                    :location="room.$location.tag"
-                                    :shortname="room.$location.shortName"
-                                    style="margin-left: 5px" />
-                                <el-tooltip
-                                    placement="top"
-                                    :content="t('dialog.world.instances.refresh_instance_info')">
-                                    <el-button
-                                        size="small"
-                                        :icon="Refresh"
-                                        style="margin-left: 5px"
-                                        circle
-                                        @click="refreshInstancePlayerCount(room.tag)" />
-                                </el-tooltip>
-                                <el-tooltip
-                                    v-if="instanceJoinHistory.get(room.$location.tag)"
-                                    placement="top"
-                                    :content="t('dialog.previous_instances.info')">
-                                    <el-button
-                                        size="small"
-                                        :icon="DataLine"
-                                        style="margin-left: 5px"
-                                        plain
-                                        circle
-                                        @click="showPreviousInstancesInfoDialog(room.location)" />
-                                </el-tooltip>
-                                <LastJoin :location="room.$location.tag" :currentlocation="lastLocation.location" />
-                                <InstanceInfo
-                                    :location="room.tag"
-                                    :instance="room.ref"
-                                    :friendcount="room.friendCount" />
+                                <div class="flex-align-center">
+                                    <LocationWorld
+                                        :locationobject="room.$location"
+                                        :currentuserid="currentUser.id"
+                                        :worlddialogshortname="worldDialog.$location.shortName" />
+                                    <Launch :location="room.tag" style="margin-left: 5px" />
+                                    <InviteYourself
+                                        :location="room.$location.tag"
+                                        :shortname="room.$location.shortName"
+                                        style="margin-left: 5px" />
+                                    <el-tooltip
+                                        placement="top"
+                                        :content="t('dialog.world.instances.refresh_instance_info')">
+                                        <el-button
+                                            size="small"
+                                            :icon="Refresh"
+                                            style="margin-left: 5px"
+                                            circle
+                                            @click="refreshInstancePlayerCount(room.tag)" />
+                                    </el-tooltip>
+                                    <el-tooltip
+                                        v-if="instanceJoinHistory.get(room.$location.tag)"
+                                        placement="top"
+                                        :content="t('dialog.previous_instances.info')">
+                                        <el-button
+                                            size="small"
+                                            :icon="DataLine"
+                                            style="margin-left: 5px"
+                                            plain
+                                            circle
+                                            @click="showPreviousInstancesInfoDialog(room.location)" />
+                                    </el-tooltip>
+                                    <LastJoin :location="room.$location.tag" :currentlocation="lastLocation.location" />
+                                    <InstanceInfo
+                                        :location="room.tag"
+                                        :instance="room.ref"
+                                        :friendcount="room.friendCount" />
+                                </div>
                                 <div
                                     v-if="room.$location.userId || room.users.length"
                                     class="x-friend-list"
@@ -1400,3 +1402,10 @@
         D.visible = true;
     }
 </script>
+
+<style scoped>
+    .flex-align-center {
+        display: flex;
+        align-items: center;
+    }
+</style>
