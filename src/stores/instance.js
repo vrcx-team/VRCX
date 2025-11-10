@@ -118,7 +118,10 @@ export const useInstanceStore = defineStore('Instance', () => {
     async function getInstanceJoinHistory() {
         try {
             const data = await database.getInstanceJoinHistory();
-            replaceReactiveObject(instanceJoinHistory, data);
+            instanceJoinHistory.clear();
+            for (const [key, value] of data) {
+                instanceJoinHistory.set(key, value);
+            }
         } catch (error) {
             console.error('Failed to get instance join history:', error);
         }
