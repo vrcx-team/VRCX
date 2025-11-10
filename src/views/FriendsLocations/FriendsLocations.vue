@@ -1,8 +1,14 @@
 <template>
     <div class="friend-view x-container">
         <div v-if="settingsReady" class="friend-view__toolbar">
-            <el-segmented v-model="activeSegment" class="friend-view__segmented" :options="segmentedOptions" />
+            <el-segmented v-model="activeSegment" :options="segmentedOptions" />
             <div class="friend-view__actions">
+                <el-input
+                    v-model="searchTerm"
+                    class="friend-view__search"
+                    :prefix-icon="Search"
+                    clearable
+                    placeholder="Search Friend"></el-input>
                 <el-popover placement="bottom" trigger="click" :width="300">
                     <template #reference>
                         <div>
@@ -17,24 +23,20 @@
                         <span class="friend-view__settings-label">Separate Same Instance</span>
                         <el-switch v-model="showSameInstance" />
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center">
+                    <div class="friend-view__settings-row">
                         <span class="friend-view__settings-label">Scale</span>
-                        <el-slider
-                            v-model="cardScale"
-                            class="friend-view__slider"
-                            :min="0.6"
-                            :max="1.0"
-                            :step="0.01"
-                            :show-tooltip="false" />
+                        <div class="friend-view__scale-control">
+                            <span class="friend-view__scale-value">{{ cardScalePercentLabel }} &nbsp;</span>
+                            <el-slider
+                                v-model="cardScale"
+                                class="friend-view__slider"
+                                :min="0.6"
+                                :max="1.0"
+                                :step="0.01"
+                                :show-tooltip="false" />
+                        </div>
                     </div>
                 </el-popover>
-
-                <el-input
-                    v-model="searchTerm"
-                    class="friend-view__search"
-                    :prefix-icon="Search"
-                    clearable
-                    placeholder="Search Friend"></el-input>
             </div>
         </div>
         <div v-else class="friend-view__toolbar friend-view__toolbar--loading">
@@ -178,9 +180,11 @@
         get: () => cardScaleBase.value,
         set: (value) => {
             cardScaleBase.value = value;
-            configRepository.setString('VRCX_FriendLocationCardScale', value);
+            configRepository.setString('VRCX_FriendLocationCardScale', value.toString());
         }
     });
+
+    const cardScalePercentLabel = computed(() => `${Math.round(cardScale.value * 100)}%`);
 
     const showSameInstanceBase = ref(false);
 
@@ -658,7 +662,6 @@
         display: flex;
         gap: 20px;
         align-items: center;
-        justify-content: space-between;
         padding: 6px 10px 0 2px;
     }
 
@@ -677,7 +680,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        flex: none;
+        flex: 1;
         flex-wrap: wrap;
         justify-content: flex-end;
         color: rgba(15, 23, 42, 0.65);
@@ -689,6 +692,28 @@
         margin-right: 8px;
     }
 
+    .friend-view__settings-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .friend-view__scale-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 160px;
+    }
+
+    .friend-view__scale-value {
+        font-size: 12px;
+        font-weight: 600;
+        color: rgba(15, 23, 42, 0.55);
+        min-width: 42px;
+        text-align: right;
+    }
+
     .friend-view__slider {
         width: 160px;
         margin-right: 12px;
@@ -696,6 +721,7 @@
 
     .friend-view__search {
         width: 240px;
+        flex: 1;
     }
 
     .friend-view__scroll {
@@ -762,13 +788,6 @@
 
     .friend-view__divider-text {
         flex: none;
-    }
-
-    .friend-view__instance-id {
-        max-width: 75%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
     }
 
     .friend-view__instance-count {
