@@ -4,6 +4,7 @@ const {
     BrowserWindow,
     ipcMain,
     app,
+    clipboard,
     Tray,
     Menu,
     dialog,
@@ -11,7 +12,6 @@ const {
     nativeImage
 } = require('electron');
 const { spawn, spawnSync } = require('child_process');
-const { clipboard } = require('electron');
 const fs = require('fs');
 const https = require('https');
 

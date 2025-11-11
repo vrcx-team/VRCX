@@ -373,7 +373,8 @@ export const useSearchStore = defineStore('Search', () => {
                     });
                 }
             }
-        } catch {
+        } catch (error) {
+            console.log(error);
         } finally {
             directAccessPrompt.value = null;
         }
