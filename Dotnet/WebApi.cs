@@ -522,17 +522,23 @@ namespace VRCX
                         await streamReader.ReadToEndAsync()
                     );
                 }
-
+                
+                var message = webException.Message;
+                if (webException.InnerException != null)
+                    message += $" | Inner Exception: {webException.InnerException.Message}";
                 return new Tuple<int, string>(
                     -1,
-                    webException.Message
+                    message
                 );
             }
             catch (Exception e)
             {
+                var message = e.Message;
+                if (e.InnerException != null)
+                    message += $" | Inner Exception: {e.InnerException.Message}";
                 return new Tuple<int, string>(
                     -1,
-                    e.Message
+                    message
                 );
             }
         }
