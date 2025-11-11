@@ -516,7 +516,7 @@
 
                 <el-tab-pane
                     name="Mutual Friends"
-                    v-if="userDialog.isFriend"
+                    v-if="userDialog.id !== currentUser.id"
                     :label="t('dialog.user.mutual_friends.header')"
                     lazy>
                     <div style="display: flex; align-items: center; justify-content: space-between">

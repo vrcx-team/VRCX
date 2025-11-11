@@ -961,18 +961,14 @@ export const useUserStore = defineStore('User', () => {
                                     D.isShowAvatar = true;
                                 }
                             });
-                            if (D.isFriend) {
-                                userRequest
-                                    .getMutualCounts({ userId })
-                                    .then((args) => {
-                                        if (args.params.userId === D.id) {
-                                            D.mutualFriendCount =
-                                                args.json.friends;
-                                            D.mutualGroupCount =
-                                                args.json.groups;
-                                        }
-                                    });
-                            }
+                            userRequest
+                                .getMutualCounts({ userId })
+                                .then((args) => {
+                                    if (args.params.userId === D.id) {
+                                        D.mutualFriendCount = args.json.friends;
+                                        D.mutualGroupCount = args.json.groups;
+                                    }
+                                });
                         } else {
                             D.previousDisplayNames =
                                 currentUser.value.pastDisplayNames;
