@@ -28,14 +28,16 @@
                     :ref="(el) => setNavPopoverRef(el, item.index)"
                     placement="right-start"
                     trigger="hover"
-                    :hide-after="isSteamVRRunning ? 400 : 150"
+                    :hide-after="isSteamVRRunning ? 400 : 250"
                     :show-arrow="false"
                     :offset="0"
                     :width="navPopoverWidth"
                     transition="null"
                     @before-enter="handleSubMenuBeforeEnter()"
-                    :popper-style="navPopoverStyle"
+                    @show="handlePopoverEnter(item.index)"
+                    :popper-style="isSteamVRRunning ? navPopoverStyleVR : navPopoverStyleDesktop"
                     popper-class="nav-menu-popover-popper">
+                    <!-- popper-style reactivity seems to be broken, background should be in VR, its not -->
                     <div class="nav-menu-popover">
                         <div class="nav-menu-popover__header">
                             <i :class="item.icon"></i>
@@ -57,6 +59,7 @@
                                 ></span>
                             </button>
                         </div>
+                        <div :v-if="isSteamVRRunning" class="nav-menu-popover__background"></div>
                     </div>
                     <template #reference>
                         <el-menu-item
@@ -311,18 +314,29 @@
         }
     ];
 
-    const navPopoverWidth = 250;
-    const navPopoverStyle = {
+    const navPopoverWidth = 252; // for some reason this renders with 2px less than desired
+    const navPopoverStyleDesktop = {
         zIndex: 500,
         borderRadius: '0',
-        border: '1px solid var(--el-border-color)',
+        // border: '1px solid var(--el-border-color)',
         borderLeft: 'none',
         borderBottom: 'none',
         borderTop: 'none',
         boxShadow: '0 8px 20px rgba(0,0,0,0.05)',
         padding: '0',
-        background: 'var(--el-bg-color)',
-        height: '100vh'
+        background: 'var(--el-bg-color)'
+    };
+
+    const navPopoverStyleVR = {
+        zIndex: 500,
+        borderRadius: '0',
+        // border: '1px solid var(--el-border-color)',
+        borderLeft: 'none',
+        borderBottom: 'none',
+        borderTop: 'none',
+        boxShadow: '0 8px 20px rgba(0,0,0,0.05)',
+        padding: '0',
+        background: 'red'
     };
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
@@ -344,6 +358,7 @@
     const supportMenuVisible = ref(false);
     const navMenuRef = ref(null);
     const navPopoverRefs = new Map();
+    const currentOpenIndex = ref(null);
 
     const version = computed(() => appVersion.value?.split('VRCX ')?.[1] || '-');
     const vrcxLogo = new URL('../../images/VRCX.png', import.meta.url).href;
@@ -398,6 +413,16 @@
             navPopoverRefs.delete(index);
         }
     };
+
+    function handlePopoverEnter(index) {
+        // instantly hide the previously open popover
+        if (currentOpenIndex.value && currentOpenIndex.value !== index) {
+            const prevPopover = navPopoverRefs.get(currentOpenIndex.value);
+            if (prevPopover) prevPopover.hide();
+        }
+
+        currentOpenIndex.value = index;
+    }
 
     const closeNavPopover = (index) => {
         navPopoverRefs.get(index)?.hide?.();
@@ -513,7 +538,6 @@
         height: 100%;
         min-width: 240px;
         background-color: var(--el-bg-color);
-        border-left: 1px solid var(--el-border-color);
         overflow: hidden;
 
         .nav-menu-popover__header {
@@ -541,6 +565,15 @@
             padding: 12px 12px 16px;
             overflow-y: auto;
             scrollbar-width: thin;
+        }
+
+        .nav-menu-popover__background {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            z-index: -100;
+            background-color: var(--el-bg-color);
         }
 
         .nav-menu-popover__menu::-webkit-scrollbar {
