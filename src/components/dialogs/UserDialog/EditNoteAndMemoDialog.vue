@@ -8,30 +8,34 @@
         width="500px"
         append-to-body
         @close="cancel">
-        <span class="name">{{ t('dialog.user.info.note') }}</span>
-        <br />
-        <el-input
-            v-model="note"
-            class="extra"
-            type="textarea"
-            maxlength="256"
-            show-word-limit
-            :rows="6"
-            :autosize="{ minRows: 2, maxRows: 20 }"
-            :placeholder="t('dialog.user.info.note_placeholder')"
-            size="small"
-            resize="none"></el-input>
-        <span class="name">{{ t('dialog.user.info.memo') }}</span>
-        <br />
-        <el-input
-            v-model="memo"
-            class="extra"
-            type="textarea"
-            :rows="6"
-            :autosize="{ minRows: 2, maxRows: 20 }"
-            :placeholder="t('dialog.user.info.memo_placeholder')"
-            size="small"
-            resize="none"></el-input>
+        <template v-if="!hideUserNotes || (hideUserNotes && hideUserMemos)">
+            <span class="name">{{ t('dialog.user.info.note') }}</span>
+            <br />
+            <el-input
+                v-model="note"
+                class="extra"
+                type="textarea"
+                maxlength="256"
+                show-word-limit
+                :rows="6"
+                :autosize="{ minRows: 2, maxRows: 20 }"
+                :placeholder="t('dialog.user.info.note_placeholder')"
+                size="small"
+                resize="none"></el-input>
+        </template>
+        <template v-if="!hideUserMemos || (hideUserNotes && hideUserMemos)">
+            <span class="name">{{ t('dialog.user.info.memo') }}</span>
+            <br />
+            <el-input
+                v-model="memo"
+                class="extra"
+                type="textarea"
+                :rows="6"
+                :autosize="{ minRows: 2, maxRows: 20 }"
+                :placeholder="t('dialog.user.info.memo_placeholder')"
+                size="small"
+                resize="none"></el-input>
+        </template>
         <template #footer>
             <div class="dialog-footer">
                 <el-button @click="cancel">Cancel</el-button>
@@ -48,10 +52,11 @@
 
     import { miscRequest, userRequest } from '../../../api';
     import { replaceBioSymbols, saveUserMemo } from '../../../shared/utils';
-    import { useUserStore } from '../../../stores';
+    import { useAppearanceSettingsStore, useUserStore } from '../../../stores';
 
     const { userDialog } = storeToRefs(useUserStore());
     const { cachedUsers } = useUserStore();
+    const { hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
 
     const { t } = useI18n();
 
