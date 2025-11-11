@@ -31,5 +31,3 @@ initRouter(app);
 await initSentry(app);
 
 app.mount('#root');
-
-window.$app = app;

@@ -6,7 +6,6 @@ declare global {
     const LINUX: boolean;
 
     interface Window {
-        $app: any;
         $pinia: any;
         $vr: any;
         $debug: AppDebug;
