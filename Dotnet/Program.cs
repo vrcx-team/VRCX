@@ -10,6 +10,7 @@ using System;
 using System.Data.SQLite;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;
 using System.Windows.Forms;
@@ -187,6 +188,20 @@ namespace VRCX
                 }
             }
 
+            #endregion
+
+            #region Handle Out Of Memory
+
+            catch (SEHException e)
+            {
+                logger.Fatal(e, "Unhandled SEH Exception, most likely out of memory, closing.");
+                var messageBoxResult = MessageBox.Show(
+                    "VRCX has run out of memory and needs to close.\n" +
+                    "We're actively working on fixing this issue. \n" +
+                    e, "Out of Memory", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(0);
+            }
+            
             #endregion
 
             catch (Exception e)
