@@ -23,6 +23,7 @@ const validChannels = ['launch-command'];
 
 contextBridge.exposeInMainWorld('electron', {
     getArch: () => ipcRenderer.invoke('app:getArch'),
+    getClipboardText: () => ipcRenderer.invoke('app:getClipboardText'),
     getNoUpdater: () => ipcRenderer.invoke('app:getNoUpdater'),
     setTrayIconNotification: (notify) =>
         ipcRenderer.invoke('app:setTrayIconNotification', notify),
