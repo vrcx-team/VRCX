@@ -886,7 +886,8 @@
                 "instance_hard_closed": "Instance hard closed",
                 "close_instance": "Close Instance",
                 "instance_age_gated": "age gated",
-                "open_previous_instance": "Open Previous Instances"
+                "open_previous_instance": "Open Previous Instances",
+                "show_mutual_friends": "Show Mutual Friends"
             },
             "groups": {
                 "header": "Groups",

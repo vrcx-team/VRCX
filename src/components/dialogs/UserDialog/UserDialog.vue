@@ -435,6 +435,20 @@
                                     }}</span>
                                 </div>
                             </div>
+                            <div class="x-friend-item" @click="toggleSharedConnectionsOptOut">
+                                <div class="detail">
+                                    <span class="name">{{ t('dialog.user.info.show_mutual_friends') }}</span>
+                                    <span
+                                        v-if="!currentUser.hasSharedConnectionsOptOut"
+                                        class="extra"
+                                        style="color: #67c23a"
+                                        >{{ t('dialog.user.info.avatar_cloning_allow') }}</span
+                                    >
+                                    <span v-else class="extra" style="color: #f56c6c">{{
+                                        t('dialog.user.info.avatar_cloning_deny')
+                                    }}</span>
+                                </div>
+                            </div>
                         </template>
                         <template v-else>
                             <div class="x-friend-item" style="cursor: default">
@@ -2164,6 +2178,9 @@
     }
 
     async function getUserMutualFriends(userId) {
+        if (currentUser.value.hasSharedConnectionsOptOut) {
+            return;
+        }
         userDialog.value.isMutualFriendsLoading = true;
         userDialog.value.mutualFriends = [];
         const params = {
@@ -2411,6 +2428,12 @@
     function toggleAllowBooping() {
         userRequest.saveCurrentUser({
             isBoopingEnabled: !currentUser.value.isBoopingEnabled
+        });
+    }
+
+    function toggleSharedConnectionsOptOut() {
+        userRequest.saveCurrentUser({
+            hasSharedConnectionsOptOut: !currentUser.value.hasSharedConnectionsOptOut
         });
     }
 
