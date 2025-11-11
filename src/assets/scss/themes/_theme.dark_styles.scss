@@ -266,6 +266,10 @@ div.x-friend-list
     border-color: $--theme-border-2;
 }
 
+.el-button.is-text:not(.is-disabled):hover {
+    background-color: unset;
+}
+
 .el-button:not(.el-button--text, .el-button--primary, .is-disabled):focus,
 .el-button:not(.el-button--text, .el-button--primary, .is-disabled):hover {
     color: $--theme-text-1 !important;

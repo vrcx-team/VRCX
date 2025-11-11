@@ -99,6 +99,7 @@ export const useUserStore = defineStore('User', () => {
         hasEmail: false,
         hasLoggedInFromClient: false,
         hasPendingEmail: false,
+        hasSharedConnectionsOptOut: false,
         hideContentFilterSettings: false,
         homeLocation: '',
         id: '',
@@ -961,14 +962,21 @@ export const useUserStore = defineStore('User', () => {
                                     D.isShowAvatar = true;
                                 }
                             });
-                            userRequest
-                                .getMutualCounts({ userId })
-                                .then((args) => {
-                                    if (args.params.userId === D.id) {
-                                        D.mutualFriendCount = args.json.friends;
-                                        D.mutualGroupCount = args.json.groups;
-                                    }
-                                });
+                            if (!currentUser.value.hasSharedConnectionsOptOut) {
+                                userRequest
+                                    .getMutualCounts({ userId })
+                                    .then((args) => {
+                                        if (args.params.userId === D.id) {
+                                            D.mutualFriendCount =
+                                                args.json.friends;
+                                            D.mutualGroupCount =
+                                                args.json.groups;
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        console.error(error);
+                                    });
+                            }
                         } else {
                             D.previousDisplayNames =
                                 currentUser.value.pastDisplayNames;
