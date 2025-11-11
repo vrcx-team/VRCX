@@ -751,8 +751,8 @@
     :global(.nav-menu-slide-enter-active),
     :global(.nav-menu-slide-leave-active) {
         transition:
-            opacity var(--el-transition-duration) ease,
-            transform var(--el-transition-duration) ease;
+            opacity 0.1s ease,
+            transform 0.1s ease;
         transform-origin: left center;
     }
 
