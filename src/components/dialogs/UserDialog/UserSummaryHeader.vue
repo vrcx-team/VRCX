@@ -116,6 +116,20 @@
                             {{ userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : '' }}
                         </el-tag>
                     </el-tooltip>
+                    <el-tooltip
+                        v-if="userDialog.mutualFriendCount"
+                        placement="top"
+                        :content="t('dialog.user.tags.mutual_friends')">
+                        <el-tag
+                            type="info"
+                            effect="plain"
+                            size="small"
+                            class="x-tag-mutual-friend"
+                            style="margin-right: 5px; margin-top: 5px">
+                            <i class="ri-group-line"></i>
+                            {{ userDialog.mutualFriendCount }}
+                        </el-tag>
+                    </el-tooltip>
                     <el-tag
                         v-if="userDialog.ref.$isTroll"
                         type="info"

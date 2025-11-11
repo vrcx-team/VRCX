@@ -170,12 +170,22 @@ function compareByLastActive(a, b) {
             b.ref?.$online_for &&
             a.ref.$online_for === b.ref.$online_for
         ) {
-            compareByActivityField(a, b, 'last_login');
+            return compareByActivityField(a, b, 'last_login');
         }
         return compareByActivityField(a, b, '$online_for');
     }
 
     return compareByActivityField(a, b, 'last_activity');
+}
+
+function compareByLastActiveRef(a, b) {
+    if (a.state === 'online' && b.state === 'online') {
+        if (a.$online_for && b.$online_for && a.$online_for === b.$online_for) {
+            return a.last_login < b.last_login ? 1 : -1;
+        }
+        return a.$online_for < b.$online_for ? 1 : -1;
+    }
+    return a.last_activity < b.last_activity ? 1 : -1;
 }
 
 /**
@@ -259,6 +269,19 @@ function compareByLocation(a, b) {
     return a.ref.location.localeCompare(b.ref.location);
 }
 
+/**
+ * $friendNumber friend order
+ * @param {object} a
+ * @param {object} b
+ * @returns
+ */
+function compareByFriendOrder(a, b) {
+    if (typeof a === 'undefined' || typeof b === 'undefined') {
+        return 0;
+    }
+    return b.$friendNumber - a.$friendNumber;
+}
+
 export {
     compareByName,
     compareByCreatedAt,
@@ -270,7 +293,9 @@ export {
     compareByPrivate,
     compareByStatus,
     compareByLastActive,
+    compareByLastActiveRef,
     compareByLastSeen,
     compareByLocationAt,
-    compareByLocation
+    compareByLocation,
+    compareByFriendOrder
 };

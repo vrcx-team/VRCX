@@ -791,7 +791,8 @@
                 "vrchat_team": "VRChat Team",
                 "18_plus_verified": "18+ Verified",
                 "age_verified": "Age Verified",
-                "trust_level": "Trust Level"
+                "trust_level": "Trust Level",
+                "mutual_friends": "Mutual Friends"
             },
             "badges": {
                 "assigned": "Assigned",
@@ -937,6 +938,14 @@
             },
             "json": {
                 "header": "JSON"
+            },
+            "mutual_friends": {
+                "header": "Mutual Friends",
+                "sorting": {
+                    "alphabetical": "Alphabetical",
+                    "last_active": "Last Active",
+                    "friend_order": "Friend Order"
+                }
             }
         },
         "world": {
