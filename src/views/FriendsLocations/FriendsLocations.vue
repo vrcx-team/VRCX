@@ -9,7 +9,7 @@
                     :prefix-icon="Search"
                     clearable
                     placeholder="Search Friend"></el-input>
-                <el-popover placement="bottom" trigger="click" :width="300">
+                <el-popover placement="bottom" trigger="click" :width="310">
                     <template #reference>
                         <div>
                             <el-tooltip :content="t('view.charts.instance_activity.settings.header')" placement="top">
