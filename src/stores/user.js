@@ -222,6 +222,10 @@ export const useUserStore = defineStore('User', () => {
             name: 'dialog.user.groups.sorting.alphabetical',
             value: 'alphabetical'
         },
+        mutualFriendSorting: {
+            name: 'dialog.user.mutual_friends.sorting.alphabetical',
+            value: 'alphabetical'
+        },
         avatarSorting: 'update',
         avatarReleaseStatus: 'all',
         treeData: [],
@@ -257,7 +261,11 @@ export const useUserStore = defineStore('User', () => {
         previousDisplayNames: [],
         dateFriended: '',
         unFriended: false,
-        dateFriendedInfo: []
+        dateFriendedInfo: [],
+        mutualFriendCount: 0,
+        mutualGroupCount: 0,
+        mutualFriends: [],
+        isMutualFriendsLoading: false
     });
 
     const currentTravelers = reactive(new Map());
@@ -813,6 +821,8 @@ export const useUserStore = defineStore('User', () => {
         D.dateFriended = '';
         D.unFriended = false;
         D.dateFriendedInfo = [];
+        D.mutualFriendCount = 0;
+        D.mutualGroupCount = 0;
         if (userId === currentUser.value.id) {
             getWorldName(currentUser.value.homeLocation).then((worldName) => {
                 D.$homeLocationName = worldName;
@@ -951,6 +961,18 @@ export const useUserStore = defineStore('User', () => {
                                     D.isShowAvatar = true;
                                 }
                             });
+                            if (D.isFriend) {
+                                userRequest
+                                    .getMutualCounts({ userId })
+                                    .then((args) => {
+                                        if (args.params.userId === D.id) {
+                                            D.mutualFriendCount =
+                                                args.json.friends;
+                                            D.mutualGroupCount =
+                                                args.json.groups;
+                                        }
+                                    });
+                            }
                         } else {
                             D.previousDisplayNames =
                                 currentUser.value.pastDisplayNames;

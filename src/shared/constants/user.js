@@ -47,8 +47,24 @@ const userDialogGroupSortingOptions = {
     }
 };
 
+const userDialogMutualFriendSortingOptions = {
+    alphabetical: {
+        name: 'dialog.user.mutual_friends.sorting.alphabetical',
+        value: 'alphabetical'
+    },
+    lastActive: {
+        name: 'dialog.user.mutual_friends.sorting.last_active',
+        value: 'lastActive'
+    },
+    friendOrder: {
+        name: 'dialog.user.mutual_friends.sorting.friend_order',
+        value: 'friendOrder'
+    }
+};
+
 export {
     userDialogWorldSortingOptions,
     userDialogWorldOrderOptions,
-    userDialogGroupSortingOptions
+    userDialogGroupSortingOptions,
+    userDialogMutualFriendSortingOptions
 };

@@ -514,6 +514,73 @@
                     </div>
                 </el-tab-pane>
 
+                <el-tab-pane
+                    name="Mutual Friends"
+                    v-if="userDialog.isFriend"
+                    :label="t('dialog.user.mutual_friends.header')"
+                    lazy>
+                    <div style="display: flex; align-items: center; justify-content: space-between">
+                        <div style="display: flex; align-items: center">
+                            <el-button
+                                type="default"
+                                :loading="userDialog.isMutualFriendsLoading"
+                                size="small"
+                                :icon="Refresh"
+                                circle
+                                @click="getUserMutualFriends(userDialog.id)">
+                            </el-button>
+                            <span style="margin-left: 5px">{{
+                                t('dialog.user.groups.total_count', { count: userDialog.mutualFriends.length })
+                            }}</span>
+                        </div>
+                        <div style="display: flex; align-items: center">
+                            <span style="margin-right: 5px">{{ t('dialog.user.groups.sort_by') }}</span>
+                            <el-dropdown
+                                trigger="click"
+                                size="small"
+                                style="margin-right: 5px"
+                                :disabled="userDialog.isMutualFriendsLoading"
+                                @click.stop>
+                                <el-button size="small">
+                                    <span
+                                        >{{ t(userDialog.mutualFriendSorting.name) }}
+                                        <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
+                                    </span>
+                                </el-button>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item
+                                            v-for="(item, key) in userDialogMutualFriendSortingOptions"
+                                            :key="key"
+                                            @click="setUserDialogMutualFriendSorting(item)"
+                                            >{{ t(item.name) }}
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
+                        </div>
+                    </div>
+                    <ul
+                        class="x-friend-list"
+                        style="margin-top: 10px; overflow: auto; max-height: 250px; min-width: 130px">
+                        <li
+                            v-for="user in userDialog.mutualFriends"
+                            :key="user.id"
+                            class="x-friend-item x-friend-item-border"
+                            @click="showUserDialog(user.id)">
+                            <div class="avatar">
+                                <img :src="userImage(user)" loading="lazy" />
+                            </div>
+                            <div class="detail">
+                                <span
+                                    class="name"
+                                    :style="{ color: user.$userColour }"
+                                    v-text="user.displayName"></span>
+                            </div>
+                        </li>
+                    </ul>
+                </el-tab-pane>
+
                 <el-tab-pane name="Groups" :label="t('dialog.user.groups.header')" lazy>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
@@ -1253,6 +1320,9 @@
     import { useI18n } from 'vue-i18n';
 
     import {
+        compareByDisplayName,
+        compareByFriendOrder,
+        compareByLastActiveRef,
         compareByMemberCount,
         compareByName,
         copyToClipboard,
@@ -1298,9 +1368,9 @@
     } from '../../../api';
     import { getNextDialogIndex, redirectToToolsTab } from '../../../shared/utils/base/ui';
     import { processBulk, request } from '../../../service/request';
+    import { userDialogGroupSortingOptions, userDialogMutualFriendSortingOptions } from '../../../shared/constants';
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import { database } from '../../../service/database';
-    import { userDialogGroupSortingOptions } from '../../../shared/constants';
 
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
     import UserSummaryHeader from './UserSummaryHeader.vue';
@@ -1376,6 +1446,7 @@
     const userDialogGroupEditSelectedGroupIds = ref([]); // selected groups in edit mode
 
     const userDialogLastActiveTab = ref('Info');
+    const userDialogLastMutualFriends = ref('');
     const userDialogLastGroup = ref('');
     const userDialogLastAvatar = ref('');
     const userDialogLastWorld = ref('');
@@ -1498,6 +1569,15 @@
         if (tabName === 'Info') {
             if (vrchatCredit.value === null) {
                 getVRChatCredits();
+            }
+        } else if (tabName === 'Mutual Friends') {
+            if (userId === currentUser.value.id) {
+                userDialogLastActiveTab.value = 'Info';
+                return;
+            }
+            if (userDialogLastMutualFriends.value !== userId) {
+                userDialogLastMutualFriends.value = userId;
+                getUserMutualFriends(userId);
             }
         } else if (tabName === 'Groups') {
             if (userDialogLastGroup.value !== userId) {
@@ -2083,6 +2163,38 @@
         userDialog.value.isGroupsLoading = false;
     }
 
+    async function getUserMutualFriends(userId) {
+        userDialog.value.isMutualFriendsLoading = true;
+        userDialog.value.mutualFriends = [];
+        const params = {
+            userId,
+            n: 100,
+            offset: 0
+        };
+        processBulk({
+            fn: userRequest.getMutualFriends,
+            N: -1,
+            params,
+            handle: (args) => {
+                for (const json of args.json) {
+                    if (userDialog.value.mutualFriends.some((u) => u.id === json.id)) {
+                        continue;
+                    }
+                    const ref = cachedUsers.get(json.id);
+                    if (typeof ref !== 'undefined') {
+                        userDialog.value.mutualFriends.push(ref);
+                    } else {
+                        userDialog.value.mutualFriends.push(json);
+                    }
+                }
+                setUserDialogMutualFriendSorting(userDialog.value.mutualFriendSorting);
+            },
+            done: () => {
+                userDialog.value.isMutualFriendsLoading = false;
+            }
+        });
+    }
+
     function sortGroupsByInGame(a, b) {
         const aIndex = inGameGroupOrder.value.indexOf(a?.id);
         const bIndex = inGameGroupOrder.value.indexOf(b?.id);
@@ -2345,6 +2457,22 @@
         }
         D.groupSorting = sortOrder;
         await sortCurrentUserGroups();
+    }
+
+    async function setUserDialogMutualFriendSorting(sortOrder) {
+        const D = userDialog.value;
+        D.mutualFriendSorting = sortOrder;
+        switch (sortOrder.value) {
+            case 'alphabetical':
+                D.mutualFriends.sort(compareByDisplayName);
+                break;
+            case 'lastActive':
+                D.mutualFriends.sort(compareByLastActiveRef);
+                break;
+            case 'friendOrder':
+                D.mutualFriends.sort(compareByFriendOrder);
+                break;
+        }
     }
 
     async function exitEditModeCurrentUserGroups() {

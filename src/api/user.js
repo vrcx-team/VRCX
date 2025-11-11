@@ -168,6 +168,44 @@ const userReq = {
             };
             return args;
         });
+    },
+
+    getMutualCounts(params) {
+        return request(`users/${params.userId}/mutuals`, {
+            method: 'GET'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    getMutualFriends(params) {
+        return request(`users/${params.userId}/mutuals/friends`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    getMutualGroups(params) {
+        return request(`users/${params.userId}/mutuals/groups`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
     }
 };
 
