@@ -148,8 +148,9 @@
 </template>
 
 <script setup>
+    import { onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
     import { Connection, Delete, Download } from '@element-plus/icons-vue';
-    import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
+    import { useRoute, useRouter } from 'vue-router';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -159,6 +160,8 @@
     import { watchState } from '../../service/watchState';
 
     const { showVRCXUpdateDialog } = useVRCXUpdaterStore();
+    const router = useRouter();
+    const route = useRoute();
     const { loginForm, enableCustomEndpoint } = storeToRefs(useAuthStore());
     const { toggleCustomEndpoint, relogin, deleteSavedLogin, login, getAllSavedCredentials } = useAuthStore();
     const { promptProxySettings } = useGeneralSettingsStore();
@@ -195,6 +198,23 @@
         }
         savedCredentials.value = await getAllSavedCredentials();
     }
+
+    function postLoginRedirect() {
+        const redirect = route.query.redirect;
+        if (typeof redirect === 'string' && redirect.startsWith('/') && redirect !== '/login') {
+            return redirect;
+        }
+        return '/feed';
+    }
+
+    watch(
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
+            if (isLoggedIn) {
+                router.replace(postLoginRedirect());
+            }
+        }
+    );
 
     onBeforeMount(async () => {
         updateSavedCredentials();
