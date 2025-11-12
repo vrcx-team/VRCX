@@ -787,7 +787,7 @@
             "previous_display_names": "曾使用的昵称",
             "pronouns": "人称代词",
             "tags": {
-                "friend_no": "第 {number} 位好友",
+                "friend_number": "第 {number} 位好友",
                 "vrchat_team": "VRChat Team",
                 "18_plus_verified": "已满18岁",
                 "age_verified": "已完成年龄验证",
