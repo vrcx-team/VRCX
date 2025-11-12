@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, onDeactivated, onMounted, ref, watch } from 'vue';
+    import { computed, nextTick, onBeforeUnmount, onDeactivated, onMounted, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
 
     import dayjs from 'dayjs';
@@ -83,9 +83,18 @@
         initEcharts();
     });
 
-    onDeactivated(() => {
-        // prevent switch tab play resize animation
-        resizeObserver.value.disconnect();
+    // onDeactivated(() => {
+    //     // prevent switch tab play resize animation
+    //     if (resizeObserver.value) {
+    //         resizeObserver.value.disconnect();
+    //     }
+    // });
+
+    onBeforeUnmount(() => {
+        if (resizeObserver.value) {
+            resizeObserver.value.disconnect();
+            resizeObserver.value = null;
+        }
     });
 
     function initResizeObserver() {
