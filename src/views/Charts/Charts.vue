@@ -3,9 +3,7 @@
         <div class="options-container" style="margin-top: 0">
             <span class="header">{{ t('view.charts.header') }}</span>
         </div>
-        <keep-alive>
-            <InstanceActivity />
-        </keep-alive>
+        <InstanceActivity />
         <el-backtop target="#chart" :right="30" :bottom="30"></el-backtop>
     </div>
 </template>

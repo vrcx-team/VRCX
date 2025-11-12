@@ -124,7 +124,7 @@
 </template>
 
 <script setup>
-    import { nextTick, onActivated, onBeforeMount, onDeactivated, onMounted, ref, watch } from 'vue';
+    import { nextTick, onActivated, onBeforeMount, onBeforeUnmount, onDeactivated, onMounted, ref, watch } from 'vue';
     import { ArrowLeft, ArrowRight, InfoFilled, Refresh, Setting, WarningFilled } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -221,19 +221,19 @@
         }
     );
 
-    onActivated(() => {
-        // first time also call activated
-        if (echartsInstance.value) {
-            reloadData();
-        }
-    });
+    // onActivated(() => {
+    //     // first time also call activated
+    //     if (echartsInstance.value) {
+    //         reloadData();
+    //     }
+    // });
 
-    onDeactivated(() => {
-        // prevent resize animation when switch tab
-        if (resizeObserver.value) {
-            resizeObserver.value.disconnect();
-        }
-    });
+    // onDeactivated(() => {
+    //     // prevent resize animation when switch tab
+    //     if (resizeObserver.value) {
+    //         resizeObserver.value.disconnect();
+    //     }
+    // });
 
     onBeforeMount(() => {
         initializeSettings();
@@ -250,6 +250,13 @@
         } catch (error) {
             console.error('error in mounted', error);
             isLoading.value = false;
+        }
+    });
+
+    onBeforeUnmount(() => {
+        if (resizeObserver.value) {
+            resizeObserver.value.disconnect();
+            resizeObserver.value = null;
         }
     });
 
