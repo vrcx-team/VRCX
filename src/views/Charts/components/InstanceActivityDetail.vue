@@ -44,7 +44,7 @@
     const activityDetailChartRef = ref(null);
 
     const isLoading = ref(true);
-    const echartsInstance = ref(null);
+    let echartsInstance = null;
     const usersFirstActivity = ref(null);
     const resizeObserver = ref(null);
 
@@ -59,9 +59,9 @@
     watch(
         () => isDarkMode.value,
         () => {
-            if (echartsInstance.value) {
-                echartsInstance.value.dispose();
-                echartsInstance.value = null;
+            if (echartsInstance) {
+                echartsInstance.dispose();
+                echartsInstance = null;
                 initEcharts();
             }
         }
@@ -70,7 +70,7 @@
     watch(
         () => dtHour12.value,
         () => {
-            if (echartsInstance.value) {
+            if (echartsInstance) {
                 initEcharts();
             }
         }
@@ -103,12 +103,12 @@
 
     function initResizeObserver() {
         resizeObserver.value = new ResizeObserver((entries) => {
-            if (!echartsInstance.value) {
+            if (!echartsInstance) {
                 return;
             }
             for (const entry of entries) {
                 try {
-                    echartsInstance.value.resize({
+                    echartsInstance.resize({
                         width: entry.contentRect.width,
                         animation: {
                             duration: 300
@@ -131,29 +131,29 @@
         const chartDom = activityDetailChartRef.value;
 
         const afterInit = () => {
-            if (!echartsInstance.value) {
+            if (!echartsInstance) {
                 console.error('ECharts instance not initialized');
                 isLoading.value = false;
                 return;
             }
 
             try {
-                echartsInstance.value.resize({
+                echartsInstance.resize({
                     height: chartsHeight,
                     animation: {
                         duration: 300
                     }
                 });
 
-                echartsInstance.value.off('click');
+                echartsInstance.off('click');
 
                 const options = getNewOption();
                 if (options && options.series && options.series.length > 0) {
-                    echartsInstance.value.clear();
-                    echartsInstance.value.setOption(options, { notMerge: true });
-                    echartsInstance.value.on('click', 'yAxis', handleClickYAxisLabel);
+                    echartsInstance.clear();
+                    echartsInstance.setOption(options, { notMerge: true });
+                    echartsInstance.on('click', 'yAxis', handleClickYAxisLabel);
                 } else {
-                    echartsInstance.value.clear();
+                    echartsInstance.clear();
                 }
             } catch (error) {
                 console.error('Error in afterInit:', error);
@@ -163,8 +163,8 @@
         };
 
         const initEchartsInstance = () => {
-            if (!echartsInstance.value) {
-                echartsInstance.value = echarts.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
+            if (!echartsInstance) {
+                echartsInstance = echarts.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
                     height: chartsHeight,
                     useDirtyRect: props.activityDetailData.length > 80
                 });
