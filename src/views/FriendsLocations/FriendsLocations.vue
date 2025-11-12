@@ -26,13 +26,26 @@
                     <div class="friend-view__settings-row">
                         <span class="friend-view__settings-label">Scale</span>
                         <div class="friend-view__scale-control">
-                            <span class="friend-view__scale-value">{{ cardScalePercentLabel }} &nbsp;</span>
+                            <span class="friend-view__scale-value">{{ cardScalePercentLabel }}&nbsp;</span>
                             <el-slider
                                 v-model="cardScale"
                                 class="friend-view__slider"
                                 :min="0.6"
                                 :max="1.0"
                                 :step="0.01"
+                                :show-tooltip="false" />
+                        </div>
+                    </div>
+                    <div class="friend-view__settings-row">
+                        <span class="friend-view__settings-label">Spacing</span>
+                        <div class="friend-view__scale-control">
+                            <span class="friend-view__scale-value">{{ cardSpacingPercentLabel }}&nbsp;</span>
+                            <el-slider
+                                v-model="cardSpacing"
+                                class="friend-view__slider"
+                                :min="0.5"
+                                :max="1.5"
+                                :step="0.05"
                                 :show-tooltip="false" />
                         </div>
                     </div>
@@ -66,7 +79,8 @@
                                 v-for="friend in group.friends"
                                 :key="friend.id ?? friend.userId ?? friend.displayName"
                                 :friend="friend"
-                                :card-scale="cardScale" />
+                                :card-scale="cardScale"
+                                :card-spacing="cardSpacing" />
                         </div>
                     </section>
                 </div>
@@ -96,6 +110,7 @@
                                 :key="friend.id ?? friend.userId ?? friend.displayName"
                                 :friend="friend"
                                 :card-scale="cardScale"
+                                :card-spacing="cardSpacing"
                                 :display-instance-info="false" />
                         </div>
                     </section>
@@ -111,7 +126,8 @@
                         v-for="entry in mergedOnlineEntries"
                         :key="entry.id ?? entry.friend.id ?? entry.friend.displayName"
                         :friend="entry.friend"
-                        :card-scale="cardScale" />
+                        :card-scale="cardScale"
+                        :card-spacing="cardSpacing" />
                 </div>
                 <div v-if="!mergedSameInstanceGroups.length && !mergedOnlineEntries.length" class="friend-view__empty">
                     No matching friends
@@ -123,7 +139,8 @@
                         v-for="entry in visibleFriends"
                         :key="entry.id ?? entry.friend.id ?? entry.friend.displayName"
                         :friend="entry.friend"
-                        :card-scale="cardScale" />
+                        :card-scale="cardScale"
+                        :card-spacing="cardSpacing" />
                 </div>
                 <div v-else class="friend-view__empty">No matching friends</div>
             </template>
@@ -175,6 +192,7 @@
     );
 
     const cardScaleBase = ref(1);
+    const cardSpacingBase = ref(1);
 
     const cardScale = computed({
         get: () => cardScaleBase.value,
@@ -184,7 +202,16 @@
         }
     });
 
+    const cardSpacing = computed({
+        get: () => cardSpacingBase.value,
+        set: (value) => {
+            cardSpacingBase.value = value;
+            configRepository.setString('VRCX_FriendLocationCardSpacing', value.toString());
+        }
+    });
+
     const cardScalePercentLabel = computed(() => `${Math.round(cardScale.value * 100)}%`);
+    const cardSpacingPercentLabel = computed(() => `${Math.round(cardSpacing.value * 100)}%`);
 
     const showSameInstanceBase = ref(false);
 
@@ -457,8 +484,9 @@
         const baseWidth = 220;
         const baseGap = 14;
         const scale = cardScale.value;
+        const spacing = cardSpacing.value;
         const minWidth = baseWidth * scale;
-        const gap = baseGap + (scale - 1) * 10;
+        const gap = Math.max(6, (baseGap + (scale - 1) * 10) * spacing);
 
         return (count = 1, options = {}) => {
             const containerWidth = Math.max(gridWidth.value ?? 0, 0);
@@ -493,7 +521,8 @@
                 '--friend-card-min-width': `${Math.round(minWidth)}px`,
                 '--friend-card-gap': `${Math.round(gap)}px`,
                 '--friend-card-target-width': `${Math.round(cardWidth)}px`,
-                '--friend-grid-columns': `${columns}`
+                '--friend-grid-columns': `${columns}`,
+                '--friend-card-spacing': `${spacing.toFixed(2)}`
             };
         };
     });
@@ -577,7 +606,7 @@
         }
     );
 
-    watch(cardScale, () => {
+    watch([cardScale, cardSpacing], () => {
         if (!settingsReady.value) {
             return;
         }
@@ -620,14 +649,20 @@
 
     async function loadInitialSettings() {
         try {
-            const [storedScale, storedShowSameInstance] = await Promise.all([
+            const [storedScale, storedSpacing, storedShowSameInstance] = await Promise.all([
                 configRepository.getString('VRCX_FriendLocationCardScale', '1'),
+                configRepository.getString('VRCX_FriendLocationCardSpacing', '1'),
                 configRepository.getBool('VRCX_FriendLocationShowSameInstance', null)
             ]);
 
             const parsedScale = parseFloat(storedScale);
             if (!Number.isNaN(parsedScale) && parsedScale > 0) {
                 cardScaleBase.value = parsedScale;
+            }
+
+            const parsedSpacing = parseFloat(storedSpacing);
+            if (!Number.isNaN(parsedSpacing) && parsedSpacing > 0) {
+                cardSpacingBase.value = parsedSpacing;
             }
 
             if (storedShowSameInstance !== null && storedShowSameInstance !== undefined) {
