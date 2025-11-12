@@ -943,7 +943,7 @@
             "mutual_friends": {
                 "header": "共同好友",
                 "sorting": {
-                    "alphabetical": "字母排序",
+                    "alphabetical": "字母顺序",
                     "last_active": "上次活跃",
                     "friend_order": "添加顺序"
                 }
