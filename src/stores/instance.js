@@ -540,7 +540,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 };
             }
         }
-        const { instanceId, shortName } = D.$location;
+        const { instanceId, shortName } = D?.$location || {};
         if (instanceId && typeof instances[instanceId] === 'undefined') {
             instances[instanceId] = {
                 id: instanceId,
@@ -555,7 +555,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         const cachedCurrentUser = userStore.cachedUsers.get(
             userStore.currentUser.id
         );
-        const lastLocation$ = cachedCurrentUser.$location;
+        const lastLocation$ = cachedCurrentUser?.$location;
         const playersInInstance = locationStore.lastLocation.playerList;
         if (lastLocation$.worldId === D.id && playersInInstance.size > 0) {
             // pull instance json from cache
