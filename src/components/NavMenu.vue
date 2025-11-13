@@ -214,6 +214,7 @@
     } from '../stores';
     import { THEME_CONFIG } from '../shared/constants';
     import { openExternalLink } from '../shared/utils';
+    import { useMagicKeys } from '../shared/utils/composables/useMagicKeys';
 
     import * as Sentry from '@sentry/vue';
 
@@ -454,15 +455,19 @@
         }
     });
 
+    const keys = useMagicKeys({ exactMatch: true });
+    const ctrlD = [keys['Ctrl+D'], keys['Ctrl+KeyD']]; // This might help with windows... cope :tm:
+
+    watch(ctrlD, ([a, b], _) => {
+        if (a || b) {
+            directAccessPaste();
+        }
+    });
+
     onMounted(() => {
         if (!sentryErrorReporting.value) return;
         const feedback = Sentry.getFeedback();
         feedback?.attachTo(document.getElementById('feedback'));
-        window.addEventListener('keydown', handleKeydown);
-    });
-
-    onUnmounted(() => {
-        window.removeEventListener('keydown', handleKeydown);
     });
 </script>
 
