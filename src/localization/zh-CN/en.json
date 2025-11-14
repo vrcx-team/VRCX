@@ -2,19 +2,31 @@
     "language": "简体中文 (zh-CN)",
     "translator": "flower_elf,Yingxue,Map1en,Stabrinai",
     "nav_tooltip": {
+        "friends_locations": "好友位置",
         "feed": "好友动态",
         "game_log": "游戏日志",
         "player_list": "房间玩家列表",
         "search": "搜索",
         "favorites": "收藏",
+        "social": "社交",
         "friend_log": "好友日志",
         "moderation": "玩家管理（屏蔽 / 静音）",
         "notification": "通知",
         "friend_list": "好友列表",
         "charts": "图表",
         "tools": "工具",
+        "about": "关于",
         "profile": "个人资料",
-        "settings": "设置"
+        "settings": "设置",
+        "help_support": "帮助 & 支持"
+    },
+    "nav_menu": {
+        "resources": "帮助资源",
+        "wiki": "Wiki",
+        "get_help": "请求帮助",
+        "github": "GitHub 仓库",
+        "discord": "加入 Discord",
+        "whats_new": "更新日志"
     },
     "view": {
         "login": {
@@ -121,7 +133,7 @@
                 "header": "模型",
                 "search": "搜索",
                 "vrchat_favorites": "VRChat 上的收藏",
-                "local_favorites": "本地收藏（需要 VRC+，游戏内不可见）",
+                "local_favorites": "本地收藏（需要 VRC+）",
                 "new_group": "创建新的收藏夹",
                 "refresh": "刷新",
                 "cancel_refresh": "清除缓存"
@@ -184,7 +196,7 @@
                 "friendRequest": "好友申请",
                 "ignoredFriendRequest": "忽略的好友申请",
                 "message": "消息",
-                "boop": "Boop",
+                "boop": "戳一戳",
                 "groupChange": "群组变动",
                 "event": {
                     "announcement": "活动日历事件"
@@ -354,7 +366,8 @@
                     "auto_update_off": "关闭",
                     "auto_update_notify": "显示通知",
                     "auto_update_download": "自动下载",
-                    "change_log": "更新日志"
+                    "change_log": "更新日志",
+                    "updater_disabled": "自带的更新检查已被禁用，因为 VRCX 的更新现在由你的系统包管理器处理。"
                 },
                 "application": {
                     "header": "首选项",
@@ -409,6 +422,7 @@
                 "appearance": {
                     "header": "外观",
                     "language": "语言 (Language)",
+                    "bio_language": "目标语言",
                     "theme_mode": "主题",
                     "theme_mode_system": "跟随系统",
                     "theme_mode_light": "浅色",
@@ -635,8 +649,14 @@
                     "youtube_api": {
                         "header": "YouTube API",
                         "enable": "启用",
-                        "youtube_api_key": "YouTube API 密钥",
+                        "youtube_api_key": "输入 API 密钥",
                         "enable_tooltip": "获取视频标题以供日志记录使用，会一并获取进度条的时间"
+                    },
+                    "translation_api": {
+                        "header": "Google 翻译 API",
+                        "enable": "启用",
+                        "translation_api_key": "输入 API 密钥",
+                        "enable_tooltip": "用于翻译玩家的个人简介"
                     },
                     "video_progress_pie": {
                         "header": "视频进度圆饼叠加界面",
@@ -767,10 +787,12 @@
             "previous_display_names": "曾使用的昵称",
             "pronouns": "人称代词",
             "tags": {
-                "friend_no": "第 {number} 位好友",
+                "friend_number": "好友序号",
                 "vrchat_team": "VRChat Team",
                 "18_plus_verified": "已满18岁",
-                "age_verified": "已完成年龄验证"
+                "age_verified": "已完成年龄验证",
+                "trust_level": "信誉等级",
+                "mutual_friends": "共同好友"
             },
             "badges": {
                 "assigned": "获得于",
@@ -864,7 +886,8 @@
                 "instance_hard_closed": "房间已关闭",
                 "close_instance": "关闭该房间",
                 "instance_age_gated": "房间具有年龄限制",
-                "open_previous_instance": "打开上次加入的房间"
+                "open_previous_instance": "打开上次加入的房间",
+                "show_mutual_friends": "查看共同好友"
             },
             "groups": {
                 "header": "群组",
@@ -877,9 +900,9 @@
                 "mutual_groups": "共同群组",
                 "groups": "加入的群组",
                 "sorting": {
-                    "alphabetical": "按字母顺序",
-                    "members": "按成员数",
-                    "in_game": "按游戏内顺序"
+                    "alphabetical": "字母顺序",
+                    "members": "成员数",
+                    "in_game": "游戏内顺序"
                 },
                 "leave_group_tooltip": "离开群组"
             },
@@ -916,6 +939,14 @@
             },
             "json": {
                 "header": "原始 JSON 信息"
+            },
+            "mutual_friends": {
+                "header": "共同好友",
+                "sorting": {
+                    "alphabetical": "字母顺序",
+                    "last_active": "上次活跃",
+                    "friend_order": "添加顺序"
+                }
             }
         },
         "world": {
@@ -1171,7 +1202,7 @@
             "header": "选择收藏夹",
             "vrchat_favorites": "VRChat 上的收藏",
             "local_favorites": "本地收藏",
-            "local_avatar_favorites": "模型收藏（需要 VRC+，游戏中不可见）"
+            "local_avatar_favorites": "模型收藏（需要 VRC+）"
         },
         "invite": {
             "header": "邀请",
@@ -1292,8 +1323,15 @@
         },
         "youtube_api": {
             "header": "YouTube API",
-            "description": "输入你的 YouTube API 密钥（选填）",
-            "placeholder": "YouTube API 密钥",
+            "description": "输入你的 YouTube API 密钥（可选）",
+            "placeholder": "输入形如“AIzaSy......”的密钥",
+            "guide": "查看教程（英语）",
+            "save": "保存"
+        },
+        "translation_api": {
+            "header": "Google 翻译 API",
+            "description": "输入你的 Google 翻译 API 密钥",
+            "placeholder": "输入形如“AIzaSy......”的密钥",
             "guide": "查看教程（英语）",
             "save": "保存"
         },
@@ -1544,7 +1582,8 @@
             "sticker": "贴纸",
             "drone_skin": "无人机皮肤",
             "emoji": "Emoji（表情）",
-            "redeem": "兑换码兑换"
+            "redeem": "兑换码兑换",
+            "create_animated_emoji": "动画表情生成器"
         },
         "change_content_image": {
             "avatar": "更改模型封面",
@@ -1696,7 +1735,9 @@
                 "interested_user": "感兴趣的人数",
                 "close_time": "结束后关闭房间",
                 "created": "创建日期",
-                "description": "描述"
+                "description": "描述",
+                "export_to_calendar": "导出到日历",
+                "download_ics": "下载 .ics 文件"
             }
         },
         "moderate_group": {
