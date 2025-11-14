@@ -276,6 +276,8 @@
 
             await nextTick();
 
+            echartsInstance.off('click');
+
             if (echartsInstance && activityData.value.length) {
                 const chartsHeight = activityData.value.length * (barWidth.value + 10) + 200;
                 echartsInstance.resize({
@@ -285,6 +287,8 @@
                     }
                 });
                 echartsInstance.setOption(getNewOption(), { notMerge: true });
+                const handleClickYAxisLabel = handleYAxisLabelClick;
+                echartsInstance.on('click', 'yAxis', handleClickYAxisLabel);
             } else if (echartsInstance) {
                 echartsInstance.clear();
             }
@@ -380,17 +384,17 @@
             echartsInstance = echarts.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
                 height: chartsHeight
             });
-            // resizeObserver.value = new ResizeObserver((entries) => {
-            //     for (const entry of entries) {
-            //         echartsInstance.resize({
-            //             width: entry.contentRect.width,
-            //             animation: {
-            //                 duration: 300
-            //             }
-            //         });
-            //     }
-            // });
-            // resizeObserver.value.observe(chartDom);
+            resizeObserver.value = new ResizeObserver((entries) => {
+                for (const entry of entries) {
+                    echartsInstance.resize({
+                        width: entry.contentRect.width,
+                        animation: {
+                            duration: 300
+                        }
+                    });
+                }
+            });
+            resizeObserver.value.observe(chartDom);
         };
 
         if (!echartsInstance) {
