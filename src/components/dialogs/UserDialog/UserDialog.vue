@@ -396,21 +396,29 @@
                             </div>
                         </div>
                         <div v-if="currentUser.id !== userDialog.id" class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span v-if="userDialog.unFriended" class="name">
-                                    {{ t('dialog.user.info.unfriended') }}
-                                    <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
-                                        <el-icon style="margin-left: 3px"><Warning /></el-icon>
-                                    </el-tooltip>
-                                </span>
-                                <span v-else class="name">
-                                    {{ t('dialog.user.info.friended') }}
-                                    <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
-                                        <el-icon style="margin-left: 3px"><Warning /></el-icon>
-                                    </el-tooltip>
-                                </span>
-                                <span class="extra">{{ formatDateFilter(userDialog.dateFriended, 'long') }}</span>
-                            </div>
+                            <el-tooltip placement="top" :disabled="!userDialog.dateFriendedInfo.length">
+                                <template v-if="userDialog.dateFriendedInfo.length" #content>
+                                    <template v-for="ref in userDialog.dateFriendedInfo" :key="ref.type">
+                                        <span>{{ ref.type }}: {{ formatDateFilter(ref.created_at, 'long') }}</span
+                                        ><br />
+                                    </template>
+                                </template>
+                                <div class="detail">
+                                    <span v-if="userDialog.unFriended" class="name">
+                                        {{ t('dialog.user.info.unfriended') }}
+                                        <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
+                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
+                                        </el-tooltip>
+                                    </span>
+                                    <span v-else class="name">
+                                        {{ t('dialog.user.info.friended') }}
+                                        <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
+                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
+                                        </el-tooltip>
+                                    </span>
+                                    <span class="extra">{{ formatDateFilter(userDialog.dateFriended, 'long') }}</span>
+                                </div>
+                            </el-tooltip>
                         </div>
                         <template v-if="currentUser.id === userDialog.id">
                             <div class="x-friend-item" @click="toggleAvatarCopying">
