@@ -5,33 +5,33 @@ import configRepository from '../service/config';
 import * as Sentry from '@sentry/vue';
 
 export async function initSentry(app) {
-    const enabled = await configRepository.getString(
-        'VRCX_SentryEnabled',
-        'false'
-    );
-    const version = await AppApi.GetVersion();
-    const isNightly = version.includes('Nightly');
-    if (enabled !== 'true' || !isNightly) {
-        return;
-    }
-    const vrcxId = await configRepository.getString('VRCX_id', '');
-    const response = await webApiService.execute({
-        url: 'https://api0.vrcx.app/errorreporting/getdsn',
-        method: 'GET',
-        headers: {
-            Referer: 'https://vrcx.app',
-            'VRCX-ID': vrcxId
-        }
-    });
-    if (response.status !== 200) {
-        console.error(
-            'Failed to get Sentry DSN:',
-            response.status,
-            response.data
-        );
-        return;
-    }
     try {
+        const enabled = await configRepository.getString(
+            'VRCX_SentryEnabled',
+            'false'
+        );
+        const version = await AppApi.GetVersion();
+        const isNightly = version.includes('Nightly');
+        if (enabled !== 'true' || !isNightly) {
+            return;
+        }
+        const vrcxId = await configRepository.getString('VRCX_id', '');
+        const response = await webApiService.execute({
+            url: 'https://api0.vrcx.app/errorreporting/getdsn',
+            method: 'GET',
+            headers: {
+                Referer: 'https://vrcx.app',
+                'VRCX-ID': vrcxId
+            }
+        });
+        if (response.status !== 200) {
+            console.error(
+                'Failed to get Sentry DSN:',
+                response.status,
+                response.data
+            );
+            return;
+        }
         const dsn = atob(response.data);
         Sentry.init({
             app,
