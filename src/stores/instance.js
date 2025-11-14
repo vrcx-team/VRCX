@@ -557,7 +557,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         );
         const lastLocation$ = cachedCurrentUser?.$location;
         const playersInInstance = locationStore.lastLocation.playerList;
-        if (lastLocation$.worldId === D.id && playersInInstance.size > 0) {
+        if (lastLocation$?.worldId === D.id && playersInInstance.size > 0) {
             // pull instance json from cache
             const friendsInInstance = locationStore.lastLocation.friendList;
             instance = {
@@ -589,7 +589,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 typeof ref === 'undefined' ||
                 typeof ref.$location === 'undefined' ||
                 ref.$location.worldId !== D.id ||
-                (ref.$location.instanceId === lastLocation$.instanceId &&
+                (ref.$location.instanceId === lastLocation$?.instanceId &&
                     playersInInstance.size > 0 &&
                     ref.location !== 'traveling')
             ) {
@@ -683,7 +683,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             // sort selected and current instance to top
             if (
                 b.location === D.$location.tag ||
-                b.location === lastLocation$.tag
+                b.location === lastLocation$?.tag
             ) {
                 // sort selected instance above current instance
                 if (a.location === D.$location.tag) {
@@ -693,7 +693,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             }
             if (
                 a.location === D.$location.tag ||
-                a.location === lastLocation$.tag
+                a.location === lastLocation$?.tag
             ) {
                 // sort selected instance above current instance
                 if (b.location === D.$location.tag) {
@@ -760,10 +760,10 @@ export const useInstanceStore = defineStore('Instance', () => {
         const cachedCurrentUser = userStore.cachedUsers.get(
             userStore.currentUser.id
         );
-        const lastLocation$ = cachedCurrentUser.$location;
-        const currentLocation = lastLocation$.tag;
+        const lastLocation$ = cachedCurrentUser?.$location;
+        const currentLocation = lastLocation$?.tag;
         const playersInInstance = locationStore.lastLocation.playerList;
-        if (lastLocation$.groupId === D.id && playersInInstance.size > 0) {
+        if (lastLocation$?.groupId === D.id && playersInInstance.size > 0) {
             const friendsInInstance = locationStore.lastLocation.friendList;
             instance = {
                 id: lastLocation$.instanceId,
@@ -794,7 +794,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 typeof ref === 'undefined' ||
                 typeof ref.$location === 'undefined' ||
                 ref.$location.groupId !== D.id ||
-                (ref.$location.instanceId === lastLocation$.instanceId &&
+                (ref.$location.instanceId === lastLocation$?.instanceId &&
                     playersInInstance.size > 0 &&
                     ref.location !== 'traveling')
             ) {
