@@ -2178,11 +2178,11 @@
     }
 
     async function getUserMutualFriends(userId) {
+        userDialog.value.mutualFriends = [];
         if (currentUser.value.hasSharedConnectionsOptOut) {
             return;
         }
         userDialog.value.isMutualFriendsLoading = true;
-        userDialog.value.mutualFriends = [];
         const params = {
             userId,
             n: 100,
