@@ -193,6 +193,7 @@ export const useLaunchStore = defineStore('Launch', () => {
         launchDialogData,
         showLaunchOptions,
         showLaunchDialog,
+        getLaunchUrl,
         launchGame,
         tryOpenInstanceInVrc
     };
