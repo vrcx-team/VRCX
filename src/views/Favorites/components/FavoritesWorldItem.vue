@@ -62,15 +62,40 @@
                     </div>
                 </template>
                 <template v-else>
-                    <div class="favorites-search-card__action">
-                        <el-tooltip placement="top" :content="inviteOrLaunchText">
-                            <el-button
-                                size="small"
-                                :icon="Message"
-                                class="favorites-search-card__action-btn"
-                                @click.stop="newInstanceSelfInvite(favorite.id)"
-                                circle />
-                        </el-tooltip>
+                    <div class="favorites-search-card__action-group">
+                        <div class="favorites-search-card__action">
+                            <el-tooltip placement="top" :content="inviteOrLaunchText">
+                                <el-button
+                                    size="small"
+                                    :icon="Message"
+                                    class="favorites-search-card__action-btn"
+                                    @click.stop="newInstanceSelfInvite(favorite.id)"
+                                    circle />
+                            </el-tooltip>
+                        </div>
+                        <div class="favorites-search-card__action">
+                            <el-tooltip
+                                v-if="showDangerUnfavorite"
+                                placement="top"
+                                :content="t('view.favorite.unfavorite_tooltip')">
+                                <el-button
+                                    size="small"
+                                    :icon="Close"
+                                    circle
+                                    class="favorites-search-card__action-btn"
+                                    type="danger"
+                                    @click.stop="handleDeleteFavorite" />
+                            </el-tooltip>
+                            <el-tooltip v-else placement="top" :content="t('view.favorite.edit_favorite_tooltip')">
+                                <el-button
+                                    type="default"
+                                    :icon="Star"
+                                    size="small"
+                                    circle
+                                    class="favorites-search-card__action-btn"
+                                    @click.stop="showFavoriteDialog('world', favorite.id)" />
+                            </el-tooltip>
+                        </div>
                     </div>
                 </template>
             </div>
@@ -98,12 +123,12 @@
 </template>
 
 <script setup>
-    import { Message } from '@element-plus/icons-vue';
+    import { Close, Message, Star } from '@element-plus/icons-vue';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useFavoriteStore, useInviteStore } from '../../../stores';
+    import { useFavoriteStore, useInviteStore, useUiStore } from '../../../stores';
     import { favoriteRequest } from '../../../api';
 
     import FavoritesMoveDropdown from './FavoritesMoveDropdown.vue';
@@ -118,13 +143,19 @@
 
     const emit = defineEmits(['toggle-select', 'remove-local-world-favorite', 'click']);
     const { favoriteWorldGroups } = storeToRefs(useFavoriteStore());
+    const { showFavoriteDialog } = useFavoriteStore();
     const { newInstanceSelfInvite } = useInviteStore();
     const { t } = useI18n();
     const { canOpenInstanceInGame } = useInviteStore();
+    const { shiftHeld } = storeToRefs(useUiStore());
 
     const isSelected = computed({
         get: () => props.selected,
         set: (value) => emit('toggle-select', value)
+    });
+
+    const showDangerUnfavorite = computed(() => {
+        return shiftHeld.value;
     });
 
     const cardClasses = computed(() => [

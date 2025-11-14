@@ -48,7 +48,7 @@
                 </template>
                 <template v-else>
                     <div class="favorites-search-card__action">
-                        <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')">
+                        <el-tooltip placement="right" :content="t('view.favorite.edit_favorite_tooltip')">
                             <el-button
                                 size="small"
                                 :icon="Star"

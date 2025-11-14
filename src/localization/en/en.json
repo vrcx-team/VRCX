@@ -148,6 +148,7 @@
             "move_tooltip": "Move",
             "copy_tooltip": "Copy",
             "unfavorite_tooltip": "Unfavorite",
+            "edit_favorite_tooltip": "Edit Favorite",
             "visibility_tooltip": "Change Visibility",
             "rename_tooltip": "Rename",
             "clear_tooltip": "Clear",

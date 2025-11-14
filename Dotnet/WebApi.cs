@@ -525,7 +525,7 @@ namespace VRCX
                 
                 var message = webException.Message;
                 if (webException.InnerException != null)
-                    message += $" | Inner Exception: {webException.InnerException.Message}";
+                    message += $" | Inner Exception: {webException.InnerException}";
                 return new Tuple<int, string>(
                     -1,
                     message
@@ -535,7 +535,7 @@ namespace VRCX
             {
                 var message = e.Message;
                 if (e.InnerException != null)
-                    message += $" | Inner Exception: {e.InnerException.Message}";
+                    message += $" | Inner Exception: {e.InnerException}";
                 return new Tuple<int, string>(
                     -1,
                     message
