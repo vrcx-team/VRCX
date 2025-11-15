@@ -9,7 +9,7 @@
                     :prefix-icon="Search"
                     clearable
                     placeholder="Search Friend"></el-input>
-                <el-popover placement="bottom" trigger="click" :width="310">
+                <el-popover placement="bottom" trigger="click" :width="350">
                     <template #reference>
                         <div>
                             <el-tooltip :content="t('view.charts.instance_activity.settings.header')" placement="top">
@@ -20,11 +20,13 @@
                         </div>
                     </template>
                     <div style="display: flex; justify-content: space-between; align-items: center">
-                        <span class="friend-view__settings-label">Separate Same Instance</span>
+                        <span class="friend-view__settings-label">{{
+                            t('view.friends_locations.separate_same_instance_friends')
+                        }}</span>
                         <el-switch v-model="showSameInstance" />
                     </div>
                     <div class="friend-view__settings-row">
-                        <span class="friend-view__settings-label">Scale</span>
+                        <span class="friend-view__settings-label">{{ t('view.friends_locations.scale') }}</span>
                         <div class="friend-view__scale-control">
                             <span class="friend-view__scale-value">{{ cardScalePercentLabel }}&nbsp;</span>
                             <el-slider
@@ -37,7 +39,7 @@
                         </div>
                     </div>
                     <div class="friend-view__settings-row">
-                        <span class="friend-view__settings-label">Spacing</span>
+                        <span class="friend-view__settings-label">{{ t('view.friends_locations.spacing') }}</span>
                         <div class="friend-view__scale-control">
                             <span class="friend-view__scale-value">{{ cardSpacingPercentLabel }}&nbsp;</span>
                             <el-slider
@@ -53,7 +55,7 @@
             </div>
         </div>
         <div v-else class="friend-view__toolbar friend-view__toolbar--loading">
-            <span class="friend-view__loading-text">Loading preferences...</span>
+            <span class="friend-view__loading-text">{{ t('view.friends_locations.loading_more') }}</span>
         </div>
         <el-scrollbar v-if="settingsReady" ref="scrollbarRef" class="friend-view__scroll" @scroll="handleScroll">
             <template v-if="isSameInstanceView">
@@ -84,7 +86,7 @@
                         </div>
                     </section>
                 </div>
-                <div v-else class="friend-view__empty">No matching friends</div>
+                <div v-else class="friend-view__empty">{{ t('view.friends_locations.no_matching_friends') }}</div>
             </template>
             <template v-else-if="shouldMergeSameInstance">
                 <div v-if="mergedSameInstanceGroups.length" class="friend-view__instances">
@@ -116,7 +118,7 @@
                     </section>
                 </div>
                 <div v-if="mergedSameInstanceGroups.length && mergedOnlineEntries.length" class="friend-view__divider">
-                    <span class="friend-view__divider-text">Online Friends</span>
+                    <span class="friend-view__divider-text"></span>
                 </div>
                 <div
                     v-if="mergedOnlineEntries.length"
@@ -130,7 +132,7 @@
                         :card-spacing="cardSpacing" />
                 </div>
                 <div v-if="!mergedSameInstanceGroups.length && !mergedOnlineEntries.length" class="friend-view__empty">
-                    No matching friends
+                    {{ t('view.friends_locations.no_matching_friends') }}
                 </div>
             </template>
             <template v-else>
@@ -142,13 +144,13 @@
                         :card-scale="cardScale"
                         :card-spacing="cardSpacing" />
                 </div>
-                <div v-else class="friend-view__empty">No matching friends</div>
+                <div v-else class="friend-view__empty">{{ t('view.friends_locations.no_matching_friends') }}</div>
             </template>
             <div v-if="isLoadingMore" class="friend-view__loading">
                 <el-icon class="friend-view__loading-icon" :size="18">
                     <Loading />
                 </el-icon>
-                <span>Loading more...</span>
+                <span>{{ t('view.friends_locations.loading_more') }}</span>
             </div>
         </el-scrollbar>
         <div v-else class="friend-view__initial-loading">
@@ -178,11 +180,11 @@
         storeToRefs(friendStore);
 
     const SEGMENTED_BASE_OPTIONS = [
-        { label: 'Online', value: 'online' },
-        { label: 'Favorite', value: 'favorite' },
-        { label: 'Same Instance', value: 'same-instance' },
-        { label: 'Active', value: 'active' },
-        { label: 'Offline', value: 'offline' }
+        { label: t('side_panel.online'), value: 'online' },
+        { label: t('side_panel.favorite'), value: 'favorite' },
+        { label: t('side_panel.same_instance'), value: 'same-instance' },
+        { label: t('side_panel.active'), value: 'active' },
+        { label: t('side_panel.offline'), value: 'offline' }
     ];
 
     const segmentedOptions = computed(() =>

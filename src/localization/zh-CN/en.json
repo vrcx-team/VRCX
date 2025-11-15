@@ -1,6 +1,6 @@
 {
     "language": "简体中文 (zh-CN)",
-    "translator": "flower_elf,Yingxue,Map1en,Stabrinai",
+    "translator": "flower_elf, Yingxue, Map1en, Stabrinai",
     "nav_tooltip": {
         "friends_locations": "好友位置",
         "feed": "好友动态",
@@ -57,6 +57,14 @@
                 "Avatar": "模型变动",
                 "Bio": "简介变更"
             }
+        },
+        "friends_locations": {
+            "online_friends": "在线好友",
+            "scale": "缩放",
+            "spacing": "卡片间距",
+            "separate_same_instance_friends": "分开显示处于同一房间的好友",
+            "no_matching_friends": "没有找到匹配的好友",
+            "loading_more": "加载中..."
         },
         "game_log": {
             "filter_placeholder": "筛选游戏日志",
