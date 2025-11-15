@@ -1,12 +1,14 @@
 {
     "language": "日本語 (ja)",
-    "translator": "Assault1892, Yuu198, paralleltree, kazu3jp, Cayahuanca, ecto0310",
+    "translator": "Assault1892, Yuu198, paralleltree, kazu3jp, Cayahuanca, ecto0310, Map1en",
     "nav_tooltip": {
         "feed": "フィード",
+        "friends_locations": "フレンドの現在地",
         "game_log": "ゲームログ",
         "player_list": "プレイヤーリスト",
         "search": "検索",
         "favorites": "お気に入り",
+        "social": "ソーシャル",
         "friend_log": "フレンドログ",
         "moderation": "モデレーション",
         "notification": "通知",
@@ -14,7 +16,16 @@
         "charts": "チャート",
         "tools": "ツール",
         "profile": "プロフィール",
-        "settings": "設定"
+        "settings": "設定",
+        "help_support": "ヘルプ & サポート"
+    },
+    "nav_menu": {
+        "resources": "お役立ちリンク",
+        "wiki": "ウィキ",
+        "get_help": "困った時はこちら",
+        "github": "バグ報告・提案 (GitHub)",
+        "discord": "みんなと話そう (Discord)",
+        "whats_new": "新機能（更新履歴）"
     },
     "view": {
         "login": {
@@ -45,6 +56,13 @@
                 "Avatar": "アバター",
                 "Bio": "自己紹介"
             }
+        },
+        "friends_locations": {
+            "loading_more": "読み込み中...",
+            "no_matching_friends": "該当するフレンドはいません",
+            "scale": "サイズ",
+            "spacing": "表示間隔",
+            "separate_same_instance_friends": "同じインスタンスのフレンドを分ける"
         },
         "game_log": {
             "filter_placeholder": "フィルター",

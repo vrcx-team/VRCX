@@ -58,6 +58,14 @@
                 "Bio": "Bio"
             }
         },
+        "friends_locations": {
+            "online_friends": "Online Friends",
+            "spacing": "Spacing",
+            "scale": "Scale",
+            "separate_same_instance_friends": "Separate Same Instance Friends",
+            "no_matching_friends": "No Matching Friends",
+            "loading_more": "Loading more..."
+        },
         "game_log": {
             "filter_placeholder": "Filter",
             "search_placeholder": "Search",
