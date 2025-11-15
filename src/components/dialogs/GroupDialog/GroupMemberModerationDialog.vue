@@ -262,7 +262,7 @@
                                     <span style="cursor: pointer" @click="showUserDialog(scope.row.userId)">
                                         <span
                                             v-if="randomUserColours"
-                                            :style="{ color: scope.row.user.$userColour }"
+                                            :style="{ color: scope.row.user?.$userColour }"
                                             v-text="scope.row.user.displayName"></span>
                                         <span v-else v-text="scope.row.user?.displayName"></span>
                                     </span>
