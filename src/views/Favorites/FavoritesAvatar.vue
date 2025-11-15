@@ -256,7 +256,7 @@
                             <el-tooltip
                                 v-if="!isCreatingLocalGroup"
                                 :disabled="isLocalUserVrcPlusSupporter"
-                                :content="t('view.favorite.avatars.local_avatar_favorites')">
+                                :content="t('view.favorite.avatars.local_favorites')">
                                 <div
                                     :class="[
                                         'group-item',
