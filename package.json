@@ -52,7 +52,7 @@
         "echarts": "^6.0.0",
         "electron": "^39.1.1",
         "electron-builder": "^26.0.12",
-        "element-plus": "github:Map1en/element-plus-vrcx",
+        "element-plus": "^2.11.8",
         "esbuild-jest": "^0.5.0",
         "eslint": "^9.39.1",
         "eslint-config-prettier": "^10.1.8",
