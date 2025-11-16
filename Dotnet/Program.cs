@@ -13,7 +13,9 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;
+#if !LINUX
 using System.Windows.Forms;
+#endif
 
 namespace VRCX
 {

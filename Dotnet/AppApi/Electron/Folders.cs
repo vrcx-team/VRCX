@@ -8,7 +8,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.Win32;
 using System.Threading;
-using System.Windows.Forms;
 using System.Threading.Tasks;
 
 namespace VRCX
