@@ -215,8 +215,6 @@
     import { THEME_CONFIG } from '../shared/constants';
     import { openExternalLink } from '../shared/utils';
 
-    import * as Sentry from '@sentry/vue';
-
     const { t } = useI18n();
     const router = useRouter();
 
@@ -457,8 +455,10 @@
     onMounted(() => {
         if (!sentryErrorReporting.value) return;
         try {
-            const feedback = Sentry.getFeedback();
-            feedback?.attachTo(document.getElementById('feedback'));
+            import('@sentry/vue').then((Sentry) => {
+                const feedback = Sentry.getFeedback();
+                feedback?.attachTo(document.getElementById('feedback'));
+            });
             window.addEventListener('keydown', handleKeydown);
         } catch (error) {
             console.error('Error setting up Sentry feedback:', error);

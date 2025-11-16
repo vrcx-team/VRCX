@@ -2,17 +2,24 @@ import { router } from './router';
 
 import configRepository from '../service/config';
 
-import * as Sentry from '@sentry/vue';
+let version = '';
+
+export async function isSentryEnabled() {
+    const enabled = await configRepository.getString(
+        'VRCX_SentryEnabled',
+        'false'
+    );
+    version = await AppApi.GetVersion();
+    const isNightly = version.includes('Nightly');
+    if (enabled !== 'true' || !isNightly) {
+        return false;
+    }
+    return true;
+}
 
 export async function initSentry(app) {
     try {
-        const enabled = await configRepository.getString(
-            'VRCX_SentryEnabled',
-            'false'
-        );
-        const version = await AppApi.GetVersion();
-        const isNightly = version.includes('Nightly');
-        if (enabled !== 'true' || !isNightly) {
+        if (!(await isSentryEnabled())) {
             return;
         }
         const vrcxId = await configRepository.getString('VRCX_id', '');
@@ -33,6 +40,7 @@ export async function initSentry(app) {
             return;
         }
         const dsn = atob(response.data);
+        const Sentry = await import('@sentry/vue');
         Sentry.init({
             app,
             dsn,
