@@ -1,204 +1,214 @@
 <template>
     <div class="x-menu-container nav-menu-container">
-        <div>
-            <div v-if="updateInProgress" class="pending-update" @click="showVRCXUpdateDialog">
-                <el-progress
-                    type="circle"
-                    :width="50"
-                    :stroke-width="3"
-                    :percentage="updateProgress"
-                    :format="updateProgressText"
-                    style="padding: 7px"></el-progress>
-            </div>
-            <div v-else-if="pendingVRCXUpdate || pendingVRCXInstall" class="pending-update">
-                <el-button
-                    type="success"
-                    plain
-                    style="font-size: 19px; height: 36px; width: 44px; margin: 10px"
-                    @click="showVRCXUpdateDialog"
-                    ><i class="ri-download-line"></i
-                ></el-button>
-            </div>
+        <template v-if="navLayoutReady">
+            <div>
+                <div v-if="updateInProgress" class="pending-update" @click="showVRCXUpdateDialog">
+                    <el-progress
+                        type="circle"
+                        :width="50"
+                        :stroke-width="3"
+                        :percentage="updateProgress"
+                        :format="updateProgressText"
+                        style="padding: 7px"></el-progress>
+                </div>
+                <div v-else-if="pendingVRCXUpdate || pendingVRCXInstall" class="pending-update">
+                    <el-button
+                        type="success"
+                        plain
+                        style="font-size: 19px; height: 36px; width: 44px; margin: 10px"
+                        @click="showVRCXUpdateDialog"
+                        ><i class="ri-download-line"></i
+                    ></el-button>
+                </div>
 
-            <el-menu collapse default-active="feed" :collapse-transition="false" ref="navMenuRef">
-                <el-popover
-                    v-for="item in navItems"
-                    :disabled="!item.entries?.length"
-                    :key="item.index"
-                    :ref="(el) => setNavPopoverRef(el, item.index)"
-                    placement="right-start"
-                    trigger="hover"
-                    :hide-after="isSteamVRRunning ? 400 : 150"
-                    :show-arrow="false"
-                    :offset="0"
-                    :width="navPopoverWidth"
-                    transition="nav-menu-slide"
-                    @before-enter="handleSubMenuBeforeEnter()"
-                    :popper-style="navPopoverStyle"
-                    popper-class="nav-menu-popover-popper">
-                    <div class="nav-menu-popover">
-                        <div class="nav-menu-popover__header">
-                            <i :class="item.icon"></i>
-                            <span>{{ t(item.title || '') }}</span>
+                <el-menu collapse :default-active="activeMenuIndex" :collapse-transition="false" ref="navMenuRef">
+                    <el-popover
+                        v-for="item in navMenuItems"
+                        :disabled="!item.entries?.length"
+                        :key="item.index"
+                        :ref="(el) => setNavPopoverRef(el, item.index)"
+                        placement="right-start"
+                        trigger="hover"
+                        :hide-after="isSteamVRRunning ? 400 : 150"
+                        :show-arrow="false"
+                        :offset="0"
+                        :width="navPopoverWidth"
+                        transition="nav-menu-slide"
+                        @before-enter="handleSubMenuBeforeEnter()"
+                        :popper-style="navPopoverStyle"
+                        popper-class="nav-menu-popover-popper">
+                        <div class="nav-menu-popover">
+                            <div class="nav-menu-popover__header">
+                                <i :class="item.icon"></i>
+                                <span>{{ item.titleIsCustom ? item.title : t(item.title || '') }}</span>
+                            </div>
+
+                            <div class="nav-menu-popover__menu">
+                                <button
+                                    v-for="entry in item.entries"
+                                    :key="entry.label"
+                                    type="button"
+                                    :class="['nav-menu-popover__menu-item', { notify: isEntryNotified(entry) }]"
+                                    @click="handleSubmenuClick(entry, item.index)">
+                                    <i v-if="entry.icon" :class="entry.icon" class="nav-menu-popover__menu-icon"></i>
+                                    <span class="nav-menu-popover__menu-label">{{ t(entry.label) }}</span>
+                                </button>
+                            </div>
                         </div>
+                        <template #reference>
+                            <el-menu-item
+                                :index="item.index"
+                                :class="{ notify: isNavItemNotified(item) }"
+                                @click="handleMenuItemClick(item)">
+                                <i :class="item.icon"></i>
+                                <template #title v-if="item.tooltip">
+                                    <span>{{ item.tooltipIsCustom ? item.tooltip : t(item.tooltip) }}</span>
+                                </template>
+                            </el-menu-item>
+                        </template>
+                    </el-popover>
+                </el-menu>
+                <el-divider style="width: calc(100% - 18px); margin-left: 9px"></el-divider>
+                <el-tooltip :content="t('prompt.direct_access_omni.header')" placement="right"
+                    ><div class="bottom-button" @click="directAccessPaste"><i class="ri-compass-3-line"></i></div
+                ></el-tooltip>
+            </div>
 
-                        <div class="nav-menu-popover__menu">
-                            <button
-                                v-for="entry in item.entries"
-                                :key="entry.label"
-                                type="button"
-                                class="nav-menu-popover__menu-item"
-                                @click="handleSubmenuClick(entry, item.index)">
-                                <span class="nav-menu-popover__menu-label"
-                                    >{{ t(entry.label)
-                                    }}<span
-                                        v-if="notifiedMenus.includes(entry.routeName || entry.path.split('/').pop())"
-                                        class="nav-menu-popover__menu-label-dot"></span
-                                ></span>
+            <div class="nav-menu-container-bottom">
+                <el-tooltip v-if="branch === 'Nightly'" :show-after="150" :content="'Feedback'" placement="right"
+                    ><div
+                        class="bottom-button"
+                        id="feedback"
+                        @click="!sentryErrorReporting && setSentryErrorReporting()">
+                        <i class="ri-feedback-line"></i></div
+                ></el-tooltip>
+
+                <el-popover
+                    v-model:visible="supportMenuVisible"
+                    placement="right"
+                    trigger="click"
+                    popper-style="padding:4px;border-radius:8px;"
+                    :offset="4"
+                    :show-arrow="false"
+                    :width="200"
+                    :hide-after="0">
+                    <div class="nav-menu-support nav-menu-settings">
+                        <div class="nav-menu-support__section">
+                            <button type="button" class="nav-menu-settings__item" @click="showChangeLogDialog">
+                                <span>{{ t('nav_menu.whats_new') }}</span>
+                            </button>
+                        </div>
+                        <el-divider></el-divider>
+                        <div class="nav-menu-support__section">
+                            <span class="nav-menu-support__title">{{ t('nav_menu.resources') }}</span>
+                            <button type="button" class="nav-menu-settings__item" @click="handleSupportLink('wiki')">
+                                <span>{{ t('nav_menu.wiki') }}</span>
+                            </button>
+                        </div>
+                        <el-divider></el-divider>
+                        <div class="nav-menu-support__section">
+                            <span class="nav-menu-support__title">{{ t('nav_menu.get_help') }}</span>
+                            <button type="button" class="nav-menu-settings__item" @click="handleSupportLink('github')">
+                                <span>{{ t('nav_menu.github') }}</span>
+                            </button>
+                            <button type="button" class="nav-menu-settings__item" @click="handleSupportLink('discord')">
+                                <span>{{ t('nav_menu.discord') }}</span>
                             </button>
                         </div>
                     </div>
                     <template #reference>
-                        <el-menu-item
-                            :index="item.index"
-                            :class="{
-                                notify:
-                                    notifiedMenus.includes(item.index) ||
-                                    (notifiedMenus.includes('friend-log') && item.index === 'social')
-                            }"
-                            @click="handleRouteChange(item.index)">
-                            <i :class="item.icon"></i>
-                            <template #title v-if="item.tooltip">
-                                <span>{{ t(item.tooltip) }}</span>
-                            </template>
-                        </el-menu-item>
+                        <div>
+                            <el-tooltip :show-after="150" :content="t('nav_tooltip.help_support')" placement="right">
+                                <div class="bottom-button">
+                                    <i class="ri-question-line"></i>
+                                </div>
+                            </el-tooltip>
+                        </div>
                     </template>
                 </el-popover>
-            </el-menu>
-            <el-divider style="width: calc(100% - 18px); margin-left: 9px"></el-divider>
-            <el-tooltip :content="t('prompt.direct_access_omni.header')" placement="right"
-                ><div class="bottom-button" @click="directAccessPaste"><i class="ri-compass-3-line"></i></div
-            ></el-tooltip>
-        </div>
 
-        <div class="nav-menu-container-bottom">
-            <el-tooltip v-if="branch === 'Nightly'" :content="'Feedback'" placement="right"
-                ><div class="bottom-button" id="feedback" @click="!sentryErrorReporting && setSentryErrorReporting()">
-                    <i class="ri-feedback-line"></i></div
-            ></el-tooltip>
-
-            <el-popover
-                v-model:visible="supportMenuVisible"
-                placement="right"
-                trigger="click"
-                popper-style="padding:4px;border-radius:8px;"
-                :offset="4"
-                :show-arrow="false"
-                :width="200"
-                :hide-after="0">
-                <div class="nav-menu-support nav-menu-settings">
-                    <div class="nav-menu-support__section">
-                        <button type="button" class="nav-menu-settings__item" @click="showChangeLogDialog">
-                            <span>{{ t('nav_menu.whats_new') }}</span>
-                        </button>
-                    </div>
-                    <el-divider></el-divider>
-                    <div class="nav-menu-support__section">
-                        <span class="nav-menu-support__title">{{ t('nav_menu.resources') }}</span>
-                        <button type="button" class="nav-menu-settings__item" @click="handleSupportLink('wiki')">
-                            <span>{{ t('nav_menu.wiki') }}</span>
-                        </button>
-                    </div>
-                    <el-divider></el-divider>
-                    <div class="nav-menu-support__section">
-                        <span class="nav-menu-support__title">{{ t('nav_menu.get_help') }}</span>
-                        <button type="button" class="nav-menu-settings__item" @click="handleSupportLink('github')">
-                            <span>{{ t('nav_menu.github') }}</span>
-                        </button>
-                        <button type="button" class="nav-menu-settings__item" @click="handleSupportLink('discord')">
-                            <span>{{ t('nav_menu.discord') }}</span>
-                        </button>
-                    </div>
-                </div>
-                <template #reference>
-                    <div>
-                        <el-tooltip :content="t('nav_tooltip.help_support')" placement="right">
-                            <div class="bottom-button">
-                                <i class="ri-question-line"></i>
+                <el-popover
+                    v-model:visible="settingsMenuVisible"
+                    placement="right"
+                    trigger="click"
+                    popper-style="padding:4px;border-radius:8px;"
+                    :offset="4"
+                    :show-arrow="false"
+                    :width="200"
+                    :hide-after="0">
+                    <div class="nav-menu-settings">
+                        <div class="nav-menu-settings__header">
+                            <img class="nav-menu-settings__logo" :src="vrcxLogo" alt="VRCX" @click="openGithub" />
+                            <div class="nav-menu-settings__meta">
+                                <span class="nav-menu-settings__title" @click="openGithub"
+                                    >VRCX
+                                    <i class="ri-heart-3-fill" style="color: #64cd8a; font-size: 14px"></i>
+                                </span>
+                                <span class="nav-menu-settings__version">{{ version }}</span>
                             </div>
-                        </el-tooltip>
-                    </div>
-                </template>
-            </el-popover>
-
-            <el-popover
-                v-model:visible="settingsMenuVisible"
-                placement="right"
-                trigger="click"
-                popper-style="padding:4px;border-radius:8px;"
-                :offset="4"
-                :show-arrow="false"
-                :width="200"
-                :hide-after="0">
-                <div class="nav-menu-settings">
-                    <div class="nav-menu-settings__header">
-                        <img class="nav-menu-settings__logo" :src="vrcxLogo" alt="VRCX" @click="openGithub" />
-                        <div class="nav-menu-settings__meta">
-                            <span class="nav-menu-settings__title" @click="openGithub"
-                                >VRCX
-                                <i class="ri-heart-3-fill" style="color: #64cd8a; font-size: 14px"></i>
-                            </span>
-                            <span class="nav-menu-settings__version">{{ version }}</span>
                         </div>
+                        <el-divider></el-divider>
+                        <button type="button" class="nav-menu-settings__item" @click="handleSettingsClick">
+                            <span>{{ t('nav_tooltip.settings') }}</span>
+                        </button>
+                        <button type="button" class="nav-menu-settings__item" @click="handleOpenCustomNavDialog">
+                            <span>{{ t('nav_menu.custom_nav.header') }}</span>
+                        </button>
+                        <el-popover
+                            v-model:visible="themeMenuVisible"
+                            placement="right-start"
+                            trigger="hover"
+                            popper-style="padding:4px;border-radius:8px;"
+                            :width="200">
+                            <div class="nav-menu-theme">
+                                <button
+                                    v-for="theme in themes"
+                                    :key="theme"
+                                    type="button"
+                                    class="nav-menu-theme__item"
+                                    :class="{ 'is-active': themeMode === theme }"
+                                    @click="handleThemeSelect(theme)">
+                                    <span class="nav-menu-theme__label">{{ themeDisplayName(theme) }}</span>
+                                    <span v-if="themeMode === theme" class="nav-menu-theme__check">✔</span>
+                                </button>
+                            </div>
+                            <template #reference>
+                                <button type="button" class="nav-menu-settings__item" @click.prevent>
+                                    <span>{{ t('view.settings.appearance.appearance.theme_mode') }}</span>
+                                    <span class="nav-menu-settings__arrow">›</span>
+                                </button>
+                            </template>
+                        </el-popover>
+                        <button
+                            type="button"
+                            class="nav-menu-settings__item nav-menu-settings__item--danger"
+                            @click="handleLogoutClick">
+                            <span>{{ t('dialog.user.actions.logout') }}</span>
+                        </button>
                     </div>
-                    <el-divider></el-divider>
-                    <button type="button" class="nav-menu-settings__item" @click="handleSettingsClick">
-                        <span>{{ t('nav_tooltip.settings') }}</span>
-                    </button>
-                    <el-popover
-                        v-model:visible="themeMenuVisible"
-                        placement="right-start"
-                        trigger="hover"
-                        popper-style="padding:4px;border-radius:8px;"
-                        :width="200">
-                        <div class="nav-menu-theme">
-                            <button
-                                v-for="theme in themes"
-                                :key="theme"
-                                type="button"
-                                class="nav-menu-theme__item"
-                                :class="{ 'is-active': themeMode === theme }"
-                                @click="handleThemeSelect(theme)">
-                                <span class="nav-menu-theme__label">{{ themeDisplayName(theme) }}</span>
-                                <span v-if="themeMode === theme" class="nav-menu-theme__check">✔</span>
-                            </button>
+                    <template #reference>
+                        <div class="bottom-button">
+                            <i class="ri-settings-3-line"></i>
                         </div>
-                        <template #reference>
-                            <button type="button" class="nav-menu-settings__item" @click.prevent>
-                                <span>{{ t('view.settings.appearance.appearance.theme_mode') }}</span>
-                                <span class="nav-menu-settings__arrow">›</span>
-                            </button>
-                        </template>
-                    </el-popover>
-                    <button
-                        type="button"
-                        class="nav-menu-settings__item nav-menu-settings__item--danger"
-                        @click="handleLogoutClick">
-                        <span>{{ t('dialog.user.actions.logout') }}</span>
-                    </button>
-                </div>
-                <template #reference>
-                    <div class="bottom-button">
-                        <i class="ri-settings-3-line"></i>
-                    </div>
-                </template>
-            </el-popover>
-        </div>
+                    </template>
+                </el-popover>
+            </div>
+        </template>
+        <template v-else>
+            <div></div>
+        </template>
     </div>
+    <CustomNavDialog
+        v-model:visible="customNavDialogVisible"
+        :layout="navLayout"
+        :default-folder-icon="DEFAULT_FOLDER_ICON"
+        @save="handleCustomNavSave"
+        @reset="handleCustomNavReset" />
 </template>
 
 <script setup>
     import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+    import { ElMessageBox, dayjs } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { useRouter } from 'vue-router';
@@ -215,99 +225,115 @@
     import { THEME_CONFIG } from '../shared/constants';
     import { openExternalLink } from '../shared/utils';
 
+    import CustomNavDialog from './dialogs/CustomNavDialog.vue';
+    import configRepository from '../service/config';
+
     const { t } = useI18n();
     const router = useRouter();
 
-    const navItems = [
+    const navDefinitions = [
         {
-            index: 'feed',
+            key: 'feed',
             icon: 'ri-rss-line',
-            tooltip: 'nav_tooltip.feed'
+            tooltip: 'nav_tooltip.feed',
+            labelKey: 'nav_tooltip.feed',
+            routeName: 'feed'
         },
         {
-            index: 'friends-locations',
+            key: 'friends-locations',
             icon: 'ri-user-location-line',
-            tooltip: 'nav_tooltip.friends_locations'
+            tooltip: 'nav_tooltip.friends_locations',
+            labelKey: 'nav_tooltip.friends_locations',
+            routeName: 'friends-locations'
         },
         {
-            index: 'game-log',
+            key: 'game-log',
             icon: 'ri-history-line',
-            tooltip: 'nav_tooltip.game_log'
+            tooltip: 'nav_tooltip.game_log',
+            labelKey: 'nav_tooltip.game_log',
+            routeName: 'game-log'
         },
         {
-            index: 'player-list',
+            key: 'player-list',
             icon: 'ri-group-3-line',
-            tooltip: 'nav_tooltip.player_list'
+            tooltip: 'nav_tooltip.player_list',
+            labelKey: 'nav_tooltip.player_list',
+            routeName: 'player-list'
         },
         {
-            index: 'search',
+            key: 'search',
             icon: 'ri-search-line',
-            tooltip: 'nav_tooltip.search'
+            tooltip: 'nav_tooltip.search',
+            labelKey: 'nav_tooltip.search',
+            routeName: 'search'
         },
         {
-            index: 'favorites',
-            icon: 'ri-star-line',
-            tooltip: '',
-            title: 'nav_tooltip.favorites',
-            entries: [
-                {
-                    label: 'view.favorite.friends.header',
-                    path: '/favorites/friends',
-                    routeName: 'favorite-friends'
-                },
-                {
-                    label: 'view.favorite.worlds.header',
-                    path: '/favorites/worlds',
-                    routeName: 'favorite-worlds'
-                },
-                {
-                    label: 'view.favorite.avatars.header',
-                    path: '/favorites/avatars',
-                    routeName: 'favorite-avatars'
-                }
-            ]
+            key: 'favorite-friends',
+            icon: 'ri-heart-2-line',
+            tooltip: 'nav_tooltip.favorite_friends',
+            labelKey: 'nav_tooltip.favorite_friends',
+            routeName: 'favorite-friends'
         },
         {
-            index: 'social',
+            key: 'favorite-worlds',
+            icon: 'ri-earth-line',
+            tooltip: 'nav_tooltip.favorite_worlds',
+            labelKey: 'nav_tooltip.favorite_worlds',
+            routeName: 'favorite-worlds'
+        },
+        {
+            key: 'favorite-avatars',
+            icon: 'ri-user-heart-line',
+            tooltip: 'nav_tooltip.favorite_avatars',
+            labelKey: 'nav_tooltip.favorite_avatars',
+            routeName: 'favorite-avatars'
+        },
+        {
+            key: 'friend-log',
+            icon: 'ri-booklet-line',
+            tooltip: 'nav_tooltip.friend_log',
+            labelKey: 'nav_tooltip.friend_log',
+            routeName: 'friend-log'
+        },
+        {
+            key: 'friend-list',
             icon: 'ri-group-line',
-            tooltip: '',
-            title: 'nav_tooltip.social',
-            entries: [
-                {
-                    label: 'nav_tooltip.friend_log',
-                    path: '/social/friend-log',
-                    routeName: 'friend-log'
-                },
-                {
-                    label: 'nav_tooltip.friend_list',
-                    path: '/social/friend-list',
-                    routeName: 'friend-list'
-                },
-                {
-                    label: 'nav_tooltip.moderation',
-                    path: '/social/moderation',
-                    routeName: 'moderation'
-                }
-            ]
+            tooltip: 'nav_tooltip.friend_list',
+            labelKey: 'nav_tooltip.friend_list',
+            routeName: 'friend-list'
         },
-
         {
-            index: 'notification',
+            key: 'moderation',
+            icon: 'ri-shield-user-line',
+            tooltip: 'nav_tooltip.moderation',
+            labelKey: 'nav_tooltip.moderation',
+            routeName: 'moderation'
+        },
+        {
+            key: 'notification',
             icon: 'ri-notification-2-line',
-            tooltip: 'nav_tooltip.notification'
+            tooltip: 'nav_tooltip.notification',
+            labelKey: 'nav_tooltip.notification',
+            routeName: 'notification'
         },
-
         {
-            index: 'charts',
+            key: 'charts',
             icon: 'ri-bar-chart-line',
-            tooltip: 'nav_tooltip.charts'
+            tooltip: 'nav_tooltip.charts',
+            labelKey: 'nav_tooltip.charts',
+            routeName: 'charts'
         },
         {
-            index: 'tools',
+            key: 'tools',
             icon: 'ri-tools-line',
-            tooltip: 'nav_tooltip.tools'
+            tooltip: 'nav_tooltip.tools',
+            labelKey: 'nav_tooltip.tools',
+            routeName: 'tools'
         }
     ];
+
+    const navDefinitionMap = new Map(navDefinitions.map((item) => [item.key, item]));
+    const DEFAULT_FOLDER_ICON = 'ri-menu-fold-line';
 
     const navPopoverWidth = 250;
     const navPopoverStyle = {
@@ -328,7 +354,7 @@
         storeToRefs(VRCXUpdaterStore);
     const { showVRCXUpdateDialog, updateProgressText, showChangeLogDialog } = VRCXUpdaterStore;
     const uiStore = useUiStore();
-    const { notifiedMenus, lastVisitedSocialRoute, lastVisitedFavoritesRoute } = storeToRefs(uiStore);
+    const { notifiedMenus } = storeToRefs(uiStore);
     const { directAccessPaste } = useSearchStore();
     const { sentryErrorReporting } = storeToRefs(useAdvancedSettingsStore());
     const { setSentryErrorReporting } = useAdvancedSettingsStore();
@@ -343,10 +369,183 @@
     const navMenuRef = ref(null);
     const navPopoverRefs = new Map();
 
+    const navLayout = ref([]);
+    const navLayoutReady = ref(false);
+
+    const navMenuItems = computed(() => {
+        const items = [];
+        navLayout.value.forEach((entry) => {
+            if (entry.type === 'item') {
+                const definition = navDefinitionMap.get(entry.key);
+                if (!definition) {
+                    return;
+                }
+                items.push({
+                    ...definition,
+                    index: definition.key,
+                    tooltipIsCustom: false,
+                    titleIsCustom: false
+                });
+                return;
+            }
+
+            if (entry.type === 'folder') {
+                const folderDefinitions = (entry.items || []).map((key) => navDefinitionMap.get(key)).filter(Boolean);
+
+                if (folderDefinitions.length < 2) {
+                    folderDefinitions.forEach((definition) => {
+                        items.push({
+                            ...definition,
+                            index: definition.key,
+                            tooltipIsCustom: false,
+                            titleIsCustom: false
+                        });
+                    });
+                    return;
+                }
+
+                const folderEntries = folderDefinitions.map((definition) => ({
+                    label: definition.labelKey,
+                    routeName: definition.routeName,
+                    key: definition.key,
+                    icon: definition.icon
+                }));
+
+                items.push({
+                    index: entry.id,
+                    icon: entry.icon || DEFAULT_FOLDER_ICON,
+                    tooltip: entry.name?.trim() || t('nav_menu.custom_nav.folder_name_placeholder'),
+                    tooltipIsCustom: true,
+                    title: entry.name?.trim() || t('nav_menu.custom_nav.folder_name_placeholder'),
+                    titleIsCustom: true,
+                    entries: folderEntries
+                });
+            }
+        });
+        return items;
+    });
+
+    const activeMenuIndex = computed(() => {
+        const currentRouteName = router.currentRoute.value?.name;
+        if (!currentRouteName) {
+            const firstEntry = navLayout.value[0];
+            if (!firstEntry) {
+                return 'feed';
+            }
+            return firstEntry.type === 'folder' ? firstEntry.id : firstEntry.key;
+        }
+
+        for (const entry of navLayout.value) {
+            if (entry.type === 'item' && entry.key === currentRouteName) {
+                return entry.key;
+            }
+            if (entry.type === 'folder' && entry.items?.includes(currentRouteName)) {
+                return entry.id;
+            }
+        }
+
+        const fallback = navLayout.value[0];
+        if (!fallback) {
+            return 'feed';
+        }
+        return fallback.type === 'folder' ? fallback.id : fallback.key;
+    });
+
     const version = computed(() => appVersion.value?.split('VRCX ')?.[1] || '-');
     const vrcxLogo = new URL('../../images/VRCX.png', import.meta.url).href;
 
     const themes = computed(() => Object.keys(THEME_CONFIG));
+
+    watch(
+        () => activeMenuIndex.value,
+        (value) => {
+            if (value) {
+                navMenuRef.value?.updateActiveIndex(value);
+            }
+        },
+        { immediate: true }
+    );
+
+    const generateFolderId = () => `nav-folder-${dayjs().toISOString()}-${Math.random().toString().slice(2, 4)}`;
+
+    const defaultNavLayout = [
+        { type: 'item', key: 'feed' },
+        { type: 'item', key: 'friends-locations' },
+        { type: 'item', key: 'game-log' },
+        { type: 'item', key: 'player-list' },
+        { type: 'item', key: 'search' },
+        {
+            type: 'folder',
+            id: 'default-folder-favorites',
+            name: t('nav_tooltip.favorites'),
+            icon: 'ri-star-line',
+            items: ['favorite-friends', 'favorite-worlds', 'favorite-avatars']
+        },
+        {
+            type: 'folder',
+            id: 'default-folder-social',
+            name: t('nav_tooltip.social'),
+            icon: 'ri-group-line',
+            items: ['friend-log', 'friend-list', 'moderation']
+        },
+        { type: 'item', key: 'notification' },
+        { type: 'item', key: 'charts' },
+        { type: 'item', key: 'tools' }
+    ];
+
+    const sanitizeLayout = (layout) => {
+        const usedKeys = new Set();
+        const normalized = [];
+
+        const appendItemEntry = (key, target = normalized) => {
+            if (!key || usedKeys.has(key) || !navDefinitionMap.has(key)) {
+                return;
+            }
+            target.push({ type: 'item', key });
+            usedKeys.add(key);
+        };
+
+        if (Array.isArray(layout)) {
+            layout.forEach((entry) => {
+                if (entry?.type === 'item') {
+                    appendItemEntry(entry.key);
+                    return;
+                }
+
+                if (entry?.type === 'folder') {
+                    const folderItems = [];
+                    (entry.items || []).forEach((key) => {
+                        if (!key || usedKeys.has(key) || !navDefinitionMap.has(key)) {
+                            return;
+                        }
+                        folderItems.push(key);
+                        usedKeys.add(key);
+                    });
+
+                    if (folderItems.length >= 2) {
+                        normalized.push({
+                            type: 'folder',
+                            id: entry.id || generateFolderId(),
+                            name: entry.name || '',
+                            icon: entry.icon || DEFAULT_FOLDER_ICON,
+                            items: folderItems
+                        });
+                    } else {
+                        folderItems.forEach((key) => appendItemEntry(key));
+                    }
+                }
+            });
+        }
+
+        navDefinitions.forEach((item) => {
+            if (!usedKeys.has(item.key)) {
+                normalized.push({ type: 'item', key: item.key });
+                usedKeys.add(item.key);
+            }
+        });
+
+        return normalized;
+    };
 
     const themeDisplayName = (key) => THEME_CONFIG[key]?.name ?? key;
 
@@ -372,6 +571,72 @@
         openExternalLink('https://github.com/vrcx-team/VRCX');
     };
 
+    const customNavDialogVisible = ref(false);
+
+    const saveNavLayout = async (layout) => {
+        try {
+            await configRepository.setString(
+                'VRCX_customNavMenuLayoutList',
+                JSON.stringify({
+                    layout
+                })
+            );
+        } catch (error) {
+            console.error('Failed to save custom nav', error);
+        }
+    };
+
+    const handleOpenCustomNavDialog = () => {
+        themeMenuVisible.value = false;
+        supportMenuVisible.value = false;
+        settingsMenuVisible.value = false;
+        customNavDialogVisible.value = true;
+    };
+
+    const handleCustomNavSave = async (layout) => {
+        const sanitized = sanitizeLayout(layout);
+        navLayout.value = sanitized;
+        await saveNavLayout(sanitized);
+        customNavDialogVisible.value = false;
+    };
+
+    const handleCustomNavReset = () => {
+        ElMessageBox.confirm(t('nav_menu.custom_nav.restore_default_confirm'), {
+            type: 'warning',
+            confirmButtonText: t('nav_menu.custom_nav.restore_default'),
+            cancelButtonText: t('nav_menu.custom_nav.cancel')
+        })
+            .then(async () => {
+                const defaults = sanitizeLayout(defaultNavLayout);
+                navLayout.value = defaults;
+                await saveNavLayout(defaults);
+                customNavDialogVisible.value = false;
+            })
+            .catch(() => {});
+    };
+
+    const loadNavMenuConfig = async () => {
+        let layoutData = null;
+        try {
+            const storedValue = await configRepository.getString('VRCX_customNavMenuLayoutList');
+            if (storedValue) {
+                const parsed = JSON.parse(storedValue);
+                if (Array.isArray(parsed)) {
+                    layoutData = parsed;
+                } else if (Array.isArray(parsed?.layout)) {
+                    layoutData = parsed.layout;
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load custom nav', error);
+        } finally {
+            const fallbackLayout = layoutData?.length ? layoutData : defaultNavLayout;
+            navLayout.value = sanitizeLayout(fallbackLayout);
+            navLayoutReady.value = true;
+            navigateToFirstNavEntry();
+        }
+    };
+
     function handleKeydown(e) {
         if (e.ctrlKey && e.key === 'd') {
             e.preventDefault();
@@ -391,6 +656,36 @@
         if (target) {
             openExternalLink(target);
         }
+    };
+
+    const isEntryNotified = (entry) => {
+        if (!entry) {
+            return false;
+        }
+        const targets = [];
+        if (entry.routeName) {
+            targets.push(entry.routeName);
+        }
+        if (entry.path) {
+            const lastSegment = entry.path.split('/').pop();
+            if (lastSegment) {
+                targets.push(lastSegment);
+            }
+        }
+        return targets.some((key) => notifiedMenus.value.includes(key));
+    };
+
+    const isNavItemNotified = (item) => {
+        if (!item) {
+            return false;
+        }
+        if (notifiedMenus.value.includes(item.index)) {
+            return true;
+        }
+        if (item.entries?.length) {
+            return item.entries.some((entry) => isEntryNotified(entry));
+        }
+        return false;
     };
 
     const setNavPopoverRef = (el, index) => {
@@ -413,11 +708,13 @@
             return;
         }
         if (entry.routeName) {
-            router.push({ name: entry.routeName });
+            handleRouteChange(entry.routeName, index || entry.routeName);
         } else if (entry.path) {
             router.push(entry.path);
+            if (index) {
+                navMenuRef.value?.updateActiveIndex(index);
+            }
         }
-        navMenuRef.value?.updateActiveIndex(index);
         closeNavPopover(index);
     };
 
@@ -427,15 +724,14 @@
         themeMenuVisible.value = false;
     };
 
-    const handleRouteChange = (index) => {
-        let targetName = index;
-        if (index === 'social') {
-            targetName = lastVisitedSocialRoute.value || 'friend-log';
-        } else if (index === 'favorites') {
-            targetName = lastVisitedFavoritesRoute.value || 'favorite-friends';
+    const handleRouteChange = (routeName, navIndex = routeName) => {
+        if (!routeName) {
+            return;
         }
-        router.push({ name: targetName });
-        navMenuRef.value?.updateActiveIndex(index);
+        router.push({ name: routeName });
+        if (navIndex) {
+            navMenuRef.value?.updateActiveIndex(navIndex);
+        }
     };
 
     watch(settingsMenuVisible, (visible) => {
@@ -452,8 +748,44 @@
         }
     });
 
-    onMounted(() => {
+    const getFirstNavRoute = (layout) => {
+        for (const entry of layout) {
+            if (entry.type === 'item') {
+                return entry.key;
+            }
+            if (entry.type === 'folder' && entry.items?.length) {
+                return entry.items[0];
+            }
+        }
+        return null;
+    };
+
+    let hasNavigatedToInitialRoute = false;
+    const navigateToFirstNavEntry = () => {
+        if (hasNavigatedToInitialRoute) {
+            return;
+        }
+        const firstRoute = getFirstNavRoute(navLayout.value);
+        if (!firstRoute) {
+            return;
+        }
+        hasNavigatedToInitialRoute = true;
+        if (router.currentRoute.value?.name !== firstRoute) {
+            router.push({ name: firstRoute }).catch(() => {});
+        }
+    };
+
+    const handleMenuItemClick = (item) => {
+        if (!item || item.entries?.length) {
+            return;
+        }
+        handleRouteChange(item.routeName, item.index);
+    };
+
+    onMounted(async () => {
+        await loadNavMenuConfig();
         window.addEventListener('keydown', handleKeydown);
+
         if (!sentryErrorReporting.value) return;
         try {
             import('@sentry/vue').then((Sentry) => {
@@ -574,9 +906,8 @@
 
         .nav-menu-popover__menu-item {
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 4px;
+            align-items: center;
+            gap: 8px;
             width: 100%;
             padding: 10px 12px;
             border: none;
@@ -589,6 +920,15 @@
             transition: background-color var(--el-transition-duration);
         }
 
+        .nav-menu-popover__menu-item.notify::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--el-text-color-primary);
+            margin-left: auto;
+        }
+
         .nav-menu-popover__menu-item:hover {
             background-color: var(--el-menu-hover-bg-color);
         }
@@ -598,22 +938,13 @@
             outline-offset: 2px;
         }
 
-        .nav-menu-popover__menu-label {
-            font-weight: 600;
-            position: relative;
+        .nav-menu-popover__menu-icon {
+            font-size: 16px;
+            color: var(--el-text-color-secondary);
         }
 
-        .nav-menu-popover__menu-label-dot {
-            position: absolute;
-            right: -8px;
-            width: 4px;
-            height: 4px;
-            background: #303133;
-            border-radius: 50%;
-        }
-        :global(html.dark),
-        .nav-menu-popover__menu-label-dot {
-            background: #ffffff;
+        .nav-menu-popover__menu-label {
+            font-weight: 600;
         }
     }
 

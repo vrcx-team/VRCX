@@ -8,6 +8,9 @@
         "player_list": "Player List",
         "search": "Search",
         "favorites": "Favorites",
+        "favorite_friends": "Favorite Friends",
+        "favorite_worlds": "Favorite Worlds",
+        "favorite_avatars": "Favorite Avatars",
         "social": "Social",
         "friend_log": "Friend Log",
         "moderation": "Moderation",
@@ -26,7 +29,27 @@
         "get_help": "GET HELP",
         "github": "VRCX on GitHub",
         "discord": "Join our Discord",
-        "whats_new": "What's New?"
+        "whats_new": "What's New?",
+        "custom_nav": {
+            "header": "Custom Navigation Menu",
+            "dialog_title": "Customize Navigation",
+            "add_folder": "Add Folder",
+            "folder_name_placeholder": "Folder name",
+            "folder_icon_placeholder": "Icon class (e.g. ri-menu-fold-line)",
+            "edit_folder": "Edit Folder",
+            "folder_available": "Available items",
+            "folder_selected": "Folder items",
+            "folder_selected_empty": "No items selected",
+            "delete_folder": "Delete Folder",
+            "assign_folder": "Add to folder",
+            "remove_from_folder": "Remove from folder",
+            "folder_empty": "No items in this folder",
+            "invalid_folder": "Folder must have a name and contain at least two items.",
+            "restore_default": "Restore Default",
+            "restore_default_confirm": "Restore navigation to its default order?",
+            "save": "Save",
+            "cancel": "Cancel"
+        }
     },
     "view": {
         "login": {
