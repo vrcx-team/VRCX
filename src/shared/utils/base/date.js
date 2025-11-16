@@ -82,6 +82,9 @@ function formatDateFilter(dateStr, format) {
     if (!isoFormat && currentCulture) {
         dateFormat = currentCulture;
     }
+    if (dateFormat.length > 4 && dateFormat[4] === '_') {
+        dateFormat = dateFormat.slice(0, 4);
+    }
 
     if (isoFormat && format === 'long') {
         return toIsoLong(dt);
