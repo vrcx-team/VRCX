@@ -453,13 +453,13 @@
     });
 
     onMounted(() => {
+        window.addEventListener('keydown', handleKeydown);
         if (!sentryErrorReporting.value) return;
         try {
             import('@sentry/vue').then((Sentry) => {
                 const feedback = Sentry.getFeedback();
                 feedback?.attachTo(document.getElementById('feedback'));
             });
-            window.addEventListener('keydown', handleKeydown);
         } catch (error) {
             console.error('Error setting up Sentry feedback:', error);
         }
