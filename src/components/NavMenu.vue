@@ -194,9 +194,6 @@
                 </el-popover>
             </div>
         </template>
-        <template v-else>
-            <div></div>
-        </template>
     </div>
     <CustomNavDialog
         v-model:visible="customNavDialogVisible"
@@ -222,114 +219,42 @@
         useUiStore,
         useVRCXUpdaterStore
     } from '../stores';
-    import { THEME_CONFIG } from '../shared/constants';
+    import { THEME_CONFIG, links, navDefinitions } from '../shared/constants';
     import { openExternalLink } from '../shared/utils';
 
     import CustomNavDialog from './dialogs/CustomNavDialog.vue';
     import configRepository from '../service/config';
 
-    const { t } = useI18n();
+    import 'remixicon/fonts/remixicon.css';
+
+    const { t, locale } = useI18n();
     const router = useRouter();
 
-    const navDefinitions = [
+    const createDefaultNavLayout = () => [
+        { type: 'item', key: 'feed' },
+        { type: 'item', key: 'friends-locations' },
+        { type: 'item', key: 'game-log' },
+        { type: 'item', key: 'player-list' },
+        { type: 'item', key: 'search' },
         {
-            key: 'feed',
-            icon: 'ri-rss-line',
-            tooltip: 'nav_tooltip.feed',
-            labelKey: 'nav_tooltip.feed',
-            routeName: 'feed'
+            type: 'folder',
+            id: 'default-folder-favorites',
+            nameKey: 'nav_tooltip.favorites',
+            name: t('nav_tooltip.favorites'),
+            icon: 'ri-star-line',
+            items: ['favorite-friends', 'favorite-worlds', 'favorite-avatars']
         },
         {
-            key: 'friends-locations',
-            icon: 'ri-user-location-line',
-            tooltip: 'nav_tooltip.friends_locations',
-            labelKey: 'nav_tooltip.friends_locations',
-            routeName: 'friends-locations'
-        },
-        {
-            key: 'game-log',
-            icon: 'ri-history-line',
-            tooltip: 'nav_tooltip.game_log',
-            labelKey: 'nav_tooltip.game_log',
-            routeName: 'game-log'
-        },
-        {
-            key: 'player-list',
-            icon: 'ri-group-3-line',
-            tooltip: 'nav_tooltip.player_list',
-            labelKey: 'nav_tooltip.player_list',
-            routeName: 'player-list'
-        },
-        {
-            key: 'search',
-            icon: 'ri-search-line',
-            tooltip: 'nav_tooltip.search',
-            labelKey: 'nav_tooltip.search',
-            routeName: 'search'
-        },
-        {
-            key: 'favorite-friends',
-            icon: 'ri-heart-2-line',
-            tooltip: 'nav_tooltip.favorite_friends',
-            labelKey: 'nav_tooltip.favorite_friends',
-            routeName: 'favorite-friends'
-        },
-        {
-            key: 'favorite-worlds',
-            icon: 'ri-earth-line',
-            tooltip: 'nav_tooltip.favorite_worlds',
-            labelKey: 'nav_tooltip.favorite_worlds',
-            routeName: 'favorite-worlds'
-        },
-        {
-            key: 'favorite-avatars',
-            icon: 'ri-user-heart-line',
-            tooltip: 'nav_tooltip.favorite_avatars',
-            labelKey: 'nav_tooltip.favorite_avatars',
-            routeName: 'favorite-avatars'
-        },
-        {
-            key: 'friend-log',
-            icon: 'ri-booklet-line',
-            tooltip: 'nav_tooltip.friend_log',
-            labelKey: 'nav_tooltip.friend_log',
-            routeName: 'friend-log'
-        },
-        {
-            key: 'friend-list',
+            type: 'folder',
+            id: 'default-folder-social',
+            nameKey: 'nav_tooltip.social',
+            name: t('nav_tooltip.social'),
             icon: 'ri-group-line',
-            tooltip: 'nav_tooltip.friend_list',
-            labelKey: 'nav_tooltip.friend_list',
-            routeName: 'friend-list'
+            items: ['friend-log', 'friend-list', 'moderation']
         },
-        {
-            key: 'moderation',
-            icon: 'ri-shield-user-line',
-            tooltip: 'nav_tooltip.moderation',
-            labelKey: 'nav_tooltip.moderation',
-            routeName: 'moderation'
-        },
-        {
-            key: 'notification',
-            icon: 'ri-notification-2-line',
-            tooltip: 'nav_tooltip.notification',
-            labelKey: 'nav_tooltip.notification',
-            routeName: 'notification'
-        },
-        {
-            key: 'charts',
-            icon: 'ri-bar-chart-line',
-            tooltip: 'nav_tooltip.charts',
-            labelKey: 'nav_tooltip.charts',
-            routeName: 'charts'
-        },
-        {
-            key: 'tools',
-            icon: 'ri-tools-line',
-            tooltip: 'nav_tooltip.tools',
-            labelKey: 'nav_tooltip.tools',
-            routeName: 'tools'
-        }
+        { type: 'item', key: 'notification' },
+        { type: 'item', key: 'charts' },
+        { type: 'item', key: 'tools' }
     ];
 
     const navDefinitionMap = new Map(navDefinitions.map((item) => [item.key, item]));
@@ -368,7 +293,6 @@
     const supportMenuVisible = ref(false);
     const navMenuRef = ref(null);
     const navPopoverRefs = new Map();
-
     const navLayout = ref([]);
     const navLayoutReady = ref(false);
 
@@ -466,32 +390,25 @@
         { immediate: true }
     );
 
-    const generateFolderId = () => `nav-folder-${dayjs().toISOString()}-${Math.random().toString().slice(2, 4)}`;
+    watch(
+        () => locale.value,
+        () => {
+            if (!navLayoutReady.value) {
+                return;
+            }
+            navLayout.value = navLayout.value.map((entry) => {
+                if (entry.type === 'folder' && entry.nameKey) {
+                    return {
+                        ...entry,
+                        name: t(entry.nameKey)
+                    };
+                }
+                return entry;
+            });
+        }
+    );
 
-    const defaultNavLayout = [
-        { type: 'item', key: 'feed' },
-        { type: 'item', key: 'friends-locations' },
-        { type: 'item', key: 'game-log' },
-        { type: 'item', key: 'player-list' },
-        { type: 'item', key: 'search' },
-        {
-            type: 'folder',
-            id: 'default-folder-favorites',
-            name: t('nav_tooltip.favorites'),
-            icon: 'ri-star-line',
-            items: ['favorite-friends', 'favorite-worlds', 'favorite-avatars']
-        },
-        {
-            type: 'folder',
-            id: 'default-folder-social',
-            name: t('nav_tooltip.social'),
-            icon: 'ri-group-line',
-            items: ['friend-log', 'friend-list', 'moderation']
-        },
-        { type: 'item', key: 'notification' },
-        { type: 'item', key: 'charts' },
-        { type: 'item', key: 'tools' }
-    ];
+    const generateFolderId = () => `nav-folder-${dayjs().toISOString()}-${Math.random().toString().slice(2, 4)}`;
 
     const sanitizeLayout = (layout) => {
         const usedKeys = new Set();
@@ -523,10 +440,13 @@
                     });
 
                     if (folderItems.length >= 2) {
+                        const folderNameKey = entry.nameKey || null;
+                        const folderName = folderNameKey ? t(folderNameKey) : entry.name || '';
                         normalized.push({
                             type: 'folder',
                             id: entry.id || generateFolderId(),
-                            name: entry.name || '',
+                            name: folderName,
+                            nameKey: folderNameKey,
                             icon: entry.icon || DEFAULT_FOLDER_ICON,
                             items: folderItems
                         });
@@ -607,7 +527,7 @@
             cancelButtonText: t('nav_menu.custom_nav.cancel')
         })
             .then(async () => {
-                const defaults = sanitizeLayout(defaultNavLayout);
+                const defaults = sanitizeLayout(createDefaultNavLayout());
                 navLayout.value = defaults;
                 await saveNavLayout(defaults);
                 customNavDialogVisible.value = false;
@@ -630,7 +550,7 @@
         } catch (error) {
             console.error('Failed to load custom nav', error);
         } finally {
-            const fallbackLayout = layoutData?.length ? layoutData : defaultNavLayout;
+            const fallbackLayout = layoutData?.length ? layoutData : createDefaultNavLayout();
             navLayout.value = sanitizeLayout(fallbackLayout);
             navLayoutReady.value = true;
             navigateToFirstNavEntry();
@@ -644,15 +564,9 @@
         }
     }
 
-    const supportLinks = {
-        wiki: 'https://github.com/vrcx-team/VRCX/wiki',
-        github: 'https://github.com/vrcx-team/VRCX',
-        discord: 'https://vrcx.app/discord'
-    };
-
     const handleSupportLink = (id) => {
         supportMenuVisible.value = false;
-        const target = supportLinks[id];
+        const target = links[id];
         if (target) {
             openExternalLink(target);
         }

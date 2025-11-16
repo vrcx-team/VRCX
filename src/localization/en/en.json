@@ -31,8 +31,8 @@
         "discord": "Join our Discord",
         "whats_new": "What's New?",
         "custom_nav": {
-            "header": "Custom Navigation Menu",
-            "dialog_title": "Customize Navigation",
+            "header": "Custom Navigation",
+            "dialog_title": "Customize Navigation Menu",
             "add_folder": "Add Folder",
             "folder_name_placeholder": "Folder name",
             "folder_icon_placeholder": "Icon class (e.g. ri-menu-fold-line)",
