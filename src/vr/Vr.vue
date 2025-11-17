@@ -1436,7 +1436,7 @@
     const vrState = reactive({
         appType: new URLSearchParams(window.location.search).has('wrist') ? 'wrist' : 'hmd',
         appLanguage: 'en',
-        currentCulture: 'en-nz',
+        currentCulture: 'en-gb',
         currentTime: new Date().toJSON(),
         cpuUsageEnabled: false,
         cpuUsage: '0',
