@@ -72,8 +72,16 @@ export async function initSentry(app) {
             beforeSendSpan(span) {
                 span.data = {
                     ...span.data,
-                    // @ts-ignore
-                    memory_usage: window.performance.memory.usedJSHeapSize
+                    usedJSHeapSize:
+                        // @ts-ignore
+                        window.performance.memory.usedJSHeapSize / 1024 / 1024,
+                    totalJSHeapSize:
+                        // @ts-ignore
+                        window.performance.memory.totalJSHeapSize / 1024 / 1024,
+                    jsHeapSizeLimit:
+                        // @ts-ignore
+                        window.performance.memory.jsHeapSizeLimit / 1024 / 1024,
+                    vrcxId: vrcxId
                 };
                 return span;
             },
