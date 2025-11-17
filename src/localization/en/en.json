@@ -49,6 +49,11 @@
             "restore_default_confirm": "Restore navigation to its default order?",
             "save": "Save",
             "cancel": "Cancel"
+        },
+        "icon_picker": {
+            "search_placeholder": "Search icon name or tags",
+            "pick_icon": "Pick Icon",
+            "no_icon_found": "No icons found"
         }
     },
     "view": {

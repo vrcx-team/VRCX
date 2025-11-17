@@ -204,7 +204,7 @@
 </template>
 
 <script setup>
-    import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+    import { computed, defineAsyncComponent, onMounted, onUnmounted, ref, watch } from 'vue';
     import { ElMessageBox, dayjs } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -222,10 +222,11 @@
     import { THEME_CONFIG, links, navDefinitions } from '../shared/constants';
     import { openExternalLink } from '../shared/utils';
 
-    import CustomNavDialog from './dialogs/CustomNavDialog.vue';
     import configRepository from '../service/config';
 
     import 'remixicon/fonts/remixicon.css';
+
+    const CustomNavDialog = defineAsyncComponent(() => import('./dialogs/CustomNavDialog.vue'));
 
     const { t, locale } = useI18n();
     const router = useRouter();
