@@ -86,7 +86,8 @@
             "images/VRCX_notify.png",
             "images/VRCX_notify.ico",
             "Version",
-            "src-electron/libs/linux/libopenvr_api.so"
+            "src-electron/libs/linux/libopenvr_api.so",
+            ".no-updater"
         ],
         "asarUnpack": [
             "node_modules/node-api-dotnet/**/*",
