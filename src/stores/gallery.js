@@ -1,4 +1,4 @@
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { useI18n } from 'vue-i18n';
 
@@ -37,7 +37,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         instanceInventoryQueueWorker: null
     });
 
-    const cachedEmoji = new Map();
+    const cachedEmoji = shallowReactive(new Map());
 
     const galleryTable = ref([]);
 
