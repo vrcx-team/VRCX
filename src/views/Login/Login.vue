@@ -1,6 +1,6 @@
 <template>
     <div style="float: left; margin: 5px; z-index: 3000">
-        <el-tooltip placement="top" :content="t('view.login.updater')">
+        <el-tooltip v-if="!noUpdater" placement="top" :content="t('view.login.updater')">
             <el-button type="default" size="small" :icon="Download" circle @click="showVRCXUpdateDialog"></el-button>
         </el-tooltip>
         <el-tooltip placement="top" :content="t('view.login.proxy_settings')">
@@ -165,6 +165,7 @@
     const { loginForm, enableCustomEndpoint } = storeToRefs(useAuthStore());
     const { toggleCustomEndpoint, relogin, deleteSavedLogin, login, getAllSavedCredentials } = useAuthStore();
     const { promptProxySettings } = useGeneralSettingsStore();
+    const { noUpdater } = storeToRefs(useVRCXUpdaterStore());
 
     const { t } = useI18n();
 
