@@ -36,7 +36,7 @@ const navDefinitions = [
     },
     {
         key: 'favorite-friends',
-        icon: 'ri-heart-2-line',
+        icon: 'ri-user-heart-line',
         tooltip: 'nav_tooltip.favorite_friends',
         labelKey: 'nav_tooltip.favorite_friends',
         routeName: 'favorite-friends'
@@ -50,21 +50,21 @@ const navDefinitions = [
     },
     {
         key: 'favorite-avatars',
-        icon: 'ri-user-heart-line',
+        icon: 'ri-empathize-line',
         tooltip: 'nav_tooltip.favorite_avatars',
         labelKey: 'nav_tooltip.favorite_avatars',
         routeName: 'favorite-avatars'
     },
     {
         key: 'friend-log',
-        icon: 'ri-booklet-line',
+        icon: 'ri-contacts-line',
         tooltip: 'nav_tooltip.friend_log',
         labelKey: 'nav_tooltip.friend_log',
         routeName: 'friend-log'
     },
     {
         key: 'friend-list',
-        icon: 'ri-group-line',
+        icon: 'ri-booklet-line',
         tooltip: 'nav_tooltip.friend_list',
         labelKey: 'nav_tooltip.friend_list',
         routeName: 'friend-list'

@@ -4,7 +4,6 @@
         class="custom-nav-dialog"
         :title="t('nav_menu.custom_nav.dialog_title')"
         width="600px"
-        :close-on-click-modal="false"
         @close="handleClose"
         destroy-on-close>
         <div class="custom-nav-dialog__list" v-if="localLayout.length">
@@ -86,10 +85,10 @@
         <template #footer>
             <div class="custom-nav-dialog__footer">
                 <div class="custom-nav-dialog__footer-left">
-                    <el-button size="small" type="primary" plain @click="openFolderEditor()">
+                    <el-button type="primary" plain @click="openFolderEditor()">
                         {{ t('nav_menu.custom_nav.add_folder') }}
                     </el-button>
-                    <el-button size="small" type="warning" plain @click="handleReset">
+                    <el-button type="warning" plain @click="handleReset">
                         {{ t('nav_menu.custom_nav.restore_default') }}
                     </el-button>
                 </div>
@@ -110,16 +109,13 @@
         class="folder-editor-dialog"
         :title="folderEditor.isEditing ? t('nav_menu.custom_nav.edit_folder') : t('nav_menu.custom_nav.add_folder')"
         width="900px"
-        :close-on-click-modal="false"
         destroy-on-close>
         <div class="folder-editor">
             <div class="folder-editor__form">
                 <el-input
                     v-model="folderEditor.data.name"
                     :placeholder="t('nav_menu.custom_nav.folder_name_placeholder')" />
-                <el-input
-                    v-model="folderEditor.data.icon"
-                    :placeholder="t('nav_menu.custom_nav.folder_icon_placeholder')" />
+                <IconPicker v-model="folderEditor.data.icon" class="folder-editor__icon-picker" />
             </div>
             <div class="folder-editor__lists">
                 <div class="folder-editor__column">
@@ -210,6 +206,8 @@
     import dayjs from 'dayjs';
 
     import { navDefinitions } from '../../shared/constants/ui.js';
+
+    import IconPicker from '../IconPicker.vue';
 
     const props = defineProps({
         visible: {
@@ -564,10 +562,15 @@
     }
 
     .folder-editor__form {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
         gap: 8px;
+        align-items: center;
         margin-bottom: 12px;
+    }
+
+    .folder-editor__icon-picker {
+        justify-self: end;
     }
 
     .folder-editor__lists {
