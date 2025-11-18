@@ -77,7 +77,7 @@
     import { useGroupStore } from '../../../stores';
 
     const { t } = useI18n();
-    const { cachedGroups, showGroupDialog } = useGroupStore();
+    const { cachedGroups } = useGroupStore();
 
     const props = defineProps({
         event: {
@@ -100,7 +100,7 @@
         }
     });
 
-    const emit = defineEmits(['update-following-calendar-data']);
+    const emit = defineEmits(['update-following-calendar-data', 'click-action']);
 
     const showGroupName = computed(() => props.mode === 'timeline');
 
@@ -182,7 +182,7 @@
     const capitalizeFirst = (str) => str?.charAt(0).toUpperCase() + str?.slice(1);
 
     const onGroupClick = () => {
-        showGroupDialog(props.event.ownerId);
+        emit('click-action');
     };
 </script>
 
@@ -202,6 +202,10 @@
         &.grid-card {
             flex: 0 0 280px;
             max-width: 280px;
+        }
+        &.group-dialog-grid-card {
+            flex: 0 0 320px;
+            max-width: 320px;
         }
         :deep(.el-card__body) {
             overflow: visible;

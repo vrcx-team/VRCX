@@ -428,6 +428,10 @@ hr.x-vertical-divider {
     border-radius: 2px;
 }
 
+.x-friend-item-no-hover:hover {
+    background: unset !important;
+}
+
 .x-friend-item-border:hover {
     border-top-left-radius: 25px;
     border-top-right-radius: 5px;

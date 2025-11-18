@@ -315,7 +315,7 @@
                 },
                 "prompt": {
                     "title": "Mutual Friend Graph",
-                    "message": "No cached mutual friend graph data was found. Start fetching now?\\nThis may take a while, we will notify you when it is finishes",
+                    "message": "No cached mutual friend graph data was found. Start fetching now? This may take a while, we will notify you when it is finishes",
                     "confirm": "Start Fetch",
                     "cancel": "Maybe Later"
                 },
@@ -1229,7 +1229,9 @@
                 "role_updated_at": "Updated At:",
                 "role_created_at": "Created At:",
                 "role_permissions": "Permissions:",
-                "last_visited": "Last Visited"
+                "last_visited": "Last Visited",
+                "past_events": "Past Events",
+                "upcoming_events": "Upcoming Events"
             },
             "posts": {
                 "header": "Posts",

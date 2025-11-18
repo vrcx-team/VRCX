@@ -702,6 +702,33 @@ const groupReq = {
     getGroupCalendar(groupId) {
         return request(`calendar/${groupId}`, {
             method: 'GET'
+        }).then((json) => {
+            const args = {
+                json,
+                params: {
+                    groupId
+                }
+            };
+            return args;
+        });
+    },
+
+    /**
+     * @param {{
+     groupId: string,
+     eventId: string
+     }} params
+     * @return { Promise<{json: any, params}> }
+     */
+    getGroupCalendarEvent(params) {
+        return request(`calendar/${params.groupId}/${params.eventId}`, {
+            method: 'GET'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
         });
     },
 
