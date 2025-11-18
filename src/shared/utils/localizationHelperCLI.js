@@ -9,11 +9,15 @@ const { hideBin } = require('yargs/helpers');
 
 const getLocalizationObjects = function* () {
     const localeFolder = './src/localization';
-    const folders = fs
+    const files = fs
         .readdirSync(localeFolder, { withFileTypes: true })
-        .filter((file) => file.isDirectory());
-    for (const folder of folders) {
-        const filePath = path.join(localeFolder, folder.name, 'en.json');
+        .filter(
+            (file) =>
+                file.isFile() &&
+                path.extname(file.name).toLowerCase() === '.json'
+        );
+    for (const file of files) {
+        const filePath = path.join(localeFolder, file.name);
         const jsonStr = fs.readFileSync(filePath);
         yield [filePath, JSON.parse(jsonStr)];
     }
@@ -119,8 +123,8 @@ const removeLocalizationKey = (key) => {
 // Yes this code is extremely slow, but it doesn't run very often so.
 const Validate = function () {
     const files = [...getLocalizationObjects()];
-    const enIndex = files.findIndex((file) =>
-        path.dirname(file[0]).endsWith('en')
+    const enIndex = files.findIndex(
+        (file) => path.basename(file[0]) === 'en.json'
     );
     const [_, enObj] = files.splice(enIndex, 1)[0];
 
