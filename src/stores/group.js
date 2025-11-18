@@ -45,6 +45,7 @@ export const useGroupStore = defineStore('Group', () => {
         announcement: {},
         posts: [],
         postsFiltered: [],
+        calendar: [],
         members: [],
         memberSearch: '',
         memberSearchResults: [],
@@ -141,6 +142,7 @@ export const useGroupStore = defineStore('Group', () => {
         D.galleries = {};
         D.members = [];
         D.memberFilter = groupDialogFilterOptions.everyone;
+        D.calendar = [];
         groupRequest
             .getCachedGroup({
                 groupId
@@ -461,10 +463,43 @@ export const useGroupStore = defineStore('Group', () => {
                                 });
                             }
                         });
+                    groupRequest.getGroupCalendar(groupId).then((args) => {
+                        if (groupDialog.value.id === args.params.groupId) {
+                            D.calendar = args.json.results;
+                            for (const event of D.calendar) {
+                                applyGroupEvent(event);
+                                // fetch again for isFollowing
+                                groupRequest
+                                    .getGroupCalendarEvent({
+                                        groupId,
+                                        eventId: event.id
+                                    })
+                                    .then((args) => {
+                                        Object.assign(
+                                            event,
+                                            applyGroupEvent(args.json)
+                                        );
+                                    });
+                            }
+                        }
+                    });
                 }
                 nextTick(() => (D.isGetGroupDialogGroupLoading = false));
                 return args;
             });
+    }
+
+    function applyGroupEvent(event) {
+        return {
+            userInterest: {
+                createdAt: null,
+                isFollowing: false,
+                updatedAt: null
+            },
+            ...event,
+            title: replaceBioSymbols(event.title),
+            description: replaceBioSymbols(event.description)
+        };
     }
 
     async function updateInGameGroupOrder() {
@@ -1102,6 +1137,7 @@ export const useGroupStore = defineStore('Group', () => {
         handleGroupRepresented,
         showModerateGroupDialog,
         showGroupMemberModerationDialog,
-        onGroupLeft
+        onGroupLeft,
+        applyGroupEvent
     };
 });
