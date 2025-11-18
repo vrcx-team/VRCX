@@ -1,6 +1,8 @@
 import { createI18n } from 'vue-i18n';
 
-import * as localizedStrings from '../localization/localizedStrings';
+import { getLocalizationStrings } from '../localization/index.js';
+
+const localizedStrings = await getLocalizationStrings();
 
 const i18n = createI18n({
     locale: 'en',

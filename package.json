@@ -7,7 +7,7 @@
         "dev": "cross-env PLATFORM=windows vite serve src",
         "dev-linux": "cross-env PLATFORM=linux vite serve src",
         "dev:test": "concurrently \"npm run dev\" \"jest --watchAll\"",
-        "localization": "node ./src/localization/localizationHelperCLI.js",
+        "localization": "node ./src/shared/utils/localizationHelperCLI.js",
         "test": "jest",
         "test:coverage": "jest --coverage",
         "prod": "cross-env PLATFORM=windows vite build src",
