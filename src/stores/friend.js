@@ -5,6 +5,8 @@ import { useI18n } from 'vue-i18n';
 
 import {
     compareByCreatedAtAscending,
+    createRateLimiter,
+    executeWithBackoff,
     getFriendsSortFunction,
     getGroupName,
     getNameColour,
@@ -690,39 +692,30 @@ export const useFriendStore = defineStore('Friend', () => {
         const MAX_RETRY = 5;
         const RETRY_BASE_DELAY = 1000;
 
-        const stamps = [];
-        async function throttle() {
-            const now = Date.now();
-            while (stamps.length && now - stamps[0] > 60_000) stamps.shift();
-            if (stamps.length >= RATE_PER_MINUTE) {
-                const wait = 60_000 - (now - stamps[0]);
-                await new Promise((r) => setTimeout(r, wait));
-            }
-            stamps.push(Date.now());
-        }
+        const rateLimiter = createRateLimiter({
+            limitPerInterval: RATE_PER_MINUTE,
+            intervalMs: 60_000
+        });
 
-        async function fetchPage(offset, retries = MAX_RETRY) {
-            try {
-                const { json } = await friendRequest.getFriends({
-                    ...args,
-                    n: PAGE_SIZE,
-                    offset
-                });
-                return Array.isArray(json) ? json : [];
-            } catch (err) {
-                const is429 =
-                    err.status === 429 || (err.message || '').includes('429');
-                if (is429 && retries > 0) {
-                    await new Promise((r) =>
-                        setTimeout(
-                            r,
-                            RETRY_BASE_DELAY * Math.pow(2, MAX_RETRY - retries)
-                        )
-                    );
-                    return fetchPage(offset, retries - 1);
+        async function fetchPage(offset) {
+            const result = await executeWithBackoff(
+                async () => {
+                    const { json } = await friendRequest.getFriends({
+                        ...args,
+                        n: PAGE_SIZE,
+                        offset
+                    });
+                    return Array.isArray(json) ? json : [];
+                },
+                {
+                    maxRetries: MAX_RETRY,
+                    baseDelay: RETRY_BASE_DELAY,
+                    shouldRetry: (err) =>
+                        err?.status === 429 ||
+                        (err?.message || '').includes('429')
                 }
-                throw err;
-            }
+            );
+            return result;
         }
 
         let nextOffset = 0;
@@ -742,7 +735,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 const offset = getNextOffset();
                 if (offset === null) break;
 
-                await throttle();
+                await rateLimiter.wait();
 
                 const page = await fetchPage(offset);
                 if (page.length === 0) {

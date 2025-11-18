@@ -297,6 +297,41 @@
                     "show_no_friend_instance": "Show No Friend Instance",
                     "show_detail": "Show Detail"
                 }
+            },
+            "mutual_friend": {
+                "tab_label": "Mutual Friend",
+                "actions": {
+                    "start_fetch": "Start Fetch",
+                    "fetch_again": "Fetch Again",
+                    "stop": "Stop",
+                    "stop_fetching": "Stop fetching"
+                },
+                "status": {
+                    "no_friends_to_process": "You have no friends to process"
+                },
+                "progress": {
+                    "friends_processed": "Friends processed",
+                    "no_relationships_discovered": "No relationships discovered"
+                },
+                "prompt": {
+                    "title": "Mutual Friend Graph",
+                    "message": "No cached mutual friend graph data was found. Start fetching now?\\nThis may take a while, we will notify you when it is finishes",
+                    "confirm": "Start Fetch",
+                    "cancel": "Maybe Later"
+                },
+                "messages": {
+                    "fetch_cancelled_graph_not_updated": "Fetch cancelled"
+                },
+                "notifications": {
+                    "start_fetching": "Start fetching",
+                    "mutual_friend_graph_ready_title": "Mutual Friend Graph",
+                    "mutual_friend_graph_ready_message": "Mutual friend graph is ready",
+                    "friend_list_changed_fetch_again": "Friend list changed. Please fetch the mutual graph again."
+                },
+                "tooltip": {
+                    "mutual_friends_count": "Mutual friends: {count}",
+                    "edge": "{source} ↔ {target}"
+                }
             }
         },
         "tools": {
