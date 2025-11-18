@@ -1,0 +1,120 @@
+import { computed, reactive, ref, watch } from 'vue';
+import { ElMessage, ElNotification } from 'element-plus';
+import { defineStore } from 'pinia';
+import { useI18n } from 'vue-i18n';
+
+import { useFriendStore } from './friend';
+
+function createDefaultFetchState() {
+    return {
+        processedFriends: 0
+    };
+}
+
+function createDefaultPayload() {
+    return {
+        nodes: [],
+        links: []
+    };
+}
+
+export const useChartsStore = defineStore('Charts', () => {
+    const friendStore = useFriendStore();
+
+    const { t } = useI18n();
+
+    const activeTab = ref('instance');
+    const mutualGraphPayload = ref(createDefaultPayload());
+    const mutualGraphFetchState = reactive(createDefaultFetchState());
+    const mutualGraphStatus = reactive({
+        isFetching: false,
+        hasFetched: false,
+        fetchError: '',
+        completionNotified: false,
+        friendSignature: 0,
+        needsRefetch: false,
+        cancelRequested: false
+    });
+
+    const friendCount = computed(() => friendStore.friends.size || 0);
+
+    function showInfoMessage(message, type) {
+        ElMessage({
+            message,
+            type,
+            duration: 4000,
+            grouping: true
+        });
+    }
+
+    watch(
+        () => mutualGraphStatus.isFetching,
+        (isFetching, wasFetching) => {
+            if (isFetching) {
+                showInfoMessage(
+                    t('view.charts.mutual_friend.notifications.start_fetching'),
+                    'info'
+                );
+                mutualGraphStatus.completionNotified = false;
+            } else if (
+                wasFetching &&
+                mutualGraphStatus.hasFetched &&
+                !mutualGraphStatus.completionNotified
+            ) {
+                mutualGraphStatus.completionNotified = true;
+                ElNotification({
+                    title: t(
+                        'view.charts.mutual_friend.notifications.mutual_friend_graph_ready_title'
+                    ),
+                    message: t(
+                        'view.charts.mutual_friend.notifications.mutual_friend_graph_ready_message'
+                    ),
+                    type: 'success',
+                    position: 'top-right',
+                    duration: 5000,
+                    showClose: true
+                });
+            }
+        }
+    );
+
+    watch(friendCount, (count) => {
+        if (
+            !mutualGraphStatus.hasFetched ||
+            mutualGraphStatus.isFetching ||
+            !mutualGraphStatus.friendSignature ||
+            mutualGraphStatus.needsRefetch
+        ) {
+            return;
+        }
+        if (count !== mutualGraphStatus.friendSignature) {
+            mutualGraphStatus.needsRefetch = true;
+            showInfoMessage(
+                t(
+                    'view.charts.mutual_friend.notifications.friend_list_changed_fetch_again'
+                ),
+                'warning'
+            );
+        }
+    });
+
+    function resetMutualGraphState() {
+        mutualGraphPayload.value = createDefaultPayload();
+        Object.assign(mutualGraphFetchState, createDefaultFetchState());
+        mutualGraphStatus.isFetching = false;
+        mutualGraphStatus.hasFetched = false;
+        mutualGraphStatus.fetchError = '';
+        mutualGraphStatus.completionNotified = false;
+        mutualGraphStatus.friendSignature = 0;
+        mutualGraphStatus.needsRefetch = false;
+        mutualGraphStatus.cancelRequested = false;
+    }
+
+    return {
+        activeTab,
+        mutualGraphPayload,
+        mutualGraphFetchState,
+        mutualGraphStatus,
+        resetMutualGraphState
+    };
+});

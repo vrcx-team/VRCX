@@ -1,5 +1,4 @@
 import { createPinia } from 'pinia';
-import { createSentryPiniaPlugin } from '@sentry/vue';
 
 import { isSentryEnabled } from '../plugin';
 import { useAdvancedSettingsStore } from './settings/advanced';
@@ -7,6 +6,7 @@ import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAuthStore } from './auth';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useAvatarStore } from './avatar';
+import { useChartsStore } from './charts';
 import { useDiscordPresenceSettingsStore } from './settings/discordPresence';
 import { useFavoriteStore } from './favorite';
 import { useFeedStore } from './feed';
@@ -152,7 +152,8 @@ export function createGlobalStores() {
         sharedFeed: useSharedFeedStore(),
         updateLoop: useUpdateLoopStore(),
         auth: useAuthStore(),
-        vrcStatus: useVrcStatusStore()
+        vrcStatus: useVrcStatusStore(),
+        charts: useChartsStore()
     };
 }
 
@@ -175,6 +176,7 @@ export {
     useNotificationStore,
     usePhotonStore,
     useSearchStore,
+    useChartsStore,
     useAdvancedSettingsStore,
     useAppearanceSettingsStore,
     useDiscordPresenceSettingsStore,
