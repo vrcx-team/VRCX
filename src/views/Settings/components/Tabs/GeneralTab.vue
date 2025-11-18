@@ -135,10 +135,7 @@
             <simple-switch
                 :label="t('view.settings.advanced.advanced.cache_debug.udon_exception_logging')"
                 :value="udonExceptionLogging"
-                @change="
-                    setUdonExceptionLogging();
-                    saveOpenVROption();
-                " />
+                @change="setUdonExceptionLogging" />
             <simple-switch
                 :label="t('view.settings.general.logging.resource_load')"
                 :value="logResourceLoad"

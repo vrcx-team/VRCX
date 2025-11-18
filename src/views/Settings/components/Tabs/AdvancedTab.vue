@@ -38,40 +38,28 @@
                 :label="t('view.settings.advanced.advanced.relaunch_vrchat.description')"
                 :value="relaunchVRChatAfterCrash"
                 :long-label="true"
-                @change="
-                    setRelaunchVRChatAfterCrash();
-                    saveOpenVROption();
-                " />
+                @change="setRelaunchVRChatAfterCrash" />
 
             <span class="sub-header">{{ t('view.settings.advanced.advanced.vrchat_quit_fix.header') }}</span>
             <simple-switch
                 :label="t('view.settings.advanced.advanced.vrchat_quit_fix.description')"
                 :value="vrcQuitFix"
                 :long-label="true"
-                @change="
-                    setVrcQuitFix();
-                    saveOpenVROption();
-                " />
+                @change="setVrcQuitFix" />
 
             <span class="sub-header">{{ t('view.settings.advanced.advanced.auto_cache_management.header') }}</span>
             <simple-switch
                 :label="t('view.settings.advanced.advanced.auto_cache_management.description')"
                 :value="autoSweepVRChatCache"
                 :long-label="true"
-                @change="
-                    setAutoSweepVRChatCache();
-                    saveOpenVROption();
-                " />
+                @change="setAutoSweepVRChatCache" />
 
             <span class="sub-header">{{ t('view.settings.advanced.advanced.self_invite.header') }}</span>
             <simple-switch
                 :label="t('view.settings.advanced.advanced.self_invite.description')"
                 :value="selfInviteOverride"
                 :long-label="true"
-                @change="
-                    setSelfInviteOverride();
-                    saveOpenVROption();
-                " />
+                @change="setSelfInviteOverride" />
 
             <div v-if="branch === 'Nightly'">
                 <span class="sub-header">Anonymous Error Reporting (Nightly Only)</span>
@@ -102,10 +90,7 @@
                 :label="t('view.settings.advanced.advanced.remote_database.enable')"
                 :value="avatarRemoteDatabase"
                 :long-label="true"
-                @change="
-                    setAvatarRemoteDatabase(!avatarRemoteDatabase);
-                    saveOpenVROption();
-                " />
+                @change="setAvatarRemoteDatabase(!avatarRemoteDatabase)" />
             <div class="options-container-item">
                 <el-button size="small" :icon="User" @click="showAvatarProviderDialog">{{
                     t('view.settings.advanced.advanced.remote_database.avatar_database_provider')
@@ -441,7 +426,7 @@
 
     const advancedSettingsStore = useAdvancedSettingsStore();
     const notificationsSettingsStore = useNotificationsSettingsStore();
-    const { saveOpenVROption, updateVRLastLocation, updateOpenVR } = useVrStore();
+    const { updateVRLastLocation, updateOpenVR } = useVrStore();
     const { showLaunchOptions } = useLaunchStore();
     const { enablePrimaryPasswordChange } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
