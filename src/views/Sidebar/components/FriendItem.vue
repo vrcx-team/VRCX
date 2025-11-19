@@ -91,30 +91,31 @@
     .skeleton {
         height: 40px;
         width: 100%;
-        :deep(.el-skeleton) {
+        & > div {
             height: 100%;
-            > div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            & > div {
+                width: calc(100% - 48px);
                 height: 100%;
                 display: flex;
-                align-items: center;
-                > :first-child {
-                    margin-right: 8px;
-                    height: 40px;
-                    width: 40px;
-                }
-                > :last-child {
-                    flex: 1;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    > :first-child {
-                        width: 50%;
-                        margin-bottom: 4px;
-                    }
-                    > :last-child {
-                        width: 90%;
-                    }
-                }
+                flex-direction: column;
+                justify-content: center;
+            }
+        }
+        :deep(.el-skeleton__circle) {
+            height: 40px;
+            width: 40px;
+        }
+        :deep(.el-skeleton__text) {
+            &:first-child {
+                height: 14px;
+                margin-bottom: 6px;
+                width: 50%;
+            }
+            &:last-child {
+                height: 12px;
             }
         }
     }
