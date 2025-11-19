@@ -174,8 +174,12 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         }
     });
 
-    function showConsole() {
-        AppApi.ShowDevTools();
+    async function showConsole() {
+        if (LINUX) {
+            await window.electron.openDevTools();
+        } else {
+            AppApi.ShowDevTools();
+        }
         if (
             AppDebug.debug ||
             AppDebug.debugWebRequests ||

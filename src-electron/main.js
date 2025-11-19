@@ -275,6 +275,10 @@ ipcMain.handle('app:setTrayIconNotification', (event, notify) => {
     setTrayIconNotification(notify);
 });
 
+ipcMain.handle('app:openDevTools', () => {
+    if (mainWindow) mainWindow.webContents.openDevTools();
+});
+
 function tryRelaunchWithArgs(args) {
     if (
         process.platform !== 'linux' ||
