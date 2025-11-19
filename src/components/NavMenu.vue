@@ -221,7 +221,7 @@
     } from '../stores';
     import { THEME_CONFIG, links, navDefinitions } from '../shared/constants';
     import { openExternalLink } from '../shared/utils';
-    import { useMagicKeys } from '../shared/utils/composables/useMagicKeys';
+    import { useMagicKeys } from '@vueuse/core';
 
     import configRepository from '../service/config';
 
@@ -657,7 +657,7 @@
         }
     });
 
-    const keys = useMagicKeys({ exactMatch: true });
+    const keys = useMagicKeys();
     const ctrlD = [keys['Ctrl+D'], keys['Ctrl+KeyD']]; // This might help with windows... cope :tm:
 
     watch(ctrlD, ([a, b], _) => {

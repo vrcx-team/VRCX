@@ -44,6 +44,7 @@
         "@types/jest": "^30.0.0",
         "@types/node": "^24.10.1",
         "@vitejs/plugin-vue": "^6.0.1",
+        "@vueuse/core": "^14.0.0",
         "animate.css": "^4.1.1",
         "babel-runtime": "^6.26.0",
         "concurrently": "^9.2.1",
