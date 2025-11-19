@@ -130,7 +130,7 @@ namespace VRCX
             );
             try
             {
-                var item = (object[])values.Item2[0];
+                var item = values[0];
                 using var stream = new MemoryStream(Convert.FromBase64String((string)item[0]));
                 _cookieContainer = new CookieContainer();
                 _cookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));

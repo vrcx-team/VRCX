@@ -957,7 +957,7 @@
                                 <div class="detail">
                                     <span
                                         class="name"
-                                        :style="{ color: user.user.$userColour }"
+                                        :style="{ color: user.user?.$userColour }"
                                         v-text="user.user.displayName" />
                                     <span class="extra">
                                         <template v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')">
@@ -1018,7 +1018,7 @@
                                 <div class="detail">
                                     <span
                                         class="name"
-                                        :style="{ color: user.user.$userColour }"
+                                        :style="{ color: user.user?.$userColour }"
                                         v-text="user.user.displayName" />
                                     <span class="extra">
                                         <template v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')">

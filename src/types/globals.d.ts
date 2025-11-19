@@ -22,7 +22,7 @@ declare global {
         utils: any;
         dayjs: any;
         configRepository: any;
-        datebase: any;
+        database: any;
         gameLogService: any;
         crypto: any;
         sqliteService: any;
@@ -120,12 +120,9 @@ declare global {
     };
 
     const SQLite: {
-        Execute: (
-            sql: string,
-            args: string
-        ) => Promise<{ Item1: any; Item2: any[] }>;
+        Execute: (sql: string, args: string) => Promise<any[]>;
         ExecuteJson: (sql: string, args: string) => Promise<string>;
-        ExecuteNonQuery: (sql: string, args: string) => Promise<void>;
+        ExecuteNonQuery: (sql: string, args: string) => Promise<Number>;
     };
 
     const LogWatcher: {
