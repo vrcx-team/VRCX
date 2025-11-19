@@ -6,7 +6,7 @@
                     <el-icon
                         class="rotation-transition"
                         :class="{
-                            'is-rotated': !groupInstancesCfg[getGroupId(group)].isCollapsed
+                            'is-rotated': !groupInstancesCfg[getGroupId(group)]?.isCollapsed
                         }"
                         ><ArrowRight
                     /></el-icon>
@@ -14,7 +14,7 @@
                 </div>
             </div>
 
-            <template v-if="!groupInstancesCfg[getGroupId(group)].isCollapsed">
+            <template v-if="!groupInstancesCfg[getGroupId(group)]?.isCollapsed">
                 <div
                     v-for="ref in group"
                     :key="ref.instance.id"

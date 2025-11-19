@@ -51,7 +51,7 @@ function computeForceOptions(nodes, links) {
         repulsion,
         edgeLength: [minEdge, maxEdge],
         gravity: 0.3,
-        layoutAnimation: false
+        layoutAnimation: nodes.length < 1000
     };
 }
 

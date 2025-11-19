@@ -258,9 +258,9 @@
             resizeObserver.value.disconnect();
             resizeObserver.value = null;
         }
-        if (echartsInstance.value) {
-            echartsInstance.value.dispose();
-            echartsInstance.value = null;
+        if (echartsInstance) {
+            echartsInstance.dispose();
+            echartsInstance = null;
         }
     });
 
