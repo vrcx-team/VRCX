@@ -205,6 +205,7 @@ export function useMutualGraphChart({ cachedUsers, graphPayload }) {
                     roamTrigger: 'global',
                     data: nodes,
                     links,
+                    animationThreshold: 1000,
                     label: {
                         position: 'right',
                         formatter: '{b}'
