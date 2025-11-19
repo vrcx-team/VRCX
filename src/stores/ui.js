@@ -4,25 +4,15 @@ import { useRouter } from 'vue-router';
 
 import { useNotificationStore } from './notification';
 import { watchState } from '../service/watchState';
+import { useMagicKeys } from '@vueuse/core';
 
 export const useUiStore = defineStore('Ui', () => {
     const notificationStore = useNotificationStore();
     const router = useRouter();
 
-    document.addEventListener('keydown', function (e) {
-        if (e.shiftKey) {
-            shiftHeld.value = true;
-        }
-    });
-
-    document.addEventListener('keyup', function (e) {
-        if (!e.shiftKey) {
-            shiftHeld.value = false;
-        }
-    });
+    const { shift: shiftHeld } = useMagicKeys();
 
     const notifiedMenus = ref([]);
-    const shiftHeld = ref(false);
     const trayIconNotify = ref(false);
     const socialRouteNames = ['friend-log', 'friend-list', 'moderation'];
     const favoriteRouteNames = [

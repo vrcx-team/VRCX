@@ -31,6 +31,7 @@ import { watchState } from '../service/watchState';
 import { worldRequest } from '../api';
 
 import configRepository from '../service/config';
+import { useMagicKeys } from '@vueuse/core';
 
 export const useVrcxStore = defineStore('Vrcx', () => {
     const gameStore = useGameStore();
@@ -156,14 +157,15 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         e.preventDefault();
     });
 
-    document.addEventListener('keyup', function (e) {
-        if (e.ctrlKey) {
-            if (e.key === 'I') {
-                showConsole();
-            } else if (e.key === 'r') {
-                location.reload();
-            }
-        } else if (e.altKey && e.key === 'R') {
+    const keys = useMagicKeys();
+    const ctrlI = keys['ctrl+I'],
+        ctrlR = keys['ctrl+R'],
+        altR = keys['alt+R'];
+
+    watch([ctrlI, ctrlR, altR], ([ctrlI, ctrlR, altR]) => {
+        if (ctrlI) showConsole();
+        if (ctrlR) location.reload();
+        if (altR) {
             refreshCustomCss();
             ElMessage({
                 message: 'Custom CSS refreshed',
