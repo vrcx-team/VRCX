@@ -1,35 +1,73 @@
-// requires binding of SQLite
+import { ElMessageBox } from 'element-plus';
 
+import { openExternalLink } from '../shared/utils';
+
+// requires binding of SQLite
 class SQLiteService {
-    async execute(callback, sql, args = null) {
-        if (LINUX) {
-            if (args) {
-                args = new Map(Object.entries(args));
+    handleSQLiteError(e) {
+        if (typeof e.message === 'string') {
+            if (e.message.includes('database disk image is malformed')) {
+                ElMessageBox.confirm(
+                    'Please repair or delete your database file by following these instructions.',
+                    'Your database is corrupted',
+                    {
+                        confirmButtonText: 'Confirm',
+                        type: 'warning'
+                    }
+                )
+                    .then(async (action) => {
+                        if (action !== 'confirm') return;
+                        openExternalLink(
+                            'https://github.com/vrcx-team/VRCX/wiki#how-to-repair-vrcx-database'
+                        );
+                    })
+                    .catch(() => {});
             }
-            var json = await SQLite.ExecuteJson(sql, args);
-            var items = JSON.parse(json);
-            if (json.status === 'error') {
-                throw new Error(json.message);
+            if (e.message.includes('database or disk is full')) {
+                ElMessageBox.alert(
+                    'Please free up some disk space.',
+                    'Disk containing database is full',
+                    {
+                        confirmButtonText: 'OK',
+                        type: 'warning'
+                    }
+                ).catch(() => {});
             }
-            items.data.forEach((item) => {
-                callback(item);
-            });
-            return;
         }
-        var item = await SQLite.Execute(sql, args);
-        if (item.Item1 !== null) {
-            throw item.Item1;
-        }
-        item.Item2?.forEach((item) => {
-            callback(item);
-        });
+        throw e;
     }
 
-    executeNonQuery(sql, args = null) {
-        if (LINUX && args) {
-            args = new Map(Object.entries(args));
+    async execute(callback, sql, args = null) {
+        try {
+            if (LINUX) {
+                if (args) {
+                    args = new Map(Object.entries(args));
+                }
+                var json = await SQLite.ExecuteJson(sql, args);
+                var items = JSON.parse(json);
+                items.forEach((item) => {
+                    callback(item);
+                });
+                return;
+            }
+            var data = await SQLite.Execute(sql, args);
+            data.forEach((row) => {
+                callback(row);
+            });
+        } catch (e) {
+            this.handleSQLiteError(e);
         }
-        return SQLite.ExecuteNonQuery(sql, args);
+    }
+
+    async executeNonQuery(sql, args = null) {
+        try {
+            if (LINUX && args) {
+                args = new Map(Object.entries(args));
+            }
+            return await SQLite.ExecuteNonQuery(sql, args);
+        } catch (e) {
+            this.handleSQLiteError(e);
+        }
     }
 }
 

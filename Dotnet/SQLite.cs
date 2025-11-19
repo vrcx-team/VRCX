@@ -44,26 +44,15 @@ namespace VRCX
             m_Connection.Close();
             m_Connection.Dispose();
         }
-        
-        public string ExecuteJson(string sql, IDictionary<string, object> args = null)
+
+        // for Electron
+        public string ExecuteJson(string sql, IDictionary<string, object>? args = null)
         {
             var result = Execute(sql, args);
-            if (result.Item1 != null)
-            {
-                return JsonSerializer.Serialize(new
-                {
-                    status = "error",
-                    message = result.Item1
-                });
-            }
-            return JsonSerializer.Serialize(new
-            {
-                status = "success",
-                data = result.Item2
-            });
+            return JsonSerializer.Serialize(result);
         }
 
-        public Tuple<string, object[]> Execute(string sql, IDictionary<string, object> args = null)
+        public object[][] Execute(string sql, IDictionary<string, object>? args = null)
         {
             m_ConnectionLock.EnterReadLock();
             try
@@ -88,11 +77,7 @@ namespace VRCX
                     }
                     result.Add(values);
                 }
-                return new Tuple<string, object[]>(null, result.ToArray());
-            }
-            catch (Exception ex)
-            {
-                return new Tuple<string, object[]>(ex.Message, null);
+                return result.ToArray();
             }
             finally
             {
@@ -100,9 +85,9 @@ namespace VRCX
             }
         }
 
-        public int ExecuteNonQuery(string sql, IDictionary<string, object> args = null)
+        public int ExecuteNonQuery(string sql, IDictionary<string, object>? args = null)
         {
-            int result = -1;
+            var result = -1;
             m_ConnectionLock.EnterWriteLock();
             try
             {

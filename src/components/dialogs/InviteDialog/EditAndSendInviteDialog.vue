@@ -24,7 +24,7 @@
             <el-button @click="cancelEditAndSendInvite">
                 {{ t('dialog.edit_send_invite_message.cancel') }}
             </el-button>
-            <el-button type="primary" @click="saveEditAndSendInvite">
+            <el-button type="primary" @click="saveEditAndSendInvite" :disabled="!editAndSendInviteDialog.newMessage">
                 {{ t('dialog.edit_send_invite_message.send') }}
             </el-button>
         </template>
