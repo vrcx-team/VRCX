@@ -29,7 +29,6 @@ export const useChartsStore = defineStore('Charts', () => {
     const mutualGraphStatus = reactive({
         isFetching: false,
         hasFetched: false,
-        fetchError: '',
         completionNotified: false,
         friendSignature: 0,
         needsRefetch: false,
@@ -103,7 +102,6 @@ export const useChartsStore = defineStore('Charts', () => {
         Object.assign(mutualGraphFetchState, createDefaultFetchState());
         mutualGraphStatus.isFetching = false;
         mutualGraphStatus.hasFetched = false;
-        mutualGraphStatus.fetchError = '';
         mutualGraphStatus.completionNotified = false;
         mutualGraphStatus.friendSignature = 0;
         mutualGraphStatus.needsRefetch = false;

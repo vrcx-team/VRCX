@@ -75,7 +75,6 @@
     const chartRef = ref(null);
     let chartInstance = null;
     let resizeObserver = null;
-    let lastRenderablePayload = null;
 
     const isFetching = computed({
         get: () => status.isFetching,
@@ -87,12 +86,6 @@
         get: () => status.hasFetched,
         set: (val) => {
             status.hasFetched = val;
-        }
-    });
-    const fetchError = computed({
-        get: () => status.fetchError,
-        set: (val) => {
-            status.fetchError = val;
         }
     });
 
@@ -181,9 +174,9 @@
             return;
         }
         chartInstance = echarts.init(chartRef.value, chartTheme.value, { useDirtyRect: totalFriends.value > 1000 });
-        if (lastRenderablePayload) {
-            updateChart(lastRenderablePayload);
-        } else if (graphReady.value) {
+        chartInstance.on('click', handleChartNodeClick);
+
+        if (graphReady.value) {
             // @ts-ignore
             updateChart(graphPayload.value);
         }
@@ -286,7 +279,6 @@
         }
 
         isFetching.value = true;
-        fetchError.value = '';
         status.completionNotified = false;
         status.needsRefetch = false;
         status.cancelRequested = false;
@@ -376,21 +368,11 @@
             }
             return;
         }
-        lastRenderablePayload = payload;
         if (!chartInstance) {
             return;
         }
-        chartInstance.setOption(createChartOption(payload), true);
-        registerChartEvents();
+        chartInstance.setOption(createChartOption(payload));
         nextTick(() => chartInstance?.resize());
-    }
-
-    function registerChartEvents() {
-        if (!chartInstance) {
-            return;
-        }
-        chartInstance.off('click', handleChartNodeClick);
-        chartInstance.on('click', handleChartNodeClick);
     }
 
     function handleChartNodeClick(params) {
