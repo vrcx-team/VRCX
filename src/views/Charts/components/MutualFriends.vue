@@ -222,7 +222,7 @@
             status.friendSignature = totalFriends.value;
             status.needsRefetch = false;
         } catch (err) {
-            console.error('[MutualGraph] Failed to load cached mutual graph', err);
+            console.error('[MutualNetworkGraph] Failed to load cached mutual graph', err);
         }
     }
 
@@ -309,7 +309,7 @@
                     const mutuals = await fetchMutualFriends(friend.id);
                     mutualMap.set(friend.id, { friend, mutuals });
                 } catch (err) {
-                    console.warn('[MutualGraph] Skipping friend due to fetch error', friend.id, err);
+                    console.warn('[MutualNetworkGraph] Skipping friend due to fetch error', friend.id, err);
                     continue;
                 }
                 fetchState.processedFriends = index + 1;
@@ -332,11 +332,11 @@
             try {
                 await persistMutualGraph(mutualMap);
             } catch (persistErr) {
-                console.error('[MutualGraph] Failed to cache data', persistErr);
+                console.error('[MutualNetworkGraph] Failed to cache data', persistErr);
             }
             hasFetched.value = true;
         } catch (err) {
-            console.error('[MutualGraph] fetch aborted', err);
+            console.error('[MutualNetworkGraph] fetch aborted', err);
         } finally {
             isFetching.value = false;
             status.cancelRequested = false;
