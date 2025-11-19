@@ -3,15 +3,20 @@ import { defineStore } from 'pinia';
 import { useRouter } from 'vue-router';
 
 import { useNotificationStore } from './notification';
-import { watchState } from '../service/watchState';
+import { useSearchStore } from './search';
 
 export const useUiStore = defineStore('Ui', () => {
     const notificationStore = useNotificationStore();
     const router = useRouter();
+    const search = useSearchStore();
 
     document.addEventListener('keydown', function (e) {
         if (e.shiftKey) {
             shiftHeld.value = true;
+        }
+        if (e.ctrlKey && e.key === 'd') {
+            e.preventDefault();
+            search.directAccessPaste();
         }
     });
 
@@ -24,15 +29,6 @@ export const useUiStore = defineStore('Ui', () => {
     const notifiedMenus = ref([]);
     const shiftHeld = ref(false);
     const trayIconNotify = ref(false);
-    watch(
-        () => watchState.isLoggedIn,
-        (isLoggedIn) => {
-            if (isLoggedIn) {
-                router.push({ name: 'feed' });
-            }
-        },
-        { flush: 'sync' }
-    );
 
     function notifyMenu(index) {
         const currentRouteName = router.currentRoute.value?.name;
