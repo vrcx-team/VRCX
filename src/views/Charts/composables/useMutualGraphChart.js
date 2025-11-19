@@ -63,21 +63,17 @@ export function useMutualGraphChart({ cachedUsers, graphPayload }) {
         const links = [];
         const linkKeys = new Set();
 
-        function ensureNode(id, name, rawUser) {
+        function ensureNode(id, name) {
             if (!id) {
                 return null;
             }
             const existing = nodes.get(id);
             if (existing) {
-                if (!existing.rawUser && rawUser) {
-                    existing.rawUser = rawUser;
-                }
                 return existing;
             }
             const node = {
                 id,
-                name: name || id,
-                value: name || id
+                name: name || id
             };
             nodes.set(id, node);
             return node;
@@ -108,7 +104,7 @@ export function useMutualGraphChart({ cachedUsers, graphPayload }) {
         for (const [friendId, { friend, mutuals }] of mutualMap.entries()) {
             const friendRef = friend?.ref || cachedUsers.get(friendId);
             const friendName = friendRef?.displayName;
-            ensureNode(friendId, friendName, friendRef);
+            ensureNode(friendId, friendName);
 
             for (const mutual of mutuals) {
                 if (!mutual?.id) {
@@ -137,7 +133,7 @@ export function useMutualGraphChart({ cachedUsers, graphPayload }) {
             node.symbolSize = size;
             node.label = {
                 show: true,
-                formatter: `${displayName}`
+                formatter: displayName
             };
             node.itemStyle = {
                 ...(node.itemStyle || {}),
@@ -205,14 +201,17 @@ export function useMutualGraphChart({ cachedUsers, graphPayload }) {
                     roamTrigger: 'global',
                     data: nodes,
                     links,
-                    animationThreshold: 1000,
                     label: {
-                        position: 'right',
-                        formatter: '{b}'
+                        position: 'right'
                     },
                     symbol: 'circle',
                     emphasis: {
                         focus: 'adjacency',
+                        scale: true,
+                        itemStyle: {
+                            borderWidth: 3,
+                            opacity: 1
+                        },
                         lineStyle: {
                             width: 5,
                             opacity: 0.5
