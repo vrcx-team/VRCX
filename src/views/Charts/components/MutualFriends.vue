@@ -305,8 +305,13 @@
                 if (!friend?.id) {
                     continue;
                 }
-                const mutuals = await fetchMutualFriends(friend.id);
-                mutualMap.set(friend.id, { friend, mutuals });
+                try {
+                    const mutuals = await fetchMutualFriends(friend.id);
+                    mutualMap.set(friend.id, { friend, mutuals });
+                } catch (err) {
+                    console.warn('[MutualGraph] Skipping friend due to fetch error', friend.id, err);
+                    continue;
+                }
                 fetchState.processedFriends = index + 1;
                 if (status.cancelRequested) {
                     cancelled = true;
