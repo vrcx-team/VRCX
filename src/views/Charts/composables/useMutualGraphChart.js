@@ -40,7 +40,7 @@ function computeForceOptions(nodes, links) {
     const repulsionBase = 140 + maxSymbol * 4 + avgDegree * 6;
     const repulsion = clamp(repulsionBase, 180, 720);
 
-    const minEdge = clamp(34 + avgDegree * 1.2, 34, 70);
+    const minEdge = clamp(48 + avgDegree * 1.2, 48, 90);
     const maxEdge = clamp(
         minEdge + 60 + Math.max(0, 140 - density * 18),
         90,
@@ -50,8 +50,8 @@ function computeForceOptions(nodes, links) {
     return {
         repulsion,
         edgeLength: [minEdge, maxEdge],
-        gravity: 0.08,
-        layoutAnimation: true
+        gravity: 0.3,
+        layoutAnimation: false
     };
 }
 
