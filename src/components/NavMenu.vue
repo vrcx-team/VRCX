@@ -370,7 +370,7 @@
 
     const handleFolderCycleNavigation = (item) => {
         if (!item?.entries?.length) {
-            return [];
+            return;
         }
         const entries = item.entries.filter((entry) => Boolean(entry?.routeName || entry?.path));
         if (!entries.length) {
@@ -593,13 +593,6 @@
         }
     };
 
-    function handleKeydown(e) {
-        if (e.ctrlKey && e.key === 'd') {
-            e.preventDefault();
-            directAccessPaste();
-        }
-    }
-
     const handleSupportLink = (id) => {
         supportMenuVisible.value = false;
         const target = links[id];
@@ -738,7 +731,6 @@
 
     onMounted(async () => {
         await loadNavMenuConfig();
-        window.addEventListener('keydown', handleKeydown);
 
         if (!sentryErrorReporting.value) return;
         try {
@@ -749,10 +741,6 @@
         } catch (error) {
             console.error('Error setting up Sentry feedback:', error);
         }
-    });
-
-    onUnmounted(() => {
-        window.removeEventListener('keydown', handleKeydown);
     });
 </script>
 
