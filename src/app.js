@@ -15,11 +15,12 @@ import {
     initRouter,
     initSentry
 } from './plugin';
-import { pinia } from './stores';
+import { initPiniaPlugins, pinia } from './stores';
 
 import App from './App.vue';
 
 await initPlugins();
+await initPiniaPlugins();
 
 // #region | Hey look it's most of VRCX!
 
@@ -31,5 +32,3 @@ initRouter(app);
 await initSentry(app);
 
 app.mount('#root');
-
-window.$app = app;

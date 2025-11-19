@@ -8,14 +8,25 @@
         "player_list": "用戶列表",
         "search": "搜尋",
         "favorites": "收藏",
+        "social": "社交",
         "friend_log": "好友紀錄",
         "moderation": "用戶處置",
         "notification": "通知",
         "friend_list": "好友列表",
         "charts": "圖表",
         "tools": "工具",
+        "about": "關於",
         "profile": "個人檔案",
-        "settings": "設定"
+        "settings": "設定",
+        "help_support": "協助與支援"
+    },
+    "nav_menu": {
+        "resources": "資源",
+        "wiki": "Wiki",
+        "get_help": "取得協助",
+        "github": "在 GitHub 上查看 VRCX",
+        "discord": "加入我們的 Discord",
+        "whats_new": "最新更新"
     },
     "view": {
         "login": {
@@ -355,7 +366,8 @@
                     "auto_update_off": "關閉",
                     "auto_update_notify": "通知",
                     "auto_update_download": "自動下載",
-                    "change_log": "更新日誌"
+                    "change_log": "更新日誌",
+                    "updater_disabled": "更新程式已停用，更新作業將由您的套件管理程式處理。"
                 },
                 "application": {
                     "header": "應用程式",
@@ -623,9 +635,9 @@
                         "description": "將放置的貼紙保存到你的 VRChat 圖片資料夾"
                     },
                     "delete_all_screenshot_metadata": {
-                        "button": "刪除截圖後設資料",
+                        "button": "刪除截圖附加資料",
                         "ask": "您確定要刪除 VRChat 圖片資料夾中所有的 VRC & VRCX 螢幕截圖 metadata？",
-                        "confirm": "刪除所有螢幕截圖後設資料是非常具破壞性的動作，且無法撤銷！這包括您 VRChat 圖片資料夾中的所有列印、子資料夾和其他不相關的圖片，如果這些照片對您來說很珍貴，請在繼續之前先做備份。",
+                        "confirm": "刪除所有螢幕截圖附加資料是非常具破壞性的動作，且無法撤銷！這包括您 VRChat 圖片資料夾中的所有列印、子資料夾和其他不相關的圖片，如果這些照片對您來說很珍貴，請在繼續之前先做備份。",
                         "confirm_yes": "確定",
                         "confirm_no": "稍等一下"
                     },
@@ -778,7 +790,9 @@
                 "friend_no": "第 {number} 位好友",
                 "vrchat_team": "VRChat 團隊",
                 "18_plus_verified": "18+ 已驗證",
-                "age_verified": "年齡已驗證"
+                "age_verified": "年齡已驗證",
+                "trust_level": "信用等級",
+                "mutual_friends": "共同好友"
             },
             "badges": {
                 "assigned": "給予",
@@ -872,7 +886,8 @@
                 "instance_hard_closed": "強制關閉",
                 "close_instance": "關閉房間",
                 "instance_age_gated": "年齡限制",
-                "open_previous_instance": "開啟上個房間"
+                "open_previous_instance": "開啟上個房間",
+                "show_mutual_friends": "顯示共同好友"
             },
             "groups": {
                 "header": "群組",
@@ -924,6 +939,14 @@
             },
             "json": {
                 "header": "原始資料"
+            },
+            "mutual_friends": {
+                "header": "共同好友",
+                "sorting": {
+                    "alphabetical": "按字母排序",
+                    "last_active": "最近在線",
+                    "friend_order": "好友列表順序"
+                }
             }
         },
         "world": {
@@ -1559,7 +1582,8 @@
             "sticker": "貼紙",
             "drone_skin": "無人機外觀",
             "emoji": "表情符號",
-            "redeem": "兌換"
+            "redeem": "兌換",
+            "create_animated_emoji": "動態表情符號生成器"
         },
         "change_content_image": {
             "avatar": "變更角色圖片",
@@ -1603,7 +1627,7 @@
             "last_screenshot": "最後一張螢幕截圖",
             "copy_image": "複製圖片",
             "open_folder": "開啟資料夾",
-            "delete_metadata": "刪除後設資料",
+            "delete_metadata": "刪除附加資料",
             "upload": "上傳"
         },
         "registry_backup": {
@@ -1711,7 +1735,9 @@
                 "interested_user": "感興趣的使用者",
                 "close_time": "在結束後關閉房間",
                 "created": "建立日期",
-                "description": "描述"
+                "description": "描述",
+                "export_to_calendar": "匯出至行事曆",
+                "download_ics": "下載 .ics 檔案"
             }
         },
         "moderate_group": {
@@ -1793,8 +1819,8 @@
             "load_failed": "載入好友清單失敗，正在登出"
         },
         "screenshot_metadata": {
-            "deleted": "刪除截圖後設資料",
-            "delete_failed": "刪除截圖後設資料失敗"
+            "deleted": "刪除截圖附加資料",
+            "delete_failed": "刪除截圖附加資料失敗"
         }
     },
     "prompt": {

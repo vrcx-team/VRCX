@@ -2,7 +2,7 @@
     <el-card
         class="friend-card"
         shadow="never"
-        :body-style="{ padding: `${16 * cardScale}px` }"
+        :body-style="{ padding: `${16 * cardScale * cardSpacing}px` }"
         :style="cardStyle"
         @click="showUserDialog(friend.id)">
         <div class="friend-card__header">
@@ -50,6 +50,10 @@
         displayInstanceInfo: {
             type: Boolean,
             default: true
+        },
+        cardSpacing: {
+            type: Number,
+            default: 1
         }
     });
 
@@ -57,6 +61,7 @@
 
     const cardStyle = computed(() => ({
         '--card-scale': props.cardScale,
+        '--card-spacing': props.cardSpacing,
         cursor: 'pointer'
     }));
 
@@ -85,9 +90,10 @@
 <style scoped lang="scss">
     .friend-card {
         --card-scale: 1;
+        --card-spacing: 1;
         position: relative;
         display: grid;
-        gap: calc(14px * var(--card-scale));
+        gap: calc(14px * var(--card-scale) * var(--card-spacing));
         border-radius: calc(8px * var(--card-scale));
         background: #fff;
         border: 1px solid var(--el-border-color);
@@ -95,7 +101,6 @@
         transition:
             box-shadow 0.2s ease,
             transform 0.2s ease;
-        width: 100%;
         max-width: var(--friend-card-target-width, 220px);
         min-width: var(--friend-card-min-width, 220px);
 
@@ -109,7 +114,7 @@
         display: grid;
         grid-template-columns: auto 1fr;
         align-items: flex-start;
-        gap: calc(12px * var(--card-scale));
+        gap: calc(12px * var(--card-scale) * var(--card-spacing));
     }
 
     .friend-card__avatar-wrapper {
@@ -126,8 +131,8 @@
         position: absolute;
         top: calc(8px * var(--card-scale));
         right: calc(8px * var(--card-scale));
-        width: calc(8px * var(--card-scale));
-        height: calc(8px * var(--card-scale));
+        inline-size: calc(8px * var(--card-scale));
+        block-size: calc(8px * var(--card-scale));
         border-radius: 999px;
         border: calc(2px * var(--card-scale)) solid #fff;
         box-shadow: 0 0 calc(4px * var(--card-scale)) rgba(15, 23, 42, 0.12);
@@ -160,7 +165,7 @@
 
     .friend-card__body {
         display: grid;
-        gap: calc(12px * var(--card-scale));
+        gap: calc(12px * var(--card-scale) * var(--card-spacing));
     }
 
     .friend-card__name {
@@ -174,7 +179,7 @@
     }
 
     .friend-card__signature {
-        margin-top: 6px;
+        margin-top: calc(6px * var(--card-spacing));
         font-size: calc(13px * var(--card-scale));
         color: rgba(31, 41, 55, 0.7);
         line-height: 1.4;
@@ -187,7 +192,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: calc(40px * var(--card-scale));
+        min-height: calc(40px * var(--card-scale));
         padding: calc(6px * var(--card-scale)) calc(10px * var(--card-scale));
         border-radius: calc(12px * var(--card-scale));
         background: rgba(148, 163, 184, 0.18);
@@ -213,6 +218,7 @@
         overflow: hidden;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
         text-overflow: ellipsis;
     }
 

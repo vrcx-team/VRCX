@@ -1,7 +1,6 @@
 <template>
     <div class="data-table-wrapper">
         <el-table
-            ref="tableRef"
             v-loading="loading"
             :data="paginatedData"
             v-bind="mergedTableProps"

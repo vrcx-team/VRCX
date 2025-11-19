@@ -21,10 +21,12 @@
                     <el-button :icon="MoreFilled" size="small" circle @click.stop />
                     <template #dropdown>
                         <el-dropdown-menu class="favorites-dropdown">
-                            <li class="favorites-dropdown__scale" @click.stop>
-                                <div class="favorites-dropdown__scale-header">
+                            <li class="favorites-dropdown__control" @click.stop>
+                                <div class="favorites-dropdown__control-header">
                                     <span>Scale</span>
-                                    <span class="favorites-dropdown__scale-value">{{ friendCardScalePercent }}%</span>
+                                    <span class="favorites-dropdown__control-value">
+                                        {{ friendCardScalePercent }}%
+                                    </span>
                                 </div>
                                 <el-slider
                                     v-model="friendCardScale"
@@ -32,6 +34,21 @@
                                     :min="friendCardScaleSlider.min"
                                     :max="friendCardScaleSlider.max"
                                     :step="friendCardScaleSlider.step"
+                                    :show-tooltip="false" />
+                            </li>
+                            <li class="favorites-dropdown__control" @click.stop>
+                                <div class="favorites-dropdown__control-header">
+                                    <span>Spacing</span>
+                                    <span class="favorites-dropdown__control-value">
+                                        {{ friendCardSpacingPercent }}%
+                                    </span>
+                                </div>
+                                <el-slider
+                                    v-model="friendCardSpacing"
+                                    class="favorites-dropdown__slider"
+                                    :min="friendCardSpacingSlider.min"
+                                    :max="friendCardSpacingSlider.max"
+                                    :step="friendCardSpacingSlider.step"
                                     :show-tooltip="false" />
                             </li>
                             <el-dropdown-item @click="handleFriendImportClick">
@@ -295,17 +312,31 @@
 
     const {
         cardScale: friendCardScale,
+        cardSpacing: friendCardSpacing,
         slider: friendCardScaleSlider,
+        spacingSlider: friendCardSpacingSlider,
         containerRef: friendFavoritesContainerRef,
         gridStyle: friendFavoritesGridStyle
     } = useFavoritesCardScaling({
         configKey: 'VRCX_FavoritesFriendCardScale',
+        spacingConfigKey: 'VRCX_FavoritesFriendCardSpacing',
         min: 0.6,
         max: 1,
-        step: 0.01
+        step: 0.01,
+        spacingMin: 0.5,
+        spacingMax: 1.5,
+        spacingStep: 0.05,
+        basePaddingY: 8,
+        basePaddingX: 10,
+        baseContentGap: 10,
+        baseActionGap: 8,
+        baseActionGroupGap: 6,
+        baseActionMargin: 8,
+        baseCheckboxMargin: 10
     });
 
     const friendCardScalePercent = computed(() => Math.round(friendCardScale.value * 100));
+    const friendCardSpacingPercent = computed(() => Math.round(friendCardSpacing.value * 100));
 
     const friendExportDialogVisible = ref(false);
     const friendFavoriteSearch = ref('');
@@ -808,7 +839,6 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        width: 100%;
         border: none;
         background: transparent;
         border-radius: 8px;
@@ -817,7 +847,8 @@
         cursor: pointer;
         color: inherit;
         transition: background-color 0.15s ease;
-        height: 32px;
+        min-height: 32px;
+        align-self: stretch;
     }
 
     .favorites-group-menu__item:hover {
@@ -848,7 +879,6 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        width: 100%;
         border: none;
         background: transparent;
         padding: 6px 10px;
@@ -857,7 +887,8 @@
         color: inherit;
         font-size: 13px;
         transition: background-color 0.15s ease;
-        height: 32px;
+        min-height: 32px;
+        align-self: stretch;
     }
 
     .group-visibility-menu__item:hover,
@@ -973,7 +1004,7 @@
         box-sizing: border-box;
         border: 1px solid var(--el-border-color);
         border-radius: calc(8px * var(--favorites-card-scale, 1));
-        padding: calc(8px * var(--favorites-card-scale, 1)) calc(10px * var(--favorites-card-scale, 1));
+        padding: var(--favorites-card-padding-y, 8px) var(--favorites-card-padding-x, 10px);
         cursor: pointer;
         background: var(--el-bg-color);
         transition:
@@ -998,7 +1029,7 @@
     :deep(.favorites-search-card__content) {
         display: flex;
         align-items: center;
-        gap: calc(10px * var(--favorites-card-scale, 1));
+        gap: var(--favorites-card-content-gap, 10px);
         flex: 1;
         min-width: 0;
     }
@@ -1068,8 +1099,8 @@
     :deep(.favorites-search-card__actions) {
         display: flex;
         flex-direction: column;
-        gap: 8px;
-        margin-left: 8px;
+        gap: var(--favorites-card-action-gap, 8px);
+        margin-left: var(--favorites-card-action-margin, 8px);
         align-items: center;
         justify-content: center;
         flex: 0 0 auto;
@@ -1088,7 +1119,7 @@
 
     :deep(.favorites-search-card__action-group) {
         display: flex;
-        gap: 6px;
+        gap: var(--favorites-card-action-group-gap, 6px);
         width: 100%;
     }
 
@@ -1099,7 +1130,7 @@
     :deep(.favorites-search-card__action--checkbox) {
         align-items: center;
         justify-content: flex-end;
-        margin-right: 10px;
+        margin-right: var(--favorites-card-checkbox-margin, 10px);
     }
 
     :deep(.favorites-search-card__action--checkbox .el-checkbox) {
@@ -1127,15 +1158,18 @@
         height: 100%;
     }
 
-    .favorites-dropdown__scale {
+    .favorites-dropdown__control {
         list-style: none;
         padding: 12px 16px 8px;
-        border-bottom: 1px solid var(--el-border-color-lighter);
         min-width: 220px;
         cursor: default;
     }
 
-    .favorites-dropdown__scale-header {
+    .favorites-dropdown__control:not(:last-child) {
+        border-bottom: 1px solid var(--el-border-color-lighter);
+    }
+
+    .favorites-dropdown__control-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -1145,7 +1179,7 @@
         margin-bottom: 6px;
     }
 
-    .favorites-dropdown__scale-value {
+    .favorites-dropdown__control-value {
         font-size: 12px;
         color: var(--el-text-color-secondary);
     }

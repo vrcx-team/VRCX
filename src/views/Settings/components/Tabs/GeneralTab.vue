@@ -18,16 +18,16 @@
                         }}</span>
                     </div>
                 </div>
-                <div class="x-friend-item" @click="openExternalLink('https://github.com/vrcx-team/VRCX')">
+                <div class="x-friend-item" @click="openExternalLink(links.github)">
                     <div class="detail">
                         <span class="name">{{ t('view.settings.general.general.repository_url') }}</span>
-                        <span v-once class="extra">https://github.com/vrcx-team/VRCX</span>
+                        <span v-once class="extra">{{ links.github }}</span>
                     </div>
                 </div>
-                <div class="x-friend-item" @click="openExternalLink('https://vrcx.app/discord')">
+                <div class="x-friend-item" @click="openExternalLink(links.discord)">
                     <div class="detail">
                         <span class="name">{{ t('view.settings.general.general.support') }}</span>
-                        <span v-once class="extra">https://vrcx.app/discord</span>
+                        <span v-once class="extra">{{ links.discord }}</span>
                     </div>
                 </div>
             </div>
@@ -135,10 +135,7 @@
             <simple-switch
                 :label="t('view.settings.advanced.advanced.cache_debug.udon_exception_logging')"
                 :value="udonExceptionLogging"
-                @change="
-                    setUdonExceptionLogging();
-                    saveOpenVROption();
-                " />
+                @change="setUdonExceptionLogging" />
             <simple-switch
                 :label="t('view.settings.general.logging.resource_load')"
                 :value="logResourceLoad"
@@ -301,6 +298,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useFavoriteStore, useGeneralSettingsStore, useVRCXUpdaterStore, useVrStore } from '../../../../stores';
+    import { links } from '../../../../shared/constants';
     import { openExternalLink } from '../../../../shared/utils';
 
     import SimpleSwitch from '../SimpleSwitch.vue';

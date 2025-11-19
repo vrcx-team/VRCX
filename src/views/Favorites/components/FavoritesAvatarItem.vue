@@ -78,17 +78,20 @@
                             </el-tooltip>
                         </div>
                         <div class="favorites-search-card__action">
-                            <el-tooltip placement="bottom" :content="t('view.favorite.unfavorite_tooltip')">
+                            <el-tooltip
+                                v-if="showDangerUnfavorite"
+                                placement="bottom"
+                                :content="t('view.favorite.unfavorite_tooltip')">
                                 <el-button
-                                    v-if="showDangerUnfavorite"
                                     size="small"
                                     :icon="Close"
                                     circle
                                     class="favorites-search-card__action-btn"
                                     type="danger"
                                     @click.stop="handlePrimaryDeleteAction" />
+                            </el-tooltip>
+                            <el-tooltip v-else placement="bottom" :content="t('view.favorite.edit_favorite_tooltip')">
                                 <el-button
-                                    v-else
                                     type="default"
                                     :icon="Star"
                                     size="small"
@@ -187,9 +190,6 @@
     });
 
     const showDangerUnfavorite = computed(() => {
-        if (props.isLocalFavorite) {
-            return shiftHeld.value;
-        }
         return shiftHeld.value;
     });
 

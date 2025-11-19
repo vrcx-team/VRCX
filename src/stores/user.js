@@ -758,7 +758,7 @@ export const useUserStore = defineStore('User', () => {
      * @param {string} userId
      */
     function showUserDialog(userId) {
-        if (!userId) {
+        if (!userId || typeof userId !== 'string') {
             return;
         }
         const D = userDialog.value;

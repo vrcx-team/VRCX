@@ -162,10 +162,7 @@
                     :model-value="desktopToast"
                     size="small"
                     style="margin-top: 5px"
-                    @change="
-                        setDesktopToast($event);
-                        saveOpenVROption();
-                    ">
+                    @change="setDesktopToast($event)">
                     <el-radio-button value="Never">{{
                         t('view.settings.notifications.notifications.conditions.never')
                     }}</el-radio-button>
@@ -194,10 +191,7 @@
                     t('view.settings.notifications.notifications.desktop_notifications.desktop_notification_while_afk')
                 "
                 :value="afkDesktopToast"
-                @change="
-                    setAfkDesktopToast();
-                    saveOpenVROption();
-                " />
+                @change="setAfkDesktopToast" />
         </div>
         <div class="options-container">
             <span class="sub-header">{{ t('view.settings.notifications.notifications.text_to_speech.header') }}</span>
@@ -251,10 +245,7 @@
                 :label="t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames')"
                 :value="notificationTTSNickName"
                 :disabled="notificationTTS === 'Never'"
-                @change="
-                    setNotificationTTSNickName();
-                    saveOpenVROption();
-                " />
+                @change="setNotificationTTSNickName" />
             <simple-switch
                 :label="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')"
                 :value="isTestTTSVisible"

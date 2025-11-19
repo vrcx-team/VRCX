@@ -124,7 +124,7 @@
 </template>
 
 <script setup>
-    import { nextTick, onActivated, onBeforeMount, onDeactivated, onMounted, ref, watch } from 'vue';
+    import { nextTick, onActivated, onBeforeMount, onBeforeUnmount, onDeactivated, onMounted, ref, watch } from 'vue';
     import { ArrowLeft, ArrowRight, InfoFilled, Refresh, Setting, WarningFilled } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -174,7 +174,7 @@
         getActivityData
     } = useInstanceActivityData();
 
-    const echartsInstance = ref(null);
+    let echartsInstance = null;
     const resizeObserver = ref(null);
     const { handleIntersectionObserver } = useIntersectionObserver();
     const isLoading = ref(true);
@@ -204,9 +204,9 @@
     watch(
         () => isDarkMode.value,
         () => {
-            if (echartsInstance.value) {
-                echartsInstance.value.dispose();
-                echartsInstance.value = null;
+            if (echartsInstance) {
+                echartsInstance.dispose();
+                echartsInstance = null;
                 initEcharts();
             }
         }
@@ -215,25 +215,25 @@
     watch(
         () => dtHour12.value,
         () => {
-            if (echartsInstance.value) {
+            if (echartsInstance) {
                 initEcharts();
             }
         }
     );
 
-    onActivated(() => {
-        // first time also call activated
-        if (echartsInstance.value) {
-            reloadData();
-        }
-    });
+    // onActivated(() => {
+    //     // first time also call activated
+    //     if (echartsInstance) {
+    //         reloadData();
+    //     }
+    // });
 
-    onDeactivated(() => {
-        // prevent resize animation when switch tab
-        if (resizeObserver.value) {
-            resizeObserver.value.disconnect();
-        }
-    });
+    // onDeactivated(() => {
+    //     // prevent resize animation when switch tab
+    //     if (resizeObserver.value) {
+    //         resizeObserver.value.disconnect();
+    //     }
+    // });
 
     onBeforeMount(() => {
         initializeSettings();
@@ -253,6 +253,17 @@
         }
     });
 
+    onBeforeUnmount(() => {
+        if (resizeObserver.value) {
+            resizeObserver.value.disconnect();
+            resizeObserver.value = null;
+        }
+        if (echartsInstance.value) {
+            echartsInstance.value.dispose();
+            echartsInstance.value = null;
+        }
+    });
+
     reloadData = async function () {
         isLoading.value = true;
         try {
@@ -265,17 +276,21 @@
 
             await nextTick();
 
-            if (echartsInstance.value && activityData.value.length) {
+            echartsInstance.off('click');
+
+            if (echartsInstance && activityData.value.length) {
                 const chartsHeight = activityData.value.length * (barWidth.value + 10) + 200;
-                echartsInstance.value.resize({
+                echartsInstance.resize({
                     height: chartsHeight,
                     animation: {
                         duration: 300
                     }
                 });
-                echartsInstance.value.setOption(getNewOption(), { notMerge: true });
-            } else if (echartsInstance.value) {
-                echartsInstance.value.clear();
+                echartsInstance.setOption(getNewOption(), { notMerge: true });
+                const handleClickYAxisLabel = handleYAxisLabelClick;
+                echartsInstance.on('click', 'yAxis', handleClickYAxisLabel);
+            } else if (echartsInstance) {
+                echartsInstance.clear();
             }
         } catch (error) {
             console.error('Error in reloadData:', error);
@@ -338,12 +353,12 @@
         const chartDom = activityChartRef.value;
 
         const afterInit = () => {
-            if (!echartsInstance.value) {
+            if (!echartsInstance) {
                 console.error('ECharts instance not initialized');
                 return;
             }
 
-            echartsInstance.value.resize({
+            echartsInstance.resize({
                 height: chartsHeight,
                 animation: {
                     duration: 300
@@ -352,37 +367,37 @@
 
             const handleClickYAxisLabel = handleYAxisLabelClick;
 
-            echartsInstance.value.off('click');
+            echartsInstance.off('click');
 
             if (activityData.value.length && worldNameArray.value.length) {
                 const options = getNewOption();
-                echartsInstance.value.clear();
-                echartsInstance.value.setOption(options, { notMerge: true });
-                echartsInstance.value.on('click', 'yAxis', handleClickYAxisLabel);
+                echartsInstance.clear();
+                echartsInstance.setOption(options, { notMerge: true });
+                echartsInstance.on('click', 'yAxis', handleClickYAxisLabel);
             } else {
-                echartsInstance.value.clear();
+                echartsInstance.clear();
             }
             isLoading.value = false;
         };
 
         const initEchartsInstance = () => {
-            echartsInstance.value = echarts.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
+            echartsInstance = echarts.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
                 height: chartsHeight
             });
-            // resizeObserver.value = new ResizeObserver((entries) => {
-            //     for (const entry of entries) {
-            //         echartsInstance.value.resize({
-            //             width: entry.contentRect.width,
-            //             animation: {
-            //                 duration: 300
-            //             }
-            //         });
-            //     }
-            // });
-            // resizeObserver.value.observe(chartDom);
+            resizeObserver.value = new ResizeObserver((entries) => {
+                for (const entry of entries) {
+                    echartsInstance.resize({
+                        width: entry.contentRect.width,
+                        animation: {
+                            duration: 300
+                        }
+                    });
+                }
+            });
+            resizeObserver.value.observe(chartDom);
         };
 
-        if (!echartsInstance.value) {
+        if (!echartsInstance) {
             initEchartsInstance();
         }
         afterInit();
@@ -530,9 +545,9 @@
     function handleSettingsChange() {
         handleChangeSettings(activityDetailChartRef);
 
-        if (echartsInstance.value) {
+        if (echartsInstance) {
             const newOptions = getNewOption();
-            echartsInstance.value.setOption({
+            echartsInstance.setOption({
                 yAxis: newOptions.yAxis
             });
         }

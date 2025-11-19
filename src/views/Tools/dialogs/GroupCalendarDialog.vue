@@ -36,7 +36,8 @@
                                         mode="timeline"
                                         :is-following="isEventFollowing(value.id)"
                                         :card-class="{ 'grouped-card': timeGroup.events.length > 1 }"
-                                        @update-following-calendar-data="updateFollowingCalendarData" />
+                                        @update-following-calendar-data="updateFollowingCalendarData"
+                                        @click-action="showGroupDialog(value.ownerId)" />
                                 </div>
                             </el-timeline-item>
                         </el-timeline>
@@ -99,6 +100,7 @@
                                         mode="grid"
                                         :is-following="isEventFollowing(event.id)"
                                         @update-following-calendar-data="updateFollowingCalendarData"
+                                        @click-action="showGroupDialog(event.ownerId)"
                                         card-class="grid-card" />
                                 </div>
                             </div>
@@ -131,7 +133,7 @@
 
     import GroupCalendarEventCard from '../components/GroupCalendarEventCard.vue';
 
-    const { cachedGroups } = useGroupStore();
+    const { cachedGroups, applyGroupEvent, showGroupDialog } = useGroupStore();
 
     const { t } = useI18n();
 
@@ -341,8 +343,7 @@
         try {
             const response = await groupRequest.getFollowingGroupCalendars(dayjs(selectedDay.value).toISOString());
             response.results.forEach((event) => {
-                event.title = replaceBioSymbols(event.title);
-                event.description = replaceBioSymbols(event.description);
+                applyGroupEvent(event);
             });
             followingCalendar.value = response.results;
         } catch (error) {

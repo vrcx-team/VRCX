@@ -8,6 +8,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 //
 
+@use 'sass:color';
+
 $--theme-hue: 0;
 $--theme-saturation: 0%;
 
@@ -208,7 +210,10 @@ $--card-background-color: $--theme-bg-4;
 
 :root {
     --group-calendar-event-bg: #{$--calendar-selected-background-color};
-    --group-calendar-badge-following: #{darken($--theme-primary, 20%)};
+    --group-calendar-badge-following: #{color.adjust(
+            $--theme-primary,
+            $lightness: 20%
+        )};
     --group-calendar-badge-normal: #{$--theme-info};
 }
 
@@ -280,11 +285,11 @@ $--card-background-color: $--theme-bg-4;
 }
 
 .el-timeline-item__tail {
-    border-left-color: #{darken($--theme-primary, 20%)} !important;
+    border-left-color: #{color.adjust($--theme-primary, $lightness: 20%)} !important;
 }
 
 .el-timeline-item__node {
-    background-color: #{darken($--theme-primary, 20%)} !important;
+    background-color: #{color.adjust($--theme-primary, $lightness: 20%)} !important;
 }
 
 .el-popper[data-popper-placement^='top'] .el-popper__arrow {

@@ -9,7 +9,7 @@
                     :prefix-icon="Search"
                     clearable
                     placeholder="Search Friend"></el-input>
-                <el-popover placement="bottom" trigger="click" :width="310">
+                <el-popover placement="bottom" trigger="click" :width="350">
                     <template #reference>
                         <div>
                             <el-tooltip :content="t('view.charts.instance_activity.settings.header')" placement="top">
@@ -20,13 +20,15 @@
                         </div>
                     </template>
                     <div style="display: flex; justify-content: space-between; align-items: center">
-                        <span class="friend-view__settings-label">Separate Same Instance</span>
+                        <span class="friend-view__settings-label">{{
+                            t('view.friends_locations.separate_same_instance_friends')
+                        }}</span>
                         <el-switch v-model="showSameInstance" />
                     </div>
                     <div class="friend-view__settings-row">
-                        <span class="friend-view__settings-label">Scale</span>
+                        <span class="friend-view__settings-label">{{ t('view.friends_locations.scale') }}</span>
                         <div class="friend-view__scale-control">
-                            <span class="friend-view__scale-value">{{ cardScalePercentLabel }} &nbsp;</span>
+                            <span class="friend-view__scale-value">{{ cardScalePercentLabel }}&nbsp;</span>
                             <el-slider
                                 v-model="cardScale"
                                 class="friend-view__slider"
@@ -36,11 +38,24 @@
                                 :show-tooltip="false" />
                         </div>
                     </div>
+                    <div class="friend-view__settings-row">
+                        <span class="friend-view__settings-label">{{ t('view.friends_locations.spacing') }}</span>
+                        <div class="friend-view__scale-control">
+                            <span class="friend-view__scale-value">{{ cardSpacingPercentLabel }}&nbsp;</span>
+                            <el-slider
+                                v-model="cardSpacing"
+                                class="friend-view__slider"
+                                :min="0.5"
+                                :max="1.5"
+                                :step="0.05"
+                                :show-tooltip="false" />
+                        </div>
+                    </div>
                 </el-popover>
             </div>
         </div>
         <div v-else class="friend-view__toolbar friend-view__toolbar--loading">
-            <span class="friend-view__loading-text">Loading preferences...</span>
+            <span class="friend-view__loading-text">{{ t('view.friends_locations.loading_more') }}</span>
         </div>
         <el-scrollbar v-if="settingsReady" ref="scrollbarRef" class="friend-view__scroll" @scroll="handleScroll">
             <template v-if="isSameInstanceView">
@@ -66,11 +81,12 @@
                                 v-for="friend in group.friends"
                                 :key="friend.id ?? friend.userId ?? friend.displayName"
                                 :friend="friend"
-                                :card-scale="cardScale" />
+                                :card-scale="cardScale"
+                                :card-spacing="cardSpacing" />
                         </div>
                     </section>
                 </div>
-                <div v-else class="friend-view__empty">No matching friends</div>
+                <div v-else class="friend-view__empty">{{ t('view.friends_locations.no_matching_friends') }}</div>
             </template>
             <template v-else-if="shouldMergeSameInstance">
                 <div v-if="mergedSameInstanceGroups.length" class="friend-view__instances">
@@ -96,12 +112,13 @@
                                 :key="friend.id ?? friend.userId ?? friend.displayName"
                                 :friend="friend"
                                 :card-scale="cardScale"
+                                :card-spacing="cardSpacing"
                                 :display-instance-info="false" />
                         </div>
                     </section>
                 </div>
                 <div v-if="mergedSameInstanceGroups.length && mergedOnlineEntries.length" class="friend-view__divider">
-                    <span class="friend-view__divider-text">Online Friends</span>
+                    <span class="friend-view__divider-text"></span>
                 </div>
                 <div
                     v-if="mergedOnlineEntries.length"
@@ -111,10 +128,11 @@
                         v-for="entry in mergedOnlineEntries"
                         :key="entry.id ?? entry.friend.id ?? entry.friend.displayName"
                         :friend="entry.friend"
-                        :card-scale="cardScale" />
+                        :card-scale="cardScale"
+                        :card-spacing="cardSpacing" />
                 </div>
                 <div v-if="!mergedSameInstanceGroups.length && !mergedOnlineEntries.length" class="friend-view__empty">
-                    No matching friends
+                    {{ t('view.friends_locations.no_matching_friends') }}
                 </div>
             </template>
             <template v-else>
@@ -123,15 +141,16 @@
                         v-for="entry in visibleFriends"
                         :key="entry.id ?? entry.friend.id ?? entry.friend.displayName"
                         :friend="entry.friend"
-                        :card-scale="cardScale" />
+                        :card-scale="cardScale"
+                        :card-spacing="cardSpacing" />
                 </div>
-                <div v-else class="friend-view__empty">No matching friends</div>
+                <div v-else class="friend-view__empty">{{ t('view.friends_locations.no_matching_friends') }}</div>
             </template>
             <div v-if="isLoadingMore" class="friend-view__loading">
                 <el-icon class="friend-view__loading-icon" :size="18">
                     <Loading />
                 </el-icon>
-                <span>Loading more...</span>
+                <span>{{ t('view.friends_locations.loading_more') }}</span>
             </div>
         </el-scrollbar>
         <div v-else class="friend-view__initial-loading">
@@ -161,11 +180,11 @@
         storeToRefs(friendStore);
 
     const SEGMENTED_BASE_OPTIONS = [
-        { label: 'Online', value: 'online' },
-        { label: 'Favorite', value: 'favorite' },
-        { label: 'Same Instance', value: 'same-instance' },
-        { label: 'Active', value: 'active' },
-        { label: 'Offline', value: 'offline' }
+        { label: t('side_panel.online'), value: 'online' },
+        { label: t('side_panel.favorite'), value: 'favorite' },
+        { label: t('side_panel.same_instance'), value: 'same-instance' },
+        { label: t('side_panel.active'), value: 'active' },
+        { label: t('side_panel.offline'), value: 'offline' }
     ];
 
     const segmentedOptions = computed(() =>
@@ -175,6 +194,7 @@
     );
 
     const cardScaleBase = ref(1);
+    const cardSpacingBase = ref(1);
 
     const cardScale = computed({
         get: () => cardScaleBase.value,
@@ -184,7 +204,16 @@
         }
     });
 
+    const cardSpacing = computed({
+        get: () => cardSpacingBase.value,
+        set: (value) => {
+            cardSpacingBase.value = value;
+            configRepository.setString('VRCX_FriendLocationCardSpacing', value.toString());
+        }
+    });
+
     const cardScalePercentLabel = computed(() => `${Math.round(cardScale.value * 100)}%`);
+    const cardSpacingPercentLabel = computed(() => `${Math.round(cardSpacing.value * 100)}%`);
 
     const showSameInstanceBase = ref(false);
 
@@ -457,8 +486,9 @@
         const baseWidth = 220;
         const baseGap = 14;
         const scale = cardScale.value;
+        const spacing = cardSpacing.value;
         const minWidth = baseWidth * scale;
-        const gap = baseGap + (scale - 1) * 10;
+        const gap = Math.max(6, (baseGap + (scale - 1) * 10) * spacing);
 
         return (count = 1, options = {}) => {
             const containerWidth = Math.max(gridWidth.value ?? 0, 0);
@@ -493,7 +523,8 @@
                 '--friend-card-min-width': `${Math.round(minWidth)}px`,
                 '--friend-card-gap': `${Math.round(gap)}px`,
                 '--friend-card-target-width': `${Math.round(cardWidth)}px`,
-                '--friend-grid-columns': `${columns}`
+                '--friend-grid-columns': `${columns}`,
+                '--friend-card-spacing': `${spacing.toFixed(2)}`
             };
         };
     });
@@ -577,7 +608,7 @@
         }
     );
 
-    watch(cardScale, () => {
+    watch([cardScale, cardSpacing], () => {
         if (!settingsReady.value) {
             return;
         }
@@ -620,14 +651,20 @@
 
     async function loadInitialSettings() {
         try {
-            const [storedScale, storedShowSameInstance] = await Promise.all([
+            const [storedScale, storedSpacing, storedShowSameInstance] = await Promise.all([
                 configRepository.getString('VRCX_FriendLocationCardScale', '1'),
+                configRepository.getString('VRCX_FriendLocationCardSpacing', '1'),
                 configRepository.getBool('VRCX_FriendLocationShowSameInstance', null)
             ]);
 
             const parsedScale = parseFloat(storedScale);
             if (!Number.isNaN(parsedScale) && parsedScale > 0) {
                 cardScaleBase.value = parsedScale;
+            }
+
+            const parsedSpacing = parseFloat(storedSpacing);
+            if (!Number.isNaN(parsedSpacing) && parsedSpacing > 0) {
+                cardSpacingBase.value = parsedSpacing;
             }
 
             if (storedShowSameInstance !== null && storedShowSameInstance !== undefined) {

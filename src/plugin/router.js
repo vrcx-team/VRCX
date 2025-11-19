@@ -1,5 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 
+import { watchState } from './../service/watchState';
+
+import AuthenticatedLayout from '../views/Layout/AuthenticatedLayout.vue';
 import Charts from './../views/Charts/Charts.vue';
 import FavoritesAvatar from './../views/Favorites/FavoritesAvatar.vue';
 import FavoritesFriend from './../views/Favorites/FavoritesFriend.vue';
@@ -9,6 +12,7 @@ import FriendList from './../views/FriendList/FriendList.vue';
 import FriendLog from './../views/FriendLog/FriendLog.vue';
 import FriendsLocations from './../views/FriendsLocations/FriendsLocations.vue';
 import GameLog from './../views/GameLog/GameLog.vue';
+import Login from './../views/Login/Login.vue';
 import Moderation from './../views/Moderation/Moderation.vue';
 import Notification from './../views/Notifications/Notification.vue';
 import PlayerList from './../views/PlayerList/PlayerList.vue';
@@ -17,49 +21,76 @@ import Settings from './../views/Settings/Settings.vue';
 import Tools from './../views/Tools/Tools.vue';
 
 const routes = [
-    { path: '/feed', name: 'feed', component: Feed },
     {
-        path: '/friends-locations',
-        name: 'friends-locations',
-        component: FriendsLocations
-    },
-    { path: '/game-log', name: 'game-log', component: GameLog },
-    { path: '/player-list', name: 'player-list', component: PlayerList },
-    { path: '/search', name: 'search', component: Search },
-    {
-        path: '/favorites/friends',
-        name: 'favorite-friends',
-        component: FavoritesFriend
+        path: '/login',
+        name: 'login',
+        component: Login,
+        meta: { public: true }
     },
     {
-        path: '/favorites/worlds',
-        name: 'favorite-worlds',
-        component: FavoritesWorld
-    },
-    {
-        path: '/favorites/avatars',
-        name: 'favorite-avatars',
-        component: FavoritesAvatar
-    },
-    { path: '/social/friend-log', name: 'friend-log', component: FriendLog },
-    { path: '/social/moderation', name: 'moderation', component: Moderation },
-    { path: '/notification', name: 'notification', component: Notification },
-    {
-        path: '/social/friend-list',
-        name: 'friend-list',
-        component: FriendList
-    },
-    {
-        path: '/charts',
-        name: 'charts',
-        component: Charts
-    },
-    { path: '/tools', name: 'tools', component: Tools },
-    { path: '/settings', name: 'settings', component: Settings }
+        path: '/',
+        component: AuthenticatedLayout,
+        meta: { requiresAuth: true },
+        children: [
+            { path: '', redirect: { name: 'feed' } },
+            { path: 'feed', name: 'feed', component: Feed },
+            {
+                path: 'friends-locations',
+                name: 'friends-locations',
+                component: FriendsLocations
+            },
+            { path: 'game-log', name: 'game-log', component: GameLog },
+            { path: 'player-list', name: 'player-list', component: PlayerList },
+            { path: 'search', name: 'search', component: Search },
+            {
+                path: 'favorites/friends',
+                name: 'favorite-friends',
+                component: FavoritesFriend
+            },
+            {
+                path: 'favorites/worlds',
+                name: 'favorite-worlds',
+                component: FavoritesWorld
+            },
+            {
+                path: 'favorites/avatars',
+                name: 'favorite-avatars',
+                component: FavoritesAvatar
+            },
+            {
+                path: 'social/friend-log',
+                name: 'friend-log',
+                component: FriendLog
+            },
+            {
+                path: 'social/moderation',
+                name: 'moderation',
+                component: Moderation
+            },
+            {
+                path: 'notification',
+                name: 'notification',
+                component: Notification
+            },
+            {
+                path: 'social/friend-list',
+                name: 'friend-list',
+                component: FriendList
+            },
+            {
+                path: 'charts',
+                name: 'charts',
+                component: Charts
+            },
+            { path: 'tools', name: 'tools', component: Tools },
+            { path: 'settings', name: 'settings', component: Settings }
+        ]
+    }
 ];
 
 export const router = createRouter({
     history: createWebHashHistory(),
+    // @ts-ignore
     routes
 });
 
@@ -67,13 +98,23 @@ export function initRouter(app) {
     app.use(router);
 }
 
-router.beforeEach((to, from) => {
-    if (to.path == '/') {
-        router.push({ name: 'feed' });
-        return false;
-    }
+router.beforeEach((to) => {
     if (to.path === '/social') {
         return false;
     }
+
+    if (to.name === 'login' && watchState.isLoggedIn) {
+        return { name: 'feed' };
+    }
+
+    const requiresAuth = to.matched.some((record) => record.meta?.requiresAuth);
+    if (requiresAuth && !watchState.isLoggedIn) {
+        const redirect = to.fullPath;
+        if (redirect && redirect !== '/feed') {
+            return { name: 'login', query: { redirect } };
+        }
+        return { name: 'login' };
+    }
+
     return true;
 });

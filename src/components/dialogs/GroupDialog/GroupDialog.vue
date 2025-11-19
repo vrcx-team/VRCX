@@ -546,6 +546,44 @@
                                 >
                             </div>
                         </div>
+                        <div class="x-friend-item x-friend-item-no-hover" style="width: 100%; cursor: default">
+                            <div class="detail" style="overflow: visible">
+                                <span class="name">{{ t('dialog.group.info.upcoming_events') }}</span>
+                                <template v-if="upcomingCalenderEvents.length > 0">
+                                    <br />
+                                    <div class="grid-view events-row">
+                                        <GroupCalendarEventCard
+                                            v-for="value in upcomingCalenderEvents"
+                                            :key="value.id"
+                                            :event="value"
+                                            :is-following="value.userInterest?.isFollowing"
+                                            @update-following-calendar-data="updateFollowingCalendarData"
+                                            mode="grid"
+                                            card-class="group-dialog-grid-card" />
+                                    </div>
+                                </template>
+                                <span v-else class="extra">-</span>
+                            </div>
+                        </div>
+                        <div class="x-friend-item x-friend-item-no-hover" style="width: 100%; cursor: default">
+                            <div class="detail" style="overflow: visible">
+                                <span class="name">{{ t('dialog.group.info.past_events') }}</span>
+                                <template v-if="pastCalenderEvents.length > 0">
+                                    <br />
+                                    <div class="grid-view events-row">
+                                        <GroupCalendarEventCard
+                                            v-for="value in pastCalenderEvents"
+                                            :key="value.id"
+                                            :event="value"
+                                            :is-following="value.userInterest?.isFollowing"
+                                            @update-following-calendar-data="updateFollowingCalendarData"
+                                            mode="grid"
+                                            card-class="group-dialog-grid-card" />
+                                    </div>
+                                </template>
+                                <span v-else class="extra">-</span>
+                            </div>
+                        </div>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">{{ t('dialog.group.info.members') }}</span>
@@ -1147,7 +1185,7 @@
         View,
         Warning
     } from '@element-plus/icons-vue';
-    import { nextTick, reactive, ref, watch } from 'vue';
+    import { computed, nextTick, reactive, ref, watch } from 'vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -1173,6 +1211,7 @@
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { groupRequest } from '../../../api';
 
+    import GroupCalendarEventCard from '../../../views/Tools/components/GroupCalendarEventCard.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
     import PreviousInstancesGroupDialog from '../PreviousInstancesDialog/PreviousInstancesGroupDialog.vue';
 
@@ -1233,6 +1272,28 @@
         groupId: '',
         sort: '',
         roleId: ''
+    });
+
+    const pastCalenderEvents = computed(() => {
+        if (!groupDialog.value.calendar) {
+            return [];
+        }
+        const now = Date.now();
+        return groupDialog.value.calendar.filter((event) => {
+            const eventEnd = new Date(event.endsAt).getTime();
+            return eventEnd < now;
+        });
+    });
+
+    const upcomingCalenderEvents = computed(() => {
+        if (!groupDialog.value.calendar) {
+            return [];
+        }
+        const now = Date.now();
+        return groupDialog.value.calendar.filter((event) => {
+            const eventEnd = new Date(event.endsAt).getTime();
+            return eventEnd >= now;
+        });
     });
 
     watch(
@@ -1764,4 +1825,31 @@
             ...obj
         };
     }
+
+    function updateFollowingCalendarData(event) {
+        const calendar = groupDialog.value.calendar;
+        for (let i = 0; i < calendar.length; i++) {
+            if (calendar[i].id === event.id) {
+                calendar[i] = {
+                    ...calendar[i],
+                    ...event
+                };
+                break;
+            }
+        }
+    }
 </script>
+<style lang="scss" scoped>
+    .time-group-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        overflow: visible;
+    }
+    .events-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        overflow: visible;
+    }
+</style>

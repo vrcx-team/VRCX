@@ -8,6 +8,9 @@
         "player_list": "Player List",
         "search": "Search",
         "favorites": "Favorites",
+        "favorite_friends": "Favorite Friends",
+        "favorite_worlds": "Favorite Worlds",
+        "favorite_avatars": "Favorite Avatars",
         "social": "Social",
         "friend_log": "Friend Log",
         "moderation": "Moderation",
@@ -26,7 +29,32 @@
         "get_help": "GET HELP",
         "github": "VRCX on GitHub",
         "discord": "Join our Discord",
-        "whats_new": "What's New?"
+        "whats_new": "What's New?",
+        "custom_nav": {
+            "header": "Custom Navigation",
+            "dialog_title": "Customize Navigation Menu",
+            "add_folder": "Add Folder",
+            "folder_name_placeholder": "Folder name",
+            "folder_icon_placeholder": "Icon class (e.g. ri-menu-fold-line)",
+            "edit_folder": "Edit Folder",
+            "folder_available": "Available items",
+            "folder_selected": "Folder items",
+            "folder_selected_empty": "No items selected",
+            "delete_folder": "Delete Folder",
+            "assign_folder": "Add to folder",
+            "remove_from_folder": "Remove from folder",
+            "folder_empty": "No items in this folder",
+            "invalid_folder": "Folder must have a name and contain at least two items.",
+            "restore_default": "Restore Default",
+            "restore_default_confirm": "Restore navigation to its default order?",
+            "save": "Save",
+            "cancel": "Cancel"
+        },
+        "icon_picker": {
+            "search_placeholder": "Search icon name or tags",
+            "pick_icon": "Pick Icon",
+            "no_icon_found": "No icons found"
+        }
     },
     "view": {
         "login": {
@@ -57,6 +85,14 @@
                 "Avatar": "Avatar",
                 "Bio": "Bio"
             }
+        },
+        "friends_locations": {
+            "online_friends": "Online Friends",
+            "spacing": "Spacing",
+            "scale": "Scale",
+            "separate_same_instance_friends": "Separate Same Instance Friends",
+            "no_matching_friends": "No Matching Friends",
+            "loading_more": "Loading more..."
         },
         "game_log": {
             "filter_placeholder": "Filter",
@@ -148,6 +184,7 @@
             "move_tooltip": "Move",
             "copy_tooltip": "Copy",
             "unfavorite_tooltip": "Unfavorite",
+            "edit_favorite_tooltip": "Edit Favorite",
             "visibility_tooltip": "Change Visibility",
             "rename_tooltip": "Rename",
             "clear_tooltip": "Clear",
@@ -259,6 +296,41 @@
                     "show_solo_instance": "Show Solo Instance",
                     "show_no_friend_instance": "Show No Friend Instance",
                     "show_detail": "Show Detail"
+                }
+            },
+            "mutual_friend": {
+                "tab_label": "Mutual Friend",
+                "actions": {
+                    "start_fetch": "Start Fetch",
+                    "fetch_again": "Fetch Again",
+                    "stop": "Stop",
+                    "stop_fetching": "Stop fetching"
+                },
+                "status": {
+                    "no_friends_to_process": "You have no friends to process"
+                },
+                "progress": {
+                    "friends_processed": "Friends processed",
+                    "no_relationships_discovered": "No relationships discovered"
+                },
+                "prompt": {
+                    "title": "Mutual Friend Graph",
+                    "message": "No cached mutual friend graph data was found. Start fetching now? This may take a while, we will notify you when it is finishes",
+                    "confirm": "Start Fetch",
+                    "cancel": "Maybe Later"
+                },
+                "messages": {
+                    "fetch_cancelled_graph_not_updated": "Fetch cancelled"
+                },
+                "notifications": {
+                    "start_fetching": "Start fetching",
+                    "mutual_friend_graph_ready_title": "Mutual Friend Graph",
+                    "mutual_friend_graph_ready_message": "Mutual friend graph is ready",
+                    "friend_list_changed_fetch_again": "Friend list changed. Please fetch the mutual graph again."
+                },
+                "tooltip": {
+                    "mutual_friends_count": "Mutual friends: {count}",
+                    "edge": "{source} ↔ {target}"
                 }
             }
         },
@@ -1157,7 +1229,9 @@
                 "role_updated_at": "Updated At:",
                 "role_created_at": "Created At:",
                 "role_permissions": "Permissions:",
-                "last_visited": "Last Visited"
+                "last_visited": "Last Visited",
+                "past_events": "Past Events",
+                "upcoming_events": "Upcoming Events"
             },
             "posts": {
                 "header": "Posts",
