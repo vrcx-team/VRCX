@@ -350,6 +350,41 @@
         return items;
     });
 
+    const folderCyclePointers = new Map();
+
+    const navigateToFolderEntry = (folderIndex, entry) => {
+        if (!entry) {
+            return;
+        }
+        if (entry.routeName) {
+            handleRouteChange(entry.routeName, folderIndex);
+            return;
+        }
+        if (entry.path) {
+            router.push(entry.path);
+            if (folderIndex) {
+                navMenuRef.value?.updateActiveIndex(folderIndex);
+            }
+        }
+    };
+
+    const handleFolderCycleNavigation = (item) => {
+        if (!item?.entries?.length) {
+            return [];
+        }
+        const entries = item.entries.filter((entry) => Boolean(entry?.routeName || entry?.path));
+        if (!entries.length) {
+            return;
+        }
+        let pointer = folderCyclePointers.get(item.index) ?? 0;
+        if (pointer >= entries.length || pointer < 0) {
+            pointer = 0;
+        }
+        const entry = entries[pointer];
+        folderCyclePointers.set(item.index, (pointer + 1) % entries.length);
+        navigateToFolderEntry(item.index, entry);
+    };
+
     const activeMenuIndex = computed(() => {
         const currentRouteName = router.currentRoute.value?.name;
         if (!currentRouteName) {
@@ -691,7 +726,11 @@
     };
 
     const handleMenuItemClick = (item) => {
-        if (!item || item.entries?.length) {
+        if (!item) {
+            return;
+        }
+        if (item.entries?.length) {
+            handleFolderCycleNavigation(item);
             return;
         }
         handleRouteChange(item.routeName, item.index);
