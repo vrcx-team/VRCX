@@ -20,4 +20,11 @@ const i18n = createI18n({
     fallbackWarn: false
 });
 
-export { i18n };
+async function updateLocalizedStrings() {
+    const newStrings = await getLocalizationStrings();
+    Object.entries(newStrings).forEach(([key, value]) => {
+        i18n.global.setLocaleMessage(key.replaceAll('_', '-'), value);
+    });
+}
+
+export { i18n, updateLocalizedStrings };

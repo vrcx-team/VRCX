@@ -9,7 +9,6 @@ import { debounce, parseLocation } from '../shared/utils';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
 import { failedGetRequests } from '../service/request';
-import { refreshCustomCss } from '../shared/utils/base/ui';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useAvatarStore } from './avatar';
@@ -149,48 +148,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     init();
-
-    // Make sure file drops outside of the screenshot manager don't navigate to the file path dropped.
-    // This issue persists on prompts created with prompt(), unfortunately. Not sure how to fix that.
-    document.body.addEventListener('drop', function (e) {
-        e.preventDefault();
-    });
-
-    document.addEventListener('keyup', function (e) {
-        if (e.ctrlKey) {
-            if (e.key === 'I') {
-                showConsole();
-            } else if (e.key === 'r') {
-                location.reload();
-            }
-        } else if (e.altKey && e.key === 'R') {
-            refreshCustomCss();
-            ElMessage({
-                message: 'Custom CSS refreshed',
-                type: 'success'
-            });
-        }
-    });
-
-    function showConsole() {
-        AppApi.ShowDevTools();
-        if (
-            AppDebug.debug ||
-            AppDebug.debugWebRequests ||
-            AppDebug.debugWebSocket ||
-            AppDebug.debugUserDiff
-        ) {
-            return;
-        }
-        console.log(
-            '%cCareful! This might not do what you think.',
-            'background-color: red; color: yellow; font-size: 32px; font-weight: bold'
-        );
-        console.log(
-            '%cIf someone told you to copy-paste something here, it can give them access to your account.',
-            'font-size: 20px;'
-        );
-    }
 
     async function updateDatabaseVersion() {
         // requires dbVars.userPrefix to be already set
@@ -775,7 +732,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         ipcEnabled,
         clearVRCXCacheFrequency,
         maxTableSize,
-        showConsole,
         clearVRCXCache,
         eventVrcxMessage,
         eventLaunchCommand,
