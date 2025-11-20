@@ -915,6 +915,16 @@ export const useFriendStore = defineStore('Friend', () => {
         }
     }
 
+    async function getAllUserMutualCount() {
+        const mutualCountMap = await database.getMutualCountForAllUsers();
+        for (const [userId, mutualCount] of mutualCountMap.entries()) {
+            const ref = friends.get(userId);
+            if (ref?.ref) {
+                ref.ref.$mutualCount = mutualCount;
+            }
+        }
+    }
+
     /**
      *
      * @param {string} id
@@ -1625,6 +1635,7 @@ export const useFriendStore = defineStore('Friend', () => {
         refreshFriendsList,
         updateOnlineFriendCounter,
         getAllUserStats,
+        getAllUserMutualCount,
         initFriendLog,
         migrateFriendLog,
         getFriendLog,

@@ -273,7 +273,8 @@
             "filter_placeholder": "Filter",
             "refresh_tooltip": "Refresh",
             "clear_tooltip": "Clear Results",
-            "cancel_tooltip": "Cancel"
+            "cancel_tooltip": "Cancel",
+            "load_mutual_friends": "Load Mutual Friends"
         },
         "charts": {
             "header": "Charts",
@@ -2201,7 +2202,8 @@
             "lastActivity": "Last Activity",
             "lastLogin": "Last Login",
             "dateJoined": "Date Joined",
-            "unfriend": "Unfriend"
+            "unfriend": "Unfriend",
+            "mutualFriends": "Mutual Friends"
         },
         "profile": {
             "invite_messages": {

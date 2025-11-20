@@ -523,6 +523,7 @@ export const useUserStore = defineStore('User', () => {
                 $joinCount: 0,
                 $timeSpent: 0,
                 $lastSeen: '',
+                $mutualCount: 0,
                 $nickName: '',
                 $previousLocation: '',
                 $customTag: '',
