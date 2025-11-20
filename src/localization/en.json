@@ -177,6 +177,8 @@
             "edit_mode": "Edit Mode",
             "copy": "Copy",
             "clear": "Clear",
+            "select_all": "Select All",
+            "deselect_all": "Deselect All",
             "bulk_unfavorite": "Bulk Unfavorite",
             "refresh_favorites_tooltip": "Refresh VRChat favorites",
             "export": "Export",
