@@ -1,4 +1,4 @@
-import { computed, reactive, ref, toRaw, watch } from 'vue';
+import { computed, reactive, ref, shallowReactive, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
 import { useI18n } from 'vue-i18n';
@@ -389,7 +389,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         const favorite = getCachedFavoritesByObjectId(objectId);
         let ctx = state.favoriteObjects.get(objectId);
         if (ctx) {
-            ctx = toRaw(ctx);
+            ctx = shallowReactive(ctx);
         }
         if (typeof favorite !== 'undefined') {
             let isTypeChanged = false;
