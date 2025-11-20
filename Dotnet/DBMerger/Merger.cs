@@ -257,10 +257,8 @@ namespace DBMerger
         private void MergeUsers()
         {
             MergeTable(
-                table => userIDRegex.IsMatch(table) 
-                    && !table.EndsWith("_avatar_history") 
-                    && (table.EndsWith("_notifications")
-                        || table.EndsWith("_moderation")),
+                table => userIDRegex.IsMatch(table) &&
+                         (table.EndsWith("_notifications") || table.EndsWith("_moderation")),
                 [0],
                 (old, existing) =>
                 {
@@ -339,7 +337,9 @@ namespace DBMerger
                 i--;
 
                 // Skip friend log current for obvious reasons
-                if (table.EndsWith("_friend_log_current"))
+                // Skip notes and mutual friends since they aren't time based
+                if (table.EndsWith("_friend_log_current") || table.EndsWith("_notes") ||
+                    table.EndsWith("_mutual_graph_friends") || table.EndsWith("_mutual_graph_links"))
                 {
                     continue;
                 }
