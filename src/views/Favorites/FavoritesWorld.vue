@@ -298,6 +298,13 @@
                     </div>
                     <div class="favorites-content__edit-actions">
                         <div v-if="worldEditMode && !isSearchActive" class="favorites-content__actions">
+                            <el-button size="small" @click="toggleSelectAllWorlds">
+                                {{
+                                    isAllWorldsSelected
+                                        ? t('view.favorite.deselect_all')
+                                        : t('view.favorite.select_all')
+                                }}
+                            </el-button>
                             <el-button size="small" :disabled="!hasWorldSelection" @click="clearSelectedWorlds">
                                 {{ t('view.favorite.clear') }}
                             </el-button>
@@ -638,6 +645,15 @@
         }
     });
 
+    const isAllWorldsSelected = computed(() => {
+        if (!activeRemoteGroup.value || !currentRemoteFavorites.value.length) {
+            return false;
+        }
+        return currentRemoteFavorites.value
+            .map((fav) => fav.id)
+            .every((id) => selectedFavoriteWorlds.value.includes(id));
+    });
+
     watch(
         () => ({
             remote: favoriteWorldGroups.value.map((group) => group.key),
@@ -853,6 +869,17 @@
 
     function clearSelectedWorlds() {
         selectedFavoriteWorlds.value = [];
+    }
+
+    function toggleSelectAllWorlds() {
+        if (!activeRemoteGroup.value) {
+            return;
+        }
+        if (isAllWorldsSelected.value) {
+            selectedFavoriteWorlds.value = [];
+        } else {
+            selectedFavoriteWorlds.value = currentRemoteFavorites.value.map((fav) => fav.id);
+        }
     }
 
     function copySelectedWorlds() {
