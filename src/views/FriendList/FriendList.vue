@@ -4,6 +4,9 @@
             <div style="display: flex; align-items: center; justify-content: space-between">
                 <span class="header">{{ t('view.friend_list.header') }}</span>
                 <div style="font-size: 13px; display: flex; align-items: center">
+                    <el-button size="small" @click="openChartsTab" style="margin-right: 10px">
+                        {{ t('view.friend_list.load_mutual_friends') }}
+                    </el-button>
                     <div v-if="friendsListBulkUnfriendMode" style="display: inline-block; margin-right: 10px">
                         <el-button size="small" @click="showBulkUnfriendSelectionConfirm">
                             {{ t('view.friend_list.bulk_unfriend_selection') }}
@@ -214,6 +217,11 @@
                         <span>{{ formatDateFilter(row.$lastSeen, 'long') }}</span>
                     </template>
                 </el-table-column>
+                <el-table-column :label="t('table.friendList.mutualFriends')" width="120" prop="$mutualCount" sortable>
+                    <template #default="{ row }">
+                        <span v-if="row.$mutualCount">{{ row.$mutualCount }}</span>
+                        <span v-else></span> </template
+                ></el-table-column>
                 <el-table-column
                     :label="t('table.friendList.lastActivity')"
                     width="170"
@@ -284,13 +292,14 @@
     } from '../../stores';
     import { friendRequest, userRequest } from '../../api';
     import removeConfusables, { removeWhitespace } from '../../service/confusables';
+    import { router } from '../../plugin/router';
 
     const { t } = useI18n();
 
     const emit = defineEmits(['lookup-user']);
 
     const { friends } = storeToRefs(useFriendStore());
-    const { getAllUserStats, confirmDeleteFriend, handleFriendDelete } = useFriendStore();
+    const { getAllUserStats, getAllUserMutualCount, confirmDeleteFriend, handleFriendDelete } = useFriendStore();
     const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { stringComparer, friendsListSearch } = storeToRefs(useSearchStore());
@@ -363,6 +372,7 @@
             results.push(ctx.ref);
         }
         getAllUserStats();
+        getAllUserMutualCount();
         nextTick(() => {
             friendsListTable.data = results;
             friendsListLoading.value = false;
@@ -448,5 +458,9 @@
         const as = a.$languages.map((i) => i.value).sort();
         const bs = b.$languages.map((i) => i.value).sort();
         return JSON.stringify(as).localeCompare(JSON.stringify(bs));
+    }
+
+    function openChartsTab() {
+        router.push({ name: 'charts' });
     }
 </script>

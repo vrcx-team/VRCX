@@ -86,6 +86,51 @@ const mutualGraph = {
             await sqliteService.executeNonQuery('ROLLBACK');
             throw err;
         }
+    },
+
+    async updateMutualsForFriend(friendId, mutualIds) {
+        if (!dbVars.userPrefix || !friendId) {
+            return;
+        }
+        const friendTable = `${dbVars.userPrefix}_mutual_graph_friends`;
+        const linkTable = `${dbVars.userPrefix}_mutual_graph_links`;
+        const safeFriendId = friendId.replace(/'/g, "''");
+        await sqliteService.executeNonQuery(
+            `INSERT OR REPLACE INTO ${friendTable} (friend_id) VALUES ('${safeFriendId}')`
+        );
+        await sqliteService.executeNonQuery(
+            `DELETE FROM ${linkTable} WHERE friend_id='${safeFriendId}'`
+        );
+        let edgeValues = '';
+        for (const mutual of mutualIds) {
+            if (!mutual) {
+                continue;
+            }
+            const safeMutualId = String(mutual).replace(/'/g, "''");
+            edgeValues += `('${safeFriendId}', '${safeMutualId}'),`;
+        }
+        if (edgeValues) {
+            edgeValues = edgeValues.slice(0, -1);
+            await sqliteService.executeNonQuery(
+                `INSERT OR REPLACE INTO ${linkTable} (friend_id, mutual_id) VALUES ${edgeValues}`
+            );
+        }
+    },
+
+    async getMutualCountForAllUsers() {
+        const mutualCountMap = new Map();
+        if (!dbVars.userPrefix) {
+            return mutualCountMap;
+        }
+        const linkTable = `${dbVars.userPrefix}_mutual_graph_links`;
+        await sqliteService.execute((dbRow) => {
+            const mutualId = dbRow[0];
+            const count = dbRow[1];
+            if (mutualId) {
+                mutualCountMap.set(mutualId, count);
+            }
+        }, `SELECT mutual_id, COUNT(*) FROM ${linkTable} GROUP BY mutual_id`);
+        return mutualCountMap;
     }
 };
 

@@ -2214,8 +2214,12 @@
                 }
                 setUserDialogMutualFriendSorting(userDialog.value.mutualFriendSorting);
             },
-            done: () => {
+            done: (success) => {
                 userDialog.value.isMutualFriendsLoading = false;
+                if (success) {
+                    const mutualIds = userDialog.value.mutualFriends.map((u) => u.id);
+                    database.updateMutualsForFriend(userId, mutualIds);
+                }
             }
         });
     }
