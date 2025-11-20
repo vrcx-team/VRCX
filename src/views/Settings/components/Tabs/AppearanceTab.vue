@@ -361,7 +361,7 @@
 
 <script setup>
     import { ArrowDown, ArrowRight, DocumentCopy, Notebook } from '@element-plus/icons-vue';
-    import { computed, ref } from 'vue';
+    import { computed, onBeforeUnmount, ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -425,15 +425,26 @@
 
     const zoomLevel = ref(100);
     const isLinux = computed(() => LINUX);
+    let cleanupWheel = null;
+
+    onBeforeUnmount(() => {
+        if (cleanupWheel) {
+            cleanupWheel();
+        }
+    });
 
     initGetZoomLevel();
 
     async function initGetZoomLevel() {
-        addEventListener('wheel', (event) => {
+        const handleWheel = (event) => {
             if (event.ctrlKey) {
                 getZoomLevel();
             }
-        });
+        };
+        window.addEventListener('wheel', handleWheel);
+        cleanupWheel = () => {
+            window.removeEventListener('wheel', handleWheel);
+        };
         getZoomLevel();
     }
 

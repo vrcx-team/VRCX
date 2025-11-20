@@ -405,6 +405,7 @@
         useLaunchStore,
         useNotificationsSettingsStore,
         usePhotonStore,
+        useUiStore,
         useUserStore,
         useVRCXUpdaterStore,
         useVrStore,
@@ -430,7 +431,8 @@
     const { showLaunchOptions } = useLaunchStore();
     const { enablePrimaryPasswordChange } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
-    const { showConsole, clearVRCXCache, showRegistryBackupDialog } = useVrcxStore();
+    const { clearVRCXCache, showRegistryBackupDialog } = useVrcxStore();
+    const { showConsole } = useUiStore();
     const { disableGameLogDialog } = useGameLogStore();
 
     const { cachedUsers } = useUserStore();
