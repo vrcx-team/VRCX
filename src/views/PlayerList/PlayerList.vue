@@ -327,7 +327,8 @@
                         :label="t('table.playerList.displayName')"
                         min-width="140"
                         prop="displayName"
-                        :sortable="true">
+                        sortable
+                        :sort-method="(a, b) => sortAlphabetically(a, b, 'displayName')">
                         <template #default="scope">
                             <span
                                 v-if="randomUserColours"
@@ -508,5 +509,10 @@
             return value;
         };
         return getValue(b) - getValue(a);
+    }
+
+    function sortAlphabetically(a, b, field) {
+        if (!a[field] || !b[field]) return 0;
+        return a[field].toLowerCase().localeCompare(b[field].toLowerCase());
     }
 </script>
