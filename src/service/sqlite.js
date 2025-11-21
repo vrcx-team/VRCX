@@ -33,6 +33,16 @@ class SQLiteService {
                     }
                 ).catch(() => {});
             }
+            if (e.message.includes('database is locked')) {
+                ElMessageBox.alert(
+                    'Please close other applications that might be using the database file.',
+                    'Database is locked',
+                    {
+                        confirmButtonText: 'OK',
+                        type: 'warning'
+                    }
+                ).catch(() => {});
+            }
         }
         throw e;
     }
