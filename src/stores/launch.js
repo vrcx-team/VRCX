@@ -150,11 +150,12 @@ export const useLaunchStore = defineStore('Launch', () => {
         if (desktopMode) {
             args.push('--no-vr');
         }
-        if (vrcLaunchPathOverride && !LINUX) {
-            AppApi.StartGameFromPath(
-                vrcLaunchPathOverride,
-                args.join(' ')
-            ).then((result) => {
+        try {
+            if (vrcLaunchPathOverride && !LINUX) {
+                const result = await AppApi.StartGameFromPath(
+                    vrcLaunchPathOverride,
+                    args.join(' ')
+                );
                 if (!result) {
                     ElMessage({
                         message:
@@ -167,9 +168,8 @@ export const useLaunchStore = defineStore('Launch', () => {
                         type: 'success'
                     });
                 }
-            });
-        } else {
-            AppApi.StartGame(args.join(' ')).then((result) => {
+            } else {
+                const result = await AppApi.StartGame(args.join(' '));
                 if (!result) {
                     ElMessage({
                         message:
@@ -182,6 +182,12 @@ export const useLaunchStore = defineStore('Launch', () => {
                         type: 'success'
                     });
                 }
+            }
+        } catch (e) {
+            console.error(e);
+            ElMessage({
+                message: `Failed to launch VRChat: ${e.message}`,
+                type: 'error'
             });
         }
         console.log('Launch Game', args.join(' '), desktopMode);

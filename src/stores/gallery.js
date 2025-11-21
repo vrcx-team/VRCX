@@ -1,20 +1,22 @@
 import { reactive, ref, shallowReactive, watch } from 'vue';
+import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { useI18n } from 'vue-i18n';
 
 import Noty from 'noty';
 
 import {
+    getEmojiFileName,
+    getPrintFileName,
+    getPrintLocalDate,
+    openExternalLink
+} from '../shared/utils';
+import {
     inventoryRequest,
     userRequest,
     vrcPlusIconRequest,
     vrcPlusImageRequest
 } from '../api';
-import {
-    getEmojiFileName,
-    getPrintFileName,
-    getPrintLocalDate
-} from '../shared/utils';
 import { AppDebug } from '../service/appConfig';
 import { handleImageUploadInput } from '../shared/utils/imageUpload';
 import { useAdvancedSettingsStore } from './settings/advanced';
@@ -487,16 +489,38 @@ export const useGalleryStore = defineStore('Gallery', () => {
         const createdAt = args.json.created_at;
         const monthFolder = createdAt.slice(0, 7);
 
-        const filePath = await AppApi.SaveEmojiToFile(
-            imageUrl,
-            advancedSettingsStore.ugcFolderPath,
-            monthFolder,
-            emojiFileName
-        );
-        if (filePath) {
-            console.log(
-                `Emoji saved to file: ${monthFolder}\\${emojiFileName}`
+        try {
+            const filePath = await AppApi.SaveEmojiToFile(
+                imageUrl,
+                advancedSettingsStore.ugcFolderPath,
+                monthFolder,
+                emojiFileName
             );
+            if (filePath) {
+                console.log(
+                    `Emoji saved to file: ${monthFolder}\\${emojiFileName}`
+                );
+            }
+        } catch (e) {
+            if (e.message.includes('Could not find file')) {
+                ElMessageBox.confirm(
+                    'Windows has blocked VRCX from creating files on your system. Please allow VRCX to create files to save emojis, would you like to see instructions on how to fix this?',
+                    'Failed to create emoji folder',
+                    {
+                        confirmButtonText: 'Confirm',
+                        cancelButtonText: 'Ignore',
+                        type: 'warning'
+                    }
+                )
+                    .then(async (action) => {
+                        if (action !== 'confirm') return;
+                        openExternalLink(
+                            'https://www.youtube.com/watch?v=1mwmmCdA4D8&t=213s'
+                        );
+                    })
+                    .catch(() => {});
+            }
+            console.error('Failed to save emoji to file:', e);
         }
 
         if (state.instanceInventoryQueue.length === 0) {

@@ -58,6 +58,17 @@ export async function initSentry(app) {
                         error.message.includes('404') ||
                         error.message.includes('500') ||
                         error.message.includes('503') ||
+                        error.message.includes('No such host is known') ||
+                        error.message.includes(
+                            'The SSL connection could not be established'
+                        ) ||
+                        error.message.includes('A connection attempt failed') ||
+                        error.message.includes(
+                            'no data of the requested type was found'
+                        ) ||
+                        error.message.includes(
+                            'An error occurred while sending the request'
+                        ) ||
                         error.message.includes('database or disk is full') ||
                         error.message.includes(
                             'There is not enough space on the disk.'
