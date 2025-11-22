@@ -71,6 +71,10 @@
         <el-checkbox v-model="setWorldTagsDialog.props">
             {{ t('dialog.new_instance.content_items') }}
         </el-checkbox>
+        <br />
+        <el-checkbox v-model="setWorldTagsDialog.thirdPerson">
+            {{ t('dialog.new_instance.content_third_person') }}
+        </el-checkbox>
         <template #footer>
             <div style="display: flex">
                 <el-button @click="isVisible = false">
@@ -133,7 +137,8 @@
         pedestals: true,
         prints: true,
         drones: true,
-        props: true
+        props: true,
+        thirdPerson: true
     });
 
     const isVisible = computed({
@@ -217,6 +222,8 @@
                 case 'feature_props_disabled':
                     D.props = false;
                     break;
+                case 'feature_third_person_view_disabled':
+                    D.thirdPerson = false;
             }
         });
         D.authorTags = authorTags.toString();
@@ -289,6 +296,9 @@
         }
         if (!D.props) {
             tags.unshift('feature_props_disabled');
+        }
+        if (!D.thirdPerson) {
+            tags.unshift('feature_third_person_view_disabled');
         }
         worldRequest
             .saveWorld({

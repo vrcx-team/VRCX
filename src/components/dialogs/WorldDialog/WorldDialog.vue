@@ -737,7 +737,7 @@
         <template v-if="isDialogVisible">
             <WorldAllowedDomainsDialog :world-allowed-domains-dialog="worldAllowedDomainsDialog" />
             <SetWorldTagsDialog
-                :is-set-world-tags-dialog-visible="isSetWorldTagsDialogVisible"
+                v-model:is-set-world-tags-dialog-visible="isSetWorldTagsDialogVisible"
                 :old-tags="worldDialog.ref?.tags"
                 :world-id="worldDialog.id"
                 :is-world-dialog-visible="worldDialog.visible" />
