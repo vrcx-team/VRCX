@@ -1339,6 +1339,7 @@
             "content_prints": "Prints",
             "content_drones": "Drones",
             "content_items": "Items",
+            "content_third_person": "Third Person",
             "world_id": "World ID",
             "instance_id": "Instance ID",
             "instance_id_placeholder": "Random",
