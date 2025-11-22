@@ -427,8 +427,9 @@ namespace VRCX
             // 2021.09.02 00:49:15 Log        -  [Behaviour] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
             // 2022.08.13 18:57:00 Log        -  [Behaviour] OnLeftRoom
             // 2024.11.22 15:32:28 Log        -  [Behaviour] Successfully left room
+            // 2025.11.20 01:35:38 Debug      -  [Behaviour] OnLeftRoom
 
-            if (line.Contains("[Behaviour] Successfully left room"))
+            if (line.Contains("[Behaviour] OnLeftRoom"))
             {
                 AppendLog(new[]
                 {
