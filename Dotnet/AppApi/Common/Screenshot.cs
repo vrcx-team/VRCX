@@ -11,6 +11,9 @@ namespace VRCX;
 
 public partial class AppApi
 {
+    [GeneratedRegex(@"\\Prints\\|\\Stickers\\|\\Emoji\\", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex ScreenshotRegex();
+
     public string GetExtraScreenshotData(string path, bool carouselCache)
     {
         var fileName = Path.GetFileNameWithoutExtension(path);
@@ -118,9 +121,9 @@ public partial class AppApi
         if (!Directory.Exists(path))
             return null;
         
-        // exclude folder names that contain "Prints" or "Stickers"
+        // exclude folder names that contain "Prints", "Stickers" or "Emoji"
         var imageFiles = Directory.GetFiles(path, "*.png", SearchOption.AllDirectories)
-            .Where(x => !Regex.IsMatch(x, @"\\Prints\\|\\Stickers\\", RegexOptions.IgnoreCase));
+            .Where(x => !ScreenshotRegex().IsMatch(x));
         var lastScreenshot = imageFiles.OrderByDescending(Directory.GetCreationTime).FirstOrDefault();
 
         return lastScreenshot;

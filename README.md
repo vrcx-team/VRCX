@@ -17,6 +17,8 @@ VRCX is an assistant/companion application for VRChat that provides information 
 
 Download and install the latest installer (`VRCX_Setup.exe`) from [here](https://github.com/vrcx-team/VRCX/releases/latest).
 
+For macOS and Linux check [here](https://github.com/vrcx-team/VRCX/wiki/Running-VRCX-on-Linux) for more info.
+
 Beta/nightly build available [here](https://vrcx.app/github/nightly) or in-app `Settings -> General -> Change build`.
 
 # Features
