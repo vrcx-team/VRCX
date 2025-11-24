@@ -7,9 +7,17 @@ export type GetGroup = (params: {
     params: { groupId: string; includeRoles?: boolean };
 }>;
 
-export type GetCalendars = (date: string) => Promise<CalendarResponse>;
+export type GetCalendars = (params: {
+    date: string;
+}) => Promise<CalendarResponse>;
 
-export type GetFollowingCalendars = (date: string) => Promise<CalendarResponse>;
+export type GetFollowingCalendars = (params: {
+    date: string;
+}) => Promise<CalendarResponse>;
+
+export type GetFeaturedCalendars = (params: {
+    date: string;
+}) => Promise<CalendarResponse>;
 
 // API response types
 interface GetGroupResponse {
