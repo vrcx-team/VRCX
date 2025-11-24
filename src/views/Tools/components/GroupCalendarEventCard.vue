@@ -1,6 +1,6 @@
 <template>
     <el-card :body-style="{ padding: '0px' }" class="event-card" :class="cardClass">
-        <img :src="bannerUrl" class="banner" />
+        <img :src="bannerUrl" @click="showFullscreenImageDialog(bannerUrl)" class="banner" />
         <div class="event-content">
             <div class="event-title">
                 <div v-if="showGroupName" class="event-group-name" @click="onGroupClick">
@@ -71,10 +71,12 @@
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
 
+    import { useGalleryStore, useGroupStore } from '../../../stores';
     import { AppDebug } from '../../../service/appConfig';
     import { formatDateFilter } from '../../../shared/utils';
     import { groupRequest } from '../../../api';
-    import { useGroupStore } from '../../../stores';
+
+    const { showFullscreenImageDialog } = useGalleryStore();
 
     const { t } = useI18n();
     const { cachedGroups } = useGroupStore();
@@ -211,6 +213,7 @@
             overflow: visible;
         }
         .banner {
+            cursor: pointer;
             width: 100%;
             object-fit: cover;
             border-radius: 8px 8px 0 0;

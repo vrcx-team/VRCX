@@ -1814,7 +1814,8 @@
                 "description": "Description",
                 "export_to_calendar": "Export to Calendar",
                 "download_ics": "Download .ics"
-            }
+            },
+            "featured_events": "Featured Events"
         },
         "moderate_group": {
             "header": "Moderate Group Member",

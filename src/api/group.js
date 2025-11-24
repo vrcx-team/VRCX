@@ -735,24 +735,30 @@ const groupReq = {
     /**
      * @type {import('../types/api/group').GetCalendars}
      */
-    getGroupCalendars(date) {
-        return request(`calendar?date=${date}`, {
-            method: 'GET'
+    getGroupCalendars(params) {
+        return request('calendar', {
+            method: 'GET',
+            params
         });
     },
 
     /**
      * @type {import('../types/api/group').GetFollowingCalendars}
      */
-    getFollowingGroupCalendars(date) {
-        return request(`calendar/following?date=${date}`, {
-            method: 'GET'
+    getFollowingGroupCalendars(params) {
+        return request('calendar/following', {
+            method: 'GET',
+            params
         });
     },
 
-    getFeaturedGroupCalendars(date) {
-        return request(`calendar/featured?date=${date}`, {
-            method: 'GET'
+    /**
+     * @type {import('../types/api/group').GetFeaturedCalendars}
+     */
+    getFeaturedGroupCalendars(params) {
+        return request('calendar/featured', {
+            method: 'GET',
+            params
         });
     },
 

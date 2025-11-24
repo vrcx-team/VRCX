@@ -371,12 +371,24 @@ export async function processBulk(options) {
     try {
         while (true) {
             const result = await fn(params);
-            const batchSize = result.json.length;
+            let batchSize = 0;
+            if (Array.isArray(result.json)) {
+                batchSize = result.json.length;
+            } else if (Array.isArray(result.results)) {
+                batchSize = result.results.length;
+            } else {
+                throw new Error(
+                    'Invalid result format: expected an array in result.json or result.results'
+                );
+            }
 
             if (typeof handle === 'function') {
                 handle(result);
             }
             if (batchSize === 0) {
+                break;
+            }
+            if (typeof result.hasNext === 'boolean' && !result.hasNext) {
                 break;
             }
 
