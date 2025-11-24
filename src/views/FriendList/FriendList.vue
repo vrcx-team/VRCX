@@ -89,16 +89,12 @@
                 :table-props="{ height: 'calc(100vh - 170px)', size: 'small' }"
                 style="margin-top: 10px; cursor: pointer"
                 @row-click="selectFriendsListRow">
-                <el-table-column
-                    v-if="friendsListBulkUnfriendMode"
-                    :key="friendsListBulkUnfriendForceUpdate"
-                    width="55"
-                    prop="$selected">
+                <el-table-column v-if="friendsListBulkUnfriendMode" width="55">
                     <template #default="{ row }">
                         <el-button text size="small" @click.stop>
                             <el-checkbox
-                                v-model="row.$selected"
-                                @change="friendsListBulkUnfriendForceUpdate++"></el-checkbox>
+                                :model-value="selectedFriends.has(row.id)"
+                                @change="toggleFriendSelection(row.id)"></el-checkbox>
                         </el-button>
                     </template>
                 </el-table-column>
@@ -316,7 +312,7 @@
     const friendsListLoading = ref(false);
     const friendsListLoadingProgress = ref('');
     const friendsListSearchFilterVIP = ref(false);
-    const friendsListBulkUnfriendForceUpdate = ref(0);
+    const selectedFriends = ref(new Set());
 
     const route = useRoute();
 
@@ -343,7 +339,6 @@
         }
         for (const ctx of friends.value.values()) {
             if (!ctx.ref) continue;
-            ctx.ref.$selected = ctx.ref.$selected ?? false;
             if (friendsListSearchFilterVIP.value && !ctx.isVIP) continue;
             if (query) {
                 let match = false;
@@ -379,14 +374,24 @@
         });
     }
 
+    function toggleFriendSelection(id) {
+        if (selectedFriends.value.has(id)) {
+            selectedFriends.value.delete(id);
+        } else {
+            selectedFriends.value.add(id);
+        }
+    }
+
     function toggleFriendsListBulkUnfriendMode() {
         if (!friendsListBulkUnfriendMode.value) {
-            friendsListTable.data.forEach((item) => (item.$selected = false));
+            selectedFriends.value.clear();
         }
     }
 
     function showBulkUnfriendSelectionConfirm() {
-        const pending = friendsListTable.data.filter((item) => item.$selected).map((item) => item.displayName);
+        const pending = friendsListTable.data
+            .filter((item) => selectedFriends.value.has(item.id))
+            .map((item) => item.displayName);
         if (!pending.length) return;
         ElMessageBox.confirm(
             `Are you sure you want to delete ${pending.length} friends?
@@ -410,13 +415,20 @@
             .catch(() => {});
     }
 
-    function bulkUnfriendSelection() {
-        friendsListTable.data.forEach((item) => {
-            if (item.$selected) {
+    async function bulkUnfriendSelection() {
+        if (!selectedFriends.value.size) return;
+        for (const item of friendsListTable.data) {
+            if (selectedFriends.value.has(item.id)) {
                 console.log(`Unfriending ${item.displayName} (${item.id})`);
-                friendRequest.deleteFriend({ userId: item.id }).then((args) => handleFriendDelete(args));
+                await friendRequest.deleteFriend({ userId: item.id }).then((args) => handleFriendDelete(args));
+                selectedFriends.value.delete(item.id);
             }
+        }
+        ElMessageBox.alert(`Unfriended ${selectedFriends.value.size} friends.`, 'Bulk Unfriend Complete', {
+            confirmButtonText: 'OK',
+            type: 'success'
         });
+        selectedFriends.value.clear();
     }
 
     async function friendsListLoadUsers() {
