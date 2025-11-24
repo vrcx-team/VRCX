@@ -372,7 +372,7 @@
                 params: {
                     n: 100,
                     offset: 0,
-                    date: dayjs(selectedDay.value).toISOString()
+                    date: dayjs(selectedDay.value).format('YYYY-MM-DDTHH:mm:ss[Z]') // this need to be local time because UTC time may cause month shift
                 },
                 handle(args) {
                     args.results.forEach((event) => {
@@ -398,7 +398,7 @@
                 params: {
                     n: 100,
                     offset: 0,
-                    date: dayjs(selectedDay.value).toISOString()
+                    date: dayjs(selectedDay.value).format('YYYY-MM-DDTHH:mm:ss[Z]')
                 },
                 handle(args) {
                     args.results.forEach((event) => {
@@ -422,7 +422,7 @@
                 params: {
                     n: 100,
                     offset: 0,
-                    date: dayjs(selectedDay.value).toISOString()
+                    date: dayjs(selectedDay.value).format('YYYY-MM-DDTHH:mm:ss[Z]')
                 },
                 handle(args) {
                     args.results.forEach((event) => {
