@@ -658,8 +658,7 @@
             .then((args) => {
                 const map = new Map();
                 for (const json of args.json) {
-                    const ref = applyGroup(json);
-                    map.set(ref.id, ref);
+                    map.set(json.id, json);
                 }
                 searchGroupResults.value = Array.from(map.values());
                 return args;
