@@ -22,7 +22,7 @@
     onMounted(() => {
         timerId = setInterval(() => {
             now.value = Date.now();
-        }, 5000);
+        }, 15000);
     });
     onBeforeUnmount(() => {
         clearInterval(timerId);
