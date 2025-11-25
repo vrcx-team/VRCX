@@ -420,7 +420,11 @@
 
             const timeString = timeToText(param.data, true);
             const color = param.color;
-            const name = param.name;
+            let name = param.name;
+            // jank: remove axis label rich text formatting
+            name = name.endsWith('}') ? name.slice(0, -1) : name;
+            name = name.replaceAll('{filtered|', '').replaceAll('{normal|', '');
+
             const location = parseLocation(instanceData.location);
 
             return `
