@@ -1418,7 +1418,8 @@
         sortUserDialogAvatars,
         refreshUserDialogAvatars,
         refreshUserDialogTreeData,
-        showSendBoopDialog
+        showSendBoopDialog,
+        toggleSharedConnectionsOptOut
     } = useUserStore();
     const { favoriteLimits } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog, handleFavoriteWorldList } = useFavoriteStore();
@@ -2440,12 +2441,6 @@
     function toggleAllowBooping() {
         userRequest.saveCurrentUser({
             isBoopingEnabled: !currentUser.value.isBoopingEnabled
-        });
-    }
-
-    function toggleSharedConnectionsOptOut() {
-        userRequest.saveCurrentUser({
-            hasSharedConnectionsOptOut: !currentUser.value.hasSharedConnectionsOptOut
         });
     }
 

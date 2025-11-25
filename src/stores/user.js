@@ -2021,6 +2021,13 @@ export const useUserStore = defineStore('User', () => {
         sendBoopDialog.value.visible = true;
     }
 
+    function toggleSharedConnectionsOptOut() {
+        userRequest.saveCurrentUser({
+            hasSharedConnectionsOptOut:
+                !currentUser.value.hasSharedConnectionsOptOut
+        });
+    }
+
     return {
         state,
 
@@ -2048,6 +2055,7 @@ export const useUserStore = defineStore('User', () => {
         getCurrentUser,
         handleConfig,
         showSendBoopDialog,
-        checkNote
+        checkNote,
+        toggleSharedConnectionsOptOut
     };
 });

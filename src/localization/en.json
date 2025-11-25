@@ -320,6 +320,12 @@
                     "confirm": "Start Fetch",
                     "cancel": "Maybe Later"
                 },
+                "enable_sharing_prompt": {
+                    "title": "Enable Mutual Friends Sharing",
+                    "message": "Mutual friends sharing is currently disabled. Do you want to enable it now?",
+                    "confirm": "Enable",
+                    "cancel": "Cancel"
+                },
                 "messages": {
                     "fetch_cancelled_graph_not_updated": "Fetch cancelled"
                 },
