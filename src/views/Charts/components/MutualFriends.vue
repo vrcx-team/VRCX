@@ -189,6 +189,10 @@
         try {
             const snapshot = await database.getMutualGraphSnapshot();
             if (!snapshot || snapshot.size === 0) {
+                if (isOptOut.value) {
+                    promptEnableMutualFriendsSharing();
+                    return;
+                }
                 await promptInitialFetch();
                 return;
             }
@@ -237,6 +241,25 @@
         } catch {
             // cancelled
         }
+    }
+
+    function promptEnableMutualFriendsSharing() {
+        ElMessageBox.confirm(
+            t('view.charts.mutual_friend.enable_sharing_prompt.message'),
+            t('view.charts.mutual_friend.enable_sharing_prompt.title'),
+            {
+                confirmButtonText: t('view.charts.mutual_friend.enable_sharing_prompt.confirm'),
+                cancelButtonText: t('view.charts.mutual_friend.enable_sharing_prompt.cancel'),
+                type: 'info'
+            }
+        )
+            .then(() => {
+                userStore.toggleSharedConnectionsOptOut();
+                promptInitialFetch();
+            })
+            .catch(() => {
+                // cancelled
+            });
     }
 
     function cancelFetch() {
