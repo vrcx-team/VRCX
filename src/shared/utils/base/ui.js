@@ -26,6 +26,28 @@ function changeAppDarkStyle(isDark) {
     }
 }
 
+function applyThemeFonts(themeKey, fontLinks = []) {
+    document
+        .querySelectorAll('link[data-theme-font]')
+        .forEach((linkEl) => linkEl.remove());
+
+    if (!fontLinks?.length) {
+        return;
+    }
+
+    const head = document.head;
+    fontLinks.forEach((href) => {
+        if (!href) {
+            return;
+        }
+        const fontLink = document.createElement('link');
+        fontLink.rel = 'stylesheet';
+        fontLink.href = href;
+        fontLink.dataset.themeFont = themeKey;
+        head.appendChild(fontLink);
+    });
+}
+
 function changeAppThemeStyle(themeMode) {
     if (themeMode === 'system') {
         themeMode = systemIsDarkMode() ? 'dark' : 'light';
@@ -56,6 +78,8 @@ function changeAppThemeStyle(themeMode) {
         document.head.appendChild($appThemeStyle);
     }
     $appThemeStyle.href = themeConfig.cssFile ? themeConfig.cssFile : '';
+
+    applyThemeFonts(themeMode, themeConfig.fontLinks);
 
     if (themeConfig.isDark) {
         document.documentElement.classList.add('dark');
