@@ -61,6 +61,7 @@
         "eslint-plugin-vue": "^9.33.0",
         "globals": "^16.5.0",
         "jest": "^30.2.0",
+        "lightningcss": "^1.30.2",
         "noty": "^3.2.0-beta-deprecated",
         "pinia": "^3.0.4",
         "prettier": "^3.6.2",
