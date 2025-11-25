@@ -43,6 +43,10 @@ export const THEME_CONFIG = {
     material3: {
         cssFile: material3,
         isDark: true,
-        name: 'Material 3'
+        name: 'Material 3',
+        fontLinks: [
+            'https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&family=Roboto&display=swap',
+            'https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
+        ]
     }
 };
