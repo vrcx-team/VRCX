@@ -19,7 +19,7 @@ if (buildAndUploadSourceMaps) {
     console.log('Source maps will be built and uploaded to Sentry');
 }
 
-// https://vite.dev/config/
+// @ts-ignore
 export default defineConfig(() => ({
     base: '',
     plugins: [
@@ -37,21 +37,33 @@ export default defineConfig(() => ({
                 }
             })
     ],
+    css: {
+        transformer: 'lightningcss',
+        lightningcss: {
+            minify: true,
+            targets: {
+                chrome: 135
+            }
+        }
+    },
     define: {
         LINUX: JSON.stringify(process.env.PLATFORM === 'linux'),
         WINDOWS: JSON.stringify(process.env.PLATFORM === 'windows')
     },
     server: {
-        port: 9000
+        port: 9000,
+        strictPort: true
     },
     build: {
         target: 'esnext',
         outDir: '../build/html',
+        cssMinify: 'lightningcss',
+        license: true,
         emptyOutDir: true,
         copyPublicDir: false,
         reportCompressedSize: false,
         chunkSizeWarningLimit: 5000,
-        modulePreload: { polyfill: false },
+        modulePreload: true,
         assetsInlineLimit: 0,
         rollupOptions: {
             input: {
