@@ -357,6 +357,13 @@
                         <div
                             v-if="avatarEditMode && !isSearchActive && activeRemoteGroup"
                             class="favorites-content__actions">
+                            <el-button size="small" @click="toggleSelectAllAvatars">
+                                {{
+                                    isAllAvatarsSelected
+                                        ? t('view.favorite.deselect_all')
+                                        : t('view.favorite.select_all')
+                                }}
+                            </el-button>
                             <el-button size="small" :disabled="!hasAvatarSelection" @click="clearSelectedAvatars">
                                 {{ t('view.favorite.clear') }}
                             </el-button>
@@ -709,6 +716,15 @@
         return sliceLocalAvatarFavorites.value(activeLocalGroupName.value);
     });
 
+    const isAllAvatarsSelected = computed(() => {
+        if (!activeRemoteGroup.value || !currentRemoteFavorites.value.length) {
+            return false;
+        }
+        return currentRemoteFavorites.value
+            .map((fav) => fav.id)
+            .every((id) => selectedFavoriteAvatars.value.includes(id));
+    });
+
     watch(
         () => ({
             remote: favoriteAvatarGroups.value.map((group) => group.key),
@@ -970,6 +986,17 @@
 
     function clearSelectedAvatars() {
         selectedFavoriteAvatars.value = [];
+    }
+
+    function toggleSelectAllAvatars() {
+        if (!activeRemoteGroup.value) {
+            return;
+        }
+        if (isAllAvatarsSelected.value) {
+            selectedFavoriteAvatars.value = [];
+        } else {
+            selectedFavoriteAvatars.value = currentRemoteFavorites.value.map((fav) => fav.id);
+        }
     }
 
     function copySelectedAvatars() {
