@@ -16,27 +16,20 @@
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div style="flex: 1">
                         <div>
-                            <el-popover placement="top" trigger="click">
-                                <template #reference>
-                                    <span
-                                        class="dialog-title"
-                                        style="margin-right: 5px; cursor: pointer"
-                                        @click="copyToClipboard(worldDialog.ref.name)">
-                                        <el-icon
-                                            v-if="
-                                                currentUser.$homeLocation &&
-                                                currentUser.$homeLocation.worldId === worldDialog.id
-                                            "
-                                            style="margin-right: 5px"
-                                            ><HomeFilled
-                                        /></el-icon>
-                                        {{ worldDialog.ref.name }}
-                                    </span>
-                                </template>
-                                <span style="display: block; text-align: center; font-family: monospace">{{
-                                    textToHex(worldDialog.ref.name)
-                                }}</span>
-                            </el-popover>
+                            <span
+                                class="dialog-title"
+                                style="margin-right: 5px; cursor: pointer"
+                                @click="copyWorldName">
+                                <el-icon
+                                    v-if="
+                                        currentUser.$homeLocation &&
+                                        currentUser.$homeLocation.worldId === worldDialog.id
+                                    "
+                                    style="margin-right: 5px"
+                                    ><HomeFilled
+                                /></el-icon>
+                                {{ worldDialog.ref.name }}
+                            </span>
                         </div>
                         <div style="margin-top: 5px">
                             <span
