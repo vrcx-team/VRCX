@@ -1495,6 +1495,10 @@
         margin-bottom: 12px;
     }
 
+    .favorites-content__actions .el-button {
+        margin: 0;
+    }
+
     .favorites-content__list {
         flex: 1;
         min-height: 0;
