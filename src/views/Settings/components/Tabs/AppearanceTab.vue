@@ -271,10 +271,6 @@
                 <span class="name">{{
                     t('view.settings.appearance.user_dialog.export_vrcx_memos_into_vrchat_notes')
                 }}</span>
-                <br />
-                <el-button size="small" :icon="DocumentCopy" style="margin-top: 5px" @click="redirectToToolsTab">{{
-                    t('view.settings.appearance.user_dialog.export_notes')
-                }}</el-button>
             </div>
         </div>
         <div class="options-container">
@@ -360,14 +356,13 @@
 </template>
 
 <script setup>
-    import { ArrowDown, ArrowRight, DocumentCopy, Notebook } from '@element-plus/icons-vue';
+    import { ArrowDown, ArrowRight, Notebook } from '@element-plus/icons-vue';
     import { computed, onBeforeUnmount, ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '../../../../stores';
     import { THEME_CONFIG } from '../../../../shared/constants';
-    import { redirectToToolsTab } from '../../../../shared/utils/base/ui';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 
