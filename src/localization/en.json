@@ -376,6 +376,11 @@
                 "screenshot_description": "Manage screenshots and view metadata",
                 "inventory": "VRC+ Images & Inventory Management",
                 "inventory_description": "Manage VRC+ Images & Inventory"
+            },
+            "other": {
+                "header": "Other",
+                "edit_invite_message": "Edit Invite Messages",
+                "edit_invite_message_description": "Edit invite and invite response messages"
             }
         },
         "profile": {
@@ -400,18 +405,6 @@
             "vrc_sdk_downloads": {
                 "header": "VRC SDK Downloads"
             },
-            "direct_access": {
-                "header": "Direct Access",
-                "username": "Username",
-                "user_id": "User ID",
-                "world_instance": "World/Instance",
-                "avatar": "Avatar"
-            },
-            "invite_messages": "Invite Messages",
-            "invite_response_messages": "Invite Response Messages",
-            "invite_request_messages": "Invite Request Messages",
-            "invite_request_response_messages": "Invite Request Response Messages",
-            "past_display_names": "Past Display Names",
             "config_json": "Config JSON",
             "current_user_json": "Current User JSON",
             "feedback": "Feedback",
@@ -1600,6 +1593,13 @@
             "description": "1 hour edit cool down time.",
             "cancel": "Cancel",
             "save": "Save"
+        },
+        "edit_invite_messages": {
+            "header": "Edit Invite Messages",
+            "invite_message_tab": "Invite",
+            "invite_request_tab": "Invite Request",
+            "invite_request_response_tab": "Invite Request Response",
+            "invite_response_tab": "Invite Response"
         },
         "invite_message": {
             "header": "Send Invite Message",

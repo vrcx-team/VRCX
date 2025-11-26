@@ -155,6 +155,30 @@
                         </el-card>
                     </div>
                 </div>
+
+                <div class="tool-category">
+                    <div class="category-header" @click="toggleCategory('other')">
+                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['other'] }"
+                            ><ArrowRight
+                        /></el-icon>
+                        <span class="category-title">{{ t('view.tools.other.header') }}</span>
+                    </div>
+                    <div class="tools-grid" v-show="!categoryCollapsed['other']">
+                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                            <div class="tool-content" @click="showEditInviteMessageDialog">
+                                <div class="tool-icon">
+                                    <i class="ri-edit-box-line"></i>
+                                </div>
+                                <div class="tool-info">
+                                    <div class="tool-name">{{ t('view.tools.other.edit_invite_message') }}</div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.other.edit_invite_message_description') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </el-card>
+                    </div>
+                </div>
             </div>
         </div>
         <template v-if="isToolsTabVisible">
@@ -175,6 +199,9 @@
                 v-model:isExportFriendsListDialogVisible="isExportFriendsListDialogVisible"
                 :friends="friends" />
             <ExportAvatarsListDialog v-model:isExportAvatarsListDialogVisible="isExportAvatarsListDialogVisible" />
+            <EditInviteMessageDialog
+                v-model:isEditInviteMessagesDialogVisible="isEditInviteMessagesDialogVisible"
+                @close="isEditInviteMessagesDialogVisible = false" />
         </template>
     </div>
 </template>
@@ -193,6 +220,7 @@
     const ScreenshotMetadataDialog = defineAsyncComponent(() => import('./dialogs/ScreenshotMetadataDialog.vue'));
     const NoteExportDialog = defineAsyncComponent(() => import('./dialogs/NoteExportDialog.vue'));
     const GalleryDialog = defineAsyncComponent(() => import('./dialogs/GalleryDialog.vue'));
+    const EditInviteMessageDialog = defineAsyncComponent(() => import('./dialogs/EditInviteMessagesDialog.vue'));
 
     const ExportDiscordNamesDialog = defineAsyncComponent(() => import('./dialogs/ExportDiscordNamesDialog.vue'));
     const ExportFriendsListDialog = defineAsyncComponent(() => import('./dialogs/ExportFriendsListDialog.vue'));
@@ -215,6 +243,7 @@
     const isExportDiscordNamesDialogVisible = ref(false);
     const isExportFriendsListDialogVisible = ref(false);
     const isExportAvatarsListDialogVisible = ref(false);
+    const isEditInviteMessagesDialogVisible = ref(false);
     const isToolsTabVisible = computed(() => {
         return useRoute().name === 'tools';
     });
@@ -233,6 +262,10 @@
 
     const toggleCategory = (category) => {
         categoryCollapsed.value[category] = !categoryCollapsed.value[category];
+    };
+
+    const showEditInviteMessageDialog = () => {
+        isEditInviteMessagesDialogVisible.value = true;
     };
 
     function showExportDiscordNamesDialog() {

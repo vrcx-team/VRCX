@@ -1,0 +1,89 @@
+<template>
+    <el-dialog
+        class="x-dialog"
+        :model-value="isEditInviteMessageDialogVisible"
+        :title="t('dialog.edit_invite_message.header')"
+        width="400px"
+        @close="closeDialog">
+        <div style="font-size: 12px">
+            <span>{{ t('dialog.edit_invite_message.description') }}</span>
+            <el-input
+                v-model="message"
+                type="textarea"
+                size="small"
+                maxlength="64"
+                show-word-limit
+                :autosize="{ minRows: 2, maxRows: 5 }"
+                placeholder=""
+                style="margin-top: 10px"></el-input>
+        </div>
+        <template #footer>
+            <el-button @click="closeDialog">{{ t('dialog.edit_invite_message.cancel') }}</el-button>
+            <el-button type="primary" @click="saveEditInviteMessage">{{
+                t('dialog.edit_invite_message.save')
+            }}</el-button>
+        </template>
+    </el-dialog>
+</template>
+
+<script setup>
+    import { ref, watch } from 'vue';
+    import { ElMessage } from 'element-plus';
+    import { useI18n } from 'vue-i18n';
+
+    import { inviteMessagesRequest } from '../../../api';
+
+    const { t } = useI18n();
+
+    const props = defineProps({
+        isEditInviteMessageDialogVisible: { type: Boolean, default: false },
+        inviteMessage: { type: Object, required: true }
+    });
+
+    const emit = defineEmits(['update:isEditInviteMessageDialogVisible', 'updateInviteMessages']);
+
+    const message = ref('');
+
+    watch(
+        () => props.inviteMessage,
+        (inviteMessage) => {
+            if (inviteMessage) {
+                message.value = inviteMessage.message;
+            }
+        },
+        { deep: true }
+    );
+
+    function saveEditInviteMessage() {
+        closeDialog();
+        if (props.inviteMessage.message !== message.value) {
+            const slot = props.inviteMessage.slot;
+            const messageType = props.inviteMessage.messageType;
+            const params = {
+                message: message.value
+            };
+            inviteMessagesRequest
+                .editInviteMessage(params, messageType, slot)
+                .catch((err) => {
+                    throw err;
+                })
+                .then((args) => {
+                    if (args.json[slot].message === props.inviteMessage.message) {
+                        ElMessage({
+                            message: "VRChat API didn't update message, try again",
+                            type: 'error'
+                        });
+                        throw new Error("VRChat API didn't update message, try again");
+                    } else {
+                        ElMessage({ message: 'Invite message updated', type: 'success' });
+                        emit('updateInviteMessages', messageType);
+                    }
+                    return args;
+                });
+        }
+    }
+
+    function closeDialog() {
+        emit('update:isEditInviteMessageDialogVisible', false);
+    }
+</script>
