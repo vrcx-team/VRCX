@@ -194,6 +194,13 @@
                     </div>
                     <div class="favorites-content__edit-actions">
                         <div v-if="friendEditMode && !isSearchActive" class="favorites-content__actions">
+                            <el-button size="small" @click="toggleSelectAllFriends">
+                                {{
+                                    isAllFriendsSelected
+                                        ? t('view.favorite.deselect_all')
+                                        : t('view.favorite.select_all')
+                                }}
+                            </el-button>
                             <el-button size="small" :disabled="!hasFriendSelection" @click="clearSelectedFriends">
                                 {{ t('view.favorite.clear') }}
                             </el-button>
@@ -426,6 +433,15 @@
         return groupedByGroupKeyFavoriteFriends.value[activeRemoteGroup.value.key] || [];
     });
 
+    const isAllFriendsSelected = computed(() => {
+        if (!activeRemoteGroup.value || !currentFriendFavorites.value.length) {
+            return false;
+        }
+        return currentFriendFavorites.value
+            .map((fav) => fav.id)
+            .every((id) => selectedFavoriteFriends.value.includes(id));
+    });
+
     watch(
         () => favoriteFriendGroups.value.map((group) => `${group.key}:${group.count}`),
         () => {
@@ -546,6 +562,17 @@
 
     function clearSelectedFriends() {
         selectedFavoriteFriends.value = [];
+    }
+
+    function toggleSelectAllFriends() {
+        if (!activeRemoteGroup.value) {
+            return;
+        }
+        if (isAllFriendsSelected.value) {
+            selectedFavoriteFriends.value = [];
+        } else {
+            selectedFavoriteFriends.value = currentFriendFavorites.value.map((fav) => fav.id);
+        }
     }
 
     function copySelectedFriends() {
