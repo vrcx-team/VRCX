@@ -8,6 +8,9 @@
         "player_list": "用戶列表",
         "search": "搜尋",
         "favorites": "收藏",
+        "favorite_friends": "收藏好友",
+        "favorite_worlds": "收藏世界",
+        "favorite_avatars": "收藏角色",
         "social": "社交",
         "friend_log": "好友紀錄",
         "moderation": "用戶處置",
@@ -26,7 +29,32 @@
         "get_help": "取得協助",
         "github": "在 GitHub 上查看 VRCX",
         "discord": "加入我們的 Discord",
-        "whats_new": "最新更新"
+        "whats_new": "最新更新",
+        "custom_nav": {
+            "header": "自訂導覽",
+            "dialog_title": "自訂導覽選單",
+            "add_folder": "新增資料夾",
+            "folder_name_placeholder": "資料夾名稱",
+            "folder_icon_placeholder": "圖示類別（例如：ri-menu-fold-line）",
+            "edit_folder": "編輯資料夾",
+            "folder_available": "可用項目",
+            "folder_selected": "資料夾項目",
+            "folder_selected_empty": "尚未選擇項目",
+            "delete_folder": "刪除資料夾",
+            "assign_folder": "加入資料夾",
+            "remove_from_folder": "從資料夾移除",
+            "folder_empty": "此資料夾沒有任何項目",
+            "invalid_folder": "資料夾必須有名稱，且至少包含兩個項目。",
+            "restore_default": "恢復預設",
+            "restore_default_confirm": "要將導覽選單恢復成預設排序嗎？",
+            "save": "儲存",
+            "cancel": "取消"
+        },
+        "icon_picker": {
+            "search_placeholder": "搜尋圖示名稱或標籤",
+            "pick_icon": "選擇圖示",
+            "no_icon_found": "找不到符合的圖示"
+        }
     },
     "view": {
         "login": {
@@ -57,6 +85,14 @@
                 "Avatar": "角色",
                 "Bio": "自我介紹"
             }
+        },
+        "friends_locations": {
+            "online_friends": "在線好友",
+            "spacing": "間距",
+            "scale": "縮放",
+            "separate_same_instance_friends": "分開顯示同房好友",
+            "no_matching_friends": "沒有符合的好友",
+            "loading_more": "載入更多..."
         },
         "game_log": {
             "filter_placeholder": "篩選遊戲紀錄",
@@ -141,13 +177,15 @@
             "edit_mode": "編輯模式",
             "copy": "複製",
             "clear": "清除",
+            "select_all": "選擇全部",
             "bulk_unfavorite_mode": "批次解除好友",
-            "refresh_tooltip": "重新整理所有收藏",
+            "refresh_favorites_tooltip": "重新整理 VRChat 收藏",
             "export": "匯出",
             "import": "匯入",
             "move_tooltip": "移動",
             "copy_tooltip": "複製",
             "unfavorite_tooltip": "解除收藏",
+            "edit_favorite_tooltip": "編輯收藏",
             "visibility_tooltip": "變更可見度",
             "rename_tooltip": "重新命名",
             "clear_tooltip": "清除",
@@ -236,7 +274,8 @@
             "filter_placeholder": "篩選好友",
             "refresh_tooltip": "重新整理",
             "clear_tooltip": "清除結果",
-            "cancel_tooltip": "取消"
+            "cancel_tooltip": "取消",
+            "load_mutual_friends": "載入共同好友"
         },
         "charts": {
             "header": "圖表",
@@ -259,6 +298,47 @@
                     "show_solo_instance": "顯示單人房間",
                     "show_no_friend_instance": "顯示無好友的房間",
                     "show_detail": "顯示詳細資訊"
+                }
+            },
+            "mutual_friend": {
+                "tab_label": "共同好友網路",
+                "actions": {
+                    "start_fetch": "開始取得",
+                    "fetch_again": "重新取得",
+                    "stop": "停止",
+                    "stop_fetching": "停止取得"
+                },
+                "status": {
+                    "no_friends_to_process": "沒有可處理的好友"
+                },
+                "progress": {
+                    "friends_processed": "已處理好友",
+                    "no_relationships_discovered": "未找到任何關聯"
+                },
+                "prompt": {
+                    "title": "共同好友網路",
+                    "message": "找不到快取的共同好友資料。要立即開始取得嗎？這可能需要一段時間，完成時會通知你。",
+                    "confirm": "開始取得",
+                    "cancel": "稍後再說"
+                },
+                "enable_sharing_prompt": {
+                    "title": "啟用共同好友分享",
+                    "message": "目前已停用共同好友分享。要現在啟用嗎？",
+                    "confirm": "啟用",
+                    "cancel": "取消"
+                },
+                "messages": {
+                    "fetch_cancelled_graph_not_updated": "已取消取得"
+                },
+                "notifications": {
+                    "start_fetching": "開始取得",
+                    "mutual_friend_graph_ready_title": "共同好友網路圖",
+                    "mutual_friend_graph_ready_message": "共同好友網路圖已準備完成",
+                    "friend_list_changed_fetch_again": "好友清單已變更，請重新取得共同好友網路。"
+                },
+                "tooltip": {
+                    "mutual_friends_count": "共同好友：{count}",
+                    "edge": "{source} ↔ {target}"
                 }
             }
         },
@@ -297,6 +377,11 @@
                 "screenshot_description": "管理截圖並檢視中繼資料",
                 "inventory": "VRC+ 圖片與物品管理",
                 "inventory_description": "管理 VRC+ 圖片與物品"
+            },
+            "other": {
+                "header": "其他",
+                "edit_invite_message": "編輯邀請訊息",
+                "edit_invite_message_description": "編輯邀請與回覆邀請的訊息"
             }
         },
         "profile": {
@@ -321,18 +406,6 @@
             "vrc_sdk_downloads": {
                 "header": "下載 VRC SDK"
             },
-            "direct_access": {
-                "header": "直接存取",
-                "username": "使用者名稱",
-                "user_id": "用戶 ID",
-                "world_instance": "世界 / 房間",
-                "avatar": "角色"
-            },
-            "invite_messages": "邀請訊息",
-            "invite_response_messages": "邀請回覆訊息",
-            "invite_request_messages": "邀請請求訊息",
-            "invite_request_response_messages": "邀請請求回覆訊息",
-            "past_display_names": "過去顯示名稱",
             "config_json": "JSON 資料",
             "current_user_json": "目前用戶的 JSON 資料",
             "feedback": "回饋",
@@ -1157,7 +1230,9 @@
                 "role_updated_at": "更新時間：",
                 "role_created_at": "創建時間：",
                 "role_permissions": "權限：",
-                "last_visited": "上次造訪"
+                "last_visited": "上次造訪",
+                "past_events": "過去的活動",
+                "upcoming_events": "即將到來的活動"
             },
             "posts": {
                 "header": "貼文",
@@ -1264,6 +1339,7 @@
             "content_prints": "拍立得",
             "content_drones": "無人機",
             "content_items": "物件",
+            "content_third_person": "第三人稱",
             "world_id": "世界 ID",
             "instance_id": "房間 ID",
             "instance_id_placeholder": "亂數",
@@ -1519,6 +1595,13 @@
             "cancel": "取消",
             "save": "儲存"
         },
+        "edit_invite_messages": {
+            "header": "編輯邀請訊息",
+            "invite_message_tab": "邀請",
+            "invite_request_tab": "邀請請求",
+            "invite_request_response_tab": "邀請請求回覆",
+            "invite_response_tab": "邀請回覆"
+        },
         "invite_message": {
             "header": "傳送邀請的訊息",
             "confirmation": "你確定你要傳送邀請？",
@@ -1738,7 +1821,8 @@
                 "description": "描述",
                 "export_to_calendar": "匯出至行事曆",
                 "download_ics": "下載 .ics 檔案"
-            }
+            },
+            "featured_events": "精選活動"
         },
         "moderate_group": {
             "header": "管理群組成員",
@@ -2127,7 +2211,8 @@
             "lastActivity": "最後活動",
             "lastLogin": "最後登入",
             "dateJoined": "加入時間",
-            "unfriend": "解除好友"
+            "unfriend": "解除好友",
+            "mutualFriends": "共同好友"
         },
         "profile": {
             "invite_messages": {
