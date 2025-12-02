@@ -9,6 +9,7 @@ import { debounce, parseLocation } from '../shared/utils';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
 import { failedGetRequests } from '../service/request';
+import { refreshCustomScript } from '../shared/utils/base/ui';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useAvatarStore } from './avatar';
@@ -145,6 +146,8 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             maxTableSize.value = 1000;
         }
         database.setMaxTableSize(maxTableSize.value);
+
+        refreshCustomScript();
     }
 
     init();
