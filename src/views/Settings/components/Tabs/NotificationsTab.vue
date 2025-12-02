@@ -72,36 +72,36 @@
                         }}</el-button
                     >
                 </div>
-                <div class="options-container-item">
-                    <span class="name" style="vertical-align: top; padding-top: 10px">{{
-                        t('view.settings.notifications.notifications.steamvr_notifications.notification_opacity')
-                    }}</span>
-                    <el-slider
-                        :model-value="notificationOpacity"
-                        @input="setNotificationOpacity"
-                        :min="0"
-                        :max="100"
-                        style="display: inline-block; width: 300px; padding-top: 16px" />
-                </div>
-                <div class="options-container-item">
-                    <el-button
-                        size="small"
-                        :icon="Timer"
-                        :disabled="(!overlayNotifications || !openVR) && !xsNotifications"
-                        @click="promptNotificationTimeout"
-                        >{{
-                            t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout')
-                        }}</el-button
-                    >
-                </div>
-                <simple-switch
-                    :label="t('view.settings.notifications.notifications.steamvr_notifications.user_images')"
-                    :value="imageNotifications"
-                    @change="
-                        setImageNotifications();
-                        saveOpenVROption();
-                    " />
             </template>
+            <div class="options-container-item">
+                <span class="name" style="vertical-align: top; padding-top: 10px">{{
+                    t('view.settings.notifications.notifications.steamvr_notifications.notification_opacity')
+                }}</span>
+                <el-slider
+                    :model-value="notificationOpacity"
+                    @input="setNotificationOpacity"
+                    :min="0"
+                    :max="100"
+                    style="display: inline-block; width: 300px; padding-top: 16px" />
+            </div>
+            <div class="options-container-item">
+                <el-button
+                    size="small"
+                    :icon="Timer"
+                    :disabled="(!overlayNotifications || !openVR) && !xsNotifications"
+                    @click="promptNotificationTimeout"
+                    >{{
+                        t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout')
+                    }}</el-button
+                >
+            </div>
+            <simple-switch
+                :label="t('view.settings.notifications.notifications.steamvr_notifications.user_images')"
+                :value="imageNotifications"
+                @change="
+                    setImageNotifications();
+                    saveOpenVROption();
+                " />
             <template v-if="!isLinux">
                 <simple-switch
                     :label="
