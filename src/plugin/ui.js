@@ -3,7 +3,6 @@ import {
     changeAppThemeStyle,
     getThemeMode,
     refreshCustomCss,
-    refreshCustomScript,
     setLoginContainerStyle
 } from '../shared/utils/base/ui';
 import { i18n } from './i18n';
@@ -29,5 +28,4 @@ export async function initUi() {
     }
 
     refreshCustomCss();
-    refreshCustomScript();
 }
