@@ -19,6 +19,7 @@ import { useFriendStore } from '../friend';
 import { useGameLogStore } from '../gameLog';
 import { useModerationStore } from '../moderation';
 import { useNotificationStore } from '../notification';
+import { useUiStore } from '../ui';
 import { useUserStore } from '../user';
 import { useVrStore } from '../vr';
 import { useVrcxStore } from '../vrcx';
@@ -39,6 +40,7 @@ export const useAppearanceSettingsStore = defineStore(
         const vrcxStore = useVrcxStore();
         const userStore = useUserStore();
         const router = useRouter();
+        const uiStore = useUiStore();
 
         const { t, availableLocales, locale } = useI18n();
 
@@ -79,6 +81,7 @@ export const useAppearanceSettingsStore = defineStore(
             troll: '#782F2F'
         });
         const currentCulture = ref('');
+        const notificationIconDot = ref(false);
         const isSideBarTabShow = computed(() => {
             const currentRouteName = router.currentRoute.value?.name;
             return !(
@@ -109,7 +112,8 @@ export const useAppearanceSettingsStore = defineStore(
                 hideUserMemosConfig,
                 hideUnfriendsConfig,
                 randomUserColoursConfig,
-                trustColorConfig
+                trustColorConfig,
+                notificationIconDotConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_appLanguage'),
                 configRepository.getString('VRCX_ThemeMode', 'system'),
@@ -160,7 +164,8 @@ export const useAppearanceSettingsStore = defineStore(
                         vip: '#FF2626',
                         troll: '#782F2F'
                     })
-                )
+                ),
+                configRepository.getBool('VRCX_notificationIconDot', true)
             ]);
 
             if (!appLanguageConfig) {
@@ -213,6 +218,7 @@ export const useAppearanceSettingsStore = defineStore(
             hideUserMemos.value = hideUserMemosConfig;
             hideUnfriends.value = hideUnfriendsConfig;
             randomUserColours.value = randomUserColoursConfig;
+            notificationIconDot.value = notificationIconDotConfig;
 
             // Migrate old settings
             // Assume all exist if one does
@@ -423,6 +429,14 @@ export const useAppearanceSettingsStore = defineStore(
                 'displayVRCPlusIconsAsAvatar',
                 displayVRCPlusIconsAsAvatar.value
             );
+        }
+        function setNotificationIconDot() {
+            notificationIconDot.value = !notificationIconDot.value;
+            configRepository.setBool(
+                'VRCX_notificationIconDot',
+                notificationIconDot.value
+            );
+            uiStore.updateTrayIconNotify();
         }
         function setHideNicknames() {
             hideNicknames.value = !hideNicknames.value;
@@ -711,6 +725,7 @@ export const useAppearanceSettingsStore = defineStore(
             trustColor,
             currentCulture,
             isSideBarTabShow,
+            notificationIconDot,
 
             setAppLanguage,
             setDisplayVRCPlusIconsAsAvatar,
@@ -741,7 +756,8 @@ export const useAppearanceSettingsStore = defineStore(
             userColourInit,
             applyUserTrustLevel,
             changeAppLanguage,
-            promptMaxTableSizeDialog
+            promptMaxTableSizeDialog,
+            setNotificationIconDot
         };
     }
 );

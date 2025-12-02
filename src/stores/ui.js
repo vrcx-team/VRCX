@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router';
 import { AppDebug } from '../service/appConfig';
 import { refreshCustomCss } from '../shared/utils/base/ui';
 import { updateLocalizedStrings } from '../plugin/i18n';
+import { useAppearanceSettingsStore } from './settings/appearance';
 import { useNotificationStore } from './notification';
 import { useSearchStore } from './search';
 
@@ -15,6 +16,7 @@ export const useUiStore = defineStore('Ui', () => {
     const router = useRouter();
     const keys = useMagicKeys();
     const { directAccessPaste } = useSearchStore();
+    const appearanceSettings = useAppearanceSettingsStore();
 
     const ctrlR = keys['Ctrl+R'];
     const ctrlD = keys['Ctrl+D'];
@@ -116,8 +118,9 @@ export const useUiStore = defineStore('Ui', () => {
 
     function updateTrayIconNotify(force = false) {
         const newState =
-            notifiedMenus.value.includes('notification') ||
-            notifiedMenus.value.includes('friend-log');
+            appearanceSettings.notificationIconDot &&
+            (notifiedMenus.value.includes('notification') ||
+                notifiedMenus.value.includes('friend-log'));
 
         if (trayIconNotify.value !== newState || force) {
             trayIconNotify.value = newState;
@@ -136,6 +139,7 @@ export const useUiStore = defineStore('Ui', () => {
 
         notifyMenu,
         removeNotify,
-        showConsole
+        showConsole,
+        updateTrayIconNotify
     };
 });

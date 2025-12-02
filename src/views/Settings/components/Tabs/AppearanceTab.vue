@@ -55,6 +55,13 @@
                     @change="setZoomLevel" />
             </div>
             <simple-switch
+                :label="t('view.settings.appearance.appearance.show_notification_icon_dot')"
+                :value="notificationIconDot"
+                @change="
+                    setNotificationIconDot();
+                    saveOpenVROption();
+                " />
+            <simple-switch
                 :label="t('view.settings.appearance.appearance.vrcplus_profile_icons')"
                 :value="displayVRCPlusIconsAsAvatar"
                 @change="
@@ -391,7 +398,8 @@
         hideUserMemos,
         hideUnfriends,
         randomUserColours,
-        trustColor
+        trustColor,
+        notificationIconDot
     } = storeToRefs(appearanceSettingsStore);
 
     const { saveSortFavoritesOption } = useFavoriteStore();
@@ -415,7 +423,8 @@
         updateTrustColor,
         saveThemeMode,
         changeAppLanguage,
-        promptMaxTableSizeDialog
+        promptMaxTableSizeDialog,
+        setNotificationIconDot
     } = appearanceSettingsStore;
 
     const zoomLevel = ref(100);

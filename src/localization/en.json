@@ -519,7 +519,8 @@
                     "sort_instance_users_by": "Sort Instance Users by",
                     "sort_instance_users_by_time": "time",
                     "sort_instance_users_by_alphabet": "alphabetical",
-                    "table_max_size": "Table Max Size"
+                    "table_max_size": "Table Max Size",
+                    "show_notification_icon_dot": "Show Tray Notification Dot"
                 },
                 "timedate": {
                     "header": "Time/Date",
