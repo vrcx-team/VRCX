@@ -307,12 +307,11 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
     }
 
-    function handleFavoriteDelete(args) {
-        const ref = getCachedFavoritesByObjectId(args.params.objectId);
+    function handleFavoriteDelete(objectId) {
+        const ref = getCachedFavoritesByObjectId(objectId);
         if (typeof ref === 'undefined') {
             return;
         }
-        args.ref = ref;
         handleFavoriteAtDelete(ref);
     }
 

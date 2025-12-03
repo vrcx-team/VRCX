@@ -62,7 +62,7 @@ const favoriteReq = {
                 json,
                 params
             };
-            useFavoriteStore().handleFavoriteDelete(args);
+            useFavoriteStore().handleFavoriteDelete(params.objectId);
             return args;
         });
     },

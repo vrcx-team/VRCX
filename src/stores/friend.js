@@ -49,6 +49,7 @@ export const useFriendStore = defineStore('Friend', () => {
     const updateLoopStore = useUpdateLoopStore();
     const authStore = useAuthStore();
     const locationStore = useLocationStore();
+    const favoriteStore = useFavoriteStore();
     const { t } = useI18n();
 
     const state = reactive({
@@ -1049,6 +1050,7 @@ export const useFriendStore = defineStore('Friend', () => {
                     notificationStore.queueFriendLogNoty(friendLogHistory);
                     friendLog.delete(id);
                     database.deleteFriendLogCurrent(id);
+                    favoriteStore.handleFavoriteDelete(id);
                     if (!appearanceSettingsStore.hideUnfriends) {
                         uiStore.notifyMenu('friend-log');
                     }
