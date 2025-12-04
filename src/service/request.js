@@ -307,6 +307,9 @@ export function $throw(code, error, endpoint) {
     if (endpoint?.startsWith('analysis/')) {
         ignoreError = true;
     }
+    if (endpoint.endsWith('/mutuals') && (code === 403 || code === -1)) {
+        ignoreError = true;
+    }
     if (text.length && !ignoreError) {
         if (AppDebug.errorNoty) {
             AppDebug.errorNoty.close();
