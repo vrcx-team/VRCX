@@ -794,12 +794,8 @@
                                             <span>({{ group.memberCount }})</span>
                                         </span>
                                     </div>
-                                    <el-dropdown
-                                        :disabled="group.privacy !== 'default'"
-                                        trigger="click"
-                                        size="small"
-                                        style="margin-right: 5px">
-                                        <el-button @click.stop size="small">
+                                    <el-dropdown trigger="click" size="small" style="margin-right: 5px">
+                                        <el-button :disabled="group.privacy !== 'default'" @click.stop size="small">
                                             <span v-if="group.myMember.visibility === 'visible'">{{
                                                 t('dialog.group.tags.visible')
                                             }}</span>
