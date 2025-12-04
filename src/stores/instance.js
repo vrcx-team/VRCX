@@ -1167,7 +1167,6 @@ export const useInstanceStore = defineStore('Instance', () => {
                 isChatBoxMuted,
                 ageVerified
             });
-            // get block, mute
         };
 
         const playersInInstance = locationStore.lastLocation.playerList;
