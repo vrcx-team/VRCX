@@ -964,19 +964,20 @@ export const useUserStore = defineStore('User', () => {
                                 }
                             });
                             if (!currentUser.value.hasSharedConnectionsOptOut) {
-                                userRequest
-                                    .getMutualCounts({ userId })
-                                    .then((args) => {
-                                        if (args.params.userId === D.id) {
-                                            D.mutualFriendCount =
-                                                args.json.friends;
-                                            D.mutualGroupCount =
-                                                args.json.groups;
-                                        }
-                                    })
-                                    .catch((error) => {
-                                        console.error(error);
-                                    });
+                                try {
+                                    userRequest
+                                        .getMutualCounts({ userId })
+                                        .then((args) => {
+                                            if (args.params.userId === D.id) {
+                                                D.mutualFriendCount =
+                                                    args.json.friends;
+                                                D.mutualGroupCount =
+                                                    args.json.groups;
+                                            }
+                                        });
+                                } catch (error) {
+                                    console.error(error);
+                                }
                             }
                         } else {
                             D.previousDisplayNames =
