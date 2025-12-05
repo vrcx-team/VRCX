@@ -7,7 +7,10 @@
         "game_log": "游戏日志",
         "player_list": "房间玩家列表",
         "search": "搜索",
-        "favorites": "收藏",
+        "favorites": "收藏&星标",
+        "favorite_friends": "星标好友",
+        "favorite_worlds": "世界收藏",
+        "favorite_avatars": "模型收藏",
         "social": "社交",
         "friend_log": "好友日志",
         "moderation": "玩家管理（屏蔽 / 静音）",
@@ -26,7 +29,32 @@
         "get_help": "请求帮助",
         "github": "GitHub 仓库",
         "discord": "加入 Discord",
-        "whats_new": "更新日志"
+        "whats_new": "更新日志",
+        "custom_nav": {
+            "header": "自定义导航栏",
+            "dialog_title": "自定义导航栏",
+            "add_folder": "添加文件夹",
+            "folder_name_placeholder": "输入文件夹名称",
+            "folder_icon_placeholder": "文件夹图标（例如“ri-menu-fold-line”）",
+            "edit_folder": "编辑文件夹",
+            "folder_available": "可用项目",
+            "folder_selected": "已选项目",
+            "folder_selected_empty": "未选择任何项目",
+            "delete_folder": "删除此文件夹",
+            "assign_folder": "添加",
+            "remove_from_folder": "移除",
+            "folder_empty": "此文件夹为空",
+            "invalid_folder": "文件夹要有名称，且其内应至少有两个项目",
+            "restore_default": "恢复默认",
+            "restore_default_confirm": "确定要恢复默认吗？所有的自定义设置都将被删除",
+            "save": "保存",
+            "cancel": "取消"
+        },
+        "icon_picker": {
+            "search_placeholder": "输入图标名称或 tag",
+            "pick_icon": "选择文件夹图标",
+            "no_icon_found": "没有找到图标"
+        }
     },
     "view": {
         "login": {
@@ -60,8 +88,8 @@
         },
         "friends_locations": {
             "online_friends": "在线好友",
-            "scale": "缩放",
             "spacing": "卡片间距",
+            "scale": "缩放",
             "separate_same_instance_friends": "分开显示处于同一房间的好友",
             "no_matching_friends": "没有找到匹配的好友",
             "loading_more": "加载中..."
@@ -149,6 +177,8 @@
             "edit_mode": "编辑模式",
             "copy": "复制",
             "clear": "清除",
+            "select_all": "全选",
+            "deselect_all": "取消全选",
             "bulk_unfavorite": "批量取消收藏",
             "refresh_favorites_tooltip": "刷新所有收藏",
             "export": "导出",
@@ -156,6 +186,7 @@
             "move_tooltip": "移动",
             "copy_tooltip": "复制",
             "unfavorite_tooltip": "取消收藏",
+            "edit_favorite_tooltip": "编辑收藏",
             "visibility_tooltip": "更改可见性",
             "rename_tooltip": "重命名",
             "clear_tooltip": "清除",
@@ -244,7 +275,8 @@
             "filter_placeholder": "筛选好友",
             "refresh_tooltip": "刷新",
             "clear_tooltip": "清除结果",
-            "cancel_tooltip": "取消"
+            "cancel_tooltip": "取消",
+            "load_mutual_friends": "查看关系网"
         },
         "charts": {
             "header": "图表",
@@ -267,6 +299,47 @@
                     "show_solo_instance": "显示“只有一人”的房间",
                     "show_no_friend_instance": "显示没有好友的房间",
                     "show_detail": "显示更多信息"
+                }
+            },
+            "mutual_friend": {
+                "tab_label": "好友关系网",
+                "actions": {
+                    "start_fetch": "开始拉取",
+                    "fetch_again": "再次拉取",
+                    "stop": "停止",
+                    "stop_fetching": "停止拉取"
+                },
+                "status": {
+                    "no_friends_to_process": "目前没有好友需要处理"
+                },
+                "progress": {
+                    "friends_processed": "处理进度",
+                    "no_relationships_discovered": "尚未发现任何关系"
+                },
+                "prompt": {
+                    "title": "好友关系网",
+                    "message": "未找到缓存的共同好友数据。现在开始拉取吗？这可能需要一段时间，你会在完成时收到通知",
+                    "confirm": "立刻开始拉取",
+                    "cancel": "待会再说"
+                },
+                "enable_sharing_prompt": {
+                    "title": "开启共同好友功能",
+                    "message": "目前你没有开启共同好友功能，你想现在打开它吗？开启后，你的好友能看到你和其他人的共同好友关系",
+                    "confirm": "开启",
+                    "cancel": "取消"
+                },
+                "messages": {
+                    "fetch_cancelled_graph_not_updated": "拉取已被取消"
+                },
+                "notifications": {
+                    "start_fetching": "开始拉取",
+                    "mutual_friend_graph_ready_title": "好友关系网已更新",
+                    "mutual_friend_graph_ready_message": "已完成共同好友数据的拉取，图谱已更新",
+                    "friend_list_changed_fetch_again": "好友列表已更改。请再次拉取共同好友数据。"
+                },
+                "tooltip": {
+                    "mutual_friends_count": "与你有 {count} 个共同好友",
+                    "edge": "{source} ↔ {target}"
                 }
             }
         },
@@ -305,6 +378,11 @@
                 "screenshot_description": "管理截图或查看截图元数据",
                 "inventory": "相册 & 库存管理",
                 "inventory_description": "管理相册与库存物品"
+            },
+            "other": {
+                "header": "其它",
+                "edit_invite_message": "编辑邀请消息",
+                "edit_invite_message_description": "编辑邀请或申请加入时使用的消息"
             }
         },
         "profile": {
@@ -329,18 +407,6 @@
             "vrc_sdk_downloads": {
                 "header": "下载 VRC SDK"
             },
-            "direct_access": {
-                "header": "直接打开",
-                "username": "用户名",
-                "user_id": "玩家 ID",
-                "world_instance": "世界 / 房间",
-                "avatar": "模型"
-            },
-            "invite_messages": "邀请他人时发送的消息",
-            "invite_response_messages": "对邀请的快捷回复",
-            "invite_request_messages": "请求加入的留言",
-            "invite_request_response_messages": "对加入请求的快捷回复",
-            "past_display_names": "使用过的昵称",
             "config_json": "API 端点返回的配置信息",
             "current_user_json": "当前账号的 JSON 信息",
             "feedback": "举报提交记录",
@@ -895,7 +961,7 @@
                 "close_instance": "关闭该房间",
                 "instance_age_gated": "房间具有年龄限制",
                 "open_previous_instance": "打开上次加入的房间",
-                "show_mutual_friends": "查看共同好友"
+                "show_mutual_friends": "是否允许查看共同好友"
             },
             "groups": {
                 "header": "群组",
@@ -1165,7 +1231,9 @@
                 "role_updated_at": "更新时间：",
                 "role_created_at": "创建时间：",
                 "role_permissions": "权限：",
-                "last_visited": "上次访问"
+                "last_visited": "上次访问",
+                "past_events": "上次举办的活动",
+                "upcoming_events": "即将到来的活动"
             },
             "posts": {
                 "header": "帖子",
@@ -1272,6 +1340,7 @@
             "content_prints": "拍立得",
             "content_drones": "无人机",
             "content_items": "物品",
+            "content_third_person": "第三人称视角",
             "world_id": "世界 ID",
             "instance_id": "房间 ID",
             "instance_id_placeholder": "通常是随机数",
@@ -1309,7 +1378,7 @@
             "header": "VRChat JSON 配置文件",
             "description1": "这些选项仅适用于高级用户。",
             "description2": "将输入框留白以使用默认值，设置需要重新启动游戏才能应用。",
-            "cache_size": "缓存大小：",
+            "cache_size": "总缓存：",
             "refresh": "刷新",
             "delete_all_cache": "删除所有缓存",
             "delete_cache": "删除缓存",
@@ -1404,7 +1473,7 @@
             "launch": "启动",
             "open_ingame": "在 VRChat 中打开",
             "self_invite": "自我邀请",
-            "game_running_warning": "你确定要启动第二个 VRChat 客户端吗？",
+            "game_running_warning": "你确定要启动另一个 VRChat 客户端吗？",
             "confirm_yes": "是，确认启动",
             "confirm_no": "否，我再想想"
         },
@@ -1418,7 +1487,7 @@
         },
         "discord_names": {
             "header": "Discord 名称",
-            "description": "点击好友列表中的「读取缺失的项目」按钮以搜索整个好友列表，而不仅仅是现有缓存"
+            "description": "点击好友列表中的“读取缺失的项目”按钮以搜索整个好友列表，而不仅仅是现有缓存"
         },
         "notification_position": {
             "header": "通知位置",
@@ -1522,13 +1591,20 @@
             "clear_errors": "清除错误信息"
         },
         "edit_invite_message": {
-            "header": "编辑留言",
+            "header": "编辑消息",
             "description": "编辑冷却时间：一小时",
             "cancel": "取消",
             "save": "保存"
         },
+        "edit_invite_messages": {
+            "header": "编辑消息",
+            "invite_message_tab": "邀请",
+            "invite_request_tab": "申请加入",
+            "invite_request_response_tab": "回绝加入申请",
+            "invite_response_tab": "回绝邀请"
+        },
         "invite_message": {
-            "header": "发送留言",
+            "header": "发送消息",
             "confirmation": "你确定要进行这个操作吗？",
             "select_image": "选择图片",
             "clear_selected_image": "清除选择",
@@ -1537,7 +1613,7 @@
             "confirm": "确定"
         },
         "invite_request_message": {
-            "header": "发送留言",
+            "header": "发送消息",
             "cancel": "取消",
             "refresh": "刷新"
         },
@@ -1746,7 +1822,8 @@
                 "description": "描述",
                 "export_to_calendar": "导出到日历",
                 "download_ics": "下载 .ics 文件"
-            }
+            },
+            "featured_events": "精选活动"
         },
         "moderate_group": {
             "header": "管理群组成员",
@@ -1785,7 +1862,7 @@
         "avatar": {
             "change_moderation_failed": "无法更新模型状态",
             "image_changed": "已更改模型封面",
-            "image_invalid": "上传的模型封面图片无效"
+            "image_invalid": "上传的封面图片无效"
         },
         "emoji": {
             "uploaded": "表情(Emoji)上传成功"
@@ -2135,7 +2212,8 @@
             "lastActivity": "上次活动",
             "lastLogin": "上次登录",
             "dateJoined": "账号创建于",
-            "unfriend": "删除好友"
+            "unfriend": "删除好友",
+            "mutualFriends": "共同好友"
         },
         "profile": {
             "invite_messages": {
