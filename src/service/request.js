@@ -284,7 +284,6 @@ export function $throw(code, error, endpoint) {
             `${t('api.error.message.endpoint')}: "${typeof endpoint === 'string' ? endpoint : JSON.stringify(endpoint)}"`
         );
     }
-    const text = message.map((s) => escapeTag(s)).join('<br>');
     let ignoreError = false;
     if (
         (code === 404 || code === -1) &&
@@ -298,11 +297,13 @@ export function $throw(code, error, endpoint) {
     ) {
         ignoreError = true;
     }
-    if (
-        (code === 403 || code === 404 || code === -1) &&
-        endpoint?.startsWith('instances/')
-    ) {
-        ignoreError = true;
+    if (code === 403 || code === 404 || code === -1) {
+        if (endpoint?.startsWith('instances/')) {
+            ignoreError = true;
+        }
+        if (endpoint?.includes('/mutuals/friends')) {
+            message[1] = `${t('api.error.message.error_message')}: "${t('api.error.message.unavailable')}"`;
+        }
     }
     if (endpoint?.startsWith('analysis/')) {
         ignoreError = true;
@@ -310,6 +311,8 @@ export function $throw(code, error, endpoint) {
     if (endpoint.endsWith('/mutuals') && (code === 403 || code === -1)) {
         ignoreError = true;
     }
+    const text = message.map((s) => escapeTag(s)).join('<br>');
+
     if (text.length && !ignoreError) {
         if (AppDebug.errorNoty) {
             AppDebug.errorNoty.close();

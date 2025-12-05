@@ -259,16 +259,16 @@ function parseUserUrl(user) {
 
 /**
  *
- * @param {object} ctx
+ * @param {object} ref
  * @returns {string}
  */
-function userOnlineFor(ctx) {
-    if (ctx.ref.state === 'online' && ctx.ref.$online_for) {
-        return timeToText(Date.now() - ctx.ref.$online_for);
-    } else if (ctx.ref.state === 'active' && ctx.ref.$active_for) {
-        return timeToText(Date.now() - ctx.ref.$active_for);
-    } else if (ctx.ref.$offline_for) {
-        return timeToText(Date.now() - ctx.ref.$offline_for);
+function userOnlineFor(ref) {
+    if (ref.state === 'online' && ref.$online_for) {
+        return timeToText(Date.now() - ref.$online_for);
+    } else if (ref.state === 'active' && ref.$active_for) {
+        return timeToText(Date.now() - ref.$active_for);
+    } else if (ref.$offline_for) {
+        return timeToText(Date.now() - ref.$offline_for);
     }
     return '-';
 }

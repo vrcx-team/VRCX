@@ -2223,7 +2223,8 @@
                 "vpn_in_use": "VRChatは現在ほとんどのVPNをブロックしています。接続中のVPNを無効にして、もう一度お試しください。",
                 "login_error": "ログインエラー",
                 "invalid_json_response": "無効なJSONレスポンス",
-                "403_404_bailing_request": "最近の404/403エラーのため、リクエストを中止しました"
+                "403_404_bailing_request": "最近の404/403エラーのため、リクエストを中止しました",
+                "unavailable": "サービスはVRChatの内部問題により利用できない可能性があります"
             }
         }
     }

@@ -2350,7 +2350,8 @@
                 "vpn_in_use": "VRChat currently blocks most VPNs. Please disable any connected VPNs and try again.",
                 "login_error": "Login Error",
                 "invalid_json_response": "Invalid JSON response",
-                "403_404_bailing_request": "Bailing request due to recent 404/403"
+                "403_404_bailing_request": "Bailing request due to recent 404/403",
+                "unavailable": "Service may be unavailable due to VRChat internal issues"
             }
         }
     }
