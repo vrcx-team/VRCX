@@ -268,6 +268,8 @@
         }
     }
 
+    const isCancelled = () => status.cancelRequested === true;
+
     async function startFetch() {
         const rateLimiter = createRateLimiter({
             limitPerInterval: 5,
@@ -278,12 +280,34 @@
             const collected = [];
             let offset = 0;
             while (true) {
+                if (isCancelled()) {
+                    break;
+                }
                 await rateLimiter.wait();
-                const args = await executeWithBackoff(() => userRequest.getMutualFriends({ userId, offset, n: 100 }), {
-                    maxRetries: 4,
-                    baseDelay: 500,
-                    shouldRetry: (err) => err?.status === 429 || (err?.message || '').includes('429')
+                if (isCancelled()) {
+                    break;
+                }
+                const args = await executeWithBackoff(
+                    () => {
+                        if (isCancelled()) {
+                            throw new Error('cancelled');
+                        }
+                        return userRequest.getMutualFriends({ userId, offset, n: 100 });
+                    },
+                    {
+                        maxRetries: 4,
+                        baseDelay: 500,
+                        shouldRetry: (err) => err?.status === 429 || (err?.message || '').includes('429')
+                    }
+                ).catch((err) => {
+                    if ((err?.message || '') === 'cancelled') {
+                        return null;
+                    }
+                    throw err;
                 });
+                if (!args || isCancelled()) {
+                    break;
+                }
                 collected.push(...args.json);
                 if (args.json.length < 100) {
                     break;
@@ -320,10 +344,22 @@
                 if (!friend?.id) {
                     continue;
                 }
+                if (isCancelled()) {
+                    cancelled = true;
+                    break;
+                }
                 try {
                     const mutuals = await fetchMutualFriends(friend.id);
+                    if (isCancelled()) {
+                        cancelled = true;
+                        break;
+                    }
                     mutualMap.set(friend.id, { friend, mutuals });
                 } catch (err) {
+                    if ((err?.message || '') === 'cancelled' || isCancelled()) {
+                        cancelled = true;
+                        break;
+                    }
                     console.warn('[MutualNetworkGraph] Skipping friend due to fetch error', friend.id, err);
                     continue;
                 }

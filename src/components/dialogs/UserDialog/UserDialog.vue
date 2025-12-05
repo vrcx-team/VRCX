@@ -363,7 +363,7 @@
                                             <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                         </el-tooltip>
                                     </span>
-                                    <span class="extra">{{ userOnlineFor(userDialog) }}</span>
+                                    <span class="extra">{{ userOnlineFor(userDialog.ref) }}</span>
                                 </div>
                             </el-tooltip>
                         </div>
@@ -538,7 +538,7 @@
 
                 <el-tab-pane
                     name="Mutual Friends"
-                    v-if="userDialog.id !== currentUser.id"
+                    v-if="userDialog.id !== currentUser.id && !currentUser.hasSharedConnectionsOptOut"
                     :label="t('dialog.user.mutual_friends.header')"
                     lazy>
                     <div style="display: flex; align-items: center; justify-content: space-between">

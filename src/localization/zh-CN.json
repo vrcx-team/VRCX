@@ -2349,7 +2349,8 @@
                 "vpn_in_use": "VRChat 目前限制了大多数的 VPN 服务。请断开所有已连接的 VPN 后重试。",
                 "login_error": "登录失败",
                 "invalid_json_response": "无效的 JSON 响应",
-                "403_404_bailing_request": "由于最近出现的 403/404 错误，请求已中止"
+                "403_404_bailing_request": "由于最近出现的 403/404 错误，请求已中止",
+                "unavailable": "服务可能由于 VRChat 内部问题而不可用"
             }
         }
     }
