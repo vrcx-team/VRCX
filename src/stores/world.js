@@ -133,8 +133,9 @@ export const useWorldStore = defineStore('World', () => {
                 D.loading = false;
                 D.visible = false;
                 ElMessage({
-                    message: 'Failed to load world',
-                    type: 'error'
+                    message: `Failed to load world. <a href="#" onclick="navigator.clipboard.writeText('${L.worldId}'); event.preventDefault();">Copy ID to clipboard</a>`,
+                    type: 'error',
+                    dangerouslyUseHTMLString: true
                 });
                 throw err;
             })
