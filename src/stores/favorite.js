@@ -9,7 +9,7 @@ import {
     replaceReactiveObject
 } from '../shared/utils';
 import { database } from '../service/database';
-import { favoriteRequest } from '../api';
+import { avatarRequest, favoriteRequest } from '../api';
 import { processBulk } from '../service/request';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAvatarStore } from './avatar';
@@ -1253,6 +1253,72 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
+     * 检查并清除失效的本地模型收藏
+     * @param {string | null} targetGroup - 指定要检查的分组,null表示检查所有分组
+     * @param {Function | null} onProgress - 进度回调函数,接收 (current, total) 参数
+     * @returns {Promise<{total: number, invalid: number, removed: number, removedIds: string[]}>}
+     */
+    async function checkAndRemoveInvalidLocalAvatars(targetGroup = null, onProgress = null) {
+        const result = {
+            total: 0,
+            invalid: 0,
+            removed: 0,
+            removedIds: []
+        };
+
+        const groupsToCheck = targetGroup
+            ? [targetGroup]
+            : localAvatarFavoriteGroups.value;
+
+        // 先计算总数
+        for (const group of groupsToCheck) {
+            const favoriteGroup = localAvatarFavorites[group];
+            if (favoriteGroup && favoriteGroup.length > 0) {
+                result.total += favoriteGroup.length;
+            }
+        }
+
+        let currentIndex = 0;
+
+        for (const group of groupsToCheck) {
+            const favoriteGroup = localAvatarFavorites[group];
+            if (!favoriteGroup || favoriteGroup.length === 0) {
+                continue;
+            }
+
+            const invalidAvatarIds = [];
+            
+            for (const favorite of favoriteGroup) {
+                currentIndex++;
+                
+                // 调用进度回调
+                if (typeof onProgress === 'function') {
+                    onProgress(currentIndex, result.total);
+                }
+                
+                try {
+                    await avatarRequest.getAvatar({
+                        avatarId: favorite.id
+                    });
+                } catch (err) {
+                    // 如果请求失败,说明模型已失效
+                    result.invalid++;
+                    invalidAvatarIds.push(favorite.id);
+                }
+            }
+
+            // 移除失效的模型
+            for (const avatarId of invalidAvatarIds) {
+                removeLocalAvatarFavorite(avatarId, group);
+                result.removed++;
+                result.removedIds.push(avatarId);
+            }
+        }
+
+        return result;
+    }
+
+    /**
      *
      * @param {string} newName
      * @param {string} group
@@ -1507,6 +1573,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         handleFavoriteGroup,
         handleFavoriteDelete,
         handleFavoriteAdd,
-        getCachedFavoritesByObjectId
+        getCachedFavoritesByObjectId,
+        checkAndRemoveInvalidLocalAvatars
     };
 });
