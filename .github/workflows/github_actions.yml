@@ -368,7 +368,7 @@ jobs:
                   mv ${file_name} ../../${file_name}
                   echo "Zip FileName: ${file_name}"
             - name: Upload Zip artifact
-              uses: actions/upload-artifact@v6
+              uses: actions/upload-artifact@v5
               with:
                   name: VRCX-Zip
                   path: 'VRCX_${{ needs.set_version.outputs.version }}.zip'
