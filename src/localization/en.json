@@ -728,7 +728,7 @@
                         "enable_tooltip": "Fetches video titles for use with gameLog and duration for overlay progress bar"
                     },
                     "translation_api": {
-                        "header": "Google Translate API",
+                        "header": "Bio Translate API",
                         "enable": "Enable",
                         "translation_api_key": "Google Translate API Key",
                         "enable_tooltip": "Translate user bios"
@@ -1407,11 +1407,26 @@
             "save": "Save"
         },
         "translation_api": {
-            "header": "Google Translate API",
+            "header": "Bio Translation API",
             "description": "Enter your Google translate API Key",
             "placeholder": "Google Translate API Key",
             "guide": "Guide",
-            "save": "Save"
+            "mode": "Provider",
+            "mode_google": "Google Translate",
+            "mode_openai": "OpenAI",
+            "test": "Test",
+            "msg_disabled": "Translation API disabled",
+            "msg_fill_endpoint_model": "Please fill endpoint and model",
+            "msg_settings_invalid": "Translation settings invalid",
+            "msg_settings_saved": "Translation settings saved",
+            "msg_test_success": "Test succeeded",
+            "msg_test_failed": "Test failed",
+            "openai": {
+                "endpoint": "API Endpoint",
+                "api_key": "API Key (Optional)",
+                "model": "Model Name",
+                "prompt_optional": "Prompt (Optional)"
+            }
         },
         "set_world_tags": {
             "header": "Set World Tags",

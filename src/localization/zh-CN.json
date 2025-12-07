@@ -727,7 +727,7 @@
                         "enable_tooltip": "获取视频标题以供日志记录使用，会一并获取进度条的时间"
                     },
                     "translation_api": {
-                        "header": "Google 翻译 API",
+                        "header": "自我介绍翻译 API",
                         "enable": "启用",
                         "translation_api_key": "输入 API 密钥",
                         "enable_tooltip": "用于翻译玩家的个人简介"
@@ -1406,7 +1406,7 @@
             "save": "保存"
         },
         "translation_api": {
-            "header": "Google 翻译 API",
+            "header": "自我介绍翻译 API",
             "description": "输入你的 Google 翻译 API 密钥",
             "placeholder": "输入形如“AIzaSy......”的密钥",
             "guide": "查看教程（英语）",
