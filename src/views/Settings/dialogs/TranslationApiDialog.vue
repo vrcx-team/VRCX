@@ -26,20 +26,65 @@
             </el-dropdown>
         </div>
         <br />
-        <div style="font-size: 12px">{{ t('dialog.translation_api.description') }} <br /></div>
+        <el-form label-position="top" label-width="120px" size="small" style="margin-bottom: 12px">
+            <el-form-item :label="t('dialog.translation_api.mode')">
+                <el-select v-model="form.translationApiType" style="width: 100%">
+                    <el-option value="google" :label="t('dialog.translation_api.mode_google')" />
+                    <el-option value="openai" :label="t('dialog.translation_api.mode_openai')" />
+                </el-select>
+            </el-form-item>
+        </el-form>
 
-        <el-input
-            v-model="translationApiKey"
-            type="textarea"
-            :placeholder="t('dialog.translation_api.placeholder')"
-            maxlength="39"
-            show-word-limit
-            style="display: block; margin-top: 10px">
-        </el-input>
+        <template v-if="form.translationApiType === 'google'">
+            <div style="font-size: 12px">{{ t('dialog.translation_api.description') }} <br /></div>
+
+            <el-input
+                v-model="form.translationApiKey"
+                type="textarea"
+                :placeholder="t('dialog.translation_api.placeholder')"
+                maxlength="39"
+                show-word-limit
+                style="display: block; margin-top: 10px">
+            </el-input>
+        </template>
+
+        <template v-if="form.translationApiType === 'openai'">
+            <el-form label-position="top" label-width="120px" size="small">
+                <el-form-item :label="t('dialog.translation_api.openai.endpoint')">
+                    <el-input
+                        v-model="form.translationApiEndpoint"
+                        placeholder="https://api.openai.com/v1/chat/completions"
+                        clearable
+                        textarea />
+                </el-form-item>
+
+                <el-form-item :label="t('dialog.translation_api.openai.api_key')">
+                    <el-input
+                        v-model="form.translationApiKey"
+                        type="textarea"
+                        :rows="4"
+                        show-password
+                        placeholder="sk-..."
+                        clearable />
+                </el-form-item>
+
+                <el-form-item :label="t('dialog.translation_api.openai.model')">
+                    <el-input v-model="form.translationApiModel" clearable />
+                </el-form-item>
+
+                <el-form-item :label="t('dialog.translation_api.openai.prompt_optional')">
+                    <el-input v-model="form.translationApiPrompt" type="textarea" :rows="3" clearable />
+                </el-form-item>
+            </el-form>
+        </template>
 
         <template #footer>
             <div style="display: flex">
+                <el-button v-if="form.translationApiType === 'openai'" @click="testOpenAiTranslation" plain>
+                    {{ t('dialog.translation_api.test') }}
+                </el-button>
                 <el-button
+                    v-if="form.translationApiType === 'google'"
                     @click="
                         openExternalLink(
                             'https://translatepress.com/docs/automatic-translation/generate-google-api-key/'
@@ -47,7 +92,7 @@
                     ">
                     {{ t('dialog.translation_api.guide') }}
                 </el-button>
-                <el-button type="primary" style="margin-left: auto" @click="testTranslationApiKey">
+                <el-button type="primary" style="margin-left: auto" @click="saveTranslationApiConfig">
                     {{ t('dialog.translation_api.save') }}
                 </el-button>
             </div>
@@ -56,6 +101,7 @@
 </template>
 
 <script setup>
+    import { reactive, watch } from 'vue';
     import { ArrowDown } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
@@ -66,13 +112,28 @@
 
     const advancedSettingsStore = useAdvancedSettingsStore();
 
-    const { bioLanguage, translationApiKey } = storeToRefs(advancedSettingsStore);
+    const {
+        bioLanguage,
+        translationApiKey,
+        translationApiType,
+        translationApiEndpoint,
+        translationApiModel,
+        translationApiPrompt
+    } = storeToRefs(advancedSettingsStore);
 
-    const { setBioLanguage, translateText, setTranslationApiKey } = advancedSettingsStore;
+    const {
+        setBioLanguage,
+        translateText,
+        setTranslationApiKey,
+        setTranslationApiType,
+        setTranslationApiEndpoint,
+        setTranslationApiModel,
+        setTranslationApiPrompt
+    } = advancedSettingsStore;
 
     const { messages, t } = useI18n();
 
-    defineProps({
+    const props = defineProps({
         isTranslationApiDialogVisible: {
             type: Boolean,
             default: false
@@ -81,32 +142,97 @@
 
     const emit = defineEmits(['update:isTranslationApiDialogVisible']);
 
-    async function testTranslationApiKey() {
-        const previousKey = translationApiKey.value;
-        if (!translationApiKey.value) {
+    const form = reactive({
+        translationApiType: 'google',
+        translationApiEndpoint: 'https://api.openai.com/v1/chat/completions',
+        translationApiModel: '',
+        translationApiPrompt: '',
+        translationApiKey: ''
+    });
+
+    const loadFormFromStore = () => {
+        form.translationApiType = translationApiType.value || 'google';
+        form.translationApiEndpoint = translationApiEndpoint.value || 'https://api.openai.com/v1/chat/completions';
+        form.translationApiModel = translationApiModel.value || '';
+        form.translationApiPrompt = translationApiPrompt.value || '';
+        form.translationApiKey = translationApiKey.value || '';
+    };
+
+    watch(
+        () => props.isTranslationApiDialogVisible,
+        (visible) => {
+            if (visible) {
+                loadFormFromStore();
+            }
+        },
+        { immediate: true }
+    );
+
+    async function saveTranslationApiConfig() {
+        if (form.translationApiType === 'openai') {
+            if (!form.translationApiEndpoint || !form.translationApiModel) {
+                ElMessage({
+                    message: t('dialog.translation_api.msg_fill_endpoint_model'),
+                    type: 'warning'
+                });
+                return;
+            }
+        }
+
+        await Promise.all([
+            setTranslationApiType(form.translationApiType),
+            setTranslationApiEndpoint(form.translationApiEndpoint),
+            setTranslationApiModel(form.translationApiModel),
+            setTranslationApiPrompt(form.translationApiPrompt),
+            setTranslationApiKey(form.translationApiKey)
+        ]);
+
+        ElMessage({
+            message: t('dialog.translation_api.msg_settings_saved'),
+            type: 'success'
+        });
+        closeDialog();
+    }
+
+    async function testOpenAiTranslation() {
+        if (form.translationApiType !== 'openai') {
+            return;
+        }
+        if (!form.translationApiEndpoint || !form.translationApiModel) {
             ElMessage({
-                message: 'Translation API key removed',
-                type: 'success'
+                message: t('dialog.translation_api.msg_fill_endpoint_model'),
+                type: 'warning'
             });
-            closeDialog();
             return;
         }
 
-        const testText = 'Hello world';
-        const data = await translateText(testText, 'fr');
-        if (!data) {
-            setTranslationApiKey(previousKey);
+        try {
+            const testText = 'Hello world';
+            const data = await translateText(testText, 'fr', {
+                type: form.translationApiType,
+                endpoint: form.translationApiEndpoint,
+                model: form.translationApiModel,
+                prompt: form.translationApiPrompt,
+                key: form.translationApiKey
+            });
+            if (data) {
+                ElMessage({
+                    message: t('dialog.translation_api.msg_test_success'),
+                    type: 'success'
+                });
+            } else {
+                console.error('[TranslationAPI] Test returned empty result');
+                ElMessage({
+                    message: t('dialog.translation_api.msg_test_failed'),
+                    type: 'error'
+                });
+            }
+        } catch (err) {
+            console.error('[TranslationAPI] Test failed', err);
             ElMessage({
-                message: 'Invalid Translation API key',
+                message: t('dialog.translation_api.msg_test_failed'),
                 type: 'error'
             });
-        } else {
-            setTranslationApiKey(translationApiKey.value);
-            ElMessage({
-                message: 'Translation API key valid!',
-                type: 'success'
-            });
-            closeDialog();
         }
     }
 

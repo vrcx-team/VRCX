@@ -238,6 +238,8 @@
                                         v-if="translationApi && userDialog.ref.bio"
                                         text
                                         size="small"
+                                        :loading="translateLoading"
+                                        :disabled="translateLoading"
                                         style="margin-left: 5px; padding: 0"
                                         @click="translateBio"
                                         ><i class="ri-translate-2"></i
@@ -1405,7 +1407,8 @@
     const { t } = useI18n();
 
     const { hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
-    const { bioLanguage, avatarRemoteDatabase, translationApi } = storeToRefs(useAdvancedSettingsStore());
+    const { bioLanguage, avatarRemoteDatabase, translationApi, translationApiType } =
+        storeToRefs(useAdvancedSettingsStore());
     const { translateText } = useAdvancedSettingsStore();
     const { userDialog, languageDialog, currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const {
@@ -1515,6 +1518,8 @@
         bio: '',
         bioLinks: []
     });
+
+    const translateLoading = ref(false);
 
     const pronounsDialog = ref({
         visible: false,
@@ -2405,8 +2410,10 @@
             return;
         }
 
+        translateLoading.value = true;
         try {
-            const translated = await translateText(bio + '\n\nTranslated by Google', targetLang);
+            const providerLabel = translationApiType.value === 'openai' ? 'OpenAI' : 'Google';
+            const translated = await translateText(`${bio}\n\nTranslated by ${providerLabel}`, targetLang);
             if (!translated) {
                 throw new Error('No translation returned');
             }
@@ -2416,6 +2423,8 @@
             userDialog.value.ref.bio = translated;
         } catch (err) {
             console.error('Translation failed:', err);
+        } finally {
+            translateLoading.value = false;
         }
     }
 

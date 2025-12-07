@@ -44,6 +44,12 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const youTubeApiKey = ref('');
     const translationApi = ref(false);
     const translationApiKey = ref('');
+    const translationApiType = ref('google'); // 'google' | 'openai'
+    const translationApiEndpoint = ref(
+        'https://api.openai.com/v1/chat/completions'
+    );
+    const translationApiModel = ref('gpt-4o-mini');
+    const translationApiPrompt = ref('');
     const progressPie = ref(false);
     const progressPieFilter = ref(true);
     const showConfirmationOnSwitchAvatar = ref(false);
@@ -90,6 +96,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             youTubeApiKeyConfig,
             translationApiConfig,
             translationApiKeyConfig,
+            translationApiTypeConfig,
+            translationApiEndpointConfig,
+            translationApiModelConfig,
+            translationApiPromptConfig,
             progressPieConfig,
             progressPieFilterConfig,
             showConfirmationOnSwitchAvatarConfig,
@@ -131,6 +141,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getString('VRCX_youtubeAPIKey', ''),
             configRepository.getBool('VRCX_translationAPI', false),
             configRepository.getString('VRCX_translationAPIKey', ''),
+            configRepository.getString('VRCX_translationAPIType', 'google'),
+            configRepository.getString('VRCX_translationAPIEndpoint', ''),
+            configRepository.getString('VRCX_translationAPIModel', ''),
+            configRepository.getString('VRCX_translationAPIPrompt', ''),
             configRepository.getBool('VRCX_progressPie', false),
             configRepository.getBool('VRCX_progressPieFilter', true),
             configRepository.getBool(
@@ -178,6 +192,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         youTubeApiKey.value = youTubeApiKeyConfig;
         translationApi.value = translationApiConfig;
         translationApiKey.value = translationApiKeyConfig;
+        translationApiType.value = translationApiTypeConfig;
+        translationApiEndpoint.value = translationApiEndpointConfig;
+        translationApiModel.value = translationApiModelConfig;
+        translationApiPrompt.value = translationApiPromptConfig;
         progressPie.value = progressPieConfig;
         progressPieFilter.value = progressPieFilterConfig;
         showConfirmationOnSwitchAvatar.value =
@@ -342,6 +360,34 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         await configRepository.setString(
             'VRCX_translationAPIKey',
             translationApiKey.value
+        );
+    }
+    async function setTranslationApiType(value) {
+        translationApiType.value = value || 'google';
+        await configRepository.setString(
+            'VRCX_translationAPIType',
+            translationApiType.value
+        );
+    }
+    async function setTranslationApiEndpoint(value) {
+        translationApiEndpoint.value = value;
+        await configRepository.setString(
+            'VRCX_translationAPIEndpoint',
+            translationApiEndpoint.value
+        );
+    }
+    async function setTranslationApiModel(value) {
+        translationApiModel.value = value;
+        await configRepository.setString(
+            'VRCX_translationAPIModel',
+            translationApiModel.value
+        );
+    }
+    async function setTranslationApiPrompt(value) {
+        translationApiPrompt.value = value;
+        await configRepository.setString(
+            'VRCX_translationAPIPrompt',
+            translationApiPrompt.value
         );
     }
     function setBioLanguage(language) {
@@ -586,39 +632,121 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         return data;
     }
 
-    async function translateText(text, targetLang) {
-        if (!translationApiKey.value) {
+    async function translateText(text, targetLang, overrides) {
+        if (!translationApi.value) {
             ElMessage({
-                message: 'No Translation API key configured',
+                message: 'Translation API disabled',
                 type: 'warning'
             });
             return null;
         }
 
+        const provider =
+            overrides?.type || translationApiType.value || 'google';
+
+        if (provider === 'google') {
+            const keyToUse = overrides?.key ?? translationApiKey.value;
+            if (!keyToUse) {
+                ElMessage({
+                    message: 'No Translation API key configured',
+                    type: 'warning'
+                });
+                return null;
+            }
+            try {
+                const response = await webApiService.execute({
+                    url: `https://translation.googleapis.com/language/translate/v2?key=${keyToUse}`,
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Referer: 'https://vrcx.app'
+                    },
+                    body: JSON.stringify({
+                        q: text,
+                        target: targetLang,
+                        format: 'text'
+                    })
+                });
+                if (response.status !== 200) {
+                    throw new Error(
+                        `Translation API error: ${response.status} - ${response.data}`
+                    );
+                }
+                const data = JSON.parse(response.data);
+                if (AppDebug.debugWebRequests) {
+                    console.log(data, response);
+                }
+                return data.data.translations[0].translatedText;
+            } catch (err) {
+                ElMessage({
+                    message: `Translation failed: ${err.message}`,
+                    type: 'error'
+                });
+                return null;
+            }
+        }
+
+        const endpoint =
+            overrides?.endpoint ||
+            translationApiEndpoint.value ||
+            'https://api.openai.com/v1/chat/completions';
+        const model =
+            overrides?.model || translationApiModel.value || 'gpt-5.1';
+        const prompt =
+            overrides?.prompt ||
+            translationApiPrompt.value ||
+            `You are a translation assistant. Translate the user message into ${targetLang}. Only return the translated text.`;
+
+        if (!endpoint || !model) {
+            ElMessage({
+                message: 'Translation endpoint/model missing',
+                type: 'warning'
+            });
+            return null;
+        }
+
+        const headers = {
+            'Content-Type': 'application/json',
+            Referer: 'https://vrcx.app'
+        };
+        const keyToUse = overrides?.key ?? translationApiKey.value;
+        if (keyToUse) {
+            headers.Authorization = `Bearer ${keyToUse}`;
+        }
+
         try {
             const response = await webApiService.execute({
-                url: `https://translation.googleapis.com/language/translate/v2?key=${translationApiKey.value}`,
+                url: endpoint,
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Referer: 'https://vrcx.app'
-                },
+                headers,
                 body: JSON.stringify({
-                    q: text,
-                    target: targetLang,
-                    format: 'text'
+                    model,
+                    messages: [
+                        {
+                            role: 'system',
+                            content: prompt
+                        },
+                        {
+                            role: 'user',
+                            content: text
+                        }
+                    ]
                 })
             });
+
             if (response.status !== 200) {
                 throw new Error(
                     `Translation API error: ${response.status} - ${response.data}`
                 );
             }
+
             const data = JSON.parse(response.data);
             if (AppDebug.debugWebRequests) {
                 console.log(data, response);
             }
-            return data.data.translations[0].translatedText;
+
+            const translated = data?.choices?.[0]?.message?.content;
+            return typeof translated === 'string' ? translated.trim() : null;
         } catch (err) {
             ElMessage({
                 message: `Translation failed: ${err.message}`,
@@ -834,6 +962,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         translationApi,
         youTubeApiKey,
         translationApiKey,
+        translationApiType,
+        translationApiEndpoint,
+        translationApiModel,
+        translationApiPrompt,
         progressPie,
         progressPieFilter,
         showConfirmationOnSwitchAvatar,
@@ -869,6 +1001,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         setTranslationApi,
         setYouTubeApiKey,
         setTranslationApiKey,
+        setTranslationApiType,
+        setTranslationApiEndpoint,
+        setTranslationApiModel,
+        setTranslationApiPrompt,
         setProgressPie,
         setProgressPieFilter,
         setShowConfirmationOnSwitchAvatar,
