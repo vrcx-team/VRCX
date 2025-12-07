@@ -132,11 +132,26 @@ export const useWorldStore = defineStore('World', () => {
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
+                const errWorldId = L.worldId;
+                const errPopupId = `worldRequest-error-${Date.now()}`;
+                const errPopupMsg = `Failed to load world. <span id="${errPopupId}" style="color: #50D0FF; cursor: pointer; text-decoration: underline;">Copy ID to clipboard</span>`;
                 ElMessage({
-                    message: `Failed to load world. <a href="#" onclick="navigator.clipboard.writeText('${L.worldId}'); event.preventDefault();">Copy ID to clipboard</a>`,
+                    message: errPopupMsg,
                     type: 'error',
                     dangerouslyUseHTMLString: true
                 });
+                setTimeout(() => {
+                    const errPopupEl = document.getElementById(errPopupId);
+                    if (errPopupEl) {
+                        const handleClick = () => {
+                            navigator.clipboard.writeText(errWorldId).then(() => {
+                                errPopupEl.textContent = 'Copied!';
+                                errPopupEl.style.color = '#B0FF0F';
+                            })
+                        };
+                        errPopupEl.addEventListener('click', handleClick, {once: true});
+                    }
+                }, 0);
                 throw err;
             })
             .then((args) => {
