@@ -305,6 +305,7 @@ declare global {
             searchType?: number
         ): Promise<string>;
         GetLastScreenshot(): Promise<string>;
+        GetScreenshotsList(): Promise<Array<string>>;
         DeleteScreenshotMetadata(path: string): Promise<boolean>;
         DeleteAllScreenshotMetadata(): Promise<void>;
 
