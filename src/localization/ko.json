@@ -97,7 +97,15 @@
                 "search": "검색",
                 "vrchat_favorites": "VRChat 즐겨찾기",
                 "local_favorites": "Local Favorites (Requires VRC+)",
-                "new_group": "새 그룹"
+                "new_group": "새 그룹",
+                "check_invalid": "이 그룹의 유효하지 않은 모델 확인",
+                "check_description": "이 그룹에서 유효하지 않은 모델을 감지하고 삭제",
+                "checking": "유효하지 않은 모델 확인 중...",
+                "check_progress": "확인 진행: {current}/{total}",
+                "check_complete": "확인 완료!",
+                "check_summary": "{total}개의 모델을 확인했고, {invalid}개의 유효하지 않은 모델을 발견했으며, {removed}개를 제거했습니다",
+                "removed_list_header": "제거된 모델 목록:",
+                "copy_removed_ids": "제거된 모델 ID 복사"
             },
             "bulk_unfavorite_mode": "즐겨찾기 해제 모드",
             "bulk_unfavorite_selection": "선택한 즐겨찾기 해제",

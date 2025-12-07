@@ -142,7 +142,15 @@
                 "local_favorites": "ローカルのお気に入り (VRC+が必要)",
                 "new_group": "グループ作成",
                 "refresh": "更新",
-                "cancel_refresh": "キャッシュ削除"
+                "cancel_refresh": "キャッシュ削除",
+                "check_invalid": "このグループの無効なアバターをチェック",
+                "check_description": "このグループ内の無効なアバターを検出して削除",
+                "checking": "無効なアバターをチェック中...",
+                "check_progress": "進行状況：{current}/{total}",
+                "check_complete": "チェック完了！",
+                "check_summary": "{total}個のアバターをチェックし、{invalid}個の無効なアバターを発見、{removed}個を削除しました",
+                "removed_list_header": "削除されたアバターリスト：",
+                "copy_removed_ids": "削除されたアバターIDをコピー"
             },
             "edit_mode": "編集モード",
             "copy": "コピー",
