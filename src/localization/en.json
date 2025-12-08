@@ -180,7 +180,13 @@
                 "check_complete": "Check complete!",
                 "check_summary": "Checked {total} avatars, found {invalid} invalid, removed {removed}",
                 "removed_list_header": "Removed avatar list:",
-                "copy_removed_ids": "Copy Removed Avatar IDs"
+                "copy_removed_ids": "Copy Removed Avatar IDs",
+                "checking_progress": "Checking avatar ({current}/{total})...",
+                "confirm_delete_invalid": "Delete Invalid Avatars?",
+                "confirm_delete_description": "Found {count} invalid avatars, delete them?",
+                "delete_summary": "Successfully deleted {removed} invalid avatars",
+                "no_invalid_found": "No invalid avatars found",
+                "delete_cancelled": "Delete operation cancelled"
             },
             "edit_mode": "Edit Mode",
             "copy": "Copy",

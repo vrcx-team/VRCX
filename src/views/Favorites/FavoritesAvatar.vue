@@ -499,9 +499,9 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+    import { computed, h, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
     import { Loading, MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessage, ElMessageBox, ElNotification, ElProgress } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -551,7 +551,8 @@
         refreshFavorites,
         getLocalWorldFavorites,
         handleFavoriteGroup,
-        checkAndRemoveInvalidLocalAvatars
+        checkInvalidLocalAvatars,
+        removeInvalidLocalAvatars
     } = favoriteStore;
     const { avatarHistory } = storeToRefs(useAvatarStore());
     const { promptClearAvatarHistory, showAvatarDialog, applyAvatar } = useAvatarStore();
@@ -1084,100 +1085,153 @@
     async function handleCheckInvalidAvatars(groupName) {
         handleGroupMenuVisible(localGroupMenuKey(groupName), false);
         
-        ElMessageBox.confirm(
-            t('view.favorite.avatars.check_description'),
-            t('view.favorite.avatars.check_invalid'),
-            {
-                confirmButtonText: t('confirm.confirm_button'),
-                cancelButtonText: t('confirm.cancel_button'),
-                type: 'info'
-            }
-        )
-            .then(async () => {
-                let loadingInstance = ElMessage({
-                    message: t('view.favorite.avatars.checking') + '(0/0)...',
-                    type: 'info',
-                    duration: 0
-                });
-
-                try {
-                    const result = await checkAndRemoveInvalidLocalAvatars(groupName, (current, total) => {
-                        // 关闭旧的消息并创建新的消息来更新进度
-                        loadingInstance.close();
-                        loadingInstance = ElMessage({
-                            message: t('view.favorite.avatars.checking') + `(${current}/${total})...`,
-                            type: 'info',
-                            duration: 0
-                        });
-                    });
-                    loadingInstance.close();
-                    
-                    // 构建结果消息
-                    const summaryMessage = t('view.favorite.avatars.check_complete') + '\n' +
-                        t('view.favorite.avatars.check_summary', {
-                            total: result.total,
-                            invalid: result.invalid,
-                            removed: result.removed
-                        });
-                    
-                    // 如果有删除的模型，显示详细列表
-                    if (result.removedIds && result.removedIds.length > 0) {
-                        const removedListHtml = result.removedIds.map(id => `<div style="font-family: monospace; font-size: 12px; padding: 2px 0;">${id}</div>`).join('');
-                        
-                        ElMessageBox.alert(
-                            `<div style="margin-bottom: 12px;">${summaryMessage}</div>
-                            <div style="margin-top: 12px; margin-bottom: 8px; font-weight: 600;">${t('view.favorite.avatars.removed_list_header')}</div>
-                            <div style="max-height: 200px; overflow-y: auto; background: var(--el-fill-color-lighter); padding: 8px; border-radius: 4px;">
-                                ${removedListHtml}
-                            </div>`,
-                            t('view.favorite.avatars.check_complete'),
-                            {
-                                confirmButtonText: t('confirm.confirm_button'),
-                                dangerouslyUseHTMLString: true,
-                                showClose: true,
-                                showCancelButton: true,
-                                cancelButtonText: t('view.favorite.avatars.copy_removed_ids'),
-                                distinguishCancelAndClose: true,
-                                beforeClose: (action, instance, done) => {
-                                    if (action === 'cancel') {
-                                        // 复制到剪贴板
-                                        const idsText = result.removedIds.join('\n');
-                                        navigator.clipboard.writeText(idsText).then(() => {
-                                            ElMessage({
-                                                message: t('dialog.user.info.copy_id'),
-                                                type: 'success'
-                                            });
-                                        }).catch(() => {
-                                            ElMessage({
-                                                message: 'Failed to copy',
-                                                type: 'error'
-                                            });
-                                        });
-                                        done();
-                                    } else {
-                                        done();
-                                    }
-                                }
-                            }
-                        ).catch(() => {});
-                    } else {
-                        // 没有删除的模型，只显示摘要
-                        ElMessage({
-                            message: summaryMessage,
-                            type: result.removed > 0 ? 'success' : 'info',
-                            duration: 5000
-                        });
-                    }
-                } catch (err) {
-                    loadingInstance.close();
-                    console.error(err);
-                    ElMessage({
-                        message: t('message.api_handler.avatar_private_or_deleted'),
-                        type: 'error'
-                    });
+        try {
+            await ElMessageBox.confirm(
+                t('view.favorite.avatars.check_description'),
+                t('view.favorite.avatars.check_invalid'),
+                {
+                    confirmButtonText: t('confirm.confirm_button'),
+                    cancelButtonText: t('confirm.cancel_button'),
+                    type: 'info'
                 }
-            })
-            .catch(() => {});
+            );
+        } catch {
+            return;
+        }
+
+        const progressState = reactive({
+            current: 0,
+            total: 0,
+            percentage: 0
+        });
+
+        const ProgressContent = {
+            setup() {
+                return () => h('div', { style: 'padding: 4px 0;' }, [
+                    h('p', {
+                        style: 'margin: 0 0 12px 0; font-size: 14px; color: var(--el-text-color-primary);'
+                    }, t('view.favorite.avatars.checking_progress', {
+                        current: progressState.current,
+                        total: progressState.total
+                    })),
+                    h(ElProgress, {
+                        percentage: progressState.percentage,
+                        style: 'margin-top: 8px;'
+                    })
+                ]);
+            }
+        };
+
+        let progressNotification = null;
+        
+        try {
+            progressNotification = ElNotification({
+                title: t('view.favorite.avatars.checking'),
+                message: h(ProgressContent),
+                duration: 0,
+                type: 'info',
+                position: 'bottom-right'
+            });
+
+            const result = await checkInvalidLocalAvatars(groupName, (current, total) => {
+                progressState.current = current;
+                progressState.total = total;
+                progressState.percentage = Math.floor((current / total) * 100);
+            });
+
+            if (progressNotification) {
+                progressNotification.close();
+                progressNotification = null;
+            }
+
+            if (result.invalid === 0) {
+                ElNotification({
+                    title: t('view.favorite.avatars.check_complete'),
+                    message: t('view.favorite.avatars.no_invalid_found'),
+                    type: 'success',
+                    duration: 5000,
+                    position: 'bottom-right'
+                });
+                return;
+            }
+
+            const confirmDelete = await ElMessageBox.confirm(
+                h('div', [
+                    h('p', { style: 'margin-bottom: 12px;' },
+                        t('view.favorite.avatars.confirm_delete_description', { count: result.invalid })
+                    ),
+                    h('div', { style: 'margin-top: 12px; margin-bottom: 8px; font-weight: 600;' },
+                        t('view.favorite.avatars.removed_list_header')
+                    ),
+                    h('div', {
+                        style: 'max-height: 200px; overflow-y: auto; background: var(--el-fill-color-lighter); padding: 8px; border-radius: 4px;'
+                    }, result.invalidIds.map(id =>
+                        h('div', { style: 'font-family: monospace; font-size: 12px; padding: 2px 0;' }, id)
+                    ))
+                ]),
+                t('view.favorite.avatars.confirm_delete_invalid'),
+                {
+                    confirmButtonText: t('confirm.confirm_button'),
+                    cancelButtonText: t('view.favorite.avatars.copy_removed_ids'),
+                    distinguishCancelAndClose: true,
+                    type: 'warning',
+                    beforeClose: (action, instance, done) => {
+                        if (action === 'cancel') {
+                            navigator.clipboard.writeText(result.invalidIds.join('\n'))
+                                .then(() => {
+                                    ElMessage({
+                                        message: t('dialog.user.info.copy_id'),
+                                        type: 'success'
+                                    });
+                                })
+                                .catch(() => {
+                                    ElMessage({
+                                        message: 'Failed to copy',
+                                        type: 'error'
+                                    });
+                                });
+                            return;
+                        }
+                        done();
+                    }
+                }
+            ).then(() => true).catch(() => false);
+
+            if (!confirmDelete) {
+                ElNotification({
+                    title: t('view.favorite.avatars.check_complete'),
+                    message: t('view.favorite.avatars.delete_cancelled'),
+                    type: 'info',
+                    duration: 5000,
+                    position: 'bottom-right'
+                });
+                return;
+            }
+
+            const removeResult = await removeInvalidLocalAvatars(result.invalidIds, groupName);
+
+            ElNotification({
+                title: t('view.favorite.avatars.check_complete'),
+                message: t('view.favorite.avatars.delete_summary', {
+                    removed: removeResult.removed
+                }),
+                type: 'success',
+                duration: 5000,
+                position: 'bottom-right'
+            });
+        } catch (err) {
+            if (progressNotification) {
+                progressNotification.close();
+            }
+            console.error(err);
+            ElNotification({
+                title: t('message.api_handler.avatar_private_or_deleted'),
+                message: String(err.message || err),
+                type: 'error',
+                duration: 5000,
+                position: 'bottom-right'
+            });
+        }
     }
 
     function handleHistoryClear() {

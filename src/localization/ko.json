@@ -105,7 +105,13 @@
                 "check_complete": "확인 완료!",
                 "check_summary": "{total}개의 모델을 확인했고, {invalid}개의 유효하지 않은 모델을 발견했으며, {removed}개를 제거했습니다",
                 "removed_list_header": "제거된 모델 목록:",
-                "copy_removed_ids": "제거된 모델 ID 복사"
+                "copy_removed_ids": "제거된 모델 ID 복사",
+                "checking_progress": "모델 확인 중 ({current}/{total})...",
+                "confirm_delete_invalid": "유효하지 않은 모델을 삭제하시겠습니까?",
+                "confirm_delete_description": "{count}개의 유효하지 않은 모델을 발견했습니다. 삭제하시겠습니까?",
+                "delete_summary": "{removed}개의 유효하지 않은 모델을 성공적으로 삭제했습니다",
+                "no_invalid_found": "유효하지 않은 모델을 찾을 수 없습니다",
+                "delete_cancelled": "삭제 작업이 취소되었습니다"
             },
             "bulk_unfavorite_mode": "즐겨찾기 해제 모드",
             "bulk_unfavorite_selection": "선택한 즐겨찾기 해제",

@@ -1253,24 +1253,22 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * 检查并清除失效的本地模型收藏
-     * @param {string | null} targetGroup - 指定要检查的分组,null表示检查所有分组
-     * @param {Function | null} onProgress - 进度回调函数,接收 (current, total) 参数
-     * @returns {Promise<{total: number, invalid: number, removed: number, removedIds: string[]}>}
+     * Check invalid local avatar favorites
+     * @param {string | null} targetGroup - Target group to check, null for all groups
+     * @param {Function | null} onProgress - Progress callback function, receives (current, total) parameters
+     * @returns {Promise<{total: number, invalid: number, invalidIds: string[]}>}
      */
-    async function checkAndRemoveInvalidLocalAvatars(targetGroup = null, onProgress = null) {
+    async function checkInvalidLocalAvatars(targetGroup = null, onProgress = null) {
         const result = {
             total: 0,
             invalid: 0,
-            removed: 0,
-            removedIds: []
+            invalidIds: []
         };
 
         const groupsToCheck = targetGroup
             ? [targetGroup]
             : localAvatarFavoriteGroups.value;
 
-        // 先计算总数
         for (const group of groupsToCheck) {
             const favoriteGroup = localAvatarFavorites[group];
             if (favoriteGroup && favoriteGroup.length > 0) {
@@ -1285,13 +1283,10 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             if (!favoriteGroup || favoriteGroup.length === 0) {
                 continue;
             }
-
-            const invalidAvatarIds = [];
             
             for (const favorite of favoriteGroup) {
                 currentIndex++;
                 
-                // 调用进度回调
                 if (typeof onProgress === 'function') {
                     onProgress(currentIndex, result.total);
                 }
@@ -1300,18 +1295,48 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                     await avatarRequest.getAvatar({
                         avatarId: favorite.id
                     });
+                    await new Promise(resolve => setTimeout(resolve, 500));
                 } catch (err) {
-                    // 如果请求失败,说明模型已失效
                     result.invalid++;
-                    invalidAvatarIds.push(favorite.id);
+                    result.invalidIds.push(favorite.id);
                 }
             }
+        }
 
-            // 移除失效的模型
-            for (const avatarId of invalidAvatarIds) {
-                removeLocalAvatarFavorite(avatarId, group);
-                result.removed++;
-                result.removedIds.push(avatarId);
+        return result;
+    }
+
+    /**
+     * Remove invalid avatars from local favorites
+     * @param {string[]} avatarIds - Array of avatar IDs to remove
+     * @param {string | null} targetGroup - Target group, null for all groups
+     * @returns {Promise<{removed: number, removedIds: string[]}>}
+     */
+    async function removeInvalidLocalAvatars(avatarIds, targetGroup = null) {
+        const result = {
+            removed: 0,
+            removedIds: []
+        };
+
+        const groupsToCheck = targetGroup
+            ? [targetGroup]
+            : localAvatarFavoriteGroups.value;
+
+        for (const group of groupsToCheck) {
+            const favoriteGroup = localAvatarFavorites[group];
+            if (!favoriteGroup) {
+                continue;
+            }
+
+            for (const avatarId of avatarIds) {
+                const index = favoriteGroup.findIndex(fav => fav.id === avatarId);
+                if (index !== -1) {
+                    removeLocalAvatarFavorite(avatarId, group);
+                    result.removed++;
+                    if (!result.removedIds.includes(avatarId)) {
+                        result.removedIds.push(avatarId);
+                    }
+                }
             }
         }
 
@@ -1574,6 +1599,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         handleFavoriteDelete,
         handleFavoriteAdd,
         getCachedFavoritesByObjectId,
-        checkAndRemoveInvalidLocalAvatars
+        checkInvalidLocalAvatars,
+        removeInvalidLocalAvatars
     };
 });
