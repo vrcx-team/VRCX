@@ -327,7 +327,10 @@
             }
 
             // first, find the user's entries, then get the focused entry
-            const instanceData = userGroupedEntries.get(userData.user_id)[targetEntryIndex].entry;
+            const instanceData = userGroupedEntries.get(userData.user_id)[targetEntryIndex]?.entry;
+            if (!instanceData) {
+                return '';
+            }
 
             const format = dtHour12.value ? 'hh:mm:ss A' : 'HH:mm:ss';
             const formattedLeftDateTime = dayjs(instanceData.leaveTime).format(format);
