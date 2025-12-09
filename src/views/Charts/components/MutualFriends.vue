@@ -203,7 +203,8 @@
                 }
                 const friendEntry = friends.value?.get ? friends.value.get(friendId) : undefined;
                 const fallbackRef = friendEntry?.ref || cachedUsers.get(friendId);
-                const normalizedMutuals = Array.isArray(mutualIds) ? mutualIds : [];
+                let normalizedMutuals = Array.isArray(mutualIds) ? mutualIds : [];
+                normalizedMutuals = normalizedMutuals.filter((id) => id != "usr_00000000-0000-0000-0000-000000000000");
                 mutualMap.set(friendId, {
                     friend: friendEntry || (fallbackRef ? { id: friendId, ref: fallbackRef } : { id: friendId }),
                     mutuals: normalizedMutuals.map((id) => ({ id }))
