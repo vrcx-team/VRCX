@@ -500,8 +500,8 @@
 
 <script setup>
     import { computed, h, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-    import { Loading, MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox, ElNotification, ElProgress } from 'element-plus';
+    import { Loading, MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -1084,7 +1084,7 @@
 
     async function handleCheckInvalidAvatars(groupName) {
         handleGroupMenuVisible(localGroupMenuKey(groupName), false);
-        
+
         try {
             await ElMessageBox.confirm(
                 t('view.favorite.avatars.check_description'),
@@ -1107,23 +1107,28 @@
 
         const ProgressContent = {
             setup() {
-                return () => h('div', { style: 'padding: 4px 0;' }, [
-                    h('p', {
-                        style: 'margin: 0 0 12px 0; font-size: 14px; color: var(--el-text-color-primary);'
-                    }, t('view.favorite.avatars.checking_progress', {
-                        current: progressState.current,
-                        total: progressState.total
-                    })),
-                    h(ElProgress, {
-                        percentage: progressState.percentage,
-                        style: 'margin-top: 8px;'
-                    })
-                ]);
+                return () =>
+                    h('div', { style: 'padding: 4px 0;' }, [
+                        h(
+                            'p',
+                            {
+                                style: 'margin: 0 0 12px 0; font-size: 14px; color: var(--el-text-color-primary);'
+                            },
+                            t('view.favorite.avatars.checking_progress', {
+                                current: progressState.current,
+                                total: progressState.total
+                            })
+                        ),
+                        h(ElProgress, {
+                            percentage: progressState.percentage,
+                            style: 'margin-top: 8px;'
+                        })
+                    ]);
             }
         };
 
         let progressNotification = null;
-        
+
         try {
             progressNotification = ElNotification({
                 title: t('view.favorite.avatars.checking'),
@@ -1157,17 +1162,25 @@
 
             const confirmDelete = await ElMessageBox.confirm(
                 h('div', [
-                    h('p', { style: 'margin-bottom: 12px;' },
+                    h(
+                        'p',
+                        { style: 'margin-bottom: 12px;' },
                         t('view.favorite.avatars.confirm_delete_description', { count: result.invalid })
                     ),
-                    h('div', { style: 'margin-top: 12px; margin-bottom: 8px; font-weight: 600;' },
+                    h(
+                        'div',
+                        { style: 'margin-top: 12px; margin-bottom: 8px; font-weight: 600;' },
                         t('view.favorite.avatars.removed_list_header')
                     ),
-                    h('div', {
-                        style: 'max-height: 200px; overflow-y: auto; background: var(--el-fill-color-lighter); padding: 8px; border-radius: 4px;'
-                    }, result.invalidIds.map(id =>
-                        h('div', { style: 'font-family: monospace; font-size: 12px; padding: 2px 0;' }, id)
-                    ))
+                    h(
+                        'div',
+                        {
+                            style: 'max-height: 200px; overflow-y: auto; background: var(--el-fill-color-lighter); padding: 8px; border-radius: 4px;'
+                        },
+                        result.invalidIds.map((id) =>
+                            h('div', { style: 'font-family: monospace; font-size: 12px; padding: 2px 0;' }, id)
+                        )
+                    )
                 ]),
                 t('view.favorite.avatars.confirm_delete_invalid'),
                 {
@@ -1177,10 +1190,11 @@
                     type: 'warning',
                     beforeClose: (action, instance, done) => {
                         if (action === 'cancel') {
-                            navigator.clipboard.writeText(result.invalidIds.join('\n'))
+                            navigator.clipboard
+                                .writeText(result.invalidIds.join('\n'))
                                 .then(() => {
                                     ElMessage({
-                                        message: t('dialog.user.info.copy_id'),
+                                        message: t('view.favorite.avatars.copied_ids'),
                                         type: 'success'
                                     });
                                 })
@@ -1195,7 +1209,9 @@
                         done();
                     }
                 }
-            ).then(() => true).catch(() => false);
+            )
+                .then(() => true)
+                .catch(() => false);
 
             if (!confirmDelete) {
                 ElNotification({
