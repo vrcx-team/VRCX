@@ -242,6 +242,12 @@
                                                     </button>
                                                     <button
                                                         type="button"
+                                                        class="favorites-group-menu__item"
+                                                        @click="handleCheckInvalidAvatars(group)">
+                                                        <span>{{ t('view.favorite.avatars.check_invalid') }}</span>
+                                                    </button>
+                                                    <button
+                                                        type="button"
                                                         class="favorites-group-menu__item favorites-group-menu__item--danger"
                                                         @click="handleLocalDelete(group)">
                                                         <span>{{ t('view.favorite.delete_tooltip') }}</span>
@@ -493,9 +499,9 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+    import { computed, h, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
     import { Loading, MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessage, ElMessageBox, ElNotification, ElProgress } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -544,7 +550,9 @@
         localAvatarFavoritesList,
         refreshFavorites,
         getLocalWorldFavorites,
-        handleFavoriteGroup
+        handleFavoriteGroup,
+        checkInvalidLocalAvatars,
+        removeInvalidLocalAvatars
     } = favoriteStore;
     const { avatarHistory } = storeToRefs(useAvatarStore());
     const { promptClearAvatarHistory, showAvatarDialog, applyAvatar } = useAvatarStore();
@@ -1072,6 +1080,158 @@
     function handleLocalDelete(groupName) {
         handleGroupMenuVisible(localGroupMenuKey(groupName), false);
         promptLocalAvatarFavoriteGroupDelete(groupName);
+    }
+
+    async function handleCheckInvalidAvatars(groupName) {
+        handleGroupMenuVisible(localGroupMenuKey(groupName), false);
+        
+        try {
+            await ElMessageBox.confirm(
+                t('view.favorite.avatars.check_description'),
+                t('view.favorite.avatars.check_invalid'),
+                {
+                    confirmButtonText: t('confirm.confirm_button'),
+                    cancelButtonText: t('confirm.cancel_button'),
+                    type: 'info'
+                }
+            );
+        } catch {
+            return;
+        }
+
+        const progressState = reactive({
+            current: 0,
+            total: 0,
+            percentage: 0
+        });
+
+        const ProgressContent = {
+            setup() {
+                return () => h('div', { style: 'padding: 4px 0;' }, [
+                    h('p', {
+                        style: 'margin: 0 0 12px 0; font-size: 14px; color: var(--el-text-color-primary);'
+                    }, t('view.favorite.avatars.checking_progress', {
+                        current: progressState.current,
+                        total: progressState.total
+                    })),
+                    h(ElProgress, {
+                        percentage: progressState.percentage,
+                        style: 'margin-top: 8px;'
+                    })
+                ]);
+            }
+        };
+
+        let progressNotification = null;
+        
+        try {
+            progressNotification = ElNotification({
+                title: t('view.favorite.avatars.checking'),
+                message: h(ProgressContent),
+                duration: 0,
+                type: 'info',
+                position: 'bottom-right'
+            });
+
+            const result = await checkInvalidLocalAvatars(groupName, (current, total) => {
+                progressState.current = current;
+                progressState.total = total;
+                progressState.percentage = Math.floor((current / total) * 100);
+            });
+
+            if (progressNotification) {
+                progressNotification.close();
+                progressNotification = null;
+            }
+
+            if (result.invalid === 0) {
+                ElNotification({
+                    title: t('view.favorite.avatars.check_complete'),
+                    message: t('view.favorite.avatars.no_invalid_found'),
+                    type: 'success',
+                    duration: 5000,
+                    position: 'bottom-right'
+                });
+                return;
+            }
+
+            const confirmDelete = await ElMessageBox.confirm(
+                h('div', [
+                    h('p', { style: 'margin-bottom: 12px;' },
+                        t('view.favorite.avatars.confirm_delete_description', { count: result.invalid })
+                    ),
+                    h('div', { style: 'margin-top: 12px; margin-bottom: 8px; font-weight: 600;' },
+                        t('view.favorite.avatars.removed_list_header')
+                    ),
+                    h('div', {
+                        style: 'max-height: 200px; overflow-y: auto; background: var(--el-fill-color-lighter); padding: 8px; border-radius: 4px;'
+                    }, result.invalidIds.map(id =>
+                        h('div', { style: 'font-family: monospace; font-size: 12px; padding: 2px 0;' }, id)
+                    ))
+                ]),
+                t('view.favorite.avatars.confirm_delete_invalid'),
+                {
+                    confirmButtonText: t('confirm.confirm_button'),
+                    cancelButtonText: t('view.favorite.avatars.copy_removed_ids'),
+                    distinguishCancelAndClose: true,
+                    type: 'warning',
+                    beforeClose: (action, instance, done) => {
+                        if (action === 'cancel') {
+                            navigator.clipboard.writeText(result.invalidIds.join('\n'))
+                                .then(() => {
+                                    ElMessage({
+                                        message: t('dialog.user.info.copy_id'),
+                                        type: 'success'
+                                    });
+                                })
+                                .catch(() => {
+                                    ElMessage({
+                                        message: 'Failed to copy',
+                                        type: 'error'
+                                    });
+                                });
+                            return;
+                        }
+                        done();
+                    }
+                }
+            ).then(() => true).catch(() => false);
+
+            if (!confirmDelete) {
+                ElNotification({
+                    title: t('view.favorite.avatars.check_complete'),
+                    message: t('view.favorite.avatars.delete_cancelled'),
+                    type: 'info',
+                    duration: 5000,
+                    position: 'bottom-right'
+                });
+                return;
+            }
+
+            const removeResult = await removeInvalidLocalAvatars(result.invalidIds, groupName);
+
+            ElNotification({
+                title: t('view.favorite.avatars.check_complete'),
+                message: t('view.favorite.avatars.delete_summary', {
+                    removed: removeResult.removed
+                }),
+                type: 'success',
+                duration: 5000,
+                position: 'bottom-right'
+            });
+        } catch (err) {
+            if (progressNotification) {
+                progressNotification.close();
+            }
+            console.error(err);
+            ElNotification({
+                title: t('message.api_handler.avatar_private_or_deleted'),
+                message: String(err.message || err),
+                type: 'error',
+                duration: 5000,
+                position: 'bottom-right'
+            });
+        }
     }
 
     function handleHistoryClear() {

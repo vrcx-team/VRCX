@@ -9,7 +9,7 @@ import {
     replaceReactiveObject
 } from '../shared/utils';
 import { database } from '../service/database';
-import { favoriteRequest } from '../api';
+import { avatarRequest, favoriteRequest } from '../api';
 import { processBulk } from '../service/request';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAvatarStore } from './avatar';
@@ -1253,6 +1253,97 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
+     * Check invalid local avatar favorites
+     * @param {string | null} targetGroup - Target group to check, null for all groups
+     * @param {Function | null} onProgress - Progress callback function, receives (current, total) parameters
+     * @returns {Promise<{total: number, invalid: number, invalidIds: string[]}>}
+     */
+    async function checkInvalidLocalAvatars(targetGroup = null, onProgress = null) {
+        const result = {
+            total: 0,
+            invalid: 0,
+            invalidIds: []
+        };
+
+        const groupsToCheck = targetGroup
+            ? [targetGroup]
+            : localAvatarFavoriteGroups.value;
+
+        for (const group of groupsToCheck) {
+            const favoriteGroup = localAvatarFavorites[group];
+            if (favoriteGroup && favoriteGroup.length > 0) {
+                result.total += favoriteGroup.length;
+            }
+        }
+
+        let currentIndex = 0;
+
+        for (const group of groupsToCheck) {
+            const favoriteGroup = localAvatarFavorites[group];
+            if (!favoriteGroup || favoriteGroup.length === 0) {
+                continue;
+            }
+            
+            for (const favorite of favoriteGroup) {
+                currentIndex++;
+                
+                if (typeof onProgress === 'function') {
+                    onProgress(currentIndex, result.total);
+                }
+                
+                try {
+                    await avatarRequest.getAvatar({
+                        avatarId: favorite.id
+                    });
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                } catch (err) {
+                    result.invalid++;
+                    result.invalidIds.push(favorite.id);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Remove invalid avatars from local favorites
+     * @param {string[]} avatarIds - Array of avatar IDs to remove
+     * @param {string | null} targetGroup - Target group, null for all groups
+     * @returns {Promise<{removed: number, removedIds: string[]}>}
+     */
+    async function removeInvalidLocalAvatars(avatarIds, targetGroup = null) {
+        const result = {
+            removed: 0,
+            removedIds: []
+        };
+
+        const groupsToCheck = targetGroup
+            ? [targetGroup]
+            : localAvatarFavoriteGroups.value;
+
+        for (const group of groupsToCheck) {
+            const favoriteGroup = localAvatarFavorites[group];
+            if (!favoriteGroup) {
+                continue;
+            }
+
+            for (const avatarId of avatarIds) {
+                const index = favoriteGroup.findIndex(fav => fav.id === avatarId);
+                if (index !== -1) {
+                    removeLocalAvatarFavorite(avatarId, group);
+                    result.removed++;
+                    if (!result.removedIds.includes(avatarId)) {
+                        result.removedIds.push(avatarId);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
      *
      * @param {string} newName
      * @param {string} group
@@ -1507,6 +1598,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         handleFavoriteGroup,
         handleFavoriteDelete,
         handleFavoriteAdd,
-        getCachedFavoritesByObjectId
+        getCachedFavoritesByObjectId,
+        checkInvalidLocalAvatars,
+        removeInvalidLocalAvatars
     };
 });
