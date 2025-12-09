@@ -955,7 +955,9 @@ input[type='number'],
 }
 
 .el-button--small.is-circle,
-.el-button.is-circle {
+.el-button.is-circle,
+.el-button--small.is-text,
+.el-button.is-text {
     width: 40px !important;
 }
 
@@ -1752,7 +1754,7 @@ img.x-link.el-popover__reference {
 }
 
 .el-dropdown-menu__item {
-    height: 42px;
+    height: 36px;
     padding: 0 12px;
     display: flex;
     align-items: center;
@@ -2189,26 +2191,7 @@ i.x-user-status {
     letter-spacing: var(--md-sys-typescale-label-medium-tracking);
 }
 
-.el-table_2_column_10,
-.el-table_2_column_11,
-.el-table_2_column_12,
-.el-table_2_column_13,
-.el-table_3_column_15,
-.el-table_3_column_16,
-.el-table_3_column_17,
-.el-table_29_column_204,
-.el-table_30_column_208,
-.el-table_31_column_212,
-.el-table_32_column_216,
-.el-table_39_column_259,
-.el-table_39_column_267,
-.el-table_40_column_274,
-.el-table_40_column_275,
-.el-table_41_column_283,
-.el-table_41_column_285,
-.el-table_41_column_286,
-.el-table_41_column_287,
-.el-table_41_column_291 {
+.el-table__cell {
     text-align: center !important;
 }
 
