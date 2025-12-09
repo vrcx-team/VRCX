@@ -36,16 +36,17 @@
         </el-form>
 
         <template v-if="form.translationApiType === 'google'">
-            <div style="font-size: 12px">{{ t('dialog.translation_api.description') }} <br /></div>
-
-            <el-input
-                v-model="form.translationApiKey"
-                type="textarea"
-                :placeholder="t('dialog.translation_api.placeholder')"
-                maxlength="39"
-                show-word-limit
-                style="display: block; margin-top: 10px">
-            </el-input>
+            <el-form label-position="top" label-width="120px" size="small">
+                <el-form-item :label="t('dialog.translation_api.description')">
+                    <el-input
+                        v-model="form.translationApiKey"
+                        type="textarea"
+                        :rows="4"
+                        show-password
+                        placeholder="AIzaSy..."
+                        clearable />
+                </el-form-item>
+            </el-form>
         </template>
 
         <template v-if="form.translationApiType === 'openai'">

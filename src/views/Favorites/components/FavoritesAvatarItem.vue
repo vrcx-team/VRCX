@@ -108,7 +108,7 @@
             <div class="favorites-search-card__content">
                 <div class="favorites-search-card__avatar is-empty"></div>
                 <div class="favorites-search-card__detail">
-                    <span class="name">{{ favorite.name || favorite.id }}</span>
+                    <span>{{ favorite.name || favorite.id }}</span>
                 </div>
             </div>
             <div class="favorites-search-card__actions">

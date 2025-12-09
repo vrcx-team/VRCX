@@ -104,7 +104,7 @@
             <div class="favorites-search-card__content">
                 <div class="favorites-search-card__avatar is-empty"></div>
                 <div class="favorites-search-card__detail" v-once>
-                    <span class="name">{{ favorite.name || favorite.id }}</span>
+                    <span>{{ favorite.name || favorite.id }}</span>
                     <i
                         v-if="favorite.deleted"
                         :title="t('view.favorite.unavailable_tooltip')"

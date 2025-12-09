@@ -38,7 +38,7 @@ const inventoryReq = {
     },
 
     /**
-     * @param {{ n: number, offset: number, order: string, types: string }} params
+     * @param {{ n: number, offset: number, order: string, types?: string }} params
      * @returns {Promise<{json: any, params}>}
      */
     getInventoryItems(params) {

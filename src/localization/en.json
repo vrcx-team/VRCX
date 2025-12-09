@@ -730,7 +730,7 @@
                     "translation_api": {
                         "header": "Bio Translate API",
                         "enable": "Enable",
-                        "translation_api_key": "Google Translate API Key",
+                        "translation_api_key": "Translate API Key",
                         "enable_tooltip": "Translate user bios"
                     },
                     "video_progress_pie": {
@@ -1415,6 +1415,7 @@
             "mode_google": "Google Translate",
             "mode_openai": "OpenAI",
             "test": "Test",
+            "save": "Save",
             "msg_disabled": "Translation API disabled",
             "msg_fill_endpoint_model": "Please fill endpoint and model",
             "msg_settings_invalid": "Translation settings invalid",

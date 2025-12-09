@@ -219,7 +219,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
             return;
         }
         instanceStickersCache.value.push(inventoryId);
-        if (instanceStickersCache.value.size > 100) {
+        if (instanceStickersCache.value.length > 100) {
             instanceStickersCache.value.shift();
         }
         const args = await inventoryRequest.getUserInventoryItem({
@@ -261,7 +261,10 @@ export const useGalleryStore = defineStore('Gallery', () => {
         try {
             const args = await vrcPlusImageRequest.getPrints(params);
             args.json.sort((a, b) => {
-                return new Date(b.timestamp) - new Date(a.timestamp);
+                return (
+                    new Date(b.timestamp).getTime() -
+                    new Date(a.timestamp).getTime()
+                );
             });
             printTable.value = args.json;
         } catch (error) {

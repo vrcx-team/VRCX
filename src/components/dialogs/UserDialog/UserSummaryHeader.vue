@@ -241,7 +241,7 @@
                                     @click="showFullscreenImageDialog(badge.badgeImageUrl)"
                                     loading="lazy" />
                                 <br />
-                                <div style="display: block; width: 300px; word-break: normal">
+                                <div style="display: block; width: 275px; word-break: normal">
                                     <span>{{ badge.badgeName }}</span>
                                     <br />
                                     <span class="x-grey" style="font-size: 12px">{{ badge.badgeDescription }}</span>
