@@ -78,8 +78,18 @@
                     screenshotMetadataDialog.searchIndex + 1 + '/' + screenshotMetadataDialog.searchResults.length
                 }}</span>
             </template>
-            <br />
-            <br />
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); max-height:450px; overflow: scroll; margin: 20px;">
+                <img v-for="image in (screenshotMetadataDialog.searchResults != null ? screenshotMetadataDialog.searchResults : screenshotMetadataDialog.imagesList)"
+                     :key="image"
+                     :src="image"
+                     :loading="lazy"
+                     @click="getAndDisplayScreenshot(image);"
+                     :style="{ width: '90%', height: '126px', padding: '10px', borderRadius: '20px', objectFit: 'contain',
+                     border: image == screenshotMetadataDialog.metadata.filePath ? 'solid 2px #555' : 'transparent' }"
+                     />
+            </div>
+            <br/>
+            <br/>
             <span v-text="screenshotMetadataDialog.metadata.fileName"></span>
             <br />
             <template v-if="screenshotMetadataDialog.metadata.note">
@@ -194,6 +204,8 @@
                     getAndDisplayLastScreenshot();
                 }
                 window.addEventListener('keyup', handleComponentKeyup);
+                const D = screenshotMetadataDialog;
+                AppApi.GetScreenshotsList().then((paths) => D.imagesList = paths);
             } else {
                 window.removeEventListener('keyup', handleComponentKeyup);
             }
@@ -209,7 +221,8 @@
         searchIndex: null,
         searchResults: null,
         metadata: {},
-        isUploading: false
+        isUploading: false,
+        imagesList: [],
     });
 
     const screenshotMetadataSearchInputs = ref(0);
