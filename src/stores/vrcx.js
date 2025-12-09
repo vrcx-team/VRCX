@@ -15,6 +15,7 @@ import { useAvatarProviderStore } from './avatarProvider';
 import { useAvatarStore } from './avatar';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
+import { useGalleryStore } from './gallery';
 import { useGameLogStore } from './gameLog';
 import { useGameStore } from './game';
 import { useGroupStore } from './group';
@@ -50,6 +51,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     const gameLogStore = useGameLogStore();
     const updateLoopStore = useUpdateLoopStore();
     const vrcStatusStore = useVrcStatusStore();
+    const galleryStore = useGalleryStore();
     const { t } = useI18n();
 
     const state = reactive({
@@ -257,8 +259,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 instanceStore.cachedInstances.delete(id);
             }
         });
-        avatarStore.cachedAvatarNames = new Map();
-        userStore.customUserTags = new Map();
+        avatarStore.cachedAvatarNames.clear();
+        userStore.customUserTags.clear();
+        galleryStore.cachedEmoji.clear();
     }
 
     function eventVrcxMessage(data) {
