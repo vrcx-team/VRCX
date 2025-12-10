@@ -38,6 +38,7 @@
 <script setup>
     import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
+    import { onBeforeRouteLeave } from 'vue-router';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -204,7 +205,7 @@
                 const friendEntry = friends.value?.get ? friends.value.get(friendId) : undefined;
                 const fallbackRef = friendEntry?.ref || cachedUsers.get(friendId);
                 let normalizedMutuals = Array.isArray(mutualIds) ? mutualIds : [];
-                normalizedMutuals = normalizedMutuals.filter((id) => id != "usr_00000000-0000-0000-0000-000000000000");
+                normalizedMutuals = normalizedMutuals.filter((id) => id != 'usr_00000000-0000-0000-0000-000000000000');
                 mutualMap.set(friendId, {
                     friend: friendEntry || (fallbackRef ? { id: friendId, ref: fallbackRef } : { id: friendId }),
                     mutuals: normalizedMutuals.map((id) => ({ id }))
@@ -444,6 +445,10 @@
             showUserDialog(nodeId);
         }
     }
+
+    onBeforeRouteLeave(() => {
+        chartsStore.resetMutualGraphState();
+    });
 </script>
 
 <style scoped>
