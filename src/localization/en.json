@@ -358,6 +358,22 @@
                 "tooltip": {
                     "mutual_friends_count": "Mutual friends: {count}",
                     "edge": "{source} ↔ {target}"
+                },
+                "force_dialog": {
+                    "open_label": "Adjust graph layout settings",
+                    "title": "Graph Layout Settings",
+                    "description": "Fine-tune the force-directed layout used to draw the mutual friend graph.",
+                    "repulsion": "Repulsion",
+                    "edge_length_min": "Edge length (min)",
+                    "edge_length_max": "Edge length (max)",
+                    "gravity": "Gravity",
+                    "apply": "Apply",
+                    "reset": "Reset",
+                    "repulsion_help": "Repulsion between nodes.",
+                    "edge_length_min_help": "Minimum distance between connected nodes.",
+                    "edge_length_max_help": "Maximum distance between connected nodes.",
+                    "gravity_help": "Pull strength toward the graph center.",
+                    "invalid_input": "Please enter non-negative numbers."
                 }
             }
         },
