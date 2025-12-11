@@ -355,12 +355,25 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     displayName: user.displayName
                 });
             }
-            newPath = await AppApi.AddScreenshotMetadata(
-                path,
-                JSON.stringify(metadata),
-                location.worldId,
-                advancedSettingsStore.screenshotHelperModifyFilename
-            );
+            try {
+                newPath = await AppApi.AddScreenshotMetadata(
+                    path,
+                    JSON.stringify(metadata),
+                    location.worldId,
+                    advancedSettingsStore.screenshotHelperModifyFilename
+                );
+            } catch (e) {
+                console.error('Failed to add screenshot metadata', e);
+                if (e.message.includes('UnauthorizedAccessException')) {
+                    ElMessage({
+                        message:
+                            'Failed to add screenshot metadata, access denied. Make sure VRCX has permission to access the screenshot folder.',
+                        type: 'error',
+                        duration: 10000
+                    });
+                }
+                return;
+            }
             if (!newPath) {
                 console.error('Failed to add screenshot metadata', path);
                 return;

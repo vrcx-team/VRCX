@@ -66,11 +66,12 @@
             return str;
         };
         for (const userId of friends) {
-            const { ref } = props.friends.get(userId);
             let discord = '';
-            if (typeof ref === 'undefined') {
+            const friend = props.friends.get(userId);
+            if (typeof friend?.ref === 'undefined') {
                 continue;
             }
+            const ref = friend.ref;
             const name = ref.displayName;
             if (ref.statusDescription) {
                 const statusRegex = /(?:discord|dc|dis)(?: |=|:|˸|;)(.*)/gi.exec(ref.statusDescription);
