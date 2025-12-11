@@ -276,6 +276,9 @@
                 },
                 "badge": {
                     "earned": "Badge Earned"
+                },
+                "vrcplus": {
+                    "gift": "VRC+ Gift"
                 }
             }
         },
