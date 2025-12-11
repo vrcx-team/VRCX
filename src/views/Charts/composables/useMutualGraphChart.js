@@ -55,7 +55,7 @@ export function computeForceOptions(nodes, links) {
     };
 }
 
-function applyForceOverrides(force, forceOverrides) {
+export function applyForceOverrides(force, forceOverrides) {
     if (!forceOverrides) {
         return force;
     }
@@ -181,13 +181,10 @@ export function useMutualGraphChart({ cachedUsers, graphPayload }) {
         updateChart?.(graphPayload.value);
     }
 
-    function createChartOption(payload, forceOverrides) {
+    function createChartOption(payload, force) {
         const nodes = payload?.nodes ?? [];
         const links = payload?.links ?? [];
-        const force = applyForceOverrides(
-            computeForceOptions(nodes, links),
-            forceOverrides
-        );
+        const resolvedForce = force || computeForceOptions(nodes, links);
         const labelMap = Object.create(null);
         nodes.forEach((node) => {
             if (node?.id) {

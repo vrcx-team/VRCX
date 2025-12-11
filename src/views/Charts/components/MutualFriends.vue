@@ -111,10 +111,12 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAppearanceSettingsStore, useChartsStore, useFriendStore, useUserStore } from '../../../stores';
-    import { computeForceOptions, useMutualGraphChart } from '../composables/useMutualGraphChart';
+    import { applyForceOverrides, computeForceOptions, useMutualGraphChart } from '../composables/useMutualGraphChart';
     import { createRateLimiter, executeWithBackoff } from '../../../shared/utils';
     import { database } from '../../../service/database';
     import { userRequest } from '../../../api';
+
+    import configRepository from '../../../service/config';
 
     import * as echarts from 'echarts';
 
@@ -179,12 +181,14 @@
 
     const isForceDialogVisible = ref(false);
     const forceOverrides = ref(null);
+    const persistedForce = ref(null);
     const forceForm = reactive({
         repulsion: null,
         edgeLengthMin: null,
         edgeLengthMax: null,
         gravity: null
     });
+    const forceConfigKey = 'VRCX_MutualGraphForce';
 
     const parseForceField = (value, { min = 0, max = Infinity, decimals = 0 } = {}) => {
         if (value === '' || value === null || value === undefined) {
@@ -250,9 +254,20 @@
         (tab) => {
             if (tab === 'mutual') {
                 loadGraphFromDatabase();
+                loadForceOverridesFromConfig();
             }
         },
         { immediate: true }
+    );
+
+    watch(
+        graphReady,
+        (ready) => {
+            if (ready && forceOverrides.value) {
+                updateChart(graphPayload.value);
+            }
+        },
+        { immediate: false }
     );
 
     function showStatusMessage(message, type = 'info') {
@@ -530,7 +545,10 @@
         if (!chartInstance) {
             return;
         }
-        chartInstance.setOption(createChartOption(payload, forceOverrides.value));
+        const forceOption =
+            persistedForce.value ||
+            applyForceOverrides(computeForceOptions(nodes, payload?.links ?? []), forceOverrides.value);
+        chartInstance.setOption(createChartOption(payload, forceOption));
         nextTick(() => chartInstance?.resize());
     }
 
@@ -590,16 +608,59 @@
             gravity: gravity.value === null ? defaults.gravity : gravity.value,
             layoutAnimation: defaults.layoutAnimation
         };
+        persistedForce.value = applyForceOverrides(defaults, forceOverrides.value);
+        persistForceOverrides();
         updateChart(graphPayload.value);
         isForceDialogVisible.value = false;
     }
 
     function resetForceSettings() {
         forceOverrides.value = null;
+        persistedForce.value = null;
         syncForceForm(forceDefaults.value);
         if (hasGraphData.value) {
             updateChart(graphPayload.value);
         }
+        clearForceOverrides();
+    }
+
+    async function loadForceOverridesFromConfig() {
+        try {
+            const saved = await configRepository.getObject(forceConfigKey, null);
+            if (!saved || typeof saved !== 'object') {
+                return;
+            }
+            forceOverrides.value = saved.overrides || null;
+            persistedForce.value = saved.force || null;
+            if (forceOverrides.value) {
+                syncForceForm(forceOverrides.value);
+            }
+            if (graphReady.value) {
+                updateChart(graphPayload.value);
+            }
+        } catch (err) {
+            console.warn('[MutualNetworkGraph] Failed to load force settings', err);
+        }
+    }
+
+    function persistForceOverrides() {
+        if (!forceOverrides.value) {
+            clearForceOverrides();
+            return;
+        }
+        const payload = {
+            overrides: forceOverrides.value,
+            force: persistedForce.value
+        };
+        configRepository.setObject(forceConfigKey, payload).catch((err) => {
+            console.warn('[MutualNetworkGraph] Failed to save force settings', err);
+        });
+    }
+
+    function clearForceOverrides() {
+        configRepository.remove(forceConfigKey).catch((err) => {
+            console.warn('[MutualNetworkGraph] Failed to clear force settings', err);
+        });
     }
 </script>
 
