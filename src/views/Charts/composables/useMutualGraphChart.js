@@ -27,7 +27,7 @@ function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
 }
 
-function computeForceOptions(nodes, links) {
+export function computeForceOptions(nodes, links) {
     const nodeCount = nodes.length || 1;
     const degreeSum = nodes.reduce((sum, node) => sum + (node.degree || 0), 0);
     const maxSymbol = nodes.reduce(
@@ -53,6 +53,38 @@ function computeForceOptions(nodes, links) {
         gravity: 0.3,
         layoutAnimation: nodes.length < 1000
     };
+}
+
+function applyForceOverrides(force, forceOverrides) {
+    if (!forceOverrides) {
+        return force;
+    }
+    const merged = { ...force };
+    if (typeof forceOverrides.repulsion === 'number') {
+        merged.repulsion = Math.max(0, forceOverrides.repulsion);
+    }
+    if (Array.isArray(forceOverrides.edgeLength)) {
+        const [
+            minRaw = merged.edgeLength?.[0],
+            maxRaw = merged.edgeLength?.[1]
+        ] = forceOverrides.edgeLength;
+        const min =
+            typeof minRaw === 'number' ? minRaw : merged.edgeLength?.[0];
+        const max =
+            typeof maxRaw === 'number' ? maxRaw : merged.edgeLength?.[1];
+        const hasBoth = typeof min === 'number' && typeof max === 'number';
+        if (hasBoth) {
+            const normalizedMin = Math.max(0, min);
+            merged.edgeLength = [normalizedMin, Math.max(normalizedMin, max)];
+        }
+    }
+    if (typeof forceOverrides.gravity === 'number') {
+        merged.gravity = clamp(forceOverrides.gravity, 0, 1);
+    }
+    if (typeof forceOverrides.layoutAnimation === 'boolean') {
+        merged.layoutAnimation = forceOverrides.layoutAnimation;
+    }
+    return merged;
 }
 
 const t = i18n.global.t;
@@ -149,10 +181,13 @@ export function useMutualGraphChart({ cachedUsers, graphPayload }) {
         updateChart?.(graphPayload.value);
     }
 
-    function createChartOption(payload) {
+    function createChartOption(payload, forceOverrides) {
         const nodes = payload?.nodes ?? [];
         const links = payload?.links ?? [];
-        const force = computeForceOptions(nodes, links);
+        const force = applyForceOverrides(
+            computeForceOptions(nodes, links),
+            forceOverrides
+        );
         const labelMap = Object.create(null);
         nodes.forEach((node) => {
             if (node?.id) {
