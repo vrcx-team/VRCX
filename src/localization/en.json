@@ -261,7 +261,10 @@
                     "invite": "Group Invite",
                     "joinRequest": "Group Join Request",
                     "transfer": "Group Transfer",
-                    "queueReady": "Queue Ready"
+                    "queueReady": "Queue Ready",
+                    "event": {
+                        "created": "Group Event Created"
+                    }
                 },
                 "moderation": {
                     "warning": {
