@@ -3,7 +3,7 @@
         id="x-app"
         class="x-app x-app-type"
         :class="{ background: appType === 'wrist' && config && config.backgroundEnabled }">
-        <template v-if="appType === 'wrist'">
+        <template v-if="appType === 'wrist' && !vrState.isWristDisabled">
             <div class="x-container" style="flex: 1">
                 <div class="x-friend-list" ref="list" style="color: #aaa">
                     <template v-if="config && config.minimalFeed">
@@ -1281,7 +1281,7 @@
             </div>
         </template>
         <!-- HMD Overlay -->
-        <template v-else>
+        <template v-else-if="appType === 'hmd' && !vrState.isHmdDisabled">
             <svg class="np-progress-circle">
                 <circle
                     class="np-progress-circle-stroke"
@@ -1407,7 +1407,7 @@
 </template>
 
 <script setup>
-    import { nextTick, onMounted, reactive, toRefs } from 'vue';
+    import { nextTick, onBeforeUnmount, onMounted, reactive, toRefs } from 'vue';
     import { useI18n } from 'vue-i18n';
 
     import MarqueeText from 'vue-marquee-text-component';
@@ -1472,8 +1472,15 @@
         notificationOpacity: 100,
         hudFeed: [],
         hudTimeout: [],
-        cleanHudFeedLoopStatus: false
+        cleanHudFeedLoopStatus: false,
+        isHmdDisabled: false,
+        isWristDisabled: false
     });
+
+    let isUnmounted = false;
+    let updateStatsLoopTimeoutId = null;
+    let updateVrElectronLoopTimeoutId = null;
+    let cleanHudFeedLoopTimeoutId = null;
 
     onMounted(() => {
         window.$vr = {};
@@ -1514,8 +1521,71 @@
         });
     });
 
+    onBeforeUnmount(() => {
+        isUnmounted = true;
+
+        if (updateStatsLoopTimeoutId !== null) {
+            workerTimers.clearTimeout(updateStatsLoopTimeoutId);
+            updateStatsLoopTimeoutId = null;
+        }
+        if (updateVrElectronLoopTimeoutId !== null) {
+            workerTimers.clearTimeout(updateVrElectronLoopTimeoutId);
+            updateVrElectronLoopTimeoutId = null;
+        }
+        if (cleanHudFeedLoopTimeoutId !== null) {
+            workerTimers.clearTimeout(cleanHudFeedLoopTimeoutId);
+            cleanHudFeedLoopTimeoutId = null;
+        }
+
+        try {
+            Noty.closeAll();
+        } catch (err) {
+            console.error('Error closing Noty notifications:', err);
+        }
+
+        if (typeof window.$vr === 'object' && window.$vr) {
+            for (const key of Object.keys(window.$vr)) {
+                delete window.$vr[key];
+            }
+        }
+        try {
+            delete window.$vr;
+        } catch {
+            window.$vr = undefined;
+        }
+    });
+
+    /**
+     * VR overlay config payload (passed as JSON string).
+     * @typedef {Object} VrConfigVarsPayload
+     * @property {boolean} overlayNotifications
+     * @property {boolean} hideDevicesFromFeed
+     * @property {boolean} vrOverlayCpuUsage
+     * @property {boolean} minimalFeed
+     * @property {string} notificationPosition
+     * @property {number} notificationTimeout
+     * @property {number} photonOverlayMessageTimeout
+     * @property {string} notificationTheme
+     * @property {boolean} backgroundEnabled
+     * @property {boolean} dtHour12
+     * @property {boolean} pcUptimeOnFeed
+     * @property {string} appLanguage
+     * @property {number} notificationOpacity
+     * @property {boolean} isWristDisabled
+     */
+
+    /**
+     * @param {string} json
+     * @returns {void}
+     */
     function configUpdate(json) {
         vrState.config = JSON.parse(json);
+        if (vrState.config.isWristDisabled) {
+            vrState.isWristDisabled = true;
+        }
+        if (!vrState.config.overlayNotifications) {
+            vrState.isHmdDisabled = false;
+        }
         vrState.hudFeed = [];
         vrState.hudTimeout = [];
         setDatetimeFormat();
@@ -1542,7 +1612,13 @@
     function nowPlayingUpdate(json) {
         vrState.nowPlaying = JSON.parse(json);
         if (vrState.appType === 'hmd') {
-            const circle = /** @type {SVGCircleElement} */ (document.querySelector('.np-progress-circle-stroke'));
+            const circle = /** @type {SVGCircleElement | null} */ (
+                document.querySelector('.np-progress-circle-stroke')
+            );
+
+            if (!circle) {
+                return;
+            }
 
             if (vrState.lastLocation.progressPie && vrState.nowPlaying.percentage !== 0) {
                 circle.style.opacity = (0.5).toString();
@@ -1700,7 +1776,10 @@
         } catch (err) {
             console.error(err);
         }
-        workerTimers.setTimeout(() => updateStatsLoop(), 500);
+        if (isUnmounted) {
+            return;
+        }
+        updateStatsLoopTimeoutId = workerTimers.setTimeout(() => updateStatsLoop(), 500);
     }
 
     async function updateVrElectronLoop() {
@@ -1739,7 +1818,10 @@
         } catch (err) {
             console.error(err);
         }
-        workerTimers.setTimeout(() => updateVrElectronLoop(), 500);
+        if (isUnmounted) {
+            return;
+        }
+        updateVrElectronLoopTimeoutId = workerTimers.setTimeout(() => updateVrElectronLoop(), 500);
     }
 
     function playNoty(json) {
@@ -1941,7 +2023,10 @@
             vrState.cleanHudFeedLoopStatus = false;
             return;
         }
-        workerTimers.setTimeout(() => cleanHudFeedLoop(), 500);
+        if (isUnmounted) {
+            return;
+        }
+        cleanHudFeedLoopTimeoutId = workerTimers.setTimeout(() => cleanHudFeedLoop(), 500);
     }
 
     function cleanHudFeed() {

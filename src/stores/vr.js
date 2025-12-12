@@ -100,6 +100,26 @@ export const useVrStore = defineStore('Vr', () => {
         if (appearanceSettingsStore.isDarkMode) {
             notificationTheme = 'sunset';
         }
+
+        /**
+         * @typedef {Object} VrConfigVarsPayload
+         * @property {boolean} overlayNotifications
+         * @property {boolean} hideDevicesFromFeed
+         * @property {boolean} vrOverlayCpuUsage
+         * @property {boolean} minimalFeed
+         * @property {string} notificationPosition
+         * @property {number} notificationTimeout
+         * @property {number} photonOverlayMessageTimeout
+         * @property {string} notificationTheme
+         * @property {boolean} backgroundEnabled
+         * @property {boolean} dtHour12
+         * @property {boolean} pcUptimeOnFeed
+         * @property {string} appLanguage
+         * @property {number} notificationOpacity
+         * @property {boolean} isWristDisabled
+         */
+
+        /** @type {VrConfigVarsPayload} */
         const VRConfigVars = {
             overlayNotifications:
                 notificationsSettingsStore.overlayNotifications,
@@ -116,8 +136,11 @@ export const useVrStore = defineStore('Vr', () => {
             dtHour12: appearanceSettingsStore.dtHour12,
             pcUptimeOnFeed: wristOverlaySettingsStore.pcUptimeOnFeed,
             appLanguage: appearanceSettingsStore.appLanguage,
-            notificationOpacity: advancedSettingsStore.notificationOpacity
+            notificationOpacity: advancedSettingsStore.notificationOpacity,
+            isWristDisabled: wristOverlaySettingsStore.overlayWrist === false
         };
+
+        /** @type {string} */
         const json = JSON.stringify(VRConfigVars);
         AppApi.ExecuteVrFeedFunction('configUpdate', json);
         AppApi.ExecuteVrOverlayFunction('configUpdate', json);
