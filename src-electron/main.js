@@ -435,6 +435,7 @@ function createWristOverlayWindowOffscreen() {
         frame: false,
         show: false,
         webPreferences: {
+            partition: 'vrcx-vr-overlay',
             offscreen: true,
             preload: path.join(__dirname, 'preload.js')
         }
@@ -501,6 +502,7 @@ function createHmdOverlayWindowOffscreen() {
         frame: false,
         show: false,
         webPreferences: {
+            partition: 'vrcx-vr-overlay',
             offscreen: true,
             preload: path.join(__dirname, 'preload.js')
         }
