@@ -184,16 +184,23 @@ export function useMutualGraphChart({ cachedUsers, graphPayload }) {
     function createChartOption(payload, force) {
         const nodes = payload?.nodes ?? [];
         const links = payload?.links ?? [];
-        const resolvedForce = force || computeForceOptions(nodes, links);
         const labelMap = Object.create(null);
         nodes.forEach((node) => {
             if (node?.id) {
                 labelMap[node.id] = node.name || node.id;
             }
         });
+
+        const resolvedForce = {
+            ...(force || {}),
+            layoutAnimation: false
+        };
         return {
             color: COLORS_PALETTE,
             backgroundColor: 'transparent',
+            animation: false,
+            animationDuration: 0,
+            animationDurationUpdate: 0,
             tooltip: {
                 trigger: 'item',
                 formatter: (params) => {
@@ -231,6 +238,9 @@ export function useMutualGraphChart({ cachedUsers, graphPayload }) {
                     legendHoverLink: false,
                     roam: true,
                     roamTrigger: 'global',
+                    animation: false,
+                    animationDuration: 0,
+                    animationDurationUpdate: 0,
                     data: nodes,
                     links,
                     label: {
@@ -249,7 +259,7 @@ export function useMutualGraphChart({ cachedUsers, graphPayload }) {
                             opacity: 0.5
                         }
                     },
-                    force,
+                    force: resolvedForce,
                     itemStyle: {
                         borderColor: '#ffffff',
                         borderWidth: 1,

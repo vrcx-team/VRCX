@@ -287,7 +287,7 @@
         if (!chartRef.value) {
             return;
         }
-        chartInstance = echarts.init(chartRef.value, chartTheme.value, { useDirtyRect: totalFriends.value > 1000 });
+        chartInstance = echarts.init(chartRef.value, chartTheme.value, { renderer: 'svg' });
         chartInstance.on('click', handleChartNodeClick);
 
         if (graphReady.value) {
