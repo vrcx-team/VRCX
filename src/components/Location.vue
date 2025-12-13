@@ -22,7 +22,7 @@
 
 <script setup>
     import { Loading, Lock, WarnTriangleFilled } from '@element-plus/icons-vue';
-    import { ref, watch, watchEffect } from 'vue';
+    import { onBeforeUnmount, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -66,9 +66,12 @@
     const groupName = ref('');
     const isClosed = ref(false);
 
-    watchEffect(() => {
-        parse();
+    let isDisposed = false;
+    onBeforeUnmount(() => {
+        isDisposed = true;
     });
+
+    watch(() => [props.location, props.traveling, props.hint, props.grouphint], parse, { immediate: true });
 
     watch(
         () => lastInstanceApplied.value,
@@ -76,8 +79,7 @@
             if (instanceId === currentInstanceId()) {
                 parse();
             }
-        },
-        { immediate: true }
+        }
     );
 
     function currentInstanceId() {
@@ -88,6 +90,9 @@
     }
 
     function parse() {
+        if (isDisposed) {
+            return;
+        }
         text.value = '';
         region.value = '';
         strict.value = false;
@@ -122,7 +127,7 @@
             groupName.value = L.groupId;
             getGroupName(instanceId)
                 .then((name) => {
-                    if (name && currentInstanceId() === L.tag) {
+                    if (!isDisposed && name && currentInstanceId() === L.tag) {
                         groupName.value = name;
                     }
                 })
@@ -163,7 +168,7 @@
             if (typeof ref === 'undefined') {
                 getWorldName(L.worldId)
                     .then((name) => {
-                        if (name && currentInstanceId() === L.tag) {
+                        if (!isDisposed && name && currentInstanceId() === L.tag) {
                             if (L.instanceId) {
                                 text.value = `${name} #${instanceName} ${L.accessTypeName}`;
                             } else {
