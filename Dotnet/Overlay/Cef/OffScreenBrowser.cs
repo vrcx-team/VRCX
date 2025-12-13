@@ -26,7 +26,7 @@ namespace VRCX
 
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-        public OffScreenBrowser(string address, int width, int height)
+        public OffScreenBrowser(string address, int width, int height, IRequestContext requestContext = null)
             : base(address, automaticallyCreateBrowser: false)
         {
             var windowInfo = new WindowInfo();
@@ -42,7 +42,7 @@ namespace VRCX
                 WindowlessFrameRate = 60
             };
 
-            CreateBrowser(windowInfo, browserSettings);
+            CreateBrowser(windowInfo, browserSettings, requestContext);
 
             Size = new System.Drawing.Size(width, height);
             RenderHandler = this;
