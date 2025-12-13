@@ -83,20 +83,21 @@ export const useInstanceStore = defineStore('Instance', () => {
     const instanceJoinHistory = reactive(new Map());
 
     const currentInstanceUsersData = ref([]);
+
+    const currentInstanceUsersTableProps = reactive({
+        stripe: true,
+        size: 'small',
+        defaultSort: {
+            prop: 'timer',
+            order: 'descending'
+        }
+    });
     const currentInstanceUsersTable = computed(() => {
         return {
             data: currentInstanceWorld.value.ref.id
                 ? currentInstanceUsersData.value
                 : [],
-            tableProps: {
-                stripe: true,
-                size: 'small',
-                defaultSort: {
-                    prop: 'timer',
-                    order: 'descending'
-                }
-            },
-            layout: 'table'
+            tableProps: currentInstanceUsersTableProps
         };
     });
 
