@@ -218,17 +218,6 @@ export function useMutualGraphChart({ cachedUsers, graphPayload }) {
                         );
                         return `${name}\n${mutualLabel}`;
                     }
-                    if (params.dataType === 'edge') {
-                        const sourceLabel =
-                            labelMap[params.data.source] || params.data.source;
-                        const targetLabel =
-                            labelMap[params.data.target] || params.data.target;
-                        return t('view.charts.mutual_friend.tooltip.edge', {
-                            source: sourceLabel,
-                            target: targetLabel
-                        });
-                    }
-                    return '';
                 }
             },
             series: [
@@ -249,14 +238,9 @@ export function useMutualGraphChart({ cachedUsers, graphPayload }) {
                     symbol: 'circle',
                     emphasis: {
                         focus: 'adjacency',
-                        scale: true,
                         itemStyle: {
                             borderWidth: 3,
                             opacity: 1
-                        },
-                        lineStyle: {
-                            width: 5,
-                            opacity: 0.5
                         }
                     },
                     force: resolvedForce,
@@ -270,9 +254,6 @@ export function useMutualGraphChart({ cachedUsers, graphPayload }) {
                         curveness: 0.18,
                         width: 0.5,
                         opacity: 0.4
-                    },
-                    labelLayout: {
-                        hideOverlap: true
                     }
                 }
             ]
