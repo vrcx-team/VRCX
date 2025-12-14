@@ -33,15 +33,7 @@ namespace VRCX
         private static readonly float[] _rotationRight = { -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
         private static OffScreenBrowserLegacy _wristOverlay;
         private static OffScreenBrowserLegacy _hmdOverlay;
-
-        private static readonly IRequestContext VrOverlayRequestContext = new RequestContext(
-            new RequestContextSettings
-            {
-                CachePath = string.Empty,
-                PersistSessionCookies = false,
-                PersistUserPreferences = false
-            }
-        );
+        
         private readonly List<string[]> _deviceList;
         private readonly ReaderWriterLockSlim _deviceListLock;
         private bool _active;
@@ -203,15 +195,13 @@ namespace VRCX
             _wristOverlay = new OffScreenBrowserLegacy(
                 Program.LaunchDebug ? "http://localhost:9000/vr.html?wrist" : "file://vrcx/vr.html?wrist",
                 512,
-                512,
-                VrOverlayRequestContext
+                512
             );
 
             _hmdOverlay = new OffScreenBrowserLegacy(
                 Program.LaunchDebug ? "http://localhost:9000/vr.html?hmd" : "file://vrcx/vr.html?hmd",
                 1024,
-                1024,
-                VrOverlayRequestContext
+                1024
             );
 
             while (_thread != null)

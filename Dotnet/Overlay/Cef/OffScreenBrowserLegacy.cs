@@ -24,7 +24,7 @@ namespace VRCX
         private int _width;
         private int _height;
 
-        public OffScreenBrowserLegacy(string address, int width, int height, IRequestContext requestContext = null)
+        public OffScreenBrowserLegacy(string address, int width, int height)
             : base(address, automaticallyCreateBrowser: false)
         {
             _paintBufferLock = new ReaderWriterLockSlim();
@@ -42,7 +42,7 @@ namespace VRCX
                 WindowlessFrameRate = 24
             };
 
-            CreateBrowser(windowInfo, browserSettings, requestContext);
+            CreateBrowser(windowInfo, browserSettings);
 
             Size = new System.Drawing.Size(width, height);
             RenderHandler = this;
