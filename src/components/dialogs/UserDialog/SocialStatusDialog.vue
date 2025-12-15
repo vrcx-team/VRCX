@@ -6,22 +6,14 @@
         append-to-body
         width="400px">
         <div v-loading="socialStatusDialog.loading">
-            <el-collapse style="border: 0">
-                <el-collapse-item>
-                    <template #title>
-                        <span style="font-size: 16px">{{ t('dialog.social_status.history') }}</span>
-                    </template>
-                    <DataTable
-                        v-bind="socialStatusHistoryTable"
-                        style="cursor: pointer"
-                        @row-click="setSocialStatusFromHistory">
-                        <el-table-column :label="t('table.social_status.no')" prop="no" width="50"></el-table-column>
-                        <el-table-column :label="t('table.social_status.status')" prop="status"></el-table-column>
-                    </DataTable>
-                </el-collapse-item>
-            </el-collapse>
-
-            <el-select v-model="socialStatusDialog.status" style="display: block; margin-top: 10px">
+            <el-select v-model="socialStatusDialog.status" style="margin-top: 10px">
+                <template #prefix>
+                    <i v-if="socialStatusDialog.status === 'join me'" class="x-user-status joinme"></i>
+                    <i v-else-if="socialStatusDialog.status === 'active'" class="x-user-status online"></i>
+                    <i v-else-if="socialStatusDialog.status === 'ask me'" class="x-user-status askme"></i>
+                    <i v-else-if="socialStatusDialog.status === 'busy'" class="x-user-status busy"></i>
+                    <i v-else-if="socialStatusDialog.status === 'offline'" class="x-user-status offline"></i>
+                </template>
                 <el-option :label="t('dialog.user.status.join_me')" value="join me">
                     <i class="x-user-status joinme"></i> {{ t('dialog.user.status.join_me') }}
                 </el-option>
@@ -45,7 +37,21 @@
                 maxlength="32"
                 show-word-limit
                 clearable
-                style="display: block; margin-top: 10px"></el-input>
+                style="margin-top: 10px"></el-input>
+            <el-collapse style="border: 0">
+                <el-collapse-item>
+                    <template #title>
+                        <span class="text-sm">{{ t('dialog.social_status.history') }}</span>
+                    </template>
+                    <DataTable
+                        v-bind="socialStatusHistoryTable"
+                        style="cursor: pointer"
+                        @row-click="setSocialStatusFromHistory">
+                        <el-table-column :label="t('table.social_status.no')" prop="no" width="50"></el-table-column>
+                        <el-table-column :label="t('table.social_status.status')" prop="status"></el-table-column>
+                    </DataTable>
+                </el-collapse-item>
+            </el-collapse>
         </div>
 
         <template #footer>
@@ -110,3 +116,12 @@
             });
     }
 </script>
+
+<style scoped>
+    :deep(.el-collapse-item__header) {
+        border-bottom: none;
+    }
+    :deep(.el-collapse-item__wrap) {
+        border-bottom: none;
+    }
+</style>
