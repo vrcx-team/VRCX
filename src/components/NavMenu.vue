@@ -204,7 +204,7 @@
 </template>
 
 <script setup>
-    import { computed, defineAsyncComponent, onMounted, onUnmounted, ref, watch } from 'vue';
+    import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
     import { ElMessageBox, dayjs } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -650,6 +650,10 @@
         if (!entry) {
             return;
         }
+        const entries = navMenuItems.value.find((item) => item.index === index)?.entries || [];
+        const indexOfEntry = entries.findIndex((e) => e.label === entry.label);
+        folderCyclePointers.set(index, (indexOfEntry + 1) % entries.length);
+
         if (entry.routeName) {
             handleRouteChange(entry.routeName, index || entry.routeName);
         } else if (entry.path) {
