@@ -63,9 +63,10 @@ const friendReq = {
      * @param {{ userId: string }} params
      * @returns {Promise<{json: any, params: { userId: string }}>}
      */
-    deleteFriend(params) {
+    deleteFriend(params, customMsg) {
         return request(`auth/user/friends/${params.userId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            customMsg
         }).then((json) => {
             const args = {
                 json,
