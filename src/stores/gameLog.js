@@ -70,7 +70,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 prop: 'created_at',
                 order: 'descending'
             },
-            rowKey: (row) => `${row.type}:${row.rowId ?? Math.random()}`
+            rowKey: (row) =>
+                `${row.type}:${row.rowId()}:${row.created_at ?? ''}`
         },
         pageSize: 20,
         pageSizeLinked: true,
