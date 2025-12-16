@@ -947,6 +947,7 @@
                 "edit_pronouns": "Pronouns",
                 "report_hacking": "Report For Hacking",
                 "unfriend": "Unfriend",
+                "unfriend_success_msg": "Unfriended",
                 "logout": "Logout"
             },
             "info": {
