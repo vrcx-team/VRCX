@@ -54,29 +54,20 @@
 
             <el-table-column :label="t('table.gameLog.type')" prop="type" width="120">
                 <template #default="scope">
-                    <el-tooltip placement="right" :show-after="500">
-                        <template #content>
-                            <span>{{ t('view.game_log.filters.' + scope.row.type) }}</span>
-                        </template>
-                        <span
-                            v-if="scope.row.location && scope.row.type !== 'Location'"
-                            class="x-link"
-                            @click="showWorldDialog(scope.row.location)"
-                            v-text="t('view.game_log.filters.' + scope.row.type)"></span>
-                        <span v-else v-text="t('view.game_log.filters.' + scope.row.type)"></span>
-                    </el-tooltip>
+                    <span
+                        v-if="scope.row.location && scope.row.type !== 'Location'"
+                        class="x-link"
+                        @click="showWorldDialog(scope.row.location)"
+                        v-text="t('view.game_log.filters.' + scope.row.type)"></span>
+                    <span v-else v-text="t('view.game_log.filters.' + scope.row.type)"></span>
                 </template>
             </el-table-column>
 
             <el-table-column :label="t('table.gameLog.icon')" prop="isFriend" width="70" align="center">
                 <template #default="scope">
                     <template v-if="gameLogIsFriend(scope.row)">
-                        <el-tooltip v-if="gameLogIsFavorite(scope.row)" placement="top" content="Favorite">
-                            <span>⭐</span>
-                        </el-tooltip>
-                        <el-tooltip v-else placement="top" content="Friend">
-                            <span>💚</span>
-                        </el-tooltip>
+                        <span v-if="gameLogIsFavorite(scope.row)">⭐</span>
+                        <span v-else>💚</span>
                     </template>
                     <span v-else></span>
                 </template>

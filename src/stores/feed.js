@@ -30,7 +30,8 @@ export const useFeedStore = defineStore('Feed', () => {
             defaultSort: {
                 prop: 'created_at',
                 order: 'descending'
-            }
+            },
+            rowKey: (row) => `${row.type}:${row.rowId ?? Math.random()}`
         },
         pageSize: 20,
         pageSizeLinked: true,

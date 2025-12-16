@@ -70,106 +70,53 @@
                         </template>
                         <template v-else-if="scope.row.type === 'Avatar'">
                             <div style="display: flex; align-items: center">
-                                <el-popover placement="right" :width="500" trigger="click">
-                                    <template #reference>
-                                        <div style="display: inline-block; vertical-align: top; width: 160px">
-                                            <template v-if="scope.row.previousCurrentAvatarThumbnailImageUrl">
-                                                <img
-                                                    :src="scope.row.previousCurrentAvatarThumbnailImageUrl"
-                                                    class="x-link"
-                                                    style="flex: none; width: 160px; height: 120px; border-radius: 4px"
-                                                    loading="lazy" />
-                                                <br />
-                                                <AvatarInfo
-                                                    :imageurl="scope.row.previousCurrentAvatarThumbnailImageUrl"
-                                                    :userid="scope.row.userId"
-                                                    :hintownerid="scope.row.previousOwnerId"
-                                                    :hintavatarname="scope.row.previousAvatarName"
-                                                    :avatartags="scope.row.previousCurrentAvatarTags" />
-                                            </template>
-                                        </div>
+                                <div style="display: inline-block; vertical-align: top; width: 160px">
+                                    <template v-if="scope.row.previousCurrentAvatarThumbnailImageUrl">
+                                        <img
+                                            :src="scope.row.previousCurrentAvatarThumbnailImageUrl"
+                                            class="x-link"
+                                            style="flex: none; width: 160px; height: 120px; border-radius: 4px"
+                                            loading="lazy" />
+                                        <br />
+                                        <AvatarInfo
+                                            :imageurl="scope.row.previousCurrentAvatarThumbnailImageUrl"
+                                            :userid="scope.row.userId"
+                                            :hintownerid="scope.row.previousOwnerId"
+                                            :hintavatarname="scope.row.previousAvatarName"
+                                            :avatartags="scope.row.previousCurrentAvatarTags" />
                                     </template>
-                                    <img
-                                        :src="scope.row.previousCurrentAvatarImageUrl"
-                                        :class="['x-link', 'x-popover-image']"
-                                        @click="showFullscreenImageDialog(scope.row.previousCurrentAvatarImageUrl)"
-                                        loading="lazy" />
-                                </el-popover>
+                                </div>
                                 <span style="position: relative; margin: 0 10px">
                                     <el-icon><Right /></el-icon>
                                 </span>
-                                <el-popover placement="right" :width="500" trigger="click">
-                                    <template #reference>
-                                        <div style="display: inline-block; vertical-align: top; width: 160px">
-                                            <template v-if="scope.row.currentAvatarThumbnailImageUrl">
-                                                <img
-                                                    :src="scope.row.currentAvatarThumbnailImageUrl"
-                                                    class="x-link"
-                                                    style="flex: none; width: 160px; height: 120px; border-radius: 4px"
-                                                    loading="lazy" />
-                                                <br />
-                                                <AvatarInfo
-                                                    :imageurl="scope.row.currentAvatarThumbnailImageUrl"
-                                                    :userid="scope.row.userId"
-                                                    :hintownerid="scope.row.ownerId"
-                                                    :hintavatarname="scope.row.avatarName"
-                                                    :avatartags="scope.row.currentAvatarTags" />
-                                            </template>
-                                        </div>
+
+                                <div style="display: inline-block; vertical-align: top; width: 160px">
+                                    <template v-if="scope.row.currentAvatarThumbnailImageUrl">
+                                        <img
+                                            :src="scope.row.currentAvatarThumbnailImageUrl"
+                                            class="x-link"
+                                            style="flex: none; width: 160px; height: 120px; border-radius: 4px"
+                                            loading="lazy" />
+                                        <br />
+                                        <AvatarInfo
+                                            :imageurl="scope.row.currentAvatarThumbnailImageUrl"
+                                            :userid="scope.row.userId"
+                                            :hintownerid="scope.row.ownerId"
+                                            :hintavatarname="scope.row.avatarName"
+                                            :avatartags="scope.row.currentAvatarTags" />
                                     </template>
-                                    <img
-                                        :src="scope.row.currentAvatarImageUrl"
-                                        :class="['x-link', 'x-popover-image']"
-                                        @click="showFullscreenImageDialog(scope.row.currentAvatarImageUrl)"
-                                        loading="lazy" />
-                                </el-popover>
+                                </div>
                             </div>
                         </template>
                         <template v-else-if="scope.row.type === 'Status'">
-                            <el-tooltip placement="top">
-                                <template #content>
-                                    <span v-if="scope.row.previousStatus === 'active'">{{
-                                        t('dialog.user.status.active')
-                                    }}</span>
-                                    <span v-else-if="scope.row.previousStatus === 'join me'">{{
-                                        t('dialog.user.status.join_me')
-                                    }}</span>
-                                    <span v-else-if="scope.row.previousStatus === 'ask me'">{{
-                                        t('dialog.user.status.ask_me')
-                                    }}</span>
-                                    <span v-else-if="scope.row.previousStatus === 'busy'">{{
-                                        t('dialog.user.status.busy')
-                                    }}</span>
-                                    <span v-else>{{ t('dialog.user.status.offline') }}</span>
-                                </template>
-                                <i class="x-user-status" :class="statusClass(scope.row.previousStatus)"></i>
-                            </el-tooltip>
+                            <i class="x-user-status" :class="statusClass(scope.row.previousStatus)"></i>
                             <span style="margin-left: 5px" v-text="scope.row.previousStatusDescription"></span>
                             <br />
                             <span>
                                 <el-icon><Right /></el-icon>
                             </span>
-                            <el-tooltip placement="top">
-                                <template #content>
-                                    <span v-if="scope.row.status === 'active'">{{
-                                        t('dialog.user.status.active')
-                                    }}</span>
-                                    <span v-else-if="scope.row.status === 'join me'">{{
-                                        t('dialog.user.status.join_me')
-                                    }}</span>
-                                    <span v-else-if="scope.row.status === 'ask me'">{{
-                                        t('dialog.user.status.ask_me')
-                                    }}</span>
-                                    <span v-else-if="scope.row.status === 'busy'">{{
-                                        t('dialog.user.status.busy')
-                                    }}</span>
-                                    <span v-else>{{ t('dialog.user.status.offline') }}</span>
-                                </template>
-                                <i
-                                    class="x-user-status"
-                                    :class="statusClass(scope.row.status)"
-                                    style="margin: 0 5px"></i>
-                            </el-tooltip>
+
+                            <i class="x-user-status" :class="statusClass(scope.row.status)" style="margin: 0 5px"></i>
                             <span v-text="scope.row.statusDescription"></span>
                         </template>
                         <template v-else-if="scope.row.type === 'Bio'">
@@ -226,68 +173,18 @@
                     </template>
                     <template v-else-if="scope.row.type === 'Status'">
                         <template v-if="scope.row.statusDescription === scope.row.previousStatusDescription">
-                            <el-tooltip placement="top">
-                                <template #content>
-                                    <span v-if="scope.row.previousStatus === 'active'">{{
-                                        t('dialog.user.status.active')
-                                    }}</span>
-                                    <span v-else-if="scope.row.previousStatus === 'join me'">{{
-                                        t('dialog.user.status.join_me')
-                                    }}</span>
-                                    <span v-else-if="scope.row.previousStatus === 'ask me'">{{
-                                        t('dialog.user.status.ask_me')
-                                    }}</span>
-                                    <span v-else-if="scope.row.previousStatus === 'busy'">{{
-                                        t('dialog.user.status.busy')
-                                    }}</span>
-                                    <span v-else>{{ t('dialog.user.status.offline') }}</span>
-                                </template>
-                                <i class="x-user-status" :class="statusClass(scope.row.previousStatus)"></i>
-                            </el-tooltip>
+                            <i class="x-user-status" :class="statusClass(scope.row.previousStatus)"></i>
                             <span style="margin: 0 5px">
                                 <el-icon><Right /></el-icon>
                             </span>
-                            <el-tooltip placement="top">
-                                <template #content>
-                                    <span v-if="scope.row.status === 'active'">{{
-                                        t('dialog.user.status.active')
-                                    }}</span>
-                                    <span v-else-if="scope.row.status === 'join me'">{{
-                                        t('dialog.user.status.join_me')
-                                    }}</span>
-                                    <span v-else-if="scope.row.status === 'ask me'">{{
-                                        t('dialog.user.status.ask_me')
-                                    }}</span>
-                                    <span v-else-if="scope.row.status === 'busy'">{{
-                                        t('dialog.user.status.busy')
-                                    }}</span>
-                                    <span v-else>{{ t('dialog.user.status.offline') }}</span>
-                                </template>
-                                <i class="x-user-status" :class="statusClass(scope.row.status)"></i>
-                            </el-tooltip>
+
+                            <i class="x-user-status" :class="statusClass(scope.row.status)"></i>
                         </template>
                         <template v-else>
-                            <el-tooltip placement="top">
-                                <template #content>
-                                    <span v-if="scope.row.status === 'active'">{{
-                                        t('dialog.user.status.active')
-                                    }}</span>
-                                    <span v-else-if="scope.row.status === 'join me'">{{
-                                        t('dialog.user.status.join_me')
-                                    }}</span>
-                                    <span v-else-if="scope.row.status === 'ask me'">{{
-                                        t('dialog.user.status.ask_me')
-                                    }}</span>
-                                    <span v-else-if="scope.row.status === 'busy'">{{
-                                        t('dialog.user.status.busy')
-                                    }}</span>
-                                    <span v-else>{{ t('dialog.user.status.offline') }}</span>
-                                </template>
-                                <i
-                                    class="x-user-status"
-                                    :class="statusClass(scope.row.status)"
-                                    style="margin-right: 3px"></i>
-                            </el-tooltip>
+                            <i
+                                class="x-user-status"
+                                :class="statusClass(scope.row.status)"
+                                style="margin-right: 3px"></i>
                             <span v-text="scope.row.statusDescription"></span>
                         </template>
                     </template>
@@ -313,13 +210,12 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useFeedStore, useGalleryStore, useUiStore, useUserStore } from '../../stores';
     import { formatDateFilter, statusClass, timeToText } from '../../shared/utils';
+    import { useFeedStore, useUserStore } from '../../stores';
 
     const { showUserDialog } = useUserStore();
     const { feedTable } = storeToRefs(useFeedStore());
     const { feedTableLookup } = useFeedStore();
-    const { showFullscreenImageDialog } = useGalleryStore();
 
     const { t } = useI18n();
 
