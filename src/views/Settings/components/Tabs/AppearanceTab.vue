@@ -101,12 +101,26 @@
                     }}</el-radio>
                 </el-radio-group>
             </div>
+
+            <div class="options-container-item">
+                <span class="name">{{ t('view.settings.appearance.appearance.table_page_sizes') }}</span>
+                <el-select
+                    v-model="tablePageSizesModel"
+                    multiple
+                    filterable
+                    allow-create
+                    default-first-option
+                    collapse-tags
+                    :max-collapse-tags="3"
+                    style="width: 300px">
+                    <el-option v-for="size in tablePageSizes" :key="size" :label="String(size)" :value="String(size)" />
+                </el-select>
+            </div>
             <div class="options-container-item">
                 <el-button size="small" :icon="Notebook" style="margin-right: 10px" @click="promptMaxTableSizeDialog">{{
                     t('view.settings.appearance.appearance.table_max_size')
                 }}</el-button>
             </div>
-            <div class="options-container-item" />
         </div>
         <div class="options-container">
             <span class="header">{{ t('view.settings.appearance.timedate.header') }}</span>
@@ -365,6 +379,7 @@
 <script setup>
     import { ArrowDown, ArrowRight, Notebook } from '@element-plus/icons-vue';
     import { computed, onBeforeUnmount, ref } from 'vue';
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -399,7 +414,8 @@
         hideUnfriends,
         randomUserColours,
         trustColor,
-        notificationIconDot
+        notificationIconDot,
+        tablePageSizes
     } = storeToRefs(appearanceSettingsStore);
 
     const { saveSortFavoritesOption } = useFavoriteStore();
@@ -424,7 +440,8 @@
         saveThemeMode,
         changeAppLanguage,
         promptMaxTableSizeDialog,
-        setNotificationIconDot
+        setNotificationIconDot,
+        setTablePageSizes
     } = appearanceSettingsStore;
 
     const zoomLevel = ref(100);
@@ -438,6 +455,20 @@
     });
 
     initGetZoomLevel();
+
+    const tablePageSizesModel = computed({
+        get: () => tablePageSizes.value.map(String),
+        set: (values) => {
+            const rawLength = Array.isArray(values) ? values.length : 0;
+            setTablePageSizes(values);
+            if (rawLength && rawLength !== tablePageSizes.value.length) {
+                ElMessage({
+                    message: t('view.settings.appearance.appearance.table_page_sizes_error'),
+                    type: 'error'
+                });
+            }
+        }
+    });
 
     async function initGetZoomLevel() {
         const handleWheel = (event) => {

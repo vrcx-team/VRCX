@@ -15,10 +15,7 @@ import {
 import { database } from '../../service/database';
 import { getNameColour } from '../../shared/utils';
 import { useFeedStore } from '../feed';
-import { useFriendStore } from '../friend';
 import { useGameLogStore } from '../gameLog';
-import { useModerationStore } from '../moderation';
-import { useNotificationStore } from '../notification';
 import { useUiStore } from '../ui';
 import { useUserStore } from '../user';
 import { useVrStore } from '../vr';
@@ -31,11 +28,8 @@ export const useAppearanceSettingsStore = defineStore(
     'AppearanceSettings',
 
     () => {
-        const friendStore = useFriendStore();
         const vrStore = useVrStore();
-        const notificationStore = useNotificationStore();
         const feedStore = useFeedStore();
-        const moderationStore = useModerationStore();
         const gameLogStore = useGameLogStore();
         const vrcxStore = useVrcxStore();
         const userStore = useUserStore();
@@ -43,6 +37,9 @@ export const useAppearanceSettingsStore = defineStore(
         const uiStore = useUiStore();
 
         const { t, availableLocales, locale } = useI18n();
+
+        const MAX_TABLE_PAGE_SIZE = 1000;
+        const DEFAULT_TABLE_PAGE_SIZES = [10, 15, 20, 25, 50, 100];
 
         const appLanguage = ref('en');
         const themeMode = ref('');
@@ -53,6 +50,7 @@ export const useAppearanceSettingsStore = defineStore(
         const sortFavorites = ref(true);
         const instanceUsersSortAlphabetical = ref(false);
         const tablePageSize = ref(15);
+        const tablePageSizes = ref([...DEFAULT_TABLE_PAGE_SIZES]);
         const dtHour12 = ref(false);
         const dtIsoFormat = ref(false);
         const sidebarSortMethod1 = ref('Sort Private to Bottom');
@@ -91,6 +89,11 @@ export const useAppearanceSettingsStore = defineStore(
             );
         });
 
+        const clampInt = (value, min, max) => {
+            const n = parseInt(value, 10);
+            return Math.min(max, Math.max(min, n));
+        };
+
         async function initAppearanceSettings() {
             const [
                 appLanguageConfig,
@@ -101,6 +104,7 @@ export const useAppearanceSettingsStore = defineStore(
                 sortFavoritesConfig,
                 instanceUsersSortAlphabeticalConfig,
                 tablePageSizeConfig,
+                tablePageSizesConfig,
                 dtHour12Config,
                 dtIsoFormatConfig,
                 sidebarSortMethodsConfig,
@@ -129,6 +133,10 @@ export const useAppearanceSettingsStore = defineStore(
                     false
                 ),
                 configRepository.getInt('VRCX_tablePageSize', 20),
+                configRepository.getString(
+                    'VRCX_tablePageSizes',
+                    JSON.stringify(DEFAULT_TABLE_PAGE_SIZES)
+                ),
                 configRepository.getBool('VRCX_dtHour12', false),
                 configRepository.getBool('VRCX_dtIsoFormat', false),
                 configRepository.getString(
@@ -192,6 +200,10 @@ export const useAppearanceSettingsStore = defineStore(
             sortFavorites.value = sortFavoritesConfig;
             instanceUsersSortAlphabetical.value =
                 instanceUsersSortAlphabeticalConfig;
+
+            tablePageSizes.value = normalizeTablePageSizes(
+                JSON.parse(tablePageSizesConfig)
+            );
 
             setTablePageSize(tablePageSizeConfig);
 
@@ -462,18 +474,42 @@ export const useAppearanceSettingsStore = defineStore(
                 instanceUsersSortAlphabetical.value
             );
         }
-        /**
-         * @param {number} size
-         */
-        function setTablePageSize(size) {
-            feedStore.feedTable.pageSize = size;
-            gameLogStore.gameLogTable.pageSize = size;
-            friendStore.friendLogTable.pageSize = size;
-            moderationStore.playerModerationTable.pageSize = size;
-            notificationStore.notificationTable.pageSize = size;
 
-            tablePageSize.value = size;
-            configRepository.setInt('VRCX_tablePageSize', size);
+        function setTablePageSize(size) {
+            const processedSize = clampInt(size, 1, MAX_TABLE_PAGE_SIZE);
+            tablePageSize.value = processedSize;
+            configRepository.setInt('VRCX_tablePageSize', processedSize);
+
+            return processedSize;
+        }
+
+        function normalizeTablePageSizes(input) {
+            const values = (
+                Array.isArray(input) ? input : DEFAULT_TABLE_PAGE_SIZES
+            )
+                .map((v) => parseInt(v, 10))
+                .filter((v) => v > 0 && v <= MAX_TABLE_PAGE_SIZE);
+            const uniqueSorted = Array.from(new Set(values)).sort(
+                (a, b) => a - b
+            );
+            return uniqueSorted.length
+                ? uniqueSorted
+                : [...DEFAULT_TABLE_PAGE_SIZES];
+        }
+
+        /**
+         * @param {Array<number|string>} sizes
+         */
+        function setTablePageSizes(sizes) {
+            tablePageSizes.value = normalizeTablePageSizes(sizes);
+            configRepository.setString(
+                'VRCX_tablePageSizes',
+                JSON.stringify(tablePageSizes.value)
+            );
+
+            if (!tablePageSizes.value.includes(tablePageSize.value)) {
+                setTablePageSize(tablePageSizes.value[0]);
+            }
         }
         function setDtHour12() {
             dtHour12.value = !dtHour12.value;
@@ -708,6 +744,7 @@ export const useAppearanceSettingsStore = defineStore(
             sortFavorites,
             instanceUsersSortAlphabetical,
             tablePageSize,
+            tablePageSizes,
             dtHour12,
             dtIsoFormat,
             sidebarSortMethod1,
@@ -734,6 +771,7 @@ export const useAppearanceSettingsStore = defineStore(
             setSortFavorites,
             setInstanceUsersSortAlphabetical,
             setTablePageSize,
+            setTablePageSizes,
             setDtHour12,
             setDtIsoFormat,
             setSidebarSortMethod1,
