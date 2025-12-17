@@ -1,14 +1,27 @@
 import { computed } from 'vue';
 
+import dayjs from 'dayjs';
+
 export function useActivityDataProcessor(
     activityData,
     activityDetailData,
     isDetailVisible,
     isSoloInstanceVisible,
-    isNoFriendInstanceVisible
+    isNoFriendInstanceVisible,
+    selectedDate
 ) {
     const totalOnlineTime = computed(() => {
-        return activityData.value?.reduce((acc, item) => acc + item.time, 0);
+        return activityData.value?.reduce((acc, item, idx) => {
+            // If the joinTime of the first data is on the previous day,
+            // and the data traverses midnight, the duration starts at midnight
+            if (idx === 0) {
+                const midnight = dayjs.tz(selectedDate.value).startOf('day');
+                if (midnight.isAfter(item.joinTime)) {
+                    return item.leaveTime - dayjs.tz(midnight).valueOf();
+                }
+            }
+            return acc + item.time;
+        }, 0);
     });
 
     const filteredActivityDetailData = computed(() => {

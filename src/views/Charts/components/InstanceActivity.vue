@@ -196,7 +196,8 @@
         activityDetailData,
         isDetailVisible,
         isSoloInstanceVisible,
-        isNoFriendInstanceVisible
+        isNoFriendInstanceVisible,
+        selectedDate
     );
 
     const { isDetailDataFiltered, findMatchingDetailData, generateYAxisLabel } = useChartHelpers();
