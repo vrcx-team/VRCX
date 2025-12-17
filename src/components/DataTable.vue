@@ -17,7 +17,7 @@
             <el-pagination
                 size="small"
                 :current-page="internalCurrentPage"
-                :page-size="internalPageSize"
+                :page-size="effectivePageSize"
                 :total="filteredData.length"
                 v-bind="mergedPaginationProps"
                 @size-change="handleSizeChange"
@@ -104,9 +104,13 @@
 
             const mergedPaginationProps = computed(() => ({
                 layout: 'sizes, prev, pager, next, total',
-                pageSizes: [10, 15, 20, 25, 50, 100],
-                ...paginationProps.value
+                ...paginationProps.value,
+                pageSizes: paginationProps.value?.pageSizes ?? appearanceSettingsStore.tablePageSizes
             }));
+
+            const effectivePageSize = computed(() => {
+                return props.pageSizeLinked ? appearanceSettingsStore.tablePageSize : internalPageSize.value;
+            });
 
             const applyFilter = function (row, filter) {
                 if (Array.isArray(filter.prop)) {
@@ -175,8 +179,8 @@
                     return filteredData.value;
                 }
 
-                const start = (internalCurrentPage.value - 1) * internalPageSize.value;
-                const end = start + internalPageSize.value;
+                const start = (internalCurrentPage.value - 1) * effectivePageSize.value;
+                const end = start + effectivePageSize.value;
                 return filteredData.value.slice(start, end);
             });
 
@@ -202,6 +206,7 @@
             const handleSizeChange = (size) => {
                 if (props.pageSizeLinked) {
                     appearanceSettingsStore.setTablePageSize(size);
+                    return;
                 }
                 internalPageSize.value = size;
             };
@@ -234,6 +239,7 @@
             return {
                 internalCurrentPage,
                 internalPageSize,
+                effectivePageSize,
                 showPagination,
                 mergedTableProps,
                 mergedPaginationProps,

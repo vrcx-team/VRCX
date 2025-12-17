@@ -31,8 +31,8 @@
                                 :disabled="
                                     Boolean(
                                         isGroupMembersLoading ||
-                                            memberSearch.length ||
-                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
+                                        memberSearch.length ||
+                                        !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
                                     )
                                 ">
                                 <el-button size="small" @click.stop>
@@ -60,8 +60,8 @@
                                 :disabled="
                                     Boolean(
                                         isGroupMembersLoading ||
-                                            memberSearch.length ||
-                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
+                                        memberSearch.length ||
+                                        !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
                                     )
                                 ">
                                 <el-button size="small" @click.stop>
@@ -398,10 +398,7 @@
                                     :disabled="
                                         Boolean(
                                             progressCurrent ||
-                                                !hasGroupPermission(
-                                                    groupMemberModeration.groupRef,
-                                                    'group-invites-manage'
-                                                )
+                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')
                                         )
                                     "
                                     @click="groupMembersDeleteSentInvite"
@@ -483,10 +480,7 @@
                                     :disabled="
                                         Boolean(
                                             progressCurrent ||
-                                                !hasGroupPermission(
-                                                    groupMemberModeration.groupRef,
-                                                    'group-invites-manage'
-                                                )
+                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')
                                         )
                                     "
                                     @click="groupMembersAcceptInviteRequest"
@@ -496,10 +490,7 @@
                                     :disabled="
                                         Boolean(
                                             progressCurrent ||
-                                                !hasGroupPermission(
-                                                    groupMemberModeration.groupRef,
-                                                    'group-invites-manage'
-                                                )
+                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')
                                         )
                                     "
                                     @click="groupMembersRejectInviteRequest"
@@ -509,10 +500,7 @@
                                     :disabled="
                                         Boolean(
                                             progressCurrent ||
-                                                !hasGroupPermission(
-                                                    groupMemberModeration.groupRef,
-                                                    'group-invites-manage'
-                                                )
+                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')
                                         )
                                     "
                                     @click="groupMembersBlockJoinRequest"
@@ -594,10 +582,7 @@
                                     :disabled="
                                         Boolean(
                                             progressCurrent ||
-                                                !hasGroupPermission(
-                                                    groupMemberModeration.groupRef,
-                                                    'group-invites-manage'
-                                                )
+                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')
                                         )
                                     "
                                     @click="groupMembersDeleteBlockedRequest"
@@ -800,8 +785,8 @@
                 :disabled="
                     Boolean(
                         !selectedRoles.length ||
-                            progressCurrent ||
-                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-roles-assign')
+                        progressCurrent ||
+                        !hasGroupPermission(groupMemberModeration.groupRef, 'group-roles-assign')
                     )
                 "
                 @click="groupMembersAddRoles"
@@ -811,8 +796,8 @@
                 :disabled="
                     Boolean(
                         !selectedRoles.length ||
-                            progressCurrent ||
-                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-roles-assign')
+                        progressCurrent ||
+                        !hasGroupPermission(groupMemberModeration.groupRef, 'group-roles-assign')
                     )
                 "
                 @click="groupMembersRemoveRoles"
@@ -947,8 +932,7 @@
         tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
-            layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 20, 25, 50, 100]
+            layout: 'sizes,prev,pager,next,total'
         }
     });
     const groupJoinRequestsModerationTable = reactive({
@@ -956,8 +940,7 @@
         tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
-            layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 20, 25, 50, 100]
+            layout: 'sizes,prev,pager,next,total'
         }
     });
     const groupBlockedModerationTable = reactive({
@@ -966,8 +949,7 @@
         pageSize: 15,
         paginationProps: {
             small: true,
-            layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 20, 25, 50, 100]
+            layout: 'sizes,prev,pager,next,total'
         }
     });
     const groupLogsModerationTable = reactive({
@@ -976,8 +958,7 @@
         tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
-            layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 20, 25, 50, 100]
+            layout: 'sizes,prev,pager,next,total'
         }
     });
     const groupBansModerationTable = reactive({
@@ -986,8 +967,7 @@
         tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
-            layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 20, 25, 50, 100]
+            layout: 'sizes,prev,pager,next,total'
         }
     });
     const groupMemberModerationTable = reactive({
@@ -995,8 +975,7 @@
         tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
-            layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 20, 25, 50, 100]
+            layout: 'sizes,prev,pager,next,total'
         }
     });
 

@@ -94,7 +94,7 @@
             defaultSort: { prop: 'created_at', order: 'descending' }
         },
         pageSize: 10,
-        paginationProps: { layout: 'sizes,prev,pager,next,total', pageSizes: [10, 25, 50, 100] }
+        paginationProps: { layout: 'sizes,prev,pager,next,total' }
     });
 
     const props = defineProps({

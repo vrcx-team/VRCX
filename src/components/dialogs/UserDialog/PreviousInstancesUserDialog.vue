@@ -119,8 +119,7 @@
         },
         pageSize: 10,
         paginationProps: {
-            layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 25, 50, 100]
+            layout: 'sizes,prev,pager,next,total'
         }
     });
 
