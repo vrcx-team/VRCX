@@ -31,7 +31,8 @@ export const useFeedStore = defineStore('Feed', () => {
                 prop: 'created_at',
                 order: 'descending'
             },
-            rowKey: (row) => `${row.type}:${row.rowId}:${row.created_at ?? ''}`
+            rowKey: (row) =>
+                `${row.type}:${row.rowId ?? row.uid}:${row.created_at ?? ''}`
         },
         pageSize: 20,
         pageSizeLinked: true,
@@ -189,7 +190,7 @@ export const useFeedStore = defineStore('Feed', () => {
         if (!feedSearch(feed)) {
             return;
         }
-        feedTable.value.data.push(feed);
+        feedTable.value.data.push({ ...feed, uid: crypto.randomUUID() });
         sweepFeed();
         UiStore.notifyMenu('feed');
     }
