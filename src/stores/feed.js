@@ -173,7 +173,9 @@ export const useFeedStore = defineStore('Feed', () => {
     function addFeed(feed) {
         notificationStore.queueFeedNoty(feed);
         feedSessionTable.value.push(feed);
-        feedSessionTable.value.shift();
+        if (feedSessionTable.value.length > vrcxStore.maxTableSize + 50) {
+            feedSessionTable.value.splice(0, 50);
+        }
         sharedFeedStore.updateSharedFeed(false);
         if (
             feedTable.value.filter.length > 0 &&
