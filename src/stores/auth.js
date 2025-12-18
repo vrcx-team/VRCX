@@ -173,8 +173,8 @@ export const useAuthStore = defineStore('Auth', () => {
         watchState.isFriendsLoaded = false;
         watchState.isFavoritesLoaded = false;
         notificationStore.notificationInitStatus = false;
+        await webApiService.clearCookies();
         await updateStoredUser(userStore.currentUser);
-        webApiService.clearCookies();
         loginForm.value.lastUserLoggedIn = '';
         await configRepository.remove('lastUserLoggedIn');
         // workerTimers.setTimeout(() => location.reload(), 500);
