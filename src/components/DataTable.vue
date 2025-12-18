@@ -185,6 +185,7 @@
                 return filteredData.value.slice(start, end);
             });
 
+            // Frictionless user experience when bigger than maxTableSize
             const totalItems = computed(() => {
                 const length = filteredData.value.length;
                 const max = vrcxStore.maxTableSize;

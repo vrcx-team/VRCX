@@ -396,7 +396,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (!gameLogSearch(entry)) {
             return;
         }
-        gameLogTable.value.data.push(entry);
+        gameLogTable.value.data.push({ ...entry, uid: crypto.randomUUID() });
         sweepGameLog();
         uiStore.notifyMenu('game-log');
     }
@@ -945,7 +945,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 }
             }
             notificationStore.queueGameLogNoty(entry);
-            addGameLog({ ...entry, uid: crypto.randomUUID() });
+            addGameLog(entry);
         }
     }
 
