@@ -70,7 +70,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 prop: 'created_at',
                 order: 'descending'
             },
-            rowKey: (row) => `${row.type}:${row.rowId}:${row.created_at ?? ''}`
+            rowKey: (row) =>
+                `${row.type}:${row.rowId ?? row.uid}:${row.created_at ?? ''}`
         },
         pageSize: 20,
         pageSizeLinked: true,
@@ -944,7 +945,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 }
             }
             notificationStore.queueGameLogNoty(entry);
-            addGameLog(entry);
+            addGameLog({ ...entry, uid: crypto.randomUUID() });
         }
     }
 
