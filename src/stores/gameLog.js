@@ -482,8 +482,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
     function sweepGameLog() {
         const { data } = gameLogTable.value;
         const j = data.length;
-        if (j > vrcxStore.maxTableSize) {
-            data.splice(0, j - vrcxStore.maxTableSize);
+        if (j > vrcxStore.maxTableSize + 50) {
+            data.splice(0, 50);
         }
 
         const date = new Date();

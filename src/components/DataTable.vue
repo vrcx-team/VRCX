@@ -18,7 +18,7 @@
                 size="small"
                 :current-page="internalCurrentPage"
                 :page-size="effectivePageSize"
-                :total="filteredData.length"
+                :total="totalItems"
                 v-bind="mergedPaginationProps"
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange" />
@@ -29,7 +29,7 @@
 <script>
     import { computed, ref, toRefs, watch } from 'vue';
 
-    import { useAppearanceSettingsStore } from '../stores';
+    import { useAppearanceSettingsStore, useVrcxStore } from '../stores';
 
     export default {
         name: 'DataTable',
@@ -84,6 +84,7 @@
         ],
         setup(props, { emit }) {
             const appearanceSettingsStore = useAppearanceSettingsStore();
+            const vrcxStore = useVrcxStore();
             const { data, currentPage, pageSize, tableProps, paginationProps, filters } = toRefs(props);
 
             const internalCurrentPage = ref(currentPage.value);
@@ -184,6 +185,12 @@
                 return filteredData.value.slice(start, end);
             });
 
+            const totalItems = computed(() => {
+                const length = filteredData.value.length;
+                const max = vrcxStore.maxTableSize;
+                return length > max && length < max + 51 ? max : length;
+            });
+
             const handleSortChange = ({ prop, order }) => {
                 if (props.tableProps.defaultSort) {
                     const { tableProps } = props;
@@ -237,6 +244,7 @@
             );
 
             return {
+                totalItems,
                 internalCurrentPage,
                 internalPageSize,
                 effectivePageSize,
