@@ -22,7 +22,7 @@ const feed = {
                 groupName: dbRow[8]
             };
             feedDatabase.push(row);
-        }, `SELECT * FROM ${dbVars.userPrefix}_feed_gps WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
+        }, `SELECT * FROM ${dbVars.userPrefix}_feed_gps WHERE created_at >= date('${dateOffset}') ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -36,7 +36,7 @@ const feed = {
                 previousStatusDescription: dbRow[7]
             };
             feedDatabase.push(row);
-        }, `SELECT * FROM ${dbVars.userPrefix}_feed_status WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
+        }, `SELECT * FROM ${dbVars.userPrefix}_feed_status WHERE created_at >= date('${dateOffset}') ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -48,7 +48,7 @@ const feed = {
                 previousBio: dbRow[5]
             };
             feedDatabase.push(row);
-        }, `SELECT * FROM ${dbVars.userPrefix}_feed_bio WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
+        }, `SELECT * FROM ${dbVars.userPrefix}_feed_bio WHERE created_at >= date('${dateOffset}') ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -64,7 +64,7 @@ const feed = {
                 previousCurrentAvatarThumbnailImageUrl: dbRow[9]
             };
             feedDatabase.push(row);
-        }, `SELECT * FROM ${dbVars.userPrefix}_feed_avatar WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
+        }, `SELECT * FROM ${dbVars.userPrefix}_feed_avatar WHERE created_at >= date('${dateOffset}') ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -78,7 +78,7 @@ const feed = {
                 groupName: dbRow[8]
             };
             feedDatabase.push(row);
-        }, `SELECT * FROM ${dbVars.userPrefix}_feed_online_offline WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
+        }, `SELECT * FROM ${dbVars.userPrefix}_feed_online_offline WHERE created_at >= date('${dateOffset}') ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
             var B = b.created_at;
@@ -91,6 +91,9 @@ const feed = {
             return 0;
         };
         feedDatabase.sort(compareByCreatedAt);
+        if (feedDatabase.length > dbVars.maxTableSize) {
+            feedDatabase.splice(0, feedDatabase.length - dbVars.maxTableSize);
+        }
         return feedDatabase;
     },
 

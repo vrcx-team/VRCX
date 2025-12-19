@@ -430,7 +430,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
         const maxLen = Math.floor(vrcxStore.maxTableSize * 1.5);
         if (maxLen > 0 && data.length > maxLen + 100) {
-            data.splice(0, data.length - maxLen);
+            data.splice(0, 100);
         }
     }
 
@@ -1369,6 +1369,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     async function getGameLogTable() {
         await database.initTables();
         gameLogSessionTable.value = await database.getGamelogDatabase();
+        sweepGameLogSessionTable();
         const dateTill = await database.getLastDateGameLogDatabase();
         updateGameLog(dateTill);
     }
