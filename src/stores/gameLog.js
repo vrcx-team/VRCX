@@ -359,6 +359,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     function addGameLog(entry) {
         gameLogSessionTable.value.push(entry);
+        sweepGameLogSessionTable();
         sharedFeedStore.updateSharedFeed(false);
         if (entry.type === 'VideoPlay') {
             // event time can be before last gameLog entry
@@ -399,6 +400,38 @@ export const useGameLogStore = defineStore('GameLog', () => {
         gameLogTable.value.data.push({ ...entry, uid: crypto.randomUUID() });
         sweepGameLog();
         uiStore.notifyMenu('game-log');
+    }
+
+    function sweepGameLogSessionTable() {
+        const data = gameLogSessionTable.value;
+        const k = data.length;
+        if (!k) {
+            return;
+        }
+
+        // 24 hour limit
+        const date = new Date();
+        date.setDate(date.getDate() - 1);
+        const limit = date.toJSON();
+
+        if (data[0].created_at < limit) {
+            let i = 0;
+            while (i < k && data[i].created_at < limit) {
+                ++i;
+            }
+            if (i === k) {
+                gameLogSessionTable.value = [];
+                return;
+            }
+            if (i) {
+                data.splice(0, i);
+            }
+        }
+
+        const maxLen = Math.floor(vrcxStore.maxTableSize * 1.5);
+        if (maxLen > 0 && data.length > maxLen + 100) {
+            data.splice(0, data.length - maxLen);
+        }
     }
 
     async function addGamelogLocationToDatabase(input) {
@@ -486,19 +519,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             data.splice(0, 50);
         }
 
-        const date = new Date();
-        date.setDate(date.getDate() - 1); // 24 hour limit
-        const limit = date.toJSON();
-        let i = 0;
-        const k = gameLogSessionTable.value.length;
-        while (i < k && gameLogSessionTable.value[i].created_at < limit) {
-            ++i;
-        }
-        if (i === k) {
-            gameLogSessionTable.value = [];
-        } else if (i) {
-            gameLogSessionTable.value.splice(0, i);
-        }
+        sweepGameLogSessionTable();
     }
 
     function addGameLogEntry(gameLog, location) {
