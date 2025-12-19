@@ -21,7 +21,7 @@ const feed = {
                 time: dbRow[7],
                 groupName: dbRow[8]
             };
-            feedDatabase.unshift(row);
+            feedDatabase.push(row);
         }, `SELECT * FROM ${dbVars.userPrefix}_feed_gps WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
@@ -35,7 +35,7 @@ const feed = {
                 previousStatus: dbRow[6],
                 previousStatusDescription: dbRow[7]
             };
-            feedDatabase.unshift(row);
+            feedDatabase.push(row);
         }, `SELECT * FROM ${dbVars.userPrefix}_feed_status WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
@@ -47,7 +47,7 @@ const feed = {
                 bio: dbRow[4],
                 previousBio: dbRow[5]
             };
-            feedDatabase.unshift(row);
+            feedDatabase.push(row);
         }, `SELECT * FROM ${dbVars.userPrefix}_feed_bio WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
@@ -63,7 +63,7 @@ const feed = {
                 previousCurrentAvatarImageUrl: dbRow[8],
                 previousCurrentAvatarThumbnailImageUrl: dbRow[9]
             };
-            feedDatabase.unshift(row);
+            feedDatabase.push(row);
         }, `SELECT * FROM ${dbVars.userPrefix}_feed_avatar WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
@@ -77,7 +77,7 @@ const feed = {
                 time: dbRow[7],
                 groupName: dbRow[8]
             };
-            feedDatabase.unshift(row);
+            feedDatabase.push(row);
         }, `SELECT * FROM ${dbVars.userPrefix}_feed_online_offline WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
@@ -175,7 +175,7 @@ const feed = {
     },
 
     async lookupFeedDatabase(search, filters, vipList) {
-        var search = search.replaceAll("'", "''");
+        search = search.replaceAll("'", "''");
         if (search.startsWith('wrld_') || search.startsWith('grp_')) {
             return this.getFeedByInstanceId(search, filters, vipList);
         }
@@ -243,7 +243,7 @@ const feed = {
                     time: dbRow[7],
                     groupName: dbRow[8]
                 };
-                feedDatabase.unshift(row);
+                feedDatabase.push(row);
             }, `SELECT * FROM ${dbVars.userPrefix}_feed_gps WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%' OR group_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         if (status) {
@@ -259,7 +259,7 @@ const feed = {
                     previousStatus: dbRow[6],
                     previousStatusDescription: dbRow[7]
                 };
-                feedDatabase.unshift(row);
+                feedDatabase.push(row);
             }, `SELECT * FROM ${dbVars.userPrefix}_feed_status WHERE (display_name LIKE '%${search}%' OR status LIKE '%${search}%' OR status_description LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         if (bio) {
@@ -273,15 +273,15 @@ const feed = {
                     bio: dbRow[4],
                     previousBio: dbRow[5]
                 };
-                feedDatabase.unshift(row);
+                feedDatabase.push(row);
             }, `SELECT * FROM ${dbVars.userPrefix}_feed_bio WHERE (display_name LIKE '%${search}%' OR bio LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         if (avatar) {
-            var query = '';
+            var avatarQuery = '';
             if (aviPrivate) {
-                query = 'OR user_id = owner_id';
+                avatarQuery = 'OR user_id = owner_id';
             } else if (aviPublic) {
-                query = 'OR user_id != owner_id';
+                avatarQuery = 'OR user_id != owner_id';
             }
             await sqliteService.execute((dbRow) => {
                 var row = {
@@ -297,8 +297,8 @@ const feed = {
                     previousCurrentAvatarImageUrl: dbRow[8],
                     previousCurrentAvatarThumbnailImageUrl: dbRow[9]
                 };
-                feedDatabase.unshift(row);
-            }, `SELECT * FROM ${dbVars.userPrefix}_feed_avatar WHERE ((display_name LIKE '%${search}%' OR avatar_name LIKE '%${search}%') ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+                feedDatabase.push(row);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_avatar WHERE ((display_name LIKE '%${search}%' OR avatar_name LIKE '%${search}%') ${avatarQuery}) ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         if (online || offline) {
             var query = '';
@@ -321,7 +321,7 @@ const feed = {
                     time: dbRow[7],
                     groupName: dbRow[8]
                 };
-                feedDatabase.unshift(row);
+                feedDatabase.push(row);
             }, `SELECT * FROM ${dbVars.userPrefix}_feed_online_offline WHERE ((display_name LIKE '%${search}%' OR world_name LIKE '%${search}%' OR group_name LIKE '%${search}%') ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         var compareByCreatedAt = function (a, b) {
@@ -336,7 +336,9 @@ const feed = {
             return 0;
         };
         feedDatabase.sort(compareByCreatedAt);
-        feedDatabase.splice(0, feedDatabase.length - dbVars.maxTableSize);
+        if (feedDatabase.length > dbVars.maxTableSize) {
+            feedDatabase.splice(0, feedDatabase.length - dbVars.maxTableSize);
+        }
         return feedDatabase;
     },
 
@@ -388,7 +390,7 @@ const feed = {
                     time: dbRow[7],
                     groupName: dbRow[8]
                 };
-                feedDatabase.unshift(row);
+                feedDatabase.push(row);
             }, `SELECT * FROM ${dbVars.userPrefix}_feed_gps WHERE location LIKE '%${instanceId}%' ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         if (online || offline) {
@@ -412,7 +414,7 @@ const feed = {
                     time: dbRow[7],
                     groupName: dbRow[8]
                 };
-                feedDatabase.unshift(row);
+                feedDatabase.push(row);
             }, `SELECT * FROM ${dbVars.userPrefix}_feed_online_offline WHERE (location LIKE '%${instanceId}%' ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         var compareByCreatedAt = function (a, b) {
@@ -427,7 +429,9 @@ const feed = {
             return 0;
         };
         feedDatabase.sort(compareByCreatedAt);
-        feedDatabase.splice(0, feedDatabase.length - dbVars.maxTableSize);
+        if (feedDatabase.length > dbVars.maxTableSize) {
+            feedDatabase.splice(0, feedDatabase.length - dbVars.maxTableSize);
+        }
         return feedDatabase;
     }
 };
