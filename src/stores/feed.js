@@ -173,9 +173,7 @@ export const useFeedStore = defineStore('Feed', () => {
     function addFeed(feed) {
         notificationStore.queueFeedNoty(feed);
         feedSessionTable.value.push(feed);
-        if (feedSessionTable.value.length > vrcxStore.maxTableSize + 50) {
-            feedSessionTable.value.splice(0, 50);
-        }
+        sweepFeedSessionTable();
         sharedFeedStore.updateSharedFeed(false);
         if (
             feedTable.value.filter.length > 0 &&
@@ -197,27 +195,46 @@ export const useFeedStore = defineStore('Feed', () => {
         UiStore.notifyMenu('feed');
     }
 
-    function sweepFeed() {
-        let limit;
-        const { data } = feedTable.value;
-        const j = data.length;
-        if (j > vrcxStore.maxTableSize) {
-            data.splice(0, j - vrcxStore.maxTableSize);
+    function sweepFeedSessionTable() {
+        const data = feedSessionTable.value;
+        const k = data.length;
+        if (!k) {
+            return;
         }
 
+        // 24 hour limit
         const date = new Date();
-        date.setDate(date.getDate() - 1); // 24 hour limit
-        limit = date.toJSON();
-        let i = 0;
-        const k = feedSessionTable.value.length;
-        while (i < k && feedSessionTable.value[i].created_at < limit) {
-            ++i;
+        date.setDate(date.getDate() - 1);
+        const limit = date.toJSON();
+
+        if (data[0].created_at < limit) {
+            let i = 0;
+            while (i < k && data[i].created_at < limit) {
+                ++i;
+            }
+            if (i === k) {
+                feedSessionTable.value = [];
+                return;
+            }
+            if (i) {
+                data.splice(0, i);
+            }
         }
-        if (i === k) {
-            feedSessionTable.value = [];
-        } else if (i) {
-            feedSessionTable.value.splice(0, i);
+
+        const maxLen = Math.floor(vrcxStore.maxTableSize * 1.5);
+        if (maxLen > 0 && data.length > maxLen + 100) {
+            data.splice(0, 100);
         }
+    }
+
+    function sweepFeed() {
+        const { data } = feedTable.value;
+        const j = data.length;
+        if (j > vrcxStore.maxTableSize + 50) {
+            data.splice(0, 50);
+        }
+
+        sweepFeedSessionTable();
     }
 
     async function initFeedTable() {
