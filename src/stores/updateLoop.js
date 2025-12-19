@@ -138,7 +138,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 }
                 if (--state.nextDatabaseOptimize <= 0) {
                     state.nextDatabaseOptimize = 86400; // 1 day
-                    database.optimize();
+                    database.optimize().catch(console.error);
                 }
             }
         } catch (err) {
