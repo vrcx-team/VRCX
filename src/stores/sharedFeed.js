@@ -68,6 +68,9 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         if (!watchState.isFriendsLoaded) {
             return;
         }
+        if (wristOverlaySettingsStore.overlayWrist === false) {
+            return;
+        }
         if (state.updateSharedFeedTimer) {
             if (forceUpdate) {
                 state.updateSharedFeedPendingForceUpdate = true;
