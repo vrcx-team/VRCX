@@ -262,12 +262,13 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         } else {
             return;
         }
-        const bias = new Date(Date.now() - 86400000).toJSON(); // 24 hours
+        const bias = new Date(Date.now() - 1000 * 60 * 60 * 12).toJSON(); // 12 hours
         const wristArr = [];
         let w = 0;
         const wristFilter = notificationsSettingsStore.sharedFeedFilters.wrist;
         let currentUserLeaveTime = 0;
         let locationJoinTime = 0;
+        let earliestKeptTime = 0;
         for (i = sessionTable.length - 1; i > -1; i--) {
             const ctx = sessionTable[i];
             if (ctx.created_at < bias) {
@@ -276,21 +277,30 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
             if (ctx.type === 'Notification') {
                 continue;
             }
+            let ctxTime = 0;
+            if (w >= 50 && earliestKeptTime > 0) {
+                ctxTime = Date.parse(ctx.created_at);
+                if (ctxTime < earliestKeptTime - 20 * 1000) {
+                    break;
+                }
+            }
             // on Location change remove OnPlayerLeft
             if (ctx.type === 'LocationDestination') {
-                currentUserLeaveTime = Date.parse(ctx.created_at);
+                if (!ctxTime) {
+                    ctxTime = Date.parse(ctx.created_at);
+                }
+                currentUserLeaveTime = ctxTime;
                 const currentUserLeaveTimeOffset =
                     currentUserLeaveTime + 5 * 1000;
                 for (var k = w - 1; k > -1; k--) {
                     var feedItem = wristArr[k];
+                    const feedItemTime = Date.parse(feedItem.created_at);
                     if (
                         (feedItem.type === 'OnPlayerLeft' ||
                             feedItem.type === 'BlockedOnPlayerLeft' ||
                             feedItem.type === 'MutedOnPlayerLeft') &&
-                        Date.parse(feedItem.created_at) >=
-                            currentUserLeaveTime &&
-                        Date.parse(feedItem.created_at) <=
-                            currentUserLeaveTimeOffset
+                        feedItemTime >= currentUserLeaveTime &&
+                        feedItemTime <= currentUserLeaveTimeOffset
                     ) {
                         wristArr.splice(k, 1);
                         w--;
@@ -299,17 +309,20 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
             }
             // on Location change remove OnPlayerJoined
             if (ctx.type === 'Location') {
-                locationJoinTime = Date.parse(ctx.created_at);
+                if (!ctxTime) {
+                    ctxTime = Date.parse(ctx.created_at);
+                }
+                locationJoinTime = ctxTime;
                 const locationJoinTimeOffset = locationJoinTime + 20 * 1000;
                 for (let k = w - 1; k > -1; k--) {
                     let feedItem = wristArr[k];
+                    const feedItemTime = Date.parse(feedItem.created_at);
                     if (
                         (feedItem.type === 'OnPlayerJoined' ||
                             feedItem.type === 'BlockedOnPlayerJoined' ||
                             feedItem.type === 'MutedOnPlayerJoined') &&
-                        Date.parse(feedItem.created_at) >= locationJoinTime &&
-                        Date.parse(feedItem.created_at) <=
-                            locationJoinTimeOffset
+                        feedItemTime >= locationJoinTime &&
+                        feedItemTime <= locationJoinTimeOffset
                     ) {
                         wristArr.splice(k, 1);
                         w--;
@@ -351,40 +364,56 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
             }
             // BlockedOnPlayerJoined, BlockedOnPlayerLeft, MutedOnPlayerJoined, MutedOnPlayerLeft
             if (ctx.type === 'OnPlayerJoined' || ctx.type === 'OnPlayerLeft') {
-                for (var ref of moderationStore.cachedPlayerModerations.values()) {
-                    if (
-                        ref.targetDisplayName !== ctx.displayName &&
-                        ref.sourceUserId !== ctx.userId
-                    ) {
-                        continue;
-                    }
+                if (
+                    ctx.userId &&
+                    !moderationStore.cachedPlayerModerationsUserIds.has(
+                        ctx.userId
+                    )
+                ) {
+                    // no moderation for this userId, skip
+                } else {
+                    for (var ref of moderationStore.cachedPlayerModerations.values()) {
+                        if (
+                            ref.targetDisplayName !== ctx.displayName &&
+                            ref.sourceUserId !== ctx.userId
+                        ) {
+                            continue;
+                        }
 
-                    let type = '';
-                    if (ref.type === 'block') {
-                        type = `Blocked${ctx.type}`;
-                    } else if (ref.type === 'mute') {
-                        type = `Muted${ctx.type}`;
-                    } else {
-                        continue;
-                    }
+                        let type = '';
+                        if (ref.type === 'block') {
+                            type = `Blocked${ctx.type}`;
+                        } else if (ref.type === 'mute') {
+                            type = `Muted${ctx.type}`;
+                        } else {
+                            continue;
+                        }
 
-                    const entry = {
-                        created_at: ctx.created_at,
-                        type,
-                        displayName: ref.targetDisplayName,
-                        userId: ref.targetUserId,
-                        isFriend,
-                        isFavorite
-                    };
-                    if (
-                        wristFilter[type] &&
-                        (wristFilter[type] === 'Everyone' ||
-                            (wristFilter[type] === 'Friends' && isFriend) ||
-                            (wristFilter[type] === 'VIP' && isFavorite))
-                    ) {
-                        wristArr.unshift(entry);
+                        const entry = {
+                            created_at: ctx.created_at,
+                            type,
+                            displayName: ref.targetDisplayName,
+                            userId: ref.targetUserId,
+                            isFriend,
+                            isFavorite
+                        };
+                        if (
+                            wristFilter[type] &&
+                            (wristFilter[type] === 'Everyone' ||
+                                (wristFilter[type] === 'Friends' && isFriend) ||
+                                (wristFilter[type] === 'VIP' && isFavorite))
+                        ) {
+                            wristArr.unshift(entry);
+                            const entryTime = Date.parse(entry.created_at);
+                            if (
+                                !earliestKeptTime ||
+                                entryTime < earliestKeptTime
+                            ) {
+                                earliestKeptTime = entryTime;
+                            }
+                        }
+                        notificationStore.queueGameLogNoty(entry);
                     }
-                    notificationStore.queueGameLogNoty(entry);
                 }
             }
             // when too many user joins happen at once when switching instances
@@ -406,8 +435,15 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
                     isFavorite
                 });
                 ++w;
+                if (!ctxTime) {
+                    ctxTime = Date.parse(ctx.created_at);
+                }
+                if (!earliestKeptTime || ctxTime < earliestKeptTime) {
+                    earliestKeptTime = ctxTime;
+                }
             }
         }
+        wristArr.splice(50);
         sharedFeed.value.gameLog.wrist = wristArr;
         sharedFeed.value.pendingUpdate = true;
     }
