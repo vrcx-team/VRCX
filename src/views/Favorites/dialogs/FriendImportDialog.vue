@@ -91,7 +91,7 @@
             <h2 style="font-weight: bold; margin: 5px 0">{{ t('dialog.friend_import.errors') }}</h2>
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="friendImportDialog.errors"></pre>
         </template>
-        <DataTable v-loading="friendImportDialog.loading" v-bind="friendImportTable" style="margin-top: 10px">
+        <DataTable :loading="friendImportDialog.loading" v-bind="friendImportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="currentAvatarThumbnailImageUrl">
                 <template #default="{ row }">
                     <el-popover placement="right" :width="500" trigger="hover">

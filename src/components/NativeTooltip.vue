@@ -322,7 +322,17 @@
         }, 80);
     }
 
+    function cancelClose() {
+        clearTimer('close');
+        clearTimer('hide');
+        if (isPopoverOpen(tooltipEl.value)) {
+            isClosing.value = false;
+            isOpen.value = true;
+        }
+    }
+
     onBeforeUnmount(() => {
+        close(true);
         clearAllTimers();
     });
 </script>
