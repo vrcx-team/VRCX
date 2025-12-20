@@ -132,7 +132,7 @@
                 </template>
             </el-table-column>
 
-            <el-table-column :label="t('table.feed.date')" prop="created_at" :sortable="true" width="130">
+            <el-table-column :label="t('table.feed.date')" prop="created_at" width="130">
                 <template #default="scope">
                     <NativeTooltip placement="right">
                         <template #content>

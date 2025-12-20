@@ -107,23 +107,35 @@
         return props.pageSizeLinked ? appearanceSettingsStore.tablePageSize : internalPageSize.value;
     });
 
-    const looksSortedByCreatedAtDesc = (src) => {
-        if (!Array.isArray(src) || src.length <= 2) return true;
+    const detectCreatedAtOrder = (src) => {
+        if (!Array.isArray(src) || src.length <= 2) return null;
+
+        let couldBeAsc = true;
+        let couldBeDesc = true;
         const start = Math.max(1, src.length - effectivePageSize.value - 1);
         for (let i = start; i < src.length; i++) {
             const a = src[i - 1]?.created_at;
             const b = src[i]?.created_at;
-            if (typeof a === 'string' && typeof b === 'string' && a > b) {
-                return false;
+            if (typeof a !== 'string' || typeof b !== 'string') continue;
+            if (a > b) {
+                couldBeAsc = false;
+            } else if (a < b) {
+                couldBeDesc = false;
+            }
+            if (!couldBeAsc && !couldBeDesc) {
+                return null;
             }
         }
-        return true;
+
+        if (couldBeAsc) return 'asc';
+        if (couldBeDesc) return 'desc';
+        return null;
     };
 
     const throttledData = ref(asRawArray(data.value));
     const throttledFilters = ref(filters.value);
     const throttledSortData = ref({ ...sortData.value });
-    const throttledLooksSortedByCreatedAt = ref(true);
+    const throttledCreatedAtOrder = ref(null);
 
     let throttleTimerId = null;
     const syncThrottledInputs = () => {
@@ -138,9 +150,7 @@
             !hasActiveFilters(throttledFilters.value) &&
             sort?.prop === 'created_at' &&
             sort?.order === 'descending';
-        throttledLooksSortedByCreatedAt.value = shouldCheckFastPath
-            ? looksSortedByCreatedAtDesc(throttledData.value)
-            : false;
+        throttledCreatedAtOrder.value = shouldCheckFastPath ? detectCreatedAtOrder(throttledData.value) : null;
     };
 
     const scheduleThrottledSync = () => {
@@ -163,7 +173,7 @@
 
     const canUseFastCreatedAtDescPagination = computed(() => {
         if (!showPagination.value) return false;
-        if (!throttledLooksSortedByCreatedAt.value) return false;
+        if (!throttledCreatedAtOrder.value) return false;
 
         const activeFilters = throttledFilters.value;
         if (hasActiveFilters(activeFilters)) return false;
@@ -171,6 +181,17 @@
         const sort = throttledSortData.value;
         return sort?.prop === 'created_at' && sort?.order === 'descending';
     });
+    const hasAnyNonNullSortValue = (rows, prop) => {
+        if (!Array.isArray(rows) || rows.length === 0) return false;
+        const sample = Math.min(rows.length, 50);
+        for (let i = 0; i < sample; i++) {
+            const value = rows[i]?.[prop];
+            if (value !== undefined && value !== null) {
+                return true;
+            }
+        }
+        return false;
+    };
 
     const mergedTableProps = computed(() => ({
         stripe: true,
@@ -262,6 +283,9 @@
         }
 
         if (activeSort?.prop && activeSort?.order) {
+            if (!hasAnyNonNullSortValue(result, activeSort.prop)) {
+                return result;
+            }
             if (result === throttledData.value) {
                 result = [...result];
             }
@@ -284,6 +308,13 @@
             }
             const startOffset = (internalCurrentPage.value - 1) * effectivePageSize.value;
             const endOffset = startOffset + effectivePageSize.value;
+            if (throttledCreatedAtOrder.value === 'desc') {
+                for (let idx = startOffset; idx < endOffset; idx++) {
+                    if (idx >= src.length) break;
+                    page.push(src[idx]);
+                }
+                return page;
+            }
             for (let offset = startOffset; offset < endOffset; offset++) {
                 const idx = src.length - 1 - offset;
                 if (idx < 0) break;
