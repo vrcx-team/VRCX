@@ -27,7 +27,7 @@
 </template>
 
 <script>
-    import { computed, ref, toRefs, watch } from 'vue';
+    import { computed, onBeforeUnmount, ref, toRefs, watch, watchEffect } from 'vue';
 
     import { useAppearanceSettingsStore, useVrcxStore } from '../stores';
 
@@ -94,6 +94,35 @@
                 order: props.tableProps.defaultSort?.order || 'descending'
             });
 
+            const throttledData = ref(Array.isArray(data.value) ? data.value.slice() : []);
+            const throttledFilters = ref(filters.value);
+            const throttledSortData = ref({ ...sortData.value });
+
+            let throttleTimerId = null;
+
+            const syncThrottledInputs = () => {
+                throttleTimerId = null;
+                throttledData.value = Array.isArray(data.value) ? data.value.slice() : [];
+                throttledFilters.value = filters.value;
+                throttledSortData.value = { ...sortData.value };
+            };
+
+            const scheduleThrottledSync = () => {
+                if (throttleTimerId !== null) {
+                    return;
+                }
+                throttleTimerId = setTimeout(syncThrottledInputs, 500);
+            };
+
+            watch([data, filters, sortData], scheduleThrottledSync);
+
+            onBeforeUnmount(() => {
+                if (throttleTimerId !== null) {
+                    clearTimeout(throttleTimerId);
+                    throttleTimerId = null;
+                }
+            });
+
             const showPagination = computed(() => {
                 return props.layout.includes('pagination');
             });
@@ -130,10 +159,12 @@
             };
 
             const filteredData = computed(() => {
-                let result = [...data.value];
+                let result = throttledData.value;
+                const activeFilters = throttledFilters.value;
+                const activeSort = throttledSortData.value;
 
-                if (filters.value && Array.isArray(filters.value) && filters.value.length > 0) {
-                    filters.value.forEach((filter) => {
+                if (activeFilters && Array.isArray(activeFilters) && activeFilters.length > 0) {
+                    activeFilters.forEach((filter) => {
                         if (!filter.value) {
                             return;
                         }
@@ -145,11 +176,37 @@
                     });
                 }
 
-                if (sortData.value.prop && sortData.value.order) {
-                    const { prop, order } = sortData.value;
+                if (activeSort?.prop && activeSort?.order) {
+                    if (result === throttledData.value) {
+                        result = [...result];
+                    }
+                    const { prop, order } = activeSort;
+                    const sortKeyByRow = new Map();
+
+                    const getSortKey = (row) => {
+                        if (sortKeyByRow.has(row)) {
+                            return sortKeyByRow.get(row);
+                        }
+
+                        const value = row[prop];
+                        let key;
+                        if (value == null) {
+                            key = null;
+                        } else if (typeof value === 'number') {
+                            key = value;
+                        } else if (value instanceof Date) {
+                            key = value.getTime();
+                        } else {
+                            key = String(value).toLowerCase();
+                        }
+
+                        sortKeyByRow.set(row, key);
+                        return key;
+                    };
+
                     result.sort((a, b) => {
-                        const aVal = a[prop];
-                        const bVal = b[prop];
+                        const aVal = getSortKey(a);
+                        const bVal = getSortKey(b);
                         let comparison = 0;
 
                         if (aVal == null && bVal == null) return 0;
@@ -158,11 +215,9 @@
 
                         if (typeof aVal === 'number' && typeof bVal === 'number') {
                             comparison = aVal - bVal;
-                        } else if (aVal instanceof Date && bVal instanceof Date) {
-                            comparison = aVal.getTime() - bVal.getTime();
                         } else {
-                            const aStr = String(aVal).toLowerCase();
-                            const bStr = String(bVal).toLowerCase();
+                            const aStr = typeof aVal === 'string' ? aVal : String(aVal);
+                            const bStr = typeof bVal === 'string' ? bVal : String(bVal);
                             if (aStr > bStr) comparison = 1;
                             else if (aStr < bStr) comparison = -1;
                         }
@@ -171,9 +226,15 @@
                     });
                 }
 
-                emit('filtered-data', result);
                 return result;
             });
+
+            watchEffect(
+                () => {
+                    emit('filtered-data', filteredData.value);
+                },
+                { flush: 'post' }
+            );
 
             const paginatedData = computed(() => {
                 if (!showPagination.value) {
