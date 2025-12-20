@@ -103,7 +103,7 @@
             const syncThrottledInputs = () => {
                 throttleTimerId = null;
                 throttledData.value = Array.isArray(data.value) ? data.value.slice() : [];
-                throttledFilters.value = filters.value;
+                throttledFilters.value = Array.isArray(filters.value) ? filters.value.slice() : filters.value;
                 throttledSortData.value = { ...sortData.value };
             };
 
@@ -114,7 +114,11 @@
                 throttleTimerId = setTimeout(syncThrottledInputs, 500);
             };
 
-            watch([data, filters, sortData], scheduleThrottledSync);
+            watch(data, scheduleThrottledSync);
+            watch(() => (Array.isArray(data.value) ? data.value.length : 0), scheduleThrottledSync);
+
+            watch(filters, scheduleThrottledSync, { deep: true });
+            watch(sortData, scheduleThrottledSync, { deep: true });
 
             onBeforeUnmount(() => {
                 if (throttleTimerId !== null) {
