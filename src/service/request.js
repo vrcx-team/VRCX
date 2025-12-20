@@ -196,7 +196,7 @@ export function request(endpoint, options) {
             if (
                 init.method === 'GET' &&
                 status === 404 &&
-                endpoint.startsWith('avatars/')
+                endpoint?.startsWith('avatars/')
             ) {
                 ElMessage({
                     message: t('message.api_handler.avatar_private_or_deleted'),
