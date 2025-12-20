@@ -1,4 +1,4 @@
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref, shallowReactive, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 
@@ -59,7 +59,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     });
 
     const gameLogTable = ref({
-        data: [],
+        data: shallowReactive([]),
         loading: false,
         search: '',
         filter: [],
@@ -103,7 +103,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            gameLogTable.value.data = [];
+            gameLogTable.value.data.length = 0;
             gameLogSessionTable.value = [];
             if (isLoggedIn) {
                 initGameLogTable();
@@ -349,11 +349,12 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (gameLogTable.value.vip) {
             vipList = Array.from(friendStore.localFavoriteFriends.values());
         }
-        gameLogTable.value.data = await database.lookupGameLogDatabase(
+        const rows = await database.lookupGameLogDatabase(
             gameLogTable.value.search,
             gameLogTable.value.filter,
             vipList
         );
+        gameLogTable.value.data = shallowReactive(rows);
         gameLogTable.value.loading = false;
     }
 
@@ -1434,10 +1435,11 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     async function initGameLogTable() {
-        gameLogTable.value.data = await database.lookupGameLogDatabase(
+        const rows = await database.lookupGameLogDatabase(
             gameLogTable.value.search,
             gameLogTable.value.filter
         );
+        gameLogTable.value.data = shallowReactive(rows);
     }
 
     return {

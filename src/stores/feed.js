@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue';
+import { ref, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
 
 import { database } from '../service/database';
@@ -19,7 +19,7 @@ export const useFeedStore = defineStore('Feed', () => {
     const sharedFeedStore = useSharedFeedStore();
 
     const feedTable = ref({
-        data: [],
+        data: shallowReactive([]),
         search: '',
         vip: false,
         loading: false,
@@ -46,7 +46,7 @@ export const useFeedStore = defineStore('Feed', () => {
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            feedTable.value.data = [];
+            feedTable.value.data.length = 0;
             feedSessionTable.value = [];
             if (isLoggedIn) {
                 initFeedTable();
@@ -162,11 +162,12 @@ export const useFeedStore = defineStore('Feed', () => {
         if (feedTable.value.vip) {
             vipList = Array.from(friendStore.localFavoriteFriends.values());
         }
-        feedTable.value.data = await database.lookupFeedDatabase(
+        const rows = await database.lookupFeedDatabase(
             feedTable.value.search,
             feedTable.value.filter,
             vipList
         );
+        feedTable.value.data = shallowReactive(rows);
         feedTable.value.loading = false;
     }
 
