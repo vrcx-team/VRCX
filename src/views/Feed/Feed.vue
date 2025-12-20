@@ -2,9 +2,13 @@
     <div class="x-container feed">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
-                <el-tooltip placement="bottom" :content="t('view.feed.favorites_only_tooltip')">
+                <NativeTooltip
+                    placement="bottom"
+                    :content="t('view.feed.favorites_only_tooltip')"
+                    :enter-ms="140"
+                    :exit-ms="120">
                     <el-switch v-model="feedTable.vip" active-color="#13ce66" @change="feedTableLookup"></el-switch>
-                </el-tooltip>
+                </NativeTooltip>
             </div>
             <el-select
                 v-model="feedTable.filter"
@@ -130,12 +134,12 @@
 
             <el-table-column :label="t('table.feed.date')" prop="created_at" :sortable="true" width="130">
                 <template #default="scope">
-                    <el-tooltip placement="right">
+                    <NativeTooltip placement="right">
                         <template #content>
                             <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                         </template>
                         <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
-                    </el-tooltip>
+                    </NativeTooltip>
                 </template>
             </el-table-column>
 

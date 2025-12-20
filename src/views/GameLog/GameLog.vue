@@ -2,12 +2,12 @@
     <div class="x-container">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
-                <el-tooltip placement="bottom" :content="t('view.feed.favorites_only_tooltip')">
+                <NativeTooltip placement="bottom" :content="t('view.feed.favorites_only_tooltip')">
                     <el-switch
                         v-model="gameLogTable.vip"
                         active-color="#13ce66"
                         @change="gameLogTableLookup"></el-switch>
-                </el-tooltip>
+                </NativeTooltip>
             </div>
             <el-select
                 v-model="gameLogTable.filter"
@@ -43,12 +43,12 @@
         <DataTable v-loading="gameLogTable.loading" v-bind="gameLogTable">
             <el-table-column :label="t('table.gameLog.date')" prop="created_at" :sortable="true" width="130">
                 <template #default="scope">
-                    <el-tooltip placement="right">
+                    <NativeTooltip placement="right">
                         <template #content>
                             <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                         </template>
                         <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
-                    </el-tooltip>
+                    </NativeTooltip>
                 </template>
             </el-table-column>
 
@@ -166,7 +166,7 @@
                             class="small-button"
                             @click="deleteGameLogEntryPrompt(scope.row)"></el-button>
                     </template>
-                    <el-tooltip placement="top" :content="t('dialog.previous_instances.info')">
+                    <NativeTooltip placement="top" :content="t('dialog.previous_instances.info')">
                         <el-button
                             v-if="scope.row.type === 'Location'"
                             text
@@ -174,7 +174,7 @@
                             size="small"
                             class="small-button"
                             @click="showPreviousInstancesInfoDialog(scope.row.location)"></el-button>
-                    </el-tooltip>
+                    </NativeTooltip>
                 </template>
             </el-table-column>
         </DataTable>

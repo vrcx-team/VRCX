@@ -6,9 +6,9 @@
         </span>
         <span v-if="groupName" @click="showGroupDialog" class="x-link">({{ groupName }})</span>
         <span v-if="region" :class="['flags', 'inline-block', 'ml-5', region]"></span>
-        <el-tooltip v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
+        <NativeTooltip v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
             <el-icon :class="['inline-block', 'ml-5']" style="color: lightcoral"><WarnTriangleFilled /></el-icon>
-        </el-tooltip>
+        </NativeTooltip>
         <el-icon v-if="strict" style="display: inline-block; margin-left: 5px"><Lock /></el-icon>
     </span>
 </template>

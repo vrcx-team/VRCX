@@ -69,19 +69,20 @@
                     </el-popover>
                 </el-menu>
                 <el-divider style="width: calc(100% - 18px); margin-left: 9px"></el-divider>
-                <el-tooltip :content="t('prompt.direct_access_omni.header')" placement="right"
-                    ><div class="bottom-button" @click="directAccessPaste"><i class="ri-compass-3-line"></i></div
-                ></el-tooltip>
+                <NativeTooltip :content="t('prompt.direct_access_omni.header')" placement="right">
+                    <div class="bottom-button" @click="directAccessPaste"><i class="ri-compass-3-line"></i></div>
+                </NativeTooltip>
             </div>
 
             <div class="nav-menu-container-bottom">
-                <el-tooltip v-if="branch === 'Nightly'" :show-after="150" :content="'Feedback'" placement="right"
-                    ><div
+                <NativeTooltip v-if="branch === 'Nightly'" :show-after="150" :content="'Feedback'" placement="right">
+                    <div
                         class="bottom-button"
                         id="feedback"
                         @click="!sentryErrorReporting && setSentryErrorReporting()">
-                        <i class="ri-feedback-line"></i></div
-                ></el-tooltip>
+                        <i class="ri-feedback-line"></i>
+                    </div>
+                </NativeTooltip>
 
                 <el-popover
                     v-model:visible="supportMenuVisible"
@@ -118,11 +119,11 @@
                     </div>
                     <template #reference>
                         <div>
-                            <el-tooltip :show-after="150" :content="t('nav_tooltip.help_support')" placement="right">
+                            <NativeTooltip :show-after="150" :content="t('nav_tooltip.help_support')" placement="right">
                                 <div class="bottom-button">
                                     <i class="ri-question-line"></i>
                                 </div>
-                            </el-tooltip>
+                            </NativeTooltip>
                         </div>
                     </template>
                 </el-popover>
