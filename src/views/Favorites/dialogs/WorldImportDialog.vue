@@ -122,7 +122,7 @@
             </h2>
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="worldImportDialog.errors"></pre>
         </template>
-        <DataTable v-loading="worldImportDialog.loading" v-bind="worldImportTable" style="margin-top: 10px">
+        <DataTable :loading="worldImportDialog.loading" v-bind="worldImportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="thumbnailImageUrl">
                 <template #default="{ row }">
                     <el-popover placement="right" :width="500" trigger="hover">

@@ -40,7 +40,7 @@
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="errors"></pre>
         </template>
 
-        <DataTable v-loading="loading" v-bind="noteExportTable" style="margin-top: 10px">
+        <DataTable :loading="loading" v-bind="noteExportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="currentAvatarThumbnailImageUrl">
                 <template #default="{ row }">
                     <el-popover placement="right" :width="500" trigger="hover">

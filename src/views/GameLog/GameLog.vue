@@ -40,7 +40,7 @@
                 @change="gameLogTableLookup"></el-input>
         </div>
 
-        <DataTable v-loading="gameLogTable.loading" v-bind="gameLogTable">
+        <DataTable v-bind="gameLogTable">
             <el-table-column :label="t('table.gameLog.date')" prop="created_at" :sortable="true" width="130">
                 <template #default="scope">
                     <NativeTooltip placement="right">
