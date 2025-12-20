@@ -41,7 +41,7 @@
         </div>
 
         <DataTable v-bind="gameLogTable">
-            <el-table-column :label="t('table.gameLog.date')" prop="created_at" :sortable="true" width="130">
+            <el-table-column :label="t('table.gameLog.date')" prop="created_at" width="130">
                 <template #default="scope">
                     <NativeTooltip placement="right">
                         <template #content>
