@@ -8,8 +8,8 @@ import {
     removeFromArray,
     replaceReactiveObject
 } from '../shared/utils';
-import { database } from '../service/database';
 import { avatarRequest, favoriteRequest } from '../api';
+import { database } from '../service/database';
 import { processBulk } from '../service/request';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAvatarStore } from './avatar';
@@ -1258,7 +1258,10 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      * @param {Function | null} onProgress - Progress callback function, receives (current, total) parameters
      * @returns {Promise<{total: number, invalid: number, invalidIds: string[]}>}
      */
-    async function checkInvalidLocalAvatars(targetGroup = null, onProgress = null) {
+    async function checkInvalidLocalAvatars(
+        targetGroup = null,
+        onProgress = null
+    ) {
         const result = {
             total: 0,
             invalid: 0,
@@ -1283,19 +1286,19 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             if (!favoriteGroup || favoriteGroup.length === 0) {
                 continue;
             }
-            
+
             for (const favorite of favoriteGroup) {
                 currentIndex++;
-                
+
                 if (typeof onProgress === 'function') {
                     onProgress(currentIndex, result.total);
                 }
-                
+
                 try {
                     await avatarRequest.getAvatar({
                         avatarId: favorite.id
                     });
-                    await new Promise(resolve => setTimeout(resolve, 500));
+                    await new Promise((resolve) => setTimeout(resolve, 500));
                 } catch (err) {
                     result.invalid++;
                     result.invalidIds.push(favorite.id);
@@ -1329,7 +1332,9 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             }
 
             for (const avatarId of avatarIds) {
-                const index = favoriteGroup.findIndex(fav => fav.id === avatarId);
+                const index = favoriteGroup.findIndex(
+                    (fav) => fav.id === avatarId
+                );
                 if (index !== -1) {
                     removeLocalAvatarFavorite(avatarId, group);
                     result.removed++;

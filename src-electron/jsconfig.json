@@ -1,18 +1,18 @@
 {
     "compilerOptions": {
-        "module": "ESNext",
-        "target": "ESNext",
+        "module": "nodenext",
+        "target": "ES2022",
         "allowJs": true,
         "checkJs": true,
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "moduleResolution": "bundler",
+        "moduleResolution": "nodenext",
         "forceConsistentCasingInFileNames": true,
-        "lib": ["esnext"],
+        "lib": ["esnext", "dom"],
         "types": ["node"],
         "noEmit": true
     },
-    "include": ["src/vite.config.js", "src/shared/utils/localizationHelperCLI.js"],
-    "exclude": ["node_modules", "build"]
+    "include": ["**/*"],
+    "exclude": ["../node_modules", "../build"]
 }
