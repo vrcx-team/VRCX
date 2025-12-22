@@ -106,13 +106,16 @@
                         class="world-card"
                         :style="worldCardStyle">
                         <!-- World header with thumbnail and title only -->
-                        <div class="world-card__header">
+                        <div
+                            class="world-card__header"
+                            :class="{ 'world-card__header--collapsed': isWorldCollapsed(worldCard.worldId) }"
+                            @click="worldCard.instances.length > 1 && toggleWorldCollapse(worldCard.worldId)">
                             <div class="world-card__thumbnail">
                                 <img
                                     v-if="worldCard.world"
                                     :src="worldCard.world.thumbnailImageUrl"
                                     class="world-card__image x-link"
-                                    @click="showWorldDialog(worldCard.worldId)"
+                                    @click.stop="showWorldDialog(worldCard.worldId)"
                                     loading="lazy" />
                             </div>
                             <div class="world-card__info">
@@ -121,13 +124,34 @@
                                         v-if="worldCard.world"
                                         class="world-card__name x-link"
                                         :title="worldCard.world.name"
-                                        @click="showWorldDialog(worldCard.worldId)"
+                                        @click.stop="showWorldDialog(worldCard.worldId)"
                                         v-text="worldCard.world.name" />
                                 </div>
+                                <!-- Collapsed summary info -->
+                                <div v-if="isWorldCollapsed(worldCard.worldId)" class="world-card__summary">
+                                    <div class="world-card__summary-main">
+                                        <span class="world-card__instance-count">🏠{{ worldCard.instances.length }}</span>
+                                        <span class="world-card__friend-count">👥{{ worldCard.totalFriends }}</span>
+                                    </div>
+                                    <div class="world-card__privacy-summary">
+                                        <span
+                                            v-for="[privacy, count] in worldCard.instanceCountsByPrivacy"
+                                            :key="privacy"
+                                            class="privacy-badge"
+                                            :class="getPrivacyColorClass(privacy)">
+                                            {{ privacy }}{{ count }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="worldCard.instances.length > 1" class="world-card__collapse-toggle">
+                                <el-icon :class="{ 'is-collapsed': isWorldCollapsed(worldCard.worldId) }">
+                                    <i class="ri-arrow-down-s-line"></i>
+                                </el-icon>
                             </div>
                         </div>
                         <!-- Instances list -->
-                        <div class="world-card__instances">
+                        <div v-show="!isWorldCollapsed(worldCard.worldId)" class="world-card__instances">
                             <div
                                 v-for="instance in worldCard.instances"
                                 :key="instance.location"
@@ -140,7 +164,7 @@
                                         placement="top"
                                         :content="instance.groupName">
                                         <span
-                                            class="instance-section__privacy has-group-info"
+                                            class="instance-section__privacy privacy-badge has-group-info"
                                             :class="getPrivacyColorClass(getInstancePrivacy(instance.$location.instanceId))"
                                             @click="groupStore.showGroupDialog(instance.$location.groupId)">
                                             {{ getInstancePrivacy(instance.$location.instanceId) }}
@@ -148,7 +172,7 @@
                                     </el-tooltip>
                                     <span
                                         v-else
-                                        class="instance-section__privacy"
+                                        class="instance-section__privacy privacy-badge"
                                         :class="getPrivacyColorClass(getInstancePrivacy(instance.$location.instanceId))">
                                         {{ getInstancePrivacy(instance.$location.instanceId) }}
                                     </span>
@@ -156,7 +180,7 @@
                                     <span
                                         class="instance-section__capacity"
                                         :class="{ 'instance-section__capacity--full': instance.instance?.capacity && (instance.instance.userCount || 0) >= instance.instance.capacity }">
-                                        ({{ (instance.instance?.userCount || 0) }}/{{ (worldCard.world?.capacity || 0) }})
+                                        ({{ (instance.instance?.userCount || 0) }}/{{ (instance.instance?.capacity || worldCard.world?.capacity || 0) }})
                                     </span>
                                     <div class="instance-section__actions">
                                         <Launch :location="instance.location" />
@@ -656,8 +680,7 @@
         
         return {
             '--world-card-scale': scale.toFixed(2),
-            '--world-card-spacing': spacing.toFixed(2),
-            'margin-bottom': `${Math.round(12 * spacing)}px`
+            '--world-card-spacing': spacing.toFixed(2)
         };
     });
 
@@ -783,6 +806,21 @@
 
     const roomCards = ref([]);
     const isLoadingRoomCards = ref(false);
+    const collapsedWorldIds = ref(new Set());
+
+    function toggleWorldCollapse(worldId) {
+        if (collapsedWorldIds.value.has(worldId)) {
+            collapsedWorldIds.value.delete(worldId);
+        } else {
+            collapsedWorldIds.value.add(worldId);
+        }
+        // Trigger reactivity
+        collapsedWorldIds.value = new Set(collapsedWorldIds.value);
+    }
+
+    function isWorldCollapsed(worldId) {
+        return collapsedWorldIds.value.has(worldId);
+    }
 
     const isOnlineView = computed(() => activeSegment.value === 'online');
 
@@ -942,6 +980,23 @@
                 return a.worldId.localeCompare(b.worldId);
             });
             
+            cards.forEach(card => {
+                card.instanceCountsByPrivacy = Object.entries(
+                    card.instances.reduce((counts, instance) => {
+                        const privacy = getInstancePrivacy(instance.$location.instanceId);
+                        counts[privacy] = (counts[privacy] || 0) + 1;
+                        return counts;
+                    }, {})
+                ).sort((a, b) => {
+                    const order = { 'P': 1, 'GP': 1, 'F': 2, 'F+': 2, 'G': 3, 'G+': 3, 'I': 4 };
+                    const orderA = order[a[0]] || 99;
+                    const orderB = order[b[0]] || 99;
+                    if (orderA !== orderB) {
+                        return orderA - orderB;
+                    }
+                    return b[1] - a[1];
+                });
+            });
             roomCards.value = cards;
             isLoadingRoomCards.value = false;
 
@@ -1026,41 +1081,40 @@
 
     // Helper function to get instance privacy type (without group name)
     function getInstancePrivacy(instanceId) {
-        if (!instanceId) return 'public';
+        if (!instanceId) return 'P';
         
         const parts = instanceId.split('~');
-        if (parts.length <= 1) return 'public';
+        if (parts.length <= 1) return 'P';
         
         const privacyPart = parts[1];
-        if (privacyPart.startsWith('hidden')) return 'friends+';
-        if (privacyPart.startsWith('friends')) return 'friends';
-        if (privacyPart.startsWith('private')) return 'invite';
+        if (privacyPart.startsWith('hidden')) return 'F+';
+        if (privacyPart.startsWith('friends')) return 'F';
+        if (privacyPart.startsWith('private')) return 'I';
         if (privacyPart.startsWith('group')) {
-            // Extract only the access type, remove group name in parentheses
             const groupMatch = privacyPart.match(/^group\(([^)]+)\)/);
             if (groupMatch) {
                 const accessType = groupMatch[1];
-                if (accessType === 'plus') return 'group+';
-                if (accessType === 'members') return 'group';
-                return 'group public';
+                if (accessType === 'plus') return 'G+';
+                if (accessType === 'members') return 'G';
+                return 'GP';
             }
-            return 'group public';
+            return 'GP';
         }
-        return 'public';
+        return 'P';
     }
 
     function getPrivacyColorClass(privacyType) {
         switch (privacyType) {
-            case 'friends':
-            case 'friends+':
+            case 'F':
+            case 'F+':
                 return 'privacy-friends';
-            case 'public':
-            case 'group public':
+            case 'P':
+            case 'GP':
                 return 'privacy-public';
-            case 'group':
-            case 'group+':
+            case 'G':
+            case 'G+':
                 return 'privacy-group';
-            case 'invite':
+            case 'I':
                 return 'privacy-invite';
             default:
                 return '';
@@ -1196,6 +1250,23 @@
                 return a.worldId.localeCompare(b.worldId);
             });
             
+            cards.forEach(card => {
+                card.instanceCountsByPrivacy = Object.entries(
+                    card.instances.reduce((counts, instance) => {
+                        const privacy = getInstancePrivacy(instance.$location.instanceId);
+                        counts[privacy] = (counts[privacy] || 0) + 1;
+                        return counts;
+                    }, {})
+                ).sort((a, b) => {
+                    const order = { 'P': 1, 'GP': 1, 'F': 2, 'F+': 2, 'G': 3, 'G+': 3, 'I': 4 };
+                    const orderA = order[a[0]] || 99;
+                    const orderB = order[b[0]] || 99;
+                    if (orderA !== orderB) {
+                        return orderA - orderB;
+                    }
+                    return b[1] - a[1];
+                });
+            });
             roomCards.value = cards;
             
             // Load missing world and instance data
@@ -1442,17 +1513,11 @@
 
     /* World cards grid - Masonry layout */
     .room-cards-grid {
-        column-count: auto;
-        column-width: var(--world-card-min-width, 240px);
-        column-gap: var(--world-card-gap, 12px);
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(var(--world-card-min-width, 240px), 1fr));
+        gap: var(--world-card-gap, 12px);
         padding: 2px;
-    }
-    
-    .room-cards-grid .world-card {
-        break-inside: avoid;
-        margin-bottom: var(--world-card-gap, 12px);
-        display: inline-block;
-        width: 100%;
+        align-items: start;
     }
 
     /* World card container */
@@ -1472,12 +1537,98 @@
         transform: translateY(calc(-2px * var(--world-card-scale)));
     }
 
+    .world-card:has(.world-card__header--collapsed) {
+        height: auto;
+    }
+
     /* World card header */
     .world-card__header {
         display: flex;
         gap: calc(12px * var(--world-card-spacing));
         padding: calc(12px * var(--world-card-scale) * var(--world-card-spacing));
         border-bottom: 1px solid var(--el-border-color-lighter);
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .world-card__header--collapsed {
+        border-bottom: none;
+        padding-bottom: calc(12px * var(--world-card-scale) * var(--world-card-spacing));
+    }
+
+    .world-card__header:hover .world-card__collapse-toggle {
+        opacity: 1;
+    }
+
+    .world-card__collapse-toggle {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        opacity: 0.5;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .world-card__collapse-toggle .el-icon {
+        font-size: calc(20px * var(--world-card-scale));
+        transition: transform 0.3s ease;
+    }
+
+    .world-card__collapse-toggle .el-icon.is-collapsed {
+        transform: rotate(-90deg);
+    }
+
+    .world-card__summary {
+        display: flex;
+        flex-direction: column;
+        gap: calc(6px * var(--world-card-spacing));
+        margin-top: calc(6px * var(--world-card-spacing));
+        font-size: calc(12px * var(--world-card-scale));
+        color: var(--el-text-color-secondary);
+        line-height: 1.2;
+    }
+
+    .world-card__summary-main {
+        display: flex;
+        align-items: center;
+        gap: calc(8px * var(--world-card-spacing));
+    }
+
+    .world-card__instance-count,
+    .world-card__friend-count {
+        display: inline-flex;
+        align-items: center;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .world-card__privacy-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: calc(4px * var(--world-card-spacing));
+    }
+
+    .privacy-badge {
+        font-size: calc(10px * var(--world-card-scale));
+        font-weight: 700;
+        padding: calc(1px * var(--world-card-scale)) calc(4px * var(--world-card-scale));
+        border-radius: calc(4px * var(--world-card-scale));
+        color: #fff;
+        background-color: var(--el-color-info-light-3);
+    }
+
+    .privacy-badge.privacy-public {
+        background-color: #67c23a;
+    }
+    .privacy-badge.privacy-friends {
+        background-color: #ff9500;
+    }
+    .privacy-badge.privacy-group {
+        background-color: #a367ff;
+    }
+    .privacy-badge.privacy-invite {
+        background-color: #909399;
     }
 
     .world-card__thumbnail {
@@ -1565,31 +1716,16 @@
         overflow: hidden;
         text-overflow: ellipsis;
         font-weight: 500;
-    }
-
-    .instance-section__privacy.privacy-friends {
-        color: #ff9500;
-    }
-
-    .instance-section__privacy.privacy-public {
-        color: #67c23a;
-    }
-
-    .instance-section__privacy.privacy-group {
-        color: #a367ff;
-    }
-
-    .instance-section__privacy.privacy-invite {
-        color: var(--el-text-color-secondary);
+        transform: scale(0.75);
     }
 
     .instance-section__privacy.has-group-info {
         cursor: pointer;
-        transition: color 0.2s ease;
+        transition: filter 0.2s ease;
     }
 
     .instance-section__privacy.has-group-info:hover {
-        color: var(--el-color-primary);
+        filter: brightness(1.15);
     }
 
     .instance-section__capacity {
@@ -1810,7 +1946,6 @@
     /* Traveling user styles */
     .traveling-user {
         opacity: 0.7;
-        border-left: 3px solid var(--el-color-warning) !important;
     }
 
     .traveling-user .avatar {
@@ -1820,9 +1955,14 @@
     .traveling-user .avatar::after {
         content: '';
         position: absolute;
-        inset: 0;
+        right: calc(-2px * var(--world-card-scale));
+        bottom: calc(-2px * var(--world-card-scale));
+        width: calc(10px * var(--world-card-scale));
+        height: calc(10px * var(--world-card-scale));
+        background: var(--el-color-warning);
         border-radius: 50%;
-        border: 2px solid var(--el-color-warning);
+        border: calc(2px * var(--world-card-scale)) solid var(--el-fill-color-light);
+        box-sizing: border-box;
         animation: pulse 2s ease-in-out infinite;
     }
 
