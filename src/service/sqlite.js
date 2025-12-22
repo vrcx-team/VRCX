@@ -33,10 +33,23 @@ class SQLiteService {
                     }
                 ).catch(() => {});
             }
-            if (e.message.includes('database is locked')) {
+            if (
+                e.message.includes('database is locked') ||
+                e.message.includes('attempt to write a readonly database')
+            ) {
                 ElMessageBox.alert(
                     'Please close other applications that might be using the database file.',
                     'Database is locked',
+                    {
+                        confirmButtonText: 'OK',
+                        type: 'warning'
+                    }
+                ).catch(() => {});
+            }
+            if (e.message.includes('disk I/O error')) {
+                ElMessageBox.alert(
+                    'Please check your disk for errors.',
+                    'Disk I/O error',
                     {
                         confirmButtonText: 'OK',
                         type: 'warning'

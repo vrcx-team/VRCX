@@ -282,7 +282,8 @@
                 },
                 "vrcplus": {
                     "gift": "VRC+ Gift"
-                }
+                },
+                "localNotifs": "System"
             }
         },
         "friend_list": {
