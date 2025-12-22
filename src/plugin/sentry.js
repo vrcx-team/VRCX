@@ -70,8 +70,12 @@ export async function initSentry(app) {
                             'An error occurred while sending the request'
                         ) ||
                         error.message.includes('database or disk is full') ||
+                        error.message.includes('disk I/O error') ||
                         error.message.includes(
                             'There is not enough space on the disk.'
+                        ) ||
+                        error.message.includes(
+                            'The requested address is not valid in its context.'
                         )
                     ) {
                         return null;

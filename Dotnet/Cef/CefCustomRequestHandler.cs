@@ -80,7 +80,7 @@ namespace VRCX
                     break;
 
                 case CefTerminationStatus.ProcessCrashed:
-                    _logger.Error("Browser crashed while.");
+                    _logger.Error("Browser crashed.");
                     break;
                 
                 case CefTerminationStatus.OutOfMemory:
@@ -91,6 +91,12 @@ namespace VRCX
                     _logger.Error($"Browser terminated with unhandled status '{status}' while at address.");
                     break;
             }
+
+            if (chromiumWebBrowser.IsDisposed || chromiumWebBrowser.IsLoading)
+                return;
+
+            _logger.Info("Attempting to reload browser...");
+            chromiumWebBrowser.Reload();
         }
     }
 }
