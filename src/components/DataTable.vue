@@ -110,26 +110,43 @@
     const detectCreatedAtOrder = (src) => {
         if (!Array.isArray(src) || src.length <= 2) return null;
 
-        let couldBeAsc = true;
-        let couldBeDesc = true;
-        const start = Math.max(1, src.length - effectivePageSize.value - 1);
-        for (let i = start; i < src.length; i++) {
-            const a = src[i - 1]?.created_at;
-            const b = src[i]?.created_at;
-            if (typeof a !== 'string' || typeof b !== 'string') continue;
-            if (a > b) {
-                couldBeAsc = false;
-            } else if (a < b) {
-                couldBeDesc = false;
+        const detectOrderInRange = (startIndexInclusive, endIndexInclusive) => {
+            let couldBeAsc = true;
+            let couldBeDesc = true;
+
+            const start = Math.max(1, startIndexInclusive);
+            const end = Math.min(endIndexInclusive, src.length - 1);
+            for (let i = start; i <= end; i++) {
+                const a = src[i - 1]?.created_at;
+                const b = src[i]?.created_at;
+                if (typeof a !== 'string' || typeof b !== 'string') continue;
+                if (a > b) {
+                    couldBeAsc = false;
+                } else if (a < b) {
+                    couldBeDesc = false;
+                }
+                if (!couldBeAsc && !couldBeDesc) {
+                    return null;
+                }
             }
-            if (!couldBeAsc && !couldBeDesc) {
-                return null;
-            }
+
+            if (couldBeAsc) return 'asc';
+            if (couldBeDesc) return 'desc';
+            return null;
+        };
+
+        const windowSize = Math.min(Math.max(effectivePageSize.value + 1, 25), 200);
+        const headEnd = Math.min(src.length - 1, windowSize);
+        const tailStart = Math.max(1, src.length - windowSize);
+
+        const headOrder = detectOrderInRange(1, headEnd);
+        const tailOrder = detectOrderInRange(tailStart, src.length - 1);
+
+        if (headOrder && tailOrder && headOrder !== tailOrder) {
+            return null;
         }
 
-        if (couldBeAsc) return 'asc';
-        if (couldBeDesc) return 'desc';
-        return null;
+        return tailOrder || headOrder;
     };
 
     const throttledData = ref(asRawArray(data.value));
