@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Timers;
 using NLog;
 
@@ -142,16 +143,16 @@ namespace VRCX
         {
             UpdateChildProcesses(); // Ensure the list contains all current child processes.
 
-            foreach (var pair in startedProcesses)
+            Parallel.ForEach(startedProcesses.ToArray(), pair =>
             {
                 var processes = pair.Value;
-
-                foreach (var pid in processes)
+                var pids = processes.ToArray();
+                foreach (var pid in pids)
                 {
                     if (!WinApi.HasProcessExited(pid))
                         KillProcessTree(pid);
                 }
-            }
+            });
 
             startedProcesses.Clear();
         }
@@ -176,9 +177,7 @@ namespace VRCX
             {
                 return pids;
             }
-
-            // Gonna be honest, not gonna spin up a 32bit windows VM to make sure this works. but it should.
-            // Does VRCX even run on 32bit windows?
+            
             PROCESSENTRY32 procEntry = new PROCESSENTRY32();
             procEntry.dwSize = (uint)Marshal.SizeOf(typeof(PROCESSENTRY32));
 
@@ -190,7 +189,7 @@ namespace VRCX
                     {
                         pids.Add((int)procEntry.th32ProcessID);
 
-                        if(recursive) // Recursively find child processes
+                        if (recursive) // Recursively find child processes
                             pids.AddRange(FindChildProcesses((int)procEntry.th32ProcessID));
                     }
                 }
@@ -209,12 +208,21 @@ namespace VRCX
             var pids = FindChildProcesses(pid);
             pids.Add(pid); // Kill parent
 
-            foreach (int p in pids)
+            foreach (var p in pids)
             {
                 try
                 {
-                    using (Process proc = Process.GetProcessById(p))
-                        proc.Kill();
+                    using var proc = Process.GetProcessById(p);
+                    if (proc.HasExited)
+                        continue;
+
+                    if (proc.CloseMainWindow())
+                        continue;
+
+                    if (proc.WaitForExit(1000))
+                        continue;
+
+                    proc.Kill();
                 }
                 catch
                 {
@@ -361,14 +369,11 @@ namespace VRCX
         /// <returns><c>true</c> if the given file path is a shortcut, otherwise <c>false</c></returns>
         private static bool IsShortcutFile(string filePath)
         {
-            byte[] headerBytes = new byte[4];
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                if (fileStream.Length >= 4)
-                {
-                    fileStream.Read(headerBytes, 0, 4);
-                }
-            }
+            var headerBytes = new byte[4];
+            using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            if (fileStream.Length < 4)
+                return false;
+            fileStream.ReadExactly(headerBytes, 0, 4);
 
             return headerBytes.SequenceEqual(shortcutSignatureBytes);
         }
