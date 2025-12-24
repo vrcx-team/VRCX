@@ -236,6 +236,13 @@ export const useNotificationStore = defineStore('Notification', () => {
             currentLocation = locationStore.lastLocationDestination;
         }
         if (!currentLocation) {
+            // game log disabled, use API location
+            currentLocation = userStore.currentUser.$locationTag;
+            if (userStore.currentUser.$travelingToLocation) {
+                currentLocation = userStore.currentUser.$travelingToLocation;
+            }
+        }
+        if (!currentLocation) {
             return;
         }
         if (

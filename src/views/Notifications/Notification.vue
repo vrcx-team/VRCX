@@ -536,6 +536,10 @@
                     if (lastLocation.value.location === 'traveling') {
                         currentLocation = lastLocationDestination.value;
                     }
+                    if (!currentLocation) {
+                        // game log disabled, use API location
+                        currentLocation = currentUser.$locationTag;
+                    }
                     const L = parseLocation(currentLocation);
                     worldRequest
                         .getCachedWorld({
