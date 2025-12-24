@@ -700,7 +700,7 @@ async function createDesktopFile() {
 
     // Download the icon and save it to the target directory
     const iconPath = path.join(homePath, '.local/share/icons/VRCX.png');
-    if (!fs.existsSync(iconPath)) {
+    if (!fs.existsSync(iconPath) || fs.statSync(iconPath).size === 0) {
         const iconDir = path.dirname(iconPath);
         if (!fs.existsSync(iconDir)) {
             fs.mkdirSync(iconDir, { recursive: true });

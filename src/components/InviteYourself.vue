@@ -32,7 +32,7 @@
 
     const { t } = useI18n();
 
-    const { canOpenInstanceInGame } = useInviteStore();
+    const { canOpenInstanceInGame } = storeToRefs(useInviteStore());
     const { tryOpenInstanceInVrc } = useLaunchStore();
 
     const { isOpeningInstance } = storeToRefs(useLaunchStore());

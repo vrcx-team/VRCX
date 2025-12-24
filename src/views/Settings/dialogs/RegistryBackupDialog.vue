@@ -9,7 +9,7 @@
         <div style="margin-top: 10px">
             <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px">
                 <span class="name" style="margin-right: 24px">{{ t('dialog.registry_backup.auto_backup') }}</span>
-                <el-switch v-model="vrcRegistryAutoBackup" @change="setVrcRegistryAutoBackup"></el-switch>
+                <el-switch :model-value="vrcRegistryAutoBackup" @change="setVrcRegistryAutoBackup"></el-switch>
             </div>
             <div
                 style="
@@ -20,7 +20,7 @@
                     margin-top: 5px;
                 ">
                 <span class="name" style="margin-right: 24px">{{ t('dialog.registry_backup.ask_to_restore') }}</span>
-                <el-switch v-model="vrcRegistryAskRestore" @change="setVrcRegistryAskRestore"></el-switch>
+                <el-switch :model-value="vrcRegistryAskRestore" @change="setVrcRegistryAskRestore"></el-switch>
             </div>
             <DataTable v-bind="registryBackupTable" style="margin-top: 10px">
                 <el-table-column :label="t('dialog.registry_backup.name')" prop="name"></el-table-column>

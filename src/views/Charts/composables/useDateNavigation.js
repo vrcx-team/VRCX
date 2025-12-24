@@ -40,9 +40,19 @@ export function useDateNavigation(allDateOfActivity, reloadData) {
         const idx = allDateOfActivityArray.value.findIndex((date) =>
             date.isSame(selectedDate.value, 'day')
         );
+
+        // when invalid date is selected, find the next closest date
+        if (idx === -1 && !isNext) {
+            const newIdx = allDateOfActivityArray.value.findIndex((date) =>
+                date.isBefore(selectedDate.value, 'day')
+            );
+            selectedDate.value = allDateOfActivityArray.value[newIdx].toDate();
+            reloadData();
+            return;
+        }
+
         if (idx !== -1) {
             const newIdx = isNext ? idx - 1 : idx + 1;
-
             if (newIdx >= 0 && newIdx < allDateOfActivityArray.value.length) {
                 selectedDate.value =
                     allDateOfActivityArray.value[newIdx].toDate();
@@ -50,6 +60,8 @@ export function useDateNavigation(allDateOfActivity, reloadData) {
                 return;
             }
         }
+
+        // Fallback to the first/last date
         selectedDate.value = isNext
             ? allDateOfActivityArray.value[0].toDate()
             : allDateOfActivityArray.value[
