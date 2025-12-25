@@ -8,23 +8,15 @@ For a copy, see <https://opensource.org/licenses/MIT>.
 
 @import 'tailwindcss';
 
-@import '@fontsource/noto-sans-kr/korean.css';
-@import '@fontsource/noto-sans-jp/japanese.css';
-@import '@fontsource/noto-sans-sc/chinese-simplified.css';
-@import '@fontsource/noto-sans-tc/chinese-traditional.css';
-@import '@fontsource/noto-sans-kr';
-@import '@fontsource/noto-sans-jp';
-@import '@fontsource/noto-sans-sc';
-@import '@fontsource/noto-sans-tc';
-
 @import 'element-plus/dist/index.css';
-
-@import './assets/scss/flags.css';
-@import './assets/scss/animated-emoji.css';
 @import 'element-plus/theme-chalk/dark/css-vars.css';
 @import 'animate.css/animate.min.css';
 @import 'noty/lib/noty.css';
 @import 'remixicon/fonts/remixicon.css';
+
+@import './assets/scss/flags.css';
+@import './assets/scss/animated-emoji.css';
+@import './assets/scss/fonts.css';
 
 :root {
     text-autospace: normal;
