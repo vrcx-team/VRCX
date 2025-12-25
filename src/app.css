@@ -1,30 +1,28 @@
-@charset "utf-8";
+/*
+Copyright(c) 2019-2025 pypy and individual contributors.
+All rights reserved.
 
-//
-// Copyright(c) 2019-2025 pypy and individual contributors.
-// All rights reserved.
-//
-// This work is licensed under the terms of the MIT license.
-// For a copy, see <https://opensource.org/licenses/MIT>.
-//
+This work is licensed under the terms of the MIT license.
+For a copy, see <https://opensource.org/licenses/MIT>. 
+*/
 
-@use '@fontsource/noto-sans-kr/korean.css';
-@use '@fontsource/noto-sans-jp/japanese.css';
-@use '@fontsource/noto-sans-sc/chinese-simplified.css';
-@use '@fontsource/noto-sans-tc/chinese-traditional.css';
-@use '@fontsource/noto-sans-kr';
-@use '@fontsource/noto-sans-jp';
-@use '@fontsource/noto-sans-sc';
-@use '@fontsource/noto-sans-tc';
+@import '@fontsource/noto-sans-kr/korean.css';
+@import '@fontsource/noto-sans-jp/japanese.css';
+@import '@fontsource/noto-sans-sc/chinese-simplified.css';
+@import '@fontsource/noto-sans-tc/chinese-traditional.css';
+@import '@fontsource/noto-sans-kr';
+@import '@fontsource/noto-sans-jp';
+@import '@fontsource/noto-sans-sc';
+@import '@fontsource/noto-sans-tc';
 
-@use './assets/scss/flags.scss';
-@use './assets/scss/animated-emoji.scss';
-@use 'element-plus/theme-chalk/src/index.scss' as *;
+@import 'element-plus/dist/index.css';
 
-@use 'element-plus/theme-chalk/src/dark/css-vars.scss';
-@use 'animate.css/animate.min.css';
-@use 'noty/lib/noty.css';
-@use 'remixicon/fonts/remixicon.css';
+@import './assets/scss/flags.css';
+@import './assets/scss/animated-emoji.css';
+@import 'element-plus/theme-chalk/dark/css-vars.css';
+@import 'animate.css/animate.min.css';
+@import 'noty/lib/noty.css';
+@import 'remixicon/fonts/remixicon.css';
 
 :root {
     text-autospace: normal;
@@ -166,46 +164,14 @@ a {
     border-bottom: 1px solid #a0b55c;
 }
 
-// .el-table + .pagination-bar {
-//     margin-top: 15px;
-// }
-
 .el-table__expanded-cell[class*='cell'] {
     padding: 20px 30px;
 }
 
 .el-table--small .cell {
-    // fix expand arrow position
+    /* fix expand arrow position */
     padding: 0px;
 }
-
-// .el-table--mini .el-table__cell {
-//     padding: 5px 0;
-// }
-
-// .el-table .cell {
-//     display: -webkit-box;
-//     -webkit-box-orient: vertical;
-//     -webkit-line-clamp: 1;
-// }
-
-// .el-table__row:hover .el-table__cell .cell {
-//     display: revert;
-//     -webkit-line-clamp: unset;
-// }
-
-// .el-table th.is-sortable .cell {
-//     display: flex;
-//     align-items: center;
-// }
-
-// .el-table .caret-wrapper {
-//     margin-top: 4.5px;
-// }
-
-// .notification-table .el-table .cell {
-//     -webkit-line-clamp: 2;
-// }
 
 .el-dialog__body {
     padding: 20px;
@@ -251,7 +217,7 @@ a {
 
 .x-login-container {
     position: absolute;
-    // modal 시작이 2000이라서
+    /* modal 시작이 2000이라서 */
     z-index: 1999;
     display: flex;
     align-items: center;
@@ -370,12 +336,6 @@ hr.x-vertical-divider {
     box-sizing: border-box;
 }
 
-// .el-popper.x-quick-search {
-//     width: 225px;
-//     min-width: 0 !important;
-//     border: none;
-// }
-
 .el-popper.x-quick-search .el-select-dropdown__item {
     width: 100%;
     height: auto;
@@ -443,11 +403,6 @@ hr.x-vertical-divider {
     background: #fff;
     border-radius: 2px;
 }
-
-// .el-select-dropdown__item .x-friend-item:hover {
-//     background: none;
-//     border-radius: 0;
-// }
 
 .x-dialog .x-friend-item {
     width: 167px;
@@ -626,16 +581,6 @@ img.friends-list-avatar {
     border-radius: 2px;
 }
 
-// .x-change-image-item > img,
-// .x-change-image-item > .el-popover__reference-wrapper > img {
-//     width: 240px;
-//     height: 180px;
-// }
-
-// .x-dialog {
-//     max-width: 100%;
-// }
-
 .x-user-dialog > .el-dialog__header,
 .x-world-dialog > .el-dialog__header,
 .x-avatar-dialog > .el-dialog__header,
@@ -643,20 +588,6 @@ img.friends-list-avatar {
     display: none;
     padding: 0;
 }
-
-// .x-user-dialog > .el-dialog__body,
-// .x-world-dialog > .el-dialog__body,
-// .x-avatar-dialog > .el-dialog__body,
-// .x-group-dialog > .el-dialog__body {
-//     padding: 20px;
-// }
-
-// .el-popper.hex {
-//     min-width: auto;
-//     padding: 10px;
-//     font-family: monospace;
-//     text-align: center;
-// }
 
 i.x-user-status,
 i.x-status-icon {
@@ -761,30 +692,6 @@ i.x-status-icon.red {
     border-color: var(--el-color-primary) !important;
 }
 
-// .el-tree-node {
-//     white-space: normal;
-// }
-
-// .el-tree-node__content {
-//     height: auto;
-// }
-
-// .el-progress-bar {
-//     padding-right: 80px;
-//     margin-right: -85px;
-// }
-
-// .el-progress__text {
-//     color: #c8c8c8;
-// }
-
-// .x-user-dialog .el-textarea__inner {
-//     padding: 0;
-//     background: none;
-//     border: 0;
-//     border-radius: 2px;
-// }
-
 .options-container {
     margin-top: 30px;
     padding: 0px 10px 10px 10px;
@@ -839,14 +746,6 @@ i.x-status-icon.red {
     vertical-align: top;
 }
 
-// .el-color-picker__trigger {
-//     border: unset;
-// }
-
-// .el-color-picker__color {
-//     border: 0.5px solid #999;
-// }
-
 .x-dialog .el-button--success {
     background-color: #67c23a !important;
     border-color: #67c23a !important;
@@ -883,15 +782,6 @@ i.x-status-icon.red {
     color: #f56c6c;
 }
 
-// .el-form-item {
-//     margin-bottom: 4px;
-// }
-
-// .photon-event-table .el-table--mini .el-table__cell,
-// .current-instance-table .el-table--mini .el-table__cell {
-//     padding: 0;
-// }
-
 .photon-event-table {
     margin-top: 20px;
 }
@@ -906,24 +796,11 @@ i.x-status-icon.red {
     margin-bottom: -1px;
 }
 
-// .el-pagination .el-select .el-input .el-input__inner,
-// .el-input--mini .el-input__icon {
-//     height: 22px;
-// }
-
-// .el-pagination .btn-next {
-//     margin-right: 10px;
-// }
-
 .el-dialog,
 .el-message-box {
     border-radius: 28px;
     word-break: break-word;
 }
-
-// .el-tabs__nav-wrap::after {
-//     background-color: #e4e7ed14;
-// }
 
 .dialog-title {
     font-weight: bold;
@@ -934,18 +811,7 @@ i.x-status-icon.red {
     top: 0 !important;
 }
 
-// .vrc-instance-queue-message .el-message__content {
-//     margin-right: 20px;
-// }
-
-// .el-tabs {
-//     display: flex;
-//     flex-direction: column;
-// }
-
 .el-tabs__content {
-    // flex: 1;
-    // max-height: 100%;
     overflow-y: auto;
 }
 
@@ -955,53 +821,6 @@ i.x-status-icon.red {
     padding: 0 !important;
     font-size: 13px;
 }
-
-// .el-tabs__header {
-//     padding: 0 1px;
-// }
-
-// .zero-margin-tabs .el-tabs__header {
-//     margin-bottom: 0;
-// }
-
-// .x-friend-item .el-checkbox__inner,
-// .el-table__row .el-checkbox__inner {
-//     width: 28px;
-//     height: 28px;
-//     border-radius: 4px;
-// }
-
-// .x-friend-item .el-checkbox__inner::after,
-// .el-table__row .el-checkbox__inner::after {
-//     width: 8px;
-//     height: 14px;
-//     left: 8px;
-//     top: 2px;
-// }
-
-// .el-pagination .el-input .el-input__icon {
-//     line-height: 22px;
-// }
-
-// .el-dialog__body .el-tag--mini {
-//     line-height: 17px;
-// }
-
-// .el-table__expanded-cell .el-tag--mini {
-//     line-height: 18px;
-// }
-
-// .x-friend-item:hover .el-input__count {
-//     background: #f0f0f0;
-// }
-
-.x-app > .x-container {
-    padding-top: 15px;
-}
-
-// .el-collapse-item .el-tag--mini {
-//     line-height: 17px;
-// }
 
 .x-text-removed {
     text-decoration: line-through;
@@ -1018,7 +837,7 @@ i.x-status-icon.red {
     border-radius: 4px;
 }
 
-// expand table cell on hover, TODO: replace with a better solution
+/* expand table cell on hover, TODO: replace with a better solution */
 .el-table .cell {
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -1031,26 +850,11 @@ i.x-status-icon.red {
 }
 
 .el-carousel__mask {
-    // looks bad
     display: none;
 }
 
-// FIXME
-// Something changed the CSS of element-ui
-// The other parts are the same
-// It feels like can't fundamentally modify it
-// And can only fix it bit by bit by overriding
-// .el-switch__core:after {
-//     top: 1.5px;
-// }
-
-// .el-popover {
-//     text-align: left;
-//     word-break: break-word;
-// }
-
 .el-dropdown-menu__item:not(.is-disabled):focus {
-    // dropdown item focus blue background looks bad
+    /* dropdown item focus blue background looks bad */
     background-color: unset;
 }
 
@@ -1058,7 +862,7 @@ i.x-status-icon.red {
     --el-overlay-color-lighter: rgba(0, 0, 0, 0.15);
 }
 
-// fix fullscreen image viewer colors in dark mode
+/* fix fullscreen image viewer colors in dark mode */
 .toolbar-icon,
 .el-image-viewer__actions,
 .el-image-viewer__close {

@@ -41,7 +41,7 @@
     import MacOSTitleBar from './components/MacOSTitleBar.vue';
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
 
-    import './app.scss';
+    import './app.css';
 
     console.log(`isLinux: ${LINUX}`);
 
