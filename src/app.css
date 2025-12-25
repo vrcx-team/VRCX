@@ -6,6 +6,8 @@ This work is licensed under the terms of the MIT license.
 For a copy, see <https://opensource.org/licenses/MIT>. 
 */
 
+@import 'tailwindcss';
+
 @import '@fontsource/noto-sans-kr/korean.css';
 @import '@fontsource/noto-sans-jp/japanese.css';
 @import '@fontsource/noto-sans-sc/chinese-simplified.css';
