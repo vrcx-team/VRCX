@@ -1423,7 +1423,7 @@
 
     import * as workerTimers from 'worker-timers';
 
-    import './vr.scss';
+    import './vr.css';
 
     defineOptions({
         name: 'vr'

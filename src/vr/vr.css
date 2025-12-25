@@ -1,27 +1,25 @@
-@charset "utf-8";
+/*
+Copyright(c) 2019-2025 pypy and individual contributors.
+All rights reserved.
 
-//
-// Copyright(c) 2019-2025 pypy and individual contributors.
-// All rights reserved.
-//
-// This work is licensed under the terms of the MIT license.
-// For a copy, see <https://opensource.org/licenses/MIT>.
-//
+This work is licensed under the terms of the MIT license.
+For a copy, see <https://opensource.org/licenses/MIT>. 
+*/
 
-@use '@fontsource/noto-sans-kr/korean.css';
-@use '@fontsource/noto-sans-jp/japanese.css';
-@use '@fontsource/noto-sans-sc/chinese-simplified.css';
-@use '@fontsource/noto-sans-tc/chinese-traditional.css';
-@use '@fontsource/noto-sans-kr';
-@use '@fontsource/noto-sans-jp';
-@use '@fontsource/noto-sans-sc';
-@use '@fontsource/noto-sans-tc';
+@import '@fontsource/noto-sans-kr/korean.css';
+@import '@fontsource/noto-sans-jp/japanese.css';
+@import '@fontsource/noto-sans-sc/chinese-simplified.css';
+@import '@fontsource/noto-sans-tc/chinese-traditional.css';
+@import '@fontsource/noto-sans-kr';
+@import '@fontsource/noto-sans-jp';
+@import '@fontsource/noto-sans-sc';
+@import '@fontsource/noto-sans-tc';
 
-@use '../assets/scss/flags.scss';
+@import '../assets/scss/flags.css';
 
-@use 'animate.css/animate.min.css';
-@use 'noty/lib/noty.css';
-@use 'remixicon/fonts/remixicon.css';
+@import 'animate.css/animate.min.css';
+@import 'noty/lib/noty.css';
+@import 'remixicon/fonts/remixicon.css';
 
 /*
     마지노선인듯
