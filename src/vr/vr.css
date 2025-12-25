@@ -7,6 +7,7 @@ For a copy, see <https://opensource.org/licenses/MIT>.
 */
 
 @import 'tailwindcss';
+@import '@fontsource-variable/inter';
 
 @import 'animate.css/animate.min.css';
 @import 'noty/lib/noty.css';
@@ -30,36 +31,35 @@ body {
     margin: 0;
 }
 
-html[lang='ja'] body,
-html[lang='ja'] * {
-    font-family:
-        'ellipsis-font', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC',
-        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
-        sans-serif;
+:root {
+    --font-western:
+        'ellipsis-font', -apple-system, 'Inter Variable', 'Segoe UI', 'Roboto',
+        'Ubuntu', 'Cantarell', 'DejaVu Sans', sans-serif;
+    --font-symbol: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    --font-fallback-cjk: sans-serif;
+    --font-primary-cjk:
+        'Noto Sans JP', 'Noto Sans SC', 'Noto Sans KR', 'Noto Sans TC';
 }
-
-html[lang='ko'] body,
-html[lang='ko'] * {
-    font-family:
-        'ellipsis-font', 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans TC',
-        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
-        sans-serif;
+:root[lang='zh-CN'] {
+    --font-primary-cjk:
+        'Noto Sans SC', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC';
 }
-
-html[lang='zh-CN'] body,
-html[lang='zh-CN'] * {
-    font-family:
-        'ellipsis-font', 'Noto Sans SC', 'Noto Sans TC', 'Noto Sans JP',
-        'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
-        sans-serif;
+:root[lang='ja'] {
+    --font-primary-cjk:
+        'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC', 'Noto Sans SC';
 }
-
-html[lang='zh-TW'] body,
-html[lang='zh-TW'] * {
+:root[lang='ko'] {
+    --font-primary-cjk:
+        'Noto Sans KR', 'Noto Sans JP', 'Noto Sans TC', 'Noto Sans SC';
+}
+:root[lang='zh-TW'] {
+    --font-primary-cjk:
+        'Noto Sans TC', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans SC';
+}
+body {
     font-family:
-        'ellipsis-font', 'Noto Sans TC', 'Noto Sans SC', 'Noto Sans JP',
-        'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
-        sans-serif;
+        var(--font-western), var(--font-symbol), var(--font-primary-cjk),
+        var(--font-fallback-cjk);
 }
 
 .noty_body {
