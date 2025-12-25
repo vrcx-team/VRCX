@@ -44,7 +44,7 @@ export default defineConfig(() => ({
         lightningcss: {
             minify: true,
             targets: {
-                chrome: 135
+                chrome: 140
             }
         }
     },
@@ -57,12 +57,11 @@ export default defineConfig(() => ({
         strictPort: true
     },
     build: {
-        target: 'esnext',
+        target: 'chrome140',
         outDir: '../build/html',
         cssMinify: 'lightningcss',
         license: true,
         emptyOutDir: true,
-        copyPublicDir: false,
         reportCompressedSize: false,
         chunkSizeWarningLimit: 5000,
         modulePreload: true,
