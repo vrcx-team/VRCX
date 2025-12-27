@@ -5,7 +5,7 @@
             <span>#{{ instanceName }} {{ accessTypeName }}</span>
         </span>
         <span v-if="groupName" @click="showGroupDialog" class="x-link">({{ groupName }})</span>
-        <span v-if="region" :class="['flags', 'inline-block', 'ml-5', region]"></span>
+        <span v-if="region" :class="['flags', 'inline-block', 'ml-5', region, 'transform-[translateY(3px)]']"></span>
         <NativeTooltip v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
             <el-icon :class="['inline-block', 'ml-5']" style="color: lightcoral"><WarnTriangleFilled /></el-icon>
         </NativeTooltip>
