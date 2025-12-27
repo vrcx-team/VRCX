@@ -259,6 +259,7 @@ div.x-friend-list
 
 .el-button {
     color: $--theme-text-2;
+    background-color: transparent;
 }
 
 .el-button:not(.el-button--text, .el-button--primary, .is-disabled) {
