@@ -2,6 +2,9 @@
 /// <reference types="jest" />
 
 declare global {
+    const VERSION: string;
+    const NIGHTLY: boolean;
+
     const WINDOWS: boolean;
     const LINUX: boolean;
 
@@ -416,4 +419,4 @@ declare global {
     };
 }
 
-export {};
+export { };

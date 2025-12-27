@@ -467,7 +467,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     async function checkSentryConsent() {
-        ElMessageBox.confirm(
+        const { action: consentAction } = await ElMessageBox.confirm(
             'Help improve VRCX by allowing anonymous error reporting?</br></br>' +
                 '• Only collects crash and error information.</br>' +
                 '• No personal data or VRChat information is collected.</br>' +
@@ -482,42 +482,35 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 closeOnPressEscape: false,
                 distinguishCancelAndClose: true
             }
-        )
-            .then(() => {
-                sentryErrorReporting.value = true;
-                configRepository.setString('VRCX_SentryEnabled', 'true');
+        ).catch(() => ({ action: 'cancel' }));
 
-                ElMessageBox.confirm(
-                    'Error reporting setting has been enabled. Would you like to restart VRCX now for the change to take effect?',
-                    'Restart Required',
-                    {
-                        confirmButtonText: 'Restart Now',
-                        cancelButtonText: 'Later',
-                        type: 'warning',
-                        center: true,
-                        closeOnClickModal: false,
-                        closeOnPressEscape: false
-                    }
-                ).then(() => {
-                    VRCXUpdaterStore.restartVRCX(false);
-                });
-            })
-            .catch((action) => {
-                const act =
-                    typeof action === 'string' ? action : action?.action;
-                if (act === 'cancel') {
-                    sentryErrorReporting.value = false;
-                    configRepository.setString('VRCX_SentryEnabled', 'false');
-                }
-            });
+        if (consentAction === 'cancel') return;
+
+        const { action: restartAction } = await ElMessageBox.confirm(
+            'Error reporting setting has been enabled. Would you like to restart VRCX now for the change to take effect?',
+            'Restart Required',
+            {
+                confirmButtonText: 'Restart Now',
+                cancelButtonText: 'Later',
+                type: 'warning',
+                center: true,
+                closeOnClickModal: false,
+                closeOnPressEscape: false
+            }
+        ).catch(() => ({ action: 'cancel' }));
+
+        if (restartAction === 'cancel') return;
+
+        sentryErrorReporting.value = true;
+        configRepository.setBool('VRCX_SentryEnabled', true);
+
+        VRCXUpdaterStore.restartVRCX(false);
     }
 
     async function setSentryErrorReporting() {
-        if (VRCXUpdaterStore.branch !== 'Nightly') {
-            return;
-        }
+        if (VRCXUpdaterStore.branch !== 'Nightly') return;
 
-        ElMessageBox.confirm(
+        const { action: restartAction } = await ElMessageBox.confirm(
             'Error reporting setting has been disabled. Would you like to restart VRCX now for the change to take effect?',
             'Restart Required',
             {
@@ -526,16 +519,16 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 type: 'info',
                 center: true
             }
-        )
-            .then(async () => {
-                sentryErrorReporting.value = !sentryErrorReporting.value;
-                await configRepository.setString(
-                    'VRCX_SentryEnabled',
-                    sentryErrorReporting.value ? 'true' : 'false'
-                );
-                VRCXUpdaterStore.restartVRCX(false);
-            })
-            .catch(() => {});
+        ).catch(() => ({ action: 'cancel' }));
+
+        if (restartAction === 'cancel') return;
+
+        sentryErrorReporting.value = !sentryErrorReporting.value;
+        await configRepository.setBool(
+            'VRCX_SentryEnabled',
+            sentryErrorReporting.value
+        );
+        VRCXUpdaterStore.restartVRCX(false);
     }
 
     async function getSqliteTableSizes() {
