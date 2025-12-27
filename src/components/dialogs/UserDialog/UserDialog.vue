@@ -252,7 +252,7 @@
                                         style="margin-left: 5px; padding: 0"
                                         @click="showBioDialog"></el-button>
                                 </div>
-                                <div style="margin-top: 5px">
+                                <div style="margin-top: 5px" class="flex">
                                     <el-tooltip v-for="(link, index) in userDialog.ref.bioLinks" :key="index">
                                         <template #content>
                                             <span v-text="link"></span>
