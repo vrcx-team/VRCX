@@ -131,8 +131,8 @@
         position: absolute;
         top: calc(8px * var(--card-scale));
         right: calc(8px * var(--card-scale));
-        inline-size: calc(8px * var(--card-scale));
-        block-size: calc(8px * var(--card-scale));
+        inline-size: calc(12px * var(--card-scale));
+        block-size: calc(12px * var(--card-scale));
         border-radius: 999px;
         border: calc(2px * var(--card-scale)) solid #fff;
         box-shadow: 0 0 calc(4px * var(--card-scale)) rgba(15, 23, 42, 0.12);
