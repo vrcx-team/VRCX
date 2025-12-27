@@ -1,4 +1,4 @@
-const langCodes = [
+const languageCodes = [
     'cs',
     'en',
     'es',
@@ -15,23 +15,51 @@ const langCodes = [
     'zh-TW'
 ];
 
-async function getLocalizationStrings() {
-    const urlPromises = Promise.all(
-        langCodes.map((code) =>
-            import(`./${code}.json?url`).then((m) => m.default)
-        )
-    );
+/**
+ * @type {Record<string, string>}
+ */
+const languageNames = import.meta.glob('./*.json', {
+    eager: true,
+    import: 'language'
+});
 
-    const urls = await urlPromises;
-    const fetchPromises = Promise.all(
-        urls.map((url) => fetch(url).then((res) => res.json()))
-    );
-    const results = await fetchPromises;
-    const entries = langCodes.map((code, index) => {
-        return [code, results[index]];
-    });
-
-    return Object.fromEntries(entries);
+function getLanguageName(code) {
+    return languageNames[`./${code}.json`];
 }
 
-export { getLocalizationStrings };
+const elementPlusStrings = {
+    // Vite does not support dynamic imports to `node_modules`.
+    // https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars#limitations
+    cs: () => import('element-plus/es/locale/lang/cs'),
+    en: () => import('element-plus/es/locale/lang/en'),
+    es: () => import('element-plus/es/locale/lang/es'),
+    fr: () => import('element-plus/es/locale/lang/fr'),
+    hu: () => import('element-plus/es/locale/lang/hu'),
+    ja: () => import('element-plus/es/locale/lang/ja'),
+    ko: () => import('element-plus/es/locale/lang/ko'),
+    pl: () => import('element-plus/es/locale/lang/pl'),
+    pt: () => import('element-plus/es/locale/lang/pt'),
+    ru: () => import('element-plus/es/locale/lang/ru'),
+    th: () => import('element-plus/es/locale/lang/th'),
+    vi: () => import('element-plus/es/locale/lang/vi'),
+    'zh-CN': () => import('element-plus/es/locale/lang/zh-cn'),
+    'zh-TW': () => import('element-plus/es/locale/lang/zh-tw')
+};
+
+async function getElementPlusStrings(code) {
+    return (await elementPlusStrings[code]()).default;
+}
+
+/**
+ * @type {Record<string, () => Promise<object>>}
+ */
+const localizedStrings = import.meta.glob('./*.json', { eager: false });
+
+async function getLocalizedStrings(code) {
+    return {
+        ...(await localizedStrings[`./${code}.json`]()),
+        elementPlus: await getElementPlusStrings(code)
+    };
+}
+
+export { languageCodes, getLanguageName, getLocalizedStrings };

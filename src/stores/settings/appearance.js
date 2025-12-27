@@ -14,6 +14,7 @@ import {
 } from '../../shared/utils/base/ui';
 import { database } from '../../service/database';
 import { getNameColour } from '../../shared/utils';
+import { loadLocalizedStrings } from '../../plugin';
 import { useFeedStore } from '../feed';
 import { useGameLogStore } from '../gameLog';
 import { useUiStore } from '../ui';
@@ -180,14 +181,15 @@ export const useAppearanceSettingsStore = defineStore(
                 const result = await AppApi.CurrentLanguage();
 
                 const lang = result.split('-')[0];
-                availableLocales.forEach((ref) => {
+
+                for (const ref of availableLocales) {
                     const refLang = ref.split('_')[0];
                     if (refLang === lang) {
-                        changeAppLanguage(ref);
+                        await changeAppLanguage(ref);
                     }
-                });
+                }
             } else {
-                changeAppLanguage(appLanguageConfig);
+                await changeAppLanguage(appLanguageConfig);
             }
 
             themeMode.value = themeModeConfig;
@@ -257,19 +259,23 @@ export const useAppearanceSettingsStore = defineStore(
          *
          * @param {string} language
          */
-        function changeAppLanguage(language) {
-            setAppLanguage(language);
+        async function changeAppLanguage(language) {
+            await setAppLanguage(language);
             vrStore.updateVRConfigVars();
         }
 
         /**
          * @param {string} language
          */
-        function setAppLanguage(language) {
+        async function setAppLanguage(language) {
             console.log('Language changed:', language);
+
+            await loadLocalizedStrings(language);
+
             appLanguage.value = language;
             configRepository.setString('VRCX_appLanguage', language);
             locale.value = appLanguage.value;
+
             changeHtmlLangAttribute(language);
         }
 
