@@ -69,6 +69,7 @@
         "vue": "^3.5.26",
         "vue-i18n": "^11.2.2",
         "vue-marquee-text-component": "^2.0.1",
+        "@element-plus/icons-vue": "^2.3.2",
         "vue-router": "^4.6.4",
         "vue-showdown": "^4.2.0",
         "worker-timers": "^8.0.27",
