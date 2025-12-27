@@ -411,6 +411,9 @@
 <style scoped>
     .data-table-wrapper {
         margin: 0 3px;
+        font-feature-settings:
+            'tnum' 1,
+            'lnum' 1;
     }
 
     .pagination-wrapper {
