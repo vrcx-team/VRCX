@@ -1881,9 +1881,6 @@
             }
         } else if (command === 'Previous Instances') {
             showPreviousInstancesUserDialog(D.ref);
-        } else if (command === 'Manage Gallery') {
-            userDialog.value.visible = false;
-            redirectToToolsTab();
         } else if (command === 'Invite To Group') {
             showInviteGroupDialog('', D.id);
         } else if (command === 'Send Boop') {
