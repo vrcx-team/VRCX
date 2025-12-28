@@ -12,13 +12,14 @@ import { watchState } from '../../service/watchState';
 
 import configRepository from '../../service/config';
 import webApiService from '../../service/webapi';
+import { languageCodes } from '../../localization';
 
 export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const gameStore = useGameStore();
     const vrcxStore = useVrcxStore();
     const VRCXUpdaterStore = useVRCXUpdaterStore();
 
-    const { availableLocales, t } = useI18n();
+    const { t } = useI18n();
 
     const state = reactive({
         folderSelectorDialogVisible: false
@@ -163,7 +164,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
         if (
             !bioLanguageConfig ||
-            !availableLocales.includes(bioLanguageConfig)
+            !languageCodes.includes(bioLanguageConfig)
         ) {
             bioLanguage.value = 'en';
         } else {

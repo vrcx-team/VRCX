@@ -4,7 +4,6 @@ import { getLocalizedStrings, languageCodes } from '../localization';
 const i18n = createI18n({
     locale: 'en',
     fallbackLocale: 'en',
-    availableLocales: languageCodes,
     legacy: false,
     globalInjection: false,
     missingWarn: false,

@@ -24,6 +24,7 @@ import { useVrcxStore } from '../vrcx';
 import { watchState } from '../../service/watchState';
 
 import configRepository from '../../service/config';
+import { languageCodes } from '../../localization';
 
 export const useAppearanceSettingsStore = defineStore(
     'AppearanceSettings',
@@ -37,7 +38,7 @@ export const useAppearanceSettingsStore = defineStore(
         const router = useRouter();
         const uiStore = useUiStore();
 
-        const { t, availableLocales, locale } = useI18n();
+        const { t, locale } = useI18n();
 
         const MAX_TABLE_PAGE_SIZE = 1000;
         const DEFAULT_TABLE_PAGE_SIZES = [10, 15, 20, 25, 50, 100];
@@ -182,7 +183,7 @@ export const useAppearanceSettingsStore = defineStore(
 
                 const lang = result.split('-')[0];
 
-                for (const ref of availableLocales) {
+                for (const ref of languageCodes) {
                     const refLang = ref.split('_')[0];
                     if (refLang === lang) {
                         await changeAppLanguage(ref);

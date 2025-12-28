@@ -17,7 +17,7 @@
                 <template #dropdown>
                     <el-dropdown-menu>
                         <el-dropdown-item
-                            v-for="language in availableLocales"
+                            v-for="language in languageCodes"
                             :key="language"
                             @click="setBioLanguage(language)"
                             v-text="getLanguageName(language)" />
@@ -108,7 +108,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { getLanguageName } from '../../../localization';
+    import { getLanguageName, languageCodes } from '../../../localization';
     import { openExternalLink } from '../../../shared/utils';
     import { useAdvancedSettingsStore } from '../../../stores';
 
@@ -133,7 +133,7 @@
         setTranslationApiPrompt
     } = advancedSettingsStore;
 
-    const { availableLocales, t } = useI18n();
+    const { t } = useI18n();
 
     const props = defineProps({
         isTranslationApiDialogVisible: {

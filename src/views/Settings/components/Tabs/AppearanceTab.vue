@@ -13,7 +13,7 @@
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item
-                                v-for="language in availableLocales"
+                                v-for="language in languageCodes"
                                 :key="language"
                                 :class="{ 'is-active': appLanguage === language }"
                                 @click="changeAppLanguage(language)"
@@ -384,11 +384,11 @@
 
     import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '../../../../stores';
     import { THEME_CONFIG } from '../../../../shared/constants';
-    import { getLanguageName } from '../../../../localization';
+    import { getLanguageName, languageCodes } from '../../../../localization';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 
-    const { availableLocales, t } = useI18n();
+    const { t } = useI18n();
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { saveOpenVROption, updateVRConfigVars } = useVrStore();
