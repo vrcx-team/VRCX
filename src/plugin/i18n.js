@@ -1,5 +1,4 @@
 import { createI18n } from 'vue-i18n';
-
 import { getLocalizedStrings, languageCodes } from '../localization';
 
 const i18n = createI18n({
@@ -19,10 +18,7 @@ async function loadLocalizedStrings(code) {
 }
 
 async function updateLocalizedStrings() {
-    // const newStrings = await getLocalizationStrings();
-    // Object.entries(newStrings).forEach(([key, value]) => {
-    //     i18n.global.setLocaleMessage(key.replaceAll('_', '-'), value);
-    // });
+    await loadLocalizedStrings(i18n.global.locale.value);
 }
 
 export { i18n, loadLocalizedStrings, updateLocalizedStrings };

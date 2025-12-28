@@ -7,25 +7,44 @@ import { defineConfig, loadEnv } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 
-/**
- * @param {string | undefined} assetId
- */
+import { languageCodes } from './localization/locales';
+
 function getAssetLanguage(assetId) {
     if (!assetId) return null;
 
+    if (assetId.endsWith('.json')) {
+        const language = assetId.split('.json')[0];
+
+        if (languageCodes.includes(language)) return language;
+    }
+
     const language =
-        assetId.split('localization/')[1]?.split('.')[0]?.toLowerCase() ||
         assetId.split('element-plus/es/locale/lang/')[1]?.split('.')[0] ||
         // Font assets, e.g., noto-sans-jp-regular.woff2 mapped to language code.
         {
             jp: 'ja',
-            sc: 'zh-cn',
-            tc: 'zh-tw',
+            sc: 'zh-CN',
+            tc: 'zh-TW',
             kr: 'ko'
         }[assetId.split('noto-sans-')[1]?.split('-')[0]];
 
-    if (language === 'index') return null;
     return language || null;
+}
+
+function getManualChunk(moduleId) {
+    const language = getAssetLanguage(moduleId);
+    if (!language) return;
+
+    return `languages/${language}`;
+}
+
+const defaultAssetName = '[hash][extname]';
+
+function getAssetFilename({ name }) {
+    const language = getAssetLanguage(name);
+    if (!language) return `assets/${defaultAssetName}`;
+
+    return `assets/languages/${language}-${defaultAssetName}`;
 }
 
 export default defineConfig(({ mode }) => {
@@ -35,7 +54,7 @@ export default defineConfig(({ mode }) => {
         ''
     );
 
-    const buildAndUploadSourceMaps = !!debug || !!sentryAuthToken;
+    const buildAndUploadSourceMaps = !!sentryAuthToken;
 
     const version = fs
         .readFileSync(new URL('../Version', import.meta.url), 'utf-8')
@@ -47,7 +66,7 @@ export default defineConfig(({ mode }) => {
         base: '',
         plugins: [
             // Bundle analysis tool, run `DEBUG=1 npm run prod` to enable.
-            debug && import('sonda/vite').then(({ default: sonda }) => sonda()),
+            // debug && import('sonda/vite').then(({ default: sonda }) => sonda()),
             vue(),
             tailwindcss(),
             buildAndUploadSourceMaps &&
@@ -102,21 +121,10 @@ export default defineConfig(({ mode }) => {
                 input: {
                     index: resolve(import.meta.dirname, './index.html'),
                     vr: resolve(import.meta.dirname, './vr.html')
-                },                
+                },
                 output: {
-                    exports: "none",
-                    assetFileNames: ({ name }) => {
-                        const language = getAssetLanguage(name);
-                        if (!language) return 'assets/[name]-[hash][extname]';
-
-                        return `assets/languages/${language}/[name]-[hash][extname]`;
-                    },
-                    manualChunks: (moduleId) => {
-                        const language = getAssetLanguage(moduleId);
-                        if (!language) return null;
-
-                        return `languages/${language}/messages`;
-                    }
+                    assetFileNames: getAssetFilename,
+                    manualChunks: getManualChunk
                 }
             }
         }

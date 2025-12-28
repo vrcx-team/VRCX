@@ -1,32 +1,3 @@
-const languageCodes = [
-    'cs',
-    'en',
-    'es',
-    'fr',
-    'hu',
-    'ja',
-    'ko',
-    'pl',
-    'pt',
-    'ru',
-    'th',
-    'vi',
-    'zh-CN',
-    'zh-TW'
-];
-
-/**
- * @type {Record<string, string>}
- */
-const languageNames = import.meta.glob('./*.json', {
-    eager: true,
-    import: 'language'
-});
-
-function getLanguageName(code) {
-    return languageNames[`./${code}.json`];
-}
-
 const elementPlusStrings = {
     // Vite does not support dynamic imports to `node_modules`.
     // https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars#limitations
@@ -50,16 +21,24 @@ async function getElementPlusStrings(code) {
     return (await elementPlusStrings[code]()).default;
 }
 
-/**
- * @type {Record<string, () => Promise<object>>}
- */
-const localizedStrings = import.meta.glob('./*.json', { eager: false });
-
 async function getLocalizedStrings(code) {
+    const localizedStringsUrl = new URL(`./${code}.json`, import.meta.url).href;
+    const localizedStrings = await fetch(localizedStringsUrl).then((response) => response.json())
+
     return {
-        ...(await localizedStrings[`./${code}.json`]()),
+        ...localizedStrings,
         elementPlus: await getElementPlusStrings(code)
     };
 }
 
-export { languageCodes, getLanguageName, getLocalizedStrings };
+const languageNames = import.meta.glob('./*.json', {
+        eager: true,
+        import: 'language'
+    });
+
+function getLanguageName(code) {
+    return languageNames[`./${code}.json`];
+}
+
+export * from "./locales";
+export { getLanguageName, getLocalizedStrings };
