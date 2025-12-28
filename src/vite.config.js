@@ -48,7 +48,7 @@ function getAssetFilename({ name }) {
 }
 
 export default defineConfig(({ mode }) => {
-    const { DEBUG: debug, SENTRY_AUTH_TOKEN: sentryAuthToken } = loadEnv(
+    const { SENTRY_AUTH_TOKEN: sentryAuthToken } = loadEnv(
         mode,
         process.cwd(),
         ''
@@ -65,8 +65,6 @@ export default defineConfig(({ mode }) => {
     return {
         base: '',
         plugins: [
-            // Bundle analysis tool, run `DEBUG=1 npm run prod` to enable.
-            // debug && import('sonda/vite').then(({ default: sonda }) => sonda()),
             vue(),
             tailwindcss(),
             buildAndUploadSourceMaps &&
@@ -79,9 +77,7 @@ export default defineConfig(({ mode }) => {
                         },
                         sourcemaps: {
                             assets: './build/html/**',
-                            filesToDeleteAfterUpload: !debug
-                                ? './build/html/**/*.js.map'
-                                : undefined
+                            filesToDeleteAfterUpload: './build/html/**/*.js.map'
                         }
                     })
                 )
