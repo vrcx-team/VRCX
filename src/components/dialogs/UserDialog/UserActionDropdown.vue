@@ -43,9 +43,6 @@
                         t('dialog.user.actions.share')
                     }}</el-dropdown-item>
                     <template v-if="userDialog.ref.id === currentUser.id">
-                        <el-dropdown-item :icon="Picture" command="Manage Gallery" divided>{{
-                            t('dialog.user.actions.manage_gallery_inventory_icon')
-                        }}</el-dropdown-item>
                         <el-dropdown-item :icon="UserFilled" command="Show Avatar Author">{{
                             t('dialog.user.actions.show_avatar_author')
                         }}</el-dropdown-item>
