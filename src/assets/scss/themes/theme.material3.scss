@@ -954,6 +954,10 @@ input[type='number'],
     position: relative;
 }
 
+.el-button .el-icon {
+    width: 100%;
+}
+
 .el-button--small.is-circle,
 .el-button.is-circle,
 .el-button--small.is-text,
