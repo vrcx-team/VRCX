@@ -1,3 +1,5 @@
+import { resolve } from 'node:path';
+
 import fs from 'node:fs';
 
 import { defineConfig, loadEnv } from 'vite';
@@ -95,43 +97,25 @@ export default defineConfig(({ mode }) => {
             // chunkSizeWarningLimit: 5000,
             sourcemap: buildAndUploadSourceMaps,
             assetsInlineLimit: 0,
-            dynamicImportVarsOptions: {
-                exclude: []
-            },
-            rolldownOptions: {
-                optimization: {
-                    inlineConst: true
-                },
-                input: {
-                    index: './index.html',
-                    vr: './vr.html'
-                },
-                // No external consumers import from this bundle, so entry
-                // signatures can be removed for better tree-shaking.
+            rollupOptions: {
                 preserveEntrySignatures: false,
+                input: {
+                    index: resolve(import.meta.dirname, './index.html'),
+                    vr: resolve(import.meta.dirname, './vr.html')
+                },                
                 output: {
-                    minify: true,
-                    minifyInternalExports: true,
+                    exports: "none",
                     assetFileNames: ({ name }) => {
                         const language = getAssetLanguage(name);
                         if (!language) return 'assets/[name]-[hash][extname]';
 
                         return `assets/languages/${language}/[name]-[hash][extname]`;
                     },
-                    advancedChunks: {
-                        // Don't collapse language assets into other chunks.
-                        includeDependenciesRecursively: false,
-                        groups: [
-                            {
-                                name: (moduleId) => {
-                                    const language = getAssetLanguage(moduleId);
-                                    if (!language) return null;
+                    manualChunks: (moduleId) => {
+                        const language = getAssetLanguage(moduleId);
+                        if (!language) return null;
 
-                                    return `languages/${language}/messages`;
-                                },
-                                priority: 20
-                            }
-                        ]
+                        return `languages/${language}/messages`;
                     }
                 }
             }
