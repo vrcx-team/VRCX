@@ -197,6 +197,7 @@
             <div class="current-instance-table">
                 <DataTable
                     v-bind="currentInstanceUsersTable"
+                    layout="table"
                     style="margin-top: 10px; cursor: pointer"
                     @row-click="selectCurrentInstanceRow">
                     <el-table-column :label="t('table.playerList.avatar')" width="70" prop="photo">
