@@ -53,12 +53,6 @@
                 </el-tooltip>
             </el-form-item>
         </el-form>
-        <el-checkbox
-            v-model="launchDialog.desktop"
-            style="display: inline-flex; align-items: center; margin-top: 5px"
-            @change="saveLaunchDialog">
-            {{ t('dialog.launch.start_as_desktop') }}
-        </el-checkbox>
         <template #footer>
             <el-button
                 :disabled="!checkCanInvite(launchDialog.location)"
@@ -68,7 +62,7 @@
             <template v-if="canOpenInstanceInGame">
                 <el-button
                     :disabled="!launchDialog.secureOrShortName"
-                    @click="handleLaunchGame(launchDialog.location, launchDialog.shortName, launchDialog.desktop)">
+                    @click="handleLaunchGame(launchDialog.location, launchDialog.shortName, false)">
                     {{ t('dialog.launch.launch') }}
                 </el-button>
                 <el-button
@@ -80,16 +74,30 @@
             </template>
             <template v-else>
                 <el-button
+                    class="mr-1.25"
                     :disabled="!launchDialog.secureOrShortName"
                     @click="selfInvite(launchDialog.location, launchDialog.shortName)">
                     {{ t('dialog.launch.self_invite') }}
                 </el-button>
-                <el-button
+                <el-dropdown
+                    split-button
                     type="primary"
                     :disabled="!launchDialog.secureOrShortName"
-                    @click="handleLaunchGame(launchDialog.location, launchDialog.shortName, launchDialog.desktop)">
-                    {{ t('dialog.launch.launch') }}
-                </el-button>
+                    @click="handleLaunchDefault(launchDialog.location, launchDialog.shortName)"
+                    @command="(cmd) => handleLaunchCommand(cmd, launchDialog.location, launchDialog.shortName)">
+                    {{ launchModeLabel }}
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item :command="launchDialog.desktop ? 'vr' : 'desktop'">
+                                {{
+                                    launchDialog.desktop
+                                        ? t('dialog.launch.launch')
+                                        : t('dialog.launch.start_as_desktop')
+                                }}
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
             </template>
         </template>
         <InviteDialog :invite-dialog="inviteDialog" @closeInviteDialog="closeInviteDialog" />
@@ -118,8 +126,12 @@
     const { launchGame, tryOpenInstanceInVrc } = useLaunchStore();
     const { launchDialogData } = storeToRefs(useLaunchStore());
 
-    const { canOpenInstanceInGame } = useInviteStore();
+    const { canOpenInstanceInGame } = storeToRefs(useInviteStore());
     const { isGameRunning } = storeToRefs(useGameStore());
+
+    const launchModeLabel = computed(() =>
+        launchDialog.value.desktop ? t('dialog.launch.start_as_desktop') : t('dialog.launch.launch')
+    );
 
     const launchDialogIndex = ref(2000);
 
@@ -212,6 +224,17 @@
         launchGame(location, shortName, desktop);
         isVisible.value = false;
     }
+
+    function handleLaunchDefault(location, shortName) {
+        handleLaunchGame(location, shortName, launchDialog.value.desktop);
+    }
+
+    function handleLaunchCommand(command, location, shortName) {
+        const desktop = command === 'desktop';
+        launchDialog.value.desktop = desktop;
+        configRepository.setBool('launchAsDesktop', desktop);
+        handleLaunchGame(location, shortName, desktop);
+    }
     function handleAttachGame(location, shortName) {
         tryOpenInstanceInVrc(location, shortName);
         isVisible.value = false;
@@ -235,11 +258,9 @@
                 return args;
             });
     }
+
     function getConfig() {
         configRepository.getBool('launchAsDesktop').then((value) => (launchDialog.value.desktop = value));
-    }
-    function saveLaunchDialog() {
-        configRepository.setBool('launchAsDesktop', launchDialog.value.desktop);
     }
     async function initLaunchDialog() {
         const { tag, shortName } = launchDialogData.value;
