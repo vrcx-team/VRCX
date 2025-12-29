@@ -66,10 +66,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         tableProps: {
             stripe: true,
             size: 'small',
-            defaultSort: {
-                prop: 'created_at',
-                order: 'descending'
-            },
+            defaultSort: null,
             rowKey: (row) =>
                 `${row.type}:${row.rowId ?? row.uid ?? row.displayName + row.location + row.time}:${row.created_at ?? ''}`
         },
@@ -398,7 +395,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (!gameLogSearch(entry)) {
             return;
         }
-        gameLogTable.value.data.push({ ...entry, uid: crypto.randomUUID() });
+        gameLogTable.value.data.push({
+            ...entry,
+            uid: crypto.randomUUID()
+        });
         sweepGameLog();
         uiStore.notifyMenu('game-log');
     }

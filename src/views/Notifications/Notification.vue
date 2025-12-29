@@ -49,7 +49,11 @@
             </el-tooltip>
         </div>
 
-        <DataTable v-bind="notificationTable" ref="notificationTableRef" class="notification-table">
+        <DataTable
+            v-bind="notificationTable"
+            :data="notificationDisplayData"
+            ref="notificationTableRef"
+            class="notification-table">
             <el-table-column :label="t('table.notification.date')" prop="created_at" width="130">
                 <template #default="scope">
                     <el-tooltip placement="right">
@@ -403,11 +407,12 @@
         Refresh
     } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
-    import { ref } from 'vue';
+    import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import Noty from 'noty';
+    import dayjs from 'dayjs';
 
     import {
         useGalleryStore,
@@ -450,6 +455,42 @@
     const { shiftHeld } = storeToRefs(useUiStore());
 
     const { t } = useI18n();
+
+    function getNotificationCreatedAt(row) {
+        if (typeof row?.created_at === 'string' && row.created_at.length > 0) {
+            return row.created_at;
+        }
+        if (typeof row?.createdAt === 'string' && row.createdAt.length > 0) {
+            return row.createdAt;
+        }
+        return '';
+    }
+
+    function getNotificationCreatedAtTs(row) {
+        const createdAtRaw = row?.created_at ?? row?.createdAt;
+        if (typeof createdAtRaw === 'number') {
+            const ts = createdAtRaw > 1_000_000_000_000 ? createdAtRaw : createdAtRaw * 1000;
+            return Number.isFinite(ts) ? ts : 0;
+        }
+
+        const createdAt = getNotificationCreatedAt(row);
+        const ts = dayjs(createdAt).valueOf();
+        return Number.isFinite(ts) ? ts : 0;
+    }
+
+    const notificationDisplayData = computed(() => {
+        return notificationTable.value.data.slice().sort((a, b) => {
+            const aTs = getNotificationCreatedAtTs(a);
+            const bTs = getNotificationCreatedAtTs(b);
+            if (aTs !== bTs) {
+                return bTs - aTs;
+            }
+
+            const aId = typeof a?.id === 'string' ? a.id : '';
+            const bId = typeof b?.id === 'string' ? b.id : '';
+            return aId < bId ? 1 : aId > bId ? -1 : 0;
+        });
+    });
 
     const sendInviteResponseDialog = ref({
         messageSlot: {},
