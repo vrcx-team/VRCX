@@ -32,7 +32,7 @@
                 @change="feedTableLookup"></el-input>
         </div>
 
-        <DataTable v-bind="feedTable">
+        <DataTable v-bind="feedTable" :data="feedDisplayData">
             <el-table-column type="expand" width="20">
                 <template #default="scope">
                     <div style="position: relative; font-size: 14px">
@@ -211,6 +211,7 @@
 
 <script setup>
     import { Right } from '@element-plus/icons-vue';
+    import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -220,6 +221,8 @@
     const { showUserDialog } = useUserStore();
     const { feedTable } = storeToRefs(useFeedStore());
     const { feedTableLookup } = useFeedStore();
+
+    const feedDisplayData = computed(() => feedTable.value.data.slice().reverse());
 
     const { t } = useI18n();
 

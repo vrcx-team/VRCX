@@ -27,10 +27,7 @@ export const useFeedStore = defineStore('Feed', () => {
         tableProps: {
             stripe: true,
             size: 'small',
-            defaultSort: {
-                prop: 'created_at',
-                order: 'descending'
-            },
+            defaultSort: null,
             rowKey: (row) =>
                 `${row.type}:${row.rowId ?? row.uid}:${row.created_at ?? ''}`
         },
@@ -191,7 +188,10 @@ export const useFeedStore = defineStore('Feed', () => {
         if (!feedSearch(feed)) {
             return;
         }
-        feedTable.value.data.push({ ...feed, uid: crypto.randomUUID() });
+        feedTable.value.data.push({
+            ...feed,
+            uid: crypto.randomUUID()
+        });
         sweepFeed();
         UiStore.notifyMenu('feed');
     }

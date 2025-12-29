@@ -90,10 +90,7 @@ export const useFriendStore = defineStore('Friend', () => {
         tableProps: {
             stripe: true,
             size: 'small',
-            defaultSort: {
-                prop: 'created_at',
-                order: 'descending'
-            }
+            defaultSort: null
         },
         pageSize: 20,
         pageSizeLinked: true,

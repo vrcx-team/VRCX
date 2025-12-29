@@ -40,7 +40,7 @@
                 @change="gameLogTableLookup"></el-input>
         </div>
 
-        <DataTable v-bind="gameLogTable">
+        <DataTable v-bind="gameLogTable" :data="gameLogDisplayData">
             <el-table-column :label="t('table.gameLog.date')" prop="created_at" width="130">
                 <template #default="scope">
                     <NativeTooltip placement="right">
@@ -184,8 +184,11 @@
 <script setup>
     import { Close, DataLine, Delete } from '@element-plus/icons-vue';
     import { ElMessageBox } from 'element-plus';
+    import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
+    import dayjs from 'dayjs';
 
     import { useGameLogStore, useInstanceStore, useUiStore, useUserStore, useWorldStore } from '../../stores';
     import { formatDateFilter, openExternalLink, removeFromArray } from '../../shared/utils';
@@ -199,6 +202,52 @@
     const { gameLogIsFriend, gameLogIsFavorite, gameLogTableLookup } = useGameLogStore();
     const { gameLogTable } = storeToRefs(useGameLogStore());
     const { updateSharedFeed } = useSharedFeedStore();
+
+    function getGameLogCreatedAt(row) {
+        if (typeof row?.created_at === 'string' && row.created_at.length > 0) {
+            return row.created_at;
+        }
+        if (typeof row?.createdAt === 'string' && row.createdAt.length > 0) {
+            return row.createdAt;
+        }
+        if (typeof row?.dt === 'string' && row.dt.length > 0) {
+            return row.dt;
+        }
+        return '';
+    }
+
+    function getGameLogCreatedAtTs(row) {
+        const createdAtRaw = row?.created_at ?? row?.createdAt ?? row?.dt;
+        if (typeof createdAtRaw === 'number') {
+            const ts = createdAtRaw > 1_000_000_000_000 ? createdAtRaw : createdAtRaw * 1000;
+            return Number.isFinite(ts) ? ts : 0;
+        }
+
+        const createdAt = getGameLogCreatedAt(row);
+        const ts = dayjs(createdAt).valueOf();
+        return Number.isFinite(ts) ? ts : 0;
+    }
+
+    const gameLogDisplayData = computed(() => {
+        const data = gameLogTable.value.data;
+        return data.slice().sort((a, b) => {
+            const aTs = getGameLogCreatedAtTs(a);
+            const bTs = getGameLogCreatedAtTs(b);
+            if (aTs !== bTs) {
+                return bTs - aTs;
+            }
+
+            const aRowId = typeof a?.rowId === 'number' ? a.rowId : 0;
+            const bRowId = typeof b?.rowId === 'number' ? b.rowId : 0;
+            if (aRowId !== bRowId) {
+                return bRowId - aRowId;
+            }
+
+            const aUid = typeof a?.uid === 'string' ? a.uid : '';
+            const bUid = typeof b?.uid === 'string' ? b.uid : '';
+            return aUid < bUid ? 1 : aUid > bUid ? -1 : 0;
+        });
+    });
 
     const { t } = useI18n();
     const emit = defineEmits(['updateGameLogSessionTable']);

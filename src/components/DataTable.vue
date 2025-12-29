@@ -4,8 +4,7 @@
             v-loading="loading"
             :data="paginatedData"
             v-bind="mergedTableProps"
-            default-sort-prop="created_at"
-            default-sort-order="descending"
+            :default-sort="resolvedDefaultSort"
             lazy
             @sort-change="handleSortChange"
             @selection-change="handleSelectionChange"
@@ -77,6 +76,7 @@
         'current-change',
         'selection-change',
         'row-click',
+        'filtered-data',
         'sort-change'
     ]);
 
@@ -87,17 +87,9 @@
 
     const internalCurrentPage = ref(currentPage.value);
     const internalPageSize = ref(pageSize.value);
-    const sortData = ref({
-        prop: props.tableProps.defaultSort?.prop || 'created_at',
-        order: props.tableProps.defaultSort?.order || 'descending'
-    });
 
     const asRawArray = (value) => (Array.isArray(value) ? toRaw(value) : []);
     const isEmptyFilterValue = (value) => (Array.isArray(value) ? value.length === 0 : !value);
-    const hasActiveFilters = (activeFilters) => {
-        if (!Array.isArray(activeFilters) || activeFilters.length === 0) return false;
-        return activeFilters.some((filter) => !isEmptyFilterValue(filter?.value));
-    };
 
     const showPagination = computed(() => {
         return props.layout.includes('pagination');
@@ -107,67 +99,14 @@
         return props.pageSizeLinked ? appearanceSettingsStore.tablePageSize : internalPageSize.value;
     });
 
-    const detectCreatedAtOrder = (src) => {
-        if (!Array.isArray(src) || src.length <= 2) return null;
-
-        const detectOrderInRange = (startIndexInclusive, endIndexInclusive) => {
-            let couldBeAsc = true;
-            let couldBeDesc = true;
-
-            const start = Math.max(1, startIndexInclusive);
-            const end = Math.min(endIndexInclusive, src.length - 1);
-            for (let i = start; i <= end; i++) {
-                const a = src[i - 1]?.created_at;
-                const b = src[i]?.created_at;
-                if (typeof a !== 'string' || typeof b !== 'string') continue;
-                if (a > b) {
-                    couldBeAsc = false;
-                } else if (a < b) {
-                    couldBeDesc = false;
-                }
-                if (!couldBeAsc && !couldBeDesc) {
-                    return null;
-                }
-            }
-
-            if (couldBeAsc) return 'asc';
-            if (couldBeDesc) return 'desc';
-            return null;
-        };
-
-        const windowSize = Math.min(Math.max(effectivePageSize.value + 1, 25), 200);
-        const headEnd = Math.min(src.length - 1, windowSize);
-        const tailStart = Math.max(1, src.length - windowSize);
-
-        const headOrder = detectOrderInRange(1, headEnd);
-        const tailOrder = detectOrderInRange(tailStart, src.length - 1);
-
-        if (headOrder && tailOrder && headOrder !== tailOrder) {
-            return null;
-        }
-
-        return tailOrder || headOrder;
-    };
-
     const throttledData = ref(asRawArray(data.value));
     const throttledFilters = ref(filters.value);
-    const throttledSortData = ref({ ...sortData.value });
-    const throttledCreatedAtOrder = ref(null);
 
     let throttleTimerId = null;
     const syncThrottledInputs = () => {
         throttleTimerId = null;
         throttledData.value = asRawArray(data.value);
         throttledFilters.value = Array.isArray(filters.value) ? filters.value.slice() : filters.value;
-        throttledSortData.value = { ...sortData.value };
-
-        const sort = throttledSortData.value;
-        const shouldCheckFastPath =
-            showPagination.value &&
-            !hasActiveFilters(throttledFilters.value) &&
-            sort?.prop === 'created_at' &&
-            sort?.order === 'descending';
-        throttledCreatedAtOrder.value = shouldCheckFastPath ? detectCreatedAtOrder(throttledData.value) : null;
     };
 
     const scheduleThrottledSync = () => {
@@ -178,7 +117,6 @@
     watch(data, scheduleThrottledSync);
     watch(() => (Array.isArray(data.value) ? data.value.length : 0), scheduleThrottledSync);
     watch(filters, scheduleThrottledSync, { deep: true });
-    watch(sortData, scheduleThrottledSync, { deep: true });
     watch(effectivePageSize, scheduleThrottledSync);
 
     onBeforeUnmount(() => {
@@ -188,32 +126,29 @@
         }
     });
 
-    const canUseFastCreatedAtDescPagination = computed(() => {
-        if (!showPagination.value) return false;
-        if (!throttledCreatedAtOrder.value) return false;
-
-        const activeFilters = throttledFilters.value;
-        if (hasActiveFilters(activeFilters)) return false;
-
-        const sort = throttledSortData.value;
-        return sort?.prop === 'created_at' && sort?.order === 'descending';
-    });
-    const hasAnyNonNullSortValue = (rows, prop) => {
-        if (!Array.isArray(rows) || rows.length === 0) return false;
-        const sample = Math.min(rows.length, 50);
-        for (let i = 0; i < sample; i++) {
-            const value = rows[i]?.[prop];
-            if (value !== undefined && value !== null) {
-                return true;
-            }
+    const resolvedDefaultSort = computed(() => {
+        if (props.tableProps?.defaultSort === null) {
+            return undefined;
         }
-        return false;
-    };
+        return (
+            props.tableProps?.defaultSort ?? {
+                prop: 'created_at',
+                order: 'descending'
+            }
+        );
+    });
 
-    const mergedTableProps = computed(() => ({
-        stripe: true,
-        ...tableProps.value
-    }));
+    const mergedTableProps = computed(() => {
+        const src = tableProps.value || {};
+        const rest = { ...src };
+        if ('defaultSort' in rest) {
+            delete rest.defaultSort;
+        }
+        return {
+            stripe: true,
+            ...rest
+        };
+    });
 
     const mergedPaginationProps = computed(() => ({
         layout: 'sizes, prev, pager, next, total',
@@ -236,55 +171,9 @@
         }
     };
 
-    const toSortKey = (value) => {
-        if (value == null) return null;
-        if (typeof value === 'number') return value;
-        if (value instanceof Date) return value.getTime();
-        return String(value).toLowerCase();
-    };
-
-    const compareSortKeys = (aKey, bKey) => {
-        if (aKey == null && bKey == null) return 0;
-        if (aKey == null) return 1;
-        if (bKey == null) return -1;
-
-        if (typeof aKey === 'number' && typeof bKey === 'number') {
-            if (aKey > bKey) return 1;
-            if (aKey < bKey) return -1;
-            return 0;
-        }
-
-        const aStr = typeof aKey === 'string' ? aKey : String(aKey);
-        const bStr = typeof bKey === 'string' ? bKey : String(bKey);
-        if (aStr > bStr) return 1;
-        if (aStr < bStr) return -1;
-        return 0;
-    };
-
-    const createRowSortKeyGetter = (prop) => {
-        const sortKeyByRow = new Map();
-        return (row) => {
-            if (sortKeyByRow.has(row)) {
-                return sortKeyByRow.get(row);
-            }
-            const key = toSortKey(row?.[prop]);
-            sortKeyByRow.set(row, key);
-            return key;
-        };
-    };
-
-    const sortRows = (rows, { prop, order }) => {
-        const getKey = createRowSortKeyGetter(prop);
-        rows.sort((a, b) => {
-            const comparison = compareSortKeys(getKey(a), getKey(b));
-            return order === 'descending' ? -comparison : comparison;
-        });
-    };
-
     const filteredData = computed(() => {
-        let result = throttledData.value;
+        let result = throttledData.value.slice();
         const activeFilters = throttledFilters.value;
-        const activeSort = throttledSortData.value;
 
         if (activeFilters && Array.isArray(activeFilters) && activeFilters.length > 0) {
             activeFilters.forEach((filter) => {
@@ -299,45 +188,20 @@
             });
         }
 
-        if (activeSort?.prop && activeSort?.order) {
-            if (!hasAnyNonNullSortValue(result, activeSort.prop)) {
-                return result;
-            }
-            if (result === throttledData.value) {
-                result = [...result];
-            }
-            sortRows(result, activeSort);
-        }
-
         return result;
     });
+
+    watch(
+        filteredData,
+        (value) => {
+            emit('filtered-data', value);
+        },
+        { immediate: true }
+    );
 
     const paginatedData = computed(() => {
         if (!showPagination.value) {
             return filteredData.value;
-        }
-
-        if (canUseFastCreatedAtDescPagination.value) {
-            const src = throttledData.value;
-            const page = [];
-            if (!Array.isArray(src) || src.length === 0) {
-                return page;
-            }
-            const startOffset = (internalCurrentPage.value - 1) * effectivePageSize.value;
-            const endOffset = startOffset + effectivePageSize.value;
-            if (throttledCreatedAtOrder.value === 'desc') {
-                for (let idx = startOffset; idx < endOffset; idx++) {
-                    if (idx >= src.length) break;
-                    page.push(src[idx]);
-                }
-                return page;
-            }
-            for (let offset = startOffset; offset < endOffset; offset++) {
-                const idx = src.length - 1 - offset;
-                if (idx < 0) break;
-                page.push(src[idx]);
-            }
-            return page;
         }
 
         const start = (internalCurrentPage.value - 1) * effectivePageSize.value;
@@ -346,18 +210,13 @@
     });
 
     const totalItems = computed(() => {
-        const length = canUseFastCreatedAtDescPagination.value
-            ? Array.isArray(throttledData.value)
-                ? throttledData.value.length
-                : 0
-            : filteredData.value.length;
+        const length = filteredData.value.length;
         const max = vrcxStore.maxTableSize;
         return length > max && length < max + 51 ? max : length;
     });
 
     const handleSortChange = ({ prop, order }) => {
-        sortData.value = { prop, order };
-        emit('sort-change', sortData.value);
+        emit('sort-change', { prop, order });
     };
 
     const handleSelectionChange = (selection) => {
@@ -393,19 +252,6 @@
     watch(pageSize, (newVal) => {
         internalPageSize.value = newVal;
     });
-
-    watch(
-        () => props.tableProps.defaultSort,
-        (newSort) => {
-            if (newSort) {
-                sortData.value = {
-                    prop: newSort.prop,
-                    order: newSort.order
-                };
-            }
-        },
-        { immediate: true }
-    );
 </script>
 
 <style scoped>

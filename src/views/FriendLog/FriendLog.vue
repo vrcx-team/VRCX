@@ -28,8 +28,8 @@
                 style="flex: 0.4; margin-left: 10px" />
         </div>
 
-        <DataTable v-bind="friendLogTable">
-            <el-table-column :label="t('table.friendLog.date')" prop="created_at" :sortable="true" width="200">
+        <DataTable v-bind="friendLogTable" :data="friendLogDisplayData">
+            <el-table-column :label="t('table.friendLog.date')" prop="created_at" width="200">
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>
@@ -90,10 +90,12 @@
 
 <script setup>
     import { Close, Delete, Right } from '@element-plus/icons-vue';
+    import { computed, watch } from 'vue';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { watch } from 'vue';
+
+    import dayjs from 'dayjs';
 
     import { useAppearanceSettingsStore, useFriendStore, useUiStore, useUserStore } from '../../stores';
     import { formatDateFilter, removeFromArray } from '../../shared/utils';
@@ -105,6 +107,23 @@
     const { showUserDialog } = useUserStore();
     const { friendLogTable } = storeToRefs(useFriendStore());
     const { shiftHeld } = storeToRefs(useUiStore());
+
+    const friendLogDisplayData = computed(() => {
+        const data = friendLogTable.value.data;
+        return data.slice().sort((a, b) => {
+            const aTime = typeof a?.created_at === 'string' ? a.created_at : '';
+            const bTime = typeof b?.created_at === 'string' ? b.created_at : '';
+            const aTs = dayjs(aTime).valueOf();
+            const bTs = dayjs(bTime).valueOf();
+            if (Number.isFinite(aTs) && Number.isFinite(bTs) && aTs !== bTs) {
+                return bTs - aTs;
+            }
+
+            const aId = typeof a?.rowId === 'number' ? a.rowId : 0;
+            const bId = typeof b?.rowId === 'number' ? b.rowId : 0;
+            return bId - aId;
+        });
+    });
 
     watch(
         () => hideUnfriends.value,
