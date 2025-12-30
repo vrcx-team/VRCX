@@ -1964,6 +1964,9 @@
         "screenshot_metadata": {
             "deleted": "Screenshot metadata deleted",
             "delete_failed": "Failed to delete screenshot metadata"
+        },
+        "crash": {
+            "vrcx_crash": "VRCX has recovered from a crash."
         }
     },
     "prompt": {

@@ -243,6 +243,11 @@ namespace VRCX
         {
             Instance.Browser.ShowDevTools();
         }
+        
+        private void TrayMenu_ForceCrash_Click(object sender, System.EventArgs e)
+        {
+            Instance.Browser.LoadUrl("chrome://crash");
+        }
 
         private void TrayMenu_Quit_Click(object sender, System.EventArgs e)
         {
