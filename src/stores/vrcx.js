@@ -531,10 +531,14 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         if (command.startsWith('crash/')) {
             const crashMessage = command.replace('crash/', '');
             console.error('VRCX recovered from crash:', crashMessage);
-            ElMessageBox.alert(
-                crashMessage,
-                t('message.crash.vrcx_crash')
-            ).catch(() => {});
+            const Sentry = await import('@sentry/vue');
+            Sentry.captureMessage(`crash message: ${crashMessage}`, {
+                level: 'fatal'
+            });
+            ElMessage({
+                message: t('message.crash.vrcx_reload'),
+                type: 'success'
+            });
             return;
         }
         eventLaunchCommand(command);
