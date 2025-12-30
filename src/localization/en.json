@@ -1966,7 +1966,7 @@
             "delete_failed": "Failed to delete screenshot metadata"
         },
         "crash": {
-            "vrcx_crash": "VRCX has recovered from a crash."
+            "vrcx_reload": "VRCX was reloaded for stability"
         }
     },
     "prompt": {
