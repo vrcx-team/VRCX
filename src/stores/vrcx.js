@@ -531,10 +531,22 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         if (command.startsWith('crash/')) {
             const crashMessage = command.replace('crash/', '');
             console.error('VRCX recovered from crash:', crashMessage);
-            const Sentry = await import('@sentry/vue');
-            Sentry.captureMessage(`crash message: ${crashMessage}`, {
-                level: 'fatal'
-            });
+
+            if (advancedSettingsStore.sentryErrorReporting) {
+                try {
+                    import('@sentry/vue').then((Sentry) => {
+                        Sentry.captureMessage(
+                            `crash message: ${crashMessage}`,
+                            {
+                                level: 'fatal'
+                            }
+                        );
+                    });
+                } catch (error) {
+                    console.error('Error setting up Sentry feedback:', error);
+                }
+            }
+
             ElMessage({
                 message: t('message.crash.vrcx_reload'),
                 type: 'success'
