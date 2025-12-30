@@ -525,11 +525,22 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
     async function startupLaunchCommand() {
         const command = await AppApi.GetLaunchCommand();
-        if (command) {
-            eventLaunchCommand(command);
+        if (!command) {
+            return;
         }
+        if (command.startsWith('crash/')) {
+            const crashMessage = command.replace('crash/', '');
+            console.error('VRCX recovered from crash:', crashMessage);
+            ElMessageBox.alert(
+                crashMessage,
+                t('message.crash.vrcx_crash')
+            ).catch(() => {});
+            return;
+        }
+        eventLaunchCommand(command);
     }
 
+    // called from C#
     function eventLaunchCommand(input) {
         if (!watchState.isLoggedIn) {
             return;

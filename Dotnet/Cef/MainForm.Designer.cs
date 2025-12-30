@@ -43,6 +43,7 @@ namespace VRCX
             this.TrayMenu = new ContextMenuStrip(this.components);
             this.TrayMenu_Open = new ToolStripMenuItem();
             this.TrayMenu_DevTools = new ToolStripMenuItem();
+            this.TrayMenu_ForceCrash = new ToolStripMenuItem();
             this.TrayMenu_Separator = new ToolStripSeparator();
             this.TrayMenu_Quit = new ToolStripMenuItem();
             this.TrayIcon = new NotifyIcon(this.components);
@@ -53,13 +54,13 @@ namespace VRCX
             //
             // TrayMenu
             //
-            this.TrayMenu.Items.AddRange(new ToolStripItem[]
-            {
-                this.TrayMenu_Open,
-                this.TrayMenu_DevTools,
-                this.TrayMenu_Separator,
-                this.TrayMenu_Quit
-            });
+            this.TrayMenu.Items.Add(this.TrayMenu_Open);
+            this.TrayMenu.Items.Add(this.TrayMenu_DevTools);
+            if (Program.LaunchDebug)
+                this.TrayMenu.Items.Add(this.TrayMenu_ForceCrash);
+            this.TrayMenu.Items.Add(this.TrayMenu_Separator);
+            this.TrayMenu.Items.Add(this.TrayMenu_Quit);
+
             this.TrayMenu.Name = "TrayMenu";
             this.TrayMenu.Size = new Size(132, 54);
             //
@@ -76,6 +77,13 @@ namespace VRCX
             this.TrayMenu_DevTools.Size = new Size(131, 22);
             this.TrayMenu_DevTools.Text = "DevTools";
             this.TrayMenu_DevTools.Click += new EventHandler(this.TrayMenu_DevTools_Click);
+            //
+            // TrayMenu_ForceCrash
+            //
+            this.TrayMenu_ForceCrash.Name = "TrayMenu_ForceCrash";
+            this.TrayMenu_ForceCrash.Size = new Size(131, 22);
+            this.TrayMenu_ForceCrash.Text = "Force Crash";
+            this.TrayMenu_ForceCrash.Click += new EventHandler(this.TrayMenu_ForceCrash_Click);
             //
             // TrayMenu_Separator
             //
@@ -119,6 +127,7 @@ namespace VRCX
         private ContextMenuStrip TrayMenu;
         private ToolStripMenuItem TrayMenu_Open;
         private ToolStripMenuItem TrayMenu_DevTools;
+        private ToolStripMenuItem TrayMenu_ForceCrash;
         private ToolStripSeparator TrayMenu_Separator;
         private ToolStripMenuItem TrayMenu_Quit;
         private NotifyIcon TrayIcon;
