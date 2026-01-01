@@ -6,8 +6,6 @@
             v-bind="mergedTableProps"
             :default-sort="resolvedDefaultSort"
             lazy
-            @sort-change="handleSortChange"
-            @selection-change="handleSelectionChange"
             @row-click="handleRowClick">
             <slot></slot>
         </el-table>
@@ -69,16 +67,7 @@
         }
     });
 
-    const emit = defineEmits([
-        'update:currentPage',
-        'update:pageSize',
-        'size-change',
-        'current-change',
-        'selection-change',
-        'row-click',
-        'filtered-data',
-        'sort-change'
-    ]);
+    const emit = defineEmits(['row-click']);
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();
@@ -191,14 +180,6 @@
         return result;
     });
 
-    watch(
-        filteredData,
-        (value) => {
-            emit('filtered-data', value);
-        },
-        { immediate: true }
-    );
-
     const paginatedData = computed(() => {
         if (!showPagination.value) {
             return filteredData.value;
@@ -215,14 +196,6 @@
         return length > max && length < max + 51 ? max : length;
     });
 
-    const handleSortChange = ({ prop, order }) => {
-        emit('sort-change', { prop, order });
-    };
-
-    const handleSelectionChange = (selection) => {
-        emit('selection-change', selection);
-    };
-
     const handleRowClick = (row, column, event) => {
         emit('row-click', row, column, event);
     };
@@ -230,19 +203,13 @@
     const handleSizeChange = (size) => {
         if (props.pageSizeLinked) {
             appearanceSettingsStore.setTablePageSize(size);
-            emit('update:pageSize', size);
-            emit('size-change', size);
             return;
         }
         internalPageSize.value = size;
-        emit('update:pageSize', size);
-        emit('size-change', size);
     };
 
     const handleCurrentChange = (page) => {
         internalCurrentPage.value = page;
-        emit('update:currentPage', page);
-        emit('current-change', page);
     };
 
     watch(currentPage, (newVal) => {
