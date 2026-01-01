@@ -5,7 +5,6 @@
             :data="paginatedData"
             v-bind="mergedTableProps"
             :default-sort="resolvedDefaultSort"
-            lazy
             @row-click="handleRowClick">
             <slot></slot>
         </el-table>

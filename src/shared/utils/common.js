@@ -406,7 +406,6 @@ function openExternalLink(link) {
         }
     })
         .then((action) => {
-            console.log(action);
             if (action === 'confirm') {
                 AppApi.OpenLink(link);
             }
