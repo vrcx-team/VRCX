@@ -1604,7 +1604,7 @@ export const useFriendStore = defineStore('Friend', () => {
         isRefreshFriendsLoading.value = true;
         watchState.isFriendsLoaded = false;
         friendLog = new Map();
-        initFriendLogHistoryTable();
+        await initFriendLogHistoryTable();
 
         try {
             if (await configRepository.getBool(`friendLogInit_${userId}`)) {
