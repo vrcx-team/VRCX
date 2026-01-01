@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-    import { computed, onBeforeUnmount, ref, toRaw, toRefs, watch } from 'vue';
+    import { computed, ref, toRaw, toRefs, watch } from 'vue';
 
     import { useAppearanceSettingsStore, useVrcxStore } from '../stores';
 
@@ -88,33 +88,6 @@
         return props.pageSizeLinked ? appearanceSettingsStore.tablePageSize : internalPageSize.value;
     });
 
-    const throttledData = ref(asRawArray(data.value));
-    const throttledFilters = ref(filters.value);
-
-    let throttleTimerId = null;
-    const syncThrottledInputs = () => {
-        throttleTimerId = null;
-        throttledData.value = asRawArray(data.value);
-        throttledFilters.value = Array.isArray(filters.value) ? filters.value.slice() : filters.value;
-    };
-
-    const scheduleThrottledSync = () => {
-        if (throttleTimerId !== null) return;
-        throttleTimerId = setTimeout(syncThrottledInputs, 500);
-    };
-
-    watch(data, scheduleThrottledSync);
-    watch(() => (Array.isArray(data.value) ? data.value.length : 0), scheduleThrottledSync);
-    watch(filters, scheduleThrottledSync, { deep: true });
-    watch(effectivePageSize, scheduleThrottledSync);
-
-    onBeforeUnmount(() => {
-        if (throttleTimerId !== null) {
-            clearTimeout(throttleTimerId);
-            throttleTimerId = null;
-        }
-    });
-
     const resolvedDefaultSort = computed(() => {
         if (props.tableProps?.defaultSort === null) {
             return undefined;
@@ -161,23 +134,24 @@
     };
 
     const filteredData = computed(() => {
-        let result = throttledData.value.slice();
-        const activeFilters = throttledFilters.value;
+        const rawData = asRawArray(data.value);
+        const rawFilters = Array.isArray(filters.value) ? filters.value : [];
+        const activeFilters = rawFilters.filter((filter) => !isEmptyFilterValue(filter?.value));
 
-        if (activeFilters && Array.isArray(activeFilters) && activeFilters.length > 0) {
-            activeFilters.forEach((filter) => {
-                if (isEmptyFilterValue(filter?.value)) {
-                    return;
-                }
-                if (filter.filterFn) {
-                    result = result.filter((row) => filter.filterFn(row, filter));
-                } else if (!Array.isArray(filter.value) || filter.value.length > 0) {
-                    result = result.filter((row) => applyFilter(row, filter));
-                }
-            });
+        if (activeFilters.length === 0) {
+            return rawData;
         }
 
-        return result;
+        return rawData.filter((row) => {
+            for (const filter of activeFilters) {
+                if (filter.filterFn) {
+                    if (!filter.filterFn(row, filter)) return false;
+                    continue;
+                }
+                if (!applyFilter(row, filter)) return false;
+            }
+            return true;
+        });
     });
 
     const paginatedData = computed(() => {
