@@ -41,10 +41,6 @@
             type: Object,
             default: () => ({})
         },
-        currentPage: {
-            type: Number,
-            default: 1
-        },
         pageSize: {
             type: Number,
             default: 20
@@ -72,9 +68,9 @@
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();
 
-    const { data, currentPage, pageSize, tableProps, paginationProps, filters } = toRefs(props);
+    const { data, pageSize, tableProps, paginationProps, filters } = toRefs(props);
 
-    const internalCurrentPage = ref(currentPage.value);
+    const internalCurrentPage = ref(1);
     const internalPageSize = ref(pageSize.value);
 
     const asRawArray = (value) => (Array.isArray(value) ? toRaw(value) : []);
@@ -185,10 +181,6 @@
     const handleCurrentChange = (page) => {
         internalCurrentPage.value = page;
     };
-
-    watch(currentPage, (newVal) => {
-        internalCurrentPage.value = newVal;
-    });
 
     watch(pageSize, (newVal) => {
         internalPageSize.value = newVal;
