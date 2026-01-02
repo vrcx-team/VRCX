@@ -105,7 +105,7 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, ref, watch } from 'vue';
+    import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
     import { CopyDocument, Warning } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
@@ -134,6 +134,12 @@
     );
 
     const launchDialogIndex = ref(2000);
+
+    let launchAsDesktopTimeoutId;
+
+    onBeforeUnmount(() => {
+        clearTimeout(launchAsDesktopTimeoutId);
+    });
 
     const launchDialog = ref({
         loading: false,
@@ -231,9 +237,12 @@
 
     function handleLaunchCommand(command, location, shortName) {
         const desktop = command === 'desktop';
-        launchDialog.value.desktop = desktop;
         configRepository.setBool('launchAsDesktop', desktop);
         handleLaunchGame(location, shortName, desktop);
+        clearTimeout(launchAsDesktopTimeoutId);
+        launchAsDesktopTimeoutId = setTimeout(() => {
+            launchDialog.value.desktop = desktop;
+        }, 500);
     }
     function handleAttachGame(location, shortName) {
         tryOpenInstanceInVrc(location, shortName);
