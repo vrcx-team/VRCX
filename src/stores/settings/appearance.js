@@ -14,6 +14,7 @@ import {
 } from '../../shared/utils/base/ui';
 import { database } from '../../service/database';
 import { getNameColour } from '../../shared/utils';
+import { loadLocalizedStrings } from '../../plugin';
 import { useFeedStore } from '../feed';
 import { useGameLogStore } from '../gameLog';
 import { useUiStore } from '../ui';
@@ -23,6 +24,7 @@ import { useVrcxStore } from '../vrcx';
 import { watchState } from '../../service/watchState';
 
 import configRepository from '../../service/config';
+import { languageCodes } from '../../localization';
 
 export const useAppearanceSettingsStore = defineStore(
     'AppearanceSettings',
@@ -36,7 +38,7 @@ export const useAppearanceSettingsStore = defineStore(
         const router = useRouter();
         const uiStore = useUiStore();
 
-        const { t, availableLocales, locale } = useI18n();
+        const { t, locale } = useI18n();
 
         const MAX_TABLE_PAGE_SIZE = 1000;
         const DEFAULT_TABLE_PAGE_SIZES = [10, 15, 20, 25, 50, 100];
@@ -180,14 +182,15 @@ export const useAppearanceSettingsStore = defineStore(
                 const result = await AppApi.CurrentLanguage();
 
                 const lang = result.split('-')[0];
-                availableLocales.forEach((ref) => {
+
+                for (const ref of languageCodes) {
                     const refLang = ref.split('_')[0];
                     if (refLang === lang) {
-                        changeAppLanguage(ref);
+                        await changeAppLanguage(ref);
                     }
-                });
+                }
             } else {
-                changeAppLanguage(appLanguageConfig);
+                await changeAppLanguage(appLanguageConfig);
             }
 
             themeMode.value = themeModeConfig;
@@ -257,19 +260,23 @@ export const useAppearanceSettingsStore = defineStore(
          *
          * @param {string} language
          */
-        function changeAppLanguage(language) {
-            setAppLanguage(language);
+        async function changeAppLanguage(language) {
+            await setAppLanguage(language);
             vrStore.updateVRConfigVars();
         }
 
         /**
          * @param {string} language
          */
-        function setAppLanguage(language) {
+        async function setAppLanguage(language) {
             console.log('Language changed:', language);
+
+            await loadLocalizedStrings(language);
+
             appLanguage.value = language;
             configRepository.setString('VRCX_appLanguage', language);
             locale.value = appLanguage.value;
+
             changeHtmlLangAttribute(language);
         }
 

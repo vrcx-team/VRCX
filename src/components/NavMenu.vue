@@ -221,6 +221,7 @@
         useVRCXUpdaterStore
     } from '../stores';
     import { THEME_CONFIG, links, navDefinitions } from '../shared/constants';
+    import { getSentry } from '../plugin';
     import { openExternalLink } from '../shared/utils';
 
     import configRepository from '../service/config';
@@ -737,12 +738,13 @@
     onMounted(async () => {
         await loadNavMenuConfig();
 
-        if (!sentryErrorReporting.value) return;
+        if (!NIGHTLY || !sentryErrorReporting.value) return;
+
         try {
-            import('@sentry/vue').then((Sentry) => {
-                const feedback = Sentry.getFeedback();
-                feedback?.attachTo(document.getElementById('feedback'));
-            });
+            const Sentry = await getSentry();
+
+            const feedback = Sentry.getFeedback();
+            feedback?.attachTo(document.getElementById('feedback'));
         } catch (error) {
             console.error('Error setting up Sentry feedback:', error);
         }

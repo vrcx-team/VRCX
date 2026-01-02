@@ -29,6 +29,8 @@ export default defineConfig([
                 AssetBundleManager: 'readonly',
                 WINDOWS: 'readonly',
                 LINUX: 'readonly',
+                VERSION: 'readonly',
+                NIGHTLY: 'readonly',
                 webApiService: 'readonly',
                 process: 'readonly'
             }

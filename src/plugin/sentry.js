@@ -2,26 +2,23 @@ import { router } from './router';
 
 import configRepository from '../service/config';
 
-let version = '';
+export async function isSentryOptedIn() {
+    return NIGHTLY && configRepository.getBool('VRCX_SentryEnabled', false);
+}
 
-export async function isSentryEnabled() {
-    const enabled = await configRepository.getString(
-        'VRCX_SentryEnabled',
-        'false'
-    );
-    version = await AppApi.GetVersion();
-    const isNightly = version.includes('Nightly');
-    if (enabled !== 'true' || !isNightly) {
-        return false;
-    }
-    return true;
+/**
+ * Guarded import, prevents leaking Sentry into non-nightly bundles.
+ */
+export function getSentry() {
+    return NIGHTLY ? import('@sentry/vue') : null;
 }
 
 export async function initSentry(app) {
+    if (!NIGHTLY) return;
+
     try {
-        if (!(await isSentryEnabled())) {
-            return;
-        }
+        if (!(await isSentryOptedIn())) return;
+
         const vrcxId = await configRepository.getString('VRCX_id', '');
         const response = await webApiService.execute({
             url: 'https://api0.vrcx.app/errorreporting/getdsn',
@@ -40,12 +37,12 @@ export async function initSentry(app) {
             return;
         }
         const dsn = atob(response.data);
-        const Sentry = await import('@sentry/vue');
+        const Sentry = await getSentry();
         Sentry.init({
             app,
             dsn,
             environment: 'nightly',
-            release: version,
+            release: VERSION,
             replaysSessionSampleRate: 0,
             replaysOnErrorSampleRate: 1.0,
             tracesSampleRate: 0.0001,
