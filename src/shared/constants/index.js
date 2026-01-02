@@ -10,3 +10,4 @@ export * from './moderation';
 export * from './themes';
 export * from './link';
 export * from './ui';
+export * from './accessType';

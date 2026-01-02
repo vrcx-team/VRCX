@@ -5,7 +5,7 @@
         v-model="userDialog.visible"
         :show-close="false"
         top="10vh"
-        width="940px">
+        width="930px">
         <div v-loading="userDialog.loading">
             <UserSummaryHeader
                 :get-user-state-text="getUserStateText"
@@ -252,7 +252,7 @@
                                         style="margin-left: 5px; padding: 0"
                                         @click="showBioDialog"></el-button>
                                 </div>
-                                <div style="margin-top: 5px" class="flex">
+                                <div style="margin-top: 5px" class="flex items-center">
                                     <el-tooltip v-for="(link, index) in userDialog.ref.bioLinks" :key="index">
                                         <template #content>
                                             <span v-text="link"></span>
@@ -426,10 +426,13 @@
                             <div class="x-friend-item" @click="toggleAvatarCopying">
                                 <div class="detail">
                                     <span class="name">{{ t('dialog.user.info.avatar_cloning') }}</span>
-                                    <span v-if="currentUser.allowAvatarCopying" class="extra" style="color: #67c23a">{{
-                                        t('dialog.user.info.avatar_cloning_allow')
-                                    }}</span>
-                                    <span v-else class="extra" style="color: #f56c6c">{{
+                                    <span
+                                        v-if="currentUser.allowAvatarCopying"
+                                        class="extra"
+                                        style="color: var(--el-color-success)"
+                                        >{{ t('dialog.user.info.avatar_cloning_allow') }}</span
+                                    >
+                                    <span v-else class="extra" style="color: var(--el-color-danger)">{{
                                         t('dialog.user.info.avatar_cloning_deny')
                                     }}</span>
                                 </div>
@@ -437,10 +440,13 @@
                             <div class="x-friend-item" @click="toggleAllowBooping">
                                 <div class="detail">
                                     <span class="name">{{ t('dialog.user.info.booping') }}</span>
-                                    <span v-if="currentUser.isBoopingEnabled" class="extra" style="color: #67c23a">{{
-                                        t('dialog.user.info.avatar_cloning_allow')
-                                    }}</span>
-                                    <span v-else class="extra" style="color: #f56c6c">{{
+                                    <span
+                                        v-if="currentUser.isBoopingEnabled"
+                                        class="extra"
+                                        style="color: var(--el-color-success)"
+                                        >{{ t('dialog.user.info.avatar_cloning_allow') }}</span
+                                    >
+                                    <span v-else class="extra" style="color: var(--el-color-danger)">{{
                                         t('dialog.user.info.avatar_cloning_deny')
                                     }}</span>
                                 </div>
@@ -451,10 +457,10 @@
                                     <span
                                         v-if="!currentUser.hasSharedConnectionsOptOut"
                                         class="extra"
-                                        style="color: #67c23a"
+                                        style="color: var(--el-color-success)"
                                         >{{ t('dialog.user.info.avatar_cloning_allow') }}</span
                                     >
-                                    <span v-else class="extra" style="color: #f56c6c">{{
+                                    <span v-else class="extra" style="color: var(--el-color-danger)">{{
                                         t('dialog.user.info.avatar_cloning_deny')
                                     }}</span>
                                 </div>
@@ -467,10 +473,10 @@
                                     <span
                                         v-if="userDialog.ref.allowAvatarCopying"
                                         class="extra"
-                                        style="color: #67c23a"
+                                        style="color: var(--el-color-success)"
                                         >{{ t('dialog.user.info.avatar_cloning_allow') }}</span
                                     >
-                                    <span v-else class="extra" style="color: #f56c6c">{{
+                                    <span v-else class="extra" style="color: var(--el-color-danger)">{{
                                         t('dialog.user.info.avatar_cloning_deny')
                                     }}</span>
                                 </div>
@@ -634,9 +640,10 @@
                                 t('dialog.user.groups.total_count', { count: userGroups.groups.length })
                             }}</span>
                             <template v-if="userDialogGroupEditMode">
-                                <span style="margin-left: 10px; color: #909399; font-size: 10px">{{
-                                    t('dialog.user.groups.hold_shift')
-                                }}</span>
+                                <span
+                                    style="margin-left: 10px; color: var(--el-text-color-secondary); font-size: 10px"
+                                    >{{ t('dialog.user.groups.hold_shift') }}</span
+                                >
                             </template>
                         </div>
                         <div style="display: flex; align-items: center">
@@ -872,7 +879,7 @@
                                             size="small"
                                             :icon="Close"
                                             circle
-                                            style="color: #f56c6c; margin-left: 5px"
+                                            style="color: var(--el-color-danger); margin-left: 5px"
                                             @click.stop="leaveGroup(group.id)">
                                         </el-button>
                                         <el-button
@@ -892,7 +899,7 @@
                                 <span style="font-weight: bold; font-size: 16px">{{
                                     t('dialog.user.groups.own_groups')
                                 }}</span>
-                                <span style="color: #909399; font-size: 12px; margin-left: 5px"
+                                <span style="color: var(--el-text-color-secondary); font-size: 12px; margin-left: 5px"
                                     >{{ userGroups.ownGroups.length }}/{{
                                         cachedConfig?.constants?.GROUPS?.MAX_OWNED
                                     }}</span
@@ -936,9 +943,10 @@
                                 <span style="font-weight: bold; font-size: 16px">{{
                                     t('dialog.user.groups.mutual_groups')
                                 }}</span>
-                                <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
-                                    userGroups.mutualGroups.length
-                                }}</span>
+                                <span
+                                    style="color: var(--el-text-color-secondary); font-size: 12px; margin-left: 5px"
+                                    >{{ userGroups.mutualGroups.length }}</span
+                                >
                                 <div
                                     class="x-friend-list"
                                     style="margin-top: 10px; margin-bottom: 15px; min-height: 60px">
@@ -978,7 +986,7 @@
                                 <span style="font-weight: bold; font-size: 16px">{{
                                     t('dialog.user.groups.groups')
                                 }}</span>
-                                <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                                <span style="color: var(--el-text-color-secondary); font-size: 12px; margin-left: 5px">
                                     {{ userGroups.remainingGroups.length }}
                                     <template v-if="currentUser.id === userDialog.id">
                                         /
@@ -1143,7 +1151,12 @@
                                             :class="userFavoriteWorldsStatus(list[1])">
                                         </i>
                                         <span style="font-weight: bold; font-size: 14px" v-text="list[0]"></span>
-                                        <span style="color: #909399; font-size: 10px; margin-left: 5px"
+                                        <span
+                                            style="
+                                                color: var(--el-text-color-secondary);
+                                                font-size: 10px;
+                                                margin-left: 5px;
+                                            "
                                             >{{ list[2].length }}/{{ favoriteLimits.maxFavoritesPerGroup.world }}</span
                                         >
                                     </span>
@@ -1272,13 +1285,13 @@
                                 <span
                                     v-if="avatar.releaseStatus === 'public'"
                                     class="extra"
-                                    style="color: #67c23a"
+                                    style="color: var(--el-color-success)"
                                     v-text="avatar.releaseStatus">
                                 </span>
                                 <span
                                     v-else-if="avatar.releaseStatus === 'private'"
                                     class="extra"
-                                    style="color: #f56c6c"
+                                    style="color: var(--el-color-danger)"
                                     v-text="avatar.releaseStatus">
                                 </span>
                                 <span v-else class="extra" v-text="avatar.releaseStatus"></span>
@@ -1400,11 +1413,11 @@
         userRequest,
         worldRequest
     } from '../../../api';
-    import { getNextDialogIndex, redirectToToolsTab } from '../../../shared/utils/base/ui';
     import { processBulk, request } from '../../../service/request';
     import { userDialogGroupSortingOptions, userDialogMutualFriendSortingOptions } from '../../../shared/constants';
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import { database } from '../../../service/database';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
 
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
     import UserSummaryHeader from './UserSummaryHeader.vue';
@@ -1455,7 +1468,7 @@
     const { refreshInviteMessageTableData } = useInviteStore();
     const { friendLogTable } = storeToRefs(useFriendStore());
     const { getFriendRequest, handleFriendDelete } = useFriendStore();
-    const { clearInviteImageUpload, showFullscreenImageDialog } = useGalleryStore();
+    const { clearInviteImageUpload, showFullscreenImageDialog, showGalleryPage } = useGalleryStore();
 
     const { logout } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
@@ -1896,6 +1909,9 @@
             }
         } else if (command === 'Previous Instances') {
             showPreviousInstancesUserDialog(D.ref);
+        } else if (command === 'Manage Gallery') {
+            userDialog.value.visible = false;
+            showGalleryPage();
         } else if (command === 'Invite To Group') {
             showInviteGroupDialog('', D.id);
         } else if (command === 'Send Boop') {

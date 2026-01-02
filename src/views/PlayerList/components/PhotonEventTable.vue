@@ -25,12 +25,7 @@
                 t('view.player_list.photon.chatbox_blacklist')
             }}</el-button>
             <el-tooltip placement="bottom" :content="t('view.player_list.photon.status_tooltip')">
-                <div
-                    style="
-                        display: inline-flex;
-                        align-items: center;
-                        font-size: 14px;
-                    ">
+                <div style="display: inline-flex; align-items: center; font-size: 14px">
                     <span v-if="ipcEnabled && !photonEventIcon">🟢</span>
                     <span v-else-if="ipcEnabled">⚪</span>
                     <span v-else>🔴</span>
@@ -170,11 +165,13 @@
                             </span>
                             <span v-else-if="scope.row.type === 'ChatBoxMessage'" v-text="scope.row.text"></span>
                             <span v-else-if="scope.row.type === 'OnPlayerJoined'">
-                                <span v-if="scope.row.platform === 'Desktop'" style="color: #409eff"
+                                <span v-if="scope.row.platform === 'Desktop'" style="color: var(--el-color-primary)"
                                     >Desktop&nbsp;</span
                                 >
-                                <span v-else-if="scope.row.platform === 'VR'" style="color: #409eff">VR&nbsp;</span>
-                                <span v-else-if="scope.row.platform === 'Quest'" style="color: #67c23a"
+                                <span v-else-if="scope.row.platform === 'VR'" style="color: var(--el-color-primary)"
+                                    >VR&nbsp;</span
+                                >
+                                <span v-else-if="scope.row.platform === 'Quest'" style="color: var(--el-color-success)"
                                     >Android&nbsp;</span
                                 >
                                 <span

@@ -1,13 +1,13 @@
 <template>
-    <div class="x-container">
+    <div class="x-container" ref="gameLogRef">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
-                <NativeTooltip placement="bottom" :content="t('view.feed.favorites_only_tooltip')">
+                <el-tooltip placement="bottom" :content="t('view.feed.favorites_only_tooltip')">
                     <el-switch
                         v-model="gameLogTable.vip"
-                        active-color="#13ce66"
+                        active-color="var(--el-color-success)"
                         @change="gameLogTableLookup"></el-switch>
-                </NativeTooltip>
+                </el-tooltip>
             </div>
             <el-select
                 v-model="gameLogTable.filter"
@@ -41,46 +41,47 @@
         </div>
 
         <DataTable v-bind="gameLogTable" :data="gameLogDisplayData">
-            <el-table-column :label="t('table.gameLog.date')" prop="created_at" width="130">
+            <el-table-column :label="t('table.gameLog.date')" prop="created_at" width="140">
                 <template #default="scope">
-                    <NativeTooltip placement="right">
+                    <el-tooltip placement="right">
                         <template #content>
                             <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                         </template>
                         <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
-                    </NativeTooltip>
+                    </el-tooltip>
                 </template>
             </el-table-column>
 
-            <el-table-column :label="t('table.gameLog.type')" prop="type" width="120">
+            <el-table-column :label="t('table.gameLog.type')" prop="type" width="150">
+                <template #default="scope">
+                    <el-tag
+                        v-if="scope.row.location && scope.row.type !== 'Location'"
+                        type="info"
+                        effect="plain"
+                        size="small">
+                        <span
+                            class="x-link"
+                            @click="showWorldDialog(scope.row.location)"
+                            v-text="t('view.game_log.filters.' + scope.row.type)"></span>
+                    </el-tag>
+                    <el-tag v-else type="info" effect="plain" size="small">
+                        <span v-text="t('view.game_log.filters.' + scope.row.type)"></span>
+                    </el-tag>
+                </template>
+            </el-table-column>
+
+            <el-table-column :label="t('table.gameLog.user')" prop="displayName" width="200">
                 <template #default="scope">
                     <span
-                        v-if="scope.row.location && scope.row.type !== 'Location'"
-                        class="x-link"
-                        @click="showWorldDialog(scope.row.location)"
-                        v-text="t('view.game_log.filters.' + scope.row.type)"></span>
-                    <span v-else v-text="t('view.game_log.filters.' + scope.row.type)"></span>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.gameLog.icon')" prop="isFriend" width="70" align="center">
-                <template #default="scope">
+                        v-if="scope.row.displayName"
+                        class="x-link table-user"
+                        style="padding-right: 10px"
+                        @click="lookupUser(scope.row)"
+                        v-text="scope.row.displayName"></span>
                     <template v-if="gameLogIsFriend(scope.row)">
                         <span v-if="gameLogIsFavorite(scope.row)">⭐</span>
                         <span v-else>💚</span>
                     </template>
-                    <span v-else></span>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.gameLog.user')" prop="displayName" width="180">
-                <template #default="scope">
-                    <span
-                        v-if="scope.row.displayName"
-                        class="x-link"
-                        style="padding-right: 10px"
-                        @click="lookupUser(scope.row)"
-                        v-text="scope.row.displayName"></span>
                 </template>
             </el-table-column>
 
@@ -158,31 +159,38 @@
                             size="small"
                             class="small-button"
                             @click="deleteGameLogEntry(scope.row)"></el-button>
-                        <el-button
+                        <i
+                            class="ri-delete-bin-line small-button"
+                            style="opacity: 0.85"
                             v-else
-                            text
-                            :icon="Delete"
-                            size="small"
-                            class="small-button"
-                            @click="deleteGameLogEntryPrompt(scope.row)"></el-button>
+                            @click="deleteGameLogEntryPrompt(scope.row)"></i>
                     </template>
-                    <NativeTooltip placement="top" :content="t('dialog.previous_instances.info')">
+                    <el-tooltip
+                        v-if="scope.row.type === 'Location'"
+                        placement="top"
+                        :content="t('dialog.previous_instances.info')">
                         <el-button
-                            v-if="scope.row.type === 'Location'"
+                            v-if="shiftHeld"
                             text
                             :icon="DataLine"
                             size="small"
                             class="small-button"
                             @click="showPreviousInstancesInfoDialog(scope.row.location)"></el-button>
-                    </NativeTooltip>
+                        <i
+                            v-else
+                            style="opacity: 0.85"
+                            class="ri-file-list-2-line small-button"
+                            @click="showPreviousInstancesInfoDialog(scope.row.location)"></i>
+                    </el-tooltip>
                 </template>
             </el-table-column>
+            <el-table-column width="5"></el-table-column>
         </DataTable>
     </div>
 </template>
 
 <script setup>
-    import { Close, DataLine, Delete } from '@element-plus/icons-vue';
+    import { Close, DataLine } from '@element-plus/icons-vue';
     import { ElMessageBox } from 'element-plus';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
@@ -194,6 +202,7 @@
     import { formatDateFilter, openExternalLink, removeFromArray } from '../../shared/utils';
     import { database } from '../../service/database';
     import { useSharedFeedStore } from '../../stores';
+    import { useTableHeight } from '../../composables/useTableHeight';
 
     const { showWorldDialog } = useWorldStore();
     const { lookupUser } = useUserStore();
@@ -252,6 +261,8 @@
     const { t } = useI18n();
     const emit = defineEmits(['updateGameLogSessionTable']);
 
+    const { containerRef: gameLogRef } = useTableHeight(gameLogTable);
+
     function deleteGameLogEntry(row) {
         removeFromArray(gameLogTable.value.data, row);
         database.deleteGameLogEntry(row);
@@ -281,5 +292,9 @@
     .small-button {
         padding: 0;
         height: 18px;
+        cursor: pointer;
+    }
+    .table-user {
+        color: var(--x-table-user-text-color) !important;
     }
 </style>

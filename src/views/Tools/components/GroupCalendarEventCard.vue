@@ -188,7 +188,7 @@
     };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
     .event-card {
         transition: all 0.3s ease;
         position: relative;
@@ -196,7 +196,7 @@
         border-radius: 8px;
         &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: var(--el-box-shadow-light);
         }
         &.grouped-card {
             margin-bottom: 0;
@@ -232,17 +232,17 @@
             height: 24px;
             border-radius: 50%;
             background-color: var(--el-text-color-regular);
-            color: #ffffff;
+            color: var(--el-bg-color);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 14px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--el-box-shadow-lighter);
             z-index: 10;
             cursor: pointer;
         }
         .is-following {
-            background-color: var(--group-calendar-badge-following, #67c23a);
+            background-color: var(--group-calendar-badge-following, var(--el-color-success));
         }
         .event-content {
             font-size: 12px;

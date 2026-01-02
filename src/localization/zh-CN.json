@@ -2207,6 +2207,8 @@
         "notification": {
             "date": "时间",
             "type": "类型",
+            "user": "玩家",
+            "group": "群组",
             "user_group": "玩家/群组",
             "photo": "封面",
             "message": "消息",

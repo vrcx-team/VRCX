@@ -19,7 +19,7 @@ export function initNoty(isVrOverlay = false) {
             },
             layout: 'bottomLeft',
             theme: 'mint',
-            timeout: 6000
+            timeout: 2000
         });
     }
 }

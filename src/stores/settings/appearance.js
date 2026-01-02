@@ -12,9 +12,12 @@ import {
     systemIsDarkMode,
     updateTrustColorClasses
 } from '../../shared/utils/base/ui';
+import { THEME_CONFIG } from '../../shared/constants';
 import { database } from '../../service/database';
 import { getNameColour } from '../../shared/utils';
+import { languageCodes } from '../../localization';
 import { loadLocalizedStrings } from '../../plugin';
+import { useElementTheme } from '../../composables/useElementTheme';
 import { useFeedStore } from '../feed';
 import { useGameLogStore } from '../gameLog';
 import { useUiStore } from '../ui';
@@ -24,7 +27,6 @@ import { useVrcxStore } from '../vrcx';
 import { watchState } from '../../service/watchState';
 
 import configRepository from '../../service/config';
-import { languageCodes } from '../../localization';
 
 export const useAppearanceSettingsStore = defineStore(
     'AppearanceSettings',
@@ -42,6 +44,7 @@ export const useAppearanceSettingsStore = defineStore(
 
         const MAX_TABLE_PAGE_SIZE = 1000;
         const DEFAULT_TABLE_PAGE_SIZES = [10, 15, 20, 25, 50, 100];
+        const { initPrimaryColor } = useElementTheme();
 
         const appLanguage = ref('en');
         const themeMode = ref('');
@@ -71,7 +74,8 @@ export const useAppearanceSettingsStore = defineStore(
         const hideUserMemos = ref(false);
         const hideUnfriends = ref(false);
         const randomUserColours = ref(false);
-        const trustColor = ref({
+        const compactTableMode = ref(false);
+        const TRUST_COLOR_DEFAULTS = Object.freeze({
             untrusted: '#CCCCCC',
             basic: '#1778FF',
             known: '#2BCF5C',
@@ -80,8 +84,10 @@ export const useAppearanceSettingsStore = defineStore(
             vip: '#FF2626',
             troll: '#782F2F'
         });
+        const trustColor = ref({ ...TRUST_COLOR_DEFAULTS });
         const currentCulture = ref('');
         const notificationIconDot = ref(false);
+        const isNavCollapsed = ref(true);
         const isSideBarTabShow = computed(() => {
             const currentRouteName = router.currentRoute.value?.name;
             return !(
@@ -118,8 +124,10 @@ export const useAppearanceSettingsStore = defineStore(
                 hideUserMemosConfig,
                 hideUnfriendsConfig,
                 randomUserColoursConfig,
+                compactTableModeConfig,
                 trustColorConfig,
-                notificationIconDotConfig
+                notificationIconDotConfig,
+                navIsCollapsedConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_appLanguage'),
                 configRepository.getString('VRCX_ThemeMode', 'system'),
@@ -163,19 +171,13 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getBool('VRCX_hideUserMemos', false),
                 configRepository.getBool('VRCX_hideUnfriends', false),
                 configRepository.getBool('VRCX_randomUserColours', false),
+                configRepository.getBool('VRCX_compactTableMode', false),
                 configRepository.getString(
                     'VRCX_trustColor',
-                    JSON.stringify({
-                        untrusted: '#CCCCCC',
-                        basic: '#1778FF',
-                        known: '#2BCF5C',
-                        trusted: '#FF7B42',
-                        veteran: '#B18FFF',
-                        vip: '#FF2626',
-                        troll: '#782F2F'
-                    })
+                    JSON.stringify(TRUST_COLOR_DEFAULTS)
                 ),
-                configRepository.getBool('VRCX_notificationIconDot', true)
+                configRepository.getBool('VRCX_notificationIconDot', true),
+                configRepository.getBool('VRCX_navIsCollapsed', true)
             ]);
 
             if (!appLanguageConfig) {
@@ -193,8 +195,18 @@ export const useAppearanceSettingsStore = defineStore(
                 await changeAppLanguage(appLanguageConfig);
             }
 
-            themeMode.value = themeModeConfig;
+            const normalizedThemeMode = normalizeThemeMode(themeModeConfig);
+            if (normalizedThemeMode !== themeModeConfig) {
+                configRepository.setString(
+                    'VRCX_ThemeMode',
+                    normalizedThemeMode
+                );
+            }
+
+            themeMode.value = normalizedThemeMode;
             applyThemeMode();
+            await changeAppThemeStyle(themeMode.value);
+            await initPrimaryColor();
 
             displayVRCPlusIconsAsAvatar.value =
                 displayVRCPlusIconsAsAvatarConfig;
@@ -222,7 +234,13 @@ export const useAppearanceSettingsStore = defineStore(
                 sidebarSortMethod3.value = sidebarSortMethods.value[2];
             }
 
-            trustColor.value = JSON.parse(trustColorConfig);
+            if (trustColorConfig !== JSON.stringify(TRUST_COLOR_DEFAULTS)) {
+                await configRepository.setString(
+                    'VRCX_trustColor',
+                    JSON.stringify(TRUST_COLOR_DEFAULTS)
+                );
+            }
+            trustColor.value = { ...TRUST_COLOR_DEFAULTS };
             asideWidth.value = asideWidthConfig;
             isSidebarGroupByInstance.value = isSidebarGroupByInstanceConfig;
             isHideFriendsInSameInstance.value =
@@ -234,6 +252,11 @@ export const useAppearanceSettingsStore = defineStore(
             hideUnfriends.value = hideUnfriendsConfig;
             randomUserColours.value = randomUserColoursConfig;
             notificationIconDot.value = notificationIconDotConfig;
+            compactTableMode.value = compactTableModeConfig;
+            applyCompactTableMode(compactTableMode.value);
+            isNavCollapsed.value = navIsCollapsedConfig;
+
+            await configRepository.remove('VRCX_navWidth');
 
             // Migrate old settings
             // Assume all exist if one does
@@ -255,6 +278,12 @@ export const useAppearanceSettingsStore = defineStore(
             },
             { flush: 'sync' }
         );
+
+        function normalizeThemeMode(mode) {
+            return Object.prototype.hasOwnProperty.call(THEME_CONFIG, mode)
+                ? mode
+                : 'light';
+        }
 
         /**
          *
@@ -421,8 +450,9 @@ export const useAppearanceSettingsStore = defineStore(
          * @param {string} mode
          */
         function setThemeMode(mode) {
-            themeMode.value = mode;
-            configRepository.setString('VRCX_ThemeMode', mode);
+            const normalizedThemeMode = normalizeThemeMode(mode);
+            themeMode.value = normalizedThemeMode;
+            configRepository.setString('VRCX_ThemeMode', normalizedThemeMode);
             applyThemeMode();
         }
         function applyThemeMode() {
@@ -557,18 +587,24 @@ export const useAppearanceSettingsStore = defineStore(
                 JSON.stringify(methods)
             );
         }
-        /**
-         * @param {number} panelNumber
-         * @param {Array<number>} widthArray
-         */
-        function setAsideWidth(panelNumber, widthArray) {
-            if (Array.isArray(widthArray) && widthArray[1]) {
+        function setNavCollapsed(collapsed) {
+            isNavCollapsed.value = collapsed;
+            configRepository.setBool('VRCX_navIsCollapsed', collapsed);
+        }
+        function toggleNavCollapsed() {
+            setNavCollapsed(!isNavCollapsed.value);
+        }
+        function setAsideWidth(widthOrArray) {
+            let width = null;
+            if (Array.isArray(widthOrArray) && widthOrArray.length) {
+                width = widthOrArray[widthOrArray.length - 1];
+            } else if (typeof widthOrArray === 'number') {
+                width = widthOrArray;
+            }
+            if (width) {
                 requestAnimationFrame(() => {
-                    asideWidth.value = widthArray[1];
-                    configRepository.setInt(
-                        'VRCX_sidePanelWidth',
-                        widthArray[1]
-                    );
+                    asideWidth.value = width;
+                    configRepository.setInt('VRCX_sidePanelWidth', width);
                 });
             }
         }
@@ -614,14 +650,22 @@ export const useAppearanceSettingsStore = defineStore(
                 randomUserColours.value
             );
         }
+        function setCompactTableMode() {
+            compactTableMode.value = !compactTableMode.value;
+            applyCompactTableMode(compactTableMode.value);
+            configRepository.setBool(
+                'VRCX_compactTableMode',
+                compactTableMode.value
+            );
+        }
         /**
          * @param {object} color
          */
         function setTrustColor(color) {
-            trustColor.value = color;
+            trustColor.value = { ...TRUST_COLOR_DEFAULTS };
             configRepository.setString(
                 'VRCX_trustColor',
-                JSON.stringify(color)
+                JSON.stringify(trustColor.value)
             );
         }
 
@@ -741,6 +785,15 @@ export const useAppearanceSettingsStore = defineStore(
             await userColourInit();
         }
 
+        function applyCompactTableMode(isCompact) {
+            const className = 'is-compact-table';
+            if (isCompact) {
+                document.documentElement.classList.add(className);
+            } else {
+                document.documentElement.classList.remove(className);
+            }
+        }
+
         return {
             appLanguage,
             themeMode,
@@ -766,10 +819,12 @@ export const useAppearanceSettingsStore = defineStore(
             hideUserMemos,
             hideUnfriends,
             randomUserColours,
+            compactTableMode,
             trustColor,
             currentCulture,
             isSideBarTabShow,
             notificationIconDot,
+            isNavCollapsed,
 
             setAppLanguage,
             setDisplayVRCPlusIconsAsAvatar,
@@ -793,6 +848,7 @@ export const useAppearanceSettingsStore = defineStore(
             setHideUserMemos,
             setHideUnfriends,
             setRandomUserColours,
+            setCompactTableMode,
             setTrustColor,
             saveThemeMode,
             tryInitUserColours,
@@ -802,7 +858,10 @@ export const useAppearanceSettingsStore = defineStore(
             applyUserTrustLevel,
             changeAppLanguage,
             promptMaxTableSizeDialog,
-            setNotificationIconDot
+            setNotificationIconDot,
+            applyCompactTableMode,
+            setNavCollapsed,
+            toggleNavCollapsed
         };
     }
 );

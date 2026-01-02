@@ -32,7 +32,7 @@
                             <el-slider
                                 v-model="cardScale"
                                 class="friend-view__slider"
-                                :min="0.6"
+                                :min="0.5"
                                 :max="1.0"
                                 :step="0.01"
                                 :show-tooltip="false" />
@@ -45,8 +45,8 @@
                             <el-slider
                                 v-model="cardSpacing"
                                 class="friend-view__slider"
-                                :min="0.5"
-                                :max="1.5"
+                                :min="0.25"
+                                :max="1.0"
                                 :step="0.05"
                                 :show-tooltip="false" />
                         </div>
@@ -688,7 +688,7 @@
     });
 </script>
 
-<style scoped lang="scss">
+<style scoped>
     .friend-view {
         display: grid;
         grid-template-rows: auto 1fr;
@@ -699,12 +699,12 @@
         display: flex;
         gap: 20px;
         align-items: center;
-        padding: 6px 10px 0 2px;
+        padding: 6px 2px 0 2px;
     }
 
     .friend-view__toolbar--loading {
         justify-content: flex-end;
-        color: rgba(15, 23, 42, 0.55);
+        color: var(--el-text-color-secondary);
         font-size: 13px;
         font-weight: 500;
     }
@@ -720,7 +720,7 @@
         flex: 1;
         flex-wrap: wrap;
         justify-content: flex-end;
-        color: rgba(15, 23, 42, 0.65);
+        color: var(--el-text-color-regular);
     }
 
     .friend-view__settings-label {
@@ -746,7 +746,7 @@
     .friend-view__scale-value {
         font-size: 12px;
         font-weight: 600;
-        color: rgba(15, 23, 42, 0.55);
+        color: var(--el-text-color-secondary);
         min-width: 42px;
         text-align: right;
     }
@@ -762,14 +762,14 @@
     }
 
     .friend-view__scroll {
-        padding: 2px 10px 2px 2px;
+        padding: 2px;
     }
 
     .friend-view__initial-loading {
         display: grid;
         place-items: center;
         min-height: 240px;
-        color: rgba(15, 23, 42, 0.45);
+        color: var(--el-text-color-secondary);
     }
 
     .friend-view__grid {
@@ -780,7 +780,7 @@
         );
         gap: var(--friend-card-gap, 18px);
         justify-content: start;
-        padding-right: 2px;
+        padding: 2px;
     }
 
     .friend-view__instances {
@@ -802,7 +802,7 @@
         margin: 5px 10px;
         font-weight: 600;
         font-size: 13px;
-        color: rgba(15, 23, 42, 0.75);
+        color: var(--el-text-color-primary);
     }
 
     .friend-view__divider {
@@ -810,7 +810,7 @@
         align-items: center;
         gap: 12px;
         margin: 16px 4px;
-        color: rgba(15, 23, 42, 0.6);
+        color: var(--el-text-color-regular);
         font-size: 13px;
         font-weight: 600;
     }
@@ -820,7 +820,7 @@
         content: '';
         flex: 1;
         height: 1px;
-        background: rgba(148, 163, 184, 0.35);
+        background: var(--el-border-color);
     }
 
     .friend-view__divider-text {
@@ -829,14 +829,14 @@
 
     .friend-view__instance-count {
         font-size: 12px;
-        color: rgba(15, 23, 42, 0.45);
+        color: var(--el-text-color-secondary);
     }
 
     .friend-view__empty {
         display: grid;
         place-items: center;
         min-height: 240px;
-        color: rgba(0, 0, 0, 0.45);
+        color: var(--el-text-color-secondary);
         font-size: 15px;
         letter-spacing: 0.5px;
     }
@@ -847,7 +847,7 @@
         justify-content: center;
         gap: 8px;
         padding: 18px 0 12px;
-        color: rgba(0, 0, 0, 0.55);
+        color: var(--el-text-color-secondary);
         font-size: 14px;
     }
 

@@ -63,14 +63,7 @@
         </div>
 
         <template #footer>
-            <el-button
-                size="small"
-                @click="
-                    redirectToToolsTab();
-                    showGalleryDialog();
-                "
-                >{{ t('dialog.boop_dialog.emoji_manager') }}</el-button
-            >
+            <el-button size="small" @click="showGalleryPage">{{ t('dialog.boop_dialog.emoji_manager') }}</el-button>
             <el-button size="small" @click="closeDialog">{{ t('dialog.boop_dialog.cancel') }}</el-button>
             <el-button size="small" :disabled="!sendBoopDialog.userId" @click="sendBoop">{{
                 t('dialog.boop_dialog.send')
@@ -87,7 +80,6 @@
     import { notificationRequest, userRequest } from '../../api';
     import { miscRequest } from '../../api';
     import { photonEmojis } from '../../shared/constants/photon.js';
-    import { redirectToToolsTab } from '../../shared/utils/base/ui';
     import { useGalleryStore } from '../../stores';
     import { useNotificationStore } from '../../stores';
     import { useUserStore } from '../../stores/user.js';
@@ -98,7 +90,7 @@
 
     const { sendBoopDialog } = storeToRefs(useUserStore());
     const { notificationTable } = storeToRefs(useNotificationStore());
-    const { showGalleryDialog, refreshEmojiTable } = useGalleryStore();
+    const { showGalleryPage, refreshEmojiTable } = useGalleryStore();
     const { emojiTable } = storeToRefs(useGalleryStore());
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 

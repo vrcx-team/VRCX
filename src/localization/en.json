@@ -21,7 +21,10 @@
         "about": "About",
         "profile": "Profile",
         "settings": "Settings",
-        "help_support": "Help & Support"
+        "manage": "Manage",
+        "help_support": "Help & Support",
+        "expand_menu": "Expand Menu",
+        "collapse_menu": "Collapse Menu"
     },
     "nav_menu": {
         "resources": "RESOURCES",
@@ -292,6 +295,10 @@
             "bulk_unfriend_selection": "Bulk Unfriend Selection",
             "load": "Load missing entries",
             "load_tooltip": "Load",
+            "load_dialog_title": "Load missing entries",
+            "load_dialog_message": "Retrieving missing profile fields for your friends.",
+            "load_cancel": "Cancel",
+            "load_complete": "Missing entries loaded",
             "favorites_only_tooltip": "Filter favorites only",
             "search_placeholder": "Search",
             "filter_placeholder": "Filter",
@@ -560,7 +567,8 @@
                     "table_max_size": "Table Max Size",
                     "table_page_sizes": "Table Page Sizes",
                     "table_page_sizes_error": "Page size must be a number between 1 and 1000",
-                    "show_notification_icon_dot": "Show Tray Notification Dot"
+                    "show_notification_icon_dot": "Show Tray Notification Dot",
+                    "compact_table_mode": "Compact Table Mode"
                 },
                 "timedate": {
                     "header": "Time/Date",
@@ -568,6 +576,9 @@
                     "time_format_24": "24 Hour",
                     "time_format_12": "12 Hour",
                     "force_iso_date_format": "Force ISO Date Format"
+                },
+                "theme_color": {
+                    "header": "Theme Color"
                 },
                 "side_panel": {
                     "header": "Side Panel",
@@ -873,7 +884,7 @@
         }
     },
     "side_panel": {
-        "search_placeholder": "Search",
+        "search_placeholder": "Search Friend",
         "search_result_active": "Offline",
         "search_result_offline": "Active",
         "search_result_more": "Search More:",
@@ -2254,6 +2265,8 @@
         "notification": {
             "date": "Date",
             "type": "Type",
+            "user": "User",
+            "group": "Group",
             "user_group": "User/Group",
             "photo": "Photo",
             "message": "Message",

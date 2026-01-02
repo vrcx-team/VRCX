@@ -68,12 +68,12 @@
                         <span
                             v-if="avatar.releaseStatus === 'public'"
                             class="extra"
-                            style="color: #67c23a"
+                            style="color: var(--el-color-success)"
                             v-text="avatar.releaseStatus"></span>
                         <span
                             v-else-if="avatar.releaseStatus === 'private'"
                             class="extra"
-                            style="color: #f56c6c"
+                            style="color: var(--el-color-danger)"
                             v-text="avatar.releaseStatus"></span>
                         <span v-else class="extra" v-text="avatar.releaseStatus"></span>
                         <span class="extra" v-text="avatarTagStrings.get(avatar.id)"></span>

@@ -1964,6 +1964,8 @@
         "notification": {
             "date": "วันที่",
             "type": "ประเภท",
+            "user": "ผู้ใช้",
+            "group": "กลุ่ม",
             "user_group": "ผู้ใช้/กลุ่ม",
             "photo": "รูปภาพ",
             "message": "ข้อความ",

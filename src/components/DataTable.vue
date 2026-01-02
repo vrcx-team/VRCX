@@ -4,6 +4,7 @@
             v-loading="loading"
             :data="paginatedData"
             v-bind="mergedTableProps"
+            :stripe="false"
             :default-sort="resolvedDefaultSort"
             @row-click="handleRowClick">
             <slot></slot>
@@ -102,7 +103,6 @@
             delete rest.defaultSort;
         }
         return {
-            stripe: true,
             ...rest
         };
     });

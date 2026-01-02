@@ -1,8 +1,5 @@
 <template>
     <div id="chart" class="x-container">
-        <div class="options-container" style="margin-top: 0">
-            <span class="header">{{ t('view.charts.header') }}</span>
-        </div>
         <el-tabs v-model="activeTab" class="charts-tabs">
             <el-tab-pane :label="t('view.charts.instance_activity.header')" name="instance"></el-tab-pane>
             <el-tab-pane :label="t('view.charts.mutual_friend.tab_label')" name="mutual"></el-tab-pane>
@@ -33,7 +30,7 @@
 </script>
 
 <style scoped>
-    .charts-tabs {
-        margin-bottom: 12px;
+    :deep(.el-tabs__header) {
+        margin: 0;
     }
 </style>

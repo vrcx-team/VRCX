@@ -1,7 +1,7 @@
 <template>
-    <div class="x-menu-container nav-menu-container">
+    <div class="x-menu-container nav-menu-container" :class="{ 'is-collapsed': isCollapsed }">
         <template v-if="navLayoutReady">
-            <div>
+            <div class="nav-menu-body mt-5">
                 <div v-if="updateInProgress" class="pending-update" @click="showVRCXUpdateDialog">
                     <el-progress
                         type="circle"
@@ -16,80 +16,71 @@
                         type="success"
                         plain
                         style="font-size: 19px; height: 36px; width: 44px; margin: 10px"
-                        @click="showVRCXUpdateDialog"
-                        ><i class="ri-download-line"></i
-                    ></el-button>
+                        @click="showVRCXUpdateDialog">
+                        <i class="ri-download-line"></i>
+                    </el-button>
                 </div>
 
-                <el-menu collapse :default-active="activeMenuIndex" :collapse-transition="false" ref="navMenuRef">
-                    <el-popover
-                        v-for="item in navMenuItems"
-                        :disabled="!item.entries?.length"
-                        :key="item.index"
-                        :ref="(el) => setNavPopoverRef(el, item.index)"
-                        placement="right-start"
-                        trigger="hover"
-                        :hide-after="isSteamVRRunning ? 400 : 150"
-                        :show-arrow="false"
-                        :offset="0"
-                        :width="navPopoverWidth"
-                        transition="nav-menu-slide"
-                        @before-enter="handleSubMenuBeforeEnter()"
-                        :popper-style="navPopoverStyle"
-                        popper-class="nav-menu-popover-popper">
-                        <div class="nav-menu-popover">
-                            <div class="nav-menu-popover__header">
-                                <i :class="item.icon"></i>
+                <el-menu ref="navMenuRef" class="nav-menu" :collapse="isCollapsed" :collapse-transition="false">
+                    <template v-for="item in menuItems" :key="item.index">
+                        <el-menu-item
+                            v-if="!item.children?.length"
+                            :index="item.index"
+                            :class="{ notify: isNavItemNotified(item) }"
+                            @click="handleMenuItemClick(item)">
+                            <i :class="item.icon"></i>
+                            <template #title>
                                 <span>{{ item.titleIsCustom ? item.title : t(item.title || '') }}</span>
-                            </div>
-
-                            <div class="nav-menu-popover__menu">
-                                <button
-                                    v-for="entry in item.entries"
-                                    :key="entry.label"
-                                    type="button"
-                                    :class="['nav-menu-popover__menu-item', { notify: isEntryNotified(entry) }]"
-                                    @click="handleSubmenuClick(entry, item.index)">
-                                    <i v-if="entry.icon" :class="entry.icon" class="nav-menu-popover__menu-icon"></i>
-                                    <span class="nav-menu-popover__menu-label">{{ t(entry.label) }}</span>
-                                </button>
-                            </div>
-                        </div>
-                        <template #reference>
+                            </template>
+                        </el-menu-item>
+                        <el-sub-menu v-else :index="item.index">
+                            <template #title>
+                                <div :class="{ notify: isNavItemNotified(item) }">
+                                    <i :class="item.icon"></i>
+                                    <span v-show="!isCollapsed">{{
+                                        item.titleIsCustom ? item.title : t(item.title || '')
+                                    }}</span>
+                                </div>
+                            </template>
                             <el-menu-item
-                                :index="item.index"
-                                :class="{ notify: isNavItemNotified(item) }"
-                                @click="handleMenuItemClick(item)">
-                                <i :class="item.icon"></i>
-                                <template #title v-if="item.tooltip">
-                                    <span>{{ item.tooltipIsCustom ? item.tooltip : t(item.tooltip) }}</span>
+                                v-for="entry in item.children"
+                                :key="entry.index"
+                                :index="entry.index"
+                                class="pl-8!"
+                                :class="{ notify: isEntryNotified(entry) }"
+                                @click="handleSubmenuClick(entry, item.index)">
+                                <i v-show="entry.icon" :class="entry.icon"></i>
+                                <template #title>
+                                    <span>{{ t(entry.label) }}</span>
                                 </template>
                             </el-menu-item>
-                        </template>
-                    </el-popover>
+                        </el-sub-menu>
+                    </template>
                 </el-menu>
-                <el-divider style="width: calc(100% - 18px); margin-left: 9px"></el-divider>
-                <NativeTooltip :content="t('prompt.direct_access_omni.header')" placement="right">
-                    <div class="bottom-button" @click="directAccessPaste"><i class="ri-compass-3-line"></i></div>
-                </NativeTooltip>
             </div>
 
-            <div class="nav-menu-container-bottom">
-                <NativeTooltip v-if="branch === 'Nightly'" :show-after="150" :content="'Feedback'" placement="right">
+            <div class="nav-menu-container-bottom mb-4">
+                <el-tooltip
+                    v-if="branch === 'Nightly'"
+                    :show-after="150"
+                    :content="'Feedback'"
+                    :disabled="!isCollapsed"
+                    placement="right">
                     <div
                         class="bottom-button"
                         id="feedback"
                         @click="!sentryErrorReporting && setSentryErrorReporting()">
                         <i class="ri-feedback-line"></i>
+                        <span v-show="!isCollapsed" class="bottom-button__label">Feedback</span>
                     </div>
-                </NativeTooltip>
+                </el-tooltip>
 
                 <el-popover
                     v-model:visible="supportMenuVisible"
                     placement="right"
                     trigger="click"
                     popper-style="padding:4px;border-radius:8px;"
-                    :offset="4"
+                    :offset="-10"
                     :show-arrow="false"
                     :width="200"
                     :hide-after="0">
@@ -119,11 +110,18 @@
                     </div>
                     <template #reference>
                         <div>
-                            <NativeTooltip :show-after="150" :content="t('nav_tooltip.help_support')" placement="right">
+                            <el-tooltip
+                                :show-after="150"
+                                :content="t('nav_tooltip.help_support')"
+                                placement="right"
+                                :disabled="!isCollapsed">
                                 <div class="bottom-button">
                                     <i class="ri-question-line"></i>
+                                    <span v-show="!isCollapsed" class="bottom-button__label">{{
+                                        t('nav_tooltip.help_support')
+                                    }}</span>
                                 </div>
-                            </NativeTooltip>
+                            </el-tooltip>
                         </div>
                     </template>
                 </el-popover>
@@ -133,7 +131,7 @@
                     placement="right"
                     trigger="click"
                     popper-style="padding:4px;border-radius:8px;"
-                    :offset="4"
+                    :offset="-10"
                     :show-arrow="false"
                     :width="200"
                     :hide-after="0">
@@ -143,7 +141,7 @@
                             <div class="nav-menu-settings__meta">
                                 <span class="nav-menu-settings__title" @click="openGithub"
                                     >VRCX
-                                    <i class="ri-heart-3-fill" style="color: #64cd8a; font-size: 14px"></i>
+                                    <i class="ri-heart-3-fill nav-menu-settings__heart"></i>
                                 </span>
                                 <span class="nav-menu-settings__version">{{ version }}</span>
                             </div>
@@ -170,7 +168,7 @@
                                     :class="{ 'is-active': themeMode === theme }"
                                     @click="handleThemeSelect(theme)">
                                     <span class="nav-menu-theme__label">{{ themeDisplayName(theme) }}</span>
-                                    <span v-if="themeMode === theme" class="nav-menu-theme__check">✔</span>
+                                    <span v-if="themeMode === theme" class="nav-menu-theme__check">✓</span>
                                 </button>
                             </div>
                             <template #reference>
@@ -190,9 +188,24 @@
                     <template #reference>
                         <div class="bottom-button">
                             <i class="ri-settings-3-line"></i>
+                            <span v-show="!isCollapsed" class="bottom-button__label">{{
+                                t('nav_tooltip.manage')
+                            }}</span>
                         </div>
                     </template>
                 </el-popover>
+                <el-tooltip
+                    :show-after="150"
+                    :content="t('nav_tooltip.expand_menu')"
+                    :disabled="!isCollapsed"
+                    placement="right">
+                    <div class="bottom-button" @click="toggleNavCollapse">
+                        <i class="ri-side-bar-line"></i>
+                        <span v-show="!isCollapsed" class="bottom-button__label">{{
+                            t('nav_tooltip.collapse_menu')
+                        }}</span>
+                    </div>
+                </el-tooltip>
             </div>
         </template>
     </div>
@@ -215,9 +228,9 @@
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
         useAuthStore,
-        useGameStore,
         useSearchStore,
         useUiStore,
+        useUserStore,
         useVRCXUpdaterStore
     } from '../stores';
     import { THEME_CONFIG, links, navDefinitions } from '../shared/constants';
@@ -225,8 +238,6 @@
     import { openExternalLink } from '../shared/utils';
 
     import configRepository from '../service/config';
-
-    import 'remixicon/fonts/remixicon.css';
 
     const CustomNavDialog = defineAsyncComponent(() => import('./dialogs/CustomNavDialog.vue'));
 
@@ -257,25 +268,12 @@
         },
         { type: 'item', key: 'notification' },
         { type: 'item', key: 'charts' },
-        { type: 'item', key: 'tools' }
+        { type: 'item', key: 'tools' },
+        { type: 'item', key: 'direct-access' }
     ];
 
     const navDefinitionMap = new Map(navDefinitions.map((item) => [item.key, item]));
     const DEFAULT_FOLDER_ICON = 'ri-menu-fold-line';
-
-    const navPopoverWidth = 250;
-    const navPopoverStyle = {
-        zIndex: 500,
-        borderRadius: '0',
-        border: '1px solid var(--el-border-color)',
-        borderLeft: 'none',
-        borderBottom: 'none',
-        borderTop: 'none',
-        boxShadow: '0 8px 20px rgba(0,0,0,0.05)',
-        padding: '0',
-        background: 'var(--el-bg-color)',
-        height: '100vh'
-    };
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
     const { pendingVRCXUpdate, pendingVRCXInstall, updateInProgress, updateProgress, branch, appVersion } =
@@ -288,18 +286,19 @@
     const { setSentryErrorReporting } = useAdvancedSettingsStore();
     const { logout } = useAuthStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const { themeMode } = storeToRefs(appearanceSettingsStore);
-    const { isSteamVRRunning } = storeToRefs(useGameStore());
+    const { themeMode, isNavCollapsed: isCollapsed } = storeToRefs(appearanceSettingsStore);
+    const userStore = useUserStore();
+    const { currentUser } = storeToRefs(userStore);
+    const { showUserDialog } = userStore;
 
     const settingsMenuVisible = ref(false);
     const themeMenuVisible = ref(false);
     const supportMenuVisible = ref(false);
     const navMenuRef = ref(null);
-    const navPopoverRefs = new Map();
     const navLayout = ref([]);
     const navLayoutReady = ref(false);
 
-    const navMenuItems = computed(() => {
+    const menuItems = computed(() => {
         const items = [];
         navLayout.value.forEach((entry) => {
             if (entry.type === 'item') {
@@ -310,7 +309,7 @@
                 items.push({
                     ...definition,
                     index: definition.key,
-                    tooltipIsCustom: false,
+                    title: definition.tooltip || definition.labelKey,
                     titleIsCustom: false
                 });
                 return;
@@ -324,7 +323,6 @@
                         items.push({
                             ...definition,
                             index: definition.key,
-                            tooltipIsCustom: false,
                             titleIsCustom: false
                         });
                     });
@@ -334,83 +332,41 @@
                 const folderEntries = folderDefinitions.map((definition) => ({
                     label: definition.labelKey,
                     routeName: definition.routeName,
-                    key: definition.key,
-                    icon: definition.icon
+                    index: definition.key,
+                    icon: definition.icon,
+                    action: definition.action
                 }));
 
                 items.push({
                     index: entry.id,
                     icon: entry.icon || DEFAULT_FOLDER_ICON,
-                    tooltip: entry.name?.trim() || t('nav_menu.custom_nav.folder_name_placeholder'),
-                    tooltipIsCustom: true,
                     title: entry.name?.trim() || t('nav_menu.custom_nav.folder_name_placeholder'),
                     titleIsCustom: true,
-                    entries: folderEntries
+                    children: folderEntries
                 });
             }
         });
         return items;
     });
 
-    const folderCyclePointers = new Map();
-
-    const navigateToFolderEntry = (folderIndex, entry) => {
-        if (!entry) {
-            return;
-        }
-        if (entry.routeName) {
-            handleRouteChange(entry.routeName, folderIndex);
-            return;
-        }
-        if (entry.path) {
-            router.push(entry.path);
-            if (folderIndex) {
-                navMenuRef.value?.updateActiveIndex(folderIndex);
-            }
-        }
-    };
-
-    const handleFolderCycleNavigation = (item) => {
-        if (!item?.entries?.length) {
-            return;
-        }
-        const entries = item.entries.filter((entry) => Boolean(entry?.routeName || entry?.path));
-        if (!entries.length) {
-            return;
-        }
-        let pointer = folderCyclePointers.get(item.index) ?? 0;
-        if (pointer >= entries.length || pointer < 0) {
-            pointer = 0;
-        }
-        const entry = entries[pointer];
-        folderCyclePointers.set(item.index, (pointer + 1) % entries.length);
-        navigateToFolderEntry(item.index, entry);
-    };
-
     const activeMenuIndex = computed(() => {
-        const currentRouteName = router.currentRoute.value?.name;
-        if (!currentRouteName) {
-            const firstEntry = navLayout.value[0];
-            if (!firstEntry) {
-                return 'feed';
-            }
-            return firstEntry.type === 'folder' ? firstEntry.id : firstEntry.key;
+        const currentRoute = router.currentRoute.value;
+        const currentRouteName = currentRoute?.name;
+        const navKey = currentRoute?.meta?.navKey || currentRouteName;
+        if (!navKey) {
+            return getFirstNavRoute(navLayout.value) || 'feed';
         }
 
         for (const entry of navLayout.value) {
-            if (entry.type === 'item' && entry.key === currentRouteName) {
+            if (entry.type === 'item' && entry.key === navKey) {
                 return entry.key;
             }
-            if (entry.type === 'folder' && entry.items?.includes(currentRouteName)) {
-                return entry.id;
+            if (entry.type === 'folder' && entry.items?.includes(navKey)) {
+                return navKey;
             }
         }
 
-        const fallback = navLayout.value[0];
-        if (!fallback) {
-            return 'feed';
-        }
-        return fallback.type === 'folder' ? fallback.id : fallback.key;
+        return getFirstNavRoute(navLayout.value) || 'feed';
     });
 
     const version = computed(() => appVersion.value?.split('VRCX ')?.[1] || '-');
@@ -447,6 +403,10 @@
     );
 
     const generateFolderId = () => `nav-folder-${dayjs().toISOString()}-${Math.random().toString().slice(2, 4)}`;
+
+    const showCurrentUserDialog = () => {
+        showUserDialog(currentUser.value?.id);
+    };
 
     const sanitizeLayout = (layout) => {
         const usedKeys = new Set();
@@ -627,50 +587,45 @@
         if (notifiedMenus.value.includes(item.index)) {
             return true;
         }
-        if (item.entries?.length) {
-            return item.entries.some((entry) => isEntryNotified(entry));
+        if (item.children?.length) {
+            return item.children.some((entry) => isEntryNotified(entry));
         }
         return false;
     };
 
-    const setNavPopoverRef = (el, index) => {
-        if (!index) {
-            return;
-        }
-        if (el) {
-            navPopoverRefs.set(index, el);
-        } else {
-            navPopoverRefs.delete(index);
-        }
-    };
-
-    const closeNavPopover = (index) => {
-        navPopoverRefs.get(index)?.hide?.();
-    };
-
-    const handleSubmenuClick = (entry, index) => {
-        if (!entry) {
-            return;
-        }
-        const entries = navMenuItems.value.find((item) => item.index === index)?.entries || [];
-        const indexOfEntry = entries.findIndex((e) => e.label === entry.label);
-        folderCyclePointers.set(index, (indexOfEntry + 1) % entries.length);
-
-        if (entry.routeName) {
-            handleRouteChange(entry.routeName, index || entry.routeName);
-        } else if (entry.path) {
-            router.push(entry.path);
-            if (index) {
-                navMenuRef.value?.updateActiveIndex(index);
-            }
-        }
-        closeNavPopover(index);
-    };
-
-    const handleSubMenuBeforeEnter = () => {
+    const closeNavFlyouts = () => {
         settingsMenuVisible.value = false;
         supportMenuVisible.value = false;
         themeMenuVisible.value = false;
+    };
+
+    const triggerNavAction = (entry, navIndex = entry?.index) => {
+        if (!entry) {
+            return;
+        }
+
+        if (entry.action === 'direct-access') {
+            closeNavFlyouts();
+            directAccessPaste();
+            if (navIndex) {
+                navMenuRef.value?.updateActiveIndex(navIndex);
+            }
+            return;
+        }
+
+        if (entry.routeName) {
+            handleRouteChange(entry.routeName, navIndex);
+            closeNavFlyouts();
+            return;
+        }
+
+        if (entry.path) {
+            router.push(entry.path);
+            if (navIndex) {
+                navMenuRef.value?.updateActiveIndex(navIndex);
+            }
+            closeNavFlyouts();
+        }
     };
 
     const handleRouteChange = (routeName, navIndex = routeName) => {
@@ -697,17 +652,23 @@
         }
     });
 
-    const getFirstNavRoute = (layout) => {
+    function getFirstNavRoute(layout) {
         for (const entry of layout) {
             if (entry.type === 'item') {
-                return entry.key;
+                const definition = navDefinitionMap.get(entry.key);
+                if (definition?.routeName) {
+                    return definition.routeName;
+                }
             }
             if (entry.type === 'folder' && entry.items?.length) {
-                return entry.items[0];
+                const definition = entry.items.map((key) => navDefinitionMap.get(key)).find((def) => def?.routeName);
+                if (definition?.routeName) {
+                    return definition.routeName;
+                }
             }
         }
         return null;
-    };
+    }
 
     let hasNavigatedToInitialRoute = false;
     const navigateToFirstNavEntry = () => {
@@ -724,15 +685,17 @@
         }
     };
 
+    const handleSubmenuClick = (entry, index) => {
+        const navIndex = index || entry?.index;
+        triggerNavAction(entry, navIndex);
+    };
+
     const handleMenuItemClick = (item) => {
-        if (!item) {
-            return;
-        }
-        if (item.entries?.length) {
-            handleFolderCycleNavigation(item);
-            return;
-        }
-        handleRouteChange(item.routeName, item.index);
+        triggerNavAction(item, item?.index);
+    };
+
+    const toggleNavCollapse = () => {
+        appearanceSettingsStore.toggleNavCollapsed();
     };
 
     onMounted(async () => {
@@ -755,146 +718,147 @@
     :deep(.el-divider) {
         margin: 0;
     }
+
     .nav-menu-container {
         position: relative;
+        width: 240px;
         height: 100%;
         display: flex;
+        flex: 0 0 240px;
         flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
+        align-items: stretch;
+        justify-content: flex-start;
         z-index: 600;
-        background-color: var(--el-bg-color);
-        border-right: 1px solid var(--el-border-color);
+        background-color: var(--el-bg-color-page);
         box-shadow: none;
-        .el-menu {
-            background: 0;
-            border: 0;
-        }
-        .el-menu-item i[class*='ri-'] {
-            font-size: 19px;
-            width: 24px;
-            height: 24px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            vertical-align: middle;
-        }
-        .bottom-button {
-            font-size: 19px;
-            width: 64px;
-            height: 56px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            vertical-align: middle;
-            cursor: pointer;
-        }
-        .bottom-button:hover {
-            background-color: var(--el-menu-hover-bg-color);
-            transition:
-                border-color var(--el-transition-duration),
-                background-color var(--el-transition-duration),
-                color var(--el-transition-duration);
-        }
-        .nav-menu-container-bottom {
-            display: flex;
-            flex-direction: column;
+        backdrop-filter: blur(14px) saturate(130%);
+    }
+
+    .nav-menu-body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden auto;
+        align-items: center;
+    }
+
+    .nav-menu {
+        background: transparent;
+        border: 0;
+        width: 100%;
+    }
+
+    .nav-menu :deep(.el-menu-item),
+    .nav-menu :deep(.el-sub-menu__title) {
+        height: 46px;
+        line-height: 46px;
+        display: flex;
+        align-items: center;
+        column-gap: 10px;
+        font-size: 13px;
+        padding: 0 20px !important;
+    }
+
+    .nav-menu :deep(.el-menu-item i[class*='ri-']),
+    .nav-menu :deep(.el-sub-menu__title i[class*='ri-']) {
+        font-size: 19px;
+        width: 24px;
+        height: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    .nav-menu :deep(.el-sub-menu__title > div) {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .nav-menu :deep(.el-sub-menu__icon-arrow) {
+        right: 8px;
+    }
+
+    .bottom-button {
+        font-size: 19px;
+        width: 100%;
+        height: 46px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        padding: 0 20px;
+        text-align: left;
+        vertical-align: middle;
+        cursor: pointer;
+        box-sizing: border-box;
+        & > span {
+            font-size: 13px;
         }
     }
 
-    .nav-menu-popover {
+    .bottom-button i {
+        width: 24px;
+        height: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+    .bottom-button__label {
+        font-size: 13px;
+        color: var(--el-text-color-regular);
+        white-space: nowrap;
+    }
+
+    .bottom-button:hover {
+        background-color: var(--el-menu-hover-bg-color);
+        transition:
+            border-color var(--el-transition-duration),
+            background-color var(--el-transition-duration),
+            color var(--el-transition-duration);
+    }
+
+    .nav-menu-container-bottom {
         display: flex;
         flex-direction: column;
-        height: 100%;
-        min-width: 240px;
-        background-color: var(--el-bg-color);
-        border-left: 1px solid var(--el-border-color);
-        overflow: hidden;
+    }
 
-        .nav-menu-popover__header {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            min-height: 52px;
-            padding: 0 20px;
-            border-bottom: 1px solid var(--el-border-color-light, var(--el-border-color));
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--el-text-color-primary);
-        }
+    .nav-menu-container.is-collapsed .nav-menu :deep(.el-menu-item),
+    .nav-menu-container.is-collapsed .nav-menu :deep(.el-sub-menu__title) {
+        column-gap: 0;
+        justify-content: center;
+        padding: 0;
+    }
 
-        .nav-menu-popover__header i {
-            font-size: 18px;
-            color: var(--el-color-primary);
-        }
+    .nav-menu-container.is-collapsed {
+        width: 64px;
+        flex-basis: 64px;
+    }
 
-        .nav-menu-popover__menu {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            gap: 6px;
-            padding: 12px 12px 16px;
-            overflow-y: auto;
-            scrollbar-width: thin;
-        }
+    .nav-menu-container.is-collapsed .nav-menu :deep(.el-sub-menu__title > div) {
+        gap: 0;
+    }
 
-        .nav-menu-popover__menu::-webkit-scrollbar {
-            width: 6px;
-        }
+    .nav-menu-container.is-collapsed .bottom-button {
+        width: 100%;
+        justify-content: center;
+        gap: 0;
+        padding: 0;
+        text-align: center;
+    }
 
-        .nav-menu-popover__menu::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.18);
-            border-radius: 3px;
-        }
+    :deep(.el-menu-item .el-menu-tooltip__trigger) {
+        justify-content: center;
+    }
 
-        .nav-menu-popover__menu::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .nav-menu-popover__menu-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-            padding: 10px 12px;
-            border: none;
-            background: transparent;
-            text-align: left;
-            color: var(--el-text-color-primary);
-            font-size: 13px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color var(--el-transition-duration);
-        }
-
-        .nav-menu-popover__menu-item.notify::after {
-            content: '';
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--el-text-color-primary);
-            margin-left: auto;
-        }
-
-        .nav-menu-popover__menu-item:hover {
-            background-color: var(--el-menu-hover-bg-color);
-        }
-
-        .nav-menu-popover__menu-item:focus-visible {
-            outline: 2px solid var(--el-color-primary);
-            outline-offset: 2px;
-        }
-
-        .nav-menu-popover__menu-icon {
-            font-size: 16px;
-            color: var(--el-text-color-secondary);
-        }
-
-        .nav-menu-popover__menu-label {
-            font-weight: 600;
-        }
+    :deep(.el-button.is-text:not(.is-disabled):hover) {
+        background-color: var(--el-menu-hover-bg-color);
     }
 
     .nav-menu-settings {
@@ -930,6 +894,11 @@
                 cursor: pointer;
             }
 
+            .nav-menu-settings__heart {
+                font-size: 14px;
+                color: var(--el-color-success);
+            }
+
             .nav-menu-settings__version {
                 font-size: 11px;
             }
@@ -942,8 +911,8 @@
             width: 100%;
             border: none;
             background: transparent;
-            color: var(--el-text-color-primary);
-            font-size: 14px;
+            color: var(--el-text-color-regular);
+            font-size: 13px;
             border-radius: 4px;
             transition: background-color var(--el-transition-duration);
             cursor: pointer;
@@ -962,7 +931,7 @@
         }
 
         .nav-menu-settings__item--danger:hover {
-            background-color: rgba(245, 108, 108, 0.18);
+            background-color: color-mix(in oklch, var(--el-color-danger) 18%, transparent);
         }
     }
 
@@ -970,23 +939,6 @@
         display: flex;
         flex-direction: column;
         gap: 8px;
-
-        .nav-menu-support__search {
-            padding: 10px 12px;
-            border-radius: 8px;
-            background: var(--el-fill-color-light);
-            color: var(--el-text-color-secondary);
-            font-size: 12px;
-            font-weight: 500;
-            line-height: 1.2;
-        }
-
-        .nav-menu-support__heading {
-            padding: 4px 12px 0;
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--el-text-color-primary);
-        }
 
         .nav-menu-support__section {
             display: flex;
@@ -1015,7 +967,6 @@
             padding: 6px 10px;
             border: none;
             background: transparent;
-            color: var(--el-text-color-primary);
             font-size: 13px;
             border-radius: 6px;
             transition: background-color var(--el-transition-duration);
@@ -1030,19 +981,5 @@
         .nav-menu-theme__item.is-active {
             background-color: var(--el-menu-hover-bg-color);
         }
-    }
-
-    :global(.nav-menu-slide-enter-active),
-    :global(.nav-menu-slide-leave-active) {
-        transition:
-            opacity 0.1s ease,
-            transform 0.1s ease;
-        transform-origin: left center;
-    }
-
-    :global(.nav-menu-slide-enter-from),
-    :global(.nav-menu-slide-leave-to) {
-        opacity: 0;
-        transform: translateX(-12px);
     }
 </style>

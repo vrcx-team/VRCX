@@ -8,7 +8,7 @@
                 remote
                 :remote-method="quickSearchRemoteMethod"
                 popper-class="x-quick-search"
-                style="flex: 1; padding: 10px"
+                style="flex: 1; padding: 10px; padding-left: 0"
                 @change="quickSearchChange">
                 <el-option v-for="item in quickSearchItems" :key="item.value" :value="item.value" :label="item.label">
                     <div class="x-friend-item">
@@ -41,7 +41,7 @@
                 </el-option>
             </el-select>
             <div>
-                <NativeTooltip placement="bottom" :content="t('side_panel.refresh_tooltip')">
+                <el-tooltip placement="bottom" :content="t('side_panel.refresh_tooltip')">
                     <el-button
                         type="default"
                         :loading="isRefreshFriendsLoading"
@@ -50,16 +50,14 @@
                         circle
                         style="margin-right: 10px"
                         @click="refreshFriendsList"></el-button>
-                </NativeTooltip>
+                </el-tooltip>
             </div>
         </div>
-        <el-tabs class="zero-margin-tabs" stretch style="height: calc(100% - 60px); margin-top: 5px">
+        <el-tabs class="zero-margin-tabs" stretch style="height: calc(100% - 70px); margin-top: 5px">
             <el-tab-pane>
                 <template #label>
                     <span>{{ t('side_panel.friends') }}</span>
-                    <span style="color: #909399; font-size: 12px; margin-left: 10px">
-                        ({{ onlineFriendCount }}/{{ friends.size }})
-                    </span>
+                    <span class="sidebar-tab-count"> ({{ onlineFriendCount }}/{{ friends.size }}) </span>
                 </template>
                 <el-backtop target=".zero-margin-tabs .el-tabs__content" :bottom="20" :right="20"></el-backtop>
                 <FriendsSidebar @confirm-delete-friend="confirmDeleteFriend" />
@@ -67,9 +65,7 @@
             <el-tab-pane lazy>
                 <template #label>
                     <span>{{ t('side_panel.groups') }}</span>
-                    <span style="color: #909399; font-size: 12px; margin-left: 10px">
-                        ({{ groupInstances.length }})
-                    </span>
+                    <span class="sidebar-tab-count"> ({{ groupInstances.length }}) </span>
                 </template>
                 <GroupsSidebar :group-instances="groupInstances" :group-order="inGameGroupOrder" />
             </el-tab-pane>
@@ -97,11 +93,17 @@
 </script>
 
 <style scoped>
+    .sidebar-tab-count {
+        color: var(--el-text-color-secondary);
+        font-size: 12px;
+        margin-left: 10px;
+    }
+
     .group-calendar-button {
         position: fixed;
         bottom: 20px;
         right: 20px;
-        box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
+        box-shadow: var(--el-box-shadow-lighter);
         border: none;
         z-index: 5;
         width: 40px;

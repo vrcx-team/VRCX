@@ -316,7 +316,7 @@
     }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
     .img-size {
         width: 500px;
         height: 375px;

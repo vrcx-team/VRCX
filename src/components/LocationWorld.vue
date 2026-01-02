@@ -1,14 +1,14 @@
 <template>
-    <span>
+    <span class="x-location-world">
+        <span v-if="region" :class="['flags', 'inline-block', 'mr-1.25', region]"></span>
         <span @click="showLaunchDialog" class="x-link">
-            <el-icon v-if="isUnlocked" :class="['inline-block', 'mr-5']"><Unlock /></el-icon>
-            <span>#{{ instanceName }} {{ accessTypeName }}</span>
+            <el-icon v-if="isUnlocked" :class="['inline-block', 'mr-1.25']"><Unlock /></el-icon>
+            <span> {{ accessTypeName }} #{{ instanceName }}</span>
         </span>
         <span v-if="groupName" @click="showGroupDialog" class="x-link">({{ groupName }})</span>
-        <span v-if="region" :class="['flags', 'inline-block', 'ml-5', region, 'transform-[translateY(3px)]']"></span>
-        <NativeTooltip v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
+        <el-tooltip v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
             <el-icon :class="['inline-block', 'ml-5']" style="color: lightcoral"><WarnTriangleFilled /></el-icon>
-        </NativeTooltip>
+        </el-tooltip>
         <el-icon v-if="strict" style="display: inline-block; margin-left: 5px"><Lock /></el-icon>
     </span>
 </template>
@@ -21,6 +21,7 @@
 
     import { useGroupStore, useInstanceStore, useLaunchStore } from '../stores';
     import { getGroupName, parseLocation } from '../shared/utils';
+    import { accessTypeLocaleKeyMap } from '../shared/constants';
 
     const { t } = useI18n();
     const { cachedInstances } = useInstanceStore();
@@ -52,7 +53,7 @@
     function parse() {
         const locObj = props.locationobject;
         location.value = locObj.tag;
-        accessTypeName.value = locObj.accessTypeName;
+        accessTypeName.value = translateAccessType(locObj.accessTypeName);
         strict.value = locObj.strict;
         shortName.value = locObj.shortName;
 
@@ -97,6 +98,14 @@
         }
     }
 
+    function translateAccessType(accessTypeNameRaw) {
+        const key = accessTypeLocaleKeyMap[accessTypeNameRaw];
+        if (!key) {
+            return accessTypeNameRaw;
+        }
+        return t(key);
+    }
+
     watch(() => props.locationobject, parse, { immediate: true });
 
     watch(
@@ -126,11 +135,9 @@
         display: inline-block;
     }
 
-    .ml-5 {
-        margin-left: 5px;
-    }
-
-    .mr-5 {
-        margin-right: 5px;
+    :global(html.dark .x-location-world),
+    :global(:root.dark .x-location-world),
+    :global(:root[data-theme='dark'] .x-location-world) {
+        color: var(--color-zinc-100);
     }
 </style>

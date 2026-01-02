@@ -1674,6 +1674,8 @@
         "notification": {
             "date": "날짜",
             "type": "유형",
+            "user": "유저",
+            "group": "그룹",
             "user_group": "User/Group",
             "photo": "사진",
             "message": "메시지",

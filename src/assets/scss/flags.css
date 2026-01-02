@@ -3,7 +3,7 @@
     --offy: 14.5px;
 }
 .flags {
-    background: url('../images/flags.png') no-repeat;
+    background: url('/images/flags.png') no-repeat;
     background-size: calc(var(--offx) * 6);
     width: var(--offx);
     height: calc(var(--offx) / 72 * 52);

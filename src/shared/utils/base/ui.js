@@ -48,6 +48,25 @@ function applyThemeFonts(themeKey, fontLinks = []) {
     });
 }
 
+function ensureStylesheetLink(id) {
+    const linkEl = /** @type {HTMLLinkElement | null} */ (
+        document.getElementById(id)
+    );
+    if (!linkEl) {
+        const created = document.createElement('link');
+        created.setAttribute('id', id);
+        created.rel = 'stylesheet';
+        document.head.appendChild(created);
+        return created;
+    }
+    return linkEl;
+}
+
+function removeStylesheetLink(id) {
+    const linkEl = document.getElementById(id);
+    linkEl?.remove();
+}
+
 function changeAppThemeStyle(themeMode) {
     if (themeMode === 'system') {
         themeMode = systemIsDarkMode() ? 'dark' : 'light';
@@ -61,27 +80,35 @@ function changeAppThemeStyle(themeMode) {
         themeConfig = THEME_CONFIG[themeMode];
     }
 
-    let filePathPrefix = 'file://vrcx/';
-    if (LINUX) {
-        filePathPrefix = './';
-    }
-    if (process.env.NODE_ENV === 'development') {
-        filePathPrefix = 'http://localhost:9000/';
-        console.log('Using development file path prefix:', filePathPrefix);
+    const cssFiles = Array.isArray(themeConfig.cssFiles)
+        ? themeConfig.cssFiles.filter(Boolean)
+        : themeConfig.cssFile
+          ? [themeConfig.cssFile]
+          : [];
+
+    if (cssFiles.length > 0) {
+        const $appThemeStyle = ensureStylesheetLink('app-theme-style');
+        $appThemeStyle.href = cssFiles[0];
+    } else {
+        removeStylesheetLink('app-theme-style');
     }
 
-    let $appThemeStyle = document.getElementById('app-theme-style');
-    if (!$appThemeStyle) {
-        $appThemeStyle = document.createElement('link');
-        $appThemeStyle.setAttribute('id', 'app-theme-style');
-        $appThemeStyle.rel = 'stylesheet';
-        document.head.appendChild($appThemeStyle);
+    if (cssFiles.length > 1) {
+        const $appThemeOverlayStyle = ensureStylesheetLink(
+            'app-theme-overlay-style'
+        );
+        $appThemeOverlayStyle.href = cssFiles[1];
+    } else {
+        removeStylesheetLink('app-theme-overlay-style');
     }
-    $appThemeStyle.href = themeConfig.cssFile ? themeConfig.cssFile : '';
 
     applyThemeFonts(themeMode, themeConfig.fontLinks);
 
-    if (themeConfig.isDark) {
+    const shouldUseDarkClass =
+        typeof themeConfig.useDarkClass === 'boolean'
+            ? themeConfig.useDarkClass
+            : Boolean(themeConfig.isDark);
+    if (shouldUseDarkClass) {
         document.documentElement.classList.add('dark');
     } else {
         document.documentElement.classList.remove('dark');
@@ -258,19 +285,19 @@ function setLoginContainerStyle(isDarkMode) {
     loginContainerStyle.id = 'login-container-style';
     loginContainerStyle.type = 'text/css';
 
-    const backgroundColor = isDarkMode ? '#101010' : '#ffffff';
-    const inputBackgroundColor = isDarkMode ? '#333333' : '#ffffff';
-    const inputBorder = isDarkMode ? '1px solid #3b3b3b' : '1px solid #DCDFE6';
+    const backgroundFallback = isDarkMode ? '#101010' : '#ffffff';
+    const inputBackgroundFallback = isDarkMode ? '#1f1f1f' : '#ffffff';
+    const borderFallback = isDarkMode ? '#3b3b3b' : '#DCDFE6';
 
     loginContainerStyle.innerHTML = `
     .x-login-container {
-        background-color: ${backgroundColor} !important;
+        background-color: var(--el-bg-color-page, ${backgroundFallback}) !important;
         transition: background-color 0.3s ease;
     }
 
     .x-login-container .el-input__wrapper {
-        background-color: ${inputBackgroundColor} !important;
-        border: ${inputBorder} !important;
+        background-color: var(--el-bg-color, ${inputBackgroundFallback}) !important;
+        border: 1px solid var(--el-border-color, ${borderFallback}) !important;
         transition: background-color 0.3s ease, border-color 0.3s ease;
     }
         `;

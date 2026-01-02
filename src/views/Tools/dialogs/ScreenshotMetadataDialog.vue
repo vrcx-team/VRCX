@@ -11,7 +11,7 @@
             @dragover.prevent
             @dragenter.prevent
             @drop="handleDrop">
-            <span style="margin-left: 5px; color: #909399; font-family: monospace">{{
+            <span style="margin-left: 5px; color: var(--el-text-color-secondary); font-family: monospace">{{
                 t('dialog.screenshot_metadata.drag')
             }}</span>
             <br />
@@ -105,7 +105,7 @@
                 v-if="screenshotMetadataDialog.metadata.author"
                 :userid="screenshotMetadataDialog.metadata.author.id"
                 :hint="screenshotMetadataDialog.metadata.author.displayName"
-                style="color: #909399; font-family: monospace" />
+                style="color: var(--el-text-color-secondary); font-family: monospace" />
             <br />
             <el-carousel
                 ref="screenshotMetadataCarouselRef"
@@ -147,7 +147,7 @@
                 <span class="x-link" @click="lookupUser(user)" v-text="user.displayName"></span>
                 <span
                     v-if="user.pos"
-                    style="margin-left: 5px; color: #909399; font-family: monospace"
+                    style="margin-left: 5px; color: var(--el-text-color-secondary); font-family: monospace"
                     v-text="'(' + user.pos.x + ', ' + user.pos.y + ', ' + user.pos.z + ')'"></span>
                 <br />
             </span>

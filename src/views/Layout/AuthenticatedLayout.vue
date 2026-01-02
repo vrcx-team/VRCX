@@ -1,8 +1,7 @@
 <template>
     <template v-if="watchState.isLoggedIn">
         <NavMenu></NavMenu>
-
-        <el-splitter @resize-end="setAsideWidth">
+        <el-splitter @resize-end="handleResizeEnd">
             <el-splitter-panel>
                 <RouterView></RouterView>
             </el-splitter-panel>
@@ -85,6 +84,20 @@
     const appearanceStore = useAppearanceSettingsStore();
     const { setAsideWidth } = appearanceStore;
     const { asideWidth, isSideBarTabShow } = storeToRefs(appearanceStore);
+
+    const handleResizeEnd = (index, sizes) => {
+        if (!Array.isArray(sizes) || sizes.length < 2) {
+            return;
+        }
+        const asideSplitterIndex = sizes.length - 2;
+        if (index !== asideSplitterIndex) {
+            return;
+        }
+        const asideSize = sizes[sizes.length - 1];
+        if (Number.isFinite(asideSize) && asideSize > 0) {
+            setAsideWidth(asideSize);
+        }
+    };
 
     watch(
         () => watchState.isLoggedIn,

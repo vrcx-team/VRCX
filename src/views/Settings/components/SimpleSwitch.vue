@@ -1,4 +1,4 @@
-﻿<template>
+<template>
     <div class="simple-switch">
         <div class="name" :style="{ width: longLabel ? '300px' : undefined }">
             {{ label }}

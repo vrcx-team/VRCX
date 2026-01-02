@@ -48,7 +48,7 @@
                             </div>
                         </el-card>
                         <el-card :body-style="{ padding: '0px' }" class="tool-card">
-                            <div class="tool-content" @click="showGalleryDialog">
+                            <div class="tool-content" @click="showGalleryPage">
                                 <div class="tool-icon">
                                     <i class="ri-multi-image-line"></i>
                                 </div>
@@ -191,7 +191,6 @@
             <NoteExportDialog
                 :isNoteExportDialogVisible="isNoteExportDialogVisible"
                 @close="isNoteExportDialogVisible = false" />
-            <GalleryDialog />
             <ExportDiscordNamesDialog
                 v-model:discordNamesDialogVisible="isExportDiscordNamesDialogVisible"
                 :friends="friends" />
@@ -207,7 +206,7 @@
 </template>
 
 <script setup>
-    import { computed, defineAsyncComponent, ref, watch } from 'vue';
+    import { computed, defineAsyncComponent, ref } from 'vue';
     import { ArrowRight } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
@@ -219,22 +218,21 @@
     const GroupCalendarDialog = defineAsyncComponent(() => import('./dialogs/GroupCalendarDialog.vue'));
     const ScreenshotMetadataDialog = defineAsyncComponent(() => import('./dialogs/ScreenshotMetadataDialog.vue'));
     const NoteExportDialog = defineAsyncComponent(() => import('./dialogs/NoteExportDialog.vue'));
-    const GalleryDialog = defineAsyncComponent(() => import('./dialogs/GalleryDialog.vue'));
     const EditInviteMessageDialog = defineAsyncComponent(() => import('./dialogs/EditInviteMessagesDialog.vue'));
-
     const ExportDiscordNamesDialog = defineAsyncComponent(() => import('./dialogs/ExportDiscordNamesDialog.vue'));
     const ExportFriendsListDialog = defineAsyncComponent(() => import('./dialogs/ExportFriendsListDialog.vue'));
     const ExportAvatarsListDialog = defineAsyncComponent(() => import('./dialogs/ExportAvatarsListDialog.vue'));
 
     const { t } = useI18n();
 
-    const { showGalleryDialog } = useGalleryStore();
+    const { showGalleryPage } = useGalleryStore();
     const { friends } = storeToRefs(useFriendStore());
 
     const categoryCollapsed = ref({
         group: false,
         image: false,
-        user: false
+        user: false,
+        other: false
     });
 
     const isGroupCalendarDialogVisible = ref(false);
@@ -313,7 +311,7 @@
     }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
     .tool-categories {
         margin-top: 20px;
         padding: 0 20px;
@@ -329,7 +327,6 @@
             padding: 8px 12px;
             border-radius: 6px;
             margin-bottom: 12px;
-            background-color: var(--el-color-primary-light-9);
             transition: all 0.2s ease;
 
             &:hover {
@@ -347,7 +344,6 @@
                 margin-left: 5px;
                 font-size: 16px;
                 font-weight: 600;
-                color: var(--el-color-primary);
             }
         }
     }
@@ -368,7 +364,7 @@
 
         &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: var(--el-box-shadow-light);
         }
 
         :deep(.el-card__body) {
@@ -389,7 +385,7 @@
                 background-color: var(--el-color-primary-light-9);
                 border-radius: 12px;
                 margin-right: 20px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                box-shadow: var(--el-box-shadow-lighter);
 
                 i {
                     font-size: 28px;

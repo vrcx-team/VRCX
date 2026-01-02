@@ -3,7 +3,7 @@
         <div class="options-container" style="margin-top: 0; padding: 5px">
             <span class="header">{{ t('view.settings.header') }}</span>
         </div>
-        <el-tabs type="card" style="height: calc(100% - 51px)">
+        <el-tabs style="height: calc(100% - 51px)">
             <el-tab-pane :label="t('view.settings.category.general')">
                 <GeneralTab />
             </el-tab-pane>

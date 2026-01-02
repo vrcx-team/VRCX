@@ -21,6 +21,7 @@ import { AppDebug } from '../service/appConfig';
 import { handleImageUploadInput } from '../shared/utils/imageUpload';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { watchState } from '../service/watchState';
+import { router } from '../plugin/router';
 
 import miscReq from '../api/misc';
 
@@ -122,8 +123,16 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
     }
 
-    function showGalleryDialog() {
+    function showGalleryPage() {
         galleryDialogVisible.value = true;
+        if (router.currentRoute.value?.name === 'gallery') {
+            loadGalleryData();
+            return;
+        }
+        router.push({ name: 'gallery' });
+    }
+
+    function loadGalleryData() {
         refreshGalleryTable();
         refreshVRCPlusIconsTable();
         refreshEmojiTable();
@@ -572,7 +581,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
         fullscreenImageDialog,
         cachedEmoji,
 
-        showGalleryDialog,
+        showGalleryPage,
+        loadGalleryData,
         refreshGalleryTable,
         refreshVRCPlusIconsTable,
         inviteImageUpload,

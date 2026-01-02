@@ -1,24 +1,33 @@
 <template>
     <div>
-        <span v-if="!text" class="transparent">-</span>
-        <span v-show="text">
-            <span
-                :class="{ 'x-link': link && location !== 'private' && location !== 'offline' }"
-                @click="handleShowWorldDialog">
-                <el-icon :class="['is-loading', 'inline-block']" style="margin-right: 3px" v-if="isTraveling"
-                    ><Loading
-                /></el-icon>
-                <span>{{ text }}</span>
-            </span>
-            <span v-if="groupName" :class="{ 'x-link': link }" @click="handleShowGroupDialog">({{ groupName }})</span>
-            <span
-                v-if="region"
-                :class="['flags', 'inline-block', 'ml-5', region, 'transform-[translateY(3px)]']"></span>
-            <NativeTooltip v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
+        <div v-if="!text" class="transparent">-</div>
+        <div v-show="text" class="flex items-center">
+            <div v-if="region" :class="['flags', 'mr-1.5', region]"></div>
+            <el-tooltip
+                :content="`${t('dialog.new_instance.instance_id')}: #${instanceName}`"
+                :disabled="!instanceName"
+                :show-after="300"
+                placement="top">
+                <div
+                    :class="['x-location', { 'x-link': link && location !== 'private' && location !== 'offline' }]"
+                    class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden"
+                    @click="handleShowWorldDialog">
+                    <el-icon :class="['is-loading']" class="mr-1" v-if="isTraveling"><Loading /></el-icon>
+                    <span class="min-w-0 truncate">{{ text }}</span>
+                    <span
+                        v-if="groupName"
+                        class="ml-0.5 whitespace-nowrap"
+                        :class="{ 'x-link': link }"
+                        @click.stop="handleShowGroupDialog">
+                        ({{ groupName }})
+                    </span>
+                </div>
+            </el-tooltip>
+            <el-tooltip v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
                 <el-icon :class="['inline-block', 'ml-5']" style="color: lightcoral"><WarnTriangleFilled /></el-icon>
-            </NativeTooltip>
+            </el-tooltip>
             <el-icon v-if="strict" :class="['inline-block', 'ml-5']"><Lock /></el-icon>
-        </span>
+        </div>
     </div>
 </template>
 
@@ -30,6 +39,7 @@
 
     import { useGroupStore, useInstanceStore, useSearchStore, useWorldStore } from '../stores';
     import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
+    import { accessTypeLocaleKeyMap } from '../shared/constants';
 
     const { t } = useI18n();
 
@@ -67,6 +77,7 @@
     const isTraveling = ref(false);
     const groupName = ref('');
     const isClosed = ref(false);
+    const instanceName = ref('');
 
     let isDisposed = false;
     onBeforeUnmount(() => {
@@ -108,7 +119,8 @@
             isTraveling.value = true;
         }
         const L = parseLocation(instanceId);
-        setText(L, L.instanceName);
+        setText(L);
+        instanceName.value = L.instanceName;
         if (!L.isRealInstance) {
             return;
         }
@@ -116,7 +128,8 @@
         const instanceRef = cachedInstances.get(L.tag);
         if (typeof instanceRef !== 'undefined') {
             if (instanceRef.displayName) {
-                setText(L, instanceRef.displayName);
+                setText(L);
+                instanceName.value = instanceRef.displayName;
             }
             if (instanceRef.closedAt) {
                 isClosed.value = true;
@@ -147,7 +160,9 @@
         strict.value = L.strict;
     }
 
-    function setText(L, instanceName) {
+    function setText(L) {
+        const accessTypeLabel = translateAccessType(L.accessTypeName);
+
         if (L.isOffline) {
             text.value = 'Offline';
         } else if (L.isPrivate) {
@@ -156,13 +171,13 @@
             text.value = 'Traveling';
         } else if (typeof props.hint === 'string' && props.hint !== '') {
             if (L.instanceId) {
-                text.value = `${props.hint} #${instanceName} ${L.accessTypeName}`;
+                text.value = `${props.hint} · ${accessTypeLabel}`;
             } else {
                 text.value = props.hint;
             }
         } else if (L.worldId) {
             if (L.instanceId) {
-                text.value = `${L.worldId} #${instanceName} ${L.accessTypeName}`;
+                text.value = `${L.worldId} · ${accessTypeLabel}`;
             } else {
                 text.value = L.worldId;
             }
@@ -172,7 +187,7 @@
                     .then((name) => {
                         if (!isDisposed && name && currentInstanceId() === L.tag) {
                             if (L.instanceId) {
-                                text.value = `${name} #${instanceName} ${L.accessTypeName}`;
+                                text.value = `${name} · ${translateAccessType(L.accessTypeName)}`;
                             } else {
                                 text.value = name;
                             }
@@ -182,11 +197,19 @@
                         console.error(e);
                     });
             } else if (L.instanceId) {
-                text.value = `${ref.name} #${instanceName} ${L.accessTypeName}`;
+                text.value = `${ref.name} · ${accessTypeLabel}`;
             } else {
                 text.value = ref.name;
             }
         }
+    }
+
+    function translateAccessType(accessTypeName) {
+        const key = accessTypeLocaleKeyMap[accessTypeName];
+        if (!key) {
+            return accessTypeName;
+        }
+        return t(key);
     }
 
     function handleShowWorldDialog() {
@@ -218,15 +241,13 @@
 </script>
 
 <style scoped>
-    .inline-block {
-        display: inline-block;
-    }
-
-    .ml-5 {
-        margin-left: 5px;
-    }
-
     .transparent {
         color: transparent;
+    }
+
+    :global(html.dark .x-location),
+    :global(:root.dark .x-location),
+    :global(:root[data-theme='dark'] .x-location) {
+        color: var(--color-zinc-300);
     }
 </style>

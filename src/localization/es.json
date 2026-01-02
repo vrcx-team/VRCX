@@ -1899,6 +1899,8 @@
         "notification": {
             "date": "Fecha",
             "type": "Tipo",
+            "user": "Usuario",
+            "group": "Grupo",
             "user_group": "Usuario/Grupo",
             "photo": "Foto",
             "message": "Mensaje",
