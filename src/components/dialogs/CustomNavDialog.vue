@@ -329,8 +329,9 @@
     );
 
     const openFolderEditor = (index) => {
-        folderEditor.isEditing = !!index;
-        folderEditor.index = folderEditor.isEditing ? index : -1;
+        const isEditing = index !== undefined && index !== null;
+        folderEditor.isEditing = isEditing;
+        folderEditor.index = isEditing ? index : -1;
         if (folderEditor.isEditing) {
             const entry = localLayout.value[index];
             folderEditor.data = {

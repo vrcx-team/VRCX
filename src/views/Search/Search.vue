@@ -16,7 +16,7 @@
                     @click="handleClearSearch"></el-button>
             </el-tooltip>
         </div>
-        <el-tabs ref="searchTabRef" type="card" style="margin-top: 15px" @tab-click="searchText = ''">
+        <el-tabs ref="searchTabRef" style="margin-top: 15px" @tab-click="searchText = ''">
             <el-tab-pane v-loading="isSearchUserLoading" :label="t('view.search.user.header')" style="min-height: 60px">
                 <el-checkbox v-model="searchUserByBio" style="margin-left: 10px">{{
                     t('view.search.user.search_by_bio')
@@ -221,12 +221,12 @@
                             <span
                                 v-if="avatar.releaseStatus === 'public'"
                                 class="extra"
-                                style="color: #67c23a"
+                                style="color: var(--el-color-success)"
                                 v-text="avatar.releaseStatus"></span>
                             <span
                                 v-else-if="avatar.releaseStatus === 'private'"
                                 class="extra"
-                                style="color: #f56c6c"
+                                style="color: var(--el-color-danger)"
                                 v-text="avatar.releaseStatus"></span>
                             <span v-else class="extra" v-text="avatar.releaseStatus"></span>
                             <span class="extra" v-text="avatar.authorName"></span>

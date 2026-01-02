@@ -1,6 +1,5 @@
 <template>
-    <div class="x-container">
-        <!-- 工具栏 -->
+    <div class="x-container" ref="friendLogRef">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <el-select
                 v-model="friendLogTable.filters[0].value"
@@ -40,27 +39,25 @@
                 </template>
             </el-table-column>
 
-            <el-table-column :label="t('table.friendLog.type')" prop="type" width="150">
+            <el-table-column :label="t('table.friendLog.type')" prop="type" width="200">
                 <template #default="scope">
-                    <span v-text="t('view.friend_log.filters.' + scope.row.type)"></span>
+                    <el-tag type="info" effect="plain" size="small"
+                        ><span v-text="t('view.friend_log.filters.' + scope.row.type)"></span
+                    ></el-tag>
                 </template>
             </el-table-column>
 
             <el-table-column :label="t('table.friendLog.user')" prop="displayName">
                 <template #default="scope">
-                    <span v-if="scope.row.type === 'DisplayName'">
-                        {{ scope.row.previousDisplayName }} <el-icon><Right /></el-icon>&nbsp;
-                    </span>
+                    <span v-if="scope.row.type === 'DisplayName'">{{ scope.row.previousDisplayName }} → </span>
                     <span
-                        class="x-link"
+                        class="x-link table-user"
                         style="padding-right: 10px"
                         @click="showUserDialog(scope.row.userId)"
-                        v-text="scope.row.displayName || scope.row.userId"></span>
+                        >{{ scope.row.displayName || scope.row.userId }}
+                    </span>
                     <template v-if="scope.row.type === 'TrustLevel'">
-                        <span>
-                            ({{ scope.row.previousTrustLevel }} <el-icon><Right /></el-icon>
-                            {{ scope.row.trustLevel }})</span
-                        >
+                        <span>({{ scope.row.previousTrustLevel }} → {{ scope.row.trustLevel }})</span>
                     </template>
                 </template>
             </el-table-column>
@@ -69,28 +66,27 @@
                 <template #default="scope">
                     <el-button
                         v-if="shiftHeld"
-                        style="color: #f56c6c"
+                        style="color: var(--el-color-danger)"
                         text
                         :icon="Close"
                         size="small"
                         class="button-pd-0"
                         @click="deleteFriendLog(scope.row)"></el-button>
-                    <el-button
+                    <i
                         v-else
-                        text
-                        :icon="Delete"
-                        size="small"
-                        class="button-pd-0"
-                        @click="deleteFriendLogPrompt(scope.row)"></el-button>
+                        class="ri-delete-bin-line"
+                        style="opacity: 0.85"
+                        @click="deleteFriendLogPrompt(scope.row)"></i>
                 </template>
             </el-table-column>
+            <el-table-column width="5"></el-table-column>
         </DataTable>
     </div>
 </template>
 
 <script setup>
-    import { Close, Delete, Right } from '@element-plus/icons-vue';
     import { computed, watch } from 'vue';
+    import { Close } from '@element-plus/icons-vue';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -100,6 +96,7 @@
     import { useAppearanceSettingsStore, useFriendStore, useUiStore, useUserStore } from '../../stores';
     import { formatDateFilter, removeFromArray } from '../../shared/utils';
     import { database } from '../../service/database';
+    import { useTableHeight } from '../../composables/useTableHeight';
 
     import configRepository from '../../service/config';
 
@@ -107,6 +104,8 @@
     const { showUserDialog } = useUserStore();
     const { friendLogTable } = storeToRefs(useFriendStore());
     const { shiftHeld } = storeToRefs(useUiStore());
+
+    const { containerRef: friendLogRef } = useTableHeight(friendLogTable);
 
     const friendLogDisplayData = computed(() => {
         const data = friendLogTable.value.data;
@@ -159,5 +158,8 @@
 <style scoped>
     .button-pd-0 {
         padding: 0 !important;
+    }
+    .table-user {
+        color: var(--x-table-user-text-color);
     }
 </style>

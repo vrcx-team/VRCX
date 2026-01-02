@@ -1,5 +1,5 @@
 <template>
-    <div class="mutual-graph">
+    <div class="mutual-graph pt-12" ref="mutualGraphRef">
         <div class="options-container mutual-graph__toolbar">
             <div class="mutual-graph__actions">
                 <el-tooltip :content="t('view.charts.mutual_friend.force_dialog.open_label')" placement="top">
@@ -207,6 +207,20 @@
         return parsed.invalid ? null : parsed.value;
     };
 
+    const mutualGraphRef = ref(null);
+
+    const mutualGraphResizeObserver = new ResizeObserver(() => {
+        setMutualGraphHeight();
+    });
+
+    function setMutualGraphHeight() {
+        if (mutualGraphRef.value) {
+            const availableHeight = window.innerHeight - 100;
+            mutualGraphRef.value.style.height = `${availableHeight}px`;
+            mutualGraphRef.value.style.overflowY = 'auto';
+        }
+    }
+
     onMounted(() => {
         nextTick(() => {
             if (!chartRef.value) {
@@ -215,6 +229,8 @@
             createChartInstance();
             resizeObserver = new ResizeObserver(() => chartInstance?.resize());
             resizeObserver.observe(chartRef.value);
+            mutualGraphResizeObserver.observe(mutualGraphRef.value);
+            setMutualGraphHeight();
         });
     });
 
@@ -226,6 +242,9 @@
         if (chartInstance) {
             chartInstance.dispose();
             chartInstance = null;
+        }
+        if (mutualGraphResizeObserver) {
+            mutualGraphResizeObserver.disconnect();
         }
     });
 
@@ -676,8 +695,8 @@
         display: flex;
         justify-content: flex-end;
         align-items: center;
-        margin-top: 0;
-        margin-bottom: 8px;
+        margin-top: 8px;
+        margin-bottom: 0;
         background: transparent;
         border: none;
         box-shadow: none;

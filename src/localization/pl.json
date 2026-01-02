@@ -2225,6 +2225,8 @@
         "notification": {
             "date": "Data",
             "type": "Typ",
+            "user": "Użytkownik",
+            "group": "Grupa",
             "user_group": "Użytkownik/Grupa",
             "photo": "Obrazek",
             "message": "Wiadomość",

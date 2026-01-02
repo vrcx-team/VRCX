@@ -115,11 +115,18 @@
                     <el-option v-for="size in tablePageSizes" :key="size" :label="String(size)" :value="String(size)" />
                 </el-select>
             </div>
+            <simple-switch
+                :label="t('view.settings.appearance.appearance.compact_table_mode')"
+                :value="compactTableMode"
+                @change="setCompactTableMode" />
             <div class="options-container-item">
                 <el-button size="small" :icon="Notebook" style="margin-right: 10px" @click="promptMaxTableSizeDialog">{{
                     t('view.settings.appearance.appearance.table_max_size')
                 }}</el-button>
             </div>
+        </div>
+        <div class="options-container">
+            <ThemePicker />
         </div>
         <div class="options-container">
             <span class="header">{{ t('view.settings.appearance.timedate.header') }}</span>
@@ -387,6 +394,7 @@
     import { getLanguageName, languageCodes } from '../../../../localization';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
+    import ThemePicker from '../ThemePicker.vue';
 
     const { t } = useI18n();
 
@@ -415,7 +423,8 @@
         randomUserColours,
         trustColor,
         notificationIconDot,
-        tablePageSizes
+        tablePageSizes,
+        compactTableMode
     } = storeToRefs(appearanceSettingsStore);
 
     const { saveSortFavoritesOption } = useFavoriteStore();
@@ -441,7 +450,8 @@
         changeAppLanguage,
         promptMaxTableSizeDialog,
         setNotificationIconDot,
-        setTablePageSizes
+        setTablePageSizes,
+        setCompactTableMode
     } = appearanceSettingsStore;
 
     const zoomLevel = ref(100);

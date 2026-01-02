@@ -5,7 +5,7 @@
         :title="t('dialog.new_instance.header')"
         width="650px"
         append-to-body>
-        <el-tabs v-model="newInstanceDialog.selectedTab" type="card" @tab-click="newInstanceTabClick">
+        <el-tabs v-model="newInstanceDialog.selectedTab" @tab-click="newInstanceTabClick">
             <el-tab-pane name="Normal" :label="t('dialog.new_instance.normal')">
                 <el-form :model="newInstanceDialog" label-width="150px">
                     <el-form-item :label="t('dialog.new_instance.access_type')">

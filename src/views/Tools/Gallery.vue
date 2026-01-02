@@ -1,11 +1,11 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="galleryDialogVisible"
-        :title="t('dialog.gallery_icons.header')"
-        width="97vw"
-        append-to-body
-        @close="closeGalleryDialog">
+    <div class="gallery-page x-container">
+        <div class="gallery-page__header">
+            <el-button text size="small" :icon="ArrowLeft" class="gallery-page__back" @click="goBack">
+                {{ t('nav_tooltip.tools') }}
+            </el-button>
+            <span class="header">{{ t('dialog.gallery_icons.header') }}</span>
+        </div>
         <el-progress
             v-if="isUploading"
             :show-text="false"
@@ -13,14 +13,12 @@
             :percentage="100"
             :stroke-width="3"
             style="margin-bottom: 12px" />
-        <el-tabs type="card" ref="galleryTabs">
+        <el-tabs>
             <el-tab-pane v-loading="galleryDialogGalleryLoading">
                 <template #label>
                     <span>
                         {{ t('dialog.gallery_icons.gallery') }}
-                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
-                            {{ galleryTable.length }}/64
-                        </span>
+                        <span class="gallery-tab-count"> {{ galleryTable.length }}/64 </span>
                     </span>
                 </template>
                 <input
@@ -92,9 +90,7 @@
                 <template #label>
                     <span>
                         {{ t('dialog.gallery_icons.icons') }}
-                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
-                            {{ VRCPlusIconsTable.length }}/64
-                        </span>
+                        <span class="gallery-tab-count"> {{ VRCPlusIconsTable.length }}/64 </span>
                     </span>
                 </template>
                 <input
@@ -166,7 +162,7 @@
                 <template #label>
                     <span>
                         {{ t('dialog.gallery_icons.emojis') }}
-                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                        <span class="gallery-tab-count">
                             {{ emojiTable.length }}/{{ cachedConfig?.maxUserEmoji }}
                         </span>
                     </span>
@@ -308,7 +304,7 @@
                 <template #label>
                     <span>
                         {{ t('dialog.gallery_icons.stickers') }}
-                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                        <span class="gallery-tab-count">
                             {{ stickerTable.length }}/{{ cachedConfig?.maxUserStickers }}
                         </span>
                     </span>
@@ -374,9 +370,7 @@
                 <template #label>
                     <span>
                         {{ t('dialog.gallery_icons.prints') }}
-                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
-                            {{ printTable.length }}/64
-                        </span>
+                        <span class="gallery-tab-count"> {{ printTable.length }}/64 </span>
                     </span>
                 </template>
                 <input
@@ -438,16 +432,12 @@
                             style="display: block" />
                         <span v-else style="display: block">&nbsp;</span>
                         <DisplayName
-                            class="x-ellipsis"
+                            class="x-ellipsis gallery-meta"
                             v-if="image.authorId"
                             :userid="image.authorId"
-                            :hint="image.authorName"
-                            style="color: #909399; font-family: monospace; display: block" />
-                        <span v-else style="font-family: monospace; display: block">&nbsp;</span>
-                        <span
-                            class="x-ellipsis"
-                            v-if="image.createdAt"
-                            style="color: #909399; font-family: monospace; font-size: 11px; display: block">
+                            :hint="image.authorName" />
+                        <span v-else class="gallery-meta">&nbsp;</span>
+                        <span v-if="image.createdAt" class="x-ellipsis gallery-meta gallery-meta--small">
                             {{ formatDateFilter(image.createdAt, 'long') }}
                         </span>
                         <span v-else style="display: block">&nbsp;</span>
@@ -474,7 +464,7 @@
                 <template #label>
                     <span>
                         {{ t('dialog.gallery_icons.inventory') }}
-                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                        <span class="gallery-tab-count">
                             {{ inventoryTable.length }}
                         </span>
                     </span>
@@ -508,9 +498,7 @@
                             v-text="item.description"
                             style="display: block"></span>
                         <span v-else style="display: block">&nbsp;</span>
-                        <span
-                            class="x-ellipsis"
-                            style="color: #909399; font-family: monospace; font-size: 11px; display: block">
+                        <span class="x-ellipsis gallery-meta gallery-meta--small">
                             {{ formatDateFilter(item.created_at, 'long') }}
                         </span>
                         <span v-if="item.itemType === 'prop'">{{ t('dialog.gallery_icons.item') }}</span>
@@ -533,15 +521,16 @@
                 </div>
             </el-tab-pane>
         </el-tabs>
-    </el-dialog>
+    </div>
 </template>
 
 <script setup>
-    import { Close, Delete, Link, Picture, Plus, Present, Refresh, Upload } from '@element-plus/icons-vue';
+    import { ArrowLeft, Close, Delete, Link, Picture, Plus, Present, Refresh, Upload } from '@element-plus/icons-vue';
+    import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
-    import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+    import { useRouter } from 'vue-router';
 
     import {
         extractFileId,
@@ -549,16 +538,17 @@
         getEmojiFileName,
         getPrintFileName,
         openExternalLink
-    } from '../../../shared/utils';
-    import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../../api';
-    import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../../stores';
-    import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../shared/constants';
-    import { AppDebug } from '../../../service/appConfig';
-    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
+    } from '../../shared/utils';
+    import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../api';
+    import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../stores';
+    import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../shared/constants';
+    import { AppDebug } from '../../service/appConfig';
+    import { handleImageUploadInput } from '../../shared/utils/imageUpload';
 
-    import Emoji from '../../../components/Emoji.vue';
+    import Emoji from '../../components/Emoji.vue';
 
     const { t } = useI18n();
+    const router = useRouter();
 
     const {
         galleryTable,
@@ -578,6 +568,7 @@
         inventoryTable
     } = storeToRefs(useGalleryStore());
     const {
+        loadGalleryData,
         refreshGalleryTable,
         refreshVRCPlusIconsTable,
         refreshStickerTable,
@@ -602,6 +593,15 @@
     const pendingUploads = ref(0);
     const isUploading = computed(() => pendingUploads.value > 0);
 
+    onMounted(() => {
+        galleryDialogVisible.value = true;
+        loadGalleryData();
+    });
+
+    onBeforeUnmount(() => {
+        galleryDialogVisible.value = false;
+    });
+
     function startUpload() {
         pendingUploads.value += 1;
     }
@@ -610,8 +610,9 @@
         pendingUploads.value = Math.max(0, pendingUploads.value - 1);
     }
 
-    function closeGalleryDialog() {
+    function goBack() {
         galleryDialogVisible.value = false;
+        router.push({ name: 'tools' });
     }
 
     function onFileChangeGallery(e) {
@@ -1116,3 +1117,32 @@
             .catch(() => {});
     }
 </script>
+
+<style scoped>
+    .gallery-page__header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .gallery-tab-count {
+        color: var(--el-text-color-secondary);
+        font-size: 12px;
+        margin-left: 5px;
+    }
+
+    .gallery-meta {
+        color: var(--el-text-color-secondary);
+        font-family: monospace;
+        display: block;
+    }
+
+    .gallery-meta--small {
+        font-size: 11px;
+    }
+
+    .gallery-page__back {
+        padding-left: 0;
+    }
+</style>

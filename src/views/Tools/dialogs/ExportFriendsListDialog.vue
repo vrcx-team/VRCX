@@ -1,6 +1,6 @@
 <template>
     <el-dialog :title="t('dialog.export_friends_list.header')" v-model="isVisible" width="650px">
-        <el-tabs type="card">
+        <el-tabs>
             <el-tab-pane :label="t('dialog.export_friends_list.csv')">
                 <el-input
                     v-model="exportFriendsListCsv"

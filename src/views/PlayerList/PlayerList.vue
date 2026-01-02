@@ -1,7 +1,7 @@
 <template>
-    <div class="x-container" style="padding-top: 5px">
+    <div class="x-container" ref="playerListRef">
         <div style="display: flex; flex-direction: column; height: 100%">
-            <div v-if="currentInstanceWorld.ref.id" style="display: flex">
+            <div v-if="currentInstanceWorld.ref.id" style="display: flex; height: 120px">
                 <img
                     :src="currentInstanceWorld.ref.thumbnailImageUrl"
                     class="x-link"
@@ -139,27 +139,8 @@
                     <div style="margin-top: 5px">
                         <span
                             v-show="currentInstanceWorld.ref.name !== currentInstanceWorld.ref.description"
-                            :style="{
-                                fontSize: '12px',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                display: '-webkit-box',
-                                WebkitBoxOrient: 'vertical',
-                                WebkitLineClamp: currentInstanceWorldDescriptionExpanded ? 'none' : '2'
-                            }"
+                            class="description"
                             v-text="currentInstanceWorld.ref.description"></span>
-                        <div style="display: flex; justify-content: end">
-                            <el-button
-                                v-if="
-                                    currentInstanceWorld.ref.description.length > 50 &&
-                                    !currentInstanceWorldDescriptionExpanded
-                                "
-                                text
-                                size="small"
-                                @click="currentInstanceWorldDescriptionExpanded = true"
-                                >{{ !currentInstanceWorldDescriptionExpanded && 'Show more' }}</el-button
-                            >
-                        </div>
                     </div>
                 </div>
                 <div style="display: flex; flex-direction: column; margin-left: 20px">
@@ -200,29 +181,59 @@
                     layout="table"
                     style="margin-top: 10px; cursor: pointer"
                     @row-click="selectCurrentInstanceRow">
-                    <el-table-column :label="t('table.playerList.avatar')" width="70" prop="photo">
+                    <el-table-column :label="t('table.playerList.avatar')" width="70" prop="photo" fixed>
                         <template #default="scope">
-                            <template v-if="userImage(scope.row.ref)">
-                                <el-popover placement="right" :width="500" trigger="hover">
-                                    <template #reference>
-                                        <img
-                                            :src="userImage(scope.row.ref)"
-                                            class="friends-list-avatar"
-                                            loading="lazy" />
-                                    </template>
-                                    <img
-                                        :src="userImageFull(scope.row.ref)"
-                                        :class="['friends-list-avatar', 'x-popover-image']"
-                                        style="cursor: pointer"
-                                        @click="showFullscreenImageDialog(userImageFull(scope.row.ref))"
-                                        loading="lazy" />
-                                </el-popover>
-                            </template>
+                            <div v-if="userImage(scope.row.ref)" class="flex items-center pl-2">
+                                <img :src="userImage(scope.row.ref)" class="friends-list-avatar" loading="lazy" />
+                            </div>
                         </template>
                     </el-table-column>
-                    <el-table-column :label="t('table.playerList.timer')" width="90" prop="timer" sortable>
+                    <el-table-column :label="t('table.playerList.timer')" width="90" prop="timer" sortable fixed>
                         <template #default="scope">
                             <Timer :epoch="scope.row.timer" />
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        class="table-user"
+                        :label="t('table.playerList.displayName')"
+                        width="200"
+                        prop="displayName"
+                        sortable
+                        :sort-method="(a, b) => sortAlphabetically(a, b, 'displayName')"
+                        fixed>
+                        <template #default="scope">
+                            <span
+                                v-if="randomUserColours"
+                                :style="{ color: scope.row.ref.$userColour }"
+                                v-text="scope.row.ref.displayName"></span>
+                            <span v-else v-text="scope.row.ref.displayName"></span>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column
+                        :label="t('table.playerList.rank')"
+                        width="110"
+                        prop="$trustSortNum"
+                        :sortable="true">
+                        <template #default="scope">
+                            <span
+                                class="name"
+                                :class="scope.row.ref.$trustClass"
+                                v-text="scope.row.ref.$trustLevel"></span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column :label="t('table.playerList.status')" min-width="200" prop="ref.status">
+                        <template #default="scope">
+                            <template v-if="scope.row.ref.status">
+                                <i
+                                    class="x-user-status"
+                                    :class="statusClass(scope.row.ref.status)"
+                                    style="margin-right: 3px"></i>
+                                <span v-text="scope.row.ref.statusDescription"></span>
+                                <!--//- el-table-column(label="Group" min-width="180" prop="groupOnNameplate" sortable)-->
+                                <!--//-     template(v-once #default="scope")-->
+                                <!--//-         span(v-text="scope.row.groupOnNameplate")-->
+                            </template>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -277,20 +288,20 @@
                                 <el-icon style="color: red"><CircleClose /></el-icon>
                             </el-tooltip>
                             <el-tooltip v-if="scope.row.isMuted" placement="left" content="Muted">
-                                <el-icon style="color: orange"><Mute /></el-icon>
+                                <el-icon style="color: var(--el-color-warning)"><Mute /></el-icon>
                             </el-tooltip>
                             <el-tooltip
                                 v-if="scope.row.isAvatarInteractionDisabled"
                                 placement="left"
                                 content="Avatar Interaction Disabled
                                     ">
-                                <el-icon style="color: orange"><Pointer /></el-icon>
+                                <el-icon style="color: var(--el-color-warning)"><Pointer /></el-icon>
                             </el-tooltip>
                             <el-tooltip v-if="scope.row.isChatBoxMuted" placement="left" content="Chatbox Muted">
-                                <el-icon style="color: orange"><ChatLineRound /></el-icon>
+                                <el-icon style="color: var(--el-color-warning)"><ChatLineRound /></el-icon>
                             </el-tooltip>
                             <el-tooltip v-if="scope.row.timeoutTime" placement="left" content="Timeout">
-                                <span style="color: red">🔴{{ scope.row.timeoutTime }}s</span>
+                                <span style="color: var(--el-color-danger)">🔴{{ scope.row.timeoutTime }}s</span>
                             </el-tooltip>
                             <el-tooltip v-if="scope.row.ageVerified" placement="left" content="18+ Verified">
                                 <i class="ri-id-card-line"></i>
@@ -300,13 +311,17 @@
                     <el-table-column :label="t('table.playerList.platform')" prop="inVRMode" width="90">
                         <template #default="scope">
                             <template v-if="scope.row.ref.$platform">
-                                <span v-if="scope.row.ref.$platform === 'standalonewindows'" style="color: #409eff"
+                                <span
+                                    v-if="scope.row.ref.$platform === 'standalonewindows'"
+                                    style="color: var(--el-color-primary)"
                                     ><i class="ri-computer-line"></i
                                 ></span>
-                                <span v-else-if="scope.row.ref.$platform === 'android'" style="color: #67c23a"
+                                <span
+                                    v-else-if="scope.row.ref.$platform === 'android'"
+                                    style="color: var(--el-color-success)"
                                     ><i class="ri-android-line"></i
                                 ></span>
-                                <span v-else-if="scope.row.ref.$platform === 'ios'" style="color: #c7c7ce"
+                                <span v-else-if="scope.row.ref.$platform === 'ios'" style="color: var(--el-color-info)"
                                     ><i class="ri-apple-line"></i
                                 ></span>
                                 <span v-else>{{ scope.row.ref.$platform }}</span>
@@ -322,46 +337,6 @@
                                 >
                                 <span v-else>D</span>
                             </template>
-                        </template>
-                    </el-table-column>
-                    <el-table-column
-                        :label="t('table.playerList.displayName')"
-                        min-width="140"
-                        prop="displayName"
-                        sortable
-                        :sort-method="(a, b) => sortAlphabetically(a, b, 'displayName')">
-                        <template #default="scope">
-                            <span
-                                v-if="randomUserColours"
-                                :style="{ color: scope.row.ref.$userColour }"
-                                v-text="scope.row.ref.displayName"></span>
-                            <span v-else v-text="scope.row.ref.displayName"></span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column :label="t('table.playerList.status')" min-width="180" prop="ref.status">
-                        <template #default="scope">
-                            <template v-if="scope.row.ref.status">
-                                <i
-                                    class="x-user-status"
-                                    :class="statusClass(scope.row.ref.status)"
-                                    style="margin-right: 3px"></i>
-                                <span v-text="scope.row.ref.statusDescription"></span>
-                                <!--//- el-table-column(label="Group" min-width="180" prop="groupOnNameplate" sortable)-->
-                                <!--//-     template(v-once #default="scope")-->
-                                <!--//-         span(v-text="scope.row.groupOnNameplate")-->
-                            </template>
-                        </template>
-                    </el-table-column>
-                    <el-table-column
-                        :label="t('table.playerList.rank')"
-                        width="110"
-                        prop="$trustSortNum"
-                        :sortable="true">
-                        <template #default="scope">
-                            <span
-                                class="name"
-                                :class="scope.row.ref.$trustClass"
-                                v-text="scope.row.ref.$trustLevel"></span>
                         </template>
                     </el-table-column>
                     <el-table-column :label="t('table.playerList.language')" width="100" prop="ref.$languages">
@@ -401,7 +376,7 @@
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column :label="t('table.playerList.note')" width="150" prop="ref.note">
+                    <el-table-column :label="t('table.playerList.note')" width="400" prop="ref.note">
                         <template #default="scope">
                             <span v-text="scope.row.ref.note"></span>
                         </template>
@@ -417,7 +392,7 @@
 
 <script setup>
     import { ChatLineRound, CircleClose, HomeFilled, Microphone, Mute, Pointer } from '@element-plus/icons-vue';
-    import { defineAsyncComponent, ref } from 'vue';
+    import { computed, defineAsyncComponent, onMounted, onUnmounted, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -428,8 +403,7 @@
         languageClass,
         openExternalLink,
         statusClass,
-        userImage,
-        userImageFull
+        userImage
     } from '../../shared/utils';
     import {
         useAppearanceSettingsStore,
@@ -437,7 +411,6 @@
         useInstanceStore,
         useLocationStore,
         usePhotonStore,
-        useUiStore,
         useUserStore,
         useWorldStore
     } from '../../stores';
@@ -459,14 +432,69 @@
     const { showFullscreenImageDialog } = useGalleryStore();
     const { currentUser } = storeToRefs(useUserStore());
 
+    const playerListRef = ref(null);
+    const tableHeight = ref(0);
+
+    onMounted(() => {
+        if (playerListRef.value) {
+            resizeObserver.observe(playerListRef.value);
+        }
+    });
+
+    const resizeObserver = new ResizeObserver(() => {
+        setPlayerListTableHeight();
+    });
+
+    function setPlayerListTableHeight() {
+        if (currentInstanceWorld.value.ref.id) {
+            tableHeight.value = playerListRef.value.clientHeight - 110;
+            return;
+        }
+        if (currentInstanceUsersTable.value.data.length === 0) {
+            tableHeight.value = playerListRef.value.clientHeight;
+            return;
+        }
+        if (playerListRef.value) {
+            tableHeight.value = playerListRef.value.clientHeight - 110;
+        }
+    }
+
+    watch(
+        () => currentInstanceWorld.value.ref.id,
+        () => {
+            setPlayerListTableHeight();
+        }
+    );
+
+    onUnmounted(() => {
+        resizeObserver.disconnect();
+    });
+
+    const compactCellStyle = () => ({
+        padding: '4px 10px'
+    });
+
+    const compactInstanceUsersTable = computed(() => {
+        const baseTableConfig = currentInstanceUsersTable.value;
+        const tableProps = baseTableConfig.tableProps || {};
+
+        return {
+            ...baseTableConfig,
+            tableProps: {
+                ...tableProps,
+                cellStyle: compactCellStyle,
+                headerCellStyle: compactCellStyle,
+                height: tableHeight.value
+            }
+        };
+    });
+
     const { t } = useI18n();
 
     const chatboxBlacklistDialog = ref({
         visible: false,
         loading: false
     });
-
-    const currentInstanceWorldDescriptionExpanded = ref(false);
 
     function showChatboxBlacklistDialog() {
         const D = chatboxBlacklistDialog.value;
@@ -517,3 +545,26 @@
         return a[field].toLowerCase().localeCompare(b[field].toLowerCase());
     }
 </script>
+
+<style>
+    .description {
+        font-size: 12px;
+        display: inline-block;
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+    }
+    #x-app .current-instance-table .el-table .el-table__cell {
+        padding: 3px 10px !important;
+    }
+    .table-user {
+        color: var(--x-table-user-text-color);
+    }
+    .friends-list-avatar {
+        width: 16px !important;
+        height: 16px !important;
+        object-fit: cover;
+    }
+</style>

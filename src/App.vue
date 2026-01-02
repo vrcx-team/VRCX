@@ -56,11 +56,7 @@
     });
 </script>
 
-<style lang="scss" scoped>
-    :deep(.el-splitter-bar__dragger) {
-        width: 4px !important;
-    }
-
+<style scoped>
     /* Add title bar spacing for macOS */
     .x-app.with-macos-titlebar {
         padding-top: 28px;

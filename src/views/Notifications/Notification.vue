@@ -1,5 +1,5 @@
 <template>
-    <div v-loading="isNotificationsLoading" class="x-container">
+    <div v-loading="isNotificationsLoading" class="x-container" ref="notificationsRef">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <el-select
                 v-model="notificationTable.filters[0].value"
@@ -54,7 +54,7 @@
             :data="notificationDisplayData"
             ref="notificationTableRef"
             class="notification-table">
-            <el-table-column :label="t('table.notification.date')" prop="created_at" width="130">
+            <el-table-column :label="t('table.notification.date')" prop="created_at" width="110">
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>
@@ -67,89 +67,121 @@
 
             <el-table-column :label="t('table.notification.type')" prop="type" width="180">
                 <template #default="scope">
-                    <span
-                        v-if="scope.row.type === 'invite'"
-                        class="x-link"
-                        @click="showWorldDialog(scope.row.details.worldId)"
-                        v-text="t('view.notification.filters.' + scope.row.type)"></span>
-                    <el-tooltip
-                        v-else-if="scope.row.type === 'group.queueReady' || scope.row.type === 'instance.closed'"
-                        placement="top">
-                        <template #content>
-                            <Location
-                                v-if="scope.row.location"
-                                :location="scope.row.location"
-                                :hint="scope.row.worldName"
-                                :grouphint="scope.row.groupName"
-                                :link="false" />
-                        </template>
+                    <el-tag type="info" effect="plain" size="small">
                         <span
-                            class="x-link"
-                            @click="showWorldDialog(scope.row.location)"
+                            v-if="scope.row.type === 'invite'"
                             v-text="t('view.notification.filters.' + scope.row.type)"></span>
-                    </el-tooltip>
-                    <el-tooltip v-else-if="scope.row.link" placement="top" :content="scope.row.linkText">
-                        <span
-                            class="x-link"
-                            @click="openNotificationLink(scope.row.link)"
-                            v-text="t('view.notification.filters.' + scope.row.type)"></span>
-                    </el-tooltip>
-                    <span v-else v-text="t('view.notification.filters.' + scope.row.type)"></span>
+                        <el-tooltip
+                            v-else-if="scope.row.type === 'group.queueReady' || scope.row.type === 'instance.closed'"
+                            placement="top">
+                            <template #content>
+                                <Location
+                                    v-if="scope.row.location"
+                                    :location="scope.row.location"
+                                    :hint="scope.row.worldName"
+                                    :grouphint="scope.row.groupName"
+                                    :link="false" />
+                            </template>
+                            <span
+                                class="x-link"
+                                @click="showWorldDialog(scope.row.location)"
+                                v-text="t('view.notification.filters.' + scope.row.type)"></span>
+                        </el-tooltip>
+                        <el-tooltip v-else-if="scope.row.link" placement="top" :content="scope.row.linkText">
+                            <span
+                                class="x-link"
+                                @click="openNotificationLink(scope.row.link)"
+                                v-text="t('view.notification.filters.' + scope.row.type)"></span>
+                        </el-tooltip>
+                        <span v-else v-text="t('view.notification.filters.' + scope.row.type)"></span>
+                    </el-tag>
                 </template>
             </el-table-column>
 
-            <el-table-column :label="t('table.notification.user_group')" prop="senderUsername" width="150">
+            <el-table-column :label="t('table.notification.user')" prop="senderUsername" width="150">
                 <template #default="scope">
-                    <template v-if="scope.row.type === 'groupChange'">
-                        <span
-                            class="x-link"
-                            @click="showGroupDialog(scope.row.senderUserId)"
-                            v-text="scope.row.senderUsername"></span>
-                    </template>
-                    <template v-else-if="scope.row.senderUserId">
-                        <span
-                            class="x-link"
-                            @click="showUserDialog(scope.row.senderUserId)"
-                            v-text="scope.row.senderUsername"></span>
-                    </template>
-                    <template v-else-if="scope.row.link && scope.row.data?.groupName">
-                        <span
-                            class="x-link"
-                            @click="openNotificationLink(scope.row.link)"
-                            v-text="scope.row.data?.groupName"></span>
-                    </template>
-                    <template v-else-if="scope.row.link">
-                        <span
-                            class="x-link"
-                            @click="openNotificationLink(scope.row.link)"
-                            v-text="scope.row.linkText"></span>
-                    </template>
+                    <div class="table-user-text">
+                        <template v-if="scope.row.senderUserId && !isGroupId(scope.row.senderUserId)">
+                            <span
+                                class="x-link"
+                                @click="showUserDialog(scope.row.senderUserId)"
+                                v-text="scope.row.senderUsername"></span>
+                        </template>
+                        <template v-else-if="scope.row.link?.startsWith('user:')">
+                            <span
+                                class="x-link"
+                                @click="openNotificationLink(scope.row.link)"
+                                v-text="scope.row.linkText || scope.row.senderUsername"></span>
+                        </template>
+                        <template v-else-if="scope.row.senderUsername && !isGroupId(scope.row.senderUserId)">
+                            <span v-text="scope.row.senderUsername"></span>
+                        </template>
+                    </div>
                 </template>
             </el-table-column>
 
-            <el-table-column :label="t('table.notification.photo')" width="100" prop="photo">
+            <el-table-column :label="t('table.notification.group')" prop="groupName" width="150">
+                <template #default="scope">
+                    <div class="table-user-text">
+                        <template
+                            v-if="
+                                scope.row.senderUserId &&
+                                (scope.row.type === 'groupChange' || isGroupId(scope.row.senderUserId))
+                            ">
+                            <span
+                                class="x-link"
+                                @click="showGroupDialog(scope.row.senderUserId)"
+                                v-text="scope.row.senderUsername || scope.row.groupName"></span>
+                        </template>
+                        <template v-else-if="scope.row.type === 'groupChange' && scope.row.senderUsername">
+                            <span v-text="scope.row.senderUsername"></span>
+                        </template>
+                        <template v-else-if="scope.row.link?.startsWith('group:')">
+                            <span
+                                class="x-link"
+                                @click="openNotificationLink(scope.row.link)"
+                                v-text="scope.row.data?.groupName || scope.row.linkText"></span>
+                        </template>
+                        <template v-else-if="scope.row.link?.startsWith('event:')">
+                            <span
+                                class="x-link"
+                                @click="openNotificationLink(scope.row.link)"
+                                v-text="scope.row.data?.groupName || scope.row.groupName || scope.row.linkText"></span>
+                        </template>
+                        <template v-else-if="scope.row.data?.groupName">
+                            <span v-text="scope.row.data.groupName"></span>
+                        </template>
+                        <template v-else-if="scope.row.details?.groupName">
+                            <span v-text="scope.row.details.groupName"></span>
+                        </template>
+                        <template v-else-if="scope.row.groupName">
+                            <span v-text="scope.row.groupName"></span>
+                        </template>
+                    </div>
+                </template>
+            </el-table-column>
+
+            <el-table-column :label="t('table.notification.photo')" width="80" prop="photo">
                 <template #default="scope">
                     <template v-if="scope.row.type === 'boop'">
                         <Emoji
-                            class="x-link"
+                            class="x-link notification-image"
                             @click="showFullscreenImageDialog(scope.row.details.imageUrl)"
                             v-if="scope.row.details?.imageUrl && !scope.row.details.imageUrl.startsWith('default_')"
                             :imageUrl="scope.row.details.imageUrl"
-                            :size="50"></Emoji>
+                            :size="30"></Emoji>
                     </template>
                     <template v-else-if="scope.row.details && scope.row.details.imageUrl">
                         <img
-                            class="x-link"
+                            class="x-link notification-image"
                             :src="getSmallThumbnailUrl(scope.row.details.imageUrl)"
-                            style="flex: none; height: 50px; border-radius: 4px"
                             @click="showFullscreenImageDialog(scope.row.details.imageUrl)"
                             loading="lazy" />
                     </template>
                     <template v-else-if="scope.row.imageUrl">
                         <img
-                            class="x-link"
+                            class="x-link notification-image"
                             :src="getSmallThumbnailUrl(scope.row.imageUrl)"
-                            style="flex: none; height: 50px; border-radius: 4px"
                             @click="showFullscreenImageDialog(scope.row.imageUrl)"
                             loading="lazy" />
                     </template>
@@ -193,7 +225,7 @@
                                 <el-button
                                     text
                                     :icon="Check"
-                                    style="color: #67c23a"
+                                    style="color: var(--el-color-success)"
                                     size="small"
                                     class="button-pd-0"
                                     @click="acceptFriendRequestNotification(scope.row)" />
@@ -216,7 +248,7 @@
                                     <el-button
                                         text
                                         :icon="Check"
-                                        style="color: #67c23a"
+                                        style="color: var(--el-color-success)"
                                         size="small"
                                         class="button-pd-0"
                                         @click="acceptRequestInvite(scope.row)" />
@@ -321,7 +353,7 @@
                             <el-tooltip placement="top" content="Decline">
                                 <el-button
                                     v-if="shiftHeld"
-                                    style="color: #f56c6c"
+                                    style="color: var(--el-color-danger)"
                                     text
                                     :icon="Close"
                                     size="small"
@@ -341,7 +373,7 @@
                         <el-tooltip placement="top" content="Delete log">
                             <el-button
                                 v-if="shiftHeld"
-                                style="color: #f56c6c"
+                                style="color: var(--el-color-danger)"
                                 text
                                 :icon="Delete"
                                 size="small"
@@ -367,7 +399,7 @@
                         <el-tooltip placement="top" content="Delete log">
                             <el-button
                                 v-if="shiftHeld"
-                                style="color: #f56c6c; margin-left: 5px"
+                                style="color: var(--el-color-danger); margin-left: 5px"
                                 text
                                 :icon="Close"
                                 size="small"
@@ -384,6 +416,7 @@
                     </template>
                 </template>
             </el-table-column>
+            <el-table-column width="5"></el-table-column>
         </DataTable>
         <SendInviteResponseDialog
             v-model:send-invite-response-dialog="sendInviteResponseDialog"
@@ -435,6 +468,7 @@
     } from '../../shared/utils';
     import { friendRequest, notificationRequest, worldRequest } from '../../api';
     import { database } from '../../service/database';
+    import { useTableHeight } from '../../composables/useTableHeight';
 
     import Emoji from '../../components/Emoji.vue';
     import SendInviteRequestResponseDialog from './dialogs/SendInviteRequestResponseDialog.vue';
@@ -455,6 +489,8 @@
     const { shiftHeld } = storeToRefs(useUiStore());
 
     const { t } = useI18n();
+
+    const { containerRef: notificationsRef } = useTableHeight(notificationTable);
 
     function getNotificationCreatedAt(row) {
         if (typeof row?.created_at === 'string' && row.created_at.length > 0) {
@@ -500,6 +536,8 @@
     const sendInviteResponseDialogVisible = ref(false);
 
     const sendInviteRequestResponseDialogVisible = ref(false);
+
+    const isGroupId = (id) => typeof id === 'string' && id.startsWith('grp_');
 
     function saveTableFilters() {
         configRepository.setString(
@@ -710,11 +748,21 @@
     }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
     .button-pd-0 {
         padding: 0;
     }
     .ml-5 {
-        margin-left: 5px !important; // due to ".el-button + .el-button"
+        margin-left: 5px !important; /* due to ".el-button + .el-button" */
+    }
+    .notification-image {
+        flex: none;
+        height: 30px;
+        width: 30px;
+        border-radius: 4px;
+        object-fit: cover;
+    }
+    .table-user-text {
+        color: var(--x-table-user-text-color);
     }
 </style>

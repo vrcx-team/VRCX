@@ -1276,6 +1276,7 @@
         justify-content: space-between;
         font-weight: 600;
         font-size: 14px;
+        margin-bottom: 9px;
     }
 
     .group-section__list {

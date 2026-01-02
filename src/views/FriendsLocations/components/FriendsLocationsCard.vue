@@ -12,11 +12,11 @@
                 </el-avatar>
             </div>
             <span class="friend-card__status-dot" :class="statusDotClass"></span>
-            <div class="friend-card__name" :title="friend.name">{{ friend.name }}</div>
+            <div class="friend-card__name ml-0.5" :title="friend.name">{{ friend.name }}</div>
         </div>
         <div class="friend-card__body">
             <div class="friend-card__signature" :title="friend.ref?.statusDescription">
-                <i v-if="friend.ref?.statusDescription" class="ri-pencil-line" style="opacity: 0.7"></i>
+                <i v-if="friend.ref?.statusDescription" class="ri-pencil-line mr-0.5" style="opacity: 0.7"></i>
                 {{ friend.ref?.statusDescription || '&nbsp;' }}
             </div>
             <div v-if="displayInstanceInfo" @click.stop class="friend-card__world" :title="friend.worldName">
@@ -87,17 +87,17 @@
     });
 </script>
 
-<style scoped lang="scss">
+<style scoped>
     .friend-card {
         --card-scale: 1;
         --card-spacing: 1;
         position: relative;
         display: grid;
         gap: calc(14px * var(--card-scale) * var(--card-spacing));
-        border-radius: calc(8px * var(--card-scale));
-        background: #fff;
+        border-radius: 8px;
+        background: var(--el-bg-color-overlay);
         border: 1px solid var(--el-border-color);
-        box-shadow: 0 calc(6px * var(--card-scale)) calc(16px * var(--card-scale)) rgba(15, 23, 42, 0.04);
+        box-shadow: var(--el-box-shadow-lighter);
         transition:
             box-shadow 0.2s ease,
             transform 0.2s ease;
@@ -105,7 +105,7 @@
         min-width: var(--friend-card-min-width, 220px);
 
         &:hover {
-            box-shadow: 0 calc(10px * var(--card-scale)) calc(24px * var(--card-scale)) rgba(15, 23, 42, 0.07);
+            box-shadow: var(--el-box-shadow-light);
             transform: translateY(calc(-2px * var(--card-scale)));
         }
     }
@@ -123,8 +123,8 @@
     }
 
     .friend-card__avatar {
-        border: 1px solid rgba(255, 255, 255, 0.85);
-        box-shadow: 0 calc(5px * var(--card-scale)) calc(10px * var(--card-scale)) rgba(15, 23, 42, 0.14);
+        border: 1px solid var(--el-border-color);
+        box-shadow: var(--el-box-shadow-lighter);
     }
 
     .friend-card__status-dot {
@@ -134,8 +134,8 @@
         inline-size: calc(12px * var(--card-scale));
         block-size: calc(12px * var(--card-scale));
         border-radius: 999px;
-        border: calc(2px * var(--card-scale)) solid #fff;
-        box-shadow: 0 0 calc(4px * var(--card-scale)) rgba(15, 23, 42, 0.12);
+        border: calc(2px * var(--card-scale)) solid var(--el-bg-color-overlay);
+        box-shadow: var(--el-box-shadow-lighter);
         pointer-events: none;
     }
 
@@ -144,23 +144,23 @@
     }
 
     .friend-card__status-dot--online {
-        background: linear-gradient(145deg, #67c23a, #4aa12d);
-        box-shadow: 0 0 calc(8px * var(--card-scale)) rgba(103, 194, 58, 0.4);
+        background: #67c23a;
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #67c23a 40%, transparent);
     }
 
     .friend-card__status-dot--join {
-        background: linear-gradient(145deg, #409eff, #2f7ed9);
-        box-shadow: 0 0 calc(8px * var(--card-scale)) rgba(64, 158, 255, 0.4);
+        background: #409eff;
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #409eff 40%, transparent);
     }
 
     .friend-card__status-dot--busy {
-        background: linear-gradient(145deg, #ff2c2c, #d81f1f);
-        box-shadow: 0 0 calc(8px * var(--card-scale)) rgba(255, 44, 44, 0.4);
+        background: #ff2c2c;
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #ff2c2c 40%, transparent);
     }
 
     .friend-card__status-dot--ask {
-        background: linear-gradient(145deg, #ff9500, #d97800);
-        box-shadow: 0 0 calc(8px * var(--card-scale)) rgba(255, 149, 0, 0.4);
+        background: #ff9500;
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #ff9500 40%, transparent);
     }
 
     .friend-card__body {
@@ -171,7 +171,7 @@
     .friend-card__name {
         font-size: calc(17px * var(--card-scale));
         font-weight: 600;
-        color: #1f2937;
+        color: var(--el-text-color-primary);
         line-height: 1.2;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -181,7 +181,7 @@
     .friend-card__signature {
         margin-top: calc(6px * var(--card-spacing));
         font-size: calc(13px * var(--card-scale));
-        color: rgba(31, 41, 55, 0.7);
+        color: var(--el-text-color-secondary);
         line-height: 1.4;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -194,12 +194,21 @@
         justify-content: center;
         min-height: calc(40px * var(--card-scale));
         padding: calc(6px * var(--card-scale)) calc(10px * var(--card-scale));
-        border-radius: calc(12px * var(--card-scale));
-        background: rgba(148, 163, 184, 0.18);
-        color: rgba(71, 85, 105, 0.95);
+        border-radius: calc(10px * var(--card-scale));
+        background: var(--el-fill-color);
+        color: var(--el-text-color-regular);
         font-size: calc(12px * var(--card-scale));
         line-height: 1.3;
         box-sizing: border-box;
+        max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    :global(html.dark) .friend-card__world,
+    :global(:root.dark) .friend-card__world,
+    :global(:root[data-theme='dark']) .friend-card__world {
+        color: var(--color-zinc-300);
     }
 
     .friend-card__location {

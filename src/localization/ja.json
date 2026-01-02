@@ -2082,6 +2082,8 @@
         "notification": {
             "date": "日付",
             "type": "種類",
+            "user": "ユーザー",
+            "group": "グループ",
             "user_group": "ユーザーまたはグループ",
             "photo": "画像",
             "message": "メッセージ",

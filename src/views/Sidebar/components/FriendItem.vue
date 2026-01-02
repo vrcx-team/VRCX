@@ -6,7 +6,7 @@
                 :class="isFriendActiveOrOffline ? undefined : userStatusClass(friend.ref, friend.pendingOffline)">
                 <img :src="userImage(friend.ref, true)" loading="lazy" />
             </div>
-            <div class="detail">
+            <div class="detail h-9 flex flex-col justify-between">
                 <span v-if="!hideNicknames && friend.$nickName" class="name" :style="{ color: friend.ref.$userColour }">
                     {{ friend.ref.displayName }} ({{ friend.$nickName }})
                 </span>
@@ -16,9 +16,9 @@
 
                 <span v-if="isFriendActiveOrOffline" class="extra">{{ friend.ref.statusDescription }}</span>
                 <template v-else>
-                    <span v-if="friend.pendingOffline" class="extra">
+                    <div v-if="friend.pendingOffline" class="extra">
                         <el-icon><WarningFilled /></el-icon> {{ t('side_panel.pending_offline') }}
-                    </span>
+                    </div>
                     <template v-else-if="isGroupByInstance">
                         <el-icon v-if="isFriendTraveling" class="is-loading" style="margin-right: 3px"
                             ><Loading
@@ -87,7 +87,7 @@
     const travelingProp = computed(() => props.friend.ref?.travelingToLocation || '');
 </script>
 
-<style scoped>
+<style>
     .skeleton {
         height: 40px;
         width: 100%;
@@ -104,11 +104,11 @@
                 justify-content: center;
             }
         }
-        :deep(.el-skeleton__circle) {
+        .el-skeleton__circle {
             height: 40px;
             width: 40px;
         }
-        :deep(.el-skeleton__text) {
+        .el-skeleton__text {
             &:first-child {
                 height: 14px;
                 margin-bottom: 6px;

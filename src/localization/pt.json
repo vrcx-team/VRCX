@@ -1660,6 +1660,8 @@
         "notification": {
             "date": "Data",
             "type": "Tipo",
+            "user": "Usuário",
+            "group": "Grupo",
             "user_group": "Usuário/Grupo",
             "photo": "Foto",
             "message": "Mensagem",

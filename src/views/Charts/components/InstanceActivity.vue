@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div ref="instanceActivityRef" class="pt-12">
         <div class="options-container instance-activity" style="margin-top: 0">
             <div>
                 <span>{{ t('view.charts.instance_activity.header') }}</span>
@@ -150,6 +150,33 @@
     const { localFavoriteFriends, friends } = storeToRefs(friendStore);
     const { currentUser } = storeToRefs(useUserStore());
     const { t } = useI18n();
+
+    const instanceActivityRef = ref(null);
+
+    const instanceActivityResizeObserver = new ResizeObserver(() => {
+        setInstanceActivityHeight();
+    });
+
+    function setInstanceActivityHeight() {
+        if (instanceActivityRef.value) {
+            const availableHeight = window.innerHeight - 100;
+            instanceActivityRef.value.style.height = `${availableHeight}px`;
+            instanceActivityRef.value.style.overflowY = 'auto';
+        }
+    }
+
+    onMounted(() => {
+        if (instanceActivityRef.value) {
+            instanceActivityResizeObserver.observe(instanceActivityRef.value);
+        }
+        setInstanceActivityHeight();
+    });
+
+    onBeforeUnmount(() => {
+        if (instanceActivityRef.value) {
+            instanceActivityResizeObserver.unobserve(instanceActivityRef.value);
+        }
+    });
 
     const {
         barWidth,
@@ -623,7 +650,7 @@
         align-items: center;
         justify-content: center;
         margin-top: 100px;
-        color: #5c5c5c;
+        color: var(--el-text-color-secondary);
     }
     .divider {
         padding: 0 400px;

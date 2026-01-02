@@ -1,5 +1,5 @@
 <template>
-    <div class="x-container">
+    <div class="x-container" ref="moderationRef">
         <!-- 工具栏 -->
         <div class="tool-slot">
             <el-select
@@ -30,7 +30,8 @@
         </div>
 
         <DataTable v-bind="playerModerationTable">
-            <el-table-column :label="t('table.moderation.date')" prop="created" :sortable="true" width="130">
+            <el-table-column width="20"></el-table-column>
+            <el-table-column :label="t('table.moderation.date')" prop="created" :sortable="true" width="150">
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>
@@ -40,12 +41,14 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column :label="t('table.moderation.type')" prop="type" width="100">
+            <el-table-column :label="t('table.moderation.type')" prop="type" width="150">
                 <template #default="scope">
-                    <span v-text="t('view.moderation.filters.' + scope.row.type)"></span>
+                    <el-tag type="info" effect="plain" size="small">
+                        <span v-text="t('view.moderation.filters.' + scope.row.type)"></span
+                    ></el-tag>
                 </template>
             </el-table-column>
-            <el-table-column :label="t('table.moderation.source')" prop="sourceDisplayName">
+            <el-table-column :label="t('table.moderation.source')" prop="sourceDisplayName" width="200">
                 <template #default="scope">
                     <span
                         class="x-link"
@@ -66,7 +69,7 @@
                     <template v-if="scope.row.sourceUserId === currentUser.id">
                         <el-button
                             v-if="shiftHeld"
-                            style="color: #f56c6c"
+                            style="color: var(--el-color-danger)"
                             text
                             :icon="Close"
                             size="small"
@@ -94,6 +97,7 @@
     import { formatDateFilter } from '../../shared/utils';
     import { moderationTypes } from '../../shared/constants';
     import { playerModerationRequest } from '../../api';
+    import { useTableHeight } from '../../composables/useTableHeight';
 
     import configRepository from '../../service/config.js';
 
@@ -103,6 +107,8 @@
     const { refreshPlayerModerations, handlePlayerModerationDelete } = useModerationStore();
     const { shiftHeld } = storeToRefs(useUiStore());
     const { currentUser } = storeToRefs(useUserStore());
+
+    const { containerRef: moderationRef } = useTableHeight(playerModerationTable);
 
     async function init() {
         playerModerationTable.value.filters[0].value = JSON.parse(

@@ -8,12 +8,10 @@ import LastJoin from '../components/LastJoin.vue';
 import Launch from '../components/Launch.vue';
 import Location from '../components/Location.vue';
 import LocationWorld from '../components/LocationWorld.vue';
-import NativeTooltip from '../components/NativeTooltip.vue';
 import Timer from '../components/Timer.vue';
 
 export function initComponents(app) {
     app.component('Location', Location);
-    app.component('NativeTooltip', NativeTooltip);
     app.component('Timer', Timer);
     app.component('InstanceInfo', InstanceInfo);
     app.component('LastJoin', LastJoin);

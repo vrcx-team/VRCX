@@ -2192,6 +2192,8 @@
         "notification": {
             "date": "時間",
             "type": "類型",
+            "user": "用戶",
+            "group": "群組",
             "user_group": "用戶/群組",
             "photo": "照片",
             "message": "訊息",

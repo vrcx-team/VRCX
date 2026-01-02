@@ -7,7 +7,7 @@
         width="90vw">
         <div>
             <h3>{{ groupMemberModeration.groupRef.name }}</h3>
-            <el-tabs type="card" style="height: 100%">
+            <el-tabs style="height: 100%">
                 <el-tab-pane :label="t('dialog.group_member_moderation.members')">
                     <div style="margin-top: 10px">
                         <el-button

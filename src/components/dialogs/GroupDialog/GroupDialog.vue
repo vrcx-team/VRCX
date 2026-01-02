@@ -3,7 +3,8 @@
         :z-index="groupDialogIndex"
         v-model="groupDialog.visible"
         :show-close="false"
-        width="770px"
+        top="10vh"
+        width="930px"
         class="x-dialog x-group-dialog">
         <div v-loading="groupDialog.loading" class="group-body">
             <div style="display: flex">
@@ -258,11 +259,7 @@
                                     @click="joinGroup(groupDialog.id)"></el-button>
                             </el-tooltip>
                         </template>
-                        <el-dropdown
-                            trigger="click"
-                            size="small"
-                            style="margin-left: 5px"
-                            @command="groupDialogCommand">
+                        <el-dropdown trigger="click" style="margin-left: 5px" @command="groupDialogCommand">
                             <el-button
                                 :type="groupDialog.ref.membershipStatus === 'userblocked' ? 'danger' : 'default'"
                                 :icon="MoreFilled"
@@ -616,7 +613,8 @@
                                 <span class="name">{{ t('dialog.group.info.links') }}</span>
                                 <div
                                     v-if="groupDialog.ref.links && groupDialog.ref.links.length > 0"
-                                    style="margin-top: 5px">
+                                    style="margin-top: 5px"
+                                    class="flex">
                                     <template v-for="(link, index) in groupDialog.ref.links" :key="index">
                                         <el-tooltip v-if="link">
                                             <template #content>
@@ -1086,7 +1084,6 @@
                     <el-tabs
                         v-model="groupDialogGalleryCurrentName"
                         v-loading="isGroupGalleryLoading"
-                        type="card"
                         style="margin-top: 10px">
                         <template v-for="(gallery, index) in groupDialog.ref.galleries" :key="index">
                             <el-tab-pane>
@@ -1839,7 +1836,7 @@
         }
     }
 </script>
-<style lang="scss" scoped>
+<style scoped>
     .time-group-container {
         display: flex;
         flex-direction: column;

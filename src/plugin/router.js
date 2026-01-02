@@ -19,6 +19,7 @@ import PlayerList from './../views/PlayerList/PlayerList.vue';
 import Search from './../views/Search/Search.vue';
 import Settings from './../views/Settings/Settings.vue';
 import Tools from './../views/Tools/Tools.vue';
+import Gallery from './../views/Tools/Gallery.vue';
 
 const routes = [
     {
@@ -83,6 +84,12 @@ const routes = [
                 component: Charts
             },
             { path: 'tools', name: 'tools', component: Tools },
+            {
+                path: 'tools/gallery',
+                name: 'gallery',
+                component: Gallery,
+                meta: { navKey: 'tools' }
+            },
             { path: 'settings', name: 'settings', component: Settings }
         ]
     }

@@ -467,7 +467,7 @@
     }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
     .x-dialog {
         :deep(.el-dialog) {
             max-height: 750px;
@@ -519,7 +519,10 @@
                             position: relative;
 
                             &.has-events {
-                                background-color: var(--group-calendar-event-bg, rgba(25, 102, 154, 0.05));
+                                background-color: var(
+                                    --group-calendar-event-bg,
+                                    color-mix(in oklch, var(--el-color-primary) 10%, transparent)
+                                );
                             }
                             .calendar-event-badge {
                                 position: absolute;
@@ -528,21 +531,21 @@
                                 min-width: 16px;
                                 height: 16px;
                                 border-radius: 8px;
-                                color: #ffffff;
+                                color: var(--el-color-white, #fff);
                                 display: flex;
                                 align-items: center;
                                 justify-content: center;
                                 font-size: 10px;
                                 font-weight: bold;
-                                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                                box-shadow: var(--el-box-shadow-lighter);
                                 z-index: 10;
                                 padding: 0 4px;
                                 line-height: 16px;
                                 &.has-following {
-                                    background-color: var(--group-calendar-badge-following, #67c23a);
+                                    background-color: var(--group-calendar-badge-following, var(--el-color-success));
                                 }
                                 &.no-following {
-                                    background-color: var(--group-calendar-badge-normal, #409eff);
+                                    background-color: var(--group-calendar-badge-normal, var(--el-color-primary));
                                 }
                             }
                         }
@@ -606,7 +609,7 @@
         flex-direction: column;
         .search-container {
             padding: 2px 20px 12px 20px;
-            border-bottom: 1px solid #ebeef5;
+            border-bottom: 1px solid var(--el-border-color-lighter);
             display: flex;
             justify-content: flex-end;
             .search-input {

@@ -1,8 +1,8 @@
 <template>
     <div @click="confirm" class="avatar-info">
-        <span style="margin-right: 5px">{{ avatarName }}</span>
-        <span v-if="avatarType" :class="color" style="margin-right: 5px"><i :class="avatarTypeIcons" /></span>
-        <span v-if="avatarTags" style="color: #909399; font-family: monospace; font-size: 12px">{{ avatarTags }}</span>
+        <span v-if="avatarType" :class="color" class="mr-2"><i :class="avatarTypeIcons" /></span>
+        <span class="mr-2">{{ avatarName }}</span>
+        <span v-if="avatarTags" style="color: var(--el-text-color-secondary); font-size: 12px">{{ avatarTags }}</span>
     </div>
 </template>
 
@@ -17,7 +17,7 @@
         imageurl: String,
         userid: String,
         hintownerid: String,
-        hintavatarname: String,
+        hintavatarname: [String, Object],
         avatartags: Array
     });
 
@@ -45,7 +45,9 @@
         if (!props.imageurl) {
             avatarName.value = '';
         } else if (props.hintownerid) {
-            avatarName.value = props.hintavatarname;
+            if (typeof props.hintavatarname === 'string') {
+                avatarName.value = props.hintavatarname;
+            }
             ownerId = props.hintownerid;
         } else {
             try {

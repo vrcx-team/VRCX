@@ -1,9 +1,9 @@
 /*
-Copyright(c) 2019-2025 pypy and individual contributors.
-All rights reserved.
-
-This work is licensed under the terms of the MIT license.
-For a copy, see <https://opensource.org/licenses/MIT>. 
+/* Copyright(c) 2019-2025 pypy and individual contributors.
+/* All rights reserved.
+/*
+/* This work is licensed under the terms of the MIT license.
+/* For a copy, see <https://opensource.org/licenses/MIT>.
 */
 
 @import 'tailwindcss';
@@ -37,23 +37,28 @@ body {
     --font-symbol: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
     --font-fallback-cjk: sans-serif;
     --font-primary-cjk:
-        'Noto Sans JP Variable', 'Noto Sans SC Variable', 'Noto Sans KR Variable', 'Noto Sans TC Variable';
+        'Noto Sans JP Variable', 'Noto Sans SC Variable',
+        'Noto Sans KR Variable', 'Noto Sans TC Variable';
 }
 :root[lang='zh-CN'] {
     --font-primary-cjk:
-        'Noto Sans SC Variable', 'Noto Sans JP Variable', 'Noto Sans KR Variable', 'Noto Sans TC Variable';
+        'Noto Sans SC Variable', 'Noto Sans JP Variable',
+        'Noto Sans KR Variable', 'Noto Sans TC Variable';
 }
 :root[lang='ja'] {
     --font-primary-cjk:
-        'Noto Sans JP Variable', 'Noto Sans KR Variable', 'Noto Sans TC Variable', 'Noto Sans SC Variable';
+        'Noto Sans JP Variable', 'Noto Sans KR Variable',
+        'Noto Sans TC Variable', 'Noto Sans SC Variable';
 }
 :root[lang='ko'] {
     --font-primary-cjk:
-        'Noto Sans KR Variable', 'Noto Sans JP Variable', 'Noto Sans TC Variable', 'Noto Sans SC Variable';
+        'Noto Sans KR Variable', 'Noto Sans JP Variable',
+        'Noto Sans TC Variable', 'Noto Sans SC Variable';
 }
 :root[lang='zh-TW'] {
     --font-primary-cjk:
-        'Noto Sans TC Variable', 'Noto Sans JP Variable', 'Noto Sans KR Variable', 'Noto Sans SC Variable';
+        'Noto Sans TC Variable', 'Noto Sans JP Variable',
+        'Noto Sans KR Variable', 'Noto Sans SC Variable';
 }
 body {
     font-family:
@@ -212,20 +217,15 @@ body {
     border-radius: 16px;
 }
 
-@font-face {
-    font-family: 'ellipsis-font';
-    src: local('Times New Roman');
-    unicode-range: U+2026;
-}
-
 body,
 input,
 textarea,
 select,
 button {
     font-family:
-        'ellipsis-font', 'Noto Sans JP Variable', 'Noto Sans KR Variable', 'Noto Sans TC Variable',
-        'Noto Sans SC Variable', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', sans-serif;
+        'ellipsis-font', 'Noto Sans JP Variable', 'Noto Sans KR Variable',
+        'Noto Sans TC Variable', 'Noto Sans SC Variable', 'Meiryo UI',
+        'Malgun Gothic', 'Segoe UI', sans-serif;
     line-height: normal;
     text-shadow:
         #000 0px 0px 3px,
@@ -384,17 +384,17 @@ i.x-user-status.online {
 
 i.x-user-status.joinme {
     background: #409eff;
-    mask-image: url(../assets/images/masks/joinme.svg);
+    mask-image: url(/images/masks/joinme.svg);
 }
 
 i.x-user-status.askme {
     background: #ff9500;
-    mask-image: url(../assets/images/masks/askme.svg);
+    mask-image: url(/images/masks/askme.svg);
 }
 
 i.x-user-status.busy {
     background: #ff2c2c;
-    mask-image: url(../assets/images/masks/busy.svg);
+    mask-image: url(/images/masks/busy.svg);
 }
 
 .spin {

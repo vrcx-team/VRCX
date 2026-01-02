@@ -1,0 +1,53 @@
+/* Noty.js */
+
+.noty_layout {
+    word-break: break-all;
+}
+
+.noty_theme__mint.noty_bar {
+    position: relative;
+    margin: 4px 0;
+    overflow: hidden;
+    border-radius: 2px;
+}
+
+.noty_theme__mint.noty_bar .noty_body {
+    padding: 10px;
+    font-size: 14px;
+}
+
+.noty_theme__mint.noty_bar .noty_buttons {
+    padding: 10px;
+}
+
+.noty_theme__mint.noty_type__alert,
+.noty_theme__mint.noty_type__notification {
+    color: #2f2f2f;
+    background-color: #fff;
+    border-bottom: 1px solid #d1d1d1;
+}
+
+.noty_theme__mint.noty_type__warning {
+    color: #fff;
+    background-color: #ffae42;
+    border-bottom: 1px solid #e89f3c;
+}
+
+.noty_theme__mint.noty_type__error {
+    color: #fff;
+    background-color: #de636f;
+    border-bottom: 1px solid #ca5a65;
+}
+
+.noty_theme__mint.noty_type__info,
+.noty_theme__mint.noty_type__information {
+    color: #fff;
+    background-color: #7f7eff;
+    border-bottom: 1px solid #7473e8;
+}
+
+.noty_theme__mint.noty_type__success {
+    color: #fff;
+    background-color: #afc765;
+    border-bottom: 1px solid #a0b55c;
+}

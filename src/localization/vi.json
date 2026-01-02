@@ -1660,6 +1660,8 @@
         "notification": {
             "date": "Date",
             "type": "Type",
+            "user": "Người chơi",
+            "group": "Nhóm",
             "user_group": "User/Group",
             "photo": "Photo",
             "message": "Message",
