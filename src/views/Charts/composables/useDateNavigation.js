@@ -46,9 +46,12 @@ export function useDateNavigation(allDateOfActivity, reloadData) {
             const newIdx = allDateOfActivityArray.value.findIndex((date) =>
                 date.isBefore(selectedDate.value, 'day')
             );
-            selectedDate.value = allDateOfActivityArray.value[newIdx].toDate();
-            reloadData();
-            return;
+            if (newIdx !== -1) {
+                selectedDate.value =
+                    allDateOfActivityArray.value[newIdx].toDate();
+                reloadData();
+                return;
+            }
         }
 
         if (idx !== -1) {
