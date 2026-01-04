@@ -1,6 +1,6 @@
 import { createPinia } from 'pinia';
 
-import { isSentryEnabled } from '../plugin';
+import { getSentry, isSentryOptedIn } from '../plugin';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAuthStore } from './auth';
@@ -39,11 +39,10 @@ import { useWristOverlaySettingsStore } from './settings/wristOverlay';
 export const pinia = createPinia();
 
 async function registerSentryPiniaPlugin() {
-    if (!(await isSentryEnabled())) {
-        return;
-    }
+    if (!NIGHTLY) return;
+    if (!(await isSentryOptedIn())) return;
 
-    const Sentry = await import('@sentry/vue');
+    const Sentry = await getSentry();
     pinia.use(
         Sentry.createSentryPiniaPlugin({
             stateTransformer: (state) => ({

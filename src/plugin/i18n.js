@@ -1,18 +1,9 @@
 import { createI18n } from 'vue-i18n';
-
-import { getLocalizationStrings } from '../localization/index.js';
-
-const localizedStrings = await getLocalizationStrings();
+import { getLocalizedStrings, languageCodes } from '../localization';
 
 const i18n = createI18n({
     locale: 'en',
     fallbackLocale: 'en',
-    messages: Object.fromEntries(
-        Object.entries(localizedStrings).map(([key, value]) => [
-            key.replaceAll('_', '-'),
-            value
-        ])
-    ),
     legacy: false,
     globalInjection: false,
     missingWarn: false,
@@ -20,11 +11,13 @@ const i18n = createI18n({
     fallbackWarn: false
 });
 
-async function updateLocalizedStrings() {
-    const newStrings = await getLocalizationStrings();
-    Object.entries(newStrings).forEach(([key, value]) => {
-        i18n.global.setLocaleMessage(key.replaceAll('_', '-'), value);
-    });
+async function loadLocalizedStrings(code) {
+    const messages = await getLocalizedStrings(code);
+    i18n.global.setLocaleMessage(code, messages);
 }
 
-export { i18n, updateLocalizedStrings };
+async function updateLocalizedStrings() {
+    await loadLocalizedStrings(i18n.global.locale.value);
+}
+
+export { i18n, loadLocalizedStrings, updateLocalizedStrings };

@@ -6,19 +6,18 @@
                 <span class="name">{{ t('view.settings.appearance.appearance.language') }}</span>
                 <el-dropdown trigger="click" size="small" @click.stop>
                     <el-button size="small">
-                        <span
-                            >{{ messages[appLanguage]?.language }}
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon
+                        <span>
+                            {{ getLanguageName(appLanguage) }} <el-icon class="el-icon--right"> <ArrowDown /></el-icon
                         ></span>
                     </el-button>
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item
-                                v-for="(obj, language) in messages"
+                                v-for="language in languageCodes"
                                 :key="language"
                                 :class="{ 'is-active': appLanguage === language }"
                                 @click="changeAppLanguage(language)"
-                                v-text="obj.language" />
+                                v-text="getLanguageName(language)" />
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
@@ -385,10 +384,11 @@
 
     import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '../../../../stores';
     import { THEME_CONFIG } from '../../../../shared/constants';
+    import { getLanguageName, languageCodes } from '../../../../localization';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 
-    const { messages, t } = useI18n();
+    const { t } = useI18n();
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { saveOpenVROption, updateVRConfigVars } = useVrStore();

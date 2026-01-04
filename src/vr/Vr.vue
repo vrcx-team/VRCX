@@ -1416,6 +1416,7 @@
     import { escapeTag, escapeTagRecursive } from '../shared/utils/base/string';
     import { changeHtmlLangAttribute } from '../shared/utils/base/ui';
     import { displayLocation } from '../shared/utils/location';
+    import { loadLocalizedStrings } from '../plugin/i18n';
     import { removeFromArray } from '../shared/utils/base/array';
     import { timeToText } from '../shared/utils/base/format';
 
@@ -2094,12 +2095,14 @@
             .replace(' pm', '');
     };
 
-    function setAppLanguage(appLanguage) {
+    async function setAppLanguage(appLanguage) {
         if (!appLanguage) {
             return;
         }
         if (appLanguage !== vrState.appLanguage) {
             vrState.appLanguage = appLanguage;
+
+            await loadLocalizedStrings(appLanguage);
             changeHtmlLangAttribute(vrState.appLanguage);
             //@ts-ignore
             i18n.locale = vrState.appLanguage;
