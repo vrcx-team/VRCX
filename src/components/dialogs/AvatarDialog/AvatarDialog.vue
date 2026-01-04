@@ -5,7 +5,7 @@
         v-model="avatarDialog.visible"
         :show-close="false"
         top="10vh"
-        width="930px">
+        width="940px">
         <div v-loading="avatarDialog.loading">
             <div style="display: flex">
                 <img

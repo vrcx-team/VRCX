@@ -5,25 +5,44 @@ import colors from 'tailwindcss/colors';
 import configRepository from '../service/config';
 
 // Tailwind indigo-500 in OKLCH
-const DEFAULT_PRIMARY = 'oklch(58.5% 0.233 277.117)';
+export const DEFAULT_PRIMARY_COLOR = 'oklch(58.5% 0.233 277.117)';
 const DARK_WEIGHT = 0.2;
 const CONFIG_KEY = 'VRCX_elPrimaryColor';
 const STYLE_ID = 'el-dynamic-theme';
 
 let elementThemeInstance = null;
 
+const INVALID_TAILWIND_COLOR_KEYS = new Set([
+    'inherit',
+    'current',
+    'transparent',
+    'black',
+    'white',
+    'lightBlue',
+    'warmGray',
+    'trueGray',
+    'coolGray',
+    'blueGray'
+]);
+
 /**
- * Keep okLCH as-is; otherwise normalize hex; fallback to default.
- * @param {string} color
- * @param {string} fallback
+ * Normalize a theme color and prevent CSS injection.
  */
-function toPrimaryColor(color, fallback = DEFAULT_PRIMARY) {
-    if (typeof color === 'string' && color.trim()) {
-        if (color.trim().startsWith('oklch(')) {
-            return color.trim();
-        }
+function toPrimaryColor(color, fallback = DEFAULT_PRIMARY_COLOR) {
+    if (typeof color !== 'string') {
+        return fallback;
     }
-    return fallback;
+
+    const normalized = color.trim();
+    if (!normalized) {
+        return fallback;
+    }
+
+    if (!CSS?.supports?.('color', normalized)) {
+        return fallback;
+    }
+
+    return normalized;
 }
 
 /**
@@ -42,10 +61,9 @@ function setElementPlusColors(primary, palette = null) {
     }
 
     // Derive Element Plus light steps either from a palette or by mixing with white.
-    const safePalette = palette || null;
-    const lightValues = safePalette
+    const lightValues = palette
         ? ['400', '300', '200', '100', '50', '50', '50', '50', '50'].map(
-              (key) => safePalette[key] || primary
+              (key) => palette[key] || primary
           )
         : Array.from({ length: 9 }, (_, idx) => {
               const whitePercent = (idx + 1) * 10;
@@ -73,25 +91,27 @@ function setElementPlusColors(primary, palette = null) {
         `${darkSelector} {\n    --el-color-primary-light-9: ${darkLight9};\n}`;
 }
 
-function findTailwindPalette(primary) {
-    const entries = Object.values(colors);
-    for (const palette of entries) {
-        if (
+const TAILWIND_COLOR_FAMILIES = Object.entries(colors)
+    .filter(([name, palette]) => {
+        return (
+            !INVALID_TAILWIND_COLOR_KEYS.has(name) &&
             palette &&
             typeof palette === 'object' &&
-            palette['500'] === primary
-        ) {
-            return palette;
-        }
-    }
-    return null;
-}
+            palette['500']
+        );
+    })
+    .map(([name, palette]) => ({
+        name,
+        base: palette['500'],
+        palette
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
 /**
  * Shared Element Plus theme controller.
  * @param {string} defaultColor
  */
-export function useElementTheme(defaultColor = DEFAULT_PRIMARY) {
+export function useElementTheme(defaultColor = DEFAULT_PRIMARY_COLOR) {
     if (elementThemeInstance) {
         return elementThemeInstance;
     }
@@ -102,7 +122,7 @@ export function useElementTheme(defaultColor = DEFAULT_PRIMARY) {
 
     const applyPrimaryColor = async (color, palette = null) => {
         const nextColor = toPrimaryColor(color, currentPrimary.value);
-        const effectivePalette = palette || findTailwindPalette(nextColor);
+        const effectivePalette = palette || null;
         isApplying.value = true;
         setElementPlusColors(nextColor, effectivePalette);
         currentPrimary.value = nextColor;
@@ -124,7 +144,7 @@ export function useElementTheme(defaultColor = DEFAULT_PRIMARY) {
         const storedColor =
             (await configRepository.getString(CONFIG_KEY)) ||
             fallbackColor ||
-            DEFAULT_PRIMARY;
+            DEFAULT_PRIMARY_COLOR;
         await applyPrimaryColor(storedColor);
     };
 
@@ -138,4 +158,31 @@ export function useElementTheme(defaultColor = DEFAULT_PRIMARY) {
     return elementThemeInstance;
 }
 
-export { toPrimaryColor };
+export function useThemePrimaryColor() {
+    const { currentPrimary, isApplying, applyPrimaryColor, initPrimaryColor } =
+        useElementTheme(DEFAULT_PRIMARY_COLOR);
+    const colorFamilies = TAILWIND_COLOR_FAMILIES;
+
+    const selectPaletteColor = async (colorFamily) => {
+        if (!colorFamily) {
+            return;
+        }
+        await applyPrimaryColor(colorFamily.base, colorFamily.palette);
+    };
+
+    const applyCustomPrimaryColor = async (color) => {
+        if (!color) {
+            return;
+        }
+        await applyPrimaryColor(color);
+    };
+
+    return {
+        currentPrimary,
+        isApplying,
+        initPrimaryColor,
+        applyCustomPrimaryColor,
+        colorFamilies,
+        selectPaletteColor
+    };
+}

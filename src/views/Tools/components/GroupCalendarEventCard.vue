@@ -194,108 +194,132 @@
         position: relative;
         overflow: visible;
         border-radius: 8px;
-        &:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--el-box-shadow-light);
-        }
-        &.grouped-card {
-            margin-bottom: 0;
-        }
-        &.grid-card {
-            flex: 0 0 280px;
-            max-width: 280px;
-        }
-        &.group-dialog-grid-card {
-            flex: 0 0 320px;
-            max-width: 320px;
-        }
-        :deep(.el-card__body) {
-            overflow: visible;
-        }
-        .banner {
-            cursor: pointer;
-            width: 100%;
-            object-fit: cover;
-            border-radius: 8px 8px 0 0;
-            .timeline-view & {
-                height: 125px;
-            }
-            .grid-view & {
-                height: 100px;
-            }
-        }
-        .following-badge {
-            position: absolute;
-            top: -8px;
-            right: -9px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background-color: var(--el-text-color-regular);
-            color: var(--el-bg-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            box-shadow: var(--el-box-shadow-lighter);
-            z-index: 10;
-            cursor: pointer;
-        }
-        .is-following {
-            background-color: var(--group-calendar-badge-following, var(--el-color-success));
-        }
-        .event-content {
-            font-size: 12px;
-            .timeline-view & {
-                padding: 4px 12px 12px 12px;
-            }
-            .grid-view & {
-                padding: 8px 12px 12px 12px;
-            }
-            .event-title {
-                display: flex;
-                flex-direction: column;
-                .grid-view & {
-                    margin-bottom: 8px;
-                }
-
-                .event-group-name {
-                    cursor: pointer;
-                    .grid-view & {
-                        display: none;
-                    }
-                }
-                .event-title-content {
-                    font-size: 14px;
-                    font-weight: bold;
-                    line-height: 1.2;
-                    cursor: pointer;
-                    .timeline-view & {
-                        margin-bottom: 2px;
-                    }
-                    &:hover {
-                        color: var(--el-color-primary);
-                    }
-                }
-            }
-            .event-info {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                .timeline-view & > :first-child {
-                    font-size: 14px;
-                }
-                .grid-view & {
-                    font-size: 11px;
-                    color: var(--el-text-color-regular);
-                }
-                .event-time {
-                    font-weight: 500;
-                    color: var(--el-color-primary);
-                }
-            }
-        }
     }
+
+    .event-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--el-box-shadow-light);
+    }
+
+    .event-card.grouped-card {
+        margin-bottom: 0;
+    }
+
+    .event-card.grid-card {
+        flex: 0 0 280px;
+        max-width: 280px;
+    }
+
+    .event-card.group-dialog-grid-card {
+        flex: 0 0 320px;
+        max-width: 320px;
+    }
+
+    .event-card :deep(.el-card__body) {
+        overflow: visible;
+    }
+
+    .event-card .banner {
+        cursor: pointer;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .timeline-view .event-card .banner {
+        height: 125px;
+    }
+
+    .grid-view .event-card .banner {
+        height: 100px;
+    }
+
+    .event-card .following-badge {
+        position: absolute;
+        top: -8px;
+        right: -9px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: var(--el-text-color-regular);
+        color: var(--el-bg-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        box-shadow: var(--el-box-shadow-lighter);
+        z-index: 10;
+        cursor: pointer;
+    }
+
+    .event-card .following-badge.is-following {
+        background-color: var(--group-calendar-badge-following, var(--el-color-success));
+    }
+
+    .event-card .event-content {
+        font-size: 12px;
+    }
+
+    .timeline-view .event-card .event-content {
+        padding: 4px 12px 12px 12px;
+    }
+
+    .grid-view .event-card .event-content {
+        padding: 8px 12px 12px 12px;
+    }
+
+    .event-card .event-title {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .grid-view .event-card .event-title {
+        margin-bottom: 8px;
+    }
+
+    .event-card .event-group-name {
+        cursor: pointer;
+    }
+
+    .grid-view .event-card .event-group-name {
+        display: none;
+    }
+
+    .event-card .event-title-content {
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 1.2;
+        cursor: pointer;
+    }
+
+    .timeline-view .event-card .event-title-content {
+        margin-bottom: 2px;
+    }
+
+    .event-card .event-title-content:hover {
+        color: var(--el-color-primary);
+    }
+
+    .event-card .event-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .timeline-view .event-card .event-info > :first-child {
+        font-size: 14px;
+    }
+
+    .grid-view .event-card .event-info {
+        font-size: 11px;
+        color: var(--el-text-color-regular);
+    }
+
+    .event-card .event-time {
+        font-weight: 500;
+        color: var(--el-color-primary);
+    }
+
     :deep(.el-card) {
         border-radius: 8px;
         width: 100%;

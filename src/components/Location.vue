@@ -14,11 +14,7 @@
                     @click="handleShowWorldDialog">
                     <el-icon :class="['is-loading']" class="mr-1" v-if="isTraveling"><Loading /></el-icon>
                     <span class="min-w-0 truncate">{{ text }}</span>
-                    <span
-                        v-if="groupName"
-                        class="ml-0.5 whitespace-nowrap"
-                        :class="{ 'x-link': link }"
-                        @click.stop="handleShowGroupDialog">
+                    <span v-if="groupName" class="ml-0.5 whitespace-nowrap x-link" @click.stop="handleShowGroupDialog">
                         ({{ groupName }})
                     </span>
                 </div>
@@ -229,7 +225,7 @@
 
     function handleShowGroupDialog() {
         let location = currentInstanceId();
-        if (!location || !props.link) {
+        if (!location) {
             return;
         }
         const L = parseLocation(location);
@@ -243,11 +239,5 @@
 <style scoped>
     .transparent {
         color: transparent;
-    }
-
-    :global(html.dark .x-location),
-    :global(:root.dark .x-location),
-    :global(:root[data-theme='dark'] .x-location) {
-        color: var(--color-zinc-300);
     }
 </style>

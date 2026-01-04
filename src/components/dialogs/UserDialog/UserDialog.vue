@@ -5,7 +5,7 @@
         v-model="userDialog.visible"
         :show-close="false"
         top="10vh"
-        width="930px">
+        width="940px">
         <div v-loading="userDialog.loading">
             <UserSummaryHeader
                 :get-user-state-text="getUserStateText"

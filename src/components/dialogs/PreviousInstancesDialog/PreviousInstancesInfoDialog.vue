@@ -16,7 +16,7 @@
                 clearable></el-input>
         </div>
         <DataTable :loading="loading" v-bind="dataTable" style="margin-top: 10px">
-            <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="110">
+            <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="130">
                 <template #default="scope">
                     <el-tooltip placement="left">
                         <template #content>

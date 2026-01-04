@@ -1,7 +1,7 @@
 <template>
     <div class="gallery-page x-container">
         <div class="gallery-page__header">
-            <el-button text size="small" :icon="ArrowLeft" class="gallery-page__back" @click="goBack">
+            <el-button text :icon="ArrowLeft" class="gallery-page__back" @click="goBack">
                 {{ t('nav_tooltip.tools') }}
             </el-button>
             <span class="header">{{ t('dialog.gallery_icons.header') }}</span>

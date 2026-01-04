@@ -4,7 +4,7 @@
         v-model="groupDialog.visible"
         :show-close="false"
         top="10vh"
-        width="930px"
+        width="940px"
         class="x-dialog x-group-dialog">
         <div v-loading="groupDialog.loading" class="group-body">
             <div style="display: flex">
