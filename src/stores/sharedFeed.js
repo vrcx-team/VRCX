@@ -68,9 +68,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         if (!watchState.isFriendsLoaded) {
             return;
         }
-        if (wristOverlaySettingsStore.overlayWrist === false) {
-            return;
-        }
+        // TODO: remove debounce, decouple blocked player join/leave notifications, pull data from database with filters instead of sharedFeed
         if (state.updateSharedFeedTimer) {
             if (forceUpdate) {
                 state.updateSharedFeedPendingForceUpdate = true;
