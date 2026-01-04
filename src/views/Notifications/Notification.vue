@@ -54,7 +54,7 @@
             :data="notificationDisplayData"
             ref="notificationTableRef"
             class="notification-table">
-            <el-table-column :label="t('table.notification.date')" prop="created_at" width="110">
+            <el-table-column :label="t('table.notification.date')" prop="created_at" width="130">
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>

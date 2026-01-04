@@ -63,7 +63,6 @@
                             v-for="friend in group"
                             :key="friend.id"
                             :friend="friend"
-                            @click="showUserDialog(friend.id)"
                             @confirm-delete-friend="confirmDeleteFriend"></friend-item>
                     </div>
                 </div>
@@ -73,7 +72,6 @@
                     v-for="friend in vipFriendsByGroupStatus"
                     :key="friend.id"
                     :friend="friend"
-                    @click="showUserDialog(friend.id)"
                     @confirm-delete-friend="confirmDeleteFriend">
                 </friend-item>
             </template>
@@ -91,7 +89,7 @@
 
             <div v-show="!isSidebarGroupByInstanceCollapsed">
                 <div v-for="friendArr in friendsInSameInstance" :key="friendArr[0].ref.$location.tag">
-                    <div style="margin-bottom: 3px">
+                    <div class="mb-1 flex items-center">
                         <Location class="extra" :location="getFriendsLocations(friendArr)" style="display: inline" />
                         <span class="extra" style="margin-left: 5px">{{ `(${friendArr.length})` }}</span>
                     </div>
@@ -102,7 +100,6 @@
                             :friend="friend"
                             is-group-by-instance
                             :style="{ 'margin-bottom': idx === friendArr.length - 1 ? '5px' : undefined }"
-                            @click="showUserDialog(friend.id)"
                             @confirm-delete-friend="confirmDeleteFriend">
                         </friend-item>
                     </div>
@@ -126,7 +123,6 @@
                 v-for="friend in onlineFriendsByGroupStatus"
                 :key="friend.id"
                 :friend="friend"
-                @click="showUserDialog(friend.id)"
                 @confirm-delete-friend="confirmDeleteFriend" />
         </div>
         <div
@@ -144,7 +140,6 @@
                 v-for="friend in activeFriends"
                 :key="friend.id"
                 :friend="friend"
-                @click="showUserDialog(friend.id)"
                 @confirm-delete-friend="confirmDeleteFriend"></friend-item>
         </div>
         <div
@@ -162,7 +157,6 @@
                 v-for="friend in offlineFriends"
                 :key="friend.id"
                 :friend="friend"
-                @click="showUserDialog(friend.id)"
                 @confirm-delete-friend="confirmDeleteFriend"></friend-item>
         </div>
     </div>

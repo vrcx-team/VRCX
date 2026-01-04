@@ -28,6 +28,7 @@
         </div>
 
         <DataTable v-bind="friendLogTable" :data="friendLogDisplayData">
+            <el-table-column width="20"></el-table-column>
             <el-table-column :label="t('table.friendLog.date')" prop="created_at" width="200">
                 <template #default="scope">
                     <el-tooltip placement="right">

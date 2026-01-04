@@ -68,7 +68,7 @@
                 <el-table-column width="20"></el-table-column>
                 <el-table-column
                     :label="t('table.friendList.no')"
-                    width="70"
+                    width="100"
                     prop="$friendNumber"
                     :sortable="true"
                     fixed="left">
@@ -141,22 +141,25 @@
                 </el-table-column>
                 <el-table-column :label="t('table.friendList.bioLink')" width="130" prop="bioLinks">
                     <template #default="{ row }">
-                        <el-tooltip v-for="(link, index) in row.bioLinks.filter(Boolean)" :key="index">
-                            <template #content>
-                                <span v-text="link"></span>
-                            </template>
-                            <img
-                                :src="getFaviconUrl(link)"
-                                style="
-                                    width: 16px;
-                                    height: 16px;
-                                    vertical-align: middle;
-                                    margin-right: 5px;
-                                    cursor: pointer;
-                                "
-                                @click.stop="openExternalLink(link)"
-                                loading="lazy" />
-                        </el-tooltip>
+                        <div class="flex items-center">
+                            <el-tooltip v-for="(link, index) in row.bioLinks.filter(Boolean)" :key="index">
+                                <template #content>
+                                    <span v-text="link"></span>
+                                </template>
+
+                                <img
+                                    :src="getFaviconUrl(link)"
+                                    style="
+                                        width: 16px;
+                                        height: 16px;
+                                        vertical-align: middle;
+                                        margin-right: 5px;
+                                        cursor: pointer;
+                                    "
+                                    @click.stop="openExternalLink(link)"
+                                    loading="lazy" />
+                            </el-tooltip>
+                        </div>
                     </template>
                 </el-table-column>
                 <el-table-column

@@ -5,7 +5,7 @@
         v-model="isDialogVisible"
         top="10vh"
         :show-close="false"
-        width="930px">
+        width="940px">
         <div v-loading="worldDialog.loading">
             <div style="display: flex">
                 <img

@@ -330,7 +330,7 @@
             transition: all 0.2s ease;
 
             &:hover {
-                background-color: var(--el-color-primary-light-8);
+                background-color: var(--el-color-primary-light-9);
             }
 
             .el-icon-arrow-right {

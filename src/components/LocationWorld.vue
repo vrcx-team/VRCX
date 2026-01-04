@@ -134,10 +134,4 @@
     .inline-block {
         display: inline-block;
     }
-
-    :global(html.dark .x-location-world),
-    :global(:root.dark .x-location-world),
-    :global(:root[data-theme='dark'] .x-location-world) {
-        color: var(--color-zinc-100);
-    }
 </style>

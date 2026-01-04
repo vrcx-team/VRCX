@@ -41,6 +41,7 @@
         </div>
 
         <DataTable v-bind="gameLogTable" :data="gameLogDisplayData">
+            <el-table-column width="20"></el-table-column>
             <el-table-column :label="t('table.gameLog.date')" prop="created_at" width="140">
                 <template #default="scope">
                     <el-tooltip placement="right">

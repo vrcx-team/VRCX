@@ -126,9 +126,6 @@
             </div>
         </div>
         <div class="options-container">
-            <ThemePicker />
-        </div>
-        <div class="options-container">
             <span class="header">{{ t('view.settings.appearance.timedate.header') }}</span>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.timedate.time_format') }}</span>
@@ -394,7 +391,6 @@
     import { getLanguageName, languageCodes } from '../../../../localization';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
-    import ThemePicker from '../ThemePicker.vue';
 
     const { t } = useI18n();
 

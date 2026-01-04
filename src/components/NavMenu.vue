@@ -131,7 +131,7 @@
                     placement="right"
                     trigger="click"
                     popper-style="padding:4px;border-radius:8px;"
-                    :offset="-10"
+                    :offset="6"
                     :show-arrow="false"
                     :width="200"
                     :hide-after="0">
@@ -158,7 +158,9 @@
                             placement="right-start"
                             trigger="hover"
                             popper-style="padding:4px;border-radius:8px;"
-                            :width="200">
+                            :offset="8"
+                            :width="200"
+                            :hide-after="0">
                             <div class="nav-menu-theme">
                                 <button
                                     v-for="theme in themes"
@@ -170,6 +172,62 @@
                                     <span class="nav-menu-theme__label">{{ themeDisplayName(theme) }}</span>
                                     <span v-if="themeMode === theme" class="nav-menu-theme__check">✓</span>
                                 </button>
+
+                                <el-divider></el-divider>
+
+                                <el-popover
+                                    v-model:visible="themeColorMenuVisible"
+                                    placement="right-start"
+                                    trigger="hover"
+                                    popper-style="padding:4px;border-radius:8px;"
+                                    :offset="8"
+                                    :width="200"
+                                    :show-arrow="false"
+                                    :hide-after="0"
+                                    :teleported="false">
+                                    <div class="nav-menu-theme nav-menu-theme--colors">
+                                        <button
+                                            v-for="color in colorFamilies"
+                                            :key="color.name"
+                                            type="button"
+                                            class="nav-menu-theme__item"
+                                            :class="{ 'is-active': currentPrimary === color.base }"
+                                            :disabled="isApplyingPrimaryColor"
+                                            @click="handleThemeColorSelect(color)">
+                                            <span class="nav-menu-theme__label nav-menu-theme__label--swatch">
+                                                <span
+                                                    class="nav-menu-theme__swatch"
+                                                    :style="{ backgroundColor: color.base }"></span>
+                                                <span class="nav-menu-theme__label-text">{{ color.name }}</span>
+                                            </span>
+                                            <span v-if="currentPrimary === color.base" class="nav-menu-theme__check">
+                                                ✓
+                                            </span>
+                                        </button>
+
+                                        <el-divider></el-divider>
+
+                                        <div class="nav-menu-theme__custom">
+                                            <span class="nav-menu-theme__custom-label">{{
+                                                t('view.settings.appearance.theme_color.header')
+                                            }}</span>
+                                            <el-color-picker
+                                                :model-value="currentPrimary"
+                                                size="small"
+                                                :disabled="isApplyingPrimaryColor"
+                                                :teleported="false"
+                                                @change="handleCustomThemeColorChange" />
+                                        </div>
+                                    </div>
+                                    <template #reference>
+                                        <button type="button" class="nav-menu-theme__item" @click.prevent>
+                                            <span class="nav-menu-theme__label">{{
+                                                t('view.settings.appearance.theme_color.header')
+                                            }}</span>
+                                            <span class="nav-menu-settings__arrow">›</span>
+                                        </button>
+                                    </template>
+                                </el-popover>
                             </div>
                             <template #reference>
                                 <button type="button" class="nav-menu-settings__item" @click.prevent>
@@ -230,12 +288,12 @@
         useAuthStore,
         useSearchStore,
         useUiStore,
-        useUserStore,
         useVRCXUpdaterStore
     } from '../stores';
     import { THEME_CONFIG, links, navDefinitions } from '../shared/constants';
     import { getSentry } from '../plugin';
     import { openExternalLink } from '../shared/utils';
+    import { useThemePrimaryColor } from '../composables/useElementTheme';
 
     import configRepository from '../service/config';
 
@@ -287,12 +345,9 @@
     const { logout } = useAuthStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { themeMode, isNavCollapsed: isCollapsed } = storeToRefs(appearanceSettingsStore);
-    const userStore = useUserStore();
-    const { currentUser } = storeToRefs(userStore);
-    const { showUserDialog } = userStore;
-
     const settingsMenuVisible = ref(false);
     const themeMenuVisible = ref(false);
+    const themeColorMenuVisible = ref(false);
     const supportMenuVisible = ref(false);
     const navMenuRef = ref(null);
     const navLayout = ref([]);
@@ -374,6 +429,15 @@
 
     const themes = computed(() => Object.keys(THEME_CONFIG));
 
+    const {
+        currentPrimary,
+        isApplying: isApplyingPrimaryColor,
+        applyCustomPrimaryColor,
+        initPrimaryColor,
+        colorFamilies,
+        selectPaletteColor
+    } = useThemePrimaryColor();
+
     watch(
         () => activeMenuIndex.value,
         (value) => {
@@ -403,10 +467,6 @@
     );
 
     const generateFolderId = () => `nav-folder-${dayjs().toISOString()}-${Math.random().toString().slice(2, 4)}`;
-
-    const showCurrentUserDialog = () => {
-        showUserDialog(currentUser.value?.id);
-    };
 
     const sanitizeLayout = (layout) => {
         const usedKeys = new Set();
@@ -483,6 +543,27 @@
         themeMenuVisible.value = false;
         settingsMenuVisible.value = false;
         appearanceSettingsStore.saveThemeMode(theme);
+    };
+
+    const handleCustomThemeColorChange = async (color) => {
+        if (!color) {
+            await initPrimaryColor();
+            themeColorMenuVisible.value = false;
+            themeMenuVisible.value = false;
+            settingsMenuVisible.value = false;
+            return;
+        }
+        await applyCustomPrimaryColor(color);
+        themeColorMenuVisible.value = false;
+        themeMenuVisible.value = false;
+        settingsMenuVisible.value = false;
+    };
+
+    const handleThemeColorSelect = async (colorFamily) => {
+        await selectPaletteColor(colorFamily);
+        themeColorMenuVisible.value = false;
+        themeMenuVisible.value = false;
+        settingsMenuVisible.value = false;
     };
 
     const openGithub = () => {
@@ -597,6 +678,7 @@
         settingsMenuVisible.value = false;
         supportMenuVisible.value = false;
         themeMenuVisible.value = false;
+        themeColorMenuVisible.value = false;
     };
 
     const triggerNavAction = (entry, navIndex = entry?.index) => {
@@ -643,6 +725,7 @@
             supportMenuVisible.value = false;
         } else {
             themeMenuVisible.value = false;
+            themeColorMenuVisible.value = false;
         }
     });
 
@@ -699,6 +782,7 @@
     };
 
     onMounted(async () => {
+        await initPrimaryColor();
         await loadNavMenuConfig();
 
         if (!NIGHTLY || !sentryErrorReporting.value) return;
@@ -981,5 +1065,50 @@
         .nav-menu-theme__item.is-active {
             background-color: var(--el-menu-hover-bg-color);
         }
+
+        .nav-menu-theme__label--swatch {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .nav-menu-theme__label-text {
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-transform: capitalize;
+        }
+
+        .nav-menu-theme__swatch {
+            inline-size: 14px;
+            block-size: 14px;
+            border-radius: 4px;
+            border: 1px solid var(--el-border-color-lighter);
+            flex: none;
+        }
+
+        .nav-menu-theme__custom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .nav-menu-theme__custom-label {
+            font-size: 13px;
+            color: var(--el-text-color-regular);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-right: 10px;
+        }
+    }
+
+    .nav-menu-theme--colors {
+        max-height: 360px;
+        overflow: hidden auto;
     }
 </style>

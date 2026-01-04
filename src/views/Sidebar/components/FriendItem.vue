@@ -1,5 +1,5 @@
 <template>
-    <div class="x-friend-item" @click="$emit('click')">
+    <div class="x-friend-item" @click="showUserDialog(friend.id)">
         <template v-if="friend.ref">
             <div
                 class="avatar"
@@ -63,7 +63,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useAppearanceSettingsStore, useFriendStore } from '../../../stores';
+    import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
     import { userImage, userStatusClass } from '../../../shared/utils';
 
     const props = defineProps({
@@ -71,10 +71,11 @@
         isGroupByInstance: Boolean
     });
 
-    defineEmits(['click', 'confirm-delete-friend']);
+    defineEmits(['confirm-delete-friend']);
 
     const { hideNicknames } = storeToRefs(useAppearanceSettingsStore());
     const { isRefreshFriendsLoading } = storeToRefs(useFriendStore());
+    const { showUserDialog } = useUserStore();
     const { t } = useI18n();
 
     const isFriendTraveling = computed(() => props.friend.ref?.location === 'traveling');

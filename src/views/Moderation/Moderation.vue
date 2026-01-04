@@ -1,6 +1,5 @@
 <template>
     <div class="x-container" ref="moderationRef">
-        <!-- 工具栏 -->
         <div class="tool-slot">
             <el-select
                 v-model="playerModerationTable.filters[0].value"
