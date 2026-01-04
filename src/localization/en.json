@@ -286,7 +286,12 @@
                 "vrcplus": {
                     "gift": "VRC+ Gift"
                 },
-                "localNotifs": "System"
+                "localNotifs": "System",
+                "economy": {
+                    "received": {
+                        "gift": "Gift Received"
+                    }
+                }
             }
         },
         "friend_list": {
@@ -1910,6 +1915,9 @@
         "confirm_button": "Confirm",
         "cancel_button": "Cancel",
         "message": "Continue {command}?"
+    },
+    "status": {
+        "title": "VRChat Status"
     },
     "message": {
         "vrcx_updater": {
