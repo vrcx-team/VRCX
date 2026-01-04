@@ -231,7 +231,7 @@
                                         max-height: 210px;
                                         overflow-y: auto;
                                     "
-                                    >{{ userDialog.ref.bio || '-' }}</pre
+                                    >{{ bioCache.value.translated || userDialog.ref.bio || '-' }}</pre
                                 >
                                 <div style="float: right">
                                     <el-button
@@ -1556,9 +1556,7 @@
 
     const bioCache = ref({
         userId: null,
-        original: null,
-        translated: null,
-        showingTranslated: false
+        translated: null
     });
 
     const isEditNoteAndMemoDialogVisible = ref(false);
@@ -2421,24 +2419,11 @@
 
         if (bioCache.value.userId !== userDialog.value.id) {
             bioCache.value.userId = userDialog.value.id;
-            bioCache.value.original = null;
             bioCache.value.translated = null;
-            bioCache.value.showingTranslated = false;
-        }
-
-        if (!bioCache.value.original) {
-            bioCache.value.original = bio;
-        }
-
-        if (bioCache.value.showingTranslated) {
-            userDialog.value.ref.bio = bioCache.value.original;
-            bioCache.value.showingTranslated = false;
-            return;
         }
 
         if (bioCache.value.translated) {
-            userDialog.value.ref.bio = bioCache.value.translated;
-            bioCache.value.showingTranslated = true;
+            bioCache.value.translated = null;
             return;
         }
 
@@ -2451,8 +2436,6 @@
             }
 
             bioCache.value.translated = translated;
-            bioCache.value.showingTranslated = true;
-            userDialog.value.ref.bio = translated;
         } catch (err) {
             console.error('Translation failed:', err);
         } finally {
