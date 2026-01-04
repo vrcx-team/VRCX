@@ -10,17 +10,17 @@
             <el-dropdown trigger="click" size="small" style="float: right" @click.stop>
                 <el-button size="small">
                     <span>
-                        {{ messages[bioLanguage]?.language || bioLanguage }}
+                        {{ getLanguageName(bioLanguage) || bioLanguage }}
                         <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                     </span>
                 </el-button>
                 <template #dropdown>
                     <el-dropdown-menu>
                         <el-dropdown-item
-                            v-for="(obj, language) in messages"
+                            v-for="language in languageCodes"
                             :key="language"
                             @click="setBioLanguage(language)"
-                            v-text="obj.language" />
+                            v-text="getLanguageName(language)" />
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
@@ -108,6 +108,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import { getLanguageName, languageCodes } from '../../../localization';
     import { openExternalLink } from '../../../shared/utils';
     import { useAdvancedSettingsStore } from '../../../stores';
 
@@ -132,7 +133,7 @@
         setTranslationApiPrompt
     } = advancedSettingsStore;
 
-    const { messages, t } = useI18n();
+    const { t } = useI18n();
 
     const props = defineProps({
         isTranslationApiDialogVisible: {

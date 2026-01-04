@@ -7,7 +7,6 @@ For a copy, see <https://opensource.org/licenses/MIT>.
 */
 
 @import 'tailwindcss';
-@import '@fontsource-variable/inter';
 
 @import 'animate.css/animate.min.css';
 @import 'noty/lib/noty.css';
@@ -38,23 +37,23 @@ body {
     --font-symbol: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
     --font-fallback-cjk: sans-serif;
     --font-primary-cjk:
-        'Noto Sans JP', 'Noto Sans SC', 'Noto Sans KR', 'Noto Sans TC';
+        'Noto Sans JP Variable', 'Noto Sans SC Variable', 'Noto Sans KR Variable', 'Noto Sans TC Variable';
 }
 :root[lang='zh-CN'] {
     --font-primary-cjk:
-        'Noto Sans SC', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC';
+        'Noto Sans SC Variable', 'Noto Sans JP Variable', 'Noto Sans KR Variable', 'Noto Sans TC Variable';
 }
 :root[lang='ja'] {
     --font-primary-cjk:
-        'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC', 'Noto Sans SC';
+        'Noto Sans JP Variable', 'Noto Sans KR Variable', 'Noto Sans TC Variable', 'Noto Sans SC Variable';
 }
 :root[lang='ko'] {
     --font-primary-cjk:
-        'Noto Sans KR', 'Noto Sans JP', 'Noto Sans TC', 'Noto Sans SC';
+        'Noto Sans KR Variable', 'Noto Sans JP Variable', 'Noto Sans TC Variable', 'Noto Sans SC Variable';
 }
 :root[lang='zh-TW'] {
     --font-primary-cjk:
-        'Noto Sans TC', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans SC';
+        'Noto Sans TC Variable', 'Noto Sans JP Variable', 'Noto Sans KR Variable', 'Noto Sans SC Variable';
 }
 body {
     font-family:
@@ -225,8 +224,8 @@ textarea,
 select,
 button {
     font-family:
-        'ellipsis-font', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC',
-        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', sans-serif;
+        'ellipsis-font', 'Noto Sans JP Variable', 'Noto Sans KR Variable', 'Noto Sans TC Variable',
+        'Noto Sans SC Variable', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', sans-serif;
     line-height: normal;
     text-shadow:
         #000 0px 0px 3px,
