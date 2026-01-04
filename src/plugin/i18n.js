@@ -1,9 +1,12 @@
 import { createI18n } from 'vue-i18n';
-import { getLocalizedStrings, languageCodes } from '../localization';
+
+import { getLocalizedStrings } from '../localization';
+
+const FALLBACK_LOCALE = 'en';
 
 const i18n = createI18n({
-    locale: 'en',
-    fallbackLocale: 'en',
+    locale: FALLBACK_LOCALE,
+    fallbackLocale: FALLBACK_LOCALE,
     legacy: false,
     globalInjection: false,
     missingWarn: false,
@@ -12,8 +15,13 @@ const i18n = createI18n({
 });
 
 async function loadLocalizedStrings(code) {
-    const messages = await getLocalizedStrings(code);
-    i18n.global.setLocaleMessage(code, messages);
+    const localesToLoad =
+        code === FALLBACK_LOCALE ? [FALLBACK_LOCALE] : [FALLBACK_LOCALE, code];
+
+    for (const locale of localesToLoad) {
+        const messages = await getLocalizedStrings(locale);
+        i18n.global.setLocaleMessage(locale, messages);
+    }
 }
 
 async function updateLocalizedStrings() {
