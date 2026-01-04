@@ -20,13 +20,17 @@
                         <el-icon><WarningFilled /></el-icon> {{ t('side_panel.pending_offline') }}
                     </div>
                     <template v-else-if="isGroupByInstance">
-                        <el-icon v-if="isFriendTraveling" class="is-loading" style="margin-right: 3px"
-                            ><Loading
-                        /></el-icon>
-                        <Timer
-                            class="extra"
-                            :epoch="epoch"
-                            :style="isFriendTraveling ? { display: 'inline-block', overflow: 'unset' } : undefined" />
+                        <div class="flex items-center">
+                            <el-icon v-if="isFriendTraveling" class="is-loading" style="margin-right: 3px"
+                                ><Loading
+                            /></el-icon>
+                            <Timer
+                                class="extra"
+                                :epoch="epoch"
+                                :style="
+                                    isFriendTraveling ? { display: 'inline-block', overflow: 'unset' } : undefined
+                                " />
+                        </div>
                     </template>
                     <Location v-else class="extra" :location="locationProp" :traveling="travelingProp" :link="false" />
                 </template>
