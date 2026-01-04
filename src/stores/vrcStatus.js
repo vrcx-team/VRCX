@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue';
 import { ElNotification } from 'element-plus';
 import { defineStore } from 'pinia';
+import { useI18n } from 'vue-i18n';
 
 import { formatDateFilter, openExternalLink } from '../shared/utils';
 
@@ -15,6 +16,7 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
     const lastTimeFetched = ref(0);
     const pollingInterval = ref(0);
     const alertRef = ref(null);
+    const { t } = useI18n();
 
     const lastStatusText = ref('');
     const statusText = computed(() => {
@@ -34,7 +36,7 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
             if (alertRef.value) {
                 alertRef.value.close();
                 alertRef.value = ElNotification({
-                    title: 'VRChat Status',
+                    title: t('status.title'),
                     message: `${formatDateFilter(lastStatusTime.value, 'short')}: All Systems Operational`,
                     type: 'success',
                     duration: 5000,
@@ -50,7 +52,7 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
 
         alertRef.value?.close();
         alertRef.value = ElNotification({
-            title: 'VRChat Status',
+            title: t('status.title'),
             message: `${formatDateFilter(lastStatusTime.value, 'short')}: ${statusText.value}`,
             type: 'warning',
             duration: 0,
