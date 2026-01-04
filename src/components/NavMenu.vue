@@ -525,7 +525,14 @@
         return normalized;
     };
 
-    const themeDisplayName = (key) => THEME_CONFIG[key]?.name ?? key;
+    const themeDisplayName = (themeKey) => {
+        const i18nKey = `view.settings.appearance.appearance.theme_mode_${themeKey}`;
+        const translated = t(i18nKey);
+        if (translated !== i18nKey) {
+            return translated;
+        }
+        return THEME_CONFIG[themeKey]?.name ?? themeKey;
+    };
 
     const handleSettingsClick = () => {
         themeMenuVisible.value = false;
