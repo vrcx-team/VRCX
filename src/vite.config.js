@@ -104,12 +104,11 @@ export default defineConfig(({ mode }) => {
         build: {
             target: 'chrome140',
             outDir: '../build/html',
-            cssMinify: 'lightningcss',
             license: true,
             emptyOutDir: true,
             copyPublicDir: false,
-            // reportCompressedSize: false,
-            // chunkSizeWarningLimit: 5000,
+            reportCompressedSize: false,
+            chunkSizeWarningLimit: 5000,
             sourcemap: buildAndUploadSourceMaps,
             assetsInlineLimit: 0,
             rollupOptions: {
