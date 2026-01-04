@@ -364,7 +364,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 );
             } catch (e) {
                 console.error('Failed to add screenshot metadata', e);
-                if (e.message.includes('UnauthorizedAccessException')) {
+                if (e.message?.includes('UnauthorizedAccessException')) {
                     ElMessage({
                         message:
                             'Failed to add screenshot metadata, access denied. Make sure VRCX has permission to access the screenshot folder.',

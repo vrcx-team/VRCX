@@ -805,7 +805,7 @@
                                                 :content="t('dialog.group.members.representing')">
                                                 <el-icon style="margin-right: 5px"><CollectionTag /></el-icon>
                                             </el-tooltip>
-                                            <el-tooltip v-if="group.myMember.visibility !== 'visible'" placement="top">
+                                            <el-tooltip v-if="group.myMember?.visibility !== 'visible'" placement="top">
                                                 <template #content>
                                                     <span
                                                         >{{ t('dialog.group.members.visibility') }}
@@ -817,7 +817,11 @@
                                             <span>({{ group.memberCount }})</span>
                                         </span>
                                     </div>
-                                    <el-dropdown trigger="click" size="small" style="margin-right: 5px">
+                                    <el-dropdown
+                                        v-if="group.myMember?.visibility"
+                                        trigger="click"
+                                        size="small"
+                                        style="margin-right: 5px">
                                         <el-button :disabled="group.privacy !== 'default'" @click.stop size="small">
                                             <span v-if="group.myMember.visibility === 'visible'">{{
                                                 t('dialog.group.tags.visible')
