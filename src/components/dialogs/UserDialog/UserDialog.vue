@@ -231,7 +231,7 @@
                                         max-height: 210px;
                                         overflow-y: auto;
                                     "
-                                    >{{ bioCache.value.translated || userDialog.ref.bio || '-' }}</pre
+                                    >{{ bioCache.translated || userDialog.ref.bio || '-' }}</pre
                                 >
                                 <div style="float: right">
                                     <el-button
