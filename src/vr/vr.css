@@ -12,8 +12,8 @@
 @import 'noty/lib/noty.css';
 @import 'remixicon/fonts/remixicon.css';
 
-@import '../assets/scss/flags.css';
-@import '../assets/scss/fonts.css';
+@import '../styles/flags.css';
+@import '../styles/fonts.css';
 
 /*
     마지노선인듯

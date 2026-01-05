@@ -15,10 +15,10 @@
 @import 'noty/lib/noty.css';
 @import 'remixicon/fonts/remixicon.css';
 
-@import './assets/scss/flags.css';
-@import './assets/scss/animated-emoji.css';
-@import './assets/scss/fonts.css';
-@import './assets/scss/noty.css';
+@import './styles/flags.css';
+@import './styles/animated-emoji.css';
+@import './styles/fonts.css';
+@import './styles/noty.css';
 
 :root {
     --font-western:

@@ -56,7 +56,7 @@ $--box-shadow-base: 0 1px 2px hsla($--theme-hue, $--theme-saturation, 0%, 0.1);
 $--box-shadow-dark: 0 1px 3px hsla($--theme-hue, $--theme-saturation, 0%, 0.15);
 $--calendar-selected-background-color: rgba($--theme-primary, 0.1);
 
-@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+@forward 'var' with (
     $colors: (
         'white': $--theme-text-1,
         'black': $--theme-bg-1,
@@ -211,7 +211,7 @@ $--card-background-color: $--theme-bg-4;
     --group-calendar-badge-normal: #{$--color-primary};
 }
 
-@import '_theme.dark_styles';
+@import 'theme.dark_styles';
 
 .el-calendar {
     background-color: $--theme-bg-4 !important;

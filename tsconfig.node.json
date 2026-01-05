@@ -1,20 +1,26 @@
 {
     "compilerOptions": {
+        "composite": true,
         "module": "ESNext",
         "target": "ESNext",
         "allowJs": true,
         "checkJs": true,
-        "jsx": "preserve",
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
         "moduleResolution": "bundler",
         "forceConsistentCasingInFileNames": true,
-        "lib": ["esnext", "dom", "dom.iterable"],
-        "types": ["vite/client", "element-plus/global"],
-        "resolveJsonModule": true,
-        "noEmit": true
+        "lib": ["esnext"],
+        "types": ["node"],
+        "noEmit": true,
+        "paths": {
+            "*": ["./*"],
+            "@/*": ["./src/*"]
+        }
     },
-    "include": ["**/*"],
-    "exclude": ["../node_modules", "../build", "vite.config.js", "shared/utils/localizationHelperCLI.js"]
+    "include": [
+        "src/vite.config.js",
+        "src/shared/utils/localizationHelperCLI.js"
+    ],
+    "exclude": ["node_modules", "build"]
 }

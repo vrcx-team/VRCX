@@ -82,6 +82,11 @@ export default defineConfig(({ mode }) => {
                     })
                 )
         ],
+        resolve: {
+            alias: {
+                '@': resolve(import.meta.dirname, '.')
+            }
+        },
         css: {
             transformer: 'lightningcss',
             lightningcss: {

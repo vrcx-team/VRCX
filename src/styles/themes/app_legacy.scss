@@ -11,12 +11,12 @@
 @use '../fonts.css';
 @use '../flags.css';
 @use '../animated-emoji.css';
-@use 'element-plus/theme-chalk/src/index.scss' as *;
+@use 'index' as *;
 
-@use 'element-plus/theme-chalk/src/dark/css-vars.scss';
-@use 'animate.css/animate.min.css';
-@use 'noty/lib/noty.css';
-@use 'remixicon/fonts/remixicon.css';
+@use 'css-vars';
+@use '../../../node_modules/animate.css/animate.min.css';
+@use '../../../node_modules/noty/lib/noty.css';
+@use '../../../node_modules/remixicon/fonts/remixicon.css';
 
 :root {
     --font-western:
