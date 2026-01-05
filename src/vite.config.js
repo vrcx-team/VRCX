@@ -6,6 +6,7 @@ import { defineConfig, loadEnv } from 'vite';
 
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
 
 import { languageCodes } from './localization/locales';
 
@@ -66,6 +67,9 @@ export default defineConfig(({ mode }) => {
         base: '',
         plugins: [
             vue(),
+            vueJsx({
+                tsTransform: 'built-in'
+            }),
             tailwindcss(),
             buildAndUploadSourceMaps &&
                 import('@sentry/vite-plugin').then(({ sentryVitePlugin }) =>
