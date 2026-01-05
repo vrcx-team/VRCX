@@ -78,6 +78,8 @@ function changeAppThemeStyle(themeMode) {
         // load system theme as fallback
         themeMode = systemIsDarkMode() ? 'dark' : 'light';
         themeConfig = THEME_CONFIG[themeMode];
+        const appSettingsStore = useAppearanceSettingsStore();
+        appSettingsStore.setThemeMode(themeMode);
     }
 
     const cssFiles = Array.isArray(themeConfig.cssFiles)
