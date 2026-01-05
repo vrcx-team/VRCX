@@ -2227,6 +2227,9 @@
         }
     },
     "table": {
+        "pagination": {
+            "rows_per_page": "Rows per page"
+        },
         "feed": {
             "date": "Date",
             "type": "Type",
