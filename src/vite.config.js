@@ -106,7 +106,7 @@ export default defineConfig(({ mode }) => {
             outDir: '../build/html',
             license: true,
             emptyOutDir: true,
-            copyPublicDir: false,
+            copyPublicDir: true,
             reportCompressedSize: false,
             chunkSizeWarningLimit: 5000,
             sourcemap: buildAndUploadSourceMaps,
