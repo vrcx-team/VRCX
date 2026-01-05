@@ -37,7 +37,7 @@ namespace VRCX
                 PersistSessionCookies = true,
                 UserAgent = Program.Version,
                 BrowserSubprocessPath = Environment.ProcessPath,
-                BackgroundColor = 0xFF101010
+                BackgroundColor = 0xFF0A0A0A
             };
 
             cefSettings.RegisterScheme(new CefCustomScheme
