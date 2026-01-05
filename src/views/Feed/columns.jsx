@@ -369,6 +369,17 @@ export const columns = [
     }
 ];
 
+/**
+ * Function that format the differences between two strings with HTML tags
+ * markerStartTag and markerEndTag are optional, if emitted, the differences will be highlighted with yellow and underlined.
+ * @param {*} s1
+ * @param {*} s2
+ * @param {*} markerStartTag
+ * @param {*} markerEndTag
+ * @returns An array that contains both the string 1 and string 2, which the differences are formatted with HTML tags
+ */
+
+//function getWordDifferences
 function formatDifference(
     oldString,
     newString,
@@ -437,6 +448,7 @@ function formatDifference(
         const match = findLongestMatch(oldStart, oldEnd, newStart, newEnd);
 
         if (match.size > 0) {
+            // Handle differences before the match
             if (oldStart < match.oldStart || newStart < match.newStart) {
                 result.push(
                     ...buildDiff(
@@ -448,12 +460,14 @@ function formatDifference(
                 );
             }
 
+            // Add the matched words
             result.push(
                 oldWords
                     .slice(match.oldStart, match.oldStart + match.size)
                     .join(' ')
             );
 
+            // Handle differences after the match
             if (
                 match.oldStart + match.size < oldEnd ||
                 match.newStart + match.size < newEnd
@@ -483,10 +497,13 @@ function formatDifference(
                 return r;
             }
 
+            // Add deletions
             if (oldStart < oldEnd)
                 result.push(
                     ...build(oldWords, oldStart, oldEnd, markerDeletion)
                 );
+
+            // Add insertions
             if (newStart < newEnd)
                 result.push(
                     ...build(newWords, newStart, newEnd, markerAddition)
