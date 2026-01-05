@@ -1,22 +1,231 @@
-import { ElTag } from 'element-plus';
-import { resolveComponent } from 'vue';
-
+import AvatarInfo from '../../components/AvatarInfo.vue';
+import Location from '../../components/Location.vue';
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger
 } from '../../components/ui/tooltip';
-import { formatDateFilter, statusClass } from '../../shared/utils';
+import {
+    ArrowDown,
+    ArrowRight,
+    ArrowUpDown,
+    ChevronDown,
+    ChevronRight
+} from 'lucide-vue-next';
+import { formatDateFilter, statusClass, timeToText } from '../../shared/utils';
 import { i18n } from '../../plugin';
 import { useUserStore } from '../../stores';
 
 const { t } = i18n.global;
 
+const expandedRow = ({ row }) => {
+    const original = row.original;
+    const type = original.type;
+    if (type === 'GPS') {
+        return (
+            <div class="pl-5 text-sm">
+                {original.previousLocation ? (
+                    <>
+                        <Location
+                            location={original.previousLocation}
+                            class="inline-block"
+                        />
+                        <Badge variant="secondary" class="ml-1 w-fit">
+                            {timeToText(original.time)}
+                        </Badge>
+                        <br />
+                        <span>
+                            <ArrowDown />
+                        </span>
+                    </>
+                ) : null}
+                {original.location ? (
+                    <Location
+                        location={original.location}
+                        hint={original.worldName}
+                        grouphint={original.groupName}
+                    />
+                ) : null}
+            </div>
+        );
+    }
+
+    if (type === 'Offline') {
+        return original.location ? (
+            <div class="pl-5 text-sm">
+                <Location
+                    location={original.location}
+                    hint={original.worldName}
+                    grouphint={original.groupName}
+                />
+                <Badge variant="secondary" class="ml-1 w-fit">
+                    {timeToText(original.time)}
+                </Badge>
+            </div>
+        ) : null;
+    }
+
+    if (type === 'Online') {
+        return original.location ? (
+            <div class="pl-5 text-sm">
+                <Location
+                    location={original.location}
+                    hint={original.worldName}
+                    grouphint={original.groupName}
+                />
+            </div>
+        ) : null;
+    }
+
+    if (type === 'Avatar') {
+        return (
+            <div class="pl-5 text-sm">
+                <div class="flex items-center">
+                    <div class="inline-block align-top w-[160px]">
+                        {original.previousCurrentAvatarThumbnailImageUrl ? (
+                            <>
+                                <img
+                                    src={
+                                        original.previousCurrentAvatarThumbnailImageUrl
+                                    }
+                                    class="x-link h-[120px] w-[160px] rounded"
+                                    loading="lazy"
+                                />
+                                <br />
+                                <AvatarInfo
+                                    imageurl={
+                                        original.previousCurrentAvatarThumbnailImageUrl
+                                    }
+                                    userid={original.userId}
+                                    hintownerid={original.previousOwnerId}
+                                    hintavatarname={original.previousAvatarName}
+                                    avatartags={
+                                        original.previousCurrentAvatarTags
+                                    }
+                                />
+                            </>
+                        ) : null}
+                    </div>
+                    <span class="mx-2">
+                        <ArrowRight />
+                    </span>
+                    <div class="inline-block align-top w-40">
+                        {original.currentAvatarThumbnailImageUrl ? (
+                            <>
+                                <img
+                                    src={
+                                        original.currentAvatarThumbnailImageUrl
+                                    }
+                                    class="x-link h-30 w-40 rounded"
+                                    loading="lazy"
+                                />
+                                <br />
+                                <AvatarInfo
+                                    imageurl={
+                                        original.currentAvatarThumbnailImageUrl
+                                    }
+                                    userid={original.userId}
+                                    hintownerid={original.ownerId}
+                                    hintavatarname={original.avatarName}
+                                    avatartags={original.currentAvatarTags}
+                                />
+                            </>
+                        ) : null}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (type === 'Status') {
+        return (
+            <div class="flex items-center pl-5 text-sm">
+                <i
+                    class={[
+                        'x-user-status',
+                        statusClass(original.previousStatus)
+                    ]}
+                ></i>
+                <span class="ml-1">{original.previousStatusDescription}</span>
+                <br />
+                <span class="mx-2">
+                    <ArrowRight />
+                </span>
+                <i
+                    class={[
+                        'x-user-status',
+                        statusClass(original.status),
+                        'mx-1'
+                    ]}
+                ></i>
+                <span>{original.statusDescription}</span>
+            </div>
+        );
+    }
+
+    if (type === 'Bio') {
+        return (
+            <div class="pl-5 text-sm">
+                <pre
+                    class="text-xs leading-5.5 whitespace-pre-wrap font-[inherit]"
+                    innerHTML={formatDifference(
+                        original.previousBio,
+                        original.bio
+                    )}
+                ></pre>
+            </div>
+        );
+    }
+
+    return null;
+};
+
 export const columns = [
     {
+        id: 'expander',
+        header: () => null,
+        enableSorting: false,
+        meta: {
+            class: 'w-[20px]',
+            expandedRow
+        },
+        cell: ({ row }) => {
+            if (!row.getCanExpand()) {
+                return null;
+            }
+            return (
+                <button
+                    type="button"
+                    class="inline-flex h-6 items-center justify-center text-xs text-muted-foreground hover:text-foreground"
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        row.toggleExpanded();
+                    }}
+                >
+                    {row.getIsExpanded() ? <ChevronDown /> : <ChevronRight />}
+                </button>
+            );
+        }
+    },
+    {
         accessorKey: 'created_at',
-        header: () => t('table.feed.date'),
+        meta: {
+            class: 'w-[140px]'
+        },
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() =>
+                    column.toggleSorting(column.getIsSorted() === 'asc')
+                }
+            >
+                {t('table.feed.date')}
+                <ArrowUpDown class="ml-1 h-4 w-4" />
+            </Button>
+        ),
         cell: ({ row }) => {
             const createdAt = row.getValue('created_at');
             const shortText = formatDateFilter(createdAt, 'short');
@@ -38,26 +247,33 @@ export const columns = [
     },
     {
         accessorKey: 'type',
+        meta: {
+            class: 'w-[130px]'
+        },
         header: () => t('table.feed.type'),
         cell: ({ row }) => {
             const type = row.getValue('type');
             return (
-                <ElTag type="info" effect="plain" size="small">
-                    {t(`view.feed.filters.${type}`)}
-                </ElTag>
+                <div>
+                    <Badge variant="outline" class="text-muted-foreground">
+                        {t(`view.feed.filters.${type}`)}
+                    </Badge>
+                </div>
             );
         }
     },
     {
         accessorKey: 'displayName',
+        meta: {
+            class: 'w-[190px]'
+        },
         header: () => t('table.feed.user'),
         cell: ({ row }) => {
             const { showUserDialog } = useUserStore();
             const original = row.original;
             return (
                 <span
-                    class="x-link table-user"
-                    style="padding-right: 10px"
+                    class="x-link pr-2.5"
                     onClick={() => showUserDialog(original.userId)}
                 >
                     {original.displayName}
@@ -68,12 +284,10 @@ export const columns = [
     {
         id: 'detail',
         header: () => t('table.feed.detail'),
+        enableSorting: false,
         cell: ({ row }) => {
             const original = row.original;
             const type = original.type;
-            const Location = resolveComponent('Location');
-            const AvatarInfo = resolveComponent('AvatarInfo');
-
             if (type === 'GPS') {
                 return original.location ? (
                     <Location
@@ -100,21 +314,23 @@ export const columns = [
                     original.previousStatusDescription
                 ) {
                     return (
-                        <span>
+                        <div class="flex items-center">
                             <i
                                 class={[
                                     'x-user-status',
                                     statusClass(original.previousStatus)
                                 ]}
                             ></i>
-                            <span class="mx-2"> Ўъ </span>
+                            <span class="mx-2">
+                                <ArrowRight />
+                            </span>
                             <i
                                 class={[
                                     'x-user-status',
                                     statusClass(original.status)
                                 ]}
                             ></i>
-                        </span>
+                        </div>
                     );
                 }
 
@@ -152,3 +368,136 @@ export const columns = [
         }
     }
 ];
+
+function formatDifference(
+    oldString,
+    newString,
+    markerAddition = '<span class="x-text-added">{{text}}</span>',
+    markerDeletion = '<span class="x-text-removed">{{text}}</span>'
+) {
+    [oldString, newString] = [oldString, newString].map((s) =>
+        s
+            .replaceAll(/&/g, '&amp;')
+            .replaceAll(/</g, '&lt;')
+            .replaceAll(/>/g, '&gt;')
+            .replaceAll(/"/g, '&quot;')
+            .replaceAll(/'/g, '&#039;')
+            .replaceAll(/\n/g, '<br>')
+    );
+
+    const oldWords = oldString
+        .split(/\s+/)
+        .flatMap((word) => word.split(/(<br>)/));
+    const newWords = newString
+        .split(/\s+/)
+        .flatMap((word) => word.split(/(<br>)/));
+
+    function findLongestMatch(oldStart, oldEnd, newStart, newEnd) {
+        let bestOldStart = oldStart;
+        let bestNewStart = newStart;
+        let bestSize = 0;
+
+        const lookup = new Map();
+        for (let i = oldStart; i < oldEnd; i++) {
+            const word = oldWords[i];
+            if (!lookup.has(word)) lookup.set(word, []);
+            lookup.get(word).push(i);
+        }
+
+        for (let j = newStart; j < newEnd; j++) {
+            const word = newWords[j];
+            if (!lookup.has(word)) continue;
+
+            for (const i of lookup.get(word)) {
+                let size = 0;
+                while (
+                    i + size < oldEnd &&
+                    j + size < newEnd &&
+                    oldWords[i + size] === newWords[j + size]
+                ) {
+                    size++;
+                }
+                if (size > bestSize) {
+                    bestOldStart = i;
+                    bestNewStart = j;
+                    bestSize = size;
+                }
+            }
+        }
+
+        return {
+            oldStart: bestOldStart,
+            newStart: bestNewStart,
+            size: bestSize
+        };
+    }
+
+    function buildDiff(oldStart, oldEnd, newStart, newEnd) {
+        const result = [];
+        const match = findLongestMatch(oldStart, oldEnd, newStart, newEnd);
+
+        if (match.size > 0) {
+            if (oldStart < match.oldStart || newStart < match.newStart) {
+                result.push(
+                    ...buildDiff(
+                        oldStart,
+                        match.oldStart,
+                        newStart,
+                        match.newStart
+                    )
+                );
+            }
+
+            result.push(
+                oldWords
+                    .slice(match.oldStart, match.oldStart + match.size)
+                    .join(' ')
+            );
+
+            if (
+                match.oldStart + match.size < oldEnd ||
+                match.newStart + match.size < newEnd
+            ) {
+                result.push(
+                    ...buildDiff(
+                        match.oldStart + match.size,
+                        oldEnd,
+                        match.newStart + match.size,
+                        newEnd
+                    )
+                );
+            }
+        } else {
+            function build(words, start, end, pattern) {
+                let r = [];
+                let ts = words
+                    .slice(start, end)
+                    .filter((w) => w.length > 0)
+                    .join(' ')
+                    .split('<br>');
+                for (let i = 0; i < ts.length; i++) {
+                    if (i > 0) r.push('<br>');
+                    if (ts[i].length < 1) continue;
+                    r.push(pattern.replace('{{text}}', ts[i]));
+                }
+                return r;
+            }
+
+            if (oldStart < oldEnd)
+                result.push(
+                    ...build(oldWords, oldStart, oldEnd, markerDeletion)
+                );
+            if (newStart < newEnd)
+                result.push(
+                    ...build(newWords, newStart, newEnd, markerAddition)
+                );
+        }
+
+        return result;
+    }
+
+    return buildDiff(0, oldWords.length, 0, newWords.length)
+        .join(' ')
+        .replace(/<br>[ ]+<br>/g, '<br><br>')
+        .replace(/<br> /g, '<br>');
+}

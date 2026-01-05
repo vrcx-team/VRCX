@@ -1,11 +1,14 @@
 <script setup>
-    import { PaginationList } from 'reka-ui';
+    import { Primitive } from 'reka-ui';
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
+
+    import { badgeVariants } from '.';
 
     const props = defineProps({
         asChild: { type: Boolean, required: false },
         as: { type: null, required: false },
+        variant: { type: null, required: false },
         class: { type: null, required: false }
     });
 
@@ -13,11 +16,7 @@
 </script>
 
 <template>
-    <PaginationList
-        v-slot="slotProps"
-        data-slot="pagination-content"
-        v-bind="delegatedProps"
-        :class="cn('flex flex-row items-center gap-1', props.class)">
-        <slot v-bind="slotProps" />
-    </PaginationList>
+    <Primitive data-slot="badge" :class="cn(badgeVariants({ variant }), props.class)" v-bind="delegatedProps">
+        <slot />
+    </Primitive>
 </template>

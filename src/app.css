@@ -6,8 +6,6 @@
 /* For a copy, see <https://opensource.org/licenses/MIT>.
 */
 
-@import 'tailwindcss';
-
 @import 'element-plus/dist/index.css';
 @import 'element-plus/theme-chalk/dark/css-vars.css';
 
@@ -27,23 +25,28 @@
     --font-symbol: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
     --font-fallback-cjk: sans-serif;
     --font-primary-cjk:
-        'Noto Sans JP Variable', 'Noto Sans SC Variable', 'Noto Sans KR Variable', 'Noto Sans TC Variable';
+        'Noto Sans JP Variable', 'Noto Sans SC Variable',
+        'Noto Sans KR Variable', 'Noto Sans TC Variable';
 }
 :root[lang='zh-CN'] {
     --font-primary-cjk:
-        'Noto Sans SC Variable', 'Noto Sans JP Variable', 'Noto Sans KR Variable', 'Noto Sans TC Variable';
+        'Noto Sans SC Variable', 'Noto Sans JP Variable',
+        'Noto Sans KR Variable', 'Noto Sans TC Variable';
 }
 :root[lang='ja'] {
     --font-primary-cjk:
-        'Noto Sans JP Variable', 'Noto Sans KR Variable', 'Noto Sans TC Variable', 'Noto Sans SC Variable';
+        'Noto Sans JP Variable', 'Noto Sans KR Variable',
+        'Noto Sans TC Variable', 'Noto Sans SC Variable';
 }
 :root[lang='ko'] {
     --font-primary-cjk:
-        'Noto Sans KR Variable', 'Noto Sans JP Variable', 'Noto Sans TC Variable', 'Noto Sans SC Variable';
+        'Noto Sans KR Variable', 'Noto Sans JP Variable',
+        'Noto Sans TC Variable', 'Noto Sans SC Variable';
 }
 :root[lang='zh-TW'] {
     --font-primary-cjk:
-        'Noto Sans TC Variable', 'Noto Sans JP Variable', 'Noto Sans KR Variable', 'Noto Sans SC Variable';
+        'Noto Sans TC Variable', 'Noto Sans JP Variable',
+        'Noto Sans KR Variable', 'Noto Sans SC Variable';
 }
 :root {
     --el-color-primary-light-9: color-mix(
@@ -416,6 +419,12 @@ html.dark .x-friend-item > .detail > .extra,
 :root.dark .x-friend-item > .detail > .extra,
 :root[data-theme='dark'] .x-friend-item > .detail > .extra {
     color: var(--color-neutral-300);
+}
+
+.lucide {
+    width: 16px;
+    height: 16px;
+    stroke-width: 1.5px;
 }
 
 #x-app {
