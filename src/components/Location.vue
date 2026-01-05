@@ -5,7 +5,7 @@
             <div v-if="region" :class="['flags', 'mr-1.5', region]"></div>
             <el-tooltip
                 :content="`${t('dialog.new_instance.instance_id')}: #${instanceName}`"
-                :disabled="!instanceName"
+                :disabled="!instanceName || showInstanceIdInLocation"
                 :show-after="300"
                 placement="top">
                 <div
@@ -14,6 +14,9 @@
                     @click="handleShowWorldDialog">
                     <el-icon :class="['is-loading']" class="mr-1" v-if="isTraveling"><Loading /></el-icon>
                     <span class="min-w-0 truncate">{{ text }}</span>
+                    <span v-if="showInstanceIdInLocation && instanceName" class="ml-1 whitespace-nowrap">{{
+                        ` · #${instanceName}`
+                    }}</span>
                     <span v-if="groupName" class="ml-0.5 whitespace-nowrap x-link" @click.stop="handleShowGroupDialog">
                         ({{ groupName }})
                     </span>
@@ -33,7 +36,13 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useGroupStore, useInstanceStore, useSearchStore, useWorldStore } from '../stores';
+    import {
+        useAppearanceSettingsStore,
+        useGroupStore,
+        useInstanceStore,
+        useSearchStore,
+        useWorldStore
+    } from '../stores';
     import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
     import { accessTypeLocaleKeyMap } from '../shared/constants';
 
@@ -45,6 +54,7 @@
     const { verifyShortName } = useSearchStore();
     const { cachedInstances } = useInstanceStore();
     const { lastInstanceApplied } = storeToRefs(useInstanceStore());
+    const { showInstanceIdInLocation } = storeToRefs(useAppearanceSettingsStore());
 
     const props = defineProps({
         location: String,

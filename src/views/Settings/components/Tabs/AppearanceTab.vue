@@ -68,6 +68,10 @@
                     saveOpenVROption();
                 " />
             <simple-switch
+                :label="t('view.settings.appearance.appearance.show_instance_id')"
+                :value="showInstanceIdInLocation"
+                @change="setShowInstanceIdInLocation" />
+            <simple-switch
                 :label="t('view.settings.appearance.appearance.nicknames')"
                 :value="!hideNicknames"
                 @change="
@@ -387,8 +391,8 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '../../../../stores';
-    import { THEME_CONFIG } from '../../../../shared/constants';
     import { getLanguageName, languageCodes } from '../../../../localization';
+    import { THEME_CONFIG } from '../../../../shared/constants';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 
@@ -402,6 +406,7 @@
         themeMode,
         displayVRCPlusIconsAsAvatar,
         hideNicknames,
+        showInstanceIdInLocation,
         isAgeGatedInstancesVisible,
         sortFavorites,
         instanceUsersSortAlphabetical,
@@ -428,6 +433,7 @@
     const {
         setDisplayVRCPlusIconsAsAvatar,
         setHideNicknames,
+        setShowInstanceIdInLocation,
         setIsAgeGatedInstancesVisible,
         setInstanceUsersSortAlphabetical,
         setDtHour12,
