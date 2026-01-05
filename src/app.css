@@ -421,12 +421,6 @@ html.dark .x-friend-item > .detail > .extra,
     color: var(--color-neutral-300);
 }
 
-.lucide {
-    width: 16px;
-    height: 16px;
-    stroke-width: 1.5px;
-}
-
 #x-app {
     background: var(--el-bg-color-page);
     color: var(--el-text-color-primary);
