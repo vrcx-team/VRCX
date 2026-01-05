@@ -51,6 +51,7 @@ export const useAppearanceSettingsStore = defineStore(
         const isDarkMode = ref(false);
         const displayVRCPlusIconsAsAvatar = ref(false);
         const hideNicknames = ref(false);
+        const showInstanceIdInLocation = ref(false);
         const isAgeGatedInstancesVisible = ref(false);
         const sortFavorites = ref(true);
         const instanceUsersSortAlphabetical = ref(false);
@@ -108,6 +109,7 @@ export const useAppearanceSettingsStore = defineStore(
                 themeModeConfig,
                 displayVRCPlusIconsAsAvatarConfig,
                 hideNicknamesConfig,
+                showInstanceIdInLocationConfig,
                 isAgeGatedInstancesVisibleConfig,
                 sortFavoritesConfig,
                 instanceUsersSortAlphabeticalConfig,
@@ -133,6 +135,10 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getString('VRCX_ThemeMode', 'system'),
                 configRepository.getBool('displayVRCPlusIconsAsAvatar', true),
                 configRepository.getBool('VRCX_hideNicknames', false),
+                configRepository.getBool(
+                    'VRCX_showInstanceIdInLocation',
+                    false
+                ),
                 configRepository.getBool(
                     'VRCX_isAgeGatedInstancesVisible',
                     true
@@ -211,6 +217,7 @@ export const useAppearanceSettingsStore = defineStore(
             displayVRCPlusIconsAsAvatar.value =
                 displayVRCPlusIconsAsAvatarConfig;
             hideNicknames.value = hideNicknamesConfig;
+            showInstanceIdInLocation.value = showInstanceIdInLocationConfig;
             isAgeGatedInstancesVisible.value = isAgeGatedInstancesVisibleConfig;
             sortFavorites.value = sortFavoritesConfig;
             instanceUsersSortAlphabetical.value =
@@ -490,6 +497,13 @@ export const useAppearanceSettingsStore = defineStore(
         function setHideNicknames() {
             hideNicknames.value = !hideNicknames.value;
             configRepository.setBool('VRCX_hideNicknames', hideNicknames.value);
+        }
+        function setShowInstanceIdInLocation() {
+            showInstanceIdInLocation.value = !showInstanceIdInLocation.value;
+            configRepository.setBool(
+                'VRCX_showInstanceIdInLocation',
+                showInstanceIdInLocation.value
+            );
         }
         function setIsAgeGatedInstancesVisible() {
             isAgeGatedInstancesVisible.value =
@@ -801,6 +815,7 @@ export const useAppearanceSettingsStore = defineStore(
             isDarkMode,
             displayVRCPlusIconsAsAvatar,
             hideNicknames,
+            showInstanceIdInLocation,
             isAgeGatedInstancesVisible,
             sortFavorites,
             instanceUsersSortAlphabetical,
@@ -830,6 +845,7 @@ export const useAppearanceSettingsStore = defineStore(
             setAppLanguage,
             setDisplayVRCPlusIconsAsAvatar,
             setHideNicknames,
+            setShowInstanceIdInLocation,
             setIsAgeGatedInstancesVisible,
             setSortFavorites,
             setInstanceUsersSortAlphabetical,
