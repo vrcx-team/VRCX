@@ -3,7 +3,11 @@
         <NavMenu></NavMenu>
         <el-splitter @resize-end="handleResizeEnd">
             <el-splitter-panel>
-                <RouterView></RouterView>
+                <RouterView v-slot="{ Component }">
+                    <KeepAlive include="Feed,GameLog,PlayerList">
+                        <component :is="Component" />
+                    </KeepAlive>
+                </RouterView>
             </el-splitter-panel>
 
             <el-splitter-panel v-if="isSideBarTabShow" :min="250" :max="700" :size="asideWidth" collapsible>
