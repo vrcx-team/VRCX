@@ -204,20 +204,6 @@
                                                 ✓
                                             </span>
                                         </button>
-
-                                        <el-divider></el-divider>
-
-                                        <div class="nav-menu-theme__custom">
-                                            <span class="nav-menu-theme__custom-label">{{
-                                                t('view.settings.appearance.theme_color.header')
-                                            }}</span>
-                                            <el-color-picker
-                                                :model-value="currentPrimary"
-                                                size="small"
-                                                :disabled="isApplyingPrimaryColor"
-                                                :teleported="false"
-                                                @change="handleCustomThemeColorChange" />
-                                        </div>
                                     </div>
                                     <template #reference>
                                         <button type="button" class="nav-menu-theme__item" @click.prevent>

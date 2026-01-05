@@ -211,7 +211,6 @@ export const useAppearanceSettingsStore = defineStore(
 
             themeMode.value = normalizedThemeMode;
             applyThemeMode();
-            await changeAppThemeStyle(themeMode.value);
             await initPrimaryColor();
 
             displayVRCPlusIconsAsAvatar.value =
@@ -462,6 +461,7 @@ export const useAppearanceSettingsStore = defineStore(
             configRepository.setString('VRCX_ThemeMode', normalizedThemeMode);
             applyThemeMode();
         }
+
         function applyThemeMode() {
             if (themeMode.value === 'light') {
                 setIsDarkMode(false);
@@ -471,6 +471,7 @@ export const useAppearanceSettingsStore = defineStore(
                 setIsDarkMode(true);
             }
         }
+
         /**
          * @param {boolean} isDark
          */
@@ -878,7 +879,8 @@ export const useAppearanceSettingsStore = defineStore(
             setNotificationIconDot,
             applyCompactTableMode,
             setNavCollapsed,
-            toggleNavCollapsed
+            toggleNavCollapsed,
+            setThemeMode
         };
     }
 );
