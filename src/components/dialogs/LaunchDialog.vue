@@ -62,15 +62,28 @@
             <template v-if="canOpenInstanceInGame">
                 <el-button
                     :disabled="!launchDialog.secureOrShortName"
-                    @click="handleLaunchGame(launchDialog.location, launchDialog.shortName, false)">
-                    {{ t('dialog.launch.launch') }}
-                </el-button>
-                <el-button
-                    type="primary"
-                    :disabled="!launchDialog.secureOrShortName"
                     @click="handleAttachGame(launchDialog.location, launchDialog.shortName)">
                     {{ t('dialog.launch.open_ingame') }}
                 </el-button>
+                <el-dropdown
+                    split-button
+                    type="primary"
+                    :disabled="!launchDialog.secureOrShortName"
+                    @click="handleLaunchDefault(launchDialog.location, launchDialog.shortName)"
+                    @command="(cmd) => handleLaunchCommand(cmd, launchDialog.location, launchDialog.shortName)">
+                    {{ launchModeLabel }}
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item :command="launchDialog.desktop ? 'vr' : 'desktop'">
+                                {{
+                                    launchDialog.desktop
+                                        ? t('dialog.launch.launch')
+                                        : t('dialog.launch.start_as_desktop')
+                                }}
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
             </template>
             <template v-else>
                 <el-button
