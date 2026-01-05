@@ -662,7 +662,8 @@ export const useAppearanceSettingsStore = defineStore(
          * @param {object} color
          */
         function setTrustColor(color) {
-            trustColor.value = { ...TRUST_COLOR_DEFAULTS };
+            // @ts-ignore
+            trustColor.value = color;
             configRepository.setString(
                 'VRCX_trustColor',
                 JSON.stringify(trustColor.value)
