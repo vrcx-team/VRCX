@@ -26,7 +26,10 @@
                 <template v-if="isSideBarTabShow">
                     <ResizableHandle
                         with-handle
-                        :class="isAsideCollapsed(layout) ? 'opacity-100' : 'opacity-0'"></ResizableHandle>
+                        :class="[
+                            isAsideCollapsed(layout) ? 'opacity-100' : 'opacity-0',
+                            'z-20 [&>div]:-translate-x-1/2'
+                        ]"></ResizableHandle>
                     <ResizablePanel
                         :default-size="asideDefaultSize"
                         :max-size="asideMaxSize"

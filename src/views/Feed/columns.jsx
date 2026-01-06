@@ -84,14 +84,14 @@ const expandedRow = ({ row }) => {
         return (
             <div class="pl-5 text-sm">
                 <div class="flex items-center">
-                    <div class="inline-block align-top w-[160px]">
+                    <div class="inline-block align-top w-40">
                         {original.previousCurrentAvatarThumbnailImageUrl ? (
                             <>
                                 <img
                                     src={
                                         original.previousCurrentAvatarThumbnailImageUrl
                                     }
-                                    class="x-link h-[120px] w-[160px] rounded"
+                                    class="x-link h-30 w-40 rounded"
                                     loading="lazy"
                                 />
                                 <br />

@@ -395,7 +395,7 @@ export const createColumns = ({
                     }
                     return (
                         <Emoji
-                            class="x-link h-[30px] w-[30px] rounded object-cover"
+                            class="x-link h-7.5 w-7.5 rounded object-cover"
                             onClick={() => showFullscreenImageDialog(imageUrl)}
                             imageUrl={imageUrl}
                             size={30}
@@ -406,7 +406,7 @@ export const createColumns = ({
                 if (original.details?.imageUrl) {
                     return (
                         <img
-                            class="x-link h-[30px] w-[30px] rounded object-cover"
+                            class="x-link h-7.5 w-7.5 rounded object-cover"
                             src={getSmallThumbnailUrl(
                                 original.details.imageUrl
                             )}
@@ -423,7 +423,7 @@ export const createColumns = ({
                 if (original.imageUrl) {
                     return (
                         <img
-                            class="x-link h-[30px] w-[30px] rounded object-cover"
+                            class="x-link h-7.5 w-7.5 rounded object-cover"
                             src={getSmallThumbnailUrl(original.imageUrl)}
                             onClick={() =>
                                 showFullscreenImageDialog(original.imageUrl)
