@@ -11,7 +11,7 @@
         data-slot="table-cell"
         :class="
             cn(
-                'p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
+                'p-2 align-middle whitespace-nowrap in-[.is-compact-table]:py-1! in-[.is-compact-table]:px-2.5! [&:has([role=checkbox])]:pr-0 *:[[role=checkbox]]:translate-y-0.5',
                 props.class
             )
         ">
