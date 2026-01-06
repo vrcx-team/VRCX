@@ -286,9 +286,11 @@ export const useAppearanceSettingsStore = defineStore(
         );
 
         function normalizeThemeMode(mode) {
-            return Object.prototype.hasOwnProperty.call(THEME_CONFIG, mode)
-                ? mode
-                : 'light';
+            if (Object.prototype.hasOwnProperty.call(THEME_CONFIG, mode)) {
+                return mode;
+            } else {
+                return 'dark';
+            }
         }
 
         /**
