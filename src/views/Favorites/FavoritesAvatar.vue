@@ -66,14 +66,14 @@
                     <div class="group-section">
                         <div class="group-section__header">
                             <span>{{ t('view.favorite.avatars.vrchat_favorites') }}</span>
-                            <el-tooltip placement="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
+                            <TooltipWrapper side="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
                                 <el-button
                                     :loading="isFavoriteLoading"
                                     size="small"
                                     :icon="Refresh"
                                     circle
                                     @click.stop="handleRefreshFavorites" />
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </div>
                         <div class="group-section__list">
                             <template v-if="favoriteAvatarGroups.length">
@@ -259,7 +259,7 @@
                                 </div>
                             </template>
                             <div v-else class="group-empty">No Data</div>
-                            <el-tooltip
+                            <TooltipWrapper
                                 v-if="!isCreatingLocalGroup"
                                 :disabled="isLocalUserVrcPlusSupporter"
                                 :content="t('view.favorite.avatars.local_favorites')">
@@ -273,7 +273,7 @@
                                     <el-icon><Plus /></el-icon>
                                     <span>{{ t('view.favorite.avatars.new_group') }}</span>
                                 </div>
-                            </el-tooltip>
+                            </TooltipWrapper>
                             <el-input
                                 v-else
                                 ref="newLocalGroupInput"

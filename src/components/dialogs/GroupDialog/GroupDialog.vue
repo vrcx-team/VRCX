@@ -27,7 +27,7 @@
                             style="font-family: monospace; font-size: 12px; margin-right: 5px">
                             {{ groupDialog.ref.shortCode }}.{{ groupDialog.ref.discriminator }}
                         </span>
-                        <el-tooltip v-for="item in groupDialog.ref.$languages" :key="item.key" placement="top">
+                        <TooltipWrapper v-for="item in groupDialog.ref.$languages" :key="item.key" side="top">
                             <template #content>
                                 <span>{{ item.value }} ({{ item.key }})</span>
                             </template>
@@ -35,7 +35,7 @@
                                 class="flags"
                                 :class="languageClass(item.key)"
                                 style="display: inline-block; margin-right: 5px"></span>
-                        </el-tooltip>
+                        </TooltipWrapper>
                         <div style="margin-top: 5px">
                             <span
                                 class="x-link x-grey"
@@ -166,9 +166,9 @@
                     </div>
                     <div style="flex: none; margin-left: 10px">
                         <template v-if="groupDialog.inGroup && groupDialog.ref?.myMember">
-                            <el-tooltip
+                            <TooltipWrapper
                                 v-if="groupDialog.ref.myMember?.isRepresenting"
-                                placement="top"
+                                side="top"
                                 :content="t('dialog.group.actions.unrepresent_tooltip')">
                                 <el-button
                                     type="warning"
@@ -177,8 +177,8 @@
                                     circle
                                     style="margin-left: 5px"
                                     @click="clearGroupRepresentation(groupDialog.id)"></el-button>
-                            </el-tooltip>
-                            <el-tooltip v-else placement="top" :content="t('dialog.group.actions.represent_tooltip')">
+                            </TooltipWrapper>
+                            <TooltipWrapper v-else side="top" :content="t('dialog.group.actions.represent_tooltip')">
                                 <span>
                                     <el-button
                                         type="default"
@@ -189,11 +189,11 @@
                                         :disabled="groupDialog.ref.privacy === 'private'"
                                         @click="setGroupRepresentation(groupDialog.id)"></el-button>
                                 </span>
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </template>
                         <template v-else-if="groupDialog.ref.myMember?.membershipStatus === 'requested'">
-                            <el-tooltip
-                                placement="top"
+                            <TooltipWrapper
+                                side="top"
                                 :content="t('dialog.group.actions.cancel_join_request_tooltip')">
                                 <span>
                                     <el-button
@@ -204,10 +204,10 @@
                                         style="margin-left: 5px"
                                         @click="cancelGroupRequest(groupDialog.id)"></el-button>
                                 </span>
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </template>
                         <template v-else-if="groupDialog.ref.myMember?.membershipStatus === 'invited'">
-                            <el-tooltip placement="top" :content="t('dialog.group.actions.pending_request_tooltip')">
+                            <TooltipWrapper side="top" :content="t('dialog.group.actions.pending_request_tooltip')">
                                 <span>
                                     <el-button
                                         type="default"
@@ -217,12 +217,12 @@
                                         style="margin-left: 5px"
                                         @click="joinGroup(groupDialog.id)"></el-button>
                                 </span>
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </template>
                         <template v-else>
-                            <el-tooltip
+                            <TooltipWrapper
                                 v-if="groupDialog.ref.joinState === 'request'"
-                                placement="top"
+                                side="top"
                                 :content="t('dialog.group.actions.request_join_tooltip')">
                                 <el-button
                                     type="default"
@@ -231,10 +231,10 @@
                                     circle
                                     style="margin-left: 5px"
                                     @click="joinGroup(groupDialog.id)"></el-button>
-                            </el-tooltip>
-                            <el-tooltip
+                            </TooltipWrapper>
+                            <TooltipWrapper
                                 v-if="groupDialog.ref.joinState === 'invite'"
-                                placement="top"
+                                side="top"
                                 :content="t('dialog.group.actions.invite_required_tooltip')">
                                 <span>
                                     <el-button
@@ -245,10 +245,10 @@
                                         circle
                                         style="margin-left: 5px"></el-button>
                                 </span>
-                            </el-tooltip>
-                            <el-tooltip
+                            </TooltipWrapper>
+                            <TooltipWrapper
                                 v-if="groupDialog.ref.joinState === 'open'"
-                                placement="top"
+                                side="top"
                                 :content="t('dialog.group.actions.join_group_tooltip')">
                                 <el-button
                                     type="default"
@@ -257,7 +257,7 @@
                                     circle
                                     style="margin-left: 5px"
                                     @click="joinGroup(groupDialog.id)"></el-button>
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </template>
                         <el-dropdown trigger="click" style="margin-left: 5px" @command="groupDialogCommand">
                             <el-button
@@ -378,14 +378,14 @@
                             <div style="margin: 5px 0">
                                 <Location :location="room.tag" style="display: inline-block" />
                                 <InviteYourself :location="room.tag" style="margin-left: 5px" />
-                                <el-tooltip placement="top" content="Refresh player count">
+                                <TooltipWrapper side="top" content="Refresh player count">
                                     <el-button
                                         size="small"
                                         :icon="Refresh"
                                         style="margin-left: 5px"
                                         circle
                                         @click="refreshInstancePlayerCount(room.tag)" />
-                                </el-tooltip>
+                                </TooltipWrapper>
                                 <LastJoin :location="room.tag" :currentlocation="lastLocation.location" />
                                 <InstanceInfo
                                     :location="room.tag"
@@ -457,7 +457,7 @@
                                     v-if="groupDialog.announcement.id"
                                     class="extra"
                                     style="float: right; margin-left: 5px">
-                                    <el-tooltip v-if="groupDialog.announcement.roleIds.length" placement="top">
+                                    <TooltipWrapper v-if="groupDialog.announcement.roleIds.length" side="top">
                                         <template #content>
                                             <span>{{ t('dialog.group.posts.visibility') }}</span>
                                             <br />
@@ -475,7 +475,7 @@
                                             </template>
                                         </template>
                                         <el-icon style="margin-right: 5px"><View /></el-icon>
-                                    </el-tooltip>
+                                    </TooltipWrapper>
                                     <DisplayName
                                         :userid="groupDialog.announcement.authorId"
                                         style="margin-right: 5px" />
@@ -483,7 +483,7 @@
                                         ({{ t('dialog.group.posts.edited_by') }}
                                         <DisplayName :userid="groupDialog.announcement.editorId" />)
                                     </span>
-                                    <el-tooltip placement="bottom">
+                                    <TooltipWrapper side="bottom">
                                         <template #content>
                                             <span
                                                 >{{ t('dialog.group.posts.created_at') }}
@@ -504,9 +504,9 @@
                                             </template>
                                         </template>
                                         <Timer :epoch="Date.parse(groupDialog.announcement.updatedAt)" />
-                                    </el-tooltip>
+                                    </TooltipWrapper>
                                     <template v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
-                                        <el-tooltip placement="top" :content="t('dialog.group.posts.edit_tooltip')">
+                                        <TooltipWrapper side="top" :content="t('dialog.group.posts.edit_tooltip')">
                                             <el-button
                                                 text
                                                 :icon="Edit"
@@ -515,15 +515,15 @@
                                                 @click="
                                                     showGroupPostEditDialog(groupDialog.id, groupDialog.announcement)
                                                 " />
-                                        </el-tooltip>
-                                        <el-tooltip placement="top" :content="t('dialog.group.posts.delete_tooltip')">
+                                        </TooltipWrapper>
+                                        <TooltipWrapper side="top" :content="t('dialog.group.posts.delete_tooltip')">
                                             <el-button
                                                 text
                                                 :icon="Delete"
                                                 size="small"
                                                 style="margin-left: 5px; padding: 0"
                                                 @click="confirmDeleteGroupPost(groupDialog.announcement)" />
-                                        </el-tooltip>
+                                        </TooltipWrapper>
                                     </template>
                                 </div>
                             </div>
@@ -595,19 +595,19 @@
                                 <span class="extra">{{ formatDateFilter(groupDialog.ref.createdAt, 'long') }}</span>
                             </div>
                         </div>
-                        <el-tooltip placement="top" :content="t('dialog.user.info.open_previous_instance')">
+                        <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
                             <div class="x-friend-item" @click="showPreviousInstancesGroupDialog(groupDialog.ref)">
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.group.info.last_visited') }}
-                                        <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
+                                        <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
                                             <el-icon style="margin-left: 3px"><Warning /></el-icon>
-                                        </el-tooltip>
+                                        </TooltipWrapper>
                                     </span>
                                     <span class="extra">{{ formatDateFilter(groupDialog.lastVisit, 'long') }}</span>
                                 </div>
                             </div>
-                        </el-tooltip>
+                        </TooltipWrapper>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">{{ t('dialog.group.info.links') }}</span>
@@ -616,7 +616,7 @@
                                     style="margin-top: 5px"
                                     class="flex">
                                     <template v-for="(link, index) in groupDialog.ref.links" :key="index">
-                                        <el-tooltip v-if="link">
+                                        <TooltipWrapper v-if="link">
                                             <template #content>
                                                 <span v-text="link" />
                                             </template>
@@ -631,7 +631,7 @@
                                                 "
                                                 @click.stop="openExternalLink(link)"
                                                 loading="lazy" />
-                                        </el-tooltip>
+                                        </TooltipWrapper>
                                     </template>
                                 </div>
                                 <div v-else class="extra">-</div>
@@ -642,15 +642,15 @@
                                 <span class="name">{{ t('dialog.group.info.url') }}</span>
                                 <span class="extra"
                                     >{{ groupDialog.ref.$url }}
-                                    <el-tooltip placement="top" :content="t('dialog.group.info.url_tooltip')">
+                                    <TooltipWrapper side="top" :content="t('dialog.group.info.url_tooltip')">
                                         <el-button
                                             type="default"
                                             size="small"
                                             :icon="CopyDocument"
                                             circle
                                             style="margin-left: 5px"
-                                            @click="copyToClipboard(groupDialog.ref.$url)" /> </el-tooltip
-                                ></span>
+                                            @click="copyToClipboard(groupDialog.ref.$url)" />
+                                    </TooltipWrapper></span>
                             </div>
                         </div>
                         <div class="x-friend-item" style="width: 350px; cursor: default">
@@ -658,15 +658,15 @@
                                 <span class="name">{{ t('dialog.group.info.id') }}</span>
                                 <span class="extra"
                                     >{{ groupDialog.id }}
-                                    <el-tooltip placement="top" :content="t('dialog.group.info.id_tooltip')">
+                                    <TooltipWrapper side="top" :content="t('dialog.group.info.id_tooltip')">
                                         <el-button
                                             type="default"
                                             size="small"
                                             :icon="CopyDocument"
                                             circle
                                             style="margin-left: 5px"
-                                            @click="copyToClipboard(groupDialog.id)" /> </el-tooltip
-                                ></span>
+                                            @click="copyToClipboard(groupDialog.id)" />
+                                    </TooltipWrapper></span>
                             </div>
                         </div>
                         <div
@@ -687,7 +687,7 @@
                                         <span v-if="groupDialog.memberRoles.length === 0" class="extra"> - </span>
                                         <span v-else class="extra">
                                             <template v-for="(role, rIndex) in groupDialog.memberRoles" :key="rIndex">
-                                                <el-tooltip placement="top">
+                                                <TooltipWrapper side="top">
                                                     <template #content>
                                                         <span>{{ t('dialog.group.info.role') }} {{ role.name }}</span>
                                                         <br />
@@ -720,7 +720,7 @@
                                                             rIndex < groupDialog.memberRoles.length - 1 ? ', ' : ''
                                                         }}</span
                                                     >
-                                                </el-tooltip>
+                                                </TooltipWrapper>
                                             </template>
                                         </span>
                                     </div>
@@ -777,7 +777,7 @@
                                     >
                                     <br />
                                     <div v-if="post.authorId" class="extra" style="float: right; margin-left: 5px">
-                                        <el-tooltip v-if="post.roleIds.length" placement="top">
+                                        <TooltipWrapper v-if="post.roleIds.length" side="top">
                                             <template #content>
                                                 <span>{{ t('dialog.group.posts.visibility') }}</span>
                                                 <br />
@@ -794,13 +794,13 @@
                                                 </template>
                                             </template>
                                             <el-icon style="margin-right: 5px"><View /></el-icon>
-                                        </el-tooltip>
+                                        </TooltipWrapper>
                                         <DisplayName :userid="post.authorId" style="margin-right: 5px" />
                                         <span v-if="post.editorId" style="margin-right: 5px"
                                             >({{ t('dialog.group.posts.edited_by') }}
                                             <DisplayName :userid="post.editorId" />)</span
                                         >
-                                        <el-tooltip placement="bottom">
+                                        <TooltipWrapper side="bottom">
                                             <template #content>
                                                 <span
                                                     >{{ t('dialog.group.posts.created_at') }}
@@ -815,19 +815,19 @@
                                                 </template>
                                             </template>
                                             <Timer :epoch="Date.parse(post.updatedAt)" />
-                                        </el-tooltip>
+                                        </TooltipWrapper>
                                         <template
                                             v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
-                                            <el-tooltip placement="top" :content="t('dialog.group.posts.edit_tooltip')">
+                                            <TooltipWrapper side="top" :content="t('dialog.group.posts.edit_tooltip')">
                                                 <el-button
                                                     text
                                                     :icon="Edit"
                                                     size="small"
                                                     style="margin-left: 5px"
                                                     @click="showGroupPostEditDialog(groupDialog.id, post)" />
-                                            </el-tooltip>
-                                            <el-tooltip
-                                                placement="top"
+                                            </TooltipWrapper>
+                                            <TooltipWrapper
+                                                side="top"
                                                 :content="t('dialog.group.posts.delete_tooltip')">
                                                 <el-button
                                                     text
@@ -835,7 +835,7 @@
                                                     size="small"
                                                     style="margin-left: 5px"
                                                     @click="confirmDeleteGroupPost(post)" />
-                                            </el-tooltip>
+                                            </TooltipWrapper>
                                         </template>
                                     </div>
                                 </div>
@@ -959,13 +959,13 @@
                                         v-text="user.user.displayName" />
                                     <span class="extra">
                                         <template v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')">
-                                            <el-tooltip
+                                            <TooltipWrapper
                                                 v-if="user.isRepresenting"
-                                                placement="top"
+                                                side="top"
                                                 :content="t('dialog.group.members.representing')">
                                                 <el-icon style="margin-right: 5px"><CollectionTag /></el-icon>
-                                            </el-tooltip>
-                                            <el-tooltip v-if="user.visibility !== 'visible'" placement="top">
+                                            </TooltipWrapper>
+                                            <TooltipWrapper v-if="user.visibility !== 'visible'" side="top">
                                                 <template #content>
                                                     <span
                                                         >{{ t('dialog.group.members.visibility') }}
@@ -973,21 +973,21 @@
                                                     >
                                                 </template>
                                                 <el-icon style="margin-right: 5px"><View /></el-icon>
-                                            </el-tooltip>
-                                            <el-tooltip
+                                            </TooltipWrapper>
+                                            <TooltipWrapper
                                                 v-if="!user.isSubscribedToAnnouncements"
-                                                placement="top"
+                                                side="top"
                                                 :content="t('dialog.group.members.unsubscribed_announcements')">
                                                 <el-icon style="margin-right: 5px"><ChatLineSquare /></el-icon>
-                                            </el-tooltip>
-                                            <el-tooltip v-if="user.managerNotes" placement="top">
+                                            </TooltipWrapper>
+                                            <TooltipWrapper v-if="user.managerNotes" side="top">
                                                 <template #content>
                                                     <span>{{ t('dialog.group.members.manager_notes') }}</span>
                                                     <br />
                                                     <span>{{ user.managerNotes }}</span>
                                                 </template>
                                                 <el-icon style="margin-right: 5px"><Edit /></el-icon>
-                                            </el-tooltip>
+                                            </TooltipWrapper>
                                         </template>
                                         <template v-for="roleId in user.roleIds" :key="roleId">
                                             <template v-for="role in groupDialog.ref.roles" :key="role.id + roleId"
@@ -1020,13 +1020,13 @@
                                         v-text="user.user.displayName" />
                                     <span class="extra">
                                         <template v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')">
-                                            <el-tooltip
+                                            <TooltipWrapper
                                                 v-if="user.isRepresenting"
-                                                placement="top"
+                                                side="top"
                                                 :content="t('dialog.group.members.representing')">
                                                 <el-icon style="margin-right: 5px"><CollectionTag /></el-icon>
-                                            </el-tooltip>
-                                            <el-tooltip v-if="user.visibility !== 'visible'" placement="top">
+                                            </TooltipWrapper>
+                                            <TooltipWrapper v-if="user.visibility !== 'visible'" side="top">
                                                 <template #content>
                                                     <span
                                                         >{{ t('dialog.group.members.visibility') }}
@@ -1034,21 +1034,21 @@
                                                     >
                                                 </template>
                                                 <el-icon style="margin-right: 5px"><View /></el-icon>
-                                            </el-tooltip>
-                                            <el-tooltip
+                                            </TooltipWrapper>
+                                            <TooltipWrapper
                                                 v-if="!user.isSubscribedToAnnouncements"
-                                                placement="top"
+                                                side="top"
                                                 :content="t('dialog.group.members.unsubscribed_announcements')">
                                                 <el-icon style="margin-right: 5px"><ChatLineSquare /></el-icon>
-                                            </el-tooltip>
-                                            <el-tooltip v-if="user.managerNotes" placement="top">
+                                            </TooltipWrapper>
+                                            <TooltipWrapper v-if="user.managerNotes" side="top">
                                                 <template #content>
                                                     <span>{{ t('dialog.group.members.manager_notes') }}</span>
                                                     <br />
                                                     <span>{{ user.managerNotes }}</span>
                                                 </template>
                                                 <el-icon style="margin-right: 5px"><Edit /></el-icon>
-                                            </el-tooltip>
+                                            </TooltipWrapper>
                                         </template>
                                         <template v-for="roleId in user.roleIds" :key="roleId">
                                             <template v-for="role in groupDialog.ref.roles" :key="roleId + role.id"

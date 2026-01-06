@@ -41,7 +41,7 @@
                 </el-option>
             </el-select>
             <div>
-                <el-tooltip placement="bottom" :content="t('side_panel.refresh_tooltip')">
+                <TooltipWrapper side="bottom" :content="t('side_panel.refresh_tooltip')">
                     <el-button
                         type="default"
                         :loading="isRefreshFriendsLoading"
@@ -50,7 +50,7 @@
                         circle
                         style="margin-right: 10px"
                         @click="refreshFriendsList"></el-button>
-                </el-tooltip>
+                </TooltipWrapper>
             </div>
         </div>
         <el-tabs class="zero-margin-tabs" stretch style="height: calc(100% - 70px); margin-top: 5px">

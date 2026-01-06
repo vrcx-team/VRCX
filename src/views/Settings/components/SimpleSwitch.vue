@@ -2,9 +2,9 @@
     <div class="simple-switch">
         <div class="name" :style="{ width: longLabel ? '300px' : undefined }">
             {{ label }}
-            <el-tooltip v-if="tooltip" placement="top" :content="tooltip"
+            <TooltipWrapper v-if="tooltip" side="top" :content="tooltip"
                 ><el-icon size="small" class="tooltip"><InfoFilled /></el-icon
-            ></el-tooltip>
+            ></TooltipWrapper>
         </div>
 
         <el-switch class="switch" :model-value="value" @change="change" :disabled="disabled"></el-switch>

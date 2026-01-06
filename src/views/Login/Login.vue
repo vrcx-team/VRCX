@@ -1,9 +1,9 @@
 <template>
     <div style="float: left; margin: 5px; z-index: 3000">
-        <el-tooltip v-if="!noUpdater" placement="top" :content="t('view.login.updater')">
+        <TooltipWrapper v-if="!noUpdater" side="top" :content="t('view.login.updater')">
             <el-button type="default" size="small" :icon="Download" circle @click="showVRCXUpdateDialog"></el-button>
-        </el-tooltip>
-        <el-tooltip placement="top" :content="t('view.login.proxy_settings')">
+        </TooltipWrapper>
+        <TooltipWrapper side="top" :content="t('view.login.proxy_settings')">
             <el-button
                 type="default"
                 size="small"
@@ -11,7 +11,7 @@
                 style="margin-left: 5px"
                 circle
                 @click="promptProxySettings"></el-button>
-        </el-tooltip>
+        </TooltipWrapper>
     </div>
     <div v-loading="loginForm.loading" class="x-login-container">
         <div class="x-login">

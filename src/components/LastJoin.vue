@@ -1,11 +1,11 @@
 <template>
     <span v-if="lastJoin" :class="['inline-block', 'ml-5']">
-        <el-tooltip placement="top" class="ml-5">
+        <TooltipWrapper side="top" class="ml-5">
             <template #content>
                 <span>{{ t('dialog.user.info.last_join') }} <Timer :epoch="lastJoin" /></span>
             </template>
             <el-icon style="display: inline-block"><Location /></el-icon>
-        </el-tooltip>
+        </TooltipWrapper>
     </span>
 </template>
 

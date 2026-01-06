@@ -24,25 +24,25 @@
             <el-button @click="emitShowChatboxBlacklist">{{
                 t('view.player_list.photon.chatbox_blacklist')
             }}</el-button>
-            <el-tooltip placement="bottom" :content="t('view.player_list.photon.status_tooltip')">
+            <TooltipWrapper side="bottom" :content="t('view.player_list.photon.status_tooltip')">
                 <div style="display: inline-flex; align-items: center; font-size: 14px">
                     <span v-if="ipcEnabled && !photonEventIcon">🟢</span>
                     <span v-else-if="ipcEnabled">⚪</span>
                     <span v-else>🔴</span>
                 </div>
-            </el-tooltip>
+            </TooltipWrapper>
         </div>
         <el-tabs type="card">
             <el-tab-pane :label="t('view.player_list.photon.current')">
                 <DataTable v-bind="photonEventTable" style="margin-bottom: 10px">
                     <el-table-column :label="t('table.playerList.date')" prop="created_at" width="130">
                         <template #default="scope">
-                            <el-tooltip placement="right">
+                            <TooltipWrapper side="right">
                                 <template #content>
                                     <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                                 </template>
                                 <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </template>
                     </el-table-column>
                     <el-table-column :label="t('table.playerList.user')" prop="photonId" width="160">
@@ -77,7 +77,7 @@
                             </template>
                             <template v-else-if="scope.row.type === 'ChangeStatus'">
                                 <template v-if="scope.row.status !== scope.row.previousStatus">
-                                    <el-tooltip placement="top">
+                                    <TooltipWrapper side="top">
                                         <template #content>
                                             <span v-if="scope.row.previousStatus === 'active'">{{
                                                 t('dialog.user.status.active')
@@ -94,11 +94,11 @@
                                             <span v-else>{{ t('dialog.user.status.offline') }}</span>
                                         </template>
                                         <i class="x-user-status" :class="statusClass(scope.row.previousStatus)"></i>
-                                    </el-tooltip>
+                                    </TooltipWrapper>
                                     <span>
                                         <el-icon><ArrowRight /></el-icon>
                                     </span>
-                                    <el-tooltip placement="top">
+                                    <TooltipWrapper side="top">
                                         <template #content>
                                             <span v-if="scope.row.status === 'active'">{{
                                                 t('dialog.user.status.active')
@@ -118,7 +118,7 @@
                                             class="x-user-status"
                                             :class="statusClass(scope.row.status)"
                                             style="margin-right: 5px"></i>
-                                    </el-tooltip>
+                                    </TooltipWrapper>
                                 </template>
                                 <span
                                     v-if="scope.row.statusDescription !== scope.row.previousStatusDescription"
@@ -193,7 +193,7 @@
                             </span>
                             <span v-else-if="scope.row.type === 'SpawnEmoji'">
                                 <span v-if="scope.row.imageUrl">
-                                    <el-tooltip placement="right">
+                                    <TooltipWrapper side="right">
                                         <template #content>
                                             <img
                                                 :src="scope.row.imageUrl"
@@ -203,7 +203,7 @@
                                                 loading="lazy" />
                                         </template>
                                         <span v-text="scope.row.fileId"></span>
-                                    </el-tooltip>
+                                    </TooltipWrapper>
                                 </span>
                                 <span v-else v-text="scope.row.text"></span>
                             </span>
@@ -220,12 +220,12 @@
                 <DataTable v-bind="photonEventTablePrevious" style="margin-bottom: 10px">
                     <el-table-column :label="t('table.playerList.date')" prop="created_at" width="130">
                         <template #default="scope">
-                            <el-tooltip placement="right">
+                            <TooltipWrapper side="right">
                                 <template #content>
                                     <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                                 </template>
                                 <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </template>
                     </el-table-column>
                     <el-table-column :label="t('table.playerList.user')" prop="photonId" width="160">
@@ -267,7 +267,7 @@
                             </template>
                             <template v-else-if="scope.row.type === 'ChangeStatus'">
                                 <template v-if="scope.row.status !== scope.row.previousStatus">
-                                    <el-tooltip placement="top">
+                                    <TooltipWrapper side="top">
                                         <template #content>
                                             <span v-if="scope.row.previousStatus === 'active'">{{
                                                 t('dialog.user.status.active')
@@ -284,11 +284,11 @@
                                             <span v-else>{{ t('dialog.user.status.offline') }}</span>
                                         </template>
                                         <i class="x-user-status" :class="statusClass(scope.row.previousStatus)"></i>
-                                    </el-tooltip>
+                                    </TooltipWrapper>
                                     <span>
                                         <el-icon><ArrowRight /></el-icon>
                                     </span>
-                                    <el-tooltip placement="top">
+                                    <TooltipWrapper side="top">
                                         <template #content>
                                             <span v-if="scope.row.status === 'active'">{{
                                                 t('dialog.user.status.active')
@@ -308,7 +308,7 @@
                                             class="x-user-status"
                                             :class="statusClass(scope.row.status)"
                                             style="margin-right: 5px"></i>
-                                    </el-tooltip>
+                                    </TooltipWrapper>
                                 </template>
                                 <span
                                     v-if="scope.row.statusDescription !== scope.row.previousStatusDescription"
@@ -356,7 +356,7 @@
                             <span v-else-if="scope.row.type === 'ChatBoxMessage'" v-text="scope.row.text"></span>
                             <span v-else-if="scope.row.type === 'SpawnEmoji'">
                                 <span v-if="scope.row.imageUrl">
-                                    <el-tooltip placement="right">
+                                    <TooltipWrapper side="right">
                                         <template #content>
                                             <img
                                                 :src="scope.row.imageUrl"
@@ -366,7 +366,7 @@
                                                 loading="lazy" />
                                         </template>
                                         <span v-text="scope.row.fileId"></span>
-                                    </el-tooltip>
+                                    </TooltipWrapper>
                                 </span>
                                 <span v-else v-text="scope.row.text"></span>
                             </span>

@@ -1,8 +1,8 @@
 <template>
     <div v-if="isVisible" class="inline-block">
-        <el-tooltip placement="top" :content="t('dialog.user.info.launch_invite_tooltip')"
+        <TooltipWrapper side="top" :content="t('dialog.user.info.launch_invite_tooltip')"
             ><el-button @click="confirm" size="small" :icon="SwitchButton" circle />
-        </el-tooltip>
+        </TooltipWrapper>
     </div>
 </template>
 

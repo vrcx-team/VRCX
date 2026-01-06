@@ -338,7 +338,7 @@
         <div class="options-container">
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.config_json') }}</span>
-                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')">
+                <TooltipWrapper side="top" :content="t('view.profile.refresh_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -346,8 +346,8 @@
                         circle
                         style="margin-left: 5px"
                         @click="refreshConfigTreeData()"></el-button>
-                </el-tooltip>
-                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')">
+                </TooltipWrapper>
+                <TooltipWrapper side="top" :content="t('view.profile.clear_results_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -355,7 +355,7 @@
                         circle
                         style="margin-left: 5px"
                         @click="configTreeData = []"></el-button>
-                </el-tooltip>
+                </TooltipWrapper>
             </div>
             <el-tree v-if="configTreeData.length > 0" :data="configTreeData" style="margin-top: 10px; font-size: 12px">
                 <template #default="scope">

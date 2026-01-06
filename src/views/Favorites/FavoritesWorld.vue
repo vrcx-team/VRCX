@@ -68,14 +68,14 @@
                     <div class="group-section">
                         <div class="group-section__header">
                             <span>{{ t('view.favorite.worlds.vrchat_favorites') }}</span>
-                            <el-tooltip placement="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
+                            <TooltipWrapper side="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
                                 <el-button
                                     :loading="isFavoriteLoading"
                                     size="small"
                                     :icon="Refresh"
                                     circle
                                     @click.stop="handleRefreshFavorites" />
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </div>
                         <div class="group-section__list">
                             <template v-if="favoriteWorldGroups.length">

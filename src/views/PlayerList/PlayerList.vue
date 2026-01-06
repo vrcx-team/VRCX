@@ -64,7 +64,7 @@
                             style="margin-right: 5px"
                             >{{ t('dialog.world.tags.private') }}</el-tag
                         >
-                        <el-tooltip v-if="currentInstanceWorld.isPC" placement="top" content="PC">
+                        <TooltipWrapper v-if="currentInstanceWorld.isPC" side="top" content="PC">
                             <el-tag
                                 class="x-tag-platform-pc"
                                 type="info"
@@ -78,8 +78,8 @@
                                     >{{ currentInstanceWorld.bundleSizes['standalonewindows'].fileSize }}</span
                                 >
                             </el-tag>
-                        </el-tooltip>
-                        <el-tooltip v-if="currentInstanceWorld.isQuest" placement="top" content="Android">
+                        </TooltipWrapper>
+                        <TooltipWrapper v-if="currentInstanceWorld.isQuest" side="top" content="Android">
                             <el-tag
                                 class="x-tag-platform-quest"
                                 type="info"
@@ -93,8 +93,8 @@
                                     >{{ currentInstanceWorld.bundleSizes['android'].fileSize }}</span
                                 >
                             </el-tag>
-                        </el-tooltip>
-                        <el-tooltip v-if="currentInstanceWorld.isIos" placement="top" content="iOS">
+                        </TooltipWrapper>
+                        <TooltipWrapper v-if="currentInstanceWorld.isIos" side="top" content="iOS">
                             <el-tag
                                 class="x-tag-platform-ios"
                                 type="info"
@@ -108,7 +108,7 @@
                                     >{{ currentInstanceWorld.bundleSizes['ios'].fileSize }}</span
                                 >
                             </el-tag>
-                        </el-tooltip>
+                        </TooltipWrapper>
                         <el-tag
                             v-if="currentInstanceWorld.avatarScalingDisabled"
                             type="warning"
@@ -244,24 +244,24 @@
                         sortable>
                         <template #default="scope">
                             <template v-if="chatboxUserBlacklist.has(scope.row.ref.id)">
-                                <el-tooltip placement="left" content="Unblock chatbox messages">
+                                <TooltipWrapper side="left" content="Unblock chatbox messages">
                                     <el-button
                                         text
                                         :icon="Mute"
                                         size="small"
                                         style="color: red; margin-right: 5px"
                                         @click.stop="deleteChatboxUserBlacklist(scope.row.ref.id)"></el-button>
-                                </el-tooltip>
+                                </TooltipWrapper>
                             </template>
                             <template v-else>
-                                <el-tooltip placement="left" content="Block chatbox messages">
+                                <TooltipWrapper side="left" content="Block chatbox messages">
                                     <el-button
                                         text
                                         :icon="Microphone"
                                         size="small"
                                         style="margin-right: 5px"
                                         @click.stop="addChatboxUserBlacklist(scope.row.ref)"></el-button>
-                                </el-tooltip>
+                                </TooltipWrapper>
                             </template>
                             <span v-text="scope.row.photonId"></span>
                         </template>
@@ -275,37 +275,37 @@
                         :sort-method="sortInstanceIcon">
                         <template #default="scope">
                             <span></span>
-                            <el-tooltip v-if="scope.row.isMaster" placement="left" content="Instance Master">
+                            <TooltipWrapper v-if="scope.row.isMaster" side="left" content="Instance Master">
                                 <span>👑</span>
-                            </el-tooltip>
-                            <el-tooltip v-if="scope.row.isModerator" placement="left" content="Moderator">
+                            </TooltipWrapper>
+                            <TooltipWrapper v-if="scope.row.isModerator" side="left" content="Moderator">
                                 <span>⚔️</span>
-                            </el-tooltip>
-                            <el-tooltip v-if="scope.row.isFriend" placement="left" content="Friend">
+                            </TooltipWrapper>
+                            <TooltipWrapper v-if="scope.row.isFriend" side="left" content="Friend">
                                 <span>💚</span>
-                            </el-tooltip>
-                            <el-tooltip v-if="scope.row.isBlocked" placement="left" content="Blocked">
+                            </TooltipWrapper>
+                            <TooltipWrapper v-if="scope.row.isBlocked" side="left" content="Blocked">
                                 <el-icon style="color: red"><CircleClose /></el-icon>
-                            </el-tooltip>
-                            <el-tooltip v-if="scope.row.isMuted" placement="left" content="Muted">
+                            </TooltipWrapper>
+                            <TooltipWrapper v-if="scope.row.isMuted" side="left" content="Muted">
                                 <el-icon style="color: var(--el-color-warning)"><Mute /></el-icon>
-                            </el-tooltip>
-                            <el-tooltip
+                            </TooltipWrapper>
+                            <TooltipWrapper
                                 v-if="scope.row.isAvatarInteractionDisabled"
-                                placement="left"
+                                side="left"
                                 content="Avatar Interaction Disabled
                                     ">
                                 <el-icon style="color: var(--el-color-warning)"><Pointer /></el-icon>
-                            </el-tooltip>
-                            <el-tooltip v-if="scope.row.isChatBoxMuted" placement="left" content="Chatbox Muted">
+                            </TooltipWrapper>
+                            <TooltipWrapper v-if="scope.row.isChatBoxMuted" side="left" content="Chatbox Muted">
                                 <el-icon style="color: var(--el-color-warning)"><ChatLineRound /></el-icon>
-                            </el-tooltip>
-                            <el-tooltip v-if="scope.row.timeoutTime" placement="left" content="Timeout">
+                            </TooltipWrapper>
+                            <TooltipWrapper v-if="scope.row.timeoutTime" side="left" content="Timeout">
                                 <span style="color: var(--el-color-danger)">🔴{{ scope.row.timeoutTime }}s</span>
-                            </el-tooltip>
-                            <el-tooltip v-if="scope.row.ageVerified" placement="left" content="18+ Verified">
+                            </TooltipWrapper>
+                            <TooltipWrapper v-if="scope.row.ageVerified" side="left" content="18+ Verified">
                                 <i class="ri-id-card-line"></i>
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </template>
                     </el-table-column>
                     <el-table-column :label="t('table.playerList.platform')" prop="inVRMode" width="90">
@@ -341,7 +341,7 @@
                     </el-table-column>
                     <el-table-column :label="t('table.playerList.language')" width="100" prop="ref.$languages">
                         <template #default="scope">
-                            <el-tooltip v-for="item in scope.row.ref.$languages" :key="item.key" placement="top">
+                            <TooltipWrapper v-for="item in scope.row.ref.$languages" :key="item.key" side="top">
                                 <template #content>
                                     <span>{{ item.value }} ({{ item.key }})</span>
                                 </template>
@@ -349,13 +349,13 @@
                                     class="flags"
                                     :class="languageClass(item.key)"
                                     style="display: inline-block; margin-right: 5px"></span>
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </template>
                     </el-table-column>
                     <el-table-column :label="t('table.playerList.bioLink')" width="100" prop="ref.bioLinks">
                         <template #default="scope">
                             <div style="display: flex; align-items: center">
-                                <el-tooltip
+                                <TooltipWrapper
                                     v-for="(link, index) in scope.row.ref.bioLinks?.filter(Boolean)"
                                     :key="index">
                                     <template #content>
@@ -372,7 +372,7 @@
                                         "
                                         @click.stop="openExternalLink(link)"
                                         loading="lazy" />
-                                </el-tooltip>
+                                </TooltipWrapper>
                             </div>
                         </template>
                     </el-table-column>

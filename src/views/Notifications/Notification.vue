@@ -48,7 +48,7 @@
                         clearable
                         class="flex-[0.4]"
                         style="margin: 0 10px" />
-                    <el-tooltip placement="bottom" :content="t('view.notification.refresh_tooltip')">
+                    <TooltipWrapper side="bottom" :content="t('view.notification.refresh_tooltip')">
                         <el-button
                             type="default"
                             :loading="isNotificationsLoading"
@@ -56,7 +56,7 @@
                             circle
                             style="flex: none"
                             @click="refreshNotifications()" />
-                    </el-tooltip>
+                    </TooltipWrapper>
                 </div>
             </template>
         </DataTableLayout>

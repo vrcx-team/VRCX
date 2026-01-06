@@ -18,14 +18,14 @@
                 v-model="playerModerationTable.filters[1].value"
                 :placeholder="t('view.moderation.search_placeholder')"
                 class="filter-input" />
-            <el-tooltip placement="bottom" :content="t('view.moderation.refresh_tooltip')">
+            <TooltipWrapper side="bottom" :content="t('view.moderation.refresh_tooltip')">
                 <el-button
                     type="default"
                     :loading="playerModerationTable.loading"
                     @click="refreshPlayerModerations()"
                     :icon="Refresh"
                     circle />
-            </el-tooltip>
+            </TooltipWrapper>
         </div>
 
         <DataTableLayout

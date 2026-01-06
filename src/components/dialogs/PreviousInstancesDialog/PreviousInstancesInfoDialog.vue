@@ -18,23 +18,23 @@
         <DataTable :loading="loading" v-bind="dataTable" style="margin-top: 10px">
             <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="130">
                 <template #default="scope">
-                    <el-tooltip placement="left">
+                    <TooltipWrapper side="left">
                         <template #content>
                             <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                         </template>
                         <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
-                    </el-tooltip>
+                    </TooltipWrapper>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.gameLog.icon')" prop="isFriend" width="70" align="center">
                 <template #default="scope">
                     <template v-if="gameLogIsFriend(scope.row)">
-                        <el-tooltip v-if="gameLogIsFavorite(scope.row)" placement="top" content="Favorite">
+                        <TooltipWrapper v-if="gameLogIsFavorite(scope.row)" side="top" content="Favorite">
                             <span>⭐</span>
-                        </el-tooltip>
-                        <el-tooltip v-else placement="top" content="Friend">
+                        </TooltipWrapper>
+                        <TooltipWrapper v-else side="top" content="Friend">
                             <span>💚</span>
-                        </el-tooltip>
+                        </TooltipWrapper>
                     </template>
                     <span v-else></span>
                 </template>

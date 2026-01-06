@@ -1,9 +1,9 @@
 <template>
     <div style="flex: none">
         <template v-if="(currentUser.id !== userDialog.ref.id && userDialog.isFriend) || userDialog.isFavorite">
-            <el-tooltip
+            <TooltipWrapper
                 v-if="userDialog.isFavorite"
-                placement="top"
+                side="top"
                 :content="t('dialog.user.actions.unfavorite_tooltip')">
                 <el-button
                     type="warning"
@@ -11,15 +11,15 @@
                     size="large"
                     circle
                     @click="userDialogCommand('Add Favorite')"></el-button>
-            </el-tooltip>
-            <el-tooltip v-else placement="top" :content="t('dialog.user.actions.favorite_tooltip')">
+            </TooltipWrapper>
+            <TooltipWrapper v-else side="top" :content="t('dialog.user.actions.favorite_tooltip')">
                 <el-button
                     type="default"
                     :icon="Star"
                     size="large"
                     circle
                     @click="userDialogCommand('Add Favorite')"></el-button>
-            </el-tooltip>
+            </TooltipWrapper>
         </template>
         <el-dropdown trigger="click" @command="onCommand">
             <el-button

@@ -1,6 +1,6 @@
 <template>
     <div style="display: inline-block; margin-left: 5px">
-        <el-tooltip v-if="state.isValidInstance" placement="bottom">
+        <TooltipWrapper v-if="state.isValidInstance" side="bottom">
             <template #content>
                 <div>
                     <span v-if="props.instance.closedAt"
@@ -40,7 +40,7 @@
                 </div>
             </template>
             <el-icon><CaretBottom /></el-icon>
-        </el-tooltip>
+        </TooltipWrapper>
         <span v-if="props.location === locationStore.lastLocation.location" style="margin-left: 5px"
             >{{ locationStore.lastLocation.playerList.size }}/{{ props.instance.capacity }}</span
         >

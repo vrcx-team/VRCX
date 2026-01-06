@@ -1,16 +1,16 @@
 <template>
     <div v-if="isVisible" :class="['inline-block']">
-        <el-tooltip v-if="!canOpenInstanceInGame" placement="top" :content="t('dialog.user.info.self_invite_tooltip')">
+        <TooltipWrapper v-if="!canOpenInstanceInGame" side="top" :content="t('dialog.user.info.self_invite_tooltip')">
             <el-button v-show="isVisible" @click="confirmInvite" size="small" :icon="Message" circle />
-        </el-tooltip>
-        <el-tooltip v-else placement="top" :content="t('dialog.user.info.open_in_vrchat_tooltip')">
+        </TooltipWrapper>
+        <TooltipWrapper v-else side="top" :content="t('dialog.user.info.open_in_vrchat_tooltip')">
             <el-button v-if="isOpeningInstance" size="small" circle>
                 <el-icon class="is-loading">
                     <Loading />
                 </el-icon>
             </el-button>
             <el-button v-else @click="openInstance" size="small" :icon="Message" circle />
-        </el-tooltip>
+        </TooltipWrapper>
     </div>
 </template>
 

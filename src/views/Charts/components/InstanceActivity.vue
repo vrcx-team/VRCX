@@ -21,9 +21,9 @@
             </div>
 
             <div>
-                <el-tooltip :content="t('view.charts.instance_activity.refresh')" placement="top"
+                <TooltipWrapper :content="t('view.charts.instance_activity.refresh')" side="top"
                     ><el-button :icon="Refresh" circle style="margin-right: 5px" @click="reloadData"></el-button
-                ></el-tooltip>
+                ></TooltipWrapper>
 
                 <el-popover placement="bottom" trigger="click" :width="250">
                     <div class="settings">
@@ -66,24 +66,24 @@
 
                     <template #reference>
                         <div>
-                            <el-tooltip :content="t('view.charts.instance_activity.settings.header')" placement="top">
+                            <TooltipWrapper :content="t('view.charts.instance_activity.settings.header')" side="top">
                                 <el-button :icon="Setting" style="margin-right: 5px" circle></el-button>
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </div>
                     </template>
                 </el-popover>
                 <el-button-group style="margin-right: 5px">
-                    <el-tooltip :content="t('view.charts.instance_activity.previous_day')" placement="top">
+                    <TooltipWrapper :content="t('view.charts.instance_activity.previous_day')" side="top">
                         <el-button
                             :icon="ArrowLeft"
                             :disabled="isPrevDayBtnDisabled"
                             @click="changeSelectedDateFromBtn(false)"></el-button>
-                    </el-tooltip>
-                    <el-tooltip :content="t('view.charts.instance_activity.next_day')" placement="top">
+                    </TooltipWrapper>
+                    <TooltipWrapper :content="t('view.charts.instance_activity.next_day')" side="top">
                         <el-button :disabled="isNextDayBtnDisabled" @click="changeSelectedDateFromBtn(true)"
                             ><el-icon class="el-icon--right"><ArrowRight /></el-icon
                         ></el-button>
-                    </el-tooltip>
+                    </TooltipWrapper>
                 </el-button-group>
                 <el-date-picker
                     v-model="selectedDate"
