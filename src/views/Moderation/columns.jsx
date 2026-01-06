@@ -6,7 +6,7 @@ import {
     TooltipProvider,
     TooltipTrigger
 } from '../../components/ui/tooltip';
-import { ArrowRight, ArrowUpDown, X } from 'lucide-vue-next';
+import { ArrowUpDown, X } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
 import { formatDateFilter } from '../../shared/utils';
@@ -18,6 +18,7 @@ const { t } = i18n.global;
 export const createColumns = ({ onDelete, onDeletePrompt }) => {
     const { showUserDialog } = useUserStore();
     const { shiftHeld } = storeToRefs(useUiStore());
+    const { currentUser } = storeToRefs(useUserStore());
 
     return [
         {
@@ -30,7 +31,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             cell: () => null
         },
         {
-            accessorKey: 'created_at',
+            accessorKey: 'created',
             meta: {
                 class: 'w-[140px]'
             },
@@ -41,12 +42,12 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
                         column.toggleSorting(column.getIsSorted() === 'asc')
                     }
                 >
-                    {t('table.friendLog.date')}
+                    {t('table.moderation.date')}
                     <ArrowUpDown class="ml-1 h-4 w-4" />
                 </Button>
             ),
             cell: ({ row }) => {
-                const createdAt = row.getValue('created_at');
+                const createdAt = row.getValue('created');
                 const shortText = formatDateFilter(createdAt, 'short');
                 const longText = formatDateFilter(createdAt, 'long');
 
@@ -67,49 +68,50 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         {
             accessorKey: 'type',
             meta: {
-                class: 'w-[180px]'
+                class: 'w-[160px]'
             },
-            header: () => t('table.friendLog.type'),
+            header: () => t('table.moderation.type'),
             cell: ({ row }) => {
                 const type = row.getValue('type');
                 return (
                     <Badge variant="outline" class="text-muted-foreground">
-                        {t(`view.friend_log.filters.${type}`)}
+                        {t(`view.moderation.filters.${type}`)}
                     </Badge>
                 );
             }
         },
         {
-            accessorKey: 'displayName',
+            accessorKey: 'sourceDisplayName',
+            meta: {
+                class: 'w-[200px] min-w-0 overflow-hidden'
+            },
+            header: () => t('table.moderation.source'),
+            cell: ({ row }) => {
+                const original = row.original;
+                return (
+                    <span
+                        class="x-link block w-full min-w-0 truncate pr-2.5"
+                        onClick={() => showUserDialog(original.sourceUserId)}
+                    >
+                        {original.sourceDisplayName}
+                    </span>
+                );
+            }
+        },
+        {
+            accessorKey: 'targetDisplayName',
             meta: {
                 class: 'min-w-0 overflow-hidden'
             },
-            header: () => t('table.friendLog.user'),
+            header: () => t('table.moderation.target'),
             cell: ({ row }) => {
                 const original = row.original;
-                const displayName =
-                    original.displayName || original.userId || '';
                 return (
-                    <span class="block w-full min-w-0 truncate">
-                        {original.type === 'DisplayName' ? (
-                            <span class="mr-1">
-                                {original.previousDisplayName}
-                                <ArrowRight class="mx-1 inline h-3 w-3" />
-                            </span>
-                        ) : null}
-                        <span
-                            class="x-link pr-2.5"
-                            onClick={() => showUserDialog(original.userId)}
-                        >
-                            {displayName}
-                        </span>
-                        {original.type === 'TrustLevel' ? (
-                            <span class="text-muted-foreground">
-                                ({original.previousTrustLevel}
-                                <ArrowRight class="mx-1 inline h-3 w-3" />
-                                {original.trustLevel})
-                            </span>
-                        ) : null}
+                    <span
+                        class="x-link block w-full min-w-0 truncate pr-2.5"
+                        onClick={() => showUserDialog(original.targetUserId)}
+                    >
+                        {original.targetDisplayName}
                     </span>
                 );
             }
@@ -119,10 +121,14 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             meta: {
                 class: 'w-[80px] max-w-[80px] text-right'
             },
-            header: () => t('table.friendLog.action'),
+            header: () => t('table.moderation.action'),
             enableSorting: false,
             cell: ({ row }) => {
                 const original = row.original;
+                if (original.sourceUserId !== currentUser.value?.id) {
+                    return null;
+                }
+
                 if (shiftHeld.value) {
                     return (
                         <div class="flex justify-end">

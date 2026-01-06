@@ -28,86 +28,52 @@
             </el-tooltip>
         </div>
 
-        <DataTable v-bind="playerModerationTable">
-            <el-table-column width="20"></el-table-column>
-            <el-table-column :label="t('table.moderation.date')" prop="created" :sortable="true" width="150">
-                <template #default="scope">
-                    <el-tooltip placement="right">
-                        <template #content>
-                            <span>{{ formatDateFilter(scope.row.created, 'long') }}</span>
-                        </template>
-                        <span>{{ formatDateFilter(scope.row.created, 'short') }}</span>
-                    </el-tooltip>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.moderation.type')" prop="type" width="150">
-                <template #default="scope">
-                    <el-tag type="info" effect="plain" size="small">
-                        <span v-text="t('view.moderation.filters.' + scope.row.type)"></span
-                    ></el-tag>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.moderation.source')" prop="sourceDisplayName" width="200">
-                <template #default="scope">
-                    <span
-                        class="x-link"
-                        v-text="scope.row.sourceDisplayName"
-                        @click="showUserDialog(scope.row.sourceUserId)"></span>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.moderation.target')" prop="targetDisplayName">
-                <template #default="scope">
-                    <span
-                        class="x-link"
-                        v-text="scope.row.targetDisplayName"
-                        @click="showUserDialog(scope.row.targetUserId)"></span>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.moderation.action')" width="80" align="right">
-                <template #default="scope">
-                    <template v-if="scope.row.sourceUserId === currentUser.id">
-                        <el-button
-                            v-if="shiftHeld"
-                            style="color: var(--el-color-danger)"
-                            text
-                            :icon="Close"
-                            size="small"
-                            @click="deletePlayerModeration(scope.row)"></el-button>
-                        <el-button
-                            v-else
-                            text
-                            :icon="Close"
-                            size="small"
-                            @click="deletePlayerModerationPrompt(scope.row)"></el-button>
-                    </template>
-                </template>
-            </el-table-column>
-        </DataTable>
+        <DataTableLayout
+            :table="table"
+            :loading="playerModerationTable.loading"
+            :table-style="tableHeightStyle"
+            :page-sizes="pageSizes"
+            :total-items="totalItems"
+            :on-page-size-change="handlePageSizeChange" />
     </div>
 </template>
 
 <script setup>
-    import { Close, Refresh } from '@element-plus/icons-vue';
+    import { Refresh } from '@element-plus/icons-vue';
     import { ElMessageBox } from 'element-plus';
+    import {
+        getCoreRowModel,
+        getFilteredRowModel,
+        getPaginationRowModel,
+        getSortedRowModel,
+        useVueTable
+    } from '@tanstack/vue-table';
+    import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useModerationStore, useUiStore, useUserStore } from '../../stores';
-    import { formatDateFilter } from '../../shared/utils';
+    import { useAppearanceSettingsStore, useModerationStore, useVrcxStore } from '../../stores';
+    import { DataTableLayout } from '../../components/ui/data-table';
+    import { createColumns } from './columns.jsx';
     import { moderationTypes } from '../../shared/constants';
     import { playerModerationRequest } from '../../api';
-    import { useTableHeight } from '../../composables/useTableHeight';
+    import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
+    import { valueUpdater } from '../../components/ui/table/utils';
 
     import configRepository from '../../service/config.js';
 
     const { t } = useI18n();
-    const { showUserDialog } = useUserStore();
     const { playerModerationTable } = storeToRefs(useModerationStore());
     const { refreshPlayerModerations, handlePlayerModerationDelete } = useModerationStore();
-    const { shiftHeld } = storeToRefs(useUiStore());
-    const { currentUser } = storeToRefs(useUserStore());
+    const appearanceSettingsStore = useAppearanceSettingsStore();
+    const vrcxStore = useVrcxStore();
 
-    const { containerRef: moderationRef } = useTableHeight(playerModerationTable);
+    const moderationRef = ref(null);
+    const { tableStyle: tableHeightStyle } = useDataTableScrollHeight(moderationRef, {
+        offset: 30,
+        toolbarHeight: 54,
+        paginationHeight: 52
+    });
 
     async function init() {
         playerModerationTable.value.filters[0].value = JSON.parse(
@@ -145,6 +111,97 @@
             })
             .catch(() => {});
     }
+
+    const moderationDisplayData = computed(() => {
+        const data = playerModerationTable.value.data;
+        const typeFilter = playerModerationTable.value.filters?.[0]?.value ?? [];
+        const searchFilter = playerModerationTable.value.filters?.[1]?.value ?? '';
+        const typeSet = Array.isArray(typeFilter)
+            ? new Set(typeFilter.map((value) => String(value).toLowerCase()))
+            : null;
+        const searchValue = String(searchFilter).trim().toLowerCase();
+
+        return data.filter((row) => {
+            if (typeSet && typeSet.size > 0) {
+                const rowType = String(row.type ?? '').toLowerCase();
+                if (!typeSet.has(rowType)) {
+                    return false;
+                }
+            }
+            if (searchValue) {
+                const source = String(row.sourceDisplayName ?? '').toLowerCase();
+                const target = String(row.targetDisplayName ?? '').toLowerCase();
+                if (!source.includes(searchValue) && !target.includes(searchValue)) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    });
+
+    const columns = createColumns({
+        onDelete: deletePlayerModeration,
+        onDeletePrompt: deletePlayerModerationPrompt
+    });
+
+    const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
+    const pageSize = computed(() =>
+        playerModerationTable.value.pageSizeLinked
+            ? appearanceSettingsStore.tablePageSize
+            : playerModerationTable.value.pageSize
+    );
+
+    const sorting = ref([{ id: 'created', desc: true }]);
+    const pagination = ref({
+        pageIndex: 0,
+        pageSize: pageSize.value
+    });
+
+    const table = useVueTable({
+        data: moderationDisplayData,
+        columns,
+        getRowId: (row) => row.id ?? `${row.type}:${row.sourceUserId}:${row.targetUserId}:${row.created ?? ''}`,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
+        onPaginationChange: (updaterOrValue) => valueUpdater(updaterOrValue, pagination),
+        state: {
+            get sorting() {
+                return sorting.value;
+            },
+            get pagination() {
+                return pagination.value;
+            }
+        }
+    });
+
+    const totalItems = computed(() => {
+        const length = table.getFilteredRowModel().rows.length;
+        const max = vrcxStore.maxTableSize;
+        return length > max && length < max + 51 ? max : length;
+    });
+
+    const handlePageSizeChange = (size) => {
+        if (playerModerationTable.value.pageSizeLinked) {
+            appearanceSettingsStore.setTablePageSize(size);
+        } else {
+            playerModerationTable.value.pageSize = size;
+        }
+    };
+
+    watch(pageSize, (size) => {
+        if (pagination.value.pageSize === size) {
+            return;
+        }
+        pagination.value = {
+            ...pagination.value,
+            pageIndex: 0,
+            pageSize: size
+        };
+        table.setPageSize(size);
+    });
 </script>
 
 <style scoped>
