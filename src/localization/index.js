@@ -18,12 +18,37 @@ const elementPlusStrings = {
 };
 
 async function getElementPlusStrings(code) {
-    return (await elementPlusStrings[code]()).default;
+    const loader = elementPlusStrings[code] || elementPlusStrings.en;
+    return (await loader().catch(() => elementPlusStrings.en())).default;
+}
+
+const localizedStringsUrls = import.meta.glob('./*.json', {
+    eager: true,
+    query: '?url',
+    import: 'default'
+});
+
+async function fetchJson(url) {
+    const response = await fetch(url);
+    if (!response.ok) {
+        console.warn(`Failed to fetch localization: ${response.status}`);
+    }
+    return response.json();
 }
 
 async function getLocalizedStrings(code) {
-    const localizedStringsUrl = new URL(`./${code}.json`, import.meta.url).href;
-    const localizedStrings = await fetch(localizedStringsUrl).then((response) => response.json())
+    const fallbackUrl = localizedStringsUrls['./en.json'];
+    const localizedStringsUrl =
+        localizedStringsUrls[`./${code}.json`] || fallbackUrl;
+
+    let localizedStrings = {};
+    try {
+        localizedStrings = await fetchJson(localizedStringsUrl);
+    } catch {
+        if (localizedStringsUrl !== fallbackUrl) {
+            localizedStrings = await fetchJson(fallbackUrl).catch(() => ({}));
+        }
+    }
 
     return {
         ...localizedStrings,
@@ -32,13 +57,13 @@ async function getLocalizedStrings(code) {
 }
 
 const languageNames = import.meta.glob('./*.json', {
-        eager: true,
-        import: 'language'
-    });
+    eager: true,
+    import: 'language'
+});
 
 function getLanguageName(code) {
     return languageNames[`./${code}.json`];
 }
 
-export * from "./locales";
+export * from './locales';
 export { getLanguageName, getLocalizedStrings };
