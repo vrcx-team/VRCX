@@ -1,26 +1,29 @@
 <template>
-    <el-config-provider
-        :locale="/** @type {import('element-plus/es/locale').Language} */ (messages[locale].elementPlus)">
-        <MacOSTitleBar></MacOSTitleBar>
+    <TooltipProvider>
+        <el-config-provider
+            :locale="/** @type {import('element-plus/es/locale').Language} */ (messages[locale].elementPlus)">
+            <MacOSTitleBar></MacOSTitleBar>
 
-        <div
-            id="x-app"
-            class="x-app"
-            :class="{ 'with-macos-titlebar': isMacOS }"
-            ondragenter="event.preventDefault()"
-            ondragover="event.preventDefault()"
-            ondrop="event.preventDefault()">
-            <RouterView></RouterView>
+            <div
+                id="x-app"
+                class="x-app"
+                :class="{ 'with-macos-titlebar': isMacOS }"
+                ondragenter="event.preventDefault()"
+                ondragover="event.preventDefault()"
+                ondrop="event.preventDefault()">
+                <RouterView></RouterView>
 
-            <VRCXUpdateDialog></VRCXUpdateDialog>
-        </div>
-    </el-config-provider>
+                <VRCXUpdateDialog></VRCXUpdateDialog>
+            </div>
+        </el-config-provider>
+    </TooltipProvider>
 </template>
 
 <script setup>
     import { computed, onBeforeMount, onMounted } from 'vue';
     import { useI18n } from 'vue-i18n';
 
+    import { TooltipProvider } from './components/ui/tooltip';
     import { createGlobalStores } from './stores';
     import { initNoty } from './plugin/noty';
 
