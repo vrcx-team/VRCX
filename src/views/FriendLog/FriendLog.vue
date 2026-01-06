@@ -1,116 +1,114 @@
 <template>
     <div class="x-container" ref="friendLogRef">
-        <div style="margin: 0 0 10px; display: flex; align-items: center">
-            <el-select
-                v-model="friendLogTable.filters[0].value"
-                multiple
-                clearable
-                style="flex: 1"
-                :placeholder="t('view.friend_log.filter_placeholder')"
-                @change="saveTableFilters">
-                <el-option
-                    v-for="type in [
-                        'Friend',
-                        'Unfriend',
-                        'FriendRequest',
-                        'CancelFriendRequest',
-                        'DisplayName',
-                        'TrustLevel'
-                    ]"
-                    :key="type"
-                    :label="t('view.friend_log.filters.' + type)"
-                    :value="type" />
-            </el-select>
-            <el-input
-                v-model="friendLogTable.filters[1].value"
-                :placeholder="t('view.friend_log.search_placeholder')"
-                style="flex: 0.4; margin-left: 10px" />
-        </div>
-
-        <DataTable v-bind="friendLogTable" :data="friendLogDisplayData">
-            <el-table-column width="20"></el-table-column>
-            <el-table-column :label="t('table.friendLog.date')" prop="created_at" width="200">
-                <template #default="scope">
-                    <el-tooltip placement="right">
-                        <template #content>
-                            <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
-                        </template>
-                        <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
-                    </el-tooltip>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.friendLog.type')" prop="type" width="200">
-                <template #default="scope">
-                    <el-tag type="info" effect="plain" size="small"
-                        ><span v-text="t('view.friend_log.filters.' + scope.row.type)"></span
-                    ></el-tag>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.friendLog.user')" prop="displayName">
-                <template #default="scope">
-                    <span v-if="scope.row.type === 'DisplayName'">{{ scope.row.previousDisplayName }} → </span>
-                    <span
-                        class="x-link table-user"
-                        style="padding-right: 10px"
-                        @click="showUserDialog(scope.row.userId)"
-                        >{{ scope.row.displayName || scope.row.userId }}
-                    </span>
-                    <template v-if="scope.row.type === 'TrustLevel'">
-                        <span>({{ scope.row.previousTrustLevel }} → {{ scope.row.trustLevel }})</span>
-                    </template>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.friendLog.action')" width="80" align="right">
-                <template #default="scope">
-                    <el-button
-                        v-if="shiftHeld"
-                        style="color: var(--el-color-danger)"
-                        text
-                        :icon="Close"
-                        size="small"
-                        class="button-pd-0"
-                        @click="deleteFriendLog(scope.row)"></el-button>
-                    <i
-                        v-else
-                        class="ri-delete-bin-line"
-                        style="opacity: 0.85"
-                        @click="deleteFriendLogPrompt(scope.row)"></i>
-                </template>
-            </el-table-column>
-            <el-table-column width="5"></el-table-column>
-        </DataTable>
+        <DataTableLayout
+            :table="table"
+            :table-style="tableHeightStyle"
+            :page-sizes="pageSizes"
+            :total-items="totalItems"
+            :on-page-size-change="handlePageSizeChange">
+            <template #toolbar>
+                <div style="margin: 0 0 10px; display: flex; align-items: center">
+                    <el-select
+                        v-model="friendLogTable.filters[0].value"
+                        multiple
+                        clearable
+                        style="flex: 1"
+                        :placeholder="t('view.friend_log.filter_placeholder')"
+                        @change="saveTableFilters">
+                        <el-option
+                            v-for="type in [
+                                'Friend',
+                                'Unfriend',
+                                'FriendRequest',
+                                'CancelFriendRequest',
+                                'DisplayName',
+                                'TrustLevel'
+                            ]"
+                            :key="type"
+                            :label="t('view.friend_log.filters.' + type)"
+                            :value="type" />
+                    </el-select>
+                    <el-input
+                        v-model="friendLogTable.filters[1].value"
+                        :placeholder="t('view.friend_log.search_placeholder')"
+                        style="flex: 0.4; margin-left: 10px" />
+                </div>
+            </template>
+        </DataTableLayout>
     </div>
 </template>
 
 <script setup>
-    import { computed, watch } from 'vue';
-    import { Close } from '@element-plus/icons-vue';
+    import {
+        getCoreRowModel,
+        getFilteredRowModel,
+        getPaginationRowModel,
+        getSortedRowModel,
+        useVueTable
+    } from '@tanstack/vue-table';
+    import { computed, ref, watch } from 'vue';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import dayjs from 'dayjs';
 
-    import { useAppearanceSettingsStore, useFriendStore, useUiStore, useUserStore } from '../../stores';
-    import { formatDateFilter, removeFromArray } from '../../shared/utils';
+    import { useAppearanceSettingsStore, useFriendStore, useVrcxStore } from '../../stores';
+    import { DataTableLayout } from '../../components/ui/data-table';
+    import { createColumns } from './columns.jsx';
     import { database } from '../../service/database';
-    import { useTableHeight } from '../../composables/useTableHeight';
+    import { removeFromArray } from '../../shared/utils';
+    import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
+    import { valueUpdater } from '../../components/ui/table/utils';
 
     import configRepository from '../../service/config';
 
-    const { hideUnfriends } = storeToRefs(useAppearanceSettingsStore());
-    const { showUserDialog } = useUserStore();
+    const appearanceSettingsStore = useAppearanceSettingsStore();
+    const vrcxStore = useVrcxStore();
+    const { hideUnfriends } = storeToRefs(appearanceSettingsStore);
     const { friendLogTable } = storeToRefs(useFriendStore());
-    const { shiftHeld } = storeToRefs(useUiStore());
 
-    const { containerRef: friendLogRef } = useTableHeight(friendLogTable);
+    const friendLogRef = ref(null);
+    const { tableStyle: tableHeightStyle } = useDataTableScrollHeight(friendLogRef, {
+        offset: 30,
+        toolbarHeight: 54,
+        paginationHeight: 52
+    });
 
     const friendLogDisplayData = computed(() => {
         const data = friendLogTable.value.data;
-        return data.slice().sort((a, b) => {
+        const typeFilter = friendLogTable.value.filters?.[0]?.value ?? [];
+        const searchFilter = friendLogTable.value.filters?.[1]?.value ?? '';
+        const hideUnfriendsFilter = friendLogTable.value.filters?.[2]?.value;
+        const typeSet = Array.isArray(typeFilter)
+            ? new Set(typeFilter.map((value) => String(value).toLowerCase()))
+            : null;
+        const searchValue = String(searchFilter).trim().toLowerCase();
+
+        const filtered = data.filter((row) => {
+            if (hideUnfriendsFilter && row.type === 'Unfriend') {
+                return false;
+            }
+            if (typeSet && typeSet.size > 0) {
+                const rowType = String(row.type ?? '').toLowerCase();
+                if (!typeSet.has(rowType)) {
+                    return false;
+                }
+            }
+            if (searchValue) {
+                const displayName = row.displayName;
+                if (
+                    displayName === undefined ||
+                    displayName === null ||
+                    !String(displayName).toLowerCase().includes(searchValue)
+                ) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        return filtered.slice().sort((a, b) => {
             const aTime = typeof a?.created_at === 'string' ? a.created_at : '';
             const bTime = typeof b?.created_at === 'string' ? b.created_at : '';
             const aTs = dayjs(aTime).valueOf();
@@ -154,12 +152,71 @@
         removeFromArray(friendLogTable.value.data, row);
         database.deleteFriendLogHistory(row.rowId);
     }
+
+    const columns = createColumns({
+        onDelete: deleteFriendLog,
+        onDeletePrompt: deleteFriendLogPrompt
+    });
+
+    const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
+    const pageSize = computed(() =>
+        friendLogTable.value.pageSizeLinked ? appearanceSettingsStore.tablePageSize : friendLogTable.value.pageSize
+    );
+
+    const sorting = ref([]);
+    const pagination = ref({
+        pageIndex: 0,
+        pageSize: pageSize.value
+    });
+
+    const table = useVueTable({
+        data: friendLogDisplayData,
+        columns,
+        getRowId: (row) => `${row.type}:${row.rowId ?? row.userId ?? row.created_at ?? ''}`,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
+        onPaginationChange: (updaterOrValue) => valueUpdater(updaterOrValue, pagination),
+        state: {
+            get sorting() {
+                return sorting.value;
+            },
+            get pagination() {
+                return pagination.value;
+            }
+        }
+    });
+
+    const totalItems = computed(() => {
+        const length = table.getFilteredRowModel().rows.length;
+        const max = vrcxStore.maxTableSize;
+        return length > max && length < max + 51 ? max : length;
+    });
+
+    const handlePageSizeChange = (size) => {
+        if (friendLogTable.value.pageSizeLinked) {
+            appearanceSettingsStore.setTablePageSize(size);
+        } else {
+            friendLogTable.value.pageSize = size;
+        }
+    };
+
+    watch(pageSize, (size) => {
+        if (pagination.value.pageSize === size) {
+            return;
+        }
+        pagination.value = {
+            ...pagination.value,
+            pageIndex: 0,
+            pageSize: size
+        };
+        table.setPageSize(size);
+    });
 </script>
 
 <style scoped>
-    .button-pd-0 {
-        padding: 0 !important;
-    }
     .table-user {
         color: var(--x-table-user-text-color);
     }

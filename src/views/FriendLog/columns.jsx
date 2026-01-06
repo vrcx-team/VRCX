@@ -1,0 +1,161 @@
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger
+} from '../../components/ui/tooltip';
+import { ArrowRight, ArrowUpDown, X } from 'lucide-vue-next';
+import { storeToRefs } from 'pinia';
+
+import { formatDateFilter } from '../../shared/utils';
+import { i18n } from '../../plugin';
+import { useUiStore, useUserStore } from '../../stores';
+
+const { t } = i18n.global;
+
+export const createColumns = ({ onDelete, onDeletePrompt }) => {
+    const { showUserDialog } = useUserStore();
+    const { shiftHeld } = storeToRefs(useUiStore());
+
+    return [
+        {
+            id: 'spacer',
+            header: () => null,
+            enableSorting: false,
+            meta: {
+                class: 'w-[20px]'
+            },
+            cell: () => null
+        },
+        {
+            accessorKey: 'created_at',
+            meta: {
+                class: 'w-[200px]'
+            },
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === 'asc')
+                    }
+                >
+                    {t('table.friendLog.date')}
+                    <ArrowUpDown class="ml-1 h-4 w-4" />
+                </Button>
+            ),
+            cell: ({ row }) => {
+                const createdAt = row.getValue('created_at');
+                const shortText = formatDateFilter(createdAt, 'short');
+                const longText = formatDateFilter(createdAt, 'long');
+
+                return (
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <span>{shortText}</span>
+                            </TooltipTrigger>
+                            <TooltipContent side="right">
+                                <span>{longText}</span>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                );
+            }
+        },
+        {
+            accessorKey: 'type',
+            meta: {
+                class: 'w-[200px]'
+            },
+            header: () => t('table.friendLog.type'),
+            cell: ({ row }) => {
+                const type = row.getValue('type');
+                return (
+                    <Badge variant="outline" class="text-muted-foreground">
+                        {t(`view.friend_log.filters.${type}`)}
+                    </Badge>
+                );
+            }
+        },
+        {
+            accessorKey: 'displayName',
+            header: () => t('table.friendLog.user'),
+            cell: ({ row }) => {
+                const original = row.original;
+                const displayName =
+                    original.displayName || original.userId || '';
+                return (
+                    <span>
+                        {original.type === 'DisplayName' ? (
+                            <span class="mr-1 text-muted-foreground">
+                                {original.previousDisplayName}
+                                <ArrowRight class="mx-1 inline h-3 w-3" />
+                            </span>
+                        ) : null}
+                        <span
+                            class="x-link table-user pr-2.5"
+                            onClick={() => showUserDialog(original.userId)}
+                        >
+                            {displayName}
+                        </span>
+                        {original.type === 'TrustLevel' ? (
+                            <span class="text-muted-foreground">
+                                ({original.previousTrustLevel}
+                                <ArrowRight class="mx-1 inline h-3 w-3" />
+                                {original.trustLevel})
+                            </span>
+                        ) : null}
+                    </span>
+                );
+            }
+        },
+        {
+            id: 'action',
+            meta: {
+                class: 'w-[80px] max-w-[80px] text-right'
+            },
+            header: () => t('table.friendLog.action'),
+            enableSorting: false,
+            cell: ({ row }) => {
+                const original = row.original;
+                if (shiftHeld.value) {
+                    return (
+                        <div class="flex justify-end">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                class="h-6 text-destructive"
+                                onClick={() => onDelete(original)}
+                            >
+                                <X />
+                            </Button>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div class="flex justify-end">
+                        <button
+                            type="button"
+                            class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
+                            onClick={() => onDeletePrompt(original)}
+                        >
+                            <i class="ri-delete-bin-line" />
+                        </button>
+                    </div>
+                );
+            }
+        },
+        {
+            id: 'trailing',
+            header: () => null,
+            enableSorting: false,
+            meta: {
+                class: 'w-[5px]'
+            },
+            cell: () => null
+        }
+    ];
+};
