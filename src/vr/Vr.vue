@@ -1248,7 +1248,9 @@
                         :style="{ width: nowPlaying.percentage + '%' }"></div>
                 </template>
                 <div style="float: right">
-                    <span v-if="!config?.minimalFeed" style="display: inline-block">{{ t('vr.status.timer') }}</span>
+                    <span v-if="!config?.minimalFeed" style="display: inline-block; margin-right: 5px">{{
+                        t('vr.status.timer')
+                    }}</span>
                     <span v-if="lastLocationTimer" style="display: inline-block; margin-right: 5px">{{
                         lastLocationTimer
                     }}</span>
@@ -1262,7 +1264,9 @@
                     <span v-if="pcUptime" style="display: inline-block; margin-left: 5px">{{ pcUptime }}</span>
                 </div>
                 <template v-if="lastLocation.playerList.length">
-                    <span v-if="!config?.minimalFeed" style="display: inline-block">{{ t('vr.status.players') }}</span>
+                    <span v-if="!config?.minimalFeed" style="display: inline-block; margin-right: 5px">{{
+                        t('vr.status.players')
+                    }}</span>
                     <span style="display: inline-block">{{ lastLocation.playerList.length }}</span>
                 </template>
                 <span
@@ -1430,9 +1434,7 @@
         name: 'vr'
     });
 
-    const i18n = useI18n();
-
-    const { t } = i18n;
+    const { t, locale } = useI18n();
 
     const vrState = reactive({
         appType: new URLSearchParams(window.location.search).has('wrist') ? 'wrist' : 'hmd',
@@ -2099,14 +2101,11 @@
         if (!appLanguage) {
             return;
         }
-        if (appLanguage !== vrState.appLanguage) {
-            vrState.appLanguage = appLanguage;
+        vrState.appLanguage = appLanguage;
 
-            await loadLocalizedStrings(appLanguage);
-            changeHtmlLangAttribute(vrState.appLanguage);
-            //@ts-ignore
-            i18n.locale = vrState.appLanguage;
-        }
+        await loadLocalizedStrings(appLanguage);
+        changeHtmlLangAttribute(vrState.appLanguage);
+        locale.value = vrState.appLanguage;
     }
 
     function trackingResultToClass(deviceStatus) {

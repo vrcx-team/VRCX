@@ -467,6 +467,7 @@ i.x-user-status.busy {
 }
 
 .tracker-device img {
+    display: inline-block;
     height: 32px;
     transition: all 0.25s linear;
 }

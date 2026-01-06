@@ -1,21 +1,25 @@
 import {
     changeAppDarkStyle,
     changeAppThemeStyle,
+    changeHtmlLangAttribute,
     getThemeMode,
     refreshCustomCss,
     setLoginContainerStyle
 } from '../shared/utils/base/ui';
-import { i18n } from './i18n';
+import { i18n, loadLocalizedStrings } from './i18n';
 
 import configRepository from '../service/config';
 
 export async function initUi() {
     try {
-        // @ts-ignore
-        i18n.locale = await configRepository.getString(
+        const language = await configRepository.getString(
             'VRCX_appLanguage',
             'en'
         );
+        // @ts-ignore
+        i18n.locale = language;
+        await loadLocalizedStrings(language);
+        changeHtmlLangAttribute(language);
 
         const { initThemeMode, isDarkMode } =
             await getThemeMode(configRepository);
