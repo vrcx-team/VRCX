@@ -63,6 +63,13 @@ export function useAuthenticatedLayoutResizable() {
     );
     const asideMaxSize = computed(() => pxToPercent(asideMaxPx, undefined, 0));
 
+    const mainDefaultSize = computed(
+        () =>
+            100 -
+            navDefaultSize.value -
+            (isSideBarTabShow.value ? asideDefaultSize.value : 0)
+    );
+
     const handleLayout = (sizes) => {
         if (!Array.isArray(sizes) || sizes.length < 2) {
             return;
@@ -129,6 +136,7 @@ export function useAuthenticatedLayoutResizable() {
         navMaxSize,
         asideDefaultSize,
         asideMaxSize,
+        mainDefaultSize,
         handleLayout,
         isAsideCollapsed,
         isNavCollapsed,
