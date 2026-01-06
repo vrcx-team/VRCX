@@ -285,26 +285,33 @@ export const columns = [
         id: 'detail',
         header: () => t('table.feed.detail'),
         enableSorting: false,
+        meta: {
+            class: 'min-w-0 overflow-hidden'
+        },
         cell: ({ row }) => {
             const original = row.original;
             const type = original.type;
             if (type === 'GPS') {
                 return original.location ? (
-                    <Location
-                        location={original.location}
-                        hint={original.worldName}
-                        grouphint={original.groupName}
-                    />
+                    <div class="w-full min-w-0 truncate">
+                        <Location
+                            location={original.location}
+                            hint={original.worldName}
+                            grouphint={original.groupName}
+                        />
+                    </div>
                 ) : null;
             }
 
             if (type === 'Offline' || type === 'Online') {
                 return original.location ? (
-                    <Location
-                        location={original.location}
-                        hint={original.worldName}
-                        grouphint={original.groupName}
-                    />
+                    <div class="w-full min-w-0 truncate">
+                        <Location
+                            location={original.location}
+                            hint={original.worldName}
+                            grouphint={original.groupName}
+                        />
+                    </div>
                 ) : null;
             }
 
@@ -335,7 +342,7 @@ export const columns = [
                 }
 
                 return (
-                    <span>
+                    <span class="block w-full min-w-0 truncate">
                         <i
                             class={[
                                 'x-user-status',
@@ -350,18 +357,24 @@ export const columns = [
 
             if (type === 'Avatar') {
                 return (
-                    <AvatarInfo
-                        imageurl={original.currentAvatarImageUrl}
-                        userid={original.userId}
-                        hintownerid={original.ownerId}
-                        hintavatarname={original.avatarName}
-                        avatartags={original.currentAvatarTags}
-                    />
+                    <div class="w-full min-w-0 truncate">
+                        <AvatarInfo
+                            imageurl={original.currentAvatarImageUrl}
+                            userid={original.userId}
+                            hintownerid={original.ownerId}
+                            hintavatarname={original.avatarName}
+                            avatartags={original.currentAvatarTags}
+                        />
+                    </div>
                 );
             }
 
             if (type === 'Bio') {
-                return <span>{original.bio}</span>;
+                return (
+                    <span class="block w-full min-w-0 truncate">
+                        {original.bio}
+                    </span>
+                );
             }
 
             return null;
