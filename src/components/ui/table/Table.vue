@@ -8,7 +8,9 @@
 
 <template>
     <div data-slot="table-container" class="relative w-full">
-        <table data-slot="table" :class="cn('w-full caption-bottom text-[13px]', props.class)">
+        <table
+            data-slot="table"
+            :class="cn('w-full caption-bottom text-[13px] in-[.is-compact-table]:text-[12px]', props.class)">
             <slot />
         </table>
     </div>
