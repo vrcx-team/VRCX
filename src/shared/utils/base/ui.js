@@ -75,8 +75,7 @@ function changeAppThemeStyle(themeMode) {
     let themeConfig = THEME_CONFIG[themeMode];
     if (!themeConfig) {
         console.error('Invalid theme mode:', themeMode);
-        // load system theme as fallback
-        themeMode = systemIsDarkMode() ? 'dark' : 'light';
+        themeMode = 'dark';
         themeConfig = THEME_CONFIG[themeMode];
         const appSettingsStore = useAppearanceSettingsStore();
         appSettingsStore.setThemeMode(themeMode);
