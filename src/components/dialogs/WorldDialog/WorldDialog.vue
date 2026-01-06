@@ -64,7 +64,7 @@
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.private') }}
                             </el-tag>
-                            <el-tooltip v-if="worldDialog.isPC" placement="top" content="PC">
+                            <TooltipWrapper v-if="worldDialog.isPC" side="top" content="PC">
                                 <el-tag
                                     class="x-tag-platform-pc"
                                     type="info"
@@ -78,9 +78,9 @@
                                         {{ worldDialog.bundleSizes['standalonewindows'].fileSize }}
                                     </span>
                                 </el-tag>
-                            </el-tooltip>
+                            </TooltipWrapper>
 
-                            <el-tooltip v-if="worldDialog.isQuest" placement="top" content="Quest">
+                            <TooltipWrapper v-if="worldDialog.isQuest" side="top" content="Quest">
                                 <el-tag
                                     class="x-tag-platform-quest"
                                     type="info"
@@ -94,9 +94,9 @@
                                         {{ worldDialog.bundleSizes['android'].fileSize }}
                                     </span>
                                 </el-tag>
-                            </el-tooltip>
+                            </TooltipWrapper>
 
-                            <el-tooltip v-if="worldDialog.isIos" placement="top" content="iOS">
+                            <TooltipWrapper v-if="worldDialog.isIos" side="top" content="iOS">
                                 <el-tag
                                     class="x-tag-platform-ios"
                                     type="info"
@@ -110,7 +110,7 @@
                                         {{ worldDialog.bundleSizes['ios'].fileSize }}
                                     </span>
                                 </el-tag>
-                            </el-tooltip>
+                            </TooltipWrapper>
 
                             <el-tag
                                 v-if="worldDialog.avatarScalingDisabled"
@@ -185,9 +185,9 @@
                         </div>
                     </div>
                     <div style="flex: none; margin-left: 10px">
-                        <el-tooltip
+                        <TooltipWrapper
                             v-if="worldDialog.inCache"
-                            placement="top"
+                            side="top"
                             :content="t('dialog.world.actions.delete_cache_tooltip')">
                             <el-button
                                 :icon="Delete"
@@ -195,8 +195,8 @@
                                 circle
                                 :disabled="isGameRunning && worldDialog.cacheLocked"
                                 @click="deleteVRChatCache(worldDialog.ref)" />
-                        </el-tooltip>
-                        <el-tooltip placement="top" :content="t('dialog.world.actions.favorites_tooltip')">
+                        </TooltipWrapper>
+                        <TooltipWrapper side="top" :content="t('dialog.world.actions.favorites_tooltip')">
                             <el-button
                                 :type="worldDialog.isFavorite ? 'warning' : 'default'"
                                 :icon="worldDialog.isFavorite ? StarFilled : Star"
@@ -204,7 +204,7 @@
                                 circle
                                 style="margin-left: 5px"
                                 @click="worldDialogCommand('Add Favorite')" />
-                        </el-tooltip>
+                        </TooltipWrapper>
                         <el-dropdown trigger="click" style="margin-left: 5px" @command="worldDialogCommand">
                             <el-button type="default" :icon="MoreFilled" size="large" circle />
                             <template #dropdown>
@@ -345,8 +345,8 @@
                                         :location="room.$location.tag"
                                         :shortname="room.$location.shortName"
                                         style="margin-left: 5px" />
-                                    <el-tooltip
-                                        placement="top"
+                                    <TooltipWrapper
+                                        side="top"
                                         :content="t('dialog.world.instances.refresh_instance_info')">
                                         <el-button
                                             size="small"
@@ -354,10 +354,10 @@
                                             style="margin-left: 5px"
                                             circle
                                             @click="refreshInstancePlayerCount(room.tag)" />
-                                    </el-tooltip>
-                                    <el-tooltip
+                                    </TooltipWrapper>
+                                    <TooltipWrapper
                                         v-if="instanceJoinHistory.get(room.$location.tag)"
-                                        placement="top"
+                                        side="top"
                                         :content="t('dialog.previous_instances.info')">
                                         <el-button
                                             size="small"
@@ -366,7 +366,7 @@
                                             plain
                                             circle
                                             @click="showPreviousInstancesInfoDialog(room.location)" />
-                                    </el-tooltip>
+                                    </TooltipWrapper>
                                     <LastJoin :location="room.$location.tag" :currentlocation="lastLocation.location" />
                                     <InstanceInfo
                                         :location="room.tag"
@@ -454,7 +454,7 @@
                                     <span class="extra" style="display: inline">
                                         {{ worldDialog.id }}
                                     </span>
-                                    <el-tooltip placement="top" :content="t('dialog.world.info.id_tooltip')">
+                                    <TooltipWrapper side="top" :content="t('dialog.world.info.id_tooltip')">
                                         <el-dropdown trigger="click" size="small" style="margin-left: 5px" @click.stop>
                                             <el-button type="default" :icon="CopyDocument" size="small" circle />
                                             <template #dropdown>
@@ -471,7 +471,7 @@
                                                 </el-dropdown-menu>
                                             </template>
                                         </el-dropdown>
-                                    </el-tooltip>
+                                    </TooltipWrapper>
                                 </div>
                             </div>
                         </div>
@@ -597,7 +597,7 @@
                                 <span class="name" style="display: inline">
                                     {{ t('dialog.world.info.publication_date') }}
                                 </span>
-                                <el-tooltip v-if="isTimeInLabVisible" placement="top" style="margin-left: 5px">
+                                <TooltipWrapper v-if="isTimeInLabVisible" side="top" style="margin-left: 5px">
                                     <template #content>
                                         <span>
                                             {{ t('dialog.world.info.time_in_labs') }}
@@ -605,7 +605,7 @@
                                         </span>
                                     </template>
                                     <el-icon><ArrowDown /></el-icon>
-                                </el-tooltip>
+                                </TooltipWrapper>
                                 <span class="extra">
                                     {{ formatDateFilter(worldDialog.ref.publicationDate, 'long') }}
                                 </span>
@@ -652,35 +652,35 @@
                             <div class="detail">
                                 <span class="name">
                                     {{ t('dialog.world.info.last_visited') }}
-                                    <el-tooltip placement="top" :content="t('dialog.world.info.accuracy_notice')"
+                                    <TooltipWrapper side="top" :content="t('dialog.world.info.accuracy_notice')"
                                         ><el-icon style="margin-left: 3px"><Warning /></el-icon
-                                    ></el-tooltip>
+                                    ></TooltipWrapper>
                                 </span>
                                 <span class="extra">{{ formatDateFilter(worldDialog.lastVisit, 'long') }}</span>
                             </div>
                         </div>
-                        <el-tooltip placement="top" :content="t('dialog.user.info.open_previous_instance')">
+                        <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
                             <div class="x-friend-item" @click="showPreviousInstancesWorldDialog(worldDialog.ref)">
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.world.info.visit_count') }}
-                                        <el-tooltip placement="top" :content="t('dialog.world.info.accuracy_notice')"
+                                        <TooltipWrapper side="top" :content="t('dialog.world.info.accuracy_notice')"
                                             ><el-icon style="margin-left: 3px"><Warning /></el-icon
-                                        ></el-tooltip>
+                                        ></TooltipWrapper>
                                     </span>
                                     <span class="extra">
                                         {{ worldDialog.visitCount }}
                                     </span>
                                 </div>
                             </div>
-                        </el-tooltip>
+                        </TooltipWrapper>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name"
                                     >{{ t('dialog.world.info.time_spent') }}
-                                    <el-tooltip placement="top" :content="t('dialog.world.info.accuracy_notice')">
+                                    <TooltipWrapper side="top" :content="t('dialog.world.info.accuracy_notice')">
                                         <el-icon style="margin-left: 3px"><Warning /></el-icon>
-                                    </el-tooltip>
+                                    </TooltipWrapper>
                                 </span>
                                 <span class="extra">
                                     {{ worldDialog.timeSpent === 0 ? ' - ' : timeSpent }}

@@ -9,14 +9,14 @@
             <div v-for="setting in currentOptions" :key="setting.key" class="toggle-item">
                 <span class="toggle-name"
                     >{{ setting.name
-                    }}<el-tooltip
+                    }}<TooltipWrapper
                         v-if="setting.tooltip"
-                        placement="top"
+                        side="top"
                         style="margin-left: 5px"
                         :content="setting.tooltip">
                         <el-icon v-if="setting.tooltipWarning"><Warning /></el-icon>
                         <el-icon v-else><InfoFilled /></el-icon>
-                    </el-tooltip>
+                    </TooltipWrapper>
                 </span>
 
                 <el-radio-group

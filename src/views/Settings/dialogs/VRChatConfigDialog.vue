@@ -16,7 +16,7 @@
             <span>/</span>
             <span v-text="totalCacheSize"></span>
             <span>GB</span>
-            <el-tooltip placement="top" :content="t('dialog.config_json.refresh')">
+            <TooltipWrapper side="top" :content="t('dialog.config_json.refresh')">
                 <el-button
                     type="default"
                     :loading="VRChatCacheSizeLoading"
@@ -25,7 +25,7 @@
                     circle
                     style="margin-left: 5px"
                     @click="getVRChatCacheSize"></el-button>
-            </el-tooltip>
+            </TooltipWrapper>
 
             <div style="margin-top: 10px">
                 <span style="margin-right: 5px">{{ t('dialog.config_json.delete_all_cache') }}</span>

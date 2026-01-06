@@ -14,7 +14,7 @@
         <div class="favorites-search-card__actions">
             <div class="favorites-search-card__action-group">
                 <div class="favorites-search-card__action">
-                    <el-tooltip placement="top" :content="t('view.favorite.select_avatar_tooltip')">
+                    <TooltipWrapper side="top" :content="t('view.favorite.select_avatar_tooltip')">
                         <el-button
                             :disabled="currentUser.currentAvatar === favorite.id"
                             size="small"
@@ -22,10 +22,10 @@
                             circle
                             class="favorites-search-card__action-btn"
                             @click.stop="selectAvatarWithConfirmation(favorite.id)" />
-                    </el-tooltip>
+                    </TooltipWrapper>
                 </div>
                 <div class="favorites-search-card__action">
-                    <el-tooltip placement="bottom" :content="t('view.favorite.favorite_tooltip')">
+                    <TooltipWrapper side="bottom" :content="t('view.favorite.favorite_tooltip')">
                         <el-button
                             type="default"
                             :icon="favoriteExists ? Star : StarFilled"
@@ -33,7 +33,7 @@
                             circle
                             class="favorites-search-card__action-btn"
                             @click.stop="showFavoriteDialog('avatar', favorite.id)" />
-                    </el-tooltip>
+                    </TooltipWrapper>
                 </div>
             </div>
         </div>

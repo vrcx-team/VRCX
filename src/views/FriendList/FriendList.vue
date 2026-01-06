@@ -3,12 +3,12 @@
         <div>
             <div style="display: flex; align-items: center; justify-content: space-between">
                 <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
-                    <el-tooltip placement="bottom" :content="t('view.friend_list.favorites_only_tooltip')">
+                    <TooltipWrapper side="bottom" :content="t('view.friend_list.favorites_only_tooltip')">
                         <el-switch
                             v-model="friendsListSearchFilterVIP"
                             active-color="var(--el-color-success)"
                             @change="friendsListSearchChange"></el-switch>
-                    </el-tooltip>
+                    </TooltipWrapper>
                     <el-select
                         v-model="friendsListSearchFilters"
                         multiple
@@ -128,7 +128,7 @@
                     sortable
                     :sort-method="(a, b) => sortLanguages(a, b)">
                     <template #default="{ row }">
-                        <el-tooltip v-for="item in row.$languages" :key="item.key" placement="top">
+                        <TooltipWrapper v-for="item in row.$languages" :key="item.key" side="top">
                             <template #content>
                                 <span>{{ item.value }} ({{ item.key }})</span>
                             </template>
@@ -136,13 +136,13 @@
                                 :class="languageClass(item.key)"
                                 style="display: inline-block; margin-right: 5px"
                                 class="flags"></span>
-                        </el-tooltip>
+                        </TooltipWrapper>
                     </template>
                 </el-table-column>
                 <el-table-column :label="t('table.friendList.bioLink')" width="130" prop="bioLinks">
                     <template #default="{ row }">
                         <div class="flex items-center">
-                            <el-tooltip v-for="(link, index) in row.bioLinks.filter(Boolean)" :key="index">
+                            <TooltipWrapper v-for="(link, index) in row.bioLinks.filter(Boolean)" :key="index">
                                 <template #content>
                                     <span v-text="link"></span>
                                 </template>
@@ -158,7 +158,7 @@
                                     "
                                     @click.stop="openExternalLink(link)"
                                     loading="lazy" />
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </div>
                     </template>
                 </el-table-column>

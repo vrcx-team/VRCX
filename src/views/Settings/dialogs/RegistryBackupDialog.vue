@@ -31,30 +31,30 @@
                 </el-table-column>
                 <el-table-column :label="t('dialog.registry_backup.action')" width="90" align="right">
                     <template #default="scope">
-                        <el-tooltip placement="top" :content="t('dialog.registry_backup.restore')">
+                        <TooltipWrapper side="top" :content="t('dialog.registry_backup.restore')">
                             <el-button
                                 text
                                 :icon="Upload"
                                 size="small"
                                 class="button-pd-0"
                                 @click="restoreVrcRegistryBackup(scope.row)"></el-button>
-                        </el-tooltip>
-                        <el-tooltip placement="top" :content="t('dialog.registry_backup.save_to_file')">
+                        </TooltipWrapper>
+                        <TooltipWrapper side="top" :content="t('dialog.registry_backup.save_to_file')">
                             <el-button
                                 text
                                 :icon="Download"
                                 size="small"
                                 class="button-pd-0"
                                 @click="saveVrcRegistryBackupToFile(scope.row)"></el-button>
-                        </el-tooltip>
-                        <el-tooltip placement="top" :content="t('dialog.registry_backup.delete')">
+                        </TooltipWrapper>
+                        <TooltipWrapper side="top" :content="t('dialog.registry_backup.delete')">
                             <el-button
                                 text
                                 :icon="Delete"
                                 size="small"
                                 class="button-pd-0"
                                 @click="deleteVrcRegistryBackup(scope.row)"></el-button>
-                        </el-tooltip>
+                        </TooltipWrapper>
                     </template>
                 </el-table-column>
             </DataTable>

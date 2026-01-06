@@ -60,12 +60,12 @@
             </div>
 
             <div class="nav-menu-container-bottom mb-4">
-                <el-tooltip
+                <TooltipWrapper
                     v-if="branch === 'Nightly'"
-                    :show-after="150"
+                    :delay-duration="150"
                     :content="'Feedback'"
                     :disabled="!isCollapsed"
-                    placement="right">
+                    side="right">
                     <div
                         class="bottom-button"
                         id="feedback"
@@ -73,7 +73,7 @@
                         <i class="ri-feedback-line"></i>
                         <span v-show="!isCollapsed" class="bottom-button__label">Feedback</span>
                     </div>
-                </el-tooltip>
+                </TooltipWrapper>
 
                 <el-popover
                     v-model:visible="supportMenuVisible"
@@ -110,10 +110,10 @@
                     </div>
                     <template #reference>
                         <div>
-                            <el-tooltip
-                                :show-after="150"
+                            <TooltipWrapper
+                                :delay-duration="150"
                                 :content="t('nav_tooltip.help_support')"
-                                placement="right"
+                                side="right"
                                 :disabled="!isCollapsed">
                                 <div class="bottom-button">
                                     <i class="ri-question-line"></i>
@@ -121,7 +121,7 @@
                                         t('nav_tooltip.help_support')
                                     }}</span>
                                 </div>
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </div>
                     </template>
                 </el-popover>
@@ -238,18 +238,18 @@
                         </div>
                     </template>
                 </el-popover>
-                <el-tooltip
-                    :show-after="150"
+                <TooltipWrapper
+                    :delay-duration="150"
                     :content="t('nav_tooltip.expand_menu')"
                     :disabled="!isCollapsed"
-                    placement="right">
+                    side="right">
                     <div class="bottom-button" @click="toggleNavCollapse">
                         <i class="ri-side-bar-line"></i>
                         <span v-show="!isCollapsed" class="bottom-button__label">{{
                             t('nav_tooltip.collapse_menu')
                         }}</span>
                     </div>
-                </el-tooltip>
+                </TooltipWrapper>
             </div>
         </template>
     </div>

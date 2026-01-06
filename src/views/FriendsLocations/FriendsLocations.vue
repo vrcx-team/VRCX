@@ -12,11 +12,11 @@
                 <el-popover placement="bottom" trigger="click" :width="350">
                     <template #reference>
                         <div>
-                            <el-tooltip :content="t('view.charts.instance_activity.settings.header')" placement="top">
+                            <TooltipWrapper :content="t('view.charts.instance_activity.settings.header')" side="top">
                                 <el-button style="margin-right: 5px" circle
                                     ><i class="ri-settings-3-line"></i
                                 ></el-button>
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </div>
                     </template>
                     <div style="display: flex; justify-content: space-between; align-items: center">

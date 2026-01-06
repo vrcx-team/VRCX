@@ -7,35 +7,35 @@
                     size="small"
                     style="width: 230px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')">
+                <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
                     <el-button
                         size="small"
                         :icon="CopyDocument"
                         style="margin-left: 5px"
                         circle
                         @click="copyInstanceMessage(launchDialog.url)" />
-                </el-tooltip>
+                </TooltipWrapper>
             </el-form-item>
             <el-form-item v-if="launchDialog.shortUrl">
                 <template #label>
                     <span>{{ t('dialog.launch.short_url') }}</span>
-                    <el-tooltip placement="top" :content="t('dialog.launch.short_url_notice')">
+                    <TooltipWrapper side="top" :content="t('dialog.launch.short_url_notice')">
                         <el-icon style="display: inline-block; margin-left: 5px"><Warning /></el-icon>
-                    </el-tooltip>
+                    </TooltipWrapper>
                 </template>
                 <el-input
                     v-model="launchDialog.shortUrl"
                     size="small"
                     style="width: 230px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')">
+                <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
                     <el-button
                         size="small"
                         :icon="CopyDocument"
                         style="display: inline-block; margin-left: 5px"
                         circle
                         @click="copyInstanceMessage(launchDialog.shortUrl)" />
-                </el-tooltip>
+                </TooltipWrapper>
             </el-form-item>
             <el-form-item :label="t('dialog.launch.location')">
                 <el-input
@@ -43,14 +43,14 @@
                     size="small"
                     style="width: 230px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')">
+                <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
                     <el-button
                         size="small"
                         :icon="CopyDocument"
                         style="display: inline-block; margin-left: 5px"
                         circle
                         @click="copyInstanceMessage(launchDialog.location)" />
-                </el-tooltip>
+                </TooltipWrapper>
             </el-form-item>
         </el-form>
         <template #footer>

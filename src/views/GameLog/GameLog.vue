@@ -10,12 +10,12 @@
             <template #toolbar>
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
                     <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
-                        <el-tooltip placement="bottom" :content="t('view.feed.favorites_only_tooltip')">
+                        <TooltipWrapper side="bottom" :content="t('view.feed.favorites_only_tooltip')">
                             <el-switch
                                 v-model="gameLogTable.vip"
                                 active-color="var(--el-color-success)"
                                 @change="gameLogTableLookup"></el-switch>
-                        </el-tooltip>
+                        </TooltipWrapper>
                     </div>
                     <el-select
                         v-model="gameLogTable.filter"

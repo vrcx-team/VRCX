@@ -33,7 +33,7 @@
                                 type="friend" />
                         </div>
                         <div class="favorites-search-card__action">
-                            <el-tooltip placement="left" :content="t('view.favorite.unfavorite_tooltip')">
+                            <TooltipWrapper side="left" :content="t('view.favorite.unfavorite_tooltip')">
                                 <el-button
                                     size="small"
                                     circle
@@ -42,20 +42,20 @@
                                     @click.stop="handleDeleteFavorite">
                                     <i class="ri-delete-bin-line"></i>
                                 </el-button>
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </div>
                     </div>
                 </template>
                 <template v-else>
                     <div class="favorites-search-card__action">
-                        <el-tooltip placement="right" :content="t('view.favorite.edit_favorite_tooltip')">
+                        <TooltipWrapper side="right" :content="t('view.favorite.edit_favorite_tooltip')">
                             <el-button
                                 size="small"
                                 :icon="Star"
                                 circle
                                 class="favorites-search-card__action-btn"
                                 @click.stop="showFavoriteDialog('friend', favorite.id)" />
-                        </el-tooltip>
+                        </TooltipWrapper>
                     </div>
                 </template>
             </div>

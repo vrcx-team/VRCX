@@ -234,12 +234,12 @@
             <div class="options-container-item">
                 <span class="name"
                     >{{ t('view.settings.general.automation.auto_invite_request_accept') }}
-                    <el-tooltip
-                        placement="top"
+                    <TooltipWrapper
+                        side="top"
                         style="margin-left: 5px"
                         :content="t('view.settings.general.automation.auto_invite_request_accept_tooltip')">
                         <el-icon><InfoFilled /></el-icon>
-                    </el-tooltip>
+                    </TooltipWrapper>
                 </span>
                 <br />
                 <el-radio-group

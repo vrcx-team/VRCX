@@ -2,22 +2,22 @@
     <div class="mutual-graph pt-12" ref="mutualGraphRef">
         <div class="options-container mutual-graph__toolbar">
             <div class="mutual-graph__actions">
-                <el-tooltip :content="t('view.charts.mutual_friend.force_dialog.open_label')" placement="top">
+                <TooltipWrapper :content="t('view.charts.mutual_friend.force_dialog.open_label')" side="top">
                     <el-button circle :icon="Setting" :disabled="!graphReady" @click="openForceDialog"></el-button>
-                </el-tooltip>
-                <el-tooltip :content="fetchButtonLabel" placement="top">
+                </TooltipWrapper>
+                <TooltipWrapper :content="fetchButtonLabel" side="top">
                     <el-button type="primary" :disabled="fetchButtonDisabled" :loading="isFetching" @click="startFetch">
                         {{ fetchButtonLabel }}
                     </el-button>
-                </el-tooltip>
-                <el-tooltip
+                </TooltipWrapper>
+                <TooltipWrapper
                     v-if="isFetching"
                     :content="t('view.charts.mutual_friend.actions.stop_fetching')"
-                    placement="top">
+                    side="top">
                     <el-button type="danger" plain :disabled="status.cancelRequested" @click="cancelFetch">
                         {{ t('view.charts.mutual_friend.actions.stop') }}
                     </el-button>
-                </el-tooltip>
+                </TooltipWrapper>
             </div>
         </div>
 

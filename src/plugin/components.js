@@ -9,6 +9,7 @@ import Launch from '../components/Launch.vue';
 import Location from '../components/Location.vue';
 import LocationWorld from '../components/LocationWorld.vue';
 import Timer from '../components/Timer.vue';
+import { TooltipWrapper } from '../components/ui/tooltip';
 
 export function initComponents(app) {
     app.component('Location', Location);
@@ -22,4 +23,5 @@ export function initComponents(app) {
     app.component('Launch', Launch);
     app.component('LocationWorld', LocationWorld);
     app.component('DataTable', DataTable);
+    app.component('TooltipWrapper', TooltipWrapper);
 }

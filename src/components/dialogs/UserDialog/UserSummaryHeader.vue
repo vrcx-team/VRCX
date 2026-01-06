@@ -20,14 +20,14 @@
         <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
             <div style="flex: 1">
                 <div>
-                    <el-tooltip v-if="userDialog.ref.status" placement="top">
+                    <TooltipWrapper v-if="userDialog.ref.status" side="top">
                         <template #content>
                             <span>{{ getUserStateText(userDialog.ref) }}</span>
                         </template>
                         <i class="x-user-status" :class="userStatusClass(userDialog.ref)"></i>
-                    </el-tooltip>
+                    </TooltipWrapper>
                     <template v-if="userDialog.previousDisplayNames.length > 0">
-                        <el-tooltip placement="bottom">
+                        <TooltipWrapper side="bottom">
                             <template #content>
                                 <span>{{ t('dialog.user.previous_display_names') }}</span>
                                 <div
@@ -41,20 +41,20 @@
                                 </div>
                             </template>
                             <el-icon><CaretBottom /></el-icon>
-                        </el-tooltip>
+                        </TooltipWrapper>
                     </template>
                     <span
                         class="dialog-title"
                         style="margin-left: 5px; margin-right: 5px; cursor: pointer"
                         v-text="userDialog.ref.displayName"
                         @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
-                    <el-tooltip v-if="userDialog.ref.pronouns" placement="top" :content="t('dialog.user.pronouns')">
+                    <TooltipWrapper v-if="userDialog.ref.pronouns" side="top" :content="t('dialog.user.pronouns')">
                         <span
                             class="x-grey"
                             style="margin-right: 5px; font-family: monospace; font-size: 12px"
                             v-text="userDialog.ref.pronouns"></span>
-                    </el-tooltip>
-                    <el-tooltip v-for="item in userDialog.ref.$languages" :key="item.key" placement="top">
+                    </TooltipWrapper>
+                    <TooltipWrapper v-for="item in userDialog.ref.$languages" :key="item.key" side="top">
                         <template #content>
                             <span>{{ item.value }} ({{ item.key }})</span>
                         </template>
@@ -62,7 +62,7 @@
                             class="flags"
                             :class="languageClass(item.key)"
                             style="display: inline-block; margin-right: 5px"></span>
-                    </el-tooltip>
+                    </TooltipWrapper>
                     <template v-if="userDialog.ref.id === currentUser.id">
                         <br />
                         <span
@@ -73,7 +73,7 @@
                     </template>
                 </div>
                 <div style="margin-top: 5px" v-show="!userDialog.loading">
-                    <el-tooltip placement="top" :content="t('dialog.user.tags.trust_level')">
+                    <TooltipWrapper side="top" :content="t('dialog.user.tags.trust_level')">
                         <el-tag
                             type="info"
                             effect="plain"
@@ -83,10 +83,10 @@
                             style="margin-right: 5px; margin-top: 5px">
                             <i class="ri-shield-line"></i> {{ userDialog.ref.$trustLevel }}
                         </el-tag>
-                    </el-tooltip>
-                    <el-tooltip
+                    </TooltipWrapper>
+                    <TooltipWrapper
                         v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
-                        placement="top"
+                        side="top"
                         :content="t('dialog.user.tags.age_verified')">
                         <el-tag
                             type="info"
@@ -101,10 +101,10 @@
                                 <i class="ri-info-card-line"></i>
                             </template>
                         </el-tag>
-                    </el-tooltip>
-                    <el-tooltip
+                    </TooltipWrapper>
+                    <TooltipWrapper
                         v-if="userDialog.isFriend && userDialog.friend"
-                        placement="top"
+                        side="top"
                         :content="t('dialog.user.tags.friend_number')">
                         <el-tag
                             type="info"
@@ -115,10 +115,10 @@
                             <i class="ri-user-add-line"></i>
                             {{ userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : '' }}
                         </el-tag>
-                    </el-tooltip>
-                    <el-tooltip
+                    </TooltipWrapper>
+                    <TooltipWrapper
                         v-if="userDialog.mutualFriendCount"
-                        placement="top"
+                        side="top"
                         :content="t('dialog.user.tags.mutual_friends')">
                         <el-tag
                             type="info"
@@ -129,7 +129,7 @@
                             <i class="ri-group-line"></i>
                             {{ userDialog.mutualFriendCount }}
                         </el-tag>
-                    </el-tooltip>
+                    </TooltipWrapper>
                     <el-tag
                         v-if="userDialog.ref.$isTroll"
                         type="info"
@@ -158,7 +158,7 @@
                         {{ t('dialog.user.tags.vrchat_team') }}
                     </el-tag>
 
-                    <el-tooltip v-if="userDialog.ref.$platform === 'standalonewindows'" placement="top" content="PC">
+                    <TooltipWrapper v-if="userDialog.ref.$platform === 'standalonewindows'" side="top" content="PC">
                         <el-tag
                             type="info"
                             effect="plain"
@@ -167,8 +167,8 @@
                             style="margin-right: 5px; margin-top: 5px">
                             <i class="ri-computer-line"></i>
                         </el-tag>
-                    </el-tooltip>
-                    <el-tooltip v-else-if="userDialog.ref.$platform === 'android'" placement="top" content="Android">
+                    </TooltipWrapper>
+                    <TooltipWrapper v-else-if="userDialog.ref.$platform === 'android'" side="top" content="Android">
                         <el-tag
                             type="info"
                             effect="plain"
@@ -177,8 +177,8 @@
                             style="margin-right: 5px; margin-top: 5px">
                             <i class="ri-android-line"></i>
                         </el-tag>
-                    </el-tooltip>
-                    <el-tooltip v-else-if="userDialog.ref.$platform === 'ios'" placement="top" content="iOS">
+                    </TooltipWrapper>
+                    <TooltipWrapper v-else-if="userDialog.ref.$platform === 'ios'" side="top" content="iOS">
                         <el-tag
                             type="info"
                             effect="plain"
@@ -187,7 +187,7 @@
                             style="margin-right: 5px; margin-top: 5px"
                             ><i class="ri-apple-line"></i
                         ></el-tag>
-                    </el-tooltip>
+                    </TooltipWrapper>
                     <el-tag
                         v-else-if="userDialog.ref.$platform"
                         type="info"
@@ -212,7 +212,7 @@
                         >{{ userDialog.ref.$customTag }}</el-tag
                     >
                     <br />
-                    <el-tooltip v-for="badge in userDialog.ref.badges" :key="badge.badgeId" placement="top">
+                    <TooltipWrapper v-for="badge in userDialog.ref.badges" :key="badge.badgeId" side="top">
                         <template #content>
                             <span>{{ badge.badgeName }}</span>
                             <span v-if="badge.hidden">&nbsp;(Hidden)</span>
@@ -269,7 +269,7 @@
                                 </div>
                             </el-popover>
                         </div>
-                    </el-tooltip>
+                    </TooltipWrapper>
                 </div>
                 <div style="margin-top: 5px">
                     <span style="font-size: 12px" v-text="userDialog.ref.statusDescription"></span>

@@ -1,9 +1,13 @@
 <script setup>
-    import { computed, useSlots } from 'vue';
+    import { computed, useAttrs, useSlots } from 'vue';
 
     import Tooltip from './Tooltip.vue';
     import TooltipContent from './TooltipContent.vue';
     import TooltipTrigger from './TooltipTrigger.vue';
+
+    defineOptions({
+        inheritAttrs: false
+    });
 
     const props = defineProps({
         content: { type: [String, Number], required: false },
@@ -17,13 +21,14 @@
         contentClass: { type: null, required: false }
     });
 
+    const attrs = useAttrs();
     const slots = useSlots();
     const hasContent = computed(() => Boolean(slots.content) || props.content !== undefined);
 </script>
 
 <template>
     <Tooltip :delay-duration="delayDuration" :disable-hoverable-content="disableHoverableContent" :disabled="disabled">
-        <TooltipTrigger :as-child="triggerAsChild">
+        <TooltipTrigger :as-child="triggerAsChild" v-bind="attrs">
             <slot />
         </TooltipTrigger>
         <TooltipContent v-if="hasContent" :side="side" :align="align" :side-offset="sideOffset" :class="contentClass">

@@ -7,14 +7,14 @@
                 style="flex: 1"
                 @input="updateSearchText"
                 @keyup.enter="search"></el-input>
-            <el-tooltip placement="bottom" :content="t('view.search.clear_results_tooltip')">
+            <TooltipWrapper side="bottom" :content="t('view.search.clear_results_tooltip')">
                 <el-button
                     type="default"
                     :icon="Delete"
                     circle
                     style="flex: none; margin-left: 10px"
                     @click="handleClearSearch"></el-button>
-            </el-tooltip>
+            </TooltipWrapper>
         </div>
         <el-tabs ref="searchTabRef" style="margin-top: 15px" @tab-click="searchText = ''">
             <el-tab-pane v-loading="isSearchUserLoading" :label="t('view.search.user.header')" style="min-height: 60px">
@@ -155,7 +155,7 @@
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>
-                        <el-tooltip placement="bottom" :content="t('view.search.avatar.refresh_tooltip')">
+                        <TooltipWrapper side="bottom" :content="t('view.search.avatar.refresh_tooltip')">
                             <el-button
                                 type="default"
                                 :loading="userDialog.isAvatarsLoading"
@@ -163,7 +163,7 @@
                                 :icon="Refresh"
                                 circle
                                 @click="refreshUserDialogAvatars"></el-button>
-                        </el-tooltip>
+                        </TooltipWrapper>
                         <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
                             t('view.search.avatar.result_count', {
                                 count: searchAvatarResults.length

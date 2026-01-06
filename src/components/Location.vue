@@ -3,11 +3,11 @@
         <div v-if="!text" class="transparent">-</div>
         <div v-show="text" class="flex items-center">
             <div v-if="region" :class="['flags', 'mr-1.5', region]"></div>
-            <el-tooltip
+            <TooltipWrapper
                 :content="`${t('dialog.new_instance.instance_id')}: #${instanceName}`"
                 :disabled="!instanceName || showInstanceIdInLocation"
-                :show-after="300"
-                placement="top">
+                :delay-duration="300"
+                side="top">
                 <div
                     :class="['x-location', { 'x-link': link && location !== 'private' && location !== 'offline' }]"
                     class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden"
@@ -21,10 +21,10 @@
                         ({{ groupName }})
                     </span>
                 </div>
-            </el-tooltip>
-            <el-tooltip v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
+            </TooltipWrapper>
+            <TooltipWrapper v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
                 <el-icon :class="['inline-block', 'ml-5']" style="color: lightcoral"><WarnTriangleFilled /></el-icon>
-            </el-tooltip>
+            </TooltipWrapper>
             <el-icon v-if="strict" :class="['inline-block', 'ml-5']"><Lock /></el-icon>
         </div>
     </div>

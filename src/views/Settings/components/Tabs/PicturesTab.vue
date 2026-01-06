@@ -61,11 +61,11 @@
         <span class="sub-header" style="margin-right: 5px">{{
             t('view.settings.advanced.advanced.save_instance_prints_to_file.header')
         }}</span>
-        <el-tooltip
-            placement="top"
+        <TooltipWrapper
+            side="top"
             :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
             <el-icon><InfoFilled /></el-icon>
-        </el-tooltip>
+        </TooltipWrapper>
         <simple-switch
             :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')"
             :value="saveInstancePrints"
@@ -87,11 +87,11 @@
         <span class="sub-header" style="margin-right: 5px"
             >{{ t('view.settings.advanced.advanced.save_instance_emoji_to_file.header') }}
         </span>
-        <el-tooltip
-            placement="top"
+        <TooltipWrapper
+            side="top"
             :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
             <el-icon><InfoFilled /></el-icon>
-        </el-tooltip>
+        </TooltipWrapper>
         <simple-switch
             :label="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')"
             :value="saveInstanceEmoji"

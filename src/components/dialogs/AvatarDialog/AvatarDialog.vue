@@ -47,7 +47,7 @@
                                 style="margin-right: 5px; margin-top: 5px"
                                 >{{ t('dialog.avatar.tags.private') }}</el-tag
                             >
-                            <el-tooltip v-if="avatarDialog.isPC" placement="top" content="PC">
+                            <TooltipWrapper v-if="avatarDialog.isPC" side="top" content="PC">
                                 <el-tag
                                     class="x-tag-platform-pc"
                                     type="info"
@@ -66,8 +66,8 @@
                                         >{{ avatarDialog.bundleSizes['standalonewindows'].fileSize }}</span
                                     >
                                 </el-tag>
-                            </el-tooltip>
-                            <el-tooltip v-if="avatarDialog.isQuest" placement="top" content="Android">
+                            </TooltipWrapper>
+                            <TooltipWrapper v-if="avatarDialog.isQuest" side="top" content="Android">
                                 <el-tag
                                     class="x-tag-platform-quest"
                                     type="info"
@@ -86,8 +86,8 @@
                                         >{{ avatarDialog.bundleSizes['android'].fileSize }}</span
                                     >
                                 </el-tag>
-                            </el-tooltip>
-                            <el-tooltip v-if="avatarDialog.isIos" placement="top" content="iOS">
+                            </TooltipWrapper>
+                            <TooltipWrapper v-if="avatarDialog.isIos" side="top" content="iOS">
                                 <el-tag
                                     class="x-tag-platform-ios"
                                     type="info"
@@ -106,7 +106,7 @@
                                         >{{ avatarDialog.bundleSizes['ios'].fileSize }}</span
                                     >
                                 </el-tag>
-                            </el-tooltip>
+                            </TooltipWrapper>
                             <el-tag
                                 v-if="avatarDialog.inCache"
                                 class="x-link"
@@ -205,9 +205,9 @@
                         </div>
                     </div>
                     <div style="flex: none; margin-left: 10px">
-                        <el-tooltip
+                        <TooltipWrapper
                             v-if="avatarDialog.inCache"
-                            placement="top"
+                            side="top"
                             :content="t('dialog.avatar.actions.delete_cache_tooltip')">
                             <el-button
                                 :icon="Delete"
@@ -215,10 +215,10 @@
                                 circle
                                 :disabled="isGameRunning && avatarDialog.cacheLocked"
                                 @click="deleteVRChatCache(avatarDialog.ref)"></el-button>
-                        </el-tooltip>
-                        <el-tooltip
+                        </TooltipWrapper>
+                        <TooltipWrapper
                             v-if="avatarDialog.isFavorite"
-                            placement="top"
+                            side="top"
                             :content="t('dialog.avatar.actions.favorite_tooltip')">
                             <el-button
                                 type="warning"
@@ -227,8 +227,8 @@
                                 circle
                                 style="margin-left: 5px"
                                 @click="avatarDialogCommand('Add Favorite')"></el-button>
-                        </el-tooltip>
-                        <el-tooltip v-else placement="top" :content="t('dialog.avatar.actions.favorite_tooltip')">
+                        </TooltipWrapper>
+                        <TooltipWrapper v-else side="top" :content="t('dialog.avatar.actions.favorite_tooltip')">
                             <el-button
                                 type="default"
                                 :icon="Star"
@@ -236,8 +236,8 @@
                                 circle
                                 style="margin-left: 5px"
                                 @click="avatarDialogCommand('Add Favorite')"></el-button>
-                        </el-tooltip>
-                        <el-tooltip placement="top" :content="t('dialog.avatar.actions.select')">
+                        </TooltipWrapper>
+                        <TooltipWrapper side="top" :content="t('dialog.avatar.actions.select')">
                             <el-button
                                 type="default"
                                 :icon="Check"
@@ -246,7 +246,7 @@
                                 :disabled="currentUser.currentAvatar === avatarDialog.id"
                                 style="margin-left: 5px"
                                 @click="selectAvatarWithoutConfirmation(avatarDialog.id)"></el-button>
-                        </el-tooltip>
+                        </TooltipWrapper>
                         <el-dropdown trigger="click" style="margin-left: 5px" @command="avatarDialogCommand">
                             <el-button
                                 :type="avatarDialog.isBlocked ? 'danger' : 'default'"
@@ -452,7 +452,7 @@
                                 <span class="name">{{ t('dialog.avatar.info.id') }}</span>
                                 <span class="extra"
                                     >{{ avatarDialog.id
-                                    }}<el-tooltip placement="top" :content="t('dialog.avatar.info.id_tooltip')">
+                                    }}<TooltipWrapper side="top" :content="t('dialog.avatar.info.id_tooltip')">
                                         <el-dropdown trigger="click" size="small" style="margin-left: 5px">
                                             <el-button
                                                 type="default"
@@ -471,7 +471,7 @@
                                                 </el-dropdown-menu>
                                             </template>
                                         </el-dropdown>
-                                    </el-tooltip></span
+                                    </TooltipWrapper></span
                                 >
                             </div>
                         </div>
@@ -506,9 +506,9 @@
                             <div class="detail">
                                 <span class="name"
                                     >{{ t('dialog.avatar.info.time_spent')
-                                    }}<el-tooltip placement="top" :content="t('dialog.world.info.accuracy_notice')">
-                                        <el-icon style="margin-left: 3px"><Warning /></el-icon></el-tooltip
-                                ></span>
+                                    }}<TooltipWrapper side="top" :content="t('dialog.world.info.accuracy_notice')">
+                                        <el-icon style="margin-left: 3px"><Warning /></el-icon>
+                                    </TooltipWrapper></span>
 
                                 <span v-if="timeSpent === 0" class="extra">-</span>
                                 <span v-else class="extra">{{ timeToText(timeSpent) }}</span>

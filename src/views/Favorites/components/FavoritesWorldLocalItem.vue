@@ -46,19 +46,19 @@
                 <template v-else>
                     <div class="favorites-search-card__action-group">
                         <div class="favorites-search-card__action">
-                            <el-tooltip placement="top" :content="inviteOrLaunchText">
+                            <TooltipWrapper side="top" :content="inviteOrLaunchText">
                                 <el-button
                                     size="small"
                                     :icon="Message"
                                     class="favorites-search-card__action-btn"
                                     @click.stop="newInstanceSelfInvite(favorite.id)"
                                     circle />
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </div>
                         <div class="favorites-search-card__action">
-                            <el-tooltip
+                            <TooltipWrapper
                                 v-if="showDangerUnfavorite"
-                                placement="top"
+                                side="top"
                                 :content="t('view.favorite.unfavorite_tooltip')">
                                 <el-button
                                     size="small"
@@ -67,8 +67,8 @@
                                     class="favorites-search-card__action-btn"
                                     type="danger"
                                     @click.stop="handleDeleteFavorite" />
-                            </el-tooltip>
-                            <el-tooltip v-else placement="top" :content="t('view.favorite.edit_favorite_tooltip')">
+                            </TooltipWrapper>
+                            <TooltipWrapper v-else side="top" :content="t('view.favorite.edit_favorite_tooltip')">
                                 <el-button
                                     type="default"
                                     :icon="Star"
@@ -76,7 +76,7 @@
                                     circle
                                     class="favorites-search-card__action-btn"
                                     @click.stop="showFavoriteDialog('world', favorite.id)" />
-                            </el-tooltip>
+                            </TooltipWrapper>
                         </div>
                     </div>
                 </template>
