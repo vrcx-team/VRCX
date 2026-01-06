@@ -39,8 +39,6 @@
 </template>
 
 <script setup>
-    import { Refresh } from '@element-plus/icons-vue';
-    import { ElMessageBox } from 'element-plus';
     import {
         getCoreRowModel,
         getFilteredRowModel,
@@ -49,6 +47,8 @@
         useVueTable
     } from '@tanstack/vue-table';
     import { computed, ref, watch } from 'vue';
+    import { ElMessageBox } from 'element-plus';
+    import { Refresh } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
