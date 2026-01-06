@@ -2,12 +2,6 @@ import Location from '../../components/Location.vue';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '../../components/ui/dropdown-menu';
-import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
@@ -41,14 +35,6 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { gameLogIsFriend, gameLogIsFavorite } = useGameLogStore();
     const { shiftHeld } = storeToRefs(useUiStore());
-
-    const handleDelete = (row) => {
-        if (shiftHeld.value) {
-            onDelete(row);
-            return;
-        }
-        onDeletePrompt(row);
-    };
 
     return [
         {
@@ -274,38 +260,52 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                 }
 
                 return (
-                    <div class="flex justify-end">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    class="h-7 px-2 text-xs"
-                                >
-                                    ...
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                {canDelete ? (
-                                    <DropdownMenuItem
-                                        onSelect={() => handleDelete(original)}
-                                    >
-                                        Delete
-                                    </DropdownMenuItem>
-                                ) : null}
-                                {canShowPrevious ? (
-                                    <DropdownMenuItem
-                                        onSelect={() =>
-                                            showPreviousInstancesInfoDialog(
-                                                original.location
-                                            )
-                                        }
-                                    >
-                                        {t('dialog.previous_instances.info')}
-                                    </DropdownMenuItem>
-                                ) : null}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                    <div class="flex items-center justify-end gap-2">
+                        {canDelete ? (
+                            <button
+                                type="button"
+                                class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
+                                onClick={() =>
+                                    shiftHeld.value
+                                        ? onDelete(original)
+                                        : onDeletePrompt(original)
+                                }
+                            >
+                                <i
+                                    class={
+                                        shiftHeld.value
+                                            ? 'ri-close-line text-red-600'
+                                            : 'ri-delete-bin-line'
+                                    }
+                                />
+                            </button>
+                        ) : null}
+                        {canShowPrevious ? (
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button
+                                            type="button"
+                                            class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
+                                            onClick={() =>
+                                                showPreviousInstancesInfoDialog(
+                                                    original.location
+                                                )
+                                            }
+                                        >
+                                            <i class="ri-file-list-2-line" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top">
+                                        <span>
+                                            {t(
+                                                'dialog.previous_instances.info'
+                                            )}
+                                        </span>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        ) : null}
                     </div>
                 );
             }

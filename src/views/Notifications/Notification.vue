@@ -1,423 +1,65 @@
 <template>
-    <div v-loading="isNotificationsLoading" class="x-container" ref="notificationsRef">
-        <div style="margin: 0 0 10px; display: flex; align-items: center">
-            <el-select
-                v-model="notificationTable.filters[0].value"
-                multiple
-                clearable
-                style="flex: 1"
-                :placeholder="t('view.notification.filter_placeholder')"
-                @change="saveTableFilters">
-                <el-option
-                    v-for="type in [
-                        'requestInvite',
-                        'invite',
-                        'requestInviteResponse',
-                        'inviteResponse',
-                        'friendRequest',
-                        'ignoredFriendRequest',
-                        'message',
-                        'boop',
-                        'event.announcement',
-                        'groupChange',
-                        'group.announcement',
-                        'group.informative',
-                        'group.invite',
-                        'group.joinRequest',
-                        'group.transfer',
-                        'group.queueReady',
-                        'moderation.warning.group',
-                        'moderation.report.closed',
-                        'instance.closed'
-                    ]"
-                    :key="type"
-                    :label="t('view.notification.filters.' + type)"
-                    :value="type" />
-            </el-select>
-            <el-input
-                v-model="notificationTable.filters[1].value"
-                :placeholder="t('view.notification.search_placeholder')"
-                style="flex: none; width: 150px; margin: 0 10px" />
-            <el-tooltip placement="bottom" :content="t('view.notification.refresh_tooltip')">
-                <el-button
-                    type="default"
-                    :loading="isNotificationsLoading"
-                    :icon="Refresh"
-                    circle
-                    style="flex: none"
-                    @click="refreshNotifications()" />
-            </el-tooltip>
-        </div>
-
-        <DataTable
-            v-bind="notificationTable"
-            :data="notificationDisplayData"
-            ref="notificationTableRef"
-            class="notification-table">
-            <el-table-column :label="t('table.notification.date')" prop="created_at" width="130">
-                <template #default="scope">
-                    <el-tooltip placement="right">
-                        <template #content>
-                            <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
-                        </template>
-                        <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
+    <div class="x-container" ref="notificationsRef">
+        <DataTableLayout
+            :table="table"
+            :loading="isNotificationsLoading"
+            :table-style="tableHeightStyle"
+            :page-sizes="pageSizes"
+            :total-items="totalItems"
+            :on-page-size-change="handlePageSizeChange">
+            <template #toolbar>
+                <div style="margin: 0 0 10px; display: flex; align-items: center">
+                    <el-select
+                        v-model="notificationTable.filters[0].value"
+                        multiple
+                        clearable
+                        style="flex: 1"
+                        :placeholder="t('view.notification.filter_placeholder')"
+                        @change="saveTableFilters">
+                        <el-option
+                            v-for="type in [
+                                'requestInvite',
+                                'invite',
+                                'requestInviteResponse',
+                                'inviteResponse',
+                                'friendRequest',
+                                'ignoredFriendRequest',
+                                'message',
+                                'boop',
+                                'event.announcement',
+                                'groupChange',
+                                'group.announcement',
+                                'group.informative',
+                                'group.invite',
+                                'group.joinRequest',
+                                'group.transfer',
+                                'group.queueReady',
+                                'moderation.warning.group',
+                                'moderation.report.closed',
+                                'instance.closed'
+                            ]"
+                            :key="type"
+                            :label="t('view.notification.filters.' + type)"
+                            :value="type" />
+                    </el-select>
+                    <el-input
+                        v-model="notificationTable.filters[1].value"
+                        :placeholder="t('view.notification.search_placeholder')"
+                        clearable
+                        class="flex-[0.4]"
+                        style="margin: 0 10px" />
+                    <el-tooltip placement="bottom" :content="t('view.notification.refresh_tooltip')">
+                        <el-button
+                            type="default"
+                            :loading="isNotificationsLoading"
+                            :icon="Refresh"
+                            circle
+                            style="flex: none"
+                            @click="refreshNotifications()" />
                     </el-tooltip>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.notification.type')" prop="type" width="180">
-                <template #default="scope">
-                    <el-tag type="info" effect="plain" size="small">
-                        <span
-                            v-if="scope.row.type === 'invite'"
-                            v-text="t('view.notification.filters.' + scope.row.type)"></span>
-                        <el-tooltip
-                            v-else-if="scope.row.type === 'group.queueReady' || scope.row.type === 'instance.closed'"
-                            placement="top">
-                            <template #content>
-                                <Location
-                                    v-if="scope.row.location"
-                                    :location="scope.row.location"
-                                    :hint="scope.row.worldName"
-                                    :grouphint="scope.row.groupName"
-                                    :link="false" />
-                            </template>
-                            <span
-                                class="x-link"
-                                @click="showWorldDialog(scope.row.location)"
-                                v-text="t('view.notification.filters.' + scope.row.type)"></span>
-                        </el-tooltip>
-                        <el-tooltip v-else-if="scope.row.link" placement="top" :content="scope.row.linkText">
-                            <span
-                                class="x-link"
-                                @click="openNotificationLink(scope.row.link)"
-                                v-text="t('view.notification.filters.' + scope.row.type)"></span>
-                        </el-tooltip>
-                        <span v-else v-text="t('view.notification.filters.' + scope.row.type)"></span>
-                    </el-tag>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.notification.user')" prop="senderUsername" width="150">
-                <template #default="scope">
-                    <div class="table-user-text">
-                        <template v-if="scope.row.senderUserId && !isGroupId(scope.row.senderUserId)">
-                            <span
-                                class="x-link"
-                                @click="showUserDialog(scope.row.senderUserId)"
-                                v-text="scope.row.senderUsername"></span>
-                        </template>
-                        <template v-else-if="scope.row.link?.startsWith('user:')">
-                            <span
-                                class="x-link"
-                                @click="openNotificationLink(scope.row.link)"
-                                v-text="scope.row.linkText || scope.row.senderUsername"></span>
-                        </template>
-                        <template v-else-if="scope.row.senderUsername && !isGroupId(scope.row.senderUserId)">
-                            <span v-text="scope.row.senderUsername"></span>
-                        </template>
-                    </div>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.notification.group')" prop="groupName" width="150">
-                <template #default="scope">
-                    <div class="table-user-text">
-                        <template
-                            v-if="
-                                scope.row.senderUserId &&
-                                (scope.row.type === 'groupChange' || isGroupId(scope.row.senderUserId))
-                            ">
-                            <span
-                                class="x-link"
-                                @click="showGroupDialog(scope.row.senderUserId)"
-                                v-text="scope.row.senderUsername || scope.row.groupName"></span>
-                        </template>
-                        <template v-else-if="scope.row.type === 'groupChange' && scope.row.senderUsername">
-                            <span v-text="scope.row.senderUsername"></span>
-                        </template>
-                        <template v-else-if="scope.row.link?.startsWith('group:')">
-                            <span
-                                class="x-link"
-                                @click="openNotificationLink(scope.row.link)"
-                                v-text="scope.row.data?.groupName || scope.row.linkText"></span>
-                        </template>
-                        <template v-else-if="scope.row.link?.startsWith('event:')">
-                            <span
-                                class="x-link"
-                                @click="openNotificationLink(scope.row.link)"
-                                v-text="scope.row.data?.groupName || scope.row.groupName || scope.row.linkText"></span>
-                        </template>
-                        <template v-else-if="scope.row.data?.groupName">
-                            <span v-text="scope.row.data.groupName"></span>
-                        </template>
-                        <template v-else-if="scope.row.details?.groupName">
-                            <span v-text="scope.row.details.groupName"></span>
-                        </template>
-                        <template v-else-if="scope.row.groupName">
-                            <span v-text="scope.row.groupName"></span>
-                        </template>
-                    </div>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.notification.photo')" width="80" prop="photo">
-                <template #default="scope">
-                    <template v-if="scope.row.type === 'boop'">
-                        <Emoji
-                            class="x-link notification-image"
-                            @click="showFullscreenImageDialog(scope.row.details.imageUrl)"
-                            v-if="scope.row.details?.imageUrl && !scope.row.details.imageUrl.startsWith('default_')"
-                            :imageUrl="scope.row.details.imageUrl"
-                            :size="30"></Emoji>
-                    </template>
-                    <template v-else-if="scope.row.details && scope.row.details.imageUrl">
-                        <img
-                            class="x-link notification-image"
-                            :src="getSmallThumbnailUrl(scope.row.details.imageUrl)"
-                            @click="showFullscreenImageDialog(scope.row.details.imageUrl)"
-                            loading="lazy" />
-                    </template>
-                    <template v-else-if="scope.row.imageUrl">
-                        <img
-                            class="x-link notification-image"
-                            :src="getSmallThumbnailUrl(scope.row.imageUrl)"
-                            @click="showFullscreenImageDialog(scope.row.imageUrl)"
-                            loading="lazy" />
-                    </template>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.notification.message')" prop="message">
-                <template #default="scope">
-                    <span v-if="scope.row.type === 'invite'" style="display: flex">
-                        <Location
-                            v-if="scope.row.details"
-                            :location="scope.row.details.worldId"
-                            :hint="scope.row.details.worldName"
-                            :grouphint="scope.row.details.groupName"
-                            :link="true" />
-                        <br v-if="scope.row.details" />
-                    </span>
-                    <div
-                        v-if="
-                            scope.row.message &&
-                            scope.row.message !== `This is a generated invite to ${scope.row.details?.worldName}`
-                        "
-                        v-text="scope.row.message"></div>
-                    <span
-                        v-else-if="scope.row.details && scope.row.details.inviteMessage"
-                        v-text="scope.row.details.inviteMessage"></span>
-                    <span
-                        v-else-if="scope.row.details && scope.row.details.requestMessage"
-                        v-text="scope.row.details.requestMessage"></span>
-                    <span
-                        v-else-if="scope.row.details && scope.row.details.responseMessage"
-                        v-text="scope.row.details.responseMessage"></span>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.notification.action')" width="100" align="right">
-                <template #default="scope">
-                    <template v-if="scope.row.senderUserId !== currentUser.id && !scope.row.$isExpired">
-                        <template v-if="scope.row.type === 'friendRequest'">
-                            <el-tooltip placement="top" content="Accept">
-                                <el-button
-                                    text
-                                    :icon="Check"
-                                    style="color: var(--el-color-success)"
-                                    size="small"
-                                    class="button-pd-0"
-                                    @click="acceptFriendRequestNotification(scope.row)" />
-                            </el-tooltip>
-                        </template>
-                        <template v-else-if="scope.row.type === 'invite'">
-                            <el-tooltip placement="top" content="Decline with message">
-                                <el-button
-                                    text
-                                    :icon="ChatLineSquare"
-                                    size="small"
-                                    class="button-pd-0"
-                                    @click="showSendInviteResponseDialog(scope.row)" />
-                            </el-tooltip>
-                        </template>
-                        <template v-else-if="scope.row.type === 'requestInvite'">
-                            <template
-                                v-if="lastLocation.location && isGameRunning && checkCanInvite(lastLocation.location)">
-                                <el-tooltip placement="top" content="Invite">
-                                    <el-button
-                                        text
-                                        :icon="Check"
-                                        style="color: var(--el-color-success)"
-                                        size="small"
-                                        class="button-pd-0"
-                                        @click="acceptRequestInvite(scope.row)" />
-                                </el-tooltip>
-                            </template>
-                            <el-tooltip placement="top" content="Decline with message">
-                                <el-button
-                                    text
-                                    :icon="ChatLineSquare"
-                                    size="small"
-                                    :class="['button-pd-0', 'ml-5']"
-                                    @click="showSendInviteRequestResponseDialog(scope.row)" />
-                            </el-tooltip>
-                        </template>
-
-                        <template v-if="scope.row.responses">
-                            <template v-for="response in scope.row.responses" :key="response.text">
-                                <el-tooltip placement="top" :content="response.text">
-                                    <el-button
-                                        v-if="response.type === 'link'"
-                                        text
-                                        :icon="Link"
-                                        size="small"
-                                        :class="['button-pd-0', 'ml-5']"
-                                        @click="openNotificationLink(response.data)" />
-                                    <el-button
-                                        v-else-if="response.icon === 'check'"
-                                        text
-                                        :icon="Check"
-                                        size="small"
-                                        :class="['button-pd-0', 'ml-5']"
-                                        @click="
-                                            sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
-                                        " />
-                                    <el-button
-                                        v-else-if="response.icon === 'cancel'"
-                                        text
-                                        :icon="Close"
-                                        size="small"
-                                        :class="['button-pd-0', 'ml-5']"
-                                        @click="
-                                            sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
-                                        " />
-                                    <el-button
-                                        v-else-if="response.icon === 'ban'"
-                                        text
-                                        :icon="CircleClose"
-                                        size="small"
-                                        :class="['button-pd-0', 'ml-5']"
-                                        @click="
-                                            sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
-                                        " />
-                                    <el-button
-                                        v-else-if="response.icon === 'bell-slash'"
-                                        text
-                                        :icon="Bell"
-                                        size="small"
-                                        :class="['button-pd-0', 'ml-5']"
-                                        @click="
-                                            sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
-                                        " />
-                                    <el-button
-                                        v-else-if="response.icon === 'reply' && scope.row.type === 'boop'"
-                                        text
-                                        :icon="ChatLineSquare"
-                                        size="small"
-                                        :class="['button-pd-0', 'ml-5']"
-                                        @click="showSendBoopDialog(scope.row.senderUserId)" />
-                                    <el-button
-                                        v-else-if="response.icon === 'reply'"
-                                        text
-                                        :icon="ChatLineSquare"
-                                        size="small"
-                                        :class="['button-pd-0', 'ml-5']"
-                                        @click="
-                                            sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
-                                        " />
-                                    <el-button
-                                        v-else
-                                        text
-                                        :icon="CollectionTag"
-                                        size="small"
-                                        :class="['button-pd-0', 'ml-5']"
-                                        @click="
-                                            sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
-                                        " />
-                                </el-tooltip>
-                            </template>
-                        </template>
-
-                        <template
-                            v-if="
-                                scope.row.type !== 'requestInviteResponse' &&
-                                scope.row.type !== 'inviteResponse' &&
-                                scope.row.type !== 'message' &&
-                                scope.row.type !== 'boop' &&
-                                scope.row.type !== 'groupChange' &&
-                                !scope.row.type.includes('group.') &&
-                                !scope.row.type.includes('moderation.') &&
-                                !scope.row.type.includes('instance.')
-                            ">
-                            <el-tooltip placement="top" content="Decline">
-                                <el-button
-                                    v-if="shiftHeld"
-                                    style="color: var(--el-color-danger)"
-                                    text
-                                    :icon="Close"
-                                    size="small"
-                                    :class="['button-pd-0', 'ml-5']"
-                                    @click="hideNotification(scope.row)" />
-                                <el-button
-                                    v-else
-                                    text
-                                    :icon="Close"
-                                    size="small"
-                                    :class="['button-pd-0', 'ml-5']"
-                                    @click="hideNotificationPrompt(scope.row)" />
-                            </el-tooltip>
-                        </template>
-                    </template>
-                    <template v-if="scope.row.type === 'group.queueReady'">
-                        <el-tooltip placement="top" content="Delete log">
-                            <el-button
-                                v-if="shiftHeld"
-                                style="color: var(--el-color-danger)"
-                                text
-                                :icon="Delete"
-                                size="small"
-                                :class="['button-pd-0', 'ml-5']"
-                                @click="deleteNotificationLog(scope.row)" />
-                            <el-button
-                                v-else
-                                text
-                                :icon="Delete"
-                                size="small"
-                                :class="['button-pd-0', 'ml-5']"
-                                @click="deleteNotificationLogPrompt(scope.row)" />
-                        </el-tooltip>
-                    </template>
-
-                    <template
-                        v-if="
-                            scope.row.type !== 'friendRequest' &&
-                            scope.row.type !== 'ignoredFriendRequest' &&
-                            !scope.row.type.includes('group.') &&
-                            !scope.row.type.includes('moderation.')
-                        ">
-                        <el-tooltip placement="top" content="Delete log">
-                            <el-button
-                                v-if="shiftHeld"
-                                style="color: var(--el-color-danger); margin-left: 5px"
-                                text
-                                :icon="Close"
-                                size="small"
-                                class="button-pd-0"
-                                @click="deleteNotificationLog(scope.row)" />
-                            <el-button
-                                v-else
-                                text
-                                :icon="Delete"
-                                size="small"
-                                :class="['button-pd-0', 'ml-5']"
-                                @click="deleteNotificationLogPrompt(scope.row)" />
-                        </el-tooltip>
-                    </template>
-                </template>
-            </el-table-column>
-            <el-table-column width="5"></el-table-column>
-        </DataTable>
+                </div>
+            </template>
+        </DataTableLayout>
         <SendInviteResponseDialog
             v-model:send-invite-response-dialog="sendInviteResponseDialog"
             v-model:sendInviteResponseDialogVisible="sendInviteResponseDialogVisible" />
@@ -429,18 +71,15 @@
 
 <script setup>
     import {
-        Bell,
-        ChatLineSquare,
-        Check,
-        CircleClose,
-        Close,
-        CollectionTag,
-        Delete,
-        Link,
-        Refresh
-    } from '@element-plus/icons-vue';
+        getCoreRowModel,
+        getFilteredRowModel,
+        getPaginationRowModel,
+        getSortedRowModel,
+        useVueTable
+    } from '@tanstack/vue-table';
+    import { computed, ref, watch } from 'vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
-    import { computed, ref } from 'vue';
+    import { Refresh } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -448,49 +87,47 @@
     import dayjs from 'dayjs';
 
     import {
+        useAppearanceSettingsStore,
         useGalleryStore,
-        useGameStore,
         useGroupStore,
         useInviteStore,
         useLocationStore,
         useNotificationStore,
-        useUiStore,
         useUserStore,
-        useWorldStore
+        useVrcxStore
     } from '../../stores';
-    import {
-        checkCanInvite,
-        convertFileUrlToImageUrl,
-        escapeTag,
-        formatDateFilter,
-        parseLocation,
-        removeFromArray
-    } from '../../shared/utils';
+    import { convertFileUrlToImageUrl, escapeTag, parseLocation, removeFromArray } from '../../shared/utils';
     import { friendRequest, notificationRequest, worldRequest } from '../../api';
+    import { DataTableLayout } from '../../components/ui/data-table';
+    import { createColumns } from './columns.jsx';
     import { database } from '../../service/database';
-    import { useTableHeight } from '../../composables/useTableHeight';
+    import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
+    import { valueUpdater } from '../../components/ui/table/utils';
 
-    import Emoji from '../../components/Emoji.vue';
     import SendInviteRequestResponseDialog from './dialogs/SendInviteRequestResponseDialog.vue';
     import SendInviteResponseDialog from './dialogs/SendInviteResponseDialog.vue';
     import configRepository from '../../service/config';
 
-    const { showUserDialog, showSendBoopDialog } = useUserStore();
-    const { showWorldDialog } = useWorldStore();
+    const { showUserDialog } = useUserStore();
     const { showGroupDialog } = useGroupStore();
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
     const { refreshInviteMessageTableData } = useInviteStore();
     const { clearInviteImageUpload } = useGalleryStore();
     const { notificationTable, isNotificationsLoading } = storeToRefs(useNotificationStore());
     const { refreshNotifications, handleNotificationHide } = useNotificationStore();
-    const { isGameRunning } = storeToRefs(useGameStore());
     const { showFullscreenImageDialog } = useGalleryStore();
     const { currentUser } = storeToRefs(useUserStore());
-    const { shiftHeld } = storeToRefs(useUiStore());
+    const appearanceSettingsStore = useAppearanceSettingsStore();
+    const vrcxStore = useVrcxStore();
 
     const { t } = useI18n();
 
-    const { containerRef: notificationsRef } = useTableHeight(notificationTable);
+    const notificationsRef = ref(null);
+    const { tableStyle: tableHeightStyle } = useDataTableScrollHeight(notificationsRef, {
+        offset: 30,
+        toolbarHeight: 54,
+        paginationHeight: 52
+    });
 
     function getNotificationCreatedAt(row) {
         if (typeof row?.created_at === 'string' && row.created_at.length > 0) {
@@ -514,18 +151,124 @@
         return Number.isFinite(ts) ? ts : 0;
     }
 
-    const notificationDisplayData = computed(() => {
-        return notificationTable.value.data.slice().sort((a, b) => {
-            const aTs = getNotificationCreatedAtTs(a);
-            const bTs = getNotificationCreatedAtTs(b);
-            if (aTs !== bTs) {
-                return bTs - aTs;
-            }
+    const asRawArray = (value) => (Array.isArray(value) ? value : []);
+    const isEmptyFilterValue = (value) => (Array.isArray(value) ? value.length === 0 : !value);
+    const applyFilter = (row, filter) => {
+        if (Array.isArray(filter.prop)) {
+            return filter.prop.some((propItem) => applyFilter(row, { prop: propItem, value: filter.value }));
+        }
 
-            const aId = typeof a?.id === 'string' ? a.id : '';
-            const bId = typeof b?.id === 'string' ? b.id : '';
-            return aId < bId ? 1 : aId > bId ? -1 : 0;
-        });
+        const cellValue = row[filter.prop];
+        if (cellValue === undefined || cellValue === null) {
+            return false;
+        }
+
+        if (Array.isArray(filter.value)) {
+            return filter.value.some((val) => String(cellValue).toLowerCase() === String(val).toLowerCase());
+        }
+        return String(cellValue).toLowerCase().includes(String(filter.value).toLowerCase());
+    };
+
+    const notificationDisplayData = computed(() => {
+        const rawData = asRawArray(notificationTable.value.data);
+        const rawFilters = Array.isArray(notificationTable.value.filters) ? notificationTable.value.filters : [];
+        const activeFilters = rawFilters.filter((filter) => !isEmptyFilterValue(filter?.value));
+
+        const filtered =
+            activeFilters.length === 0
+                ? rawData
+                : rawData.filter((row) => {
+                      for (const filter of activeFilters) {
+                          if (filter.filterFn) {
+                              if (!filter.filterFn(row, filter)) {
+                                  return false;
+                              }
+                              continue;
+                          }
+                          if (!applyFilter(row, filter)) {
+                              return false;
+                          }
+                      }
+                      return true;
+                  });
+
+        return filtered;
+    });
+
+    const columns = createColumns({
+        getNotificationCreatedAt,
+        getNotificationCreatedAtTs,
+        openNotificationLink,
+        showFullscreenImageDialog,
+        getSmallThumbnailUrl,
+        acceptFriendRequestNotification,
+        showSendInviteResponseDialog,
+        showSendInviteRequestResponseDialog,
+        acceptRequestInvite,
+        sendNotificationResponse,
+        hideNotification,
+        hideNotificationPrompt,
+        deleteNotificationLog,
+        deleteNotificationLogPrompt
+    });
+
+    const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
+    const pageSize = computed(() =>
+        notificationTable.value.pageSizeLinked
+            ? appearanceSettingsStore.tablePageSize
+            : notificationTable.value.pageSize
+    );
+
+    const sorting = ref([{ id: 'created_at', desc: true }]);
+    const pagination = ref({
+        pageIndex: 0,
+        pageSize: pageSize.value
+    });
+
+    const table = useVueTable({
+        data: notificationDisplayData,
+        columns,
+        getRowId: (row) => row.id ?? `${row.type}:${row.senderUserId ?? ''}:${row.created_at ?? ''}`,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
+        onPaginationChange: (updaterOrValue) => valueUpdater(updaterOrValue, pagination),
+        state: {
+            get sorting() {
+                return sorting.value;
+            },
+            get pagination() {
+                return pagination.value;
+            }
+        }
+    });
+
+    const totalItems = computed(() => {
+        const length = table.getFilteredRowModel().rows.length;
+        const max = vrcxStore.maxTableSize;
+        return length > max && length < max + 51 ? max : length;
+    });
+
+    const handlePageSizeChange = (size) => {
+        if (notificationTable.value.pageSizeLinked) {
+            appearanceSettingsStore.setTablePageSize(size);
+        } else {
+            notificationTable.value.pageSize = size;
+        }
+    };
+
+    watch(pageSize, (size) => {
+        if (pagination.value.pageSize === size) {
+            return;
+        }
+        pagination.value = {
+            ...pagination.value,
+            pageIndex: 0,
+            pageSize: size
+        };
+        table.setPageSize(size);
     });
 
     const sendInviteResponseDialog = ref({
@@ -536,8 +279,6 @@
     const sendInviteResponseDialogVisible = ref(false);
 
     const sendInviteRequestResponseDialogVisible = ref(false);
-
-    const isGroupId = (id) => typeof id === 'string' && id.startsWith('grp_');
 
     function saveTableFilters() {
         configRepository.setString(

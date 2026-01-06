@@ -6,7 +6,7 @@ import {
     TooltipProvider,
     TooltipTrigger
 } from '../../components/ui/tooltip';
-import { ArrowRight, ArrowUpDown, X } from 'lucide-vue-next';
+import { ArrowRight, ArrowUpDown } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
 import { formatDateFilter } from '../../shared/utils';
@@ -123,29 +123,24 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             enableSorting: false,
             cell: ({ row }) => {
                 const original = row.original;
-                if (shiftHeld.value) {
-                    return (
-                        <div class="flex justify-end">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                class="h-6 text-destructive"
-                                onClick={() => onDelete(original)}
-                            >
-                                <X />
-                            </Button>
-                        </div>
-                    );
-                }
-
                 return (
                     <div class="flex justify-end">
                         <button
                             type="button"
                             class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
-                            onClick={() => onDeletePrompt(original)}
+                            onClick={() =>
+                                shiftHeld.value
+                                    ? onDelete(original)
+                                    : onDeletePrompt(original)
+                            }
                         >
-                            <i class="ri-delete-bin-line" />
+                            <i
+                                class={
+                                    shiftHeld.value
+                                        ? 'ri-close-line text-red-600'
+                                        : 'ri-delete-bin-line'
+                                }
+                            />
                         </button>
                     </div>
                 );
