@@ -363,10 +363,19 @@ export const useAppearanceSettingsStore = defineStore(
             updateTrustColorClasses(trustColor.value);
         }
 
-        async function userColourInit() {
-            let dictObject = await AppApi.GetColourBulk(
-                Array.from(userStore.cachedUsers.keys())
-            );
+        async function userColourInit(customFunc) {
+            let dictObject = null;
+            if (typeof customFunc === 'function') {
+                dictObject = customFunc(userStore.cachedUsers.keys());
+            } else {
+                dictObject = await AppApi.GetColourBulk(
+                    Array.from(userStore.cachedUsers.keys())
+                );
+            }
+            if (!dictObject) {
+                console.warn('No user colour data found');
+                return;
+            }
             if (LINUX) {
                 // @ts-ignore
                 dictObject = Object.fromEntries(dictObject);
