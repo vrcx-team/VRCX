@@ -798,10 +798,11 @@
 
     .nav-menu-container {
         position: relative;
-        width: 240px;
+        width: 100%;
+        min-width: 64px;
         height: 100%;
         display: flex;
-        flex: 0 0 240px;
+        flex: 1 1 auto;
         flex-direction: column;
         align-items: stretch;
         justify-content: flex-start;
@@ -914,8 +915,7 @@
     }
 
     .nav-menu-container.is-collapsed {
-        width: 64px;
-        flex-basis: 64px;
+        width: 100%;
     }
 
     .nav-menu-container.is-collapsed .nav-menu :deep(.el-sub-menu__title > div) {

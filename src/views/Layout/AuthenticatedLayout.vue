@@ -1,19 +1,43 @@
 <template>
     <template v-if="watchState.isLoggedIn">
-        <NavMenu></NavMenu>
-        <el-splitter @resize-end="handleResizeEnd">
-            <el-splitter-panel>
-                <RouterView v-slot="{ Component }">
-                    <KeepAlive include="Feed,GameLog,PlayerList">
-                        <component :is="Component" />
-                    </KeepAlive>
-                </RouterView>
-            </el-splitter-panel>
+        <ResizablePanelGroup
+            ref="panelGroupRef"
+            direction="horizontal"
+            class="group/main-layout flex-1 h-full min-w-0"
+            @layout="handleLayout">
+            <template #default="{ layout }">
+                <ResizablePanel
+                    ref="navPanelRef"
+                    :default-size="navDefaultSize"
+                    :min-size="navMinSize"
+                    :max-size="navMaxSize"
+                    :order="1">
+                    <NavMenu></NavMenu>
+                </ResizablePanel>
+                <ResizableHandle :disabled="isNavCollapsed" class="opacity-0"></ResizableHandle>
+                <ResizablePanel :order="2">
+                    <RouterView v-slot="{ Component }">
+                        <KeepAlive include="Feed,GameLog,PlayerList">
+                            <component :is="Component" />
+                        </KeepAlive>
+                    </RouterView>
+                </ResizablePanel>
 
-            <el-splitter-panel v-if="isSideBarTabShow" :min="250" :max="700" :size="asideWidth" collapsible>
-                <Sidebar></Sidebar>
-            </el-splitter-panel>
-        </el-splitter>
+                <template v-if="isSideBarTabShow">
+                    <ResizableHandle
+                        with-handle
+                        :class="isAsideCollapsed(layout) ? 'opacity-100' : 'opacity-0'"></ResizableHandle>
+                    <ResizablePanel
+                        :default-size="asideDefaultSize"
+                        :max-size="asideMaxSize"
+                        :collapsed-size="0"
+                        collapsible
+                        :order="3">
+                        <Sidebar></Sidebar>
+                    </ResizablePanel>
+                </template>
+            </template>
+        </ResizablePanelGroup>
 
         <!-- ## Dialogs ## -->
         <UserDialog></UserDialog>
@@ -55,11 +79,11 @@
 </template>
 
 <script setup>
-    import { storeToRefs } from 'pinia';
     import { useRouter } from 'vue-router';
     import { watch } from 'vue';
 
-    import { useAppearanceSettingsStore } from '../../stores';
+    import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
+    import { useAuthenticatedLayoutResizable } from '../../composables/useAuthenticatedLayoutResizable';
     import { watchState } from '../../service/watchState';
 
     import AvatarDialog from '../../components/dialogs/AvatarDialog/AvatarDialog.vue';
@@ -85,23 +109,19 @@
 
     const router = useRouter();
 
-    const appearanceStore = useAppearanceSettingsStore();
-    const { setAsideWidth } = appearanceStore;
-    const { asideWidth, isSideBarTabShow } = storeToRefs(appearanceStore);
-
-    const handleResizeEnd = (index, sizes) => {
-        if (!Array.isArray(sizes) || sizes.length < 2) {
-            return;
-        }
-        const asideSplitterIndex = sizes.length - 2;
-        if (index !== asideSplitterIndex) {
-            return;
-        }
-        const asideSize = sizes[sizes.length - 1];
-        if (Number.isFinite(asideSize) && asideSize > 0) {
-            setAsideWidth(asideSize);
-        }
-    };
+    const {
+        panelGroupRef,
+        navPanelRef,
+        navDefaultSize,
+        navMinSize,
+        navMaxSize,
+        asideDefaultSize,
+        asideMaxSize,
+        handleLayout,
+        isAsideCollapsed,
+        isNavCollapsed,
+        isSideBarTabShow
+    } = useAuthenticatedLayoutResizable();
 
     watch(
         () => watchState.isLoggedIn,

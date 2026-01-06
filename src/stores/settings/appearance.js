@@ -68,6 +68,7 @@ export const useAppearanceSettingsStore = defineStore(
             'Sort by Last Active'
         ]);
         const asideWidth = ref(300);
+        const navWidth = ref(240);
         const isSidebarGroupByInstance = ref(true);
         const isHideFriendsInSameInstance = ref(false);
         const isSidebarDivideByFriendGroup = ref(false);
@@ -119,6 +120,7 @@ export const useAppearanceSettingsStore = defineStore(
                 dtIsoFormatConfig,
                 sidebarSortMethodsConfig,
                 asideWidthConfig,
+                navWidthConfig,
                 isSidebarGroupByInstanceConfig,
                 isHideFriendsInSameInstanceConfig,
                 isSidebarDivideByFriendGroupConfig,
@@ -164,6 +166,7 @@ export const useAppearanceSettingsStore = defineStore(
                     ])
                 ),
                 configRepository.getInt('VRCX_sidePanelWidth', 300),
+                configRepository.getInt('VRCX_navPanelWidth', 240),
                 configRepository.getBool('VRCX_sidebarGroupByInstance', true),
                 configRepository.getBool(
                     'VRCX_hideFriendsInSameInstance',
@@ -248,6 +251,7 @@ export const useAppearanceSettingsStore = defineStore(
             }
             trustColor.value = { ...TRUST_COLOR_DEFAULTS };
             asideWidth.value = asideWidthConfig;
+            navWidth.value = clampInt(navWidthConfig, 64, 480);
             isSidebarGroupByInstance.value = isSidebarGroupByInstanceConfig;
             isHideFriendsInSameInstance.value =
                 isHideFriendsInSameInstanceConfig;
@@ -620,7 +624,7 @@ export const useAppearanceSettingsStore = defineStore(
         function toggleNavCollapsed() {
             setNavCollapsed(!isNavCollapsed.value);
         }
-        function setAsideWidth(widthOrArray) {
+        function setNavWidth(widthOrArray) {
             let width = null;
             if (Array.isArray(widthOrArray) && widthOrArray.length) {
                 width = widthOrArray[widthOrArray.length - 1];
@@ -629,10 +633,29 @@ export const useAppearanceSettingsStore = defineStore(
             }
             if (width) {
                 requestAnimationFrame(() => {
-                    asideWidth.value = width;
-                    configRepository.setInt('VRCX_sidePanelWidth', width);
+                    navWidth.value = clampInt(width, 64, 480);
+                    configRepository.setInt(
+                        'VRCX_navPanelWidth',
+                        navWidth.value
+                    );
                 });
             }
+        }
+        function setAsideWidth(widthOrArray) {
+            let width = null;
+            if (Array.isArray(widthOrArray) && widthOrArray.length) {
+                width = widthOrArray[widthOrArray.length - 1];
+            } else if (typeof widthOrArray === 'number') {
+                width = widthOrArray;
+            }
+            if (!Number.isFinite(width) || width === null) {
+                return;
+            }
+            const normalized = Math.max(0, Math.round(width));
+            requestAnimationFrame(() => {
+                asideWidth.value = normalized;
+                configRepository.setInt('VRCX_sidePanelWidth', normalized);
+            });
         }
         function setIsSidebarGroupByInstance() {
             isSidebarGroupByInstance.value = !isSidebarGroupByInstance.value;
@@ -840,6 +863,7 @@ export const useAppearanceSettingsStore = defineStore(
             sidebarSortMethod3,
             sidebarSortMethods,
             asideWidth,
+            navWidth,
             isSidebarGroupByInstance,
             isHideFriendsInSameInstance,
             isSidebarDivideByFriendGroup,
@@ -869,6 +893,7 @@ export const useAppearanceSettingsStore = defineStore(
             setSidebarSortMethod2,
             setSidebarSortMethod3,
             setSidebarSortMethods,
+            setNavWidth,
             setAsideWidth,
             setIsSidebarGroupByInstance,
             setIsHideFriendsInSameInstance,
