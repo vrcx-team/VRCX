@@ -110,9 +110,12 @@ export function useAuthenticatedLayoutResizable() {
         resizeNavPanel(targetSize);
     });
 
-    onMounted(() => {
-        navExpandedSize.value =
-            navPanelRef.value?.getSize?.() ?? navDefaultSize.value;
+    onMounted(async () => {
+        await nextTick();
+        let panelSize = null;
+        panelSize = navPanelRef.value?.getSize?.() ?? null;
+
+        navExpandedSize.value = panelSize ?? navDefaultSize.value;
         if (isNavCollapsed.value) {
             resizeNavPanel(navCollapsedSize.value);
         }

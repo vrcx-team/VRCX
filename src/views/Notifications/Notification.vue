@@ -96,7 +96,7 @@
         useUserStore,
         useVrcxStore
     } from '../../stores';
-    import { convertFileUrlToImageUrl, escapeTag, parseLocation, removeFromArray } from '../../shared/utils';
+    import { convertFileUrlToImageUrl, escapeTag, parseLocation } from '../../shared/utils';
     import { friendRequest, notificationRequest, worldRequest } from '../../api';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { createColumns } from './columns.jsx';
@@ -174,25 +174,24 @@
         const rawFilters = Array.isArray(notificationTable.value.filters) ? notificationTable.value.filters : [];
         const activeFilters = rawFilters.filter((filter) => !isEmptyFilterValue(filter?.value));
 
-        const filtered =
-            activeFilters.length === 0
-                ? rawData
-                : rawData.filter((row) => {
-                      for (const filter of activeFilters) {
-                          if (filter.filterFn) {
-                              if (!filter.filterFn(row, filter)) {
-                                  return false;
-                              }
-                              continue;
-                          }
-                          if (!applyFilter(row, filter)) {
-                              return false;
-                          }
-                      }
-                      return true;
-                  });
+        if (activeFilters.length === 0) {
+            return rawData.slice();
+        }
 
-        return filtered;
+        return rawData.filter((row) => {
+            for (const filter of activeFilters) {
+                if (filter.filterFn) {
+                    if (!filter.filterFn(row, filter)) {
+                        return false;
+                    }
+                    continue;
+                }
+                if (!applyFilter(row, filter)) {
+                    return false;
+                }
+            }
+            return true;
+        });
     });
 
     const columns = createColumns({
@@ -468,7 +467,10 @@
     }
 
     function deleteNotificationLog(row) {
-        removeFromArray(notificationTable.value.data, row);
+        const idx = notificationTable.value.data.findIndex((e) => e.id === row.id);
+        if (idx !== -1) {
+            notificationTable.value.data.splice(idx, 1);
+        }
         if (row.type !== 'friendRequest' && row.type !== 'ignoredFriendRequest') {
             database.deleteNotification(row.id);
         }
