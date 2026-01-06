@@ -6,16 +6,11 @@
             class="group/main-layout flex-1 h-full min-w-0"
             @layout="handleLayout">
             <template #default="{ layout }">
-                <ResizablePanel
-                    ref="navPanelRef"
-                    :default-size="navDefaultSize"
-                    :min-size="navMinSize"
-                    :max-size="navMaxSize"
-                    :order="1">
+                <ResizablePanel ref="navPanelRef" :min-size="navMinSize" :max-size="navMaxSize" :order="1">
                     <NavMenu></NavMenu>
                 </ResizablePanel>
                 <ResizableHandle :disabled="isNavCollapsed" class="opacity-0"></ResizableHandle>
-                <ResizablePanel :order="2">
+                <ResizablePanel :default-size="mainDefaultSize" :order="2">
                     <RouterView v-slot="{ Component }">
                         <KeepAlive include="Feed,GameLog,PlayerList">
                             <component :is="Component" />
@@ -120,6 +115,7 @@
         navMaxSize,
         asideDefaultSize,
         asideMaxSize,
+        mainDefaultSize,
         handleLayout,
         isAsideCollapsed,
         isNavCollapsed,
