@@ -28,13 +28,12 @@
                                         {{ friendCardScalePercent }}%
                                     </span>
                                 </div>
-                                <el-slider
-                                    v-model="friendCardScale"
+                                <Slider
+                                    v-model="friendCardScaleValue"
                                     class="favorites-dropdown__slider"
                                     :min="friendCardScaleSlider.min"
                                     :max="friendCardScaleSlider.max"
-                                    :step="friendCardScaleSlider.step"
-                                    :show-tooltip="false" />
+                                    :step="friendCardScaleSlider.step" />
                             </li>
                             <li class="favorites-dropdown__control" @click.stop>
                                 <div class="favorites-dropdown__control-header">
@@ -43,13 +42,12 @@
                                         {{ friendCardSpacingPercent }}%
                                     </span>
                                 </div>
-                                <el-slider
-                                    v-model="friendCardSpacing"
+                                <Slider
+                                    v-model="friendCardSpacingValue"
                                     class="favorites-dropdown__slider"
                                     :min="friendCardSpacingSlider.min"
                                     :max="friendCardSpacingSlider.max"
-                                    :step="friendCardSpacingSlider.step"
-                                    :show-tooltip="false" />
+                                    :step="friendCardSpacingSlider.step" />
                             </li>
                             <el-dropdown-item @click="handleFriendImportClick">
                                 {{ t('view.favorite.import') }}
@@ -108,7 +106,7 @@
                                                     circle
                                                     @click.stop></el-button>
                                             </PopoverTrigger>
-                                            <PopoverContent side="right" class="w-[220px] p-1 rounded-lg">
+                                            <PopoverContent side="right" class="w-55 p-1 rounded-lg">
                                                 <div class="favorites-group-menu">
                                                     <button
                                                         type="button"
@@ -284,6 +282,7 @@
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { useAppearanceSettingsStore, useFavoriteStore, useUserStore } from '../../stores';
     import { Badge } from '../../components/ui/badge';
+    import { Slider } from '../../components/ui/slider';
     import { Switch } from '../../components/ui/switch';
     import { favoriteRequest } from '../../api';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
@@ -339,6 +338,24 @@
 
     const friendCardScalePercent = computed(() => Math.round(friendCardScale.value * 100));
     const friendCardSpacingPercent = computed(() => Math.round(friendCardSpacing.value * 100));
+    const friendCardScaleValue = computed({
+        get: () => [friendCardScale.value],
+        set: (value) => {
+            const next = value?.[0];
+            if (typeof next === 'number') {
+                friendCardScale.value = next;
+            }
+        }
+    });
+    const friendCardSpacingValue = computed({
+        get: () => [friendCardSpacing.value],
+        set: (value) => {
+            const next = value?.[0];
+            if (typeof next === 'number') {
+                friendCardSpacing.value = next;
+            }
+        }
+    });
 
     const friendExportDialogVisible = ref(false);
     const friendFavoriteSearch = ref('');
