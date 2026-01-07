@@ -12,7 +12,8 @@
                             <TableHead
                                 v-for="header in headerGroup.headers"
                                 :key="header.id"
-                                :class="getHeaderClass(header)">
+                                :class="getHeaderClass(header)"
+                                :style="getPinnedStyle(header.column, true)">
                                 <FlexRender
                                     v-if="!header.isPlaceholder"
                                     :render="header.column.columnDef.header"
@@ -23,11 +24,12 @@
                     <TableBody>
                         <template v-if="table.getRowModel().rows?.length">
                             <template v-for="row in table.getRowModel().rows" :key="row.id">
-                                <TableRow>
+                                <TableRow @click="handleRowClick(row)">
                                     <TableCell
                                         v-for="cell in row.getVisibleCells()"
                                         :key="cell.id"
-                                        :class="getCellClass(cell)">
+                                        :class="getCellClass(cell)"
+                                        :style="getPinnedStyle(cell.column, false)">
                                         <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                                     </TableCell>
                                 </TableRow>
@@ -56,7 +58,7 @@
             </div>
         </div>
 
-        <div class="mt-4 flex w-full items-center gap-3">
+        <div v-if="showPagination" class="mt-4 flex w-full items-center gap-3">
             <div v-if="pageSizes.length" class="inline-flex items-center flex-1 justify-end gap-2">
                 <span class="text-xs text-muted-foreground">{{ t('table.pagination.rows_per_page') }}</span>
                 <Select v-model="pageSizeValue">
@@ -137,11 +139,19 @@
             type: String,
             default: 'No results.'
         },
+        showPagination: {
+            type: Boolean,
+            default: true
+        },
         onPageSizeChange: {
             type: Function,
             default: null
         },
         onPageChange: {
+            type: Function,
+            default: null
+        },
+        onRowClick: {
             type: Function,
             default: null
         }
@@ -197,13 +207,40 @@
     const getCellClass = (cell) => {
         const columnDef = cell?.column?.columnDef;
         const meta = columnDef?.meta ?? {};
+        const isPinned = Boolean(cell?.column?.getIsPinned?.());
         return joinClasses(
+            isPinned ? 'bg-background' : null,
             resolveClassValue(meta.class, cell?.getContext?.()),
             resolveClassValue(meta.cellClass, cell?.getContext?.()),
             resolveClassValue(meta.tdClass, cell?.getContext?.()),
             resolveClassValue(columnDef?.class, cell?.getContext?.()),
             resolveClassValue(columnDef?.cellClass, cell?.getContext?.())
         );
+    };
+
+    const getPinnedStyle = (column, isHeader) => {
+        const pinned = column?.getIsPinned?.();
+        if (!pinned) return null;
+
+        const style = {
+            position: 'sticky',
+            zIndex: isHeader ? 30 : 20
+        };
+
+        const size = column?.getSize?.();
+        if (Number.isFinite(size)) {
+            style.width = `${size}px`;
+        }
+
+        if (pinned === 'left') {
+            const left = column?.getStart?.('left');
+            if (Number.isFinite(left)) style.left = `${left}px`;
+        } else if (pinned === 'right') {
+            const right = column?.getAfter?.('right');
+            if (Number.isFinite(right)) style.right = `${right}px`;
+        }
+
+        return style;
     };
 
     const handlePageSizeChange = (size) => {
@@ -214,7 +251,7 @@
     };
 
     const pageSizeProxy = computed({
-        get: () => props.table.getState().pagination.pageSize,
+        get: () => props.table.getState?.().pagination?.pageSize ?? 0,
         set: (size) => handlePageSizeChange(size)
     });
 
@@ -224,7 +261,7 @@
     });
 
     const currentPage = computed({
-        get: () => props.table.getState().pagination.pageIndex + 1,
+        get: () => (props.table.getState?.().pagination?.pageIndex ?? 0) + 1,
         set: (page) => {
             props.table.setPageIndex(page - 1);
             if (props.onPageChange) {
@@ -232,4 +269,9 @@
             }
         }
     });
+
+    const handleRowClick = (row) => {
+        if (!props.onRowClick) return;
+        props.onRowClick(row);
+    };
 </script>

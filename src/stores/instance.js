@@ -84,23 +84,6 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     const currentInstanceUsersData = ref([]);
 
-    const currentInstanceUsersTableProps = reactive({
-        stripe: true,
-        size: 'small',
-        defaultSort: {
-            prop: 'timer',
-            order: 'descending'
-        }
-    });
-    const currentInstanceUsersTable = computed(() => {
-        return {
-            data: currentInstanceWorld.value.ref.id
-                ? currentInstanceUsersData.value
-                : [],
-            tableProps: currentInstanceUsersTableProps
-        };
-    });
-
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
@@ -1229,7 +1212,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         previousInstancesInfoDialogVisible,
         previousInstancesInfoDialogInstanceId,
         instanceJoinHistory,
-        currentInstanceUsersTable,
+        currentInstanceUsersData,
 
         applyInstance,
         updateCurrentInstanceWorld,
