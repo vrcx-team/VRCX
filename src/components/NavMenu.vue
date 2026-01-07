@@ -60,21 +60,6 @@
             </div>
 
             <div class="nav-menu-container-bottom mb-4">
-                <TooltipWrapper
-                    v-if="branch === 'Nightly'"
-                    :delay-duration="150"
-                    :content="'Feedback'"
-                    :disabled="!isCollapsed"
-                    side="right">
-                    <div
-                        class="bottom-button"
-                        id="feedback"
-                        @click="!sentryErrorReporting && setSentryErrorReporting()">
-                        <i class="ri-feedback-line"></i>
-                        <span v-show="!isCollapsed" class="bottom-button__label">Feedback</span>
-                    </div>
-                </TooltipWrapper>
-
                 <el-popover
                     v-model:visible="supportMenuVisible"
                     placement="right"
@@ -326,8 +311,6 @@
     const uiStore = useUiStore();
     const { notifiedMenus } = storeToRefs(uiStore);
     const { directAccessPaste } = useSearchStore();
-    const { sentryErrorReporting } = storeToRefs(useAdvancedSettingsStore());
-    const { setSentryErrorReporting } = useAdvancedSettingsStore();
     const { logout } = useAuthStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { themeMode, isNavCollapsed: isCollapsed } = storeToRefs(appearanceSettingsStore);
@@ -536,20 +519,6 @@
         themeMenuVisible.value = false;
         settingsMenuVisible.value = false;
         appearanceSettingsStore.saveThemeMode(theme);
-    };
-
-    const handleCustomThemeColorChange = async (color) => {
-        if (!color) {
-            await initPrimaryColor();
-            themeColorMenuVisible.value = false;
-            themeMenuVisible.value = false;
-            settingsMenuVisible.value = false;
-            return;
-        }
-        await applyCustomPrimaryColor(color);
-        themeColorMenuVisible.value = false;
-        themeMenuVisible.value = false;
-        settingsMenuVisible.value = false;
     };
 
     const handleThemeColorSelect = async (colorFamily) => {
@@ -777,17 +746,6 @@
     onMounted(async () => {
         await initPrimaryColor();
         await loadNavMenuConfig();
-
-        if (!NIGHTLY || !sentryErrorReporting.value) return;
-
-        try {
-            const Sentry = await getSentry();
-
-            const feedback = Sentry.getFeedback();
-            feedback?.attachTo(document.getElementById('feedback'));
-        } catch (error) {
-            console.error('Error setting up Sentry feedback:', error);
-        }
     });
 </script>
 
