@@ -222,94 +222,105 @@
                                 style="margin-left: 5px"
                                 @click="selectAvatarWithoutConfirmation(avatarDialog.id)"></el-button>
                         </TooltipWrapper>
-                        <el-dropdown trigger="click" style="margin-left: 5px" @command="avatarDialogCommand">
-                            <el-button
-                                :type="avatarDialog.isBlocked ? 'danger' : 'default'"
-                                :icon="MoreFilled"
-                                size="large"
-                                circle></el-button>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item :icon="Refresh" command="Refresh">{{
-                                        t('dialog.avatar.actions.refresh')
-                                    }}</el-dropdown-item>
-                                    <el-dropdown-item :icon="Share" command="Share">{{
-                                        t('dialog.avatar.actions.share')
-                                    }}</el-dropdown-item>
-                                    <el-dropdown-item
-                                        v-if="avatarDialog.isBlocked"
-                                        :icon="CircleCheck"
-                                        command="Unblock Avatar"
-                                        style="color: #f56c6c"
-                                        divided
-                                        >{{ t('dialog.avatar.actions.unblock') }}</el-dropdown-item
-                                    >
-                                    <el-dropdown-item v-else :icon="CircleClose" command="Block Avatar" divided>{{
-                                        t('dialog.avatar.actions.block')
-                                    }}</el-dropdown-item>
-                                    <el-dropdown-item
-                                        v-if="/quest/.test(avatarDialog.ref.tags)"
-                                        :icon="Check"
-                                        command="Select Fallback Avatar"
-                                        >{{ t('dialog.avatar.actions.select_fallback') }}</el-dropdown-item
-                                    >
-                                    <template v-if="avatarDialog.ref.authorId === currentUser.id">
-                                        <el-dropdown-item
-                                            v-if="avatarDialog.ref.releaseStatus === 'public'"
-                                            :icon="User"
-                                            command="Make Private"
-                                            divided
-                                            >{{ t('dialog.avatar.actions.make_private') }}</el-dropdown-item
-                                        >
-                                        <el-dropdown-item v-else :icon="User" command="Make Public" divided>{{
-                                            t('dialog.avatar.actions.make_public')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="Edit" command="Rename">{{
-                                            t('dialog.avatar.actions.rename')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="Edit" command="Change Description">{{
-                                            t('dialog.avatar.actions.change_description')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="Edit" command="Change Content Tags">{{
-                                            t('dialog.avatar.actions.change_content_tags')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="Edit" command="Change Styles and Author Tags">{{
-                                            t('dialog.avatar.actions.change_styles_author_tags')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="Picture" command="Change Image">{{
-                                            t('dialog.avatar.actions.change_image')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item
-                                            v-if="avatarDialog.ref.unityPackageUrl"
-                                            :icon="Download"
-                                            command="Download Unity Package"
-                                            >{{ t('dialog.avatar.actions.download_package') }}</el-dropdown-item
-                                        >
-                                        <el-dropdown-item
-                                            v-if="avatarDialog.hasImposter"
-                                            :icon="Refresh"
-                                            command="Regenerate Imposter"
-                                            style="color: #f56c6c"
-                                            divided
-                                            >{{ t('dialog.avatar.actions.regenerate_impostor') }}</el-dropdown-item
-                                        >
-                                        <el-dropdown-item
-                                            v-if="avatarDialog.hasImposter"
-                                            :icon="Delete"
-                                            command="Delete Imposter"
-                                            style="color: #f56c6c"
-                                            >{{ t('dialog.avatar.actions.delete_impostor') }}</el-dropdown-item
-                                        >
-                                        <el-dropdown-item v-else :icon="User" command="Create Imposter" divided>{{
-                                            t('dialog.avatar.actions.create_impostor')
-                                        }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="Delete" command="Delete" style="color: #f56c6c">{{
-                                            t('dialog.avatar.actions.delete')
-                                        }}</el-dropdown-item>
-                                    </template>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger as-child>
+                                <el-button
+                                    :type="avatarDialog.isBlocked ? 'danger' : 'default'"
+                                    :icon="MoreFilled"
+                                    size="large"
+                                    circle></el-button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem @click="avatarDialogCommand('Refresh')">
+                                    <Refresh class="size-4" />
+                                    {{ t('dialog.avatar.actions.refresh') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem @click="avatarDialogCommand('Share')">
+                                    <Share class="size-4" />
+                                    {{ t('dialog.avatar.actions.share') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    v-if="avatarDialog.isBlocked"
+                                    variant="destructive"
+                                    @click="avatarDialogCommand('Unblock Avatar')">
+                                    <CircleCheck class="size-4" />
+                                    {{ t('dialog.avatar.actions.unblock') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem v-else @click="avatarDialogCommand('Block Avatar')">
+                                    <CircleClose class="size-4" />
+                                    {{ t('dialog.avatar.actions.block') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    v-if="/quest/.test(avatarDialog.ref.tags)"
+                                    @click="avatarDialogCommand('Select Fallback Avatar')">
+                                    <Check class="size-4" />
+                                    {{ t('dialog.avatar.actions.select_fallback') }}
+                                </DropdownMenuItem>
+                                <template v-if="avatarDialog.ref.authorId === currentUser.id">
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                        v-if="avatarDialog.ref.releaseStatus === 'public'"
+                                        @click="avatarDialogCommand('Make Private')">
+                                        <User class="size-4" />
+                                        {{ t('dialog.avatar.actions.make_private') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem v-else @click="avatarDialogCommand('Make Public')">
+                                        <User class="size-4" />
+                                        {{ t('dialog.avatar.actions.make_public') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem @click="avatarDialogCommand('Rename')">
+                                        <Edit class="size-4" />
+                                        {{ t('dialog.avatar.actions.rename') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem @click="avatarDialogCommand('Change Description')">
+                                        <Edit class="size-4" />
+                                        {{ t('dialog.avatar.actions.change_description') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem @click="avatarDialogCommand('Change Content Tags')">
+                                        <Edit class="size-4" />
+                                        {{ t('dialog.avatar.actions.change_content_tags') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem @click="avatarDialogCommand('Change Styles and Author Tags')">
+                                        <Edit class="size-4" />
+                                        {{ t('dialog.avatar.actions.change_styles_author_tags') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem @click="avatarDialogCommand('Change Image')">
+                                        <Picture class="size-4" />
+                                        {{ t('dialog.avatar.actions.change_image') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        v-if="avatarDialog.ref.unityPackageUrl"
+                                        @click="avatarDialogCommand('Download Unity Package')">
+                                        <Download class="size-4" />
+                                        {{ t('dialog.avatar.actions.download_package') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                        v-if="avatarDialog.hasImposter"
+                                        variant="destructive"
+                                        @click="avatarDialogCommand('Regenerate Imposter')">
+                                        <Refresh class="size-4" />
+                                        {{ t('dialog.avatar.actions.regenerate_impostor') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        v-if="avatarDialog.hasImposter"
+                                        variant="destructive"
+                                        @click="avatarDialogCommand('Delete Imposter')">
+                                        <Delete class="size-4" />
+                                        {{ t('dialog.avatar.actions.delete_impostor') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem v-else @click="avatarDialogCommand('Create Imposter')">
+                                        <User class="size-4" />
+                                        {{ t('dialog.avatar.actions.create_impostor') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem variant="destructive" @click="avatarDialogCommand('Delete')">
+                                        <Delete class="size-4" />
+                                        {{ t('dialog.avatar.actions.delete') }}
+                                    </DropdownMenuItem>
+                                </template>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </div>
             </div>
@@ -428,24 +439,24 @@
                                 <span class="extra"
                                     >{{ avatarDialog.id
                                     }}<TooltipWrapper side="top" :content="t('dialog.avatar.info.id_tooltip')">
-                                        <el-dropdown trigger="click" size="small" style="margin-left: 5px">
-                                            <el-button
-                                                type="default"
-                                                :icon="CopyDocument"
-                                                size="small"
-                                                circle
-                                                @click.stop></el-button>
-                                            <template #dropdown>
-                                                <el-dropdown-menu>
-                                                    <el-dropdown-item @click="copyAvatarId(avatarDialog.id)">{{
-                                                        t('dialog.avatar.info.copy_id')
-                                                    }}</el-dropdown-item>
-                                                    <el-dropdown-item @click="copyAvatarUrl(avatarDialog.id)">{{
-                                                        t('dialog.avatar.info.copy_url')
-                                                    }}</el-dropdown-item>
-                                                </el-dropdown-menu>
-                                            </template>
-                                        </el-dropdown>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger as-child>
+                                                <el-button
+                                                    type="default"
+                                                    :icon="CopyDocument"
+                                                    size="small"
+                                                    circle
+                                                    @click.stop></el-button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuItem @click="copyAvatarId(avatarDialog.id)">
+                                                    {{ t('dialog.avatar.info.copy_id') }}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem @click="copyAvatarUrl(avatarDialog.id)">
+                                                    {{ t('dialog.avatar.info.copy_url') }}
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </TooltipWrapper></span
                                 >
                             </div>
@@ -566,7 +577,7 @@
         User,
         Warning
     } from '@element-plus/icons-vue';
-    import { computed, defineAsyncComponent, nextTick, reactive, ref, watch } from 'vue';
+    import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -585,6 +596,13 @@
         replaceVrcPackageUrl,
         timeToText
     } from '../../../shared/utils';
+    import {
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuSeparator,
+        DropdownMenuTrigger
+    } from '../../ui/dropdown-menu';
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useGameStore, useUserStore } from '../../../stores';
     import { avatarModerationRequest, avatarRequest, favoriteRequest, miscRequest } from '../../../api';
     import { AppDebug } from '../../../service/appConfig.js';

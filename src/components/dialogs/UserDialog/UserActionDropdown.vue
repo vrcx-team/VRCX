@@ -21,186 +21,212 @@
                     @click="userDialogCommand('Add Favorite')"></el-button>
             </TooltipWrapper>
         </template>
-        <el-dropdown trigger="click" @command="onCommand">
-            <el-button
-                :type="
-                    userDialog.incomingRequest || userDialog.outgoingRequest
-                        ? 'success'
-                        : userDialog.isBlock || userDialog.isMute
-                          ? 'danger'
-                          : 'default'
-                "
-                :icon="MoreFilled"
-                size="large"
-                circle
-                style="margin-left: 5px"></el-button>
-            <template #dropdown>
-                <el-dropdown-menu>
-                    <el-dropdown-item :icon="Refresh" command="Refresh">{{
-                        t('dialog.user.actions.refresh')
-                    }}</el-dropdown-item>
-                    <el-dropdown-item :icon="Share" command="Share">{{
-                        t('dialog.user.actions.share')
-                    }}</el-dropdown-item>
-                    <template v-if="userDialog.ref.id === currentUser.id">
-                        <el-dropdown-item :icon="UserFilled" command="Show Avatar Author">{{
-                            t('dialog.user.actions.show_avatar_author')
-                        }}</el-dropdown-item>
-                        <el-dropdown-item :icon="UserFilled" command="Show Fallback Avatar Details">{{
-                            t('dialog.user.actions.show_fallback_avatar')
-                        }}</el-dropdown-item>
-                        <el-dropdown-item :icon="Edit" command="Edit Social Status" divided>{{
-                            t('dialog.user.actions.edit_status')
-                        }}</el-dropdown-item>
-                        <el-dropdown-item :icon="Edit" command="Edit Language">{{
-                            t('dialog.user.actions.edit_language')
-                        }}</el-dropdown-item>
-                        <el-dropdown-item :icon="Edit" command="Edit Bio">{{
-                            t('dialog.user.actions.edit_bio')
-                        }}</el-dropdown-item>
-                        <el-dropdown-item :icon="Edit" command="Edit Pronouns">{{
-                            t('dialog.user.actions.edit_pronouns')
-                        }}</el-dropdown-item>
-                        <el-dropdown-item :icon="SwitchButton" command="Logout" divided>{{
-                            t('dialog.user.actions.logout')
-                        }}</el-dropdown-item>
+        <DropdownMenu>
+            <DropdownMenuTrigger as-child>
+                <el-button
+                    :type="
+                        userDialog.incomingRequest || userDialog.outgoingRequest
+                            ? 'success'
+                            : userDialog.isBlock || userDialog.isMute
+                              ? 'danger'
+                              : 'default'
+                    "
+                    :icon="MoreFilled"
+                    size="large"
+                    circle
+                    style="margin-left: 5px"></el-button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <DropdownMenuItem @click="onCommand('Refresh')">
+                    <Refresh class="size-4" />
+                    {{ t('dialog.user.actions.refresh') }}
+                </DropdownMenuItem>
+                <DropdownMenuItem @click="onCommand('Share')">
+                    <Share class="size-4" />
+                    {{ t('dialog.user.actions.share') }}
+                </DropdownMenuItem>
+                <template v-if="userDialog.ref.id === currentUser.id">
+                    <DropdownMenuItem @click="onCommand('Show Avatar Author')">
+                        <UserFilled class="size-4" />
+                        {{ t('dialog.user.actions.show_avatar_author') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="onCommand('Show Fallback Avatar Details')">
+                        <UserFilled class="size-4" />
+                        {{ t('dialog.user.actions.show_fallback_avatar') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem @click="onCommand('Edit Social Status')">
+                        <Edit class="size-4" />
+                        {{ t('dialog.user.actions.edit_status') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="onCommand('Edit Language')">
+                        <Edit class="size-4" />
+                        {{ t('dialog.user.actions.edit_language') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="onCommand('Edit Bio')">
+                        <Edit class="size-4" />
+                        {{ t('dialog.user.actions.edit_bio') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="onCommand('Edit Pronouns')">
+                        <Edit class="size-4" />
+                        {{ t('dialog.user.actions.edit_pronouns') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem @click="onCommand('Logout')">
+                        <SwitchButton class="size-4" />
+                        {{ t('dialog.user.actions.logout') }}
+                    </DropdownMenuItem>
+                </template>
+                <template v-else>
+                    <template v-if="userDialog.isFriend">
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem @click="onCommand('Request Invite')">
+                            <Postcard class="size-4" />
+                            {{ t('dialog.user.actions.request_invite') }}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="onCommand('Request Invite Message')">
+                            <Postcard class="size-4" />
+                            {{ t('dialog.user.actions.request_invite_with_message') }}
+                        </DropdownMenuItem>
+                        <template v-if="isGameRunning">
+                            <DropdownMenuItem
+                                :disabled="!checkCanInvite(lastLocation.location)"
+                                @click="onCommand('Invite')">
+                                <Message class="size-4" />
+                                {{ t('dialog.user.actions.invite') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                :disabled="!checkCanInvite(lastLocation.location)"
+                                @click="onCommand('Invite Message')">
+                                <Message class="size-4" />
+                                {{ t('dialog.user.actions.invite_with_message') }}
+                            </DropdownMenuItem>
+                        </template>
+                        <DropdownMenuItem :disabled="!currentUser.isBoopingEnabled" @click="onCommand('Send Boop')">
+                            <Pointer class="size-4" />
+                            {{ t('dialog.user.actions.send_boop') }}
+                        </DropdownMenuItem>
                     </template>
-                    <template v-else>
-                        <template v-if="userDialog.isFriend">
-                            <el-dropdown-item :icon="Postcard" command="Request Invite" divided>{{
-                                t('dialog.user.actions.request_invite')
-                            }}</el-dropdown-item>
-                            <el-dropdown-item :icon="Postcard" command="Request Invite Message">{{
-                                t('dialog.user.actions.request_invite_with_message')
-                            }}</el-dropdown-item>
-                            <template v-if="isGameRunning">
-                                <el-dropdown-item
-                                    :disabled="!checkCanInvite(lastLocation.location)"
-                                    :icon="Message"
-                                    command="Invite"
-                                    >{{ t('dialog.user.actions.invite') }}</el-dropdown-item
-                                >
-                                <el-dropdown-item
-                                    :disabled="!checkCanInvite(lastLocation.location)"
-                                    :icon="Message"
-                                    command="Invite Message"
-                                    >{{ t('dialog.user.actions.invite_with_message') }}</el-dropdown-item
-                                >
-                            </template>
-                            <el-dropdown-item
-                                :disabled="!currentUser.isBoopingEnabled"
-                                :icon="Pointer"
-                                command="Send Boop"
-                                >{{ t('dialog.user.actions.send_boop') }}</el-dropdown-item
-                            >
-                        </template>
-                        <template v-else-if="userDialog.incomingRequest">
-                            <el-dropdown-item :icon="Check" command="Accept Friend Request">{{
-                                t('dialog.user.actions.accept_friend_request')
-                            }}</el-dropdown-item>
-                            <el-dropdown-item :icon="Close" command="Decline Friend Request">{{
-                                t('dialog.user.actions.decline_friend_request')
-                            }}</el-dropdown-item>
-                        </template>
-                        <el-dropdown-item
-                            v-else-if="userDialog.outgoingRequest"
-                            :icon="Close"
-                            command="Cancel Friend Request">
-                            {{ t('dialog.user.actions.cancel_friend_request') }}
-                        </el-dropdown-item>
-                        <el-dropdown-item v-else :icon="Plus" command="Send Friend Request">{{
-                            t('dialog.user.actions.send_friend_request')
-                        }}</el-dropdown-item>
-                        <el-dropdown-item :icon="Message" command="Invite To Group">{{
-                            t('dialog.user.actions.invite_to_group')
-                        }}</el-dropdown-item>
-                        <el-dropdown-item :icon="Operation" command="Group Moderation">{{
-                            t('dialog.user.actions.group_moderation')
-                        }}</el-dropdown-item>
-                        <el-dropdown-item :icon="Edit" command="Edit Note Memo"> Edit Note and Memo </el-dropdown-item>
-                        <el-dropdown-item :icon="UserFilled" command="Show Avatar Author" divided>{{
-                            t('dialog.user.actions.show_avatar_author')
-                        }}</el-dropdown-item>
-                        <el-dropdown-item :icon="UserFilled" command="Show Fallback Avatar Details">{{
-                            t('dialog.user.actions.show_fallback_avatar')
-                        }}</el-dropdown-item>
-                        <el-dropdown-item :icon="DataLine" command="Previous Instances">{{
-                            t('dialog.user.actions.show_previous_instances')
-                        }}</el-dropdown-item>
-                        <el-dropdown-item
-                            v-if="userDialog.isBlock"
-                            :icon="CircleCheck"
-                            command="Moderation Unblock"
-                            divided
-                            style="color: var(--el-color-danger)">
-                            {{ t('dialog.user.actions.moderation_unblock') }}
-                        </el-dropdown-item>
-                        <el-dropdown-item
-                            v-else
-                            :icon="CircleClose"
-                            command="Moderation Block"
-                            divided
-                            :disabled="userDialog.ref.$isModerator">
-                            {{ t('dialog.user.actions.moderation_block') }}
-                        </el-dropdown-item>
-                        <el-dropdown-item
-                            v-if="userDialog.isMute"
-                            :icon="Microphone"
-                            command="Moderation Unmute"
-                            style="color: var(--el-color-danger)">
-                            {{ t('dialog.user.actions.moderation_unmute') }}
-                        </el-dropdown-item>
-                        <el-dropdown-item
-                            v-else
-                            :icon="Mute"
-                            command="Moderation Mute"
-                            :disabled="userDialog.ref.$isModerator">
-                            {{ t('dialog.user.actions.moderation_mute') }}
-                        </el-dropdown-item>
-                        <el-dropdown-item
-                            v-if="userDialog.isMuteChat"
-                            :icon="ChatLineRound"
-                            command="Moderation Enable Chatbox"
-                            style="color: var(--el-color-danger)">
-                            {{ t('dialog.user.actions.moderation_enable_chatbox') }}
-                        </el-dropdown-item>
-                        <el-dropdown-item v-else :icon="ChatDotRound" command="Moderation Disable Chatbox">
-                            {{ t('dialog.user.actions.moderation_disable_chatbox') }}
-                        </el-dropdown-item>
-                        <el-dropdown-item :icon="User" command="Show Avatar">
-                            <el-icon v-if="userDialog.isShowAvatar" style="margin-right: 5px"><Check /></el-icon>
-                            <span>{{ t('dialog.user.actions.moderation_show_avatar') }}</span>
-                        </el-dropdown-item>
-                        <el-dropdown-item :icon="User" command="Hide Avatar">
-                            <el-icon v-if="userDialog.isHideAvatar" style="margin-right: 5px"><Check /></el-icon>
-                            <span>{{ t('dialog.user.actions.moderation_hide_avatar') }}</span>
-                        </el-dropdown-item>
-                        <el-dropdown-item
-                            v-if="userDialog.isInteractOff"
-                            :icon="Pointer"
-                            command="Moderation Enable Avatar Interaction"
-                            style="color: var(--el-color-danger)">
-                            {{ t('dialog.user.actions.moderation_enable_avatar_interaction') }}
-                        </el-dropdown-item>
-                        <el-dropdown-item v-else :icon="CircleClose" command="Moderation Disable Avatar Interaction">
-                            {{ t('dialog.user.actions.moderation_disable_avatar_interaction') }}
-                        </el-dropdown-item>
-                        <el-dropdown-item :icon="Flag" command="Report Hacking" :disabled="userDialog.ref.$isModerator">
-                            {{ t('dialog.user.actions.report_hacking') }}
-                        </el-dropdown-item>
-                        <template v-if="userDialog.isFriend">
-                            <el-dropdown-item
-                                :icon="Delete"
-                                command="Unfriend"
-                                divided
-                                style="color: var(--el-color-danger)">
-                                {{ t('dialog.user.actions.unfriend') }}
-                            </el-dropdown-item>
-                        </template>
+                    <template v-else-if="userDialog.incomingRequest">
+                        <DropdownMenuItem @click="onCommand('Accept Friend Request')">
+                            <Check class="size-4" />
+                            {{ t('dialog.user.actions.accept_friend_request') }}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="onCommand('Decline Friend Request')">
+                            <Close class="size-4" />
+                            {{ t('dialog.user.actions.decline_friend_request') }}
+                        </DropdownMenuItem>
                     </template>
-                </el-dropdown-menu>
-            </template>
-        </el-dropdown>
+                    <DropdownMenuItem
+                        v-else-if="userDialog.outgoingRequest"
+                        @click="onCommand('Cancel Friend Request')">
+                        <Close class="size-4" />
+                        {{ t('dialog.user.actions.cancel_friend_request') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem v-else @click="onCommand('Send Friend Request')">
+                        <Plus class="size-4" />
+                        {{ t('dialog.user.actions.send_friend_request') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="onCommand('Invite To Group')">
+                        <Message class="size-4" />
+                        {{ t('dialog.user.actions.invite_to_group') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="onCommand('Group Moderation')">
+                        <Operation class="size-4" />
+                        {{ t('dialog.user.actions.group_moderation') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="onCommand('Edit Note Memo')">
+                        <Edit class="size-4" />
+                        Edit Note and Memo
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem @click="onCommand('Show Avatar Author')">
+                        <UserFilled class="size-4" />
+                        {{ t('dialog.user.actions.show_avatar_author') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="onCommand('Show Fallback Avatar Details')">
+                        <UserFilled class="size-4" />
+                        {{ t('dialog.user.actions.show_fallback_avatar') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="onCommand('Previous Instances')">
+                        <DataLine class="size-4" />
+                        {{ t('dialog.user.actions.show_previous_instances') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                        v-if="userDialog.isBlock"
+                        variant="destructive"
+                        @click="onCommand('Moderation Unblock')">
+                        <CircleCheck class="size-4" />
+                        {{ t('dialog.user.actions.moderation_unblock') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        v-else
+                        :disabled="userDialog.ref.$isModerator"
+                        @click="onCommand('Moderation Block')">
+                        <CircleClose class="size-4" />
+                        {{ t('dialog.user.actions.moderation_block') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        v-if="userDialog.isMute"
+                        variant="destructive"
+                        @click="onCommand('Moderation Unmute')">
+                        <Microphone class="size-4" />
+                        {{ t('dialog.user.actions.moderation_unmute') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        v-else
+                        :disabled="userDialog.ref.$isModerator"
+                        @click="onCommand('Moderation Mute')">
+                        <Mute class="size-4" />
+                        {{ t('dialog.user.actions.moderation_mute') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        v-if="userDialog.isMuteChat"
+                        variant="destructive"
+                        @click="onCommand('Moderation Enable Chatbox')">
+                        <ChatLineRound class="size-4" />
+                        {{ t('dialog.user.actions.moderation_enable_chatbox') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem v-else @click="onCommand('Moderation Disable Chatbox')">
+                        <ChatDotRound class="size-4" />
+                        {{ t('dialog.user.actions.moderation_disable_chatbox') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="onCommand('Show Avatar')">
+                        <User class="size-4" />
+                        <Check v-if="userDialog.isShowAvatar" class="size-4" />
+                        <span>{{ t('dialog.user.actions.moderation_show_avatar') }}</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="onCommand('Hide Avatar')">
+                        <User class="size-4" />
+                        <Check v-if="userDialog.isHideAvatar" class="size-4" />
+                        <span>{{ t('dialog.user.actions.moderation_hide_avatar') }}</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        v-if="userDialog.isInteractOff"
+                        variant="destructive"
+                        @click="onCommand('Moderation Enable Avatar Interaction')">
+                        <Pointer class="size-4" />
+                        {{ t('dialog.user.actions.moderation_enable_avatar_interaction') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem v-else @click="onCommand('Moderation Disable Avatar Interaction')">
+                        <CircleClose class="size-4" />
+                        {{ t('dialog.user.actions.moderation_disable_avatar_interaction') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem :disabled="userDialog.ref.$isModerator" @click="onCommand('Report Hacking')">
+                        <Flag class="size-4" />
+                        {{ t('dialog.user.actions.report_hacking') }}
+                    </DropdownMenuItem>
+                    <template v-if="userDialog.isFriend">
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem variant="destructive" @click="onCommand('Unfriend')">
+                            <Delete class="size-4" />
+                            {{ t('dialog.user.actions.unfriend') }}
+                        </DropdownMenuItem>
+                    </template>
+                </template>
+            </DropdownMenuContent>
+        </DropdownMenu>
     </div>
 </template>
 
@@ -236,6 +262,13 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import {
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuSeparator,
+        DropdownMenuTrigger
+    } from '../../ui/dropdown-menu';
     import { useGameStore, useLocationStore, useUserStore } from '../../../stores';
     import { checkCanInvite } from '../../../shared/utils';
 

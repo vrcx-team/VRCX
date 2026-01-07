@@ -231,102 +231,108 @@
                                     @click="joinGroup(groupDialog.id)"></el-button>
                             </TooltipWrapper>
                         </template>
-                        <el-dropdown trigger="click" style="margin-left: 5px" @command="groupDialogCommand">
-                            <el-button
-                                :type="groupDialog.ref.membershipStatus === 'userblocked' ? 'danger' : 'default'"
-                                :icon="MoreFilled"
-                                size="large"
-                                circle></el-button>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item :icon="Refresh" command="Refresh">
-                                        {{ t('dialog.group.actions.refresh') }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item :icon="Share" command="Share">
-                                        {{ t('dialog.group.actions.share') }}
-                                    </el-dropdown-item>
-                                    <template v-if="groupDialog.inGroup">
-                                        <template v-if="groupDialog.ref.myMember">
-                                            <el-dropdown-item
-                                                v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements"
-                                                :icon="MuteNotification"
-                                                command="Unsubscribe To Announcements"
-                                                divided>
-                                                {{ t('dialog.group.actions.unsubscribe') }}
-                                            </el-dropdown-item>
-                                            <el-dropdown-item
-                                                v-else
-                                                :icon="Bell"
-                                                command="Subscribe To Announcements"
-                                                divided>
-                                                {{ t('dialog.group.actions.subscribe') }}
-                                            </el-dropdown-item>
-                                            <el-dropdown-item
-                                                v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')"
-                                                :icon="Message"
-                                                command="Invite To Group">
-                                                {{ t('dialog.group.actions.invite_to_group') }}
-                                            </el-dropdown-item>
-                                            <template
-                                                v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
-                                                <el-dropdown-item :icon="Tickets" command="Create Post">
-                                                    {{ t('dialog.group.actions.create_post') }}
-                                                </el-dropdown-item>
-                                            </template>
-                                            <el-dropdown-item
-                                                :disabled="!hasGroupModerationPermission(groupDialog.ref)"
-                                                :icon="Operation"
-                                                command="Moderation Tools">
-                                                {{ t('dialog.group.actions.moderation_tools') }}
-                                            </el-dropdown-item>
-                                            <template
-                                                v-if="
-                                                    groupDialog.ref.myMember && groupDialog.ref.privacy === 'default'
-                                                ">
-                                                <el-dropdown-item :icon="View" command="Visibility Everyone" divided>
-                                                    <el-icon v-if="groupDialog.ref.myMember.visibility === 'visible'"
-                                                        ><Check
-                                                    /></el-icon>
-                                                    {{ t('dialog.group.actions.visibility_everyone') }}
-                                                </el-dropdown-item>
-                                                <el-dropdown-item :icon="View" command="Visibility Friends">
-                                                    <el-icon v-if="groupDialog.ref.myMember.visibility === 'friends'"
-                                                        ><Check
-                                                    /></el-icon>
-                                                    {{ t('dialog.group.actions.visibility_friends') }}
-                                                </el-dropdown-item>
-                                                <el-dropdown-item :icon="View" command="Visibility Hidden">
-                                                    <el-icon v-if="groupDialog.ref.myMember.visibility === 'hidden'"
-                                                        ><Check
-                                                    /></el-icon>
-                                                    {{ t('dialog.group.actions.visibility_hidden') }}
-                                                </el-dropdown-item>
-                                            </template>
-                                            <el-dropdown-item
-                                                :icon="Delete"
-                                                command="Leave Group"
-                                                style="color: #f56c6c"
-                                                divided>
-                                                {{ t('dialog.group.actions.leave') }}
-                                            </el-dropdown-item>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger as-child>
+                                <el-button
+                                    :type="groupDialog.ref.membershipStatus === 'userblocked' ? 'danger' : 'default'"
+                                    :icon="MoreFilled"
+                                    size="large"
+                                    class="ml-1.25"
+                                    circle></el-button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem @click="groupDialogCommand('Refresh')">
+                                    <Refresh class="size-4" />
+                                    {{ t('dialog.group.actions.refresh') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem @click="groupDialogCommand('Share')">
+                                    <Share class="size-4" />
+                                    {{ t('dialog.group.actions.share') }}
+                                </DropdownMenuItem>
+                                <template v-if="groupDialog.inGroup">
+                                    <template v-if="groupDialog.ref.myMember">
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                                            v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements"
+                                            @click="groupDialogCommand('Unsubscribe To Announcements')">
+                                            <MuteNotification class="size-4" />
+                                            {{ t('dialog.group.actions.unsubscribe') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            v-else
+                                            @click="groupDialogCommand('Subscribe To Announcements')">
+                                            <Bell class="size-4" />
+                                            {{ t('dialog.group.actions.subscribe') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')"
+                                            @click="groupDialogCommand('Invite To Group')">
+                                            <Message class="size-4" />
+                                            {{ t('dialog.group.actions.invite_to_group') }}
+                                        </DropdownMenuItem>
+                                        <template
+                                            v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
+                                            <DropdownMenuItem @click="groupDialogCommand('Create Post')">
+                                                <Tickets class="size-4" />
+                                                {{ t('dialog.group.actions.create_post') }}
+                                            </DropdownMenuItem>
                                         </template>
+                                        <DropdownMenuItem
+                                            :disabled="!hasGroupModerationPermission(groupDialog.ref)"
+                                            @click="groupDialogCommand('Moderation Tools')">
+                                            <Operation class="size-4" />
+                                            {{ t('dialog.group.actions.moderation_tools') }}
+                                        </DropdownMenuItem>
+                                        <template
+                                            v-if="groupDialog.ref.myMember && groupDialog.ref.privacy === 'default'">
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem @click="groupDialogCommand('Visibility Everyone')">
+                                                <View class="size-4" />
+                                                <Check
+                                                    v-if="groupDialog.ref.myMember.visibility === 'visible'"
+                                                    class="size-4" />
+                                                {{ t('dialog.group.actions.visibility_everyone') }}
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem @click="groupDialogCommand('Visibility Friends')">
+                                                <View class="size-4" />
+                                                <Check
+                                                    v-if="groupDialog.ref.myMember.visibility === 'friends'"
+                                                    class="size-4" />
+                                                {{ t('dialog.group.actions.visibility_friends') }}
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem @click="groupDialogCommand('Visibility Hidden')">
+                                                <View class="size-4" />
+                                                <Check
+                                                    v-if="groupDialog.ref.myMember.visibility === 'hidden'"
+                                                    class="size-4" />
+                                                {{ t('dialog.group.actions.visibility_hidden') }}
+                                            </DropdownMenuItem>
+                                        </template>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                                            variant="destructive"
+                                            @click="groupDialogCommand('Leave Group')">
+                                            <Delete class="size-4" />
+                                            {{ t('dialog.group.actions.leave') }}
+                                        </DropdownMenuItem>
                                     </template>
-                                    <template v-else>
-                                        <el-dropdown-item
-                                            v-if="groupDialog.ref.membershipStatus === 'userblocked'"
-                                            :icon="CircleCheck"
-                                            command="Unblock Group"
-                                            style="color: #f56c6c"
-                                            divided>
-                                            {{ t('dialog.group.actions.unblock') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item v-else :icon="CircleClose" command="Block Group" divided>
-                                            {{ t('dialog.group.actions.block') }}
-                                        </el-dropdown-item>
-                                    </template>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
+                                </template>
+                                <template v-else>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                        v-if="groupDialog.ref.membershipStatus === 'userblocked'"
+                                        variant="destructive"
+                                        @click="groupDialogCommand('Unblock Group')">
+                                        <CircleCheck class="size-4" />
+                                        {{ t('dialog.group.actions.unblock') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem v-else @click="groupDialogCommand('Block Group')">
+                                        <CircleClose class="size-4" />
+                                        {{ t('dialog.group.actions.block') }}
+                                    </DropdownMenuItem>
+                                </template>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </div>
             </div>
@@ -852,55 +858,60 @@
                                 v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')"
                                 style="float: right">
                                 <span style="margin-right: 5px">{{ t('dialog.group.members.sort_by') }}</span>
-                                <el-dropdown
-                                    trigger="click"
-                                    size="small"
-                                    style="margin-right: 5px"
-                                    :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0">
-                                    <el-button size="small" @click.stop>
-                                        <span
-                                            >{{ t(groupDialog.memberSortOrder.name) }}
-                                            <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
-                                        </span>
-                                    </el-button>
-                                    <template #dropdown>
-                                        <el-dropdown-menu>
-                                            <el-dropdown-item
-                                                v-for="item in groupDialogSortingOptions"
-                                                :key="item.name"
-                                                @click="setGroupMemberSortOrder(item)"
-                                                v-text="t(item.name)" />
-                                        </el-dropdown-menu>
-                                    </template>
-                                </el-dropdown>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger
+                                        as-child
+                                        :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0">
+                                        <el-button
+                                            size="small"
+                                            :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0"
+                                            @click.stop>
+                                            <span>
+                                                {{ t(groupDialog.memberSortOrder.name) }}
+                                                <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
+                                            </span>
+                                        </el-button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuItem
+                                            v-for="item in groupDialogSortingOptions"
+                                            :key="item.name"
+                                            @click="setGroupMemberSortOrder(item)">
+                                            {{ t(item.name) }}
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                                 <span style="margin-right: 5px">{{ t('dialog.group.members.filter') }}</span>
-                                <el-dropdown
-                                    trigger="click"
-                                    size="small"
-                                    style="margin-right: 5px"
-                                    :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0">
-                                    <el-button size="small" @click.stop>
-                                        <span
-                                            >{{ t(groupDialog.memberFilter.name) }}
-                                            <el-icon style="margin-left: 5px"><ArrowDown /></el-icon
-                                        ></span>
-                                    </el-button>
-                                    <template #dropdown>
-                                        <el-dropdown-menu>
-                                            <el-dropdown-item
-                                                v-for="item in groupDialogFilterOptions"
-                                                :key="item.name"
-                                                @click="setGroupMemberFilter(item)"
-                                                v-text="t(item.name)" />
-                                            <template v-for="role in groupDialog.ref.roles" :key="role.name">
-                                                <el-dropdown-item
-                                                    v-if="!role.defaultRole"
-                                                    @click="setGroupMemberFilter(role)"
-                                                    v-text="role.name" />
-                                            </template>
-                                        </el-dropdown-menu>
-                                    </template>
-                                </el-dropdown>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger
+                                        as-child
+                                        :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0">
+                                        <el-button
+                                            size="small"
+                                            :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0"
+                                            @click.stop>
+                                            <span>
+                                                {{ t(groupDialog.memberFilter.name) }}
+                                                <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
+                                            </span>
+                                        </el-button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuItem
+                                            v-for="item in groupDialogFilterOptions"
+                                            :key="item.name"
+                                            @click="setGroupMemberFilter(item)">
+                                            {{ t(item.name) }}
+                                        </DropdownMenuItem>
+                                        <template v-for="role in groupDialog.ref.roles" :key="role.name">
+                                            <DropdownMenuItem
+                                                v-if="!role.defaultRole"
+                                                @click="setGroupMemberFilter(role)">
+                                                {{ role.name }}
+                                            </DropdownMenuItem>
+                                        </template>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
                             <el-input
                                 v-model="groupDialog.memberSearch"
@@ -1176,6 +1187,13 @@
         userImage,
         userStatusClass
     } from '../../../shared/utils';
+    import {
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuSeparator,
+        DropdownMenuTrigger
+    } from '../../ui/dropdown-menu';
     import { useGalleryStore, useGroupStore, useLocationStore, useUserStore } from '../../../stores';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import { Badge } from '../../ui/badge';
