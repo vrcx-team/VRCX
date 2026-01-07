@@ -1,4 +1,5 @@
 import { router } from './router';
+import { startRendererMemoryThresholdReport } from './piniaActionTrail';
 
 import configRepository from '../service/config';
 
@@ -81,22 +82,7 @@ export async function initSentry(app) {
                 }
                 return event;
             },
-            beforeSendSpan(span) {
-                span.data = {
-                    ...span.data,
-                    usedJSHeapSize:
-                        // @ts-ignore
-                        window.performance.memory.usedJSHeapSize / 1024 / 1024,
-                    totalJSHeapSize:
-                        // @ts-ignore
-                        window.performance.memory.totalJSHeapSize / 1024 / 1024,
-                    jsHeapSizeLimit:
-                        // @ts-ignore
-                        window.performance.memory.jsHeapSizeLimit / 1024 / 1024,
-                    vrcxId: vrcxId
-                };
-                return span;
-            },
+
             integrations: [
                 Sentry.replayIntegration({
                     maskAllText: true,
@@ -119,6 +105,12 @@ export async function initSentry(app) {
             ]
         });
         console.log('Sentry initialized');
+
+        startRendererMemoryThresholdReport(Sentry, {
+            thresholdRatio: 0.8,
+            intervalMs: 10_000,
+            cooldownMs: 5 * 60_000
+        });
     } catch (e) {
         console.error('Failed to initialize Sentry:', e);
         return;
