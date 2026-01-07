@@ -58,18 +58,6 @@ export function appendPiniaActionTrail(entry, maxEntries = 200) {
 }
 
 export function createPiniaActionTrailPlugin({ maxEntries = 200 } = {}) {
-    if (typeof window !== 'undefined') {
-        // @ts-ignore
-        if (!window.__VRCX_PINIA_ACTION_TRAIL__) {
-            // @ts-ignore
-            window.__VRCX_PINIA_ACTION_TRAIL__ = true;
-
-            window.addEventListener('beforeunload', () => {
-                clearPiniaActionTrail();
-            });
-        }
-    }
-
     return ({ store }) => {
         store.$onAction(({ name }) => {
             appendPiniaActionTrail(
