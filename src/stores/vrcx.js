@@ -5,12 +5,16 @@ import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
 import Noty from 'noty';
+import dayjs from 'dayjs';
 
+import {
+    clearPiniaActionTrail,
+    getPiniaActionTrail
+} from '../plugin/piniaActionTrail';
 import { debounce, parseLocation } from '../shared/utils';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
 import { failedGetRequests } from '../service/request';
-import { getPiniaActionTrail } from '../plugin/piniaActionTrail';
 import { refreshCustomScript } from '../shared/utils/base/ui';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
@@ -528,7 +532,17 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             if (advancedSettingsStore.sentryErrorReporting) {
                 try {
                     import('@sentry/vue').then((Sentry) => {
-                        const trail = getPiniaActionTrail();
+                        const cutoff = dayjs().subtract(30, 'minute');
+                        const trail = getPiniaActionTrail().filter((entry) => {
+                            if (!entry || typeof entry.ts !== 'number') {
+                                return false;
+                            }
+                            const ts = dayjs(entry.ts);
+                            if (!ts.isValid()) {
+                                return false;
+                            }
+                            return ts.isAfter(cutoff) || ts.isSame(cutoff);
+                        });
                         Sentry.withScope((scope) => {
                             scope.setLevel('fatal');
                             scope.setTag('reason', 'crash-recovery');
@@ -540,6 +554,8 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                                 `crash message: ${crashMessage}`
                             );
                         });
+
+                        clearPiniaActionTrail();
                     });
                 } catch (error) {
                     console.error('Error setting up Sentry feedback:', error);
