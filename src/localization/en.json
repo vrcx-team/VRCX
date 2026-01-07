@@ -1896,7 +1896,8 @@
                 "created": "Created Date",
                 "description": "Description",
                 "export_to_calendar": "Export to Calendar",
-                "download_ics": "Download .ics"
+                "download_ics": "Download .ics",
+                "copied_event_link": "Calendar event URL copied to clipboard"
             },
             "featured_events": "Featured Events"
         },
