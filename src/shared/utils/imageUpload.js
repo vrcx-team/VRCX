@@ -1,5 +1,4 @@
-import { ElMessage } from 'element-plus';
-
+import { toast } from 'vue-sonner';
 function resolveMessage(message) {
     if (typeof message === 'function') {
         return message();
@@ -47,10 +46,7 @@ export function handleImageUploadInput(event, options = {}) {
     const file = files[0];
     if (file.size >= maxSize) {
         if (tooLargeMessage) {
-            ElMessage({
-                message: resolveMessage(tooLargeMessage),
-                type: 'error'
-            });
+            toast.error(resolveMessage(tooLargeMessage));
         }
         clearInput();
         return { file: null, clearInput };
@@ -66,10 +62,7 @@ export function handleImageUploadInput(event, options = {}) {
 
     if (acceptRegex && !acceptRegex.test(file.type)) {
         if (invalidTypeMessage) {
-            ElMessage({
-                message: resolveMessage(invalidTypeMessage),
-                type: 'error'
-            });
+            toast.error(resolveMessage(invalidTypeMessage));
         }
         clearInput();
         return { file: null, clearInput };

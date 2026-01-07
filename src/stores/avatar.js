@@ -1,6 +1,7 @@
 import { nextTick, ref, watch } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 
 import {
     checkVRChatCache,
@@ -468,10 +469,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             } catch (err) {
                 const msg = `Avatar search failed for ${search} with ${avatarProviderStore.avatarRemoteDatabaseProvider}\n${err}`;
                 console.error(msg);
-                ElMessage({
-                    message: msg,
-                    type: 'error'
-                });
+                toast.error(msg);
             }
         } else if (type === 'authorId') {
             const length =
@@ -546,10 +544,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         } catch (err) {
             const msg = `Avatar lookup failed for ${authorId} with ${url}\n${err}`;
             console.error(msg);
-            ElMessage({
-                message: msg,
-                type: 'error'
-            });
+            toast.error(msg);
         }
         return avatars;
     }
@@ -568,10 +563,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
 
     async function selectAvatarWithoutConfirmation(id) {
         if (userStore.currentUser.currentAvatar === id) {
-            ElMessage({
-                message: 'Avatar already selected',
-                type: 'info'
-            });
+            toast.info('Avatar already selected');
             return;
         }
         return avatarRequest
@@ -579,10 +571,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 avatarId: id
             })
             .then(() => {
-                ElMessage({
-                    message: 'Avatar changed',
-                    type: 'success'
-                });
+                toast.success('Avatar changed');
             });
     }
 
@@ -614,10 +603,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     ) {
         const fileId = extractFileId(currentAvatarImageUrl);
         if (!fileId) {
-            ElMessage({
-                message: 'Sorry, the author is unknown',
-                type: 'error'
-            });
+            toast.error('Sorry, the author is unknown');
         } else if (refUserId === userStore.currentUser.id) {
             showAvatarDialog(userStore.currentUser.currentAvatar);
         } else {
@@ -637,16 +623,11 @@ export const useAvatarStore = defineStore('Avatar', () => {
             }
             if (!avatarId) {
                 if (avatarInfo.ownerId === refUserId) {
-                    ElMessage({
-                        message:
-                            "It's personal (own) avatar or not found in avatar database",
-                        type: 'warning'
-                    });
+                    toast.warning(
+                        "It's personal (own) avatar or not found in avatar database"
+                    );
                 } else {
-                    ElMessage({
-                        message: 'Avatar not found in avatar database',
-                        type: 'warning'
-                    });
+                    toast.warning('Avatar not found in avatar database');
                     userStore.showUserDialog(avatarInfo.ownerId);
                 }
             }

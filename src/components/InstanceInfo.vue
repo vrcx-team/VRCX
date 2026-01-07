@@ -63,9 +63,10 @@
 </template>
 
 <script setup>
-    import { ElMessage, ElMessageBox } from 'element-plus';
     import { reactive, watch } from 'vue';
     import { CaretBottom } from '@element-plus/icons-vue';
+    import { ElMessageBox } from 'element-plus';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useGroupStore, useInstanceStore, useLocationStore, useUserStore } from '../stores';
@@ -132,7 +133,7 @@
                 if (action !== 'confirm') return;
                 const args = await miscRequest.closeInstance({ location, hardClose: false });
                 if (args.json) {
-                    ElMessage({ message: t('message.instance.closed'), type: 'success' });
+                    toast.success(t('message.instance.closed'));
                     instanceStore.applyInstance(args.json);
                 }
             })

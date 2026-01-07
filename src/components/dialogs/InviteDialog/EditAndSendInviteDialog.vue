@@ -32,8 +32,8 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { instanceRequest, inviteMessagesRequest, notificationRequest } from '../../../api';
@@ -84,13 +84,10 @@
                 })
                 .then((args) => {
                     if (args.json[slot].message === I.messageSlot.message) {
-                        ElMessage({
-                            message: "VRChat API didn't update message, try again",
-                            type: 'error'
-                        });
+                        toast.error("VRChat API didn't update message, try again");
                         throw new Error("VRChat API didn't update message, try again");
                     } else {
-                        ElMessage('Invite message updated');
+                        toast('Invite message updated');
                     }
                     return args;
                 });
@@ -137,10 +134,7 @@
                 } else {
                     J.loading = false;
                     J.visible = false;
-                    ElMessage({
-                        message: 'Invite sent',
-                        type: 'success'
-                    });
+                    toast.success('Invite sent');
                 }
             };
             inviteLoop();
@@ -153,10 +147,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        ElMessage({
-                            message: 'Invite photo message sent',
-                            type: 'success'
-                        });
+                        toast.success('Invite photo message sent');
                         return args;
                     });
             } else {
@@ -166,10 +157,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        ElMessage({
-                            message: 'Invite message sent',
-                            type: 'success'
-                        });
+                        toast.success('Invite message sent');
                         return args;
                     });
             }
@@ -183,10 +171,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        ElMessage({
-                            message: 'Request invite photo message sent',
-                            type: 'success'
-                        });
+                        toast.success('Request invite photo message sent');
                         return args;
                     });
             } else {
@@ -196,10 +181,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        ElMessage({
-                            message: 'Request invite message sent',
-                            type: 'success'
-                        });
+                        toast.success('Request invite message sent');
                         return args;
                     });
             }

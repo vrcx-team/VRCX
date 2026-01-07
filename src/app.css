@@ -12,6 +12,7 @@
 @import 'animate.css/animate.min.css';
 @import 'noty/lib/noty.css';
 @import 'remixicon/fonts/remixicon.css';
+@import 'vue-sonner/style.css';
 
 @import './styles/flags.css';
 @import './styles/animated-emoji.css';

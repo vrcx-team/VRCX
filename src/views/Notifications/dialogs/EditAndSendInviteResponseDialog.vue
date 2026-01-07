@@ -34,8 +34,8 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { inviteMessagesRequest, notificationRequest } from '../../../api';
@@ -79,13 +79,10 @@
                 })
                 .then((args) => {
                     if (args.json[slot].message === I.messageSlot.message) {
-                        ElMessage({
-                            message: "VRChat API didn't update message, try again",
-                            type: 'error'
-                        });
+                        toast.error("VRChat API didn't update message, try again");
                         throw new Error("VRChat API didn't update message, try again");
                     } else {
-                        ElMessage('Invite message updated');
+                        toast('Invite message updated');
                     }
                     return args;
                 });
@@ -104,10 +101,7 @@
                     notificationRequest.hideNotification({
                         notificationId: I.invite.id
                     });
-                    ElMessage({
-                        message: 'Invite response message sent',
-                        type: 'success'
-                    });
+                    toast.success('Invite response message sent');
                     return args;
                 })
                 .finally(() => {
@@ -123,10 +117,7 @@
                     notificationRequest.hideNotification({
                         notificationId: I.invite.id
                     });
-                    ElMessage({
-                        message: 'Invite response message sent',
-                        type: 'success'
-                    });
+                    toast.success('Invite response message sent');
                     return args;
                 })
                 .finally(() => {

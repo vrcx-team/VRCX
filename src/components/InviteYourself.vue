@@ -16,9 +16,9 @@
 
 <script setup>
     import { Loading, Message } from '@element-plus/icons-vue';
-    import { ElMessage } from 'element-plus';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { checkCanInviteSelf, parseLocation } from '../shared/utils';
@@ -52,7 +52,7 @@
                 shortName: props.shortname
             })
             .then((args) => {
-                ElMessage({ message: 'Self invite sent', type: 'success' });
+                toast.success('Self invite sent');
                 return args;
             });
     }

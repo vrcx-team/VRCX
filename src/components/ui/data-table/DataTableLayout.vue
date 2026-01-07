@@ -66,7 +66,7 @@
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem v-for="size in pageSizes" :key="size" :value="String(size)">
+                        <SelectItem v-for="size in pageSizes" :key="String(size)" :value="String(size)">
                             {{ size }}
                         </SelectItem>
                     </SelectContent>
@@ -81,7 +81,9 @@
                 class="flex-none">
                 <PaginationContent v-slot="{ items }">
                     <PaginationPrevious />
-                    <template v-for="item in items" :key="item.key">
+                    <template
+                        v-for="(item, index) in items"
+                        :key="item.type === 'page' ? `page-${item.value}` : `ellipsis-${index}`">
                         <PaginationItem
                             v-if="item.type === 'page'"
                             :value="item.value"

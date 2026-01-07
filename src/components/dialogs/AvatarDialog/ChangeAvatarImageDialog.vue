@@ -42,10 +42,10 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
     import { Upload } from '@element-plus/icons-vue';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { avatarRequest, imageRequest } from '../../../api';
@@ -286,10 +286,7 @@
     function avatarImageSet(args) {
         changeAvatarImageDialogLoading.value = false;
         if (args.json.imageUrl === args.params.imageUrl) {
-            ElMessage({
-                message: t('message.avatar.image_changed'),
-                type: 'success'
-            });
+            toast.success(t('message.avatar.image_changed'));
             emit('update:previousImageUrl', args.json.imageUrl);
         } else {
             $throw(0, 'avatar image change failed', args.params.imageUrl);
@@ -308,10 +305,7 @@
         const ref = applyAvatar(avatarArgs.json);
         changeAvatarImageDialogLoading.value = false;
         emit('update:previousImageUrl', ref.imageUrl);
-        ElMessage({
-            message: t('message.avatar.image_changed'),
-            type: 'success'
-        });
+        toast.success(t('message.avatar.image_changed'));
 
         // closeDialog();
     }

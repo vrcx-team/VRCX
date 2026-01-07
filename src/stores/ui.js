@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue';
-import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 import { useMagicKeys } from '@vueuse/core';
 import { useRouter } from 'vue-router';
 
@@ -54,10 +54,7 @@ export const useUiStore = defineStore('Ui', () => {
         if (isPressed) {
             refreshCustomCss();
             updateLocalizedStrings();
-            ElMessage({
-                message: 'Custom CSS and localization strings refreshed',
-                type: 'success'
-            });
+            toast.success('Custom CSS and localization strings refreshed');
         }
     });
 

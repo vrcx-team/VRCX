@@ -48,7 +48,7 @@
 
 <script setup>
     import { Delete } from '@element-plus/icons-vue';
-    import { ElMessage } from 'element-plus';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { getFaviconUrl } from '../../../shared/utils';
@@ -78,10 +78,7 @@
             })
             .then((args) => {
                 D.visible = false;
-                ElMessage({
-                    message: 'Bio updated',
-                    type: 'success'
-                });
+                toast.success('Bio updated');
                 return args;
             });
     }

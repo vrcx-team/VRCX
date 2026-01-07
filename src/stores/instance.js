@@ -1,6 +1,6 @@
-import { computed, reactive, ref, watch } from 'vue';
-import { ElMessage } from 'element-plus';
+import { reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
 import {
@@ -16,8 +16,7 @@ import {
     hasGroupPermission,
     isRealInstance,
     parseLocation,
-    replaceBioSymbols,
-    replaceReactiveObject
+    replaceBioSymbols
 } from '../shared/utils';
 import { instanceRequest, userRequest, worldRequest } from '../api';
 import { database } from '../service/database';
@@ -72,6 +71,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         lastUpdated: ''
     });
 
+    /** @type {import('vue').Ref<any>} */
     const currentInstanceLocation = ref({});
 
     const queuedInstances = reactive(new Map());
@@ -877,11 +877,8 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     function removeAllQueuedInstances() {
         queuedInstances.forEach((ref) => {
-            ElMessage({
-                message: `Removed instance ${ref.$worldName} from queue`,
-                type: 'info'
-            });
-            ref.$msgBox?.close();
+            toast.info(`Removed instance ${ref.$worldName} from queue`);
+            toast.dismiss(ref.$msgBox);
         });
         queuedInstances.clear();
     }
@@ -893,7 +890,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     function removeQueuedInstance(instanceId) {
         const ref = queuedInstances.get(instanceId);
         if (typeof ref !== 'undefined') {
-            ref.$msgBox.close();
+            toast.dismiss(ref.$msgBox);
             queuedInstances.delete(instanceId);
         }
     }
@@ -905,13 +902,12 @@ export const useInstanceStore = defineStore('Instance', () => {
     function applyQueuedInstance(instanceId) {
         queuedInstances.forEach((ref) => {
             if (ref.location !== instanceId) {
-                ElMessage({
-                    message: t('message.instance.removed_form_queue', {
+                toast.info(
+                    t('message.instance.removed_form_queue', {
                         worldName: ref.$worldName
-                    }),
-                    type: 'info'
-                });
-                ref.$msgBox?.close();
+                    })
+                );
+                toast.dismiss(ref.$msgBox);
                 queuedInstances.delete(ref.location);
             }
         });
@@ -953,7 +949,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     function instanceQueueReady(instanceId) {
         const ref = queuedInstances.get(instanceId);
         if (typeof ref !== 'undefined') {
-            ref.$msgBox.close();
+            toast.dismiss(ref.$msgBox);
             queuedInstances.delete(instanceId);
         }
         const L = parseLocation(instanceId);
@@ -961,10 +957,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         const groupName = group?.name ?? '';
         const worldName = ref?.$worldName ?? '';
         const location = displayLocation(instanceId, worldName, groupName);
-        ElMessage({
-            message: `Instance ready to join ${location}`,
-            type: 'success'
-        });
+        toast.success(`Instance ready to join ${location}`);
         const noty = {
             created_at: new Date().toJSON(),
             type: 'group.queueReady',
@@ -1021,14 +1014,16 @@ export const useInstanceStore = defineStore('Instance', () => {
             ref.$worldName,
             ref.$groupName
         );
-        ref.$msgBox?.close();
-        ref.$msgBox = ElMessage({
-            message: `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${location} `,
-            type: 'info',
-            duration: 0,
-            showClose: true,
-            customClass: 'vrc-instance-queue-message'
-        });
+        toast.dismiss(ref.$msgBox ?? undefined);
+        ref.$msgBox = toast.info(
+            `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${location} `,
+            {
+                duration: Infinity,
+                position: 'bottom-right',
+                closeButton: true,
+                class: 'vrc-instance-queue-message'
+            }
+        );
         queuedInstances.set(instanceId, ref);
         // workerTimers.setTimeout(this.instanceQueueTimeout, 3600000);
     }
@@ -1196,7 +1191,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     // $app.methods.instanceQueueClear = function () {
     //     // remove all instances from queue
     //     queuedInstances.forEach((ref) => {
-    //         ref.$msgBox.close();
+    //         toast.dismiss(ref.$msgBox);
     //         queuedInstances.delete(ref.location);
     //     });
     // };

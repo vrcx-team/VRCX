@@ -99,7 +99,7 @@
 
 <script setup>
     import { computed, ref } from 'vue';
-    import { ElMessage } from 'element-plus';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { groupRequest, vrcPlusIconRequest } from '../../../api';
@@ -160,10 +160,7 @@
             return;
         }
         if (!D.title || !D.text) {
-            ElMessage({
-                message: 'Title and text are required',
-                type: 'warning'
-            });
+            toast.warning('Title and text are required');
             return;
         }
         const params = {
@@ -180,20 +177,14 @@
         }
         groupRequest.editGroupPost(params).then((args) => {
             handleGroupPost(args);
-            ElMessage({
-                message: 'Group post edited',
-                type: 'success'
-            });
+            toast.success('Group post edited');
         });
         D.visible = false;
     }
     function createGroupPost() {
         const D = groupPostEditDialog.value;
         if (!D.title || !D.text) {
-            ElMessage({
-                message: 'Title and text are required',
-                type: 'warning'
-            });
+            toast.warning('Title and text are required');
             return;
         }
         const params = {
@@ -210,10 +201,7 @@
         }
         groupRequest.createGroupPost(params).then((args) => {
             handleGroupPost(args);
-            ElMessage({
-                message: 'Group post created',
-                type: 'success'
-            });
+            toast.success('Group post created');
         });
         D.visible = false;
     }

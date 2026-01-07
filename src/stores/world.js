@@ -1,6 +1,6 @@
 import { reactive, shallowReactive, watch } from 'vue';
-import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 
 import {
     checkVRChatCache,
@@ -132,10 +132,7 @@ export const useWorldStore = defineStore('World', () => {
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
-                ElMessage({
-                    message: 'Failed to load world',
-                    type: 'error'
-                });
+                toast.error('Failed to load world');
                 throw err;
             })
             .then((args) => {

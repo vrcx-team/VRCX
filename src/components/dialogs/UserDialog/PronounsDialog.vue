@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { userRequest } from '../../../api';
@@ -53,10 +53,7 @@
             })
             .then((args) => {
                 D.visible = false;
-                ElMessage({
-                    message: 'Pronouns updated',
-                    type: 'success'
-                });
+                toast.success('Pronouns updated');
                 return args;
             });
     }

@@ -265,8 +265,9 @@
 
 <script setup>
     import { computed, nextTick, reactive, ref, watch } from 'vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
     import { useRoute } from 'vue-router';
 
@@ -449,7 +450,7 @@
         friendsListLoadingTotal.value = total;
         friendsListLoadingCurrent.value = 0;
         if (!total) {
-            ElMessage.success(t('view.friend_list.load_complete'));
+            toast.success(t('view.friend_list.load_complete'));
             return;
         }
         friendsListLoading.value = true;
@@ -472,7 +473,7 @@
         friendsListLoadingCurrent.value = 0;
         friendsListLoadingTotal.value = 0;
         if (!cancelled) {
-            ElMessage.success(t('view.friend_list.load_complete'));
+            toast.success(t('view.friend_list.load_complete'));
         }
     }
 

@@ -183,8 +183,9 @@
 <script setup>
     import { ArrowDown, Delete, FolderDelete, FolderOpened, Refresh } from '@element-plus/icons-vue';
     import { computed, ref, watch } from 'vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { VRChatCameraResolutions, VRChatScreenshotResolutions } from '../../../shared/constants';
@@ -279,15 +280,9 @@
     async function deleteAllVRChatCache() {
         try {
             await AssetBundleManager.DeleteAllCache();
-            ElMessage({
-                message: 'All VRChat cache deleted',
-                type: 'success'
-            });
+            toast.success('All VRChat cache deleted');
         } catch (error) {
-            ElMessage({
-                message: `Error deleting VRChat cache: ${error.message}`,
-                type: 'error'
-            });
+            toast.error(`Error deleting VRChat cache: ${error.message}`);
         }
         getVRChatCacheSize();
     }
@@ -379,10 +374,7 @@
                 const parsedConfig = JSON.parse(config);
                 VRChatConfigFile.value = { ...VRChatConfigFile.value, ...parsedConfig };
             } catch {
-                ElMessage({
-                    message: 'Invalid JSON in config.json',
-                    type: 'error'
-                });
+                toast.error('Invalid JSON in config.json');
                 throw new Error('Invalid JSON in config.json');
             }
         }

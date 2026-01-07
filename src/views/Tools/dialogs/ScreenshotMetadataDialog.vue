@@ -158,8 +158,8 @@
 <script setup>
     import { CopyDocument, Delete, Folder, FolderOpened, Picture, Upload } from '@element-plus/icons-vue';
     import { reactive, ref, watch } from 'vue';
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useGalleryStore, useUserStore, useVrcxStore } from '../../../stores';
@@ -275,10 +275,7 @@
             return;
         }
         AppApi.CopyImageToClipboard(path).then(() => {
-            ElMessage({
-                message: 'Image copied to clipboard',
-                type: 'success'
-            });
+            toast.success('Image copied to clipboard');
         });
     }
     function openImageFolder(path) {
@@ -286,10 +283,7 @@
             return;
         }
         AppApi.OpenFolderAndSelectItem(path).then(() => {
-            ElMessage({
-                message: 'Opened image folder',
-                type: 'success'
-            });
+            toast.success('Opened image folder');
         });
     }
     function deleteMetadata(path) {
@@ -298,16 +292,10 @@
         }
         AppApi.DeleteScreenshotMetadata(path).then((result) => {
             if (!result) {
-                ElMessage({
-                    message: t('message.screenshot_metadata.delete_failed'),
-                    type: 'error'
-                });
+                toast.error(t('message.screenshot_metadata.delete_failed'));
                 return;
             }
-            ElMessage({
-                message: t('message.screenshot_metadata.deleted'),
-                type: 'success'
-            });
+            toast.success(t('message.screenshot_metadata.deleted'));
             const D = screenshotMetadataDialog;
             getAndDisplayScreenshot(D.metadata.filePath, true);
         });
@@ -315,10 +303,7 @@
     function uploadScreenshotToGallery() {
         const D = screenshotMetadataDialog;
         if (D.metadata.fileSizeBytes > 10000000) {
-            ElMessage({
-                message: t('message.file.too_large'),
-                type: 'error'
-            });
+            toast.error(t('message.file.too_large'));
             return;
         }
         D.isUploading = true;
@@ -328,10 +313,7 @@
                     .uploadGalleryImage(base64Body)
                     .then((args) => {
                         handleGalleryImageAdd(args);
-                        ElMessage({
-                            message: t('message.gallery.uploaded'),
-                            type: 'success'
-                        });
+                        toast.success(t('message.gallery.uploaded'));
                         return args;
                     })
                     .finally(() => {
@@ -339,10 +321,7 @@
                     });
             })
             .catch((err) => {
-                ElMessage({
-                    message: t('message.gallery.failed'),
-                    type: 'error'
-                });
+                toast.error(t('message.gallery.failed'));
                 console.error(err);
                 D.isUploading = false;
             });

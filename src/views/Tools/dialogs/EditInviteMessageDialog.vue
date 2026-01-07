@@ -28,7 +28,7 @@
 
 <script setup>
     import { ref, watch } from 'vue';
-    import { ElMessage } from 'element-plus';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { inviteMessagesRequest } from '../../../api';
@@ -69,13 +69,10 @@
                 })
                 .then((args) => {
                     if (args.json[slot].message === props.inviteMessage.message) {
-                        ElMessage({
-                            message: "VRChat API didn't update message, try again",
-                            type: 'error'
-                        });
+                        toast.error("VRChat API didn't update message, try again");
                         throw new Error("VRChat API didn't update message, try again");
                     } else {
-                        ElMessage({ message: 'Invite message updated', type: 'success' });
+                        toast.success('Invite message updated');
                         emit('updateInviteMessages', messageType);
                     }
                     return args;

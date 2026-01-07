@@ -527,8 +527,9 @@
 <script setup>
     import { ArrowLeft, Close, Delete, Link, Picture, Plus, Present, Refresh, Upload } from '@element-plus/icons-vue';
     import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
     import { useRouter } from 'vue-router';
 
@@ -636,10 +637,7 @@
                     .uploadGalleryImage(base64Body)
                     .then((args) => {
                         handleGalleryImageAdd(args);
-                        ElMessage({
-                            message: t('message.gallery.uploaded'),
-                            type: 'success'
-                        });
+                        toast.success(t('message.gallery.uploaded'));
                         return args;
                     })
                     .catch((error) => {
@@ -667,10 +665,7 @@
 
     function setProfilePicOverride(fileId) {
         if (!isLocalUserVrcPlusSupporter.value) {
-            ElMessage({
-                message: 'VRCPlus required',
-                type: 'error'
-            });
+            toast.error('VRCPlus required');
             return;
         }
         let profilePicOverride = '';
@@ -685,10 +680,7 @@
                 profilePicOverride
             })
             .then((args) => {
-                ElMessage({
-                    message: 'Profile picture changed',
-                    type: 'success'
-                });
+                toast.success('Profile picture changed');
                 return args;
             });
     }
@@ -739,10 +731,7 @@
                         if (Object.keys(VRCPlusIconsTable.value).length !== 0) {
                             VRCPlusIconsTable.value.unshift(args.json);
                         }
-                        ElMessage({
-                            message: t('message.icon.uploaded'),
-                            type: 'success'
-                        });
+                        toast.success(t('message.icon.uploaded'));
                         return args;
                     })
                     .catch((error) => {
@@ -770,10 +759,7 @@
 
     function setVRCPlusIcon(fileId) {
         if (!isLocalUserVrcPlusSupporter.value) {
-            ElMessage({
-                message: 'VRCPlus required',
-                type: 'error'
-            });
+            toast.error('VRCPlus required');
             return;
         }
         let userIcon = '';
@@ -788,10 +774,7 @@
                 userIcon
             })
             .then((args) => {
-                ElMessage({
-                    message: 'Icon changed',
-                    type: 'success'
-                });
+                toast.success('Icon changed');
                 return args;
             });
     }
@@ -878,10 +861,7 @@
                         if (Object.keys(emojiTable.value).length !== 0) {
                             emojiTable.value.unshift(args.json);
                         }
-                        ElMessage({
-                            message: t('message.emoji.uploaded'),
-                            type: 'success'
-                        });
+                        toast.success(t('message.emoji.uploaded'));
                         return args;
                     })
                     .catch((error) => {
@@ -946,10 +926,7 @@
                     .uploadSticker(base64Body, params)
                     .then((args) => {
                         handleStickerAdd(args);
-                        ElMessage({
-                            message: t('message.sticker.uploaded'),
-                            type: 'success'
-                        });
+                        toast.success(t('message.sticker.uploaded'));
                         return args;
                     })
                     .catch((error) => {
@@ -1020,10 +997,7 @@
                 vrcPlusImageRequest
                     .uploadPrint(base64Body, cropWhiteBorder, params)
                     .then((args) => {
-                        ElMessage({
-                            message: t('message.print.uploaded'),
-                            type: 'success'
-                        });
+                        toast.success(t('message.print.uploaded'));
                         if (Object.keys(printTable.value).length !== 0) {
                             printTable.value.unshift(args.json);
                         }
@@ -1102,10 +1076,7 @@
                             code: value.trim()
                         })
                         .then((args) => {
-                            ElMessage({
-                                message: t('prompt.redeem.success'),
-                                type: 'success'
-                            });
+                            toast.success(t('prompt.redeem.success'));
                             getInventory();
                             return args;
                         })

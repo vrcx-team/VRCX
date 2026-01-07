@@ -67,8 +67,8 @@
 
 <script setup>
     import { Calendar, Download, Star, StarFilled } from '@element-plus/icons-vue';
-    import { ElMessage } from 'element-plus';
     import { computed } from 'vue';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useGalleryStore, useGroupStore } from '../../../stores';
@@ -148,10 +148,7 @@
             }
             return response.data;
         } catch (error) {
-            ElMessage({
-                message: `Failed to download .ics file, ${error.message}`,
-                type: 'error'
-            });
+            toast.error(`Failed to download .ics file, ${error.message}`);
             console.error('Failed to download .ics file:', error);
         }
     }

@@ -84,8 +84,8 @@
 <script setup>
     import { computed, ref, watch } from 'vue';
     import { ArrowDown } from '@element-plus/icons-vue';
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useAvatarStore, useFavoriteStore } from '../../../stores';
@@ -153,18 +153,11 @@
         navigator.clipboard
             .writeText(avatarExportContent.value)
             .then(() => {
-                ElMessage({
-                    message: 'Copied successfully!',
-                    type: 'success',
-                    duration: 2000
-                });
+                toast.success('Copied successfully!', { duration: 2000 });
             })
             .catch((err) => {
                 console.error('Copy failed:', err);
-                ElMessage({
-                    message: 'Copy failed!',
-                    type: 'error'
-                });
+                toast.error('Copy failed!');
             });
     }
     function updateAvatarExportDialog() {

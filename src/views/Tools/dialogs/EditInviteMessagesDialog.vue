@@ -119,8 +119,8 @@
 
 <script setup>
     import { ref, watch } from 'vue';
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useInviteStore } from '../../../stores';
@@ -173,10 +173,7 @@
             cooldownEnd.setHours(cooldownEnd.getHours() + 1);
             const now = new Date();
             if (now < cooldownEnd) {
-                ElMessage({
-                    message: 'This invite message is on cooldown and cannot be edited yet.',
-                    type: 'warning'
-                });
+                toast.warning('This invite message is on cooldown and cannot be edited yet.');
                 return;
             }
         }

@@ -1,5 +1,5 @@
-import { ElMessage } from 'element-plus';
 import { storeToRefs } from 'pinia';
+import { toast } from 'vue-sonner';
 
 import { THEME_CONFIG } from '../../constants';
 import { i18n } from '../../../plugin/i18n';
@@ -327,11 +327,7 @@ async function getThemeMode(configRepository) {
 
 function redirectToToolsTab() {
     router.push({ name: 'tools' });
-    ElMessage({
-        message: i18n.global.t('view.tools.redirect_message'),
-        type: 'primary',
-        duration: 3000
-    });
+    toast(i18n.global.t('view.tools.redirect_message'), { duration: 3000 });
 }
 
 export {

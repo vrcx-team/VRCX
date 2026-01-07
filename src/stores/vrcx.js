@@ -1,6 +1,7 @@
 import { reactive, ref, watch } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
 import Noty from 'noty';
@@ -160,12 +161,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         let msgBox;
         if (state.databaseVersion < databaseVersion) {
             if (state.databaseVersion) {
-                msgBox = ElMessage({
-                    message:
-                        'DO NOT CLOSE VRCX, database upgrade in progress...',
-                    type: 'warning',
-                    duration: 0
-                });
+                msgBox = toast.warning(
+                    'DO NOT CLOSE VRCX, database upgrade in progress...',
+                    { duration: Infinity, position: 'bottom-right' }
+                );
             }
             console.log(
                 `Updating database from ${state.databaseVersion} to ${databaseVersion}...`
@@ -188,24 +187,19 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     databaseVersion
                 );
                 console.log('Database update complete.');
-                msgBox?.close();
+                toast.dismiss(msgBox);
                 if (state.databaseVersion) {
                     // only display when database exists
-                    ElMessage({
-                        message: 'Database upgrade complete',
-                        type: 'success'
-                    });
+                    toast.success('Database upgrade complete');
                 }
                 state.databaseVersion = databaseVersion;
             } catch (err) {
                 console.error(err);
-                msgBox?.close();
-                ElMessage({
-                    message:
-                        'Database upgrade failed, check console for details',
-                    type: 'error',
-                    duration: 120000
-                });
+                toast.dismiss(msgBox);
+                toast.error(
+                    'Database upgrade failed, check console for details',
+                    { duration: 120000 }
+                );
                 AppApi.ShowDevTools();
             }
         }
@@ -365,12 +359,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             } catch (e) {
                 console.error('Failed to add screenshot metadata', e);
                 if (e.message?.includes('UnauthorizedAccessException')) {
-                    ElMessage({
-                        message:
-                            'Failed to add screenshot metadata, access denied. Make sure VRCX has permission to access the screenshot folder.',
-                        type: 'error',
-                        duration: 10000
-                    });
+                    toast.error(
+                        'Failed to add screenshot metadata, access denied. Make sure VRCX has permission to access the screenshot folder.',
+                        { duration: 10000 }
+                    );
                 }
                 return;
             }
@@ -547,10 +539,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 }
             }
 
-            ElMessage({
-                message: t('message.crash.vrcx_reload'),
-                type: 'success'
-            });
+            toast.success(t('message.crash.vrcx_reload'));
             return;
         }
         eventLaunchCommand(command);
@@ -603,10 +592,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 const regexAvatarId =
                     /avtr_[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}/g;
                 if (!avatarId.match(regexAvatarId) || avatarId.length !== 41) {
-                    ElMessage({
-                        message: 'Invalid Avatar ID',
-                        type: 'error'
-                    });
+                    toast.error('Invalid Avatar ID');
                     break;
                 }
                 if (advancedSettingsStore.showConfirmationOnSwitchAvatar) {

@@ -96,8 +96,8 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
     import { Loading } from '@element-plus/icons-vue';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
     import { watch } from 'vue';
 
@@ -254,10 +254,7 @@
             }
         } catch (err) {
             console.error(err);
-            ElMessage({
-                message: 'Error saving avatar tags',
-                type: 'error'
-            });
+            toast.error('Error saving avatar tags');
         } finally {
             D.loading = false;
             D.visible = false;

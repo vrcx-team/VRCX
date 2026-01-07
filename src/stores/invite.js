@@ -1,6 +1,6 @@
 import { computed, ref, watch } from 'vue';
-import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 
 import { instanceRequest, inviteMessagesRequest } from '../api';
 import { parseLocation } from '../shared/utils';
@@ -111,10 +111,7 @@ export const useInviteStore = defineStore('Invite', () => {
         instanceStore.createNewInstance(worldId).then((args) => {
             const location = args?.json?.location;
             if (!location) {
-                ElMessage({
-                    message: 'Failed to create instance',
-                    type: 'error'
-                });
+                toast.error('Failed to create instance');
                 return;
             }
             // self invite
@@ -134,10 +131,7 @@ export const useInviteStore = defineStore('Invite', () => {
                     worldId: L.worldId
                 })
                 .then((args) => {
-                    ElMessage({
-                        message: 'Self invite sent',
-                        type: 'success'
-                    });
+                    toast.success('Self invite sent');
                     return args;
                 });
         });

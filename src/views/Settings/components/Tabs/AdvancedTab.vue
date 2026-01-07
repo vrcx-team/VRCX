@@ -390,8 +390,8 @@
         User
     } from '@element-plus/icons-vue';
     import { computed, reactive, ref } from 'vue';
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import {
@@ -503,15 +503,9 @@
     function openVrcxAppDataFolder() {
         AppApi.OpenVrcxAppDataFolder().then((result) => {
             if (result) {
-                ElMessage({
-                    message: 'Folder opened',
-                    type: 'success'
-                });
+                toast.success('Folder opened');
             } else {
-                ElMessage({
-                    message: "Folder dosn't exist",
-                    type: 'error'
-                });
+                toast.error("Folder dosn't exist");
             }
         });
     }
@@ -519,15 +513,9 @@
     function openVrcAppDataFolder() {
         AppApi.OpenVrcAppDataFolder().then((result) => {
             if (result) {
-                ElMessage({
-                    message: 'Folder opened',
-                    type: 'success'
-                });
+                toast.success('Folder opened');
             } else {
-                ElMessage({
-                    message: "Folder dosn't exist",
-                    type: 'error'
-                });
+                toast.error("Folder dosn't exist");
             }
         });
     }
@@ -535,15 +523,9 @@
     function openCrashVrcCrashDumps() {
         AppApi.OpenCrashVrcCrashDumps().then((result) => {
             if (result) {
-                ElMessage({
-                    message: 'Folder opened',
-                    type: 'success'
-                });
+                toast.success('Folder opened');
             } else {
-                ElMessage({
-                    message: "Folder dosn't exist",
-                    type: 'error'
-                });
+                toast.error("Folder dosn't exist");
             }
         });
     }

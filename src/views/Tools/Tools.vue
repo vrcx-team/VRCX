@@ -208,8 +208,8 @@
 <script setup>
     import { computed, defineAsyncComponent, ref } from 'vue';
     import { ArrowRight } from '@element-plus/icons-vue';
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
     import { useRoute } from 'vue-router';
 
@@ -281,15 +281,9 @@
     function openVrcPhotosFolder() {
         AppApi.OpenVrcPhotosFolder().then((result) => {
             if (result) {
-                ElMessage({
-                    message: 'Folder opened',
-                    type: 'success'
-                });
+                toast.success('Folder opened');
             } else {
-                ElMessage({
-                    message: "Folder dosn't exist",
-                    type: 'error'
-                });
+                toast.error("Folder dosn't exist");
             }
         });
     }
@@ -297,15 +291,9 @@
     function openVrcScreenshotsFolder() {
         AppApi.OpenVrcScreenshotsFolder().then((result) => {
             if (result) {
-                ElMessage({
-                    message: 'Folder opened',
-                    type: 'success'
-                });
+                toast.success('Folder opened');
             } else {
-                ElMessage({
-                    message: "Folder dosn't exist",
-                    type: 'error'
-                });
+                toast.error("Folder dosn't exist");
             }
         });
     }

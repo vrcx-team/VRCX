@@ -1,6 +1,7 @@
 import { computed, ref, watch } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -367,10 +368,7 @@ export const useSearchStore = defineStore('Search', () => {
             if (action === 'confirm' && value) {
                 const input = value.trim();
                 if (!directAccessParse(input)) {
-                    ElMessage({
-                        message: t('prompt.direct_access_omni.message.error'),
-                        type: 'error'
-                    });
+                    toast.error(t('prompt.direct_access_omni.message.error'));
                 }
             }
         } catch (error) {

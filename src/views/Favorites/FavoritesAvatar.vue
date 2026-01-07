@@ -497,9 +497,10 @@
 
 <script setup>
     import { computed, h, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-    import { ElMessage, ElMessageBox, ElNotification, ElProgress } from 'element-plus';
     import { Loading, MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
+    import { ElMessageBox, ElNotification, ElProgress } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useUserStore } from '../../stores';
@@ -1191,16 +1192,10 @@
                             navigator.clipboard
                                 .writeText(result.invalidIds.join('\n'))
                                 .then(() => {
-                                    ElMessage({
-                                        message: t('view.favorite.avatars.copied_ids'),
-                                        type: 'success'
-                                    });
+                                    toast.success(t('view.favorite.avatars.copied_ids'));
                                 })
                                 .catch(() => {
-                                    ElMessage({
-                                        message: 'Failed to copy',
-                                        type: 'error'
-                                    });
+                                    toast.error('Failed to copy');
                                 });
                             return;
                         }
@@ -1285,10 +1280,7 @@
                                 favoriteGroupId: args.json.id
                             }
                         });
-                        ElMessage({
-                            message: t('prompt.change_favorite_group_name.message.success'),
-                            type: 'success'
-                        });
+                        toast.success(t('prompt.change_favorite_group_name.message.success'));
                         refreshFavorites();
                     });
             })
@@ -1308,10 +1300,7 @@
                     favoriteGroupId: args.json.id
                 }
             });
-            ElMessage({
-                message: 'Group visibility changed',
-                type: 'success'
-            });
+            toast.success('Group visibility changed');
             if (menuKey) {
                 handleGroupMenuVisible(menuKey, false);
             }

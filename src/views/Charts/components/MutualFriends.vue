@@ -104,10 +104,11 @@
 
 <script setup>
     import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessageBox } from 'element-plus';
     import { Setting } from '@element-plus/icons-vue';
     import { onBeforeRouteLeave } from 'vue-router';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useAppearanceSettingsStore, useChartsStore, useFriendStore, useUserStore } from '../../../stores';
@@ -173,7 +174,7 @@
     const progressPercent = computed(() =>
         totalFriends.value ? Math.min(100, Math.round((fetchState.processedFriends / totalFriends.value) * 100)) : 0
     );
-    const progressStatus = computed(() => (isFetching.value ? 'warning' : undefined));
+    const progressStatus = computed(() => (isFetching.value ? 'warning' : ''));
     const forceDefaults = computed(() =>
         computeForceOptions(graphPayload.value?.nodes ?? [], graphPayload.value?.links ?? [])
     );
@@ -293,13 +294,8 @@
         if (!message) {
             return;
         }
-        ElMessage({
-            // @ts-ignore
-            message,
-            type,
-            duration: 4000,
-            grouping: true
-        });
+        const toastFn = toast[type] ?? toast;
+        toastFn(message, { duration: 4000 });
     }
 
     function createChartInstance() {
@@ -613,7 +609,7 @@
 
         const hasInvalid = [repulsion, minEdge, maxEdge, gravity].some((entry) => entry.invalid);
         if (hasInvalid) {
-            ElMessage.error(t('view.charts.mutual_friend.force_dialog.invalid_input'));
+            toast.error(t('view.charts.mutual_friend.force_dialog.invalid_input'));
             return;
         }
 

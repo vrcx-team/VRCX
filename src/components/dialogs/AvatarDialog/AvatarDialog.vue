@@ -567,8 +567,9 @@
         Warning
     } from '@element-plus/icons-vue';
     import { computed, defineAsyncComponent, nextTick, reactive, ref, watch } from 'vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import {
@@ -787,10 +788,7 @@
                                         avatarId: D.id
                                     })
                                     .then((args) => {
-                                        ElMessage({
-                                            message: 'Fallback avatar changed',
-                                            type: 'success'
-                                        });
+                                        toast.success('Fallback avatar changed');
                                         return args;
                                     });
                                 break;
@@ -803,10 +801,7 @@
                                     .then((args) => {
                                         // 'AVATAR-MODERATION';
                                         applyAvatarModeration(args.json);
-                                        ElMessage({
-                                            message: 'Avatar blocked',
-                                            type: 'success'
-                                        });
+                                        toast.success('Avatar blocked');
                                         return args;
                                     });
                                 break;
@@ -835,10 +830,7 @@
                                     })
                                     .then((args) => {
                                         applyAvatar(args.json);
-                                        ElMessage({
-                                            message: 'Avatar updated to public',
-                                            type: 'success'
-                                        });
+                                        toast.success('Avatar updated to public');
                                         return args;
                                     });
                                 break;
@@ -850,10 +842,7 @@
                                     })
                                     .then((args) => {
                                         applyAvatar(args.json);
-                                        ElMessage({
-                                            message: 'Avatar updated to private',
-                                            type: 'success'
-                                        });
+                                        toast.success('Avatar updated to private');
                                         return args;
                                     });
                                 break;
@@ -876,10 +865,7 @@
                                             sortUserDialogAvatars(array);
                                         }
 
-                                        ElMessage({
-                                            message: 'Avatar deleted',
-                                            type: 'success'
-                                        });
+                                        toast.success('Avatar deleted');
                                         D.visible = false;
                                         return args;
                                     });
@@ -890,10 +876,7 @@
                                         avatarId: D.id
                                     })
                                     .then((args) => {
-                                        ElMessage({
-                                            message: 'Imposter deleted',
-                                            type: 'success'
-                                        });
+                                        toast.success('Imposter deleted');
                                         showAvatarDialog(D.id);
                                         return args;
                                     });
@@ -904,10 +887,7 @@
                                         avatarId: D.id
                                     })
                                     .then((args) => {
-                                        ElMessage({
-                                            message: 'Imposter queued for creation',
-                                            type: 'success'
-                                        });
+                                        toast.success('Imposter queued for creation');
                                         return args;
                                     });
                                 break;
@@ -926,10 +906,7 @@
                                                 avatarId: D.id
                                             })
                                             .then((args) => {
-                                                ElMessage({
-                                                    message: 'Imposter deleted and queued for creation',
-                                                    type: 'success'
-                                                });
+                                                toast.success('Imposter deleted and queued for creation');
                                                 return args;
                                             });
                                     });
@@ -968,10 +945,7 @@
                         })
                         .then((args) => {
                             applyAvatar(args.json);
-                            ElMessage({
-                                message: t('prompt.change_avatar_description.message.success'),
-                                type: 'success'
-                            });
+                            toast.success(t('prompt.change_avatar_description.message.success'));
                             return args;
                         });
                 }
@@ -996,10 +970,7 @@
                         })
                         .then((args) => {
                             applyAvatar(args.json);
-                            ElMessage({
-                                message: t('prompt.rename_avatar.message.success'),
-                                type: 'success'
-                            });
+                            toast.success(t('prompt.rename_avatar.message.success'));
                             return args;
                         });
                 }
@@ -1130,10 +1101,7 @@
                 avatarRequest
                     .uploadAvatarGalleryImage(base64Body, avatarDialog.value.id)
                     .then(async (args) => {
-                        ElMessage({
-                            message: t('message.avatar_gallery.uploaded'),
-                            type: 'success'
-                        });
+                        toast.success(t('message.avatar_gallery.uploaded'));
                         console.log(args);
                         avatarDialog.value.galleryImages = await getAvatarGallery(avatarDialog.value.id);
                         return args;
@@ -1163,24 +1131,15 @@
         });
         const index = fileIds.indexOf(fileId);
         if (index === -1) {
-            ElMessage({
-                message: t('message.avatar_gallery.not_found'),
-                type: 'error'
-            });
+            toast.error(t('message.avatar_gallery.not_found'));
             return;
         }
         if (direction === -1 && index === 0) {
-            ElMessage({
-                message: t('message.avatar_gallery.already_first'),
-                type: 'warning'
-            });
+            toast.warning(t('message.avatar_gallery.already_first'));
             return;
         }
         if (direction === 1 && index === fileIds.length - 1) {
-            ElMessage({
-                message: t('message.avatar_gallery.already_last'),
-                type: 'warning'
-            });
+            toast.warning(t('message.avatar_gallery.already_last'));
             return;
         }
         if (direction === -1) {
@@ -1189,10 +1148,7 @@
             moveArrayItem(fileIds, index, index + 1);
         }
         avatarRequest.setAvatarGalleryOrder(fileIds).then(async (args) => {
-            ElMessage({
-                message: t('message.avatar_gallery.reordered'),
-                type: 'success'
-            });
+            toast.success(t('message.avatar_gallery.reordered'));
             avatarDialog.value.galleryImages = await getAvatarGallery(avatarDialog.value.id);
             return args;
         });
@@ -1201,10 +1157,7 @@
     function deleteAvatarGalleryImage(imageUrl) {
         const fileId = extractFileId(imageUrl);
         miscRequest.deleteFile(fileId).then((args) => {
-            ElMessage({
-                message: t('message.avatar_gallery.deleted'),
-                type: 'success'
-            });
+            toast.success(t('message.avatar_gallery.deleted'));
             getAvatarGallery(avatarDialog.value.id);
             return args;
         });

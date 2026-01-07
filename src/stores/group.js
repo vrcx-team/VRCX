@@ -1,6 +1,7 @@
 import { nextTick, reactive, ref, watch } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 
 import {
     groupRequest,
@@ -150,10 +151,7 @@ export const useGroupStore = defineStore('Group', () => {
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
-                ElMessage({
-                    message: 'Failed to load group',
-                    type: 'error'
-                });
+                toast.error('Failed to load group');
                 throw err;
             })
             .then((args) => {
@@ -596,10 +594,7 @@ export const useGroupStore = defineStore('Group', () => {
             })
             .then((args) => {
                 handleGroupMemberProps(args);
-                ElMessage({
-                    message: 'Group visibility updated',
-                    type: 'success'
-                });
+                toast.success('Group visibility updated');
                 return args;
             });
     }
@@ -611,10 +606,7 @@ export const useGroupStore = defineStore('Group', () => {
             })
             .then((args) => {
                 handleGroupMemberProps(args);
-                ElMessage({
-                    message: 'Group subscription updated',
-                    type: 'success'
-                });
+                toast.success('Group subscription updated');
                 return args;
             });
     }

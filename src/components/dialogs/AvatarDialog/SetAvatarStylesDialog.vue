@@ -60,7 +60,7 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
     import { watch } from 'vue';
 
@@ -150,11 +150,11 @@
             .saveAvatar(params)
             .then((args) => {
                 applyAvatar(args.json);
-                ElMessage({ message: t('dialog.set_avatar_styles.save_success'), type: 'success' });
+                toast.success(t('dialog.set_avatar_styles.save_success'));
                 closeSetAvatarStylesDialog();
             })
             .catch((error) => {
-                ElMessage({ message: t('dialog.set_avatar_styles.save_failed'), type: 'error' });
+                toast.error(t('dialog.set_avatar_styles.save_failed'));
                 console.error('Error saving avatar styles:', error);
             });
     }

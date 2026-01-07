@@ -24,8 +24,8 @@
 
 <script setup>
     import { Back } from '@element-plus/icons-vue';
-    import { ElMessage } from 'element-plus';
     import { computed } from 'vue';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { favoriteRequest } from '../../../api';
@@ -89,10 +89,7 @@
                 tags: groupAPI.name
             })
             .then((args) => {
-                ElMessage({
-                    message: 'Avatar added to favorites',
-                    type: 'success'
-                });
+                toast.success('Avatar added to favorites');
                 return args;
             });
     }
@@ -105,7 +102,7 @@
                 tags: groupAPI.name
             })
             .then((args) => {
-                ElMessage({ message: 'World added to favorites', type: 'success' });
+                toast.success('World added to favorites');
                 return args;
             });
     }

@@ -78,9 +78,10 @@
         useVueTable
     } from '@tanstack/vue-table';
     import { computed, ref, watch } from 'vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessageBox } from 'element-plus';
     import { Refresh } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import Noty from 'noty';
@@ -376,7 +377,7 @@
                                     row.senderUserId
                                 )
                                 .then((_args) => {
-                                    ElMessage('Invite sent');
+                                    toast('Invite sent');
                                     notificationRequest.hideNotification({
                                         notificationId: row.id
                                     });

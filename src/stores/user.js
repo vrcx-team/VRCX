@@ -1,6 +1,6 @@
 import { computed, reactive, ref, shallowReactive, watch } from 'vue';
-import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 
 import Noty from 'noty';
 
@@ -842,10 +842,7 @@ export const useUserStore = defineStore('User', () => {
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
-                ElMessage({
-                    message: 'Failed to load user',
-                    type: 'error'
-                });
+                toast.error('Failed to load user');
                 throw err;
             })
             .then((args) => {
@@ -1218,10 +1215,7 @@ export const useUserStore = defineStore('User', () => {
                             return;
                         }
                     }
-                    ElMessage({
-                        message: 'Own avatar not found',
-                        type: 'error'
-                    });
+                    toast.error('Own avatar not found');
                 }
             }
         });

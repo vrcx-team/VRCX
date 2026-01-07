@@ -29,7 +29,7 @@
 <script setup>
     import { computed, ref, watch } from 'vue';
     import { Delete } from '@element-plus/icons-vue';
-    import { ElMessage } from 'element-plus';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { worldRequest } from '../../../api';
@@ -76,10 +76,7 @@
                 urlList: urlList.value
             })
             .then((args) => {
-                ElMessage({
-                    message: 'Allowed Video Player Domains updated',
-                    type: 'success'
-                });
+                toast.success('Allowed Video Player Domains updated');
                 return args;
             });
         D.visible = false;

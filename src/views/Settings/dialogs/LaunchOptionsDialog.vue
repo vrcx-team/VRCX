@@ -55,8 +55,8 @@
 
 <script setup>
     import { computed, ref } from 'vue';
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { Badge } from '../../../components/ui/badge';
@@ -104,17 +104,11 @@
             D.vrcLaunchPathOverride.endsWith('.exe') &&
             !D.vrcLaunchPathOverride.endsWith('launch.exe')
         ) {
-            ElMessage({
-                message: 'Invalid path, you must enter VRChat folder or launch.exe',
-                type: 'error'
-            });
+            toast.error('Invalid path, you must enter VRChat folder or launch.exe');
             return;
         }
         configRepository.setString('vrcLaunchPathOverride', D.vrcLaunchPathOverride);
-        ElMessage({
-            message: 'Updated launch options',
-            type: 'success'
-        });
+        toast.success('Updated launch options');
         closeDialog();
     }
 

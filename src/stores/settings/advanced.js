@@ -1,10 +1,12 @@
 import { reactive, ref, watch } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
 import { AppDebug } from '../../service/appConfig';
 import { database } from '../../service/database';
+import { languageCodes } from '../../localization';
 import { useGameStore } from '../game';
 import { useVRCXUpdaterStore } from '../vrcxUpdater';
 import { useVrcxStore } from '../vrcx';
@@ -12,7 +14,6 @@ import { watchState } from '../../service/watchState';
 
 import configRepository from '../../service/config';
 import webApiService from '../../service/webapi';
-import { languageCodes } from '../../localization';
 
 export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const gameStore = useGameStore();
@@ -162,10 +163,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getString('VRCX_SentryEnabled', '')
         ]);
 
-        if (
-            !bioLanguageConfig ||
-            !languageCodes.includes(bioLanguageConfig)
-        ) {
+        if (!bioLanguageConfig || !languageCodes.includes(bioLanguageConfig)) {
             bioLanguage.value = 'en';
         } else {
             bioLanguage.value = bioLanguageConfig;
@@ -628,10 +626,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
     async function translateText(text, targetLang, overrides) {
         if (!translationApi.value) {
-            ElMessage({
-                message: 'Translation API disabled',
-                type: 'warning'
-            });
+            toast.warning('Translation API disabled');
             return null;
         }
 
@@ -641,10 +636,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         if (provider === 'google') {
             const keyToUse = overrides?.key ?? translationApiKey.value;
             if (!keyToUse) {
-                ElMessage({
-                    message: 'No Translation API key configured',
-                    type: 'warning'
-                });
+                toast.warning('No Translation API key configured');
                 return null;
             }
             try {
@@ -672,10 +664,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 }
                 return data.data.translations[0].translatedText;
             } catch (err) {
-                ElMessage({
-                    message: `Translation failed: ${err.message}`,
-                    type: 'error'
-                });
+                toast.error(`Translation failed: ${err.message}`);
                 return null;
             }
         }
@@ -692,10 +681,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             `You are a translation assistant. Translate the user message into ${targetLang}. Only return the translated text.`;
 
         if (!endpoint || !model) {
-            ElMessage({
-                message: 'Translation endpoint/model missing',
-                type: 'warning'
-            });
+            toast.warning('Translation endpoint/model missing');
             return null;
         }
 
@@ -742,10 +728,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             const translated = data?.choices?.[0]?.message?.content;
             return typeof translated === 'string' ? translated.trim() : null;
         } catch (err) {
-            ElMessage({
-                message: `Translation failed: ${err.message}`,
-                type: 'error'
-            });
+            toast.error(`Translation failed: ${err.message}`);
             return null;
         }
     }
@@ -769,25 +752,18 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         )
             .then(async ({ action }) => {
                 if (action === 'confirm') {
-                    const msgBox = ElMessage({
-                        message: 'Batch print cropping in progress...',
-                        type: 'warning',
-                        duration: 0
-                    });
+                    const msgBox = toast.warning(
+                        'Batch print cropping in progress...',
+                        { duration: Infinity, position: 'bottom-right' }
+                    );
                     try {
                         await AppApi.CropAllPrints(ugcFolderPath.value);
-                        ElMessage({
-                            message: 'Batch print cropping complete',
-                            type: 'success'
-                        });
+                        toast.success('Batch print cropping complete');
                     } catch (err) {
                         console.error(err);
-                        ElMessage({
-                            message: `Batch print cropping failed: ${err}`,
-                            type: 'error'
-                        });
+                        toast.error(`Batch print cropping failed: ${err}`);
                     } finally {
-                        msgBox.close();
+                        toast.dismiss(msgBox);
                     }
                 }
             })
@@ -836,25 +812,18 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         )
             .then(async ({ action }) => {
                 if (action === 'confirm') {
-                    const msgBox = ElMessage({
-                        message: 'Batch metadata removal in progress...',
-                        type: 'warning',
-                        duration: 0
-                    });
+                    const msgBox = toast.warning(
+                        'Batch metadata removal in progress...',
+                        { duration: Infinity, position: 'bottom-right' }
+                    );
                     try {
                         await AppApi.DeleteAllScreenshotMetadata();
-                        ElMessage({
-                            message: 'Batch metadata removal complete',
-                            type: 'success'
-                        });
+                        toast.success('Batch metadata removal complete');
                     } catch (err) {
                         console.error(err);
-                        ElMessage({
-                            message: `Batch metadata removal failed: ${err}`,
-                            type: 'error'
-                        });
+                        toast.error(`Batch metadata removal failed: ${err}`);
                     } finally {
-                        msgBox.close();
+                        toast.dismiss(msgBox);
                     }
                 }
             })

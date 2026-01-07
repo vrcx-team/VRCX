@@ -1155,8 +1155,9 @@
         Warning
     } from '@element-plus/icons-vue';
     import { computed, nextTick, reactive, ref, watch } from 'vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import {
@@ -1545,15 +1546,9 @@
                     getGroupDialogGroup(id);
                 }
                 if (args.json.membershipStatus === 'member') {
-                    ElMessage({
-                        message: 'Group joined',
-                        type: 'success'
-                    });
+                    toast.success('Group joined');
                 } else if (args.json.membershipStatus === 'requested') {
-                    ElMessage({
-                        message: 'Group join request sent',
-                        type: 'success'
-                    });
+                    toast.success('Group join request sent');
                 }
                 return args;
             });
