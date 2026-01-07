@@ -199,7 +199,7 @@
                                         :class="{ 'x-user-badge-hidden': badge.hidden }"
                                         loading="lazy" />
                                 </PopoverTrigger>
-                                <PopoverContent side="bottom" class="w-[300px]">
+                                <PopoverContent side="bottom" class="w-75">
                                     <img
                                         :src="badge.badgeImageUrl"
                                         :class="['x-link', 'x-popover-image']"

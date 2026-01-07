@@ -22,10 +22,10 @@ export function useAuthenticatedLayoutResizable() {
 
     const panelGroupRef = ref(null);
     const navPanelRef = ref(null);
+    const asidePanelRef = ref(null);
     const navExpandedSize = ref(null);
     const groupWidth = ref(fallbackWidth);
     let resizeObserver = null;
-    let windowResizeHandler = null;
 
     const getGroupWidth = () => {
         const element = panelGroupRef.value?.$el ?? panelGroupRef.value;
@@ -111,11 +111,29 @@ export function useAuthenticatedLayoutResizable() {
     const resizeNavPanel = (targetSize) =>
         navPanelRef.value?.resize?.(targetSize);
 
+    const resizeAsidePanel = (targetSize) =>
+        asidePanelRef.value?.resize?.(targetSize);
+
     const updateGroupWidth = () => {
-        groupWidth.value = getGroupWidth();
+        const width = getGroupWidth();
+        groupWidth.value = width;
+
         if (isNavCollapsed.value) {
             resizeNavPanel(navCollapsedSize.value);
+        } else {
+            const targetSize = pxToPercent(navExpandedPx.value, width);
+            navExpandedSize.value = targetSize;
+            resizeNavPanel(targetSize);
         }
+
+        if (!isSideBarTabShow.value) {
+            return;
+        }
+
+        const storedAsidePx = asideWidth.value;
+        const asideTargetSize =
+            storedAsidePx > 0 ? pxToPercent(storedAsidePx, width, 0) : 0;
+        resizeAsidePanel(asideTargetSize);
     };
 
     watch(isNavCollapsed, async (collapsed) => {
@@ -144,9 +162,6 @@ export function useAuthenticatedLayoutResizable() {
         if (element && typeof ResizeObserver !== 'undefined') {
             resizeObserver = new ResizeObserver(updateGroupWidth);
             resizeObserver.observe(element);
-        } else if (typeof window !== 'undefined') {
-            windowResizeHandler = updateGroupWidth;
-            window.addEventListener('resize', windowResizeHandler);
         }
     });
 
@@ -155,15 +170,12 @@ export function useAuthenticatedLayoutResizable() {
             resizeObserver.disconnect();
             resizeObserver = null;
         }
-        if (windowResizeHandler && typeof window !== 'undefined') {
-            window.removeEventListener('resize', windowResizeHandler);
-            windowResizeHandler = null;
-        }
     });
 
     return {
         panelGroupRef,
         navPanelRef,
+        asidePanelRef,
         navDefaultSize,
         navMinSize,
         navMaxSize,

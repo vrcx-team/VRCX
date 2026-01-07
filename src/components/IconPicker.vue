@@ -6,7 +6,7 @@
                 <span>{{ t('nav_menu.icon_picker.pick_icon') }}</span>
             </el-button>
         </PopoverTrigger>
-        <PopoverContent side="bottom" align="start" class="w-[620px]">
+        <PopoverContent side="bottom" align="start" class="w-155">
             <div class="icon-picker">
                 <el-input
                     v-model="search"

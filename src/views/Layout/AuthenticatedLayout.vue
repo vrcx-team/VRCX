@@ -26,6 +26,7 @@
                             'z-20 [&>div]:-translate-x-1/2'
                         ]"></ResizableHandle>
                     <ResizablePanel
+                        ref="asidePanelRef"
                         :default-size="asideDefaultSize"
                         :max-size="asideMaxSize"
                         :collapsed-size="0"
@@ -110,6 +111,7 @@
     const {
         panelGroupRef,
         navPanelRef,
+        asidePanelRef,
         navDefaultSize,
         navMinSize,
         navMaxSize,
