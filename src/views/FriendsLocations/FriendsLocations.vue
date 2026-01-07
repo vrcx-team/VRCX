@@ -9,8 +9,8 @@
                     :prefix-icon="Search"
                     clearable
                     placeholder="Search Friend"></el-input>
-                <el-popover placement="bottom" trigger="click" :width="350">
-                    <template #reference>
+                <Popover>
+                    <PopoverTrigger asChild>
                         <div>
                             <TooltipWrapper :content="t('view.charts.instance_activity.settings.header')" side="top">
                                 <el-button style="margin-right: 5px" circle
@@ -18,40 +18,42 @@
                                 ></el-button>
                             </TooltipWrapper>
                         </div>
-                    </template>
-                    <div style="display: flex; justify-content: space-between; align-items: center">
-                        <span class="friend-view__settings-label">{{
-                            t('view.friends_locations.separate_same_instance_friends')
-                        }}</span>
-                        <el-switch v-model="showSameInstance" />
-                    </div>
-                    <div class="friend-view__settings-row">
-                        <span class="friend-view__settings-label">{{ t('view.friends_locations.scale') }}</span>
-                        <div class="friend-view__scale-control">
-                            <span class="friend-view__scale-value">{{ cardScalePercentLabel }}&nbsp;</span>
-                            <el-slider
-                                v-model="cardScale"
-                                class="friend-view__slider"
-                                :min="0.5"
-                                :max="1.0"
-                                :step="0.01"
-                                :show-tooltip="false" />
+                    </PopoverTrigger>
+                    <PopoverContent side="bottom" class="w-[350px]">
+                        <div style="display: flex; justify-content: space-between; align-items: center">
+                            <span class="friend-view__settings-label">{{
+                                t('view.friends_locations.separate_same_instance_friends')
+                            }}</span>
+                            <el-switch v-model="showSameInstance" />
                         </div>
-                    </div>
-                    <div class="friend-view__settings-row">
-                        <span class="friend-view__settings-label">{{ t('view.friends_locations.spacing') }}</span>
-                        <div class="friend-view__scale-control">
-                            <span class="friend-view__scale-value">{{ cardSpacingPercentLabel }}&nbsp;</span>
-                            <el-slider
-                                v-model="cardSpacing"
-                                class="friend-view__slider"
-                                :min="0.25"
-                                :max="1.0"
-                                :step="0.05"
-                                :show-tooltip="false" />
+                        <div class="friend-view__settings-row">
+                            <span class="friend-view__settings-label">{{ t('view.friends_locations.scale') }}</span>
+                            <div class="friend-view__scale-control">
+                                <span class="friend-view__scale-value">{{ cardScalePercentLabel }}&nbsp;</span>
+                                <el-slider
+                                    v-model="cardScale"
+                                    class="friend-view__slider"
+                                    :min="0.5"
+                                    :max="1.0"
+                                    :step="0.01"
+                                    :show-tooltip="false" />
+                            </div>
                         </div>
-                    </div>
-                </el-popover>
+                        <div class="friend-view__settings-row">
+                            <span class="friend-view__settings-label">{{ t('view.friends_locations.spacing') }}</span>
+                            <div class="friend-view__scale-control">
+                                <span class="friend-view__scale-value">{{ cardSpacingPercentLabel }}&nbsp;</span>
+                                <el-slider
+                                    v-model="cardSpacing"
+                                    class="friend-view__slider"
+                                    :min="0.25"
+                                    :max="1.0"
+                                    :step="0.05"
+                                    :show-tooltip="false" />
+                            </div>
+                        </div>
+                    </PopoverContent>
+                </Popover>
             </div>
         </div>
         <div v-else class="friend-view__toolbar friend-view__toolbar--loading">
@@ -167,6 +169,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { getFriendsLocations } from '../../shared/utils/location.js';
     import { useFriendStore } from '../../stores';
 

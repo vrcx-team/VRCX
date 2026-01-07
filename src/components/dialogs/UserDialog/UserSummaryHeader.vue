@@ -182,8 +182,8 @@
                             <span v-if="badge.hidden">&nbsp;(Hidden)</span>
                         </template>
                         <div style="display: inline-block">
-                            <el-popover placement="bottom" :width="300" trigger="click">
-                                <template #reference>
+                            <Popover>
+                                <PopoverTrigger asChild>
                                     <img
                                         class="x-link x-user-badge"
                                         :src="badge.badgeImageUrl"
@@ -198,40 +198,44 @@
                                         "
                                         :class="{ 'x-user-badge-hidden': badge.hidden }"
                                         loading="lazy" />
-                                </template>
-                                <img
-                                    :src="badge.badgeImageUrl"
-                                    :class="['x-link', 'x-popover-image']"
-                                    @click="showFullscreenImageDialog(badge.badgeImageUrl)"
-                                    loading="lazy" />
-                                <br />
-                                <div style="display: block; width: 275px; word-break: normal">
-                                    <span>{{ badge.badgeName }}</span>
+                                </PopoverTrigger>
+                                <PopoverContent side="bottom" class="w-[300px]">
+                                    <img
+                                        :src="badge.badgeImageUrl"
+                                        :class="['x-link', 'x-popover-image']"
+                                        @click="showFullscreenImageDialog(badge.badgeImageUrl)"
+                                        loading="lazy" />
                                     <br />
-                                    <span class="x-grey" style="font-size: 12px">{{ badge.badgeDescription }}</span>
-                                    <br />
-                                    <span
-                                        v-if="badge.assignedAt"
-                                        class="x-grey"
-                                        style="font-family: monospace; font-size: 12px">
-                                        {{ t('dialog.user.badges.assigned') }}:
-                                        {{ formatDateFilter(badge.assignedAt, 'long') }}
-                                    </span>
-                                    <template v-if="userDialog.id === currentUser.id">
+                                    <div style="display: block; width: 275px; word-break: normal">
+                                        <span>{{ badge.badgeName }}</span>
                                         <br />
-                                        <el-checkbox
-                                            v-model="badge.hidden"
-                                            style="margin-top: 5px"
-                                            @change="toggleBadgeVisibility(badge)">
-                                            {{ t('dialog.user.badges.hidden') }}
-                                        </el-checkbox>
+                                        <span class="x-grey" style="font-size: 12px">{{ badge.badgeDescription }}</span>
                                         <br />
-                                        <el-checkbox v-model="badge.showcased" @change="toggleBadgeShowcased(badge)">
-                                            {{ t('dialog.user.badges.showcased') }}
-                                        </el-checkbox>
-                                    </template>
-                                </div>
-                            </el-popover>
+                                        <span
+                                            v-if="badge.assignedAt"
+                                            class="x-grey"
+                                            style="font-family: monospace; font-size: 12px">
+                                            {{ t('dialog.user.badges.assigned') }}:
+                                            {{ formatDateFilter(badge.assignedAt, 'long') }}
+                                        </span>
+                                        <template v-if="userDialog.id === currentUser.id">
+                                            <br />
+                                            <el-checkbox
+                                                v-model="badge.hidden"
+                                                style="margin-top: 5px"
+                                                @change="toggleBadgeVisibility(badge)">
+                                                {{ t('dialog.user.badges.hidden') }}
+                                            </el-checkbox>
+                                            <br />
+                                            <el-checkbox
+                                                v-model="badge.showcased"
+                                                @change="toggleBadgeShowcased(badge)">
+                                                {{ t('dialog.user.badges.showcased') }}
+                                            </el-checkbox>
+                                        </template>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
                         </div>
                     </TooltipWrapper>
                 </div>
@@ -260,6 +264,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { formatDateFilter, languageClass, userImage, userStatusClass } from '../../../shared/utils';
+    import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover';
     import { useGalleryStore, useUserStore } from '../../../stores';
     import { Badge } from '../../ui/badge';
 
