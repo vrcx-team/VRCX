@@ -1,10 +1,10 @@
 #nullable enable
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Xml;
 using Newtonsoft.Json;
 using NLog;
@@ -15,7 +15,7 @@ namespace VRCX
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly ScreenshotMetadataDatabase CacheDatabase = new(Path.Join(Program.AppDataDirectory, "metadataCache.db"));
-        private static readonly Dictionary<string, ScreenshotMetadata?> MetadataCache = new();
+        private static readonly ConcurrentDictionary<string, ScreenshotMetadata?> MetadataCache = new();
 
         public enum ScreenshotSearchType
         {
@@ -36,7 +36,7 @@ namespace VRCX
             
             var metadataStr = CacheDatabase.GetMetadataById(id);
             var metadataObj = metadataStr == null ? null : JsonConvert.DeserializeObject<ScreenshotMetadata>(metadataStr);
-            MetadataCache.Add(filePath, metadataObj);
+            MetadataCache.TryAdd(filePath, metadataObj);
 
             metadata = metadataObj;
             return true;

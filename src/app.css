@@ -463,8 +463,7 @@ html.dark .x-friend-item > .detail > .extra,
 }
 
 .el-select__wrapper {
-    height: var(--el-component-size);
-    padding: 0 12px;
+    padding: 4px 12px;
 }
 
 .el-table {

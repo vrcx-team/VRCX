@@ -54,7 +54,6 @@
             <!-- Search bar input -->
             <el-input
                 v-model="screenshotMetadataDialog.search"
-                size="small"
                 placeholder="Search"
                 clearable
                 style="width: 200px"
@@ -62,7 +61,6 @@
             <!-- Search type dropdown -->
             <el-select
                 v-model="screenshotMetadataDialog.searchType"
-                size="small"
                 placeholder="Search Type"
                 style="width: 150px; margin-left: 10px"
                 @change="screenshotMetadataSearch">
