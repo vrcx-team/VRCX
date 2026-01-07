@@ -26,13 +26,12 @@
                                     <span>Scale</span>
                                     <span class="favorites-dropdown__control-value">{{ avatarCardScalePercent }}%</span>
                                 </div>
-                                <el-slider
-                                    v-model="avatarCardScale"
+                                <Slider
+                                    v-model="avatarCardScaleValue"
                                     class="favorites-dropdown__slider"
                                     :min="avatarCardScaleSlider.min"
                                     :max="avatarCardScaleSlider.max"
-                                    :step="avatarCardScaleSlider.step"
-                                    :show-tooltip="false" />
+                                    :step="avatarCardScaleSlider.step" />
                             </li>
                             <li class="favorites-dropdown__control" @click.stop>
                                 <div class="favorites-dropdown__control-header">
@@ -41,13 +40,12 @@
                                         {{ avatarCardSpacingPercent }}%
                                     </span>
                                 </div>
-                                <el-slider
-                                    v-model="avatarCardSpacing"
+                                <Slider
+                                    v-model="avatarCardSpacingValue"
                                     class="favorites-dropdown__slider"
                                     :min="avatarCardSpacingSlider.min"
                                     :max="avatarCardSpacingSlider.max"
-                                    :step="avatarCardSpacingSlider.step"
-                                    :show-tooltip="false" />
+                                    :step="avatarCardSpacingSlider.step" />
                             </li>
                             <el-dropdown-item @click="handleAvatarImportClick">
                                 {{ t('view.favorite.import') }}
@@ -106,7 +104,7 @@
                                                     circle
                                                     @click.stop></el-button>
                                             </PopoverTrigger>
-                                            <PopoverContent side="right" class="w-[220px] p-1 rounded-lg">
+                                            <PopoverContent side="right" class="w-55 p-1 rounded-lg">
                                                 <div class="favorites-group-menu">
                                                     <button
                                                         type="button"
@@ -220,7 +218,7 @@
                                                         circle
                                                         @click.stop></el-button>
                                                 </PopoverTrigger>
-                                                <PopoverContent side="right" class="w-[200px] p-1 rounded-lg">
+                                                <PopoverContent side="right" class="w-50 p-1 rounded-lg">
                                                     <div class="favorites-group-menu">
                                                         <button
                                                             type="button"
@@ -284,7 +282,7 @@
                                 <PopoverTrigger asChild>
                                     <el-button text size="small" :icon="MoreFilled" circle @click.stop></el-button>
                                 </PopoverTrigger>
-                                <PopoverContent side="right" class="w-[180px] p-1 rounded-lg">
+                                <PopoverContent side="right" class="w-45 p-1 rounded-lg">
                                     <div class="favorites-group-menu">
                                         <button
                                             type="button"
@@ -493,6 +491,7 @@
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { avatarRequest, favoriteRequest } from '../../api';
     import { Badge } from '../../components/ui/badge';
+    import { Slider } from '../../components/ui/slider';
     import { Switch } from '../../components/ui/switch';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
 
@@ -573,6 +572,24 @@
 
     const avatarCardScalePercent = computed(() => Math.round(avatarCardScale.value * 100));
     const avatarCardSpacingPercent = computed(() => Math.round(avatarCardSpacing.value * 100));
+    const avatarCardScaleValue = computed({
+        get: () => [avatarCardScale.value],
+        set: (value) => {
+            const next = value?.[0];
+            if (typeof next === 'number') {
+                avatarCardScale.value = next;
+            }
+        }
+    });
+    const avatarCardSpacingValue = computed({
+        get: () => [avatarCardSpacing.value],
+        set: (value) => {
+            const next = value?.[0];
+            if (typeof next === 'number') {
+                avatarCardSpacing.value = next;
+            }
+        }
+    });
 
     const avatarExportDialogVisible = ref(false);
     const avatarFavoriteSearch = ref('');

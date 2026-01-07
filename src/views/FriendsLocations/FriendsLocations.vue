@@ -19,7 +19,7 @@
                             </TooltipWrapper>
                         </div>
                     </PopoverTrigger>
-                    <PopoverContent side="bottom" class="w-[350px]">
+                    <PopoverContent side="bottom" class="w-87.5">
                         <div style="display: flex; justify-content: space-between; align-items: center">
                             <span class="friend-view__settings-label">{{
                                 t('view.friends_locations.separate_same_instance_friends')
@@ -30,26 +30,24 @@
                             <span class="friend-view__settings-label">{{ t('view.friends_locations.scale') }}</span>
                             <div class="friend-view__scale-control">
                                 <span class="friend-view__scale-value">{{ cardScalePercentLabel }}&nbsp;</span>
-                                <el-slider
-                                    v-model="cardScale"
+                                <Slider
+                                    v-model="cardScaleValue"
                                     class="friend-view__slider"
                                     :min="0.5"
                                     :max="1.0"
-                                    :step="0.01"
-                                    :show-tooltip="false" />
+                                    :step="0.01" />
                             </div>
                         </div>
                         <div class="friend-view__settings-row">
                             <span class="friend-view__settings-label">{{ t('view.friends_locations.spacing') }}</span>
                             <div class="friend-view__scale-control">
                                 <span class="friend-view__scale-value">{{ cardSpacingPercentLabel }}&nbsp;</span>
-                                <el-slider
-                                    v-model="cardSpacing"
+                                <Slider
+                                    v-model="cardSpacingValue"
                                     class="friend-view__slider"
                                     :min="0.25"
                                     :max="1.0"
-                                    :step="0.05"
-                                    :show-tooltip="false" />
+                                    :step="0.05" />
                             </div>
                         </div>
                     </PopoverContent>
@@ -170,6 +168,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
+    import { Slider } from '../../components/ui/slider';
     import { Switch } from '../../components/ui/switch';
     import { getFriendsLocations } from '../../shared/utils/location.js';
     import { useFriendStore } from '../../stores';
@@ -218,6 +217,24 @@
 
     const cardScalePercentLabel = computed(() => `${Math.round(cardScale.value * 100)}%`);
     const cardSpacingPercentLabel = computed(() => `${Math.round(cardSpacing.value * 100)}%`);
+    const cardScaleValue = computed({
+        get: () => [cardScale.value],
+        set: (value) => {
+            const next = value?.[0];
+            if (typeof next === 'number') {
+                cardScale.value = next;
+            }
+        }
+    });
+    const cardSpacingValue = computed({
+        get: () => [cardSpacing.value],
+        set: (value) => {
+            const next = value?.[0];
+            if (typeof next === 'number') {
+                cardSpacing.value = next;
+            }
+        }
+    });
 
     const showSameInstanceBase = ref(false);
 

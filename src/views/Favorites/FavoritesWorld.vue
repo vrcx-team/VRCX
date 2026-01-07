@@ -28,13 +28,12 @@
                                         {{ worldCardScalePercent }}%
                                     </span>
                                 </div>
-                                <el-slider
-                                    v-model="worldCardScale"
+                                <Slider
+                                    v-model="worldCardScaleValue"
                                     class="favorites-dropdown__slider"
                                     :min="worldCardScaleSlider.min"
                                     :max="worldCardScaleSlider.max"
-                                    :step="worldCardScaleSlider.step"
-                                    :show-tooltip="false" />
+                                    :step="worldCardScaleSlider.step" />
                             </li>
                             <li class="favorites-dropdown__control" @click.stop>
                                 <div class="favorites-dropdown__control-header">
@@ -43,13 +42,12 @@
                                         {{ worldCardSpacingPercent }}%
                                     </span>
                                 </div>
-                                <el-slider
-                                    v-model="worldCardSpacing"
+                                <Slider
+                                    v-model="worldCardSpacingValue"
                                     class="favorites-dropdown__slider"
                                     :min="worldCardSpacingSlider.min"
                                     :max="worldCardSpacingSlider.max"
-                                    :step="worldCardSpacingSlider.step"
-                                    :show-tooltip="false" />
+                                    :step="worldCardSpacingSlider.step" />
                             </li>
                             <el-dropdown-item @click="handleWorldImportClick">
                                 {{ t('view.favorite.import') }}
@@ -108,7 +106,7 @@
                                                     circle
                                                     @click.stop></el-button>
                                             </PopoverTrigger>
-                                            <PopoverContent side="right" class="w-[200px] p-1 rounded-lg">
+                                            <PopoverContent side="right" class="w-50 p-1 rounded-lg">
                                                 <div class="favorites-group-menu">
                                                     <button
                                                         type="button"
@@ -222,7 +220,7 @@
                                                             circle
                                                             @click.stop></el-button>
                                                     </PopoverTrigger>
-                                                    <PopoverContent side="right" class="w-[200px] p-1 rounded-lg">
+                                                    <PopoverContent side="right" class="w-50 p-1 rounded-lg">
                                                         <div class="favorites-group-menu">
                                                             <button
                                                                 type="button"
@@ -412,6 +410,7 @@
     import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../stores';
     import { favoriteRequest, worldRequest } from '../../api';
     import { Badge } from '../../components/ui/badge';
+    import { Slider } from '../../components/ui/slider';
     import { Switch } from '../../components/ui/switch';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
 
@@ -485,6 +484,24 @@
 
     const worldCardScalePercent = computed(() => Math.round(worldCardScale.value * 100));
     const worldCardSpacingPercent = computed(() => Math.round(worldCardSpacing.value * 100));
+    const worldCardScaleValue = computed({
+        get: () => [worldCardScale.value],
+        set: (value) => {
+            const next = value?.[0];
+            if (typeof next === 'number') {
+                worldCardScale.value = next;
+            }
+        }
+    });
+    const worldCardSpacingValue = computed({
+        get: () => [worldCardSpacing.value],
+        set: (value) => {
+            const next = value?.[0];
+            if (typeof next === 'number') {
+                worldCardSpacing.value = next;
+            }
+        }
+    });
 
     const worldGroupVisibilityOptions = ref(['public', 'friends', 'private']);
     const worldSplitterSize = ref(260);

@@ -77,12 +77,9 @@
                 <span class="name" style="vertical-align: top; padding-top: 10px">{{
                     t('view.settings.notifications.notifications.steamvr_notifications.notification_opacity')
                 }}</span>
-                <el-slider
-                    :model-value="notificationOpacity"
-                    @input="setNotificationOpacity"
-                    :min="0"
-                    :max="100"
-                    style="display: inline-block; width: 300px; padding-top: 16px" />
+                <div style="flex: 0 0 300px; width: 300px; max-width: 100%; padding-top: 16px">
+                    <Slider v-model="notificationOpacityValue" :min="0" :max="100" />
+                </div>
             </div>
             <div class="options-container-item">
                 <el-button
@@ -162,7 +159,7 @@
                     :model-value="desktopToast"
                     size="small"
                     style="margin-top: 5px"
-                    @change="setDesktopToast($event)">
+                    @change="setDesktopToast(String($event))">
                     <el-radio-button value="Never">{{
                         t('view.settings.notifications.notifications.conditions.never')
                     }}</el-radio-button>
@@ -274,6 +271,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAdvancedSettingsStore, useNotificationsSettingsStore, useVrStore } from '../../../../stores';
+    import { Slider } from '../../../../components/ui/slider';
 
     import FeedFiltersDialog from '../../dialogs/FeedFiltersDialog.vue';
     import NotificationPositionDialog from '../../dialogs/NotificationPositionDialog.vue';
@@ -327,6 +325,15 @@
     const feedFiltersDialogMode = ref('');
     const isNotificationPositionDialogVisible = ref(false);
     const isLinux = computed(() => LINUX);
+    const notificationOpacityValue = computed({
+        get: () => [notificationOpacity.value],
+        set: (value) => {
+            const next = value?.[0];
+            if (typeof next === 'number') {
+                setNotificationOpacity(next);
+            }
+        }
+    });
 
     function showNotyFeedFiltersDialog() {
         feedFiltersDialogMode.value = 'noty';

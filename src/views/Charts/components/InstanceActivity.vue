@@ -33,18 +33,16 @@
                             </TooltipWrapper>
                         </div>
                     </PopoverTrigger>
-                    <PopoverContent side="bottom" class="w-[250px]">
+                    <PopoverContent side="bottom" class="w-62.5">
                         <div class="settings">
                             <div>
                                 <span>{{ t('view.charts.instance_activity.settings.bar_width') }}</span>
                                 <div>
-                                    <el-slider
-                                        v-model.lazy="barWidth"
+                                    <Slider
+                                        v-model="barWidthDraftValue"
                                         :max="50"
                                         :min="1"
-                                        @change="
-                                            (value) => changeBarWidth(value, () => handleEchartsRerender())
-                                        "></el-slider>
+                                        @valueCommit="handleBarWidthCommit"></Slider>
                                 </div>
                             </div>
                             <div>
@@ -126,8 +124,8 @@
 </template>
 
 <script setup>
+    import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { ArrowLeft, ArrowRight, InfoFilled, Refresh, Setting, WarningFilled } from '@element-plus/icons-vue';
-    import { nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -136,6 +134,7 @@
     import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/popover';
     import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
     import { parseLocation, timeToText } from '../../../shared/utils';
+    import { Slider } from '../../../components/ui/slider';
     import { Switch } from '../../../components/ui/switch';
     import { useActivityDataProcessor } from '../composables/useActivityDataProcessor';
     import { useChartHelpers } from '../composables/useChartHelpers';
@@ -194,6 +193,27 @@
         changeIsNoFriendInstanceVisible,
         handleChangeSettings
     } = useInstanceActivitySettings();
+    const barWidthDraft = ref(barWidth.value);
+    const barWidthDraftValue = computed({
+        get: () => [barWidthDraft.value],
+        set: (value) => {
+            const next = value?.[0];
+            if (typeof next === 'number') {
+                barWidthDraft.value = next;
+            }
+        }
+    });
+
+    function handleBarWidthCommit(value) {
+        changeBarWidth(value?.[0] ?? barWidthDraft.value, () => handleEchartsRerender());
+    }
+
+    watch(
+        () => barWidth.value,
+        (value) => {
+            barWidthDraft.value = value;
+        }
+    );
 
     const {
         activityData,
