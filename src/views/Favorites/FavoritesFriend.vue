@@ -180,10 +180,7 @@
                         </div>
                         <div class="favorites-content__edit">
                             <span>{{ t('view.favorite.edit_mode') }}</span>
-                            <el-switch
-                                v-model="friendEditMode"
-                                size="small"
-                                :disabled="isSearchActive || !activeRemoteGroup"></el-switch>
+                            <Switch v-model="friendEditMode" :disabled="isSearchActive || !activeRemoteGroup" />
                         </div>
                     </div>
                     <div class="favorites-content__edit-actions">
@@ -287,6 +284,7 @@
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { useAppearanceSettingsStore, useFavoriteStore, useUserStore } from '../../stores';
     import { Badge } from '../../components/ui/badge';
+    import { Switch } from '../../components/ui/switch';
     import { favoriteRequest } from '../../api';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
     import { userImage } from '../../shared/utils';

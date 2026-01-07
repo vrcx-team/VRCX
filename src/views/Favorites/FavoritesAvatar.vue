@@ -339,10 +339,7 @@
                         </div>
                         <div class="favorites-content__edit">
                             <span>{{ t('view.favorite.edit_mode') }}</span>
-                            <el-switch
-                                v-model="avatarEditMode"
-                                size="small"
-                                :disabled="isSearchActive || !activeRemoteGroup"></el-switch>
+                            <Switch v-model="avatarEditMode" :disabled="isSearchActive || !activeRemoteGroup" />
                         </div>
                     </div>
                     <div class="favorites-content__edit-actions">
@@ -496,6 +493,7 @@
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { avatarRequest, favoriteRequest } from '../../api';
     import { Badge } from '../../components/ui/badge';
+    import { Switch } from '../../components/ui/switch';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
 
     import AvatarExportDialog from './dialogs/AvatarExportDialog.vue';

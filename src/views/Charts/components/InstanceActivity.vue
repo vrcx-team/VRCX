@@ -49,30 +49,27 @@
                             </div>
                             <div>
                                 <span>{{ t('view.charts.instance_activity.settings.show_detail') }}</span>
-                                <el-switch
+                                <Switch
                                     v-model="isDetailVisible"
-                                    @change="
+                                    @update:modelValue="
                                         (value) => changeIsDetailInstanceVisible(value, () => handleSettingsChange())
-                                    ">
-                                </el-switch>
+                                    " />
                             </div>
                             <div v-if="isDetailVisible">
                                 <span>{{ t('view.charts.instance_activity.settings.show_solo_instance') }}</span>
-                                <el-switch
+                                <Switch
                                     v-model="isSoloInstanceVisible"
-                                    @change="
+                                    @update:modelValue="
                                         (value) => changeIsSoloInstanceVisible(value, () => handleSettingsChange())
-                                    ">
-                                </el-switch>
+                                    " />
                             </div>
                             <div v-if="isDetailVisible">
                                 <span>{{ t('view.charts.instance_activity.settings.show_no_friend_instance') }}</span>
-                                <el-switch
+                                <Switch
                                     v-model="isNoFriendInstanceVisible"
-                                    @change="
+                                    @update:modelValue="
                                         (value) => changeIsNoFriendInstanceVisible(value, () => handleSettingsChange())
-                                    ">
-                                </el-switch>
+                                    " />
                             </div>
                         </div>
                     </PopoverContent>
@@ -139,6 +136,7 @@
     import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/popover';
     import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
     import { parseLocation, timeToText } from '../../../shared/utils';
+    import { Switch } from '../../../components/ui/switch';
     import { useActivityDataProcessor } from '../composables/useActivityDataProcessor';
     import { useChartHelpers } from '../composables/useChartHelpers';
     import { useDateNavigation } from '../composables/useDateNavigation';
