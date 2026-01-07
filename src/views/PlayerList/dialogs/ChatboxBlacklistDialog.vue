@@ -28,16 +28,28 @@
             </el-button>
             <br />
             <h2>{{ t('dialog.chatbox_blacklist.user_blacklist') }}</h2>
-            <el-tag
+            <Badge
                 v-for="user in chatboxUserBlacklist"
                 :key="user[0]"
-                type="info"
-                disable-transitions
-                style="margin-right: 5px; margin-top: 5px"
-                closable
-                @close="deleteChatboxUserBlacklist(user[0])">
+                variant="outline"
+                style="margin-right: 5px; margin-top: 5px">
                 <span>{{ user[1] }}</span>
-            </el-tag>
+                <button
+                    type="button"
+                    style="
+                        margin-left: 6px;
+                        border: none;
+                        background: transparent;
+                        padding: 0;
+                        display: inline-flex;
+                        align-items: center;
+                        color: inherit;
+                        cursor: pointer;
+                    "
+                    @click="deleteChatboxUserBlacklist(user[0])">
+                    <i class="ri-close-line" style="font-size: 12px; line-height: 1"></i>
+                </button>
+            </Badge>
         </div>
     </el-dialog>
 </template>
@@ -47,6 +59,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import { Badge } from '../../../components/ui/badge';
     import { usePhotonStore } from '../../../stores';
 
     const { t } = useI18n();
@@ -63,7 +76,6 @@
     });
 
     const emit = defineEmits(['deleteChatboxUserBlacklist']);
-
 
     function deleteChatboxUserBlacklist(userId) {
         emit('deleteChatboxUserBlacklist', userId);

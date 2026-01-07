@@ -2,6 +2,7 @@
     import { Primitive } from 'reka-ui';
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
+    import { useAttrs } from 'vue';
 
     import { badgeVariants } from '.';
 
@@ -13,10 +14,14 @@
     });
 
     const delegatedProps = reactiveOmit(props, 'class');
+    const attrs = useAttrs();
 </script>
 
 <template>
-    <Primitive data-slot="badge" :class="cn(badgeVariants({ variant }), props.class)" v-bind="delegatedProps">
+    <Primitive
+        data-slot="badge"
+        :class="cn(badgeVariants({ variant }), props.class)"
+        v-bind="{ ...delegatedProps, ...attrs }">
         <slot />
     </Primitive>
 </template>

@@ -62,13 +62,13 @@
                     </div>
                     <div class="custom-nav-entry__folder-items">
                         <template v-if="entry.items?.length">
-                            <el-tag
+                            <Badge
                                 v-for="key in entry.items"
                                 :key="`${entry.id}-${key}`"
-                                size="small"
+                                variant="outline"
                                 class="custom-nav-entry__folder-tag">
                                 {{ t(definitionsMap.get(key)?.labelKey || key) }}
-                            </el-tag>
+                            </Badge>
                         </template>
                         <span v-else class="custom-nav-entry__folder-empty">
                             {{ t('nav_menu.custom_nav.folder_empty') }}
@@ -205,6 +205,7 @@
 
     import dayjs from 'dayjs';
 
+    import { Badge } from '../ui/badge';
     import { navDefinitions } from '../../shared/constants/ui.js';
 
     import IconPicker from '../IconPicker.vue';

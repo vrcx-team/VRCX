@@ -92,12 +92,9 @@
                                         <span class="group-item__count">{{ group.count }}/{{ group.capacity }}</span>
                                     </div>
                                     <div class="group-item__bottom">
-                                        <el-tag
-                                            size="small"
-                                            effect="plain"
-                                            :type="userFavoriteFriendsStatusForFavTab(group.visibility)">
+                                        <Badge variant="outline">
                                             {{ formatVisibility(group.visibility) }}
-                                        </el-tag>
+                                        </Badge>
                                         <el-popover
                                             :visible="activeGroupMenu === remoteGroupMenuKey(group.key)"
                                             @update:visible="
@@ -290,6 +287,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAppearanceSettingsStore, useFavoriteStore, useUserStore } from '../../stores';
+    import { Badge } from '../../components/ui/badge';
     import { favoriteRequest } from '../../api';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
     import { userImage } from '../../shared/utils';
@@ -713,16 +711,6 @@
             refreshFavorites();
             return args;
         });
-    }
-
-    function userFavoriteFriendsStatusForFavTab(visibility) {
-        if (visibility === 'public') {
-            return 'primary';
-        }
-        if (visibility === 'friends') {
-            return 'success';
-        }
-        return 'info';
     }
 
     function formatVisibility(value) {

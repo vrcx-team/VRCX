@@ -92,12 +92,9 @@
                                         <span class="group-item__count">{{ group.count }}/{{ group.capacity }}</span>
                                     </div>
                                     <div class="group-item__bottom">
-                                        <el-tag
-                                            size="small"
-                                            effect="plain"
-                                            :type="userFavoriteWorldsStatusForFavTab(group.visibility)">
+                                        <Badge variant="outline">
                                             {{ formatVisibility(group.visibility) }}
-                                        </el-tag>
+                                        </Badge>
                                         <el-popover
                                             :visible="activeGroupMenu === remoteGroupMenuKey(group.key)"
                                             @update:visible="
@@ -416,6 +413,7 @@
 
     import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../stores';
     import { favoriteRequest, worldRequest } from '../../api';
+    import { Badge } from '../../components/ui/badge';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
 
     import FavoritesWorldItem from './components/FavoritesWorldItem.vue';
@@ -966,16 +964,6 @@
     function handleRefreshFavorites() {
         refreshFavorites();
         getLocalWorldFavorites();
-    }
-
-    function userFavoriteWorldsStatusForFavTab(visibility) {
-        if (visibility === 'public') {
-            return 'primary';
-        }
-        if (visibility === 'friends') {
-            return 'success';
-        }
-        return 'info';
     }
 
     function changeWorldGroupVisibility(name, visibility, menuKey = null) {

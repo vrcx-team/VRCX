@@ -44,91 +44,60 @@
                             v-text="currentInstanceWorld.ref.authorName"></span>
                     </div>
                     <div style="margin-top: 5px">
-                        <el-tag
-                            v-if="currentInstanceWorld.ref.$isLabs"
-                            type="primary"
-                            effect="plain"
-                            size="small"
-                            style="margin-right: 5px"
-                            >{{ t('dialog.world.tags.labs') }}</el-tag
-                        >
-                        <el-tag
+                        <Badge v-if="currentInstanceWorld.ref.$isLabs" variant="outline" style="margin-right: 5px">
+                            {{ t('dialog.world.tags.labs') }}
+                        </Badge>
+                        <Badge
                             v-else-if="currentInstanceWorld.ref.releaseStatus === 'public'"
-                            type="success"
-                            effect="plain"
-                            size="small"
-                            style="margin-right: 5px"
-                            >{{ t('dialog.world.tags.public') }}</el-tag
-                        >
-                        <el-tag
+                            variant="outline"
+                            style="margin-right: 5px">
+                            {{ t('dialog.world.tags.public') }}
+                        </Badge>
+                        <Badge
                             v-else-if="currentInstanceWorld.ref.releaseStatus === 'private'"
-                            type="danger"
-                            effect="plain"
-                            size="small"
-                            style="margin-right: 5px"
-                            >{{ t('dialog.world.tags.private') }}</el-tag
-                        >
+                            variant="outline"
+                            style="margin-right: 5px">
+                            {{ t('dialog.world.tags.private') }}
+                        </Badge>
                         <TooltipWrapper v-if="currentInstanceWorld.isPC" side="top" content="PC">
-                            <el-tag
-                                class="x-tag-platform-pc"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                style="margin-right: 5px"
+                            <Badge class="x-tag-platform-pc" variant="outline" style="margin-right: 5px"
                                 ><i class="ri-computer-line"></i>
                                 <span
                                     v-if="currentInstanceWorld.bundleSizes['standalonewindows']"
                                     :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
                                     >{{ currentInstanceWorld.bundleSizes['standalonewindows'].fileSize }}</span
                                 >
-                            </el-tag>
+                            </Badge>
                         </TooltipWrapper>
                         <TooltipWrapper v-if="currentInstanceWorld.isQuest" side="top" content="Android">
-                            <el-tag
-                                class="x-tag-platform-quest"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                style="margin-right: 5px"
+                            <Badge class="x-tag-platform-quest" variant="outline" style="margin-right: 5px"
                                 ><i class="ri-android-line"></i>
                                 <span
                                     v-if="currentInstanceWorld.bundleSizes['android']"
                                     :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
                                     >{{ currentInstanceWorld.bundleSizes['android'].fileSize }}</span
                                 >
-                            </el-tag>
+                            </Badge>
                         </TooltipWrapper>
                         <TooltipWrapper v-if="currentInstanceWorld.isIos" side="top" content="iOS">
-                            <el-tag
-                                class="x-tag-platform-ios"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                style="margin-right: 5px"
+                            <Badge class="x-tag-platform-ios" variant="outline" style="margin-right: 5px"
                                 ><i class="ri-apple-line"></i>
                                 <span
                                     v-if="currentInstanceWorld.bundleSizes['ios']"
                                     :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']"
                                     >{{ currentInstanceWorld.bundleSizes['ios'].fileSize }}</span
                                 >
-                            </el-tag>
+                            </Badge>
                         </TooltipWrapper>
-                        <el-tag
+                        <Badge
                             v-if="currentInstanceWorld.avatarScalingDisabled"
-                            type="warning"
-                            effect="plain"
-                            size="small"
-                            style="margin-right: 5px; margin-top: 5px"
-                            >{{ t('dialog.world.tags.avatar_scaling_disabled') }}</el-tag
-                        >
-                        <el-tag
-                            v-if="currentInstanceWorld.inCache"
-                            type="info"
-                            effect="plain"
-                            size="small"
-                            style="margin-right: 5px">
+                            variant="outline"
+                            style="margin-right: 5px; margin-top: 5px">
+                            {{ t('dialog.world.tags.avatar_scaling_disabled') }}
+                        </Badge>
+                        <Badge v-if="currentInstanceWorld.inCache" variant="outline" style="margin-right: 5px">
                             <span>{{ currentInstanceWorld.cacheSize }} {{ t('dialog.world.tags.cache') }}</span>
-                        </el-tag>
+                        </Badge>
                     </div>
                     <div style="margin-top: 5px">
                         <LocationWorld :locationobject="currentInstanceLocation" :currentuserid="currentUser.id" />
@@ -215,6 +184,7 @@
         useWorldStore
     } from '../../stores';
     import { commaNumber, formatDateFilter } from '../../shared/utils';
+    import { Badge } from '../../components/ui/badge';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { createColumns } from './columns.jsx';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';

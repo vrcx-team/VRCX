@@ -7,19 +7,28 @@
         append-to-body>
         <div v-loading="languageDialog.loading">
             <div v-for="item in currentUser.$languages" :key="item.key" style="margin: 6px 0">
-                <el-tag
-                    size="small"
-                    type="info"
-                    effect="plain"
-                    closable
-                    style="margin-right: 5px"
-                    @close="removeUserLanguage(item.key)">
+                <Badge variant="outline" style="margin-right: 5px">
                     <span
                         class="flags"
                         :class="languageClass(item.key)"
                         style="display: inline-block; margin-right: 5px"></span>
                     {{ item.value }} ({{ item.key.toUpperCase() }})
-                </el-tag>
+                    <button
+                        type="button"
+                        style="
+                            margin-left: 6px;
+                            border: none;
+                            background: transparent;
+                            padding: 0;
+                            display: inline-flex;
+                            align-items: center;
+                            color: inherit;
+                            cursor: pointer;
+                        "
+                        @click="removeUserLanguage(item.key)">
+                        <i class="ri-close-line" style="font-size: 12px; line-height: 1"></i>
+                    </button>
+                </Badge>
             </div>
             <el-select
                 :disabled="languageDialog.loading || (currentUser.$languages && currentUser.$languages.length === 3)"
@@ -46,6 +55,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import { Badge } from '../../ui/badge';
     import { languageClass } from '../../../shared/utils';
     import { useUserStore } from '../../../stores';
     import { userRequest } from '../../../api';
