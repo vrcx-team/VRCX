@@ -19,12 +19,17 @@ export function useDataTableScrollHeight(containerRef, options = {}) {
             return 0;
         }
         const style = getComputedStyle(el);
-        return (Number.parseFloat(style.paddingTop) || 0) + (Number.parseFloat(style.paddingBottom) || 0);
+        return (
+            (Number.parseFloat(style.paddingTop) || 0) +
+            (Number.parseFloat(style.paddingBottom) || 0)
+        );
     };
 
     const getHeight = (maybeRef) => {
         const el = maybeRef?.value;
-        return el && typeof el.getBoundingClientRect === 'function' ? el.getBoundingClientRect().height : 0;
+        return el && typeof el.getBoundingClientRect === 'function'
+            ? el.getBoundingClientRect().height
+            : 0;
     };
 
     const recalc = () => {
@@ -33,7 +38,10 @@ export function useDataTableScrollHeight(containerRef, options = {}) {
             return;
         }
 
-        const extraOffset = extraOffsetRefs.reduce((sum, ref) => sum + getHeight(ref), 0);
+        const extraOffset = extraOffsetRefs.reduce(
+            (sum, ref) => sum + getHeight(ref),
+            0
+        );
 
         const available =
             containerEl.clientHeight -
@@ -51,10 +59,12 @@ export function useDataTableScrollHeight(containerRef, options = {}) {
             return;
         }
 
-        const nextObserved = new Set([
-            containerRef?.value,
-            ...extraOffsetRefs.map((ref) => ref?.value)
-        ].filter(Boolean));
+        const nextObserved = new Set(
+            [
+                containerRef?.value,
+                ...extraOffsetRefs.map((ref) => ref?.value)
+            ].filter(Boolean)
+        );
 
         for (const el of observedElements) {
             if (!nextObserved.has(el)) {
@@ -93,7 +103,8 @@ export function useDataTableScrollHeight(containerRef, options = {}) {
     });
 
     const tableStyle = computed(() => {
-        if (!Number.isFinite(maxHeight.value) || maxHeight.value <= 0) return undefined;
+        if (!Number.isFinite(maxHeight.value) || maxHeight.value <= 0)
+            return undefined;
         return { maxHeight: `${maxHeight.value}px` };
     });
 
