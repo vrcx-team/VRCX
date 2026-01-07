@@ -1,4 +1,4 @@
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useAppearanceSettingsStore } from '../stores';
@@ -15,14 +15,17 @@ export function useAuthenticatedLayoutResizable() {
     const { asideWidth, isNavCollapsed, isSideBarTabShow, navWidth } =
         storeToRefs(appearanceStore);
 
-    const panelGroupRef = ref(null);
-    const navPanelRef = ref(null);
-    const navExpandedSize = ref(null);
-
     const fallbackWidth =
         typeof window !== 'undefined' && window.innerWidth
             ? window.innerWidth
             : 1200;
+
+    const panelGroupRef = ref(null);
+    const navPanelRef = ref(null);
+    const navExpandedSize = ref(null);
+    const groupWidth = ref(fallbackWidth);
+    let resizeObserver = null;
+    let windowResizeHandler = null;
 
     const getGroupWidth = () => {
         const element = panelGroupRef.value?.$el ?? panelGroupRef.value;
@@ -42,7 +45,9 @@ export function useAuthenticatedLayoutResizable() {
         layout.length >= 3 &&
         layout[layout.length - 1] <= 1;
 
-    const navCollapsedSize = computed(() => pxToPercent(navCollapsedPx));
+    const navCollapsedSize = computed(() =>
+        pxToPercent(navCollapsedPx, groupWidth.value)
+    );
     const navExpandedPx = computed(() => navWidth.value || navDefaultPx);
 
     const navDefaultSize = computed(() =>
@@ -75,15 +80,15 @@ export function useAuthenticatedLayoutResizable() {
             return;
         }
 
-        const groupWidth = getGroupWidth();
-        if (!Number.isFinite(groupWidth) || groupWidth <= 0) {
+        const width = getGroupWidth();
+        if (!Number.isFinite(width) || width <= 0) {
             return;
         }
 
         const navSize = sizes[0];
         if (!isNavCollapsed.value && Number.isFinite(navSize) && navSize > 0) {
             navExpandedSize.value = navSize;
-            setNavWidth(Math.round(percentToPx(navSize, groupWidth)));
+            setNavWidth(Math.round(percentToPx(navSize, width)));
         }
 
         if (!isSideBarTabShow.value || sizes.length < 3) {
@@ -100,11 +105,18 @@ export function useAuthenticatedLayoutResizable() {
             return;
         }
 
-        setAsideWidth(Math.round(percentToPx(asideSize, groupWidth)));
+        setAsideWidth(Math.round(percentToPx(asideSize, width)));
     };
 
     const resizeNavPanel = (targetSize) =>
         navPanelRef.value?.resize?.(targetSize);
+
+    const updateGroupWidth = () => {
+        groupWidth.value = getGroupWidth();
+        if (isNavCollapsed.value) {
+            resizeNavPanel(navCollapsedSize.value);
+        }
+    };
 
     watch(isNavCollapsed, async (collapsed) => {
         await nextTick();
@@ -119,12 +131,33 @@ export function useAuthenticatedLayoutResizable() {
 
     onMounted(async () => {
         await nextTick();
+        updateGroupWidth();
         let panelSize = null;
         panelSize = navPanelRef.value?.getSize?.() ?? null;
 
         navExpandedSize.value = panelSize ?? navDefaultSize.value;
         if (isNavCollapsed.value) {
             resizeNavPanel(navCollapsedSize.value);
+        }
+
+        const element = panelGroupRef.value?.$el ?? panelGroupRef.value;
+        if (element && typeof ResizeObserver !== 'undefined') {
+            resizeObserver = new ResizeObserver(updateGroupWidth);
+            resizeObserver.observe(element);
+        } else if (typeof window !== 'undefined') {
+            windowResizeHandler = updateGroupWidth;
+            window.addEventListener('resize', windowResizeHandler);
+        }
+    });
+
+    onUnmounted(() => {
+        if (resizeObserver) {
+            resizeObserver.disconnect();
+            resizeObserver = null;
+        }
+        if (windowResizeHandler && typeof window !== 'undefined') {
+            window.removeEventListener('resize', windowResizeHandler);
+            windowResizeHandler = null;
         }
     });
 
