@@ -24,69 +24,82 @@
                         </span>
                         <div style="float: right; margin-top: 5px">
                             <span style="margin-right: 5px">{{ t('dialog.group.members.sort_by') }}</span>
-                            <el-dropdown
-                                trigger="click"
-                                size="small"
-                                style="margin-right: 5px"
-                                :disabled="
-                                    Boolean(
-                                        isGroupMembersLoading ||
-                                        memberSearch.length ||
-                                        !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
-                                    )
-                                ">
-                                <el-button size="small" @click.stop>
-                                    <span
-                                        >{{ t(memberSortOrder.name) }}
-                                        <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
-                                    </span>
-                                </el-button>
-                                <template #dropdown>
-                                    <el-dropdown-menu>
-                                        <el-dropdown-item
-                                            v-for="item in groupDialogSortingOptions"
-                                            :key="item.name"
-                                            @click="setGroupMemberSortOrder(item)">
-                                            {{ t(item.name) }}
-                                        </el-dropdown-item>
-                                    </el-dropdown-menu>
-                                </template>
-                            </el-dropdown>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger
+                                    as-child
+                                    :disabled="
+                                        Boolean(
+                                            isGroupMembersLoading ||
+                                            memberSearch.length ||
+                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
+                                        )
+                                    ">
+                                    <el-button
+                                        size="small"
+                                        :disabled="
+                                            Boolean(
+                                                isGroupMembersLoading ||
+                                                memberSearch.length ||
+                                                !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
+                                            )
+                                        "
+                                        @click.stop>
+                                        <span>
+                                            {{ t(memberSortOrder.name) }}
+                                            <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
+                                        </span>
+                                    </el-button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    <DropdownMenuItem
+                                        v-for="item in groupDialogSortingOptions"
+                                        :key="item.name"
+                                        @click="setGroupMemberSortOrder(item)">
+                                        {{ t(item.name) }}
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                             <span style="margin-right: 5px">{{ t('dialog.group.members.filter') }}</span>
-                            <el-dropdown
-                                trigger="click"
-                                size="small"
-                                style="margin-right: 5px"
-                                :disabled="
-                                    Boolean(
-                                        isGroupMembersLoading ||
-                                        memberSearch.length ||
-                                        !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
-                                    )
-                                ">
-                                <el-button size="small" @click.stop>
-                                    <span
-                                        >{{ t(memberFilter.name) }}
-                                        <el-icon style="margin-left: 5px"><ArrowDown /></el-icon
-                                    ></span>
-                                </el-button>
-                                <template #dropdown>
-                                    <el-dropdown-menu>
-                                        <el-dropdown-item
-                                            v-for="item in groupDialogFilterOptions"
-                                            :key="item.name"
-                                            @click="setGroupMemberFilter(item)"
-                                            v-text="t(item.name)"></el-dropdown-item>
-                                        <template v-for="role in groupMemberModeration.groupRef.roles" :key="role.name">
-                                            <el-dropdown-item
-                                                v-if="!role.defaultRole"
-                                                @click="setGroupMemberFilter(role)">
-                                                {{ t(role.name) }}
-                                            </el-dropdown-item>
-                                        </template>
-                                    </el-dropdown-menu>
-                                </template>
-                            </el-dropdown>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger
+                                    as-child
+                                    :disabled="
+                                        Boolean(
+                                            isGroupMembersLoading ||
+                                            memberSearch.length ||
+                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
+                                        )
+                                    ">
+                                    <el-button
+                                        size="small"
+                                        :disabled="
+                                            Boolean(
+                                                isGroupMembersLoading ||
+                                                memberSearch.length ||
+                                                !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
+                                            )
+                                        "
+                                        @click.stop>
+                                        <span>
+                                            {{ t(memberFilter.name) }}
+                                            <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
+                                        </span>
+                                    </el-button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    <DropdownMenuItem
+                                        v-for="item in groupDialogFilterOptions"
+                                        :key="item.name"
+                                        @click="setGroupMemberFilter(item)">
+                                        {{ t(item.name) }}
+                                    </DropdownMenuItem>
+                                    <template v-for="role in groupMemberModeration.groupRef.roles" :key="role.name">
+                                        <DropdownMenuItem v-if="!role.defaultRole" @click="setGroupMemberFilter(role)">
+                                            {{ t(role.name) }}
+                                        </DropdownMenuItem>
+                                    </template>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                         <el-input
                             v-model="memberSearch"
@@ -869,6 +882,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { debounce, formatDateFilter, hasGroupPermission, userImage, userImageFull } from '../../../shared/utils';
+    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../ui/dropdown-menu';
     import { useAppearanceSettingsStore, useGalleryStore, useGroupStore, useUserStore } from '../../../stores';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import { groupRequest, userRequest } from '../../../api';

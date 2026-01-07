@@ -181,110 +181,124 @@
                                 style="margin-left: 5px"
                                 @click="worldDialogCommand('Add Favorite')" />
                         </TooltipWrapper>
-                        <el-dropdown trigger="click" style="margin-left: 5px" @command="worldDialogCommand">
-                            <el-button type="default" :icon="MoreFilled" size="large" circle />
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item :icon="Refresh" command="Refresh">
-                                        {{ t('dialog.world.actions.refresh') }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item :icon="Share" command="Share">
-                                        {{ t('dialog.world.actions.share') }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item :icon="Flag" command="New Instance" divided>
-                                        {{ t('dialog.world.actions.new_instance') }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item :icon="Message" command="New Instance and Self Invite">
-                                        {{
-                                            canOpenInstanceInGame
-                                                ? t('dialog.world.actions.new_instance_and_open_ingame')
-                                                : t('dialog.world.actions.new_instance_and_self_invite')
-                                        }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item
+                        <DropdownMenu>
+                            <DropdownMenuTrigger as-child>
+                                <el-button type="default" :icon="MoreFilled" size="large" circle />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem @click="worldDialogCommand('Refresh')">
+                                    <Refresh class="size-4" />
+                                    {{ t('dialog.world.actions.refresh') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem @click="worldDialogCommand('Share')">
+                                    <Share class="size-4" />
+                                    {{ t('dialog.world.actions.share') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem @click="worldDialogCommand('New Instance')">
+                                    <Flag class="size-4" />
+                                    {{ t('dialog.world.actions.new_instance') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem @click="worldDialogCommand('New Instance and Self Invite')">
+                                    <Message class="size-4" />
+                                    {{
+                                        canOpenInstanceInGame
+                                            ? t('dialog.world.actions.new_instance_and_open_ingame')
+                                            : t('dialog.world.actions.new_instance_and_self_invite')
+                                    }}
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    v-if="
+                                        currentUser.$homeLocation &&
+                                        currentUser.$homeLocation.worldId === worldDialog.id
+                                    "
+                                    @click="worldDialogCommand('Reset Home')">
+                                    <MagicStick class="size-4" />
+                                    {{ t('dialog.world.actions.reset_home') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem v-else @click="worldDialogCommand('Make Home')">
+                                    <HomeFilled class="size-4" />
+                                    {{ t('dialog.world.actions.make_home') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem @click="worldDialogCommand('Previous Instances')">
+                                    <DataLine class="size-4" />
+                                    {{ t('dialog.world.actions.show_previous_instances') }}
+                                </DropdownMenuItem>
+                                <template v-if="currentUser.id !== worldDialog.ref.authorId">
+                                    <DropdownMenuItem
+                                        :disabled="!worldDialog.hasPersistData"
+                                        @click="worldDialogCommand('Delete Persistent Data')">
+                                        <Upload class="size-4" />
+                                        {{ t('dialog.world.actions.delete_persistent_data') }}
+                                    </DropdownMenuItem>
+                                </template>
+                                <template v-else>
+                                    <DropdownMenuItem @click="worldDialogCommand('Rename')">
+                                        <Edit class="size-4" />
+                                        {{ t('dialog.world.actions.rename') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem @click="worldDialogCommand('Change Description')">
+                                        <Edit class="size-4" />
+                                        {{ t('dialog.world.actions.change_description') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem @click="worldDialogCommand('Change Capacity')">
+                                        <Edit class="size-4" />
+                                        {{ t('dialog.world.actions.change_capacity') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem @click="worldDialogCommand('Change Recommended Capacity')">
+                                        <Edit class="size-4" />
+                                        {{ t('dialog.world.actions.change_recommended_capacity') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem @click="worldDialogCommand('Change YouTube Preview')">
+                                        <Edit class="size-4" />
+                                        {{ t('dialog.world.actions.change_preview') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem @click="worldDialogCommand('Change Tags')">
+                                        <Edit class="size-4" />
+                                        {{ t('dialog.world.actions.change_warnings_settings_tags') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem @click="worldDialogCommand('Change Allowed Domains')">
+                                        <Edit class="size-4" />
+                                        {{ t('dialog.world.actions.change_allowed_video_player_domains') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem v-if="isWindows" @click="worldDialogCommand('Change Image')">
+                                        <Picture class="size-4" />
+                                        {{ t('dialog.world.actions.change_image') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        v-if="worldDialog.ref.unityPackageUrl"
+                                        @click="worldDialogCommand('Download Unity Package')">
+                                        <Download class="size-4" />
+                                        {{ t('dialog.world.actions.download_package') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
                                         v-if="
-                                            currentUser.$homeLocation &&
-                                            currentUser.$homeLocation.worldId === worldDialog.id
+                                            worldDialog.ref?.tags?.includes('system_approved') ||
+                                            worldDialog.ref?.tags?.includes('system_labs')
                                         "
-                                        :icon="MagicStick"
-                                        command="Reset Home"
-                                        divided>
-                                        {{ t('dialog.world.actions.reset_home') }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item v-else :icon="HomeFilled" command="Make Home" divided>
-                                        {{ t('dialog.world.actions.make_home') }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item :icon="DataLine" command="Previous Instances">
-                                        {{ t('dialog.world.actions.show_previous_instances') }}
-                                    </el-dropdown-item>
-                                    <template v-if="currentUser.id !== worldDialog.ref.authorId">
-                                        <el-dropdown-item
-                                            :disabled="!worldDialog.hasPersistData"
-                                            :icon="Upload"
-                                            command="Delete Persistent Data">
-                                            {{ t('dialog.world.actions.delete_persistent_data') }}
-                                        </el-dropdown-item>
-                                    </template>
-                                    <template v-else>
-                                        <el-dropdown-item :icon="Edit" command="Rename">
-                                            {{ t('dialog.world.actions.rename') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item :icon="Edit" command="Change Description">
-                                            {{ t('dialog.world.actions.change_description') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item :icon="Edit" command="Change Capacity">
-                                            {{ t('dialog.world.actions.change_capacity') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item :icon="Edit" command="Change Recommended Capacity">
-                                            {{ t('dialog.world.actions.change_recommended_capacity') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item :icon="Edit" command="Change YouTube Preview">
-                                            {{ t('dialog.world.actions.change_preview') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item :icon="Edit" command="Change Tags">
-                                            {{ t('dialog.world.actions.change_warnings_settings_tags') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item :icon="Edit" command="Change Allowed Domains">
-                                            {{ t('dialog.world.actions.change_allowed_video_player_domains') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item v-if="isWindows" :icon="Picture" command="Change Image">
-                                            {{ t('dialog.world.actions.change_image') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
-                                            v-if="worldDialog.ref.unityPackageUrl"
-                                            :icon="Download"
-                                            command="Download Unity Package">
-                                            {{ t('dialog.world.actions.download_package') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
-                                            v-if="
-                                                worldDialog.ref?.tags?.includes('system_approved') ||
-                                                worldDialog.ref?.tags?.includes('system_labs')
-                                            "
-                                            :icon="View"
-                                            command="Unpublish"
-                                            divided>
-                                            {{ t('dialog.world.actions.unpublish') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item v-else :icon="View" command="Publish" divided>
-                                            {{ t('dialog.world.actions.publish_to_labs') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
-                                            :disabled="!worldDialog.hasPersistData"
-                                            :icon="Upload"
-                                            command="Delete Persistent Data">
-                                            {{ t('dialog.world.actions.delete_persistent_data') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
-                                            :icon="Delete"
-                                            command="Delete"
-                                            style="color: var(--el-color-danger)">
-                                            {{ t('dialog.world.actions.delete') }}
-                                        </el-dropdown-item>
-                                    </template>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
+                                        @click="worldDialogCommand('Unpublish')">
+                                        <View class="size-4" />
+                                        {{ t('dialog.world.actions.unpublish') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem v-else @click="worldDialogCommand('Publish')">
+                                        <View class="size-4" />
+                                        {{ t('dialog.world.actions.publish_to_labs') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        :disabled="!worldDialog.hasPersistData"
+                                        @click="worldDialogCommand('Delete Persistent Data')">
+                                        <Upload class="size-4" />
+                                        {{ t('dialog.world.actions.delete_persistent_data') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem variant="destructive" @click="worldDialogCommand('Delete')">
+                                        <Delete class="size-4" />
+                                        {{ t('dialog.world.actions.delete') }}
+                                    </DropdownMenuItem>
+                                </template>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </div>
             </div>
@@ -431,22 +445,27 @@
                                         {{ worldDialog.id }}
                                     </span>
                                     <TooltipWrapper side="top" :content="t('dialog.world.info.id_tooltip')">
-                                        <el-dropdown trigger="click" size="small" style="margin-left: 5px" @click.stop>
-                                            <el-button type="default" :icon="CopyDocument" size="small" circle />
-                                            <template #dropdown>
-                                                <el-dropdown-menu>
-                                                    <el-dropdown-item @click="copyWorldId()">
-                                                        {{ t('dialog.world.info.copy_id') }}
-                                                    </el-dropdown-item>
-                                                    <el-dropdown-item @click="copyWorldUrl()">
-                                                        {{ t('dialog.world.info.copy_url') }}
-                                                    </el-dropdown-item>
-                                                    <el-dropdown-item @click="copyWorldName()">
-                                                        {{ t('dialog.world.info.copy_name') }}
-                                                    </el-dropdown-item>
-                                                </el-dropdown-menu>
-                                            </template>
-                                        </el-dropdown>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger as-child>
+                                                <el-button
+                                                    type="default"
+                                                    :icon="CopyDocument"
+                                                    size="small"
+                                                    circle
+                                                    @click.stop />
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuItem @click="copyWorldId()">
+                                                    {{ t('dialog.world.info.copy_id') }}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem @click="copyWorldUrl()">
+                                                    {{ t('dialog.world.info.copy_url') }}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem @click="copyWorldName()">
+                                                    {{ t('dialog.world.info.copy_name') }}
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </TooltipWrapper>
                                 </div>
                             </div>
@@ -780,6 +799,13 @@
         useUserStore,
         useWorldStore
     } from '../../../stores';
+    import {
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuSeparator,
+        DropdownMenuTrigger
+    } from '../../ui/dropdown-menu';
     import { favoriteRequest, miscRequest, userRequest, worldRequest } from '../../../api';
     import { Badge } from '../../ui/badge';
     import { database } from '../../../service/database.js';
