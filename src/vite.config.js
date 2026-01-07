@@ -61,7 +61,8 @@ export default defineConfig(({ mode }) => {
         .readFileSync(new URL('../Version', import.meta.url), 'utf-8')
         .trim();
 
-    const nightly = version.split('-').at(-1).length === 7;
+    const nightly =
+        mode === 'development' || version.split('-').at(-1).length === 7;
 
     return {
         base: '',
