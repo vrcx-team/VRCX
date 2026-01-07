@@ -286,7 +286,7 @@ export const columns = [
         header: () => t('table.feed.detail'),
         enableSorting: false,
         meta: {
-            class: 'min-w-0 overflow-hidden'
+            class: 'min-w-[240px] overflow-hidden'
         },
         cell: ({ row }) => {
             const original = row.original;

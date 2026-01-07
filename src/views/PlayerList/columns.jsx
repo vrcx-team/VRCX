@@ -147,7 +147,7 @@ export const createColumns = ({
             minSize: 200,
             enableSorting: false,
             meta: {
-                class: 'min-w-[200px]'
+                class: 'w-[200px]'
             },
             cell: ({ row }) => {
                 const userRef = row.original?.ref;

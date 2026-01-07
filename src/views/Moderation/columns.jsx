@@ -33,7 +33,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         {
             accessorKey: 'created',
             meta: {
-                class: 'w-[140px]'
+                class: 'w-[90px]'
             },
             header: ({ column }) => (
                 <Button
@@ -68,7 +68,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         {
             accessorKey: 'type',
             meta: {
-                class: 'w-[160px]'
+                class: 'w-[80px]'
             },
             header: () => t('table.moderation.type'),
             cell: ({ row }) => {
@@ -83,7 +83,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         {
             accessorKey: 'sourceDisplayName',
             meta: {
-                class: 'w-[200px] min-w-0 overflow-hidden'
+                class: 'w-[120px] min-w-0 overflow-hidden'
             },
             header: () => t('table.moderation.source'),
             cell: ({ row }) => {
@@ -101,14 +101,14 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         {
             accessorKey: 'targetDisplayName',
             meta: {
-                class: 'min-w-0 overflow-hidden'
+                class: 'w-[200px]'
             },
             header: () => t('table.moderation.target'),
             cell: ({ row }) => {
                 const original = row.original;
                 return (
                     <span
-                        class="x-link block w-full min-w-0 truncate pr-2.5"
+                        class="x-link block w-full whitespace-normal break-words pr-2.5"
                         onClick={() => showUserDialog(original.targetUserId)}
                     >
                         {original.targetDisplayName}

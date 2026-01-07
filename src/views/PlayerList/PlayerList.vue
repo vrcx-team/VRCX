@@ -179,10 +179,12 @@
                 <PhotonEventTable @show-chatbox-blacklist="showChatboxBlacklistDialog" />
             </div>
 
-            <div class="current-instance-table flex min-h-0 flex-1">
+            <div class="current-instance-table flex min-h-0 min-w-0 flex-1">
                 <DataTableLayout
-                    class="[&_th]:px-2.5! [&_th]:py-0.75! [&_td]:px-2.5! [&_td]:py-0.75! [&_tr]:h-7!"
+                    class="min-w-0 w-full [&_th]:px-2.5! [&_th]:py-0.75! [&_td]:px-2.5! [&_td]:py-0.75! [&_tr]:h-7!"
                     :table="playerListTable"
+                    table-class="min-w-max w-max"
+                    :use-table-min-width="true"
                     :table-style="playerListTableStyle"
                     :loading="false"
                     :total-items="playerListTotalItems"
