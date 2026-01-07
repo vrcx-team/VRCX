@@ -1,7 +1,11 @@
 <template>
     <div class="x-container" ref="playerListRef">
-        <div style="display: flex; flex-direction: column; height: 100%">
-            <div v-if="currentInstanceWorld.ref.id" style="display: flex; height: 120px">
+        <div class="flex h-full min-h-0 flex-col">
+            <div
+                v-if="currentInstanceWorld.ref.id"
+                ref="playerListHeaderRef"
+                style="display: flex; height: 120px"
+                class="mb-7">
                 <img
                     :src="currentInstanceWorld.ref.thumbnailImageUrl"
                     class="x-link"
@@ -171,217 +175,19 @@
                 </div>
             </div>
 
-            <div v-if="photonLoggingEnabled" style="margin-bottom: 10px">
+            <div v-if="photonLoggingEnabled" ref="playerListPhotonRef" style="margin-bottom: 10px">
                 <PhotonEventTable @show-chatbox-blacklist="showChatboxBlacklistDialog" />
             </div>
 
-            <div class="current-instance-table">
-                <DataTable
-                    v-bind="currentInstanceUsersTable"
-                    layout="table"
-                    style="margin-top: 10px; cursor: pointer"
-                    @row-click="selectCurrentInstanceRow">
-                    <el-table-column :label="t('table.playerList.avatar')" width="70" prop="photo" fixed>
-                        <template #default="scope">
-                            <div v-if="userImage(scope.row.ref)" class="flex items-center pl-2">
-                                <img :src="userImage(scope.row.ref)" class="friends-list-avatar" loading="lazy" />
-                            </div>
-                        </template>
-                    </el-table-column>
-                    <el-table-column :label="t('table.playerList.timer')" width="90" prop="timer" sortable fixed>
-                        <template #default="scope">
-                            <Timer :epoch="scope.row.timer" />
-                        </template>
-                    </el-table-column>
-                    <el-table-column
-                        class="table-user"
-                        :label="t('table.playerList.displayName')"
-                        width="200"
-                        prop="displayName"
-                        sortable
-                        :sort-method="(a, b) => sortAlphabetically(a, b, 'displayName')"
-                        fixed>
-                        <template #default="scope">
-                            <span
-                                v-if="randomUserColours"
-                                :style="{ color: scope.row.ref.$userColour }"
-                                v-text="scope.row.ref.displayName"></span>
-                            <span v-else v-text="scope.row.ref.displayName"></span>
-                        </template>
-                    </el-table-column>
-
-                    <el-table-column
-                        :label="t('table.playerList.rank')"
-                        width="110"
-                        prop="$trustSortNum"
-                        :sortable="true">
-                        <template #default="scope">
-                            <span
-                                class="name"
-                                :class="scope.row.ref.$trustClass"
-                                v-text="scope.row.ref.$trustLevel"></span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column :label="t('table.playerList.status')" min-width="200" prop="ref.status">
-                        <template #default="scope">
-                            <template v-if="scope.row.ref.status">
-                                <i
-                                    class="x-user-status"
-                                    :class="statusClass(scope.row.ref.status)"
-                                    style="margin-right: 3px"></i>
-                                <span v-text="scope.row.ref.statusDescription"></span>
-                                <!--//- el-table-column(label="Group" min-width="180" prop="groupOnNameplate" sortable)-->
-                                <!--//-     template(v-once #default="scope")-->
-                                <!--//-         span(v-text="scope.row.groupOnNameplate")-->
-                            </template>
-                        </template>
-                    </el-table-column>
-                    <el-table-column
-                        v-if="photonLoggingEnabled"
-                        :label="t('table.playerList.photonId')"
-                        width="110"
-                        prop="photonId"
-                        sortable>
-                        <template #default="scope">
-                            <template v-if="chatboxUserBlacklist.has(scope.row.ref.id)">
-                                <TooltipWrapper side="left" content="Unblock chatbox messages">
-                                    <el-button
-                                        text
-                                        :icon="Mute"
-                                        size="small"
-                                        style="color: red; margin-right: 5px"
-                                        @click.stop="deleteChatboxUserBlacklist(scope.row.ref.id)"></el-button>
-                                </TooltipWrapper>
-                            </template>
-                            <template v-else>
-                                <TooltipWrapper side="left" content="Block chatbox messages">
-                                    <el-button
-                                        text
-                                        :icon="Microphone"
-                                        size="small"
-                                        style="margin-right: 5px"
-                                        @click.stop="addChatboxUserBlacklist(scope.row.ref)"></el-button>
-                                </TooltipWrapper>
-                            </template>
-                            <span v-text="scope.row.photonId"></span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column
-                        :label="t('table.playerList.icon')"
-                        prop="isMaster"
-                        width="90"
-                        align="center"
-                        sortable
-                        :sort-method="sortInstanceIcon">
-                        <template #default="scope">
-                            <span></span>
-                            <TooltipWrapper v-if="scope.row.isMaster" side="left" content="Instance Master">
-                                <span>👑</span>
-                            </TooltipWrapper>
-                            <TooltipWrapper v-if="scope.row.isModerator" side="left" content="Moderator">
-                                <span>⚔️</span>
-                            </TooltipWrapper>
-                            <TooltipWrapper v-if="scope.row.isFriend" side="left" content="Friend">
-                                <span>💚</span>
-                            </TooltipWrapper>
-                            <TooltipWrapper v-if="scope.row.isBlocked" side="left" content="Blocked">
-                                <el-icon style="color: red"><CircleClose /></el-icon>
-                            </TooltipWrapper>
-                            <TooltipWrapper v-if="scope.row.isMuted" side="left" content="Muted">
-                                <el-icon style="color: var(--el-color-warning)"><Mute /></el-icon>
-                            </TooltipWrapper>
-                            <TooltipWrapper
-                                v-if="scope.row.isAvatarInteractionDisabled"
-                                side="left"
-                                content="Avatar Interaction Disabled
-                                    ">
-                                <el-icon style="color: var(--el-color-warning)"><Pointer /></el-icon>
-                            </TooltipWrapper>
-                            <TooltipWrapper v-if="scope.row.isChatBoxMuted" side="left" content="Chatbox Muted">
-                                <el-icon style="color: var(--el-color-warning)"><ChatLineRound /></el-icon>
-                            </TooltipWrapper>
-                            <TooltipWrapper v-if="scope.row.timeoutTime" side="left" content="Timeout">
-                                <span style="color: var(--el-color-danger)">🔴{{ scope.row.timeoutTime }}s</span>
-                            </TooltipWrapper>
-                            <TooltipWrapper v-if="scope.row.ageVerified" side="left" content="18+ Verified">
-                                <i class="ri-id-card-line"></i>
-                            </TooltipWrapper>
-                        </template>
-                    </el-table-column>
-                    <el-table-column :label="t('table.playerList.platform')" prop="inVRMode" width="90">
-                        <template #default="scope">
-                            <template v-if="scope.row.ref.$platform">
-                                <span
-                                    v-if="scope.row.ref.$platform === 'standalonewindows'"
-                                    style="color: var(--el-color-primary)"
-                                    ><i class="ri-computer-line"></i
-                                ></span>
-                                <span
-                                    v-else-if="scope.row.ref.$platform === 'android'"
-                                    style="color: var(--el-color-success)"
-                                    ><i class="ri-android-line"></i
-                                ></span>
-                                <span v-else-if="scope.row.ref.$platform === 'ios'" style="color: var(--el-color-info)"
-                                    ><i class="ri-apple-line"></i
-                                ></span>
-                                <span v-else>{{ scope.row.ref.$platform }}</span>
-                            </template>
-                            <template v-if="scope.row.inVRMode !== null">
-                                <span v-if="scope.row.inVRMode">VR</span>
-                                <span
-                                    v-else-if="
-                                        scope.row.ref.last_platform === 'android' ||
-                                        scope.row.ref.last_platform === 'ios'
-                                    "
-                                    >M</span
-                                >
-                                <span v-else>D</span>
-                            </template>
-                        </template>
-                    </el-table-column>
-                    <el-table-column :label="t('table.playerList.language')" width="100" prop="ref.$languages">
-                        <template #default="scope">
-                            <TooltipWrapper v-for="item in scope.row.ref.$languages" :key="item.key" side="top">
-                                <template #content>
-                                    <span>{{ item.value }} ({{ item.key }})</span>
-                                </template>
-                                <span
-                                    class="flags"
-                                    :class="languageClass(item.key)"
-                                    style="display: inline-block; margin-right: 5px"></span>
-                            </TooltipWrapper>
-                        </template>
-                    </el-table-column>
-                    <el-table-column :label="t('table.playerList.bioLink')" width="100" prop="ref.bioLinks">
-                        <template #default="scope">
-                            <div style="display: flex; align-items: center">
-                                <TooltipWrapper
-                                    v-for="(link, index) in scope.row.ref.bioLinks?.filter(Boolean)"
-                                    :key="index">
-                                    <template #content>
-                                        <span v-text="link"></span>
-                                    </template>
-                                    <img
-                                        :src="getFaviconUrl(link)"
-                                        style="
-                                            width: 16px;
-                                            height: 16px;
-                                            vertical-align: middle;
-                                            margin-right: 5px;
-                                            cursor: pointer;
-                                        "
-                                        @click.stop="openExternalLink(link)"
-                                        loading="lazy" />
-                                </TooltipWrapper>
-                            </div>
-                        </template>
-                    </el-table-column>
-                    <el-table-column :label="t('table.playerList.note')" width="400" prop="ref.note">
-                        <template #default="scope">
-                            <span v-text="scope.row.ref.note"></span>
-                        </template>
-                    </el-table-column>
-                </DataTable>
+            <div class="current-instance-table flex min-h-0 flex-1">
+                <DataTableLayout
+                    class="[&_th]:px-2.5! [&_th]:py-0.75! [&_td]:px-2.5! [&_td]:py-0.75! [&_tr]:h-7!"
+                    :table="playerListTable"
+                    :table-style="playerListTableStyle"
+                    :loading="false"
+                    :total-items="playerListTotalItems"
+                    :show-pagination="false"
+                    :on-row-click="handlePlayerListRowClick" />
             </div>
         </div>
         <ChatboxBlacklistDialog
@@ -391,20 +197,12 @@
 </template>
 
 <script setup>
-    import { ChatLineRound, CircleClose, HomeFilled, Microphone, Mute, Pointer } from '@element-plus/icons-vue';
-    import { computed, defineAsyncComponent, onMounted, onUnmounted, ref, watch } from 'vue';
+    import { computed, defineAsyncComponent, onActivated, onMounted, ref, watch } from 'vue';
+    import { getCoreRowModel, getPaginationRowModel, getSortedRowModel, useVueTable } from '@tanstack/vue-table';
+    import { HomeFilled } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import {
-        commaNumber,
-        formatDateFilter,
-        getFaviconUrl,
-        languageClass,
-        openExternalLink,
-        statusClass,
-        userImage
-    } from '../../shared/utils';
     import {
         useAppearanceSettingsStore,
         useGalleryStore,
@@ -414,8 +212,15 @@
         useUserStore,
         useWorldStore
     } from '../../stores';
+    import { commaNumber, formatDateFilter } from '../../shared/utils';
+    import { DataTableLayout } from '../../components/ui/data-table';
+    import { createColumns } from './columns.jsx';
+    import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
+    import { valueUpdater } from '../../components/ui/table/utils';
+    import { watchState } from '../../service/watchState';
 
     import ChatboxBlacklistDialog from './dialogs/ChatboxBlacklistDialog.vue';
+    import Timer from '../../components/Timer.vue';
 
     const PhotonEventTable = defineAsyncComponent(() => import('./components/PhotonEventTable.vue'));
 
@@ -428,65 +233,19 @@
     const { lastLocation } = storeToRefs(useLocationStore());
     const { currentInstanceLocation, currentInstanceWorld } = storeToRefs(useInstanceStore());
     const { getCurrentInstanceUserList } = useInstanceStore();
-    const { currentInstanceUsersTable } = storeToRefs(useInstanceStore());
+    const { currentInstanceUsersData } = storeToRefs(useInstanceStore());
     const { showFullscreenImageDialog } = useGalleryStore();
     const { currentUser } = storeToRefs(useUserStore());
 
     const playerListRef = ref(null);
-    const tableHeight = ref(0);
+    const playerListHeaderRef = ref(null);
+    const playerListPhotonRef = ref(null);
 
-    onMounted(() => {
-        if (playerListRef.value) {
-            resizeObserver.observe(playerListRef.value);
-        }
-    });
-
-    const resizeObserver = new ResizeObserver(() => {
-        setPlayerListTableHeight();
-    });
-
-    function setPlayerListTableHeight() {
-        if (currentInstanceWorld.value.ref.id) {
-            tableHeight.value = playerListRef.value.clientHeight - 110;
-            return;
-        }
-        if (currentInstanceUsersTable.value.data.length === 0) {
-            tableHeight.value = playerListRef.value.clientHeight;
-            return;
-        }
-        if (playerListRef.value) {
-            tableHeight.value = playerListRef.value.clientHeight - 110;
-        }
-    }
-
-    watch(
-        () => currentInstanceWorld.value.ref.id,
-        () => {
-            setPlayerListTableHeight();
-        }
-    );
-
-    onUnmounted(() => {
-        resizeObserver.disconnect();
-    });
-
-    const compactCellStyle = () => ({
-        padding: '4px 10px'
-    });
-
-    const compactInstanceUsersTable = computed(() => {
-        const baseTableConfig = currentInstanceUsersTable.value;
-        const tableProps = baseTableConfig.tableProps || {};
-
-        return {
-            ...baseTableConfig,
-            tableProps: {
-                ...tableProps,
-                cellStyle: compactCellStyle,
-                headerCellStyle: compactCellStyle,
-                height: tableHeight.value
-            }
-        };
+    const { tableStyle: playerListTableStyle } = useDataTableScrollHeight(playerListRef, {
+        offset: 30,
+        paginationHeight: 0,
+        subtractContainerPadding: true,
+        extraOffsetRefs: [playerListHeaderRef, playerListPhotonRef]
     });
 
     const { t } = useI18n();
@@ -525,25 +284,65 @@
         getCurrentInstanceUserList();
     }
 
-    function sortInstanceIcon(a, b) {
-        const getValue = (item) => {
-            let value = 0;
-            if (item.isMaster) value += 1000;
-            if (item.isModerator) value += 500;
-            if (item.isFriend) value += 200;
-            if (item.isBlocked) value -= 100;
-            if (item.isMuted) value -= 50;
-            if (item.isAvatarInteractionDisabled) value -= 20;
-            if (item.isChatBoxMuted) value -= 10;
-            return value;
-        };
-        return getValue(b) - getValue(a);
-    }
-
     function sortAlphabetically(a, b, field) {
         if (!a[field] || !b[field]) return 0;
         return a[field].toLowerCase().localeCompare(b[field].toLowerCase());
     }
+
+    const sorting = ref([]);
+    const pagination = ref({
+        pageIndex: 0,
+        pageSize: 500
+    });
+
+    const columnPinning = ref({
+        left: ['avatar', 'timer', 'displayName'],
+        right: []
+    });
+
+    const playerListColumns = computed(() =>
+        createColumns({
+            randomUserColours,
+            photonLoggingEnabled,
+            chatboxUserBlacklist,
+            onBlockChatbox: addChatboxUserBlacklist,
+            onUnblockChatbox: deleteChatboxUserBlacklist,
+            sortAlphabetically
+        })
+    );
+
+    const playerListTable = useVueTable({
+        data: currentInstanceUsersData.value,
+        columns: playerListColumns.value,
+        getRowId: (row) => `${row?.ref?.id ?? ''}:${row?.displayName ?? ''}`,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
+        onPaginationChange: (updaterOrValue) => valueUpdater(updaterOrValue, pagination),
+        onColumnPinningChange: (updaterOrValue) => valueUpdater(updaterOrValue, columnPinning),
+        state: {
+            get sorting() {
+                return sorting.value;
+            },
+            get pagination() {
+                return pagination.value;
+            },
+            get columnPinning() {
+                return columnPinning.value;
+            }
+        },
+        initialState: {
+            columnPinning: columnPinning.value,
+            pagination: pagination.value
+        }
+    });
+
+    const playerListTotalItems = computed(() => playerListTable.getRowModel().rows.length);
+
+    const handlePlayerListRowClick = (row) => {
+        selectCurrentInstanceRow(row?.original ?? null);
+    };
 </script>
 
 <style>
@@ -555,16 +354,5 @@
         overflow: hidden;
         text-overflow: ellipsis;
         vertical-align: middle;
-    }
-    #x-app .current-instance-table .el-table .el-table__cell {
-        padding: 3px 10px !important;
-    }
-    .table-user {
-        color: var(--x-table-user-text-color);
-    }
-    .friends-list-avatar {
-        width: 16px !important;
-        height: 16px !important;
-        object-fit: cover;
     }
 </style>
