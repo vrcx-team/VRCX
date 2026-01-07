@@ -38,20 +38,32 @@
                 show-word-limit
                 clearable
                 style="margin-top: 10px"></el-input>
-            <el-collapse style="border: 0">
-                <el-collapse-item>
-                    <template #title>
-                        <span class="text-sm">{{ t('dialog.social_status.history') }}</span>
-                    </template>
-                    <DataTable
-                        v-bind="socialStatusHistoryTable"
-                        style="cursor: pointer"
-                        @row-click="setSocialStatusFromHistory">
-                        <el-table-column :label="t('table.social_status.no')" prop="no" width="50"></el-table-column>
-                        <el-table-column :label="t('table.social_status.status')" prop="status"></el-table-column>
-                    </DataTable>
-                </el-collapse-item>
-            </el-collapse>
+            <Collapsible v-model:open="isOpen" class="mt-3 flex w-full flex-col gap-2">
+                <div class="flex items-center justify-between gap-4 px-4">
+                    <h4 class="text-sm font-semibold">{{ t('dialog.social_status.history') }}</h4>
+                    <CollapsibleTrigger as-child>
+                        <Button variant="ghost" size="icon" class="size-8">
+                            <ChevronsUpDown />
+                            <span class="sr-only">Toggle</span>
+                        </Button>
+                    </CollapsibleTrigger>
+                </div>
+                <div
+                    v-if="!isOpen && latestHistoryItem"
+                    class="cursor-pointer rounded-md border w-full px-4 py-2 font-mono text-sm"
+                    @click="setSocialStatusFromHistory(latestHistoryItem)">
+                    {{ latestHistoryItem.status }}
+                </div>
+                <CollapsibleContent class="flex flex-col gap-2">
+                    <div
+                        v-for="item in historyItems"
+                        :key="item.no ?? item.status"
+                        class="cursor-pointer rounded-md border w-full px-4 py-2 font-mono text-sm"
+                        @click="setSocialStatusFromHistory(item)">
+                        {{ item.status }}
+                    </div>
+                </CollapsibleContent>
+            </Collapsible>
         </div>
 
         <template #footer>
@@ -62,7 +74,11 @@
     </el-dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
+    import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+    import { computed, ref } from 'vue';
+    import { Button } from '@/components/ui/button';
+    import { ChevronsUpDown } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -83,6 +99,10 @@
             required: true
         }
     });
+
+    const isOpen = ref(false);
+    const historyItems = computed(() => props.socialStatusHistoryTable?.data ?? []);
+    const latestHistoryItem = computed(() => historyItems.value[0] ?? null);
 
     function setSocialStatusFromHistory(val) {
         if (val === null) {
@@ -113,12 +133,3 @@
             });
     }
 </script>
-
-<style scoped>
-    :deep(.el-collapse-item__header) {
-        border-bottom: none;
-    }
-    :deep(.el-collapse-item__wrap) {
-        border-bottom: none;
-    }
-</style>
