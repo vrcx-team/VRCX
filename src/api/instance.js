@@ -1,4 +1,4 @@
-import { ElMessage } from 'element-plus';
+import { toast } from 'vue-sonner';
 
 import { i18n } from '../plugin/i18n';
 import { request } from '../service/request';
@@ -140,16 +140,10 @@ const instanceReq = {
             })
             .catch((err) => {
                 if (err?.error?.message) {
-                    ElMessage({
-                        message: err.error.message,
-                        type: 'error'
-                    });
+                    toast.error(err.error.message);
                     throw err;
                 }
-                ElMessage({
-                    message: i18n.global.t('message.instance.not_allowed'),
-                    type: 'error'
-                });
+                toast.error(i18n.global.t('message.instance.not_allowed'));
                 throw err;
             });
     }

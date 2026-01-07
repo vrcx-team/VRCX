@@ -20,8 +20,8 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { notificationRequest } from '../../../api';
@@ -65,10 +65,7 @@
                     notificationRequest.hideNotification({
                         notificationId: D.invite.id
                     });
-                    ElMessage({
-                        message: 'Invite response photo message sent',
-                        type: 'success'
-                    });
+                    toast.success('Invite response photo message sent');
                     return args;
                 })
                 .finally(() => {
@@ -84,10 +81,7 @@
                     notificationRequest.hideNotification({
                         notificationId: D.invite.id
                     });
-                    ElMessage({
-                        message: 'Invite response message sent',
-                        type: 'success'
-                    });
+                    toast.success('Invite response message sent');
                     return args;
                 })
                 .finally(() => {

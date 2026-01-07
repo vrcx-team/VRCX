@@ -168,9 +168,10 @@
 </template>
 
 <script setup>
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessageBox } from 'element-plus';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useFriendStore, useGalleryStore, useInviteStore, useUserStore } from '../../../stores';
@@ -280,10 +281,7 @@
                     } else {
                         D.loading = false;
                         D.visible = false;
-                        ElMessage({
-                            message: 'Invite sent',
-                            type: 'success'
-                        });
+                        toast.success('Invite sent');
                     }
                 };
                 inviteLoop();

@@ -1,4 +1,5 @@
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
+import { toast } from 'vue-sonner';
 
 import Noty from 'noty';
 
@@ -198,10 +199,7 @@ export function request(endpoint, options) {
                 status === 404 &&
                 endpoint?.startsWith('avatars/')
             ) {
-                ElMessage({
-                    message: t('message.api_handler.avatar_private_or_deleted'),
-                    type: 'error'
-                });
+                toast.error(t('message.api_handler.avatar_private_or_deleted'));
                 avatarStore.avatarDialog.visible = false;
                 $throw(404, data.error?.message || '', endpoint);
             }

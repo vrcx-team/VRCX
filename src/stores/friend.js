@@ -1,6 +1,7 @@
 import { computed, reactive, ref, watch } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
 import {
@@ -1606,10 +1607,7 @@ export const useFriendStore = defineStore('Friend', () => {
             }
         } catch (err) {
             if (!AppDebug.dontLogMeOut) {
-                ElMessage({
-                    message: t('message.friend.load_failed'),
-                    type: 'error'
-                });
+                toast.error(t('message.friend.load_failed'));
                 authStore.handleLogoutEvent();
                 throw err;
             }

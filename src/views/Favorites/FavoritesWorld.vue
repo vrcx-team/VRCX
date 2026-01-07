@@ -407,8 +407,9 @@
 <script setup>
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { Loading, MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../stores';
@@ -979,10 +980,7 @@
                     favoriteGroupId: args.json.id
                 }
             });
-            ElMessage({
-                message: 'Group visibility changed',
-                type: 'success'
-            });
+            toast.success('Group visibility changed');
             if (menuKey) {
                 handleGroupMenuVisible(menuKey, false);
             }
@@ -1121,10 +1119,7 @@
                                 favoriteGroupId: args.json.id
                             }
                         });
-                        ElMessage({
-                            message: t('prompt.change_favorite_group_name.message.success'),
-                            type: 'success'
-                        });
+                        toast.success(t('prompt.change_favorite_group_name.message.success'));
                         refreshFavorites();
                     });
             })

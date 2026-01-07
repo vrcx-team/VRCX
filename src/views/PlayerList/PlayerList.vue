@@ -283,10 +283,12 @@
         })
     );
 
+    const playerListDisplayData = computed(() => currentInstanceUsersData.value ?? []);
+
     const playerListTable = useVueTable({
-        data: currentInstanceUsersData.value,
+        data: playerListDisplayData,
         columns: playerListColumns.value,
-        getRowId: (row) => `${row?.ref?.id ?? ''}:${row?.displayName ?? ''}`,
+        getRowId: (row) => `${row?.ref?.id ?? ''}:${row?.displayName ?? ''}:${row?.photonId ?? ''}`,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -309,6 +311,28 @@
             pagination: pagination.value
         }
     });
+
+    watch(
+        playerListColumns,
+        (next) => {
+            playerListTable.setOptions((prev) => ({
+                ...prev,
+                columns: next
+            }));
+        },
+        { immediate: true }
+    );
+
+    watch(
+        playerListDisplayData,
+        (next) => {
+            playerListTable.setOptions((prev) => ({
+                ...prev,
+                data: next
+            }));
+        },
+        { immediate: true }
+    );
 
     const playerListTotalItems = computed(() => playerListTable.getRowModel().rows.length);
 

@@ -1,6 +1,7 @@
 import { computed, reactive, ref } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
 import {
@@ -433,10 +434,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                     userStore.lookupUser(ref);
                 }
             } else {
-                ElMessage({
-                    message: 'No user info available',
-                    type: 'error'
-                });
+                toast.error('No user info available');
             }
         }
     }

@@ -38,8 +38,8 @@
 <script setup>
     import { CopyDocument, Download, RefreshLeft, RefreshRight, ZoomIn, ZoomOut } from '@element-plus/icons-vue';
     import { nextTick, ref, watch } from 'vue';
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
 
     import Noty from 'noty';
 
@@ -92,10 +92,7 @@
         if (!url) {
             return;
         }
-        const msg = ElMessage({
-            message: 'Downloading image...',
-            type: 'info'
-        });
+        const msg = toast.info('Downloading image...');
         try {
             const response = await webApiService.execute({
                 url,
@@ -109,10 +106,7 @@
                     'image/png': await (await fetch(response.data)).blob()
                 })
             ]);
-            ElMessage({
-                message: 'Image copied to clipboard',
-                type: 'success'
-            });
+            toast.success('Image copied to clipboard');
         } catch (error) {
             console.error('Error downloading image:', error);
             new Noty({
@@ -120,7 +114,7 @@
                 text: escapeTag(`Failed to download image. ${url}`)
             }).show();
         } finally {
-            msg.close();
+            toast.dismiss(msg);
         }
     }
 
@@ -128,10 +122,7 @@
         if (!url) {
             return;
         }
-        const msg = ElMessage({
-            message: 'Downloading image...',
-            type: 'info'
-        });
+        const msg = toast.info('Downloading image...');
         try {
             const response = await webApiService.execute({
                 url,
@@ -163,7 +154,7 @@
                 text: escapeTag(`Failed to download image. ${url}`)
             }).show();
         } finally {
-            msg.close();
+            toast.dismiss(msg);
         }
     }
 </script>

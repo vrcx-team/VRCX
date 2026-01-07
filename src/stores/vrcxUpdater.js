@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue';
-import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
 import { AppDebug } from '../service/appConfig';
@@ -211,12 +211,11 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             checkingForVRCXUpdate.value = false;
         }
         if (response.status !== 200) {
-            ElMessage({
-                message: t('message.vrcx_updater.failed', {
+            toast.error(
+                t('message.vrcx_updater.failed', {
                     message: `${response.status} ${response.data}`
-                }),
-                type: 'error'
-            });
+                })
+            );
             return;
         }
         pendingVRCXUpdate.value = false;
@@ -290,12 +289,11 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             checkingForVRCXUpdate.value = false;
         }
         if (response.status !== 200) {
-            ElMessage({
-                message: t('message.vrcx_updater.failed', {
+            toast.error(
+                t('message.vrcx_updater.failed', {
                     message: `${response.status} ${response.data}`
-                }),
-                type: 'error'
-            });
+                })
+            );
             return;
         }
         if (AppDebug.debugWebRequests) {
@@ -303,12 +301,11 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
         const releases = [];
         if (typeof json !== 'object' || json.message) {
-            ElMessage({
-                message: t('message.vrcx_updater.failed', {
+            toast.error(
+                t('message.vrcx_updater.failed', {
                     message: json.message
-                }),
-                type: 'error'
-            });
+                })
+            );
             return;
         }
         for (const release of json) {
@@ -347,10 +344,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             pendingVRCXInstall.value = releaseName;
         } catch (err) {
             console.error(err);
-            ElMessage({
-                message: `${t('message.vrcx_updater.failed_install')} ${err}`,
-                type: 'error'
-            });
+            toast.error(`${t('message.vrcx_updater.failed_install')} ${err}`);
         } finally {
             updateInProgress.value = false;
             updateProgress.value = 0;

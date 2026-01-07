@@ -1,6 +1,7 @@
-import { ElMessage, ElMessageBox } from 'element-plus';
 import { reactive, ref } from 'vue';
+import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 
 import {
     deleteVRChatCache as _deleteVRChatCache,
@@ -123,10 +124,7 @@ export const useGameStore = defineStore('Game', () => {
         }
         AppApi.FocusWindow();
         const message = 'VRChat crashed, attempting to rejoin last instance';
-        ElMessage({
-            message,
-            type: 'info'
-        });
+        toast(message);
         const entry = {
             created_at: new Date().toJSON(),
             type: 'Event',

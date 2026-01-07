@@ -178,8 +178,8 @@
 <script setup>
     import { ArrowDown, Close, Loading } from '@element-plus/icons-vue';
     import { computed, ref, watch } from 'vue';
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
@@ -324,10 +324,7 @@
             })
             .then((args) => {
                 if (message) {
-                    ElMessage({
-                        message: 'Avatar added to favorites',
-                        type: 'success'
-                    });
+                    toast.success('Avatar added to favorites');
                 }
                 return args;
             });

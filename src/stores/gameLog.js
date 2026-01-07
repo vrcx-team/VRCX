@@ -1,6 +1,7 @@
 import { reactive, ref, shallowReactive, watch } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 
 import dayjs from 'dayjs';
 
@@ -1400,11 +1401,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     async function disableGameLogDialog() {
         if (gameStore.isGameRunning) {
-            ElMessage({
-                message:
-                    'VRChat needs to be closed before this option can be changed',
-                type: 'error'
-            });
+            toast.error(
+                'VRChat needs to be closed before this option can be changed'
+            );
             return;
         }
         if (!advancedSettingsStore.gameLogDisabled) {

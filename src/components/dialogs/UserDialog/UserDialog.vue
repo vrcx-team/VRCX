@@ -293,9 +293,7 @@
                                         style="display: flex; justify-content: space-between; align-items: center">
                                         <div>
                                             {{ t('dialog.user.info.join_count') }}
-                                            <TooltipWrapper
-                                                side="top"
-                                                :content="t('dialog.user.info.accuracy_notice')">
+                                            <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
                                                 <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                             </TooltipWrapper>
                                         </div>
@@ -333,9 +331,7 @@
                                     <div class="detail">
                                         <span class="name">
                                             {{ t('dialog.user.info.play_time') }}
-                                            <TooltipWrapper
-                                                side="top"
-                                                :content="t('dialog.user.info.accuracy_notice')">
+                                            <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
                                                 <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                             </TooltipWrapper>
                                         </span>
@@ -875,9 +871,7 @@
                                             {{ t('dialog.group.tags.unsubscribed') }}</span
                                         >
                                     </el-button> -->
-                                    <TooltipWrapper
-                                        side="right"
-                                        :content="t('dialog.user.groups.leave_group_tooltip')">
+                                    <TooltipWrapper side="right" :content="t('dialog.user.groups.leave_group_tooltip')">
                                         <el-button
                                             v-if="shiftHeld"
                                             size="small"
@@ -1366,8 +1360,9 @@
         Warning
     } from '@element-plus/icons-vue';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import {
@@ -1756,10 +1751,7 @@
 
     function handleBadgeUpdate(args) {
         if (args.json) {
-            ElMessage({
-                message: t('message.badge.updated'),
-                type: 'success'
-            });
+            toast.success(t('message.badge.updated'));
         }
     }
 
@@ -1778,10 +1770,7 @@
                     D.isHideAvatar = false;
                 }
             } else {
-                ElMessage({
-                    message: t('message.avatar.change_moderation_failed'),
-                    type: 'error'
-                });
+                toast.error(t('message.avatar.change_moderation_failed'));
             }
         });
     }
@@ -1845,7 +1834,7 @@
                     D.id
                 )
                 .then((args) => {
-                    ElMessage('Request invite sent');
+                    toast('Request invite sent');
                     return args;
                 });
         } else if (command === 'Invite Message') {
@@ -1892,7 +1881,7 @@
                             D.id
                         )
                         .then((_args) => {
-                            ElMessage('Invite sent');
+                            toast('Invite sent');
                             return _args;
                         });
                 });
@@ -1904,10 +1893,7 @@
             if (fallbackAvatar) {
                 showAvatarDialog(fallbackAvatar);
             } else {
-                ElMessage({
-                    message: 'No fallback avatar set',
-                    type: 'error'
-                });
+                toast.error('No fallback avatar set');
             }
         } else if (command === 'Previous Instances') {
             showPreviousInstancesUserDialog(D.ref);
@@ -2021,10 +2007,7 @@
         } else if (ref.type === 'muteChat') {
             D.isMuteChat = true;
         }
-        ElMessage({
-            message: t('message.user.moderated'),
-            type: 'success'
-        });
+        toast.success(t('message.user.moderated'));
     }
 
     async function performUserDialogCommand(command, userId) {
@@ -2481,10 +2464,7 @@
                             homeLocation: ''
                         })
                         .then((args) => {
-                            ElMessage({
-                                message: 'Home world has been reset',
-                                type: 'success'
-                            });
+                            toast.success('Home world has been reset');
                             return args;
                         });
                 }
@@ -2554,10 +2534,7 @@
             );
         } catch (err) {
             console.error(err);
-            ElMessage({
-                message: 'Failed to save in-game group order',
-                type: 'error'
-            });
+            toast.error('Failed to save in-game group order');
         }
     }
 

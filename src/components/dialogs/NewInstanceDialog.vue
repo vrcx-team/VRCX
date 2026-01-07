@@ -479,8 +479,8 @@
 
 <script setup>
     import { nextTick, ref, watch } from 'vue';
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import {
@@ -735,10 +735,7 @@
                 worldId: L.worldId
             })
             .then((args) => {
-                ElMessage({
-                    message: 'Self invite sent',
-                    type: 'success'
-                });
+                toast.success('Self invite sent');
                 return args;
             });
     }

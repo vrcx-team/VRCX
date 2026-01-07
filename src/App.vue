@@ -12,6 +12,7 @@
                 ondragover="event.preventDefault()"
                 ondrop="event.preventDefault()">
                 <RouterView></RouterView>
+                <Toaster position="top-center"></Toaster>
 
                 <VRCXUpdateDialog></VRCXUpdateDialog>
             </div>
@@ -23,6 +24,7 @@
     import { computed, onBeforeMount, onMounted } from 'vue';
     import { useI18n } from 'vue-i18n';
 
+    import { Toaster } from './components/ui/sonner';
     import { TooltipProvider } from './components/ui/tooltip';
     import { createGlobalStores } from './stores';
     import { initNoty } from './plugin/noty';

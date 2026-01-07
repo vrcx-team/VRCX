@@ -77,9 +77,10 @@
 
 <script setup>
     import { Delete, Download, Upload } from '@element-plus/icons-vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
     import { ref, watch } from 'vue';
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { downloadAndSaveJson, formatDateFilter, removeFromArray } from '../../../shared/utils';
@@ -134,17 +135,11 @@
                 const data = JSON.stringify(row.data);
                 AppApi.SetVRChatRegistry(data)
                     .then(() => {
-                        ElMessage({
-                            message: 'VRC registry settings restored',
-                            type: 'success'
-                        });
+                        toast.success('VRC registry settings restored');
                     })
                     .catch((e) => {
                         console.error(e);
-                        ElMessage({
-                            message: `Failed to restore VRC registry settings, check console for full error: ${e}`,
-                            type: 'error'
-                        });
+                        toast.error(`Failed to restore VRC registry settings, check console for full error: ${e}`);
                     });
             })
             .catch(() => {});
@@ -172,10 +167,7 @@
                     return;
                 }
                 AppApi.DeleteVRChatRegistryFolder().then(() => {
-                    ElMessage({
-                        message: 'VRC registry settings deleted',
-                        type: 'success'
-                    });
+                    toast.success('VRC registry settings deleted');
                 });
             })
             .catch(() => {});
@@ -256,23 +248,14 @@
             }
             AppApi.SetVRChatRegistry(json)
                 .then(() => {
-                    ElMessage({
-                        message: 'VRC registry settings restored',
-                        type: 'success'
-                    });
+                    toast.success('VRC registry settings restored');
                 })
                 .catch((e) => {
                     console.error(e);
-                    ElMessage({
-                        message: `Failed to restore VRC registry settings, check console for full error: ${e}`,
-                        type: 'error'
-                    });
+                    toast.error(`Failed to restore VRC registry settings, check console for full error: ${e}`);
                 });
         } catch {
-            ElMessage({
-                message: 'Invalid JSON',
-                type: 'error'
-            });
+            toast.error('Invalid JSON');
         }
     }
 

@@ -1,5 +1,6 @@
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 import { storeToRefs } from 'pinia';
+import { toast } from 'vue-sonner';
 
 import Noty from 'noty';
 
@@ -159,17 +160,11 @@ function copyToClipboard(text, message = 'Copied successfully!') {
     navigator.clipboard
         .writeText(text)
         .then(() => {
-            ElMessage({
-                message: message,
-                type: 'success'
-            });
+            toast.success(message);
         })
         .catch((err) => {
             console.error('Copy failed:', err);
-            ElMessage({
-                message: 'Copy failed!',
-                type: 'error'
-            });
+            toast.error('Copy failed!');
         });
 }
 

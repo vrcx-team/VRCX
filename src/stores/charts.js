@@ -1,6 +1,7 @@
 import { computed, reactive, ref, watch } from 'vue';
-import { ElMessage, ElNotification } from 'element-plus';
+import { ElNotification } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
 import { useFriendStore } from './friend';
@@ -38,12 +39,8 @@ export const useChartsStore = defineStore('Charts', () => {
     const friendCount = computed(() => friendStore.friends.size || 0);
 
     function showInfoMessage(message, type) {
-        ElMessage({
-            message,
-            type,
-            duration: 4000,
-            grouping: true
-        });
+        const toastFn = toast[type] ?? toast;
+        toastFn(message, { duration: 4000 });
     }
 
     watch(

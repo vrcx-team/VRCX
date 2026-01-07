@@ -864,8 +864,8 @@
 <script setup>
     import { ArrowDown, Delete, Loading, Refresh, Warning } from '@element-plus/icons-vue';
     import { reactive, ref, watch } from 'vue';
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { debounce, formatDateFilter, hasGroupPermission, userImage, userImageFull } from '../../../shared/utils';
@@ -1080,18 +1080,12 @@
                 });
             } catch (err) {
                 console.error(err);
-                ElMessage({
-                    message: `Failed to delete group invites: ${err}`,
-                    type: 'error'
-                });
+                toast.error(`Failed to delete group invites: ${err}`);
                 allSuccess = false;
             }
         }
         if (allSuccess) {
-            ElMessage({
-                message: `Deleted ${memberCount} group invites`,
-                type: 'success'
-            });
+            toast.success(`Deleted ${memberCount} group invites`);
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1132,10 +1126,7 @@
             }
             groupBansModerationTable.data = fetchedBans;
         } catch {
-            ElMessage({
-                message: 'Failed to get group bans',
-                type: 'error'
-            });
+            toast.error('Failed to get group bans');
         } finally {
             isGroupMembersLoading.value = false;
         }
@@ -1163,13 +1154,10 @@
                 await groupRequest.banGroupMember({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                ElMessage({
-                    message: `Failed to ban group member: ${err}`,
-                    type: 'error'
-                });
+                toast.error(`Failed to ban group member: ${err}`);
             }
         }
-        ElMessage({ message: `Banned ${memberCount} group members`, type: 'success' });
+        toast.success(`Banned ${memberCount} group members`);
         progressCurrent.value = 0;
         progressTotal.value = 0;
         getAllGroupBans(D.id);
@@ -1192,16 +1180,13 @@
                 await groupRequest.unbanGroupMember({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                ElMessage({
-                    message: `Failed to unban group member: ${err}`,
-                    type: 'error'
-                });
+                toast.error(`Failed to unban group member: ${err}`);
                 allSuccess = false;
             }
         }
 
         if (allSuccess) {
-            ElMessage({ message: `Unbanned ${memberCount} group members`, type: 'success' });
+            toast.success(`Unbanned ${memberCount} group members`);
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1226,15 +1211,12 @@
                 await groupRequest.kickGroupMember({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                ElMessage({
-                    message: `Failed to kick group member: ${err}`,
-                    type: 'error'
-                });
+                toast.error(`Failed to kick group member: ${err}`);
                 allSuccess = false;
             }
         }
         if (allSuccess) {
-            ElMessage({ message: `Kicked ${memberCount} group members`, type: 'success' });
+            toast.success(`Kicked ${memberCount} group members`);
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1262,15 +1244,12 @@
                 handleGroupMemberProps(args);
             } catch (err) {
                 console.error(err);
-                ElMessage({
-                    message: `Failed to set group member note for ${err}`,
-                    type: 'error'
-                });
+                toast.error(`Failed to set group member note for ${err}`);
                 allSuccess = false;
             }
         }
         if (allSuccess) {
-            ElMessage({ message: `Saved notes for ${memberCount} group members`, type: 'success' });
+            toast.success(`Saved notes for ${memberCount} group members`);
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1310,19 +1289,13 @@
                     handleGroupMemberRoleChange(args);
                 } catch (err) {
                     console.error(err);
-                    ElMessage({
-                        message: `Failed to remove group member roles: ${err}`,
-                        type: 'error'
-                    });
+                    toast.error(`Failed to remove group member roles: ${err}`);
                     allSuccess = false;
                 }
             }
         }
         if (allSuccess) {
-            ElMessage({
-                message: `Roles removed`,
-                type: 'success'
-            });
+            toast.success(`Roles removed`);
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1358,19 +1331,13 @@
                     handleGroupMemberRoleChange(args);
                 } catch (err) {
                     console.error(err);
-                    ElMessage({
-                        message: `Failed to add group member roles: ${err}`,
-                        type: 'error'
-                    });
+                    toast.error(`Failed to add group member roles: ${err}`);
                     allSuccess = false;
                 }
             }
         }
         if (allSuccess) {
-            ElMessage({
-                message: `Added group member roles`,
-                type: 'success'
-            });
+            toast.success(`Added group member roles`);
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1462,10 +1429,7 @@
                 }
             }
         } catch {
-            ElMessage({
-                message: 'Failed to get group logs',
-                type: 'error'
-            });
+            toast.error('Failed to get group logs');
         } finally {
             isGroupMembersLoading.value = false;
         }
@@ -1492,18 +1456,12 @@
                 await groupRequest.deleteBlockedGroupRequest({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                ElMessage({
-                    message: `Failed to delete blocked group requests: ${err}`,
-                    type: 'error'
-                });
+                toast.error(`Failed to delete blocked group requests: ${err}`);
                 allSuccess = false;
             }
         }
         if (allSuccess) {
-            ElMessage({
-                message: `Deleted ${memberCount} blocked group requests`,
-                type: 'success'
-            });
+            toast.success(`Deleted ${memberCount} blocked group requests`);
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1528,18 +1486,12 @@
                 await groupRequest.blockGroupInviteRequest({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                ElMessage({
-                    message: `Failed to block group join requests: ${err}`,
-                    type: 'error'
-                });
+                toast.error(`Failed to block group join requests: ${err}`);
                 allSuccess = false;
             }
         }
         if (allSuccess) {
-            ElMessage({
-                message: `Blocked ${memberCount} group join requests`,
-                type: 'success'
-            });
+            toast.success(`Blocked ${memberCount} group join requests`);
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1565,18 +1517,12 @@
                 await groupRequest.rejectGroupInviteRequest({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                ElMessage({
-                    message: `Failed to reject group join requests: ${err}`,
-                    type: 'error'
-                });
+                toast.error(`Failed to reject group join requests: ${err}`);
                 allSuccess = false;
             }
         }
         if (allSuccess) {
-            ElMessage({
-                message: `Rejected ${memberCount} group join requests`,
-                type: 'success'
-            });
+            toast.success(`Rejected ${memberCount} group join requests`);
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1601,18 +1547,12 @@
                 await groupRequest.acceptGroupInviteRequest({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                ElMessage({
-                    message: `Failed to accept group join requests: ${err}`,
-                    type: 'error'
-                });
+                toast.error(`Failed to accept group join requests: ${err}`);
                 allSuccess = false;
             }
         }
         if (allSuccess) {
-            ElMessage({
-                message: `Accepted ${memberCount} group join requests`,
-                type: 'success'
-            });
+            toast.success(`Accepted ${memberCount} group join requests`);
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1657,10 +1597,7 @@
                 }
             }
         } catch {
-            ElMessage({
-                message: 'Failed to get group join requests',
-                type: 'error'
-            });
+            toast.error('Failed to get group join requests');
         } finally {
             isGroupMembersLoading.value = false;
         }
@@ -1690,10 +1627,7 @@
                 }
             }
         } catch {
-            ElMessage({
-                message: 'Failed to get group join requests',
-                type: 'error'
-            });
+            toast.error('Failed to get group join requests');
         } finally {
             isGroupMembersLoading.value = false;
         }
@@ -1727,10 +1661,7 @@
                 }
             }
         } catch {
-            ElMessage({
-                message: 'Failed to get group invites',
-                type: 'error'
-            });
+            toast.error('Failed to get group invites');
         } finally {
             isGroupMembersLoading.value = false;
         }

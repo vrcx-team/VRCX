@@ -1,6 +1,7 @@
 import { reactive, ref, watch } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
 import Noty from 'noty';
@@ -477,10 +478,7 @@ export const useAuthStore = defineStore('Auth', () => {
                             });
                     })
                     .catch((_) => {
-                        ElMessage({
-                            message: 'Incorrect primary password',
-                            type: 'error'
-                        });
+                        toast.error('Incorrect primary password');
                         reject(_);
                     });
             } else {

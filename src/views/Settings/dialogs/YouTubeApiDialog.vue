@@ -30,8 +30,8 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { openExternalLink } from '../../../shared/utils';
@@ -57,26 +57,17 @@
     async function testYouTubeApiKey() {
         const previousKey = youTubeApiKey.value;
         if (!youTubeApiKey.value) {
-            ElMessage({
-                message: 'YouTube API key removed',
-                type: 'success'
-            });
+            toast.success('YouTube API key removed');
             closeDialog();
             return;
         }
         const data = await lookupYouTubeVideo('dQw4w9WgXcQ');
         if (!data) {
             setYouTubeApiKey(previousKey);
-            ElMessage({
-                message: 'Invalid YouTube API key',
-                type: 'error'
-            });
+            toast.error('Invalid YouTube API key');
         } else {
             setYouTubeApiKey(youTubeApiKey.value);
-            ElMessage({
-                message: 'YouTube API key valid!',
-                type: 'success'
-            });
+            toast.success('YouTube API key valid!');
             closeDialog();
         }
     }

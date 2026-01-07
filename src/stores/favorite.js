@@ -1,6 +1,6 @@
 import { computed, reactive, ref, shallowReactive, watch } from 'vue';
-import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
 import {
@@ -1071,12 +1071,11 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      */
     function renameLocalAvatarFavoriteGroup(newName, group) {
         if (localAvatarFavoriteGroups.value.includes(newName)) {
-            ElMessage({
-                message: t('prompt.local_favorite_group_rename.message.error', {
+            toast.error(
+                t('prompt.local_favorite_group_rename.message.error', {
                     name: newName
-                }),
-                type: 'error'
-            });
+                })
+            );
             return;
         }
         localAvatarFavorites[newName] = localAvatarFavorites[group];
@@ -1092,12 +1091,11 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      */
     function newLocalAvatarFavoriteGroup(group) {
         if (localAvatarFavoriteGroups.value.includes(group)) {
-            ElMessage({
-                message: t('prompt.new_local_favorite_group.message.error', {
+            toast.error(
+                t('prompt.new_local_favorite_group.message.error', {
                     name: group
-                }),
-                type: 'error'
-            });
+                })
+            );
             return;
         }
         if (!localAvatarFavorites[group]) {
@@ -1355,12 +1353,11 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      */
     function renameLocalWorldFavoriteGroup(newName, group) {
         if (localWorldFavoriteGroups.value.includes(newName)) {
-            ElMessage({
-                message: t('prompt.local_favorite_group_rename.message.error', {
+            toast.error(
+                t('prompt.local_favorite_group_rename.message.error', {
                     name: newName
-                }),
-                type: 'error'
-            });
+                })
+            );
             return;
         }
         localWorldFavorites[newName] = localWorldFavorites[group];
@@ -1474,12 +1471,11 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      */
     function newLocalWorldFavoriteGroup(group) {
         if (localWorldFavoriteGroups.value.includes(group)) {
-            ElMessage({
-                message: t('prompt.new_local_favorite_group.message.error', {
+            toast.error(
+                t('prompt.new_local_favorite_group.message.error', {
                     name: group
-                }),
-                type: 'error'
-            });
+                })
+            );
             return;
         }
         if (!localWorldFavorites[group]) {

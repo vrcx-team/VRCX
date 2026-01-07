@@ -748,8 +748,9 @@
         Warning
     } from '@element-plus/icons-vue';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import {
@@ -983,10 +984,7 @@
                                         homeLocation: D.id
                                     })
                                     .then((args) => {
-                                        ElMessage({
-                                            message: 'Home world updated',
-                                            type: 'success'
-                                        });
+                                        toast.success('Home world updated');
                                         return args;
                                     });
                                 break;
@@ -996,10 +994,7 @@
                                         homeLocation: ''
                                     })
                                     .then((args) => {
-                                        ElMessage({
-                                            message: 'Home world has been reset',
-                                            type: 'success'
-                                        });
+                                        toast.success('Home world has been reset');
                                         return args;
                                     });
                                 break;
@@ -1009,10 +1004,7 @@
                                         worldId: D.id
                                     })
                                     .then((args) => {
-                                        ElMessage({
-                                            message: 'World has been published',
-                                            type: 'success'
-                                        });
+                                        toast.success('World has been published');
                                         return args;
                                     });
                                 break;
@@ -1022,10 +1014,7 @@
                                         worldId: D.id
                                     })
                                     .then((args) => {
-                                        ElMessage({
-                                            message: 'World has been unpublished',
-                                            type: 'success'
-                                        });
+                                        toast.success('World has been unpublished');
                                         return args;
                                     });
                                 break;
@@ -1038,10 +1027,7 @@
                                         if (args.params.worldId === worldDialog.value.id && worldDialog.value.visible) {
                                             worldDialog.value.hasPersistData = false;
                                         }
-                                        ElMessage({
-                                            message: 'Persistent data has been deleted',
-                                            type: 'success'
-                                        });
+                                        toast.success('Persistent data has been deleted');
                                         return args;
                                     });
                                 break;
@@ -1063,10 +1049,7 @@
                                             const array = Array.from(map.values());
                                             userDialog.value.worlds = array;
                                         }
-                                        ElMessage({
-                                            message: 'World has been deleted',
-                                            type: 'success'
-                                        });
+                                        toast.success('World has been deleted');
                                         D.visible = false;
                                         return args;
                                     });
@@ -1141,10 +1124,7 @@
                             name: value
                         })
                         .then((args) => {
-                            ElMessage({
-                                message: t('prompt.rename_world.message.success'),
-                                type: 'success'
-                            });
+                            toast.success(t('prompt.rename_world.message.success'));
                             return args;
                         });
                 }
@@ -1171,10 +1151,7 @@
                             description: value
                         })
                         .then((args) => {
-                            ElMessage({
-                                message: t('prompt.change_world_description.message.success'),
-                                type: 'success'
-                            });
+                            toast.success(t('prompt.change_world_description.message.success'));
                             return args;
                         });
                 }
@@ -1199,10 +1176,7 @@
                             capacity: Number(value)
                         })
                         .then((args) => {
-                            ElMessage({
-                                message: t('prompt.change_world_capacity.message.success'),
-                                type: 'success'
-                            });
+                            toast.success(t('prompt.change_world_capacity.message.success'));
                             return args;
                         });
                 }
@@ -1231,10 +1205,7 @@
                             recommendedCapacity: Number(value)
                         })
                         .then((args) => {
-                            ElMessage({
-                                message: t('prompt.change_world_recommended_capacity.message.success'),
-                                type: 'success'
-                            });
+                            toast.success(t('prompt.change_world_recommended_capacity.message.success'));
                             return args;
                         });
                 }
@@ -1265,10 +1236,7 @@
                                 processedValue = id2;
                             }
                         } catch {
-                            ElMessage({
-                                message: t('prompt.change_world_preview.message.error'),
-                                type: 'error'
-                            });
+                            toast.error(t('prompt.change_world_preview.message.error'));
                             return;
                         }
                     }
@@ -1279,10 +1247,7 @@
                                 previewYoutubeId: processedValue
                             })
                             .then((args) => {
-                                ElMessage({
-                                    message: t('prompt.change_world_preview.message.success'),
-                                    type: 'success'
-                                });
+                                toast.success(t('prompt.change_world_preview.message.success'));
                                 return args;
                             });
                     }
@@ -1318,51 +1283,33 @@
         navigator.clipboard
             .writeText(worldDialog.value.id)
             .then(() => {
-                ElMessage({
-                    message: 'World ID copied to clipboard',
-                    type: 'success'
-                });
+                toast.success('World ID copied to clipboard');
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                ElMessage({
-                    message: 'Copy failed',
-                    type: 'error'
-                });
+                toast.error('Copy failed');
             });
     }
     function copyWorldUrl() {
         navigator.clipboard
             .writeText(`https://vrchat.com/home/world/${worldDialog.value.id}`)
             .then(() => {
-                ElMessage({
-                    message: 'World URL copied to clipboard',
-                    type: 'success'
-                });
+                toast.success('World URL copied to clipboard');
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                ElMessage({
-                    message: 'Copy failed',
-                    type: 'error'
-                });
+                toast.error('Copy failed');
             });
     }
     function copyWorldName() {
         navigator.clipboard
             .writeText(worldDialog.value.ref.name)
             .then(() => {
-                ElMessage({
-                    message: 'World name copied to clipboard',
-                    type: 'success'
-                });
+                toast.success('World name copied to clipboard');
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                ElMessage({
-                    message: 'Copy failed',
-                    type: 'error'
-                });
+                toast.error('Copy failed');
             });
     }
     function showWorldAllowedDomainsDialog() {

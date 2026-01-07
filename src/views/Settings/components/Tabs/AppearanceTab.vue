@@ -386,8 +386,8 @@
 <script setup>
     import { ArrowDown, ArrowRight, Notebook } from '@element-plus/icons-vue';
     import { computed, onBeforeUnmount, ref } from 'vue';
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '../../../../stores';
@@ -474,10 +474,7 @@
             const rawLength = Array.isArray(values) ? values.length : 0;
             setTablePageSizes(values);
             if (rawLength && rawLength !== tablePageSizes.value.length) {
-                ElMessage({
-                    message: t('view.settings.appearance.appearance.table_page_sizes_error'),
-                    type: 'error'
-                });
+                toast.error(t('view.settings.appearance.appearance.table_page_sizes_error'));
             }
         }
     });

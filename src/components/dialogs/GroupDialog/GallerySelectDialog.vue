@@ -54,8 +54,8 @@
 
 <script setup>
     import { Close, Refresh, Upload } from '@element-plus/icons-vue';
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useGalleryStore, useUserStore } from '../../../stores';
@@ -98,18 +98,12 @@
         }
         if (files[0].size >= 100000000) {
             // 100MB
-            ElMessage({
-                message: t('message.file.too_large'),
-                type: 'error'
-            });
+            toast.error(t('message.file.too_large'));
             clearFile();
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            ElMessage({
-                message: t('message.file.not_image'),
-                type: 'error'
-            });
+            toast.error(t('message.file.not_image'));
             clearFile();
             return;
         }
@@ -118,10 +112,7 @@
             const base64Body = btoa(r.result.toString());
             vrcPlusImageRequest.uploadGalleryImage(base64Body).then((args) => {
                 handleGalleryImageAdd(args);
-                ElMessage({
-                    message: t('message.gallery.uploaded'),
-                    type: 'success'
-                });
+                toast.success(t('message.gallery.uploaded'));
                 if (Object.keys(galleryTable.value).length !== 0) {
                     galleryTable.value.unshift(args.json);
                 }

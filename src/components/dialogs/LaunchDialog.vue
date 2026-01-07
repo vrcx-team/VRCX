@@ -120,8 +120,9 @@
 <script setup>
     import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
     import { CopyDocument, Warning } from '@element-plus/icons-vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useFriendStore, useGameStore, useInviteStore, useLaunchStore, useLocationStore } from '../../stores';
@@ -273,10 +274,7 @@
                 shortName
             })
             .then((args) => {
-                ElMessage({
-                    message: 'Self invite sent',
-                    type: 'success'
-                });
+                toast.success('Self invite sent');
                 return args;
             });
     }
@@ -334,15 +332,9 @@
     async function copyInstanceMessage(input) {
         try {
             await navigator.clipboard.writeText(input);
-            ElMessage({
-                message: 'Instance copied to clipboard',
-                type: 'success'
-            });
+            toast.success('Instance copied to clipboard');
         } catch (error) {
-            ElMessage({
-                message: 'Instance copied failed',
-                type: 'error'
-            });
+            toast.error('Instance copied failed');
             console.error(error.message);
         }
     }

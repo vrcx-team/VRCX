@@ -166,8 +166,9 @@
 
 <script setup>
     import { computed, nextTick, ref, watch } from 'vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { hasGroupPermission, userImage, userStatusClass } from '../../shared/utils';
@@ -244,10 +245,7 @@
                 }
                 // not allowed to invite
                 inviteGroupDialog.value.groupId = '';
-                ElMessage({
-                    type: 'error',
-                    message: 'You are not allowed to invite to this group'
-                });
+                toast.error('You are not allowed to invite to this group');
                 return args;
             })
             .finally(() => {

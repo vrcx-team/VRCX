@@ -90,7 +90,7 @@
 
 <script setup>
     import { computed, ref, watch } from 'vue';
-    import { ElMessage } from 'element-plus';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useWorldStore } from '../../../stores';
@@ -306,10 +306,7 @@
                 tags
             })
             .then((args) => {
-                ElMessage({
-                    message: 'Tags updated',
-                    type: 'success'
-                });
+                toast.success('Tags updated');
                 emit('update:isSetWorldTagsDialogVisible', false);
                 if (props.isWorldDialogVisible) {
                     showWorldDialog(args.json.id);

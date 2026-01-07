@@ -104,8 +104,8 @@
 <script setup>
     import { reactive, watch } from 'vue';
     import { ArrowDown } from '@element-plus/icons-vue';
-    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { getLanguageName, languageCodes } from '../../../localization';
@@ -173,10 +173,7 @@
     async function saveTranslationApiConfig() {
         if (form.translationApiType === 'openai') {
             if (!form.translationApiEndpoint || !form.translationApiModel) {
-                ElMessage({
-                    message: t('dialog.translation_api.msg_fill_endpoint_model'),
-                    type: 'warning'
-                });
+                toast.warning(t('dialog.translation_api.msg_fill_endpoint_model'));
                 return;
             }
         }
@@ -189,10 +186,7 @@
             setTranslationApiKey(form.translationApiKey)
         ]);
 
-        ElMessage({
-            message: t('dialog.translation_api.msg_settings_saved'),
-            type: 'success'
-        });
+        toast.success(t('dialog.translation_api.msg_settings_saved'));
         closeDialog();
     }
 
@@ -201,10 +195,7 @@
             return;
         }
         if (!form.translationApiEndpoint || !form.translationApiModel) {
-            ElMessage({
-                message: t('dialog.translation_api.msg_fill_endpoint_model'),
-                type: 'warning'
-            });
+            toast.warning(t('dialog.translation_api.msg_fill_endpoint_model'));
             return;
         }
 
@@ -218,23 +209,14 @@
                 key: form.translationApiKey
             });
             if (data) {
-                ElMessage({
-                    message: t('dialog.translation_api.msg_test_success'),
-                    type: 'success'
-                });
+                toast.success(t('dialog.translation_api.msg_test_success'));
             } else {
                 console.error('[TranslationAPI] Test returned empty result');
-                ElMessage({
-                    message: t('dialog.translation_api.msg_test_failed'),
-                    type: 'error'
-                });
+                toast.error(t('dialog.translation_api.msg_test_failed'));
             }
         } catch (err) {
             console.error('[TranslationAPI] Test failed', err);
-            ElMessage({
-                message: t('dialog.translation_api.msg_test_failed'),
-                type: 'error'
-            });
+            toast.error(t('dialog.translation_api.msg_test_failed'));
         }
     }
 
