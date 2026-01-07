@@ -95,69 +95,68 @@
                                         <Badge variant="outline">
                                             {{ formatVisibility(group.visibility) }}
                                         </Badge>
-                                        <el-popover
-                                            :visible="activeGroupMenu === remoteGroupMenuKey(group.key)"
-                                            @update:visible="
+                                        <Popover
+                                            :open="activeGroupMenu === remoteGroupMenuKey(group.key)"
+                                            @update:open="
                                                 handleGroupMenuVisible(remoteGroupMenuKey(group.key), $event)
-                                            "
-                                            placement="right"
-                                            trigger="click"
-                                            :hide-after="0"
-                                            :width="200"
-                                            popper-style="padding: 4px; border-radius: 8px;">
-                                            <template #reference>
+                                            ">
+                                            <PopoverTrigger asChild>
                                                 <el-button
                                                     text
                                                     size="small"
                                                     :icon="MoreFilled"
                                                     circle
                                                     @click.stop></el-button>
-                                            </template>
-                                            <div class="favorites-group-menu">
-                                                <button
-                                                    type="button"
-                                                    class="favorites-group-menu__item"
-                                                    @click="handleRemoteRename(group)">
-                                                    <span>{{ t('view.favorite.rename_tooltip') }}</span>
-                                                </button>
-                                                <el-popover
-                                                    placement="right-start"
-                                                    trigger="hover"
-                                                    :width="200"
-                                                    popper-style="padding: 4px; border-radius: 8px;">
-                                                    <div class="group-visibility-menu">
-                                                        <button
-                                                            v-for="visibility in worldGroupVisibilityOptions"
-                                                            :key="visibility"
-                                                            type="button"
-                                                            class="group-visibility-menu__item"
-                                                            :class="{ 'is-active': group.visibility === visibility }"
-                                                            @click="handleVisibilitySelection(group, visibility)">
-                                                            <span>{{ formatVisibility(visibility) }}</span>
-                                                            <span
-                                                                v-if="group.visibility === visibility"
-                                                                class="group-visibility-menu__check"
-                                                                >✔</span
-                                                            >
-                                                        </button>
-                                                    </div>
-                                                    <template #reference>
-                                                        <button
-                                                            type="button"
-                                                            class="favorites-group-menu__item favorites-group-menu__item--submenu">
-                                                            <span>{{ t('view.favorite.visibility_tooltip') }}</span>
-                                                            <span class="favorites-group-menu__arrow">›</span>
-                                                        </button>
-                                                    </template>
-                                                </el-popover>
-                                                <button
-                                                    type="button"
-                                                    class="favorites-group-menu__item favorites-group-menu__item--danger"
-                                                    @click="handleRemoteClear(group)">
-                                                    <span>{{ t('view.favorite.clear') }}</span>
-                                                </button>
-                                            </div>
-                                        </el-popover>
+                                            </PopoverTrigger>
+                                            <PopoverContent side="right" class="w-[200px] p-1 rounded-lg">
+                                                <div class="favorites-group-menu">
+                                                    <button
+                                                        type="button"
+                                                        class="favorites-group-menu__item"
+                                                        @click="handleRemoteRename(group)">
+                                                        <span>{{ t('view.favorite.rename_tooltip') }}</span>
+                                                    </button>
+                                                    <el-popover
+                                                        placement="right-start"
+                                                        trigger="hover"
+                                                        :width="200"
+                                                        popper-style="padding: 4px; border-radius: 8px;">
+                                                        <div class="group-visibility-menu">
+                                                            <button
+                                                                v-for="visibility in worldGroupVisibilityOptions"
+                                                                :key="visibility"
+                                                                type="button"
+                                                                class="group-visibility-menu__item"
+                                                                :class="{
+                                                                    'is-active': group.visibility === visibility
+                                                                }"
+                                                                @click="handleVisibilitySelection(group, visibility)">
+                                                                <span>{{ formatVisibility(visibility) }}</span>
+                                                                <span
+                                                                    v-if="group.visibility === visibility"
+                                                                    class="group-visibility-menu__check"
+                                                                    >✔</span
+                                                                >
+                                                            </button>
+                                                        </div>
+                                                        <template #reference>
+                                                            <button
+                                                                type="button"
+                                                                class="favorites-group-menu__item favorites-group-menu__item--submenu">
+                                                                <span>{{ t('view.favorite.visibility_tooltip') }}</span>
+                                                                <span class="favorites-group-menu__arrow">›</span>
+                                                            </button>
+                                                        </template>
+                                                    </el-popover>
+                                                    <button
+                                                        type="button"
+                                                        class="favorites-group-menu__item favorites-group-menu__item--danger"
+                                                        @click="handleRemoteClear(group)">
+                                                        <span>{{ t('view.favorite.clear') }}</span>
+                                                    </button>
+                                                </div>
+                                            </PopoverContent>
+                                        </Popover>
                                     </div>
                                 </div>
                             </template>
@@ -210,39 +209,36 @@
                                         <div class="group-item__right">
                                             <span class="group-item__count">{{ localWorldFavGroupLength(group) }}</span>
                                             <div class="group-item__bottom">
-                                                <el-popover
-                                                    :visible="activeGroupMenu === localGroupMenuKey(group)"
-                                                    @update:visible="
+                                                <Popover
+                                                    :open="activeGroupMenu === localGroupMenuKey(group)"
+                                                    @update:open="
                                                         handleGroupMenuVisible(localGroupMenuKey(group), $event)
-                                                    "
-                                                    placement="right"
-                                                    trigger="click"
-                                                    :hide-after="0"
-                                                    :width="200"
-                                                    popper-style="padding: 4px; border-radius: 8px;">
-                                                    <template #reference>
+                                                    ">
+                                                    <PopoverTrigger asChild>
                                                         <el-button
                                                             text
                                                             size="small"
                                                             :icon="MoreFilled"
                                                             circle
                                                             @click.stop></el-button>
-                                                    </template>
-                                                    <div class="favorites-group-menu">
-                                                        <button
-                                                            type="button"
-                                                            class="favorites-group-menu__item"
-                                                            @click="handleLocalRename(group)">
-                                                            <span>{{ t('view.favorite.rename_tooltip') }}</span>
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            class="favorites-group-menu__item favorites-group-menu__item--danger"
-                                                            @click="handleLocalDelete(group)">
-                                                            <span>{{ t('view.favorite.delete_tooltip') }}</span>
-                                                        </button>
-                                                    </div>
-                                                </el-popover>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent side="right" class="w-[200px] p-1 rounded-lg">
+                                                        <div class="favorites-group-menu">
+                                                            <button
+                                                                type="button"
+                                                                class="favorites-group-menu__item"
+                                                                @click="handleLocalRename(group)">
+                                                                <span>{{ t('view.favorite.rename_tooltip') }}</span>
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                class="favorites-group-menu__item favorites-group-menu__item--danger"
+                                                                @click="handleLocalDelete(group)">
+                                                                <span>{{ t('view.favorite.delete_tooltip') }}</span>
+                                                            </button>
+                                                        </div>
+                                                    </PopoverContent>
+                                                </Popover>
                                             </div>
                                         </div>
                                     </div>
@@ -412,6 +408,7 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../stores';
     import { favoriteRequest, worldRequest } from '../../api';
     import { Badge } from '../../components/ui/badge';

@@ -25,53 +25,58 @@
                     ><el-button :icon="Refresh" circle style="margin-right: 5px" @click="reloadData"></el-button
                 ></TooltipWrapper>
 
-                <el-popover placement="bottom" trigger="click" :width="250">
-                    <div class="settings">
-                        <div>
-                            <span>{{ t('view.charts.instance_activity.settings.bar_width') }}</span>
-                            <div>
-                                <el-slider
-                                    v-model.lazy="barWidth"
-                                    :max="50"
-                                    :min="1"
-                                    @change="
-                                        (value) => changeBarWidth(value, () => handleEchartsRerender())
-                                    "></el-slider>
-                            </div>
-                        </div>
-                        <div>
-                            <span>{{ t('view.charts.instance_activity.settings.show_detail') }}</span>
-                            <el-switch
-                                v-model="isDetailVisible"
-                                @change="(value) => changeIsDetailInstanceVisible(value, () => handleSettingsChange())">
-                            </el-switch>
-                        </div>
-                        <div v-if="isDetailVisible">
-                            <span>{{ t('view.charts.instance_activity.settings.show_solo_instance') }}</span>
-                            <el-switch
-                                v-model="isSoloInstanceVisible"
-                                @change="(value) => changeIsSoloInstanceVisible(value, () => handleSettingsChange())">
-                            </el-switch>
-                        </div>
-                        <div v-if="isDetailVisible">
-                            <span>{{ t('view.charts.instance_activity.settings.show_no_friend_instance') }}</span>
-                            <el-switch
-                                v-model="isNoFriendInstanceVisible"
-                                @change="
-                                    (value) => changeIsNoFriendInstanceVisible(value, () => handleSettingsChange())
-                                ">
-                            </el-switch>
-                        </div>
-                    </div>
-
-                    <template #reference>
+                <Popover>
+                    <PopoverTrigger asChild>
                         <div>
                             <TooltipWrapper :content="t('view.charts.instance_activity.settings.header')" side="top">
                                 <el-button :icon="Setting" style="margin-right: 5px" circle></el-button>
                             </TooltipWrapper>
                         </div>
-                    </template>
-                </el-popover>
+                    </PopoverTrigger>
+                    <PopoverContent side="bottom" class="w-[250px]">
+                        <div class="settings">
+                            <div>
+                                <span>{{ t('view.charts.instance_activity.settings.bar_width') }}</span>
+                                <div>
+                                    <el-slider
+                                        v-model.lazy="barWidth"
+                                        :max="50"
+                                        :min="1"
+                                        @change="
+                                            (value) => changeBarWidth(value, () => handleEchartsRerender())
+                                        "></el-slider>
+                                </div>
+                            </div>
+                            <div>
+                                <span>{{ t('view.charts.instance_activity.settings.show_detail') }}</span>
+                                <el-switch
+                                    v-model="isDetailVisible"
+                                    @change="
+                                        (value) => changeIsDetailInstanceVisible(value, () => handleSettingsChange())
+                                    ">
+                                </el-switch>
+                            </div>
+                            <div v-if="isDetailVisible">
+                                <span>{{ t('view.charts.instance_activity.settings.show_solo_instance') }}</span>
+                                <el-switch
+                                    v-model="isSoloInstanceVisible"
+                                    @change="
+                                        (value) => changeIsSoloInstanceVisible(value, () => handleSettingsChange())
+                                    ">
+                                </el-switch>
+                            </div>
+                            <div v-if="isDetailVisible">
+                                <span>{{ t('view.charts.instance_activity.settings.show_no_friend_instance') }}</span>
+                                <el-switch
+                                    v-model="isNoFriendInstanceVisible"
+                                    @change="
+                                        (value) => changeIsNoFriendInstanceVisible(value, () => handleSettingsChange())
+                                    ">
+                                </el-switch>
+                            </div>
+                        </div>
+                    </PopoverContent>
+                </Popover>
                 <el-button-group style="margin-right: 5px">
                     <TooltipWrapper :content="t('view.charts.instance_activity.previous_day')" side="top">
                         <el-button
@@ -124,13 +129,14 @@
 </template>
 
 <script setup>
-    import { nextTick, onActivated, onBeforeMount, onBeforeUnmount, onDeactivated, onMounted, ref, watch } from 'vue';
     import { ArrowLeft, ArrowRight, InfoFilled, Refresh, Setting, WarningFilled } from '@element-plus/icons-vue';
+    import { nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import dayjs from 'dayjs';
 
+    import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/popover';
     import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
     import { parseLocation, timeToText } from '../../../shared/utils';
     import { useActivityDataProcessor } from '../composables/useActivityDataProcessor';
