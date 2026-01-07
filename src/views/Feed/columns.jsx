@@ -17,7 +17,7 @@ import {
 } from 'lucide-vue-next';
 import { formatDateFilter, statusClass, timeToText } from '../../shared/utils';
 import { i18n } from '../../plugin';
-import { useUserStore } from '../../stores';
+import { useUserStore, useGalleryStore } from '../../stores';
 
 const { t } = i18n.global;
 
@@ -81,6 +81,7 @@ const expandedRow = ({ row }) => {
     }
 
     if (type === 'Avatar') {
+        const { showFullscreenImageDialog } = useGalleryStore();
         return (
             <div class="pl-5 text-sm">
                 <div class="flex items-center">
@@ -91,8 +92,13 @@ const expandedRow = ({ row }) => {
                                     src={
                                         original.previousCurrentAvatarThumbnailImageUrl
                                     }
-                                    class="x-link h-30 w-40 rounded"
+                                    class="x-link h-30 w-40 rounded pointer"
                                     loading="lazy"
+                                    onClick={() =>
+                                        showFullscreenImageDialog(
+                                            original.previousCurrentAvatarImageUrl
+                                        )
+                                    }
                                 />
                                 <br />
                                 <AvatarInfo
@@ -119,8 +125,13 @@ const expandedRow = ({ row }) => {
                                     src={
                                         original.currentAvatarThumbnailImageUrl
                                     }
-                                    class="x-link h-30 w-40 rounded"
+                                    class="x-link h-30 w-40 rounded pointer"
                                     loading="lazy"
+                                    onClick={() =>
+                                        showFullscreenImageDialog(
+                                            original.currentAvatarImageUrl
+                                        )
+                                    }
                                 />
                                 <br />
                                 <AvatarInfo

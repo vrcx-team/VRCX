@@ -1,6 +1,7 @@
 import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 
+import { removeFromArray } from '../shared/utils';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { watchState } from '../service/watchState';
 
@@ -14,10 +15,8 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     const avatarRemoteDatabaseProvider = ref('');
 
     const avatarRemoteDatabaseProviderList = ref([
-        'https://api.avtrdb.com/v2/avatar/search/vrcx',
-        'https://avtr.just-h.party/vrcx_search.php'
+        'https://api.avtrdb.com/v2/avatar/search/vrcx'
     ]);
-
     watch(
         () => watchState.isLoggedIn,
         () => {
@@ -30,16 +29,17 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
         avatarRemoteDatabaseProviderList.value = JSON.parse(
             await configRepository.getString(
                 'VRCX_avatarRemoteDatabaseProviderList',
-                '[ "https://api.avtrdb.com/v2/avatar/search/vrcx", "https://avtr.just-h.party/vrcx_search.php" ]'
+                '[ "https://api.avtrdb.com/v2/avatar/search/vrcx" ]'
             )
         );
         if (
-            avatarRemoteDatabaseProviderList.value.length === 1 &&
-            avatarRemoteDatabaseProviderList.value[0] ===
+            avatarRemoteDatabaseProviderList.value.includes(
                 'https://avtr.just-h.party/vrcx_search.php'
+            )
         ) {
-            avatarRemoteDatabaseProviderList.value.unshift(
-                'https://api.avtrdb.com/v2/avatar/search/vrcx'
+            removeFromArray(
+                avatarRemoteDatabaseProviderList.value,
+                'https://avtr.just-h.party/vrcx_search.php'
             );
             await configRepository.setString(
                 'VRCX_avatarRemoteDatabaseProviderList',
