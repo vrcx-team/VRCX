@@ -24,7 +24,7 @@
                             <span class="friend-view__settings-label">{{
                                 t('view.friends_locations.separate_same_instance_friends')
                             }}</span>
-                            <el-switch v-model="showSameInstance" />
+                            <Switch v-model="showSameInstance" />
                         </div>
                         <div class="friend-view__settings-row">
                             <span class="friend-view__settings-label">{{ t('view.friends_locations.scale') }}</span>
@@ -170,6 +170,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
+    import { Switch } from '../../components/ui/switch';
     import { getFriendsLocations } from '../../shared/utils/location.js';
     import { useFriendStore } from '../../stores';
 

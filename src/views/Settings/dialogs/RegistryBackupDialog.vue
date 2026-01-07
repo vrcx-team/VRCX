@@ -9,7 +9,7 @@
         <div style="margin-top: 10px">
             <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px">
                 <span class="name" style="margin-right: 24px">{{ t('dialog.registry_backup.auto_backup') }}</span>
-                <el-switch :model-value="vrcRegistryAutoBackup" @change="setVrcRegistryAutoBackup"></el-switch>
+                <Switch :model-value="vrcRegistryAutoBackup" @update:modelValue="setVrcRegistryAutoBackup" />
             </div>
             <div
                 style="
@@ -20,7 +20,7 @@
                     margin-top: 5px;
                 ">
                 <span class="name" style="margin-right: 24px">{{ t('dialog.registry_backup.ask_to_restore') }}</span>
-                <el-switch :model-value="vrcRegistryAskRestore" @change="setVrcRegistryAskRestore"></el-switch>
+                <Switch :model-value="vrcRegistryAskRestore" @update:modelValue="setVrcRegistryAskRestore" />
             </div>
             <DataTable v-bind="registryBackupTable" style="margin-top: 10px">
                 <el-table-column :label="t('dialog.registry_backup.name')" prop="name"></el-table-column>
@@ -85,6 +85,7 @@
 
     import { downloadAndSaveJson, formatDateFilter, removeFromArray } from '../../../shared/utils';
     import { useAdvancedSettingsStore, useVrcxStore } from '../../../stores';
+    import { Switch } from '../../../components/ui/switch';
 
     import configRepository from '../../../service/config';
 

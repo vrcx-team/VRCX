@@ -4,10 +4,7 @@
             <div style="display: flex; align-items: center; justify-content: space-between">
                 <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
                     <TooltipWrapper side="bottom" :content="t('view.friend_list.favorites_only_tooltip')">
-                        <el-switch
-                            v-model="friendsListSearchFilterVIP"
-                            active-color="var(--el-color-success)"
-                            @change="friendsListSearchChange"></el-switch>
+                        <Switch v-model="friendsListSearchFilterVIP" @update:modelValue="friendsListSearchChange" />
                     </TooltipWrapper>
                     <el-select
                         v-model="friendsListSearchFilters"
@@ -39,9 +36,9 @@
                     </div>
                     <div class="flex items-center mr-3">
                         <span class="name mr-2 text-xs">{{ t('view.friend_list.bulk_unfriend') }}</span>
-                        <el-switch
+                        <Switch
                             v-model="friendsListBulkUnfriendMode"
-                            @change="toggleFriendsListBulkUnfriendMode"></el-switch>
+                            @update:modelValue="toggleFriendsListBulkUnfriendMode" />
                     </div>
                     <div class="flex items-center">
                         <el-button @click="openChartsTab">
@@ -284,6 +281,7 @@
     } from '../../shared/utils';
     import { useAppearanceSettingsStore, useFriendStore, useSearchStore, useUserStore } from '../../stores';
     import { friendRequest, userRequest } from '../../api';
+    import { Switch } from '../../components/ui/switch';
     import removeConfusables, { removeWhitespace } from '../../service/confusables';
     import { router } from '../../plugin/router';
     import { useTableHeight } from '../../composables/useTableHeight';

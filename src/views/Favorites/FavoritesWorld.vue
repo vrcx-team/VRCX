@@ -286,7 +286,7 @@
                         </div>
                         <div class="favorites-content__edit">
                             <span>{{ t('view.favorite.edit_mode') }}</span>
-                            <el-switch v-model="worldEditMode" size="small" :disabled="isSearchActive"></el-switch>
+                            <Switch v-model="worldEditMode" :disabled="isSearchActive" />
                         </div>
                     </div>
                     <div class="favorites-content__edit-actions">
@@ -412,6 +412,7 @@
     import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../stores';
     import { favoriteRequest, worldRequest } from '../../api';
     import { Badge } from '../../components/ui/badge';
+    import { Switch } from '../../components/ui/switch';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
 
     import FavoritesWorldItem from './components/FavoritesWorldItem.vue';

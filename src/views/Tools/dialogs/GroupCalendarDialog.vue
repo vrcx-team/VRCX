@@ -19,7 +19,7 @@
             </div>
             <div class="featured-switch">
                 <span class="featured-switch-text">{{ t('dialog.group_calendar.featured_events') }}</span>
-                <el-switch v-model="showFeaturedEvents" @change="toggleFeaturedEvents" size="small" />
+                <Switch v-model="showFeaturedEvents" @update:modelValue="toggleFeaturedEvents" />
             </div>
         </template>
         <div class="top-content">
@@ -131,6 +131,7 @@
     import dayjs from 'dayjs';
 
     import { formatDateFilter, getGroupName, replaceBioSymbols } from '../../../shared/utils';
+    import { Switch } from '../../../components/ui/switch';
     import { groupRequest } from '../../../api';
     import { processBulk } from '../../../service/request';
     import { useGroupStore } from '../../../stores';

@@ -7,12 +7,14 @@
             ></TooltipWrapper>
         </div>
 
-        <el-switch class="switch" :model-value="value" @change="change" :disabled="disabled"></el-switch>
+        <Switch class="switch" :model-value="value" @update:modelValue="change" :disabled="disabled" />
     </div>
 </template>
 
 <script setup>
     import { InfoFilled } from '@element-plus/icons-vue';
+
+    import { Switch } from '../../../components/ui/switch';
     defineProps({
         label: String,
         value: Boolean,

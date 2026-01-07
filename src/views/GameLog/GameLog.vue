@@ -11,10 +11,7 @@
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
                     <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
                         <TooltipWrapper side="bottom" :content="t('view.feed.favorites_only_tooltip')">
-                            <el-switch
-                                v-model="gameLogTable.vip"
-                                active-color="var(--el-color-success)"
-                                @change="gameLogTableLookup"></el-switch>
+                            <Switch v-model="gameLogTable.vip" @update:modelValue="gameLogTableLookup" />
                         </TooltipWrapper>
                     </div>
                     <el-select
@@ -69,6 +66,7 @@
 
     import { useAppearanceSettingsStore, useGameLogStore, useSharedFeedStore, useVrcxStore } from '../../stores';
     import { DataTableLayout } from '../../components/ui/data-table';
+    import { Switch } from '../../components/ui/switch';
     import { createColumns } from './columns.jsx';
     import { database } from '../../service/database';
     import { removeFromArray } from '../../shared/utils';

@@ -11,10 +11,7 @@
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
                     <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
                         <TooltipWrapper side="bottom" :content="t('view.feed.favorites_only_tooltip')">
-                            <el-switch
-                                v-model="feedTable.vip"
-                                active-color="var(--el-color-success)"
-                                @change="feedTableLookup"></el-switch>
+                            <Switch v-model="feedTable.vip" @update:modelValue="feedTableLookup" />
                         </TooltipWrapper>
                     </div>
                     <el-select
@@ -58,6 +55,7 @@
 
     import { useAppearanceSettingsStore, useFeedStore, useVrcxStore } from '../../stores';
     import { DataTableLayout } from '../../components/ui/data-table';
+    import { Switch } from '../../components/ui/switch';
     import { columns as baseColumns } from './columns.jsx';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { valueUpdater } from '../../components/ui/table/utils';
