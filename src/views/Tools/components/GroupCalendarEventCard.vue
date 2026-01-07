@@ -56,17 +56,22 @@
                 </div>
             </div>
         </div>
-        <div v-if="isFollowing" @click="toggleEventFollow(event)" class="following-badge is-following">
-            <el-icon><Star /></el-icon>
-        </div>
-        <div v-else @click="toggleEventFollow(event)" class="following-badge">
-            <el-icon><StarFilled /></el-icon>
+        <div class="badges">
+            <div @click="copyEventLink(event)" class="share-badge">
+                <el-icon><Share /></el-icon>
+            </div>
+            <div v-if="isFollowing" @click="toggleEventFollow(event)" class="following-badge is-following">
+                <el-icon><Star /></el-icon>
+            </div>
+            <div v-else @click="toggleEventFollow(event)" class="following-badge">
+                <el-icon><StarFilled /></el-icon>
+            </div>
         </div>
     </el-card>
 </template>
 
 <script setup>
-    import { Calendar, Download, Star, StarFilled } from '@element-plus/icons-vue';
+    import { Calendar, Download, Share, Star, StarFilled } from '@element-plus/icons-vue';
     import { computed } from 'vue';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -175,6 +180,12 @@
         emit('update-following-calendar-data', args.json);
     }
 
+    function copyEventLink(event) {
+        const eventLink = `https://vrchat.com/home/group/${event.ownerId}/calendar/${event.id}`;
+        navigator.clipboard.writeText(eventLink);
+        toast.success(t('dialog.group_calendar.event_card.copied_event_link'));
+    }
+
     const formatTimeRange = (startsAt, endsAt) =>
         `${formatDateFilter(startsAt, 'time')} - ${formatDateFilter(endsAt, 'time')}`;
 
@@ -231,26 +242,46 @@
         height: 100px;
     }
 
-    .event-card .following-badge {
+    .event-card .badges {
+        display: inline-flex;
         position: absolute;
         top: -8px;
         right: -9px;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background-color: var(--el-text-color-regular);
-        color: var(--el-bg-color);
+        z-index: 10;
+        font-size: 15px;
+    }
+
+    .event-card .badges .following-badge {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 14px;
+        width: 24px;
+        height: 24px;
+        gap: 4px;
+        border-radius: 50%;
+        background-color: var(--el-text-color-regular);
+        color: var(--el-bg-color);
         box-shadow: var(--el-box-shadow-lighter);
-        z-index: 10;
         cursor: pointer;
     }
 
-    .event-card .following-badge.is-following {
+    .event-card .badges .following-badge.is-following {
         background-color: var(--group-calendar-badge-following, var(--el-color-success));
+    }
+
+    .event-card .badges .share-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        gap: 4px;
+        border-radius: 50%;
+        background-color: var(--el-text-color-regular);
+        color: var(--el-bg-color);
+        box-shadow: var(--el-box-shadow-lighter);
+        cursor: pointer;
+        margin-right: 5px;
     }
 
     .event-card .event-content {
