@@ -87,16 +87,8 @@ export const useFriendStore = defineStore('Friend', () => {
                     !(filter.value && row.type === 'Unfriend')
             }
         ],
-        tableProps: {
-            stripe: true,
-            size: 'small',
-            defaultSort: null
-        },
         pageSize: 20,
-        pageSizeLinked: true,
-        paginationProps: {
-            layout: 'sizes,prev,pager,next,total'
-        }
+        pageSizeLinked: true
     });
 
     const vipFriends = computed(() => {

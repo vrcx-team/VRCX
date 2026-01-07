@@ -6,7 +6,7 @@
 
         <div class="rounded-md border">
             <div v-loading="loading" class="overflow-auto" :style="tableStyle">
-                <Table class="table-fixed">
+                <Table :class="tableClassValue" :style="tableElementStyle">
                     <TableHeader>
                         <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
                             <TableHead
@@ -119,6 +119,14 @@
             type: Object,
             required: true
         },
+        tableClass: {
+            type: [String, Array],
+            default: null
+        },
+        useTableMinWidth: {
+            type: Boolean,
+            default: false
+        },
         tableStyle: {
             type: Object,
             default: null
@@ -183,6 +191,15 @@
             .flatMap((value) => (Array.isArray(value) ? value : [value]))
             .filter(Boolean)
             .join(' ');
+
+    const tableClassValue = computed(() => joinClasses('table-fixed', props.tableClass));
+
+    const tableElementStyle = computed(() => {
+        if (!props.useTableMinWidth) return undefined;
+        const size = props.table?.getTotalSize?.();
+        if (!Number.isFinite(size) || size <= 0) return undefined;
+        return { minWidth: `${size}px` };
+    });
 
     const resolveClassValue = (value, ctx) => {
         if (typeof value === 'function') {

@@ -63,18 +63,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
         loading: false,
         search: '',
         filter: [],
-        tableProps: {
-            stripe: true,
-            size: 'small',
-            defaultSort: null,
-            rowKey: (row) =>
-                `${row.type}:${row.rowId ?? row.uid ?? row.displayName + row.location + row.time}:${row.created_at ?? ''}`
-        },
         pageSize: 20,
         pageSizeLinked: true,
-        paginationProps: {
-            layout: 'sizes,prev,pager,next,total'
-        },
         vip: false
     });
 

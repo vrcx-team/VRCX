@@ -26,19 +26,8 @@ export const useModerationStore = defineStore('Moderation', () => {
                 value: ''
             }
         ],
-        tableProps: {
-            stripe: true,
-            size: 'small',
-            defaultSort: {
-                prop: 'created',
-                order: 'descending'
-            }
-        },
         pageSize: 20,
-        pageSizeLinked: true,
-        paginationProps: {
-            layout: 'sizes,prev,pager,next,total'
-        }
+        pageSizeLinked: true
     });
 
     watch(

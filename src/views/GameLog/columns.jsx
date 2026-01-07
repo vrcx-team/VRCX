@@ -139,9 +139,9 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             id: 'detail',
             header: () => t('table.gameLog.detail'),
             enableSorting: false,
-            meta: {
-                class: 'min-w-0 overflow-hidden'
-            },
+        meta: {
+            class: 'min-w-[240px] overflow-hidden'
+        },
             cell: ({ row }) => {
                 const original = row.original;
                 if (original.type === 'Location') {

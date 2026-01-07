@@ -32,7 +32,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         {
             accessorKey: 'created_at',
             meta: {
-                class: 'w-[140px]'
+                class: 'w-[90px]'
             },
             header: ({ column }) => (
                 <Button
@@ -67,7 +67,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         {
             accessorKey: 'type',
             meta: {
-                class: 'w-[180px]'
+                class: 'w-[110px]'
             },
             header: () => t('table.friendLog.type'),
             cell: ({ row }) => {
@@ -82,7 +82,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         {
             accessorKey: 'displayName',
             meta: {
-                class: 'min-w-0 overflow-hidden'
+                class: 'w-[260px]'
             },
             header: () => t('table.friendLog.user'),
             cell: ({ row }) => {
@@ -90,7 +90,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
                 const displayName =
                     original.displayName || original.userId || '';
                 return (
-                    <span class="block w-full min-w-0 truncate">
+                    <span class="block w-full whitespace-normal break-words">
                         {original.type === 'DisplayName' ? (
                             <span class="mr-1">
                                 {original.previousDisplayName}
