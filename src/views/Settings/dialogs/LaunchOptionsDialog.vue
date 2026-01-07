@@ -8,9 +8,9 @@
         <div style="font-size: 12px">
             {{ t('dialog.launch_options.description') }} <br />
             {{ t('dialog.launch_options.example') }}
-            <el-tag size="small"
+            <Badge variant="outline"
                 >--fps=144 --enable-debug-gui --enable-sdk-log-levels --enable-udon-debug-logging
-            </el-tag>
+            </Badge>
         </div>
 
         <el-input
@@ -59,6 +59,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import { Badge } from '../../../components/ui/badge';
     import { openExternalLink } from '../../../shared/utils';
     import { useLaunchStore } from '../../../stores';
 

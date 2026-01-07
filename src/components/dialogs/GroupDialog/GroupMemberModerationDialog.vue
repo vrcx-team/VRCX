@@ -723,14 +723,11 @@
                 style="margin-left: 5px"
                 @click="clearSelectedGroupMembers"></el-button>
             <br />
-            <el-tag
+            <Badge
                 v-for="user in selectedUsersArray"
                 :key="user.id"
-                type="info"
-                :disable-transitions="true"
-                style="margin-right: 5px; margin-top: 5px"
-                closable
-                @close="deleteSelectedGroupMember(user)">
+                variant="outline"
+                style="margin-right: 5px; margin-top: 5px">
                 <TooltipWrapper v-if="user.membershipStatus !== 'member'" side="top">
                     <template #content>
                         <span>{{ t('dialog.group_member_moderation.user_isnt_in_group') }}</span>
@@ -738,7 +735,22 @@
                     <el-icon style="margin-left: 3px; display: inline-block"><Warning /></el-icon>
                 </TooltipWrapper>
                 <span v-text="user.user?.displayName || user.userId" style="font-weight: bold; margin-left: 5px"></span>
-            </el-tag>
+                <button
+                    type="button"
+                    style="
+                        margin-left: 6px;
+                        border: none;
+                        background: transparent;
+                        padding: 0;
+                        display: inline-flex;
+                        align-items: center;
+                        color: inherit;
+                        cursor: pointer;
+                    "
+                    @click="deleteSelectedGroupMember(user)">
+                    <i class="ri-close-line" style="font-size: 12px; line-height: 1"></i>
+                </button>
+            </Badge>
             <br />
             <br />
             <span class="name">{{ t('dialog.group_member_moderation.notes') }}</span>
@@ -860,6 +872,7 @@
     import { useAppearanceSettingsStore, useGalleryStore, useGroupStore, useUserStore } from '../../../stores';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import { groupRequest, userRequest } from '../../../api';
+    import { Badge } from '../../ui/badge';
 
     import GroupMemberModerationExportDialog from './GroupMemberModerationExportDialog.vue';
 

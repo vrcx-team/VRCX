@@ -93,9 +93,9 @@
                 v-if="screenshotMetadataDialog.metadata.fileResolution"
                 style="margin-right: 5px"
                 v-text="screenshotMetadataDialog.metadata.fileResolution"></span>
-            <el-tag v-if="screenshotMetadataDialog.metadata.fileSize" type="info" effect="plain" size="small">{{
+            <Badge v-if="screenshotMetadataDialog.metadata.fileSize" variant="outline">{{
                 screenshotMetadataDialog.metadata.fileSize
-            }}</el-tag>
+            }}</Badge>
             <br />
             <Location
                 v-if="screenshotMetadataDialog.metadata.world"
@@ -163,6 +163,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useGalleryStore, useUserStore, useVrcxStore } from '../../../stores';
+    import { Badge } from '../../../components/ui/badge';
     import { formatDateFilter } from '../../../shared/utils';
     import { vrcPlusImageRequest } from '../../../api';
 

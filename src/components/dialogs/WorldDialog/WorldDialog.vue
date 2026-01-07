@@ -40,36 +40,25 @@
                                 v-text="worldDialog.ref.authorName" />
                         </div>
                         <div>
-                            <el-tag
+                            <Badge
                                 v-if="worldDialog.ref.$isLabs"
-                                type="primary"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.labs') }}
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-else-if="worldDialog.ref.releaseStatus === 'public'"
-                                type="success"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.public') }}
-                            </el-tag>
-                            <el-tag
-                                v-else
-                                type="danger"
-                                effect="plain"
-                                size="small"
-                                style="margin-right: 5px; margin-top: 5px">
+                            </Badge>
+                            <Badge v-else variant="outline" style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.private') }}
-                            </el-tag>
+                            </Badge>
                             <TooltipWrapper v-if="worldDialog.isPC" side="top" content="PC">
-                                <el-tag
+                                <Badge
                                     class="x-tag-platform-pc"
-                                    type="info"
-                                    effect="plain"
-                                    size="small"
+                                    variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
                                     <i class="ri-computer-line"></i
                                     ><span
@@ -77,15 +66,13 @@
                                         :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']">
                                         {{ worldDialog.bundleSizes['standalonewindows'].fileSize }}
                                     </span>
-                                </el-tag>
+                                </Badge>
                             </TooltipWrapper>
 
                             <TooltipWrapper v-if="worldDialog.isQuest" side="top" content="Quest">
-                                <el-tag
+                                <Badge
                                     class="x-tag-platform-quest"
-                                    type="info"
-                                    effect="plain"
-                                    size="small"
+                                    variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
                                     <i class="ri-android-line"></i
                                     ><span
@@ -93,15 +80,13 @@
                                         :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']">
                                         {{ worldDialog.bundleSizes['android'].fileSize }}
                                     </span>
-                                </el-tag>
+                                </Badge>
                             </TooltipWrapper>
 
                             <TooltipWrapper v-if="worldDialog.isIos" side="top" content="iOS">
-                                <el-tag
+                                <Badge
                                     class="x-tag-platform-ios"
-                                    type="info"
-                                    effect="plain"
-                                    size="small"
+                                    variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
                                     <i class="ri-apple-line"></i
                                     ><span
@@ -109,51 +94,42 @@
                                         :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']">
                                         {{ worldDialog.bundleSizes['ios'].fileSize }}
                                     </span>
-                                </el-tag>
+                                </Badge>
                             </TooltipWrapper>
 
-                            <el-tag
+                            <Badge
                                 v-if="worldDialog.avatarScalingDisabled"
-                                type="warning"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.avatar_scaling_disabled') }}
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-if="worldDialog.focusViewDisabled"
-                                type="warning"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.focus_view_disabled') }}
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-if="worldDialog.ref.unityPackageUrl"
-                                type="success"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.future_proofing') }}
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-if="worldDialog.inCache"
+                                variant="outline"
                                 class="x-link"
-                                type="info"
-                                effect="plain"
-                                size="small"
                                 style="margin-right: 5px; margin-top: 5px"
                                 @click="openFolderGeneric(worldDialog.cachePath)">
                                 <span v-text="worldDialog.cacheSize" />
                                 | {{ t('dialog.world.tags.cache') }}
-                            </el-tag>
+                            </Badge>
                         </div>
                         <div>
                             <template v-for="tag in worldDialog.ref.tags" :key="tag">
-                                <el-tag
+                                <Badge
                                     v-if="tag.startsWith('content_')"
-                                    effect="plain"
-                                    size="small"
+                                    variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
                                     <span v-if="tag === 'content_horror'">
                                         {{ t('dialog.world.tags.content_horror') }}
@@ -173,7 +149,7 @@
                                     <span v-else>
                                         {{ tag.replace('content_', '') }}
                                     </span>
-                                </el-tag>
+                                </Badge>
                             </template>
                         </div>
                         <div style="margin-top: 5px">
@@ -804,6 +780,7 @@
         useWorldStore
     } from '../../../stores';
     import { favoriteRequest, miscRequest, userRequest, worldRequest } from '../../../api';
+    import { Badge } from '../../ui/badge';
     import { database } from '../../../service/database.js';
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
 

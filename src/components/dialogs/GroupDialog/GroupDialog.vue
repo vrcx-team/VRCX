@@ -44,111 +44,85 @@
                                 v-text="groupDialog.ownerDisplayName"></span>
                         </div>
                         <div class="group-tags">
-                            <el-tag
+                            <Badge
                                 v-if="groupDialog.ref.isVerified"
-                                type="info"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.verified') }}
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-if="groupDialog.ref.privacy === 'private'"
-                                type="danger"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.private') }}
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-if="groupDialog.ref.privacy === 'default'"
-                                type="success"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.public') }}
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-if="groupDialog.ref.joinState === 'open'"
-                                type="success"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.open') }}
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-else-if="groupDialog.ref.joinState === 'request'"
-                                type="warning"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.request') }}
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-else-if="groupDialog.ref.joinState === 'invite'"
-                                type="danger"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.invite') }}
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-else-if="groupDialog.ref.joinState === 'closed'"
-                                type="danger"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.closed') }}
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-if="groupDialog.inGroup"
-                                type="info"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.joined') }}
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-if="groupDialog.ref.myMember && groupDialog.ref.myMember.bannedAt"
-                                type="danger"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.banned') }}
-                            </el-tag>
+                            </Badge>
                             <template v-if="groupDialog.inGroup && groupDialog.ref.myMember">
-                                <el-tag
+                                <Badge
                                     v-if="groupDialog.ref.myMember.visibility === 'visible'"
-                                    type="info"
-                                    effect="plain"
-                                    size="small"
+                                    variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
                                     {{ t('dialog.group.tags.visible') }}
-                                </el-tag>
-                                <el-tag
+                                </Badge>
+                                <Badge
                                     v-else-if="groupDialog.ref.myMember.visibility === 'friends'"
-                                    type="info"
-                                    effect="plain"
-                                    size="small"
+                                    variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
                                     {{ t('dialog.group.tags.friends') }}
-                                </el-tag>
-                                <el-tag
+                                </Badge>
+                                <Badge
                                     v-else-if="groupDialog.ref.myMember.visibility === 'hidden'"
-                                    type="info"
-                                    effect="plain"
-                                    size="small"
+                                    variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
                                     {{ t('dialog.group.tags.hidden') }}
-                                </el-tag>
-                                <el-tag
+                                </Badge>
+                                <Badge
                                     v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements"
-                                    type="info"
-                                    effect="plain"
-                                    size="small"
+                                    variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
                                     {{ t('dialog.group.tags.subscribed') }}
-                                </el-tag>
+                                </Badge>
                             </template>
                         </div>
                         <div style="margin-top: 5px">
@@ -192,9 +166,7 @@
                             </TooltipWrapper>
                         </template>
                         <template v-else-if="groupDialog.ref.myMember?.membershipStatus === 'requested'">
-                            <TooltipWrapper
-                                side="top"
-                                :content="t('dialog.group.actions.cancel_join_request_tooltip')">
+                            <TooltipWrapper side="top" :content="t('dialog.group.actions.cancel_join_request_tooltip')">
                                 <span>
                                     <el-button
                                         type="default"
@@ -649,8 +621,8 @@
                                             :icon="CopyDocument"
                                             circle
                                             style="margin-left: 5px"
-                                            @click="copyToClipboard(groupDialog.ref.$url)" />
-                                    </TooltipWrapper></span>
+                                            @click="copyToClipboard(groupDialog.ref.$url)" /> </TooltipWrapper
+                                ></span>
                             </div>
                         </div>
                         <div class="x-friend-item" style="width: 350px; cursor: default">
@@ -665,8 +637,8 @@
                                             :icon="CopyDocument"
                                             circle
                                             style="margin-left: 5px"
-                                            @click="copyToClipboard(groupDialog.id)" />
-                                    </TooltipWrapper></span>
+                                            @click="copyToClipboard(groupDialog.id)" /> </TooltipWrapper
+                                ></span>
                             </div>
                         </div>
                         <div
@@ -1205,6 +1177,7 @@
     } from '../../../shared/utils';
     import { useGalleryStore, useGroupStore, useLocationStore, useUserStore } from '../../../stores';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
+    import { Badge } from '../../ui/badge';
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { groupRequest } from '../../../api';
 

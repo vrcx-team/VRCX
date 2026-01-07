@@ -31,28 +31,19 @@
                                 v-text="avatarDialog.ref.authorName"></span>
                         </div>
                         <div>
-                            <el-tag
+                            <Badge
                                 v-if="avatarDialog.ref.releaseStatus === 'public'"
-                                type="success"
-                                effect="plain"
-                                size="small"
-                                style="margin-right: 5px; margin-top: 5px"
-                                >{{ t('dialog.avatar.tags.public') }}</el-tag
-                            >
-                            <el-tag
-                                v-else
-                                type="danger"
-                                effect="plain"
-                                size="small"
-                                style="margin-right: 5px; margin-top: 5px"
-                                >{{ t('dialog.avatar.tags.private') }}</el-tag
-                            >
+                                variant="outline"
+                                style="margin-right: 5px; margin-top: 5px">
+                                {{ t('dialog.avatar.tags.public') }}
+                            </Badge>
+                            <Badge v-else variant="outline" style="margin-right: 5px; margin-top: 5px">
+                                {{ t('dialog.avatar.tags.private') }}
+                            </Badge>
                             <TooltipWrapper v-if="avatarDialog.isPC" side="top" content="PC">
-                                <el-tag
+                                <Badge
                                     class="x-tag-platform-pc"
-                                    type="info"
-                                    effect="plain"
-                                    size="small"
+                                    variant="outline"
                                     style="margin-right: 5px; margin-top: 5px"
                                     ><i class="ri-computer-line"></i>
                                     <span
@@ -65,14 +56,12 @@
                                         :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
                                         >{{ avatarDialog.bundleSizes['standalonewindows'].fileSize }}</span
                                     >
-                                </el-tag>
+                                </Badge>
                             </TooltipWrapper>
                             <TooltipWrapper v-if="avatarDialog.isQuest" side="top" content="Android">
-                                <el-tag
+                                <Badge
                                     class="x-tag-platform-quest"
-                                    type="info"
-                                    effect="plain"
-                                    size="small"
+                                    variant="outline"
                                     style="margin-right: 5px; margin-top: 5px"
                                     ><i class="ri-android-line"></i>
                                     <span
@@ -85,14 +74,12 @@
                                         :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
                                         >{{ avatarDialog.bundleSizes['android'].fileSize }}</span
                                     >
-                                </el-tag>
+                                </Badge>
                             </TooltipWrapper>
                             <TooltipWrapper v-if="avatarDialog.isIos" side="top" content="iOS">
-                                <el-tag
+                                <Badge
                                     class="x-tag-platform-ios"
-                                    type="info"
-                                    effect="plain"
-                                    size="small"
+                                    variant="outline"
                                     style="margin-right: 5px; margin-top: 5px"
                                     ><i class="ri-apple-line"></i>
                                     <span
@@ -105,24 +92,20 @@
                                         :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']"
                                         >{{ avatarDialog.bundleSizes['ios'].fileSize }}</span
                                     >
-                                </el-tag>
+                                </Badge>
                             </TooltipWrapper>
-                            <el-tag
+                            <Badge
                                 v-if="avatarDialog.inCache"
+                                variant="outline"
                                 class="x-link"
-                                type="info"
-                                effect="plain"
-                                size="small"
                                 style="margin-right: 5px; margin-top: 5px"
                                 @click="openFolderGeneric(avatarDialog.cachePath)">
                                 <span v-text="avatarDialog.cacheSize"></span>
                                 &nbsp;{{ t('dialog.avatar.tags.cache') }}
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-if="avatarDialog.ref.styles?.primary || avatarDialog.ref.styles?.secondary"
-                                type="info"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px"
                                 >Styles
                                 <span v-if="avatarDialog.ref.styles.primary" :class="['x-grey', 'x-tag-border-left']">{{
@@ -133,40 +116,33 @@
                                     :class="['x-grey', 'x-tag-border-left']"
                                     >{{ avatarDialog.ref.styles.secondary }}</span
                                 >
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-if="avatarDialog.isQuestFallback"
-                                type="info"
-                                effect="plain"
-                                size="small"
-                                style="margin-right: 5px; margin-top: 5px"
-                                >{{ t('dialog.avatar.tags.fallback') }}</el-tag
-                            >
-                            <el-tag
+                                variant="outline"
+                                style="margin-right: 5px; margin-top: 5px">
+                                {{ t('dialog.avatar.tags.fallback') }}
+                            </Badge>
+                            <Badge
                                 v-if="avatarDialog.hasImposter"
-                                type="info"
-                                effect="plain"
-                                size="small"
+                                variant="outline"
                                 style="margin-right: 5px; margin-top: 5px"
                                 >{{ t('dialog.avatar.tags.impostor') }}
                                 <span v-if="avatarDialog.imposterVersion" :class="['x-grey', 'x-tag-border-left']"
                                     >v{{ avatarDialog.imposterVersion }}</span
                                 >
-                            </el-tag>
-                            <el-tag
+                            </Badge>
+                            <Badge
                                 v-if="avatarDialog.ref.unityPackageUrl"
-                                type="success"
-                                effect="plain"
-                                size="small"
-                                style="margin-right: 5px; margin-top: 5px"
-                                >{{ t('dialog.avatar.tags.future_proofing') }}</el-tag
-                            >
+                                variant="outline"
+                                style="margin-right: 5px; margin-top: 5px">
+                                {{ t('dialog.avatar.tags.future_proofing') }}
+                            </Badge>
                             <div>
                                 <template v-for="tag in avatarDialog.ref.tags" :key="tag">
-                                    <el-tag
+                                    <Badge
                                         v-if="tag.startsWith('content_')"
-                                        effect="plain"
-                                        size="small"
+                                        variant="outline"
                                         style="margin-right: 5px; margin-top: 5px">
                                         <span v-if="tag === 'content_horror'">{{
                                             t('dialog.avatar.tags.content_horror')
@@ -184,16 +160,15 @@
                                             t('dialog.avatar.tags.content_sex')
                                         }}</span>
                                         <span v-else>{{ tag.replace('content_', '') }}</span>
-                                    </el-tag>
-                                    <el-tag
+                                    </Badge>
+                                    <Badge
                                         v-if="tag.startsWith('author_tag_')"
-                                        effect="plain"
-                                        size="small"
+                                        variant="outline"
                                         style="margin-right: 5px; margin-top: 5px">
                                         <span>
                                             {{ tag.replace('author_tag_', '') }}
                                         </span>
-                                    </el-tag>
+                                    </Badge>
                                 </template>
                             </div>
                         </div>
@@ -507,8 +482,8 @@
                                 <span class="name"
                                     >{{ t('dialog.avatar.info.time_spent')
                                     }}<TooltipWrapper side="top" :content="t('dialog.world.info.accuracy_notice')">
-                                        <el-icon style="margin-left: 3px"><Warning /></el-icon>
-                                    </TooltipWrapper></span>
+                                        <el-icon style="margin-left: 3px"><Warning /></el-icon> </TooltipWrapper
+                                ></span>
 
                                 <span v-if="timeSpent === 0" class="extra">-</span>
                                 <span v-else class="extra">{{ timeToText(timeSpent) }}</span>
@@ -612,6 +587,7 @@
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useGameStore, useUserStore } from '../../../stores';
     import { avatarModerationRequest, avatarRequest, favoriteRequest, miscRequest } from '../../../api';
     import { AppDebug } from '../../../service/appConfig.js';
+    import { Badge } from '../../ui/badge';
     import { database } from '../../../service/database';
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { handleImageUploadInput } from '../../../shared/utils/imageUpload';

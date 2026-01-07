@@ -1262,16 +1262,6 @@ i.x-status-icon.red {
     background: #ff2c2c;
 }
 
-.x-tag-friend {
-    color: var(--color-amber-400);
-    border-color: var(--color-amber-400) !important;
-}
-
-.x-tag-mutual-friend {
-    color: var(--el-color-success);
-    border-color: var(--el-color-success) !important;
-}
-
 .x-tag-platform-pc {
     color: #0078d4;
     border-color: #0078d4 !important;
@@ -1282,14 +1272,14 @@ i.x-status-icon.red {
     border-color: #3ddc84 !important;
 }
 
-.x-tag-platform-ios {
-    color: #c7c7ce;
-    border-color: #c7c7ce !important;
+.x-tag-friend {
+    color: var(--color-amber-400);
+    border-color: var(--color-amber-400) !important;
 }
 
-.x-tag-platform-other {
-    color: var(--el-color-danger);
-    border-color: var(--el-color-danger) !important;
+.x-tag-mutual-friend {
+    color: var(--el-color-success);
+    border-color: var(--el-color-success) !important;
 }
 
 .x-tag-age-verification {

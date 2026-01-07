@@ -90,12 +90,9 @@
                                         <span class="group-item__count">{{ group.count }}/{{ group.capacity }}</span>
                                     </div>
                                     <div class="group-item__bottom">
-                                        <el-tag
-                                            size="small"
-                                            effect="plain"
-                                            :type="userFavoriteAvatarsStatusForFavTab(group.visibility)">
+                                        <Badge variant="outline">
                                             {{ formatVisibility(group.visibility) }}
-                                        </el-tag>
+                                        </Badge>
                                         <el-popover
                                             :visible="activeGroupMenu === remoteGroupMenuKey(group.key)"
                                             @update:visible="
@@ -507,6 +504,7 @@
 
     import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useUserStore } from '../../stores';
     import { avatarRequest, favoriteRequest } from '../../api';
+    import { Badge } from '../../components/ui/badge';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
 
     import AvatarExportDialog from './dialogs/AvatarExportDialog.vue';
@@ -1498,16 +1496,6 @@
             window.removeEventListener('resize', maybeFillLocalAvatarViewport);
         }
     });
-
-    function userFavoriteAvatarsStatusForFavTab(visibility) {
-        if (visibility === 'public') {
-            return 'primary';
-        }
-        if (visibility === 'friends') {
-            return 'success';
-        }
-        return 'info';
-    }
 
     function formatVisibility(value) {
         if (!value) {
