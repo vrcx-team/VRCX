@@ -17,9 +17,12 @@
                     t('view.settings.notifications.notifications.desktop_notifications.when_to_display')
                 }}</span>
                 <br />
-                <el-radio-group
+                <ToggleGroup
+                    type="single"
+                    required
+                    variant="outline"
+                    size="sm"
                     :model-value="overlayToast"
-                    size="small"
                     :disabled="
                         (!overlayNotifications || !openVR) &&
                         !xsNotifications &&
@@ -27,23 +30,23 @@
                         !ovrtWristNotifications
                     "
                     style="margin-top: 5px"
-                    @change="
+                    @update:model-value="
                         setOverlayToast($event);
                         saveOpenVROption();
                     ">
-                    <el-radio-button value="Never">{{
+                    <ToggleGroupItem value="Never">{{
                         t('view.settings.notifications.notifications.conditions.never')
-                    }}</el-radio-button>
-                    <el-radio-button value="Game Running">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Game Running">{{
                         t('view.settings.notifications.notifications.conditions.inside_vrchat')
-                    }}</el-radio-button>
-                    <el-radio-button value="Game Closed">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Game Closed">{{
                         t('view.settings.notifications.notifications.conditions.outside_vrchat')
-                    }}</el-radio-button>
-                    <el-radio-button value="Always">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Always">{{
                         t('view.settings.notifications.notifications.conditions.always')
-                    }}</el-radio-button>
-                </el-radio-group>
+                    }}</ToggleGroupItem>
+                </ToggleGroup>
             </div>
             <simple-switch
                 :label="t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')"
@@ -155,33 +158,36 @@
                     t('view.settings.notifications.notifications.desktop_notifications.when_to_display')
                 }}</span>
                 <br />
-                <el-radio-group
+                <ToggleGroup
+                    type="single"
+                    required
+                    variant="outline"
+                    size="sm"
                     :model-value="desktopToast"
-                    size="small"
                     style="margin-top: 5px"
-                    @change="setDesktopToast(String($event))">
-                    <el-radio-button value="Never">{{
+                    @update:model-value="setDesktopToast(String($event))">
+                    <ToggleGroupItem value="Never">{{
                         t('view.settings.notifications.notifications.conditions.never')
-                    }}</el-radio-button>
-                    <el-radio-button value="Desktop Mode">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Desktop Mode">{{
                         t('view.settings.notifications.notifications.conditions.desktop')
-                    }}</el-radio-button>
-                    <el-radio-button value="Inside VR">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Inside VR">{{
                         t('view.settings.notifications.notifications.conditions.inside_vr')
-                    }}</el-radio-button>
-                    <el-radio-button value="Outside VR">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Outside VR">{{
                         t('view.settings.notifications.notifications.conditions.outside_vr')
-                    }}</el-radio-button>
-                    <el-radio-button value="Game Running">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Game Running">{{
                         t('view.settings.notifications.notifications.conditions.inside_vrchat')
-                    }}</el-radio-button>
-                    <el-radio-button value="Game Closed">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Game Closed">{{
                         t('view.settings.notifications.notifications.conditions.outside_vrchat')
-                    }}</el-radio-button>
-                    <el-radio-button value="Always">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Always">{{
                         t('view.settings.notifications.notifications.conditions.always')
-                    }}</el-radio-button>
-                </el-radio-group>
+                    }}</ToggleGroupItem>
+                </ToggleGroup>
             </div>
             <simple-switch
                 :label="
@@ -197,27 +203,30 @@
                     t('view.settings.notifications.notifications.text_to_speech.when_to_play')
                 }}</span>
                 <br />
-                <el-radio-group
+                <ToggleGroup
+                    type="single"
+                    required
+                    variant="outline"
+                    size="sm"
                     :model-value="notificationTTS"
-                    size="small"
                     style="margin-top: 5px"
-                    @change="saveNotificationTTS">
-                    <el-radio-button value="Never">{{
+                    @update:model-value="saveNotificationTTS">
+                    <ToggleGroupItem value="Never">{{
                         t('view.settings.notifications.notifications.conditions.never')
-                    }}</el-radio-button>
-                    <el-radio-button value="Inside VR">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Inside VR">{{
                         t('view.settings.notifications.notifications.conditions.inside_vr')
-                    }}</el-radio-button>
-                    <el-radio-button value="Game Running">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Game Running">{{
                         t('view.settings.notifications.notifications.conditions.inside_vrchat')
-                    }}</el-radio-button>
-                    <el-radio-button value="Game Closed">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Game Closed">{{
                         t('view.settings.notifications.notifications.conditions.outside_vrchat')
-                    }}</el-radio-button>
-                    <el-radio-button value="Always">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Always">{{
                         t('view.settings.notifications.notifications.conditions.always')
-                    }}</el-radio-button>
-                </el-radio-group>
+                    }}</ToggleGroupItem>
+                </ToggleGroup>
             </div>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.notifications.notifications.text_to_speech.tts_voice') }}</span>
@@ -272,6 +281,7 @@
 
     import { useAdvancedSettingsStore, useNotificationsSettingsStore, useVrStore } from '../../../../stores';
     import { Slider } from '../../../../components/ui/slider';
+    import { ToggleGroup, ToggleGroupItem } from '../../../../components/ui/toggle-group';
 
     import FeedFiltersDialog from '../../dialogs/FeedFiltersDialog.vue';
     import NotificationPositionDialog from '../../dialogs/NotificationPositionDialog.vue';

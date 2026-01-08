@@ -2,7 +2,7 @@
     <el-dialog
         :model-value="!!feedFiltersDialogMode"
         :title="dialogTitle"
-        width="550px"
+        width="600px"
         destroy-on-close
         @close="handleDialogClose">
         <div class="toggle-list" style="height: 75vh; overflow-y: auto">
@@ -19,14 +19,22 @@
                     </TooltipWrapper>
                 </span>
 
-                <el-radio-group
-                    v-model="currentSharedFeedFilters[setting.key]"
-                    size="small"
-                    @change="saveSharedFeedFilters">
-                    <el-radio-button v-for="option in setting.options" :key="option.label" :value="option.label">
+                <ToggleGroup
+                    type="single"
+                    required
+                    variant="outline"
+                    size="sm"
+                    :model-value="currentSharedFeedFilters[setting.key]"
+                    @update:model-value="
+                        (value) => {
+                            currentSharedFeedFilters[setting.key] = value;
+                            saveSharedFeedFilters();
+                        }
+                    ">
+                    <ToggleGroupItem v-for="option in setting.options" :key="option.label" :value="option.label">
                         {{ t(option.textKey) }}
-                    </el-radio-button>
-                </el-radio-group>
+                    </ToggleGroupItem>
+                </ToggleGroup>
             </div>
 
             <template v-if="photonLoggingEnabled">
@@ -36,14 +44,22 @@
                 </div>
                 <div v-for="setting in photonFeedFiltersOptions" :key="setting.key" class="toggle-item">
                     <span class="toggle-name">{{ setting.name }}</span>
-                    <el-radio-group
-                        v-model="currentSharedFeedFilters[setting.key]"
-                        size="small"
-                        @change="saveSharedFeedFilters">
-                        <el-radio-button v-for="option in setting.options" :key="option.label" :value="option.label">
+                    <ToggleGroup
+                        type="single"
+                        required
+                        variant="outline"
+                        size="sm"
+                        :model-value="currentSharedFeedFilters[setting.key]"
+                        @update:model-value="
+                            (value) => {
+                                currentSharedFeedFilters[setting.key] = value;
+                                saveSharedFeedFilters();
+                            }
+                        ">
+                        <ToggleGroupItem v-for="option in setting.options" :key="option.label" :value="option.label">
                             {{ t(option.textKey) }}
-                        </el-radio-button>
-                    </el-radio-group>
+                        </ToggleGroupItem>
+                    </ToggleGroup>
                 </div>
             </template>
         </div>
@@ -64,6 +80,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useNotificationsSettingsStore, usePhotonStore, useSharedFeedStore } from '../../../stores';
+    import { ToggleGroup, ToggleGroupItem } from '../../../components/ui/toggle-group';
     import { feedFiltersOptions, sharedFeedFiltersDefaults } from '../../../shared/constants';
 
     import configRepository from '../../../service/config';
@@ -130,3 +147,11 @@
         emit('update:feedFiltersDialogMode', '');
     }
 </script>
+
+<style scoped>
+    .toggle-list .toggle-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+</style>
