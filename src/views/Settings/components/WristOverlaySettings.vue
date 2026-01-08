@@ -73,26 +73,26 @@
         </div>
         <div class="options-container-item">
             <span class="name">{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on') }}</span>
-                <ToggleGroup
-                    type="single"
-                    required
-                    variant="outline"
-                    size="sm"
-                    :model-value="overlayHand"
-                    @update:model-value="
-                        setOverlayHand($event);
-                        saveOpenVROption();
-                    ">
-                    <ToggleGroupItem value="1">{{
-                        t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_left')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="2">{{
-                        t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_right')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="0">{{
-                        t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_both')
-                    }}</ToggleGroupItem>
-                </ToggleGroup>
+            <ToggleGroup
+                type="single"
+                required
+                variant="outline"
+                size="sm"
+                :model-value="overlayHand"
+                @update:model-value="
+                    setOverlayHand($event);
+                    saveOpenVROption();
+                ">
+                <ToggleGroupItem value="1">{{
+                    t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_left')
+                }}</ToggleGroupItem>
+                <ToggleGroupItem value="2">{{
+                    t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_right')
+                }}</ToggleGroupItem>
+                <ToggleGroupItem value="0">{{
+                    t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_both')
+                }}</ToggleGroupItem>
+            </ToggleGroup>
         </div>
         <simple-switch
             :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.grey_background')"

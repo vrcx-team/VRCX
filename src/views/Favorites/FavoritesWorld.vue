@@ -17,47 +17,44 @@
                     class="favorites-toolbar__search"
                     :placeholder="t('view.favorite.worlds.search')"
                     @input="searchWorldFavorites" />
-                <el-dropdown ref="worldToolbarMenuRef" trigger="click" :hide-on-click="false">
-                    <el-button :icon="MoreFilled" size="small" circle />
-                    <template #dropdown>
-                        <el-dropdown-menu class="favorites-dropdown">
-                            <li class="favorites-dropdown__control" @click.stop>
-                                <div class="favorites-dropdown__control-header">
-                                    <span>Scale</span>
-                                    <span class="favorites-dropdown__control-value">
-                                        {{ worldCardScalePercent }}%
-                                    </span>
-                                </div>
-                                <Slider
-                                    v-model="worldCardScaleValue"
-                                    class="favorites-dropdown__slider"
-                                    :min="worldCardScaleSlider.min"
-                                    :max="worldCardScaleSlider.max"
-                                    :step="worldCardScaleSlider.step" />
-                            </li>
-                            <li class="favorites-dropdown__control" @click.stop>
-                                <div class="favorites-dropdown__control-header">
-                                    <span>Spacing</span>
-                                    <span class="favorites-dropdown__control-value">
-                                        {{ worldCardSpacingPercent }}%
-                                    </span>
-                                </div>
-                                <Slider
-                                    v-model="worldCardSpacingValue"
-                                    class="favorites-dropdown__slider"
-                                    :min="worldCardSpacingSlider.min"
-                                    :max="worldCardSpacingSlider.max"
-                                    :step="worldCardSpacingSlider.step" />
-                            </li>
-                            <el-dropdown-item @click="handleWorldImportClick">
-                                {{ t('view.favorite.import') }}
-                            </el-dropdown-item>
-                            <el-dropdown-item divided @click="handleWorldExportClick">
-                                {{ t('view.favorite.export') }}
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+                <DropdownMenu v-model:open="worldToolbarMenuOpen">
+                    <DropdownMenuTrigger as-child>
+                        <el-button :icon="MoreFilled" size="small" circle />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent class="favorites-dropdown">
+                        <li class="favorites-dropdown__control" @click.stop>
+                            <div class="favorites-dropdown__control-header">
+                                <span>Scale</span>
+                                <span class="favorites-dropdown__control-value"> {{ worldCardScalePercent }}% </span>
+                            </div>
+                            <Slider
+                                v-model="worldCardScaleValue"
+                                class="favorites-dropdown__slider"
+                                :min="worldCardScaleSlider.min"
+                                :max="worldCardScaleSlider.max"
+                                :step="worldCardScaleSlider.step" />
+                        </li>
+                        <li class="favorites-dropdown__control" @click.stop>
+                            <div class="favorites-dropdown__control-header">
+                                <span>Spacing</span>
+                                <span class="favorites-dropdown__control-value"> {{ worldCardSpacingPercent }}% </span>
+                            </div>
+                            <Slider
+                                v-model="worldCardSpacingValue"
+                                class="favorites-dropdown__slider"
+                                :min="worldCardSpacingSlider.min"
+                                :max="worldCardSpacingSlider.max"
+                                :step="worldCardSpacingSlider.step" />
+                        </li>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem @click="handleWorldImportClick">
+                            {{ t('view.favorite.import') }}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="handleWorldExportClick">
+                            {{ t('view.favorite.export') }}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </div>
         <el-splitter class="favorites-splitter" @resize-end="handleWorldSplitterResize">
@@ -406,6 +403,13 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import {
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuSeparator,
+        DropdownMenuTrigger
+    } from '../../components/ui/dropdown-menu';
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../stores';
     import { favoriteRequest, worldRequest } from '../../api';
@@ -522,7 +526,7 @@
     const worldEditMode = ref(false);
     const activeGroupMenu = ref(null);
     const localFavoritesScrollbarRef = ref(null);
-    const worldToolbarMenuRef = ref();
+    const worldToolbarMenuOpen = ref(false);
     const localFavoritesLoadingMore = ref(false);
     const hasWorldSelection = computed(() => selectedFavoriteWorlds.value.length > 0);
     const hasSearchInput = computed(() => worldFavoriteSearch.value.trim().length > 0);
@@ -533,7 +537,7 @@
     const localGroupMenuKey = (key) => `local:${key}`;
 
     const closeWorldToolbarMenu = () => {
-        worldToolbarMenuRef.value?.handleClose?.();
+        worldToolbarMenuOpen.value = false;
     };
 
     function handleWorldImportClick() {

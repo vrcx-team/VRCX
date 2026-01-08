@@ -46,7 +46,7 @@
                                 v-for="entry in item.children"
                                 :key="entry.index"
                                 :index="entry.index"
-                                class="pl-8!"
+                                class="pl-9!"
                                 :class="{ notify: isEntryNotified(entry) }"
                                 @click="handleSubmenuClick(entry, item.index)">
                                 <i v-show="entry.icon" :class="entry.icon"></i>
@@ -254,7 +254,6 @@
     import { useRouter } from 'vue-router';
 
     import {
-        useAdvancedSettingsStore,
         useAppearanceSettingsStore,
         useAuthStore,
         useSearchStore,
@@ -262,7 +261,6 @@
         useVRCXUpdaterStore
     } from '../stores';
     import { THEME_CONFIG, links, navDefinitions } from '../shared/constants';
-    import { getSentry } from '../plugin';
     import { openExternalLink } from '../shared/utils';
     import { useThemePrimaryColor } from '../composables/useElementTheme';
 

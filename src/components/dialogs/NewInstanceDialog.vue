@@ -15,10 +15,12 @@
                             variant="outline"
                             size="sm"
                             :model-value="newInstanceDialog.accessType"
-                            @update:model-value="(value) => {
-                                newInstanceDialog.accessType = value;
-                                buildInstance();
-                            }">
+                            @update:model-value="
+                                (value) => {
+                                    newInstanceDialog.accessType = value;
+                                    buildInstance();
+                                }
+                            ">
                             <ToggleGroupItem value="public">{{
                                 t('dialog.new_instance.access_type_public')
                             }}</ToggleGroupItem>
@@ -48,18 +50,24 @@
                             variant="outline"
                             size="sm"
                             :model-value="newInstanceDialog.groupAccessType"
-                            @update:model-value="(value) => {
-                                newInstanceDialog.groupAccessType = value;
-                                buildInstance();
-                            }">
+                            @update:model-value="
+                                (value) => {
+                                    newInstanceDialog.groupAccessType = value;
+                                    buildInstance();
+                                }
+                            ">
                             <ToggleGroupItem
                                 value="members"
-                                :disabled="!hasGroupPermission(newInstanceDialog.groupRef, 'group-instance-open-create')"
+                                :disabled="
+                                    !hasGroupPermission(newInstanceDialog.groupRef, 'group-instance-open-create')
+                                "
                                 >{{ t('dialog.new_instance.group_access_type_members') }}</ToggleGroupItem
                             >
                             <ToggleGroupItem
                                 value="plus"
-                                :disabled="!hasGroupPermission(newInstanceDialog.groupRef, 'group-instance-plus-create')"
+                                :disabled="
+                                    !hasGroupPermission(newInstanceDialog.groupRef, 'group-instance-plus-create')
+                                "
                                 >{{ t('dialog.new_instance.group_access_type_plus') }}</ToggleGroupItem
                             >
                             <ToggleGroupItem
@@ -79,10 +87,12 @@
                             variant="outline"
                             size="sm"
                             :model-value="newInstanceDialog.region"
-                            @update:model-value="(value) => {
-                                newInstanceDialog.region = value;
-                                buildInstance();
-                            }">
+                            @update:model-value="
+                                (value) => {
+                                    newInstanceDialog.region = value;
+                                    buildInstance();
+                                }
+                            ">
                             <ToggleGroupItem value="US West">{{ t('dialog.new_instance.region_usw') }}</ToggleGroupItem>
                             <ToggleGroupItem value="US East">{{ t('dialog.new_instance.region_use') }}</ToggleGroupItem>
                             <ToggleGroupItem value="Europe">{{ t('dialog.new_instance.region_eu') }}</ToggleGroupItem>
@@ -198,10 +208,12 @@
                             variant="outline"
                             size="sm"
                             :model-value="newInstanceDialog.accessType"
-                            @update:model-value="(value) => {
-                                newInstanceDialog.accessType = value;
-                                buildLegacyInstance();
-                            }">
+                            @update:model-value="
+                                (value) => {
+                                    newInstanceDialog.accessType = value;
+                                    buildLegacyInstance();
+                                }
+                            ">
                             <ToggleGroupItem value="public">{{
                                 t('dialog.new_instance.access_type_public')
                             }}</ToggleGroupItem>
@@ -231,10 +243,12 @@
                             variant="outline"
                             size="sm"
                             :model-value="newInstanceDialog.groupAccessType"
-                            @update:model-value="(value) => {
-                                newInstanceDialog.groupAccessType = value;
-                                buildLegacyInstance();
-                            }">
+                            @update:model-value="
+                                (value) => {
+                                    newInstanceDialog.groupAccessType = value;
+                                    buildLegacyInstance();
+                                }
+                            ">
                             <ToggleGroupItem value="members">{{
                                 t('dialog.new_instance.group_access_type_members')
                             }}</ToggleGroupItem>
@@ -253,10 +267,12 @@
                             variant="outline"
                             size="sm"
                             :model-value="newInstanceDialog.region"
-                            @update:model-value="(value) => {
-                                newInstanceDialog.region = value;
-                                buildLegacyInstance();
-                            }">
+                            @update:model-value="
+                                (value) => {
+                                    newInstanceDialog.region = value;
+                                    buildLegacyInstance();
+                                }
+                            ">
                             <ToggleGroupItem value="US West">{{ t('dialog.new_instance.region_usw') }}</ToggleGroupItem>
                             <ToggleGroupItem value="US East">{{ t('dialog.new_instance.region_use') }}</ToggleGroupItem>
                             <ToggleGroupItem value="Europe">{{ t('dialog.new_instance.region_eu') }}</ToggleGroupItem>
@@ -524,8 +540,6 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-
     import {
         copyToClipboard,
         getLaunchURL,
@@ -545,6 +559,7 @@
         useUserStore
     } from '../../stores';
     import { groupRequest, instanceRequest, worldRequest } from '../../api';
+    import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
     import { getNextDialogIndex } from '../../shared/utils/base/ui';
 
     import InviteDialog from './InviteDialog/InviteDialog.vue';
