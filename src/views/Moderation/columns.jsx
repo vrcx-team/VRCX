@@ -72,12 +72,33 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             },
             header: () => t('table.moderation.type'),
             cell: ({ row }) => {
+                const moderationColors = {
+                    block: 'text-red-500 border-red-500',
+                    unblock: 'text-green-500 border-green-500',
+                    mute: 'text-red-500 border-red-500',
+                    unmute: 'text-green-500 border-green-500',
+                    interactOn: 'text-green-500 border-green-500',
+                    interactOff: 'text-red-500 border-red-500',
+                    muteChat: 'text-red-500 border-red-500',
+                    unmuteChat: 'text-green-500 border-green-500'
+                };
                 const type = row.getValue('type');
                 return (
-                    <Badge variant="outline" class="text-muted-foreground">
+                    <Badge
+                        class={
+                            moderationColors[type] || 'text-muted-foreground'
+                        }
+                        variant="outline"
+                    >
                         {t(`view.moderation.filters.${type}`)}
                     </Badge>
                 );
+                //Old return whitout colors
+                // return (
+                //     <Badge variant="outline" class="text-muted-foreground">
+                //         {t(`view.moderation.filters.${type}`)}
+                //     </Badge>
+                // );
             }
         },
         {
