@@ -25,12 +25,23 @@ export function useAuthenticatedLayoutResizable() {
     const asidePanelRef = ref(null);
     const navExpandedSize = ref(null);
     const groupWidth = ref(fallbackWidth);
+    const draggingCount = ref(0);
     let resizeObserver = null;
 
-    const getGroupWidth = () => {
+    const getGroupWidthRaw = () => {
         const element = panelGroupRef.value?.$el ?? panelGroupRef.value;
         const width = element?.getBoundingClientRect?.().width;
+        return Number.isFinite(width) ? width : null;
+    };
+
+    const getGroupWidth = () => {
+        const width = getGroupWidthRaw();
         return Number.isFinite(width) && width > 0 ? width : fallbackWidth;
+    };
+
+    const setIsDragging = (isDragging) => {
+        const next = draggingCount.value + (isDragging ? 1 : -1);
+        draggingCount.value = Math.max(0, next);
     };
 
     const pxToPercent = (px, groupWidth, min = 1) => {
@@ -80,10 +91,15 @@ export function useAuthenticatedLayoutResizable() {
             return;
         }
 
-        const width = getGroupWidth();
-        if (!Number.isFinite(width) || width <= 0) {
+        if (draggingCount.value === 0) {
             return;
         }
+
+        const rawWidth = getGroupWidthRaw();
+        if (!Number.isFinite(rawWidth) || rawWidth <= 0) {
+            return;
+        }
+        const width = rawWidth;
 
         const navSize = sizes[0];
         if (!isNavCollapsed.value && Number.isFinite(navSize) && navSize > 0) {
@@ -183,6 +199,7 @@ export function useAuthenticatedLayoutResizable() {
         asideMaxSize,
         mainDefaultSize,
         handleLayout,
+        setIsDragging,
         isAsideCollapsed,
         isNavCollapsed,
         isSideBarTabShow
