@@ -17,47 +17,44 @@
                     class="favorites-toolbar__search"
                     :placeholder="t('view.favorite.worlds.search')"
                     @input="searchFriendFavorites" />
-                <el-dropdown ref="friendToolbarMenuRef" trigger="click" :hide-on-click="false">
-                    <el-button :icon="MoreFilled" size="small" circle @click.stop />
-                    <template #dropdown>
-                        <el-dropdown-menu class="favorites-dropdown">
-                            <li class="favorites-dropdown__control" @click.stop>
-                                <div class="favorites-dropdown__control-header">
-                                    <span>Scale</span>
-                                    <span class="favorites-dropdown__control-value">
-                                        {{ friendCardScalePercent }}%
-                                    </span>
-                                </div>
-                                <Slider
-                                    v-model="friendCardScaleValue"
-                                    class="favorites-dropdown__slider"
-                                    :min="friendCardScaleSlider.min"
-                                    :max="friendCardScaleSlider.max"
-                                    :step="friendCardScaleSlider.step" />
-                            </li>
-                            <li class="favorites-dropdown__control" @click.stop>
-                                <div class="favorites-dropdown__control-header">
-                                    <span>Spacing</span>
-                                    <span class="favorites-dropdown__control-value">
-                                        {{ friendCardSpacingPercent }}%
-                                    </span>
-                                </div>
-                                <Slider
-                                    v-model="friendCardSpacingValue"
-                                    class="favorites-dropdown__slider"
-                                    :min="friendCardSpacingSlider.min"
-                                    :max="friendCardSpacingSlider.max"
-                                    :step="friendCardSpacingSlider.step" />
-                            </li>
-                            <el-dropdown-item @click="handleFriendImportClick">
-                                {{ t('view.favorite.import') }}
-                            </el-dropdown-item>
-                            <el-dropdown-item divided @click="handleFriendExportClick">
-                                {{ t('view.favorite.export') }}
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+                <DropdownMenu v-model:open="friendToolbarMenuOpen">
+                    <DropdownMenuTrigger as-child>
+                        <el-button :icon="MoreFilled" size="small" circle />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent class="favorites-dropdown">
+                        <li class="favorites-dropdown__control" @click.stop>
+                            <div class="favorites-dropdown__control-header">
+                                <span>Scale</span>
+                                <span class="favorites-dropdown__control-value"> {{ friendCardScalePercent }}% </span>
+                            </div>
+                            <Slider
+                                v-model="friendCardScaleValue"
+                                class="favorites-dropdown__slider"
+                                :min="friendCardScaleSlider.min"
+                                :max="friendCardScaleSlider.max"
+                                :step="friendCardScaleSlider.step" />
+                        </li>
+                        <li class="favorites-dropdown__control" @click.stop>
+                            <div class="favorites-dropdown__control-header">
+                                <span>Spacing</span>
+                                <span class="favorites-dropdown__control-value"> {{ friendCardSpacingPercent }}% </span>
+                            </div>
+                            <Slider
+                                v-model="friendCardSpacingValue"
+                                class="favorites-dropdown__slider"
+                                :min="friendCardSpacingSlider.min"
+                                :max="friendCardSpacingSlider.max"
+                                :step="friendCardSpacingSlider.step" />
+                        </li>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem @click="handleFriendImportClick">
+                            {{ t('view.favorite.import') }}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="handleFriendExportClick">
+                            {{ t('view.favorite.export') }}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </div>
         <el-splitter class="favorites-splitter" @resize-end="handleFriendSplitterResize">
@@ -279,6 +276,13 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import {
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuSeparator,
+        DropdownMenuTrigger
+    } from '../../components/ui/dropdown-menu';
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { useAppearanceSettingsStore, useFavoriteStore, useUserStore } from '../../stores';
     import { Badge } from '../../components/ui/badge';
@@ -363,7 +367,7 @@
     const friendEditMode = ref(false);
     const selectedGroup = ref(null);
     const activeGroupMenu = ref(null);
-    const friendToolbarMenuRef = ref();
+    const friendToolbarMenuOpen = ref(false);
 
     const sortFav = computed({
         get() {
@@ -380,7 +384,7 @@
     const isRemoteGroupSelected = computed(() => selectedGroup.value?.type === 'remote');
 
     const closeFriendToolbarMenu = () => {
-        friendToolbarMenuRef.value?.handleClose?.();
+        friendToolbarMenuOpen.value = false;
     };
 
     function handleFriendImportClick() {

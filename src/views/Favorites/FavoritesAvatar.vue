@@ -17,45 +17,44 @@
                     class="favorites-toolbar__search"
                     :placeholder="t('view.favorite.avatars.search')"
                     @input="searchAvatarFavorites" />
-                <el-dropdown ref="avatarToolbarMenuRef" trigger="click" :hide-on-click="false">
-                    <el-button :icon="MoreFilled" size="small" circle />
-                    <template #dropdown>
-                        <el-dropdown-menu class="favorites-dropdown">
-                            <li class="favorites-dropdown__control" @click.stop>
-                                <div class="favorites-dropdown__control-header">
-                                    <span>Scale</span>
-                                    <span class="favorites-dropdown__control-value">{{ avatarCardScalePercent }}%</span>
-                                </div>
-                                <Slider
-                                    v-model="avatarCardScaleValue"
-                                    class="favorites-dropdown__slider"
-                                    :min="avatarCardScaleSlider.min"
-                                    :max="avatarCardScaleSlider.max"
-                                    :step="avatarCardScaleSlider.step" />
-                            </li>
-                            <li class="favorites-dropdown__control" @click.stop>
-                                <div class="favorites-dropdown__control-header">
-                                    <span>Spacing</span>
-                                    <span class="favorites-dropdown__control-value">
-                                        {{ avatarCardSpacingPercent }}%
-                                    </span>
-                                </div>
-                                <Slider
-                                    v-model="avatarCardSpacingValue"
-                                    class="favorites-dropdown__slider"
-                                    :min="avatarCardSpacingSlider.min"
-                                    :max="avatarCardSpacingSlider.max"
-                                    :step="avatarCardSpacingSlider.step" />
-                            </li>
-                            <el-dropdown-item @click="handleAvatarImportClick">
-                                {{ t('view.favorite.import') }}
-                            </el-dropdown-item>
-                            <el-dropdown-item divided @click="handleAvatarExportClick">
-                                {{ t('view.favorite.export') }}
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+                <DropdownMenu v-model:open="avatarToolbarMenuOpen">
+                    <DropdownMenuTrigger as-child>
+                        <el-button :icon="MoreFilled" size="small" circle />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent class="favorites-dropdown">
+                        <li class="favorites-dropdown__control" @click.stop>
+                            <div class="favorites-dropdown__control-header">
+                                <span>Scale</span>
+                                <span class="favorites-dropdown__control-value">{{ avatarCardScalePercent }}%</span>
+                            </div>
+                            <Slider
+                                v-model="avatarCardScaleValue"
+                                class="favorites-dropdown__slider"
+                                :min="avatarCardScaleSlider.min"
+                                :max="avatarCardScaleSlider.max"
+                                :step="avatarCardScaleSlider.step" />
+                        </li>
+                        <li class="favorites-dropdown__control" @click.stop>
+                            <div class="favorites-dropdown__control-header">
+                                <span>Spacing</span>
+                                <span class="favorites-dropdown__control-value"> {{ avatarCardSpacingPercent }}% </span>
+                            </div>
+                            <Slider
+                                v-model="avatarCardSpacingValue"
+                                class="favorites-dropdown__slider"
+                                :min="avatarCardSpacingSlider.min"
+                                :max="avatarCardSpacingSlider.max"
+                                :step="avatarCardSpacingSlider.step" />
+                        </li>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem @click="handleAvatarImportClick">
+                            {{ t('view.favorite.import') }}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="handleAvatarExportClick">
+                            {{ t('view.favorite.export') }}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </div>
         <el-splitter class="favorites-splitter" @resize-end="handleAvatarSplitterResize">
@@ -487,6 +486,13 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import {
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuSeparator,
+        DropdownMenuTrigger
+    } from '../../components/ui/dropdown-menu';
     import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useUserStore } from '../../stores';
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { avatarRequest, favoriteRequest } from '../../api';
@@ -597,7 +603,7 @@
     const avatarEditMode = ref(false);
     const selectedGroup = ref(null);
     const activeGroupMenu = ref(null);
-    const avatarToolbarMenuRef = ref();
+    const avatarToolbarMenuOpen = ref(false);
     const isCreatingLocalGroup = ref(false);
     const newLocalGroupName = ref('');
     const newLocalGroupInput = ref(null);
@@ -632,7 +638,7 @@
     const historyGroupMenuKey = 'history';
 
     const closeAvatarToolbarMenu = () => {
-        avatarToolbarMenuRef.value?.handleClose?.();
+        avatarToolbarMenuOpen.value = false;
     };
 
     function handleAvatarImportClick() {
