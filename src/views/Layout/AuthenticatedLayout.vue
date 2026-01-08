@@ -12,7 +12,7 @@
                 <ResizableHandle :disabled="isNavCollapsed" class="opacity-0"></ResizableHandle>
                 <ResizablePanel :default-size="mainDefaultSize" :order="2">
                     <RouterView v-slot="{ Component }">
-                        <KeepAlive include="Feed,GameLog,Search">
+                        <KeepAlive exclude="Charts">
                             <component :is="Component" />
                         </KeepAlive>
                     </RouterView>
