@@ -51,25 +51,28 @@
             <br />
             <br />
 
-            <!-- Search bar input -->
-            <el-input
-                v-model="screenshotMetadataDialog.search"
-                placeholder="Search"
-                clearable
-                style="width: 200px"
-                @input="screenshotMetadataSearch" />
-            <!-- Search type dropdown -->
-            <el-select
-                v-model="screenshotMetadataDialog.searchType"
-                placeholder="Search Type"
-                style="width: 150px; margin-left: 10px"
-                @change="screenshotMetadataSearch">
-                <el-option
-                    v-for="type in screenshotMetadataDialog.searchTypes"
-                    :key="type"
-                    :label="type"
-                    :value="type" />
-            </el-select>
+            <div class="flex items-center">
+                <!-- Search bar input -->
+                <el-input
+                    v-model="screenshotMetadataDialog.search"
+                    placeholder="Search"
+                    clearable
+                    style="width: 200px"
+                    @input="screenshotMetadataSearch" />
+                <!-- Search type dropdown -->
+                <Select :model-value="screenshotMetadataDialog.searchType" @update:modelValue="handleSearchTypeChange">
+                    <SelectTrigger size="sm" style="width: 150px; margin-left: 10px">
+                        <SelectValue placeholder="Search Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem v-for="type in screenshotMetadataDialog.searchTypes" :key="type" :value="type">
+                                {{ type }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </div>
             <!-- Search index/total label -->
             <template v-if="screenshotMetadataDialog.searchIndex !== null">
                 <span style="white-space: pre-wrap; font-size: 12px; margin-left: 10px">{{
@@ -155,6 +158,7 @@
 
 <script setup>
     import { CopyDocument, Delete, Folder, FolderOpened, Picture, Upload } from '@element-plus/icons-vue';
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { reactive, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -370,6 +374,11 @@
                     D.loading = false;
                 });
         }, 500);
+    }
+
+    function handleSearchTypeChange(value) {
+        screenshotMetadataDialog.searchType = value;
+        screenshotMetadataSearch();
     }
 
     function screenshotMetadataCarouselChange(index) {

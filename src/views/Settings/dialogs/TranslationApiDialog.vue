@@ -23,10 +23,21 @@
         <br />
         <el-form label-position="top" label-width="120px" size="small" style="margin-bottom: 12px">
             <el-form-item :label="t('dialog.translation_api.mode')">
-                <el-select v-model="form.translationApiType" style="width: 100%">
-                    <el-option value="google" :label="t('dialog.translation_api.mode_google')" />
-                    <el-option value="openai" :label="t('dialog.translation_api.mode_openai')" />
-                </el-select>
+                <Select :model-value="form.translationApiType" @update:modelValue="handleTranslationApiTypeChange">
+                    <SelectTrigger size="sm" style="width: 100%">
+                        <SelectValue :placeholder="t('dialog.translation_api.mode')" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem value="google" :text-value="t('dialog.translation_api.mode_google')">
+                                {{ t('dialog.translation_api.mode_google') }}
+                            </SelectItem>
+                            <SelectItem value="openai" :text-value="t('dialog.translation_api.mode_openai')">
+                                {{ t('dialog.translation_api.mode_openai') }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
             </el-form-item>
         </el-form>
 
@@ -138,6 +149,10 @@
     });
 
     const emit = defineEmits(['update:isTranslationApiDialogVisible']);
+
+    function handleTranslationApiTypeChange(value) {
+        form.translationApiType = String(value);
+    }
 
     const form = reactive({
         translationApiType: 'google',

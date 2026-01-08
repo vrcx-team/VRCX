@@ -2,13 +2,29 @@
     <div class="favorites-page x-container" v-loading="isFavoriteLoading">
         <div class="favorites-toolbar">
             <div>
-                <el-select v-model="sortFav" class="favorites-toolbar__select">
-                    <template #prefix>
-                        <i class="ri-sort-asc"></i>
-                    </template>
-                    <el-option :label="t('view.settings.appearance.appearance.sort_favorite_by_name')" :value="false" />
-                    <el-option :label="t('view.settings.appearance.appearance.sort_favorite_by_date')" :value="true" />
-                </el-select>
+                <Select :model-value="sortFavorites" @update:modelValue="handleSortFavoritesChange">
+                    <SelectTrigger size="sm" class="favorites-toolbar__select">
+                        <span class="flex items-center gap-2">
+                            <i class="ri-sort-asc"></i>
+                            <SelectValue
+                                :placeholder="t('view.settings.appearance.appearance.sort_favorite_by_name')" />
+                        </span>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem
+                                :value="false"
+                                :text-value="t('view.settings.appearance.appearance.sort_favorite_by_name')">
+                                {{ t('view.settings.appearance.appearance.sort_favorite_by_name') }}
+                            </SelectItem>
+                            <SelectItem
+                                :value="true"
+                                :text-value="t('view.settings.appearance.appearance.sort_favorite_by_date')">
+                                {{ t('view.settings.appearance.appearance.sort_favorite_by_date') }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
             </div>
             <div class="favorites-toolbar__right">
                 <el-input
@@ -277,6 +293,14 @@
     import { useI18n } from 'vue-i18n';
 
     import {
+        Select,
+        SelectContent,
+        SelectGroup,
+        SelectItem,
+        SelectTrigger,
+        SelectValue
+    } from '../../components/ui/select';
+    import {
         DropdownMenu,
         DropdownMenuContent,
         DropdownMenuItem,
@@ -369,14 +393,12 @@
     const activeGroupMenu = ref(null);
     const friendToolbarMenuOpen = ref(false);
 
-    const sortFav = computed({
-        get() {
-            return sortFavorites.value;
-        },
-        set() {
+    function handleSortFavoritesChange(value) {
+        const next = Boolean(value);
+        if (next !== sortFavorites.value) {
             setSortFavorites();
         }
-    });
+    }
 
     const hasFriendSelection = computed(() => selectedFavoriteFriends.value.length > 0);
     const hasSearchInput = computed(() => friendFavoriteSearch.value.trim().length > 0);

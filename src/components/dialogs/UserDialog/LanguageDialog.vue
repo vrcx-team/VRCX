@@ -30,31 +30,39 @@
                     </button>
                 </Badge>
             </div>
-            <el-select
+            <Select
+                :model-value="selectedLanguageToAdd"
                 :disabled="languageDialog.loading || (currentUser.$languages && currentUser.$languages.length === 3)"
-                :placeholder="t('dialog.language.select_language')"
-                style="margin-top: 14px"
-                @change="addUserLanguage">
-                <el-option
-                    v-for="item in languageDialog.languages"
-                    :key="item.key"
-                    :value="item.key"
-                    :label="item.value">
-                    <span
-                        class="flags"
-                        :class="languageClass(item.key)"
-                        style="display: inline-block; margin-right: 5px"></span>
-                    {{ item.value }} ({{ item.key.toUpperCase() }})
-                </el-option>
-            </el-select>
+                @update:modelValue="handleAddUserLanguage">
+                <SelectTrigger size="sm" style="margin-top: 14px">
+                    <SelectValue :placeholder="t('dialog.language.select_language')" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectItem
+                            v-for="item in languageDialog.languages"
+                            :key="item.key"
+                            :value="item.key"
+                            :text-value="item.value">
+                            <span
+                                class="flags"
+                                :class="languageClass(item.key)"
+                                style="display: inline-block; margin-right: 5px"></span>
+                            {{ item.value }} ({{ item.key.toUpperCase() }})
+                        </SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
         </div>
     </el-dialog>
 </template>
 
 <script setup>
+    import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
     import { Badge } from '../../ui/badge';
     import { languageClass } from '../../../shared/utils';
     import { useUserStore } from '../../../stores';
@@ -63,6 +71,13 @@
     const { t } = useI18n();
 
     const { languageDialog, currentUser } = storeToRefs(useUserStore());
+
+    const selectedLanguageToAdd = ref('');
+
+    function handleAddUserLanguage(language) {
+        addUserLanguage(language);
+        selectedLanguageToAdd.value = '';
+    }
 
     function removeUserLanguage(language) {
         if (language !== String(language)) {
