@@ -141,12 +141,36 @@ export const createColumns = ({
             },
             header: () => t('table.notification.type'),
             cell: ({ row }) => {
+                const notificationsColors = {
+                    requestInvite: 'text-orange-500 border-orange-500',
+                    invite: 'text-cyan-500 border-cyan-500',
+                    requestInviteResponse: 'text-purple-800 border-purple-800',
+                    inviteResponse: 'text-purple-800 border-purple-800',
+                    friendRequest: 'text-green-500 border-green-500',
+                    ignoredFriendRequest: 'text-red-500 border-red-500',
+                    message: 'text-blue-500 border-blue-500',
+                    boop: 'text-yellow-500 border-yellow-500',
+                    event: 'text-yellow-500 border-yellow-500',
+                    groupChange: 'text-yellow-500 border-yellow-500',
+                    'group.announcement': 'text-yellow-500 border-yellow-500',
+                    'group.informative': 'text-yellow-500 border-yellow-500',
+                    'group.invite': 'text-cyan-500 border-cyan-500',
+                    'group.joinRequest': 'text-orange-500 border-orange-500',
+                    'group.transfer': 'text-yellow-500 border-yellow-500',
+                    'group.queueReady': 'text-yellow-500 border-yellow-500',
+                    'moderation.warning.group': 'text-red-500 border-red-500',
+                    'moderation.report.closed': 'text-red-500 border-red-500',
+                    'instance.closed': 'text-red-500 border-red-500'
+                };
                 const original = row.original;
                 const label = t(`view.notification.filters.${original.type}`);
+                const badgeColor =
+                    notificationsColors[original.type] ||
+                    'text-muted-foreground';
 
                 if (original.type === 'invite') {
                     return (
-                        <Badge variant="outline" class="text-muted-foreground">
+                        <Badge variant="outline" class={badgeColor}>
                             {label}
                         </Badge>
                     );
@@ -157,7 +181,7 @@ export const createColumns = ({
                     original.type === 'instance.closed'
                 ) {
                     return (
-                        <Badge variant="outline" class="text-muted-foreground">
+                        <Badge variant="outline" class={badgeColor}>
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
@@ -190,7 +214,7 @@ export const createColumns = ({
 
                 if (original.link) {
                     return (
-                        <Badge variant="outline" class="text-muted-foreground">
+                        <Badge variant="outline" class={badgeColor}>
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
@@ -215,7 +239,7 @@ export const createColumns = ({
                 }
 
                 return (
-                    <Badge variant="outline" class="text-muted-foreground">
+                    <Badge variant="outline" class={badgeColor}>
                         {label}
                     </Badge>
                 );
