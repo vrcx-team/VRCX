@@ -4,45 +4,33 @@
             <span class="header">{{ t('view.settings.appearance.appearance.header') }}</span>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.language') }}</span>
-                <el-dropdown trigger="click" size="small" @click.stop>
-                    <el-button size="small">
-                        <span>
-                            {{ getLanguageName(appLanguage) }} <el-icon class="el-icon--right"> <ArrowDown /></el-icon
-                        ></span>
-                    </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item
-                                v-for="language in languageCodes"
-                                :key="language"
-                                :class="{ 'is-active': appLanguage === language }"
-                                @click="changeAppLanguage(language)"
-                                v-text="getLanguageName(language)" />
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+                <Select :model-value="appLanguage" @update:modelValue="changeAppLanguage">
+                    <SelectTrigger size="sm">
+                        <SelectValue :placeholder="getLanguageName(appLanguage)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem v-for="language in languageCodes" :key="language" :value="language">
+                                {{ getLanguageName(language) }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
             </div>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.theme_mode') }}</span>
-                <el-dropdown trigger="click" size="small" @click.stop>
-                    <el-button size="small">
-                        <span
-                            >{{ t(`view.settings.appearance.appearance.theme_mode_${themeMode}`) }}
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon
-                        ></span>
-                    </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item
-                                v-for="(config, themeKey) in THEME_CONFIG"
-                                :key="themeKey"
-                                @click="saveThemeMode(themeKey)"
-                                :class="{ 'is-active': themeMode === themeKey }">
+                <Select :model-value="themeMode" @update:modelValue="saveThemeMode">
+                    <SelectTrigger size="sm">
+                        <SelectValue :placeholder="t(`view.settings.appearance.appearance.theme_mode_${themeMode}`)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem v-for="(config, themeKey) in THEME_CONFIG" :key="themeKey" :value="themeKey">
                                 {{ t(`view.settings.appearance.appearance.theme_mode_${themeKey}`) }}
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
             </div>
             <div v-if="!isLinux" class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.zoom') }}</span>
@@ -314,7 +302,7 @@
                 :label="t('view.settings.appearance.user_colors.random_colors_from_user_id')"
                 :value="randomUserColours"
                 @change="updateTrustColor('', '', true)"></simple-switch>
-            <div class="options-container-item">
+            <div>
                 <div>
                     <el-color-picker
                         :model-value="trustColor.untrusted"
@@ -384,8 +372,9 @@
 </template>
 
 <script setup>
-    import { ArrowDown, ArrowRight, Notebook } from '@element-plus/icons-vue';
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, onBeforeUnmount, ref } from 'vue';
+    import { ArrowRight, Notebook } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

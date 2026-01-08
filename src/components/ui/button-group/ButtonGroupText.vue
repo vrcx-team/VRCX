@@ -1,13 +1,13 @@
 <script setup>
-    import { Primitive } from 'reka-ui';
-    import { cn } from '@/lib/utils';
+import { Primitive } from 'reka-ui';
+import { cn } from '@/lib/utils';
 
-    const props = defineProps({
-        class: { type: null, required: false },
-        orientation: { type: null, required: false },
-        asChild: { type: Boolean, required: false },
-        as: { type: null, required: false, default: 'div' }
-    });
+const props = defineProps({
+    class: { type: null, required: false },
+    orientation: { type: null, required: false },
+    asChild: { type: Boolean, required: false },
+    as: { type: null, required: false, default: 'div' }
+});
 </script>
 
 <template>

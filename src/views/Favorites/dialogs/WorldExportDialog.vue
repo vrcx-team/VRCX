@@ -9,61 +9,38 @@
             </template>
         </el-checkbox-group>
 
-        <el-dropdown trigger="click" size="small">
-            <el-button size="small">
-                <span v-if="worldExportFavoriteGroup">
-                    {{ worldExportFavoriteGroup.displayName }} ({{ worldExportFavoriteGroup.count }}/{{
-                        worldExportFavoriteGroup.capacity
-                    }})
-                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                </span>
-                <span v-else>
-                    All Favorites
-                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                </span>
-            </el-button>
-            <template #dropdown>
-                <el-dropdown-menu>
-                    <el-dropdown-item style="display: block; margin: 10px 0" @click="selectWorldExportGroup(null)">
-                        None
-                    </el-dropdown-item>
-                    <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
-                        <el-dropdown-item
-                            style="display: block; margin: 10px 0"
-                            @click="selectWorldExportGroup(groupAPI)">
+        <div class="flex items-center gap-2">
+            <Select :model-value="worldExportFavoriteGroupSelection" @update:modelValue="handleWorldExportGroupSelect">
+                <SelectTrigger size="sm">
+                    <SelectValue placeholder="All Favorites" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectItem :value="WORLD_EXPORT_ALL_VALUE">None</SelectItem>
+                        <SelectItem v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name" :value="groupAPI.name">
                             {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                        </el-dropdown-item>
-                    </template>
-                </el-dropdown-menu>
-            </template>
-        </el-dropdown>
+                        </SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
 
-        <el-dropdown trigger="click" size="small" style="margin-left: 10px">
-            <el-button size="small">
-                <span v-if="worldExportLocalFavoriteGroup">
-                    {{ worldExportLocalFavoriteGroup }} ({{ localWorldFavGroupLength(worldExportLocalFavoriteGroup) }})
-                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                </span>
-                <span v-else>
-                    Select Group
-                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                </span>
-            </el-button>
-            <template #dropdown>
-                <el-dropdown-menu>
-                    <el-dropdown-item style="display: block; margin: 10px 0" @click="selectWorldExportLocalGroup(null)">
-                        None
-                    </el-dropdown-item>
-                    <template v-for="group in localWorldFavoriteGroups" :key="group">
-                        <el-dropdown-item
-                            style="display: block; margin: 10px 0"
-                            @click="selectWorldExportLocalGroup(group)">
+            <Select
+                :model-value="worldExportLocalFavoriteGroupSelection"
+                @update:modelValue="handleWorldExportLocalGroupSelect"
+                style="margin-left: 10px">
+                <SelectTrigger size="sm">
+                    <SelectValue placeholder="Select Group" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectItem :value="WORLD_EXPORT_NONE_VALUE">None</SelectItem>
+                        <SelectItem v-for="group in localWorldFavoriteGroups" :key="group" :value="group">
                             {{ group }} ({{ localWorldFavorites[group].length }})
-                        </el-dropdown-item>
-                    </template>
-                </el-dropdown-menu>
-            </template>
-        </el-dropdown>
+                        </SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+        </div>
 
         <br />
 
@@ -80,8 +57,8 @@
 </template>
 
 <script setup>
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
-    import { ArrowDown } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -112,6 +89,12 @@
     const worldExportContent = ref('');
     const worldExportFavoriteGroup = ref(null);
     const worldExportLocalFavoriteGroup = ref(null);
+
+    const WORLD_EXPORT_ALL_VALUE = '__all__';
+    const WORLD_EXPORT_NONE_VALUE = '__none__';
+
+    const worldExportFavoriteGroupSelection = ref(WORLD_EXPORT_ALL_VALUE);
+    const worldExportLocalFavoriteGroupSelection = ref(WORLD_EXPORT_NONE_VALUE);
     // Storage of selected filtering options for model and world export
     const exportSelectedOptions = ref(['ID', 'Name']);
     const exportSelectOptions = ref([
@@ -143,7 +126,28 @@
     function showWorldExportDialog() {
         worldExportFavoriteGroup.value = null;
         worldExportLocalFavoriteGroup.value = null;
+        worldExportFavoriteGroupSelection.value = WORLD_EXPORT_ALL_VALUE;
+        worldExportLocalFavoriteGroupSelection.value = WORLD_EXPORT_NONE_VALUE;
         updateWorldExportDialog();
+    }
+
+    function handleWorldExportGroupSelect(value) {
+        worldExportFavoriteGroupSelection.value = value;
+        if (value === WORLD_EXPORT_ALL_VALUE) {
+            selectWorldExportGroup(null);
+            return;
+        }
+        const group = favoriteWorldGroups.value.find((g) => g.name === value) || null;
+        selectWorldExportGroup(group);
+    }
+
+    function handleWorldExportLocalGroupSelect(value) {
+        worldExportLocalFavoriteGroupSelection.value = value;
+        if (value === WORLD_EXPORT_NONE_VALUE) {
+            selectWorldExportLocalGroup(null);
+            return;
+        }
+        selectWorldExportLocalGroup(value);
     }
 
     function handleCopyWorldExportData(event) {
@@ -221,12 +225,16 @@
     function selectWorldExportGroup(group) {
         worldExportFavoriteGroup.value = group;
         worldExportLocalFavoriteGroup.value = null;
+        worldExportFavoriteGroupSelection.value = group?.name ?? WORLD_EXPORT_ALL_VALUE;
+        worldExportLocalFavoriteGroupSelection.value = WORLD_EXPORT_NONE_VALUE;
         updateWorldExportDialog();
     }
 
     function selectWorldExportLocalGroup(group) {
         worldExportLocalFavoriteGroup.value = group;
         worldExportFavoriteGroup.value = null;
+        worldExportLocalFavoriteGroupSelection.value = group ?? WORLD_EXPORT_NONE_VALUE;
+        worldExportFavoriteGroupSelection.value = WORLD_EXPORT_ALL_VALUE;
         updateWorldExportDialog();
     }
 </script>

@@ -71,81 +71,69 @@
             <div style="display: inline-block; margin-top: 10px">
                 <span>{{ t('dialog.config_json.camera_resolution') }}</span>
                 <br />
-                <el-dropdown
-                    size="small"
-                    trigger="click"
-                    style="margin-top: 5px"
-                    @command="(command) => setVRChatCameraResolution(command)">
-                    <el-button size="small">
-                        <span>
-                            <span v-text="getVRChatCameraResolution()"></span>
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                        </span>
-                    </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item v-for="row in VRChatCameraResolutions" :key="row.index" :command="row">{{
-                                row.name
-                            }}</el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+                <Select
+                    :model-value="vrchatCameraResolutionKey"
+                    @update:modelValue="(v) => (vrchatCameraResolutionKey = v)">
+                    <SelectTrigger size="sm" style="margin-top: 5px">
+                        <SelectValue :placeholder="getVRChatCameraResolution()" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem
+                                v-for="row in VRChatCameraResolutions"
+                                :key="row.name"
+                                :value="getVRChatResolutionKey(row)">
+                                {{ row.name }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
             </div>
             <br />
 
             <div style="display: inline-block; margin-top: 10px">
                 <span>{{ t('dialog.config_json.spout_resolution') }}</span>
                 <br />
-                <el-dropdown
-                    size="small"
-                    trigger="click"
-                    style="margin-top: 5px"
-                    @command="(command) => setVRChatSpoutResolution(command)">
-                    <el-button size="small">
-                        <span>
-                            <span v-text="getVRChatSpoutResolution()"></span>
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                        </span>
-                    </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item
+                <Select
+                    :model-value="vrchatSpoutResolutionKey"
+                    @update:modelValue="(v) => (vrchatSpoutResolutionKey = v)">
+                    <SelectTrigger size="sm" style="margin-top: 5px">
+                        <SelectValue :placeholder="getVRChatSpoutResolution()" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem
                                 v-for="row in VRChatScreenshotResolutions"
-                                :key="row.index"
-                                :command="row"
-                                >{{ row.name }}</el-dropdown-item
-                            >
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+                                :key="row.name"
+                                :value="getVRChatResolutionKey(row)">
+                                {{ row.name }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
             </div>
             <br />
 
             <div style="display: inline-block; margin-top: 10px">
                 <span>{{ t('dialog.config_json.screenshot_resolution') }}</span>
                 <br />
-                <el-dropdown
-                    size="small"
-                    trigger="click"
-                    style="margin-top: 5px"
-                    @command="(command) => setVRChatScreenshotResolution(command)">
-                    <el-button size="small">
-                        <span>
-                            <span v-text="getVRChatScreenshotResolution()"></span>
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                        </span>
-                    </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item
+                <Select
+                    :model-value="vrchatScreenshotResolutionKey"
+                    @update:modelValue="(v) => (vrchatScreenshotResolutionKey = v)">
+                    <SelectTrigger size="sm" style="margin-top: 5px">
+                        <SelectValue :placeholder="getVRChatScreenshotResolution()" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem
                                 v-for="row in VRChatScreenshotResolutions"
-                                :key="row.index"
-                                :command="row"
-                                >{{ row.name }}</el-dropdown-item
-                            >
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+                                :key="row.name"
+                                :value="getVRChatResolutionKey(row)">
+                                {{ row.name }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
             </div>
             <br />
 
@@ -181,7 +169,8 @@
 </template>
 
 <script setup>
-    import { ArrowDown, Delete, FolderDelete, FolderOpened, Refresh } from '@element-plus/icons-vue';
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Delete, FolderDelete, FolderOpened, Refresh } from '@element-plus/icons-vue';
     import { computed, ref, watch } from 'vue';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
@@ -199,52 +188,54 @@
 
     const { t } = useI18n();
 
-    const VRChatConfigFile = ref({});
+    const VRChatConfigFile = ref(/** @type {Record<string, any>} */ ({}));
     // it's a object
-    const VRChatConfigList = ref({
-        cache_size: {
-            name: t('dialog.config_json.max_cache_size'),
-            default: '30',
-            type: 'number',
-            min: 30
-        },
-        cache_expiry_delay: {
-            name: t('dialog.config_json.cache_expiry_delay'),
-            default: '30',
-            type: 'number',
-            min: 30
-        },
-        cache_directory: {
-            name: t('dialog.config_json.cache_directory'),
-            default: '%AppData%\\..\\LocalLow\\VRChat\\VRChat',
-            folderBrowser: true
-        },
-        picture_output_folder: {
-            name: t('dialog.config_json.picture_directory'),
-            // my pictures folder
-            default: `%UserProfile%\\Pictures\\VRChat`,
-            folderBrowser: true
-        },
-        // dynamic_bone_max_affected_transform_count: {
-        //     name: 'Dynamic Bones Limit Max Transforms (0 disable all transforms)',
-        //     default: '32',
-        //     type: 'number',
-        //     min: 0
-        // },
-        // dynamic_bone_max_collider_check_count: {
-        //     name: 'Dynamic Bones Limit Max Collider Collisions (0 disable all colliders)',
-        //     default: '8',
-        //     type: 'number',
-        //     min: 0
-        // },
-        fpv_steadycam_fov: {
-            name: t('dialog.config_json.fpv_steadycam_fov'),
-            default: '50',
-            type: 'number',
-            min: 30,
-            max: 110
-        }
-    });
+    const VRChatConfigList = ref(
+        /** @type {Record<string, any>} */ ({
+            cache_size: {
+                name: t('dialog.config_json.max_cache_size'),
+                default: '30',
+                type: 'number',
+                min: 30
+            },
+            cache_expiry_delay: {
+                name: t('dialog.config_json.cache_expiry_delay'),
+                default: '30',
+                type: 'number',
+                min: 30
+            },
+            cache_directory: {
+                name: t('dialog.config_json.cache_directory'),
+                default: '%AppData%\\..\\LocalLow\\VRChat\\VRChat',
+                folderBrowser: true
+            },
+            picture_output_folder: {
+                name: t('dialog.config_json.picture_directory'),
+                // my pictures folder
+                default: `%UserProfile%\\Pictures\\VRChat`,
+                folderBrowser: true
+            },
+            // dynamic_bone_max_affected_transform_count: {
+            //     name: 'Dynamic Bones Limit Max Transforms (0 disable all transforms)',
+            //     default: '32',
+            //     type: 'number',
+            //     min: 0
+            // },
+            // dynamic_bone_max_collider_check_count: {
+            //     name: 'Dynamic Bones Limit Max Collider Collisions (0 disable all colliders)',
+            //     default: '8',
+            //     type: 'number',
+            //     min: 0
+            // },
+            fpv_steadycam_fov: {
+                name: t('dialog.config_json.fpv_steadycam_fov'),
+                default: '50',
+                type: 'number',
+                min: 30,
+                max: 110
+            }
+        })
+    );
 
     const loading = ref(false);
 
@@ -261,6 +252,68 @@
 
     const totalCacheSize = computed(() => {
         return VRChatConfigFile.value.cache_size || VRChatTotalCacheSize.value;
+    });
+
+    const VRCHAT_RESOLUTION_DEFAULT_KEY = '__default__';
+
+    function getVRChatResolutionKey(row) {
+        const width = Number(row?.width);
+        const height = Number(row?.height);
+        if (width > 0 && height > 0) {
+            return `${width}x${height}`;
+        }
+        return VRCHAT_RESOLUTION_DEFAULT_KEY;
+    }
+
+    const vrchatCameraResolutionKey = computed({
+        get: () => {
+            const width = Number(VRChatConfigFile.value.camera_res_width);
+            const height = Number(VRChatConfigFile.value.camera_res_height);
+            if (width > 0 && height > 0) {
+                return `${width}x${height}`;
+            }
+            return VRCHAT_RESOLUTION_DEFAULT_KEY;
+        },
+        set: (value) => {
+            const row = VRChatCameraResolutions.find((r) => getVRChatResolutionKey(r) === value);
+            if (row) {
+                setVRChatCameraResolution(row);
+            }
+        }
+    });
+
+    const vrchatSpoutResolutionKey = computed({
+        get: () => {
+            const width = Number(VRChatConfigFile.value.camera_spout_res_width);
+            const height = Number(VRChatConfigFile.value.camera_spout_res_height);
+            if (width > 0 && height > 0) {
+                return `${width}x${height}`;
+            }
+            return VRCHAT_RESOLUTION_DEFAULT_KEY;
+        },
+        set: (value) => {
+            const row = VRChatScreenshotResolutions.find((r) => getVRChatResolutionKey(r) === value);
+            if (row) {
+                setVRChatSpoutResolution(row);
+            }
+        }
+    });
+
+    const vrchatScreenshotResolutionKey = computed({
+        get: () => {
+            const width = Number(VRChatConfigFile.value.screenshot_res_width);
+            const height = Number(VRChatConfigFile.value.screenshot_res_height);
+            if (width > 0 && height > 0) {
+                return `${width}x${height}`;
+            }
+            return VRCHAT_RESOLUTION_DEFAULT_KEY;
+        },
+        set: (value) => {
+            const row = VRChatScreenshotResolutions.find((r) => getVRChatResolutionKey(r) === value);
+            if (row) {
+                setVRChatScreenshotResolution(row);
+            }
+        }
     });
 
     function showDeleteAllVRChatCacheConfirm() {
@@ -354,8 +407,11 @@
                 delete VRChatConfigFile.value[item];
             } else if (typeof VRChatConfigFile.value[item] === 'boolean' && VRChatConfigFile.value[item] === false) {
                 delete VRChatConfigFile.value[item];
-            } else if (typeof VRChatConfigFile.value[item] === 'string' && !isNaN(VRChatConfigFile.value[item])) {
-                VRChatConfigFile.value[item] = parseInt(VRChatConfigFile.value[item], 10);
+            } else if (typeof VRChatConfigFile.value[item] === 'string') {
+                const parsed = parseInt(VRChatConfigFile.value[item], 10);
+                if (!Number.isNaN(parsed)) {
+                    VRChatConfigFile.value[item] = parsed;
+                }
             }
         }
         WriteVRChatConfigFile();

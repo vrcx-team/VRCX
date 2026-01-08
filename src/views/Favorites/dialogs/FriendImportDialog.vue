@@ -29,32 +29,24 @@
             style="margin-top: 10px" />
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
             <div>
-                <el-dropdown trigger="click" size="small">
-                    <el-button size="small">
-                        <span v-if="friendImportDialog.friendImportFavoriteGroup">
-                            {{ friendImportDialog.friendImportFavoriteGroup.displayName }} ({{
-                                friendImportDialog.friendImportFavoriteGroup.count
-                            }}/{{ friendImportDialog.friendImportFavoriteGroup.capacity }})
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                        </span>
-                        <span v-else
-                            >{{ t('dialog.friend_import.select_group_placeholder') }}
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon
-                        ></span>
-                    </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <template v-for="groupAPI in favoriteFriendGroups" :key="groupAPI.name">
-                                <el-dropdown-item
-                                    style="display: block; margin: 10px 0"
-                                    :disabled="groupAPI.count >= groupAPI.capacity"
-                                    @click="selectFriendImportGroup(groupAPI)">
-                                    {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                                </el-dropdown-item>
-                            </template>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+                <Select
+                    :model-value="friendImportFavoriteGroupSelection"
+                    @update:modelValue="handleFriendImportGroupSelect">
+                    <SelectTrigger size="sm">
+                        <SelectValue :placeholder="t('dialog.friend_import.select_group_placeholder')" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem
+                                v-for="groupAPI in favoriteFriendGroups"
+                                :key="groupAPI.name"
+                                :value="groupAPI.name"
+                                :disabled="groupAPI.count >= groupAPI.capacity">
+                                {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
                 <span v-if="friendImportDialog.friendImportFavoriteGroup" style="margin-left: 5px">
                     {{ friendImportTable.data.length }} /
                     {{
@@ -123,8 +115,9 @@
 </template>
 
 <script setup>
-    import { ArrowDown, Close, Loading } from '@element-plus/icons-vue';
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
+    import { Close, Loading } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -155,6 +148,8 @@
         importProgressTotal: 0
     });
 
+    const friendImportFavoriteGroupSelection = ref('');
+
     const friendImportTable = ref({
         data: [],
         tableProps: {
@@ -182,6 +177,8 @@
                 friendImportDialogIndex.value = getNextDialogIndex();
                 clearFriendImportTable();
                 resetFriendImport();
+                friendImportFavoriteGroupSelection.value =
+                    friendImportDialog.value.friendImportFavoriteGroup?.name ?? '';
                 if (friendImportDialogInput.value) {
                     friendImportDialog.value.input = friendImportDialogInput.value;
                     processFriendImportList();
@@ -190,6 +187,14 @@
             }
         }
     );
+
+    function handleFriendImportGroupSelect(value) {
+        friendImportFavoriteGroupSelection.value = value;
+        const group = favoriteFriendGroups.value.find((g) => g.name === value) || null;
+        if (group) {
+            selectFriendImportGroup(group);
+        }
+    }
 
     function cancelFriendImport() {
         friendImportDialog.value.loading = false;
@@ -204,6 +209,7 @@
     }
     function selectFriendImportGroup(group) {
         friendImportDialog.value.friendImportFavoriteGroup = group;
+        friendImportFavoriteGroupSelection.value = group?.name ?? '';
     }
     async function importFriendImportTable() {
         const D = friendImportDialog.value;

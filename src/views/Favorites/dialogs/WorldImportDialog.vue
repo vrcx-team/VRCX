@@ -30,57 +30,42 @@
             style="margin-top: 10px"></el-input>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
             <div>
-                <el-dropdown trigger="click" size="small" style="margin-right: 5px" @click.stop>
-                    <el-button size="small">
-                        <span v-if="worldImportDialog.worldImportFavoriteGroup">
-                            {{ worldImportDialog.worldImportFavoriteGroup.displayName }}
-                            ({{ worldImportDialog.worldImportFavoriteGroup.count }}/{{
-                                worldImportDialog.worldImportFavoriteGroup.capacity
-                            }})
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                        </span>
-                        <span v-else>
-                            {{ t('dialog.world_import.select_vrchat_group_placeholder') }}
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                        </span>
-                    </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
-                                <el-dropdown-item
-                                    style="display: block; margin: 10px 0"
-                                    :disabled="groupAPI.count >= groupAPI.capacity"
-                                    @click="selectWorldImportGroup(groupAPI)">
+                <div class="flex items-center gap-2">
+                    <Select
+                        :model-value="worldImportFavoriteGroupSelection"
+                        @update:modelValue="handleWorldImportGroupSelect">
+                        <SelectTrigger size="sm">
+                            <SelectValue :placeholder="t('dialog.world_import.select_vrchat_group_placeholder')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="groupAPI in favoriteWorldGroups"
+                                    :key="groupAPI.name"
+                                    :value="groupAPI.name"
+                                    :disabled="groupAPI.count >= groupAPI.capacity">
                                     {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                                </el-dropdown-item>
-                            </template>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
-                <el-dropdown trigger="click" size="small" @click.stop>
-                    <el-button size="small">
-                        <span v-if="worldImportDialog.worldImportLocalFavoriteGroup">
-                            {{ worldImportDialog.worldImportLocalFavoriteGroup }}
-                            ({{ localWorldFavGroupLength(worldImportDialog.worldImportLocalFavoriteGroup) }})
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                        </span>
-                        <span v-else>
-                            {{ t('dialog.world_import.select_local_group_placeholder') }}
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                        </span>
-                    </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <template v-for="group in localWorldFavoriteGroups" :key="group">
-                                <el-dropdown-item
-                                    style="display: block; margin: 10px 0"
-                                    @click="selectWorldImportLocalGroup(group)">
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+
+                    <Select
+                        :model-value="worldImportLocalFavoriteGroupSelection"
+                        @update:modelValue="handleWorldImportLocalGroupSelect"
+                        style="margin-left: 10px">
+                        <SelectTrigger size="sm">
+                            <SelectValue :placeholder="t('dialog.world_import.select_local_group_placeholder')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem v-for="group in localWorldFavoriteGroups" :key="group" :value="group">
                                     {{ group }} ({{ localWorldFavGroupLength(group) }})
-                                </el-dropdown-item>
-                            </template>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
                 <span v-if="worldImportDialog.worldImportFavoriteGroup" style="margin-left: 5px">
                     {{ worldImportTable.data.length }} /
                     {{
@@ -172,8 +157,9 @@
 </template>
 
 <script setup>
-    import { ArrowDown, Close, Loading } from '@element-plus/icons-vue';
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
+    import { Close, Loading } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -208,6 +194,9 @@
         importProgress: 0,
         importProgressTotal: 0
     });
+
+    const worldImportFavoriteGroupSelection = ref('');
+    const worldImportLocalFavoriteGroupSelection = ref('');
 
     const worldImportTable = ref({
         data: [],
@@ -302,11 +291,26 @@
     function selectWorldImportGroup(group) {
         worldImportDialog.value.worldImportLocalFavoriteGroup = null;
         worldImportDialog.value.worldImportFavoriteGroup = group;
+        worldImportFavoriteGroupSelection.value = group?.name ?? '';
+        worldImportLocalFavoriteGroupSelection.value = '';
     }
 
     function selectWorldImportLocalGroup(group) {
         worldImportDialog.value.worldImportFavoriteGroup = null;
         worldImportDialog.value.worldImportLocalFavoriteGroup = group;
+        worldImportFavoriteGroupSelection.value = '';
+        worldImportLocalFavoriteGroupSelection.value = group ?? '';
+    }
+
+    function handleWorldImportGroupSelect(value) {
+        worldImportFavoriteGroupSelection.value = value;
+        const group = favoriteWorldGroups.value.find((g) => g.name === value) ?? null;
+        selectWorldImportGroup(group);
+    }
+
+    function handleWorldImportLocalGroupSelect(value) {
+        worldImportLocalFavoriteGroupSelection.value = value;
+        selectWorldImportLocalGroup(value || null);
     }
 
     function cancelWorldImport() {

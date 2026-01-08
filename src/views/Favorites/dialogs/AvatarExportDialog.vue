@@ -9,65 +9,43 @@
             </template>
         </el-checkbox-group>
 
-        <el-dropdown trigger="click" size="small">
-            <el-button size="small">
-                <span v-if="avatarExportFavoriteGroup">
-                    {{ avatarExportFavoriteGroup.displayName }} ({{ avatarExportFavoriteGroup.count }}/{{
-                        avatarExportFavoriteGroup.capacity
-                    }})
-                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                </span>
-                <span v-else>
-                    All Favorites
-                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                </span>
-            </el-button>
-            <template #dropdown>
-                <el-dropdown-menu>
-                    <el-dropdown-item style="display: block; margin: 10px 0" @click="selectAvatarExportGroup(null)">
-                        All Favorites
-                    </el-dropdown-item>
-                    <template v-for="groupAPI in favoriteAvatarGroups" :key="groupAPI.name">
-                        <el-dropdown-item
-                            style="display: block; margin: 10px 0"
-                            @click="selectAvatarExportGroup(groupAPI)">
+        <div class="flex items-center gap-2">
+            <Select
+                :model-value="avatarExportFavoriteGroupSelection"
+                @update:modelValue="handleAvatarExportFavoriteGroupSelect">
+                <SelectTrigger size="sm">
+                    <SelectValue placeholder="All Favorites" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectItem :value="AVATAR_EXPORT_ALL_VALUE">All Favorites</SelectItem>
+                        <SelectItem
+                            v-for="groupAPI in favoriteAvatarGroups"
+                            :key="groupAPI.name"
+                            :value="groupAPI.name">
                             {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                        </el-dropdown-item>
-                    </template>
-                </el-dropdown-menu>
-            </template>
-        </el-dropdown>
+                        </SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
 
-        <el-dropdown trigger="click" size="small" style="margin-left: 10px">
-            <el-button size="small">
-                <span v-if="avatarExportLocalFavoriteGroup">
-                    {{ avatarExportLocalFavoriteGroup }} ({{
-                        localAvatarFavGroupLength(avatarExportLocalFavoriteGroup)
-                    }})
-                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                </span>
-                <span v-else>
-                    Select Group
-                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                </span>
-            </el-button>
-            <template #dropdown>
-                <el-dropdown-menu>
-                    <el-dropdown-item
-                        style="display: block; margin: 10px 0"
-                        @click="selectAvatarExportLocalGroup(null)">
-                        None
-                    </el-dropdown-item>
-                    <template v-for="group in localAvatarFavoriteGroups" :key="group">
-                        <el-dropdown-item
-                            style="display: block; margin: 10px 0"
-                            @click="selectAvatarExportLocalGroup(group)">
+            <Select
+                :model-value="avatarExportLocalFavoriteGroupSelection"
+                @update:modelValue="handleAvatarExportLocalFavoriteGroupSelect"
+                style="margin-left: 10px">
+                <SelectTrigger size="sm">
+                    <SelectValue placeholder="Select Group" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectItem :value="AVATAR_EXPORT_NONE_VALUE">None</SelectItem>
+                        <SelectItem v-for="group in localAvatarFavoriteGroups" :key="group" :value="group">
                             {{ group }} ({{ localAvatarFavGroupLength(group) }})
-                        </el-dropdown-item>
-                    </template>
-                </el-dropdown-menu>
-            </template>
-        </el-dropdown>
+                        </SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+        </div>
         <br />
         <el-input
             v-model="avatarExportContent"
@@ -82,8 +60,8 @@
 </template>
 
 <script setup>
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
-    import { ArrowDown } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -114,6 +92,12 @@
     const avatarExportContent = ref('');
     const avatarExportFavoriteGroup = ref(null);
     const avatarExportLocalFavoriteGroup = ref(null);
+
+    const AVATAR_EXPORT_ALL_VALUE = '__all__';
+    const AVATAR_EXPORT_NONE_VALUE = '__none__';
+
+    const avatarExportFavoriteGroupSelection = ref(AVATAR_EXPORT_ALL_VALUE);
+    const avatarExportLocalFavoriteGroupSelection = ref(AVATAR_EXPORT_NONE_VALUE);
     const exportSelectedOptions = ref(['ID', 'Name']);
     const exportSelectOptions = ref([
         { label: 'ID', value: 'id' },
@@ -144,7 +128,28 @@
     function showAvatarExportDialog() {
         avatarExportFavoriteGroup.value = null;
         avatarExportLocalFavoriteGroup.value = null;
+        avatarExportFavoriteGroupSelection.value = AVATAR_EXPORT_ALL_VALUE;
+        avatarExportLocalFavoriteGroupSelection.value = AVATAR_EXPORT_NONE_VALUE;
         updateAvatarExportDialog();
+    }
+
+    function handleAvatarExportFavoriteGroupSelect(value) {
+        avatarExportFavoriteGroupSelection.value = value;
+        if (value === AVATAR_EXPORT_ALL_VALUE) {
+            selectAvatarExportGroup(null);
+            return;
+        }
+        const group = favoriteAvatarGroups.value.find((g) => g.name === value) || null;
+        selectAvatarExportGroup(group);
+    }
+
+    function handleAvatarExportLocalFavoriteGroupSelect(value) {
+        avatarExportLocalFavoriteGroupSelection.value = value;
+        if (value === AVATAR_EXPORT_NONE_VALUE) {
+            selectAvatarExportLocalGroup(null);
+            return;
+        }
+        selectAvatarExportLocalGroup(value);
     }
     function handleCopyAvatarExportData(event) {
         if (event.target.tagName === 'TEXTAREA') {
@@ -161,11 +166,24 @@
             });
     }
     function updateAvatarExportDialog() {
-        const formatter = function (str) {
-            if (/[\x00-\x1f,"]/.test(str) === true) {
-                return `"${str.replace(/"/g, '""')}"`;
+        const needsCsvQuotes = (text) => {
+            for (let i = 0; i < text.length; i++) {
+                if (text.charCodeAt(i) < 0x20) {
+                    return true;
+                }
             }
-            return str;
+            return text.includes(',') || text.includes('"');
+        };
+
+        const formatter = function (value) {
+            if (value === null || typeof value === 'undefined') {
+                return '';
+            }
+            const text = String(value);
+            if (needsCsvQuotes(text)) {
+                return `"${text.replace(/"/g, '""')}"`;
+            }
+            return text;
         };
         const propsForQuery = exportSelectOptions.value
             .filter((option) => exportSelectedOptions.value.includes(option.label))
@@ -205,8 +223,8 @@
             favoriteAvatars.value.forEach((ref) => {
                 lines.push(resText(ref.ref));
             });
-            for (let i = 0; i < localAvatarFavoritesList.length; ++i) {
-                const avatarId = localAvatarFavoritesList[i];
+            for (let i = 0; i < localAvatarFavoritesList.value.length; ++i) {
+                const avatarId = localAvatarFavoritesList.value[i];
                 const ref = cachedAvatars.get(avatarId);
                 if (typeof ref !== 'undefined') {
                     lines.push(resText(ref));
@@ -218,11 +236,15 @@
     function selectAvatarExportGroup(group) {
         avatarExportFavoriteGroup.value = group;
         avatarExportLocalFavoriteGroup.value = null;
+        avatarExportFavoriteGroupSelection.value = group?.name ?? AVATAR_EXPORT_ALL_VALUE;
+        avatarExportLocalFavoriteGroupSelection.value = AVATAR_EXPORT_NONE_VALUE;
         updateAvatarExportDialog();
     }
     function selectAvatarExportLocalGroup(group) {
         avatarExportLocalFavoriteGroup.value = group;
         avatarExportFavoriteGroup.value = null;
+        avatarExportLocalFavoriteGroupSelection.value = group ?? AVATAR_EXPORT_NONE_VALUE;
+        avatarExportFavoriteGroupSelection.value = AVATAR_EXPORT_ALL_VALUE;
         updateAvatarExportDialog();
     }
 </script>
