@@ -14,12 +14,19 @@ import { i18n } from '../../plugin';
 
 const { t } = i18n.global;
 
-const sortButton = ({ column, label }) => (
+const sortButton = ({ column, label, descFirst = false }) => (
     <Button
         variant="ghost"
         size="sm"
         class="-ml-2 h-8 px-2"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        onClick={() => {
+            const sorted = column.getIsSorted();
+            if (!sorted && descFirst) {
+                column.toggleSorting(true);
+                return;
+            }
+            column.toggleSorting(sorted === 'asc');
+        }}
     >
         {label}
         <ArrowUpDown class="ml-1 h-4 w-4" />
@@ -36,8 +43,12 @@ const getInstanceIconWeight = (item) => {
     if (item.isMuted) value -= 50;
     if (item.isAvatarInteractionDisabled) value -= 20;
     if (item.isChatBoxMuted) value -= 10;
+    if (item.ageVerified) value += 5;
     return value;
 };
+
+const sortInstanceIcon = (a, b) =>
+    getInstanceIconWeight(b) - getInstanceIconWeight(a);
 
 export const createColumns = ({
     randomUserColours,
@@ -220,16 +231,20 @@ export const createColumns = ({
         {
             id: 'icon',
             header: ({ column }) =>
-                sortButton({ column, label: t('table.playerList.icon') }),
+                sortButton({
+                    column,
+                    label: t('table.playerList.icon'),
+                    descFirst: true
+                }),
             size: 90,
             accessorFn: (row) => getInstanceIconWeight(row),
             meta: {
                 class: 'w-[90px] text-center'
             },
             sortingFn: (rowA, rowB, columnId) => {
-                const a = rowA.getValue(columnId) ?? 0;
-                const b = rowB.getValue(columnId) ?? 0;
-                return b - a;
+                const a = rowA.original;
+                const b = rowB.original;
+                return -sortInstanceIcon(a, b);
             },
             cell: ({ row }) => {
                 const r = row.original;
