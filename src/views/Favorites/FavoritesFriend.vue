@@ -103,7 +103,7 @@
                                         <span class="group-item__count">{{ group.count }}/{{ group.capacity }}</span>
                                     </div>
                                     <div class="group-item__bottom">
-                                        <Badge variant="outline">
+                                        <Badge :class="friendGroupVisibilityColors[group.visibility]" variant="outline">
                                             {{ formatVisibility(group.visibility) }}
                                         </Badge>
                                         <Popover
@@ -321,6 +321,11 @@
     import configRepository from '../../service/config.js';
 
     const friendGroupVisibilityOptions = ref(['public', 'friends', 'private']);
+    const friendGroupVisibilityColors = {
+        public: 'text-green-500 border-green-500',
+        friends: 'text-blue-500 border-blue-500',
+        private: 'text-red-500 border-red-500'
+    };
 
     const friendSplitterSize = ref(260);
 

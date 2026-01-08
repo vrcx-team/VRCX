@@ -103,7 +103,7 @@
                                         <span class="group-item__count">{{ group.count }}/{{ group.capacity }}</span>
                                     </div>
                                     <div class="group-item__bottom">
-                                        <Badge variant="outline">
+                                        <Badge :class="avatarGroupVisibilityColors[group.visibility]" variant="outline">
                                             {{ formatVisibility(group.visibility) }}
                                         </Badge>
                                         <Popover
@@ -542,6 +542,11 @@
     const LOCAL_AVATAR_VIEWPORT_BUFFER = 32;
 
     const avatarGroupVisibilityOptions = ref(['public', 'friends', 'private']);
+    const avatarGroupVisibilityColors = {
+        public: 'text-green-500 border-green-500',
+        friends: 'text-blue-500 border-blue-500',
+        private: 'text-red-500 border-red-500'
+    };
     const historyGroupKey = 'local-history';
     const avatarSplitterSize = ref(260);
 

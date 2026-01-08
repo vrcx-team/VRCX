@@ -103,7 +103,7 @@
                                         <span class="group-item__count">{{ group.count }}/{{ group.capacity }}</span>
                                     </div>
                                     <div class="group-item__bottom">
-                                        <Badge variant="outline">
+                                        <Badge :class="worldGroupVisibilityColors[group.visibility]" variant="outline">
                                             {{ formatVisibility(group.visibility) }}
                                         </Badge>
                                         <Popover
@@ -532,6 +532,11 @@
     });
 
     const worldGroupVisibilityOptions = ref(['public', 'friends', 'private']);
+    const worldGroupVisibilityColors = {
+        public: 'text-green-500 border-green-500',
+        friends: 'text-blue-500 border-blue-500',
+        private: 'text-red-500 border-red-500'
+    };
     const worldSplitterSize = ref(260);
     const worldExportDialogVisible = ref(false);
     const worldFavoriteSearch = ref('');
