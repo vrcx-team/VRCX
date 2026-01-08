@@ -22,17 +22,15 @@
                 style="margin-bottom: 12px" />
             <span>{{ t('dialog.change_content_image.description') }}</span>
             <br />
-            <el-button-group style="padding-bottom: 10px; padding-top: 10px">
-                <el-button
-                    type="default"
-                    size="small"
-                    :icon="Upload"
-                    :loading="changeWorldImageDialogLoading"
-                    :disabled="changeWorldImageDialogLoading"
-                    @click="uploadWorldImage">
-                    {{ t('dialog.change_content_image.upload') }}
-                </el-button>
-            </el-button-group>
+            <el-button
+                type="default"
+                size="small"
+                :icon="Upload"
+                :loading="changeWorldImageDialogLoading"
+                :disabled="changeWorldImageDialogLoading"
+                @click="uploadWorldImage">
+                {{ t('dialog.change_content_image.upload') }}
+            </el-button>
             <br />
             <div class="x-change-image-item">
                 <img :src="previousImageUrl" class="img-size" loading="lazy" />

@@ -48,22 +48,24 @@
                         </div>
                     </div>
                 </div>
-                <el-button-group v-if="searchUserResults.length" style="margin-top: 15px">
-                    <el-button
+                <ButtonGroup v-if="searchUserResults.length" style="margin-top: 15px">
+                    <Button
+                        variant="outline"
+                        size="sm"
                         :disabled="!searchUserParams.offset"
-                        :icon="Back"
-                        size="small"
-                        @click="handleMoreSearchUser(-1)"
-                        >{{ t('view.search.prev_page') }}</el-button
-                    >
-                    <el-button
+                        @click="handleMoreSearchUser(-1)">
+                        <Back />
+                        {{ t('view.search.prev_page') }}
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
                         :disabled="searchUserResults.length < 10"
-                        :icon="Right"
-                        size="small"
-                        @click="handleMoreSearchUser(1)"
-                        >{{ t('view.search.next_page') }}</el-button
-                    >
-                </el-button-group>
+                        @click="handleMoreSearchUser(1)">
+                        <Right />
+                        {{ t('view.search.next_page') }}
+                    </Button>
+                </ButtonGroup>
             </el-tab-pane>
             <el-tab-pane
                 v-loading="isSearchWorldLoading"
@@ -108,22 +110,24 @@
                         </div>
                     </div>
                 </div>
-                <el-button-group v-if="searchWorldResults.length" style="margin-top: 15px">
-                    <el-button
+                <ButtonGroup v-if="searchWorldResults.length" style="margin-top: 15px">
+                    <Button
+                        variant="outline"
+                        size="sm"
                         :disabled="!searchWorldParams.offset"
-                        :icon="Back"
-                        size="small"
-                        @click="moreSearchWorld(-1)"
-                        >{{ t('view.search.prev_page') }}</el-button
-                    >
-                    <el-button
+                        @click="moreSearchWorld(-1)">
+                        <Back />
+                        {{ t('view.search.prev_page') }}
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
                         :disabled="searchWorldResults.length < 10"
-                        :icon="Right"
-                        size="small"
-                        @click="moreSearchWorld(1)"
-                        >{{ t('view.search.next_page') }}</el-button
-                    >
-                </el-button-group>
+                        @click="moreSearchWorld(1)">
+                        <Right />
+                        {{ t('view.search.next_page') }}
+                    </Button>
+                </ButtonGroup>
             </el-tab-pane>
             <el-tab-pane
                 v-loading="isSearchAvatarLoading"
@@ -233,25 +237,23 @@
                         </div>
                     </div>
                 </div>
-                <el-button-group v-if="searchAvatarPage.length" style="margin-top: 15px">
-                    <el-button
-                        :disabled="!searchAvatarPageNum"
-                        :icon="Back"
-                        size="small"
-                        @click="moreSearchAvatar(-1)"
-                        >{{ t('view.search.prev_page') }}</el-button
-                    >
-                    <el-button
+                <ButtonGroup v-if="searchAvatarPage.length" style="margin-top: 15px">
+                    <Button variant="outline" size="sm" :disabled="!searchAvatarPageNum" @click="moreSearchAvatar(-1)">
+                        <Back />
+                        {{ t('view.search.prev_page') }}
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
                         :disabled="
                             searchAvatarResults.length < 10 ||
                             (searchAvatarPageNum + 1) * 10 >= searchAvatarResults.length
                         "
-                        :icon="Right"
-                        size="small"
-                        @click="moreSearchAvatar(1)"
-                        >{{ t('view.search.next_page') }}</el-button
-                    >
-                </el-button-group>
+                        @click="moreSearchAvatar(1)">
+                        <Right />
+                        {{ t('view.search.next_page') }}
+                    </Button>
+                </ButtonGroup>
             </el-tab-pane>
             <el-tab-pane
                 v-loading="isSearchGroupLoading"
@@ -285,22 +287,24 @@
                         </div>
                     </div>
                 </div>
-                <el-button-group v-if="searchGroupResults.length" style="margin-top: 15px">
-                    <el-button
+                <ButtonGroup v-if="searchGroupResults.length" style="margin-top: 15px">
+                    <Button
+                        variant="outline"
+                        size="sm"
                         :disabled="!searchGroupParams.offset"
-                        :icon="Back"
-                        size="small"
-                        @click="moreSearchGroup(-1)"
-                        >{{ t('view.search.prev_page') }}</el-button
-                    >
-                    <el-button
+                        @click="moreSearchGroup(-1)">
+                        <Back />
+                        {{ t('view.search.prev_page') }}
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
                         :disabled="searchGroupResults.length < 10"
-                        :icon="Right"
-                        size="small"
-                        @click="moreSearchGroup(1)"
-                        >{{ t('view.search.next_page') }}</el-button
-                    >
-                </el-button-group>
+                        @click="moreSearchGroup(1)">
+                        <Right />
+                        {{ t('view.search.next_page') }}
+                    </Button>
+                </ButtonGroup>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -308,6 +312,8 @@
 
 <script setup>
     import { ArrowDown, Back, Check, Delete, Refresh, Right } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
+    import { ButtonGroup } from '@/components/ui/button-group';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

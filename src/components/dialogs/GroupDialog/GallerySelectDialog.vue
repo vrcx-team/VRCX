@@ -15,22 +15,24 @@
                 accept="image/*"
                 style="display: none"
                 @change="onFileChangeGallery" />
-            <el-button-group>
-                <el-button type="default" size="small" :icon="Close" @click="selectImageGallerySelect('', '')">{{
-                    t('dialog.gallery_select.none')
-                }}</el-button>
-                <el-button type="default" size="small" :icon="Refresh" @click="refreshGalleryTable">{{
-                    t('dialog.gallery_select.refresh')
-                }}</el-button>
-                <el-button
-                    type="default"
-                    size="small"
-                    :icon="Upload"
+            <ButtonGroup>
+                <Button variant="outline" size="sm" @click="selectImageGallerySelect('', '')">
+                    <Close />
+                    {{ t('dialog.gallery_select.none') }}
+                </Button>
+                <Button variant="outline" size="sm" @click="refreshGalleryTable">
+                    <Refresh />
+                    {{ t('dialog.gallery_select.refresh') }}
+                </Button>
+                <Button
+                    variant="outline"
+                    size="sm"
                     :disabled="!isLocalUserVrcPlusSupporter"
-                    @click="displayGalleryUpload"
-                    >{{ t('dialog.gallery_select.upload') }}</el-button
-                >
-            </el-button-group>
+                    @click="displayGalleryUpload">
+                    <Upload />
+                    {{ t('dialog.gallery_select.upload') }}
+                </Button>
+            </ButtonGroup>
             <br />
             <div
                 v-for="image in galleryTable"
@@ -54,6 +56,8 @@
 
 <script setup>
     import { Close, Refresh, Upload } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
+    import { ButtonGroup } from '@/components/ui/button-group';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

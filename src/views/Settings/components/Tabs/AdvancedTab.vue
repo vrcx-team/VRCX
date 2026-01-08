@@ -3,25 +3,39 @@
         <div class="options-container" style="margin-top: 0">
             <span class="header">{{ t('view.settings.advanced.advanced.header') }}</span>
             <div class="options-container-item" style="margin-top: 15px">
-                <el-button-group>
-                    <el-button size="small" :icon="Operation" @click="showVRChatConfig()">VRChat config.json</el-button>
-                    <el-button size="small" :icon="Operation" @click="showLaunchOptions()">{{
-                        t('view.settings.advanced.advanced.launch_options')
-                    }}</el-button>
-                    <el-button size="small" :icon="Goods" @click="showRegistryBackupDialog()">{{
-                        t('view.settings.advanced.advanced.vrc_registry_backup')
-                    }}</el-button>
-                </el-button-group>
+                <ButtonGroup>
+                    <Button variant="outline" size="sm" @click="showVRChatConfig()">
+                        <Operation />
+                        VRChat config.json
+                    </Button>
+                    <Button variant="outline" size="sm" @click="showLaunchOptions()">
+                        <Operation />
+                        {{ t('view.settings.advanced.advanced.launch_options') }}
+                    </Button>
+                    <Button variant="outline" size="sm" @click="showRegistryBackupDialog()">
+                        <Goods />
+                        {{ t('view.settings.advanced.advanced.vrc_registry_backup') }}
+                    </Button>
+                </ButtonGroup>
             </div>
         </div>
         <div class="options-container">
             <span class="header">{{ t('view.settings.advanced.advanced.common_folders') }}</span>
             <div class="options-container-item" style="margin-top: 15px">
-                <el-button-group>
-                    <el-button size="small" :icon="Folder" @click="openVrcxAppDataFolder()">VRCX Data</el-button>
-                    <el-button size="small" :icon="Folder" @click="openVrcAppDataFolder()">VRChat Data</el-button>
-                    <el-button size="small" :icon="Folder" @click="openCrashVrcCrashDumps()">Crash Dumps</el-button>
-                </el-button-group>
+                <ButtonGroup>
+                    <Button variant="outline" size="sm" @click="openVrcxAppDataFolder()">
+                        <Folder />
+                        VRCX Data
+                    </Button>
+                    <Button variant="outline" size="sm" @click="openVrcAppDataFolder()">
+                        <Folder />
+                        VRChat Data
+                    </Button>
+                    <Button variant="outline" size="sm" @click="openCrashVrcCrashDumps()">
+                        <Folder />
+                        Crash Dumps
+                    </Button>
+                </ButtonGroup>
             </div>
         </div>
         <div class="options-container">
@@ -390,6 +404,8 @@
         User
     } from '@element-plus/icons-vue';
     import { computed, reactive, ref } from 'vue';
+    import { Button } from '@/components/ui/button';
+    import { ButtonGroup } from '@/components/ui/button-group';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
