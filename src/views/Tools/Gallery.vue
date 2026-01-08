@@ -30,27 +30,28 @@
                 <span>{{ t('dialog.gallery_icons.recommended_image_size') }}: 1200x900px (4:3)</span>
                 <br />
                 <br />
-                <el-button-group>
-                    <el-button type="default" size="small" @click="refreshGalleryTable" :icon="Refresh">
+                <ButtonGroup>
+                    <Button variant="outline" size="sm" @click="refreshGalleryTable">
+                        <Refresh />
                         {{ t('dialog.gallery_icons.refresh') }}
-                    </el-button>
-                    <el-button
-                        type="default"
-                        size="small"
-                        @click="displayGalleryUpload"
-                        :icon="Upload"
-                        :disabled="!isLocalUserVrcPlusSupporter || isUploading">
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        :disabled="!isLocalUserVrcPlusSupporter || isUploading"
+                        @click="displayGalleryUpload">
+                        <Upload />
                         {{ t('dialog.gallery_icons.upload') }}
-                    </el-button>
-                    <el-button
-                        type="default"
-                        size="small"
-                        @click="setProfilePicOverride('')"
-                        :icon="Close"
-                        :disabled="!currentUser.profilePicOverride">
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        :disabled="!currentUser.profilePicOverride"
+                        @click="setProfilePicOverride('')">
+                        <Close />
                         {{ t('dialog.gallery_icons.clear') }}
-                    </el-button>
-                </el-button-group>
+                    </Button>
+                </ButtonGroup>
                 <br />
                 <div
                     class="x-friend-item"
@@ -102,27 +103,24 @@
                 <span>{{ t('dialog.gallery_icons.recommended_image_size') }}: 2048x2048px (1:1)</span>
                 <br />
                 <br />
-                <el-button-group>
-                    <el-button type="default" size="small" @click="refreshVRCPlusIconsTable" :icon="Refresh">
+                <ButtonGroup>
+                    <Button variant="outline" size="sm" @click="refreshVRCPlusIconsTable">
+                        <Refresh />
                         {{ t('dialog.gallery_icons.refresh') }}
-                    </el-button>
-                    <el-button
-                        type="default"
-                        size="small"
-                        @click="displayVRCPlusIconUpload"
-                        :icon="Upload"
-                        :disabled="!isLocalUserVrcPlusSupporter || isUploading">
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        :disabled="!isLocalUserVrcPlusSupporter || isUploading"
+                        @click="displayVRCPlusIconUpload">
+                        <Upload />
                         {{ t('dialog.gallery_icons.upload') }}
-                    </el-button>
-                    <el-button
-                        type="default"
-                        size="small"
-                        @click="setVRCPlusIcon('')"
-                        :icon="Close"
-                        :disabled="!currentUser.userIcon">
+                    </Button>
+                    <Button variant="outline" size="sm" :disabled="!currentUser.userIcon" @click="setVRCPlusIcon('')">
+                        <Close />
                         {{ t('dialog.gallery_icons.clear') }}
-                    </el-button>
-                </el-button-group>
+                    </Button>
+                </ButtonGroup>
                 <br />
                 <div
                     class="x-friend-item"
@@ -177,19 +175,20 @@
                 <br />
                 <br />
                 <div>
-                    <el-button-group style="margin-right: 10px">
-                        <el-button type="default" size="small" @click="refreshEmojiTable" :icon="Refresh">
+                    <ButtonGroup style="margin-right: 10px">
+                        <Button variant="outline" size="sm" @click="refreshEmojiTable">
+                            <Refresh />
                             {{ t('dialog.gallery_icons.refresh') }}
-                        </el-button>
-                        <el-button
-                            type="default"
-                            size="small"
-                            @click="displayEmojiUpload"
-                            :icon="Upload"
-                            :disabled="!isLocalUserVrcPlusSupporter || isUploading">
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            :disabled="!isLocalUserVrcPlusSupporter || isUploading"
+                            @click="displayEmojiUpload">
+                            <Upload />
                             {{ t('dialog.gallery_icons.upload') }}
-                        </el-button>
-                    </el-button-group>
+                        </Button>
+                    </ButtonGroup>
                     <br />
                     <br />
                     <el-select v-model="emojiAnimationStyle">
@@ -318,19 +317,20 @@
                 <span>{{ t('dialog.gallery_icons.recommended_image_size') }}: 1024x1024px (1:1)</span>
                 <br />
                 <br />
-                <el-button-group>
-                    <el-button type="default" size="small" @click="refreshStickerTable" :icon="Refresh">
+                <ButtonGroup>
+                    <Button variant="outline" size="sm" @click="refreshStickerTable">
+                        <Refresh />
                         {{ t('dialog.gallery_icons.refresh') }}
-                    </el-button>
-                    <el-button
-                        type="default"
-                        size="small"
-                        @click="displayStickerUpload"
-                        :icon="Upload"
-                        :disabled="!isLocalUserVrcPlusSupporter || isUploading">
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        :disabled="!isLocalUserVrcPlusSupporter || isUploading"
+                        @click="displayStickerUpload">
+                        <Upload />
                         {{ t('dialog.gallery_icons.upload') }}
-                    </el-button>
-                </el-button-group>
+                    </Button>
+                </ButtonGroup>
                 <br />
                 <div
                     class="x-friend-item"
@@ -383,19 +383,20 @@
                 <br />
                 <br />
                 <div style="display: flex; align-items: center">
-                    <el-button-group>
-                        <el-button type="default" size="small" @click="refreshPrintTable" :icon="Refresh">
+                    <ButtonGroup>
+                        <Button variant="outline" size="sm" @click="refreshPrintTable">
+                            <Refresh />
                             {{ t('dialog.gallery_icons.refresh') }}
-                        </el-button>
-                        <el-button
-                            type="default"
-                            size="small"
-                            @click="displayPrintUpload"
-                            :icon="Upload"
-                            :disabled="!isLocalUserVrcPlusSupporter || isUploading">
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            :disabled="!isLocalUserVrcPlusSupporter || isUploading"
+                            @click="displayPrintUpload">
+                            <Upload />
                             {{ t('dialog.gallery_icons.upload') }}
-                        </el-button>
-                    </el-button-group>
+                        </Button>
+                    </ButtonGroup>
                     <el-input
                         type="textarea"
                         v-model="printUploadNote"
@@ -472,14 +473,16 @@
                 <br />
                 <br />
                 <div style="display: flex; align-items: center">
-                    <el-button-group>
-                        <el-button type="default" size="small" @click="getInventory" :icon="Refresh">
+                    <ButtonGroup>
+                        <Button variant="outline" size="sm" @click="getInventory">
+                            <Refresh />
                             {{ t('dialog.gallery_icons.refresh') }}
-                        </el-button>
-                        <el-button type="default" size="small" @click="redeemReward" :icon="Present">
+                        </Button>
+                        <Button variant="outline" size="sm" @click="redeemReward">
+                            <Present />
                             {{ t('dialog.gallery_icons.redeem') }}
-                        </el-button>
-                    </el-button-group>
+                        </Button>
+                    </ButtonGroup>
                 </div>
                 <br />
                 <div
@@ -527,6 +530,8 @@
 <script setup>
     import { ArrowLeft, Close, Delete, Link, Picture, Plus, Present, Refresh, Upload } from '@element-plus/icons-vue';
     import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+    import { Button } from '@/components/ui/button';
+    import { ButtonGroup } from '@/components/ui/button-group';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

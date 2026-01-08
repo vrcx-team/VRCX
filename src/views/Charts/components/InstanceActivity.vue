@@ -72,19 +72,26 @@
                         </div>
                     </PopoverContent>
                 </Popover>
-                <el-button-group style="margin-right: 5px">
+                <ButtonGroup style="margin-right: 5px">
                     <TooltipWrapper :content="t('view.charts.instance_activity.previous_day')" side="top">
-                        <el-button
-                            :icon="ArrowLeft"
+                        <Button
+                            variant="outline"
+                            size="icon-sm"
                             :disabled="isPrevDayBtnDisabled"
-                            @click="changeSelectedDateFromBtn(false)"></el-button>
+                            @click="changeSelectedDateFromBtn(false)">
+                            <ArrowLeft />
+                        </Button>
                     </TooltipWrapper>
                     <TooltipWrapper :content="t('view.charts.instance_activity.next_day')" side="top">
-                        <el-button :disabled="isNextDayBtnDisabled" @click="changeSelectedDateFromBtn(true)"
-                            ><el-icon class="el-icon--right"><ArrowRight /></el-icon
-                        ></el-button>
+                        <Button
+                            variant="outline"
+                            size="icon-sm"
+                            :disabled="isNextDayBtnDisabled"
+                            @click="changeSelectedDateFromBtn(true)">
+                            <ArrowRight />
+                        </Button>
                     </TooltipWrapper>
-                </el-button-group>
+                </ButtonGroup>
                 <el-date-picker
                     v-model="selectedDate"
                     type="date"
@@ -126,6 +133,8 @@
 <script setup>
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { ArrowLeft, ArrowRight, InfoFilled, Refresh, Setting, WarningFilled } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
+    import { ButtonGroup } from '@/components/ui/button-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
