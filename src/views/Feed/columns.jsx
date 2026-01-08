@@ -264,13 +264,33 @@ export const columns = [
         header: () => t('table.feed.type'),
         cell: ({ row }) => {
             const type = row.getValue('type');
+            const feedColors = {
+                Online: 'text-green-500 border-green-500', 
+                Offline: 'text-red-500 border-red-500', 
+                Avatar: 'text-blue-500 border-blue-500', 
+                GPS: 'text-purple-500 border-purple-500',
+                Status: 'text-orange-500 border-orange-500',
+                Bio: 'text-orange-500 border-orange-500'
+                // Default: 'text-gray-500 border-gray-500' //Default color only if necessary
+            };
+
+            const colorClass = feedColors[type];
+
             return (
                 <div>
-                    <Badge variant="outline" class="text-muted-foreground">
+                    <Badge class={colorClass} variant="outline">
                         {t(`view.feed.filters.${type}`)}
                     </Badge>
                 </div>
             );
+            //Old return without colors
+            // return (
+            //     <div>
+            //         <Badge variant="outline" class="text-muted-foreground">
+            //             {t(`view.feed.filters.${type}`)}
+            //         </Badge>
+            //     </div>
+            // );
         }
     },
     {
