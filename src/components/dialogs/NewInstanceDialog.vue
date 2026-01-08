@@ -9,65 +9,85 @@
             <el-tab-pane name="Normal" :label="t('dialog.new_instance.normal')">
                 <el-form :model="newInstanceDialog" label-width="150px">
                     <el-form-item :label="t('dialog.new_instance.access_type')">
-                        <el-radio-group v-model="newInstanceDialog.accessType" size="small" @change="buildInstance">
-                            <el-radio-button value="public">{{
+                        <ToggleGroup
+                            type="single"
+                            required
+                            variant="outline"
+                            size="sm"
+                            :model-value="newInstanceDialog.accessType"
+                            @update:model-value="(value) => {
+                                newInstanceDialog.accessType = value;
+                                buildInstance();
+                            }">
+                            <ToggleGroupItem value="public">{{
                                 t('dialog.new_instance.access_type_public')
-                            }}</el-radio-button>
-                            <el-radio-button value="group">{{
+                            }}</ToggleGroupItem>
+                            <ToggleGroupItem value="group">{{
                                 t('dialog.new_instance.access_type_group')
-                            }}</el-radio-button>
-                            <el-radio-button value="friends+">{{
+                            }}</ToggleGroupItem>
+                            <ToggleGroupItem value="friends+">{{
                                 t('dialog.new_instance.access_type_friend_plus')
-                            }}</el-radio-button>
-                            <el-radio-button value="friends">{{
+                            }}</ToggleGroupItem>
+                            <ToggleGroupItem value="friends">{{
                                 t('dialog.new_instance.access_type_friend')
-                            }}</el-radio-button>
-                            <el-radio-button value="invite+">{{
+                            }}</ToggleGroupItem>
+                            <ToggleGroupItem value="invite+">{{
                                 t('dialog.new_instance.access_type_invite_plus')
-                            }}</el-radio-button>
-                            <el-radio-button value="invite">{{
+                            }}</ToggleGroupItem>
+                            <ToggleGroupItem value="invite">{{
                                 t('dialog.new_instance.access_type_invite')
-                            }}</el-radio-button>
-                        </el-radio-group>
+                            }}</ToggleGroupItem>
+                        </ToggleGroup>
                     </el-form-item>
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
                         :label="t('dialog.new_instance.group_access_type')">
-                        <el-radio-group
-                            v-model="newInstanceDialog.groupAccessType"
-                            size="small"
-                            @change="buildInstance">
-                            <el-radio-button
+                        <ToggleGroup
+                            type="single"
+                            required
+                            variant="outline"
+                            size="sm"
+                            :model-value="newInstanceDialog.groupAccessType"
+                            @update:model-value="(value) => {
+                                newInstanceDialog.groupAccessType = value;
+                                buildInstance();
+                            }">
+                            <ToggleGroupItem
                                 value="members"
-                                :disabled="
-                                    !hasGroupPermission(newInstanceDialog.groupRef, 'group-instance-open-create')
-                                "
-                                >{{ t('dialog.new_instance.group_access_type_members') }}</el-radio-button
+                                :disabled="!hasGroupPermission(newInstanceDialog.groupRef, 'group-instance-open-create')"
+                                >{{ t('dialog.new_instance.group_access_type_members') }}</ToggleGroupItem
                             >
-                            <el-radio-button
+                            <ToggleGroupItem
                                 value="plus"
-                                :disabled="
-                                    !hasGroupPermission(newInstanceDialog.groupRef, 'group-instance-plus-create')
-                                "
-                                >{{ t('dialog.new_instance.group_access_type_plus') }}</el-radio-button
+                                :disabled="!hasGroupPermission(newInstanceDialog.groupRef, 'group-instance-plus-create')"
+                                >{{ t('dialog.new_instance.group_access_type_plus') }}</ToggleGroupItem
                             >
-                            <el-radio-button
+                            <ToggleGroupItem
                                 value="public"
                                 :disabled="
                                     !hasGroupPermission(newInstanceDialog.groupRef, 'group-instance-public-create') ||
                                     newInstanceDialog.groupRef.privacy === 'private'
                                 "
-                                >{{ t('dialog.new_instance.group_access_type_public') }}</el-radio-button
+                                >{{ t('dialog.new_instance.group_access_type_public') }}</ToggleGroupItem
                             >
-                        </el-radio-group>
+                        </ToggleGroup>
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.region')">
-                        <el-radio-group v-model="newInstanceDialog.region" size="small" @change="buildInstance">
-                            <el-radio-button value="US West">{{ t('dialog.new_instance.region_usw') }}</el-radio-button>
-                            <el-radio-button value="US East">{{ t('dialog.new_instance.region_use') }}</el-radio-button>
-                            <el-radio-button value="Europe">{{ t('dialog.new_instance.region_eu') }}</el-radio-button>
-                            <el-radio-button value="Japan">{{ t('dialog.new_instance.region_jp') }}</el-radio-button>
-                        </el-radio-group>
+                        <ToggleGroup
+                            type="single"
+                            required
+                            variant="outline"
+                            size="sm"
+                            :model-value="newInstanceDialog.region"
+                            @update:model-value="(value) => {
+                                newInstanceDialog.region = value;
+                                buildInstance();
+                            }">
+                            <ToggleGroupItem value="US West">{{ t('dialog.new_instance.region_usw') }}</ToggleGroupItem>
+                            <ToggleGroupItem value="US East">{{ t('dialog.new_instance.region_use') }}</ToggleGroupItem>
+                            <ToggleGroupItem value="Europe">{{ t('dialog.new_instance.region_eu') }}</ToggleGroupItem>
+                            <ToggleGroupItem value="Japan">{{ t('dialog.new_instance.region_jp') }}</ToggleGroupItem>
+                        </ToggleGroup>
                     </el-form-item>
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
@@ -172,55 +192,76 @@
             <el-tab-pane name="Legacy" :label="t('dialog.new_instance.legacy')">
                 <el-form :model="newInstanceDialog" label-width="150px">
                     <el-form-item :label="t('dialog.new_instance.access_type')">
-                        <el-radio-group
-                            v-model="newInstanceDialog.accessType"
-                            size="small"
-                            @change="buildLegacyInstance">
-                            <el-radio-button value="public">{{
+                        <ToggleGroup
+                            type="single"
+                            required
+                            variant="outline"
+                            size="sm"
+                            :model-value="newInstanceDialog.accessType"
+                            @update:model-value="(value) => {
+                                newInstanceDialog.accessType = value;
+                                buildLegacyInstance();
+                            }">
+                            <ToggleGroupItem value="public">{{
                                 t('dialog.new_instance.access_type_public')
-                            }}</el-radio-button>
-                            <el-radio-button value="group">{{
+                            }}</ToggleGroupItem>
+                            <ToggleGroupItem value="group">{{
                                 t('dialog.new_instance.access_type_group')
-                            }}</el-radio-button>
-                            <el-radio-button value="friends+">{{
+                            }}</ToggleGroupItem>
+                            <ToggleGroupItem value="friends+">{{
                                 t('dialog.new_instance.access_type_friend_plus')
-                            }}</el-radio-button>
-                            <el-radio-button value="friends">{{
+                            }}</ToggleGroupItem>
+                            <ToggleGroupItem value="friends">{{
                                 t('dialog.new_instance.access_type_friend')
-                            }}</el-radio-button>
-                            <el-radio-button value="invite+">{{
+                            }}</ToggleGroupItem>
+                            <ToggleGroupItem value="invite+">{{
                                 t('dialog.new_instance.access_type_invite_plus')
-                            }}</el-radio-button>
-                            <el-radio-button value="invite">{{
+                            }}</ToggleGroupItem>
+                            <ToggleGroupItem value="invite">{{
                                 t('dialog.new_instance.access_type_invite')
-                            }}</el-radio-button>
-                        </el-radio-group>
+                            }}</ToggleGroupItem>
+                        </ToggleGroup>
                     </el-form-item>
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
                         :label="t('dialog.new_instance.group_access_type')">
-                        <el-radio-group
-                            v-model="newInstanceDialog.groupAccessType"
-                            size="small"
-                            @change="buildLegacyInstance">
-                            <el-radio-button value="members">{{
+                        <ToggleGroup
+                            type="single"
+                            required
+                            variant="outline"
+                            size="sm"
+                            :model-value="newInstanceDialog.groupAccessType"
+                            @update:model-value="(value) => {
+                                newInstanceDialog.groupAccessType = value;
+                                buildLegacyInstance();
+                            }">
+                            <ToggleGroupItem value="members">{{
                                 t('dialog.new_instance.group_access_type_members')
-                            }}</el-radio-button>
-                            <el-radio-button value="plus">{{
+                            }}</ToggleGroupItem>
+                            <ToggleGroupItem value="plus">{{
                                 t('dialog.new_instance.group_access_type_plus')
-                            }}</el-radio-button>
-                            <el-radio-button value="public">{{
+                            }}</ToggleGroupItem>
+                            <ToggleGroupItem value="public">{{
                                 t('dialog.new_instance.group_access_type_public')
-                            }}</el-radio-button>
-                        </el-radio-group>
+                            }}</ToggleGroupItem>
+                        </ToggleGroup>
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.region')">
-                        <el-radio-group v-model="newInstanceDialog.region" size="small" @change="buildLegacyInstance">
-                            <el-radio-button value="US West">{{ t('dialog.new_instance.region_usw') }}</el-radio-button>
-                            <el-radio-button value="US East">{{ t('dialog.new_instance.region_use') }}</el-radio-button>
-                            <el-radio-button value="Europe">{{ t('dialog.new_instance.region_eu') }}</el-radio-button>
-                            <el-radio-button value="Japan">{{ t('dialog.new_instance.region_jp') }}</el-radio-button>
-                        </el-radio-group>
+                        <ToggleGroup
+                            type="single"
+                            required
+                            variant="outline"
+                            size="sm"
+                            :model-value="newInstanceDialog.region"
+                            @update:model-value="(value) => {
+                                newInstanceDialog.region = value;
+                                buildLegacyInstance();
+                            }">
+                            <ToggleGroupItem value="US West">{{ t('dialog.new_instance.region_usw') }}</ToggleGroupItem>
+                            <ToggleGroupItem value="US East">{{ t('dialog.new_instance.region_use') }}</ToggleGroupItem>
+                            <ToggleGroupItem value="Europe">{{ t('dialog.new_instance.region_eu') }}</ToggleGroupItem>
+                            <ToggleGroupItem value="Japan">{{ t('dialog.new_instance.region_jp') }}</ToggleGroupItem>
+                        </ToggleGroup>
                     </el-form-item>
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
@@ -482,6 +523,8 @@
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
+
+    import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 
     import {
         copyToClipboard,

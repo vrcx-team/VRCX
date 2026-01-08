@@ -45,21 +45,24 @@
             <div v-if="!noUpdater" class="options-container-item">
                 <span class="name">{{ t('view.settings.general.vrcx_updater.update_action') }}</span>
                 <br />
-                <el-radio-group
+                <ToggleGroup
+                    type="single"
+                    required
+                    variant="outline"
+                    size="sm"
                     :model-value="autoUpdateVRCX"
-                    size="small"
                     style="margin-top: 5px"
-                    @change="setAutoUpdateVRCX">
-                    <el-radio-button value="Off">{{
+                    @update:model-value="setAutoUpdateVRCX">
+                    <ToggleGroupItem value="Off">{{
                         t('view.settings.general.vrcx_updater.auto_update_off')
-                    }}</el-radio-button>
-                    <el-radio-button value="Notify">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Notify">{{
                         t('view.settings.general.vrcx_updater.auto_update_notify')
-                    }}</el-radio-button>
-                    <el-radio-button value="Auto Download">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Auto Download">{{
                         t('view.settings.general.vrcx_updater.auto_update_download')
-                    }}</el-radio-button>
-                </el-radio-group>
+                    }}</ToggleGroupItem>
+                </ToggleGroup>
             </div>
             <div v-else class="options-container-item">
                 <span>{{ t('view.settings.general.vrcx_updater.updater_disabled') }}</span>
@@ -242,21 +245,24 @@
                     </TooltipWrapper>
                 </span>
                 <br />
-                <el-radio-group
+                <ToggleGroup
+                    type="single"
+                    required
+                    variant="outline"
+                    size="sm"
                     :model-value="autoAcceptInviteRequests"
-                    size="small"
                     style="margin-top: 5px"
-                    @change="setAutoAcceptInviteRequests">
-                    <el-radio-button value="Off">{{
+                    @update:model-value="setAutoAcceptInviteRequests">
+                    <ToggleGroupItem value="Off">{{
                         t('view.settings.general.automation.auto_invite_request_accept_off')
-                    }}</el-radio-button>
-                    <el-radio-button value="All Favorites">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="All Favorites">{{
                         t('view.settings.general.automation.auto_invite_request_accept_favs')
-                    }}</el-radio-button>
-                    <el-radio-button value="Selected Favorites">{{
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="Selected Favorites">{{
                         t('view.settings.general.automation.auto_invite_request_accept_selected_favs')
-                    }}</el-radio-button>
-                </el-radio-group>
+                    }}</ToggleGroupItem>
+                </ToggleGroup>
             </div>
         </div>
         <div class="options-container">
@@ -300,6 +306,8 @@
     import { useFavoriteStore, useGeneralSettingsStore, useVRCXUpdaterStore, useVrStore } from '../../../../stores';
     import { links } from '../../../../shared/constants';
     import { openExternalLink } from '../../../../shared/utils';
+
+    import { ToggleGroup, ToggleGroupItem } from '../../../../components/ui/toggle-group';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 
