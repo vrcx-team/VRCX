@@ -230,22 +230,21 @@
             </div>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.notifications.notifications.text_to_speech.tts_voice') }}</span>
-                <el-dropdown trigger="click" size="small" @command="(voice) => changeTTSVoice(voice)">
-                    <el-button size="small" :disabled="notificationTTS === 'Never'">
-                        <span
-                            >{{ getTTSVoiceName() }} <el-icon style="margin-left: 5px"><ArrowDown /></el-icon
-                        ></span>
-                    </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item
-                                v-for="(voice, index) in TTSvoices"
-                                :key="index"
-                                :command="index"
-                                v-text="voice.name" />
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+                <Select
+                    :model-value="ttsVoiceIndex"
+                    :disabled="notificationTTS === 'Never'"
+                    @update:modelValue="(v) => (ttsVoiceIndex = v)">
+                    <SelectTrigger size="sm">
+                        <SelectValue :placeholder="getTTSVoiceName()" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem v-for="(voice, index) in TTSvoices" :key="index" :value="index">
+                                {{ voice.name }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
             </div>
             <simple-switch
                 :label="t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames')"
@@ -274,14 +273,15 @@
 </template>
 
 <script setup>
-    import { ArrowDown, ChatSquare, Rank, Timer, VideoPlay } from '@element-plus/icons-vue';
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { ChatSquare, Rank, Timer, VideoPlay } from '@element-plus/icons-vue';
     import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { useAdvancedSettingsStore, useNotificationsSettingsStore, useVrStore } from '../../../../stores';
-    import { Slider } from '../../../../components/ui/slider';
     import { ToggleGroup, ToggleGroupItem } from '../../../../components/ui/toggle-group';
+    import { Slider } from '../../../../components/ui/slider';
 
     import FeedFiltersDialog from '../../dialogs/FeedFiltersDialog.vue';
     import NotificationPositionDialog from '../../dialogs/NotificationPositionDialog.vue';
@@ -341,6 +341,19 @@
             const next = value?.[0];
             if (typeof next === 'number') {
                 setNotificationOpacity(next);
+            }
+        }
+    });
+
+    const ttsVoiceIndex = computed({
+        get: () => {
+            const currentName = getTTSVoiceName();
+            const idx = TTSvoices.value.findIndex((v) => v?.name === currentName);
+            return idx >= 0 ? idx : null;
+        },
+        set: (value) => {
+            if (typeof value === 'number') {
+                changeTTSVoice(value);
             }
         }
     });

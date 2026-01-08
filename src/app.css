@@ -1326,6 +1326,8 @@ i.x-status-icon.red {
 .options-container-item {
     font-size: 12px;
     margin-top: 5px;
+    display: flex;
+    align-items: center;
 }
 
 .options-container-item .name {

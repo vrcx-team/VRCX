@@ -34,6 +34,7 @@
     .simple-switch {
         font-size: 12px;
         display: flex;
+        align-items: center;
     }
     .simple-switch > .name {
         width: 225px;

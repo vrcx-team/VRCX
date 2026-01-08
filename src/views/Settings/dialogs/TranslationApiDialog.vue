@@ -7,23 +7,18 @@
         @close="closeDialog">
         <div class="options-container-item">
             <span class="name">{{ t('view.settings.appearance.appearance.bio_language') }}</span>
-            <el-dropdown trigger="click" size="small" style="float: right" @click.stop>
-                <el-button size="small">
-                    <span>
-                        {{ getLanguageName(bioLanguage) || bioLanguage }}
-                        <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                    </span>
-                </el-button>
-                <template #dropdown>
-                    <el-dropdown-menu>
-                        <el-dropdown-item
-                            v-for="language in languageCodes"
-                            :key="language"
-                            @click="setBioLanguage(language)"
-                            v-text="getLanguageName(language)" />
-                    </el-dropdown-menu>
-                </template>
-            </el-dropdown>
+            <Select :model-value="bioLanguage" @update:modelValue="setBioLanguage">
+                <SelectTrigger size="sm" style="float: right">
+                    <SelectValue :placeholder="String(getLanguageName(bioLanguage) || bioLanguage || '')" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectItem v-for="language in languageCodes" :key="language" :value="language">
+                            {{ getLanguageName(language) }}
+                        </SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
         </div>
         <br />
         <el-form label-position="top" label-width="120px" size="small" style="margin-bottom: 12px">
@@ -102,8 +97,8 @@
 </template>
 
 <script setup>
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { reactive, watch } from 'vue';
-    import { ArrowDown } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

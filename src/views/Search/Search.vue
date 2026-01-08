@@ -71,24 +71,24 @@
                 v-loading="isSearchWorldLoading"
                 :label="t('view.search.world.header')"
                 style="min-height: 60px">
-                <el-dropdown
-                    size="small"
-                    trigger="click"
-                    style="margin-bottom: 15px"
-                    @command="(row) => searchWorld(row)">
-                    <el-button size="small"
-                        >{{ t('view.search.world.category') }} <el-icon class="el-icon--right"><ArrowDown /></el-icon
-                    ></el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item
+                <Select
+                    :model-value="searchWorldCategoryIndex"
+                    @update:modelValue="handleSearchWorldCategorySelect"
+                    style="margin-bottom: 15px">
+                    <SelectTrigger size="sm">
+                        <SelectValue :placeholder="t('view.search.world.category')" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem
                                 v-for="row in cachedConfig.dynamicWorldRows"
                                 :key="row.index"
-                                :command="row"
-                                v-text="row.name"></el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+                                :value="row.index">
+                                {{ row.name }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
                 <el-checkbox v-model="searchWorldLabs" style="margin-left: 10px">{{
                     t('view.search.world.community_lab')
                 }}</el-checkbox>
@@ -135,30 +135,25 @@
                 style="min-height: 60px">
                 <div style="display: flex; align-items: center; justify-content: space-between">
                     <div style="display: flex; align-items: center">
-                        <el-dropdown
+                        <Select
                             v-if="avatarRemoteDatabaseProviderList.length > 1"
-                            trigger="click"
-                            size="small"
-                            style="margin-right: 5px"
-                            @click.stop>
-                            <el-button size="small"
-                                >{{ t('view.search.avatar.search_provider') }}
-                                <el-icon class="el-icon--right"><ArrowDown /></el-icon
-                            ></el-button>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item
+                            :model-value="avatarRemoteDatabaseProvider"
+                            @update:modelValue="setAvatarProvider"
+                            style="margin-right: 5px">
+                            <SelectTrigger size="sm">
+                                <SelectValue :placeholder="t('view.search.avatar.search_provider')" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem
                                         v-for="provider in avatarRemoteDatabaseProviderList"
                                         :key="provider"
-                                        @click="setAvatarProvider(provider)">
-                                        <el-icon v-if="provider === avatarRemoteDatabaseProvider" class="el-icon--left"
-                                            ><Check
-                                        /></el-icon>
+                                        :value="provider">
                                         {{ provider }}
-                                    </el-dropdown-item>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                         <TooltipWrapper side="bottom" :content="t('view.search.avatar.refresh_tooltip')">
                             <el-button
                                 type="default"
@@ -311,7 +306,8 @@
 </template>
 
 <script setup>
-    import { ArrowDown, Back, Check, Delete, Refresh, Right } from '@element-plus/icons-vue';
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Back, Delete, Refresh, Right } from '@element-plus/icons-vue';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { ref } from 'vue';
@@ -368,6 +364,8 @@
     const searchWorldOption = ref('');
     const searchWorldLabs = ref(false);
     const searchWorldParams = ref({});
+
+    const searchWorldCategoryIndex = ref(null);
     const searchWorldResults = ref([]);
 
     const searchAvatarFilter = ref('');
@@ -436,6 +434,7 @@
 
     function searchWorld(ref) {
         searchWorldOption.value = '';
+        searchWorldCategoryIndex.value = ref?.index ?? null;
         const params = {
             n: 10,
             offset: 0
@@ -500,6 +499,12 @@
         // TODO: option.platform
         searchWorldParams.value = params;
         moreSearchWorld();
+    }
+
+    function handleSearchWorldCategorySelect(index) {
+        searchWorldCategoryIndex.value = index;
+        const row = cachedConfig.value?.dynamicWorldRows?.find((r) => r.index === index);
+        searchWorld(row || {});
     }
 
     function moreSearchWorld(go) {

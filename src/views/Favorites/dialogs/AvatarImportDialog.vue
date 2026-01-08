@@ -29,57 +29,43 @@
             style="margin-top: 10px"></el-input>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
             <div>
-                <el-dropdown trigger="click" size="small" style="margin-right: 5px" @click.stop>
-                    <el-button size="small">
-                        <span v-if="avatarImportDialog.avatarImportFavoriteGroup">
-                            {{ avatarImportDialog.avatarImportFavoriteGroup.displayName }} ({{
-                                avatarImportDialog.avatarImportFavoriteGroup.count
-                            }}/{{ avatarImportDialog.avatarImportFavoriteGroup.capacity }})
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                        </span>
-                        <span v-else>
-                            {{ t('dialog.avatar_import.select_group_placeholder') }}
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                        </span>
-                    </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <template v-for="groupAPI in favoriteAvatarGroups" :key="groupAPI.name">
-                                <el-dropdown-item
-                                    style="display: block; margin: 10px 0"
-                                    :disabled="groupAPI.count >= groupAPI.capacity"
-                                    @click="selectAvatarImportGroup(groupAPI)">
+                <div class="flex items-center gap-2">
+                    <Select
+                        :model-value="avatarImportFavoriteGroupSelection"
+                        @update:modelValue="handleAvatarImportGroupSelect"
+                        style="margin-right: 5px">
+                        <SelectTrigger size="sm">
+                            <SelectValue :placeholder="t('dialog.avatar_import.select_group_placeholder')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="groupAPI in favoriteAvatarGroups"
+                                    :key="groupAPI.name"
+                                    :value="groupAPI.name"
+                                    :disabled="groupAPI.count >= groupAPI.capacity">
                                     {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                                </el-dropdown-item>
-                            </template>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
-                <el-dropdown trigger="click" size="small">
-                    <el-button size="small">
-                        <span v-if="avatarImportDialog.avatarImportLocalFavoriteGroup">
-                            {{ avatarImportDialog.avatarImportLocalFavoriteGroup }} ({{
-                                localAvatarFavGroupLength(avatarImportDialog.avatarImportLocalFavoriteGroup)
-                            }})
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                        </span>
-                        <span v-else>
-                            {{ t('dialog.avatar_import.select_group_placeholder') }}
-                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-                        </span>
-                    </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <template v-for="group in localAvatarFavoriteGroups" :key="group">
-                                <el-dropdown-item
-                                    style="display: block; margin: 10px 0"
-                                    @click="selectAvatarImportLocalGroup(group)">
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+
+                    <Select
+                        :model-value="avatarImportLocalFavoriteGroupSelection"
+                        @update:modelValue="handleAvatarImportLocalGroupSelect"
+                        style="margin-left: 10px">
+                        <SelectTrigger size="sm">
+                            <SelectValue :placeholder="t('dialog.avatar_import.select_group_placeholder')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem v-for="group in localAvatarFavoriteGroups" :key="group" :value="group">
                                     {{ group }} ({{ localAvatarFavGroupLength(group) }})
-                                </el-dropdown-item>
-                            </template>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
                 <span v-if="avatarImportDialog.avatarImportFavoriteGroup" style="margin-left: 5px">
                     {{ avatarImportTable.data.length }} /
                     {{
@@ -176,8 +162,9 @@
 </template>
 
 <script setup>
-    import { ArrowDown, Close, Loading } from '@element-plus/icons-vue';
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
+    import { Close, Loading } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -208,6 +195,9 @@
         importProgress: 0,
         importProgressTotal: 0
     });
+
+    const avatarImportFavoriteGroupSelection = ref('');
+    const avatarImportLocalFavoriteGroupSelection = ref('');
 
     const avatarImportTable = ref({
         data: [],
@@ -305,11 +295,26 @@
     function selectAvatarImportGroup(group) {
         avatarImportDialog.value.avatarImportLocalFavoriteGroup = null;
         avatarImportDialog.value.avatarImportFavoriteGroup = group;
+        avatarImportFavoriteGroupSelection.value = group?.name ?? '';
+        avatarImportLocalFavoriteGroupSelection.value = '';
     }
 
     function selectAvatarImportLocalGroup(group) {
         avatarImportDialog.value.avatarImportFavoriteGroup = null;
         avatarImportDialog.value.avatarImportLocalFavoriteGroup = group;
+        avatarImportFavoriteGroupSelection.value = '';
+        avatarImportLocalFavoriteGroupSelection.value = group ?? '';
+    }
+
+    function handleAvatarImportGroupSelect(value) {
+        avatarImportFavoriteGroupSelection.value = value;
+        const group = favoriteAvatarGroups.value.find((g) => g.name === value) ?? null;
+        selectAvatarImportGroup(group);
+    }
+
+    function handleAvatarImportLocalGroupSelect(value) {
+        avatarImportLocalFavoriteGroupSelection.value = value;
+        selectAvatarImportLocalGroup(value || null);
     }
 
     function cancelAvatarImport() {

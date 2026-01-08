@@ -54,64 +54,60 @@
             </el-form-item>
         </el-form>
         <template #footer>
-            <el-button
-                :disabled="!checkCanInvite(launchDialog.location)"
-                @click="showInviteDialog(launchDialog.location)">
-                {{ t('dialog.launch.invite') }}
-            </el-button>
-            <template v-if="canOpenInstanceInGame">
-                <el-button
+            <div class="flex justify-end">
+                <Button
+                    class="mr-1.5"
+                    variant="outline"
+                    :disabled="!checkCanInvite(launchDialog.location)"
+                    @click="showInviteDialog(launchDialog.location)">
+                    {{ t('dialog.launch.invite') }}
+                </Button>
+                <Button
+                    v-if="canOpenInstanceInGame"
+                    variant="outline"
                     :disabled="!launchDialog.secureOrShortName"
                     @click="handleAttachGame(launchDialog.location, launchDialog.shortName)">
                     {{ t('dialog.launch.open_ingame') }}
-                </el-button>
-                <el-dropdown
-                    split-button
-                    type="primary"
-                    :disabled="!launchDialog.secureOrShortName"
-                    @click="handleLaunchDefault(launchDialog.location, launchDialog.shortName)"
-                    @command="(cmd) => handleLaunchCommand(cmd, launchDialog.location, launchDialog.shortName)">
-                    {{ launchModeLabel }}
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item :command="launchDialog.desktop ? 'vr' : 'desktop'">
-                                {{
-                                    launchDialog.desktop
-                                        ? t('dialog.launch.launch')
-                                        : t('dialog.launch.start_as_desktop')
-                                }}
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
-            </template>
-            <template v-else>
-                <el-button
+                </Button>
+                <Button
+                    v-else
+                    variant="outline"
                     class="mr-1.25"
                     :disabled="!launchDialog.secureOrShortName"
                     @click="selfInvite(launchDialog.location, launchDialog.shortName)">
                     {{ t('dialog.launch.self_invite') }}
-                </el-button>
-                <el-dropdown
-                    split-button
-                    type="primary"
-                    :disabled="!launchDialog.secureOrShortName"
-                    @click="handleLaunchDefault(launchDialog.location, launchDialog.shortName)"
-                    @command="(cmd) => handleLaunchCommand(cmd, launchDialog.location, launchDialog.shortName)">
-                    {{ launchModeLabel }}
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item :command="launchDialog.desktop ? 'vr' : 'desktop'">
+                </Button>
+                <ButtonGroup>
+                    <Button
+                        :disabled="!launchDialog.secureOrShortName"
+                        @click="handleLaunchDefault(launchDialog.location, launchDialog.shortName)">
+                        {{ launchModeLabel }}
+                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger as-child>
+                            <Button size="icon" :disabled="!launchDialog.secureOrShortName" aria-label="More options">
+                                <MoreHorizontal class="size-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" class="w-52">
+                            <DropdownMenuItem
+                                @click="
+                                    handleLaunchCommand(
+                                        launchDialog.desktop ? 'vr' : 'desktop',
+                                        launchDialog.location,
+                                        launchDialog.shortName
+                                    )
+                                ">
                                 {{
                                     launchDialog.desktop
                                         ? t('dialog.launch.launch')
                                         : t('dialog.launch.start_as_desktop')
                                 }}
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
-            </template>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </ButtonGroup>
+            </div>
         </template>
         <InviteDialog :invite-dialog="inviteDialog" @closeInviteDialog="closeInviteDialog" />
     </el-dialog>
@@ -119,8 +115,17 @@
 
 <script setup>
     import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+    import {
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuTrigger
+    } from '@/components/ui/dropdown-menu';
     import { CopyDocument, Warning } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
+    import { ButtonGroup } from '@/components/ui/button-group';
     import { ElMessageBox } from 'element-plus';
+    import { MoreHorizontal } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

@@ -1,16 +1,16 @@
 <script setup>
-    import { Separator } from '@/components/ui/separator';
-    import { cn } from '@/lib/utils';
-    import { reactiveOmit } from '@vueuse/core';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+import { reactiveOmit } from '@vueuse/core';
 
-    const props = defineProps({
-        orientation: { type: String, required: false, default: 'vertical' },
-        decorative: { type: Boolean, required: false },
-        asChild: { type: Boolean, required: false },
-        as: { type: null, required: false },
-        class: { type: null, required: false }
-    });
-    const delegatedProps = reactiveOmit(props, 'class');
+const props = defineProps({
+    orientation: { type: String, required: false, default: 'vertical' },
+    decorative: { type: Boolean, required: false },
+    asChild: { type: Boolean, required: false },
+    as: { type: null, required: false },
+    class: { type: null, required: false }
+});
+const delegatedProps = reactiveOmit(props, 'class');
 </script>
 
 <template>
