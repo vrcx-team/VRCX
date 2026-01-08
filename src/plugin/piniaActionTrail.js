@@ -109,6 +109,7 @@ export function startRendererMemoryThresholdReport(
         lastSent = now;
 
         const trail = getPiniaActionTrail();
+        const trailText = JSON.stringify(trail);
         Sentry.withScope((scope) => {
             scope.setLevel('warning');
             scope.setTag('reason', 'high-js-heap');
@@ -118,7 +119,7 @@ export function startRendererMemoryThresholdReport(
                 ratio
             });
             scope.setContext('pinia_actions', {
-                trail,
+                trailText,
                 count: trail.length
             });
             Sentry.captureMessage(

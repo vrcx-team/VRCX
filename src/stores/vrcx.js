@@ -543,11 +543,12 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                             }
                             return ts.isAfter(cutoff) || ts.isSame(cutoff);
                         });
+                        const trailText = JSON.stringify(trail);
                         Sentry.withScope((scope) => {
                             scope.setLevel('fatal');
                             scope.setTag('reason', 'crash-recovery');
                             scope.setContext('pinia_actions', {
-                                trail,
+                                trailText,
                                 count: trail.length
                             });
                             Sentry.captureMessage(
