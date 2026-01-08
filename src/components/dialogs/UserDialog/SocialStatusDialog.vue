@@ -6,30 +6,40 @@
         append-to-body
         width="400px">
         <div v-loading="socialStatusDialog.loading">
-            <el-select v-model="socialStatusDialog.status" style="margin-top: 10px">
-                <template #prefix>
-                    <i v-if="socialStatusDialog.status === 'join me'" class="x-user-status joinme"></i>
-                    <i v-else-if="socialStatusDialog.status === 'active'" class="x-user-status online"></i>
-                    <i v-else-if="socialStatusDialog.status === 'ask me'" class="x-user-status askme"></i>
-                    <i v-else-if="socialStatusDialog.status === 'busy'" class="x-user-status busy"></i>
-                    <i v-else-if="socialStatusDialog.status === 'offline'" class="x-user-status offline"></i>
-                </template>
-                <el-option :label="t('dialog.user.status.join_me')" value="join me">
-                    <i class="x-user-status joinme"></i> {{ t('dialog.user.status.join_me') }}
-                </el-option>
-                <el-option :label="t('dialog.user.status.online')" value="active">
-                    <i class="x-user-status online"></i> {{ t('dialog.user.status.online') }}
-                </el-option>
-                <el-option :label="t('dialog.user.status.ask_me')" value="ask me">
-                    <i class="x-user-status askme"></i> {{ t('dialog.user.status.ask_me') }}
-                </el-option>
-                <el-option :label="t('dialog.user.status.busy')" value="busy">
-                    <i class="x-user-status busy"></i> {{ t('dialog.user.status.busy') }}
-                </el-option>
-                <el-option v-if="currentUser.$isModerator" :label="t('dialog.user.status.offline')" value="offline">
-                    <i class="x-user-status offline"></i> {{ t('dialog.user.status.offline') }}
-                </el-option>
-            </el-select>
+            <Select :model-value="socialStatusDialog.status" @update:modelValue="handleSocialStatusChange">
+                <SelectTrigger size="sm" style="margin-top: 10px; width: 100%">
+                    <span class="flex items-center gap-2">
+                        <i v-if="socialStatusDialog.status === 'join me'" class="x-user-status joinme"></i>
+                        <i v-else-if="socialStatusDialog.status === 'active'" class="x-user-status online"></i>
+                        <i v-else-if="socialStatusDialog.status === 'ask me'" class="x-user-status askme"></i>
+                        <i v-else-if="socialStatusDialog.status === 'busy'" class="x-user-status busy"></i>
+                        <i v-else-if="socialStatusDialog.status === 'offline'" class="x-user-status offline"></i>
+                        <SelectValue :placeholder="t('dialog.social_status.status_placeholder')" />
+                    </span>
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectItem value="join me" :text-value="t('dialog.user.status.join_me')">
+                            <i class="x-user-status joinme"></i> {{ t('dialog.user.status.join_me') }}
+                        </SelectItem>
+                        <SelectItem value="active" :text-value="t('dialog.user.status.online')">
+                            <i class="x-user-status online"></i> {{ t('dialog.user.status.online') }}
+                        </SelectItem>
+                        <SelectItem value="ask me" :text-value="t('dialog.user.status.ask_me')">
+                            <i class="x-user-status askme"></i> {{ t('dialog.user.status.ask_me') }}
+                        </SelectItem>
+                        <SelectItem value="busy" :text-value="t('dialog.user.status.busy')">
+                            <i class="x-user-status busy"></i> {{ t('dialog.user.status.busy') }}
+                        </SelectItem>
+                        <SelectItem
+                            v-if="currentUser.$isModerator"
+                            value="offline"
+                            :text-value="t('dialog.user.status.offline')">
+                            <i class="x-user-status offline"></i> {{ t('dialog.user.status.offline') }}
+                        </SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
 
             <el-input
                 v-model="socialStatusDialog.statusDescription"
@@ -75,6 +85,7 @@
 </template>
 
 <script setup lang="ts">
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
@@ -103,6 +114,10 @@
     const isOpen = ref(false);
     const historyItems = computed(() => props.socialStatusHistoryTable?.data ?? []);
     const latestHistoryItem = computed(() => historyItems.value[0] ?? null);
+
+    function handleSocialStatusChange(value) {
+        props.socialStatusDialog.status = String(value);
+    }
 
     function setSocialStatusFromHistory(val) {
         if (val === null) {
