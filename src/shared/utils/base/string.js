@@ -34,7 +34,7 @@ function textToHex(text) {
     const s = String(text);
     return s
         .split('')
-        .map((c) => c.charCodeAt(0).toString(16))
+        .map((c) => c.charCodeAt(0).toString(16).toUpperCase())
         .join(' ');
 }
 

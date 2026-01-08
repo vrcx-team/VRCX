@@ -1303,7 +1303,10 @@
         nextTick(() => (D.openFlg = false));
     }
     function refreshWorldDialogTreeData() {
-        treeData.value = buildTreeData(worldDialog.value.ref);
+        treeData.value = buildTreeData({
+            ...worldDialog.value.ref,
+            _hexDisplayName: textToHex(worldDialog.value.ref?.displayName)
+        });
     }
     function copyWorldId() {
         navigator.clipboard

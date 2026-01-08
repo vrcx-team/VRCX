@@ -1184,6 +1184,7 @@
         openExternalLink,
         refreshInstancePlayerCount,
         removeFromArray,
+        textToHex,
         userImage,
         userStatusClass
     } from '../../../shared/utils';
@@ -1757,6 +1758,7 @@
     function refreshGroupDialogTreeData() {
         const D = groupDialog.value;
         const treeData = buildTreeData({
+            _hexDisplayName: textToHex(D.ref.displayName),
             group: D.ref,
             posts: D.posts,
             instances: D.instances,
