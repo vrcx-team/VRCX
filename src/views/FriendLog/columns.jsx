@@ -71,12 +71,29 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             },
             header: () => t('table.friendLog.type'),
             cell: ({ row }) => {
+                const friendLogColors = {
+                    Friend: 'text-green-500 border-green-500',
+                    Unfriend: 'text-red-500 border-red-500',
+                    FriendRequest: 'text-cyan-500 border-cyan-500',
+                    CancelFriendRequest: 'text-red-500 border-red-500',
+                    DisplayName: 'text-yellow-500 border-yellow-500',
+                    TrustLevel: 'text-purple-500 border-purple-500'
+                };
                 const type = row.getValue('type');
                 return (
-                    <Badge variant="outline" class="text-muted-foreground">
+                    <Badge
+                        class={friendLogColors[type] || 'text-muted-foreground'}
+                        variant="outline"
+                    >
                         {t(`view.friend_log.filters.${type}`)}
                     </Badge>
                 );
+                //Old return whitout colors
+                // return (
+                //     <Badge variant="outline" class="text-muted-foreground">
+                //         {t(`view.friend_log.filters.${type}`)}
+                //     </Badge>
+                // );
             }
         },
         {
