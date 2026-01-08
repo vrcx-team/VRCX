@@ -321,6 +321,13 @@ function buildTreeData(json) {
     node.sort(function (a, b) {
         const A = String(a.key).toUpperCase();
         const B = String(b.key).toUpperCase();
+        // sort _ to top
+        if (A.startsWith('_') && !B.startsWith('_')) {
+            return -1;
+        }
+        if (B.startsWith('_') && !A.startsWith('_')) {
+            return 1;
+        }
         if (A < B) {
             return -1;
         }

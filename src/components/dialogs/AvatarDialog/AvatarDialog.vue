@@ -594,6 +594,7 @@
         openExternalLink,
         openFolderGeneric,
         replaceVrcPackageUrl,
+        textToHex,
         timeToText
     } from '../../../shared/utils';
     import {
@@ -1017,7 +1018,10 @@
     }
 
     function refreshAvatarDialogTreeData() {
-        treeData.value = buildTreeData(avatarDialog.value.ref);
+        treeData.value = buildTreeData({
+            ...avatarDialog.value.ref,
+            _hexDisplayName: textToHex(avatarDialog.value.ref?.displayName)
+        });
     }
 
     function showSetAvatarTagsDialog(avatarId) {

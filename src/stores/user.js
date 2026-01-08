@@ -19,7 +19,8 @@ import {
     isRealInstance,
     parseLocation,
     removeEmojis,
-    replaceBioSymbols
+    replaceBioSymbols,
+    textToHex
 } from '../shared/utils';
 import {
     avatarRequest,
@@ -1226,12 +1227,16 @@ export const useUserStore = defineStore('User', () => {
         if (D.id === currentUser.value.id) {
             const treeData = {
                 ...currentUser.value,
-                ...D.ref
+                ...D.ref,
+                _hexDisplayName: textToHex(D.ref?.displayName)
             };
             D.treeData = buildTreeData(treeData);
             return;
         }
-        D.treeData = buildTreeData(D.ref);
+        D.treeData = buildTreeData({
+            ...D.ref,
+            _hexDisplayName: textToHex(D.ref?.displayName)
+        });
     }
 
     async function lookupUser(ref) {
