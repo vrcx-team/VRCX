@@ -1,4 +1,10 @@
+import dayjs from 'dayjs';
+
 const STORAGE_KEY = 'vrcx:sentry:piniaActions';
+
+function formatAction(actionName, count) {
+    return count > 1 ? `${actionName}×${count}` : actionName;
+}
 
 function getStorage() {
     try {
@@ -46,8 +52,11 @@ export function appendPiniaActionTrail(entry, maxEntries = 200) {
     const existing = getPiniaActionTrail();
     existing.push(entry);
 
+    let removed = 0;
+
     if (existing.length > maxEntries) {
-        existing.splice(0, existing.length - maxEntries);
+        removed = existing.length - maxEntries;
+        existing.splice(0, removed);
     }
 
     try {
@@ -55,19 +64,93 @@ export function appendPiniaActionTrail(entry, maxEntries = 200) {
     } catch {
         // ignore
     }
+
+    return {
+        index: existing.length - 1,
+        removed
+    };
 }
 
-export function createPiniaActionTrailPlugin({ maxEntries = 200 } = {}) {
+export function createPiniaActionTrailPlugin({
+    maxEntries = 200,
+    dedupeWindowMs = 1000
+} = {}) {
+    const actionStateByName = new Map();
+
     return ({ store }) => {
         store.$onAction(({ name }) => {
-            appendPiniaActionTrail(
+            const storage = getStorage();
+            if (!storage) return;
+
+            const now = dayjs().valueOf();
+            const prev = actionStateByName.get(name) ?? {
+                lastAt: 0,
+                count: 0,
+                lastIndex: null
+            };
+
+            const isWithinWindow = now - prev.lastAt < dedupeWindowMs;
+
+            if (isWithinWindow && prev.lastIndex !== null) {
+                const trail = getPiniaActionTrail();
+                const idx = prev.lastIndex;
+
+                if (idx >= 0 && idx < trail.length) {
+                    const existingEntry = trail[idx];
+                    if (existingEntry) {
+                        const nextCount = (prev.count ?? 1) + 1;
+                        trail[idx] = {
+                            ...existingEntry,
+                            ts: now,
+                            action: formatAction(name, nextCount)
+                        };
+
+                        try {
+                            storage.setItem(
+                                STORAGE_KEY,
+                                safeJsonStringify(trail)
+                            );
+                        } catch {
+                            // ignore
+                        }
+
+                        actionStateByName.set(name, {
+                            lastAt: now,
+                            count: nextCount,
+                            lastIndex: idx
+                        });
+                        return;
+                    }
+                }
+            }
+
+            const appendResult = appendPiniaActionTrail(
                 {
-                    ts: Date.now(),
-                    storeId: store.$id,
+                    ts: now,
                     action: name
                 },
                 maxEntries
             );
+
+            const removed = appendResult?.removed ?? 0;
+            if (removed > 0) {
+                for (const [actionName, actionState] of actionStateByName) {
+                    if (!actionState || actionState.lastIndex === null) {
+                        continue;
+                    }
+                    const shifted = actionState.lastIndex - removed;
+                    actionStateByName.set(actionName, {
+                        ...actionState,
+                        lastIndex: shifted >= 0 ? shifted : null
+                    });
+                }
+            }
+
+            actionStateByName.set(name, {
+                lastAt: now,
+                count: 1,
+                lastIndex: appendResult?.index ?? null
+            });
         });
     };
 }
@@ -104,12 +187,25 @@ export function startRendererMemoryThresholdReport(
         const ratio = m.usedJSHeapSize / m.jsHeapSizeLimit;
         if (!Number.isFinite(ratio) || ratio < thresholdRatio) return;
 
-        const now = Date.now();
+        const now = dayjs().valueOf();
         if (now - lastSent < cooldownMs) return;
         lastSent = now;
 
         const trail = getPiniaActionTrail();
-        const trailText = JSON.stringify(trail);
+        const trailText = trail
+            .map((entry) => {
+                const t =
+                    typeof entry?.ts === 'number'
+                        ? dayjs(entry.ts).format('HH:mm:ss')
+                        : '';
+                const a = entry?.action ?? '';
+                if (!t && !a) return '';
+                if (!t) return String(a);
+                if (!a) return t;
+                return `${t} ${a}`;
+            })
+            .filter(Boolean)
+            .join(';');
         Sentry.withScope((scope) => {
             scope.setLevel('warning');
             scope.setTag('reason', 'high-js-heap');

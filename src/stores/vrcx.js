@@ -543,7 +543,15 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                             }
                             return ts.isAfter(cutoff) || ts.isSame(cutoff);
                         });
-                        const trailText = JSON.stringify(trail);
+                        const trailText = trail
+                            .map((entry) => {
+                                const t = dayjs(entry.ts).format('HH:mm:ss');
+                                const a = entry.action ?? '';
+                                if (!a) return t;
+                                return `${t} ${a}`;
+                            })
+                            .filter(Boolean)
+                            .join(';');
                         Sentry.withScope((scope) => {
                             scope.setLevel('fatal');
                             scope.setTag('reason', 'crash-recovery');
