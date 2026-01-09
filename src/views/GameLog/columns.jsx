@@ -116,6 +116,8 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             header: () => t('table.gameLog.user'),
             cell: ({ row }) => {
                 const original = row.original;
+                const isFriend = original.isFriend;
+                const isFavorite = original.isFavorite;
                 return (
                     <span>
                         {original.displayName ? (
@@ -126,10 +128,8 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                                 {original.displayName}
                             </span>
                         ) : null}
-                        {gameLogIsFriend(original) ? (
-                            <span>
-                                {gameLogIsFavorite(original) ? '⭐' : '💚'}
-                            </span>
+                        {isFriend ? (
+                            <span>{isFavorite ? '⭐' : '💚'}</span>
                         ) : null}
                     </span>
                 );
@@ -139,9 +139,9 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             id: 'detail',
             header: () => t('table.gameLog.detail'),
             enableSorting: false,
-        meta: {
-            class: 'min-w-[240px] overflow-hidden'
-        },
+            meta: {
+                class: 'min-w-[240px] overflow-hidden'
+            },
             cell: ({ row }) => {
                 const original = row.original;
                 if (original.type === 'Location') {

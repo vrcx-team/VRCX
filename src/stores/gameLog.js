@@ -94,7 +94,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
             gameLogTable.value.data.length = 0;
             gameLogSessionTable.value = [];
             if (isLoggedIn) {
-                initGameLogTable();
+                // wait for friends to load, silly but works
+                setTimeout(() => {
+                    initGameLogTable();
+                }, 800);
             }
         },
         { flush: 'sync' }
@@ -342,11 +345,18 @@ export const useGameLogStore = defineStore('GameLog', () => {
             gameLogTable.value.filter,
             vipList
         );
+
+        for (const row of rows) {
+            row.isFriend = gameLogIsFriend(row);
+            row.isFavorite = gameLogIsFavorite(row);
+        }
         gameLogTable.value.data = shallowReactive(rows);
         gameLogTable.value.loading = false;
     }
 
     function addGameLog(entry) {
+        entry.isFriend = gameLogIsFriend(entry);
+        entry.isFavorite = gameLogIsFavorite(entry);
         gameLogSessionTable.value.push(entry);
         sweepGameLogSessionTable();
         sharedFeedStore.updateSharedFeed(false);
@@ -386,10 +396,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (!gameLogSearch(entry)) {
             return;
         }
-        gameLogTable.value.data.push({
-            ...entry,
-            uid: crypto.randomUUID()
-        });
+        gameLogTable.value.data.push(entry);
         sweepGameLog();
         uiStore.notifyMenu('game-log');
     }
@@ -1428,6 +1435,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
             gameLogTable.value.search,
             gameLogTable.value.filter
         );
+        for (const row of rows) {
+            row.isFriend = gameLogIsFriend(row);
+            row.isFavorite = gameLogIsFavorite(row);
+        }
         gameLogTable.value.data = shallowReactive(rows);
     }
 

@@ -28,8 +28,8 @@
             </el-table-column>
             <el-table-column :label="t('table.gameLog.icon')" prop="isFriend" width="70" align="center">
                 <template #default="scope">
-                    <template v-if="gameLogIsFriend(scope.row)">
-                        <TooltipWrapper v-if="gameLogIsFavorite(scope.row)" side="top" content="Favorite">
+                    <template v-if="scope.row?.isFriend">
+                        <TooltipWrapper v-if="scope.row?.isFavorite" side="top" content="Favorite">
                             <span>⭐</span>
                         </TooltipWrapper>
                         <TooltipWrapper v-else side="top" content="Friend">
@@ -146,6 +146,8 @@
             const array = [];
             for (const entry of Array.from(data.values())) {
                 entry.timer = timeToText(entry.time);
+                entry.isFriend = gameLogIsFriend(entry);
+                entry.isFavorite = gameLogIsFavorite(entry);
                 array.push(entry);
             }
             array.sort(compareByCreatedAt);
