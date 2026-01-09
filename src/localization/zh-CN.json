@@ -54,7 +54,7 @@
             "cancel": "取消"
         },
         "icon_picker": {
-            "search_placeholder": "输入图标名称或 tags",
+            "search_placeholder": "输入图标名称或 tag",
             "pick_icon": "选择文件夹图标",
             "no_icon_found": "没有找到图标"
         }
