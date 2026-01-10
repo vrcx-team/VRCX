@@ -487,6 +487,14 @@
         else showUserDialog(val.id);
     }
 
+    function compareWithFriendNumber(a, b, primaryComparison, primarySelector = (x) => x)  {
+        const primaryComparisonResult = primaryComparison(primarySelector(a), primarySelector(b));
+        if (primaryComparisonResult === 0) {
+            return (a.$friendNumber || 0) - (b.$friendNumber || 0);
+        }
+        return primaryComparisonResult;
+    }
+
     function sortAlphabetically(a, b, field) {
         if (!a[field] || !b[field]) return 0;
         return a[field].toLowerCase().localeCompare(b[field].toLowerCase());
