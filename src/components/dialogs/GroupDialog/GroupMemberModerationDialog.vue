@@ -1121,6 +1121,9 @@
                 } else {
                     break;
                 }
+                if (!groupMemberModeration.value.visible) {
+                    break;
+                }
             }
             groupBansModerationTable.data = fetchedBans;
         } catch {
@@ -1291,6 +1294,9 @@
                     allSuccess = false;
                 }
             }
+            if (!groupMemberModeration.value.visible) {
+                break;
+            }
         }
         if (allSuccess) {
             toast.success(`Roles removed`);
@@ -1332,6 +1338,9 @@
                     toast.error(`Failed to add group member roles: ${err}`);
                     allSuccess = false;
                 }
+            }
+            if (!groupMemberModeration.value.visible) {
+                break;
             }
         }
         if (allSuccess) {
@@ -1405,6 +1414,7 @@
         }
         const count = 50; // 5000 max
         isGroupMembersLoading.value = true;
+        let newData = [];
 
         try {
             for (let i = 0; i < count; i++) {
@@ -1415,9 +1425,9 @@
                     }
 
                     for (const json of args.json.results) {
-                        const existsInData = groupLogsModerationTable.data.some((dataItem) => dataItem.id === json.id);
+                        const existsInData = newData.some((dataItem) => dataItem.id === json.id);
                         if (!existsInData) {
-                            groupLogsModerationTable.data.push(json);
+                            newData.push(json);
                         }
                     }
                 }
@@ -1425,7 +1435,11 @@
                 if (!args.json.hasNext) {
                     break;
                 }
+                if (!groupMemberModeration.value.visible) {
+                    break;
+                }
             }
+            groupLogsModerationTable.data = newData;
         } catch {
             toast.error('Failed to get group logs');
         } finally {
@@ -1575,6 +1589,7 @@
         const params = { groupId, n: 100, offset: 0, blocked: true };
         const count = 50; // 5000
         isGroupMembersLoading.value = true;
+        let newData = [];
 
         try {
             for (let i = 0; i < count; i++) {
@@ -1582,18 +1597,19 @@
                 if (groupMemberModeration.value.id !== args.params.groupId) {
                     return;
                 }
-                const targetTable = args.params.blocked
-                    ? groupBlockedModerationTable
-                    : groupJoinRequestsModerationTable;
                 for (const json of args.json) {
                     const ref = applyGroupMember(json);
-                    targetTable.data.push(ref);
+                    newData.push(ref);
                 }
                 params.offset += params.n;
                 if (args.json.length < params.n) {
                     break;
                 }
+                if (!groupMemberModeration.value.visible) {
+                    break;
+                }
             }
+            groupBlockedModerationTable.data = newData;
         } catch {
             toast.error('Failed to get group join requests');
         } finally {
@@ -1606,24 +1622,27 @@
         const params = { groupId, n: 100, offset: 0, blocked: false };
         const count = 50; // 5000 max
         isGroupMembersLoading.value = true;
+        let newData = [];
+
         try {
             for (let i = 0; i < count; i++) {
                 const args = await groupRequest.getGroupJoinRequests(params);
                 if (groupMemberModeration.value.id !== args.params.groupId) {
                     return;
                 }
-                const targetTable = args.params.blocked
-                    ? groupBlockedModerationTable
-                    : groupJoinRequestsModerationTable;
                 for (const json of args.json) {
                     const ref = applyGroupMember(json);
-                    targetTable.data.push(ref);
+                    newData.push(ref);
                 }
                 params.offset += params.n;
                 if (args.json.length < params.n) {
                     break;
                 }
+                if (!groupMemberModeration.value.visible) {
+                    break;
+                }
             }
+            groupJoinRequestsModerationTable.data = newData;
         } catch {
             toast.error('Failed to get group join requests');
         } finally {
@@ -1636,6 +1655,7 @@
         const params = { groupId, n: 100, offset: 0 };
         const count = 50; // 5000 max
         isGroupMembersLoading.value = true;
+        let newData = [];
 
         try {
             for (let i = 0; i < count; i++) {
@@ -1644,10 +1664,9 @@
                     if (groupMemberModeration.value.id !== args.params.groupId) {
                         return;
                     }
-
                     for (const json of args.json) {
                         const ref = applyGroupMember(json);
-                        groupInvitesModerationTable.data.push(ref);
+                        newData.push(ref);
                     }
                 }
                 params.offset += params.n;
@@ -1658,6 +1677,7 @@
                     break;
                 }
             }
+            groupInvitesModerationTable.data = newData;
         } catch {
             toast.error('Failed to get group invites');
         } finally {
