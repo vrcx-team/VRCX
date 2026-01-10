@@ -217,13 +217,25 @@
             </div>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.general.automation.alone_condition') }}</span>
-                <el-radio-group
-                    :model-value="autoStateChangeNoFriends"
+                <RadioGroup
+                    :model-value="autoStateChangeNoFriends ? 'true' : 'false'"
                     :disabled="!autoStateChangeEnabled"
-                    @change="setAutoStateChangeNoFriends">
-                    <el-radio :value="false">{{ t('view.settings.general.automation.alone') }}</el-radio>
-                    <el-radio :value="true">{{ t('view.settings.general.automation.no_friends') }}</el-radio>
-                </el-radio-group>
+                    class="gap-2"
+                    style="margin-top: 8px"
+                    @update:modelValue="handleAutoStateChangeNoFriendsRadio">
+                    <div class="flex items-center space-x-2">
+                        <RadioGroupItem id="autoStateChangeNoFriends-false" value="false" />
+                        <label for="autoStateChangeNoFriends-false">
+                            {{ t('view.settings.general.automation.alone') }}
+                        </label>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <RadioGroupItem id="autoStateChangeNoFriends-true" value="true" />
+                        <label for="autoStateChangeNoFriends-true">
+                            {{ t('view.settings.general.automation.no_friends') }}
+                        </label>
+                    </div>
+                </RadioGroup>
             </div>
             <div class="options-container-item">
                 <span class="name"
@@ -296,6 +308,7 @@
 
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../../components/ui/select';
     import { useFavoriteStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '../../../../stores';
+    import { RadioGroup, RadioGroupItem } from '../../../../components/ui/radio-group';
     import { ToggleGroup, ToggleGroupItem } from '../../../../components/ui/toggle-group';
     import { links } from '../../../../shared/constants';
     import { openExternalLink } from '../../../../shared/utils';
@@ -373,5 +386,12 @@
 
     function openOSSDialog() {
         ossDialog.value = true;
+    }
+
+    function handleAutoStateChangeNoFriendsRadio(value) {
+        const nextValue = value === 'true';
+        if (nextValue !== autoStateChangeNoFriends.value) {
+            setAutoStateChangeNoFriends();
+        }
     }
 </script>

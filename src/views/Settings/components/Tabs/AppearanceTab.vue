@@ -72,25 +72,45 @@
                 @change="setIsAgeGatedInstancesVisible" />
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.sort_favorite_by') }}</span>
-                <el-radio-group :model-value="sortFavorites" @change="saveSortFavoritesOption">
-                    <el-radio :value="false">{{
-                        t('view.settings.appearance.appearance.sort_favorite_by_name')
-                    }}</el-radio>
-                    <el-radio :value="true">{{
-                        t('view.settings.appearance.appearance.sort_favorite_by_date')
-                    }}</el-radio>
-                </el-radio-group>
+                <RadioGroup
+                    :model-value="sortFavorites ? 'true' : 'false'"
+                    class="gap-2"
+                    style="margin-top: 8px"
+                    @update:modelValue="handleSortFavoritesRadio">
+                    <div class="flex items-center space-x-2">
+                        <RadioGroupItem id="sortFavorites-false" value="false" />
+                        <label for="sortFavorites-false">
+                            {{ t('view.settings.appearance.appearance.sort_favorite_by_name') }}
+                        </label>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <RadioGroupItem id="sortFavorites-true" value="true" />
+                        <label for="sortFavorites-true">
+                            {{ t('view.settings.appearance.appearance.sort_favorite_by_date') }}
+                        </label>
+                    </div>
+                </RadioGroup>
             </div>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.sort_instance_users_by') }}</span>
-                <el-radio-group :model-value="instanceUsersSortAlphabetical" @change="setInstanceUsersSortAlphabetical">
-                    <el-radio :value="false">{{
-                        t('view.settings.appearance.appearance.sort_instance_users_by_time')
-                    }}</el-radio>
-                    <el-radio :value="true">{{
-                        t('view.settings.appearance.appearance.sort_instance_users_by_alphabet')
-                    }}</el-radio>
-                </el-radio-group>
+                <RadioGroup
+                    :model-value="instanceUsersSortAlphabetical ? 'true' : 'false'"
+                    class="gap-2"
+                    style="margin-top: 8px"
+                    @update:modelValue="handleInstanceUsersSortAlphabeticalRadio">
+                    <div class="flex items-center space-x-2">
+                        <RadioGroupItem id="instanceUsersSortAlphabetical-false" value="false" />
+                        <label for="instanceUsersSortAlphabetical-false">
+                            {{ t('view.settings.appearance.appearance.sort_instance_users_by_time') }}
+                        </label>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <RadioGroupItem id="instanceUsersSortAlphabetical-true" value="true" />
+                        <label for="instanceUsersSortAlphabetical-true">
+                            {{ t('view.settings.appearance.appearance.sort_instance_users_by_alphabet') }}
+                        </label>
+                    </div>
+                </RadioGroup>
             </div>
 
             <div class="options-container-item">
@@ -154,15 +174,24 @@
             <span class="header">{{ t('view.settings.appearance.timedate.header') }}</span>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.timedate.time_format') }}</span>
-                <el-radio-group
-                    :model-value="dtHour12"
-                    @change="
-                        setDtHour12();
-                        updateVRConfigVars();
-                    ">
-                    <el-radio :value="true">{{ t('view.settings.appearance.timedate.time_format_12') }}</el-radio>
-                    <el-radio :value="false">{{ t('view.settings.appearance.timedate.time_format_24') }}</el-radio>
-                </el-radio-group>
+                <RadioGroup
+                    :model-value="dtHour12 ? 'true' : 'false'"
+                    class="gap-2"
+                    style="margin-top: 8px"
+                    @update:modelValue="handleDtHour12Radio">
+                    <div class="flex items-center space-x-2">
+                        <RadioGroupItem id="dtHour12-true" value="true" />
+                        <label for="dtHour12-true">
+                            {{ t('view.settings.appearance.timedate.time_format_12') }}
+                        </label>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <RadioGroupItem id="dtHour12-false" value="false" />
+                        <label for="dtHour12-false">
+                            {{ t('view.settings.appearance.timedate.time_format_24') }}
+                        </label>
+                    </div>
+                </RadioGroup>
             </div>
             <simple-switch
                 :label="t('view.settings.appearance.timedate.force_iso_date_format')"
@@ -398,6 +427,7 @@
     import { computed, onBeforeUnmount, ref, watch } from 'vue';
     import { ArrowRight, Notebook } from '@element-plus/icons-vue';
     import { CheckIcon, ChevronDown } from 'lucide-vue-next';
+    import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -482,6 +512,28 @@
     });
 
     initGetZoomLevel();
+
+    function handleSortFavoritesRadio(value) {
+        const nextValue = value === 'true';
+        if (nextValue !== sortFavorites.value) {
+            saveSortFavoritesOption();
+        }
+    }
+
+    function handleInstanceUsersSortAlphabeticalRadio(value) {
+        const nextValue = value === 'true';
+        if (nextValue !== instanceUsersSortAlphabetical.value) {
+            setInstanceUsersSortAlphabetical();
+        }
+    }
+
+    function handleDtHour12Radio(value) {
+        const nextValue = value === 'true';
+        if (nextValue !== dtHour12.value) {
+            setDtHour12();
+            updateVRConfigVars();
+        }
+    }
 
     const tablePageSizesModel = computed({
         get: () => tablePageSizes.value.map(String),

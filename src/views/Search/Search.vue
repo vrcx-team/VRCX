@@ -170,40 +170,70 @@
                         }}</span>
                     </div>
                     <div style="display: flex; align-items: center">
-                        <el-radio-group
-                            v-model="searchAvatarFilter"
-                            size="small"
-                            style="margin: 5px; display: block"
-                            @change="searchAvatar">
-                            <el-radio value="all">{{ t('view.search.avatar.all') }}</el-radio>
-                            <el-radio value="public">{{ t('view.search.avatar.public') }}</el-radio>
-                            <el-radio value="private">{{ t('view.search.avatar.private') }}</el-radio>
-                        </el-radio-group>
+                        <RadioGroup
+                            :model-value="searchAvatarFilter"
+                            class="flex items-center gap-4"
+                            style="margin: 5px"
+                            @update:modelValue="handleSearchAvatarFilterChange">
+                            <div class="flex items-center space-x-2">
+                                <RadioGroupItem id="searchAvatarFilter-all" value="all" />
+                                <label for="searchAvatarFilter-all">{{ t('view.search.avatar.all') }}</label>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <RadioGroupItem id="searchAvatarFilter-public" value="public" />
+                                <label for="searchAvatarFilter-public">{{ t('view.search.avatar.public') }}</label>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <RadioGroupItem id="searchAvatarFilter-private" value="private" />
+                                <label for="searchAvatarFilter-private">{{ t('view.search.avatar.private') }}</label>
+                            </div>
+                        </RadioGroup>
                         <el-divider direction="vertical"></el-divider>
-                        <el-radio-group
-                            v-model="searchAvatarFilterRemote"
-                            size="small"
-                            style="margin: 5px; display: block"
-                            @change="searchAvatar">
-                            <el-radio value="all">{{ t('view.search.avatar.all') }}</el-radio>
-                            <el-radio value="local">{{ t('view.search.avatar.local') }}</el-radio>
-                            <el-radio value="remote" :disabled="!avatarRemoteDatabase">{{
-                                t('view.search.avatar.remote')
-                            }}</el-radio>
-                        </el-radio-group>
+                        <RadioGroup
+                            :model-value="searchAvatarFilterRemote"
+                            class="flex items-center gap-4"
+                            style="margin: 5px"
+                            @update:modelValue="handleSearchAvatarFilterRemoteChange">
+                            <div class="flex items-center space-x-2">
+                                <RadioGroupItem id="searchAvatarFilterRemote-all" value="all" />
+                                <label for="searchAvatarFilterRemote-all">{{ t('view.search.avatar.all') }}</label>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <RadioGroupItem id="searchAvatarFilterRemote-local" value="local" />
+                                <label for="searchAvatarFilterRemote-local">{{ t('view.search.avatar.local') }}</label>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <RadioGroupItem
+                                    id="searchAvatarFilterRemote-remote"
+                                    value="remote"
+                                    :disabled="!avatarRemoteDatabase" />
+                                <label for="searchAvatarFilterRemote-remote">{{
+                                    t('view.search.avatar.remote')
+                                }}</label>
+                            </div>
+                        </RadioGroup>
                     </div>
                 </div>
                 <div style="display: flex; justify-content: end">
-                    <el-radio-group
-                        v-model="searchAvatarSort"
+                    <RadioGroup
+                        :model-value="searchAvatarSort"
                         :disabled="searchAvatarFilterRemote !== 'local'"
-                        size="small"
-                        style="margin: 5px; display: block"
-                        @change="searchAvatar">
-                        <el-radio value="name">{{ t('view.search.avatar.sort_name') }}</el-radio>
-                        <el-radio value="update">{{ t('view.search.avatar.sort_update') }}</el-radio>
-                        <el-radio value="created">{{ t('view.search.avatar.sort_created') }}</el-radio>
-                    </el-radio-group>
+                        class="flex items-center gap-4"
+                        style="margin: 5px"
+                        @update:modelValue="handleSearchAvatarSortChange">
+                        <div class="flex items-center space-x-2">
+                            <RadioGroupItem id="searchAvatarSort-name" value="name" />
+                            <label for="searchAvatarSort-name">{{ t('view.search.avatar.sort_name') }}</label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <RadioGroupItem id="searchAvatarSort-update" value="update" />
+                            <label for="searchAvatarSort-update">{{ t('view.search.avatar.sort_update') }}</label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <RadioGroupItem id="searchAvatarSort-created" value="created" />
+                            <label for="searchAvatarSort-created">{{ t('view.search.avatar.sort_created') }}</label>
+                        </div>
+                    </RadioGroup>
                 </div>
                 <div class="x-friend-list" style="margin-top: 20px; min-height: 500px">
                     <div
@@ -308,6 +338,7 @@
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Back, Delete, Refresh, Right } from '@element-plus/icons-vue';
+    import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { ref } from 'vue';
@@ -367,6 +398,21 @@
 
     const searchWorldCategoryIndex = ref(null);
     const searchWorldResults = ref([]);
+
+    function handleSearchAvatarFilterChange(value) {
+        searchAvatarFilter.value = value;
+        searchAvatar();
+    }
+
+    function handleSearchAvatarFilterRemoteChange(value) {
+        searchAvatarFilterRemote.value = value;
+        searchAvatar();
+    }
+
+    function handleSearchAvatarSortChange(value) {
+        searchAvatarSort.value = value;
+        searchAvatar();
+    }
 
     const searchAvatarFilter = ref('');
     const searchAvatarSort = ref('');

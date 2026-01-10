@@ -28,14 +28,20 @@
                     </el-checkbox>
                 </el-form-item>
                 <el-form-item :label="t('dialog.group_post_edit.post_visibility')">
-                    <el-radio-group v-model="groupPostEditDialog.visibility" size="small">
-                        <el-radio value="public">
-                            {{ t('dialog.group_post_edit.visibility_public') }}
-                        </el-radio>
-                        <el-radio value="group">
-                            {{ t('dialog.group_post_edit.visibility_group') }}
-                        </el-radio>
-                    </el-radio-group>
+                    <RadioGroup v-model="groupPostEditDialog.visibility" class="flex items-center gap-4">
+                        <div class="flex items-center space-x-2">
+                            <RadioGroupItem id="groupPostVisibility-public" value="public" />
+                            <label for="groupPostVisibility-public">
+                                {{ t('dialog.group_post_edit.visibility_public') }}
+                            </label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <RadioGroupItem id="groupPostVisibility-group" value="group" />
+                            <label for="groupPostVisibility-group">
+                                {{ t('dialog.group_post_edit.visibility_group') }}
+                            </label>
+                        </div>
+                    </RadioGroup>
                 </el-form-item>
                 <el-form-item v-if="groupPostEditDialog.visibility === 'group'" :label="t('dialog.new_instance.roles')">
                     <Select
@@ -106,6 +112,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
+    import { RadioGroup, RadioGroupItem } from '../../ui/radio-group';
     import { groupRequest, vrcPlusIconRequest } from '../../../api';
     import { useGalleryStore, useGroupStore } from '../../../stores';
 
