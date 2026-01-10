@@ -99,6 +99,8 @@ function sortStatus(a, b) {
                     return 1;
                 case 'busy':
                     return 1;
+                case 'offline':
+                    return 1;
             }
             break;
         case 'active':
@@ -108,6 +110,8 @@ function sortStatus(a, b) {
                 case 'ask me':
                     return 1;
                 case 'busy':
+                    return 1;
+                case 'offline':
                     return 1;
             }
             break;
@@ -119,6 +123,8 @@ function sortStatus(a, b) {
                     return -1;
                 case 'busy':
                     return 1;
+                case 'offline':
+                    return 1;
             }
             break;
         case 'busy':
@@ -128,6 +134,20 @@ function sortStatus(a, b) {
                 case 'active':
                     return -1;
                 case 'ask me':
+                    return -1;
+                case 'offline':
+                    return 1;
+            }
+            break;
+        case 'offline':
+            switch (a) {
+                case 'join me':
+                    return -1;
+                case 'active':
+                    return -1;
+                case 'ask me':
+                    return -1;
+                case 'busy':
                     return -1;
             }
             break;
