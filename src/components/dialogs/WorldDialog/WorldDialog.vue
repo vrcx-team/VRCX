@@ -698,26 +698,14 @@
                         circle
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)"></el-button>
-                    <el-tree :data="treeData" style="margin-top: 5px; font-size: 12px">
-                        <template #default="{ data }">
-                            <span>
-                                <span style="font-weight: bold; margin-right: 5px" v-text="data.key"></span>
-                                <span v-if="!data.children" v-text="data.value"></span>
-                            </span>
-                        </template>
-                    </el-tree>
+                    <vue-json-pretty :data="treeData" :deep="2" :theme="isDarkMode ? 'dark' : 'light'" show-icon />
                     <br />
-                    <el-tree
+                    <vue-json-pretty
                         v-if="worldDialog.fileAnalysis.length > 0"
                         :data="worldDialog.fileAnalysis"
-                        style="margin-top: 5px; font-size: 12px">
-                        <template #default="scope">
-                            <span>
-                                <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key"></span>
-                                <span v-if="!scope.data.children" v-text="scope.data.value"></span>
-                            </span>
-                        </template>
-                    </el-tree>
+                        :deep="2"
+                        :theme="isDarkMode ? 'dark' : 'light'"
+                        show-icon />
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -772,10 +760,10 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import VueJsonPretty from 'vue-json-pretty';
+
     import {
-        buildTreeData,
         commaNumber,
-        copyToClipboard,
         deleteVRChatCache,
         downloadAndSaveJson,
         formatDateFilter,
@@ -819,7 +807,7 @@
     const SetWorldTagsDialog = defineAsyncComponent(() => import('./SetWorldTagsDialog.vue'));
     const WorldAllowedDomainsDialog = defineAsyncComponent(() => import('./WorldAllowedDomainsDialog.vue'));
 
-    const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
+    const { isAgeGatedInstancesVisible, isDarkMode } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { currentUser, userDialog } = storeToRefs(useUserStore());
     const { worldDialog } = storeToRefs(useWorldStore());
@@ -1303,10 +1291,10 @@
         nextTick(() => (D.openFlg = false));
     }
     function refreshWorldDialogTreeData() {
-        treeData.value = buildTreeData({
+        treeData.value = {
             ...worldDialog.value.ref,
             _hexDisplayName: textToHex(worldDialog.value.ref?.displayName)
-        });
+        };
     }
     function copyWorldId() {
         navigator.clipboard

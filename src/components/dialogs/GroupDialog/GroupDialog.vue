@@ -1120,14 +1120,11 @@
                         circle
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(groupDialog.id, groupDialog.ref)" />
-                    <el-tree :data="groupDialog.treeData" style="margin-top: 5px; font-size: 12px">
-                        <template #default="scope">
-                            <span>
-                                <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key" />
-                                <span v-if="!scope.data.children" v-text="scope.data.value" />
-                            </span>
-                        </template>
-                    </el-tree>
+                    <vue-json-pretty
+                        :data="groupDialog.treeData"
+                        :deep="2"
+                        :theme="isDarkMode ? 'dark' : 'light'"
+                        show-icon />
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -1171,8 +1168,9 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import VueJsonPretty from 'vue-json-pretty';
+
     import {
-        buildTreeData,
         copyToClipboard,
         debounce,
         downloadAndSaveJson,
@@ -1195,7 +1193,13 @@
         DropdownMenuSeparator,
         DropdownMenuTrigger
     } from '../../ui/dropdown-menu';
-    import { useGalleryStore, useGroupStore, useLocationStore, useUserStore } from '../../../stores';
+    import {
+        useAppearanceSettingsStore,
+        useGalleryStore,
+        useGroupStore,
+        useLocationStore,
+        useUserStore
+    } from '../../../stores';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import { Badge } from '../../ui/badge';
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
@@ -1226,6 +1230,8 @@
 
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showFullscreenImageDialog } = useGalleryStore();
+
+    const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
 
     const groupDialogLastActiveTab = ref('Info');
     const groupDialogIndex = ref(2000);
@@ -1757,14 +1763,14 @@
 
     function refreshGroupDialogTreeData() {
         const D = groupDialog.value;
-        const treeData = buildTreeData({
+        const treeData = {
             _hexDisplayName: textToHex(D.ref.displayName),
             group: D.ref,
             posts: D.posts,
             instances: D.instances,
             members: D.members,
             galleries: D.galleries
-        });
+        };
         updateGroupDialogData({
             ...groupDialog.value,
             treeData

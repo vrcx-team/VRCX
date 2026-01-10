@@ -13,6 +13,7 @@
 @import 'noty/lib/noty.css';
 @import 'remixicon/fonts/remixicon.css';
 @import 'vue-sonner/style.css';
+@import 'vue-json-pretty/lib/styles.css';
 
 @import './styles/flags.css';
 @import './styles/animated-emoji.css';

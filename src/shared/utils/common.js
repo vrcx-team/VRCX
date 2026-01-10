@@ -493,13 +493,13 @@ async function getBundleDateSize(ref) {
             // update avatar dialog
             avatarDialog.value.bundleSizes[platform] = bundleSizes[platform];
             avatarDialog.value.lastUpdated = createdAt;
-            avatarDialog.value.fileAnalysis = buildTreeData(bundleJson);
+            avatarDialog.value.fileAnalysis = bundleJson;
         }
         // update world dialog
         if (worldDialog.value.id === ref.id) {
             worldDialog.value.bundleSizes[platform] = bundleSizes[platform];
             worldDialog.value.lastUpdated = createdAt;
-            worldDialog.value.fileAnalysis = buildTreeData(bundleJson);
+            worldDialog.value.fileAnalysis = bundleJson;
         }
         // update player list
         if (currentInstanceLocation.value.worldId === ref.id) {

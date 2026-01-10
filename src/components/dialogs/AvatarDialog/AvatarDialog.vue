@@ -523,26 +523,14 @@
                         circle
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(avatarDialog.id, avatarDialog.ref)"></el-button>
-                    <el-tree :data="treeData" style="margin-top: 5px; font-size: 12px">
-                        <template #default="scope">
-                            <span>
-                                <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key"></span>
-                                <span v-if="!scope.data.children" v-text="scope.data.value"></span>
-                            </span>
-                        </template>
-                    </el-tree>
+                    <vue-json-pretty :data="treeData" :deep="2" :theme="isDarkMode ? 'dark' : 'light'" show-icon />
                     <br />
-                    <el-tree
+                    <vue-json-pretty
                         v-if="avatarDialog.fileAnalysis.length > 0"
                         :data="avatarDialog.fileAnalysis"
-                        style="margin-top: 5px; font-size: 12px">
-                        <template #default="scope">
-                            <span>
-                                <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key"></span>
-                                <span v-if="!scope.data.children" v-text="scope.data.value"></span>
-                            </span>
-                        </template>
-                    </el-tree>
+                        :deep="2"
+                        :theme="isDarkMode ? 'dark' : 'light'"
+                        show-icon />
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -583,8 +571,9 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import VueJsonPretty from 'vue-json-pretty';
+
     import {
-        buildTreeData,
         commaNumber,
         copyToClipboard,
         downloadAndSaveJson,
@@ -598,13 +587,20 @@
         timeToText
     } from '../../../shared/utils';
     import {
+        useAppearanceSettingsStore,
+        useAvatarStore,
+        useFavoriteStore,
+        useGalleryStore,
+        useGameStore,
+        useUserStore
+    } from '../../../stores';
+    import {
         DropdownMenu,
         DropdownMenuContent,
         DropdownMenuItem,
         DropdownMenuSeparator,
         DropdownMenuTrigger
     } from '../../ui/dropdown-menu';
-    import { useAvatarStore, useFavoriteStore, useGalleryStore, useGameStore, useUserStore } from '../../../stores';
     import { avatarModerationRequest, avatarRequest, favoriteRequest, miscRequest } from '../../../api';
     import { AppDebug } from '../../../service/appConfig.js';
     import { Badge } from '../../ui/badge';
@@ -627,6 +623,7 @@
     const { isGameRunning } = storeToRefs(useGameStore());
     const { deleteVRChatCache } = useGameStore();
     const { showFullscreenImageDialog } = useGalleryStore();
+    const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
 
     const { t } = useI18n();
 
@@ -1018,10 +1015,10 @@
     }
 
     function refreshAvatarDialogTreeData() {
-        treeData.value = buildTreeData({
+        treeData.value = {
             ...avatarDialog.value.ref,
             _hexDisplayName: textToHex(avatarDialog.value.ref?.displayName)
-        });
+        };
     }
 
     function showSetAvatarTagsDialog(avatarId) {

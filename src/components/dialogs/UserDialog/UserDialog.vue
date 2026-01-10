@@ -1274,14 +1274,11 @@
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(userDialog.id, userDialog.ref)">
                     </el-button>
-                    <el-tree :data="userDialog.treeData" style="margin-top: 5px; font-size: 12px">
-                        <template #default="scope">
-                            <span>
-                                <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key"></span>
-                                <span v-if="!scope.data.children" v-text="scope.data.value"></span>
-                            </span>
-                        </template>
-                    </el-tree>
+                    <vue-json-pretty
+                        :data="userDialog.treeData"
+                        :deep="2"
+                        :theme="isDarkMode ? 'dark' : 'light'"
+                        show-icon />
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -1329,6 +1326,8 @@
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
+
+    import VueJsonPretty from 'vue-json-pretty';
 
     import {
         compareByDisplayName,
@@ -1404,7 +1403,7 @@
 
     const { t } = useI18n();
 
-    const { hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
+    const { hideUserNotes, hideUserMemos, isDarkMode } = storeToRefs(useAppearanceSettingsStore());
     const { bioLanguage, avatarRemoteDatabase, translationApi, translationApiType } =
         storeToRefs(useAdvancedSettingsStore());
     const { translateText } = useAdvancedSettingsStore();

@@ -368,17 +368,18 @@
                         :icon="Delete"
                         circle
                         style="margin-left: 5px"
-                        @click="configTreeData = []"></el-button>
+                        @click="configTreeData = {}"></el-button>
                 </TooltipWrapper>
             </div>
-            <el-tree v-if="configTreeData.length > 0" :data="configTreeData" style="margin-top: 10px; font-size: 12px">
-                <template #default="scope">
-                    <span>
-                        <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key"></span>
-                        <span v-if="!scope.data.children" v-text="scope.data.value"></span>
-                    </span>
-                </template>
-            </el-tree>
+            <vue-json-pretty
+                v-if="Object.keys(configTreeData).length > 0"
+                :data="configTreeData"
+                :deep="2"
+                :theme="isDarkMode ? 'dark' : 'light'"
+                :height="800"
+                :dynamic-height="false"
+                virtual
+                show-icon />
         </div>
 
         <RegistryBackupDialog />
@@ -410,8 +411,11 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import VueJsonPretty from 'vue-json-pretty';
+
     import {
         useAdvancedSettingsStore,
+        useAppearanceSettingsStore,
         useAuthStore,
         useAvatarProviderStore,
         useAvatarStore,
@@ -429,7 +433,6 @@
         useWorldStore
     } from '../../../../stores';
     import { authRequest, miscRequest } from '../../../../api';
-    import { buildTreeData } from '../../../../shared/utils/common';
     import { openExternalLink } from '../../../../shared/utils';
 
     import AvatarProviderDialog from '../../dialogs/AvatarProviderDialog.vue';
@@ -460,6 +463,8 @@
     const { photonLoggingEnabled } = storeToRefs(usePhotonStore());
     const { branch } = storeToRefs(useVRCXUpdaterStore());
     const { openVR } = storeToRefs(notificationsSettingsStore);
+
+    const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
 
     const {
         enablePrimaryPassword,
@@ -502,7 +507,7 @@
 
     const isYouTubeApiDialogVisible = ref(false);
     const isTranslationApiDialogVisible = ref(false);
-    const configTreeData = ref([]);
+    const configTreeData = ref({});
     const visits = ref(0);
 
     const cacheSize = reactive({
@@ -587,7 +592,7 @@
 
     async function refreshConfigTreeData() {
         await authRequest.getConfig();
-        configTreeData.value = buildTreeData(cachedConfig.value);
+        configTreeData.value = cachedConfig.value;
     }
 
     function getVisits() {

@@ -6,7 +6,6 @@ import Noty from 'noty';
 
 import {
     arraysMatch,
-    buildTreeData,
     compareByDisplayName,
     compareByLocationAt,
     compareByName,
@@ -1230,13 +1229,13 @@ export const useUserStore = defineStore('User', () => {
                 ...D.ref,
                 _hexDisplayName: textToHex(D.ref?.displayName)
             };
-            D.treeData = buildTreeData(treeData);
+            D.treeData = treeData;
             return;
         }
-        D.treeData = buildTreeData({
+        D.treeData = {
             ...D.ref,
             _hexDisplayName: textToHex(D.ref?.displayName)
-        });
+        };
     }
 
     async function lookupUser(ref) {
