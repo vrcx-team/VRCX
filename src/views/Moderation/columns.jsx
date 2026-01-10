@@ -25,16 +25,14 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             id: 'spacer',
             header: () => null,
             enableSorting: false,
-            meta: {
-                class: 'w-[20px]'
-            },
+            size: 20,
+            minSize: 0,
+            maxSize: 20,
             cell: () => null
         },
         {
             accessorKey: 'created',
-            meta: {
-                class: 'w-[90px]'
-            },
+            size: 90,
             header: ({ column }) => (
                 <Button
                     variant="ghost"
@@ -67,9 +65,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         },
         {
             accessorKey: 'type',
-            meta: {
-                class: 'w-[80px]'
-            },
+            size: 90,
             header: () => t('table.moderation.type'),
             cell: ({ row }) => {
                 const type = row.getValue('type');
@@ -83,8 +79,9 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         {
             accessorKey: 'sourceDisplayName',
             meta: {
-                class: 'w-[120px] min-w-0 overflow-hidden'
+                class: 'overflow-hidden'
             },
+            size: 120,
             header: () => t('table.moderation.source'),
             cell: ({ row }) => {
                 const original = row.original;
@@ -100,8 +97,10 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         },
         {
             accessorKey: 'targetDisplayName',
+            size: 200,
+            minSize: 80,
             meta: {
-                class: 'w-[200px]'
+                stretch: true
             },
             header: () => t('table.moderation.target'),
             cell: ({ row }) => {
@@ -119,10 +118,14 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         {
             id: 'action',
             meta: {
-                class: 'w-[80px] max-w-[80px] text-right'
+                class: 'text-right'
             },
-            header: () => t('table.moderation.action'),
+            size: 80,
+            minSize: 80,
+            maxSize: 80,
             enableSorting: false,
+            enableResizing: false,
+            header: () => t('table.moderation.action'),
             cell: ({ row }) => {
                 const original = row.original;
                 if (original.sourceUserId !== currentUser.value?.id) {
@@ -156,9 +159,8 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             id: 'trailing',
             header: () => null,
             enableSorting: false,
-            meta: {
-                class: 'w-[5px]'
-            },
+            enableResizing: false,
+            size: 5,
             cell: () => null
         }
     ];

@@ -50,13 +50,6 @@
 </template>
 
 <script setup>
-    import {
-        getCoreRowModel,
-        getFilteredRowModel,
-        getPaginationRowModel,
-        getSortedRowModel,
-        useVueTable
-    } from '@tanstack/vue-table';
     import { computed, ref, watch } from 'vue';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
@@ -64,18 +57,16 @@
 
     import dayjs from 'dayjs';
 
-    import { useAppearanceSettingsStore, useGameLogStore, useSharedFeedStore, useVrcxStore } from '../../stores';
+    import { useAppearanceSettingsStore, useGameLogStore, useVrcxStore } from '../../stores';
     import { DataTableLayout } from '../../components/ui/data-table';
-    import { Switch } from '../../components/ui/switch';
     import { createColumns } from './columns.jsx';
     import { database } from '../../service/database';
     import { removeFromArray } from '../../shared/utils';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
-    import { valueUpdater } from '../../components/ui/table/utils';
+    import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     const { gameLogTableLookup } = useGameLogStore();
     const { gameLogTable } = storeToRefs(useGameLogStore());
-    const { updateSharedFeed } = useSharedFeedStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();
 
@@ -126,7 +117,6 @@
     });
 
     const { t } = useI18n();
-    const emit = defineEmits(['updateGameLogSessionTable']);
 
     const gameLogRef = ref(null);
     const { tableStyle: tableHeightStyle } = useDataTableScrollHeight(gameLogRef, {
@@ -134,16 +124,6 @@
         toolbarHeight: 54,
         paginationHeight: 52
     });
-
-    function deleteGameLogEntry(row) {
-        removeFromArray(gameLogTable.value.data, row);
-        database.deleteGameLogEntry(row);
-        console.log('deleteGameLogEntry', row);
-        database.getGamelogDatabase().then((data) => {
-            emit('updateGameLogSessionTable', data);
-            updateSharedFeed(true);
-        });
-    }
 
     function deleteGameLogEntryPrompt(row) {
         ElMessageBox.confirm('Continue? Delete Log', 'Confirm', {
@@ -159,6 +139,11 @@
             .catch(() => {});
     }
 
+    function deleteGameLogEntry(row) {
+        removeFromArray(gameLogTable.value.data, row);
+        database.deleteGameLogEntry(row);
+    }
+
     const columns = createColumns({
         getCreatedAt: getGameLogCreatedAt,
         onDelete: deleteGameLogEntry,
@@ -170,30 +155,14 @@
         gameLogTable.value.pageSizeLinked ? appearanceSettingsStore.tablePageSize : gameLogTable.value.pageSize
     );
 
-    const sorting = ref([]);
-    const pagination = ref({
-        pageIndex: 0,
-        pageSize: pageSize.value
-    });
-
-    const table = useVueTable({
+    const { table, pagination } = useVrcxVueTable({
         data: gameLogDisplayData,
         columns,
-        getRowId: (row) =>
-            `${row.type}:${row.rowId ?? row.uid ?? row.displayName + row.location + row.time}:${getGameLogCreatedAt(row)}`,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
-        onPaginationChange: (updaterOrValue) => valueUpdater(updaterOrValue, pagination),
-        state: {
-            get sorting() {
-                return sorting.value;
-            },
-            get pagination() {
-                return pagination.value;
-            }
+        getRowId: (row) => `${row.type}:${row.rowId ?? row.displayName + row.location + row.time}`,
+        initialSorting: [],
+        initialPagination: {
+            pageIndex: 0,
+            pageSize: pageSize.value
         }
     });
 

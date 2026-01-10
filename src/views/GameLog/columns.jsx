@@ -13,7 +13,6 @@ import { storeToRefs } from 'pinia';
 import { formatDateFilter, openExternalLink } from '../../shared/utils';
 import { i18n } from '../../plugin';
 import {
-    useGameLogStore,
     useInstanceStore,
     useUiStore,
     useUserStore,
@@ -33,7 +32,6 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
     const { showWorldDialog } = useWorldStore();
     const { lookupUser } = useUserStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
-    const { gameLogIsFriend, gameLogIsFavorite } = useGameLogStore();
     const { shiftHeld } = storeToRefs(useUiStore());
 
     return [
@@ -41,17 +39,15 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             id: 'spacer',
             header: () => null,
             enableSorting: false,
-            meta: {
-                class: 'w-[20px]'
-            },
+            size: 20,
+            minSize: 0,
+            maxSize: 20,
             cell: () => null
         },
         {
             accessorFn: (row) => getCreatedAt(row),
             id: 'created_at',
-            meta: {
-                class: 'w-[140px]'
-            },
+            size: 140,
             header: ({ column }) => (
                 <Button
                     variant="ghost"
@@ -84,9 +80,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
         },
         {
             accessorKey: 'type',
-            meta: {
-                class: 'w-[150px]'
-            },
+            size: 150,
             header: () => t('table.gameLog.type'),
             cell: ({ row }) => {
                 const original = row.original;
@@ -110,9 +104,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
         },
         {
             accessorKey: 'displayName',
-            meta: {
-                class: 'w-[200px]'
-            },
+            size: 200,
             header: () => t('table.gameLog.user'),
             cell: ({ row }) => {
                 const original = row.original;
@@ -139,8 +131,9 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             id: 'detail',
             header: () => t('table.gameLog.detail'),
             enableSorting: false,
+            minSize: 150,
             meta: {
-                class: 'min-w-[240px] overflow-hidden'
+                stretch: true
             },
             cell: ({ row }) => {
                 const original = row.original;
@@ -246,8 +239,12 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
         {
             id: 'action',
             meta: {
-                class: 'w-[90px] max-w-[90px] text-right'
+                class: 'text-right'
             },
+            enableResizing: false,
+            size: 90,
+            minSize: 90,
+            maxSize: 90,
             header: () => t('table.gameLog.action'),
             enableSorting: false,
             cell: ({ row }) => {

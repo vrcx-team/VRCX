@@ -24,16 +24,14 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             id: 'spacer',
             header: () => null,
             enableSorting: false,
-            meta: {
-                class: 'w-[20px]'
-            },
+            size: 20,
+            minSize: 0,
+            maxSize: 20,
             cell: () => null
         },
         {
             accessorKey: 'created_at',
-            meta: {
-                class: 'w-[90px]'
-            },
+            size: 90,
             header: ({ column }) => (
                 <Button
                     variant="ghost"
@@ -66,9 +64,8 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         },
         {
             accessorKey: 'type',
-            meta: {
-                class: 'w-[110px]'
-            },
+
+            size: 110,
             header: () => t('table.friendLog.type'),
             cell: ({ row }) => {
                 const type = row.getValue('type');
@@ -81,10 +78,12 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         },
         {
             accessorKey: 'displayName',
-            meta: {
-                class: 'w-[260px]'
-            },
+            size: 260,
+            minSize: 80,
             header: () => t('table.friendLog.user'),
+            meta: {
+                stretch: true
+            },
             cell: ({ row }) => {
                 const original = row.original;
                 const displayName =
@@ -119,6 +118,9 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             meta: {
                 class: 'w-[80px] max-w-[80px] text-right'
             },
+            enableResizing: false,
+            size: 80,
+            maxSize: 80,
             header: () => t('table.friendLog.action'),
             enableSorting: false,
             cell: ({ row }) => {
@@ -150,9 +152,8 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             id: 'trailing',
             header: () => null,
             enableSorting: false,
-            meta: {
-                class: 'w-[5px]'
-            },
+            enableResizing: false,
+            size: 5,
             cell: () => null
         }
     ];

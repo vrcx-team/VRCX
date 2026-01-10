@@ -66,9 +66,7 @@ export const createColumns = ({
             header: () => t('table.playerList.avatar'),
             size: 70,
             enableSorting: false,
-            meta: {
-                class: 'w-[70px]'
-            },
+            enableResizing: false,
             cell: ({ row }) => {
                 const userRef = row.original?.ref;
                 const src = userImage(userRef);
@@ -90,9 +88,7 @@ export const createColumns = ({
             header: ({ column }) =>
                 sortButton({ column, label: t('table.playerList.timer') }),
             size: 90,
-            meta: {
-                class: 'w-[90px]'
-            },
+            enableResizing: false,
             sortingFn: (rowA, rowB) =>
                 (rowA.original?.timer ?? 0) - (rowB.original?.timer ?? 0),
             cell: ({ row }) => <Timer epoch={row.original?.timer} />
@@ -106,9 +102,6 @@ export const createColumns = ({
                     label: t('table.playerList.displayName')
                 }),
             size: 200,
-            meta: {
-                class: 'w-[200px]'
-            },
             sortingFn: (rowA, rowB) =>
                 sortAlphabetically(rowA.original, rowB.original, 'displayName'),
             cell: ({ row }) => {
@@ -132,9 +125,6 @@ export const createColumns = ({
             header: ({ column }) =>
                 sortButton({ column, label: t('table.playerList.rank') }),
             size: 110,
-            meta: {
-                class: 'w-[110px]'
-            },
             sortingFn: (rowA, rowB) =>
                 (rowA.original?.ref?.$trustSortNum ?? 0) -
                 (rowB.original?.ref?.$trustSortNum ?? 0),
@@ -157,9 +147,6 @@ export const createColumns = ({
             header: () => t('table.playerList.status'),
             minSize: 200,
             enableSorting: false,
-            meta: {
-                class: 'w-[200px]'
-            },
             cell: ({ row }) => {
                 const userRef = row.original?.ref;
                 const status = userRef?.status;
@@ -188,9 +175,6 @@ export const createColumns = ({
             header: ({ column }) =>
                 sortButton({ column, label: t('table.playerList.photonId') }),
             size: 110,
-            meta: {
-                class: 'w-[110px]'
-            },
             sortingFn: (rowA, rowB) =>
                 (rowA.original?.photonId ?? 0) - (rowB.original?.photonId ?? 0),
             cell: ({ row }) => {
@@ -239,7 +223,7 @@ export const createColumns = ({
             size: 90,
             accessorFn: (row) => getInstanceIconWeight(row),
             meta: {
-                class: 'w-[90px] text-center'
+                class: 'text-center'
             },
             sortingFn: (rowA, rowB, columnId) => {
                 const a = rowA.original;
@@ -312,9 +296,6 @@ export const createColumns = ({
             header: () => t('table.playerList.platform'),
             size: 90,
             enableSorting: false,
-            meta: {
-                class: 'w-[90px]'
-            },
             cell: ({ row }) => {
                 const userRef = row.original?.ref;
                 const platform = userRef?.$platform;
@@ -354,9 +335,6 @@ export const createColumns = ({
             header: () => t('table.playerList.language'),
             size: 100,
             enableSorting: false,
-            meta: {
-                class: 'w-[100px]'
-            },
             cell: ({ row }) => {
                 const userRef = row.original?.ref;
                 const langs = userRef?.$languages ?? [];
@@ -393,9 +371,6 @@ export const createColumns = ({
             header: () => t('table.playerList.bioLink'),
             size: 100,
             enableSorting: false,
-            meta: {
-                class: 'w-[100px]'
-            },
             cell: ({ row }) => {
                 const links =
                     row.original?.ref?.bioLinks?.filter(Boolean) ?? [];
@@ -429,11 +404,12 @@ export const createColumns = ({
             id: 'note',
             accessorFn: (row) => row?.ref?.note,
             header: () => t('table.playerList.note'),
-            size: 400,
-            enableSorting: false,
+            size: 150,
+            minSize: 40,
             meta: {
-                class: 'w-[150px]'
+                stretch: true
             },
+            enableSorting: false,
             cell: ({ row }) => {
                 const note = row.original?.ref?.note;
                 const text =

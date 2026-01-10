@@ -39,13 +39,6 @@
 </template>
 
 <script setup>
-    import {
-        getCoreRowModel,
-        getFilteredRowModel,
-        getPaginationRowModel,
-        getSortedRowModel,
-        useVueTable
-    } from '@tanstack/vue-table';
     import { computed, ref, watch } from 'vue';
     import { ElMessageBox } from 'element-plus';
     import { Refresh } from '@element-plus/icons-vue';
@@ -58,7 +51,7 @@
     import { moderationTypes } from '../../shared/constants';
     import { playerModerationRequest } from '../../api';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
-    import { valueUpdater } from '../../components/ui/table/utils';
+    import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     import configRepository from '../../service/config.js';
 
@@ -151,29 +144,14 @@
             : playerModerationTable.value.pageSize
     );
 
-    const sorting = ref([{ id: 'created', desc: true }]);
-    const pagination = ref({
-        pageIndex: 0,
-        pageSize: pageSize.value
-    });
-
-    const table = useVueTable({
+    const { table, pagination } = useVrcxVueTable({
         data: moderationDisplayData,
         columns,
         getRowId: (row) => row.id ?? `${row.type}:${row.sourceUserId}:${row.targetUserId}:${row.created ?? ''}`,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
-        onPaginationChange: (updaterOrValue) => valueUpdater(updaterOrValue, pagination),
-        state: {
-            get sorting() {
-                return sorting.value;
-            },
-            get pagination() {
-                return pagination.value;
-            }
+        initialSorting: [{ id: 'created', desc: true }],
+        initialPagination: {
+            pageIndex: 0,
+            pageSize: pageSize.value
         }
     });
 

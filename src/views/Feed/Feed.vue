@@ -41,14 +41,6 @@
 </template>
 
 <script setup>
-    import {
-        getCoreRowModel,
-        getExpandedRowModel,
-        getFilteredRowModel,
-        getPaginationRowModel,
-        getSortedRowModel,
-        useVueTable
-    } from '@tanstack/vue-table';
     import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -58,7 +50,7 @@
     import { Switch } from '../../components/ui/switch';
     import { columns as baseColumns } from './columns.jsx';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
-    import { valueUpdater } from '../../components/ui/table/utils';
+    import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     const { feedTable } = storeToRefs(useFeedStore());
     const { feedTableLookup } = useFeedStore();
@@ -83,36 +75,17 @@
         feedTable.value.pageSizeLinked ? appearanceSettingsStore.tablePageSize : feedTable.value.pageSize
     );
 
-    const sorting = ref([]);
-    const expanded = ref({});
-    const pagination = ref({
-        pageIndex: 0,
-        pageSize: pageSize.value
-    });
-
-    const table = useVueTable({
+    const { table, pagination } = useVrcxVueTable({
         data: feedDisplayData,
         columns: baseColumns,
-        getRowId: (row) => `${row.type}:${row.rowId ?? row.uid}:${row.created_at ?? ''}`,
+        getRowId: (row) => `${row.type}:${row.rowId}:${row.created_at ?? ''}`,
+        enableExpanded: true,
         getRowCanExpand: () => true,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        getExpandedRowModel: getExpandedRowModel(),
-        onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
-        onPaginationChange: (updaterOrValue) => valueUpdater(updaterOrValue, pagination),
-        onExpandedChange: (updaterOrValue) => valueUpdater(updaterOrValue, expanded),
-        state: {
-            get sorting() {
-                return sorting.value;
-            },
-            get pagination() {
-                return pagination.value;
-            },
-            get expanded() {
-                return expanded.value;
-            }
+        initialSorting: [],
+        initialExpanded: {},
+        initialPagination: {
+            pageIndex: 0,
+            pageSize: pageSize.value
         }
     });
 

@@ -7,17 +7,23 @@
         <div class="rounded-md border">
             <div v-loading="loading" class="overflow-auto" :style="tableStyle">
                 <Table :class="tableClassValue" :style="tableElementStyle">
+                    <colgroup>
+                        <col v-for="col in table.getVisibleLeafColumns()" :key="col.id" :style="getColStyle(col)" />
+                    </colgroup>
                     <TableHeader>
                         <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
                             <TableHead
                                 v-for="header in headerGroup.headers"
                                 :key="header.id"
-                                :class="getHeaderClass(header)"
-                                :style="getPinnedStyle(header.column, true)">
-                                <FlexRender
-                                    v-if="!header.isPlaceholder"
-                                    :render="header.column.columnDef.header"
-                                    :props="header.getContext()" />
+                                :class="getHeaderClass(header)">
+                                <template v-if="!header.isPlaceholder">
+                                    <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
+                                    <div
+                                        v-if="header.column.getCanResize?.()"
+                                        class="absolute right-0 top-0 h-full w-1 cursor-col-resize touch-none select-none"
+                                        @mousedown.stop="header.getResizeHandler?.()($event)"
+                                        @touchstart.stop="header.getResizeHandler?.()($event)" />
+                                </template>
                             </TableHead>
                         </TableRow>
                     </TableHeader>
@@ -28,8 +34,7 @@
                                     <TableCell
                                         v-for="cell in row.getVisibleCells()"
                                         :key="cell.id"
-                                        :class="getCellClass(cell)"
-                                        :style="getPinnedStyle(cell.column, false)">
+                                        :class="getCellClass(cell)">
                                         <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                                     </TableCell>
                                 </TableRow>
@@ -47,7 +52,7 @@
                         </template>
 
                         <TableRow v-else>
-                            <TableCell :colspan="visibleColumnCount" class="h-24 text-center">
+                            <TableCell class="h-24 text-center">
                                 <slot name="empty">
                                     {{ emptyText }}
                                 </slot>
@@ -60,7 +65,7 @@
 
         <div v-if="showPagination" class="mt-4 flex w-full items-center gap-3">
             <div v-if="pageSizes.length" class="inline-flex items-center flex-1 justify-end gap-2">
-                <span class="text-xs text-muted-foreground">{{ t('table.pagination.rows_per_page') }}</span>
+                <span class="text-xs text-muted-foreground truncate">{{ t('table.pagination.rows_per_page') }}</span>
                 <Select v-model="pageSizeValue">
                     <SelectTrigger size="sm">
                         <SelectValue />
@@ -125,10 +130,6 @@
             type: [String, Array],
             default: null
         },
-        useTableMinWidth: {
-            type: Boolean,
-            default: false
-        },
         tableStyle: {
             type: Object,
             default: null
@@ -169,14 +170,6 @@
 
     const { t } = useI18n();
 
-    const visibleColumnCount = computed(() => {
-        const count = props.table.getVisibleLeafColumns?.().length ?? 0;
-        if (count > 0) {
-            return count;
-        }
-        return props.table.getAllColumns?.().length ?? 1;
-    });
-
     const expandedRenderer = computed(() => {
         const columns = props.table.getAllColumns?.() ?? [];
         for (const column of columns) {
@@ -194,10 +187,9 @@
             .filter(Boolean)
             .join(' ');
 
-    const tableClassValue = computed(() => joinClasses('table-fixed', props.tableClass));
+    const tableClassValue = computed(() => joinClasses('table-fixed w-full', props.tableClass));
 
     const tableElementStyle = computed(() => {
-        if (!props.useTableMinWidth) return undefined;
         const size = props.table?.getTotalSize?.();
         if (!Number.isFinite(size) || size <= 0) return undefined;
         return { minWidth: `${size}px` };
@@ -210,11 +202,30 @@
         return value;
     };
 
+    const isSpacer = (col) => col?.id === '__spacer';
+
+    const isStretch = (col) => {
+        return !!col?.columnDef?.meta?.stretch;
+    };
+
+    const getColStyle = (col) => {
+        if (isSpacer(col)) return { width: '0px' };
+
+        if (isStretch(col)) {
+            return null;
+        }
+
+        const size = col?.getSize?.();
+        if (!Number.isFinite(size)) return null;
+        return { width: `${size}px` };
+    };
+
     const getHeaderClass = (header) => {
         const columnDef = header?.column?.columnDef;
         const meta = columnDef?.meta ?? {};
         return joinClasses(
-            'sticky top-0 z-10 bg-background',
+            'sticky top-0 z-10 bg-background relative',
+            isSpacer(header.column) && 'p-0',
             resolveClassValue(meta.class, header?.getContext?.()),
             resolveClassValue(meta.headerClass, header?.getContext?.()),
             resolveClassValue(meta.thClass, header?.getContext?.()),
@@ -226,40 +237,14 @@
     const getCellClass = (cell) => {
         const columnDef = cell?.column?.columnDef;
         const meta = columnDef?.meta ?? {};
-        const isPinned = Boolean(cell?.column?.getIsPinned?.());
         return joinClasses(
-            isPinned ? 'bg-background' : null,
+            isSpacer(cell.column) && 'p-0',
             resolveClassValue(meta.class, cell?.getContext?.()),
             resolveClassValue(meta.cellClass, cell?.getContext?.()),
             resolveClassValue(meta.tdClass, cell?.getContext?.()),
             resolveClassValue(columnDef?.class, cell?.getContext?.()),
             resolveClassValue(columnDef?.cellClass, cell?.getContext?.())
         );
-    };
-
-    const getPinnedStyle = (column, isHeader) => {
-        const pinned = column?.getIsPinned?.();
-        if (!pinned) return null;
-
-        const style = {
-            position: 'sticky',
-            zIndex: isHeader ? 30 : 20
-        };
-
-        const size = column?.getSize?.();
-        if (Number.isFinite(size)) {
-            style.width = `${size}px`;
-        }
-
-        if (pinned === 'left') {
-            const left = column?.getStart?.('left');
-            if (Number.isFinite(left)) style.left = `${left}px`;
-        } else if (pinned === 'right') {
-            const right = column?.getAfter?.('right');
-            if (Number.isFinite(right)) style.right = `${right}px`;
-        }
-
-        return style;
     };
 
     const handlePageSizeChange = (size) => {

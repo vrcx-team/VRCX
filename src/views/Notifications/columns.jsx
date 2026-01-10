@@ -84,9 +84,7 @@ export const createColumns = ({
         {
             accessorFn: (row) => getNotificationCreatedAtTs(row),
             id: 'created_at',
-            meta: {
-                class: 'w-[120px]'
-            },
+            size: 120,
             header: ({ column }) => (
                 <Button
                     variant="ghost"
@@ -136,9 +134,7 @@ export const createColumns = ({
         },
         {
             accessorKey: 'type',
-            meta: {
-                class: 'w-[180px]'
-            },
+            size: 180,
             header: () => t('table.notification.type'),
             cell: ({ row }) => {
                 const original = row.original;
@@ -224,8 +220,9 @@ export const createColumns = ({
         {
             accessorKey: 'senderUsername',
             meta: {
-                class: 'w-[150px] min-w-0 overflow-hidden'
+                class: 'overflow-hidden'
             },
+            size: 150,
             header: () => t('table.notification.user'),
             cell: ({ row }) => {
                 const original = row.original;
@@ -279,8 +276,9 @@ export const createColumns = ({
         {
             accessorKey: 'groupName',
             meta: {
-                class: 'w-[150px] min-w-0 overflow-hidden'
+                class: 'overflow-hidden'
             },
+            size: 150,
             header: () => t('table.notification.group'),
             cell: ({ row }) => {
                 const original = row.original;
@@ -382,9 +380,8 @@ export const createColumns = ({
         },
         {
             accessorKey: 'photo',
-            meta: {
-                class: 'w-[80px]'
-            },
+            enableResizing: false,
+            size: 80,
             header: () => t('table.notification.photo'),
             cell: ({ row }) => {
                 const original = row.original;
@@ -441,8 +438,10 @@ export const createColumns = ({
             header: () => t('table.notification.message'),
             enableSorting: false,
             meta: {
-                class: 'min-w-0 overflow-hidden'
+                class: 'min-w-0 overflow-hidden',
+                stretch: true
             },
+            minSize: 100,
             cell: ({ row }) => {
                 const original = row.original;
                 return (
@@ -489,8 +488,12 @@ export const createColumns = ({
         {
             id: 'action',
             meta: {
-                class: 'w-[120px] max-w-[120px] text-right'
+                class: 'text-right'
             },
+            size: 120,
+            minSize: 120,
+            maxSize: 120,
+            enableResizing: false,
             header: () => t('table.notification.action'),
             enableSorting: false,
             cell: ({ row }) => {
@@ -781,9 +784,8 @@ export const createColumns = ({
             id: 'trailing',
             header: () => null,
             enableSorting: false,
-            meta: {
-                class: 'w-[5px]'
-            },
+            enableResizing: false,
+            size: 5,
             cell: () => null
         }
     ];

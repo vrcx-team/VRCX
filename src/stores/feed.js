@@ -178,10 +178,7 @@ export const useFeedStore = defineStore('Feed', () => {
         if (!feedSearch(feed)) {
             return;
         }
-        feedTable.value.data.push({
-            ...feed,
-            uid: crypto.randomUUID()
-        });
+        feedTable.value.data.push(feed);
         sweepFeed();
         UiStore.notifyMenu('feed');
     }

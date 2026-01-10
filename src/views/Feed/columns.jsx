@@ -199,8 +199,10 @@ export const columns = [
         id: 'expander',
         header: () => null,
         enableSorting: false,
+        size: 20,
+        minSize: 0,
+        maxSize: 20,
         meta: {
-            class: 'w-[20px]',
             expandedRow
         },
         cell: ({ row }) => {
@@ -223,9 +225,7 @@ export const columns = [
     },
     {
         accessorKey: 'created_at',
-        meta: {
-            class: 'w-[140px]'
-        },
+        size: 140,
         header: ({ column }) => (
             <Button
                 variant="ghost"
@@ -258,9 +258,7 @@ export const columns = [
     },
     {
         accessorKey: 'type',
-        meta: {
-            class: 'w-[130px]'
-        },
+        size: 130,
         header: () => t('table.feed.type'),
         cell: ({ row }) => {
             const type = row.getValue('type');
@@ -275,9 +273,7 @@ export const columns = [
     },
     {
         accessorKey: 'displayName',
-        meta: {
-            class: 'w-[190px]'
-        },
+        size: 190,
         header: () => t('table.feed.user'),
         cell: ({ row }) => {
             const { showUserDialog } = useUserStore();
@@ -296,8 +292,9 @@ export const columns = [
         id: 'detail',
         header: () => t('table.feed.detail'),
         enableSorting: false,
+        minSize: 100,
         meta: {
-            class: 'min-w-[240px] overflow-hidden'
+            stretch: true
         },
         cell: ({ row }) => {
             const original = row.original;

@@ -39,13 +39,6 @@
 </template>
 
 <script setup>
-    import {
-        getCoreRowModel,
-        getFilteredRowModel,
-        getPaginationRowModel,
-        getSortedRowModel,
-        useVueTable
-    } from '@tanstack/vue-table';
     import { computed, ref, watch } from 'vue';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
@@ -59,7 +52,7 @@
     import { database } from '../../service/database';
     import { removeFromArray } from '../../shared/utils';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
-    import { valueUpdater } from '../../components/ui/table/utils';
+    import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     import configRepository from '../../service/config';
 
@@ -163,29 +156,14 @@
         friendLogTable.value.pageSizeLinked ? appearanceSettingsStore.tablePageSize : friendLogTable.value.pageSize
     );
 
-    const sorting = ref([]);
-    const pagination = ref({
-        pageIndex: 0,
-        pageSize: pageSize.value
-    });
-
-    const table = useVueTable({
+    const { table, pagination } = useVrcxVueTable({
         data: friendLogDisplayData,
         columns,
         getRowId: (row) => `${row.type}:${row.rowId ?? row.userId ?? row.created_at ?? ''}`,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
-        onPaginationChange: (updaterOrValue) => valueUpdater(updaterOrValue, pagination),
-        state: {
-            get sorting() {
-                return sorting.value;
-            },
-            get pagination() {
-                return pagination.value;
-            }
+        initialSorting: [],
+        initialPagination: {
+            pageIndex: 0,
+            pageSize: pageSize.value
         }
     });
 

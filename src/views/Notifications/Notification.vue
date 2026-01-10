@@ -70,13 +70,6 @@
 </template>
 
 <script setup>
-    import {
-        getCoreRowModel,
-        getFilteredRowModel,
-        getPaginationRowModel,
-        getSortedRowModel,
-        useVueTable
-    } from '@tanstack/vue-table';
     import { computed, ref, watch } from 'vue';
     import { ElMessageBox } from 'element-plus';
     import { Refresh } from '@element-plus/icons-vue';
@@ -103,7 +96,7 @@
     import { createColumns } from './columns.jsx';
     import { database } from '../../service/database';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
-    import { valueUpdater } from '../../components/ui/table/utils';
+    import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     import SendInviteRequestResponseDialog from './dialogs/SendInviteRequestResponseDialog.vue';
     import SendInviteResponseDialog from './dialogs/SendInviteResponseDialog.vue';
@@ -219,29 +212,14 @@
             : notificationTable.value.pageSize
     );
 
-    const sorting = ref([{ id: 'created_at', desc: true }]);
-    const pagination = ref({
-        pageIndex: 0,
-        pageSize: pageSize.value
-    });
-
-    const table = useVueTable({
+    const { table, pagination } = useVrcxVueTable({
         data: notificationDisplayData,
         columns,
         getRowId: (row) => row.id ?? `${row.type}:${row.senderUserId ?? ''}:${row.created_at ?? ''}`,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
-        onPaginationChange: (updaterOrValue) => valueUpdater(updaterOrValue, pagination),
-        state: {
-            get sorting() {
-                return sorting.value;
-            },
-            get pagination() {
-                return pagination.value;
-            }
+        initialSorting: [{ id: 'created_at', desc: true }],
+        initialPagination: {
+            pageIndex: 0,
+            pageSize: pageSize.value
         }
     });
 

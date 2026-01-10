@@ -168,8 +168,7 @@
 </template>
 
 <script setup>
-    import { computed, defineAsyncComponent, onActivated, onMounted, ref, watch } from 'vue';
-    import { getCoreRowModel, getPaginationRowModel, getSortedRowModel, useVueTable } from '@tanstack/vue-table';
+    import { computed, defineAsyncComponent, ref, watch } from 'vue';
     import { HomeFilled } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -188,7 +187,7 @@
     import { DataTableLayout } from '../../components/ui/data-table';
     import { createColumns } from './columns.jsx';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
-    import { valueUpdater } from '../../components/ui/table/utils';
+    import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
     import { watchState } from '../../service/watchState';
 
     import ChatboxBlacklistDialog from './dialogs/ChatboxBlacklistDialog.vue';
@@ -261,16 +260,10 @@
         return a[field].toLowerCase().localeCompare(b[field].toLowerCase());
     }
 
-    const sorting = ref([]);
-    const pagination = ref({
-        pageIndex: 0,
-        pageSize: 500
-    });
-
-    const columnPinning = ref({
+    const initialColumnPinning = {
         left: ['avatar', 'timer', 'displayName'],
         right: []
-    });
+    };
 
     const playerListColumns = computed(() =>
         createColumns({
@@ -285,30 +278,15 @@
 
     const playerListDisplayData = computed(() => currentInstanceUsersData.value ?? []);
 
-    const playerListTable = useVueTable({
+    const { table: playerListTable } = useVrcxVueTable({
         data: playerListDisplayData,
         columns: playerListColumns.value,
         getRowId: (row) => `${row?.ref?.id ?? ''}:${row?.displayName ?? ''}:${row?.photonId ?? ''}`,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
-        onPaginationChange: (updaterOrValue) => valueUpdater(updaterOrValue, pagination),
-        onColumnPinningChange: (updaterOrValue) => valueUpdater(updaterOrValue, columnPinning),
-        state: {
-            get sorting() {
-                return sorting.value;
-            },
-            get pagination() {
-                return pagination.value;
-            },
-            get columnPinning() {
-                return columnPinning.value;
-            }
-        },
-        initialState: {
-            columnPinning: columnPinning.value,
-            pagination: pagination.value
+        enablePinning: true,
+        initialColumnPinning,
+        initialPagination: {
+            pageIndex: 0,
+            pageSize: 500
         }
     });
 
