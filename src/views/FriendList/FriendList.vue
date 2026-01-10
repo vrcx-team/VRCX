@@ -491,14 +491,14 @@
         return primaryComparisonResult;
     }
 
-    function sortAlphabetically(a, b, field) {
-        if (!a[field] || !b[field]) return 0;
-        return a[field].toLowerCase().localeCompare(b[field].toLowerCase());
+    function sortAlphabetically(a, b) {
+        if (!a || !b) return 0;
+        return a.toLowerCase().localeCompare(b.toLowerCase());
     }
 
     function sortLanguages(a, b) {
-        const as = a.$languages.map((i) => i.value).sort();
-        const bs = b.$languages.map((i) => i.value).sort();
+        const as = a.map((i) => i.value).sort();
+        const bs = b.map((i) => i.value).sort();
         return JSON.stringify(as).localeCompare(JSON.stringify(bs));
     }
 
@@ -511,35 +511,34 @@
     }
 
     function resolveSortFunction(prop) {
-        const selfSelector = (item) => item;
         const numberComparison = (a, b) => (a || 0) - (b || 0);
         switch (prop) {
             case '$friendNumber':
                 return [numberComparison, (item) => item.$friendNumber || 0];
             case 'displayName':
-                return [sortAlphabetically, selfSelector];
+                return [sortAlphabetically, (item) => item.displayName || ''];
             case '$trustSortNum':
                 return [numberComparison, (item) => item.$trustSortNum || 0];
             case 'status':
                 return [sortStatus, (item) => item.status || 'offline'];
             case '$languages':
-                return [sortLanguages, selfSelector];
+                return [sortLanguages, (item) => item.$languages || []];
             case '$joinCount':
                 return [numberComparison, (item) => item.$joinCount || 0];
             case '$timeSpent':
                 return [numberComparison, (item) => item.$timeSpent || 0];
             case '$lastSeen':
-                return [sortAlphabetically, selfSelector];
+                return [sortAlphabetically, (item) => item.$lastSeen || ''];
             case '$mutualCount':
                 return [numberComparison, (item) => item.$mutualCount || 0];
             case 'last_activity':
-                return [sortAlphabetically, selfSelector];
+                return [sortAlphabetically, (item) => item.last_activity || ''];
             case 'last_login':
-                return [sortAlphabetically, selfSelector];
+                return [sortAlphabetically, (item) => item.last_login || ''];
             case 'date_joined':
-                return [sortAlphabetically, selfSelector];
+                return [sortAlphabetically, (item) => item.date_joined || ''];
             default:
-                return [sortAlphabetically, selfSelector];
+                return [sortAlphabetically, (item) => item[prop] || ''];
         }
     }
 
