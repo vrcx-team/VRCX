@@ -39,7 +39,23 @@ export function useAuthenticatedLayoutResizable() {
         return Number.isFinite(width) && width > 0 ? width : fallbackWidth;
     };
 
-    const setIsDragging = (isDragging) => {
+    const resolveDraggingPayload = (payload) => {
+        if (typeof payload === 'boolean') {
+            return payload;
+        }
+        if (payload && typeof payload === 'object') {
+            if (typeof payload.detail === 'boolean') {
+                return payload.detail;
+            }
+            if (typeof payload.dragging === 'boolean') {
+                return payload.dragging;
+            }
+        }
+        return Boolean(payload);
+    };
+
+    const setIsDragging = (payload) => {
+        const isDragging = resolveDraggingPayload(payload);
         const next = draggingCount.value + (isDragging ? 1 : -1);
         draggingCount.value = Math.max(0, next);
     };

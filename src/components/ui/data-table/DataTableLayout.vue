@@ -20,9 +20,12 @@
                                     <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
                                     <div
                                         v-if="header.column.getCanResize?.()"
-                                        class="absolute right-0 top-0 h-full w-1 cursor-col-resize touch-none select-none"
+                                        class="absolute right-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
                                         @mousedown.stop="header.getResizeHandler?.()($event)"
-                                        @touchstart.stop="header.getResizeHandler?.()($event)" />
+                                        @touchstart.stop="header.getResizeHandler?.()($event)">
+                                        <div
+                                            class="absolute right-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
+                                    </div>
                                 </template>
                             </TableHead>
                         </TableRow>
@@ -224,7 +227,7 @@
         const columnDef = header?.column?.columnDef;
         const meta = columnDef?.meta ?? {};
         return joinClasses(
-            'sticky top-0 z-10 bg-background relative',
+            'sticky top-0 z-10 bg-background relative group',
             isSpacer(header.column) && 'p-0',
             resolveClassValue(meta.class, header?.getContext?.()),
             resolveClassValue(meta.headerClass, header?.getContext?.()),

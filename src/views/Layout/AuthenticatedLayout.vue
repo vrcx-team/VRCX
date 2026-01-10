@@ -9,7 +9,10 @@
                 <ResizablePanel ref="navPanelRef" :min-size="navMinSize" :max-size="navMaxSize" :order="1">
                     <NavMenu></NavMenu>
                 </ResizablePanel>
-                <ResizableHandle :disabled="isNavCollapsed" class="opacity-0"></ResizableHandle>
+                <ResizableHandle
+                    :disabled="isNavCollapsed"
+                    class="opacity-0"
+                    @dragging="setIsDragging"></ResizableHandle>
                 <ResizablePanel :default-size="mainDefaultSize" :order="2">
                     <RouterView v-slot="{ Component }">
                         <KeepAlive exclude="Charts">
@@ -24,7 +27,8 @@
                         :class="[
                             isAsideCollapsed(layout) ? 'opacity-100' : 'opacity-0',
                             'z-20 [&>div]:-translate-x-1/2'
-                        ]"></ResizableHandle>
+                        ]"
+                        @dragging="setIsDragging"></ResizableHandle>
                     <ResizablePanel
                         ref="asidePanelRef"
                         :default-size="asideDefaultSize"
@@ -119,6 +123,7 @@
         asideMaxSize,
         mainDefaultSize,
         handleLayout,
+        setIsDragging,
         isAsideCollapsed,
         isNavCollapsed,
         isSideBarTabShow
