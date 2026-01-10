@@ -492,7 +492,10 @@
     }
 
     function sortAlphabetically(a, b) {
-        if (!a || !b) return 0;
+        if (!a || !b) {
+            if (!a && !b) return 0;
+            return !a ? -1 : 1;
+        }
         return a.toLowerCase().localeCompare(b.toLowerCase());
     }
 
