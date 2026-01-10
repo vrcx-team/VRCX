@@ -6,7 +6,8 @@
             v-bind="mergedTableProps"
             :stripe="false"
             :default-sort="resolvedDefaultSort"
-            @row-click="handleRowClick">
+            @row-click="handleRowClick"
+            @sort-change="handleSortChange">
             <slot></slot>
         </el-table>
 
@@ -63,7 +64,7 @@
         }
     });
 
-    const emit = defineEmits(['row-click']);
+    const emit = defineEmits(['row-click', 'sort-change']);
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();
@@ -167,6 +168,10 @@
 
     const handleRowClick = (row, column, event) => {
         emit('row-click', row, column, event);
+    };
+
+    const handleSortChange = (data) => {
+        emit('sort-change', data);
     };
 
     const handleSizeChange = (size) => {
