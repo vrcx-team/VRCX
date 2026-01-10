@@ -19,7 +19,7 @@
             </div>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.theme_mode') }}</span>
-                <Select :model-value="themeMode" @update:modelValue="saveThemeMode">
+                <Select :model-value="themeMode" @update:modelValue="setThemeMode">
                     <SelectTrigger size="sm">
                         <SelectValue :placeholder="t(`view.settings.appearance.appearance.theme_mode_${themeMode}`)" />
                     </SelectTrigger>
@@ -437,7 +437,7 @@
         setHideUserMemos,
         setHideUnfriends,
         updateTrustColor,
-        saveThemeMode,
+        setThemeMode,
         changeAppLanguage,
         promptMaxTableSizeDialog,
         setNotificationIconDot,

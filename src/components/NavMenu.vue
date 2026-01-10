@@ -516,7 +516,7 @@
     const handleThemeSelect = (theme) => {
         themeMenuVisible.value = false;
         settingsMenuVisible.value = false;
-        appearanceSettingsStore.saveThemeMode(theme);
+        appearanceSettingsStore.setThemeMode(theme);
     };
 
     const handleThemeColorSelect = async (colorFamily) => {

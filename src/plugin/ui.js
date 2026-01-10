@@ -23,9 +23,7 @@ export async function initUi() {
 
         const { initThemeMode, isDarkMode } =
             await getThemeMode(configRepository);
-
         setLoginContainerStyle(isDarkMode);
-        changeAppDarkStyle(isDarkMode);
         changeAppThemeStyle(initThemeMode);
     } catch (error) {
         console.error('Error initializing locale and theme:', error);

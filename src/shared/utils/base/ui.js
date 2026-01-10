@@ -6,6 +6,8 @@ import { i18n } from '../../../plugin/i18n';
 import { router } from '../../../plugin/router';
 import { useAppearanceSettingsStore } from '../../../stores';
 
+import configRepository from '../../../service/config.js';
+
 /**
  *
  * @returns {boolean}
@@ -74,11 +76,11 @@ function changeAppThemeStyle(themeMode) {
 
     let themeConfig = THEME_CONFIG[themeMode];
     if (!themeConfig) {
+        // fallback to system
         console.error('Invalid theme mode:', themeMode);
-        themeMode = 'dark';
+        configRepository.setString('VRCX_ThemeMode', 'system');
+        themeMode = systemIsDarkMode() ? 'dark' : 'light';
         themeConfig = THEME_CONFIG[themeMode];
-        const appSettingsStore = useAppearanceSettingsStore();
-        appSettingsStore.setThemeMode(themeMode);
     }
 
     const cssFiles = Array.isArray(themeConfig.cssFiles)
@@ -115,6 +117,8 @@ function changeAppThemeStyle(themeMode) {
         document.documentElement.classList.remove('dark');
     }
     changeAppDarkStyle(themeConfig.isDark);
+
+    return { isDark: themeConfig.isDark };
 
     // let $appThemeDarkStyle = document.getElementById('app-theme-dark-style');
     // const darkThemeCssPath = `${filePathPrefix}theme.dark.css`;
@@ -313,7 +317,6 @@ async function getThemeMode(configRepository) {
     );
 
     let isDarkMode;
-
     if (initThemeMode === 'light') {
         isDarkMode = false;
     } else if (initThemeMode === 'system') {

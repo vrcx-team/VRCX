@@ -6,13 +6,10 @@ import { useRouter } from 'vue-router';
 
 import {
     HueToHex,
-    changeAppDarkStyle,
     changeAppThemeStyle,
     changeHtmlLangAttribute,
-    systemIsDarkMode,
     updateTrustColorClasses
 } from '../../shared/utils/base/ui';
-import { THEME_CONFIG } from '../../shared/constants';
 import { database } from '../../service/database';
 import { getNameColour } from '../../shared/utils';
 import { languageCodes } from '../../localization';
@@ -204,16 +201,8 @@ export const useAppearanceSettingsStore = defineStore(
                 await changeAppLanguage(appLanguageConfig);
             }
 
-            const normalizedThemeMode = normalizeThemeMode(themeModeConfig);
-            if (normalizedThemeMode !== themeModeConfig) {
-                configRepository.setString(
-                    'VRCX_ThemeMode',
-                    normalizedThemeMode
-                );
-            }
-
-            themeMode.value = normalizedThemeMode;
-            applyThemeMode();
+            themeMode.value = themeModeConfig;
+            setThemeMode(themeModeConfig);
             await initPrimaryColor();
 
             displayVRCPlusIconsAsAvatar.value =
@@ -289,14 +278,6 @@ export const useAppearanceSettingsStore = defineStore(
             { flush: 'sync' }
         );
 
-        function normalizeThemeMode(mode) {
-            if (Object.prototype.hasOwnProperty.call(THEME_CONFIG, mode)) {
-                return mode;
-            } else {
-                return 'dark';
-            }
-        }
-
         /**
          *
          * @param {string} language
@@ -319,21 +300,6 @@ export const useAppearanceSettingsStore = defineStore(
             locale.value = appLanguage.value;
 
             changeHtmlLangAttribute(language);
-        }
-
-        /**
-         * @param {string} newThemeMode
-         * @returns {Promise<void>}
-         */
-        async function saveThemeMode(newThemeMode) {
-            setThemeMode(newThemeMode);
-            await changeThemeMode();
-        }
-
-        async function changeThemeMode() {
-            await changeAppThemeStyle(themeMode.value);
-            vrStore.updateVRConfigVars();
-            await updateTrustColor(undefined, undefined);
         }
 
         /**
@@ -463,7 +429,7 @@ export const useAppearanceSettingsStore = defineStore(
             .matchMedia('(prefers-color-scheme: dark)')
             .addEventListener('change', async () => {
                 if (themeMode.value === 'system') {
-                    await changeThemeMode();
+                    setThemeMode(themeMode.value);
                 }
             });
 
@@ -471,29 +437,14 @@ export const useAppearanceSettingsStore = defineStore(
          * @param {string} mode
          */
         function setThemeMode(mode) {
-            const normalizedThemeMode = normalizeThemeMode(mode);
-            themeMode.value = normalizedThemeMode;
-            configRepository.setString('VRCX_ThemeMode', normalizedThemeMode);
-            applyThemeMode();
-        }
-
-        function applyThemeMode() {
-            if (themeMode.value === 'light') {
-                setIsDarkMode(false);
-            } else if (themeMode.value === 'system') {
-                setIsDarkMode(systemIsDarkMode());
-            } else {
-                setIsDarkMode(true);
-            }
-        }
-
-        /**
-         * @param {boolean} isDark
-         */
-        function setIsDarkMode(isDark) {
+            themeMode.value = mode;
+            configRepository.setString('VRCX_ThemeMode', mode);
+            const { isDark } = changeAppThemeStyle(mode);
             isDarkMode.value = isDark;
-            changeAppDarkStyle(isDark);
+            vrStore.updateVRConfigVars();
+            updateTrustColor(undefined, undefined);
         }
+
         function setDisplayVRCPlusIconsAsAvatar() {
             displayVRCPlusIconsAsAvatar.value =
                 !displayVRCPlusIconsAsAvatar.value;
@@ -904,10 +855,8 @@ export const useAppearanceSettingsStore = defineStore(
             setRandomUserColours,
             setCompactTableMode,
             setTrustColor,
-            saveThemeMode,
             tryInitUserColours,
             updateTrustColor,
-            changeThemeMode,
             userColourInit,
             applyUserTrustLevel,
             changeAppLanguage,
