@@ -228,6 +228,7 @@
                                     :type="avatarDialog.isBlocked ? 'danger' : 'default'"
                                     :icon="MoreFilled"
                                     size="large"
+                                    style="margin-left: 5px"
                                     circle></el-button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>

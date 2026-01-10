@@ -5,25 +5,21 @@
         :model-value="setAvatarTagsDialog.visible"
         @close="closeSetAvatarTagsDialog"
         :title="t('dialog.set_avatar_tags.header')"
-        width="770px"
+        width="780px"
         append-to-body>
         <template v-if="setAvatarTagsDialog.visible">
             <el-checkbox v-model="setAvatarTagsDialog.contentHorror" @change="updateSelectedAvatarTags">{{
                 t('dialog.set_avatar_tags.content_horror')
             }}</el-checkbox>
-            <br />
             <el-checkbox v-model="setAvatarTagsDialog.contentGore" @change="updateSelectedAvatarTags">{{
                 t('dialog.set_avatar_tags.content_gore')
             }}</el-checkbox>
-            <br />
             <el-checkbox v-model="setAvatarTagsDialog.contentViolence" @change="updateSelectedAvatarTags">{{
                 t('dialog.set_avatar_tags.content_violence')
             }}</el-checkbox>
-            <br />
             <el-checkbox v-model="setAvatarTagsDialog.contentAdult" @change="updateSelectedAvatarTags">{{
                 t('dialog.set_avatar_tags.content_adult')
             }}</el-checkbox>
-            <br />
             <el-checkbox v-model="setAvatarTagsDialog.contentSex" @change="updateSelectedAvatarTags">{{
                 t('dialog.set_avatar_tags.content_sex')
             }}</el-checkbox>
@@ -35,6 +31,8 @@
                 :placeholder="t('dialog.set_avatar_tags.custom_tags_placeholder')"
                 style="margin-top: 10px"
                 @input="updateInputAvatarTags"></el-input>
+            <br />
+            <br />
             <template
                 v-if="setAvatarTagsDialog.ownAvatars.length === props.setAvatarTagsDialog.selectedAvatarIds.length">
                 <el-button size="small" @click="setAvatarTagsSelectToggle">{{

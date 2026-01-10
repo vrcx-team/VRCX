@@ -10,6 +10,7 @@
         <template v-if="setAvatarStylesDialog.visible">
             <div>
                 <span>{{ t('dialog.set_avatar_styles.primary_style') }}</span>
+                <br />
                 <Select
                     :model-value="setAvatarStylesDialog.primaryStyle"
                     @update:modelValue="(v) => updateDialog({ primaryStyle: v === SELECT_CLEAR_VALUE ? '' : v })">
@@ -32,6 +33,7 @@
 
             <div>
                 <span>{{ t('dialog.set_avatar_styles.secondary_style') }}</span>
+                <br />
                 <Select
                     :model-value="setAvatarStylesDialog.secondaryStyle"
                     @update:modelValue="(v) => updateDialog({ secondaryStyle: v === SELECT_CLEAR_VALUE ? '' : v })">
@@ -52,7 +54,7 @@
 
             <br />
 
-            <div style="font-size: 12px; margin-top: 10px">{{ t('dialog.set_world_tags.author_tags') }}<br /></div>
+            <div style="font-size: 12px">{{ t('dialog.set_world_tags.author_tags') }}</div>
 
             <el-input
                 :model-value="setAvatarStylesDialog.authorTags"

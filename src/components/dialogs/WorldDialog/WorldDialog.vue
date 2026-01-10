@@ -183,7 +183,12 @@
                         </TooltipWrapper>
                         <DropdownMenu>
                             <DropdownMenuTrigger as-child>
-                                <el-button type="default" :icon="MoreFilled" size="large" circle />
+                                <el-button
+                                    type="default"
+                                    :icon="MoreFilled"
+                                    size="large"
+                                    style="margin-left: 5px"
+                                    circle />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuItem @click="worldDialogCommand('Refresh')">

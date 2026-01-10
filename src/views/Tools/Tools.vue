@@ -243,7 +243,9 @@
     const isExportAvatarsListDialogVisible = ref(false);
     const isEditInviteMessagesDialogVisible = ref(false);
     const isToolsTabVisible = computed(() => {
-        return useRoute().name === 'tools';
+        const route = useRoute();
+        if (!route) return false;
+        return route.name === 'tools';
     });
 
     const showGroupCalendarDialog = () => {

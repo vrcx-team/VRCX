@@ -237,7 +237,7 @@
                                     :type="groupDialog.ref.membershipStatus === 'userblocked' ? 'danger' : 'default'"
                                     :icon="MoreFilled"
                                     size="large"
-                                    class="ml-1.25"
+                                    style="margin-left: 5px"
                                     circle></el-button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
