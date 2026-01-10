@@ -55,6 +55,7 @@
             <DataTable
                 v-bind="friendsListTable"
                 style="margin-top: 10px; cursor: pointer"
+                @sort-change="handleSortChange"
                 @row-click="selectFriendsListRow">
                 <el-table-column v-if="friendsListBulkUnfriendMode" width="55">
                     <template #default="{ row }">
@@ -70,7 +71,7 @@
                     :label="t('table.friendList.no')"
                     width="100"
                     prop="$friendNumber"
-                    :sortable="true"
+                    :sortable="'custom'"
                     fixed="left">
                     <template #default="{ row }">
                         <span>{{ row.$friendNumber ? row.$friendNumber : '' }}</span>
@@ -87,8 +88,7 @@
                     :label="t('table.friendList.displayName')"
                     min-width="200"
                     prop="displayName"
-                    sortable
-                    :sort-method="(a, b) => sortAlphabetically(a, b, 'displayName')"
+                    sortable="'custom'"
                     fixed="left">
                     <template #default="{ row }">
                         <span :style="{ color: randomUserColours ? row.$userColour : undefined }" class="name">{{
@@ -96,7 +96,7 @@
                         }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column :label="t('table.friendList.rank')" width="140" prop="$trustSortNum" :sortable="true">
+                <el-table-column :label="t('table.friendList.rank')" width="140" prop="$trustSortNum" :sortable="'custom'">
                     <template #default="{ row }">
                         <span
                             v-if="randomUserColours"
@@ -110,8 +110,7 @@
                     :label="t('table.friendList.status')"
                     min-width="200"
                     prop="status"
-                    sortable
-                    :sort-method="(a, b) => sortStatus(a.status, b.status)">
+                    sortable="'custom'">
                     <template #default="{ row }">
                         <i
                             v-if="row.status !== 'offline'"
@@ -125,8 +124,7 @@
                     :label="t('table.friendList.language')"
                     width="130"
                     prop="$languages"
-                    sortable
-                    :sort-method="(a, b) => sortLanguages(a, b)">
+                    sortable="'custom'">
                     <template #default="{ row }">
                         <el-tooltip v-for="item in row.$languages" :key="item.key" placement="top">
                             <template #content>
@@ -166,13 +164,13 @@
                     :label="t('table.friendList.joinCount')"
                     width="120"
                     prop="$joinCount"
-                    sortable
+                    sortable="'custom'"
                     align="right"></el-table-column>
                 <el-table-column
                     :label="t('table.friendList.timeTogether')"
                     width="140"
                     prop="$timeSpent"
-                    sortable
+                    sortable="'custom'"
                     align="right">
                     <template #default="{ row }">
                         <span v-if="row.$timeSpent">{{ timeToText(row.$timeSpent) }}</span>
@@ -182,8 +180,7 @@
                     :label="t('table.friendList.lastSeen')"
                     width="170"
                     prop="$lastSeen"
-                    sortable
-                    :sort-method="(a, b) => sortAlphabetically(a, b, '$lastSeen')">
+                    sortable="'custom'">
                     <template #default="{ row }">
                         <span>{{
                             formatDateFilter(row.$lastSeen, 'long') === '-'
@@ -196,7 +193,7 @@
                     :label="t('table.friendList.mutualFriends')"
                     width="120"
                     prop="$mutualCount"
-                    sortable
+                    sortable="'custom'"
                     align="right">
                     <template #default="{ row }">
                         <span v-if="row.$mutualCount">{{ row.$mutualCount }}</span>
@@ -206,8 +203,7 @@
                     :label="t('table.friendList.lastActivity')"
                     width="200"
                     prop="last_activity"
-                    sortable
-                    :sort-method="(a, b) => sortAlphabetically(a, b, 'last_activity')">
+                    sortable="'custom'">
                     <template #default="{ row }">
                         <span>{{ formatDateFilter(row.last_activity, 'long') }}</span>
                     </template>
@@ -216,8 +212,7 @@
                     :label="t('table.friendList.lastLogin')"
                     width="200"
                     prop="last_login"
-                    sortable
-                    :sort-method="(a, b) => sortAlphabetically(a, b, 'last_login')">
+                    sortable="'custom'">
                     <template #default="{ row }">
                         <span>{{ formatDateFilter(row.last_login, 'long') }}</span>
                     </template>
@@ -226,8 +221,7 @@
                     :label="t('table.friendList.dateJoined')"
                     width="120"
                     prop="date_joined"
-                    sortable
-                    :sort-method="(a, b) => sortAlphabetically(a, b, 'date_joined')"></el-table-column>
+                    sortable="'custom'"></el-table-column>
                 <el-table-column :label="t('table.friendList.unfriend')" width="100" align="center">
                     <template #default="{ row }">
                         <i
@@ -316,6 +310,7 @@
     const friendsListLoadDialogVisible = ref(false);
     const friendsListSearchFilterVIP = ref(false);
     const selectedFriends = ref(new Set());
+    const allFilteredData = ref([]);
 
     const friendsListLoadingPercent = computed(() => {
         if (!friendsListLoadingTotal.value) return 0;
@@ -376,10 +371,11 @@
             }
             results.push(ctx.ref);
         }
+        allFilteredData.value = results;
         getAllUserStats();
         getAllUserMutualCount();
+        applySortAndPagination(friendsListTable.tableProps.defaultSort.prop, friendsListTable.tableProps.defaultSort.order);
         nextTick(() => {
-            friendsListTable.data = results;
             friendsListLoading.value = false;
         });
     }
@@ -508,6 +504,57 @@
 
     function openChartsTab() {
         router.push({ name: 'charts' });
+    }
+
+    function handleSortChange({ prop, order }) {
+        applySortAndPagination(prop, order);
+    }
+
+    function resolveSortFunction(prop) {
+        const selfSelector = (item) => item;
+        const numberComparison = (a, b) => (a || 0) - (b || 0);
+        switch (prop) {
+            case '$friendNumber':
+                return [numberComparison, (item) => item.$friendNumber || 0];
+            case 'displayName':
+                return [sortAlphabetically, selfSelector];
+            case '$trustSortNum':
+                return [numberComparison, (item) => item.$trustSortNum || 0];
+            case 'status':
+                return [sortStatus, (item) => item.status || 'offline'];
+            case '$languages':
+                return [sortLanguages, selfSelector];
+            case '$joinCount':
+                return [numberComparison, (item) => item.$joinCount || 0];
+            case '$timeSpent':
+                return [numberComparison, (item) => item.$timeSpent || 0];
+            case '$lastSeen':
+                return [sortAlphabetically, selfSelector];
+            case '$mutualCount':
+                return [numberComparison, (item) => item.$mutualCount || 0];
+            case 'last_activity':
+                return [sortAlphabetically, selfSelector];
+            case 'last_login':
+                return [sortAlphabetically, selfSelector];
+            case 'date_joined':
+                return [sortAlphabetically, selfSelector];
+            default:
+                return [sortAlphabetically, selfSelector];
+        }
+    }
+
+    function applySortAndPagination(prop, order) {
+        let sortedData = [...allFilteredData.value];
+
+        if (prop && order !== null) {
+            const [comparison, selector] = resolveSortFunction(prop);
+            sortedData.sort((a, b) => {
+                const result = compareWithFriendNumber(a, b, comparison, selector);
+                return order === 'ascending' ? result : -result;
+            });
+        }
+
+        friendsListTable.data = sortedData;
     }
 </script>
 
