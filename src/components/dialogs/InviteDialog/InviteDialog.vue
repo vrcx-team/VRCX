@@ -27,125 +27,37 @@
                 >{{ t('dialog.invite.add_favorite_friends') }}</el-button
             >
 
-            <el-select
-                v-model="inviteDialog.userIds"
-                multiple
-                clearable
-                :placeholder="t('dialog.invite.select_placeholder')"
-                filterable
-                :disabled="inviteDialog.loading"
-                style="width: 100%; margin-top: 15px">
-                <template v-if="currentUser">
-                    <el-option-group :label="t('side_panel.me')">
-                        <el-option
-                            class="x-friend-item"
-                            :label="currentUser.displayName"
-                            :value="currentUser.id"
-                            style="height: auto">
-                            <div :class="['avatar', userStatusClass(currentUser)]">
-                                <img :src="userImage(currentUser)" loading="lazy" />
-                            </div>
-                            <div class="detail">
-                                <span class="name">{{ currentUser.displayName }}</span>
-                            </div>
-                        </el-option>
-                    </el-option-group>
-                </template>
-
-                <template v-if="inviteDialog.friendsInInstance.length">
-                    <el-option-group :label="t('dialog.invite.friends_in_instance')">
-                        <el-option
-                            v-for="friend in inviteDialog.friendsInInstance"
-                            :key="friend.id"
-                            class="x-friend-item"
-                            :label="friend.name"
-                            :value="friend.id"
-                            style="height: auto">
-                            <template v-if="friend.ref">
-                                <div :class="['avatar', userStatusClass(friend.ref)]">
-                                    <img :src="userImage(friend.ref)" loading="lazy" />
+            <div style="width: 100%; margin-top: 15px">
+                <VirtualCombobox
+                    :model-value="Array.isArray(inviteDialog.userIds) ? inviteDialog.userIds : []"
+                    @update:modelValue="setInviteUserIds"
+                    :groups="userPickerGroups"
+                    multiple
+                    :disabled="inviteDialog.loading"
+                    :placeholder="t('dialog.invite.select_placeholder')"
+                    :search-placeholder="t('dialog.invite.select_placeholder')"
+                    :clearable="true">
+                    <template #item="{ item, selected }">
+                        <div class="x-friend-item flex w-full items-center">
+                            <template v-if="item.user">
+                                <div :class="['avatar', userStatusClass(item.user)]">
+                                    <img :src="userImage(item.user)" loading="lazy" />
                                 </div>
                                 <div class="detail">
-                                    <span class="name" :style="{ color: friend.ref.$userColour }">{{
-                                        friend.ref.displayName
+                                    <span class="name" :style="{ color: item.user.$userColour }">{{
+                                        item.user.displayName
                                     }}</span>
                                 </div>
                             </template>
-                            <span v-else>{{ friend.id }}</span>
-                        </el-option>
-                    </el-option-group>
-                </template>
-
-                <template v-if="vipFriends.length">
-                    <el-option-group :label="t('side_panel.favorite')">
-                        <el-option
-                            v-for="friend in vipFriends"
-                            :key="friend.id"
-                            class="x-friend-item"
-                            :label="friend.name"
-                            :value="friend.id"
-                            style="height: auto">
-                            <template v-if="friend.ref">
-                                <div :class="['avatar', userStatusClass(friend.ref)]">
-                                    <img :src="userImage(friend.ref)" loading="lazy" />
-                                </div>
-                                <div class="detail">
-                                    <span class="name" :style="{ color: friend.ref.$userColour }">{{
-                                        friend.ref.displayName
-                                    }}</span>
-                                </div>
+                            <template v-else>
+                                <span>{{ item.label }}</span>
                             </template>
-                            <span v-else>{{ friend.id }}</span>
-                        </el-option>
-                    </el-option-group>
-                </template>
 
-                <template v-if="onlineFriends.length">
-                    <el-option-group :label="t('side_panel.online')">
-                        <el-option
-                            v-for="friend in onlineFriends"
-                            :key="friend.id"
-                            class="x-friend-item"
-                            :label="friend.name"
-                            :value="friend.id"
-                            style="height: auto">
-                            <template v-if="friend.ref">
-                                <div :class="['avatar', userStatusClass(friend.ref)]">
-                                    <img :src="userImage(friend.ref)" loading="lazy" />
-                                </div>
-                                <div class="detail">
-                                    <span class="name" :style="{ color: friend.ref.$userColour }">{{
-                                        friend.ref.displayName
-                                    }}</span>
-                                </div>
-                            </template>
-                            <span v-else>{{ friend.id }}</span>
-                        </el-option>
-                    </el-option-group>
-                </template>
-
-                <template v-if="activeFriends.length">
-                    <el-option-group :label="t('side_panel.active')">
-                        <el-option
-                            v-for="friend in activeFriends"
-                            :key="friend.id"
-                            class="x-friend-item"
-                            :label="friend.name"
-                            :value="friend.id"
-                            style="height: auto">
-                            <template v-if="friend.ref">
-                                <div class="avatar"><img :src="userImage(friend.ref)" loading="lazy" /></div>
-                                <div class="detail">
-                                    <span class="name" :style="{ color: friend.ref.$userColour }">{{
-                                        friend.ref.displayName
-                                    }}</span>
-                                </div>
-                            </template>
-                            <span v-else>{{ friend.id }}</span>
-                        </el-option>
-                    </el-option-group>
-                </template>
-            </el-select>
+                            <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                        </div>
+                    </template>
+                </VirtualCombobox>
+            </div>
         </div>
 
         <template #footer>
@@ -168,8 +80,9 @@
 </template>
 
 <script setup>
+    import { computed, ref } from 'vue';
+    import { Check as CheckIcon } from 'lucide-vue-next';
     import { ElMessageBox } from 'element-plus';
-    import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -177,6 +90,7 @@
     import { useFriendStore, useGalleryStore, useInviteStore, useUserStore } from '../../../stores';
     import { parseLocation, userImage, userStatusClass } from '../../../shared/utils';
     import { instanceRequest, notificationRequest } from '../../../api';
+    import { VirtualCombobox } from '../../ui/virtual-combobox';
 
     import SendInviteDialog from './SendInviteDialog.vue';
 
@@ -201,6 +115,77 @@
         userId: '',
         params: {}
     });
+
+    const userPickerGroups = computed(() => {
+        const groups = [];
+
+        if (currentUser.value) {
+            groups.push({
+                key: 'me',
+                label: t('side_panel.me'),
+                items: [
+                    {
+                        value: String(currentUser.value.id),
+                        label: currentUser.value.displayName,
+                        search: currentUser.value.displayName,
+                        user: currentUser.value
+                    }
+                ]
+            });
+        }
+
+        const addFriendGroup = (key, label, friends) => {
+            if (!friends?.length) return;
+            groups.push({
+                key,
+                label,
+                items: friends.map((friend) => {
+                    const user = friend?.ref ?? null;
+                    const displayName = resolveUserDisplayName(friend.id);
+                    return {
+                        value: String(friend.id),
+                        label: displayName,
+                        search: displayName,
+                        user
+                    };
+                })
+            });
+        };
+
+        addFriendGroup(
+            'friendsInInstance',
+            t('dialog.invite.friends_in_instance'),
+            props.inviteDialog?.friendsInInstance
+        );
+        addFriendGroup('vip', t('side_panel.favorite'), vipFriends.value);
+        addFriendGroup('online', t('side_panel.online'), onlineFriends.value);
+        addFriendGroup('active', t('side_panel.active'), activeFriends.value);
+
+        return groups;
+    });
+
+    function setInviteUserIds(value) {
+        const next = Array.isArray(value) ? value.map((v) => String(v ?? '')).filter(Boolean) : [];
+        const ids = Array.isArray(props.inviteDialog.userIds) ? props.inviteDialog.userIds : [];
+        ids.splice(0, ids.length, ...next);
+    }
+
+    const friendById = computed(() => {
+        const map = new Map();
+        for (const friend of props.inviteDialog?.friendsInInstance ?? []) map.set(friend.id, friend);
+        for (const friend of vipFriends.value) map.set(friend.id, friend);
+        for (const friend of onlineFriends.value) map.set(friend.id, friend);
+        for (const friend of activeFriends.value) map.set(friend.id, friend);
+        return map;
+    });
+
+    function resolveUserDisplayName(userId) {
+        if (currentUser.value?.id && currentUser.value.id === userId) {
+            return currentUser.value.displayName;
+        }
+        const friend = friendById.value.get(userId);
+        return friend?.ref?.displayName ?? friend?.name ?? String(userId);
+    }
 
     function closeInviteDialog() {
         emit('closeInviteDialog');

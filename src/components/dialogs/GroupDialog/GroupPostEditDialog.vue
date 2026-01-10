@@ -38,25 +38,28 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item v-if="groupPostEditDialog.visibility === 'group'" :label="t('dialog.new_instance.roles')">
-                    <el-select
-                        v-model="groupPostEditDialog.roleIds"
+                    <Select
                         multiple
-                        clearable
-                        :placeholder="t('dialog.new_instance.role_placeholder')"
-                        style="width: 100%">
-                        <el-option-group :label="t('dialog.new_instance.role_placeholder')">
-                            <el-option
-                                v-for="role in groupPostEditDialog.groupRef?.roles"
-                                :key="role.id"
-                                :label="role.name"
-                                :value="role.id"
-                                style="height: auto; width: 478px">
-                                <div class="detail">
-                                    <span class="name" v-text="role.name"></span>
-                                </div>
-                            </el-option>
-                        </el-option-group>
-                    </el-select>
+                        :model-value="Array.isArray(groupPostEditDialog.roleIds) ? groupPostEditDialog.roleIds : []"
+                        @update:modelValue="handleRoleIdsChange">
+                        <SelectTrigger size="sm" class="w-full">
+                            <SelectValue>
+                                <span class="truncate">
+                                    {{ selectedRoleSummary || t('dialog.new_instance.role_placeholder') }}
+                                </span>
+                            </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="role in groupPostEditDialog.groupRef?.roles ?? []"
+                                    :key="role.id"
+                                    :value="role.id">
+                                    {{ role.name }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                 </el-form-item>
                 <el-form-item :label="t('dialog.group_post_edit.image')">
                     <template v-if="gallerySelectDialog.selectedFileId">
@@ -102,6 +105,7 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
     import { groupRequest, vrcPlusIconRequest } from '../../../api';
     import { useGalleryStore, useGroupStore } from '../../../stores';
 
@@ -137,6 +141,21 @@
             emit('update:dialogData', value);
         }
     });
+
+    const selectedRoleSummary = computed(() => {
+        const ids = groupPostEditDialog.value.roleIds ?? [];
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return '';
+        }
+        const roleById = new Map((groupPostEditDialog.value.groupRef?.roles ?? []).map((r) => [r.id, r.name]));
+        const names = ids.map((id) => roleById.get(id) ?? String(id));
+        return names.slice(0, 3).join(', ') + (names.length > 3 ? ` +${names.length - 3}` : '');
+    });
+
+    function handleRoleIdsChange(value) {
+        const next = Array.isArray(value) ? value.map((v) => String(v ?? '')).filter(Boolean) : [];
+        groupPostEditDialog.value.roleIds = next;
+    }
 
     function showGallerySelectDialog() {
         const D = gallerySelectDialog.value;

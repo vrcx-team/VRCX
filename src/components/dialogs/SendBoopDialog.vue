@@ -10,23 +10,21 @@
         <br />
         <br />
 
-        <el-select
-            v-if="sendBoopDialog.visible"
-            v-model="fileId"
-            clearable
-            :placeholder="t('dialog.boop_dialog.select_default_emoji')"
-            size="small"
-            style="width: 100%">
-            <el-option-group :label="t('dialog.boop_dialog.default_emojis')">
-                <el-option
-                    v-for="emojiName in photonEmojis"
-                    :key="emojiName"
-                    :value="getEmojiValue(emojiName)"
-                    style="width: 100%; height: 100%">
-                    <span v-text="emojiName"></span>
-                </el-option>
-            </el-option-group>
-        </el-select>
+        <div v-if="sendBoopDialog.visible" style="width: 100%">
+            <VirtualCombobox
+                v-model="emojiModel"
+                :groups="emojiPickerGroups"
+                :placeholder="t('dialog.boop_dialog.select_default_emoji')"
+                :search-placeholder="t('dialog.boop_dialog.select_default_emoji')"
+                :clearable="true"
+                :close-on-select="true"
+                :deselect-on-reselect="true">
+                <template #item="{ item, selected }">
+                    <span v-text="item.label"></span>
+                    <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                </template>
+            </VirtualCombobox>
+        </div>
 
         <br />
         <br />
@@ -73,16 +71,15 @@
 </template>
 
 <script setup>
-    import { ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
+    import { Check as CheckIcon } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { notificationRequest, userRequest } from '../../api';
-    import { miscRequest } from '../../api';
+    import { miscRequest, notificationRequest, userRequest } from '../../api';
+    import { useGalleryStore, useNotificationStore, useUserStore } from '../../stores';
+    import { VirtualCombobox } from '../ui/virtual-combobox';
     import { photonEmojis } from '../../shared/constants/photon.js';
-    import { useGalleryStore } from '../../stores';
-    import { useNotificationStore } from '../../stores';
-    import { useUserStore } from '../../stores/user.js';
 
     import Emoji from '../Emoji.vue';
 
@@ -115,12 +112,32 @@
     function closeDialog() {
         sendBoopDialog.value.visible = false;
     }
+
+    const emojiModel = computed({
+        get: () => (fileId.value ? String(fileId.value) : null),
+        set: (value) => {
+            fileId.value = value ? String(value) : '';
+        }
+    });
+
     function getEmojiValue(emojiName) {
         if (!emojiName) {
             return '';
         }
         return `default_${emojiName.replace(/ /g, '_').toLowerCase()}`;
     }
+
+    const emojiPickerGroups = computed(() => [
+        {
+            key: 'defaultEmojis',
+            label: t('dialog.boop_dialog.default_emojis'),
+            items: photonEmojis.map((emojiName) => ({
+                value: getEmojiValue(emojiName),
+                label: emojiName,
+                search: emojiName
+            }))
+        }
+    ]);
 
     function sendBoop() {
         const D = sendBoopDialog.value;

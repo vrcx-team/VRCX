@@ -116,7 +116,6 @@
         panelGroupRef,
         navPanelRef,
         asidePanelRef,
-        navDefaultSize,
         navMinSize,
         navMaxSize,
         asideDefaultSize,

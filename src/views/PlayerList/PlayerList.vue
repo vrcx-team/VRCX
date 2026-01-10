@@ -188,7 +188,6 @@
     import { createColumns } from './columns.jsx';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
-    import { watchState } from '../../service/watchState';
 
     import ChatboxBlacklistDialog from './dialogs/ChatboxBlacklistDialog.vue';
     import Timer from '../../components/Timer.vue';

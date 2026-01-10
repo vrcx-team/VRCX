@@ -69,7 +69,7 @@
                                 :src="image.versions[image.versions.length - 1].file.url"
                                 loading="lazy" />
                         </div>
-                        <div style="float: right; margin-top: 5px">
+                        <div class="float-right" style="margin-top: 5px">
                             <el-button
                                 type="default"
                                 @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
@@ -82,8 +82,9 @@
                                 size="small"
                                 :icon="Delete"
                                 circle
-                                style="margin-left: 5px"></el-button></div
-                    ></template>
+                                style="margin-left: 5px"></el-button>
+                        </div>
+                    </template>
                 </div>
             </el-tab-pane>
 
@@ -138,7 +139,7 @@
                                 :src="image.versions[image.versions.length - 1].file.url"
                                 loading="lazy" />
                         </div>
-                        <div style="float: right; margin-top: 5px">
+                        <div class="float-right" style="margin-top: 5px">
                             <el-button
                                 type="default"
                                 @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
@@ -161,7 +162,7 @@
                     <span>
                         {{ t('dialog.gallery_icons.emojis') }}
                         <span class="gallery-tab-count">
-                            {{ emojiTable.length }}/{{ cachedConfig?.maxUserEmoji }}
+                            {{ emojiTable.length }}/{{ cachedConfigTyped.maxUserEmoji }}
                         </span>
                     </span>
                 </template>
@@ -191,25 +192,26 @@
                     </ButtonGroup>
                     <br />
                     <br />
-                    <el-select v-model="emojiAnimationStyle">
-                        <el-option-group>
-                            {{ t('dialog.gallery_icons.emoji_animation_styles') }}
-                            <el-option
-                                class="x-friend-item"
-                                v-for="(fileName, styleName) in emojiAnimationStyleList"
-                                :key="styleName"
-                                :label="styleName"
-                                :value="styleName"
-                                style="height: auto">
-                                <div class="avatar" style="width: 200px; height: 200px">
-                                    <img :src="`${emojiAnimationStyleUrl}${fileName}`" loading="lazy" />
+                    <VirtualCombobox
+                        v-model="emojiAnimationStyle"
+                        :groups="emojiStylePickerGroups"
+                        :placeholder="t('dialog.gallery_icons.emoji_animation_styles')"
+                        :search-placeholder="t('dialog.gallery_icons.emoji_animation_styles')"
+                        :clearable="false"
+                        :close-on-select="true">
+                        <template #item="{ item, selected }">
+                            <div class="flex w-full items-center gap-2">
+                                <div class="h-10 w-10 shrink-0 overflow-hidden rounded-sm bg-black/5">
+                                    <img
+                                        class="h-full w-full object-cover"
+                                        :src="`${emojiAnimationStyleUrl}${item.fileName}`"
+                                        loading="lazy" />
                                 </div>
-                                <div class="detail">
-                                    <span class="name" v-text="styleName" style="margin-right: 100px"></span>
-                                </div>
-                            </el-option>
-                        </el-option-group>
-                    </el-select>
+                                <span class="truncate text-sm" v-text="item.label"></span>
+                                <span v-if="selected" class="ml-auto opacity-70">✓</span>
+                            </div>
+                        </template>
+                    </VirtualCombobox>
                     <el-checkbox v-model="emojiAnimType">
                         <span>{{ t('dialog.gallery_icons.emoji_animation_type') }}</span>
                     </el-checkbox>
@@ -276,7 +278,7 @@
                             <span v-if="image.frames" style="margin-right: 5px">{{ image.frames }}frames</span>
                             <br />
                         </div>
-                        <div style="float: right; margin-top: 5px">
+                        <div class="float-right" style="margin-top: 5px">
                             <el-button
                                 type="default"
                                 @click="
@@ -304,7 +306,7 @@
                     <span>
                         {{ t('dialog.gallery_icons.stickers') }}
                         <span class="gallery-tab-count">
-                            {{ stickerTable.length }}/{{ cachedConfig?.maxUserStickers }}
+                            {{ stickerTable.length }}/{{ cachedConfigTyped.maxUserStickers }}
                         </span>
                     </span>
                 </template>
@@ -348,7 +350,7 @@
                                 :src="image.versions[image.versions.length - 1].file.url"
                                 loading="lazy" />
                         </div>
-                        <div style="float: right; margin-top: 5px">
+                        <div class="float-right" style="margin-top: 5px">
                             <el-button
                                 type="default"
                                 @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
@@ -443,7 +445,7 @@
                         </span>
                         <span v-else style="display: block">&nbsp;</span>
                     </div>
-                    <div style="float: right">
+                    <div class="float-right">
                         <el-button
                             type="default"
                             @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))"
@@ -518,7 +520,7 @@
                         @click="consumeInventoryBundle(item.id)"
                         size="small"
                         :icon="Plus"
-                        style="float: right">
+                        class="float-right">
                         {{ t('dialog.gallery_icons.consume_bundle') }}
                     </el-button>
                 </div>
@@ -533,6 +535,7 @@
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { ElMessageBox } from 'element-plus';
+    import { VirtualCombobox } from '@/components/ui/virtual-combobox';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -589,12 +592,28 @@
     const { showFullscreenImageDialog } = useGalleryStore();
     const { currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { cachedConfig } = storeToRefs(useAuthStore());
+    const cachedConfigTyped = computed(
+        () => /** @type {{ maxUserEmoji?: number, maxUserStickers?: number }} */ (cachedConfig.value ?? {})
+    );
 
     const emojiAnimFps = ref(15);
     const emojiAnimFrameCount = ref(4);
     const emojiAnimType = ref(false);
     const emojiAnimationStyle = ref('Stop');
     const emojiAnimLoopPingPong = ref(false);
+
+    const emojiStylePickerGroups = computed(() => [
+        {
+            key: 'emojiAnimationStyles',
+            label: t('dialog.gallery_icons.emoji_animation_styles'),
+            items: Object.entries(emojiAnimationStyleList).map(([styleName, fileName]) => ({
+                value: styleName,
+                label: styleName,
+                search: styleName,
+                fileName
+            }))
+        }
+    ]);
 
     const pendingUploads = ref(0);
     const isUploading = computed(() => pendingUploads.value > 0);

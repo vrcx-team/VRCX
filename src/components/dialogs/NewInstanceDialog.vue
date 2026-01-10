@@ -125,65 +125,55 @@
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
                         :label="t('dialog.new_instance.group_id')">
-                        <el-select
+                        <VirtualCombobox
                             v-model="newInstanceDialog.groupId"
-                            clearable
+                            :groups="normalGroupPickerGroups"
                             :placeholder="t('dialog.new_instance.group_placeholder')"
-                            filterable
-                            style="width: 100%"
+                            :search-placeholder="t('dialog.new_instance.group_placeholder')"
+                            :clearable="true"
+                            :close-on-select="true"
+                            :deselect-on-reselect="true"
                             @change="buildInstance">
-                            <el-option-group :label="t('dialog.new_instance.group_placeholder')">
-                                <el-option
-                                    v-for="group in currentUserGroups.values()"
-                                    :key="group.id"
-                                    :label="group.name"
-                                    :value="group.id"
-                                    class="x-friend-item"
-                                    style="height: auto; width: 478px">
-                                    <template
-                                        v-if="
-                                            group &&
-                                            (hasGroupPermission(group, 'group-instance-public-create') ||
-                                                hasGroupPermission(group, 'group-instance-plus-create') ||
-                                                hasGroupPermission(group, 'group-instance-open-create'))
-                                        ">
-                                        <div class="avatar">
-                                            <img :src="group.iconUrl" loading="lazy" />
-                                        </div>
-                                        <div class="detail">
-                                            <span class="name" v-text="group.name"></span>
-                                        </div>
-                                    </template>
-                                </el-option>
-                            </el-option-group>
-                        </el-select>
+                            <template #item="{ item, selected }">
+                                <div class="x-friend-item flex w-full items-center">
+                                    <div class="avatar">
+                                        <img :src="item.iconUrl" loading="lazy" />
+                                    </div>
+                                    <div class="detail">
+                                        <span class="name" v-text="item.label"></span>
+                                    </div>
+                                    <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                                </div>
+                            </template>
+                        </VirtualCombobox>
                     </el-form-item>
                     <el-form-item
                         v-if="
                             newInstanceDialog.accessType === 'group' && newInstanceDialog.groupAccessType === 'members'
                         "
                         :label="t('dialog.new_instance.roles')">
-                        <el-select
-                            v-model="newInstanceDialog.roleIds"
+                        <Select
                             multiple
-                            clearable
-                            :placeholder="t('dialog.new_instance.role_placeholder')"
-                            style="width: 100%"
-                            @change="buildInstance">
-                            <el-option-group :label="t('dialog.new_instance.role_placeholder')">
-                                <el-option
-                                    v-for="role in newInstanceDialog.selectedGroupRoles"
-                                    :key="role.id"
-                                    class="x-friend-item"
-                                    :label="role.name"
-                                    :value="role.id"
-                                    style="height: auto; width: 478px">
-                                    <div class="detail">
-                                        <span class="name" v-text="role.name"></span>
-                                    </div>
-                                </el-option>
-                            </el-option-group>
-                        </el-select>
+                            :model-value="Array.isArray(newInstanceDialog.roleIds) ? newInstanceDialog.roleIds : []"
+                            @update:modelValue="handleRoleIdsChange">
+                            <SelectTrigger size="sm" class="w-full">
+                                <SelectValue>
+                                    <span class="truncate">
+                                        {{ selectedRoleSummary || t('dialog.new_instance.role_placeholder') }}
+                                    </span>
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem
+                                        v-for="role in newInstanceDialog.selectedGroupRoles"
+                                        :key="role.id"
+                                        :value="role.id">
+                                        {{ role.name }}
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                     </el-form-item>
                     <template v-if="newInstanceDialog.instanceCreated">
                         <el-form-item :label="t('dialog.new_instance.location')">
@@ -305,146 +295,61 @@
                             newInstanceDialog.accessType !== 'group'
                         "
                         :label="t('dialog.new_instance.instance_creator')">
-                        <el-select
+                        <VirtualCombobox
                             v-model="newInstanceDialog.userId"
-                            clearable
+                            :groups="creatorPickerGroups"
                             :placeholder="t('dialog.new_instance.instance_creator_placeholder')"
-                            :persistent="false"
-                            filterable
-                            style="width: 100%"
+                            :search-placeholder="t('dialog.new_instance.instance_creator_placeholder')"
+                            :clearable="true"
+                            :close-on-select="true"
+                            :deselect-on-reselect="true"
                             @change="buildLegacyInstance">
-                            <el-option-group v-if="currentUser" :label="t('side_panel.me')">
-                                <el-option
-                                    class="x-friend-item"
-                                    :label="currentUser.displayName"
-                                    :value="currentUser.id"
-                                    style="height: auto">
-                                    <div class="avatar" :class="userStatusClass(currentUser)">
-                                        <img :src="userImage(currentUser)" loading="lazy" />
-                                    </div>
-                                    <div class="detail">
-                                        <span class="name" v-text="currentUser.displayName"></span>
-                                    </div>
-                                </el-option>
-                            </el-option-group>
-                            <el-option-group v-if="vipFriends.length" :label="t('side_panel.favorite')">
-                                <el-option
-                                    v-for="friend in vipFriends"
-                                    :key="friend.id"
-                                    class="x-friend-item"
-                                    :label="friend.name"
-                                    :value="friend.id"
-                                    style="height: auto">
-                                    <template v-if="friend.ref">
-                                        <div class="avatar" :class="userStatusClass(friend.ref)">
-                                            <img :src="userImage(friend.ref)" loading="lazy" />
+                            <template #item="{ item, selected }">
+                                <div class="x-friend-item flex w-full items-center">
+                                    <template v-if="item.user">
+                                        <div class="avatar" :class="userStatusClass(item.user)">
+                                            <img :src="userImage(item.user)" loading="lazy" />
                                         </div>
                                         <div class="detail">
                                             <span
                                                 class="name"
-                                                :style="{ color: friend.ref.$userColour }"
-                                                v-text="friend.ref.displayName"></span>
+                                                :style="{ color: item.user.$userColour }"
+                                                v-text="item.user.displayName"></span>
                                         </div>
                                     </template>
-                                    <span v-else v-text="friend.id"></span>
-                                </el-option>
-                            </el-option-group>
-                            <el-option-group v-if="onlineFriends.length" :label="t('side_panel.online')">
-                                <el-option
-                                    v-for="friend in onlineFriends"
-                                    :key="friend.id"
-                                    class="x-friend-item"
-                                    :label="friend.name"
-                                    :value="friend.id"
-                                    style="height: auto">
-                                    <template v-if="friend.ref">
-                                        <div class="avatar" :class="userStatusClass(friend.ref)">
-                                            <img :src="userImage(friend.ref)" loading="lazy" />
-                                        </div>
-                                        <div class="detail">
-                                            <span
-                                                class="name"
-                                                :style="{ color: friend.ref.$userColour }"
-                                                v-text="friend.ref.displayName"></span>
-                                        </div>
+                                    <template v-else>
+                                        <span v-text="item.label"></span>
                                     </template>
-                                    <span v-else v-text="friend.id"></span>
-                                </el-option>
-                            </el-option-group>
-                            <el-option-group v-if="activeFriends.length" :label="t('side_panel.active')">
-                                <el-option
-                                    v-for="friend in activeFriends"
-                                    :key="friend.id"
-                                    class="x-friend-item"
-                                    :label="friend.name"
-                                    :value="friend.id"
-                                    style="height: auto">
-                                    <template v-if="friend.ref">
-                                        <div class="avatar">
-                                            <img :src="userImage(friend.ref)" loading="lazy" />
-                                        </div>
-                                        <div class="detail">
-                                            <span
-                                                class="name"
-                                                :style="{ color: friend.ref.$userColour }"
-                                                v-text="friend.ref.displayName"></span>
-                                        </div>
-                                    </template>
-                                    <span v-else v-text="friend.id"></span>
-                                </el-option>
-                            </el-option-group>
-                            <el-option-group v-if="offlineFriends.length" :label="t('side_panel.offline')">
-                                <el-option
-                                    v-for="friend in offlineFriends"
-                                    :key="friend.id"
-                                    class="x-friend-item"
-                                    :label="friend.name"
-                                    :value="friend.id"
-                                    style="height: auto">
-                                    <template v-if="friend.ref">
-                                        <div class="avatar">
-                                            <img :src="userImage(friend.ref)" loading="lazy" />
-                                        </div>
-                                        <div class="detail">
-                                            <span
-                                                class="name"
-                                                :style="{ color: friend.ref.$userColour }"
-                                                v-text="friend.ref.displayName"></span>
-                                        </div>
-                                    </template>
-                                    <span v-else v-text="friend.id"></span>
-                                </el-option>
-                            </el-option-group>
-                        </el-select>
+
+                                    <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                                </div>
+                            </template>
+                        </VirtualCombobox>
                     </el-form-item>
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
                         :label="t('dialog.new_instance.group_id')">
-                        <el-select
+                        <VirtualCombobox
                             v-model="newInstanceDialog.groupId"
-                            clearable
+                            :groups="legacyGroupPickerGroups"
                             :placeholder="t('dialog.new_instance.group_placeholder')"
-                            filterable
-                            style="width: 100%"
+                            :search-placeholder="t('dialog.new_instance.group_placeholder')"
+                            :clearable="true"
+                            :close-on-select="true"
+                            :deselect-on-reselect="true"
                             @change="buildLegacyInstance">
-                            <el-option-group :label="t('dialog.new_instance.group_placeholder')">
-                                <el-option
-                                    v-for="group in currentUserGroups.values()"
-                                    :key="group.id"
-                                    class="x-friend-item"
-                                    :label="group.name"
-                                    :value="group.id"
-                                    style="height: auto; width: 478px">
-                                    <template v-if="group">
-                                        <div class="avatar">
-                                            <img :src="group.iconUrl" loading="lazy" />
-                                        </div>
-                                        <div class="detail">
-                                            <span class="name" v-text="group.name"></span></div
-                                    ></template>
-                                </el-option>
-                            </el-option-group>
-                        </el-select>
+                            <template #item="{ item, selected }">
+                                <div class="x-friend-item flex w-full items-center">
+                                    <div class="avatar">
+                                        <img :src="item.iconUrl" loading="lazy" />
+                                    </div>
+                                    <div class="detail">
+                                        <span class="name" v-text="item.label"></span>
+                                    </div>
+                                    <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                                </div>
+                            </template>
+                        </VirtualCombobox>
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.location')">
                         <el-input
@@ -535,7 +440,8 @@
 </template>
 
 <script setup>
-    import { nextTick, ref, watch } from 'vue';
+    import { computed, nextTick, ref, watch } from 'vue';
+    import { Check as CheckIcon } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -558,8 +464,11 @@
         useLocationStore,
         useUserStore
     } from '../../stores';
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
     import { groupRequest, instanceRequest, worldRequest } from '../../api';
     import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
+    import { Button } from '../ui/button';
+    import { VirtualCombobox } from '../ui/virtual-combobox';
     import { getNextDialogIndex } from '../../shared/utils/base/ui';
 
     import InviteDialog from './InviteDialog/InviteDialog.vue';
@@ -621,6 +530,124 @@
         userIds: [],
         friendsInInstance: []
     });
+
+    const instanceCreatableGroups = computed(() => {
+        return Array.from(currentUserGroups.value.values()).filter((group) => {
+            if (!group) {
+                return false;
+            }
+            return (
+                hasGroupPermission(group, 'group-instance-public-create') ||
+                hasGroupPermission(group, 'group-instance-plus-create') ||
+                hasGroupPermission(group, 'group-instance-open-create')
+            );
+        });
+    });
+
+    const normalGroupPickerGroups = computed(() => [
+        {
+            key: 'instanceCreatableGroups',
+            label: t('dialog.new_instance.group_placeholder'),
+            items: instanceCreatableGroups.value.map((group) => ({
+                value: String(group.id),
+                label: group.name,
+                search: group.name,
+                iconUrl: group.iconUrl
+            }))
+        }
+    ]);
+
+    const legacyGroupPickerGroups = computed(() => [
+        {
+            key: 'currentUserGroups',
+            label: t('dialog.new_instance.group_placeholder'),
+            items: Array.from(currentUserGroups.value.values())
+                .filter(Boolean)
+                .map((group) => ({
+                    value: String(group.id),
+                    label: group.name,
+                    search: group.name,
+                    iconUrl: group.iconUrl
+                }))
+        }
+    ]);
+
+    const selectedRoleSummary = computed(() => {
+        const roleIds = newInstanceDialog.value.roleIds ?? [];
+        if (!Array.isArray(roleIds) || roleIds.length === 0) {
+            return '';
+        }
+        const roleById = new Map((newInstanceDialog.value.selectedGroupRoles ?? []).map((r) => [r.id, r.name]));
+        const names = roleIds.map((id) => roleById.get(id) ?? String(id));
+        return names.slice(0, 3).join(', ') + (names.length > 3 ? ` +${names.length - 3}` : '');
+    });
+
+    const friendById = computed(() => {
+        const map = new Map();
+        for (const friend of vipFriends.value) map.set(friend.id, friend);
+        for (const friend of onlineFriends.value) map.set(friend.id, friend);
+        for (const friend of activeFriends.value) map.set(friend.id, friend);
+        for (const friend of offlineFriends.value) map.set(friend.id, friend);
+        return map;
+    });
+
+    function resolveUserDisplayName(userId) {
+        if (currentUser.value?.id && currentUser.value.id === userId) {
+            return currentUser.value.displayName;
+        }
+        const friend = friendById.value.get(userId);
+        return friend?.ref?.displayName ?? friend?.name ?? String(userId);
+    }
+
+    const creatorPickerGroups = computed(() => {
+        const groups = [];
+
+        if (currentUser.value) {
+            groups.push({
+                key: 'me',
+                label: t('side_panel.me'),
+                items: [
+                    {
+                        value: String(currentUser.value.id),
+                        label: currentUser.value.displayName,
+                        search: currentUser.value.displayName,
+                        user: currentUser.value
+                    }
+                ]
+            });
+        }
+
+        const addFriendGroup = (key, label, friends) => {
+            if (!friends?.length) return;
+            groups.push({
+                key,
+                label,
+                items: friends.map((friend) => {
+                    const user = friend?.ref ?? null;
+                    const displayName = resolveUserDisplayName(friend.id);
+                    return {
+                        value: String(friend.id),
+                        label: displayName,
+                        search: displayName,
+                        user
+                    };
+                })
+            });
+        };
+
+        addFriendGroup('vip', t('side_panel.favorite'), vipFriends.value);
+        addFriendGroup('online', t('side_panel.online'), onlineFriends.value);
+        addFriendGroup('active', t('side_panel.active'), activeFriends.value);
+        addFriendGroup('offline', t('side_panel.offline'), offlineFriends.value);
+
+        return groups;
+    });
+
+    function handleRoleIdsChange(value) {
+        const next = Array.isArray(value) ? value.map((v) => String(v ?? '')).filter(Boolean) : [];
+        newInstanceDialog.value.roleIds = next;
+        buildInstance();
+    }
 
     watch(
         () => props.newInstanceDialogLocationTag,

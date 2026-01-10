@@ -1,3 +1,78 @@
+<template>
+    <Popover v-model:open="isOpen">
+        <PopoverTrigger as-child>
+            <Button variant="outline" size="sm" role="combobox" class="w-full justify-between" :disabled="disabled">
+                <slot name="trigger" :text="selectionSummaryText" :clear="clearSelection">
+                    <span class="truncate">
+                        {{ selectionSummaryText || placeholder }}
+                    </span>
+                </slot>
+
+                <div class="flex items-center gap-2">
+                    <span class="opacity-60">▾</span>
+                </div>
+            </Button>
+        </PopoverTrigger>
+
+        <PopoverContent class="w-(--reka-popover-trigger-width) p-2">
+            <Input v-if="searchable" v-model="searchText" :placeholder="searchPlaceholder" class="mb-2" />
+
+            <div
+                ref="scrollContainerRef"
+                class="overflow-auto rounded-md border"
+                :style="{ maxHeight: `${maxHeight}px` }">
+                <div
+                    :style="{
+                        height: `${virtualizer.getTotalSize()}px`,
+                        position: 'relative'
+                    }">
+                    <template v-for="virtualRow in virtualizer.getVirtualItems()" :key="String(virtualRow.key)">
+                        <div
+                            class="absolute left-0 top-0 w-full"
+                            :style="{ transform: `translateY(${virtualRow.start}px)` }">
+                            <template v-if="virtualListEntries[virtualRow.index]?.type === 'group'">
+                                <div
+                                    class="px-2 text-xs font-medium opacity-70 flex items-center"
+                                    :style="{ height: `${groupHeaderHeight}px` }">
+                                    <slot name="group" :group="virtualListEntries[virtualRow.index].group">
+                                        {{ virtualListEntries[virtualRow.index].group.label }}
+                                    </slot>
+                                </div>
+                            </template>
+
+                            <template v-else>
+                                <button
+                                    type="button"
+                                    class="flex w-full items-center gap-2 px-2 text-left"
+                                    :style="{ height: `${itemHeight}px` }"
+                                    @click="toggleSelection(virtualListEntries[virtualRow.index].value)">
+                                    <slot
+                                        name="item"
+                                        :item="virtualListEntries[virtualRow.index].item"
+                                        :selected="selectedValueSet.has(virtualListEntries[virtualRow.index].value)">
+                                        <span class="truncate text-sm">
+                                            {{ virtualListEntries[virtualRow.index].item.label }}
+                                        </span>
+                                        <span
+                                            v-if="selectedValueSet.has(virtualListEntries[virtualRow.index].value)"
+                                            class="ml-auto opacity-70">
+                                            ✓
+                                        </span>
+                                    </slot>
+                                </button>
+                            </template>
+                        </div>
+                    </template>
+
+                    <div v-if="virtualListEntries.length === 0" class="p-3 text-sm opacity-70">
+                        <slot name="empty">Nothing found</slot>
+                    </div>
+                </div>
+            </div>
+        </PopoverContent>
+    </Popover>
+</template>
+
 <script setup>
     import { computed, ref, shallowRef, watch } from 'vue';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -22,7 +97,8 @@
         itemHeight: { type: Number, default: 40 },
         groupHeaderHeight: { type: Number, default: 28 },
 
-        closeOnSelect: { type: Boolean, default: false }
+        closeOnSelect: { type: Boolean, default: false },
+        deselectOnReselect: { type: Boolean, default: false }
     });
 
     const emit = defineEmits(['update:modelValue', 'change', 'clear']);
@@ -30,6 +106,8 @@
     const isOpen = ref(false);
     const searchText = ref('');
     const scrollContainerRef = shallowRef(null);
+
+    const normalizedGroups = computed(() => /** @type {Array<any>} */ (props.groups ?? []));
 
     const selectedValueSet = computed(() => {
         if (props.multiple) {
@@ -44,8 +122,8 @@
 
         const entries = [];
 
-        for (const group of props.groups) {
-            const groupItems = Array.isArray(group.items) ? group.items : [];
+        for (const group of normalizedGroups.value) {
+            const groupItems = Array.isArray(group?.items) ? group.items : [];
 
             const filteredItems = normalizedSearch
                 ? groupItems.filter((item) =>
@@ -57,14 +135,14 @@
 
             entries.push({
                 type: 'group',
-                key: `group:${group.key}`,
+                key: `group:${group?.key ?? ''}`,
                 group
             });
 
             for (const item of filteredItems) {
                 entries.push({
                     type: 'item',
-                    key: `item:${group.key}:${item.value}`,
+                    key: `item:${group?.key ?? ''}:${item?.value}`,
                     group,
                     item,
                     value: String(item.value)
@@ -81,8 +159,8 @@
 
         const valueToLabelMap = new Map();
 
-        for (const group of props.groups) {
-            for (const item of group.items ?? []) {
+        for (const group of normalizedGroups.value) {
+            for (const item of group?.items ?? []) {
                 valueToLabelMap.set(String(item.value), item.label);
             }
         }
@@ -103,6 +181,13 @@
             emit('update:modelValue', next);
             emit('change', next);
         } else {
+            if (props.deselectOnReselect && selectedValueSet.value.has(value)) {
+                clearSelection();
+                if (props.closeOnSelect) {
+                    isOpen.value = false;
+                }
+                return;
+            }
             emit('update:modelValue', value);
             emit('change', value);
 
@@ -133,85 +218,3 @@
         virtualizer.value?.scrollToOffset?.(0);
     });
 </script>
-
-<template>
-    <Popover v-model:open="isOpen">
-        <PopoverTrigger as-child>
-            <Button variant="outline" size="sm" role="combobox" class="w-full justify-between" :disabled="disabled">
-                <slot name="trigger" :text="selectionSummaryText" :clear="clearSelection">
-                    <span class="truncate">
-                        {{ selectionSummaryText || placeholder }}
-                    </span>
-                </slot>
-
-                <div class="flex items-center gap-2">
-                    <button
-                        v-if="clearable && selectedValueSet.size && !disabled"
-                        type="button"
-                        class="opacity-60 hover:opacity-90"
-                        @click.stop="clearSelection">
-                        ✕
-                    </button>
-                    <span class="opacity-60">▾</span>
-                </div>
-            </Button>
-        </PopoverTrigger>
-
-        <PopoverContent class="w-(--reka-popover-trigger-width) p-2">
-            <Input v-if="searchable" v-model="searchText" :placeholder="searchPlaceholder" class="mb-2" />
-
-            <div
-                ref="scrollContainerRef"
-                class="overflow-auto rounded-md border"
-                :style="{ maxHeight: `${maxHeight}px` }">
-                <div
-                    :style="{
-                        height: `${virtualizer.getTotalSize()}px`,
-                        position: 'relative'
-                    }">
-                    <template v-for="virtualRow in virtualizer.getVirtualItems()" :key="virtualRow.key">
-                        <div
-                            class="absolute left-0 top-0 w-full"
-                            :style="{ transform: `translateY(${virtualRow.start}px)` }">
-                            <template v-if="virtualListEntries[virtualRow.index]?.type === 'group'">
-                                <div
-                                    class="px-2 text-xs font-medium opacity-70 flex items-center"
-                                    :style="{ height: `${groupHeaderHeight}px` }">
-                                    <slot name="group" :group="virtualListEntries[virtualRow.index].group">
-                                        {{ virtualListEntries[virtualRow.index].group.label }}
-                                    </slot>
-                                </div>
-                            </template>
-
-                            <template v-else>
-                                <button
-                                    type="button"
-                                    class="flex w-full items-center gap-2 px-2 hover:bg-accent text-left"
-                                    :style="{ height: `${itemHeight}px` }"
-                                    @click="toggleSelection(virtualListEntries[virtualRow.index].value)">
-                                    <slot
-                                        name="item"
-                                        :item="virtualListEntries[virtualRow.index].item"
-                                        :selected="selectedValueSet.has(virtualListEntries[virtualRow.index].value)">
-                                        <span class="truncate text-sm">
-                                            {{ virtualListEntries[virtualRow.index].item.label }}
-                                        </span>
-                                        <span
-                                            v-if="selectedValueSet.has(virtualListEntries[virtualRow.index].value)"
-                                            class="ml-auto opacity-70">
-                                            ✓
-                                        </span>
-                                    </slot>
-                                </button>
-                            </template>
-                        </div>
-                    </template>
-
-                    <div v-if="virtualListEntries.length === 0" class="p-3 text-sm opacity-70">
-                        <slot name="empty">Nothing found</slot>
-                    </div>
-                </div>
-            </div>
-        </PopoverContent>
-    </Popover>
-</template>

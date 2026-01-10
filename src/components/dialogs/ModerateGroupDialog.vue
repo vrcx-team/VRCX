@@ -19,31 +19,24 @@
                     <span v-else v-text="moderateGroupDialog.userId"></span>
                 </div>
             </div>
-            <el-select
-                v-model="moderateGroupDialog.groupId"
-                clearable
-                :placeholder="t('dialog.moderate_group.choose_group_placeholder')"
-                filterable
-                style="margin-top: 15px; width: 100%">
-                <el-option-group
-                    v-if="currentUserGroups.size"
-                    :label="t('dialog.moderate_group.groups_with_moderation_permission')">
-                    <el-option
-                        v-for="group in groupsWithModerationPermission"
-                        :key="group.id"
-                        :label="group.name"
-                        :value="group.id"
-                        style="height: auto"
-                        class="x-friend-item">
-                        <div class="avatar">
-                            <img :src="group.iconUrl" loading="lazy" />
+
+            <div style="margin-top: 15px; width: 100%">
+                <VirtualCombobox
+                    :model-value="moderateGroupDialog.groupId"
+                    @update:modelValue="setGroupId"
+                    :groups="groupPickerGroups"
+                    :placeholder="t('dialog.moderate_group.choose_group_placeholder')"
+                    :search-placeholder="t('dialog.moderate_group.choose_group_placeholder')"
+                    :close-on-select="true">
+                    <template #item="{ item, selected }">
+                        <div class="flex w-full items-center gap-2">
+                            <img :src="item.iconUrl" loading="lazy" class="size-5 rounded-sm" />
+                            <span class="truncate text-sm" v-text="item.label"></span>
+                            <span v-if="selected" class="ml-auto opacity-70">✓</span>
                         </div>
-                        <div class="detail">
-                            <span class="name" v-text="group.name"></span>
-                        </div>
-                    </el-option>
-                </el-option-group>
-            </el-select>
+                    </template>
+                </VirtualCombobox>
+            </div>
         </div>
         <template #footer>
             <el-button
@@ -66,6 +59,7 @@
 
     import { groupRequest, userRequest } from '../../api';
     import { hasGroupModerationPermission, userImage } from '../../shared/utils';
+    import { VirtualCombobox } from '../ui/virtual-combobox';
     import { getNextDialogIndex } from '../../shared/utils/base/ui';
     import { useGroupStore } from '../../stores';
 
@@ -76,6 +70,23 @@
     const groupsWithModerationPermission = computed(() => {
         return Array.from(currentUserGroups.value.values()).filter((group) => hasGroupModerationPermission(group));
     });
+
+    const groupPickerGroups = computed(() => [
+        {
+            key: 'groups',
+            label: t('dialog.moderate_group.header'),
+            items: groupsWithModerationPermission.value.map((group) => ({
+                value: group.id,
+                label: group.name,
+                search: group.name,
+                iconUrl: group.iconUrl
+            }))
+        }
+    ]);
+
+    function setGroupId(value) {
+        moderateGroupDialog.value.groupId = String(value ?? '');
+    }
 
     watch(
         () => {
