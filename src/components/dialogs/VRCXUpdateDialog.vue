@@ -17,20 +17,33 @@
                     <br />
                     <span>{{ t('dialog.vrcx_updater.ready_for_update') }}</span>
                 </div>
-                <el-select
-                    v-model="branch"
-                    style="display: inline-block; width: 150px; margin-right: 15px"
-                    @change="loadBranchVersions">
-                    <el-option v-for="b in branches" :key="b.name" :label="b.name" :value="b.name"> </el-option>
-                </el-select>
-                <el-select v-model="VRCXUpdateDialog.release" style="display: inline-block; width: 150px">
-                    <el-option
-                        v-for="item in VRCXUpdateDialog.releases"
-                        :key="item.name"
-                        :label="item.tag_name"
-                        :value="item.name">
-                    </el-option>
-                </el-select>
+                <Select
+                    :model-value="branch"
+                    @update:modelValue="
+                        (v) => {
+                            branch = v;
+                            loadBranchVersions();
+                        }
+                    ">
+                    <SelectTrigger style="display: inline-flex; width: 150px; margin-right: 15px">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem v-for="b in branches" :key="b.name" :value="b.name">{{ b.name }}</SelectItem>
+                    </SelectContent>
+                </Select>
+                <Select
+                    :model-value="VRCXUpdateDialog.release"
+                    @update:modelValue="(v) => (VRCXUpdateDialog.release = v)">
+                    <SelectTrigger style="display: inline-flex; width: 150px">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem v-for="item in VRCXUpdateDialog.releases" :key="item.name" :value="item.name">
+                            {{ item.tag_name }}
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
                 <div
                     v-if="!VRCXUpdateDialog.updatePending && VRCXUpdateDialog.release === appVersion"
                     style="margin-top: 15px">
@@ -62,6 +75,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
     import { branches } from '../../shared/constants';
     import { getNextDialogIndex } from '../../shared/utils/base/ui';
     import { useVRCXUpdaterStore } from '../../stores';

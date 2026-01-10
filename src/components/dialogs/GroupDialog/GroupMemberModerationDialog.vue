@@ -623,25 +623,19 @@
                         <br />
                         <div style="display: flex; justify-content: space-between; align-items: center">
                             <div>
-                                <el-select
-                                    v-model="selectedAuditLogTypes"
-                                    multiple
-                                    collapse-tags
-                                    :placeholder="t('dialog.group_member_moderation.filter_type')"
-                                    style="margin: 10px 0; width: 250px">
-                                    <el-option-group :label="t('dialog.group_member_moderation.select_type')">
-                                        <el-option
+                                <Select v-model="selectedAuditLogTypes" multiple>
+                                    <SelectTrigger style="margin: 10px 0; width: 250px">
+                                        <SelectValue :placeholder="t('dialog.group_member_moderation.filter_type')" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem
                                             v-for="type in groupMemberModeration.auditLogTypes"
                                             :key="type"
-                                            class="x-friend-item"
-                                            :label="getAuditLogTypeName(type)"
                                             :value="type">
-                                            <div class="detail">
-                                                <span class="name" v-text="getAuditLogTypeName(type)"></span>
-                                            </div>
-                                        </el-option>
-                                    </el-option-group>
-                                </el-select>
+                                            {{ getAuditLogTypeName(type) }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
                                 <el-input
                                     v-model="groupLogsModerationTable.filters[0].value"
                                     :placeholder="t('dialog.group_member_moderation.search_placeholder')"
@@ -781,27 +775,16 @@
             <br />
             <span class="name">{{ t('dialog.group_member_moderation.selected_roles') }}</span>
             <br />
-            <el-select
-                v-model="selectedRoles"
-                clearable
-                multiple
-                :placeholder="t('dialog.group_member_moderation.choose_roles_placeholder')"
-                filterable
-                style="margin-top: 5px">
-                <el-option-group :label="t('dialog.group_member_moderation.roles')">
-                    <el-option
-                        v-for="role in groupMemberModeration.groupRef.roles"
-                        :key="role.id"
-                        class="x-friend-item"
-                        :label="role.name"
-                        :value="role.id"
-                        style="height: auto">
-                        <div class="detail">
-                            <span class="name" v-text="role.name"></span>
-                        </div>
-                    </el-option>
-                </el-option-group>
-            </el-select>
+            <Select v-model="selectedRoles" multiple>
+                <SelectTrigger style="margin-top: 5px">
+                    <SelectValue :placeholder="t('dialog.group_member_moderation.choose_roles_placeholder')" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem v-for="role in groupMemberModeration.groupRef.roles" :key="role.id" :value="role.id">
+                        {{ role.name }}
+                    </SelectItem>
+                </SelectContent>
+            </Select>
             <br />
             <br />
             <span class="name">{{ t('dialog.group_member_moderation.actions') }}</span>
@@ -881,6 +864,7 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
     import { debounce, formatDateFilter, hasGroupPermission, userImage, userImageFull } from '../../../shared/utils';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../ui/dropdown-menu';
     import { useAppearanceSettingsStore, useGalleryStore, useGroupStore, useUserStore } from '../../../stores';

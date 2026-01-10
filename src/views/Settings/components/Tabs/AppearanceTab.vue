@@ -6,7 +6,7 @@
                 <span class="name">{{ t('view.settings.appearance.appearance.language') }}</span>
                 <Select :model-value="appLanguage" @update:modelValue="changeAppLanguage">
                     <SelectTrigger size="sm">
-                        <SelectValue :placeholder="getLanguageName(appLanguage)" />
+                        <SelectValue :placeholder="appLanguageDisplayName" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
@@ -95,17 +95,50 @@
 
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.table_page_sizes') }}</span>
-                <el-select
-                    v-model="tablePageSizesModel"
-                    multiple
-                    filterable
-                    allow-create
-                    default-first-option
-                    collapse-tags
-                    :max-collapse-tags="3"
-                    style="width: 300px">
-                    <el-option v-for="size in tablePageSizes" :key="size" :label="String(size)" :value="String(size)" />
-                </el-select>
+                <Popover v-model:open="tablePageSizesOpen">
+                    <ListboxRoot v-model="tablePageSizesModel" highlight-on-hover multiple>
+                        <PopoverAnchor class="inline-flex w-75">
+                            <TagsInput v-slot="{ modelValue: tags }" v-model="tablePageSizesModel" class="w-full">
+                                <TagsInputItem v-for="item in tags" :key="item.toString()" :value="item.toString()">
+                                    <TagsInputItemText />
+                                    <TagsInputItemDelete />
+                                </TagsInputItem>
+
+                                <ListboxFilter v-model="tablePageSizesSearchTerm" as-child>
+                                    <TagsInputInput
+                                        :placeholder="t('view.settings.appearance.appearance.table_page_sizes')"
+                                        @keydown.enter.prevent="addTablePageSizeFromInput"
+                                        @keydown.down="tablePageSizesOpen = true" />
+                                </ListboxFilter>
+
+                                <PopoverTrigger as-child>
+                                    <Button size="icon-sm" variant="ghost" class="order-last self-start ml-auto">
+                                        <ChevronDown class="size-3.5" />
+                                    </Button>
+                                </PopoverTrigger>
+                            </TagsInput>
+                        </PopoverAnchor>
+
+                        <PopoverContent class="p-1" @open-auto-focus.prevent>
+                            <ListboxContent
+                                class="max-h-75 scroll-py-1 overflow-x-hidden overflow-y-auto empty:after:content-['No_options'] empty:p-1 empty:after:block"
+                                tabindex="0">
+                                <ListboxItem
+                                    v-for="size in filteredTablePageSizeOptions"
+                                    :key="size"
+                                    class="data-highlighted:bg-accent data-highlighted:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+                                    :value="size"
+                                    @select="tablePageSizesSearchTerm = ''">
+                                    <span>{{ size }}</span>
+
+                                    <ListboxItemIndicator class="ml-auto inline-flex items-center justify-center">
+                                        <CheckIcon />
+                                    </ListboxItemIndicator>
+                                </ListboxItem>
+                            </ListboxContent>
+                        </PopoverContent>
+                    </ListboxRoot>
+                </Popover>
             </div>
             <simple-switch
                 :label="t('view.settings.appearance.appearance.compact_table_mode')"
@@ -141,120 +174,100 @@
             <br />
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.side_panel.sorting.header') }}</span>
-                <el-select
-                    :model-value="sidebarSortMethod1"
-                    style="width: 170px"
-                    :placeholder="t('view.settings.appearance.side_panel.sorting.placeholder')"
-                    @change="setSidebarSortMethod1($event)">
-                    <el-option-group :label="t('view.settings.appearance.side_panel.sorting.dropdown_header')">
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.alphabetical')"
-                            value="Sort Alphabetically"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.status')"
-                            value="Sort by Status"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.private_to_bottom')"
-                            value="Sort Private to Bottom"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.last_active')"
-                            value="Sort by Last Active"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.last_seen')"
-                            value="Sort by Last Seen"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.time_in_instance')"
-                            value="Sort by Time in Instance"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.location')"
-                            value="Sort by Location"></el-option>
-                    </el-option-group>
-                </el-select>
+                <Select :model-value="sidebarSortMethod1" @update:modelValue="setSidebarSortMethod1">
+                    <SelectTrigger style="width: 170px" size="sm">
+                        <SelectValue :placeholder="t('view.settings.appearance.side_panel.sorting.placeholder')" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Sort Alphabetically">{{
+                            t('view.settings.appearance.side_panel.sorting.alphabetical')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Status">{{
+                            t('view.settings.appearance.side_panel.sorting.status')
+                        }}</SelectItem>
+                        <SelectItem value="Sort Private to Bottom">{{
+                            t('view.settings.appearance.side_panel.sorting.private_to_bottom')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Last Active">{{
+                            t('view.settings.appearance.side_panel.sorting.last_active')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Last Seen">{{
+                            t('view.settings.appearance.side_panel.sorting.last_seen')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Time in Instance">{{
+                            t('view.settings.appearance.side_panel.sorting.time_in_instance')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Location">{{
+                            t('view.settings.appearance.side_panel.sorting.location')
+                        }}</SelectItem>
+                    </SelectContent>
+                </Select>
                 <el-icon style="padding: 5px"><ArrowRight /></el-icon>
-                <el-select
+                <Select
                     :model-value="sidebarSortMethod2"
                     :disabled="!sidebarSortMethod1"
-                    style="width: 170px"
-                    clearable
-                    :placeholder="t('view.settings.appearance.side_panel.sorting.placeholder')"
-                    @change="setSidebarSortMethod2($event)">
-                    <el-option-group :label="t('view.settings.appearance.side_panel.sorting.dropdown_header')">
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.alphabetical')"
-                            value="Sort Alphabetically"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.status')"
-                            value="Sort by Status"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.private_to_bottom')"
-                            value="Sort Private to Bottom"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.last_active')"
-                            value="Sort by Last Active"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.last_seen')"
-                            value="Sort by Last Seen"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.time_in_instance')"
-                            value="Sort by Time in Instance"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.location')"
-                            value="Sort by Location"></el-option>
-                    </el-option-group>
-                </el-select>
+                    @update:modelValue="(v) => setSidebarSortMethod2(v === SELECT_CLEAR_VALUE ? '' : v)">
+                    <SelectTrigger style="width: 170px" size="sm">
+                        <SelectValue :placeholder="t('view.settings.appearance.side_panel.sorting.placeholder')" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem :value="SELECT_CLEAR_VALUE">{{ t('dialog.gallery_select.none') }}</SelectItem>
+                        <SelectItem value="Sort Alphabetically">{{
+                            t('view.settings.appearance.side_panel.sorting.alphabetical')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Status">{{
+                            t('view.settings.appearance.side_panel.sorting.status')
+                        }}</SelectItem>
+                        <SelectItem value="Sort Private to Bottom">{{
+                            t('view.settings.appearance.side_panel.sorting.private_to_bottom')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Last Active">{{
+                            t('view.settings.appearance.side_panel.sorting.last_active')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Last Seen">{{
+                            t('view.settings.appearance.side_panel.sorting.last_seen')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Time in Instance">{{
+                            t('view.settings.appearance.side_panel.sorting.time_in_instance')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Location">{{
+                            t('view.settings.appearance.side_panel.sorting.location')
+                        }}</SelectItem>
+                    </SelectContent>
+                </Select>
                 <el-icon style="padding: 5px"><ArrowRight /></el-icon>
-                <el-select
+                <Select
                     :model-value="sidebarSortMethod3"
                     :disabled="!sidebarSortMethod2"
-                    style="width: 170px"
-                    clearable
-                    :placeholder="t('view.settings.appearance.side_panel.sorting.placeholder')"
-                    @change="setSidebarSortMethod3($event)">
-                    <el-option-group :label="t('view.settings.appearance.side_panel.sorting.dropdown_header')">
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.alphabetical')"
-                            value="Sort Alphabetically"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.status')"
-                            value="Sort by Status"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.private_to_bottom')"
-                            value="Sort Private to Bottom"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.last_active')"
-                            value="Sort by Last Active"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.last_seen')"
-                            value="Sort by Last Seen"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.time_in_instance')"
-                            value="Sort by Time in Instance"></el-option>
-                        <el-option
-                            class="x-friend-item"
-                            :label="t('view.settings.appearance.side_panel.sorting.location')"
-                            value="Sort by Location"></el-option>
-                    </el-option-group>
-                </el-select>
+                    @update:modelValue="(v) => setSidebarSortMethod3(v === SELECT_CLEAR_VALUE ? '' : v)">
+                    <SelectTrigger style="width: 170px" size="sm">
+                        <SelectValue :placeholder="t('view.settings.appearance.side_panel.sorting.placeholder')" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem :value="SELECT_CLEAR_VALUE">{{ t('dialog.gallery_select.none') }}</SelectItem>
+                        <SelectItem value="Sort Alphabetically">{{
+                            t('view.settings.appearance.side_panel.sorting.alphabetical')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Status">{{
+                            t('view.settings.appearance.side_panel.sorting.status')
+                        }}</SelectItem>
+                        <SelectItem value="Sort Private to Bottom">{{
+                            t('view.settings.appearance.side_panel.sorting.private_to_bottom')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Last Active">{{
+                            t('view.settings.appearance.side_panel.sorting.last_active')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Last Seen">{{
+                            t('view.settings.appearance.side_panel.sorting.last_seen')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Time in Instance">{{
+                            t('view.settings.appearance.side_panel.sorting.time_in_instance')
+                        }}</SelectItem>
+                        <SelectItem value="Sort by Location">{{
+                            t('view.settings.appearance.side_panel.sorting.location')
+                        }}</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
             <simple-switch
                 :label="t('view.settings.appearance.side_panel.group_by_instance')"
@@ -372,9 +385,20 @@
 </template>
 
 <script setup>
+    import { ListboxContent, ListboxFilter, ListboxItem, ListboxItemIndicator, ListboxRoot, useFilter } from 'reka-ui';
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { computed, onBeforeUnmount, ref } from 'vue';
+    import {
+        TagsInput,
+        TagsInputInput,
+        TagsInputItem,
+        TagsInputItemDelete,
+        TagsInputItemText
+    } from '@/components/ui/tags-input';
+    import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+    import { computed, onBeforeUnmount, ref, watch } from 'vue';
     import { ArrowRight, Notebook } from '@element-plus/icons-vue';
+    import { CheckIcon, ChevronDown } from 'lucide-vue-next';
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -416,6 +440,8 @@
         tablePageSizes,
         compactTableMode
     } = storeToRefs(appearanceSettingsStore);
+
+    const appLanguageDisplayName = computed(() => getLanguageName(String(appLanguage.value)));
 
     const { saveSortFavoritesOption } = useFavoriteStore();
 
@@ -467,6 +493,47 @@
             }
         }
     });
+
+    const SELECT_CLEAR_VALUE = '__clear__';
+
+    const TABLE_PAGE_SIZE_SUGGESTIONS = Object.freeze([5, 10, 15, 20, 25, 30, 50, 75, 100, 150, 200, 250, 500, 1000]);
+
+    const tablePageSizesOpen = ref(false);
+    const tablePageSizesSearchTerm = ref('');
+
+    const { contains } = useFilter({ sensitivity: 'base' });
+
+    const tablePageSizeOptions = computed(() => {
+        const current = Array.isArray(tablePageSizes.value) ? tablePageSizes.value : [];
+        const merged = new Set([...TABLE_PAGE_SIZE_SUGGESTIONS, ...current].map((v) => String(v)));
+        return Array.from(merged).sort((a, b) => Number(a) - Number(b));
+    });
+
+    const filteredTablePageSizeOptions = computed(() => {
+        if (tablePageSizesSearchTerm.value === '') {
+            return tablePageSizeOptions.value;
+        }
+        return tablePageSizeOptions.value.filter((option) => contains(option, tablePageSizesSearchTerm.value));
+    });
+
+    watch(tablePageSizesSearchTerm, (value) => {
+        if (value) {
+            tablePageSizesOpen.value = true;
+        }
+    });
+
+    function addTablePageSizeFromInput() {
+        const raw = String(tablePageSizesSearchTerm.value ?? '').trim();
+        if (!raw) {
+            return;
+        }
+        if (!Array.isArray(tablePageSizesModel.value)) {
+            tablePageSizesModel.value = [raw];
+        } else if (!tablePageSizesModel.value.includes(raw)) {
+            tablePageSizesModel.value = [...tablePageSizesModel.value, raw];
+        }
+        tablePageSizesSearchTerm.value = '';
+    }
 
     async function initGetZoomLevel() {
         const handleWheel = (event) => {

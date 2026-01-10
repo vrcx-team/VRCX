@@ -62,7 +62,7 @@ const languageNames = import.meta.glob('./*.json', {
 });
 
 function getLanguageName(code) {
-    return languageNames[`./${code}.json`];
+    return String(languageNames[`./${code}.json`] ?? code);
 }
 
 export * from './locales';

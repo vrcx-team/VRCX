@@ -40,23 +40,24 @@
             }}</el-button>
         </div>
         <div class="options-container-item">
-            <el-select
+            <Select
                 :model-value="photonEventTableTypeOverlayFilter"
                 multiple
-                clearable
-                collapse-tags
-                style="flex: 1"
-                placeholder="Filter"
-                @change="
-                    setPhotonEventTableTypeOverlayFilter($event);
-                    photonEventTableFilterChange();
+                @update:modelValue="
+                    (v) => {
+                        setPhotonEventTableTypeOverlayFilter(v);
+                        photonEventTableFilterChange();
+                    }
                 ">
-                <el-option
-                    v-for="type in photonEventTableTypeFilterList"
-                    :key="type"
-                    :label="type"
-                    :value="type"></el-option>
-            </el-select>
+                <SelectTrigger style="flex: 1">
+                    <SelectValue placeholder="Filter" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem v-for="type in photonEventTableTypeFilterList" :key="type" :value="type">{{
+                        type
+                    }}</SelectItem>
+                </SelectContent>
+            </Select>
         </div>
         <br />
         <span class="sub-header">{{ t('view.settings.advanced.photon.timeout_hud.header') }}</span>
@@ -103,9 +104,10 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
+    import { ToggleGroup, ToggleGroupItem } from '../../../components/ui/toggle-group';
     import { useNotificationsSettingsStore, usePhotonStore } from '../../../stores';
     import { photonEventTableTypeFilterList } from '../../../shared/constants/photon';
-    import { ToggleGroup, ToggleGroupItem } from '../../../components/ui/toggle-group';
 
     import SimpleSwitch from './SimpleSwitch.vue';
 

@@ -1,20 +1,24 @@
 <template>
     <div class="photon-event-table">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap">
-            <el-select
-                v-model="photonEventTableTypeFilter"
+            <Select
+                :model-value="photonEventTableTypeFilter"
                 multiple
-                clearable
-                collapse-tags
-                style="width: 220px"
-                :placeholder="t('view.player_list.photon.filter_placeholder')"
-                @change="photonEventTableFilterChange">
-                <el-option
-                    v-for="type in photonEventTableTypeFilterList"
-                    :key="type"
-                    :label="type"
-                    :value="type"></el-option>
-            </el-select>
+                @update:modelValue="
+                    (v) => {
+                        photonEventTableTypeFilter = v;
+                        photonEventTableFilterChange();
+                    }
+                ">
+                <SelectTrigger style="width: 220px">
+                    <SelectValue :placeholder="t('view.player_list.photon.filter_placeholder')" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem v-for="type in photonEventTableTypeFilterList" :key="type" :value="type">{{
+                        type
+                    }}</SelectItem>
+                </SelectContent>
+            </Select>
             <el-input
                 v-model="photonEventTableFilter"
                 :placeholder="t('view.player_list.photon.search_placeholder')"
@@ -397,6 +401,7 @@
         useVrcxStore,
         useWorldStore
     } from '../../../stores';
+    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
     import { formatDateFilter, statusClass } from '../../../shared/utils';
     import { photonEventTableTypeFilterList } from '../../../shared/constants/photon';
 

@@ -112,26 +112,19 @@
         <div class="options-container">
             <span class="header">{{ t('view.settings.general.favorites.header') }}</span>
             <br />
-            <el-select
+            <Select
                 :model-value="localFavoriteFriendsGroups"
                 multiple
-                clearable
-                :placeholder="t('view.settings.general.favorites.group_placeholder')"
-                style="margin-top: 8px"
-                @change="setLocalFavoriteFriendsGroups">
-                <el-option-group :label="t('view.settings.general.favorites.group_placeholder')">
-                    <el-option
-                        v-for="group in favoriteFriendGroups"
-                        :key="group.key"
-                        :label="group.displayName"
-                        :value="group.key"
-                        class="x-friend-item">
-                        <div class="detail">
-                            <span class="name" v-text="group.displayName"></span>
-                        </div>
-                    </el-option>
-                </el-option-group>
-            </el-select>
+                @update:modelValue="setLocalFavoriteFriendsGroups">
+                <SelectTrigger style="margin-top: 8px">
+                    <SelectValue :placeholder="t('view.settings.general.favorites.group_placeholder')" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem v-for="group in favoriteFriendGroups" :key="group.key" :value="group.key">
+                        {{ group.displayName }}
+                    </SelectItem>
+                </SelectContent>
+            </Select>
         </div>
         <div class="options-container">
             <span class="header">{{ t('view.settings.general.logging.header') }}</span>
@@ -157,72 +150,70 @@
                 @change="setAutoStateChangeEnabled" />
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.general.automation.alone_status') }}</span>
-                <el-select
+                <Select
                     :model-value="autoStateChangeAloneStatus"
                     :disabled="!autoStateChangeEnabled"
-                    style="margin-top: 8px"
-                    size="small"
-                    @change="setAutoStateChangeAloneStatus">
-                    <el-option :label="t('dialog.user.status.join_me')" value="join me">
-                        <i class="x-user-status joinme"></i> {{ t('dialog.user.status.join_me') }}
-                    </el-option>
-                    <el-option :label="t('dialog.user.status.online')" value="active">
-                        <i class="x-user-status online"></i> {{ t('dialog.user.status.online') }}
-                    </el-option>
-                    <el-option :label="t('dialog.user.status.ask_me')" value="ask me">
-                        <i class="x-user-status askme"></i> {{ t('dialog.user.status.ask_me') }}
-                    </el-option>
-                    <el-option :label="t('dialog.user.status.busy')" value="busy">
-                        <i class="x-user-status busy"></i> {{ t('dialog.user.status.busy') }}
-                    </el-option>
-                </el-select>
+                    @update:modelValue="setAutoStateChangeAloneStatus">
+                    <SelectTrigger style="margin-top: 8px" size="sm">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="join me">
+                            <i class="x-user-status joinme"></i> {{ t('dialog.user.status.join_me') }}
+                        </SelectItem>
+                        <SelectItem value="active">
+                            <i class="x-user-status online"></i> {{ t('dialog.user.status.online') }}
+                        </SelectItem>
+                        <SelectItem value="ask me">
+                            <i class="x-user-status askme"></i> {{ t('dialog.user.status.ask_me') }}
+                        </SelectItem>
+                        <SelectItem value="busy">
+                            <i class="x-user-status busy"></i> {{ t('dialog.user.status.busy') }}
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.general.automation.company_status') }}</span>
-                <el-select
+                <Select
                     :model-value="autoStateChangeCompanyStatus"
                     :disabled="!autoStateChangeEnabled"
-                    style="margin-top: 8px"
-                    size="small"
-                    @change="setAutoStateChangeCompanyStatus">
-                    <el-option :label="t('dialog.user.status.join_me')" value="join me">
-                        <i class="x-user-status joinme"></i> {{ t('dialog.user.status.join_me') }}
-                    </el-option>
-                    <el-option :label="t('dialog.user.status.online')" value="active">
-                        <i class="x-user-status online"></i> {{ t('dialog.user.status.online') }}
-                    </el-option>
-                    <el-option :label="t('dialog.user.status.ask_me')" value="ask me">
-                        <i class="x-user-status askme"></i> {{ t('dialog.user.status.ask_me') }}
-                    </el-option>
-                    <el-option :label="t('dialog.user.status.busy')" value="busy">
-                        <i class="x-user-status busy"></i> {{ t('dialog.user.status.busy') }}
-                    </el-option>
-                </el-select>
+                    @update:modelValue="setAutoStateChangeCompanyStatus">
+                    <SelectTrigger style="margin-top: 8px" size="sm">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="join me">
+                            <i class="x-user-status joinme"></i> {{ t('dialog.user.status.join_me') }}
+                        </SelectItem>
+                        <SelectItem value="active">
+                            <i class="x-user-status online"></i> {{ t('dialog.user.status.online') }}
+                        </SelectItem>
+                        <SelectItem value="ask me">
+                            <i class="x-user-status askme"></i> {{ t('dialog.user.status.ask_me') }}
+                        </SelectItem>
+                        <SelectItem value="busy">
+                            <i class="x-user-status busy"></i> {{ t('dialog.user.status.busy') }}
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.general.automation.allowed_instance_types') }}</span>
-                <el-select
+                <Select
                     :model-value="autoStateChangeInstanceTypes"
                     :disabled="!autoStateChangeEnabled"
                     multiple
-                    clearable
-                    :placeholder="t('view.settings.general.automation.instance_type_placeholder')"
-                    style="margin-top: 8px"
-                    size="small"
-                    @change="setAutoStateChangeInstanceTypes">
-                    <el-option-group :label="t('view.settings.general.automation.allowed_instance_types')">
-                        <el-option
-                            v-for="instanceType in instanceTypes"
-                            :key="instanceType"
-                            :label="instanceType"
-                            :value="instanceType"
-                            class="x-friend-item">
-                            <div class="detail">
-                                <span class="name" v-text="instanceType"></span>
-                            </div>
-                        </el-option>
-                    </el-option-group>
-                </el-select>
+                    @update:modelValue="setAutoStateChangeInstanceTypes">
+                    <SelectTrigger style="margin-top: 8px" size="sm">
+                        <SelectValue :placeholder="t('view.settings.general.automation.instance_type_placeholder')" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem v-for="instanceType in instanceTypes" :key="instanceType" :value="instanceType">
+                            {{ instanceType }}
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.general.automation.alone_condition') }}</span>
@@ -303,11 +294,11 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useFavoriteStore, useGeneralSettingsStore, useVRCXUpdaterStore, useVrStore } from '../../../../stores';
+    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../../components/ui/select';
+    import { useFavoriteStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '../../../../stores';
+    import { ToggleGroup, ToggleGroupItem } from '../../../../components/ui/toggle-group';
     import { links } from '../../../../shared/constants';
     import { openExternalLink } from '../../../../shared/utils';
-
-    import { ToggleGroup, ToggleGroupItem } from '../../../../components/ui/toggle-group';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 
@@ -316,8 +307,6 @@
     const generalSettingsStore = useGeneralSettingsStore();
     const vrcxUpdaterStore = useVRCXUpdaterStore();
     const favoriteStore = useFavoriteStore();
-
-    const { saveOpenVROption } = useVrStore();
 
     const {
         isStartAtWindowsStartup,
