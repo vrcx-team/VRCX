@@ -1,6 +1,6 @@
 {
     "language": "简体中文 (zh-CN)",
-    "translator": "flower_elf, Yingxue, Map1en, Stabrinai",
+    "translator": "flower_elf, Yingxue, Map1en, Stabrinai, xxKawa",
     "nav_tooltip": {
         "friends_locations": "好友位置",
         "feed": "好友动态",
@@ -21,7 +21,10 @@
         "about": "关于",
         "profile": "个人资料",
         "settings": "设置",
-        "help_support": "帮助 & 支持"
+        "manage": "管理",
+        "help_support": "帮助 & 支持",
+        "expand_menu": "展开菜单",
+        "collapse_menu": "折叠菜单"
     },
     "nav_menu": {
         "resources": "帮助资源",
@@ -177,14 +180,15 @@
                 "check_description": "检测并删除这个分组中的失效模型",
                 "checking": "正在检查失效模型...",
                 "check_progress": "检查进度：{current}/{total}",
+                "check_complete": "检查完成！",
+                "check_summary": "共检查 {total} 个模型，发现 {invalid} 个失效模型",
+                "removed_list_header": "已删除的模型列表：",
+                "copy_removed_ids": "复制已删除的模型ID",
+                "copied_ids": "模型ID已复制到剪贴板",
                 "checking_progress": "正在检查模型 ({current}/{total})...",
                 "confirm_delete_invalid": "删除失效模型？",
                 "confirm_delete_description": "发现 {count} 个失效模型，是否删除它们？",
-                "check_complete": "检查完成！",
-                "check_summary": "共检查 {total} 个模型，发现 {invalid} 个失效模型",
                 "delete_summary": "已成功删除 {removed} 个失效模型",
-                "removed_list_header": "已删除的模型列表：",
-                "copy_removed_ids": "复制已删除的模型ID",
                 "no_invalid_found": "未发现失效模型",
                 "delete_cancelled": "已取消删除操作"
             },
@@ -260,7 +264,10 @@
                     "invite": "邀请",
                     "joinRequest": "加入申请",
                     "transfer": "转让",
-                    "queueReady": "队列准备就绪"
+                    "queueReady": "队列准备就绪",
+                    "event": {
+                        "created": "群组活动已创建"
+                    }
                 },
                 "moderation": {
                     "warning": {
@@ -275,6 +282,15 @@
                 },
                 "badge": {
                     "earned": "获得徽章"
+                },
+                "vrcplus": {
+                    "gift": "VRC+ 礼物"
+                },
+                "localNotifs": "系统",
+                "economy": {
+                    "received": {
+                        "gift": "礼物已接收"
+                    }
                 }
             }
         },
@@ -284,6 +300,10 @@
             "bulk_unfriend_selection": "批量删除已选择的好友",
             "load": "读取缺失的项目",
             "load_tooltip": "读取",
+            "load_dialog_title": "获取缺失条目",
+            "load_dialog_message": "正在获取好友的缺失资料字段。",
+            "load_cancel": "取消",
+            "load_complete": "缺失条目已加载",
             "favorites_only_tooltip": "仅显示星标好友",
             "search_placeholder": "搜索好友",
             "filter_placeholder": "筛选好友",
@@ -354,6 +374,22 @@
                 "tooltip": {
                     "mutual_friends_count": "与你有 {count} 个共同好友",
                     "edge": "{source} ↔ {target}"
+                },
+                "force_dialog": {
+                    "open_label": "调整图谱布局设置",
+                    "title": "图谱布局设置",
+                    "description": "微调用于绘制共同好友图谱的力导向布局。",
+                    "repulsion": "排斥力",
+                    "edge_length_min": "边长（最小）",
+                    "edge_length_max": "边长（最大）",
+                    "gravity": "重力",
+                    "apply": "应用",
+                    "reset": "重置",
+                    "repulsion_help": "节点之间的排斥力。",
+                    "edge_length_min_help": "连接节点之间的最小距离。",
+                    "edge_length_max_help": "连接节点之间的最大距离。",
+                    "gravity_help": "拉力强度，将节点拉向图中心。",
+                    "invalid_input": "请输入非负数。"
                 }
             }
         },
@@ -533,7 +569,11 @@
                     "sort_instance_users_by": "房间玩家排序规则",
                     "sort_instance_users_by_time": "时间",
                     "sort_instance_users_by_alphabet": "字母顺序",
-                    "table_max_size": "最大显示记录"
+                    "table_max_size": "最大显示记录",
+                    "table_page_sizes": "显示记录大小",
+                    "table_page_sizes_error": "记录大小必须是 1 到 1000 之间的数字",
+                    "show_notification_icon_dot": "显示托盘通知",
+                    "compact_table_mode": "紧凑表格模式"
                 },
                 "timedate": {
                     "header": "时间 / 日期",
@@ -541,6 +581,9 @@
                     "time_format_24": "24 小时制",
                     "time_format_12": "12 小时制",
                     "force_iso_date_format": "强制使用 ISO 时间格式"
+                },
+                "theme_color": {
+                    "header": "主题颜色"
                 },
                 "side_panel": {
                     "header": "侧边栏",
@@ -923,6 +966,7 @@
                 "edit_pronouns": "人称代词",
                 "report_hacking": "报告这个玩家的作弊行为（例如盗模）",
                 "unfriend": "删除好友",
+                "unfriend_success_msg": "已删除好友",
                 "logout": "退出登录"
             },
             "info": {
@@ -1424,7 +1468,23 @@
             "description": "输入你的 Google 翻译 API 密钥",
             "placeholder": "输入形如“AIzaSy......”的密钥",
             "guide": "查看教程（英语）",
-            "save": "保存"
+            "mode": "提供商",
+            "mode_google": "Google 翻译",
+            "mode_openai": "OpenAI",
+            "test": "测试",
+            "save": "保存",
+            "msg_disabled": "翻译 API 已禁用",
+            "msg_fill_endpoint_model": "请填写端点和模型",
+            "msg_settings_invalid": "翻译设置无效",
+            "msg_settings_saved": "翻译设置已保存",
+            "msg_test_success": "测试成功",
+            "msg_test_failed": "测试失败",
+            "openai": {
+                "endpoint": "API 端点",
+                "api_key": "API 密钥（可选）",
+                "model": "模型名称",
+                "prompt_optional": "提示词（可选）"
+            }
         },
         "set_world_tags": {
             "header": "设置世界标签",
@@ -1856,6 +1916,9 @@
         "cancel_button": "取消",
         "message": "确认{command}?"
     },
+    "status": {
+        "title": "VRChat 状态"
+    },
     "message": {
         "vrcx_updater": {
             "failed": "无法检查更新，{message}",
@@ -1920,6 +1983,9 @@
         "screenshot_metadata": {
             "deleted": "已删除图片元数据",
             "delete_failed": "删除图片元数据失败"
+        },
+        "crash": {
+            "vrcx_reload": "为保证稳定性，VRCX 已重新加载"
         }
     },
     "prompt": {
