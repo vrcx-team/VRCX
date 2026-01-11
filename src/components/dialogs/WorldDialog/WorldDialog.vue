@@ -152,12 +152,22 @@
                                 </Badge>
                             </template>
                         </div>
-                        <div style="margin-top: 5px">
+                        <div style="margin-top: 5px; display: flex; align-items: flex-start">
                             <span
                                 v-show="worldDialog.ref.name !== worldDialog.ref.description"
-                                style="font-size: 12px"
-                                >{{ worldDialog.ref.description }}</span
+                                style="font-size: 12px; flex: 1"
+                                >{{ (descriptionCache.worldId === worldDialog.id ? descriptionCache.translated : '') || worldDialog.ref.description }}</span
                             >
+                            <el-button
+                                v-if="translationApi && worldDialog.ref.name !== worldDialog.ref.description && worldDialog.ref.description"
+                                text
+                                size="small"
+                                :loading="translatingDescription"
+                                :disabled="translatingDescription"
+                                style="margin-left: 8px; padding: 0; flex-shrink: 0"
+                                @click="translateDescription"
+                                ><i class="ri-translate-2"></i
+                            ></el-button>
                         </div>
                     </div>
                     <div style="flex: none; margin-left: 10px">
@@ -782,6 +792,7 @@
         userStatusClass
     } from '../../../shared/utils';
     import {
+        useAdvancedSettingsStore,
         useAppearanceSettingsStore,
         useFavoriteStore,
         useGalleryStore,
@@ -813,6 +824,8 @@
     const WorldAllowedDomainsDialog = defineAsyncComponent(() => import('./WorldAllowedDomainsDialog.vue'));
 
     const { isAgeGatedInstancesVisible, isDarkMode } = storeToRefs(useAppearanceSettingsStore());
+    const { translationApi, bioLanguage, translationApiType } = storeToRefs(useAdvancedSettingsStore());
+    const { translateText } = useAdvancedSettingsStore();
     const { showUserDialog } = useUserStore();
     const { currentUser, userDialog } = storeToRefs(useUserStore());
     const { worldDialog } = storeToRefs(useWorldStore());
@@ -841,6 +854,11 @@
     const newInstanceDialogLocationTag = ref('');
     const changeWorldImageDialogVisible = ref(false);
     const previousImageUrl = ref('');
+    const translatingDescription = ref(false);
+    const descriptionCache = ref({
+        worldId: '',
+        translated: ''
+    });
 
     const isDialogVisible = computed({
         get() {
@@ -932,6 +950,16 @@
                 handleDialogOpen();
                 !worldDialog.value.loading && loadLastActiveTab();
             }
+        }
+    );
+
+    watch(
+        () => worldDialog.value.id,
+        () => {
+            descriptionCache.value = {
+                worldId: '',
+                translated: ''
+            };
         }
     );
 
@@ -1339,6 +1367,53 @@
         D.worldId = worldDialog.value.id;
         D.urlList = worldDialog.value.ref?.urlList ?? [];
         D.visible = true;
+    }
+
+    async function translateDescription() {
+        const description = worldDialog.value.ref.description;
+        if (!description || translatingDescription.value) {
+            return;
+        }
+
+        if (descriptionCache.value.worldId !== worldDialog.value.id) {
+            descriptionCache.value.worldId = worldDialog.value.id;
+            descriptionCache.value.translated = null;
+        }
+
+        if (descriptionCache.value.translated) {
+            descriptionCache.value.translated = null;
+            return;
+        }
+
+        translatingDescription.value = true;
+        try {
+            let providerLabel = '';
+            switch (translationApiType.value) {
+                case 'openai':
+                    providerLabel = 'OpenAI';
+                    break;
+                case 'google':
+                    providerLabel = 'Google API';
+                    break;
+                case 'microsoft':
+                    providerLabel = 'Microsoft Translator';
+                    break;
+                case 'google-translate':
+                    providerLabel = 'Google Translate';
+                    break;
+                default:
+                    providerLabel = 'Translation Service';
+            }
+
+            const translated = await translateText(`${description}\n\nTranslated by ${providerLabel}`, bioLanguage.value);
+            if (translated) {
+                descriptionCache.value.translated = translated;
+            }
+        } catch (err) {
+            console.error('Translation failed:', err);
+        } finally {
+            translatingDescription.value = false;
+        }
     }
 </script>
 
