@@ -354,45 +354,24 @@
                                 :indeterminate="true"
                                 :percentage="100"
                                 :stroke-width="3"
-                                style="margin: 10px 0; max-width: 240px" />
-                            <el-carousel
-                                v-if="avatarDialog.galleryImages.length"
-                                type="card"
-                                :autoplay="false"
-                                height="200px">
-                                <el-carousel-item v-for="imageUrl in avatarDialog.galleryImages" :key="imageUrl">
-                                    <img
-                                        :src="imageUrl"
-                                        style="width: 100%; height: 100%; object-fit: contain"
-                                        @click="showFullscreenImageDialog(imageUrl)"
-                                        loading="lazy" />
-                                    <div
-                                        v-if="avatarDialog.ref.authorId === currentUser.id"
-                                        style="position: absolute; bottom: 35px; left: 38%">
-                                        <el-button
-                                            size="small"
-                                            :icon="Back"
-                                            circle
-                                            class="x-link"
-                                            style="margin-left: 0"
-                                            @click.stop="reorderAvatarGalleryImage(imageUrl, -1)"></el-button>
-                                        <el-button
-                                            size="small"
-                                            :icon="Right"
-                                            circle
-                                            class="x-link"
-                                            style="margin-left: 0"
-                                            @click.stop="reorderAvatarGalleryImage(imageUrl, 1)"></el-button>
-                                        <el-button
-                                            size="small"
-                                            :icon="Delete"
-                                            circle
-                                            class="x-link"
-                                            style="margin-left: 0"
-                                            @click.stop="deleteAvatarGalleryImage(imageUrl)"></el-button>
-                                    </div>
-                                </el-carousel-item>
-                            </el-carousel>
+                                style="margin: 10px 0" />
+                            <div class="mt-2 w-[80%] ml-20">
+                                <Carousel v-if="avatarDialog.galleryImages.length" class="w-full">
+                                    <CarouselContent class="h-50">
+                                        <CarouselItem v-for="imageUrl in avatarDialog.galleryImages" :key="imageUrl">
+                                            <div class="relative h-50 w-full">
+                                                <img
+                                                    :src="imageUrl"
+                                                    style="width: 100%; height: 100%; object-fit: contain"
+                                                    @click="showFullscreenImageDialog(imageUrl)"
+                                                    loading="lazy" />
+                                            </div>
+                                        </CarouselItem>
+                                    </CarouselContent>
+                                    <CarouselPrevious />
+                                    <CarouselNext />
+                                </Carousel>
+                            </div>
                         </div>
                         <div v-if="avatarDialog.ref.publishedListings?.length">
                             <span class="name">{{ t('dialog.avatar.info.listings') }}</span>
@@ -560,6 +539,7 @@
         User,
         Warning
     } from '@element-plus/icons-vue';
+    import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
     import { CircleCheck, Ellipsis, RefreshCcw, Star, Trash2 } from 'lucide-vue-next';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';

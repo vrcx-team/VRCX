@@ -111,36 +111,39 @@
                 :hint="screenshotMetadataDialog.metadata.author.displayName"
                 style="color: var(--el-text-color-secondary); font-family: monospace" />
             <br />
-            <el-carousel
-                ref="screenshotMetadataCarouselRef"
-                :interval="0"
-                :initial-index="1"
-                indicator-position="none"
-                arrow="always"
-                height="600px"
-                style="margin-top: 10px"
-                @change="screenshotMetadataCarouselChange">
-                <el-carousel-item>
-                    <img
-                        class="x-link"
-                        :src="screenshotMetadataDialog.metadata.previousFilePath"
-                        style="width: 100%; height: 100%; object-fit: contain" />
-                </el-carousel-item>
-                <el-carousel-item>
-                    <img
-                        class="x-link"
-                        :src="screenshotMetadataDialog.metadata.filePath"
-                        style="width: 100%; height: 100%; object-fit: contain"
-                        @click="showFullscreenImageDialog(screenshotMetadataDialog.metadata.filePath)" />
-                </el-carousel-item>
-                <el-carousel-item>
-                    <img
-                        class="x-link"
-                        :src="screenshotMetadataDialog.metadata.nextFilePath"
-                        style="width: 100%; height: 100%; object-fit: contain" />
-                </el-carousel-item>
-            </el-carousel>
-            <br />
+            <div class="my-2 w-[95%] ml-6.5">
+                <Carousel :opts="{ loop: false }" @init-api="handleScreenshotMetadataCarouselInit">
+                    <CarouselContent class="h-150">
+                        <CarouselItem>
+                            <div class="h-150 w-full">
+                                <img
+                                    class="x-link"
+                                    :src="screenshotMetadataDialog.metadata.previousFilePath"
+                                    style="width: 100%; height: 100%; object-fit: contain" />
+                            </div>
+                        </CarouselItem>
+                        <CarouselItem>
+                            <div class="h-150 w-full">
+                                <img
+                                    class="x-link"
+                                    :src="screenshotMetadataDialog.metadata.filePath"
+                                    style="width: 100%; height: 100%; object-fit: contain"
+                                    @click="showFullscreenImageDialog(screenshotMetadataDialog.metadata.filePath)" />
+                            </div>
+                        </CarouselItem>
+                        <CarouselItem>
+                            <div class="h-150 w-full">
+                                <img
+                                    class="x-link"
+                                    :src="screenshotMetadataDialog.metadata.nextFilePath"
+                                    style="width: 100%; height: 100%; object-fit: contain" />
+                            </div>
+                        </CarouselItem>
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                </Carousel>
+            </div>
             <template v-if="screenshotMetadataDialog.metadata.error">
                 <pre
                     style="white-space: pre-wrap; font-size: 12px"
@@ -161,6 +164,7 @@
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
     import { reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
@@ -219,11 +223,20 @@
     });
 
     const screenshotMetadataSearchInputs = ref(0);
-    const screenshotMetadataCarouselRef = ref(null);
+    const screenshotMetadataCarouselApi = ref(null);
+    const ignoreCarouselSelect = ref(false);
 
     const handleComponentKeyup = (event) => {
         const carouselNavigation = { ArrowLeft: 0, ArrowRight: 2 }[event.key];
         if (typeof carouselNavigation !== 'undefined' && props.isScreenshotMetadataDialogVisible) {
+            if (screenshotMetadataCarouselApi.value) {
+                if (event.key === 'ArrowLeft') {
+                    screenshotMetadataCarouselApi.value.scrollPrev();
+                } else {
+                    screenshotMetadataCarouselApi.value.scrollNext();
+                }
+                return;
+            }
             screenshotMetadataCarouselChange(carouselNavigation);
         }
     };
@@ -407,9 +420,7 @@
                 getAndDisplayScreenshot(D.metadata.filePath);
             }
         }
-        if (typeof screenshotMetadataCarouselRef.value !== 'undefined') {
-            screenshotMetadataCarouselRef.value.setActiveItem(1);
-        }
+        resetCarouselIndex();
 
         if (fullscreenImageDialog.value.visible) {
             // TODO
@@ -451,11 +462,36 @@
             }
         }
 
-        if (typeof screenshotMetadataCarouselRef.value !== 'undefined') {
-            screenshotMetadataCarouselRef.value.setActiveItem(1);
-        }
+        resetCarouselIndex();
 
         D.searchIndex = searchIndex;
+    }
+
+    function handleScreenshotMetadataCarouselInit(api) {
+        screenshotMetadataCarouselApi.value = api;
+        api.on('select', handleCarouselSelect);
+        api.on('reInit', handleCarouselSelect);
+        resetCarouselIndex();
+    }
+
+    function handleCarouselSelect() {
+        if (ignoreCarouselSelect.value || !screenshotMetadataCarouselApi.value) {
+            return;
+        }
+        const index = screenshotMetadataCarouselApi.value.selectedScrollSnap();
+        screenshotMetadataCarouselChange(index);
+    }
+
+    function resetCarouselIndex() {
+        const api = screenshotMetadataCarouselApi.value;
+        if (!api) {
+            return;
+        }
+        ignoreCarouselSelect.value = true;
+        api.scrollTo(1, true);
+        setTimeout(() => {
+            ignoreCarouselSelect.value = false;
+        }, 0);
     }
 
     async function getAndDisplayScreenshot(path, needsCarouselFiles = true) {
