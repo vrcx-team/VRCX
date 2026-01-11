@@ -10,18 +10,16 @@
             <span>{{ t('dialog.edit_send_invite_message.description') }}</span>
         </div>
 
-        <el-input
+        <InputGroupCharCount
             v-model="editAndSendInviteDialog.newMessage"
-            type="textarea"
-            size="small"
-            maxlength="64"
-            show-word-limit
-            :autosize="{ minRows: 2, maxRows: 5 }"
-            placeholder=""
-            style="margin-top: 10px"></el-input>
+            :maxlength="64"
+            multiline
+            rows="2"
+            class="mt-2.5"
+            placeholder="" />
 
         <template #footer>
-            <Button variant="secondary" @click="cancelEditAndSendInvite">
+            <Button variant="secondary" class="mr-2" @click="cancelEditAndSendInvite">
                 {{ t('dialog.edit_send_invite_message.cancel') }}
             </Button>
             <Button @click="saveEditAndSendInvite" :disabled="!editAndSendInviteDialog.newMessage">
@@ -33,6 +31,7 @@
 
 <script setup>
     import { Button } from '@/components/ui/button';
+    import { InputGroupCharCount } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

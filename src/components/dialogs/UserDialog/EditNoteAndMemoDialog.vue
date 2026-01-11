@@ -11,17 +11,13 @@
         <template v-if="!hideUserNotes || (hideUserNotes && hideUserMemos)">
             <span class="name">{{ t('dialog.user.info.note') }}</span>
             <br />
-            <el-input
+            <InputGroupCharCount
                 v-model="note"
-                class="extra"
-                type="textarea"
-                maxlength="256"
-                show-word-limit
-                :rows="6"
-                :autosize="{ minRows: 2, maxRows: 20 }"
+                :maxlength="256"
+                multiline
+                rows="6"
                 :placeholder="t('dialog.user.info.note_placeholder')"
-                size="small"
-                resize="none"></el-input>
+                input-class="extra resize-none" />
         </template>
         <template v-if="!hideUserMemos || (hideUserNotes && hideUserMemos)">
             <span class="name">{{ t('dialog.user.info.memo') }}</span>
@@ -47,6 +43,7 @@
 
 <script setup>
     import { ref, watch } from 'vue';
+    import { InputGroupCharCount } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

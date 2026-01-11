@@ -65,15 +65,12 @@
 
             <el-table-column :label="t('table.import.note')" prop="memo">
                 <template #default="{ row }">
-                    <el-input
+                    <InputGroupCharCount
                         v-model="row.memo"
-                        type="textarea"
-                        maxlength="256"
-                        show-word-limit
-                        :rows="2"
-                        :autosize="{ minRows: 1, maxRows: 10 }"
-                        size="small"
-                        resize="none"></el-input>
+                        :maxlength="256"
+                        multiline
+                        rows="2"
+                        input-class="min-h-0 py-1 resize-none" />
                 </template>
             </el-table-column>
 
@@ -89,6 +86,7 @@
 <script setup>
     import { ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupCharCount } from '@/components/ui/input-group';
     import { Loading } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

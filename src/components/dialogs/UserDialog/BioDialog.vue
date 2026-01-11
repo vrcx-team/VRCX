@@ -6,16 +6,13 @@
         width="600px"
         append-to-body>
         <div v-loading="bioDialog.loading">
-            <el-input
+            <InputGroupCharCount
                 v-model="bioDialog.bio"
-                type="textarea"
-                size="small"
-                maxlength="512"
-                show-word-limit
-                :autosize="{ minRows: 5, maxRows: 20 }"
+                :maxlength="512"
+                multiline
+                rows="5"
                 :placeholder="t('dialog.bio.bio_placeholder')"
-                style="margin-bottom: 10px">
-            </el-input>
+                class="mb-2.5" />
 
             <el-input
                 v-for="(link, index) in bioDialog.bioLinks"
@@ -48,6 +45,7 @@
 
 <script setup>
     import { Delete } from '@element-plus/icons-vue';
+    import { InputGroupCharCount } from '@/components/ui/input-group';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

@@ -7,14 +7,13 @@
         @close="closeDialog">
         <div style="font-size: 12px">{{ t('dialog.youtube_api.description') }} <br /></div>
 
-        <el-input
+        <InputGroupCharCount
             v-model="youTubeApiKey"
-            type="textarea"
             :placeholder="t('dialog.youtube_api.placeholder')"
-            maxlength="39"
-            show-word-limit
-            style="display: block; margin-top: 10px">
-        </el-input>
+            :maxlength="39"
+            multiline
+            rows="2"
+            class="mt-2.5" />
 
         <template #footer>
             <div class="flex items-center justify-between">
@@ -31,6 +30,7 @@
 
 <script setup>
     import { Button } from '@/components/ui/button';
+    import { InputGroupCharCount } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

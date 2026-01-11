@@ -41,13 +41,12 @@
                 </SelectContent>
             </Select>
 
-            <el-input
+            <InputGroupCharCount
                 v-model="socialStatusDialog.statusDescription"
                 :placeholder="t('dialog.social_status.status_placeholder')"
-                maxlength="32"
-                show-word-limit
+                :maxlength="32"
                 clearable
-                style="margin-top: 10px"></el-input>
+                class="mt-2.5" />
             <Collapsible v-model:open="isOpen" class="mt-3 flex w-full flex-col gap-2">
                 <div class="flex items-center justify-between gap-4 px-4">
                     <h4 class="text-sm font-semibold">{{ t('dialog.social_status.history') }}</h4>
@@ -90,6 +89,7 @@
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { ChevronsUpDown } from 'lucide-vue-next';
+    import { InputGroupCharCount } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

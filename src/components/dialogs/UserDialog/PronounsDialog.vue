@@ -6,15 +6,12 @@
         width="600px"
         append-to-body>
         <div v-loading="pronounsDialog.loading">
-            <el-input
-                type="textarea"
+            <InputGroupCharCount
                 v-model="pronounsDialog.pronouns"
-                size="small"
-                maxlength="32"
-                show-word-limit
-                :autosize="{ minRows: 2, maxRows: 5 }"
-                :placeholder="t('dialog.pronouns.pronouns_placeholder')">
-            </el-input>
+                :maxlength="32"
+                multiline
+                rows="2"
+                :placeholder="t('dialog.pronouns.pronouns_placeholder')" />
         </div>
         <template #footer>
             <el-button type="primary" :disabled="pronounsDialog.loading" @click="savePronouns">
@@ -25,6 +22,7 @@
 </template>
 
 <script setup>
+    import { InputGroupCharCount } from '@/components/ui/input-group';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

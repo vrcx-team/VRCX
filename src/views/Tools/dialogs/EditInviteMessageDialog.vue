@@ -7,18 +7,12 @@
         @close="closeDialog">
         <div style="font-size: 12px">
             <span>{{ t('dialog.edit_invite_message.description') }}</span>
-            <el-input
-                v-model="message"
-                type="textarea"
-                size="small"
-                maxlength="64"
-                show-word-limit
-                :autosize="{ minRows: 2, maxRows: 5 }"
-                placeholder=""
-                style="margin-top: 10px"></el-input>
+            <InputGroupCharCount v-model="message" :maxlength="64" multiline rows="2" class="mt-2.5" placeholder="" />
         </div>
         <template #footer>
-            <Button variant="secondary" @click="closeDialog">{{ t('dialog.edit_invite_message.cancel') }}</Button>
+            <Button variant="secondary" class="mr-2" @click="closeDialog">{{
+                t('dialog.edit_invite_message.cancel')
+            }}</Button>
             <Button @click="saveEditInviteMessage">{{ t('dialog.edit_invite_message.save') }}</Button>
         </template>
     </el-dialog>
@@ -27,6 +21,7 @@
 <script setup>
     import { ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupCharCount } from '@/components/ui/input-group';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
