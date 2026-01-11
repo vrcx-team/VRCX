@@ -157,6 +157,7 @@
     );
 
     const { table, pagination } = useVrcxVueTable({
+        persistKey: 'friendLog',
         data: friendLogDisplayData,
         columns,
         getRowId: (row) => `${row.type}:${row.rowId ?? row.userId ?? row.created_at ?? ''}`,

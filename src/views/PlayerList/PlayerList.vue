@@ -278,6 +278,7 @@
     const playerListDisplayData = computed(() => currentInstanceUsersData.value ?? []);
 
     const { table: playerListTable } = useVrcxVueTable({
+        persistKey: 'playerList',
         data: playerListDisplayData,
         columns: playerListColumns.value,
         getRowId: (row) => `${row?.ref?.id ?? ''}:${row?.displayName ?? ''}:${row?.photonId ?? ''}`,

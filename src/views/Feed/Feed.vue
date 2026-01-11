@@ -76,6 +76,7 @@
     );
 
     const { table, pagination } = useVrcxVueTable({
+        persistKey: 'feed',
         data: feedDisplayData,
         columns: baseColumns,
         getRowId: (row) => `${row.type}:${row.rowId}:${row.created_at ?? ''}`,

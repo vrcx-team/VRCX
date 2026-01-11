@@ -145,6 +145,7 @@
     );
 
     const { table, pagination } = useVrcxVueTable({
+        persistKey: 'moderation',
         data: moderationDisplayData,
         columns,
         getRowId: (row) => row.id ?? `${row.type}:${row.sourceUserId}:${row.targetUserId}:${row.created ?? ''}`,

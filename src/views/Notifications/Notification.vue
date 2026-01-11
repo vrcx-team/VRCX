@@ -213,6 +213,7 @@
     );
 
     const { table, pagination } = useVrcxVueTable({
+        persistKey: 'notifications',
         data: notificationDisplayData,
         columns,
         getRowId: (row) => row.id ?? `${row.type}:${row.senderUserId ?? ''}:${row.created_at ?? ''}`,

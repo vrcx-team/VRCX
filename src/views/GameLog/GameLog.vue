@@ -156,6 +156,7 @@
     );
 
     const { table, pagination } = useVrcxVueTable({
+        persistKey: 'gameLog',
         data: gameLogDisplayData,
         columns,
         getRowId: (row) => `${row.type}:${row.rowId ?? row.displayName + row.location + row.time}`,

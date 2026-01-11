@@ -7,7 +7,42 @@ import {
     isFunction,
     useVueTable
 } from '@tanstack/vue-table';
-import { ref, unref } from 'vue';
+import { ref, unref, watch } from 'vue';
+
+function safeJsonParse(str) {
+    if (!str) {
+        return null;
+    }
+    try {
+        return JSON.parse(str);
+    } catch {
+        return null;
+    }
+}
+
+function debounce(fn, wait) {
+    let t = 0;
+    return (...args) => {
+        if (t) {
+            clearTimeout(t);
+        }
+        t = setTimeout(() => fn(...args), wait);
+    };
+}
+
+function filterSizingByColumns(sizing, columns) {
+    if (!sizing || typeof sizing !== 'object') {
+        return {};
+    }
+    const ids = new Set((columns ?? []).map((c) => c?.id).filter(Boolean));
+    const out = {};
+    for (const [key, value] of Object.entries(sizing)) {
+        if (ids.has(key)) {
+            out[key] = value;
+        }
+    }
+    return out;
+}
 
 function getColumnId(col) {
     return col?.id ?? col?.accessorKey ?? null;
@@ -98,6 +133,10 @@ export function useVrcxVueTable(options) {
         fillRemainingSpace = true,
         spacerColumnId = '__spacer',
 
+        persistKey,
+        persistColumnSizing = true,
+        persistDebounceMs = 200,
+
         tableOptions = {}
     } = options ?? {};
 
@@ -111,6 +150,29 @@ export function useVrcxVueTable(options) {
     const pagination = ref(initialPagination ?? { pageIndex: 0, pageSize: 50 });
     const columnPinning = ref(initialColumnPinning ?? { left: [], right: [] });
     const columnSizing = ref(initialColumnSizing ?? {});
+
+    const storageKey = persistKey ? `vrcx:table:${persistKey}` : null;
+
+    function readPersisted() {
+        if (!storageKey) {
+            return null;
+        }
+        return safeJsonParse(localStorage.getItem(storageKey));
+    }
+
+    function writePersisted(patch) {
+        if (!storageKey) {
+            return;
+        }
+        const cur = safeJsonParse(localStorage.getItem(storageKey)) ?? {};
+        const next = { ...cur, ...patch, updatedAt: Date.now() };
+        localStorage.setItem(storageKey, JSON.stringify(next));
+    }
+
+    const persisted = readPersisted();
+    if (persisted && persistColumnSizing && persisted.columnSizing) {
+        columnSizing.value = persisted.columnSizing;
+    }
 
     const state = {};
     const handlers = {};
@@ -198,6 +260,24 @@ export function useVrcxVueTable(options) {
 
         ...tableOptions
     });
+
+    const persistWrite = debounce(
+        (payload) => writePersisted(payload),
+        persistDebounceMs
+    );
+
+    if (storageKey && persistColumnSizing) {
+        watch(
+            columnSizing,
+            (val) => {
+                const cols = table.getAllLeafColumns?.() ?? [];
+                persistWrite({
+                    columnSizing: filterSizingByColumns(val, cols)
+                });
+            },
+            { deep: true }
+        );
+    }
 
     return {
         table,
