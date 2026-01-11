@@ -384,7 +384,7 @@ html.dark,
     }
 }
 
-:root[data-theme='darkgrey'] {
+:root[data-theme='dark'] {
     --el-bg-color: var(--color-neutral-900);
     --el-bg-color-page: var(--color-neutral-900);
     --el-bg-color-overlay: var(--color-neutral-800);

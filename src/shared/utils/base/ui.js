@@ -50,25 +50,6 @@ function applyThemeFonts(themeKey, fontLinks = []) {
     });
 }
 
-function ensureStylesheetLink(id) {
-    const linkEl = /** @type {HTMLLinkElement | null} */ (
-        document.getElementById(id)
-    );
-    if (!linkEl) {
-        const created = document.createElement('link');
-        created.setAttribute('id', id);
-        created.rel = 'stylesheet';
-        document.head.appendChild(created);
-        return created;
-    }
-    return linkEl;
-}
-
-function removeStylesheetLink(id) {
-    const linkEl = document.getElementById(id);
-    linkEl?.remove();
-}
-
 function changeAppThemeStyle(themeMode) {
     if (themeMode === 'system') {
         themeMode = systemIsDarkMode() ? 'dark' : 'light';
@@ -83,36 +64,11 @@ function changeAppThemeStyle(themeMode) {
         themeConfig = THEME_CONFIG[themeMode];
     }
 
-    const cssFiles = Array.isArray(themeConfig.cssFiles)
-        ? themeConfig.cssFiles.filter(Boolean)
-        : themeConfig.cssFile
-          ? [themeConfig.cssFile]
-          : [];
-
-    if (cssFiles.length > 0) {
-        const $appThemeStyle = ensureStylesheetLink('app-theme-style');
-        $appThemeStyle.href = cssFiles[0];
-    } else {
-        removeStylesheetLink('app-theme-style');
-    }
-
-    if (cssFiles.length > 1) {
-        const $appThemeOverlayStyle = ensureStylesheetLink(
-            'app-theme-overlay-style'
-        );
-        $appThemeOverlayStyle.href = cssFiles[1];
-    } else {
-        removeStylesheetLink('app-theme-overlay-style');
-    }
-
     applyThemeFonts(themeMode, themeConfig.fontLinks);
 
     document.documentElement.setAttribute('data-theme', themeMode);
 
-    const shouldUseDarkClass =
-        typeof themeConfig.useDarkClass === 'boolean'
-            ? themeConfig.useDarkClass
-            : Boolean(themeConfig.isDark);
+    const shouldUseDarkClass = Boolean(themeConfig.isDark);
     if (shouldUseDarkClass) {
         document.documentElement.classList.add('dark');
     } else {
