@@ -21,7 +21,10 @@
         "about": "關於",
         "profile": "個人檔案",
         "settings": "設定",
-        "help_support": "協助與支援"
+        "manage": "管理",
+        "help_support": "協助與支援",
+        "expand_menu": "展開選單",
+        "collapse_menu": "收起選單"
     },
     "nav_menu": {
         "resources": "資源",
@@ -172,12 +175,28 @@
                 "local_favorites": "本地收藏列表 (需要 VRC+)",
                 "new_group": "新群組",
                 "refresh": "重新刷新",
-                "cancel_refresh": "取消刷新"
+                "cancel_refresh": "取消刷新",
+                "check_invalid": "檢查已刪除／私人角色",
+                "check_description": "偵測並移除群組中的無效角色",
+                "checking": "正在檢查無效角色…",
+                "check_progress": "進度：{current}/{total}",
+                "check_complete": "檢查完成！",
+                "check_summary": "已檢查 {total} 個角色，找到 {invalid} 個無效，已移除 {removed} 個",
+                "removed_list_header": "待刪除的角色：",
+                "copy_removed_ids": "複製角色 ID",
+                "copied_ids": "已將角色 ID 複製到剪貼簿",
+                "checking_progress": "正在檢查角色（{current}/{total}）…",
+                "confirm_delete_invalid": "刪除無效角色？",
+                "confirm_delete_description": "發現 {count} 個無效角色，要刪除嗎？",
+                "delete_summary": "成功刪除 {removed} 個無效角色",
+                "no_invalid_found": "未發現無效角色",
+                "delete_cancelled": "已取消刪除操作"
             },
             "edit_mode": "編輯模式",
             "copy": "複製",
             "clear": "清除",
             "select_all": "選擇全部",
+            "deselect_all": "取消選擇全部",
             "bulk_unfavorite_mode": "批次解除好友",
             "refresh_favorites_tooltip": "重新整理 VRChat 收藏",
             "export": "匯出",
@@ -245,7 +264,10 @@
                     "invite": "邀請",
                     "joinRequest": "加入請求",
                     "transfer": "轉移",
-                    "queueReady": "排隊準備"
+                    "queueReady": "排隊準備",
+                    "event": {
+                        "created": "群組活動已建立"
+                    }
                 },
                 "moderation": {
                     "warning": {
@@ -260,6 +282,15 @@
                 },
                 "badge": {
                     "earned": "徽章獲取"
+                },
+                "vrcplus": {
+                    "gift": "VRC+ 禮物"
+                },
+                "localNotifs": "系統",
+                "economy": {
+                    "received": {
+                        "gift": "已接收禮物"
+                    }
                 }
             }
         },
@@ -269,6 +300,10 @@
             "bulk_unfriend_selection": "批次解除已選擇的好友",
             "load": "讀取缺失的項目",
             "load_tooltip": "讀取",
+            "load_dialog_title": "載入缺少的項目",
+            "load_dialog_message": "正在取得你好友資料中缺少的欄位。",
+            "load_cancel": "取消",
+            "load_complete": "已載入缺少的項目",
             "favorites_only_tooltip": "僅篩選收藏",
             "search_placeholder": "搜尋好友",
             "filter_placeholder": "篩選好友",
@@ -339,6 +374,22 @@
                 "tooltip": {
                     "mutual_friends_count": "共同好友：{count}",
                     "edge": "{source} ↔ {target}"
+                },
+                "force_dialog": {
+                    "open_label": "調整圖表佈局設定",
+                    "title": "圖表佈局設定",
+                    "description": "微調用來繪製共同好友關係圖的力導向佈局。",
+                    "repulsion": "排斥力",
+                    "edge_length_min": "連線長度（最小）",
+                    "edge_length_max": "連線長度（最大）",
+                    "gravity": "重力",
+                    "apply": "套用",
+                    "reset": "重設",
+                    "repulsion_help": "節點之間的排斥力。",
+                    "edge_length_min_help": "已連線節點之間的最小距離。",
+                    "edge_length_max_help": "已連線節點之間的最大距離。",
+                    "gravity_help": "拉向圖表中心的力量強度。",
+                    "invalid_input": "請輸入非負數。"
                 }
             }
         },
@@ -510,6 +561,7 @@
                     "zoom": "介面縮放",
                     "vrcplus_profile_icons": "VRChat+ 個人檔案圖示",
                     "tooltips": "工具提示",
+                    "show_instance_id": "顯示房間 ID",
                     "age_gated_instances": "年齡限制房間",
                     "nicknames": "備註暱稱",
                     "sort_favorite_by": "收藏排序依據",
@@ -518,7 +570,11 @@
                     "sort_instance_users_by": "房間用戶排序依據",
                     "sort_instance_users_by_time": "時間",
                     "sort_instance_users_by_alphabet": "字母順序",
-                    "table_max_size": "表格大小"
+                    "table_max_size": "表格大小",
+                    "table_page_sizes": "表格每頁筆數",
+                    "table_page_sizes_error": "每頁筆數必須是 1 到 1000 之間的數字",
+                    "show_notification_icon_dot": "顯示通知圖示提示點",
+                    "compact_table_mode": "精簡表格模式"
                 },
                 "timedate": {
                     "header": "時間 / 日期",
@@ -526,6 +582,9 @@
                     "time_format_24": "24 小時制",
                     "time_format_12": "12 小時制",
                     "force_iso_date_format": "強制使用 ISO 時間格式"
+                },
+                "theme_color": {
+                    "header": "主題顏色"
                 },
                 "side_panel": {
                     "header": "側邊欄",
@@ -908,6 +967,7 @@
                 "edit_pronouns": "代稱",
                 "report_hacking": "檢舉駭客行為",
                 "unfriend": "解除好友",
+                "unfriend_success_msg": "已解除好友",
                 "logout": "登出"
             },
             "info": {
@@ -943,7 +1003,7 @@
                 "friended": "好友",
                 "unfriended": "解除好友",
                 "avatar_cloning": "角色複製",
-                "booping": "正在戳",
+                "booping": "戳一戳功能",
                 "avatar_cloning_allow": "允許",
                 "avatar_cloning_deny": "不允許",
                 "home_location": "家點",
@@ -1409,7 +1469,23 @@
             "description": "輸入你的 Google 翻譯 API 金鑰",
             "placeholder": "Google 翻譯 API 金鑰",
             "guide": "使用指南",
-            "save": "儲存"
+            "mode": "服務提供者",
+            "mode_google": "Google 翻譯",
+            "mode_openai": "OpenAI",
+            "test": "測試",
+            "save": "儲存",
+            "msg_disabled": "翻譯 API 已停用",
+            "msg_fill_endpoint_model": "請填寫 API 端點與模型",
+            "msg_settings_invalid": "翻譯設定無效",
+            "msg_settings_saved": "翻譯設定已儲存",
+            "msg_test_success": "測試成功",
+            "msg_test_failed": "測試失敗",
+            "openai": {
+                "endpoint": "API 端點",
+                "api_key": "API 金鑰（選填）",
+                "model": "模型名稱",
+                "prompt_optional": "提示詞（選填）"
+            }
         },
         "set_world_tags": {
             "header": "設定世界標籤",
@@ -1792,7 +1868,7 @@
             "edit_post": "編輯貼文"
         },
         "boop_dialog": {
-            "header": "Boop",
+            "header": "戳一下",
             "emoji_manager": "管理表情符號",
             "select_emoji": "選擇表情符號",
             "my_emojis": "我的表情符號",
@@ -1820,7 +1896,8 @@
                 "created": "建立日期",
                 "description": "描述",
                 "export_to_calendar": "匯出至行事曆",
-                "download_ics": "下載 .ics 檔案"
+                "download_ics": "下載 .ics 檔案",
+                "copied_event_link": "行事曆活動網址已複製至剪貼簿"
             },
             "featured_events": "精選活動"
         },
@@ -1840,6 +1917,9 @@
         "confirm_button": "確定",
         "cancel_button": "取消",
         "message": "繼續 {command}?"
+    },
+    "status": {
+        "title": "VRChat 狀態"
     },
     "message": {
         "vrcx_updater": {
@@ -1884,7 +1964,7 @@
             "uploaded": "角色圖庫圖片上傳成功",
             "failed": "上傳角色圖庫圖片失敗",
             "deleted": "角色圖庫圖片刪除成功",
-            "not_found": "角色圖庫 fileId 未找到",
+            "not_found": "角色圖庫檔案 ID 未找到",
             "already_first": "已是第一張圖片",
             "already_last": "已是最後一張圖片",
             "reordered": "成功重新排列角色圖庫圖片"
@@ -1905,6 +1985,9 @@
         "screenshot_metadata": {
             "deleted": "刪除截圖附加資料",
             "delete_failed": "刪除截圖附加資料失敗"
+        },
+        "crash": {
+            "vrcx_reload": "為確保穩定性，已重新載入 VRCX"
         }
     },
     "prompt": {
@@ -2145,6 +2228,9 @@
         }
     },
     "table": {
+        "pagination": {
+            "rows_per_page": "每頁行數"
+        },
         "feed": {
             "date": "時間",
             "type": "類型",
@@ -2350,7 +2436,8 @@
                 "vpn_in_use": "VRChat 目前封鎖大部分 VPN。請停用任何已連線的 VPN 並重試。",
                 "login_error": "登入錯誤",
                 "invalid_json_response": "無效的 JSON 回應",
-                "403_404_bailing_request": "由於最近發生 404/403 錯誤而放棄請求"
+                "403_404_bailing_request": "由於最近發生 404/403 錯誤而放棄請求",
+                "unavailable": "服務可能因 VRChat 內部問題而無法使用"
             }
         }
     }
