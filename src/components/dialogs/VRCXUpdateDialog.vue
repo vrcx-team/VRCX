@@ -53,25 +53,26 @@
         </div>
 
         <template #footer>
-            <el-button v-if="updateInProgress" type="primary" @click="cancelUpdate">
+            <Button variant="secondary" class="mr-2" v-if="updateInProgress" @click="cancelUpdate">
                 {{ t('dialog.vrcx_updater.cancel') }}
-            </el-button>
-            <el-button
+            </Button>
+            <Button
+                variant="default"
                 v-if="VRCXUpdateDialog.release !== pendingVRCXInstall"
                 :disabled="updateInProgress"
-                type="primary"
                 @click="installVRCXUpdate">
                 {{ t('dialog.vrcx_updater.download') }}
-            </el-button>
-            <el-button v-if="!updateInProgress && pendingVRCXInstall" type="primary" @click="restartVRCX(true)">
+            </Button>
+            <Button variant="default" v-if="!updateInProgress && pendingVRCXInstall" @click="restartVRCX(true)">
                 {{ t('dialog.vrcx_updater.install') }}
-            </el-button>
+            </Button>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
     import { nextTick, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

@@ -78,15 +78,16 @@
 
         <template #footer>
             <div style="display: flex">
-                <el-button type="primary" style="margin-left: auto" @click="closeDialog">
+                <Button @click="closeDialog">
                     {{ t('dialog.notification_position.ok') }}
-                </el-button>
+                </Button>
             </div>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

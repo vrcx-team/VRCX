@@ -25,9 +25,9 @@
                 clearable
                 style="width: 150px"
                 @input="photonEventTableFilterChange"></el-input>
-            <el-button @click="emitShowChatboxBlacklist">{{
+            <Button variant="outline" @click="emitShowChatboxBlacklist">{{
                 t('view.player_list.photon.chatbox_blacklist')
-            }}</el-button>
+            }}</Button>
             <TooltipWrapper side="bottom" :content="t('view.player_list.photon.status_tooltip')">
                 <div style="display: inline-flex; align-items: center; font-size: 14px">
                     <span v-if="ipcEnabled && !photonEventIcon">🟢</span>
@@ -389,6 +389,7 @@
 
 <script setup>
     import { ArrowRight, Download } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

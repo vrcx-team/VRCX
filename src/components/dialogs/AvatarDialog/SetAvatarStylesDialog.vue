@@ -68,15 +68,18 @@
         </template>
 
         <template #footer>
-            <el-button @click="closeSetAvatarStylesDialog">{{ t('dialog.set_avatar_styles.cancel') }}</el-button>
-            <el-button type="primary" @click="saveSetAvatarStylesDialog">
+            <Button variant="secondary" @click="closeSetAvatarStylesDialog">{{
+                t('dialog.set_avatar_styles.cancel')
+            }}</Button>
+            <Button @click="saveSetAvatarStylesDialog">
                 {{ t('dialog.set_avatar_styles.save') }}
-            </el-button>
+            </Button>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
+    import { Button } from '@/components/ui/button';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
     import { watch } from 'vue';

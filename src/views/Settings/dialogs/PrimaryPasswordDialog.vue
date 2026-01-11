@@ -25,20 +25,20 @@
             show-password>
         </el-input>
         <template #footer>
-            <el-button
-                type="primary"
+            <Button
                 :disabled="
                     enablePrimaryPasswordDialog.password.length === 0 ||
                     enablePrimaryPasswordDialog.password !== enablePrimaryPasswordDialog.rePassword
                 "
                 @click="handleSetPrimaryPassword()">
                 {{ t('dialog.primary_password.ok') }}
-            </el-button>
+            </Button>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

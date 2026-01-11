@@ -4,14 +4,13 @@
             <template #content>
                 <span>{{ t('dialog.user.info.last_join') }} <Timer :epoch="lastJoin" /></span>
             </template>
-            <el-icon style="display: inline-block"><Location /></el-icon>
+            <i class="ri-history-line"></i>
         </TooltipWrapper>
     </span>
 </template>
 
 <script setup>
     import { ref, watch } from 'vue';
-    import { Location } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

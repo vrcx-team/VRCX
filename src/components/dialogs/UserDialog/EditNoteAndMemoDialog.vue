@@ -38,8 +38,8 @@
         </template>
         <template #footer>
             <div class="dialog-footer">
-                <el-button @click="cancel">Cancel</el-button>
-                <el-button type="primary" @click="saveChanges"> Confirm </el-button>
+                <Button variant="secondary" @click="cancel">Cancel</Button>
+                <Button @click="saveChanges"> Confirm </Button>
             </div>
         </template>
     </el-dialog>

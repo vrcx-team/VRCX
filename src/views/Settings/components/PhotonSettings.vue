@@ -35,9 +35,9 @@
             </ToggleGroup>
         </div>
         <div class="options-container-item">
-            <el-button size="small" :icon="Timer" :disabled="!openVR" @click="promptPhotonOverlayMessageTimeout">{{
+            <Button size="sm" variant="outline" :disabled="!openVR" @click="promptPhotonOverlayMessageTimeout">{{
                 t('view.settings.advanced.photon.event_hud.message_timeout')
-            }}</el-button>
+            }}</Button>
         </div>
         <div class="options-container-item">
             <Select
@@ -92,15 +92,15 @@
             </ToggleGroup>
         </div>
         <div class="options-container-item">
-            <el-button size="small" :icon="Timer" :disabled="!openVR" @click="promptPhotonLobbyTimeoutThreshold">{{
+            <Button size="sm" variant="outline" :disabled="!openVR" @click="promptPhotonLobbyTimeoutThreshold">{{
                 t('view.settings.advanced.photon.timeout_hud.timeout_threshold')
-            }}</el-button>
+            }}</Button>
         </div>
     </div>
 </template>
 
 <script setup>
-    import { Timer } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

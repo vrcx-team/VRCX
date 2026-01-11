@@ -77,12 +77,12 @@
         </el-checkbox>
         <template #footer>
             <div style="display: flex">
-                <el-button @click="isVisible = false">
+                <Button variant="secondary" @click="isVisible = false">
                     {{ t('dialog.set_world_tags.cancel') }}
-                </el-button>
-                <el-button type="primary" @click="saveSetWorldTagsDialog">
+                </Button>
+                <Button @click="saveSetWorldTagsDialog">
                     {{ t('dialog.set_world_tags.save') }}
-                </el-button>
+                </Button>
             </div>
         </template>
     </el-dialog>
@@ -90,6 +90,7 @@
 
 <script setup>
     import { computed, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

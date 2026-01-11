@@ -13,9 +13,9 @@
                     <PopoverTrigger asChild>
                         <div>
                             <TooltipWrapper :content="t('view.charts.instance_activity.settings.header')" side="top">
-                                <el-button style="margin-right: 5px" circle
-                                    ><i class="ri-settings-3-line"></i
-                                ></el-button>
+                                <Button class="rounded-full mr-2" size="icon" variant="outline">
+                                    <Settings />
+                                </Button>
                             </TooltipWrapper>
                         </div>
                     </PopoverTrigger>
@@ -164,6 +164,8 @@
 <script setup>
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { Loading, Search } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
+    import { Settings } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

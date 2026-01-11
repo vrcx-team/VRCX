@@ -1,40 +1,29 @@
 <template>
-    <div style="flex: none">
+    <div style="flex: none" class="flex items-center">
         <template v-if="(currentUser.id !== userDialog.ref.id && userDialog.isFriend) || userDialog.isFavorite">
             <TooltipWrapper
                 v-if="userDialog.isFavorite"
                 side="top"
                 :content="t('dialog.user.actions.unfavorite_tooltip')">
-                <el-button
-                    type="warning"
-                    :icon="StarFilled"
-                    size="large"
-                    circle
-                    @click="userDialogCommand('Add Favorite')"></el-button>
+                <Button class="rounded-full" size="icon-lg" @click="userDialogCommand('Add Favorite')"><Star /></Button>
             </TooltipWrapper>
             <TooltipWrapper v-else side="top" :content="t('dialog.user.actions.favorite_tooltip')">
-                <el-button
-                    type="default"
-                    :icon="Star"
-                    size="large"
-                    circle
-                    @click="userDialogCommand('Add Favorite')"></el-button>
+                <Button class="rounded-full" size="icon-lg" variant="outline" @click="userDialogCommand('Add Favorite')"
+                    ><Star
+                /></Button>
             </TooltipWrapper>
         </template>
         <DropdownMenu>
             <DropdownMenuTrigger as-child>
-                <el-button
-                    :type="
-                        userDialog.incomingRequest || userDialog.outgoingRequest
-                            ? 'success'
-                            : userDialog.isBlock || userDialog.isMute
-                              ? 'danger'
-                              : 'default'
-                    "
-                    :icon="MoreFilled"
-                    size="large"
-                    circle
-                    style="margin-left: 5px"></el-button>
+                <div class="ml-2">
+                    <Button variant="outline" size="icon-lg" class="rounded-full">
+                        <Ellipsis />
+                        <span
+                            v-if="dotClass"
+                            class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-background"
+                            :class="dotClass" />
+                    </Button>
+                </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 <DropdownMenuItem @click="onCommand('Refresh')">
@@ -244,21 +233,20 @@
         Flag,
         Message,
         Microphone,
-        MoreFilled,
         Mute,
         Operation,
-        Picture,
         Plus,
         Pointer,
         Postcard,
         Refresh,
         Share,
-        Star,
-        StarFilled,
         SwitchButton,
         User,
         UserFilled
     } from '@element-plus/icons-vue';
+    import { MoreHorizontal as Ellipsis, Star } from 'lucide-vue-next';
+    import { Button } from '@/components/ui/button';
+    import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -284,6 +272,15 @@
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { lastLocation } = storeToRefs(useLocationStore());
+
+    const hasRequest = computed(() => userDialog.value.incomingRequest || userDialog.value.outgoingRequest);
+    const hasRisk = computed(() => userDialog.value.isBlock || userDialog.value.isMute);
+
+    const dotClass = computed(() => {
+        if (hasRequest.value) return 'bg-emerald-500';
+        if (hasRisk.value) return 'bg-destructive';
+        return null;
+    });
 
     function onCommand(command) {
         props.userDialogCommand(command);

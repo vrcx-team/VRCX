@@ -7,12 +7,12 @@
                         >Closed At: {{ formatDateFilter(props.instance.closedAt, 'long') }}<br
                     /></span>
                     <template v-if="state.canCloseInstance">
-                        <el-button
+                        <Button
+                            class="mt-1"
+                            size="sm"
                             :disabled="!!props.instance.closedAt"
-                            size="small"
-                            type="primary"
                             @click="closeInstance(props.location)">
-                            {{ t('dialog.user.info.close_instance') }} </el-button
+                            {{ t('dialog.user.info.close_instance') }} </Button
                         ><br /><br />
                     </template>
                     <span
@@ -64,6 +64,7 @@
 
 <script setup>
     import { reactive, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { CaretBottom } from '@element-plus/icons-vue';
     import { ElMessageBox } from 'element-plus';
     import { toast } from 'vue-sonner';

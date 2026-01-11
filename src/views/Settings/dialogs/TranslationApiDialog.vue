@@ -86,11 +86,9 @@
         </template>
 
         <template #footer>
-            <div style="display: flex">
-                <el-button v-if="form.translationApiType === 'openai'" @click="testOpenAiTranslation" plain>
-                    {{ t('dialog.translation_api.test') }}
-                </el-button>
-                <el-button
+            <div class="flex items-center justify-between">
+                <Button
+                    variant="outline"
                     v-if="form.translationApiType === 'google'"
                     @click="
                         openExternalLink(
@@ -98,10 +96,19 @@
                         )
                     ">
                     {{ t('dialog.translation_api.guide') }}
-                </el-button>
-                <el-button type="primary" style="margin-left: auto" @click="saveTranslationApiConfig">
-                    {{ t('dialog.translation_api.save') }}
-                </el-button>
+                </Button>
+                <div>
+                    <Button
+                        variant="secondary"
+                        class="mr-2"
+                        v-if="form.translationApiType === 'openai'"
+                        @click="testOpenAiTranslation">
+                        {{ t('dialog.translation_api.test') }}
+                    </Button>
+                    <Button style="margin-left: auto" @click="saveTranslationApiConfig">
+                        {{ t('dialog.translation_api.save') }}
+                    </Button>
+                </div>
             </div>
         </template>
     </el-dialog>
@@ -110,6 +117,7 @@
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { reactive, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

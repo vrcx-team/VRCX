@@ -14,18 +14,18 @@
                 style="margin-top: 5px"
                 @change="saveChatboxBlacklist">
                 <template #append>
-                    <el-button
-                        :icon="Delete"
+                    <Button
+                        variant="outline"
                         @click="
                             chatboxBlacklist.splice(index, 1);
                             saveChatboxBlacklist();
                         ">
-                    </el-button>
+                    </Button>
                 </template>
             </el-input>
-            <el-button size="small" style="margin-top: 5px" @click="chatboxBlacklist.push('')">
+            <Button size="sm" variant="outline" style="margin-top: 5px" @click="chatboxBlacklist.push('')">
                 {{ t('dialog.chatbox_blacklist.add_item') }}
-            </el-button>
+            </Button>
             <br />
             <h2>{{ t('dialog.chatbox_blacklist.user_blacklist') }}</h2>
             <Badge
@@ -55,7 +55,7 @@
 </template>
 
 <script setup>
-    import { Delete } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

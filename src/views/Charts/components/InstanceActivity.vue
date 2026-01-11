@@ -21,15 +21,24 @@
             </div>
 
             <div>
-                <TooltipWrapper :content="t('view.charts.instance_activity.refresh')" side="top"
-                    ><el-button :icon="Refresh" circle style="margin-right: 5px" @click="reloadData"></el-button
-                ></TooltipWrapper>
+                <TooltipWrapper :content="t('view.charts.instance_activity.refresh')" side="top">
+                    <Button
+                        class="rounded-full"
+                        size="icon"
+                        variant="outline"
+                        style="margin-right: 5px"
+                        @click="reloadData">
+                        <RefreshCcw />
+                    </Button>
+                </TooltipWrapper>
 
                 <Popover>
                     <PopoverTrigger asChild>
                         <div>
                             <TooltipWrapper :content="t('view.charts.instance_activity.settings.header')" side="top">
-                                <el-button :icon="Setting" style="margin-right: 5px" circle></el-button>
+                                <Button class="rounded-full" size="icon" variant="outline" style="margin-right: 5px">
+                                    <Settings />
+                                </Button>
                             </TooltipWrapper>
                         </div>
                     </PopoverTrigger>
@@ -132,7 +141,8 @@
 
 <script setup>
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-    import { ArrowLeft, ArrowRight, InfoFilled, Refresh, Setting, WarningFilled } from '@element-plus/icons-vue';
+    import { ArrowLeft, ArrowRight, InfoFilled, WarningFilled } from '@element-plus/icons-vue';
+    import { RefreshCcw, Settings } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { storeToRefs } from 'pinia';

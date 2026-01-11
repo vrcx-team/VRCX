@@ -1,10 +1,9 @@
 <template>
     <Popover v-model:open="visible">
         <PopoverTrigger asChild>
-            <el-button class="icon-picker__trigger" plain>
-                <i v-if="modelValue" :class="modelValue"></i>
-                <span>{{ t('nav_menu.icon_picker.pick_icon') }}</span>
-            </el-button>
+            <Button>
+                {{ t('nav_menu.icon_picker.pick_icon') }}
+            </Button>
         </PopoverTrigger>
         <PopoverContent side="bottom" align="start" class="w-155">
             <div class="icon-picker">
@@ -47,6 +46,7 @@
 
 <script setup>
     import { computed, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { useI18n } from 'vue-i18n';
 
     import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
@@ -145,14 +145,6 @@
 </script>
 
 <style scoped>
-    .icon-picker__trigger {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        min-width: 110px;
-        justify-content: center;
-    }
-
     .icon-picker__trigger i {
         font-size: 16px;
     }

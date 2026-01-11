@@ -38,13 +38,13 @@
         </template>
         <template v-else-if="!friend.ref && !isRefreshFriendsLoading">
             <span>{{ friend.name || friend.id }}</span>
-            <el-button
-                text
-                :icon="Close"
-                size="small"
-                style="margin-left: 5px"
-                @click.stop="$emit('confirm-delete-friend', friend.id)">
-            </el-button>
+            <Button
+                size="sm"
+                variant="ghost"
+                class="mr-1 w-6 h-6 text-xs"
+                @click.stop="$emit('confirm-delete-friend', friend.id)"
+                ><i class="ri-delete-bin-2-line"></i>
+            </Button>
         </template>
 
         <el-skeleton v-else animated class="skeleton" :throttle="100">
@@ -62,7 +62,8 @@
 </template>
 
 <script setup>
-    import { Close, Loading, WarningFilled } from '@element-plus/icons-vue';
+    import { Loading, WarningFilled } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

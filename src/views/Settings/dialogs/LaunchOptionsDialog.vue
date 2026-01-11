@@ -38,16 +38,23 @@
         </template>
 
         <template #footer>
-            <div style="display: flex">
-                <el-button @click="openExternalLink('https://docs.vrchat.com/docs/launch-options')">
-                    {{ t('dialog.launch_options.vrchat_docs') }}
-                </el-button>
-                <el-button @click="openExternalLink('https://docs.unity3d.com/Manual/CommandLineArguments.html')">
-                    {{ t('dialog.launch_options.unity_manual') }}
-                </el-button>
-                <el-button type="primary" style="margin-left: auto" @click="updateLaunchOptions">
+            <div class="flex items-center justify-between">
+                <div>
+                    <Button
+                        variant="outline"
+                        class="mr-2"
+                        @click="openExternalLink('https://docs.vrchat.com/docs/launch-options')">
+                        {{ t('dialog.launch_options.vrchat_docs') }}
+                    </Button>
+                    <Button
+                        variant="outline"
+                        @click="openExternalLink('https://docs.unity3d.com/Manual/CommandLineArguments.html')">
+                        {{ t('dialog.launch_options.unity_manual') }}
+                    </Button>
+                </div>
+                <Button @click="updateLaunchOptions">
                     {{ t('dialog.launch_options.save') }}
-                </el-button>
+                </Button>
             </div>
         </template>
     </el-dialog>
@@ -55,6 +62,7 @@
 
 <script setup>
     import { computed, ref } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

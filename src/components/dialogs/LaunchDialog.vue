@@ -8,20 +8,23 @@
                     style="width: 230px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
-                    <el-button
-                        size="small"
-                        :icon="CopyDocument"
-                        style="margin-left: 5px"
-                        circle
-                        @click="copyInstanceMessage(launchDialog.url)" />
+                    <Button
+                        class="rounded-full ml-1"
+                        size="icon-sm"
+                        variant="ghost"
+                        @click="copyInstanceMessage(launchDialog.url)"
+                        ><Copy
+                    /></Button>
                 </TooltipWrapper>
             </el-form-item>
             <el-form-item v-if="launchDialog.shortUrl">
                 <template #label>
-                    <span>{{ t('dialog.launch.short_url') }}</span>
-                    <TooltipWrapper side="top" :content="t('dialog.launch.short_url_notice')">
-                        <el-icon style="display: inline-block; margin-left: 5px"><Warning /></el-icon>
-                    </TooltipWrapper>
+                    <div class="flex items-center">
+                        <span>{{ t('dialog.launch.short_url') }}</span>
+                        <TooltipWrapper side="top" :content="t('dialog.launch.short_url_notice')">
+                            <el-icon style="display: inline-block; margin-left: 5px"><Warning /></el-icon>
+                        </TooltipWrapper>
+                    </div>
                 </template>
                 <el-input
                     v-model="launchDialog.shortUrl"
@@ -29,12 +32,13 @@
                     style="width: 230px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
-                    <el-button
-                        size="small"
-                        :icon="CopyDocument"
-                        style="display: inline-block; margin-left: 5px"
-                        circle
-                        @click="copyInstanceMessage(launchDialog.shortUrl)" />
+                    <Button
+                        class="rounded-full ml-1"
+                        size="icon-sm"
+                        variant="ghost"
+                        @click="copyInstanceMessage(launchDialog.shortUrl)"
+                        ><Copy
+                    /></Button>
                 </TooltipWrapper>
             </el-form-item>
             <el-form-item :label="t('dialog.launch.location')">
@@ -44,12 +48,13 @@
                     style="width: 230px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
-                    <el-button
-                        size="small"
-                        :icon="CopyDocument"
-                        style="display: inline-block; margin-left: 5px"
-                        circle
-                        @click="copyInstanceMessage(launchDialog.location)" />
+                    <Button
+                        class="rounded-full ml-1"
+                        size="icon-sm"
+                        variant="ghost"
+                        @click="copyInstanceMessage(launchDialog.location)"
+                        ><Copy
+                    /></Button>
                 </TooltipWrapper>
             </el-form-item>
         </el-form>
@@ -121,11 +126,12 @@
         DropdownMenuItem,
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
-    import { CopyDocument, Warning } from '@element-plus/icons-vue';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
+    import { Copy } from 'lucide-vue-next';
     import { ElMessageBox } from 'element-plus';
     import { MoreHorizontal } from 'lucide-vue-next';
+    import { Warning } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

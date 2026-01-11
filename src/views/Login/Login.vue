@@ -1,16 +1,14 @@
 <template>
     <div style="float: left; margin: 5px; z-index: 3000">
         <TooltipWrapper v-if="!noUpdater" side="top" :content="t('view.login.updater')">
-            <el-button type="default" size="small" :icon="Download" circle @click="showVRCXUpdateDialog"></el-button>
+            <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="showVRCXUpdateDialog"
+                ><CircleArrowDown
+            /></Button>
         </TooltipWrapper>
         <TooltipWrapper side="top" :content="t('view.login.proxy_settings')">
-            <el-button
-                type="default"
-                size="small"
-                :icon="Connection"
-                style="margin-left: 5px"
-                circle
-                @click="promptProxySettings"></el-button>
+            <Button class="rounded-full text-xs" size="icon-sm" variant="ghost" @click="promptProxySettings"
+                ><Route
+            /></Button>
         </TooltipWrapper>
     </div>
     <div v-loading="loginForm.loading" class="x-login-container">
@@ -79,16 +77,15 @@
                                 clearable></el-input>
                         </el-form-item>
                         <el-form-item>
-                            <el-button native-type="submit" type="primary" style="width: 100%">{{
-                                t('view.login.login')
-                            }}</el-button>
+                            <Button type="submit" size="lg" style="width: 100%">{{ t('view.login.login') }}</Button>
                         </el-form-item>
                     </el-form>
-                    <el-button
-                        type="primary"
+                    <Button
+                        variant="Secondary"
+                        size="lg"
                         style="width: 100%"
                         @click="openExternalLink('https://vrchat.com/register')"
-                        >{{ t('view.login.register') }}</el-button
+                        >{{ t('view.login.register') }}</Button
                     >
                 </div>
 
@@ -113,13 +110,14 @@
                                     <span class="extra" v-text="user.user.username"></span>
                                     <span class="extra" v-text="user.loginParams.endpoint"></span>
                                 </div>
-                                <el-button
-                                    type="default"
-                                    size="small"
-                                    :icon="Delete"
+                                <Button
+                                    class="rounded-full"
+                                    size="icon-sm"
+                                    variant="ghost"
                                     style="margin-left: 10px"
-                                    circle
-                                    @click.stop="clickDeleteSavedLogin(user.user.id)"></el-button>
+                                    @click.stop="clickDeleteSavedLogin(user.user.id)"
+                                    ><i class="ri-delete-bin-line h-3 w-3"></i
+                                ></Button>
                             </div>
                         </div>
                     </div>
@@ -149,8 +147,9 @@
 
 <script setup>
     import { onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
-    import { Connection, Delete, Download } from '@element-plus/icons-vue';
+    import { CircleArrowDown, Route } from 'lucide-vue-next';
     import { useRoute, useRouter } from 'vue-router';
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

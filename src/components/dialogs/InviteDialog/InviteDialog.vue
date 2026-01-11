@@ -9,22 +9,25 @@
         <div v-if="inviteDialog.visible" v-loading="inviteDialog.loading">
             <Location :location="inviteDialog.worldId" :link="false" />
             <br />
-            <el-button size="small" style="margin-top: 10px" @click="addSelfToInvite">{{
+            <Button size="sm" class="mr-2" variant="outline" style="margin-top: 10px" @click="addSelfToInvite">{{
                 t('dialog.invite.add_self')
-            }}</el-button>
-            <el-button
-                size="small"
+            }}</Button>
+            <Button
+                size="sm"
+                class="mr-2"
+                variant="outline"
                 :disabled="inviteDialog.friendsInInstance.length === 0"
                 style="margin-top: 10px"
                 @click="addFriendsInInstanceToInvite"
-                >{{ t('dialog.invite.add_friends_in_instance') }}</el-button
+                >{{ t('dialog.invite.add_friends_in_instance') }}</Button
             >
-            <el-button
-                size="small"
+            <Button
+                size="sm"
+                variant="outline"
                 :disabled="vipFriends.length === 0"
                 style="margin-top: 10px"
                 @click="addFavoriteFriendsToInvite"
-                >{{ t('dialog.invite.add_favorite_friends') }}</el-button
+                >{{ t('dialog.invite.add_favorite_friends') }}</Button
             >
 
             <div style="width: 100%; margin-top: 15px">
@@ -61,15 +64,16 @@
         </div>
 
         <template #footer>
-            <el-button :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="showSendInviteDialog">{{
-                t('dialog.invite.invite_with_message')
-            }}</el-button>
-            <el-button
-                type="primary"
+            <Button
+                variant="secondary"
+                class="mr-2"
                 :disabled="inviteDialog.loading || !inviteDialog.userIds.length"
-                @click="sendInvite"
-                >{{ t('dialog.invite.invite') }}</el-button
+                @click="showSendInviteDialog"
+                >{{ t('dialog.invite.invite_with_message') }}</Button
             >
+            <Button :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="sendInvite">{{
+                t('dialog.invite.invite')
+            }}</Button>
         </template>
         <SendInviteDialog
             v-model:sendInviteDialogVisible="sendInviteDialogVisible"
@@ -81,6 +85,7 @@
 
 <script setup>
     import { computed, ref } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { Check as CheckIcon } from 'lucide-vue-next';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';

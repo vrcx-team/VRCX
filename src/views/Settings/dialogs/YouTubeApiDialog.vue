@@ -17,19 +17,20 @@
         </el-input>
 
         <template #footer>
-            <div style="display: flex">
-                <el-button @click="openExternalLink('https://smashballoon.com/doc/youtube-api-key/')">
+            <div class="flex items-center justify-between">
+                <Button variant="outline" @click="openExternalLink('https://smashballoon.com/doc/youtube-api-key/')">
                     {{ t('dialog.youtube_api.guide') }}
-                </el-button>
-                <el-button type="primary" style="margin-left: auto" @click="testYouTubeApiKey">
+                </Button>
+                <Button style="margin-left: auto" @click="testYouTubeApiKey">
                     {{ t('dialog.youtube_api.save') }}
-                </el-button>
+                </Button>
             </div>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

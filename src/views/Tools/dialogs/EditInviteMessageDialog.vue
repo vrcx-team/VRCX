@@ -18,16 +18,15 @@
                 style="margin-top: 10px"></el-input>
         </div>
         <template #footer>
-            <el-button @click="closeDialog">{{ t('dialog.edit_invite_message.cancel') }}</el-button>
-            <el-button type="primary" @click="saveEditInviteMessage">{{
-                t('dialog.edit_invite_message.save')
-            }}</el-button>
+            <Button variant="secondary" @click="closeDialog">{{ t('dialog.edit_invite_message.cancel') }}</Button>
+            <Button @click="saveEditInviteMessage">{{ t('dialog.edit_invite_message.save') }}</Button>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
     import { ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

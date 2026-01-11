@@ -21,20 +21,24 @@
                 style="height: 62vh; overflow-y: auto; margin-top: 10px" />
         </div>
         <template #footer>
-            <el-button @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')">
+            <Button
+                variant="ghost"
+                class="mr-2"
+                @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')">
                 {{ t('dialog.change_log.github') }}
-            </el-button>
-            <el-button @click="openExternalLink('https://patreon.com/Natsumi_VRCX')">
+            </Button>
+            <Button variant="outline" class="mr-2" @click="openExternalLink('https://patreon.com/Natsumi_VRCX')">
                 {{ t('dialog.change_log.donate') }}
-            </el-button>
-            <el-button @click="closeDialog">
+            </Button>
+            <Button @click="closeDialog">
                 {{ t('dialog.change_log.close') }}
-            </el-button>
+            </Button>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
+    import { Button } from '@/components/ui/button';
     import { defineAsyncComponent } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

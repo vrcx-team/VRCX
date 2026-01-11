@@ -39,21 +39,21 @@
             </div>
         </div>
         <template #footer>
-            <el-button
-                type="primary"
+            <Button
                 :disabled="!moderateGroupDialog.userId || !moderateGroupDialog.groupId"
                 @click="
                     showGroupMemberModerationDialog(moderateGroupDialog.groupId, moderateGroupDialog.userId);
                     moderateGroupDialog.visible = false;
                 ">
                 {{ t('dialog.moderate_group.moderation_tools') }}
-            </el-button>
+            </Button>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
     import { computed, nextTick, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

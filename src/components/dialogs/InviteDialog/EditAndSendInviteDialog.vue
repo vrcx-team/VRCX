@@ -21,17 +21,18 @@
             style="margin-top: 10px"></el-input>
 
         <template #footer>
-            <el-button @click="cancelEditAndSendInvite">
+            <Button variant="secondary" @click="cancelEditAndSendInvite">
                 {{ t('dialog.edit_send_invite_message.cancel') }}
-            </el-button>
-            <el-button type="primary" @click="saveEditAndSendInvite" :disabled="!editAndSendInviteDialog.newMessage">
+            </Button>
+            <Button @click="saveEditAndSendInvite" :disabled="!editAndSendInviteDialog.newMessage">
                 {{ t('dialog.edit_send_invite_message.send') }}
-            </el-button>
+            </Button>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

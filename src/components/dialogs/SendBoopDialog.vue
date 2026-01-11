@@ -61,17 +61,22 @@
         </div>
 
         <template #footer>
-            <el-button size="small" @click="showGalleryPage">{{ t('dialog.boop_dialog.emoji_manager') }}</el-button>
-            <el-button size="small" @click="closeDialog">{{ t('dialog.boop_dialog.cancel') }}</el-button>
-            <el-button size="small" :disabled="!sendBoopDialog.userId" @click="sendBoop">{{
+            <Button size="sm" variant="outline" class="mr-2" @click="showGalleryPage">{{
+                t('dialog.boop_dialog.emoji_manager')
+            }}</Button>
+            <Button size="sm" variant="secondary" class="mr-2" @click="closeDialog">{{
+                t('dialog.boop_dialog.cancel')
+            }}</Button>
+            <Button size="sm" :disabled="!sendBoopDialog.userId" @click="sendBoop">{{
                 t('dialog.boop_dialog.send')
-            }}</el-button>
+            }}</Button>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
     import { computed, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { Check as CheckIcon } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

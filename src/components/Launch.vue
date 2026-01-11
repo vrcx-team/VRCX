@@ -1,13 +1,19 @@
 <template>
     <div v-if="isVisible" class="inline-block">
         <TooltipWrapper side="top" :content="t('dialog.user.info.launch_invite_tooltip')"
-            ><el-button @click="confirm" size="small" :icon="SwitchButton" circle />
+            ><Button
+                class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                size="icon"
+                variant="outline"
+                @click="confirm"
+                ><i class="ri-login-box-line"></i
+            ></Button>
         </TooltipWrapper>
     </div>
 </template>
 
 <script setup>
-    import { SwitchButton } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
 

@@ -5,15 +5,13 @@
                 :model-value="searchText"
                 :placeholder="t('view.search.search_placeholder')"
                 style="flex: 1"
+                clearable
                 @input="updateSearchText"
                 @keyup.enter="search"></el-input>
             <TooltipWrapper side="bottom" :content="t('view.search.clear_results_tooltip')">
-                <el-button
-                    type="default"
-                    :icon="Delete"
-                    circle
-                    style="flex: none; margin-left: 10px"
-                    @click="handleClearSearch"></el-button>
+                <Button class="rounded-full mr-2" size="icon-sm" variant="ghost" @click="handleClearSearch"
+                    ><Trash2
+                /></Button>
             </TooltipWrapper>
         </div>
         <el-tabs ref="searchTabRef" style="margin-top: 15px" @tab-click="searchText = ''">
@@ -337,10 +335,11 @@
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { Back, Delete, Refresh, Right } from '@element-plus/icons-vue';
+    import { Back, Refresh, Right } from '@element-plus/icons-vue';
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
+    import { Trash2 } from 'lucide-vue-next';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -374,7 +373,7 @@
     const { showUserDialog, refreshUserDialogAvatars } = useUserStore();
     const { showAvatarDialog, lookupAvatars, cachedAvatars } = useAvatarStore();
     const { cachedWorlds, showWorldDialog } = useWorldStore();
-    const { showGroupDialog, applyGroup } = useGroupStore();
+    const { showGroupDialog } = useGroupStore();
     const { searchText, searchUserResults } = storeToRefs(useSearchStore());
     const { clearSearch, moreSearchUser } = useSearchStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
