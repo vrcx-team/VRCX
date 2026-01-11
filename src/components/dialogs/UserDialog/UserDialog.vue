@@ -231,7 +231,7 @@
                                         max-height: 210px;
                                         overflow-y: auto;
                                     "
-                                    >{{ bioCache.translated || userDialog.ref.bio || '-' }}</pre
+                                    >{{ (bioCache.userId === userDialog.id ? bioCache.translated : '') || userDialog.ref.bio || '-' }}</pre
                                 >
                                 <div style="float: right">
                                     <el-button
@@ -1457,6 +1457,14 @@
         }
     );
 
+    watch(
+        () => userDialog.value.id,
+        () => {
+            bioCache.value.userId = '';
+            bioCache.value.translated = '';
+        }
+    );
+
     const userDialogIndex = ref(2000);
 
     const userDialogGroupEditMode = ref(false); // whether edit mode is active
@@ -1525,8 +1533,8 @@
     });
 
     const bioCache = ref({
-        userId: null,
-        translated: null
+        userId: '',
+        translated: ''
     });
 
     const isEditNoteAndMemoDialogVisible = ref(false);
@@ -2387,7 +2395,25 @@
 
         translateLoading.value = true;
         try {
-            const providerLabel = translationApiType.value === 'openai' ? 'OpenAI' : 'Google';
+            // Get provider label based on translation type
+            let providerLabel = '';
+            switch (translationApiType.value) {
+                case 'openai':
+                    providerLabel = 'OpenAI';
+                    break;
+                case 'google':
+                    providerLabel = 'Google API';
+                    break;
+                case 'microsoft':
+                    providerLabel = 'Microsoft Translator';
+                    break;
+                case 'google-translate':
+                    providerLabel = 'Google Translate';
+                    break;
+                default:
+                    providerLabel = 'Translation Service';
+            }
+            
             const translated = await translateText(`${bio}\n\nTranslated by ${providerLabel}`, targetLang);
             if (!translated) {
                 throw new Error('No translation returned');

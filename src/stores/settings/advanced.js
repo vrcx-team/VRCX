@@ -46,7 +46,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const youTubeApiKey = ref('');
     const translationApi = ref(false);
     const translationApiKey = ref('');
-    const translationApiType = ref('google'); // 'google' | 'openai'
+    const translationApiType = ref('microsoft'); // 'google' | 'openai' | 'microsoft' | 'google-translate'
     const translationApiEndpoint = ref(
         'https://api.openai.com/v1/chat/completions'
     );
@@ -632,6 +632,82 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
         const provider =
             overrides?.type || translationApiType.value || 'google';
+
+        // Free Google Translate (no API key needed)
+        if (provider === 'google-translate') {
+            try {
+                const response = await webApiService.execute({
+                    url: `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`,
+                    method: 'GET',
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                        Referer: 'https://translate.google.com'
+                    }
+                });
+                if (response.status !== 200) {
+                    throw new Error(
+                        `Translation API error: ${response.status} - ${response.data}`
+                    );
+                }
+                const data = JSON.parse(response.data);
+                if (AppDebug.debugWebRequests) {
+                    console.log(data, response);
+                }
+                // Parse the response - it's an array of translation segments
+                const translated = data[0]?.map(item => item[0]).join('') || '';
+                return translated;
+            } catch (err) {
+                toast.error(`Translation failed: ${err.message}`);
+                return null;
+            }
+        }
+
+        // Free Microsoft Translator (using Edge's free token)
+        if (provider === 'microsoft') {
+            try {
+                // Get free token from Edge Translator
+                const tokenResponse = await webApiService.execute({
+                    url: 'https://edge.microsoft.com/translate/auth',
+                    method: 'GET',
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                    }
+                });
+                
+                if (tokenResponse.status !== 200) {
+                    throw new Error('Failed to get Microsoft Translator token');
+                }
+                
+                const token = tokenResponse.data;
+                
+                // Translate using the free token
+                const response = await webApiService.execute({
+                    url: `https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=${targetLang}`,
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                    },
+                    body: JSON.stringify([{ text }])
+                });
+                
+                if (response.status !== 200) {
+                    throw new Error(
+                        `Translation API error: ${response.status} - ${response.data}`
+                    );
+                }
+                
+                const data = JSON.parse(response.data);
+                if (AppDebug.debugWebRequests) {
+                    console.log(data, response);
+                }
+                return data[0]?.translations[0]?.text || '';
+            } catch (err) {
+                toast.error(`Translation failed: ${err.message}`);
+                return null;
+            }
+        }
 
         if (provider === 'google') {
             const keyToUse = overrides?.key ?? translationApiKey.value;

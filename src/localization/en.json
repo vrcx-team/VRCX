@@ -1471,6 +1471,8 @@
             "guide": "Guide",
             "mode": "Provider",
             "mode_google": "Google Translate",
+            "mode_microsoft": "Microsoft Translator(free)",
+            "mode_google_translate": "Google Translate (Free)",
             "mode_openai": "OpenAI",
             "test": "Test",
             "save": "Save",

@@ -276,6 +276,19 @@ ipcMain.handle('app:setTrayIconNotification', (event, notify) => {
     setTrayIconNotification(notify);
 });
 
+ipcMain.handle('app:translatePage', async (event, targetLanguage, provider) => {
+    if (mainWindow && mainWindow.webContents) {
+        try {
+            await mainWindow.webContents.translateService.translatePage(targetLanguage, provider);
+            return { success: true };
+        } catch (error) {
+            console.error('Error translating page:', error);
+            return { success: false, error: error.message };
+        }
+    }
+    return { success: false, error: 'Main window or webContents not available' };
+});
+
 function tryRelaunchWithArgs(args) {
     if (
         process.platform !== 'linux' ||

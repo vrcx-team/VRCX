@@ -1471,6 +1471,8 @@
             "mode": "提供商",
             "mode_google": "Google 翻译",
             "mode_openai": "OpenAI",
+            "mode_microsoft": "微软翻译(免费)",
+            "mode_google_translate": "Google 翻译（免费）",
             "test": "测试",
             "save": "保存",
             "msg_disabled": "翻译 API 已禁用",

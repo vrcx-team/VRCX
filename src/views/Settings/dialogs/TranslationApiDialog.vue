@@ -29,6 +29,12 @@
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
+                            <SelectItem value="microsoft" :text-value="t('dialog.translation_api.mode_microsoft')">
+                                {{ t('dialog.translation_api.mode_microsoft') }}
+                            </SelectItem>
+                            <SelectItem value="google-translate" :text-value="t('dialog.translation_api.mode_google_translate')">
+                                {{ t('dialog.translation_api.mode_google_translate') }}
+                            </SelectItem>
                             <SelectItem value="google" :text-value="t('dialog.translation_api.mode_google')">
                                 {{ t('dialog.translation_api.mode_google') }}
                             </SelectItem>
@@ -55,7 +61,21 @@
             </el-form>
         </template>
 
-        <template v-if="form.translationApiType === 'openai'">
+        <template v-if="form.translationApiType === 'google'">
+            <el-form label-position="top" label-width="120px" size="small">
+                <el-form-item :label="t('dialog.translation_api.description')">
+                    <el-input
+                        v-model="form.translationApiKey"
+                        type="textarea"
+                        :rows="4"
+                        show-password
+                        placeholder="AIzaSy..."
+                        clearable />
+                </el-form-item>
+            </el-form>
+        </template>
+
+        <template v-else-if="form.translationApiType === 'openai'">
             <el-form label-position="top" label-width="120px" size="small">
                 <el-form-item :label="t('dialog.translation_api.openai.endpoint')">
                     <el-input
@@ -155,7 +175,7 @@
     }
 
     const form = reactive({
-        translationApiType: 'google',
+        translationApiType: 'microsoft',
         translationApiEndpoint: 'https://api.openai.com/v1/chat/completions',
         translationApiModel: '',
         translationApiPrompt: '',
@@ -163,7 +183,7 @@
     });
 
     const loadFormFromStore = () => {
-        form.translationApiType = translationApiType.value || 'google';
+        form.translationApiType = translationApiType.value || 'microsoft';
         form.translationApiEndpoint = translationApiEndpoint.value || 'https://api.openai.com/v1/chat/completions';
         form.translationApiModel = translationApiModel.value || '';
         form.translationApiPrompt = translationApiPrompt.value || '';
@@ -187,14 +207,25 @@
                 return;
             }
         }
+        // For free translation, we don't need to save API key, endpoint, model, prompt
+        if (form.translationApiType === 'google-translate' || form.translationApiType === 'microsoft') {
+            await Promise.all([
+                setTranslationApiType(form.translationApiType),
+                setTranslationApiEndpoint(''), // Clear endpoint
+                setTranslationApiModel(''), // Clear model
+                setTranslationApiPrompt(''), // Clear prompt
+                setTranslationApiKey('') // Clear API key
+            ]);
+        } else {
+            await Promise.all([
+                setTranslationApiType(form.translationApiType),
+                setTranslationApiEndpoint(form.translationApiEndpoint),
+                setTranslationApiModel(form.translationApiModel),
+                setTranslationApiPrompt(form.translationApiPrompt),
+                setTranslationApiKey(form.translationApiKey)
+            ]);
+        }
 
-        await Promise.all([
-            setTranslationApiType(form.translationApiType),
-            setTranslationApiEndpoint(form.translationApiEndpoint),
-            setTranslationApiModel(form.translationApiModel),
-            setTranslationApiPrompt(form.translationApiPrompt),
-            setTranslationApiKey(form.translationApiKey)
-        ]);
 
         toast.success(t('dialog.translation_api.msg_settings_saved'));
         closeDialog();

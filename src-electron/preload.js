@@ -51,6 +51,8 @@ contextBridge.exposeInMainWorld('electron', {
             menuButton,
             overlayHand
         ),
+    translatePage: (targetLanguage, provider) =>
+        ipcRenderer.invoke('app:translatePage', targetLanguage, provider),
     ipcRenderer: {
         on(channel, func) {
             if (validChannels.includes(channel)) {
