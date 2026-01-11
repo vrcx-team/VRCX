@@ -621,11 +621,13 @@
                                     >{{ groupDialog.ref.$url }}
                                     <TooltipWrapper side="top" :content="t('dialog.group.info.url_tooltip')">
                                         <Button
-                                            class="rounded-full"
-                                            size="icon"
+                                            class="rounded-full text-xs"
+                                            size="icon-sm"
                                             variant="outline"
                                             style="margin-left: 5px"
-                                            @click="copyToClipboard(groupDialog.ref.$url)"></Button> </TooltipWrapper
+                                            @click="copyToClipboard(groupDialog.ref.$url)"
+                                            ><i class="ri-file-copy-line"></i
+                                        ></Button> </TooltipWrapper
                                 ></span>
                             </div>
                         </div>
@@ -636,11 +638,13 @@
                                     >{{ groupDialog.id }}
                                     <TooltipWrapper side="top" :content="t('dialog.group.info.id_tooltip')">
                                         <Button
-                                            class="rounded-full"
-                                            size="icon"
+                                            class="rounded-full text-xs"
+                                            size="icon-sm"
                                             variant="outline"
                                             style="margin-left: 5px"
-                                            @click="copyToClipboard(groupDialog.id)"></Button> </TooltipWrapper
+                                            @click="copyToClipboard(groupDialog.id)"
+                                            ><i class="ri-file-copy-line"></i
+                                        ></Button> </TooltipWrapper
                                 ></span>
                             </div>
                         </div>
@@ -1898,6 +1902,8 @@
         display: flex;
         flex-wrap: wrap;
         gap: 16px;
-        overflow: visible;
+        overflow-y: auto;
+        max-height: 360px;
+        padding: 10px 0;
     }
 </style>
