@@ -737,9 +737,9 @@
                                             transform-origin: left center;
                                         "
                                         @click.stop>
-                                        <el-checkbox
-                                            :checked="userDialogGroupEditSelectedGroupIds.includes(group.id)"
-                                            @change="() => toggleGroupSelection(group.id)" />
+                                        <Checkbox
+                                            :model-value="userDialogGroupEditSelectedGroupIds.includes(group.id)"
+                                            @update:modelValue="() => toggleGroupSelection(group.id)" />
                                     </div>
 
                                     <div style="margin-right: 3px; margin-left: 5px" @click.stop>
@@ -1306,6 +1306,7 @@
     } from '@/components/ui/dropdown-menu';
     import { Download, LogOut, RefreshCcw } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { ElMessageBox } from 'element-plus';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';

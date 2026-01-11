@@ -220,18 +220,19 @@
                                         </span>
                                         <template v-if="userDialog.id === currentUser.id">
                                             <br />
-                                            <el-checkbox
-                                                v-model="badge.hidden"
-                                                style="margin-top: 5px"
-                                                @change="toggleBadgeVisibility(badge)">
-                                                {{ t('dialog.user.badges.hidden') }}
-                                            </el-checkbox>
+                                            <label class="inline-flex items-center gap-2" style="margin-top: 5px">
+                                                <Checkbox
+                                                    v-model="badge.hidden"
+                                                    @update:modelValue="toggleBadgeVisibility(badge)" />
+                                                <span>{{ t('dialog.user.badges.hidden') }}</span>
+                                            </label>
                                             <br />
-                                            <el-checkbox
-                                                v-model="badge.showcased"
-                                                @change="toggleBadgeShowcased(badge)">
-                                                {{ t('dialog.user.badges.showcased') }}
-                                            </el-checkbox>
+                                            <label class="inline-flex items-center gap-2">
+                                                <Checkbox
+                                                    v-model="badge.showcased"
+                                                    @update:modelValue="toggleBadgeShowcased(badge)" />
+                                                <span>{{ t('dialog.user.badges.showcased') }}</span>
+                                            </label>
                                         </template>
                                     </div>
                                 </PopoverContent>
@@ -267,6 +268,7 @@
     import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover';
     import { useGalleryStore, useUserStore } from '../../../stores';
     import { Badge } from '../../ui/badge';
+    import { Checkbox } from '../../ui/checkbox';
 
     import UserActionDropdown from './UserActionDropdown.vue';
 

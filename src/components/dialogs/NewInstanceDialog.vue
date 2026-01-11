@@ -102,17 +102,17 @@
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
                         :label="t('dialog.new_instance.queueEnabled')">
-                        <el-checkbox v-model="newInstanceDialog.queueEnabled" @change="buildInstance"></el-checkbox>
+                        <Checkbox v-model="newInstanceDialog.queueEnabled" @update:modelValue="buildInstance" />
                     </el-form-item>
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
                         :label="t('dialog.new_instance.ageGate')">
-                        <el-checkbox
+                        <Checkbox
                             v-model="newInstanceDialog.ageGate"
                             :disabled="
                                 !hasGroupPermission(newInstanceDialog.groupRef, 'group-instance-age-gated-create')
                             "
-                            @change="buildInstance"></el-checkbox>
+                            @update:modelValue="buildInstance" />
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.display_name')">
                         <el-input
@@ -272,7 +272,7 @@
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
                         :label="t('dialog.new_instance.ageGate')">
-                        <el-checkbox v-model="newInstanceDialog.ageGate" @change="buildInstance"></el-checkbox>
+                        <Checkbox v-model="newInstanceDialog.ageGate" @update:modelValue="buildInstance" />
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.world_id')">
                         <el-input
@@ -443,6 +443,7 @@
 <script setup>
     import { computed, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { Check as CheckIcon } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

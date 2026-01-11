@@ -120,11 +120,9 @@
                             <el-table-column width="55" prop="$selected">
                                 <template #default="scope">
                                     <el-button text size="small" @click.stop>
-                                        <el-checkbox
+                                        <Checkbox
                                             v-model="scope.row.$selected"
-                                            @change="
-                                                groupMemberModerationTableSelectionChange(scope.row)
-                                            "></el-checkbox>
+                                            @update:modelValue="groupMemberModerationTableSelectionChange(scope.row)" />
                                     </el-button>
                                 </template>
                             </el-table-column>
@@ -237,11 +235,9 @@
                             <el-table-column width="55" prop="$selected">
                                 <template #default="scope">
                                     <el-button text size="small" @click.stop>
-                                        <el-checkbox
+                                        <Checkbox
                                             v-model="scope.row.$selected"
-                                            @change="
-                                                groupMemberModerationTableSelectionChange(scope.row)
-                                            "></el-checkbox>
+                                            @update:modelValue="groupMemberModerationTableSelectionChange(scope.row)" />
                                     </el-button>
                                 </template>
                             </el-table-column>
@@ -353,11 +349,11 @@
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
                                             <el-button text size="small" @click.stop>
-                                                <el-checkbox
+                                                <Checkbox
                                                     v-model="scope.row.$selected"
-                                                    @change="
+                                                    @update:modelValue="
                                                         groupMemberModerationTableSelectionChange(scope.row)
-                                                    "></el-checkbox>
+                                                    " />
                                             </el-button>
                                         </template>
                                     </el-table-column>
@@ -435,11 +431,11 @@
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
                                             <el-button text size="small" @click.stop>
-                                                <el-checkbox
+                                                <Checkbox
                                                     v-model="scope.row.$selected"
-                                                    @change="
+                                                    @update:modelValue="
                                                         groupMemberModerationTableSelectionChange(scope.row)
-                                                    "></el-checkbox>
+                                                    " />
                                             </el-button>
                                         </template>
                                     </el-table-column>
@@ -537,11 +533,11 @@
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
                                             <el-button text size="small" @click.stop>
-                                                <el-checkbox
+                                                <Checkbox
                                                     v-model="scope.row.$selected"
-                                                    @change="
+                                                    @update:modelValue="
                                                         groupMemberModerationTableSelectionChange(scope.row)
-                                                    "></el-checkbox>
+                                                    " />
                                             </el-button>
                                         </template>
                                     </el-table-column>
@@ -871,6 +867,7 @@
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import { groupRequest, userRequest } from '../../../api';
     import { Badge } from '../../ui/badge';
+    import { Checkbox } from '../../ui/checkbox';
 
     import GroupMemberModerationExportDialog from './GroupMemberModerationExportDialog.vue';
 

@@ -21,7 +21,7 @@
             <div class="favorites-search-card__actions">
                 <template v-if="editMode">
                     <div class="favorites-search-card__action favorites-search-card__action--checkbox" @click.stop>
-                        <el-checkbox v-model="isSelected"></el-checkbox>
+                        <Checkbox v-model="isSelected" />
                     </div>
                     <div class="favorites-search-card__action-group">
                         <div class="favorites-search-card__action favorites-search-card__action--full" @click.stop>
@@ -79,6 +79,7 @@
 </template>
 
 <script setup>
+    import { Checkbox } from '@/components/ui/checkbox';
     import { Star } from '@element-plus/icons-vue';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';

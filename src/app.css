@@ -1012,7 +1012,7 @@ hr.x-vertical-divider {
     display: flex;
     align-items: center;
     padding: 6px;
-    font-size: 12px;
+    font-size: 13px;
     cursor: pointer;
 }
 
@@ -1151,7 +1151,7 @@ img.friends-list-avatar {
 .x-friend-item > .detail > .extra,
 .extra {
     color: var(--el-text-color-secondary);
-    font-size: 11px;
+    font-size: 12px;
     & > span > span:first-child {
         scale: 0.9;
         margin-right: 2px;

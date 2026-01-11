@@ -8,21 +8,26 @@
         width="780px"
         append-to-body>
         <template v-if="setAvatarTagsDialog.visible">
-            <el-checkbox v-model="setAvatarTagsDialog.contentHorror" @change="updateSelectedAvatarTags">{{
-                t('dialog.set_avatar_tags.content_horror')
-            }}</el-checkbox>
-            <el-checkbox v-model="setAvatarTagsDialog.contentGore" @change="updateSelectedAvatarTags">{{
-                t('dialog.set_avatar_tags.content_gore')
-            }}</el-checkbox>
-            <el-checkbox v-model="setAvatarTagsDialog.contentViolence" @change="updateSelectedAvatarTags">{{
-                t('dialog.set_avatar_tags.content_violence')
-            }}</el-checkbox>
-            <el-checkbox v-model="setAvatarTagsDialog.contentAdult" @change="updateSelectedAvatarTags">{{
-                t('dialog.set_avatar_tags.content_adult')
-            }}</el-checkbox>
-            <el-checkbox v-model="setAvatarTagsDialog.contentSex" @change="updateSelectedAvatarTags">{{
-                t('dialog.set_avatar_tags.content_sex')
-            }}</el-checkbox>
+            <label class="inline-flex items-center gap-2">
+                <Checkbox v-model="setAvatarTagsDialog.contentHorror" @update:modelValue="updateSelectedAvatarTags" />
+                <span>{{ t('dialog.set_avatar_tags.content_horror') }}</span>
+            </label>
+            <label class="inline-flex items-center gap-2">
+                <Checkbox v-model="setAvatarTagsDialog.contentGore" @update:modelValue="updateSelectedAvatarTags" />
+                <span>{{ t('dialog.set_avatar_tags.content_gore') }}</span>
+            </label>
+            <label class="inline-flex items-center gap-2">
+                <Checkbox v-model="setAvatarTagsDialog.contentViolence" @update:modelValue="updateSelectedAvatarTags" />
+                <span>{{ t('dialog.set_avatar_tags.content_violence') }}</span>
+            </label>
+            <label class="inline-flex items-center gap-2">
+                <Checkbox v-model="setAvatarTagsDialog.contentAdult" @update:modelValue="updateSelectedAvatarTags" />
+                <span>{{ t('dialog.set_avatar_tags.content_adult') }}</span>
+            </label>
+            <label class="inline-flex items-center gap-2">
+                <Checkbox v-model="setAvatarTagsDialog.contentSex" @update:modelValue="updateSelectedAvatarTags" />
+                <span>{{ t('dialog.set_avatar_tags.content_sex') }}</span>
+            </label>
             <br />
             <el-input
                 v-model="setAvatarTagsDialog.selectedTagsCsv"
@@ -77,9 +82,9 @@
                         <span class="extra" v-text="avatarTagStrings.get(avatar.id)"></span>
                     </div>
                     <Button size="sm" variant="ghost" style="margin-left: 5px" @click.stop>
-                        <el-checkbox
+                        <Checkbox
                             :model-value="props.setAvatarTagsDialog.selectedAvatarIds.includes(avatar.id)"
-                            @click="toggleAvatarSelection(avatar.id)"></el-checkbox>
+                            @update:modelValue="(val) => toggleAvatarSelection(avatar.id, val)" />
                     </Button>
                 </div>
             </div>
@@ -95,6 +100,7 @@
 
 <script setup>
     import { Button } from '@/components/ui/button';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { Loading } from '@element-plus/icons-vue';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -177,12 +183,14 @@
         D.selectedTagsCsv = D.selectedTags.join(',').replace(/content_/g, '');
     }
 
-    function toggleAvatarSelection(avatarId) {
+    function toggleAvatarSelection(avatarId, checked) {
         const D = props.setAvatarTagsDialog;
-        if (D.selectedAvatarIds.includes(avatarId)) {
-            removeFromArray(D.selectedAvatarIds, avatarId);
-        } else {
+        const isSelected = D.selectedAvatarIds.includes(avatarId);
+        const shouldSelect = typeof checked === 'boolean' ? checked : !isSelected;
+        if (shouldSelect && !isSelected) {
             D.selectedAvatarIds.push(avatarId);
+        } else if (!shouldSelect && isSelected) {
+            removeFromArray(D.selectedAvatarIds, avatarId);
         }
     }
 

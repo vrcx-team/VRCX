@@ -133,18 +133,16 @@
             </div>
             <br />
 
-            <el-checkbox
-                v-model="VRChatConfigFile.picture_output_split_by_date"
-                @change="refreshDialogValues"
-                style="margin-top: 5px; display: block">
-                {{ t('dialog.config_json.picture_sort_by_date') }}
-            </el-checkbox>
-            <el-checkbox
-                v-model="VRChatConfigFile.disableRichPresence"
-                @change="refreshDialogValues"
-                style="margin-top: 5px; display: block">
-                {{ t('dialog.config_json.disable_discord_presence') }}
-            </el-checkbox>
+            <label class="inline-flex items-center gap-2" style="margin-top: 5px; display: block">
+                <Checkbox
+                    v-model="VRChatConfigFile.picture_output_split_by_date"
+                    @update:modelValue="refreshDialogValues" />
+                <span>{{ t('dialog.config_json.picture_sort_by_date') }}</span>
+            </label>
+            <label class="inline-flex items-center gap-2" style="margin-top: 5px; display: block">
+                <Checkbox v-model="VRChatConfigFile.disableRichPresence" @update:modelValue="refreshDialogValues" />
+                <span>{{ t('dialog.config_json.disable_discord_presence') }}</span>
+            </label>
         </div>
         <template #footer>
             <div style="display: flex; align-items: center; justify-content: space-between">
@@ -172,6 +170,7 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { ElMessageBox } from 'element-plus';
     import { Refresh } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';

@@ -32,7 +32,7 @@
                         v-if="!isLocalFavorite"
                         class="favorites-search-card__action favorites-search-card__action--checkbox"
                         @click.stop>
-                        <el-checkbox v-model="isSelected"></el-checkbox>
+                        <Checkbox v-model="isSelected" />
                     </div>
                     <div class="favorites-search-card__action-group">
                         <div class="favorites-search-card__action favorites-search-card__action--full" @click.stop>
@@ -124,6 +124,7 @@
 
 <script setup>
     import { Check, Close, Star } from '@element-plus/icons-vue';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

@@ -16,12 +16,14 @@
         </div>
         <el-tabs ref="searchTabRef" style="margin-top: 15px" @tab-click="searchText = ''">
             <el-tab-pane v-loading="isSearchUserLoading" :label="t('view.search.user.header')" style="min-height: 60px">
-                <el-checkbox v-model="searchUserByBio" style="margin-left: 10px">{{
-                    t('view.search.user.search_by_bio')
-                }}</el-checkbox>
-                <el-checkbox v-model="searchUserSortByLastLoggedIn" style="margin-left: 10px">{{
-                    t('view.search.user.sort_by_last_logged_in')
-                }}</el-checkbox>
+                <label class="inline-flex items-center gap-2" style="margin-left: 10px">
+                    <Checkbox v-model="searchUserByBio" />
+                    <span>{{ t('view.search.user.search_by_bio') }}</span>
+                </label>
+                <label class="inline-flex items-center gap-2" style="margin-left: 10px">
+                    <Checkbox v-model="searchUserSortByLastLoggedIn" />
+                    <span>{{ t('view.search.user.sort_by_last_logged_in') }}</span>
+                </label>
                 <div class="x-friend-list" style="min-height: 500px">
                     <div
                         v-for="user in searchUserResults"
@@ -87,9 +89,10 @@
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <el-checkbox v-model="searchWorldLabs" style="margin-left: 10px">{{
-                    t('view.search.world.community_lab')
-                }}</el-checkbox>
+                <label class="inline-flex items-center gap-2" style="margin-left: 10px">
+                    <Checkbox v-model="searchWorldLabs" />
+                    <span>{{ t('view.search.world.community_lab') }}</span>
+                </label>
                 <div class="x-friend-list" style="min-height: 500px">
                     <div
                         v-for="world in searchWorldResults"
@@ -339,6 +342,7 @@
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { Trash2 } from 'lucide-vue-next';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';

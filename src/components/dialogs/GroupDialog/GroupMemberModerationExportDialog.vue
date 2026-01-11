@@ -6,16 +6,17 @@
         width="650px"
         append-to-body
         @close="setIsGroupLogsExportDialogVisible">
-        <el-checkbox-group
-            v-model="checkedGroupLogsExportLogsOptions"
-            style="margin-bottom: 10px"
-            @change="updateGroupLogsExportContent">
-            <template v-for="option in checkGroupsLogsExportLogsOptions" :key="option.label">
-                <el-checkbox :label="option.label">
-                    {{ t(option.text) }}
-                </el-checkbox>
-            </template>
-        </el-checkbox-group>
+        <div style="margin-bottom: 10px" class="flex flex-col gap-2">
+            <label
+                v-for="option in checkGroupsLogsExportLogsOptions"
+                :key="option.label"
+                class="inline-flex items-center gap-2">
+                <Checkbox
+                    :model-value="checkedGroupLogsExportLogsOptions.includes(option.label)"
+                    @update:modelValue="(val) => toggleGroupLogsExportOption(option.label, val)" />
+                <span>{{ t(option.text) }}</span>
+            </label>
+        </div>
         <br />
         <el-input
             v-model="groupLogsExportContent"
@@ -31,6 +32,7 @@
 
 <script setup>
     import { ref, watch } from 'vue';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { useI18n } from 'vue-i18n';
 
     import { copyToClipboard } from '../../../shared/utils';
@@ -74,6 +76,17 @@
         'description',
         'data'
     ]);
+
+    function toggleGroupLogsExportOption(label, checked) {
+        const selection = checkedGroupLogsExportLogsOptions.value;
+        const index = selection.indexOf(label);
+        if (checked && index === -1) {
+            selection.push(label);
+        } else if (!checked && index !== -1) {
+            selection.splice(index, 1);
+        }
+        updateGroupLogsExportContent();
+    }
 
     function updateGroupLogsExportContent() {
         const formatter = (str) => (/[\x00-\x1f,"]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str);

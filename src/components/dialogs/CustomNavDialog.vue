@@ -127,14 +127,15 @@
                     </div>
                     <el-scrollbar v-else always class="folder-editor__scroll">
                         <div v-for="item in folderEditorAvailableItems" :key="item.key" class="folder-editor__option">
-                            <el-checkbox
-                                :model-value="folderEditor.data.items.includes(item.key)"
-                                @change="(val) => toggleFolderItem(item.key, val)">
-                                <span class="folder-editor__option-label">
+                            <label class="folder-editor__option-label">
+                                <Checkbox
+                                    :model-value="folderEditor.data.items.includes(item.key)"
+                                    @update:modelValue="(val) => toggleFolderItem(item.key, val)" />
+                                <span>
                                     <i :class="item.icon"></i>
                                     {{ t(item.labelKey) }}
                                 </span>
-                            </el-checkbox>
+                            </label>
                         </div>
                     </el-scrollbar>
                 </div>
@@ -206,6 +207,7 @@
     import dayjs from 'dayjs';
 
     import { Badge } from '../ui/badge';
+    import { Checkbox } from '../ui/checkbox';
     import { navDefinitions } from '../../shared/constants/ui.js';
 
     import IconPicker from '../IconPicker.vue';

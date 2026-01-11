@@ -212,9 +212,10 @@
                             </div>
                         </template>
                     </VirtualCombobox>
-                    <el-checkbox v-model="emojiAnimType">
+                    <label class="inline-flex items-center gap-2">
+                        <Checkbox v-model="emojiAnimType" />
                         <span>{{ t('dialog.gallery_icons.emoji_animation_type') }}</span>
-                    </el-checkbox>
+                    </label>
                     <template v-if="emojiAnimType">
                         <el-button
                             type="default"
@@ -240,9 +241,10 @@
                             :min="2"
                             :max="64"
                             style="margin-right: 10px; width: 112px"></el-input-number>
-                        <el-checkbox v-model="emojiAnimLoopPingPong" style="margin-left: 10px; margin-right: 10px">
+                        <label class="inline-flex items-center gap-2" style="margin-left: 10px; margin-right: 10px">
+                            <Checkbox v-model="emojiAnimLoopPingPong" />
                             <span>{{ t('dialog.gallery_icons.emoji_loop_pingpong') }}</span>
-                        </el-checkbox>
+                        </label>
                         <br />
                         <br />
                         <span>{{ t('dialog.gallery_icons.flipbook_info') }}</span>
@@ -408,9 +410,10 @@
                         maxlength="32"
                         style="margin-left: 10px; width: 300px"
                         :placeholder="t('dialog.gallery_icons.note')"></el-input>
-                    <el-checkbox v-model="printCropBorder" style="margin-left: 10px; margin-right: 10px">
+                    <label class="inline-flex items-center gap-2" style="margin-left: 10px; margin-right: 10px">
+                        <Checkbox v-model="printCropBorder" />
                         <span>{{ t('dialog.gallery_icons.crop_print_border') }}</span>
-                    </el-checkbox>
+                    </label>
                 </div>
                 <br />
                 <div
@@ -534,6 +537,7 @@
     import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { ElMessageBox } from 'element-plus';
     import { VirtualCombobox } from '@/components/ui/virtual-combobox';
     import { storeToRefs } from 'pinia';

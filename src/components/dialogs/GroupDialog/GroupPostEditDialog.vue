@@ -20,12 +20,10 @@
                         resize="none"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-checkbox
-                        v-if="!groupPostEditDialog.postId"
-                        v-model="groupPostEditDialog.sendNotification"
-                        size="small">
-                        {{ t('dialog.group_post_edit.send_notification') }}
-                    </el-checkbox>
+                    <label v-if="!groupPostEditDialog.postId" class="inline-flex items-center gap-2">
+                        <Checkbox v-model="groupPostEditDialog.sendNotification" />
+                        <span>{{ t('dialog.group_post_edit.send_notification') }}</span>
+                    </label>
                 </el-form-item>
                 <el-form-item :label="t('dialog.group_post_edit.post_visibility')">
                     <RadioGroup v-model="groupPostEditDialog.visibility" class="flex items-center gap-4">
@@ -113,6 +111,7 @@
 <script setup>
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

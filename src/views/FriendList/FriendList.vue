@@ -56,11 +56,11 @@
                 @row-click="selectFriendsListRow">
                 <el-table-column v-if="friendsListBulkUnfriendMode" width="55">
                     <template #default="{ row }">
-                        <el-button text size="small" @click.stop>
-                            <el-checkbox
+                        <div class="flex items-center justify-center" @click.stop>
+                            <Checkbox
                                 :model-value="selectedFriends.has(row.id)"
-                                @change="toggleFriendSelection(row.id)"></el-checkbox>
-                        </el-button>
+                                @update:modelValue="toggleFriendSelection(row.id)" />
+                        </div>
                     </template>
                 </el-table-column>
                 <el-table-column width="20"></el-table-column>
@@ -93,7 +93,11 @@
                         }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column :label="t('table.friendList.rank')" width="140" prop="$trustSortNum" :sortable="'custom'">
+                <el-table-column
+                    :label="t('table.friendList.rank')"
+                    width="140"
+                    prop="$trustSortNum"
+                    :sortable="'custom'">
                     <template #default="{ row }">
                         <span
                             v-if="randomUserColours"
@@ -275,6 +279,7 @@
     } from '../../shared/utils';
     import { useAppearanceSettingsStore, useFriendStore, useSearchStore, useUserStore } from '../../stores';
     import { friendRequest, userRequest } from '../../api';
+    import { Checkbox } from '../../components/ui/checkbox';
     import { Switch } from '../../components/ui/switch';
     import removeConfusables, { removeWhitespace } from '../../service/confusables';
     import { router } from '../../plugin/router';
@@ -373,7 +378,10 @@
         allFilteredData.value = results;
         getAllUserStats();
         getAllUserMutualCount();
-        applySortAndPagination(friendsListTable.tableProps.defaultSort.prop, friendsListTable.tableProps.defaultSort.order);
+        applySortAndPagination(
+            friendsListTable.tableProps.defaultSort.prop,
+            friendsListTable.tableProps.defaultSort.order
+        );
         nextTick(() => {
             friendsListLoading.value = false;
         });
@@ -482,7 +490,7 @@
         else showUserDialog(val.id);
     }
 
-    function compareWithFriendNumber(a, b, primaryComparison, primarySelector = (x) => x)  {
+    function compareWithFriendNumber(a, b, primaryComparison, primarySelector = (x) => x) {
         const primaryComparisonResult = primaryComparison(primarySelector(a), primarySelector(b));
         if (primaryComparisonResult === 0) {
             return (a.$friendNumber || 0) - (b.$friendNumber || 0);

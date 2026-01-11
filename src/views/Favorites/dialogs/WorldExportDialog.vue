@@ -1,13 +1,13 @@
 <template>
     <el-dialog v-model="isDialogVisible" :title="t('dialog.world_export.header')" width="650px">
-        <el-checkbox-group
-            v-model="exportSelectedOptions"
-            style="margin-bottom: 10px"
-            @change="updateWorldExportDialog">
-            <template v-for="option in exportSelectOptions" :key="option.value">
-                <el-checkbox :label="option.label"></el-checkbox>
-            </template>
-        </el-checkbox-group>
+        <div style="margin-bottom: 10px" class="flex flex-col gap-2">
+            <label v-for="option in exportSelectOptions" :key="option.value" class="inline-flex items-center gap-2">
+                <Checkbox
+                    :model-value="exportSelectedOptions.includes(option.label)"
+                    @update:modelValue="(val) => toggleWorldExportOption(option.label, val)" />
+                <span>{{ option.label }}</span>
+            </label>
+        </div>
 
         <div class="flex items-center gap-2">
             <Select :model-value="worldExportFavoriteGroupSelection" @update:modelValue="handleWorldExportGroupSelect">
@@ -59,6 +59,7 @@
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -104,6 +105,17 @@
         { label: 'Author Name', value: 'authorName' },
         { label: 'Thumbnail', value: 'thumbnailImageUrl' }
     ]);
+
+    function toggleWorldExportOption(label, checked) {
+        const selection = exportSelectedOptions.value;
+        const index = selection.indexOf(label);
+        if (checked && index === -1) {
+            selection.push(label);
+        } else if (!checked && index !== -1) {
+            selection.splice(index, 1);
+        }
+        updateWorldExportDialog();
+    }
 
     const isDialogVisible = computed({
         get() {

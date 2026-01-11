@@ -1187,7 +1187,7 @@
         margin-right: var(--favorites-card-checkbox-margin, 10px);
     }
 
-    :deep(.favorites-search-card__action--checkbox .el-checkbox) {
+    :deep(.favorites-search-card__action--checkbox [data-slot='checkbox']) {
         margin: 0;
     }
 

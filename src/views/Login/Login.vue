@@ -45,15 +45,14 @@
                                 clearable
                                 show-password></el-input>
                         </el-form-item>
-                        <el-checkbox v-model="loginForm.saveCredentials">{{
-                            t('view.login.field.saveCredentials')
-                        }}</el-checkbox>
-                        <el-checkbox
-                            v-model="enableCustomEndpoint"
-                            style="margin-top: 10px"
-                            @change="toggleCustomEndpoint"
-                            >{{ t('view.login.field.devEndpoint') }}</el-checkbox
-                        >
+                        <label class="inline-flex items-center gap-2 mr-2">
+                            <Checkbox v-model="loginForm.saveCredentials" />
+                            <span>{{ t('view.login.field.saveCredentials') }}</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2" style="margin-top: 10px">
+                            <Checkbox v-model="enableCustomEndpoint" @update:modelValue="toggleCustomEndpoint" />
+                            <span>{{ t('view.login.field.devEndpoint') }}</span>
+                        </label>
                         <el-form-item
                             v-if="enableCustomEndpoint"
                             :label="t('view.login.field.endpoint')"
@@ -77,7 +76,9 @@
                                 clearable></el-input>
                         </el-form-item>
                         <el-form-item>
-                            <Button type="submit" size="lg" style="width: 100%">{{ t('view.login.login') }}</Button>
+                            <Button class="mt-2" type="submit" size="lg" style="width: 100%">{{
+                                t('view.login.login')
+                            }}</Button>
                         </el-form-item>
                     </el-form>
                     <Button
@@ -150,6 +151,7 @@
     import { CircleArrowDown, Route } from 'lucide-vue-next';
     import { useRoute, useRouter } from 'vue-router';
     import { Button } from '@/components/ui/button';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
