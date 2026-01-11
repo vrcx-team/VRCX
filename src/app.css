@@ -578,10 +578,6 @@ html.dark .x-friend-item > .detail > .extra,
 .el-table .cell {
     padding-left: 4px;
     padding-right: 4px;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
 }
 
 .el-table th.el-table__cell {
@@ -601,10 +597,22 @@ html.dark .x-friend-item > .detail > .extra,
     background-color: var(--el-table-row-hover-bg-color) !important;
 }
 
-.el-table__row:hover .el-table__cell .cell {
+.el-table .cell,
+.data-table tr > td > span,
+.data-table tr > td > div > span {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+}
+
+.el-table__row:hover .el-table__cell .cell,
+.data-table tr:hover > td > span,
+.data-table tr:hover > td > div > span {
     display: revert;
     -webkit-line-clamp: unset;
     line-clamp: unset;
+    white-space: pre-line;
 }
 
 .el-tabs__content {

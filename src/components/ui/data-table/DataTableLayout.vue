@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col">
+    <div class="flex flex-col data-table">
         <div v-if="$slots.toolbar" class="mb-2">
             <slot name="toolbar"></slot>
         </div>
