@@ -179,57 +179,57 @@
                                 v-text="avatarDialog.ref.description"></span>
                         </div>
                     </div>
-                    <div style="flex: none; margin-left: 10px">
+                    <div class="flex items-center">
                         <TooltipWrapper
                             v-if="avatarDialog.inCache"
                             side="top"
                             :content="t('dialog.avatar.actions.delete_cache_tooltip')">
-                            <el-button
-                                :icon="Delete"
-                                size="large"
-                                circle
+                            <Button
+                                class="rounded-full mr-2"
+                                size="icon-lg"
+                                variant="outline"
                                 :disabled="isGameRunning && avatarDialog.cacheLocked"
-                                @click="deleteVRChatCache(avatarDialog.ref)"></el-button>
+                                @click="deleteVRChatCache(avatarDialog.ref)"
+                                ><Trash2
+                            /></Button>
                         </TooltipWrapper>
+
                         <TooltipWrapper
                             v-if="avatarDialog.isFavorite"
                             side="top"
                             :content="t('dialog.avatar.actions.favorite_tooltip')">
-                            <el-button
-                                type="warning"
-                                :icon="StarFilled"
-                                size="large"
-                                circle
-                                style="margin-left: 5px"
-                                @click="avatarDialogCommand('Add Favorite')"></el-button>
+                            <Button class="rounded-full" size="icon-lg" @click="avatarDialogCommand('Add Favorite')"
+                                ><Star
+                            /></Button>
                         </TooltipWrapper>
                         <TooltipWrapper v-else side="top" :content="t('dialog.avatar.actions.favorite_tooltip')">
-                            <el-button
-                                type="default"
-                                :icon="Star"
-                                size="large"
-                                circle
-                                style="margin-left: 5px"
-                                @click="avatarDialogCommand('Add Favorite')"></el-button>
+                            <Button
+                                class="rounded-full"
+                                size="icon-lg"
+                                variant="outline"
+                                @click="avatarDialogCommand('Add Favorite')"
+                                ><Star
+                            /></Button>
                         </TooltipWrapper>
+
                         <TooltipWrapper side="top" :content="t('dialog.avatar.actions.select')">
-                            <el-button
-                                type="default"
-                                :icon="Check"
-                                size="large"
-                                circle
+                            <Button
+                                class="rounded-full ml-2"
+                                size="icon-lg"
+                                variant="outline"
                                 :disabled="currentUser.currentAvatar === avatarDialog.id"
-                                style="margin-left: 5px"
-                                @click="selectAvatarWithoutConfirmation(avatarDialog.id)"></el-button>
+                                @click="selectAvatarWithoutConfirmation(avatarDialog.id)">
+                                <CircleCheck
+                            /></Button>
                         </TooltipWrapper>
                         <DropdownMenu>
                             <DropdownMenuTrigger as-child>
-                                <el-button
-                                    :type="avatarDialog.isBlocked ? 'danger' : 'default'"
-                                    :icon="MoreFilled"
-                                    size="large"
-                                    style="margin-left: 5px"
-                                    circle></el-button>
+                                <Button
+                                    class="rounded-full ml-2"
+                                    :variant="avatarDialog.isBlocked ? 'destructive' : 'outline'"
+                                    size="icon-lg">
+                                    <Ellipsis />
+                                </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuItem @click="avatarDialogCommand('Refresh')">
@@ -442,12 +442,13 @@
                                     }}<TooltipWrapper side="top" :content="t('dialog.avatar.info.id_tooltip')">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger as-child>
-                                                <el-button
-                                                    type="default"
-                                                    :icon="CopyDocument"
-                                                    size="small"
-                                                    circle
-                                                    @click.stop></el-button>
+                                                <Button
+                                                    class="rounded-full text-xs"
+                                                    size="icon-sm"
+                                                    variant="outline"
+                                                    @click.stop
+                                                    ><i class="ri-file-copy-line"></i
+                                                ></Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent>
                                                 <DropdownMenuItem @click="copyAvatarId(avatarDialog.id)">
@@ -511,19 +512,20 @@
                     </div>
                 </el-tab-pane>
                 <el-tab-pane name="JSON" :label="t('dialog.avatar.json.header')" style="max-height: 50vh" lazy>
-                    <el-button
-                        type="default"
-                        size="small"
-                        :icon="Refresh"
-                        circle
-                        @click="refreshAvatarDialogTreeData"></el-button>
-                    <el-button
-                        type="default"
-                        size="small"
-                        :icon="Download"
-                        circle
-                        style="margin-left: 5px"
-                        @click="downloadAndSaveJson(avatarDialog.id, avatarDialog.ref)"></el-button>
+                    <Button
+                        class="rounded-full h-6 w-6 mr-2"
+                        size="icon-sm"
+                        variant="outline"
+                        @click="refreshAvatarDialogTreeData()">
+                        <RefreshCcw />
+                    </Button>
+                    <Button
+                        class="rounded-full h-6 w-6"
+                        size="icon-sm"
+                        variant="outline"
+                        @click="downloadAndSaveJson(avatarDialog.id, avatarDialog.ref)">
+                        <Download />
+                    </Button>
                     <vue-json-pretty :data="treeData" :deep="2" :theme="isDarkMode ? 'dark' : 'light'" show-icon />
                     <br />
                     <vue-json-pretty
@@ -547,26 +549,20 @@
 
 <script setup>
     import {
-        Back,
-        Check,
-        CircleCheck,
         CircleClose,
-        CopyDocument,
         Delete,
         Download,
         Edit,
-        MoreFilled,
         Picture,
         Refresh,
-        Right,
         Share,
-        Star,
-        StarFilled,
         Upload,
         User,
         Warning
     } from '@element-plus/icons-vue';
+    import { CircleCheck, Ellipsis, RefreshCcw, Star, Trash2 } from 'lucide-vue-next';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

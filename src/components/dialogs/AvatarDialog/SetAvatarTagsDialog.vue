@@ -35,14 +35,14 @@
             <br />
             <template
                 v-if="setAvatarTagsDialog.ownAvatars.length === props.setAvatarTagsDialog.selectedAvatarIds.length">
-                <el-button size="small" @click="setAvatarTagsSelectToggle">{{
+                <Button size="sm" variant="outline" @click="setAvatarTagsSelectToggle">{{
                     t('dialog.set_avatar_tags.select_none')
-                }}</el-button>
+                }}</Button>
             </template>
             <template v-else>
-                <el-button size="small" @click="setAvatarTagsSelectToggle">{{
+                <Button size="sm" variant="outline" @click="setAvatarTagsSelectToggle">{{
                     t('dialog.set_avatar_tags.select_all')
-                }}</el-button>
+                }}</Button>
             </template>
             <span style="margin-left: 5px"
                 >{{ props.setAvatarTagsDialog.selectedAvatarIds.length }} /
@@ -76,24 +76,25 @@
                         <span v-else class="extra" v-text="avatar.releaseStatus"></span>
                         <span class="extra" v-text="avatarTagStrings.get(avatar.id)"></span>
                     </div>
-                    <el-button text size="small" style="margin-left: 5px" @click.stop>
+                    <Button size="sm" variant="ghost" style="margin-left: 5px" @click.stop>
                         <el-checkbox
                             :model-value="props.setAvatarTagsDialog.selectedAvatarIds.includes(avatar.id)"
                             @click="toggleAvatarSelection(avatar.id)"></el-checkbox>
-                    </el-button>
+                    </Button>
                 </div>
             </div>
         </template>
         <template #footer>
-            <el-button @click="closeSetAvatarTagsDialog">{{ t('dialog.set_avatar_tags.cancel') }}</el-button>
-            <el-button type="primary" @click="saveSetAvatarTagsDialog">{{
-                t('dialog.set_avatar_tags.save')
-            }}</el-button>
+            <Button variant="secondary" @click="closeSetAvatarTagsDialog">{{
+                t('dialog.set_avatar_tags.cancel')
+            }}</Button>
+            <Button @click="saveSetAvatarTagsDialog">{{ t('dialog.set_avatar_tags.save') }}</Button>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
+    import { Button } from '@/components/ui/button';
     import { Loading } from '@element-plus/icons-vue';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

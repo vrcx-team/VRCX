@@ -366,73 +366,74 @@
         </el-tabs>
         <template v-if="newInstanceDialog.selectedTab === 'Normal'" #footer>
             <template v-if="newInstanceDialog.instanceCreated">
-                <el-button @click="copyInstanceUrl(newInstanceDialog.location)">{{
+                <Button variant="outline" class="mr-2" @click="copyInstanceUrl(newInstanceDialog.location)">{{
                     t('dialog.new_instance.copy_url')
-                }}</el-button>
-                <el-button @click="selfInvite(newInstanceDialog.location)">{{
+                }}</Button>
+                <Button variant="outline" class="mr-2" @click="selfInvite(newInstanceDialog.location)">{{
                     t('dialog.new_instance.self_invite')
-                }}</el-button>
-                <el-button
+                }}</Button>
+                <Button
+                    variant="outline"
+                    class="mr-2"
                     :disabled="
                         (newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') &&
                         newInstanceDialog.userId !== currentUser.id
                     "
                     @click="showInviteDialog(newInstanceDialog.location)"
-                    >{{ t('dialog.new_instance.invite') }}</el-button
+                    >{{ t('dialog.new_instance.invite') }}</Button
                 >
                 <template v-if="canOpenInstanceInGame">
-                    <el-button @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)">{{
-                        t('dialog.new_instance.launch')
-                    }}</el-button>
-                    <el-button @click="handleAttachGame(newInstanceDialog.location, newInstanceDialog.shortName)">
+                    <Button
+                        variant="secondary"
+                        class="mr-2"
+                        @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
+                        >{{ t('dialog.new_instance.launch') }}</Button
+                    >
+                    <Button @click="handleAttachGame(newInstanceDialog.location, newInstanceDialog.shortName)">
                         {{ t('dialog.new_instance.open_ingame') }}
-                    </el-button>
+                    </Button>
                 </template>
                 <template v-else>
-                    <el-button
-                        type="primary"
-                        @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
-                        >{{ t('dialog.new_instance.launch') }}</el-button
-                    >
+                    <Button @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)">{{
+                        t('dialog.new_instance.launch')
+                    }}</Button>
                 </template>
             </template>
             <template v-else>
-                <el-button type="primary" @click="handleCreateNewInstance">{{
-                    t('dialog.new_instance.create_instance')
-                }}</el-button>
+                <Button @click="handleCreateNewInstance">{{ t('dialog.new_instance.create_instance') }}</Button>
             </template>
         </template>
         <template v-else-if="newInstanceDialog.selectedTab === 'Legacy'" #footer>
-            <el-button @click="copyInstanceUrl(newInstanceDialog.location)">{{
+            <Button variant="outline" class="mr-2" @click="copyInstanceUrl(newInstanceDialog.location)">{{
                 t('dialog.new_instance.copy_url')
-            }}</el-button>
-            <el-button @click="selfInvite(newInstanceDialog.location)">{{
+            }}</Button>
+            <Button variant="outline" class="mr-2" @click="selfInvite(newInstanceDialog.location)">{{
                 t('dialog.new_instance.self_invite')
-            }}</el-button>
-            <el-button
+            }}</Button>
+            <Button
+                variant="outline"
                 :disabled="
                     (newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') &&
                     newInstanceDialog.userId !== currentUser.id
                 "
                 @click="showInviteDialog(newInstanceDialog.location)"
-                >{{ t('dialog.new_instance.invite') }}</el-button
+                >{{ t('dialog.new_instance.invite') }}</Button
             >
             <template v-if="canOpenInstanceInGame">
-                <el-button @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)">{{
-                    t('dialog.new_instance.launch')
-                }}</el-button>
-                <el-button
-                    type="primary"
-                    @click="handleAttachGame(newInstanceDialog.location, newInstanceDialog.shortName)">
+                <Button
+                    variant="secondary"
+                    class="mr-2"
+                    @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
+                    >{{ t('dialog.new_instance.launch') }}</Button
+                >
+                <Button @click="handleAttachGame(newInstanceDialog.location, newInstanceDialog.shortName)">
                     {{ t('dialog.new_instance.open_ingame') }}
-                </el-button>
+                </Button>
             </template>
             <template v-else>
-                <el-button
-                    type="primary"
-                    @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
-                    >{{ t('dialog.new_instance.launch') }}</el-button
-                >
+                <Button @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)">{{
+                    t('dialog.new_instance.launch')
+                }}</Button>
             </template>
         </template>
         <InviteDialog :invite-dialog="inviteDialog" @closeInviteDialog="closeInviteDialog" />
@@ -441,6 +442,7 @@
 
 <script setup>
     import { computed, nextTick, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { Check as CheckIcon } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -467,7 +469,6 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
     import { groupRequest, instanceRequest, worldRequest } from '../../api';
     import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-    import { Button } from '../ui/button';
     import { VirtualCombobox } from '../ui/virtual-combobox';
     import { getNextDialogIndex } from '../../shared/utils/base/ui';
 

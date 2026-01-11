@@ -28,26 +28,31 @@
                             ">
                             <div style="flex: none">
                                 <template v-if="isRealInstance(userDialog.$location.tag)">
-                                    <Launch :location="userDialog.$location.tag" />
-                                    <InviteYourself
-                                        :location="userDialog.$location.tag"
-                                        :shortname="userDialog.$location.shortName"
-                                        style="margin-left: 5px" />
-                                    <TooltipWrapper side="top" :content="t('dialog.user.info.refresh_instance_info')"
-                                        ><el-button
-                                            size="small"
-                                            :icon="Refresh"
-                                            style="margin-left: 5px"
-                                            circle
-                                            @click="refreshInstancePlayerCount(userDialog.$location.tag)"></el-button>
-                                    </TooltipWrapper>
-                                    <LastJoin
-                                        :location="userDialog.$location.tag"
-                                        :currentlocation="lastLocation.location" />
-                                    <InstanceInfo
-                                        :location="userDialog.$location.tag"
-                                        :instance="userDialog.instance.ref"
-                                        :friendcount="userDialog.instance.friendCount" />
+                                    <div class="flex items-center mb-1">
+                                        <Launch :location="userDialog.$location.tag" />
+                                        <InviteYourself
+                                            :location="userDialog.$location.tag"
+                                            :shortname="userDialog.$location.shortName"
+                                            style="margin-left: 5px" />
+                                        <TooltipWrapper
+                                            side="top"
+                                            :content="t('dialog.user.info.refresh_instance_info')"
+                                            ><Button
+                                                class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                                                size="icon"
+                                                variant="outline"
+                                                @click="refreshInstancePlayerCount(userDialog.$location.tag)"
+                                                ><i class="ri-refresh-line"></i
+                                            ></Button>
+                                        </TooltipWrapper>
+                                        <LastJoin
+                                            :location="userDialog.$location.tag"
+                                            :currentlocation="lastLocation.location" />
+                                        <InstanceInfo
+                                            :location="userDialog.$location.tag"
+                                            :instance="userDialog.instance.ref"
+                                            :friendcount="userDialog.instance.friendCount" />
+                                    </div>
                                 </template>
                                 <Location
                                     :location="userDialog.ref.location"
@@ -234,23 +239,24 @@
                                     >{{ bioCache.translated || userDialog.ref.bio || '-' }}</pre
                                 >
                                 <div style="float: right">
-                                    <el-button
+                                    <Button
                                         v-if="translationApi && userDialog.ref.bio"
-                                        text
-                                        size="small"
-                                        :loading="translateLoading"
-                                        :disabled="translateLoading"
-                                        style="margin-left: 5px; padding: 0"
-                                        @click="translateBio"
-                                        ><i class="ri-translate-2"></i
-                                    ></el-button>
-                                    <el-button
+                                        class="w-3 h-6 text-xs mr-0.5"
+                                        size="icon-sm"
+                                        variant="ghost"
+                                        @click="translateBio">
+                                        <Spinner v-if="translateLoading" class="size-1" />
+                                        <i v-else class="ri-translate-2"> </i
+                                    ></Button>
+                                    <Button
+                                        class="w-3 h-6 text-xs"
+                                        size="icon-sm"
+                                        variant="ghost"
                                         v-if="userDialog.id === currentUser.id"
-                                        text
-                                        :icon="Edit"
-                                        size="small"
                                         style="margin-left: 5px; padding: 0"
-                                        @click="showBioDialog"></el-button>
+                                        @click="showBioDialog"
+                                        ><i class="ri-pencil-line"></i
+                                    ></Button>
                                 </div>
                                 <div style="margin-top: 5px" class="flex items-center">
                                     <TooltipWrapper v-for="(link, index) in userDialog.ref.bioLinks" :key="index">
@@ -496,13 +502,14 @@
                                 <span class="name">{{ t('dialog.user.info.home_location') }}</span>
                                 <span class="extra">
                                     <span v-text="userDialog.$homeLocationName"></span>
-                                    <el-button
-                                        size="small"
-                                        :icon="Delete"
-                                        circle
+                                    <Button
+                                        class="rounded-full text-xs ml-1"
+                                        size="icon-sm"
+                                        variant="outline"
                                         style="margin-left: 5px"
-                                        @click.stop="resetHome()">
-                                    </el-button>
+                                        @click.stop="resetHome()"
+                                        ><i class="ri-delete-bin-line"></i>
+                                    </Button>
                                 </span>
                             </div>
                         </div>
@@ -514,12 +521,13 @@
                                     <TooltipWrapper side="top" :content="t('dialog.user.info.id_tooltip')">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger as-child>
-                                                <el-button
-                                                    type="default"
-                                                    :icon="CopyDocument"
-                                                    size="small"
-                                                    circle
-                                                    @click.stop></el-button>
+                                                <Button
+                                                    class="rounded-full text-xs"
+                                                    size="icon-sm"
+                                                    variant="outline"
+                                                    @click.stop
+                                                    ><i class="ri-file-copy-line"></i
+                                                ></Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent>
                                                 <DropdownMenuItem @click="copyUserId(userDialog.id)">
@@ -562,24 +570,22 @@
                         </div>
                         <div style="display: flex; align-items: center">
                             <span style="margin-right: 5px">{{ t('dialog.user.groups.sort_by') }}</span>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger as-child :disabled="userDialog.isMutualFriendsLoading">
-                                    <el-button size="small" :disabled="userDialog.isMutualFriendsLoading" @click.stop>
-                                        <span>
-                                            {{ t(userDialog.mutualFriendSorting.name) }}
-                                            <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
-                                        </span>
-                                    </el-button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    <DropdownMenuItem
+                            <Select
+                                :model-value="userDialogMutualFriendSortingKey"
+                                :disabled="userDialog.isMutualFriendsLoading"
+                                @update:modelValue="setUserDialogMutualFriendSortingByKey">
+                                <SelectTrigger size="sm" @click.stop>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem
                                         v-for="(item, key) in userDialogMutualFriendSortingOptions"
-                                        :key="key"
-                                        @click="setUserDialogMutualFriendSorting(item)">
+                                        :key="String(key)"
+                                        :value="String(key)">
                                         {{ t(item.name) }}
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
                     <div
@@ -641,96 +647,80 @@
                         <div style="display: flex; align-items: center">
                             <template v-if="!userDialogGroupEditMode">
                                 <span style="margin-right: 5px">{{ t('dialog.user.groups.sort_by') }}</span>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger as-child :disabled="userDialog.isGroupsLoading">
-                                        <el-button size="small" :disabled="userDialog.isGroupsLoading" @click.stop>
-                                            <span>
-                                                {{ t(userDialog.groupSorting.name) }}
-                                                <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
-                                            </span>
-                                        </el-button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuItem
+                                <Select
+                                    :model-value="userDialogGroupSortingKey"
+                                    :disabled="userDialog.isGroupsLoading"
+                                    @update:modelValue="setUserDialogGroupSortingByKey">
+                                    <SelectTrigger size="sm" @click.stop>
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem
                                             v-for="(item, key) in userDialogGroupSortingOptions"
-                                            :key="key"
+                                            :key="String(key)"
+                                            :value="String(key)"
                                             :disabled="
                                                 item === userDialogGroupSortingOptions.inGame &&
                                                 userDialog.id !== currentUser.id
-                                            "
-                                            @click="setUserDialogGroupSorting(item)">
+                                            ">
                                             {{ t(item.name) }}
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </template>
-                            <el-button
+                            <Button
+                                variant="outline"
+                                size="sm"
                                 v-if="userDialogGroupEditMode"
-                                size="small"
-                                :icon="Edit"
-                                style="margin-right: 5px; height: 29px; padding: 7px 15px"
                                 @click="exitEditModeCurrentUserGroups">
                                 {{ t('dialog.user.groups.exit_edit_mode') }}
-                            </el-button>
-                            <el-button
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
                                 v-else-if="currentUser.id === userDialog.id"
-                                size="small"
-                                :icon="Edit"
-                                style="margin-right: 5px; height: 29px; padding: 7px 15px"
+                                class="ml-2"
                                 @click="editModeCurrentUserGroups">
                                 {{ t('dialog.user.groups.edit_mode') }}
-                            </el-button>
+                            </Button>
                         </div>
                     </div>
                     <div v-loading="userDialog.isGroupsLoading" style="margin-top: 10px">
                         <template v-if="userDialogGroupEditMode">
                             <div class="x-friend-list" style="margin-top: 10px; margin-bottom: 15px; max-height: unset">
                                 <!-- Bulk actions dropdown (shown only in edit mode) -->
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger as-child>
-                                        <el-button
-                                            size="small"
-                                            :icon="Setting"
-                                            style="
-                                                margin-right: 5px;
-                                                height: 29px;
-                                                padding: 7px 15px;
-                                                margin-bottom: 5px;
-                                            ">
-                                            {{ t('dialog.group.actions.manage_selected') }}
-                                            <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
-                                        </el-button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuItem @click="bulkSetVisibility('visible')">
+                                <Select :model-value="bulkGroupActionValue" @update:modelValue="handleBulkGroupAction">
+                                    <SelectTrigger size="sm" style="margin-right: 5px; margin-bottom: 5px" @click.stop>
+                                        <SelectValue :placeholder="t('dialog.group.actions.manage_selected')" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="visibility:visible">
                                             {{ t('dialog.group.actions.visibility_everyone') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem @click="bulkSetVisibility('friends')">
+                                        </SelectItem>
+                                        <SelectItem value="visibility:friends">
                                             {{ t('dialog.group.actions.visibility_friends') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem @click="bulkSetVisibility('hidden')">
+                                        </SelectItem>
+                                        <SelectItem value="visibility:hidden">
                                             {{ t('dialog.group.actions.visibility_hidden') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem variant="destructive" @click="bulkLeaveGroups">
-                                            <Delete class="size-4" />
+                                        </SelectItem>
+                                        <SelectItem value="leave">
                                             {{ t('dialog.user.groups.leave_group_tooltip') }}
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
 
                                 <!-- Select All button -->
-                                <el-button
-                                    size="small"
-                                    :icon="userDialogGroupAllSelected ? Close : Check"
-                                    style="height: 29px; padding: 7px 15px; margin-bottom: 5px"
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    style="padding: 7px 15px; margin-bottom: 5px"
                                     @click="selectAllGroups">
                                     {{
                                         userDialogGroupAllSelected
                                             ? t('dialog.group.actions.deselect_all')
                                             : t('dialog.group.actions.select_all')
                                     }}
-                                </el-button>
+                                </Button>
 
                                 <div
                                     v-for="group in userDialogGroupEditGroups"
@@ -755,7 +745,7 @@
                                     <div style="margin-right: 3px; margin-left: 5px" @click.stop>
                                         <el-button
                                             size="small"
-                                            :icon="Download"
+                                            :icon="DownloadIcon"
                                             style="
                                                 display: block;
                                                 padding: 7px;
@@ -767,7 +757,7 @@
                                         </el-button>
                                         <el-button
                                             size="small"
-                                            :icon="Download"
+                                            :icon="DownloadIcon"
                                             style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
                                             @click="moveGroupBottom(group.id)">
                                         </el-button>
@@ -810,43 +800,40 @@
                                             <span>({{ group.memberCount }})</span>
                                         </span>
                                     </div>
-                                    <DropdownMenu v-if="group.myMember?.visibility">
-                                        <DropdownMenuTrigger as-child :disabled="group.privacy !== 'default'">
-                                            <el-button :disabled="group.privacy !== 'default'" @click.stop size="small">
-                                                <span v-if="group.myMember.visibility === 'visible'">{{
-                                                    t('dialog.group.tags.visible')
-                                                }}</span>
-                                                <span v-else-if="group.myMember.visibility === 'friends'">{{
-                                                    t('dialog.group.tags.friends')
-                                                }}</span>
-                                                <span v-else-if="group.myMember.visibility === 'hidden'">{{
-                                                    t('dialog.group.tags.hidden')
-                                                }}</span>
-                                                <span v-else>{{ group.myMember.visibility }}</span>
-                                                <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
-                                            </el-button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent>
-                                            <DropdownMenuItem @click="setGroupVisibility(group.id, 'visible')">
-                                                <Check v-if="group.myMember.visibility === 'visible'" class="size-4" />
+                                    <Select
+                                        v-if="group.myMember?.visibility"
+                                        :model-value="group.myMember.visibility"
+                                        :disabled="group.privacy !== 'default'"
+                                        @update:modelValue="(value) => setGroupVisibility(group.id, value)">
+                                        <SelectTrigger size="sm" @click.stop>
+                                            <SelectValue
+                                                :placeholder="
+                                                    group.myMember.visibility === 'visible'
+                                                        ? t('dialog.group.tags.visible')
+                                                        : group.myMember.visibility === 'friends'
+                                                          ? t('dialog.group.tags.friends')
+                                                          : group.myMember.visibility === 'hidden'
+                                                            ? t('dialog.group.tags.hidden')
+                                                            : group.myMember.visibility
+                                                " />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="visible">
                                                 {{ t('dialog.group.actions.visibility_everyone') }}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem @click="setGroupVisibility(group.id, 'friends')">
-                                                <Check v-if="group.myMember.visibility === 'friends'" class="size-4" />
+                                            </SelectItem>
+                                            <SelectItem value="friends">
                                                 {{ t('dialog.group.actions.visibility_friends') }}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem @click="setGroupVisibility(group.id, 'hidden')">
-                                                <Check v-if="group.myMember.visibility === 'hidden'" class="size-4" />
+                                            </SelectItem>
+                                            <SelectItem value="hidden">
                                                 {{ t('dialog.group.actions.visibility_hidden') }}
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                     <!--//- JSON is missing isSubscribedToAnnouncements, can't be implemented-->
-                                    <!-- <el-button
+                                    <!-- <Button size="sm" variant="outline"
                                         @click.stop="
                                             setGroupSubscription(group.id, !group.myMember.isSubscribedToAnnouncements)
-                                        "
-                                        size="small">
+                                        ">
                                         <span v-if="group.myMember.isSubscribedToAnnouncements"
                                             ><el-icon style="margin-left: 5px"><MuteNotification /></el-icon>
                                             {{ t('dialog.group.tags.subscribed') }}</span
@@ -855,24 +842,26 @@
                                             ><el-icon style="margin-left: 5px"><Bell /></el-icon>
                                             {{ t('dialog.group.tags.unsubscribed') }}</span
                                         >
-                                    </el-button> -->
+                                    </Button> -->
                                     <TooltipWrapper side="right" :content="t('dialog.user.groups.leave_group_tooltip')">
-                                        <el-button
+                                        <Button
+                                            class="rounded-full h-6 w-6"
+                                            size="icon-sm"
+                                            variant="outline"
                                             v-if="shiftHeld"
-                                            size="small"
-                                            :icon="Close"
-                                            circle
                                             style="color: var(--el-color-danger); margin-left: 5px"
                                             @click.stop="leaveGroup(group.id)">
-                                        </el-button>
-                                        <el-button
+                                            <LogOut />
+                                        </Button>
+                                        <Button
+                                            class="rounded-full h-6 w-6 text-red-600"
+                                            size="icon-sm"
+                                            variant="outline"
                                             v-else
-                                            size="small"
-                                            :icon="Delete"
-                                            circle
                                             style="margin-left: 5px"
                                             @click.stop="leaveGroupPrompt(group.id)">
-                                        </el-button>
+                                            <LogOut />
+                                        </Button>
                                     </TooltipWrapper>
                                 </div>
                             </div>
@@ -1036,44 +1025,40 @@
                             }}</span>
                         </div>
                         <div style="display: flex; align-items: center">
-                            <span style="margin-right: 5px">{{ t('dialog.user.worlds.sort_by') }}</span>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger as-child :disabled="userDialog.isWorldsLoading">
-                                    <el-button size="small" :disabled="userDialog.isWorldsLoading" @click.stop>
-                                        <span>
-                                            {{ t(userDialog.worldSorting.name) }}
-                                            <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
-                                        </span>
-                                    </el-button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    <DropdownMenuItem
+                            <span class="mr-1">{{ t('dialog.user.worlds.sort_by') }}</span>
+                            <Select
+                                :model-value="userDialogWorldSortingKey"
+                                :disabled="userDialog.isWorldsLoading"
+                                @update:modelValue="setUserDialogWorldSortingByKey">
+                                <SelectTrigger size="sm" @click.stop>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem
                                         v-for="(item, key) in userDialogWorldSortingOptions"
-                                        :key="key"
-                                        @click="setUserDialogWorldSorting(item)">
+                                        :key="String(key)"
+                                        :value="String(key)">
                                         {{ t(item.name) }}
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                            <span style="margin: 0 5px">{{ t('dialog.user.worlds.order_by') }}</span>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger as-child :disabled="userDialog.isWorldsLoading">
-                                    <el-button size="small" :disabled="userDialog.isWorldsLoading" @click.stop>
-                                        <span>
-                                            {{ t(userDialog.worldOrder.name) }}
-                                            <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
-                                        </span>
-                                    </el-button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    <DropdownMenuItem
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <span class="ml-2 mr-1">{{ t('dialog.user.worlds.order_by') }}</span>
+                            <Select
+                                :model-value="userDialogWorldOrderKey"
+                                :disabled="userDialog.isWorldsLoading"
+                                @update:modelValue="setUserDialogWorldOrderByKey">
+                                <SelectTrigger size="sm" @click.stop>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem
                                         v-for="(item, key) in userDialogWorldOrderOptions"
-                                        :key="key"
-                                        @click="setUserDialogWorldOrder(item)">
+                                        :key="String(key)"
+                                        :value="String(key)">
                                         {{ t(item.name) }}
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
                     <div
@@ -1097,7 +1082,8 @@
                 </el-tab-pane>
 
                 <el-tab-pane name="Favorite Worlds" :label="t('dialog.user.favorite_worlds.header')" lazy>
-                    <el-button
+                    <!-- <Button
+                        variant="outline"
                         v-if="userFavoriteWorlds && userFavoriteWorlds.length > 0"
                         type="default"
                         :loading="userDialog.isFavoriteWorldsLoading"
@@ -1106,7 +1092,7 @@
                         circle
                         style="position: absolute; right: 15px; bottom: 15px; z-index: 99"
                         @click="getUserFavoriteWorlds(userDialog.id)">
-                    </el-button>
+                    </Button> -->
                     <el-tabs
                         ref="favoriteWorldsRef"
                         v-loading="userDialog.isFavoriteWorldsLoading"
@@ -1186,51 +1172,43 @@
                                 t('dialog.user.avatars.total_count', { count: userDialogAvatars.length })
                             }}</span>
                         </div>
-                        <div>
+                        <div class="flex items-center">
                             <template v-if="userDialog.ref.id === currentUser.id">
-                                <span style="margin-right: 5px">{{ t('dialog.user.avatars.sort_by') }}</span>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger as-child :disabled="userDialog.isWorldsLoading">
-                                        <el-button size="small" :disabled="userDialog.isWorldsLoading" @click.stop>
-                                            <span>
-                                                {{ t(`dialog.user.avatars.sort_by_${userDialog.avatarSorting}`) }}
-                                                <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
-                                            </span>
-                                        </el-button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuItem @click="changeUserDialogAvatarSorting('name')">
-                                            {{ t('dialog.user.avatars.sort_by_name') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem @click="changeUserDialogAvatarSorting('update')">
-                                            {{ t('dialog.user.avatars.sort_by_update') }}
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                                <span style="margin-right: 5px; margin-left: 10px">{{
-                                    t('dialog.user.avatars.group_by')
-                                }}</span>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger as-child :disabled="userDialog.isWorldsLoading">
-                                        <el-button size="small" :disabled="userDialog.isWorldsLoading" @click.stop>
-                                            <span>
-                                                {{ t(`dialog.user.avatars.${userDialog.avatarReleaseStatus}`) }}
-                                                <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
-                                            </span>
-                                        </el-button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuItem @click="userDialog.avatarReleaseStatus = 'all'">
-                                            {{ t('dialog.user.avatars.all') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem @click="userDialog.avatarReleaseStatus = 'public'">
-                                            {{ t('dialog.user.avatars.public') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem @click="userDialog.avatarReleaseStatus = 'private'">
-                                            {{ t('dialog.user.avatars.private') }}
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                <span class="mr-1">{{ t('dialog.user.avatars.sort_by') }}</span>
+                                <Select
+                                    :model-value="userDialog.avatarSorting"
+                                    :disabled="userDialog.isWorldsLoading"
+                                    @update:modelValue="changeUserDialogAvatarSorting">
+                                    <SelectTrigger size="sm" @click.stop>
+                                        <SelectValue
+                                            :placeholder="
+                                                t(`dialog.user.avatars.sort_by_${userDialog.avatarSorting}`)
+                                            " />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="name">{{
+                                            t('dialog.user.avatars.sort_by_name')
+                                        }}</SelectItem>
+                                        <SelectItem value="update">{{
+                                            t('dialog.user.avatars.sort_by_update')
+                                        }}</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <span class="ml-2 mr-1">{{ t('dialog.user.avatars.group_by') }}</span>
+                                <Select
+                                    :model-value="userDialog.avatarReleaseStatus"
+                                    :disabled="userDialog.isWorldsLoading"
+                                    @update:modelValue="(value) => (userDialog.avatarReleaseStatus = value)">
+                                    <SelectTrigger size="sm" @click.stop>
+                                        <SelectValue
+                                            :placeholder="t(`dialog.user.avatars.${userDialog.avatarReleaseStatus}`)" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">{{ t('dialog.user.avatars.all') }}</SelectItem>
+                                        <SelectItem value="public">{{ t('dialog.user.avatars.public') }}</SelectItem>
+                                        <SelectItem value="private">{{ t('dialog.user.avatars.private') }}</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </template>
                         </div>
                     </div>
@@ -1264,16 +1242,20 @@
                 </el-tab-pane>
 
                 <el-tab-pane name="JSON" :label="t('dialog.user.json.header')" lazy style="height: 50vh">
-                    <el-button type="default" size="small" :icon="Refresh" circle @click="refreshUserDialogTreeData()">
-                    </el-button>
-                    <el-button
-                        type="default"
-                        size="small"
-                        :icon="Download"
-                        circle
-                        style="margin-left: 5px"
+                    <Button
+                        class="rounded-full h-6 w-6 mr-2"
+                        size="icon-sm"
+                        variant="outline"
+                        @click="refreshUserDialogTreeData()">
+                        <RefreshCcw />
+                    </Button>
+                    <Button
+                        class="rounded-full h-6 w-6"
+                        size="icon-sm"
+                        variant="outline"
                         @click="downloadAndSaveJson(userDialog.id, userDialog.ref)">
-                    </el-button>
+                        <Download />
+                    </Button>
                     <vue-json-pretty
                         :data="userDialog.treeData"
                         :deep="2"
@@ -1304,25 +1286,28 @@
 
 <script setup>
     import {
-        ArrowDown,
         Bottom,
-        Check,
-        Close,
         CollectionTag,
-        CopyDocument,
-        Delete,
-        Download,
-        Edit,
+        Download as DownloadIcon,
         Loading,
         MoreFilled,
         Refresh,
-        Setting,
         Top,
         View,
         Warning
     } from '@element-plus/icons-vue';
+    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
+    import {
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuTrigger
+    } from '@/components/ui/dropdown-menu';
+    import { Download, LogOut, RefreshCcw } from 'lucide-vue-next';
+    import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
+    import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -1376,13 +1361,6 @@
         userRequest,
         worldRequest
     } from '../../../api';
-    import {
-        DropdownMenu,
-        DropdownMenuContent,
-        DropdownMenuItem,
-        DropdownMenuSeparator,
-        DropdownMenuTrigger
-    } from '../../ui/dropdown-menu';
     import { processBulk, request } from '../../../service/request';
     import { userDialogGroupSortingOptions, userDialogMutualFriendSortingOptions } from '../../../shared/constants';
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
@@ -2368,6 +2346,9 @@
     }
 
     async function translateBio() {
+        if (translateLoading.value) {
+            return;
+        }
         const bio = userDialog.value.ref.bio;
         if (!bio) {
             return;
@@ -2455,6 +2436,25 @@
         copyToClipboard(displayName, 'User DisplayName copied to clipboard');
     }
 
+    const userDialogGroupSortingKey = computed(() => {
+        const current = userDialog.value.groupSorting;
+        const found = Object.entries(userDialogGroupSortingOptions).find(([, option]) => {
+            if (option === current) {
+                return true;
+            }
+            return option?.value === current?.value || option?.name === current?.name;
+        });
+        return found ? String(found[0]) : '';
+    });
+
+    function setUserDialogGroupSortingByKey(key) {
+        const option = userDialogGroupSortingOptions[key];
+        if (!option) {
+            return;
+        }
+        setUserDialogGroupSorting(option);
+    }
+
     async function setUserDialogGroupSorting(sortOrder) {
         const D = userDialog.value;
         if (D.groupSorting.value === sortOrder.value) {
@@ -2462,6 +2462,25 @@
         }
         D.groupSorting = sortOrder;
         await sortCurrentUserGroups();
+    }
+
+    const userDialogMutualFriendSortingKey = computed(() => {
+        const current = userDialog.value.mutualFriendSorting;
+        const found = Object.entries(userDialogMutualFriendSortingOptions).find(([, option]) => {
+            if (option === current) {
+                return true;
+            }
+            return option?.value === current?.value || option?.name === current?.name;
+        });
+        return found ? String(found[0]) : '';
+    });
+
+    function setUserDialogMutualFriendSortingByKey(key) {
+        const option = userDialogMutualFriendSortingOptions[key];
+        if (!option) {
+            return;
+        }
+        setUserDialogMutualFriendSorting(option);
     }
 
     async function setUserDialogMutualFriendSorting(sortOrder) {
@@ -2521,6 +2540,23 @@
         userDialogGroupEditMode.value = false;
         nextTick(() => {
             userDialogGroupEditMode.value = true;
+        });
+    }
+
+    const bulkGroupActionValue = ref('');
+
+    function handleBulkGroupAction(value) {
+        bulkGroupActionValue.value = value;
+
+        if (value === 'leave') {
+            bulkLeaveGroups();
+        } else if (typeof value === 'string' && value.startsWith('visibility:')) {
+            const newVisibility = value.slice('visibility:'.length);
+            bulkSetVisibility(newVisibility);
+        }
+
+        nextTick(() => {
+            bulkGroupActionValue.value = '';
         });
     }
 
@@ -2593,6 +2629,25 @@
         refreshUserDialogWorlds();
     }
 
+    const userDialogWorldSortingKey = computed(() => {
+        const current = userDialog.value.worldSorting;
+        const found = Object.entries(userDialogWorldSortingOptions).find(([, option]) => {
+            if (option === current) {
+                return true;
+            }
+            return option?.value === current?.value || option?.name === current?.name;
+        });
+        return found ? String(found[0]) : '';
+    });
+
+    function setUserDialogWorldSortingByKey(key) {
+        const option = userDialogWorldSortingOptions[key];
+        if (!option) {
+            return;
+        }
+        setUserDialogWorldSorting(option);
+    }
+
     async function setUserDialogWorldOrder(order) {
         const D = userDialog.value;
         if (D.worldOrder.value === order.value) {
@@ -2600,6 +2655,25 @@
         }
         D.worldOrder = order;
         refreshUserDialogWorlds();
+    }
+
+    const userDialogWorldOrderKey = computed(() => {
+        const current = userDialog.value.worldOrder;
+        const found = Object.entries(userDialogWorldOrderOptions).find(([, option]) => {
+            if (option === current) {
+                return true;
+            }
+            return option?.value === current?.value || option?.name === current?.name;
+        });
+        return found ? String(found[0]) : '';
+    });
+
+    function setUserDialogWorldOrderByKey(key) {
+        const option = userDialogWorldOrderOptions[key];
+        if (!option) {
+            return;
+        }
+        setUserDialogWorldOrder(option);
     }
 
     function changeUserDialogAvatarSorting(sortOption) {

@@ -31,9 +31,9 @@
         </span>
 
         <template v-if="errors">
-            <el-button size="small" @click="errors = ''">
+            <Button size="sm" variant="outline" @click="errors = ''">
                 {{ t('dialog.note_export.clear_errors') }}
-            </el-button>
+            </Button>
             <h2 style="font-weight: bold; margin: 0">
                 {{ t('dialog.note_export.errors') }}
             </h2>
@@ -79,7 +79,7 @@
 
             <el-table-column :label="t('table.import.skip_export')" width="90" align="right">
                 <template #default="{ row }">
-                    <el-button text :icon="Close" size="small" @click="removeFromNoteExportTable(row)"></el-button>
+                    <Button size="sm" variant="ghost" @click="removeFromNoteExportTable(row)"></Button>
                 </template>
             </el-table-column>
         </DataTable>
@@ -87,8 +87,9 @@
 </template>
 
 <script setup>
-    import { Close, Loading } from '@element-plus/icons-vue';
     import { ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
+    import { Loading } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

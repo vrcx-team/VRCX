@@ -2,12 +2,12 @@
     <div class="options-container" style="margin-top: 0">
         <span class="header">{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.header') }}</span>
         <div class="options-container-item">
-            <el-button
-                size="small"
-                :icon="Files"
+            <Button
+                size="sm"
+                variant="outline"
                 :disabled="!openVR || !overlayWrist"
                 @click="emit('open-feed-filters')"
-                >{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_filters') }}</el-button
+                >{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_filters') }}</Button
             >
         </div>
         <div class="options-container-item">
@@ -156,7 +156,7 @@
 </template>
 
 <script setup>
-    import { Files } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

@@ -106,18 +106,18 @@
                 :long-label="true"
                 @change="setAvatarRemoteDatabase(!avatarRemoteDatabase)" />
             <div class="options-container-item">
-                <el-button size="small" :icon="User" @click="showAvatarProviderDialog">{{
+                <Button size="sm" variant="outline" @click="showAvatarProviderDialog">{{
                     t('view.settings.advanced.advanced.remote_database.avatar_database_provider')
-                }}</el-button>
+                }}</Button>
             </div>
         </div>
         <template v-if="!isLinux">
             <div class="options-container">
                 <span class="header">{{ t('view.settings.advanced.advanced.app_launcher.header') }}</span>
                 <br />
-                <el-button size="small" :icon="Folder" style="margin-top: 5px" @click="openShortcutFolder()">{{
+                <Button size="sm" variant="outline" style="margin-top: 5px" @click="openShortcutFolder()">{{
                     t('view.settings.advanced.advanced.app_launcher.folder')
-                }}</el-button>
+                }}</Button>
                 <simple-switch
                     :label="t('view.settings.advanced.advanced.remote_database.enable')"
                     :value="enableAppLauncher"
@@ -145,9 +145,9 @@
                 :long-label="true"
                 @change="changeYouTubeApi('VRCX_youtubeAPI')" />
             <div class="options-container-item">
-                <el-button size="small" :icon="CaretRight" @click="showYouTubeApiDialog">{{
+                <Button size="sm" variant="outline" @click="showYouTubeApiDialog">{{
                     t('view.settings.advanced.advanced.youtube_api.youtube_api_key')
-                }}</el-button>
+                }}</Button>
             </div>
         </div>
         <div class="options-container">
@@ -159,9 +159,9 @@
                 :long-label="true"
                 @change="changeTranslationAPI('VRCX_translationAPI')" />
             <div class="options-container-item">
-                <el-button size="small" @click="showTranslationApiDialog"
+                <Button size="sm" variant="outline" @click="showTranslationApiDialog"
                     ><i class="ri-translate-2" style="margin-right: 5px"></i
-                    >{{ t('view.settings.advanced.advanced.translation_api.translation_api_key') }}</el-button
+                    >{{ t('view.settings.advanced.advanced.translation_api.translation_api_key') }}</Button
                 >
             </div>
         </div>
@@ -192,17 +192,18 @@
                 :long-label="true"
                 @change="setShowConfirmationOnSwitchAvatar" />
             <div class="options-container-item">
-                <el-button
-                    size="small"
-                    :icon="Paperclip"
+                <Button
+                    size="sm"
+                    variant="outline"
+                    class="mr-2"
                     @click="openExternalLink('https://github.com/vrcx-team/VRCX/wiki/Launch-parameters-&-VRCX.json')"
-                    >{{ t('view.settings.advanced.advanced.launch_commands.docs') }}</el-button
+                    >{{ t('view.settings.advanced.advanced.launch_commands.docs') }}</Button
                 >
-                <el-button
-                    size="small"
-                    :icon="Paperclip"
+                <Button
+                    size="sm"
+                    variant="outline"
                     @click="openExternalLink('https://github.com/Myrkie/open-in-vrcx')"
-                    >{{ t('view.settings.advanced.advanced.launch_commands.website_userscript') }}</el-button
+                    >{{ t('view.settings.advanced.advanced.launch_commands.website_userscript') }}</Button
                 >
             </div>
         </div>
@@ -210,15 +211,15 @@
             <span class="header">{{ t('view.settings.advanced.advanced.cache_debug.header') }}</span>
             <br />
             <div class="options-container-item">
-                <el-button size="small" :icon="DeleteFilled" @click="clearVRCXCache">{{
+                <Button size="sm" variant="outline" class="mr-2" @click="clearVRCXCache">{{
                     t('view.settings.advanced.advanced.cache_debug.clear_cache')
-                }}</el-button>
-                <el-button size="small" :icon="Timer" @click="promptAutoClearVRCXCacheFrequency">{{
+                }}</Button>
+                <Button size="sm" variant="outline" class="mr-2" @click="promptAutoClearVRCXCacheFrequency">{{
                     t('view.settings.advanced.advanced.cache_debug.auto_clear_cache')
-                }}</el-button>
-                <el-button size="small" :icon="Refresh" @click="refreshCacheSize">{{
+                }}</Button>
+                <Button size="sm" variant="outline" @click="refreshCacheSize">{{
                     t('view.settings.advanced.advanced.cache_debug.refresh_cache')
-                }}</el-button>
+                }}</Button>
             </div>
 
             <simple-switch
@@ -263,17 +264,17 @@
                 </span>
             </div>
             <div class="options-container-item">
-                <el-button size="small" :icon="Tickets" @click="showConsole">{{
+                <Button size="sm" variant="outline" @click="showConsole">{{
                     t('view.settings.advanced.advanced.cache_debug.show_console')
-                }}</el-button>
+                }}</Button>
             </div>
         </div>
         <div class="options-container">
             <span class="sub-header">{{ t('view.settings.advanced.advanced.sqlite_table_size.header') }}</span>
             <div class="options-container-item">
-                <el-button size="small" :icon="Refresh" @click="getSqliteTableSizes">{{
+                <Button size="sm" variant="outline" @click="getSqliteTableSizes">{{
                     t('view.settings.advanced.advanced.sqlite_table_size.refresh')
-                }}</el-button>
+                }}</Button>
             </div>
             <div class="options-container-item">
                 <span class="name">
@@ -353,22 +354,14 @@
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.config_json') }}</span>
                 <TooltipWrapper side="top" :content="t('view.profile.refresh_tooltip')">
-                    <el-button
-                        type="default"
-                        size="small"
-                        :icon="Refresh"
-                        circle
-                        style="margin-left: 5px"
-                        @click="refreshConfigTreeData()"></el-button>
+                    <Button class="rounded-full mr-2" size="icon-sm" variant="outline" @click="refreshConfigTreeData()">
+                        <RefreshCcw />
+                    </Button>
                 </TooltipWrapper>
                 <TooltipWrapper side="top" :content="t('view.profile.clear_results_tooltip')">
-                    <el-button
-                        type="default"
-                        size="small"
-                        :icon="Delete"
-                        circle
-                        style="margin-left: 5px"
-                        @click="configTreeData = {}"></el-button>
+                    <Button class="rounded-full" size="icon-sm" variant="outline" @click="configTreeData = {}">
+                        <Trash2
+                    /></Button>
                 </TooltipWrapper>
             </div>
             <vue-json-pretty
@@ -391,20 +384,9 @@
 </template>
 
 <script setup>
-    import {
-        CaretRight,
-        Delete,
-        DeleteFilled,
-        Folder,
-        Goods,
-        Operation,
-        Paperclip,
-        Refresh,
-        Tickets,
-        Timer,
-        User
-    } from '@element-plus/icons-vue';
+    import { Folder, Goods, Operation } from '@element-plus/icons-vue';
     import { computed, reactive, ref } from 'vue';
+    import { RefreshCcw, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { storeToRefs } from 'pinia';

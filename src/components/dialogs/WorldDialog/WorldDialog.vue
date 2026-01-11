@@ -165,30 +165,37 @@
                             v-if="worldDialog.inCache"
                             side="top"
                             :content="t('dialog.world.actions.delete_cache_tooltip')">
-                            <el-button
-                                :icon="Delete"
-                                size="large"
-                                circle
+                            <Button
+                                class="rounded-full mr-2"
+                                size="icon-lg"
+                                variant="outline"
                                 :disabled="isGameRunning && worldDialog.cacheLocked"
-                                @click="deleteVRChatCache(worldDialog.ref)" />
+                                @click="deleteVRChatCache(worldDialog.ref)"
+                                ><Trash2
+                            /></Button>
                         </TooltipWrapper>
-                        <TooltipWrapper side="top" :content="t('dialog.world.actions.favorites_tooltip')">
-                            <el-button
-                                :type="worldDialog.isFavorite ? 'warning' : 'default'"
-                                :icon="worldDialog.isFavorite ? StarFilled : Star"
-                                size="large"
-                                circle
-                                style="margin-left: 5px"
-                                @click="worldDialogCommand('Add Favorite')" />
+                        <TooltipWrapper
+                            v-if="worldDialog.isFavorite"
+                            side="top"
+                            :content="t('dialog.world.actions.favorites_tooltip')">
+                            <Button class="rounded-full" size="icon-lg" @click="worldDialogCommand('Add Favorite')"
+                                ><Star
+                            /></Button>
+                        </TooltipWrapper>
+                        <TooltipWrapper v-else side="top" :content="t('dialog.world.actions.favorites_tooltip')">
+                            <Button
+                                class="rounded-full"
+                                size="icon-lg"
+                                variant="outline"
+                                @click="worldDialogCommand('Add Favorite')"
+                                ><Star
+                            /></Button>
                         </TooltipWrapper>
                         <DropdownMenu>
                             <DropdownMenuTrigger as-child>
-                                <el-button
-                                    type="default"
-                                    :icon="MoreFilled"
-                                    size="large"
-                                    style="margin-left: 5px"
-                                    circle />
+                                <Button variant="outline" size="icon-lg" class="rounded-full ml-2">
+                                    <Ellipsis />
+                                </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuItem @click="worldDialogCommand('Refresh')">
@@ -343,24 +350,26 @@
                                     <TooltipWrapper
                                         side="top"
                                         :content="t('dialog.world.instances.refresh_instance_info')">
-                                        <el-button
-                                            size="small"
-                                            :icon="Refresh"
-                                            style="margin-left: 5px"
-                                            circle
-                                            @click="refreshInstancePlayerCount(room.tag)" />
+                                        <Button
+                                            class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                                            size="icon"
+                                            variant="outline"
+                                            @click="refreshInstancePlayerCount(room.tag)"
+                                            ><i class="ri-refresh-line"></i
+                                        ></Button>
                                     </TooltipWrapper>
                                     <TooltipWrapper
                                         v-if="instanceJoinHistory.get(room.$location.tag)"
                                         side="top"
                                         :content="t('dialog.previous_instances.info')">
-                                        <el-button
-                                            size="small"
-                                            :icon="DataLine"
+                                        <Button
+                                            class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                                            size="icon-sm"
+                                            variant="outline"
                                             style="margin-left: 5px"
-                                            plain
-                                            circle
-                                            @click="showPreviousInstancesInfoDialog(room.location)" />
+                                            @click="showPreviousInstancesInfoDialog(room.location)"
+                                            ><i class="ri-history-line"></i
+                                        ></Button>
                                     </TooltipWrapper>
                                     <LastJoin :location="room.$location.tag" :currentlocation="lastLocation.location" />
                                     <InstanceInfo
@@ -452,12 +461,13 @@
                                     <TooltipWrapper side="top" :content="t('dialog.world.info.id_tooltip')">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger as-child>
-                                                <el-button
-                                                    type="default"
-                                                    :icon="CopyDocument"
-                                                    size="small"
-                                                    circle
-                                                    @click.stop />
+                                                <Button
+                                                    class="rounded-full text-xs"
+                                                    size="icon-sm"
+                                                    variant="outline"
+                                                    @click.stop
+                                                    ><i class="ri-file-copy-line"></i
+                                                ></Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent>
                                                 <DropdownMenuItem @click="copyWorldId()">
@@ -690,19 +700,20 @@
                     </div>
                 </el-tab-pane>
                 <el-tab-pane name="JSON" :label="t('dialog.world.json.header')" style="max-height: 50vh" lazy>
-                    <el-button
-                        type="default"
-                        size="small"
-                        :icon="Refresh"
-                        circle
-                        @click="refreshWorldDialogTreeData"></el-button>
-                    <el-button
-                        type="default"
-                        size="small"
-                        :icon="Download"
-                        circle
-                        style="margin-left: 5px"
-                        @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)"></el-button>
+                    <Button
+                        class="rounded-full h-6 w-6 mr-2"
+                        size="icon-sm"
+                        variant="outline"
+                        @click="refreshWorldDialogTreeData()">
+                        <RefreshCcw />
+                    </Button>
+                    <Button
+                        class="rounded-full h-6 w-6"
+                        size="icon-sm"
+                        variant="outline"
+                        @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)">
+                        <Download />
+                    </Button>
                     <vue-json-pretty :data="treeData" :deep="2" :theme="isDarkMode ? 'dark' : 'light'" show-icon />
                     <br />
                     <vue-json-pretty
@@ -737,7 +748,6 @@
     import {
         ArrowDown,
         Check,
-        CopyDocument,
         DataLine,
         Delete,
         Download,
@@ -747,12 +757,9 @@
         Loading,
         MagicStick,
         Message,
-        MoreFilled,
         Picture,
         Refresh,
         Share,
-        Star,
-        StarFilled,
         Upload,
         User,
         UserFilled,
@@ -760,6 +767,8 @@
         Warning
     } from '@element-plus/icons-vue';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
+    import { Ellipsis, RefreshCcw, Star, Trash2 } from 'lucide-vue-next';
+    import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

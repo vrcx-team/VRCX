@@ -75,29 +75,33 @@
                                 style="flex: none; width: 60px; height: 60px; border-radius: 4px; object-fit: cover"
                                 @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)"
                                 loading="lazy" />
-                            <el-button size="small" style="vertical-align: top" @click="clearImageGallerySelect">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                style="vertical-align: top"
+                                @click="clearImageGallerySelect">
                                 {{ t('dialog.invite_message.clear_selected_image') }}
-                            </el-button>
+                            </Button>
                         </div>
                     </template>
                     <template v-else>
-                        <el-button size="small" style="margin-right: 5px" @click="showGallerySelectDialog">
+                        <Button size="sm" variant="outline" @click="showGallerySelectDialog">
                             {{ t('dialog.invite_message.select_image') }}
-                        </el-button>
+                        </Button>
                     </template>
                 </el-form-item>
             </el-form>
         </div>
         <template #footer>
-            <el-button @click="groupPostEditDialog.visible = false">
+            <Button variant="secondary" @click="groupPostEditDialog.visible = false">
                 {{ t('dialog.group_post_edit.cancel') }}
-            </el-button>
-            <el-button v-if="groupPostEditDialog.postId" @click="editGroupPost">
+            </Button>
+            <Button v-if="groupPostEditDialog.postId" @click="editGroupPost">
                 {{ t('dialog.group_post_edit.edit_post') }}
-            </el-button>
-            <el-button v-else @click="createGroupPost">
+            </Button>
+            <Button v-else @click="createGroupPost">
                 {{ t('dialog.group_post_edit.create_post') }}
-            </el-button>
+            </Button>
         </template>
         <GallerySelectDialog
             :gallery-select-dialog="gallerySelectDialog"
@@ -108,6 +112,7 @@
 
 <script setup>
     import { computed, ref } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

@@ -65,16 +65,19 @@
         </div>
 
         <template #footer>
-            <el-button @click="currentResetFunction">{{ t('dialog.shared_feed_filters.reset') }}</el-button>
-            <el-button type="primary" style="margin-left: 10px" @click="handleDialogClose">{{
+            <Button variant="secondary" @click="currentResetFunction">{{
+                t('dialog.shared_feed_filters.reset')
+            }}</Button>
+            <Button style="margin-left: 10px" @click="handleDialogClose">{{
                 t('dialog.shared_feed_filters.close')
-            }}</el-button>
+            }}</Button>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
     import { InfoFilled, Warning } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

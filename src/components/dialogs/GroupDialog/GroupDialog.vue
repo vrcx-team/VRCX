@@ -357,12 +357,13 @@
                                 <Location :location="room.tag" style="display: inline-block" />
                                 <InviteYourself :location="room.tag" style="margin-left: 5px" />
                                 <TooltipWrapper side="top" content="Refresh player count">
-                                    <el-button
-                                        size="small"
-                                        :icon="Refresh"
-                                        style="margin-left: 5px"
-                                        circle
-                                        @click="refreshInstancePlayerCount(room.tag)" />
+                                    <Button
+                                        class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                                        size="icon"
+                                        variant="outline"
+                                        @click="refreshInstancePlayerCount(room.tag)"
+                                        ><i class="ri-refresh-line"></i
+                                    ></Button>
                                 </TooltipWrapper>
                                 <LastJoin :location="room.tag" :currentlocation="lastLocation.location" />
                                 <InstanceInfo
@@ -485,22 +486,20 @@
                                     </TooltipWrapper>
                                     <template v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
                                         <TooltipWrapper side="top" :content="t('dialog.group.posts.edit_tooltip')">
-                                            <el-button
-                                                text
-                                                :icon="Edit"
-                                                size="small"
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
                                                 style="margin-left: 5px; padding: 0"
                                                 @click="
                                                     showGroupPostEditDialog(groupDialog.id, groupDialog.announcement)
-                                                " />
+                                                "></Button>
                                         </TooltipWrapper>
                                         <TooltipWrapper side="top" :content="t('dialog.group.posts.delete_tooltip')">
-                                            <el-button
-                                                text
-                                                :icon="Delete"
-                                                size="small"
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
                                                 style="margin-left: 5px; padding: 0"
-                                                @click="confirmDeleteGroupPost(groupDialog.announcement)" />
+                                                @click="confirmDeleteGroupPost(groupDialog.announcement)"></Button>
                                         </TooltipWrapper>
                                     </template>
                                 </div>
@@ -621,13 +620,12 @@
                                 <span class="extra"
                                     >{{ groupDialog.ref.$url }}
                                     <TooltipWrapper side="top" :content="t('dialog.group.info.url_tooltip')">
-                                        <el-button
-                                            type="default"
-                                            size="small"
-                                            :icon="CopyDocument"
-                                            circle
+                                        <Button
+                                            class="rounded-full"
+                                            size="icon"
+                                            variant="outline"
                                             style="margin-left: 5px"
-                                            @click="copyToClipboard(groupDialog.ref.$url)" /> </TooltipWrapper
+                                            @click="copyToClipboard(groupDialog.ref.$url)"></Button> </TooltipWrapper
                                 ></span>
                             </div>
                         </div>
@@ -637,13 +635,12 @@
                                 <span class="extra"
                                     >{{ groupDialog.id }}
                                     <TooltipWrapper side="top" :content="t('dialog.group.info.id_tooltip')">
-                                        <el-button
-                                            type="default"
-                                            size="small"
-                                            :icon="CopyDocument"
-                                            circle
+                                        <Button
+                                            class="rounded-full"
+                                            size="icon"
+                                            variant="outline"
                                             style="margin-left: 5px"
-                                            @click="copyToClipboard(groupDialog.id)" /> </TooltipWrapper
+                                            @click="copyToClipboard(groupDialog.id)"></Button> </TooltipWrapper
                                 ></span>
                             </div>
                         </div>
@@ -797,22 +794,24 @@
                                         <template
                                             v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
                                             <TooltipWrapper side="top" :content="t('dialog.group.posts.edit_tooltip')">
-                                                <el-button
-                                                    text
-                                                    :icon="Edit"
-                                                    size="small"
-                                                    style="margin-left: 5px"
-                                                    @click="showGroupPostEditDialog(groupDialog.id, post)" />
+                                                <Button
+                                                    size="icon-sm"
+                                                    class="h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                                                    variant="ghost"
+                                                    @click="showGroupPostEditDialog(groupDialog.id, post)"
+                                                    ><i class="ri-pencil-line"></i
+                                                ></Button>
                                             </TooltipWrapper>
                                             <TooltipWrapper
                                                 side="top"
                                                 :content="t('dialog.group.posts.delete_tooltip')">
-                                                <el-button
-                                                    text
-                                                    :icon="Delete"
-                                                    size="small"
-                                                    style="margin-left: 5px"
-                                                    @click="confirmDeleteGroupPost(post)" />
+                                                <Button
+                                                    size="icon-sm"
+                                                    class="h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                                                    variant="ghost"
+                                                    @click="confirmDeleteGroupPost(post)"
+                                                    ><i class="ri-delete-bin-line"></i
+                                                ></Button>
                                             </TooltipWrapper>
                                         </template>
                                     </div>
@@ -832,20 +831,23 @@
                             t('dialog.group.members.friends_only')
                         }}</span>
                         <div style="margin-top: 10px">
-                            <el-button
-                                type="default"
-                                size="small"
-                                :icon="Refresh"
+                            <Button
+                                class="rounded-full h-6 w-6"
+                                variant="outline"
+                                size="icon-sm"
                                 :loading="isGroupMembersLoading"
                                 circle
-                                @click="loadAllGroupMembers" />
-                            <el-button
-                                type="default"
-                                size="small"
-                                :icon="Download"
-                                circle
+                                @click="loadAllGroupMembers">
+                                <Spinner v-if="isGroupMembersLoading" /><RefreshCcw v-else
+                            /></Button>
+                            <Button
+                                class="rounded-full h-6 w-6 ml-2"
+                                size="icon-sm"
+                                variant="outline"
                                 style="margin-left: 5px"
-                                @click="downloadAndSaveJson(`${groupDialog.id}_members`, groupDialog.members)" />
+                                @click="downloadAndSaveJson(`${groupDialog.id}_members`, groupDialog.members)">
+                                <Download class="h-4 w-4" />
+                            </Button>
                             <span
                                 v-if="groupDialog.memberSearch.length"
                                 style="font-size: 14px; margin-left: 5px; margin-right: 5px"
@@ -856,62 +858,41 @@
                             >
                             <div
                                 v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')"
-                                style="float: right">
+                                style="float: right"
+                                class="flex items-center">
                                 <span style="margin-right: 5px">{{ t('dialog.group.members.sort_by') }}</span>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger
-                                        as-child
-                                        :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0">
-                                        <el-button
-                                            size="small"
-                                            :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0"
-                                            @click.stop>
-                                            <span>
-                                                {{ t(groupDialog.memberSortOrder.name) }}
-                                                <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
-                                            </span>
-                                        </el-button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuItem
+                                <Select
+                                    v-model="groupDialogMemberSortValue"
+                                    :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0">
+                                    <SelectTrigger class="h-8 w-45 mr-1">
+                                        <SelectValue :placeholder="t('dialog.group.members.sort_by')" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem
                                             v-for="item in groupDialogSortingOptions"
-                                            :key="item.name"
-                                            @click="setGroupMemberSortOrder(item)">
+                                            :key="item.value"
+                                            :value="item.value">
                                             {{ t(item.name) }}
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                                <span style="margin-right: 5px">{{ t('dialog.group.members.filter') }}</span>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger
-                                        as-child
-                                        :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0">
-                                        <el-button
-                                            size="small"
-                                            :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0"
-                                            @click.stop>
-                                            <span>
-                                                {{ t(groupDialog.memberFilter.name) }}
-                                                <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <span class="ml-2 mr-1">{{ t('dialog.group.members.filter') }}</span>
+                                <div style="display: inline-block; width: 220px">
+                                    <VirtualCombobox
+                                        v-model="groupDialogMemberFilterKey"
+                                        :groups="groupDialogMemberFilterGroups"
+                                        :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0"
+                                        :placeholder="t('dialog.group.members.filter')"
+                                        :search-placeholder="t('dialog.group.members.search')"
+                                        :clearable="false"
+                                        :close-on-select="true">
+                                        <template #trigger="{ text }">
+                                            <span class="truncate">
+                                                {{ text || t('dialog.group.members.filter') }}
                                             </span>
-                                        </el-button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuItem
-                                            v-for="item in groupDialogFilterOptions"
-                                            :key="item.name"
-                                            @click="setGroupMemberFilter(item)">
-                                            {{ t(item.name) }}
-                                        </DropdownMenuItem>
-                                        <template v-for="role in groupDialog.ref.roles" :key="role.name">
-                                            <DropdownMenuItem
-                                                v-if="!role.defaultRole"
-                                                @click="setGroupMemberFilter(role)">
-                                                {{ role.name }}
-                                            </DropdownMenuItem>
                                         </template>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                    </VirtualCombobox>
+                                </div>
                             </div>
                             <el-input
                                 v-model="groupDialog.memberSearch"
@@ -1107,19 +1088,20 @@
                     </el-tabs>
                 </el-tab-pane>
                 <el-tab-pane name="JSON" :label="t('dialog.group.json.header')" lazy>
-                    <el-button
-                        type="default"
-                        size="small"
-                        :icon="Refresh"
-                        circle
-                        @click="refreshGroupDialogTreeData()" />
-                    <el-button
-                        type="default"
-                        size="small"
-                        :icon="Download"
-                        circle
-                        style="margin-left: 5px"
-                        @click="downloadAndSaveJson(groupDialog.id, groupDialog.ref)" />
+                    <Button
+                        class="rounded-full h-6 w-6 mr-2"
+                        size="icon-sm"
+                        variant="outline"
+                        @click="refreshGroupDialogTreeData()">
+                        <RefreshCcw />
+                    </Button>
+                    <Button
+                        class="rounded-full h-6 w-6"
+                        size="icon-sm"
+                        variant="outline"
+                        @click="downloadAndSaveJson(groupDialog.id, groupDialog.ref)">
+                        <Download />
+                    </Button>
                     <vue-json-pretty
                         :data="groupDialog.treeData"
                         :deep="2"
@@ -1137,7 +1119,6 @@
 
 <script setup>
     import {
-        ArrowDown,
         Bell,
         ChatLineSquare,
         Check,
@@ -1145,7 +1126,6 @@
         CircleClose,
         Close,
         CollectionTag,
-        CopyDocument,
         Delete,
         Download,
         Edit,
@@ -1162,8 +1142,13 @@
         View,
         Warning
     } from '@element-plus/icons-vue';
+    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, nextTick, reactive, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
+    import { RefreshCcw } from 'lucide-vue-next';
+    import { Spinner } from '@/components/ui/spinner';
+    import { VirtualCombobox } from '@/components/ui/virtual-combobox';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -1240,6 +1225,78 @@
     const groupDialogGalleryCurrentName = ref('0');
     const groupDialogTabCurrentName = ref('0');
     const isGroupGalleryLoading = ref(false);
+
+    const groupDialogMemberSortValue = computed({
+        get() {
+            return groupDialog.value?.memberSortOrder?.value ?? '';
+        },
+        set(value) {
+            const option = Object.values(groupDialogSortingOptions).find((item) => item.value === value);
+            if (option) {
+                setGroupMemberSortOrder(option);
+            }
+        }
+    });
+
+    const groupDialogMemberFilterKey = computed({
+        get() {
+            const filter = groupDialog.value?.memberFilter;
+            if (!filter) return null;
+
+            if (filter.id === null) return 'everyone';
+            if (filter.id === '') return 'usersWithNoRole';
+            return `role:${filter.id}`;
+        },
+        set(key) {
+            if (!key) return;
+
+            if (key === 'everyone') {
+                setGroupMemberFilter(groupDialogFilterOptions.everyone);
+                return;
+            }
+            if (key === 'usersWithNoRole') {
+                setGroupMemberFilter(groupDialogFilterOptions.usersWithNoRole);
+                return;
+            }
+
+            if (key.startsWith('role:')) {
+                const roleId = key.slice('role:'.length);
+                const role = groupDialog.value?.ref?.roles?.find((r) => r.id === roleId);
+                if (role) {
+                    setGroupMemberFilter(role);
+                }
+            }
+        }
+    });
+
+    const groupDialogMemberFilterGroups = computed(() => {
+        const filterItems = Object.values(groupDialogFilterOptions).map((item) => ({
+            value: item.id === null ? 'everyone' : item.id === '' ? 'usersWithNoRole' : `role:${item.id}`,
+            label: t(item.name),
+            search: t(item.name)
+        }));
+
+        const roleItems = (groupDialog.value?.ref?.roles ?? [])
+            .filter((role) => !role.defaultRole)
+            .map((role) => ({
+                value: `role:${role.id}`,
+                label: role.name,
+                search: role.name
+            }));
+
+        return [
+            {
+                key: 'filters',
+                label: t('dialog.group.members.filter'),
+                items: filterItems
+            },
+            {
+                key: 'roles',
+                label: 'Roles',
+                items: roleItems
+            }
+        ].filter((group) => group.items.length);
+    });
     const selectedGalleryFile = ref({
         selectedFileId: '',
         selectedImageUrl: ''

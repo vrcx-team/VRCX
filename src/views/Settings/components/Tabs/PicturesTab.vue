@@ -23,9 +23,9 @@
             :value="screenshotHelperCopyToClipboard"
             @change="setScreenshotHelperCopyToClipboard()"
             :long-label="true" />
-        <el-button size="small" :icon="Delete" @click="askDeleteAllScreenshotMetadata()">{{
+        <Button size="sm" variant="outline" @click="askDeleteAllScreenshotMetadata()">{{
             t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button')
-        }}</el-button>
+        }}</Button>
     </div>
 
     <div class="options-container">
@@ -46,15 +46,15 @@
                 t('view.settings.advanced.advanced.user_generated_content.description')
             }}</span>
         </div>
-        <el-button size="small" :icon="Folder" @click="openUGCFolder()">{{
+        <Button size="sm" variant="outline" @click="openUGCFolder()">{{
             t('view.settings.advanced.advanced.user_generated_content.folder')
-        }}</el-button>
-        <el-button size="small" :icon="FolderOpened" @click="openUGCFolderSelector()">{{
+        }}</Button>
+        <Button size="sm" variant="outline" @click="openUGCFolderSelector()">{{
             t('view.settings.advanced.advanced.user_generated_content.set_folder')
-        }}</el-button>
-        <el-button size="small" :icon="Delete" @click="resetUGCFolder()" v-if="ugcFolderPath">{{
+        }}</Button>
+        <Button size="sm" variant="outline" @click="resetUGCFolder()" v-if="ugcFolderPath">{{
             t('view.settings.advanced.advanced.user_generated_content.reset_override')
-        }}</el-button>
+        }}</Button>
         <br />
         <br />
         <br />
@@ -101,7 +101,8 @@
 </template>
 
 <script setup>
-    import { Delete, Folder, FolderOpened, InfoFilled } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
+    import { InfoFilled } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

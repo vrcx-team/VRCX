@@ -29,20 +29,16 @@
 
             <div style="margin-top: 10px">
                 <span style="margin-right: 5px">{{ t('dialog.config_json.delete_all_cache') }}</span>
-                <el-button
-                    size="small"
-                    style="margin-left: 5px"
-                    :icon="Delete"
-                    @click="showDeleteAllVRChatCacheConfirm"
-                    >{{ t('dialog.config_json.delete_cache') }}</el-button
-                >
+                <Button size="sm" variant="outline" style="margin-left: 5px" @click="showDeleteAllVRChatCacheConfirm">{{
+                    t('dialog.config_json.delete_cache')
+                }}</Button>
             </div>
 
             <div style="margin-top: 10px">
                 <span style="margin-right: 5px">{{ t('dialog.config_json.delete_old_cache') }}</span>
-                <el-button size="small" style="margin-left: 5px" :icon="FolderDelete" @click="sweepVRChatCache">{{
+                <Button size="sm" variant="outline" style="margin-left: 5px" @click="sweepVRChatCache">{{
                     t('dialog.config_json.sweep_cache')
-                }}</el-button>
+                }}</Button>
             </div>
 
             <div v-for="(item, value) in VRChatConfigList" :key="value" style="display: block; margin-top: 10px">
@@ -58,11 +54,11 @@
                         @input="refreshDialogValues"
                         style="flex: 1; margin-top: 5px">
                         <template #append>
-                            <el-button
+                            <Button
+                                size="sm"
+                                variant="outline"
                                 v-if="item.folderBrowser"
-                                size="small"
-                                :icon="FolderOpened"
-                                @click="openConfigFolderBrowser(value)"></el-button>
+                                @click="openConfigFolderBrowser(value)"></Button>
                         </template>
                     </el-input>
                 </div>
@@ -153,15 +149,19 @@
         <template #footer>
             <div style="display: flex; align-items: center; justify-content: space-between">
                 <div>
-                    <el-button @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')">{{
-                        t('dialog.config_json.vrchat_docs')
-                    }}</el-button>
+                    <Button
+                        variant="ghost"
+                        @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')"
+                        >{{ t('dialog.config_json.vrchat_docs') }}</Button
+                    >
                 </div>
                 <div>
-                    <el-button @click="closeDialog">{{ t('dialog.config_json.cancel') }}</el-button>
-                    <el-button type="primary" :disabled="loading" @click="saveVRChatConfigFile">{{
+                    <Button variant="secondary" class="mr-2" @click="closeDialog">{{
+                        t('dialog.config_json.cancel')
+                    }}</Button>
+                    <Button :disabled="loading" @click="saveVRChatConfigFile">{{
                         t('dialog.config_json.save')
-                    }}</el-button>
+                    }}</Button>
                 </div>
             </div>
         </template>
@@ -170,9 +170,10 @@
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { Delete, FolderDelete, FolderOpened, Refresh } from '@element-plus/icons-vue';
     import { computed, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
+    import { Refresh } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

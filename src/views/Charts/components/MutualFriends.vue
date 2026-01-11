@@ -3,7 +3,14 @@
         <div class="options-container mutual-graph__toolbar">
             <div class="mutual-graph__actions">
                 <TooltipWrapper :content="t('view.charts.mutual_friend.force_dialog.open_label')" side="top">
-                    <el-button circle :icon="Setting" :disabled="!graphReady" @click="openForceDialog"></el-button>
+                    <Button
+                        class="rounded-full"
+                        size="icon"
+                        variant="outline"
+                        :disabled="!graphReady"
+                        @click="openForceDialog">
+                        <Settings />
+                    </Button>
                 </TooltipWrapper>
                 <TooltipWrapper :content="fetchButtonLabel" side="top">
                     <el-button type="primary" :disabled="fetchButtonDisabled" :loading="isFetching" @click="startFetch">
@@ -14,9 +21,9 @@
                     v-if="isFetching"
                     :content="t('view.charts.mutual_friend.actions.stop_fetching')"
                     side="top">
-                    <el-button type="danger" plain :disabled="status.cancelRequested" @click="cancelFetch">
+                    <Button variant="destructive" :disabled="status.cancelRequested" @click="cancelFetch">
                         {{ t('view.charts.mutual_friend.actions.stop') }}
-                    </el-button>
+                    </Button>
                 </TooltipWrapper>
             </div>
         </div>
@@ -90,12 +97,12 @@
 
             <template #footer>
                 <div class="mutual-graph__dialog-footer">
-                    <el-button @click="resetForceSettings">{{
+                    <Button variant="secondary" class="mr-2" @click="resetForceSettings">{{
                         t('view.charts.mutual_friend.force_dialog.reset')
-                    }}</el-button>
-                    <el-button type="primary" :disabled="!graphReady" @click="applyForceSettings">
+                    }}</Button>
+                    <Button :disabled="!graphReady" @click="applyForceSettings">
                         {{ t('view.charts.mutual_friend.force_dialog.apply') }}
-                    </el-button>
+                    </Button>
                 </div>
             </template>
         </el-dialog>
@@ -104,8 +111,9 @@
 
 <script setup>
     import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
-    import { Setting } from '@element-plus/icons-vue';
+    import { Settings } from 'lucide-vue-next';
     import { onBeforeRouteLeave } from 'vue-router';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

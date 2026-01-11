@@ -12,13 +12,12 @@
                         style="padding: 7px"></el-progress>
                 </div>
                 <div v-else-if="pendingVRCXUpdate || pendingVRCXInstall" class="pending-update">
-                    <el-button
-                        type="success"
-                        plain
+                    <Button
+                        variant="outline"
                         style="font-size: 19px; height: 36px; width: 44px; margin: 10px"
                         @click="showVRCXUpdateDialog">
                         <i class="ri-download-line"></i>
-                    </el-button>
+                    </Button>
                 </div>
 
                 <el-menu ref="navMenuRef" class="nav-menu" :collapse="isCollapsed" :collapse-transition="false">
@@ -249,6 +248,7 @@
 <script setup>
     import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
     import { ElMessageBox, dayjs } from 'element-plus';
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { useRouter } from 'vue-router';

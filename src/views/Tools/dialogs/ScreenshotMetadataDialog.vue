@@ -16,37 +16,40 @@
             }}</span>
             <br />
             <br />
-            <el-button size="small" :icon="FolderOpened" @click="getAndDisplayScreenshotFromFile">{{
+            <Button size="sm" variant="outline" class="mr-2" @click="getAndDisplayScreenshotFromFile">{{
                 t('dialog.screenshot_metadata.browse')
-            }}</el-button>
-            <el-button size="small" :icon="Picture" @click="getAndDisplayLastScreenshot">{{
+            }}</Button>
+            <Button size="sm" variant="outline" class="mr-2" @click="getAndDisplayLastScreenshot">{{
                 t('dialog.screenshot_metadata.last_screenshot')
-            }}</el-button>
-            <el-button
-                size="small"
-                :icon="CopyDocument"
+            }}</Button>
+            <Button
+                size="sm"
+                variant="outline"
+                class="mr-2"
                 @click="copyImageToClipboard(screenshotMetadataDialog.metadata.filePath)"
-                >{{ t('dialog.screenshot_metadata.copy_image') }}</el-button
+                >{{ t('dialog.screenshot_metadata.copy_image') }}</Button
             >
-            <el-button
-                size="small"
-                :icon="Folder"
+            <Button
+                size="sm"
+                variant="outline"
+                class="mr-2"
                 @click="openImageFolder(screenshotMetadataDialog.metadata.filePath)"
-                >{{ t('dialog.screenshot_metadata.open_folder') }}</el-button
+                >{{ t('dialog.screenshot_metadata.open_folder') }}</Button
             >
-            <el-button
+            <Button
+                size="sm"
+                variant="outline"
+                class="mr-2"
                 v-if="isLocalUserVrcPlusSupporter && screenshotMetadataDialog.metadata.filePath"
-                size="small"
-                :icon="Upload"
                 @click="uploadScreenshotToGallery"
-                >{{ t('dialog.screenshot_metadata.upload') }}</el-button
+                >{{ t('dialog.screenshot_metadata.upload') }}</Button
             >
-            <el-button
+            <Button
+                size="sm"
+                variant="outline"
                 v-if="screenshotMetadataDialog.metadata.filePath"
-                size="small"
-                :icon="Delete"
                 @click="deleteMetadata(screenshotMetadataDialog.metadata.filePath)"
-                >{{ t('dialog.screenshot_metadata.delete_metadata') }}</el-button
+                >{{ t('dialog.screenshot_metadata.delete_metadata') }}</Button
             >
             <br />
             <br />
@@ -157,9 +160,9 @@
 </template>
 
 <script setup>
-    import { CopyDocument, Delete, Folder, FolderOpened, Picture, Upload } from '@element-plus/icons-vue';
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { reactive, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

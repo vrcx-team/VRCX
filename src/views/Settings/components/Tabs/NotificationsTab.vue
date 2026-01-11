@@ -3,9 +3,9 @@
         <div class="options-container" style="margin-top: 0">
             <span class="header">{{ t('view.settings.notifications.notifications.header') }}</span>
             <div class="options-container-item">
-                <el-button size="small" :icon="ChatSquare" @click="showNotyFeedFiltersDialog">{{
+                <Button size="sm" variant="outline" @click="showNotyFeedFiltersDialog">{{
                     t('view.settings.notifications.notifications.notification_filter')
-                }}</el-button>
+                }}</Button>
             </div>
         </div>
         <div class="options-container">
@@ -65,14 +65,14 @@
                         saveOpenVROption();
                     " />
                 <div class="options-container-item">
-                    <el-button
-                        size="small"
-                        :icon="Rank"
+                    <Button
+                        size="sm"
+                        variant="outline"
                         :disabled="!overlayNotifications || !openVR"
                         @click="showNotificationPositionDialog"
                         >{{
                             t('view.settings.notifications.notifications.steamvr_notifications.notification_position')
-                        }}</el-button
+                        }}</Button
                     >
                 </div>
             </template>
@@ -85,14 +85,14 @@
                 </div>
             </div>
             <div class="options-container-item">
-                <el-button
-                    size="small"
-                    :icon="Timer"
+                <Button
+                    size="sm"
+                    variant="outline"
                     :disabled="(!overlayNotifications || !openVR) && !xsNotifications"
                     @click="promptNotificationTimeout"
                     >{{
                         t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout')
-                    }}</el-button
+                    }}</Button
                 >
             </div>
             <simple-switch
@@ -262,9 +262,9 @@
                     :placeholder="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')"
                     :rows="1"
                     style="width: 175px; display: inline-block"></el-input>
-                <el-button size="small" :icon="VideoPlay" style="margin-left: 10px" @click="testNotificationTTS">{{
+                <Button size="sm" variant="outline" style="margin-left: 10px" @click="testNotificationTTS">{{
                     t('view.settings.notifications.notifications.text_to_speech.play')
-                }}</el-button>
+                }}</Button>
             </div>
         </div>
         <NotificationPositionDialog v-model:isNotificationPositionDialogVisible="isNotificationPositionDialogVisible" />
@@ -274,8 +274,8 @@
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { ChatSquare, Rank, Timer, VideoPlay } from '@element-plus/icons-vue';
     import { computed, ref } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

@@ -165,9 +165,9 @@
                 :value="compactTableMode"
                 @change="setCompactTableMode" />
             <div class="options-container-item">
-                <el-button size="small" :icon="Notebook" style="margin-right: 10px" @click="promptMaxTableSizeDialog">{{
+                <Button size="sm" variant="outline" @click="promptMaxTableSizeDialog">{{
                     t('view.settings.appearance.appearance.table_max_size')
-                }}</el-button>
+                }}</Button>
             </div>
         </div>
         <div class="options-container">
@@ -425,9 +425,9 @@
     } from '@/components/ui/tags-input';
     import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { computed, onBeforeUnmount, ref, watch } from 'vue';
-    import { ArrowRight, Notebook } from '@element-plus/icons-vue';
     import { CheckIcon, ChevronDown } from 'lucide-vue-next';
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+    import { ArrowRight } from '@element-plus/icons-vue';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

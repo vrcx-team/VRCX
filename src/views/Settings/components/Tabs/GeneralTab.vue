@@ -35,12 +35,12 @@
         <div class="options-container">
             <span class="header">{{ t('view.settings.general.vrcx_updater.header') }}</span>
             <div class="options-container-item">
-                <el-button size="small" :icon="Document" @click="showChangeLogDialog">{{
+                <Button size="sm" variant="outline" class="mr-2" @click="showChangeLogDialog">{{
                     t('view.settings.general.vrcx_updater.change_log')
-                }}</el-button>
-                <el-button v-if="!noUpdater" size="small" :icon="Upload" @click="showVRCXUpdateDialog()">{{
+                }}</Button>
+                <Button size="sm" variant="outline" v-if="!noUpdater" @click="showVRCXUpdateDialog()">{{
                     t('view.settings.general.vrcx_updater.change_build')
-                }}</el-button>
+                }}</Button>
             </div>
             <div v-if="!noUpdater" class="options-container-item">
                 <span class="name">{{ t('view.settings.general.vrcx_updater.update_action') }}</span>
@@ -104,9 +104,9 @@
                 :tooltip="t('view.settings.general.application.disable_gpu_acceleration_tooltip')"
                 @change="setDisableVrOverlayGpuAcceleration" />
             <div class="options-container-item">
-                <el-button size="small" :icon="Connection" @click="promptProxySettings">{{
+                <Button size="sm" variant="outline" @click="promptProxySettings">{{
                     t('view.settings.general.application.proxy')
-                }}</el-button>
+                }}</Button>
             </div>
         </div>
         <div class="options-container">
@@ -291,9 +291,9 @@
                 <p>{{ t('view.settings.general.legal_notice.disclaimer2') }}</p>
             </div>
             <div class="options-container-item">
-                <el-button size="small" @click="openOSSDialog">{{
+                <Button size="sm" variant="outline" @click="openOSSDialog">{{
                     t('view.settings.general.legal_notice.open_source_software_notice')
-                }}</el-button>
+                }}</Button>
             </div>
         </div>
         <OpenSourceSoftwareNoticeDialog v-if="ossDialog" v-model:ossDialog="ossDialog" />
@@ -301,8 +301,9 @@
 </template>
 
 <script setup>
-    import { Connection, Document, InfoFilled, Upload } from '@element-plus/icons-vue';
     import { computed, defineAsyncComponent, ref } from 'vue';
+    import { Button } from '@/components/ui/button';
+    import { InfoFilled } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

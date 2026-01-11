@@ -1,3 +1,5 @@
+import { TooltipWrapper } from '../components/ui/tooltip';
+
 import AvatarInfo from '../components/AvatarInfo.vue';
 import CountdownTimer from '../components/CountdownTimer.vue';
 import DataTable from '../components/DataTable.vue';
@@ -9,7 +11,6 @@ import Launch from '../components/Launch.vue';
 import Location from '../components/Location.vue';
 import LocationWorld from '../components/LocationWorld.vue';
 import Timer from '../components/Timer.vue';
-import { TooltipWrapper } from '../components/ui/tooltip';
 
 export function initComponents(app) {
     app.component('Location', Location);

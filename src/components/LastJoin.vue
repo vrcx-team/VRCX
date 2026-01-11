@@ -4,7 +4,7 @@
             <template #content>
                 <span>{{ t('dialog.user.info.last_join') }} <Timer :epoch="lastJoin" /></span>
             </template>
-            <i class="ri-history-line"></i>
+            <i class="ri-map-pin-time-line text-muted-foreground"></i>
         </TooltipWrapper>
     </span>
 </template>

@@ -9,13 +9,13 @@
         <template #header>
             <div class="dialog-title-container">
                 <span>{{ t('dialog.group_calendar.header') }}</span>
-                <el-button @click="toggleViewMode" type="primary" size="small" class="view-toggle-btn">
+                <Button size="sm" variant="outline" @click="toggleViewMode" class="view-toggle-btn">
                     {{
                         viewMode === 'timeline'
                             ? t('dialog.group_calendar.list_view')
                             : t('dialog.group_calendar.calendar_view')
                     }}
-                </el-button>
+                </Button>
             </div>
             <div class="featured-switch">
                 <span class="featured-switch-text">{{ t('dialog.group_calendar.featured_events') }}</span>
@@ -126,6 +126,7 @@
 <script setup>
     import { computed, onMounted, ref, watch } from 'vue';
     import { ArrowRight } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { useI18n } from 'vue-i18n';
 
     import dayjs from 'dayjs';
