@@ -126,6 +126,12 @@
     }
 }
 
+[data-slot='table-header'],
+[data-slot='table-header'] [data-slot='table-row'],
+[data-slot='table-head'] {
+    background-color: transparent;
+}
+
 .lucide {
     width: 16px;
     height: 16px;

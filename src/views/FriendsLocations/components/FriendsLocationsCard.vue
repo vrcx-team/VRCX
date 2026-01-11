@@ -195,7 +195,6 @@
         min-height: calc(40px * var(--card-scale));
         padding: calc(6px * var(--card-scale)) calc(10px * var(--card-scale));
         border-radius: calc(10px * var(--card-scale));
-        background: var(--el-fill-color);
         color: var(--el-text-color-regular);
         font-size: calc(12px * var(--card-scale));
         line-height: 1.3;

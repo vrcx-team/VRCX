@@ -19,6 +19,12 @@ export const THEME_CONFIG = {
         isDark: true,
         useDarkClass: true,
         name: 'Dark'
+    },
+    darkgrey: {
+        cssFiles: [appCss],
+        isDark: true,
+        useDarkClass: true,
+        name: 'Dark Grey'
     }
     // darkold: {
     //     cssFiles: [appLegacy, dark],

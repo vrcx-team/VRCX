@@ -551,6 +551,7 @@
                     "theme_mode_system": "System",
                     "theme_mode_light": "Light",
                     "theme_mode_dark": "Dark",
+                    "theme_mode_darkgrey": "Dark Grey",
                     "theme_mode_blue": "Blue",
                     "theme_mode_darkblue": "Dark Blue",
                     "theme_mode_amoled": "Amoled",

@@ -107,6 +107,8 @@ function changeAppThemeStyle(themeMode) {
 
     applyThemeFonts(themeMode, themeConfig.fontLinks);
 
+    document.documentElement.setAttribute('data-theme', themeMode);
+
     const shouldUseDarkClass =
         typeof themeConfig.useDarkClass === 'boolean'
             ? themeConfig.useDarkClass

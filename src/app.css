@@ -384,6 +384,20 @@ html.dark,
     }
 }
 
+:root[data-theme='darkgrey'] {
+    --el-bg-color: var(--color-neutral-900);
+    --el-bg-color-page: var(--color-neutral-900);
+    --el-bg-color-overlay: var(--color-neutral-800);
+
+    .el-dialog {
+        background-color: var(--el-bg-color-overlay) !important;
+    }
+
+    .el-message-box {
+        background-color: var(--el-bg-color-overlay) !important;
+    }
+}
+
 html.dark body,
 :root.dark body,
 :root[data-theme='dark'] body {
@@ -400,8 +414,8 @@ html.dark body,
         ),
         linear-gradient(
             180deg,
-            color-mix(in oklch, var(--color-neutral-950) 92%, transparent),
-            var(--color-neutral-950)
+            color-mix(in oklch, var(--el-bg-color-page) 92%, transparent),
+            var(--el-bg-color-page)
         );
 }
 
