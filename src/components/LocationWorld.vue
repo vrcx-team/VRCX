@@ -103,6 +103,10 @@
         if (!key) {
             return accessTypeNameRaw;
         }
+        if (accessTypeNameRaw === 'groupPublic' || accessTypeNameRaw === 'groupPlus') {
+            const groupKey = accessTypeLocaleKeyMap['group'];
+            return t(groupKey) + ' ' + t(key);
+        }
         return t(key);
     }
 

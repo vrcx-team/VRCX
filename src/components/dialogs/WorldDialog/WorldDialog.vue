@@ -351,7 +351,7 @@
                                         side="top"
                                         :content="t('dialog.world.instances.refresh_instance_info')">
                                         <Button
-                                            class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                                            class="rounded-full ml-1 w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
                                             size="icon"
                                             variant="outline"
                                             @click="refreshInstancePlayerCount(room.tag)"
@@ -785,7 +785,6 @@
         openFolderGeneric,
         refreshInstancePlayerCount,
         replaceVrcPackageUrl,
-        textToHex,
         timeToText,
         userImage,
         userStatusClass

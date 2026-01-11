@@ -210,10 +210,14 @@
         }
     }
 
-    function translateAccessType(accessTypeName) {
-        const key = accessTypeLocaleKeyMap[accessTypeName];
+    function translateAccessType(accessTypeNameRaw) {
+        const key = accessTypeLocaleKeyMap[accessTypeNameRaw];
         if (!key) {
-            return accessTypeName;
+            return accessTypeNameRaw;
+        }
+        if (accessTypeNameRaw === 'groupPublic' || accessTypeNameRaw === 'groupPlus') {
+            const groupKey = accessTypeLocaleKeyMap['group'];
+            return t(groupKey) + ' ' + t(key);
         }
         return t(key);
     }

@@ -46,7 +46,7 @@
             <RadioGroup
                 :model-value="openVRAlways ? 'true' : 'false'"
                 :disabled="!openVR"
-                class="gap-2"
+                class="gap-2 flex"
                 style="margin-top: 8px"
                 @update:modelValue="handleOpenVRAlwaysRadio">
                 <div class="flex items-center space-x-2">
@@ -64,7 +64,7 @@
             <RadioGroup
                 :model-value="overlaybutton ? 'true' : 'false'"
                 :disabled="!openVR || !overlayWrist"
-                class="gap-2"
+                class="gap-2 flex"
                 style="margin-top: 8px"
                 @update:modelValue="handleOverlayButtonRadio">
                 <div class="flex items-center space-x-2">

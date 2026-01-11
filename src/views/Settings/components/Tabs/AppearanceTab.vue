@@ -80,7 +80,7 @@
                 <span class="name">{{ t('view.settings.appearance.appearance.sort_favorite_by') }}</span>
                 <RadioGroup
                     :model-value="sortFavorites ? 'true' : 'false'"
-                    class="gap-2"
+                    class="gap-2 flex"
                     style="margin-top: 8px"
                     @update:modelValue="handleSortFavoritesRadio">
                     <div class="flex items-center space-x-2">
@@ -101,7 +101,7 @@
                 <span class="name">{{ t('view.settings.appearance.appearance.sort_instance_users_by') }}</span>
                 <RadioGroup
                     :model-value="instanceUsersSortAlphabetical ? 'true' : 'false'"
-                    class="gap-2"
+                    class="gap-2 flex"
                     style="margin-top: 8px"
                     @update:modelValue="handleInstanceUsersSortAlphabeticalRadio">
                     <div class="flex items-center space-x-2">
@@ -182,7 +182,7 @@
                 <span class="name">{{ t('view.settings.appearance.timedate.time_format') }}</span>
                 <RadioGroup
                     :model-value="dtHour12 ? 'true' : 'false'"
-                    class="gap-2"
+                    class="gap-2 flex"
                     style="margin-top: 8px"
                     @update:modelValue="handleDtHour12Radio">
                     <div class="flex items-center space-x-2">
@@ -237,7 +237,7 @@
                         }}</SelectItem>
                     </SelectContent>
                 </Select>
-                <el-icon style="padding: 5px"><ArrowRight /></el-icon>
+                <el-icon style="margin: 5px"><ArrowRight /></el-icon>
                 <Select
                     :model-value="sidebarSortMethod2"
                     :disabled="!sidebarSortMethod1"
@@ -270,7 +270,7 @@
                         }}</SelectItem>
                     </SelectContent>
                 </Select>
-                <el-icon style="padding: 5px"><ArrowRight /></el-icon>
+                <el-icon style="margin: 5px"><ArrowRight /></el-icon>
                 <Select
                     :model-value="sidebarSortMethod3"
                     :disabled="!sidebarSortMethod2"

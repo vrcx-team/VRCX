@@ -358,7 +358,7 @@
                                 <InviteYourself :location="room.tag" style="margin-left: 5px" />
                                 <TooltipWrapper side="top" content="Refresh player count">
                                     <Button
-                                        class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                                        class="rounded-full ml-1 w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
                                         size="icon"
                                         variant="outline"
                                         @click="refreshInstancePlayerCount(room.tag)"
@@ -614,38 +614,38 @@
                                 <div v-else class="extra">-</div>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="width: 350px; cursor: default">
-                            <div class="detail">
-                                <span class="name">{{ t('dialog.group.info.url') }}</span>
-                                <span class="extra"
-                                    >{{ groupDialog.ref.$url }}
-                                    <TooltipWrapper side="top" :content="t('dialog.group.info.url_tooltip')">
-                                        <Button
-                                            class="rounded-full text-xs"
-                                            size="icon-sm"
-                                            variant="outline"
-                                            style="margin-left: 5px"
-                                            @click="copyToClipboard(groupDialog.ref.$url)"
-                                            ><i class="ri-file-copy-line"></i
-                                        ></Button> </TooltipWrapper
-                                ></span>
+                        <div class="inline-flex justify-between w-full">
+                            <div class="x-friend-item" style="cursor: default; width: 50%">
+                                <div class="detail">
+                                    <span class="name">{{ t('dialog.group.info.url') }}</span>
+                                    <span class="extra"
+                                        >{{ groupDialog.ref.$url }}
+                                        <TooltipWrapper side="top" :content="t('dialog.group.info.url_tooltip')">
+                                            <Button
+                                                class="rounded-full ml-1 text-xs"
+                                                size="icon-sm"
+                                                variant="outline"
+                                                @click="copyToClipboard(groupDialog.ref.$url)"
+                                                ><i class="ri-file-copy-line"></i
+                                            ></Button> </TooltipWrapper
+                                    ></span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="x-friend-item" style="width: 350px; cursor: default">
-                            <div class="detail">
-                                <span class="name">{{ t('dialog.group.info.id') }}</span>
-                                <span class="extra"
-                                    >{{ groupDialog.id }}
-                                    <TooltipWrapper side="top" :content="t('dialog.group.info.id_tooltip')">
-                                        <Button
-                                            class="rounded-full text-xs"
-                                            size="icon-sm"
-                                            variant="outline"
-                                            style="margin-left: 5px"
-                                            @click="copyToClipboard(groupDialog.id)"
-                                            ><i class="ri-file-copy-line"></i
-                                        ></Button> </TooltipWrapper
-                                ></span>
+                            <div class="x-friend-item w-1/2" style="cursor: default; width: 50%">
+                                <div class="detail">
+                                    <span class="name">{{ t('dialog.group.info.id') }}</span>
+                                    <span class="extra"
+                                        >{{ groupDialog.id }}
+                                        <TooltipWrapper side="top" :content="t('dialog.group.info.id_tooltip')">
+                                            <Button
+                                                class="rounded-full ml-1 text-xs"
+                                                size="icon-sm"
+                                                variant="outline"
+                                                @click="copyToClipboard(groupDialog.id)"
+                                                ><i class="ri-file-copy-line"></i
+                                            ></Button> </TooltipWrapper
+                                    ></span>
+                                </div>
                             </div>
                         </div>
                         <div
@@ -1171,7 +1171,6 @@
         openExternalLink,
         refreshInstancePlayerCount,
         removeFromArray,
-        textToHex,
         userImage,
         userStatusClass
     } from '../../../shared/utils';
@@ -1903,6 +1902,6 @@
         gap: 16px;
         overflow-y: auto;
         max-height: 360px;
-        padding: 10px 0;
+        padding: 9px 0;
     }
 </style>

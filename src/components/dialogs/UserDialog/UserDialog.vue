@@ -38,7 +38,7 @@
                                             side="top"
                                             :content="t('dialog.user.info.refresh_instance_info')"
                                             ><Button
-                                                class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                                                class="rounded-full ml-1 w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
                                                 size="icon"
                                                 variant="outline"
                                                 @click="refreshInstancePlayerCount(userDialog.$location.tag)"
@@ -503,10 +503,9 @@
                                 <span class="extra">
                                     <span v-text="userDialog.$homeLocationName"></span>
                                     <Button
-                                        class="rounded-full text-xs ml-1"
+                                        class="rounded-full ml-1 text-xs"
                                         size="icon-sm"
                                         variant="outline"
-                                        style="margin-left: 5px"
                                         @click.stop="resetHome()"
                                         ><i class="ri-delete-bin-line"></i>
                                     </Button>
@@ -522,7 +521,7 @@
                                         <DropdownMenu>
                                             <DropdownMenuTrigger as-child>
                                                 <Button
-                                                    class="rounded-full text-xs"
+                                                    class="rounded-full ml-1 text-xs"
                                                     size="icon-sm"
                                                     variant="outline"
                                                     @click.stop

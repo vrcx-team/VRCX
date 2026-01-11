@@ -71,28 +71,30 @@
                 v-loading="isSearchWorldLoading"
                 :label="t('view.search.world.header')"
                 style="min-height: 60px">
-                <Select
-                    :model-value="searchWorldCategoryIndex"
-                    @update:modelValue="handleSearchWorldCategorySelect"
-                    style="margin-bottom: 15px">
-                    <SelectTrigger size="sm">
-                        <SelectValue :placeholder="t('view.search.world.category')" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem
-                                v-for="row in cachedConfig.dynamicWorldRows"
-                                :key="row.index"
-                                :value="row.index">
-                                {{ row.name }}
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-                <label class="inline-flex items-center gap-2" style="margin-left: 10px">
-                    <Checkbox v-model="searchWorldLabs" />
-                    <span>{{ t('view.search.world.community_lab') }}</span>
-                </label>
+                <div class="inline-flex justify-between mb-4 w-full">
+                    <Select
+                        :model-value="searchWorldCategoryIndex"
+                        @update:modelValue="handleSearchWorldCategorySelect"
+                        style="margin-bottom: 15px">
+                        <SelectTrigger size="sm">
+                            <SelectValue :placeholder="t('view.search.world.category')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="row in cachedConfig.dynamicWorldRows"
+                                    :key="row.index"
+                                    :value="row.index">
+                                    {{ row.name }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <label class="inline-flex items-center gap-2" style="margin-left: 10px">
+                        <Checkbox v-model="searchWorldLabs" />
+                        <span>{{ t('view.search.world.community_lab') }}</span>
+                    </label>
+                </div>
                 <div class="x-friend-list" style="min-height: 500px">
                     <div
                         v-for="world in searchWorldResults"
@@ -161,6 +163,7 @@
                                 :loading="userDialog.isAvatarsLoading"
                                 size="small"
                                 :icon="Refresh"
+                                class="ml-1"
                                 circle
                                 @click="refreshUserDialogAvatars"></el-button>
                         </TooltipWrapper>

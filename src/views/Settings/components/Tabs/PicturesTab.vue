@@ -1,6 +1,6 @@
 <template>
     <!--//- Pictures | Screenshot Helper-->
-    <div class="options-container">
+    <div class="options-container" style="margin-top: 0">
         <span class="header">{{ t('view.settings.advanced.advanced.screenshot_helper.header') }}</span>
         <div class="options-container-item">
             <span class="name">{{ t('view.settings.advanced.advanced.screenshot_helper.description') }}</span>

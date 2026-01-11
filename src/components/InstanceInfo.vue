@@ -16,12 +16,13 @@
                         ><br /><br />
                     </template>
                     <span
-                        ><span style="color: var(--el-color-primary)">PC: </span
+                        ><span class="x-tag-platform-pc">PC: </span
                         >{{ props.instance.platforms.standalonewindows }}</span
                     ><br />
                     <span
-                        ><span style="color: var(--el-color-success)">Android: </span
-                        >{{ props.instance.platforms.android }}</span
+                        ><span class="x-tag-platform-quest">Android: </span>{{ props.instance.platforms.android }}</span
+                    ><br />
+                    <span><span>iOS: </span>{{ props.instance.platforms.ios }}</span
                     ><br />
                     <span>{{ t('dialog.user.info.instance_game_version') }} {{ props.instance.gameServerVersion }}</span
                     ><br />

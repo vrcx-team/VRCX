@@ -560,7 +560,6 @@
         openExternalLink,
         openFolderGeneric,
         replaceVrcPackageUrl,
-        textToHex,
         timeToText
     } from '../../../shared/utils';
     import {

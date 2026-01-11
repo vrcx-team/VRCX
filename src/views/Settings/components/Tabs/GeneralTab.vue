@@ -220,7 +220,7 @@
                 <RadioGroup
                     :model-value="autoStateChangeNoFriends ? 'true' : 'false'"
                     :disabled="!autoStateChangeEnabled"
-                    class="gap-2"
+                    class="gap-2 flex"
                     style="margin-top: 8px"
                     @update:modelValue="handleAutoStateChangeNoFriendsRadio">
                     <div class="flex items-center space-x-2">
@@ -280,7 +280,7 @@
         </div>
         <div class="options-container" style="margin-top: 45px; border-top: 1px solid #eee; padding-top: 30px">
             <span class="header">{{ t('view.settings.general.legal_notice.header') }}</span>
-            <div class="options-container-item">
+            <div class="options-container-item" style="display: block">
                 <p>
                     &copy; 2019-2025
                     <a class="x-link" @click="openExternalLink('https://github.com/pypy-vrc')">pypy</a> &amp;
