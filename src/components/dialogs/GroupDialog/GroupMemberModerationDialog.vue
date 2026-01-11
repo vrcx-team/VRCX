@@ -59,7 +59,7 @@
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                            <span style="margin-right: 5px">{{ t('dialog.group.members.filter') }}</span>
+                            <span class="ml-2" style="margin-right: 5px">{{ t('dialog.group.members.filter') }}</span>
                             <DropdownMenu>
                                 <DropdownMenuTrigger
                                     as-child
@@ -632,11 +632,6 @@
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <el-input
-                                    v-model="groupLogsModerationTable.filters[0].value"
-                                    :placeholder="t('dialog.group_member_moderation.search_placeholder')"
-                                    style="display: inline-block; width: 150px; margin: 10px"
-                                    clearable></el-input>
                             </div>
                             <div>
                                 <el-button @click="showGroupLogsExportDialog">{{
@@ -644,6 +639,12 @@
                                 }}</el-button>
                             </div>
                         </div>
+                        <el-input
+                            v-model="groupLogsModerationTable.filters[0].value"
+                            clearable
+                            size="small"
+                            :placeholder="t('dialog.group.members.search')"
+                            style="margin-top: 10px; margin-bottom: 10px"></el-input>
                         <br />
                         <DataTable v-bind="groupLogsModerationTable" style="margin-top: 10px">
                             <el-table-column
@@ -848,7 +849,7 @@
             }}</el-button>
         </div>
         <group-member-moderation-export-dialog
-            :is-group-logs-export-dialog-visible="isGroupLogsExportDialogVisible"
+            v-model:isGroupLogsExportDialogVisible="isGroupLogsExportDialogVisible"
             :group-logs-moderation-table="groupLogsModerationTable" />
     </el-dialog>
 </template>
