@@ -90,8 +90,8 @@ export const useAppearanceSettingsStore = defineStore(
         const isSideBarTabShow = computed(() => {
             const currentRouteName = router.currentRoute.value?.name;
             return !(
-                currentRouteName === 'friendLocation' ||
-                currentRouteName === 'friendList' ||
+                currentRouteName === 'friends-locations' ||
+                currentRouteName === 'friend-list' ||
                 currentRouteName === 'charts'
             );
         });
