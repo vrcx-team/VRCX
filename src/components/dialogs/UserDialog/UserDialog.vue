@@ -1192,6 +1192,9 @@
                                         <SelectItem value="update">{{
                                             t('dialog.user.avatars.sort_by_update')
                                         }}</SelectItem>
+                                        <SelectItem value="createdAt">{{
+                                            t('dialog.user.avatars.sort_by_uploaded')
+                                        }}</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <span class="ml-2 mr-1">{{ t('dialog.user.avatars.group_by') }}</span>

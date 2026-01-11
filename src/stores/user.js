@@ -6,6 +6,7 @@ import Noty from 'noty';
 
 import {
     arraysMatch,
+    compareByCreatedAt,
     compareByDisplayName,
     compareByLocationAt,
     compareByName,
@@ -1162,6 +1163,8 @@ export const useUserStore = defineStore('User', () => {
         const D = userDialog.value;
         if (D.avatarSorting === 'update') {
             array.sort(compareByUpdatedAt);
+        } else if (D.avatarSorting === 'createdAt') {
+            array.sort(compareByCreatedAt);
         } else {
             array.sort(compareByName);
         }
