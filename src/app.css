@@ -384,7 +384,7 @@ html.dark,
     }
 }
 
-:root[data-theme='dark'] {
+/* :root[data-theme='dark'] {
     --el-bg-color: var(--color-neutral-900);
     --el-bg-color-page: var(--color-neutral-900);
     --el-bg-color-overlay: var(--color-neutral-800);
@@ -396,7 +396,7 @@ html.dark,
     .el-message-box {
         background-color: var(--el-bg-color-overlay) !important;
     }
-}
+} */
 
 html.dark body,
 :root.dark body,
