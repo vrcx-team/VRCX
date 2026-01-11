@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading;
 #if !LINUX
 using System.Windows.Forms;
+using VRCX.Overlay;
 #endif
 
 namespace VRCX
@@ -20,9 +21,7 @@ namespace VRCX
         public static string Version { get; private set; }
         public static bool LaunchDebug;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        public static VRCXVRInterface VRCXVRInstance { get; set; }
         public static AppApi AppApiInstance { get; private set; }
-        public static AppApiVr AppApiVrInstance { get; private set; }
 
         private static void SetProgramDirectories()
         {
@@ -86,11 +85,15 @@ namespace VRCX
 
         private static void ConfigureLogger()
         {
+            var fileName = Path.Join(AppDataDirectory, "logs", "VRCX.log");
+            if (StartupArgs.LaunchArguments.IsOverlay)
+                fileName = Path.Join(AppDataDirectory, "logs", "VRCX.Overlay.log");
+
             LogManager.Setup().LoadConfiguration(builder =>
             {
                 var fileTarget = new FileTarget("fileTarget")
                 {
-                    FileName = Path.Join(AppDataDirectory, "logs", "VRCX.log"),
+                    FileName = fileName,
                     //Layout = "${longdate} [${level:uppercase=true}] ${logger} - ${message} ${exception:format=tostring}",
                     // Layout with padding between the level/logger and message so that the message always starts at the same column
                     Layout =
@@ -183,7 +186,7 @@ namespace VRCX
                     AppApiInstance.OpenLink("https://github.com/vrcx-team/VRCX/wiki#how-to-repair-vrcx-database");
                 }
             }
-
+            
             #endregion
 
             catch (Exception e)
@@ -215,6 +218,9 @@ namespace VRCX
             VRCXStorage.Instance.Load();
             ConfigureLogger();
             GetVersion();
+            if (StartupArgs.LaunchArguments.IsOverlay)
+                OverlayProgram.OverlayMain();
+
             Update.Check();
 
             Application.EnableVisualStyles();
@@ -225,43 +231,36 @@ namespace VRCX
             if (!string.IsNullOrEmpty(StartupArgs.LaunchArguments.LaunchCommand))
                 logger.Info("Launch Command: {0}", StartupArgs.LaunchArguments.LaunchCommand);
             logger.Debug("Wine detection: {0}", Wine.GetIfWine());
-
+            
+            IPCServer.Instance.Init();
             SQLite.Instance.Init();
             AppApiInstance = new AppApiCef();
-
-            AppApiVrInstance = new AppApiVrCef();
-            AppApiVrInstance.Init();
+            
             ProcessMonitor.Instance.Init();
             Discord.Instance.Init();
             WebApi.Instance.Init();
             LogWatcher.Instance.Init();
             AutoAppLaunchManager.Instance.Init();
             CefService.Instance.Init();
-            IPCServer.Instance.Init();
-
-            if (VRCXStorage.Instance.Get("VRCX_DisableVrOverlayGpuAcceleration") == "true")
-                VRCXVRInstance = new VRCXVRLegacy();
-            else
-                VRCXVRInstance = new VRCXVRCef();
-            VRCXVRInstance.Init();
+            OverlayServer.Instance.Init();
 
             Application.Run(new MainForm());
+
             logger.Info("{0} Exiting...", Version);
             WebApi.Instance.SaveCookies();
-            VRCXVRInstance.Exit();
+            OverlayServer.Instance.Exit();
             CefService.Instance.Exit();
-
             AutoAppLaunchManager.Instance.Exit();
             LogWatcher.Instance.Exit();
             WebApi.Instance.Exit();
-
             Discord.Instance.Exit();
-            SystemMonitorCef.Instance.Exit();
             VRCXStorage.Instance.Save();
             SQLite.Instance.Exit();
             ProcessMonitor.Instance.Exit();
         }
 #else
+        public static VRCXVRInterface VRCXVRInstance;
+        
         public static void PreInit(string version, string[] args)
         {
             Version = version;
@@ -280,7 +279,7 @@ namespace VRCX
                 logger.Info("Launch Command: {0}", StartupArgs.LaunchArguments.LaunchCommand);
 
             AppApiInstance = new AppApiElectron();
-
+            
             VRCXVRInstance = new VRCXVRElectron();
             VRCXVRInstance.Init();
         }

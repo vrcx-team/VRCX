@@ -853,11 +853,11 @@ export const useFriendStore = defineStore('Friend', () => {
         reconnectWebSocket();
     }
 
-    function updateOnlineFriendCounter() {
+    function updateOnlineFriendCounter(forceUpdate = false) {
         const onlineFriendCounts =
             vipFriends.value.length + onlineFriends.value.length;
-        if (onlineFriendCounts !== onlineFriendCount.value) {
-            AppApi.ExecuteVrFeedFunction(
+        if (onlineFriendCounts !== onlineFriendCount.value || forceUpdate) {
+            AppApi.ExecuteVrOverlayFunction(
                 'updateOnlineFriendCount',
                 `${onlineFriendCounts}`
             );

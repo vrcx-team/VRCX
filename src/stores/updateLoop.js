@@ -131,8 +131,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                     state.nextGameRunningCheck = 1;
                     gameStore.updateIsGameRunning(
                         await AppApi.IsGameRunning(),
-                        await AppApi.IsSteamVRRunning(),
-                        false
+                        await AppApi.IsSteamVRRunning()
                     );
                     vrStore.vrInit(); // TODO: make this event based
                 }

@@ -9,8 +9,6 @@ namespace VRCX
         // AppApi
         public abstract void ShowDevTools();
         public abstract void SetVR(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand);
-        public abstract void RefreshVR();
-        public abstract void RestartVR();
         public abstract void SetZoom(double zoomLevel);
         public abstract Task<double> GetZoom();
         public abstract void DesktopNotification(string BoldText, string Text = "", string Image = "");
@@ -18,7 +16,6 @@ namespace VRCX
 
         public abstract void RestartApplication(bool isUpgrade);
         public abstract bool CheckForUpdateExe();
-        public abstract void ExecuteVrFeedFunction(string function, string json);
         public abstract void ExecuteVrOverlayFunction(string function, string json);
         public abstract void FocusWindow();
         public abstract void ChangeTheme(int value);

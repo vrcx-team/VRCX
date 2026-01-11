@@ -146,11 +146,7 @@ export const useGameStore = defineStore('Game', () => {
     }
 
     // use in C#
-    async function updateIsGameRunning(
-        isGameRunningArg,
-        isSteamVRRunningArg,
-        isHmdAfkArg
-    ) {
+    async function updateIsGameRunning(isGameRunningArg, isSteamVRRunningArg) {
         const avatarStore = useAvatarStore();
         if (advancedSettingsStore.gameLogDisabled) {
             return;
@@ -186,11 +182,15 @@ export const useGameStore = defineStore('Game', () => {
             isSteamVRRunning.value = isSteamVRRunningArg;
             console.log('isSteamVRRunning:', isSteamVRRunningArg);
         }
+        vrStore.updateOpenVR();
+    }
+
+    // use in C#
+    function updateIsHmdAfk(isHmdAfkArg) {
         if (isHmdAfkArg !== isHmdAfk.value) {
             isHmdAfk.value = isHmdAfkArg;
-            console.log('isHmdAfk:', isHmdAfkArg);
+            console.log('isHmdAfk', isHmdAfkArg);
         }
-        vrStore.updateOpenVR();
     }
 
     async function checkVRChatDebugLogging() {
@@ -258,6 +258,7 @@ export const useGameStore = defineStore('Game', () => {
         getVRChatCacheSize,
         updateIsGameRunning,
         getVRChatRegistryKey,
-        checkVRChatDebugLogging
+        checkVRChatDebugLogging,
+        updateIsHmdAfk
     };
 });

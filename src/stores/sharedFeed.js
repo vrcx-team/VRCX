@@ -233,7 +233,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
                 }
             }
         }
-        AppApi.ExecuteVrFeedFunction(
+        AppApi.ExecuteVrOverlayFunction(
             'wristFeedUpdate',
             JSON.stringify(wristFeed)
         );

@@ -1,32 +1,37 @@
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using CefSharp;
 
 namespace VRCX
 {
-    public class AppApiVrCef : AppApiVr
+    public class AppApiVrElectron : AppApiVr
     {
-        static AppApiVrCef()
+        static AppApiVrElectron()
         {
-            Instance = new AppApiVrCef();
+            Instance = new AppApiVrElectron();
         }
 
         public override void Init()
         {
-            // Create Instance before Cef tries to bind it
         }
 
         public override void VrInit()
         {
-            if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-                MainForm.Instance.Browser.ExecuteScriptAsync("window?.$pinia?.vr.vrInit();");
+        }
+
+        public override List<KeyValuePair<string, string>> GetExecuteVrOverlayFunctionQueue()
+        {
+            var list = new List<KeyValuePair<string, string>>();
+            while (Program.VRCXVRInstance.GetExecuteVrOverlayFunctionQueue().TryDequeue(out var item))
+            {
+                list.Add(item);
+            }
+            return list;
         }
 
         public override void ToggleSystemMonitor(bool enabled)
         {
-            SystemMonitorCef.Instance.Start(enabled);
+            SystemMonitorElectron.Instance.Start(enabled);
         }
 
         /// <summary>
@@ -35,7 +40,7 @@ namespace VRCX
         /// <returns>The current CPU usage as a percentage.</returns>
         public override float CpuUsage()
         {
-            return SystemMonitorCef.Instance.CpuUsage;
+            return SystemMonitorElectron.Instance.CpuUsage;
         }
 
         /// <summary>
@@ -54,7 +59,7 @@ namespace VRCX
         /// <returns>The number of milliseconds that the system has been running.</returns>
         public override double GetUptime()
         {
-            return SystemMonitorCef.Instance.UpTime;
+            return SystemMonitorElectron.Instance.UpTime;
         }
 
         /// <summary>
@@ -66,6 +71,10 @@ namespace VRCX
             return CultureInfo.CurrentCulture.ToString();
         }
 
+        /// <summary>
+        /// Returns the file path of the custom user js file, if it exists.
+        /// </summary>
+        /// <returns>The file path of the custom user js file, or an empty string if it doesn't exist.</returns>
         public override string CustomVrScript()
         {
             var filePath = Path.Join(Program.AppDataDirectory, "customvr.js");
@@ -73,16 +82,6 @@ namespace VRCX
                 return File.ReadAllText(filePath);
 
             return string.Empty;
-        }
-
-        public override List<KeyValuePair<string, string>> GetExecuteVrFeedFunctionQueue()
-        {
-            throw new NotImplementedException("GetExecuteVrFeedFunctionQueue is not implemented in AppApiVrCef.");
-        }
-
-        public override List<KeyValuePair<string, string>> GetExecuteVrOverlayFunctionQueue()
-        {
-            throw new NotImplementedException("GetExecuteVrOverlayFunctionQueue is not implemented in AppApiVrCef.");
         }
     }
 }

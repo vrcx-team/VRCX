@@ -84,22 +84,22 @@ if (fs.existsSync(armPath)) {
 const InteropApi = require('./InteropApi');
 const interopApi = new InteropApi();
 
-const WRIST_FRAME_WIDTH = 512;
-const WRIST_FRAME_HEIGHT = 512;
-const WRIST_FRAME_SIZE = WRIST_FRAME_WIDTH * WRIST_FRAME_HEIGHT * 4;
-const WRIST_SHM_PATH = '/dev/shm/vrcx_wrist_overlay';
+const OVERLAY_WRIST_FRAME_WIDTH = 512;
+const OVERLAY_WRIST_FRAME_HEIGHT = 512;
+const OVERLAY_HMD_FRAME_WIDTH = 1024;
+const OVERLAY_HMD_FRAME_HEIGHT = 1024;
+const OVERLAY_SHARED_HEIGHT =
+    OVERLAY_WRIST_FRAME_HEIGHT + OVERLAY_HMD_FRAME_HEIGHT;
+const OVERLAY_SHARED_WIDTH = Math.max(
+    OVERLAY_WRIST_FRAME_WIDTH,
+    OVERLAY_HMD_FRAME_WIDTH
+);
+const OVERLAY_FRAME_SIZE =
+    OVERLAY_SHARED_WIDTH * OVERLAY_SHARED_HEIGHT * 4;
+const OVERLAY_SHM_PATH = '/dev/shm/vrcx_overlay';
 
-function createWristOverlayWindowShm() {
-    fs.writeFileSync(WRIST_SHM_PATH, Buffer.alloc(WRIST_FRAME_SIZE + 1));
-}
-
-const HMD_FRAME_WIDTH = 1024;
-const HMD_FRAME_HEIGHT = 1024;
-const HMD_FRAME_SIZE = HMD_FRAME_WIDTH * HMD_FRAME_HEIGHT * 4;
-const HMD_SHM_PATH = '/dev/shm/vrcx_hmd_overlay';
-
-function createHmdOverlayWindowShm() {
-    fs.writeFileSync(HMD_SHM_PATH, Buffer.alloc(HMD_FRAME_SIZE + 1));
+function createOverlayWindowShm() {
+    fs.writeFileSync(OVERLAY_SHM_PATH, Buffer.alloc(OVERLAY_FRAME_SIZE + 1));
 }
 
 const version = getVersion();
@@ -218,21 +218,11 @@ ipcMain.handle('app:restart', () => {
     }
 });
 
-ipcMain.handle('app:getWristOverlayWindow', () => {
-    if (wristOverlayWindow && wristOverlayWindow.webContents) {
+ipcMain.handle('app:getOverlayWindow', () => {
+    if (overlayWindow && overlayWindow.webContents) {
         return (
-            !wristOverlayWindow.webContents.isLoading() &&
-            wristOverlayWindow.webContents.isPainting()
-        );
-    }
-    return false;
-});
-
-ipcMain.handle('app:getHmdOverlayWindow', () => {
-    if (hmdOverlayWindow && hmdOverlayWindow.webContents) {
-        return (
-            !hmdOverlayWindow.webContents.isLoading() &&
-            hmdOverlayWindow.webContents.isPainting()
+            !overlayWindow.webContents.isLoading() &&
+            overlayWindow.webContents.isPainting()
         );
     }
     return false;
@@ -241,22 +231,16 @@ ipcMain.handle('app:getHmdOverlayWindow', () => {
 ipcMain.handle(
     'app:updateVr',
     (event, active, hmdOverlay, wristOverlay, menuButton, overlayHand) => {
-        if (!active) {
+        if (!active || (!hmdOverlay && !wristOverlay)) {
             disposeOverlay();
             return;
         }
-        isOverlayActive = true;
-
-        if (!hmdOverlay) {
-            destroyHmdOverlayWindow();
-        } else if (active && !hmdOverlayWindow) {
-            createHmdOverlayWindowOffscreen();
-        }
-
-        if (!wristOverlay) {
-            destroyWristOverlayWindow();
-        } else if (active && !wristOverlayWindow) {
-            createWristOverlayWindowOffscreen();
+        if (active && !overlayWindow) {
+            try {
+                createOverlayWindowOffscreen();
+            } catch (err) {
+                console.error('Error creating overlay windows:', err);
+            }
         }
     }
 );
@@ -412,19 +396,24 @@ function createWindow() {
     });
 }
 
-let wristOverlayWindow = undefined;
+let overlayWindow = undefined;
 
-function createWristOverlayWindowOffscreen() {
-    if (!fs.existsSync(WRIST_SHM_PATH)) {
-        createWristOverlayWindowShm();
+function createOverlayWindowOffscreen() {
+    if (process.platform !== 'linux') {
+        console.error('Offscreen overlay is only supported on Linux.');
+        return;
+    }
+    isOverlayActive = true;
+    if (!fs.existsSync(OVERLAY_SHM_PATH)) {
+        createOverlayWindowShm();
     }
 
     const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
     const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
-    const width = WRIST_FRAME_WIDTH;
-    const height = WRIST_FRAME_HEIGHT;
+    const width = OVERLAY_SHARED_WIDTH;
+    const height = OVERLAY_SHARED_HEIGHT;
 
-    wristOverlayWindow = new BrowserWindow({
+    overlayWindow = new BrowserWindow({
         x,
         y,
         width,
@@ -440,110 +429,34 @@ function createWristOverlayWindowOffscreen() {
             preload: path.join(__dirname, 'preload.js')
         }
     });
-    wristOverlayWindow.webContents.setFrameRate(2);
+    overlayWindow.webContents.setFrameRate(48);
 
-    let indexPath = path.join(rootDir, 'build/html/vr.html');
+    let fileUrl = `file://${path.join(rootDir, 'build/html/vr.html')}`;
     if (debug) {
-        indexPath = 'http://localhost:9000/vr.html';
+        fileUrl = 'http://localhost:9000/vr.html';
     }
-    const fileUrl = `file://${indexPath}?wrist`;
-    wristOverlayWindow.loadURL(fileUrl, { userAgent: version });
-
+    overlayWindow.loadURL(fileUrl, { userAgent: version });
     // Use paint event for offscreen rendering
-    wristOverlayWindow.webContents.on('paint', (event, dirty, image) => {
+    overlayWindow.webContents.on('paint', (event, dirty, image) => {
         const buffer = image.toBitmap();
-        //console.log('Captured wrist frame via paint event, size:', buffer.length);
-        writeWristFrame(buffer);
+        //console.log('Captured frame via paint event, size:', buffer.length);
+        writeOverlayFrame(buffer);
     });
 }
 
-function writeWristFrame(imageBuffer) {
+function writeOverlayFrame(imageBuffer) {
     try {
-        const fd = fs.openSync(WRIST_SHM_PATH, 'r+');
-        const buffer = Buffer.alloc(WRIST_FRAME_SIZE + 1);
+        const fd = fs.openSync(OVERLAY_SHM_PATH, 'r+');
+        const buffer = Buffer.alloc(OVERLAY_FRAME_SIZE + 1);
         buffer[0] = 0; // not ready
-        imageBuffer.copy(buffer, 1, 0, WRIST_FRAME_SIZE);
+        imageBuffer.copy(buffer, 1, 0, OVERLAY_FRAME_SIZE);
         buffer[0] = 1; // ready
         fs.writeSync(fd, buffer);
         fs.closeSync(fd);
-        //console.log('Wrote wrist frame to shared memory');
+        //console.log('Wrote frame to shared memory');
     } catch (err) {
-        console.error('Error writing wrist frame to shared memory:', err);
+        console.error('Error writing frame to shared memory:', err);
     }
-}
-
-function destroyWristOverlayWindow() {
-    if (wristOverlayWindow && !wristOverlayWindow.isDestroyed()) {
-        wristOverlayWindow.close();
-    }
-    wristOverlayWindow = undefined;
-}
-
-let hmdOverlayWindow = undefined;
-
-function createHmdOverlayWindowOffscreen() {
-    if (!fs.existsSync(HMD_SHM_PATH)) {
-        createHmdOverlayWindowShm();
-    }
-
-    const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
-    const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
-    const width = HMD_FRAME_WIDTH;
-    const height = HMD_FRAME_HEIGHT;
-
-    hmdOverlayWindow = new BrowserWindow({
-        x,
-        y,
-        width,
-        height,
-        icon: path.join(rootDir, 'images/VRCX.png'),
-        autoHideMenuBar: true,
-        transparent: true,
-        frame: false,
-        show: false,
-        webPreferences: {
-            partition: 'vrcx-vr-overlay',
-            offscreen: true,
-            preload: path.join(__dirname, 'preload.js')
-        }
-    });
-    hmdOverlayWindow.webContents.setFrameRate(48);
-
-    let indexPath = path.join(rootDir, 'build/html/vr.html');
-    if (debug) {
-        indexPath = 'http://localhost:9000/vr.html';
-    }
-    const fileUrl = `file://${indexPath}?hmd`;
-    hmdOverlayWindow.loadURL(fileUrl, { userAgent: version });
-
-    // Use paint event for offscreen rendering
-    hmdOverlayWindow.webContents.on('paint', (event, dirty, image) => {
-        const buffer = image.toBitmap();
-        //console.log('Captured HMD frame via paint event, size:', buffer.length);
-        writeHmdFrame(buffer);
-    });
-}
-
-function writeHmdFrame(imageBuffer) {
-    try {
-        const fd = fs.openSync(HMD_SHM_PATH, 'r+');
-        const buffer = Buffer.alloc(HMD_FRAME_SIZE + 1);
-        buffer[0] = 0; // not ready
-        imageBuffer.copy(buffer, 1, 0, HMD_FRAME_SIZE);
-        buffer[0] = 1; // ready
-        fs.writeSync(fd, buffer);
-        fs.closeSync(fd);
-        //console.log('Wrote HMD frame to shared memory');
-    } catch (err) {
-        console.error('Error writing HMD frame to shared memory:', err);
-    }
-}
-
-function destroyHmdOverlayWindow() {
-    if (hmdOverlayWindow && !hmdOverlayWindow.isDestroyed()) {
-        hmdOverlayWindow.close();
-    }
-    hmdOverlayWindow = undefined;
 }
 
 let tray = null;
@@ -931,16 +844,6 @@ function applyWindowState() {
 app.whenReady().then(() => {
     createWindow();
     createTray();
-
-    if (process.platform === 'linux') {
-        try {
-            createWristOverlayWindowOffscreen();
-            createHmdOverlayWindowOffscreen();
-        } catch (err) {
-            console.error('Error creating overlay windows:', err);
-        }
-    }
-
     installVRCX();
 
     app.on('activate', function () {
@@ -959,21 +862,13 @@ function disposeOverlay() {
     if (!isOverlayActive) {
         return;
     }
+    if (overlayWindow && !overlayWindow.isDestroyed()) {
+        overlayWindow.close();
+    }
+    overlayWindow = undefined;
     isOverlayActive = false;
-    if (wristOverlayWindow) {
-        wristOverlayWindow.close();
-        wristOverlayWindow = undefined;
-    }
-    if (hmdOverlayWindow) {
-        hmdOverlayWindow.close();
-        hmdOverlayWindow = undefined;
-    }
-
-    if (fs.existsSync(WRIST_SHM_PATH)) {
-        fs.unlinkSync(WRIST_SHM_PATH);
-    }
-    if (fs.existsSync(HMD_SHM_PATH)) {
-        fs.unlinkSync(HMD_SHM_PATH);
+    if (fs.existsSync(OVERLAY_SHM_PATH)) {
+        fs.unlinkSync(OVERLAY_SHM_PATH);
     }
 }
 

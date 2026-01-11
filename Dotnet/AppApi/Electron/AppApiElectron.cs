@@ -19,16 +19,6 @@ namespace VRCX
             Program.VRCXVRInstance.SetActive(active, hmdOverlay, wristOverlay, menuButton, overlayHand);
         }
 
-        public override void RefreshVR()
-        {
-            Program.VRCXVRInstance.Restart();
-        }
-
-        public override void RestartVR()
-        {
-            Program.VRCXVRInstance.Restart();
-        }
-
         public override void SetZoom(double zoomLevel)
         {
         }
@@ -49,11 +39,6 @@ namespace VRCX
         public override bool CheckForUpdateExe()
         {
             return false;
-        }
-
-        public override void ExecuteVrFeedFunction(string function, string json)
-        {
-            Program.VRCXVRInstance.ExecuteVrFeedFunction(function, json);
         }
 
         public override void ExecuteVrOverlayFunction(string function, string json)

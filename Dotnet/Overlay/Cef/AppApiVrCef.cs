@@ -1,47 +1,36 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using VRCX.Overlay;
 
 namespace VRCX
 {
-    public class AppApiVrElectron : AppApiVr
+    public class AppApiVrCef : AppApiVr
     {
-        static AppApiVrElectron()
+        static AppApiVrCef()
         {
-            Instance = new AppApiVrElectron();
+            Instance = new AppApiVrCef();
         }
 
         public override void Init()
         {
+            // Create Instance before Cef tries to bind it
         }
 
         public override void VrInit()
         {
-        }
-
-        public override List<KeyValuePair<string, string>> GetExecuteVrFeedFunctionQueue()
-        {
-            var list = new List<KeyValuePair<string, string>>();
-            while (Program.VRCXVRInstance.GetExecuteVrFeedFunctionQueue().TryDequeue(out var item))
+            // IPC to main process that VR has initialized
+            var message = new OverlayMessage
             {
-                list.Add(item);
-            }
-            return list;
-        }
-
-        public override List<KeyValuePair<string, string>> GetExecuteVrOverlayFunctionQueue()
-        {
-            var list = new List<KeyValuePair<string, string>>();
-            while (Program.VRCXVRInstance.GetExecuteVrOverlayFunctionQueue().TryDequeue(out var item))
-            {
-                list.Add(item);
-            }
-            return list;
+                Type = OverlayMessageType.OverlayConnected
+            };
+            OverlayClient.SendMessage(message);
         }
 
         public override void ToggleSystemMonitor(bool enabled)
         {
-            SystemMonitorElectron.Instance.Start(enabled);
+            SystemMonitorCef.Instance.Start(enabled);
         }
 
         /// <summary>
@@ -50,7 +39,7 @@ namespace VRCX
         /// <returns>The current CPU usage as a percentage.</returns>
         public override float CpuUsage()
         {
-            return SystemMonitorElectron.Instance.CpuUsage;
+            return SystemMonitorCef.Instance.CpuUsage;
         }
 
         /// <summary>
@@ -60,7 +49,7 @@ namespace VRCX
         /// <returns>An array of arrays containing information about the connected VR devices.</returns>
         public override string[][] GetVRDevices()
         {
-            return Program.VRCXVRInstance.GetDevices();
+            return OverlayProgram.VRCXVRInstance.GetDevices();
         }
 
         /// <summary>
@@ -69,7 +58,7 @@ namespace VRCX
         /// <returns>The number of milliseconds that the system has been running.</returns>
         public override double GetUptime()
         {
-            return SystemMonitorElectron.Instance.UpTime;
+            return SystemMonitorCef.Instance.UpTime;
         }
 
         /// <summary>
@@ -81,10 +70,6 @@ namespace VRCX
             return CultureInfo.CurrentCulture.ToString();
         }
 
-        /// <summary>
-        /// Returns the file path of the custom user js file, if it exists.
-        /// </summary>
-        /// <returns>The file path of the custom user js file, or an empty string if it doesn't exist.</returns>
         public override string CustomVrScript()
         {
             var filePath = Path.Join(Program.AppDataDirectory, "customvr.js");
@@ -92,6 +77,11 @@ namespace VRCX
                 return File.ReadAllText(filePath);
 
             return string.Empty;
+        }
+
+        public override List<KeyValuePair<string, string>> GetExecuteVrOverlayFunctionQueue()
+        {
+            throw new NotImplementedException("GetExecuteVrOverlayFunctionQueue is not implemented in AppApiVrCef.");
         }
     }
 }

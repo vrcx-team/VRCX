@@ -240,6 +240,30 @@ button {
 
 .x-app-type {
     color: #fff;
+    width: 1024px;
+    height: 1536px;
+    position: relative;
+    overflow: hidden;
+}
+
+.wrist {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    width: 512px;
+    height: 512px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+}
+
+.hmd {
+    position: absolute;
+    top: 512px;
+    left: 0;
+    width: 1024px;
+    height: 1024px;
+    z-index: 10;
 }
 
 .background {

@@ -23,7 +23,6 @@ namespace VRCX
         {
             var isGameRunning = false;
             var isSteamVRRunning = false;
-            var isHmdAfk = false;
 
             if (ProcessMonitor.Instance.IsProcessRunning("VRChat"))
                 isGameRunning = true;
@@ -31,12 +30,9 @@ namespace VRCX
             if (ProcessMonitor.Instance.IsProcessRunning("vrserver"))
                 isSteamVRRunning = true;
 
-            if (Program.VRCXVRInstance != null)
-                isHmdAfk = Program.VRCXVRInstance.IsHmdAfk;
-
             // TODO: fix this throwing an exception for being called before the browser is ready. somehow it gets past the checks
             if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-                MainForm.Instance.Browser.ExecuteScriptAsync("window?.$pinia?.game.updateIsGameRunning", isGameRunning, isSteamVRRunning, isHmdAfk);
+                MainForm.Instance.Browser.ExecuteScriptAsync("window?.$pinia?.game.updateIsGameRunning", isGameRunning, isSteamVRRunning);
         }
 
         public override bool IsGameRunning()

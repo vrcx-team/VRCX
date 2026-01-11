@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -31,17 +32,15 @@ namespace VRCX
 
         public override void SetVR(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand)
         {
-            Program.VRCXVRInstance.SetActive(active, hmdOverlay, wristOverlay, menuButton, overlayHand);
-        }
-
-        public override void RefreshVR()
-        {
-            Program.VRCXVRInstance.Restart();
-        }
-
-        public override void RestartVR()
-        {
-            Program.VRCXVRInstance.Restart();
+            var updateVars = new OverlayVars
+            {
+                Active = active,
+                HmdOverlay = hmdOverlay,
+                WristOverlay = wristOverlay,
+                MenuButton = menuButton,
+                OverlayHand = overlayHand
+            };
+            OverlayServer.Instance.UpdateVars(updateVars);
         }
 
         public override void SetZoom(double zoomLevel)
@@ -116,14 +115,15 @@ namespace VRCX
             return File.Exists(Path.Join(Program.AppDataDirectory, "update.exe"));
         }
 
-        public override void ExecuteVrFeedFunction(string function, string json)
-        {
-            Program.VRCXVRInstance.ExecuteVrFeedFunction(function, json);
-        }
-
         public override void ExecuteVrOverlayFunction(string function, string json)
         {
-            Program.VRCXVRInstance.ExecuteVrOverlayFunction(function, json);
+            var message = new OverlayMessage
+            {
+                Type = OverlayMessageType.JsFunctionCall,
+                FunctionName = function,
+                Data = json
+            };
+            OverlayServer.Instance.SendMessage(message);
         }
 
         public override void FocusWindow()

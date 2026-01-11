@@ -39,9 +39,7 @@ contextBridge.exposeInMainWorld('electron', {
     desktopNotification: (title, body, icon) =>
         ipcRenderer.invoke('notification:showNotification', title, body, icon),
     restartApp: () => ipcRenderer.invoke('app:restart'),
-    getWristOverlayWindow: () =>
-        ipcRenderer.invoke('app:getWristOverlayWindow'),
-    getHmdOverlayWindow: () => ipcRenderer.invoke('app:getHmdOverlayWindow'),
+    getOverlayWindow: () => ipcRenderer.invoke('app:getOverlayWindow'),
     updateVr: (active, hmdOverlay, wristOverlay, menuButton, overlayHand) =>
         ipcRenderer.invoke(
             'app:updateVr',

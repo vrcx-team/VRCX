@@ -81,10 +81,7 @@
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
     <PackageReference Include="SourceGear.sqlite3" Version="3.50.4.5" />
     <PackageReference Include="System.Data.SQLite" Version="2.0.2" />
-    <PackageReference Include="System.Drawing.Common" Version="10.0.1" />
     <PackageReference Include="System.Management" Version="10.0.1" />
-    <PackageReference Include="System.Text.Json" Version="10.0.1" />
-    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageReference Include="Websocket.Client" Version="5.3.0" />
   </ItemGroup>
 
@@ -97,6 +94,8 @@
     <Compile Remove="AppApi\Cef\**" />
     <Content Remove="Overlay\Cef\**" />
     <Compile Remove="Overlay\Cef\**" />
+    <Content Remove="OverlayWebSocket\**" />
+    <Compile Remove="OverlayWebSocket\**" />
     <Content Remove="DBMerger\**" />
     <Compile Remove="DBMerger\**" />
   </ItemGroup>

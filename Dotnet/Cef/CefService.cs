@@ -23,7 +23,10 @@ namespace VRCX
 
         internal void Init()
         {
+            var isOverlay = StartupArgs.LaunchArguments.IsOverlay;
             var userDataDir = Path.Join(Program.AppDataDirectory, "userdata");
+            if (isOverlay)
+                userDataDir = Path.Join(Program.AppDataDirectory, "overlay/userdata");
             // delete userdata if Cef version has been downgraded, fixes VRCX not opening after a downgrade
             CheckCefVersion(userDataDir);
 
@@ -39,6 +42,8 @@ namespace VRCX
                 BrowserSubprocessPath = Environment.ProcessPath,
                 BackgroundColor = 0xFF0A0A0A
             };
+            if (isOverlay)
+                cefSettings.LogFile = Path.Join(Program.AppDataDirectory, "overlay/logs/cef.log");
 
             cefSettings.RegisterScheme(new CefCustomScheme
             {
@@ -58,7 +63,7 @@ namespace VRCX
             cefSettings.CefCommandLineArgs.Add("disable-pdf-extension");
             cefSettings.CefCommandLineArgs["autoplay-policy"] = "no-user-gesture-required";
             cefSettings.CefCommandLineArgs.Add("disable-web-security");
-            cefSettings.CefCommandLineArgs.Add("disk-cache-size", "2147483647");
+            // cefSettings.CefCommandLineArgs.Add("disk-cache-size", "2147483647");
             cefSettings.CefCommandLineArgs.Add("unsafely-disable-devtools-self-xss-warnings");
             cefSettings.CefCommandLineArgs.Add("do-not-de-elevate"); // fix program failing to start when running as admin
 
@@ -78,9 +83,13 @@ namespace VRCX
                 // Discover network targets, Configure...
                 // Add Remote Target: localhost:8089
                 logger.Info("Debug mode enabled");
-                cefSettings.RemoteDebuggingPort = 8089;
+                cefSettings.RemoteDebuggingPort = !isOverlay ? 8089 : 8090;
                 cefSettings.CefCommandLineArgs["remote-allow-origins"] = "*";
+            }
 
+            // load extensions in debug mode
+            if (Program.LaunchDebug && !isOverlay)
+            {
                 var extensionsPath = Path.Join(Program.AppDataDirectory, "extensions");
                 Directory.CreateDirectory(extensionsPath);
 
@@ -111,10 +120,11 @@ namespace VRCX
                 }
             }
 
-            CefSharpSettings.ShutdownOnExit = false;
+            CefSharpSettings.ShutdownOnExit = true;
+            CefSharpSettings.SubprocessExitIfParentProcessClosed = true;
             CefSharpSettings.ConcurrentTaskExecution = true;
 
-            if (Cef.Initialize(cefSettings, false) == false)
+            if (!Cef.Initialize(cefSettings, false))
             {
                 logger.Error("Cef failed to initialize");
                 throw new Exception("Cef.Initialize()");

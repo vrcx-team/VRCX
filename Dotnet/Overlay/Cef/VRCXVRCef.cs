@@ -12,12 +12,12 @@ using Silk.NET.Core.Native;
 using Silk.NET.Direct3D11;
 using Silk.NET.DXGI;
 using Valve.VR;
+using VRCX.Overlay;
 
 namespace VRCX
 {
     public class VRCXVRCef : VRCXVRInterface
     {
-        public static VRCXVRInterface Instance;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private static readonly float[] _rotation = { 0f, 0f, 0f };
         private static readonly float[] _translation = { 0f, 0f, 0f };
@@ -25,11 +25,11 @@ namespace VRCX
         private static readonly float[] _translationRight = { 7f / 100f, -5f / 100f, 6f / 100f };
         private static readonly float[] _rotationLeft = { 90f * (float)(Math.PI / 180f), 90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
         private static readonly float[] _rotationRight = { -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
-        private static OffScreenBrowser _wristOverlay;
-        private static OffScreenBrowser _hmdOverlay;
 
+        private static OffScreenBrowser _sharedOverlay;
         private readonly List<string[]> _deviceList;
         private readonly ReaderWriterLockSlim _deviceListLock;
+        private readonly bool _isLegacy;
         private bool _active;
         private bool _menuButton;
         private int _overlayHand;
@@ -44,6 +44,11 @@ namespace VRCX
         private bool _wristOverlayActive;
         private bool _wristOverlayWasActive;
 
+        private const int HMD_HEIGHT = 1024;
+        private const int WRIST_SIZE = 512;
+        private const int TOTAL_WIDTH = 1024;
+        private const int TOTAL_HEIGHT = HMD_HEIGHT + WRIST_SIZE; // 1024 + 512 = 1536
+
         private DXGI _dxgi;
         private D3D11 _d3d11;
         private ComPtr<IDXGIFactory2> _factory;
@@ -52,16 +57,11 @@ namespace VRCX
         private ComPtr<ID3D11Multithread> _multithread;
         private ComPtr<ID3D11DeviceContext> _deviceContext;
 
-        private ComPtr<ID3D11Texture2D> _texture1;
-        private ComPtr<ID3D11Texture2D> _texture2;
+        private ComPtr<ID3D11Texture2D> _sharedTexture;
 
-        static VRCXVRCef()
+        public VRCXVRCef(bool isLegacy)
         {
-            Instance = new VRCXVRCef();
-        }
-
-        public VRCXVRCef()
-        {
+            _isLegacy = isLegacy;
             _deviceListLock = new ReaderWriterLockSlim();
             _deviceList = new List<string[]>();
             _thread = new Thread(ThreadLoop)
@@ -70,8 +70,6 @@ namespace VRCX
             };
         }
 
-        // NOTE
-        // 메모리 릭 때문에 미리 생성해놓고 계속 사용함
         public override void Init()
         {
             _thread.Start();
@@ -88,10 +86,8 @@ namespace VRCX
         public override void Restart()
         {
             Exit();
-            Instance = new VRCXVRCef();
-            Instance.Init();
-            Program.VRCXVRInstance = Instance;
-            MainForm.Instance.Browser.ExecuteScriptAsync("console.log('VRCXVR Restarted');");
+            OverlayProgram.VRCXVRInstance = new VRCXVRCef(_isLegacy);
+            OverlayProgram.VRCXVRInstance.Init();
         }
 
         private void SetupTextures()
@@ -111,6 +107,7 @@ namespace VRCX
 
                 _device.Dispose();
                 _deviceContext.Dispose();
+
                 SilkMarshal.ThrowHResult
                 (
                     _d3d11.CreateDevice
@@ -128,51 +125,39 @@ namespace VRCX
                     )
                 );
 
+                if ((IntPtr)_sharedTexture.Handle != IntPtr.Zero)
+                {
+                    _sharedTexture.Dispose();
+                }
+
+                SilkMarshal.ThrowHResult
+                (
+                    _device.CreateTexture2D(new Texture2DDesc
+                    {
+                        Width = TOTAL_WIDTH,
+                        Height = TOTAL_HEIGHT,
+                        MipLevels = 1,
+                        ArraySize = 1,
+                        Format = Format.FormatB8G8R8A8Unorm,
+                        SampleDesc = new SampleDesc
+                        {
+                            Count = 1,
+                            Quality = 0
+                        },
+                        BindFlags = (uint)BindFlag.ShaderResource,
+                        CPUAccessFlags = _isLegacy ? (uint)CpuAccessFlag.Write : (uint)CpuAccessFlag.None,
+                        Usage = _isLegacy ? Usage.Dynamic : Usage.Default
+                    }, null, ref _sharedTexture)
+                );
+
+                // new
+                _sharedOverlay?.UpdateRender(_device, _deviceContext, _sharedTexture);
+
                 _multithread = _device.QueryInterface<ID3D11Multithread>();
                 _multithread.SetMultithreadProtected(true);
 
                 if (Program.LaunchDebug)
                     _device.SetInfoQueueCallback(msg => logger.Info(SilkMarshal.PtrToString((nint)msg.PDescription)!));
-
-                _texture1.Dispose();
-                SilkMarshal.ThrowHResult
-                (
-                    _device.CreateTexture2D(new Texture2DDesc
-                    {
-                        Width = 512,
-                        Height = 512,
-                        MipLevels = 1,
-                        ArraySize = 1,
-                        Format = Format.FormatB8G8R8A8Unorm,
-                        SampleDesc = new SampleDesc
-                        {
-                            Count = 1,
-                            Quality = 0
-                        },
-                        BindFlags = (uint)BindFlag.ShaderResource
-                    }, null, ref _texture1)
-                );
-                _wristOverlay?.UpdateRender(_device, _deviceContext, _texture1);
-
-                _texture2.Dispose();
-                SilkMarshal.ThrowHResult
-                (
-                    _device.CreateTexture2D(new Texture2DDesc
-                    {
-                        Width = 1024,
-                        Height = 1024,
-                        MipLevels = 1,
-                        ArraySize = 1,
-                        Format = Format.FormatB8G8R8A8Unorm,
-                        SampleDesc = new SampleDesc
-                        {
-                            Count = 1,
-                            Quality = 0
-                        },
-                        BindFlags = (uint)BindFlag.ShaderResource
-                    }, null, ref _texture2)
-                );
-                _hmdOverlay?.UpdateRender(_device, _deviceContext, _texture2);
             }
         }
 
@@ -188,20 +173,17 @@ namespace VRCX
             var overlayVisible2 = false;
             var dashboardHandle = 0UL;
 
-            _wristOverlay = new OffScreenBrowser(
-                Program.LaunchDebug ? "http://localhost:9000/vr.html?wrist" : "file://vrcx/vr.html?wrist",
-                512,
-                512
-            );
-
-            _hmdOverlay = new OffScreenBrowser(
-                Program.LaunchDebug ? "http://localhost:9000/vr.html?hmd" : "file://vrcx/vr.html?hmd",
-                1024,
-                1024
+            _sharedOverlay = new OffScreenBrowser(
+                Program.LaunchDebug ? "http://localhost:9000/vr.html" : "file://vrcx/vr.html",
+                TOTAL_WIDTH,
+                TOTAL_HEIGHT,
+                _isLegacy
             );
 
             while (_thread != null)
             {
+                if (_isLegacy && (_wristOverlayActive || _hmdOverlayActive))
+                    _sharedOverlay.RenderToTexture(_deviceContext, _sharedTexture);
                 try
                 {
                     Thread.Sleep(32);
@@ -267,18 +249,18 @@ namespace VRCX
                         if (overlay != null)
                         {
                             var dashboardVisible = overlay.IsDashboardVisible();
-                            var err = ProcessDashboard(overlay, ref dashboardHandle, dashboardVisible);
-                            if (err != EVROverlayError.None &&
-                                dashboardHandle != 0)
-                            {
-                                overlay.DestroyOverlay(dashboardHandle);
-                                dashboardHandle = 0;
-                                logger.Error(err);
-                            }
+                            // var err = ProcessDashboard(overlay, ref dashboardHandle, dashboardVisible);
+                            // if (err != EVROverlayError.None &&
+                            //     dashboardHandle != 0)
+                            // {
+                            //     overlay.DestroyOverlay(dashboardHandle);
+                            //     dashboardHandle = 0;
+                            //     logger.Error(err);
+                            // }
 
                             if (_wristOverlayActive)
                             {
-                                err = ProcessOverlay1(overlay, ref _wristOverlayHandle, ref overlayVisible1,
+                                var err = ProcessOverlay1(overlay, ref _wristOverlayHandle, ref overlayVisible1,
                                     dashboardVisible, overlayIndex);
                                 if (err != EVROverlayError.None &&
                                     _wristOverlayHandle != 0)
@@ -291,7 +273,7 @@ namespace VRCX
 
                             if (_hmdOverlayActive)
                             {
-                                err = ProcessOverlay2(overlay, ref _hmdOverlayHandle, ref overlayVisible2,
+                                var err = ProcessOverlay2(overlay, ref _hmdOverlayHandle, ref overlayVisible2,
                                     dashboardVisible);
                                 if (err != EVROverlayError.None &&
                                     _hmdOverlayHandle != 0)
@@ -321,13 +303,18 @@ namespace VRCX
                 }
             }
 
-            _hmdOverlay?.Dispose();
-            _wristOverlay?.Dispose();
-            _texture2.Dispose();
-            _texture1.Dispose();
             _device.Dispose();
             _adapter.Dispose();
             _factory.Dispose();
+
+            _sharedOverlay?.Dispose();
+            _sharedOverlay = null;
+            _sharedTexture.Dispose();
+            _sharedTexture = default;
+            _deviceContext.Dispose();
+            _multithread.Dispose();
+            _dxgi?.Dispose();
+            _d3d11?.Dispose();
         }
 
         public override void SetActive(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand)
@@ -355,10 +342,14 @@ namespace VRCX
             _wristOverlayWasActive = _wristOverlayActive;
         }
 
+        public override bool IsActive()
+        {
+            return _active;
+        }
+
         public override void Refresh()
         {
-            _wristOverlay.Reload();
-            _hmdOverlay.Reload();
+            _sharedOverlay.Reload();
         }
 
         public override string[][] GetDevices()
@@ -405,7 +396,12 @@ namespace VRCX
                         if (isHmdAfk != IsHmdAfk)
                         {
                             IsHmdAfk = isHmdAfk;
-                            Program.AppApiInstance.CheckGameRunning();
+                            var message = new OverlayMessage
+                            {
+                                Type = OverlayMessageType.IsHmdAfk,
+                                Data = IsHmdAfk.ToString()
+                            };
+                            OverlayClient.SendMessage(message);
                         }
 
                         var headsetErr = ETrackedPropertyError.TrackedProp_Success;
@@ -593,37 +589,22 @@ namespace VRCX
 
             var e = new VREvent_t();
 
-            while (overlay.PollNextOverlayEvent(dashboardHandle, ref e, (uint)Marshal.SizeOf(e)))
-            {
-                var type = (EVREventType)e.eventType;
-                if (type == EVREventType.VREvent_MouseMove)
-                {
-                    var m = e.data.mouse;
-                    var s = _wristOverlay.Size;
-                    _wristOverlay.GetBrowserHost().SendMouseMoveEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), false, CefEventFlags.None);
-                }
-                else if (type == EVREventType.VREvent_MouseButtonDown)
-                {
-                    var m = e.data.mouse;
-                    var s = _wristOverlay.Size;
-                    _wristOverlay.GetBrowserHost().SendMouseClickEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), MouseButtonType.Left, false, 1, CefEventFlags.LeftMouseButton);
-                }
-                else if (type == EVREventType.VREvent_MouseButtonUp)
-                {
-                    var m = e.data.mouse;
-                    var s = _wristOverlay.Size;
-                    _wristOverlay.GetBrowserHost().SendMouseClickEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), MouseButtonType.Left, true, 1, CefEventFlags.None);
-                }
-            }
-
             if (dashboardVisible)
             {
                 unsafe
                 {
                     var texture = new Texture_t
                     {
-                        handle = (IntPtr)_texture1.Handle
+                        handle = (IntPtr)_sharedTexture.Handle
                     };
+                    var bounds = new VRTextureBounds_t
+                    {
+                        uMin = 0f,
+                        uMax = 1f,
+                        vMin = (float)(TOTAL_HEIGHT - HMD_HEIGHT) / TOTAL_HEIGHT,
+                        vMax = 1f
+                    };
+                    overlay.SetOverlayTextureBounds(dashboardHandle, ref bounds);
                     err = overlay.SetOverlayTexture(dashboardHandle, ref texture);
                     if (err != EVROverlayError.None)
                     {
@@ -707,30 +688,29 @@ namespace VRCX
                 }
             }
 
-            if (!dashboardVisible &&
-                DateTime.UtcNow.CompareTo(_nextOverlayUpdate) <= 0)
+            if (!dashboardVisible && DateTime.UtcNow.CompareTo(_nextOverlayUpdate) <= 0)
             {
                 unsafe
-                {
+                {                   
                     var texture = new Texture_t
                     {
-                        handle = (IntPtr)_texture1.Handle
+                        handle = (IntPtr)_sharedTexture.Handle
                     };
                     err = overlay.SetOverlayTexture(overlayHandle, ref texture);
-                    if (err != EVROverlayError.None)
-                    {
-                        return err;
-                    }
                 }
+
+                var bounds = new VRTextureBounds_t
+                {
+                    uMin = 0f,
+                    uMax = 0.5f,
+                    vMin = 0f,
+                    vMax = (float)WRIST_SIZE / TOTAL_HEIGHT
+                };
+                overlay.SetOverlayTextureBounds(overlayHandle, ref bounds);
 
                 if (!overlayVisible)
                 {
                     err = overlay.ShowOverlay(overlayHandle);
-                    if (err != EVROverlayError.None)
-                    {
-                        return err;
-                    }
-
                     overlayVisible = true;
                 }
             }
@@ -818,23 +798,23 @@ namespace VRCX
                 {
                     var texture = new Texture_t
                     {
-                        handle = (IntPtr)_texture2.Handle
+                        handle = (IntPtr)_sharedTexture.Handle
                     };
                     err = overlay.SetOverlayTexture(overlayHandle, ref texture);
-                    if (err != EVROverlayError.None)
-                    {
-                        return err;
-                    }
                 }
+
+                var bounds = new VRTextureBounds_t
+                {
+                    uMin = 0f,
+                    uMax = 1f,
+                    vMin = (float)(TOTAL_HEIGHT - HMD_HEIGHT) / TOTAL_HEIGHT,
+                    vMax = 1f
+                };
+                overlay.SetOverlayTextureBounds(overlayHandle, ref bounds);
 
                 if (!overlayVisible)
                 {
                     err = overlay.ShowOverlay(overlayHandle);
-                    if (err != EVROverlayError.None)
-                    {
-                        return err;
-                    }
-
                     overlayVisible = true;
                 }
             }
@@ -852,19 +832,6 @@ namespace VRCX
             return err;
         }
 
-        public override ConcurrentQueue<KeyValuePair<string, string>> GetExecuteVrFeedFunctionQueue()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ExecuteVrFeedFunction(string function, string json)
-        {
-            if (_wristOverlay == null) return;
-            // if (_wristOverlay.IsLoading)
-            //     Restart();
-            _wristOverlay.ExecuteScriptAsync($"$vr.{function}", json);
-        }
-
         public override ConcurrentQueue<KeyValuePair<string, string>> GetExecuteVrOverlayFunctionQueue()
         {
             throw new NotImplementedException();
@@ -872,10 +839,10 @@ namespace VRCX
 
         public override void ExecuteVrOverlayFunction(string function, string json)
         {
-            if (_hmdOverlay == null) return;
-            // if (_hmdOverlay.IsLoading)
-            //     Restart();
-            _hmdOverlay.ExecuteScriptAsync($"$vr.{function}", json);
+            if (_sharedOverlay == null || _sharedOverlay.IsLoading || !_sharedOverlay.CanExecuteJavascriptInMainFrame)
+                return;
+
+            _sharedOverlay.ExecuteScriptAsync($"$vr.{function}", json);
         }
     }
 }

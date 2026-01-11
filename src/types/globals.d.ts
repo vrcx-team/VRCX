@@ -65,8 +65,7 @@ declare global {
             ) => void;
             onBrowserFocus: (Function: (event: any) => void) => void;
             restartApp: () => Promise<void>;
-            getWristOverlayWindow: () => Promise<boolean>;
-            getHmdOverlayWindow: () => Promise<boolean>;
+            getOverlayWindow: () => Promise<boolean>;
             updateVr: (
                 active: bool,
                 hmdOverlay: bool,
@@ -168,8 +167,6 @@ declare global {
             menuButton: boolean,
             overlayHand: number
         ): Promise<void>;
-        RefreshVR(): Promise<void>;
-        RestartVR(): Promise<void>;
         SetZoom(zoomLevel: number): Promise<void>;
         GetZoom(): Promise<number>;
         DesktopNotification(
@@ -179,7 +176,6 @@ declare global {
         ): Promise<void>;
         RestartApplication(isUpgrade: boolean): Promise<void>;
         CheckForUpdateExe(): Promise<boolean>;
-        ExecuteVrFeedFunction(key: string, json: string): Promise<void>;
         ExecuteVrOverlayFunction(key: string, json: string): Promise<void>;
         FocusWindow(): Promise<void>;
         ChangeTheme(value: number): Promise<void>;
@@ -367,7 +363,6 @@ declare global {
         GetUptime(): Promise<number>;
         CurrentCulture(): Promise<string>;
         CustomVrScript(): Promise<string>;
-        GetExecuteVrFeedFunctionQueue(): Promise<Map<string, string>>;
         GetExecuteVrOverlayFunctionQueue(): Promise<Map<string, string>>;
     };
 

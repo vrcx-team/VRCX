@@ -45,8 +45,7 @@ export const useVrStore = defineStore('Vr', () => {
         updateVrNowPlaying();
         // run these methods again to send data to the overlay
         sharedFeedStore.updateSharedFeed(true);
-        friendStore.onlineFriendCount = 0; // force an update
-        friendStore.updateOnlineFriendCounter();
+        friendStore.updateOnlineFriendCounter(true); // force an update
     }
 
     async function saveOpenVROption() {
@@ -59,7 +58,6 @@ export const useVrStore = defineStore('Vr', () => {
 
     function updateVrNowPlaying() {
         const json = JSON.stringify(gameLogStore.nowPlaying);
-        AppApi.ExecuteVrFeedFunction('nowPlayingUpdate', json);
         AppApi.ExecuteVrOverlayFunction('nowPlayingUpdate', json);
     }
 
@@ -91,7 +89,6 @@ export const useVrStore = defineStore('Vr', () => {
             onlineFor
         };
         const json = JSON.stringify(lastLocation);
-        AppApi.ExecuteVrFeedFunction('lastLocationUpdate', json);
         AppApi.ExecuteVrOverlayFunction('lastLocationUpdate', json);
     }
 
@@ -142,7 +139,6 @@ export const useVrStore = defineStore('Vr', () => {
 
         /** @type {string} */
         const json = JSON.stringify(VRConfigVars);
-        AppApi.ExecuteVrFeedFunction('configUpdate', json);
         AppApi.ExecuteVrOverlayFunction('configUpdate', json);
     }
 
@@ -185,6 +181,9 @@ export const useVrStore = defineStore('Vr', () => {
             newState.menuButton,
             newState.overlayHand
         );
+        if (!newState.active) {
+            gameStore.updateIsHmdAfk(false);
+        }
 
         if (LINUX) {
             window.electron.updateVr(
