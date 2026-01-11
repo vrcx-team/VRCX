@@ -34,12 +34,18 @@
             </div>
             <div v-if="!isLinux" class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.zoom') }}</span>
-                <el-input-number
+                <NumberField
                     v-model="zoomLevel"
-                    size="small"
-                    :precision="0"
-                    style="width: 128px"
-                    @change="setZoomLevel" />
+                    :step="1"
+                    :format-options="{ maximumFractionDigits: 0 }"
+                    class="w-32"
+                    @update:modelValue="setZoomLevel">
+                    <NumberFieldContent>
+                        <NumberFieldDecrement />
+                        <NumberFieldInput />
+                        <NumberFieldIncrement />
+                    </NumberFieldContent>
+                </NumberField>
             </div>
             <simple-switch
                 :label="t('view.settings.appearance.appearance.show_notification_icon_dot')"
@@ -416,6 +422,13 @@
 <script setup>
     import { ListboxContent, ListboxFilter, ListboxItem, ListboxItemIndicator, ListboxRoot, useFilter } from 'reka-ui';
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import {
+        NumberField,
+        NumberFieldContent,
+        NumberFieldDecrement,
+        NumberFieldIncrement,
+        NumberFieldInput
+    } from '@/components/ui/number-field';
     import {
         TagsInput,
         TagsInputInput,

@@ -226,21 +226,35 @@
                             {{ t('dialog.gallery_icons.create_animated_emoji') }}
                         </el-button>
                         <span style="margin-right: 10px">{{ t('dialog.gallery_icons.emoji_animation_fps') }}</span>
-                        <el-input-number
-                            size="small"
+                        <NumberField
                             v-model="emojiAnimFps"
                             :min="1"
                             :max="64"
-                            style="margin-right: 10px; width: 112px"></el-input-number>
+                            :step="1"
+                            :format-options="{ maximumFractionDigits: 0 }"
+                            class="mr-2.5 w-28">
+                            <NumberFieldContent>
+                                <NumberFieldDecrement />
+                                <NumberFieldInput />
+                                <NumberFieldIncrement />
+                            </NumberFieldContent>
+                        </NumberField>
                         <span style="margin-right: 10px">{{
                             t('dialog.gallery_icons.emoji_animation_frame_count')
                         }}</span>
-                        <el-input-number
-                            size="small"
+                        <NumberField
                             v-model="emojiAnimFrameCount"
                             :min="2"
                             :max="64"
-                            style="margin-right: 10px; width: 112px"></el-input-number>
+                            :step="1"
+                            :format-options="{ maximumFractionDigits: 0 }"
+                            class="mr-2.5 w-28">
+                            <NumberFieldContent>
+                                <NumberFieldDecrement />
+                                <NumberFieldInput />
+                                <NumberFieldIncrement />
+                            </NumberFieldContent>
+                        </NumberField>
                         <label class="inline-flex items-center gap-2" style="margin-left: 10px; margin-right: 10px">
                             <Checkbox v-model="emojiAnimLoopPingPong" />
                             <span>{{ t('dialog.gallery_icons.emoji_loop_pingpong') }}</span>
@@ -534,6 +548,13 @@
 
 <script setup>
     import { ArrowLeft, Close, Delete, Link, Picture, Plus, Present, Refresh, Upload } from '@element-plus/icons-vue';
+    import {
+        NumberField,
+        NumberFieldContent,
+        NumberFieldDecrement,
+        NumberFieldIncrement,
+        NumberFieldInput
+    } from '@/components/ui/number-field';
     import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';

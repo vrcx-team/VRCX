@@ -52,6 +52,7 @@
 <script setup>
     import { computed, ref, watch } from 'vue';
     import { ElMessageBox } from 'element-plus';
+    import { Switch } from '@/components/ui/switch';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

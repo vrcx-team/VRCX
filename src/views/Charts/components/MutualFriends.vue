@@ -52,43 +52,58 @@
             </p>
             <el-form label-position="top" size="small" class="mutual-graph__force-form">
                 <el-form-item :label="t('view.charts.mutual_friend.force_dialog.repulsion')">
-                    <el-input-number
+                    <NumberField
                         v-model="forceForm.repulsion"
-                        :precision="0"
-                        :controls="false"
-                        class="mutual-graph__number-input" />
+                        :step="1"
+                        :format-options="{ maximumFractionDigits: 0 }"
+                        class="mutual-graph__number-input">
+                        <NumberFieldContent>
+                            <NumberFieldInput />
+                        </NumberFieldContent>
+                    </NumberField>
                     <div class="mutual-graph__helper">
                         {{ t('view.charts.mutual_friend.force_dialog.repulsion_help') }}
                     </div>
                 </el-form-item>
                 <el-form-item :label="t('view.charts.mutual_friend.force_dialog.edge_length_min')">
-                    <el-input-number
+                    <NumberField
                         v-model="forceForm.edgeLengthMin"
-                        :precision="0"
-                        :controls="false"
-                        class="mutual-graph__number-input" />
+                        :step="1"
+                        :format-options="{ maximumFractionDigits: 0 }"
+                        class="mutual-graph__number-input">
+                        <NumberFieldContent>
+                            <NumberFieldInput />
+                        </NumberFieldContent>
+                    </NumberField>
                     <div class="mutual-graph__helper">
                         {{ t('view.charts.mutual_friend.force_dialog.edge_length_min_help') }}
                     </div>
                 </el-form-item>
                 <el-form-item :label="t('view.charts.mutual_friend.force_dialog.edge_length_max')">
-                    <el-input-number
+                    <NumberField
                         v-model="forceForm.edgeLengthMax"
-                        :precision="0"
-                        :controls="false"
-                        class="mutual-graph__number-input" />
+                        :step="1"
+                        :format-options="{ maximumFractionDigits: 0 }"
+                        class="mutual-graph__number-input">
+                        <NumberFieldContent>
+                            <NumberFieldInput />
+                        </NumberFieldContent>
+                    </NumberField>
                     <div class="mutual-graph__helper">
                         {{ t('view.charts.mutual_friend.force_dialog.edge_length_max_help') }}
                     </div>
                 </el-form-item>
                 <el-form-item :label="t('view.charts.mutual_friend.force_dialog.gravity')">
-                    <el-input-number
+                    <NumberField
                         v-model="forceForm.gravity"
                         :max="1"
                         :step="0.1"
-                        :precision="1"
-                        :controls="false"
-                        class="mutual-graph__number-input" />
+                        :format-options="{ maximumFractionDigits: 1 }"
+                        class="mutual-graph__number-input">
+                        <NumberFieldContent>
+                            <NumberFieldInput />
+                        </NumberFieldContent>
+                    </NumberField>
                     <div class="mutual-graph__helper">
                         {{ t('view.charts.mutual_friend.force_dialog.gravity_help') }}
                     </div>
@@ -111,6 +126,7 @@
 
 <script setup>
     import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+    import { NumberField, NumberFieldContent, NumberFieldInput } from '@/components/ui/number-field';
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { Settings } from 'lucide-vue-next';
