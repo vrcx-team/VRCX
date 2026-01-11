@@ -701,6 +701,7 @@
 
     function handleDialogOpen() {
         setAvatarTagsDialog.value.visible = false;
+        timeSpent.value = 0;
         memo.value = '';
         treeData.value = {};
         getAvatarTimeSpent();
@@ -709,6 +710,7 @@
 
     function getAvatarTimeSpent() {
         const D = avatarDialog.value;
+        timeSpent.value = 0;
         database.getAvatarTimeSpent(D.id).then((aviTime) => {
             if (D.id === aviTime.avatarId) {
                 timeSpent.value = aviTime.timeSpent;
