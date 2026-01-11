@@ -37,6 +37,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     });
 
     const cachedFavorites = reactive(new Map());
+    const cachedFavoritesByObjectId = reactive(new Map());
 
     const cachedFavoriteGroups = ref({});
 
@@ -205,6 +206,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         (isLoggedIn) => {
             friendStore.localFavoriteFriends.clear();
             cachedFavorites.clear();
+            cachedFavoritesByObjectId.clear();
             cachedFavoriteGroups.value = {};
             favoriteFriendGroups.value = [];
             favoriteWorldGroups.value = [];
@@ -251,12 +253,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     function getCachedFavoritesByObjectId(objectId) {
-        for (const item of cachedFavorites.values()) {
-            if (item.favoriteId === objectId) {
-                return item;
-            }
-        }
-        return undefined;
+        return cachedFavoritesByObjectId.get(objectId);
     }
 
     function handleFavoriteAdd(args) {
@@ -353,6 +350,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         removeFromArray(state.favoriteWorlds_, favorite);
         removeFromArray(state.favoriteAvatars_, favorite);
         cachedFavorites.delete(ref.id);
+        cachedFavoritesByObjectId.delete(ref.favoriteId);
         state.favoriteObjects.delete(ref.favoriteId);
         friendStore.localFavoriteFriends.delete(ref.favoriteId);
         favoritesSortOrder.value = favoritesSortOrder.value.filter(
@@ -752,6 +750,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 ...json
             };
             cachedFavorites.set(ref.id, ref);
+            cachedFavoritesByObjectId.set(ref.favoriteId, ref);
             if (
                 ref.type === 'friend' &&
                 (generalSettingsStore.localFavoriteFriendsGroups.length === 0 ||
@@ -768,7 +767,11 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 ++group.count;
             }
         } else {
+            if (ref.favoriteId !== json.favoriteId) {
+                cachedFavoritesByObjectId.delete(ref.favoriteId);
+            }
             Object.assign(ref, json);
+            cachedFavoritesByObjectId.set(ref.favoriteId, ref);
         }
 
         return ref;

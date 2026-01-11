@@ -539,8 +539,8 @@
         User,
         Warning
     } from '@element-plus/icons-vue';
+    import { Check, CircleCheck, Ellipsis, RefreshCcw, Star, Trash2 } from 'lucide-vue-next';
     import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-    import { CircleCheck, Ellipsis, RefreshCcw, Star, Trash2 } from 'lucide-vue-next';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
