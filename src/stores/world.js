@@ -36,7 +36,7 @@ export const useWorldStore = defineStore('World', () => {
         avatarScalingDisabled: false,
         focusViewDisabled: false,
         rooms: [],
-        treeData: [],
+        treeData: {},
         bundleSizes: [],
         lastUpdated: '',
         inCache: false,
@@ -78,7 +78,7 @@ export const useWorldStore = defineStore('World', () => {
         L.shortName = shortName;
         D.id = L.worldId;
         D.$location = L;
-        D.treeData = [];
+        D.treeData = {};
         D.bundleSizes = [];
         D.lastUpdated = '';
         D.visible = true;

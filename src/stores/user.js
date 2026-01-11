@@ -18,8 +18,7 @@ import {
     isRealInstance,
     parseLocation,
     removeEmojis,
-    replaceBioSymbols,
-    textToHex
+    replaceBioSymbols
 } from '../shared/utils';
 import {
     avatarRequest,
@@ -30,6 +29,7 @@ import {
 import { processBulk, request } from '../service/request';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
+import { formatJsonVars } from '../shared/utils/base/ui';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAuthStore } from './auth';
 import { useAvatarStore } from './avatar';
@@ -229,7 +229,7 @@ export const useUserStore = defineStore('User', () => {
         },
         avatarSorting: 'update',
         avatarReleaseStatus: 'all',
-        treeData: [],
+        treeData: {},
         memo: '',
         $avatarInfo: {
             ownerId: '',
@@ -768,7 +768,7 @@ export const useUserStore = defineStore('User', () => {
         }
         const D = userDialog.value;
         D.id = userId;
-        D.treeData = [];
+        D.treeData = {};
         D.memo = '';
         D.note = '';
         getUserMemo(userId).then((memo) => {
@@ -1224,18 +1224,13 @@ export const useUserStore = defineStore('User', () => {
     function refreshUserDialogTreeData() {
         const D = userDialog.value;
         if (D.id === currentUser.value.id) {
-            const treeData = {
+            D.treeData = formatJsonVars({
                 ...currentUser.value,
-                ...D.ref,
-                _hexDisplayName: textToHex(D.ref?.displayName)
-            };
-            D.treeData = treeData;
+                ...D.ref
+            });
             return;
         }
-        D.treeData = {
-            ...D.ref,
-            _hexDisplayName: textToHex(D.ref?.displayName)
-        };
+        D.treeData = formatJsonVars(D.ref);
     }
 
     async function lookupUser(ref) {

@@ -1189,9 +1189,9 @@
         useLocationStore,
         useUserStore
     } from '../../../stores';
+    import { formatJsonVars, getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import { Badge } from '../../ui/badge';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { groupRequest } from '../../../api';
 
     import GroupCalendarEventCard from '../../../views/Tools/components/GroupCalendarEventCard.vue';
@@ -1825,8 +1825,7 @@
     function refreshGroupDialogTreeData() {
         const D = groupDialog.value;
         const treeData = {
-            _hexDisplayName: textToHex(D.ref.displayName),
-            group: D.ref,
+            group: formatJsonVars(D.ref),
             posts: D.posts,
             instances: D.instances,
             members: D.members,

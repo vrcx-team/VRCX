@@ -4,6 +4,7 @@ import { toast } from 'vue-sonner';
 import { THEME_CONFIG } from '../../constants';
 import { i18n } from '../../../plugin/i18n';
 import { router } from '../../../plugin/router';
+import { textToHex } from './string';
 import { useAppearanceSettingsStore } from '../../../stores';
 
 import configRepository from '../../../service/config.js';
@@ -175,8 +176,11 @@ function HSVtoRGB(h, s, v) {
     let g = 0;
     let b = 0;
     if (arguments.length === 1) {
+        // @ts-ignore
         s = h.s;
+        // @ts-ignore
         v = h.v;
+        // @ts-ignore
         h = h.h;
     }
     const i = Math.floor(h * 6);
@@ -223,12 +227,47 @@ function HSVtoRGB(h, s, v) {
     return `#${decColor.toString(16).substr(1)}`;
 }
 
+function formatJsonVars(ref) {
+    // remove all object keys that start with $
+    const newRef = { ...ref };
+    for (const key in newRef) {
+        if (key.startsWith('$')) {
+            delete newRef[key];
+        }
+    }
+    // sort keys alphabetically
+    const sortedKeys = Object.keys(newRef).sort();
+    const sortedRef = {};
+    sortedKeys.forEach((key) => {
+        sortedRef[key] = newRef[key];
+    });
+    if ('displayName' in sortedRef) {
+        // add _hexDisplayName to top
+        return {
+            // @ts-ignore
+            _hexDisplayName: textToHex(sortedRef.displayName),
+            ...sortedRef
+        };
+    }
+    if ('name' in sortedRef) {
+        // add _hexName to top
+        return {
+            // @ts-ignore
+            _hexName: textToHex(sortedRef.name),
+            ...sortedRef
+        };
+    }
+    return sortedRef;
+}
+
 function getNextDialogIndex() {
     let z = 2000;
     document.querySelectorAll('.el-overlay,.el-modal-dialog').forEach((v) => {
+        // @ts-ignore
         if (v.style.display === 'none') {
             return;
         }
+        // @ts-ignore
         const _z = Number(v.style.zIndex) || 0;
         if (_z > z) {
             z = _z;
@@ -300,6 +339,7 @@ export {
     refreshCustomScript,
     HueToHex,
     HSVtoRGB,
+    formatJsonVars,
     getNextDialogIndex,
     changeHtmlLangAttribute,
     setLoginContainerStyle,

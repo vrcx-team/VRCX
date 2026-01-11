@@ -579,10 +579,10 @@
         DropdownMenuTrigger
     } from '../../ui/dropdown-menu';
     import { avatarModerationRequest, avatarRequest, favoriteRequest, miscRequest } from '../../../api';
+    import { formatJsonVars, getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { AppDebug } from '../../../service/appConfig.js';
     import { Badge } from '../../ui/badge';
     import { database } from '../../../service/database';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
 
     const ChangeAvatarImageDialog = defineAsyncComponent(() => import('./ChangeAvatarImageDialog.vue'));
@@ -609,7 +609,7 @@
     const changeAvatarImageDialogVisible = ref(false);
     const previousImageUrl = ref('');
 
-    const treeData = ref([]);
+    const treeData = ref({});
     const timeSpent = ref(0);
     const memo = ref('');
     const setAvatarTagsDialog = ref({
@@ -703,7 +703,7 @@
     function handleDialogOpen() {
         setAvatarTagsDialog.value.visible = false;
         memo.value = '';
-        treeData.value = [];
+        treeData.value = {};
         getAvatarTimeSpent();
         getAvatarMemo();
     }
@@ -992,10 +992,7 @@
     }
 
     function refreshAvatarDialogTreeData() {
-        treeData.value = {
-            ...avatarDialog.value.ref,
-            _hexDisplayName: textToHex(avatarDialog.value.ref?.displayName)
-        };
+        treeData.value = formatJsonVars(avatarDialog.value.ref);
     }
 
     function showSetAvatarTagsDialog(avatarId) {

@@ -809,9 +809,9 @@
         DropdownMenuTrigger
     } from '../../ui/dropdown-menu';
     import { favoriteRequest, miscRequest, userRequest, worldRequest } from '../../../api';
+    import { formatJsonVars, getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { Badge } from '../../ui/badge';
     import { database } from '../../../service/database.js';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
 
     const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog.vue'));
     const PreviousInstancesWorldDialog = defineAsyncComponent(
@@ -835,7 +835,7 @@
     const { showFullscreenImageDialog } = useGalleryStore();
     const { t } = useI18n();
 
-    const treeData = ref([]);
+    const treeData = ref({});
     const worldAllowedDomainsDialog = ref({
         visible: false,
         worldId: '',
@@ -963,7 +963,7 @@
     }
 
     function handleDialogOpen() {
-        treeData.value = [];
+        treeData.value = {};
     }
 
     function showChangeWorldImageDialog() {
@@ -1305,10 +1305,7 @@
         nextTick(() => (D.openFlg = false));
     }
     function refreshWorldDialogTreeData() {
-        treeData.value = {
-            ...worldDialog.value.ref,
-            _hexDisplayName: textToHex(worldDialog.value.ref?.displayName)
-        };
+        treeData.value = formatJsonVars(worldDialog.value.ref);
     }
     function copyWorldId() {
         navigator.clipboard
