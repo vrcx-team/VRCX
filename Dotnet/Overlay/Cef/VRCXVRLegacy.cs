@@ -1,9 +1,3 @@
-// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
-// All rights reserved.
-//
-// This work is licensed under the terms of the MIT license.
-// For a copy, see <https://opensource.org/licenses/MIT>.
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -33,7 +27,7 @@ namespace VRCX
         private static readonly float[] _rotationRight = { -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
         private static OffScreenBrowserLegacy _wristOverlay;
         private static OffScreenBrowserLegacy _hmdOverlay;
-        
+
         private readonly List<string[]> _deviceList;
         private readonly ReaderWriterLockSlim _deviceListLock;
         private bool _active;
@@ -43,7 +37,7 @@ namespace VRCX
         private Thread _thread;
         private bool _wristOverlayActive;
         private DateTime _nextOverlayUpdate;
-        
+
         private DXGI _dxgi;
         private D3D11 _d3d11;
         private ComPtr<IDXGIFactory2> _factory;

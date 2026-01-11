@@ -1,9 +1,3 @@
-// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
-// All rights reserved.
-//
-// This work is licensed under the terms of the MIT license.
-// For a copy, see <https://opensource.org/licenses/MIT>.
-
 using System.Security.Cryptography.X509Certificates;
 using CefSharp;
 using NLog;
@@ -13,14 +7,14 @@ namespace VRCX
     public class CustomRequestHandler : IRequestHandler
     {
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-        
+
         public bool OnBeforeBrowse(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect)
         {
             if (Program.LaunchDebug ||
                 request.Url.StartsWith("file://vrcx/") ||
                 request.Url.StartsWith("chrome-extension://"))
                 return false;
-            
+
             _logger.Error("Blocking navigation to: {Url}", request.Url);
             return true;
         }

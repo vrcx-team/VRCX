@@ -1,9 +1,3 @@
-// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
-// All rights reserved.
-//
-// This work is licensed under the terms of the MIT license.
-// For a copy, see <https://opensource.org/licenses/MIT>.
-
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -74,7 +68,7 @@ namespace VRCX
             {
                 if (arg == VrcxLaunchArguments.IsStartupPrefix)
                     arguments.IsStartup = true;
-                
+
                 if (arg == VrcxLaunchArguments.IsUpgradePrefix)
                     arguments.IsUpgrade = true;
 
@@ -83,7 +77,7 @@ namespace VRCX
 
                 if (arg.StartsWith(VrcxLaunchArguments.LaunchCommandPrefix) && arg.Length > VrcxLaunchArguments.LaunchCommandPrefix.Length)
                     arguments.LaunchCommand = arg.Substring(VrcxLaunchArguments.LaunchCommandPrefix.Length);
-                
+
                 if (arg.StartsWith(VrcxLaunchArguments.LinuxLaunchCommandPrefix) && arg.Length > VrcxLaunchArguments.LinuxLaunchCommandPrefix.Length)
                     arguments.LaunchCommand = arg.Substring(VrcxLaunchArguments.LinuxLaunchCommandPrefix.Length);
 
@@ -100,7 +94,7 @@ namespace VRCX
         {
             public const string IsStartupPrefix = "--startup";
             public bool IsStartup { get; set; } = false;
-            
+
             public const string IsUpgradePrefix = "/Upgrade";
             public bool IsUpgrade { get; set; } = false;
 

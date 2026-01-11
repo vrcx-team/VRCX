@@ -1,9 +1,3 @@
-// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
-// All rights reserved.
-//
-// This work is licensed under the terms of the MIT license.
-// For a copy, see <https://opensource.org/licenses/MIT>.
-
 using System;
 using DiscordRPC;
 using System.Text;
@@ -135,21 +129,21 @@ namespace VRCX
             }
             return Encoding.UTF8.GetString(bytesArr, 0, bytesArr.Length - bytesToRemove);
         }
-        
+
         public void SetAssets(
             string details,
             string state,
             string detailsUrl,
-            
+
             string largeKey,
             string largeText,
-            
+
             string smallKey,
             string smallText,
-            
+
             double startUnixMilliseconds,
             double endUnixMilliseconds,
-            
+
             string partyId,
             int partySize,
             int partyMax,
@@ -171,21 +165,21 @@ namespace VRCX
                     _lock.ExitWriteLock();
                     return;
                 }
-                
+
                 _presence.Details = LimitByteLength(details, 127);
                 _presence.DetailsUrl = !string.IsNullOrEmpty(detailsUrl) ? detailsUrl : null;
                 // _presence.StateUrl
                 _presence.State = LimitByteLength(state, 127);
                 _presence.Assets ??= new Assets();
-                
+
                 _presence.Assets.LargeImageKey = largeKey;
                 _presence.Assets.LargeImageText = largeText;
                 _presence.Assets.LargeImageUrl = VrcxUrl;
-                
+
                 _presence.Assets.SmallImageKey = smallKey;
                 _presence.Assets.SmallImageText = smallText;
                 // m_Presence.Assets.SmallImageUrl
-                
+
                 if (startUnixMilliseconds == 0)
                 {
                     _presence.Timestamps = null;
@@ -214,7 +208,7 @@ namespace VRCX
 
                 _presence.Type = (ActivityType)activityType;
                 _presence.StatusDisplay = (StatusDisplayType)statusDisplayType;
-                
+
                 Button[] buttons = [];
                 if (!string.IsNullOrEmpty(buttonUrl))
                 {
@@ -224,7 +218,7 @@ namespace VRCX
                     ];
                 }
                 _presence.Buttons = buttons;
-                
+
                 if (_discordAppId != appId)
                 {
                     _discordAppId = appId;

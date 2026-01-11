@@ -1,9 +1,3 @@
-// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
-// All rights reserved.
-//
-// This work is licensed under the terms of the MIT license.
-// For a copy, see <https://opensource.org/licenses/MIT>.
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -56,7 +50,7 @@ namespace VRCX
         {
             if (Process.GetProcessesByName("VRCX_Setup").Length > 0)
                 Environment.Exit(0);
-            
+
             if (File.Exists(TempDownload))
                 File.Delete(TempDownload);
             if (File.Exists(VrcxSetupExecutable))
@@ -194,7 +188,7 @@ namespace VRCX
                 await destination.WriteAsync(buffer.AsMemory(0, bytesRead), _cancellationToken);
                 totalBytesRead += bytesRead;
             }
-            
+
             destination.Close();
 
             var data = new FileInfo(TempDownload);

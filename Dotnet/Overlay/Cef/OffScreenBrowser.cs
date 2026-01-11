@@ -1,9 +1,3 @@
-// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
-// All rights reserved.
-//
-// This work is licensed under the terms of the MIT license.
-// For a copy, see <https://opensource.org/licenses/MIT>.
-
 using CefSharp;
 using CefSharp.Enums;
 using CefSharp.OffScreen;
@@ -100,22 +94,22 @@ namespace VRCX
             {
                 if ((IntPtr)_device1.Handle == IntPtr.Zero)
                     return;
-                
+
                 if ((IntPtr)_deviceContext.Handle == IntPtr.Zero)
                     return;
-                
+
                 if ((IntPtr)_query.Handle == IntPtr.Zero)
                     return;
-                
+
                 if ((IntPtr)_renderTarget.Handle == IntPtr.Zero)
                     return;
-                
+
                 using ComPtr<ID3D11Texture2D> cefTexture =
                     _device1.OpenSharedResource1<ID3D11Texture2D>(paintInfo.SharedTextureHandle.ToPointer());
                 _deviceContext.CopyResource(_renderTarget, cefTexture);
                 _deviceContext.End(_query);
                 _deviceContext.Flush();
-                
+
                 while (_deviceContext.GetData(_query, IntPtr.Zero.ToPointer(), 0, 0) == 1)
                 {
                     Thread.Yield();
