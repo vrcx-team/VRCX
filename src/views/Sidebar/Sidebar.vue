@@ -42,14 +42,16 @@
             </el-select>
             <div>
                 <TooltipWrapper side="bottom" :content="t('side_panel.refresh_tooltip')">
-                    <el-button
-                        type="default"
-                        :loading="isRefreshFriendsLoading"
-                        size="small"
-                        :icon="Refresh"
-                        circle
+                    <Button
+                        class="rounded-full"
+                        variant="outline"
+                        size="icon-sm"
+                        :disabled="isRefreshFriendsLoading"
                         style="margin-right: 10px"
-                        @click="refreshFriendsList"></el-button>
+                        @click="refreshFriendsList">
+                        <Spinner v-if="isRefreshFriendsLoading" />
+                        <Refresh v-else />
+                    </Button>
                 </TooltipWrapper>
             </div>
         </div>
@@ -74,7 +76,9 @@
 </template>
 
 <script setup>
+    import { Button } from '@/components/ui/button';
     import { Refresh } from '@element-plus/icons-vue';
+    import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

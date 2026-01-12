@@ -16,15 +16,20 @@
             {{ t('dialog.note_export.description8') }} <br />
         </div>
 
-        <el-button size="small" :disabled="loading" style="margin-top: 10px" @click="updateNoteExportDialog">
+        <Button
+            size="sm"
+            variant="outline"
+            :disabled="loading"
+            style="margin-top: 10px"
+            @click="updateNoteExportDialog">
             {{ t('dialog.note_export.refresh') }}
-        </el-button>
-        <el-button size="small" :disabled="loading" style="margin-top: 10px" @click="exportNoteExport">
+        </Button>
+        <Button size="sm" variant="outline" :disabled="loading" style="margin-top: 10px" @click="exportNoteExport">
             {{ t('dialog.note_export.export') }}
-        </el-button>
-        <el-button v-if="loading" size="small" style="margin-top: 10px" @click="cancelNoteExport">
+        </Button>
+        <Button v-if="loading" size="sm" variant="outline" style="margin-top: 10px" @click="cancelNoteExport">
             {{ t('dialog.note_export.cancel') }}
-        </el-button>
+        </Button>
         <span v-if="loading" style="margin: 10px">
             <el-icon style="margin-right: 5px"><Loading /></el-icon>
             {{ t('dialog.note_export.progress') }} {{ progress }}/{{ progressTotal }}

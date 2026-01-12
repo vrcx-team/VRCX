@@ -10,13 +10,15 @@
             <el-tabs style="height: 100%">
                 <el-tab-pane :label="t('dialog.group_member_moderation.members')">
                     <div style="margin-top: 10px">
-                        <el-button
-                            type="default"
-                            size="small"
-                            :icon="Refresh"
-                            :loading="isGroupMembersLoading"
-                            circle
-                            @click="loadAllGroupMembers" />
+                        <Button
+                            class="rounded-full"
+                            variant="outline"
+                            size="icon-sm"
+                            :disabled="isGroupMembersLoading"
+                            @click="loadAllGroupMembers">
+                            <Spinner v-if="isGroupMembersLoading" />
+                            <Refresh v-else />
+                        </Button>
                         <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">
                             {{ groupMemberModerationTable.data.length }}/{{
                                 groupMemberModeration.groupRef.memberCount
@@ -34,8 +36,9 @@
                                             !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
                                         )
                                     ">
-                                    <el-button
-                                        size="small"
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
                                         :disabled="
                                             Boolean(
                                                 isGroupMembersLoading ||
@@ -48,7 +51,7 @@
                                             {{ t(memberSortOrder.name) }}
                                             <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
                                         </span>
-                                    </el-button>
+                                    </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent>
                                     <DropdownMenuItem
@@ -209,13 +212,15 @@
                     :label="t('dialog.group_member_moderation.bans')"
                     :disabled="!hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')">
                     <div style="margin-top: 10px">
-                        <el-button
-                            type="default"
-                            size="small"
-                            :icon="Refresh"
-                            :loading="isGroupMembersLoading"
-                            circle
-                            @click="getAllGroupBans(groupMemberModeration.id)"></el-button>
+                        <Button
+                            class="rounded-full"
+                            variant="outline"
+                            size="icon-sm"
+                            :disabled="isGroupMembersLoading"
+                            @click="getAllGroupBans(groupMemberModeration.id)">
+                            <Spinner v-if="isGroupMembersLoading" />
+                            <Refresh v-else />
+                        </Button>
                         <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
                             groupBansModerationTable.data.length
                         }}</span>
@@ -321,13 +326,15 @@
                     :label="t('dialog.group_member_moderation.invites')"
                     :disabled="!hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')">
                     <div style="margin-top: 10px">
-                        <el-button
-                            type="default"
-                            size="small"
-                            :icon="Refresh"
-                            :loading="isGroupMembersLoading"
-                            circle
-                            @click="getAllGroupInvitesAndJoinRequests(groupMemberModeration.id)"></el-button>
+                        <Button
+                            class="rounded-full"
+                            variant="outline"
+                            size="icon-sm"
+                            :disabled="isGroupMembersLoading"
+                            @click="getAllGroupInvitesAndJoinRequests(groupMemberModeration.id)">
+                            <Spinner v-if="isGroupMembersLoading" />
+                            <Refresh v-else />
+                        </Button>
                         <br />
                         <el-tabs>
                             <el-tab-pane>
@@ -602,13 +609,15 @@
                     :label="t('dialog.group_member_moderation.logs')"
                     :disabled="!hasGroupPermission(groupMemberModeration.groupRef, 'group-audit-view')">
                     <div style="margin-top: 10px">
-                        <el-button
-                            type="default"
-                            size="small"
-                            :icon="Refresh"
-                            :loading="isGroupMembersLoading"
-                            circle
-                            @click="getAllGroupLogs(groupMemberModeration.id)"></el-button>
+                        <Button
+                            class="rounded-full"
+                            variant="outline"
+                            size="icon-sm"
+                            :disabled="isGroupMembersLoading"
+                            @click="getAllGroupLogs(groupMemberModeration.id)">
+                            <Spinner v-if="isGroupMembersLoading" />
+                            <Refresh v-else />
+                        </Button>
                         <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
                             groupLogsModerationTable.data.length
                         }}</span>
@@ -862,6 +871,7 @@
     import { ArrowDown, Loading, Refresh, Warning } from '@element-plus/icons-vue';
     import { reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Spinner } from '@/components/ui/spinner';
     import { Trash2 } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

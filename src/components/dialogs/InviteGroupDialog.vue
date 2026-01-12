@@ -66,18 +66,18 @@
             </div>
         </div>
         <template #footer>
-            <el-button
-                type="primary"
+            <Button
                 :disabled="inviteGroupDialog.loading || !inviteGroupDialog.userIds.length || !inviteGroupDialog.groupId"
                 @click="sendGroupInvite">
                 {{ t('dialog.invite_to_group.invite') }}
-            </el-button>
+            </Button>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
     import { computed, nextTick, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { Check as CheckIcon } from 'lucide-vue-next';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';

@@ -19,12 +19,15 @@
                 :placeholder="t('view.moderation.search_placeholder')"
                 class="filter-input" />
             <TooltipWrapper side="bottom" :content="t('view.moderation.refresh_tooltip')">
-                <el-button
-                    type="default"
-                    :loading="playerModerationTable.loading"
-                    @click="refreshPlayerModerations()"
-                    :icon="Refresh"
-                    circle />
+                <Button
+                    class="rounded-full"
+                    variant="outline"
+                    size="icon-sm"
+                    :disabled="playerModerationTable.loading"
+                    @click="refreshPlayerModerations()">
+                    <Spinner v-if="playerModerationTable.loading" />
+                    <Refresh v-else />
+                </Button>
             </TooltipWrapper>
         </div>
 
@@ -40,8 +43,10 @@
 
 <script setup>
     import { computed, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { Refresh } from '@element-plus/icons-vue';
+    import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

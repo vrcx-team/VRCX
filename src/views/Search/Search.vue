@@ -158,14 +158,15 @@
                             </SelectContent>
                         </Select>
                         <TooltipWrapper side="bottom" :content="t('view.search.avatar.refresh_tooltip')">
-                            <el-button
-                                type="default"
-                                :loading="userDialog.isAvatarsLoading"
-                                size="small"
-                                :icon="Refresh"
-                                class="ml-1"
-                                circle
-                                @click="refreshUserDialogAvatars"></el-button>
+                            <Button
+                                class="rounded-full ml-1"
+                                variant="outline"
+                                size="icon-sm"
+                                :disabled="userDialog.isAvatarsLoading"
+                                @click="refreshUserDialogAvatars">
+                                <Spinner v-if="userDialog.isAvatarsLoading" />
+                                <Refresh v-else />
+                            </Button>
                         </TooltipWrapper>
                         <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
                             t('view.search.avatar.result_count', {
@@ -346,6 +347,7 @@
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Checkbox } from '@/components/ui/checkbox';
+    import { Spinner } from '@/components/ui/spinner';
     import { Trash2 } from 'lucide-vue-next';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';

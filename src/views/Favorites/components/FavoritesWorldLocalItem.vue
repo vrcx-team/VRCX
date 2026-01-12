@@ -32,14 +32,13 @@
                                 type="world" />
                         </div>
                         <div class="favorites-search-card__action">
-                            <el-button
-                                size="small"
-                                circle
-                                class="favorites-search-card__action-btn"
-                                :type="deleteButtonType"
+                            <Button
+                                size="icon-sm"
+                                :variant="shiftHeld ? 'destructive' : 'outline'"
+                                class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                                 @click.stop="handlePrimaryDeleteAction">
                                 <i class="ri-delete-bin-line"></i>
-                            </el-button>
+                            </Button>
                         </div>
                     </div>
                 </template>
@@ -141,8 +140,6 @@
         const url = props.favorite.thumbnailImageUrl?.replace('256', '128');
         return url || props.favorite.thumbnailImageUrl;
     });
-
-    const deleteButtonType = computed(() => (shiftHeld.value ? 'danger' : 'default'));
 
     const inviteOrLaunchText = computed(() => {
         return canOpenInstanceInGame

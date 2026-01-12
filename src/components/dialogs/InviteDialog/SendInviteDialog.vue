@@ -93,6 +93,7 @@
 
 <script setup>
     import { Button } from '@/components/ui/button';
+    import { SquarePen } from 'lucide-vue-next';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

@@ -52,14 +52,13 @@
                                         ? t('view.favorite.delete_tooltip')
                                         : t('view.favorite.unfavorite_tooltip')
                                 ">
-                                <el-button
-                                    size="small"
-                                    circle
-                                    class="favorites-search-card__action-btn"
-                                    :type="isLocalFavorite ? 'default' : 'default'"
+                                <Button
+                                    size="icon-sm"
+                                    variant="outline"
+                                    class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                                     @click.stop="handlePrimaryDeleteAction">
                                     <i class="ri-delete-bin-line"></i>
-                                </el-button>
+                                </Button>
                             </TooltipWrapper>
                         </div>
                     </div>

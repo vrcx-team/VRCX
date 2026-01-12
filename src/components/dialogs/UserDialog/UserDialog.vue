@@ -555,14 +555,15 @@
                     lazy>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
-                            <el-button
-                                type="default"
-                                :loading="userDialog.isMutualFriendsLoading"
-                                size="small"
-                                :icon="Refresh"
-                                circle
+                            <Button
+                                class="rounded-full"
+                                variant="outline"
+                                size="icon-sm"
+                                :disabled="userDialog.isMutualFriendsLoading"
                                 @click="getUserMutualFriends(userDialog.id)">
-                            </el-button>
+                                <Spinner v-if="userDialog.isMutualFriendsLoading" />
+                                <Refresh v-else />
+                            </Button>
                             <span style="margin-left: 5px">{{
                                 t('dialog.user.groups.total_count', { count: userDialog.mutualFriends.length })
                             }}</span>
@@ -625,14 +626,15 @@
                 <el-tab-pane name="Groups" :label="t('dialog.user.groups.header')" lazy>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
-                            <el-button
-                                type="default"
-                                :loading="userDialog.isGroupsLoading"
-                                size="small"
-                                :icon="Refresh"
-                                circle
+                            <Button
+                                class="rounded-full"
+                                variant="outline"
+                                size="icon-sm"
+                                :disabled="userDialog.isGroupsLoading"
                                 @click="getUserGroups(userDialog.id)">
-                            </el-button>
+                                <Spinner v-if="userDialog.isGroupsLoading" />
+                                <Refresh v-else />
+                            </Button>
                             <span style="margin-left: 5px">{{
                                 t('dialog.user.groups.total_count', { count: userGroups.groups.length })
                             }}</span>
@@ -742,9 +744,9 @@
                                     </div>
 
                                     <div style="margin-right: 3px; margin-left: 5px" @click.stop>
-                                        <el-button
-                                            size="small"
-                                            :icon="DownloadIcon"
+                                        <Button
+                                            size="icon-sm"
+                                            variant="outline"
                                             style="
                                                 display: block;
                                                 padding: 7px;
@@ -753,27 +755,31 @@
                                                 rotate: 180deg;
                                             "
                                             @click="moveGroupTop(group.id)">
-                                        </el-button>
-                                        <el-button
-                                            size="small"
-                                            :icon="DownloadIcon"
+                                            <DownloadIcon />
+                                        </Button>
+                                        <Button
+                                            size="icon-sm"
+                                            variant="outline"
                                             style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
                                             @click="moveGroupBottom(group.id)">
-                                        </el-button>
+                                            <DownloadIcon />
+                                        </Button>
                                     </div>
                                     <div style="margin-right: 10px" @click.stop>
-                                        <el-button
-                                            size="small"
-                                            :icon="Top"
+                                        <Button
+                                            size="icon-sm"
+                                            variant="outline"
                                             style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
                                             @click="moveGroupUp(group.id)">
-                                        </el-button>
-                                        <el-button
-                                            size="small"
-                                            :icon="Bottom"
+                                            <Top />
+                                        </Button>
+                                        <Button
+                                            size="icon-sm"
+                                            variant="outline"
                                             style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
                                             @click="moveGroupDown(group.id)">
-                                        </el-button>
+                                            <Bottom />
+                                        </Button>
                                     </div>
                                     <div class="avatar">
                                         <img :src="group.iconUrl" loading="lazy" />
@@ -1011,14 +1017,15 @@
                 <el-tab-pane name="Worlds" :label="t('dialog.user.worlds.header')" lazy>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
-                            <el-button
-                                type="default"
-                                :loading="userDialog.isWorldsLoading"
-                                size="small"
-                                :icon="Refresh"
-                                circle
+                            <Button
+                                class="rounded-full"
+                                variant="outline"
+                                size="icon-sm"
+                                :disabled="userDialog.isWorldsLoading"
                                 @click="refreshUserDialogWorlds()">
-                            </el-button>
+                                <Spinner v-if="userDialog.isWorldsLoading" />
+                                <Refresh v-else />
+                            </Button>
                             <span style="margin-left: 5px">{{
                                 t('dialog.user.worlds.total_count', { count: userDialog.worlds.length })
                             }}</span>
@@ -1149,24 +1156,26 @@
                 <el-tab-pane name="Avatars" :label="t('dialog.user.avatars.header')" lazy>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
-                            <el-button
+                            <Button
                                 v-if="userDialog.ref.id === currentUser.id"
-                                type="default"
-                                :loading="userDialog.isAvatarsLoading"
-                                size="small"
-                                :icon="Refresh"
-                                circle
+                                class="rounded-full"
+                                variant="outline"
+                                size="icon-sm"
+                                :disabled="userDialog.isAvatarsLoading"
                                 @click="refreshUserDialogAvatars()">
-                            </el-button>
-                            <el-button
+                                <Spinner v-if="userDialog.isAvatarsLoading" />
+                                <Refresh v-else />
+                            </Button>
+                            <Button
                                 v-else
-                                type="default"
-                                :loading="userDialog.isAvatarsLoading"
-                                size="small"
-                                :icon="Refresh"
-                                circle
+                                class="rounded-full"
+                                variant="outline"
+                                size="icon-sm"
+                                :disabled="userDialog.isAvatarsLoading"
                                 @click="setUserDialogAvatarsRemote(userDialog.id)">
-                            </el-button>
+                                <Spinner v-if="userDialog.isAvatarsLoading" />
+                                <Refresh v-else />
+                            </Button>
                             <span style="margin-left: 5px">{{
                                 t('dialog.user.avatars.total_count', { count: userDialogAvatars.length })
                             }}</span>

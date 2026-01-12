@@ -338,16 +338,17 @@
                                 accept="image/*"
                                 style="display: none"
                                 @change="onFileChangeAvatarGallery" />
-                            <el-button
+                            <Button
                                 v-if="avatarDialog.ref.authorId === currentUser.id"
+                                variant="outline"
+                                size="sm"
                                 :disabled="avatarDialog.galleryLoading"
-                                size="small"
-                                :icon="Upload"
-                                :loading="avatarDialog.galleryLoading"
-                                style="margin-left: 5px"
-                                @click="displayAvatarGalleryUpload"
-                                >{{ t('dialog.screenshot_metadata.upload') }}</el-button
-                            >
+                                class="ml-1"
+                                @click="displayAvatarGalleryUpload">
+                                <Spinner v-if="avatarDialog.galleryLoading" />
+                                <Upload v-else />
+                                {{ t('dialog.screenshot_metadata.upload') }}
+                            </Button>
                             <el-progress
                                 v-if="avatarDialog.galleryLoading"
                                 :show-text="false"
@@ -544,6 +545,7 @@
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
+    import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

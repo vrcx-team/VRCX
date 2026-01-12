@@ -144,50 +144,54 @@
                                 v-if="groupDialog.ref.myMember?.isRepresenting"
                                 side="top"
                                 :content="t('dialog.group.actions.unrepresent_tooltip')">
-                                <el-button
-                                    type="warning"
-                                    :icon="Star"
-                                    size="large"
-                                    circle
+                                <Button
+                                    class="rounded-full"
+                                    variant="secondary"
+                                    size="icon-lg"
                                     style="margin-left: 5px"
-                                    @click="clearGroupRepresentation(groupDialog.id)"></el-button>
+                                    @click="clearGroupRepresentation(groupDialog.id)">
+                                    <Star />
+                                </Button>
                             </TooltipWrapper>
                             <TooltipWrapper v-else side="top" :content="t('dialog.group.actions.represent_tooltip')">
                                 <span>
-                                    <el-button
-                                        type="default"
-                                        :icon="StarFilled"
-                                        size="large"
-                                        circle
+                                    <Button
+                                        class="rounded-full"
+                                        variant="outline"
+                                        size="icon-lg"
                                         style="margin-left: 5px"
                                         :disabled="groupDialog.ref.privacy === 'private'"
-                                        @click="setGroupRepresentation(groupDialog.id)"></el-button>
+                                        @click="setGroupRepresentation(groupDialog.id)">
+                                        <StarFilled />
+                                    </Button>
                                 </span>
                             </TooltipWrapper>
                         </template>
                         <template v-else-if="groupDialog.ref.myMember?.membershipStatus === 'requested'">
                             <TooltipWrapper side="top" :content="t('dialog.group.actions.cancel_join_request_tooltip')">
                                 <span>
-                                    <el-button
-                                        type="default"
-                                        :icon="Close"
-                                        size="large"
-                                        circle
+                                    <Button
+                                        class="rounded-full"
+                                        variant="outline"
+                                        size="icon-lg"
                                         style="margin-left: 5px"
-                                        @click="cancelGroupRequest(groupDialog.id)"></el-button>
+                                        @click="cancelGroupRequest(groupDialog.id)">
+                                        <Close />
+                                    </Button>
                                 </span>
                             </TooltipWrapper>
                         </template>
                         <template v-else-if="groupDialog.ref.myMember?.membershipStatus === 'invited'">
                             <TooltipWrapper side="top" :content="t('dialog.group.actions.pending_request_tooltip')">
                                 <span>
-                                    <el-button
-                                        type="default"
-                                        :icon="Check"
-                                        size="large"
-                                        circle
+                                    <Button
+                                        class="rounded-full"
+                                        variant="outline"
+                                        size="icon-lg"
                                         style="margin-left: 5px"
-                                        @click="joinGroup(groupDialog.id)"></el-button>
+                                        @click="joinGroup(groupDialog.id)">
+                                        <Check />
+                                    </Button>
                                 </span>
                             </TooltipWrapper>
                         </template>
@@ -196,49 +200,55 @@
                                 v-if="groupDialog.ref.joinState === 'request'"
                                 side="top"
                                 :content="t('dialog.group.actions.request_join_tooltip')">
-                                <el-button
-                                    type="default"
-                                    :icon="Message"
-                                    size="large"
-                                    circle
+                                <Button
+                                    class="rounded-full"
+                                    variant="outline"
+                                    size="icon-lg"
                                     style="margin-left: 5px"
-                                    @click="joinGroup(groupDialog.id)"></el-button>
+                                    @click="joinGroup(groupDialog.id)">
+                                    <Message />
+                                </Button>
                             </TooltipWrapper>
                             <TooltipWrapper
                                 v-if="groupDialog.ref.joinState === 'invite'"
                                 side="top"
                                 :content="t('dialog.group.actions.invite_required_tooltip')">
                                 <span>
-                                    <el-button
-                                        type="default"
-                                        :icon="Message"
-                                        size="large"
+                                    <Button
+                                        class="rounded-full"
+                                        variant="outline"
+                                        size="icon-lg"
                                         disabled
-                                        circle
-                                        style="margin-left: 5px"></el-button>
+                                        style="margin-left: 5px">
+                                        <Message />
+                                    </Button>
                                 </span>
                             </TooltipWrapper>
                             <TooltipWrapper
                                 v-if="groupDialog.ref.joinState === 'open'"
                                 side="top"
                                 :content="t('dialog.group.actions.join_group_tooltip')">
-                                <el-button
-                                    type="default"
-                                    :icon="Check"
-                                    size="large"
-                                    circle
+                                <Button
+                                    class="rounded-full"
+                                    variant="outline"
+                                    size="icon-lg"
                                     style="margin-left: 5px"
-                                    @click="joinGroup(groupDialog.id)"></el-button>
+                                    @click="joinGroup(groupDialog.id)">
+                                    <Check />
+                                </Button>
                             </TooltipWrapper>
                         </template>
                         <DropdownMenu>
                             <DropdownMenuTrigger as-child>
-                                <el-button
-                                    :type="groupDialog.ref.membershipStatus === 'userblocked' ? 'danger' : 'default'"
-                                    :icon="MoreFilled"
-                                    size="large"
-                                    style="margin-left: 5px"
-                                    circle></el-button>
+                                <Button
+                                    class="rounded-full"
+                                    :variant="
+                                        groupDialog.ref.membershipStatus === 'userblocked' ? 'destructive' : 'outline'
+                                    "
+                                    size="icon-lg"
+                                    style="margin-left: 5px">
+                                    <MoreFilled />
+                                </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuItem @click="groupDialogCommand('Refresh')">
@@ -1042,13 +1052,15 @@
                     </template>
                 </el-tab-pane>
                 <el-tab-pane name="Photos" :label="t('dialog.group.gallery.header')" lazy>
-                    <el-button
-                        type="default"
-                        size="small"
-                        :icon="Refresh"
-                        :loading="isGroupGalleryLoading"
-                        circle
-                        @click="getGroupGalleries" />
+                    <Button
+                        class="rounded-full"
+                        variant="outline"
+                        size="icon-sm"
+                        :disabled="isGroupGalleryLoading"
+                        @click="getGroupGalleries">
+                        <Spinner v-if="isGroupGalleryLoading" />
+                        <Refresh v-else />
+                    </Button>
                     <el-tabs
                         v-model="groupDialogGalleryCurrentName"
                         v-loading="isGroupGalleryLoading"

@@ -15,14 +15,16 @@
                         </template>
 
                         <el-descriptions-item>
-                            <el-button type="default" :icon="Calendar" size="small" @click="openCalendarEvent(event)">{{
-                                t('dialog.group_calendar.event_card.export_to_calendar')
-                            }}</el-button>
+                            <Button variant="outline" size="sm" @click="openCalendarEvent(event)">
+                                <Calendar />
+                                {{ t('dialog.group_calendar.event_card.export_to_calendar') }}
+                            </Button>
                         </el-descriptions-item>
                         <el-descriptions-item>
-                            <el-button type="default" :icon="Download" size="small" @click="downloadEventIcs(event)">{{
-                                t('dialog.group_calendar.event_card.download_ics')
-                            }}</el-button>
+                            <Button variant="outline" size="sm" @click="downloadEventIcs(event)">
+                                <Download />
+                                {{ t('dialog.group_calendar.event_card.download_ics') }}
+                            </Button>
                         </el-descriptions-item>
                         <el-descriptions-item :label="t('dialog.group_calendar.event_card.category')">
                             {{ capitalizeFirst(event.category) }}
@@ -72,6 +74,7 @@
 
 <script setup>
     import { Calendar, Download, Share, Star, StarFilled } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { computed } from 'vue';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

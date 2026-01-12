@@ -43,6 +43,7 @@
 
 <script setup>
     import { ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { InputGroupCharCount } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

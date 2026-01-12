@@ -80,12 +80,15 @@
                         <div class="group-section__header">
                             <span>{{ t('view.favorite.worlds.vrchat_favorites') }}</span>
                             <TooltipWrapper side="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
-                                <el-button
-                                    :loading="isFavoriteLoading"
-                                    size="small"
-                                    :icon="Refresh"
-                                    circle
-                                    @click.stop="handleRefreshFavorites" />
+                                <Button
+                                    class="rounded-full"
+                                    variant="outline"
+                                    size="icon-sm"
+                                    :disabled="isFavoriteLoading"
+                                    @click.stop="handleRefreshFavorites">
+                                    <Spinner v-if="isFavoriteLoading" />
+                                    <Refresh v-else />
+                                </Button>
                             </TooltipWrapper>
                         </div>
                         <div class="group-section__list">
@@ -112,12 +115,9 @@
                                                 handleGroupMenuVisible(remoteGroupMenuKey(group.key), $event)
                                             ">
                                             <PopoverTrigger asChild>
-                                                <el-button
-                                                    text
-                                                    size="small"
-                                                    :icon="MoreFilled"
-                                                    circle
-                                                    @click.stop></el-button>
+                                                <Button class="rounded-full" variant="ghost" size="icon-sm" @click.stop>
+                                                    <MoreFilled />
+                                                </Button>
                                             </PopoverTrigger>
                                             <PopoverContent side="right" class="w-50 p-1 rounded-lg">
                                                 <div class="favorites-group-menu">
@@ -429,6 +429,7 @@
     import { Ellipsis, RefreshCcw } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
+    import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

@@ -13,9 +13,10 @@
                     </Button>
                 </TooltipWrapper>
                 <TooltipWrapper :content="fetchButtonLabel" side="top">
-                    <el-button type="primary" :disabled="fetchButtonDisabled" :loading="isFetching" @click="startFetch">
+                    <Button :disabled="fetchButtonDisabled" @click="startFetch">
+                        <Spinner v-if="isFetching" />
                         {{ fetchButtonLabel }}
-                    </el-button>
+                    </Button>
                 </TooltipWrapper>
                 <TooltipWrapper
                     v-if="isFetching"
@@ -130,6 +131,7 @@
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { Settings } from 'lucide-vue-next';
+    import { Spinner } from '@/components/ui/spinner';
     import { onBeforeRouteLeave } from 'vue-router';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

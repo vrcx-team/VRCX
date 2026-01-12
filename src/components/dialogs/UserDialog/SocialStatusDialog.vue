@@ -76,9 +76,9 @@
         </div>
 
         <template #footer>
-            <el-button type="primary" :disabled="socialStatusDialog.loading" @click="saveSocialStatus">
+            <Button :disabled="socialStatusDialog.loading" @click="saveSocialStatus">
                 {{ t('dialog.social_status.update') }}
-            </el-button>
+            </Button>
         </template>
     </el-dialog>
 </template>

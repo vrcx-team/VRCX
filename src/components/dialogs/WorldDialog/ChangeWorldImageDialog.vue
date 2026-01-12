@@ -22,15 +22,11 @@
                 style="margin-bottom: 12px" />
             <span>{{ t('dialog.change_content_image.description') }}</span>
             <br />
-            <el-button
-                type="default"
-                size="small"
-                :icon="Upload"
-                :loading="changeWorldImageDialogLoading"
-                :disabled="changeWorldImageDialogLoading"
-                @click="uploadWorldImage">
+            <Button variant="outline" size="sm" :disabled="changeWorldImageDialogLoading" @click="uploadWorldImage">
+                <Spinner v-if="changeWorldImageDialogLoading" />
+                <Upload v-else />
                 {{ t('dialog.change_content_image.upload') }}
-            </el-button>
+            </Button>
             <br />
             <div class="x-change-image-item">
                 <img :src="previousImageUrl" class="img-size" loading="lazy" />
@@ -40,6 +36,8 @@
 </template>
 
 <script setup>
+    import { Button } from '@/components/ui/button';
+    import { Spinner } from '@/components/ui/spinner';
     import { Upload } from '@element-plus/icons-vue';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
