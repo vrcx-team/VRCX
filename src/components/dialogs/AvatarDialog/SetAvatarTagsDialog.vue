@@ -90,7 +90,7 @@
             </div>
         </template>
         <template #footer>
-            <Button variant="secondary" @click="closeSetAvatarTagsDialog">{{
+            <Button variant="secondary" class="mr-2" @click="closeSetAvatarTagsDialog">{{
                 t('dialog.set_avatar_tags.cancel')
             }}</Button>
             <Button @click="saveSetAvatarTagsDialog">{{ t('dialog.set_avatar_tags.save') }}</Button>

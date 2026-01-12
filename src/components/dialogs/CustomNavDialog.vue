@@ -199,7 +199,7 @@
                     {{ t('nav_menu.custom_nav.delete_folder') }}
                 </Button>
                 <div class="folder-editor__footer-spacer"></div>
-                <Button variant="secondary" @click="closeFolderEditor">
+                <Button variant="secondary" class="mr-2" @click="closeFolderEditor">
                     {{ t('nav_menu.custom_nav.cancel') }}
                 </Button>
                 <Button :disabled="folderEditorSaveDisabled" @click="handleFolderEditorSave">

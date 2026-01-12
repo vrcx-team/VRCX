@@ -89,15 +89,17 @@
             </el-form>
         </div>
         <template #footer>
-            <Button variant="secondary" @click="groupPostEditDialog.visible = false">
-                {{ t('dialog.group_post_edit.cancel') }}
-            </Button>
-            <Button v-if="groupPostEditDialog.postId" @click="editGroupPost">
-                {{ t('dialog.group_post_edit.edit_post') }}
-            </Button>
-            <Button v-else @click="createGroupPost">
-                {{ t('dialog.group_post_edit.create_post') }}
-            </Button>
+            <div class="flex gap-2">
+                <Button variant="secondary" @click="groupPostEditDialog.visible = false">
+                    {{ t('dialog.group_post_edit.cancel') }}
+                </Button>
+                <Button v-if="groupPostEditDialog.postId" @click="editGroupPost">
+                    {{ t('dialog.group_post_edit.edit_post') }}
+                </Button>
+                <Button v-else @click="createGroupPost">
+                    {{ t('dialog.group_post_edit.create_post') }}
+                </Button>
+            </div>
         </template>
         <GallerySelectDialog
             :gallery-select-dialog="gallerySelectDialog"
@@ -107,9 +109,9 @@
 </template>
 
 <script setup>
+    import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { Checkbox } from '@/components/ui/checkbox';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

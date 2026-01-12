@@ -554,10 +554,10 @@
     import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
     import { Maximize2, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
-    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Checkbox } from '@/components/ui/checkbox';
     import { ElMessageBox } from 'element-plus';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { VirtualCombobox } from '@/components/ui/virtual-combobox';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -1158,9 +1158,5 @@
 
     .gallery-meta--small {
         font-size: 11px;
-    }
-
-    .gallery-page__back {
-        padding-left: 0;
     }
 </style>

@@ -67,7 +67,7 @@
         </template>
 
         <template #footer>
-            <Button variant="secondary" @click="closeSetAvatarStylesDialog">{{
+            <Button variant="secondary" class="mr-2" @click="closeSetAvatarStylesDialog">{{
                 t('dialog.set_avatar_styles.cancel')
             }}</Button>
             <Button @click="saveSetAvatarStylesDialog">

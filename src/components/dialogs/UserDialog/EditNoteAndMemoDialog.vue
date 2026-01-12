@@ -9,7 +9,7 @@
         append-to-body
         @close="cancel">
         <template v-if="!hideUserNotes || (hideUserNotes && hideUserMemos)">
-            <span class="name">{{ t('dialog.user.info.note') }}</span>
+            <span class="name my-2">{{ t('dialog.user.info.note') }}</span>
             <br />
             <InputGroupTextareaField
                 v-model="note"
@@ -18,22 +18,22 @@
                 :rows="6"
                 :placeholder="t('dialog.user.info.note_placeholder')"
                 input-class="extra resize-none"
+                class="my-2"
                 show-count />
         </template>
         <template v-if="!hideUserMemos || (hideUserNotes && hideUserMemos)">
             <span class="name">{{ t('dialog.user.info.memo') }}</span>
-            <br />
             <InputGroupTextareaField
                 v-model="memo"
-                class="extra"
+                class="extra mt-2"
                 :rows="6"
                 :placeholder="t('dialog.user.info.memo_placeholder')"
                 input-class="resize-none min-h-0" />
         </template>
         <template #footer>
             <div class="dialog-footer">
-                <Button variant="secondary" @click="cancel">Cancel</Button>
-                <Button @click="saveChanges"> Confirm </Button>
+                <Button variant="secondary" @click="cancel" class="mr-2">Cancel</Button>
+                <Button @click="saveChanges">Confirm</Button>
             </div>
         </template>
     </el-dialog>

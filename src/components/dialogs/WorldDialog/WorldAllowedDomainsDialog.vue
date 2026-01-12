@@ -13,7 +13,7 @@
                 size="sm"
                 style="margin-top: 5px">
                 <template #actions>
-                    <Button variant="outline" @click="urlList.splice(index, 1)"></Button>
+                    <Button variant="ghost" @click="urlList.splice(index, 1)"><Trash2 /></Button>
                 </template>
             </InputGroupAction>
             <Button size="sm" variant="outline" style="margin-top: 5px" @click="urlList.push('')">
@@ -32,6 +32,7 @@
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupAction } from '@/components/ui/input-group';
+    import { Trash2 } from 'lucide-vue-next';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

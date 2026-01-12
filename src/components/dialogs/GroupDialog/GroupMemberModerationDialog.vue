@@ -790,73 +790,85 @@
             <br />
             <span class="name">{{ t('dialog.group_member_moderation.actions') }}</span>
             <br />
-            <Button
-                variant="outline"
-                :disabled="
-                    Boolean(
-                        !selectedRoles.length ||
-                        progressCurrent ||
-                        !hasGroupPermission(groupMemberModeration.groupRef, 'group-roles-assign')
-                    )
-                "
-                @click="groupMembersAddRoles"
-                >{{ t('dialog.group_member_moderation.add_roles') }}</Button
-            >
-            <Button
-                variant="secondary"
-                :disabled="
-                    Boolean(
-                        !selectedRoles.length ||
-                        progressCurrent ||
-                        !hasGroupPermission(groupMemberModeration.groupRef, 'group-roles-assign')
-                    )
-                "
-                @click="groupMembersRemoveRoles"
-                >{{ t('dialog.group_member_moderation.remove_roles') }}</Button
-            >
-            <Button
-                variant="outline"
-                :disabled="
-                    Boolean(
-                        progressCurrent || !hasGroupPermission(groupMemberModeration.groupRef, 'group-members-manage')
-                    )
-                "
-                @click="groupMembersSaveNote"
-                >{{ t('dialog.group_member_moderation.save_note') }}</Button
-            >
-            <Button
-                variant="outline"
-                :disabled="
-                    Boolean(
-                        progressCurrent || !hasGroupPermission(groupMemberModeration.groupRef, 'group-members-remove')
-                    )
-                "
-                @click="groupMembersKick"
-                >{{ t('dialog.group_member_moderation.kick') }}</Button
-            >
-            <Button
-                variant="outline"
-                :disabled="
-                    Boolean(progressCurrent || !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage'))
-                "
-                @click="groupMembersBan"
-                >{{ t('dialog.group_member_moderation.ban') }}</Button
-            >
-            <Button
-                variant="outline"
-                :disabled="
-                    Boolean(progressCurrent || !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage'))
-                "
-                @click="groupMembersUnban"
-                >{{ t('dialog.group_member_moderation.unban') }}</Button
-            >
-            <span v-if="progressCurrent" style="margin-top: 10px">
-                <el-icon class="is-loading" style="margin-left: 5px; margin-right: 5px"><Loading /></el-icon>
-                {{ t('dialog.group_member_moderation.progress') }} {{ progressCurrent }}/{{ progressTotal }}
-            </span>
-            <Button variant="secondary" v-if="progressCurrent" style="margin-left: 5px" @click="progressTotal = 0">{{
-                t('dialog.group_member_moderation.cancel')
-            }}</Button>
+            <div class="flex gap-2">
+                <Button
+                    variant="outline"
+                    :disabled="
+                        Boolean(
+                            !selectedRoles.length ||
+                            progressCurrent ||
+                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-roles-assign')
+                        )
+                    "
+                    @click="groupMembersAddRoles"
+                    >{{ t('dialog.group_member_moderation.add_roles') }}</Button
+                >
+                <Button
+                    variant="secondary"
+                    :disabled="
+                        Boolean(
+                            !selectedRoles.length ||
+                            progressCurrent ||
+                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-roles-assign')
+                        )
+                    "
+                    @click="groupMembersRemoveRoles"
+                    >{{ t('dialog.group_member_moderation.remove_roles') }}</Button
+                >
+                <Button
+                    variant="outline"
+                    :disabled="
+                        Boolean(
+                            progressCurrent ||
+                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-members-manage')
+                        )
+                    "
+                    @click="groupMembersSaveNote"
+                    >{{ t('dialog.group_member_moderation.save_note') }}</Button
+                >
+                <Button
+                    variant="outline"
+                    :disabled="
+                        Boolean(
+                            progressCurrent ||
+                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-members-remove')
+                        )
+                    "
+                    @click="groupMembersKick"
+                    >{{ t('dialog.group_member_moderation.kick') }}</Button
+                >
+                <Button
+                    variant="outline"
+                    :disabled="
+                        Boolean(
+                            progressCurrent || !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
+                        )
+                    "
+                    @click="groupMembersBan"
+                    >{{ t('dialog.group_member_moderation.ban') }}</Button
+                >
+                <Button
+                    variant="outline"
+                    :disabled="
+                        Boolean(
+                            progressCurrent || !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
+                        )
+                    "
+                    @click="groupMembersUnban"
+                    >{{ t('dialog.group_member_moderation.unban') }}</Button
+                >
+                <span v-if="progressCurrent" style="margin-top: 10px">
+                    <el-icon class="is-loading" style="margin-left: 5px; margin-right: 5px"><Loading /></el-icon>
+                    {{ t('dialog.group_member_moderation.progress') }} {{ progressCurrent }}/{{ progressTotal }}
+                </span>
+                <Button
+                    variant="secondary"
+                    v-if="progressCurrent"
+                    style="margin-left: 5px"
+                    @click="progressTotal = 0"
+                    >{{ t('dialog.group_member_moderation.cancel') }}</Button
+                >
+            </div>
         </div>
         <group-member-moderation-export-dialog
             v-model:isGroupLogsExportDialogVisible="isGroupLogsExportDialogVisible"

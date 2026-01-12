@@ -23,7 +23,7 @@
             :value="screenshotHelperCopyToClipboard"
             @change="setScreenshotHelperCopyToClipboard()"
             :long-label="true" />
-        <Button size="sm" variant="outline" @click="askDeleteAllScreenshotMetadata()">{{
+        <Button size="sm" variant="outline" class="mt-2" @click="askDeleteAllScreenshotMetadata()">{{
             t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button')
         }}</Button>
     </div>
@@ -46,15 +46,18 @@
                 t('view.settings.advanced.advanced.user_generated_content.description')
             }}</span>
         </div>
-        <Button size="sm" variant="outline" @click="openUGCFolder()">{{
-            t('view.settings.advanced.advanced.user_generated_content.folder')
-        }}</Button>
-        <Button size="sm" variant="outline" @click="openUGCFolderSelector()">{{
-            t('view.settings.advanced.advanced.user_generated_content.set_folder')
-        }}</Button>
-        <Button size="sm" variant="outline" @click="resetUGCFolder()" v-if="ugcFolderPath">{{
-            t('view.settings.advanced.advanced.user_generated_content.reset_override')
-        }}</Button>
+        <div class="flex gap-2 mt-2">
+            <Button size="sm" variant="outline" @click="openUGCFolder()">{{
+                t('view.settings.advanced.advanced.user_generated_content.folder')
+            }}</Button>
+            <Button size="sm" variant="outline" @click="openUGCFolderSelector()">{{
+                t('view.settings.advanced.advanced.user_generated_content.set_folder')
+            }}</Button>
+            <Button size="sm" variant="outline" @click="resetUGCFolder()" v-if="ugcFolderPath">{{
+                t('view.settings.advanced.advanced.user_generated_content.reset_override')
+            }}</Button>
+        </div>
+
         <br />
         <br />
         <br />

@@ -275,7 +275,10 @@
         })
     );
 
-    const playerListDisplayData = computed(() => currentInstanceUsersData.value ?? []);
+    const playerListDisplayData = computed(() => {
+        const data = currentInstanceUsersData.value;
+        return Array.isArray(data) ? data.slice() : [];
+    });
 
     const { table: playerListTable } = useVrcxVueTable({
         persistKey: 'playerList',

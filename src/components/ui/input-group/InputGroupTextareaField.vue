@@ -68,7 +68,7 @@
         const lineHeight = parseFloat(computedStyle.lineHeight) || 16;
         const paddingTop = parseFloat(computedStyle.paddingTop) || 0;
         const paddingBottom = parseFloat(computedStyle.paddingBottom) || 0;
-        const minRows = autosizeConfig.value.minRows ?? Number(attrs.rows) || 1;
+        const minRows = autosizeConfig.value.minRows ?? (Number(attrs.rows) || 1);
         const maxRows = autosizeConfig.value.maxRows ?? Number.POSITIVE_INFINITY;
         const minHeight = lineHeight * minRows + paddingTop + paddingBottom;
         const maxHeight = lineHeight * maxRows + paddingTop + paddingBottom;

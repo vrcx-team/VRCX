@@ -18,7 +18,7 @@
                 v-for="(link, index) in bioDialog.bioLinks"
                 :key="index"
                 v-model="bioDialog.bioLinks[index]"
-                maxlength="64"
+                :maxlength="64"
                 show-count
                 size="sm"
                 style="margin-top: 5px">
@@ -26,7 +26,9 @@
                     <img :src="getFaviconUrl(link)" style="width: 16px; height: 16px; vertical-align: middle" />
                 </template>
                 <template #actions>
-                    <Button variant="outline" @click="bioDialog.bioLinks.splice(index, 1)" />
+                    <Button variant="ghost" size="icon-sm" @click="bioDialog.bioLinks.splice(index, 1)"
+                        ><Trash2 class="size-4"
+                    /></Button>
                 </template>
             </InputGroupAction>
 
@@ -49,8 +51,9 @@
 </template>
 
 <script setup>
-    import { Button } from '@/components/ui/button';
     import { InputGroupAction, InputGroupTextareaField } from '@/components/ui/input-group';
+    import { Button } from '@/components/ui/button';
+    import { Trash2 } from 'lucide-vue-next';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
