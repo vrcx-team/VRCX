@@ -525,7 +525,7 @@ export const createColumns = ({
                                             <TooltipTrigger asChild>
                                                 <button
                                                     type="button"
-                                                    class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                    class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
                                                     onClick={() =>
                                                         acceptFriendRequestNotification(
                                                             original
@@ -548,7 +548,7 @@ export const createColumns = ({
                                             <TooltipTrigger asChild>
                                                 <button
                                                     type="button"
-                                                    class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                    class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
                                                     onClick={() =>
                                                         showSendInviteResponseDialog(
                                                             original
@@ -575,7 +575,7 @@ export const createColumns = ({
                                                     <TooltipTrigger asChild>
                                                         <button
                                                             type="button"
-                                                            class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                            class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
                                                             onClick={() =>
                                                                 acceptRequestInvite(
                                                                     original
@@ -596,7 +596,7 @@ export const createColumns = ({
                                                 <TooltipTrigger asChild>
                                                     <button
                                                         type="button"
-                                                        class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                        class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
                                                         onClick={() =>
                                                             showSendInviteRequestResponseDialog(
                                                                 original
@@ -655,7 +655,7 @@ export const createColumns = ({
                                                       <TooltipTrigger asChild>
                                                           <button
                                                               type="button"
-                                                              class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                              class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
                                                               onClick={onClick}
                                                           >
                                                               <i
@@ -682,7 +682,7 @@ export const createColumns = ({
                                             <TooltipTrigger asChild>
                                                 <button
                                                     type="button"
-                                                    class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                    class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
                                                     onClick={() =>
                                                         shiftHeld.value
                                                             ? hideNotification(
@@ -708,73 +708,73 @@ export const createColumns = ({
                                         </Tooltip>
                                     </TooltipProvider>
                                 ) : null}
+
+                                {original.type === 'group.queueReady' ? (
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <button
+                                                    type="button"
+                                                    class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                    onClick={() =>
+                                                        shiftHeld.value
+                                                            ? deleteNotificationLog(
+                                                                  original
+                                                              )
+                                                            : deleteNotificationLogPrompt(
+                                                                  original
+                                                              )
+                                                    }
+                                                >
+                                                    <i
+                                                        class={
+                                                            shiftHeld.value
+                                                                ? 'ri-close-line text-red-600'
+                                                                : 'ri-delete-bin-line'
+                                                        }
+                                                    />
+                                                </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="top">
+                                                <span>Delete log</span>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                ) : null}
+
+                                {showDeleteLog ? (
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <button
+                                                    type="button"
+                                                    class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                    onClick={() =>
+                                                        shiftHeld.value
+                                                            ? deleteNotificationLog(
+                                                                  original
+                                                              )
+                                                            : deleteNotificationLogPrompt(
+                                                                  original
+                                                              )
+                                                    }
+                                                >
+                                                    <i
+                                                        class={
+                                                            shiftHeld.value
+                                                                ? 'ri-close-line text-red-600'
+                                                                : 'ri-delete-bin-line'
+                                                        }
+                                                    />
+                                                </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="top">
+                                                <span>Delete log</span>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                ) : null}
                             </span>
-                        ) : null}
-
-                        {original.type === 'group.queueReady' ? (
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <button
-                                            type="button"
-                                            class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
-                                            onClick={() =>
-                                                shiftHeld.value
-                                                    ? deleteNotificationLog(
-                                                          original
-                                                      )
-                                                    : deleteNotificationLogPrompt(
-                                                          original
-                                                      )
-                                            }
-                                        >
-                                            <i
-                                                class={
-                                                    shiftHeld.value
-                                                        ? 'ri-close-line text-red-600'
-                                                        : 'ri-delete-bin-line'
-                                                }
-                                            />
-                                        </button>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="top">
-                                        <span>Delete log</span>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                        ) : null}
-
-                        {showDeleteLog ? (
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <button
-                                            type="button"
-                                            class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
-                                            onClick={() =>
-                                                shiftHeld.value
-                                                    ? deleteNotificationLog(
-                                                          original
-                                                      )
-                                                    : deleteNotificationLogPrompt(
-                                                          original
-                                                      )
-                                            }
-                                        >
-                                            <i
-                                                class={
-                                                    shiftHeld.value
-                                                        ? 'ri-close-line text-red-600'
-                                                        : 'ri-delete-bin-line'
-                                                }
-                                            />
-                                        </button>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="top">
-                                        <span>Delete log</span>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
                         ) : null}
                     </div>
                 );

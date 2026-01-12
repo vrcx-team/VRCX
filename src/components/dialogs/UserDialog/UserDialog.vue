@@ -1443,6 +1443,12 @@
                     userDialogIndex.value = getNextDialogIndex();
                 });
                 !userDialog.value.loading && loadLastActiveTab();
+                if (userDialog.value.id !== bioCache.value.userId) {
+                    bioCache.value = {
+                        userId: null,
+                        translated: null
+                    };
+                }
             }
         }
     );

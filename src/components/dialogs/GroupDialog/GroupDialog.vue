@@ -923,7 +923,7 @@
                                     <span
                                         class="name"
                                         :style="{ color: user.user?.$userColour }"
-                                        v-text="user.user.displayName" />
+                                        v-text="user.user?.displayName" />
                                     <span class="extra">
                                         <template v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')">
                                             <TooltipWrapper
@@ -984,7 +984,7 @@
                                     <span
                                         class="name"
                                         :style="{ color: user.user?.$userColour }"
-                                        v-text="user.user.displayName" />
+                                        v-text="user.user?.displayName" />
                                     <span class="extra">
                                         <template v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')">
                                             <TooltipWrapper

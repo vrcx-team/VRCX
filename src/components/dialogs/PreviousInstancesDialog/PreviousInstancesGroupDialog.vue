@@ -35,7 +35,7 @@
                 </template>
             </el-table-column>
 
-            <el-table-column :label="t('table.previous_instances.action')" width="90" align="right">
+            <el-table-column :label="t('table.previous_instances.action')" width="120" align="right">
                 <template #default="scope">
                     <Button
                         size="icon-sm"
@@ -70,8 +70,8 @@
 <script setup>
     import { computed, nextTick, reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { InputGroupField } from '@/components/ui/input-group';
     import { ElMessageBox } from 'element-plus';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { useI18n } from 'vue-i18n';
 
     import {
