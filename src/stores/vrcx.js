@@ -5,7 +5,6 @@ import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
 import Noty from 'noty';
-import dayjs from 'dayjs';
 
 import {
     clearPiniaActionTrail,
@@ -532,16 +531,12 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             if (advancedSettingsStore.sentryErrorReporting) {
                 try {
                     import('@sentry/vue').then((Sentry) => {
-                        const cutoff = dayjs().subtract(30, 'minute');
                         const trail = getPiniaActionTrail().filter((entry) => {
-                            if (!entry || typeof entry.ts !== 'number') {
-                                return false;
-                            }
-                            const ts = dayjs(entry.ts);
-                            if (!ts.isValid()) {
-                                return false;
-                            }
-                            return ts.isAfter(cutoff) || ts.isSame(cutoff);
+                            if (!entry) return false;
+                            return (
+                                typeof entry.t === 'string' &&
+                                typeof entry.a === 'string'
+                            );
                         });
                         const trailText = JSON.stringify(trail);
                         Sentry.withScope((scope) => {

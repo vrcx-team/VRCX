@@ -2,7 +2,7 @@
     <div v-if="isVisible" :class="['inline-block']">
         <TooltipWrapper v-if="!canOpenInstanceInGame" side="top" :content="t('dialog.user.info.self_invite_tooltip')">
             <Button
-                class="rounded-full h-6 w-6 text-xs"
+                class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
                 size="icon-sm"
                 variant="outline"
                 v-show="isVisible"
@@ -11,10 +11,19 @@
             ></Button>
         </TooltipWrapper>
         <TooltipWrapper v-else side="top" :content="t('dialog.user.info.open_in_vrchat_tooltip')">
-            <Button class="rounded-full h-6 w-6 text-xs" size="icon-sm" variant="outline" v-if="isOpeningInstance">
+            <Button
+                class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                size="icon-sm"
+                variant="outline"
+                v-if="isOpeningInstance">
                 <i class="ri-loader-line"></i>
             </Button>
-            <Button class="rounded-full h-6 w-6 text-xs" size="icon-sm" variant="outline" v-else @click="openInstance"
+            <Button
+                class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                size="icon-sm"
+                variant="outline"
+                v-else
+                @click="openInstance"
                 ><i class="ri-mail-line"></i
             ></Button>
         </TooltipWrapper>

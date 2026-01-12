@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 
 const STORAGE_KEY = 'vrcx:sentry:piniaActions';
+const DEFAULT_MAX_ENTRIES = 200;
 
 function getStorage() {
     try {
@@ -41,15 +42,17 @@ export function clearPiniaActionTrail() {
     storage.removeItem(STORAGE_KEY);
 }
 
-export function appendPiniaActionTrail(entry) {
+export function appendPiniaActionTrail(entry, options) {
     const storage = getStorage();
     if (!storage) return;
+
+    const maxEntries = options?.maxEntries ?? DEFAULT_MAX_ENTRIES;
 
     const existing = getPiniaActionTrail();
     existing.push(entry);
 
-    if (existing.length > 200) {
-        existing.splice(0, existing.length - 200);
+    if (existing.length > maxEntries) {
+        existing.splice(0, existing.length - maxEntries);
     }
 
     try {
@@ -59,13 +62,17 @@ export function appendPiniaActionTrail(entry) {
     }
 }
 
-export function createPiniaActionTrailPlugin() {
+export function createPiniaActionTrailPlugin(options) {
+    const maxEntries = options?.maxEntries ?? DEFAULT_MAX_ENTRIES;
     return ({ store }) => {
         store.$onAction(({ name }) => {
-            appendPiniaActionTrail({
-                t: dayjs().format('HH:mm:ss'),
-                a: name
-            });
+            appendPiniaActionTrail(
+                {
+                    t: dayjs().format('HH:mm:ss'),
+                    a: name
+                },
+                { maxEntries }
+            );
         });
     };
 }
