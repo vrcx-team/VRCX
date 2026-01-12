@@ -150,6 +150,7 @@
 
             <div class="current-instance-table flex min-h-0 min-w-0 flex-1">
                 <DataTableLayout
+                    :key="playerListRenderKey"
                     class="min-w-0 w-full [&_th]:px-2.5! [&_th]:py-0.75! [&_td]:px-2.5! [&_td]:py-0.75! [&_tr]:h-7!"
                     :table="playerListTable"
                     table-class="min-w-max w-max"
@@ -168,7 +169,7 @@
 </template>
 
 <script setup>
-    import { computed, defineAsyncComponent, ref, watch } from 'vue';
+    import { computed, defineAsyncComponent, onActivated, onMounted, ref, watch } from 'vue';
     import { HomeFilled } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -201,15 +202,15 @@
     const { showUserDialog, lookupUser } = useUserStore();
     const { showWorldDialog } = useWorldStore();
     const { lastLocation } = storeToRefs(useLocationStore());
-    const { currentInstanceLocation, currentInstanceWorld } = storeToRefs(useInstanceStore());
+    const { currentInstanceLocation, currentInstanceWorld, currentInstanceUsersData } = storeToRefs(useInstanceStore());
     const { getCurrentInstanceUserList } = useInstanceStore();
-    const { currentInstanceUsersData } = storeToRefs(useInstanceStore());
     const { showFullscreenImageDialog } = useGalleryStore();
     const { currentUser } = storeToRefs(useUserStore());
 
     const playerListRef = ref(null);
     const playerListHeaderRef = ref(null);
     const playerListPhotonRef = ref(null);
+    const playerListRenderKey = ref(0);
 
     const { tableStyle: playerListTableStyle } = useDataTableScrollHeight(playerListRef, {
         offset: 30,
@@ -275,16 +276,11 @@
         })
     );
 
-    const playerListDisplayData = computed(() => {
-        const data = currentInstanceUsersData.value;
-        return Array.isArray(data) ? data.slice() : [];
-    });
-
     const { table: playerListTable } = useVrcxVueTable({
         persistKey: 'playerList',
-        data: playerListDisplayData,
+        data: currentInstanceUsersData,
         columns: playerListColumns.value,
-        getRowId: (row) => `${row?.ref?.id ?? ''}:${row?.displayName ?? ''}:${row?.photonId ?? ''}`,
+        getRowId: (row) => `${row?.ref?.id ?? ''}:${row?.displayName ?? ''}`,
         enablePinning: true,
         initialColumnPinning,
         initialPagination: {
@@ -305,12 +301,14 @@
     );
 
     watch(
-        playerListDisplayData,
-        (next) => {
+        () => currentInstanceUsersData.value,
+        (val) => {
+            console.debug('Player list data updated:', val.length);
             playerListTable.setOptions((prev) => ({
                 ...prev,
-                data: next
+                data: val
             }));
+            playerListRenderKey.value += 1;
         },
         { immediate: true }
     );
@@ -320,6 +318,14 @@
     const handlePlayerListRowClick = (row) => {
         selectCurrentInstanceRow(row?.original ?? null);
     };
+
+    onMounted(() => {
+        getCurrentInstanceUserList();
+    });
+
+    onActivated(() => {
+        getCurrentInstanceUserList();
+    });
 </script>
 
 <style>
