@@ -12,12 +12,12 @@
                     {{ friendImportDialog.progressTotal }}
                     <el-icon style="margin: 0 5px"><Loading /></el-icon>
                 </div>
-                <el-button v-if="friendImportDialog.loading" size="small" @click="cancelFriendImport">
+                <Button v-if="friendImportDialog.loading" size="sm" variant="secondary" @click="cancelFriendImport">
                     {{ t('dialog.friend_import.cancel') }}
-                </el-button>
-                <el-button v-else size="small" :disabled="!friendImportDialog.input" @click="processFriendImportList">
+                </Button>
+                <Button size="sm" v-else :disabled="!friendImportDialog.input" @click="processFriendImportList">
                     {{ t('dialog.friend_import.process_list') }}
-                </el-button>
+                </Button>
             </div>
         </div>
         <el-input
@@ -56,17 +56,20 @@
                 </span>
             </div>
             <div>
-                <el-button size="small" :disabled="friendImportTable.data.length === 0" @click="clearFriendImportTable">
+                <Button
+                    size="sm"
+                    class="mr-2"
+                    variant="secondary"
+                    :disabled="friendImportTable.data.length === 0"
+                    @click="clearFriendImportTable">
                     {{ t('dialog.friend_import.clear_table') }}
-                </el-button>
-                <el-button
-                    size="small"
-                    type="primary"
-                    style="margin: 5px"
+                </Button>
+                <Button
+                    size="sm"
                     :disabled="friendImportTable.data.length === 0 || !friendImportDialog.friendImportFavoriteGroup"
                     @click="importFriendImportTable">
                     {{ t('dialog.friend_import.import') }}
-                </el-button>
+                </Button>
             </div>
         </div>
         <span v-if="friendImportDialog.importProgress" style="margin: 10px">
@@ -77,9 +80,9 @@
         </span>
         <br />
         <template v-if="friendImportDialog.errors">
-            <el-button size="small" @click="friendImportDialog.errors = ''">
+            <Button size="sm" variant="secondary" @click="friendImportDialog.errors = ''">
                 {{ t('dialog.friend_import.clear_errors') }}
-            </el-button>
+            </Button>
             <h2 style="font-weight: bold; margin: 5px 0">{{ t('dialog.friend_import.errors') }}</h2>
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="friendImportDialog.errors"></pre>
         </template>
@@ -107,7 +110,7 @@
             </el-table-column>
             <el-table-column :label="t('table.import.action')" width="90" align="right">
                 <template #default="{ row }">
-                    <el-button text :icon="Close" size="small" @click="deleteItemFriendImport(row)"> </el-button>
+                    <Button size="icon-sm" variant="ghost" @click="deleteItemFriendImport(row)"><Trash2 /></Button>
                 </template>
             </el-table-column>
         </DataTable>
@@ -117,7 +120,9 @@
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
-    import { Close, Loading } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
+    import { Loading } from '@element-plus/icons-vue';
+    import { Trash2 } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

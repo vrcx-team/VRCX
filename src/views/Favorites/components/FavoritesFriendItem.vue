@@ -34,14 +34,13 @@
                         </div>
                         <div class="favorites-search-card__action">
                             <TooltipWrapper side="left" :content="t('view.favorite.unfavorite_tooltip')">
-                                <el-button
-                                    size="small"
-                                    circle
-                                    class="favorites-search-card__action-btn"
-                                    type="default"
+                                <Button
+                                    size="icon-sm"
+                                    variant="outline"
+                                    class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                                     @click.stop="handleDeleteFavorite">
                                     <i class="ri-delete-bin-line"></i>
-                                </el-button>
+                                </Button>
                             </TooltipWrapper>
                         </div>
                     </div>
@@ -49,12 +48,13 @@
                 <template v-else>
                     <div class="favorites-search-card__action">
                         <TooltipWrapper side="right" :content="t('view.favorite.edit_favorite_tooltip')">
-                            <el-button
-                                size="small"
-                                :icon="Star"
-                                circle
-                                class="favorites-search-card__action-btn"
-                                @click.stop="showFavoriteDialog('friend', favorite.id)" />
+                            <Button
+                                size="icon-sm"
+                                variant="outline"
+                                class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
+                                @click.stop="showFavoriteDialog('friend', favorite.id)"
+                                ><i class="ri-star-line"></i
+                            ></Button>
                         </TooltipWrapper>
                     </div>
                 </template>
@@ -69,9 +69,13 @@
             </div>
             <div class="favorites-search-card__actions">
                 <div class="favorites-search-card__action">
-                    <el-button circle type="default" size="small" @click.stop="handleDeleteFavorite">
+                    <Button
+                        class="rounded-full text-xs h-6 w-6"
+                        size="icon-sm"
+                        variant="outline"
+                        @click.stop="handleDeleteFavorite">
                         <i class="ri-delete-bin-line"></i>
-                    </el-button>
+                    </Button>
                 </div>
             </div>
         </template>
@@ -79,8 +83,8 @@
 </template>
 
 <script setup>
+    import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
-    import { Star } from '@element-plus/icons-vue';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

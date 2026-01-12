@@ -11,10 +11,10 @@
         </div>
 
         <template #footer>
-            <el-button @click="cancelInviteResponseConfirm">{{ t('dialog.invite_response_message.cancel') }}</el-button>
-            <el-button type="primary" @click="sendInviteResponseConfirm">{{
-                t('dialog.invite_response_message.confirm')
-            }}</el-button>
+            <Button variant="secondary" class="mr-2" @click="cancelInviteResponseConfirm">{{
+                t('dialog.invite_response_message.cancel')
+            }}</Button>
+            <Button @click="sendInviteResponseConfirm">{{ t('dialog.invite_response_message.confirm') }}</Button>
         </template>
     </el-dialog>
 </template>

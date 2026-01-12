@@ -38,33 +38,37 @@
             </el-table-column>
             <el-table-column :label="t('table.previous_instances.action')" width="90" align="right">
                 <template #default="scope">
-                    <el-button
-                        text
-                        :icon="SwitchButton"
-                        size="small"
-                        class="button-pd-0"
-                        @click="showLaunchDialog(scope.row.location)"></el-button>
-                    <el-button
-                        text
-                        :icon="DataLine"
-                        size="small"
-                        class="button-pd-0"
-                        @click="showPreviousInstancesInfoDialog(scope.row.location)"></el-button>
-                    <el-button
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        class="button-pd-0 w-6 h-6 text-xs"
+                        @click="showLaunchDialog(scope.row.location)"
+                        ><i class="ri-door-open-line"></i
+                    ></Button>
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        class="button-pd-0 w-6 h-6 text-xs"
+                        @click="showPreviousInstancesInfoDialog(scope.row.location)"
+                        ><i class="ri-information-line"></i
+                    ></Button>
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
                         v-if="shiftHeld"
                         style="color: #f56c6c"
-                        text
-                        :icon="Close"
-                        size="small"
-                        class="button-pd-0"
-                        @click="deleteGameLogUserInstance(scope.row)"></el-button>
-                    <el-button
+                        class="button-pd-0 w-6 h-6 text-xs"
+                        @click="deleteGameLogUserInstance(scope.row)"
+                        ><i class="ri-delete-bin-line"></i
+                    ></Button>
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
                         v-else
-                        text
-                        :icon="Close"
-                        size="small"
-                        class="button-pd-0"
-                        @click="deleteGameLogUserInstancePrompt(scope.row)"></el-button>
+                        class="button-pd-0 w-6 h-6 text-xs"
+                        @click="deleteGameLogUserInstancePrompt(scope.row)"
+                        ><i class="ri-delete-bin-line"></i
+                    ></Button>
                 </template>
             </el-table-column>
         </DataTable>
@@ -73,7 +77,7 @@
 
 <script setup>
     import { computed, nextTick, reactive, ref, watch } from 'vue';
-    import { Close, DataLine, SwitchButton } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

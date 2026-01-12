@@ -1,9 +1,9 @@
 <template>
     <div class="gallery-page x-container">
         <div class="gallery-page__header">
-            <el-button text :icon="ArrowLeft" class="gallery-page__back" @click="goBack">
+            <Button variant="ghost" class="gallery-page__back" @click="goBack">
                 {{ t('nav_tooltip.tools') }}
-            </el-button>
+            </Button>
             <span class="header">{{ t('dialog.gallery_icons.header') }}</span>
         </div>
         <el-progress
@@ -70,19 +70,20 @@
                                 loading="lazy" />
                         </div>
                         <div class="float-right" style="margin-top: 5px">
-                            <el-button
-                                type="default"
-                                @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
-                                size="small"
-                                :icon="Picture"
-                                circle></el-button>
-                            <el-button
-                                type="default"
-                                @click="deleteGalleryImage(image.id)"
-                                size="small"
-                                :icon="Delete"
-                                circle
-                                style="margin-left: 5px"></el-button>
+                            <Button
+                                class="rounded-full mr-2"
+                                size="icon-sm"
+                                variant="outline"
+                                @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)">
+                                <Maximize2 />
+                            </Button>
+                            <Button
+                                class="rounded-full"
+                                size="icon-sm"
+                                variant="outline"
+                                @click="deleteGalleryImage(image.id)">
+                                <Trash2 />
+                            </Button>
                         </div>
                     </template>
                 </div>
@@ -140,19 +141,20 @@
                                 loading="lazy" />
                         </div>
                         <div class="float-right" style="margin-top: 5px">
-                            <el-button
-                                type="default"
-                                @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
-                                size="small"
-                                :icon="Picture"
-                                circle></el-button>
-                            <el-button
-                                type="default"
+                            <Button
+                                class="rounded-full mr-2"
+                                size="icon-sm"
+                                variant="outline"
+                                @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)">
+                                <Maximize2 />
+                            </Button>
+                            <Button
+                                class="rounded-full"
+                                size="icon-sm"
+                                variant="outline"
                                 @click="deleteVRCPlusIcon(image.id)"
-                                size="small"
-                                :icon="Delete"
-                                circle
-                                style="margin-left: 5px"></el-button></div
+                                ><Trash2
+                            /></Button></div
                     ></template>
                 </div>
             </el-tab-pane>
@@ -217,14 +219,13 @@
                         <span>{{ t('dialog.gallery_icons.emoji_animation_type') }}</span>
                     </label>
                     <template v-if="emojiAnimType">
-                        <el-button
-                            type="default"
-                            size="small"
-                            :icon="Link"
-                            style="margin-right: 10px"
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            class="mr-3"
                             @click="openExternalLink('https://vrcemoji.com')">
                             {{ t('dialog.gallery_icons.create_animated_emoji') }}
-                        </el-button>
+                        </Button>
                         <span style="margin-right: 10px">{{ t('dialog.gallery_icons.emoji_animation_fps') }}</span>
                         <NumberField
                             v-model="emojiAnimFps"
@@ -295,24 +296,25 @@
                             <br />
                         </div>
                         <div class="float-right" style="margin-top: 5px">
-                            <el-button
-                                type="default"
+                            <Button
+                                class="rounded-full mr-2"
+                                size="icon-sm"
+                                variant="outline"
                                 @click="
                                     showFullscreenImageDialog(
                                         image.versions[image.versions.length - 1].file.url,
                                         getEmojiFileName(image)
                                     )
                                 "
-                                size="small"
-                                :icon="Picture"
-                                circle></el-button>
-                            <el-button
-                                type="default"
-                                @click="deleteEmoji(image.id)"
-                                size="small"
-                                :icon="Delete"
-                                circle
-                                style="margin-left: 5px"></el-button></div
+                                ><Maximize2
+                            /></Button>
+                            <Button
+                                class="rounded-full mr-2"
+                                size="icon-sm"
+                                variant="outline"
+                                @click="deleteEmoji(image.id)">
+                                <Trash2
+                            /></Button></div
                     ></template>
                 </div>
             </el-tab-pane>
@@ -367,19 +369,20 @@
                                 loading="lazy" />
                         </div>
                         <div class="float-right" style="margin-top: 5px">
-                            <el-button
-                                type="default"
+                            <Button
+                                class="rounded-full mr-2"
+                                size="icon-sm"
+                                variant="outline"
                                 @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
-                                size="small"
-                                :icon="Picture"
-                                circle></el-button>
-                            <el-button
-                                type="default"
+                                ><Maximize2
+                            /></Button>
+                            <Button
+                                class="rounded-full"
+                                size="icon-sm"
+                                variant="outline"
                                 @click="deleteSticker(image.id)"
-                                size="small"
-                                :icon="Delete"
-                                circle
-                                style="margin-left: 5px"></el-button></div
+                                ><Trash2
+                            /></Button></div
                     ></template>
                 </div>
             </el-tab-pane>
@@ -463,19 +466,16 @@
                         <span v-else style="display: block">&nbsp;</span>
                     </div>
                     <div class="float-right">
-                        <el-button
-                            type="default"
-                            @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))"
-                            size="small"
-                            :icon="Picture"
-                            circle></el-button>
-                        <el-button
-                            type="default"
-                            @click="deletePrint(image.id)"
-                            size="small"
-                            :icon="Delete"
-                            circle
-                            style="margin-left: 5px"></el-button>
+                        <Button
+                            class="rounded-full mr-2"
+                            size="icon-sm"
+                            variant="outline"
+                            @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))">
+                            <Maximize2
+                        /></Button>
+                        <Button class="rounded-full" size="icon-sm" variant="outline" @click="deletePrint(image.id)">
+                            <Trash2
+                        /></Button>
                     </div>
                 </div>
             </el-tab-pane>
@@ -531,15 +531,13 @@
                         <span v-else-if="item.itemType === 'emoji'">{{ t('dialog.gallery_icons.emoji') }}</span>
                         <span v-else v-text="item.itemTypeLabel"></span>
                     </div>
-                    <el-button
+                    <Button
+                        size="sm"
                         v-if="item.itemType === 'bundle'"
-                        type="default"
                         @click="consumeInventoryBundle(item.id)"
-                        size="small"
-                        :icon="Plus"
                         class="float-right">
                         {{ t('dialog.gallery_icons.consume_bundle') }}
-                    </el-button>
+                    </Button>
                 </div>
             </el-tab-pane>
         </el-tabs>
@@ -547,7 +545,6 @@
 </template>
 
 <script setup>
-    import { ArrowLeft, Close, Delete, Link, Picture, Plus, Present, Refresh, Upload } from '@element-plus/icons-vue';
     import {
         NumberField,
         NumberFieldContent,
@@ -555,7 +552,9 @@
         NumberFieldIncrement,
         NumberFieldInput
     } from '@/components/ui/number-field';
+    import { Close, Present, Refresh, Upload } from '@element-plus/icons-vue';
     import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+    import { Maximize2, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Checkbox } from '@/components/ui/checkbox';

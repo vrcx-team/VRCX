@@ -29,9 +29,9 @@
                 </div>
                 <div class="flex items-center">
                     <div v-if="friendsListBulkUnfriendMode" class="inline-block mr-10">
-                        <el-button @click="showBulkUnfriendSelectionConfirm">
+                        <Button variant="outline" @click="showBulkUnfriendSelectionConfirm">
                             {{ t('view.friend_list.bulk_unfriend_selection') }}
-                        </el-button>
+                        </Button>
                         <!-- el-button(size="small" @click="showBulkUnfriendAllConfirm" style="margin-right:5px") Bulk Unfriend All-->
                     </div>
                     <div class="flex items-center mr-3">
@@ -41,11 +41,13 @@
                             @update:modelValue="toggleFriendsListBulkUnfriendMode" />
                     </div>
                     <div class="flex items-center">
-                        <el-button @click="openChartsTab">
+                        <Button variant="outline" @click="openChartsTab">
                             {{ t('view.friend_list.load_mutual_friends') }}
-                        </el-button>
+                        </Button>
 
-                        <el-button @click="friendsListLoadUsers">{{ t('view.friend_list.load') }}</el-button>
+                        <Button variant="outline" @click="friendsListLoadUsers">{{
+                            t('view.friend_list.load')
+                        }}</Button>
                     </div>
                 </div>
             </div>
@@ -56,11 +58,9 @@
                 @row-click="selectFriendsListRow">
                 <el-table-column v-if="friendsListBulkUnfriendMode" width="55">
                     <template #default="{ row }">
-                        <div class="flex items-center justify-center" @click.stop>
-                            <Checkbox
-                                :model-value="selectedFriends.has(row.id)"
-                                @update:modelValue="toggleFriendSelection(row.id)" />
-                        </div>
+                        <Checkbox
+                            :model-value="selectedFriends.has(row.id)"
+                            @update:modelValue="toggleFriendSelection(row.id)" />
                     </template>
                 </el-table-column>
                 <el-table-column width="20"></el-table-column>
@@ -249,9 +249,9 @@
                     <span>{{ friendsListLoadingCurrent }} / {{ friendsListLoadingTotal }}</span>
                 </div>
                 <template #footer>
-                    <el-button @click="cancelFriendsListLoad">
+                    <Button variant="outline" @click="cancelFriendsListLoad">
                         {{ t('view.friend_list.load_cancel') }}
-                    </el-button>
+                    </Button>
                 </template>
             </el-dialog>
         </div>
@@ -260,6 +260,7 @@
 
 <script setup>
     import { computed, nextTick, reactive, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

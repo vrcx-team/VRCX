@@ -23,27 +23,29 @@
                 show-word-limit
                 style="margin-top: 5px">
                 <img :src="getFaviconUrl(link)" style="width: 16px; height: 16px; vertical-align: middle" />
-                <el-button :icon="Delete" @click="bioDialog.bioLinks.splice(index, 1)" />
+                <Button variant="outline" @click="bioDialog.bioLinks.splice(index, 1)" />
             </el-input>
 
-            <el-button
+            <Button
+                variant="outline"
                 :disabled="bioDialog.bioLinks.length >= 3"
-                size="small"
-                style="margin-top: 5px"
+                size="sm"
+                class="mt-2"
                 @click="bioDialog.bioLinks.push('')">
                 {{ t('dialog.bio.add_link') }}
-            </el-button>
+            </Button>
         </div>
 
         <template #footer>
-            <el-button type="primary" :disabled="bioDialog.loading" @click="saveBio">
+            <Button :disabled="bioDialog.loading" @click="saveBio">
                 {{ t('dialog.bio.update') }}
-            </el-button>
+            </Button>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
+    import { Button } from '@/components/ui/button';
     import { Delete } from '@element-plus/icons-vue';
     import { InputGroupCharCount } from '@/components/ui/input-group';
     import { toast } from 'vue-sonner';

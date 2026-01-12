@@ -57,22 +57,24 @@
             </el-table-column>
             <el-table-column :label="t('table.profile.invite_messages.action')" width="70" align="right">
                 <template #default="scope">
-                    <el-button
-                        text
-                        :icon="Edit"
-                        size="small"
-                        @click.stop="showEditAndSendInviteDialog(scope.row)"></el-button>
+                    <Button
+                        size="icon-sm"
+                        class="w-6 h-6"
+                        variant="ghost"
+                        @click.stop="showEditAndSendInviteDialog(scope.row)">
+                        <SquarePen />
+                    </Button>
                 </template>
             </el-table-column>
         </DataTable>
 
         <template #footer>
-            <el-button @click="cancelSendInvite">
+            <Button variant="secondary" @click="cancelSendInvite">
                 {{ t('dialog.invite_message.cancel') }}
-            </el-button>
-            <el-button @click="refreshInviteMessageTableData('message')">
+            </Button>
+            <Button variant="outline" @click="refreshInviteMessageTableData('message')">
                 {{ t('dialog.invite_message.refresh') }}
-            </el-button>
+            </Button>
         </template>
         <SendInviteConfirmDialog
             v-model:isSendInviteConfirmDialogVisible="isSendInviteConfirmDialogVisible"
@@ -90,7 +92,7 @@
 </template>
 
 <script setup>
-    import { Edit } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

@@ -28,20 +28,20 @@
             </el-table-column>
             <el-table-column :label="t('table.profile.invite_messages.action')" width="70" align="right">
                 <template #default="scope">
-                    <el-button
-                        text
-                        :icon="Edit"
-                        size="small"
-                        @click.stop="showEditAndSendInviteResponseDialog(scope.row)" />
+                    <Button size="icon-sm" variant="ghost" @click.stop="showEditAndSendInviteResponseDialog(scope.row)">
+                        <SquarePen
+                    /></Button>
                 </template>
             </el-table-column>
         </DataTable>
 
         <template #footer>
-            <el-button @click="cancelSendInviteResponse">{{ t('dialog.invite_response_message.cancel') }}</el-button>
-            <el-button @click="refreshInviteMessageTableData('response')">{{
+            <Button variant="secondary" class="mr-2" @click="cancelSendInviteResponse">{{
+                t('dialog.invite_response_message.cancel')
+            }}</Button>
+            <Button @click="refreshInviteMessageTableData('response')">{{
                 t('dialog.invite_response_message.refresh')
-            }}</el-button>
+            }}</Button>
         </template>
         <EditAndSendInviteResponseDialog
             :edit-and-send-invite-response-dialog="editAndSendInviteResponseDialog"
@@ -57,7 +57,8 @@
 </template>
 
 <script setup>
-    import { Edit } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
+    import { SquarePen } from 'lucide-vue-next';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

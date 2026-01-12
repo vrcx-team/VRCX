@@ -32,43 +32,46 @@
                 <el-table-column :label="t('dialog.registry_backup.action')" width="90" align="right">
                     <template #default="scope">
                         <TooltipWrapper side="top" :content="t('dialog.registry_backup.restore')">
-                            <el-button
-                                text
-                                :icon="Upload"
-                                size="small"
+                            <Button
+                                size="sm"
+                                variant="ghost"
                                 class="button-pd-0"
-                                @click="restoreVrcRegistryBackup(scope.row)"></el-button>
+                                @click="restoreVrcRegistryBackup(scope.row)">
+                                <RotateCcw
+                            /></Button>
                         </TooltipWrapper>
                         <TooltipWrapper side="top" :content="t('dialog.registry_backup.save_to_file')">
-                            <el-button
-                                text
-                                :icon="Download"
-                                size="small"
+                            <Button
+                                size="icon-sm"
+                                variant="ghost"
                                 class="button-pd-0"
-                                @click="saveVrcRegistryBackupToFile(scope.row)"></el-button>
+                                @click="saveVrcRegistryBackupToFile(scope.row)">
+                                <Download
+                            /></Button>
                         </TooltipWrapper>
                         <TooltipWrapper side="top" :content="t('dialog.registry_backup.delete')">
-                            <el-button
-                                text
-                                :icon="Delete"
-                                size="small"
+                            <Button
+                                size="icon-sm"
+                                variant="ghost"
                                 class="button-pd-0"
-                                @click="deleteVrcRegistryBackup(scope.row)"></el-button>
+                                @click="deleteVrcRegistryBackup(scope.row)"
+                                ><Trash2
+                            /></Button>
                         </TooltipWrapper>
                     </template>
                 </el-table-column>
             </DataTable>
             <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px">
-                <el-button type="danger" size="small" @click="deleteVrcRegistry">{{
+                <Button size="sm" variant="destructive" @click="deleteVrcRegistry">{{
                     t('dialog.registry_backup.reset')
-                }}</el-button>
+                }}</Button>
                 <div>
-                    <el-button size="small" @click="promptVrcRegistryBackupName">{{
+                    <Button size="sm" variant="outline" @click="promptVrcRegistryBackupName">{{
                         t('dialog.registry_backup.backup')
-                    }}</el-button>
-                    <el-button size="small" @click="restoreVrcRegistryFromFile">{{
+                    }}</Button>
+                    <Button size="sm" variant="outline" @click="restoreVrcRegistryFromFile">{{
                         t('dialog.registry_backup.restore_from_file')
-                    }}</el-button>
+                    }}</Button>
                 </div>
             </div>
         </div>
@@ -76,8 +79,9 @@
 </template>
 
 <script setup>
-    import { Delete, Download, Upload } from '@element-plus/icons-vue';
+    import { Download, RotateCcw, Trash2 } from 'lucide-vue-next';
     import { ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

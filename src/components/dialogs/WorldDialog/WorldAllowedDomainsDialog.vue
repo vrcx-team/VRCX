@@ -12,23 +12,23 @@
                 v-model="urlList[index]"
                 size="small"
                 style="margin-top: 5px">
-                <el-button :icon="Delete" @click="urlList.splice(index, 1)"></el-button>
+                <Button variant="outline" @click="urlList.splice(index, 1)"></Button>
             </el-input>
-            <el-button size="small" style="margin-top: 5px" @click="urlList.push('')">
+            <Button size="sm" variant="outline" style="margin-top: 5px" @click="urlList.push('')">
                 {{ t('dialog.allowed_video_player_domains.add_domain') }}
-            </el-button>
+            </Button>
         </div>
         <template #footer>
-            <el-button type="primary" :disabled="!worldAllowedDomainsDialog.worldId" @click="saveWorldAllowedDomains">
+            <Button :disabled="!worldAllowedDomainsDialog.worldId" @click="saveWorldAllowedDomains">
                 {{ t('dialog.allowed_video_player_domains.save') }}
-            </el-button>
+            </Button>
         </template>
     </el-dialog>
 </template>
 
 <script setup>
     import { computed, ref, watch } from 'vue';
-    import { Delete } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

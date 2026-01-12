@@ -1,7 +1,9 @@
 <template>
     <DropdownMenu v-model:open="moveDropdownOpen" style="margin-left: 5px">
         <DropdownMenuTrigger as-child>
-            <el-button type="default" :icon="Back" size="small" circle></el-button>
+            <Button class="rounded-full w-6 h-6 text-xs" size="icon-sm" variant="ghost"
+                ><i class="ri-arrow-left-line"></i
+            ></Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent class="favorites-dropdown">
             <span style="font-weight: bold; display: block; text-align: center">
@@ -23,7 +25,7 @@
 
 <script setup>
     import { computed, ref } from 'vue';
-    import { Back } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

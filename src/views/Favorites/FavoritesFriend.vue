@@ -35,7 +35,7 @@
                     @input="searchFriendFavorites" />
                 <DropdownMenu v-model:open="friendToolbarMenuOpen">
                     <DropdownMenuTrigger as-child>
-                        <el-button :icon="MoreFilled" size="small" circle />
+                        <Button class="rounded-full" size="icon-sm" variant="ghost"><Ellipsis /></Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent class="favorites-dropdown">
                         <li class="favorites-dropdown__control" @click.stop>
@@ -196,25 +196,34 @@
                     </div>
                     <div class="favorites-content__edit-actions">
                         <div v-if="friendEditMode && !isSearchActive" class="favorites-content__actions">
-                            <el-button size="small" @click="toggleSelectAllFriends">
+                            <Button size="sm" variant="outline" @click="toggleSelectAllFriends">
                                 {{
                                     isAllFriendsSelected
                                         ? t('view.favorite.deselect_all')
                                         : t('view.favorite.select_all')
                                 }}
-                            </el-button>
-                            <el-button size="small" :disabled="!hasFriendSelection" @click="clearSelectedFriends">
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="secondary"
+                                :disabled="!hasFriendSelection"
+                                @click="clearSelectedFriends">
                                 {{ t('view.favorite.clear') }}
-                            </el-button>
-                            <el-button size="small" :disabled="!hasFriendSelection" @click="copySelectedFriends">
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                :disabled="!hasFriendSelection"
+                                @click="copySelectedFriends">
                                 {{ t('view.favorite.copy') }}
-                            </el-button>
-                            <el-button
-                                size="small"
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
                                 :disabled="!hasFriendSelection"
                                 @click="showFriendBulkUnfavoriteSelectionConfirm">
                                 {{ t('view.favorite.bulk_unfavorite') }}
-                            </el-button>
+                            </Button>
                         </div>
                     </div>
                     <div ref="friendFavoritesContainerRef" class="favorites-content__list">
@@ -287,7 +296,9 @@
 <script setup>
     import { computed, onBeforeMount, ref, watch } from 'vue';
     import { MoreFilled, Refresh } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
+    import { Ellipsis } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

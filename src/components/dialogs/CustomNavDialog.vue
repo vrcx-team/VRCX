@@ -18,16 +18,22 @@
                     </div>
                     <div class="custom-nav-entry__controls">
                         <div class="custom-nav-entry__move">
-                            <el-button circle size="small" :disabled="index === 0" @click="handleMoveEntry(index, -1)">
+                            <Button
+                                class="rounded-full w-6 h-6 text-xs"
+                                size="icon-sm"
+                                variant="outline"
+                                :disabled="index === 0"
+                                @click="handleMoveEntry(index, -1)">
                                 <i class="ri-arrow-up-line"></i>
-                            </el-button>
-                            <el-button
-                                circle
-                                size="small"
+                            </Button>
+                            <Button
+                                class="rounded-full w-6 h-6 text-xs"
+                                size="icon-sm"
+                                variant="outline"
                                 :disabled="index === localLayout.length - 1"
                                 @click="handleMoveEntry(index, 1)">
                                 <i class="ri-arrow-down-line"></i>
-                            </el-button>
+                            </Button>
                         </div>
                     </div>
                 </template>
@@ -38,25 +44,27 @@
                             <span>{{ entry.name?.trim() || t('nav_menu.custom_nav.folder_name_placeholder') }}</span>
                         </div>
                         <div class="custom-nav-entry__actions">
-                            <el-button size="small" plain @click="openFolderEditor(index)">
+                            <Button size="icon-sm w-6 h-6 text-xs" variant="outline" @click="openFolderEditor(index)">
                                 <i class="ri-edit-box-line"></i>
                                 {{ t('nav_menu.custom_nav.edit_folder') }}
-                            </el-button>
+                            </Button>
                             <div class="custom-nav-entry__move">
-                                <el-button
-                                    circle
-                                    size="small"
+                                <Button
+                                    class="rounded-full text-xs w-6 h-6"
+                                    size="icon-sm"
+                                    variant="outline"
                                     :disabled="index === 0"
                                     @click="handleMoveEntry(index, -1)">
                                     <i class="ri-arrow-up-line"></i>
-                                </el-button>
-                                <el-button
-                                    circle
-                                    size="small"
+                                </Button>
+                                <Button
+                                    class="rounded-full text-xs w-6 h-6"
+                                    size="icon-sm"
+                                    variant="outline"
                                     :disabled="index === localLayout.length - 1"
                                     @click="handleMoveEntry(index, 1)">
                                     <i class="ri-arrow-down-line"></i>
-                                </el-button>
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -85,20 +93,20 @@
         <template #footer>
             <div class="custom-nav-dialog__footer">
                 <div class="custom-nav-dialog__footer-left">
-                    <el-button type="primary" plain @click="openFolderEditor()">
+                    <Button variant="outline" @click="openFolderEditor()">
                         {{ t('nav_menu.custom_nav.add_folder') }}
-                    </el-button>
-                    <el-button type="warning" plain @click="handleReset">
+                    </Button>
+                    <Button variant="outline" @click="handleReset">
                         {{ t('nav_menu.custom_nav.restore_default') }}
-                    </el-button>
+                    </Button>
                 </div>
                 <div class="custom-nav-dialog__footer-right">
-                    <el-button @click="handleClose">
+                    <Button variant="secondary" @click="handleClose">
                         {{ t('nav_menu.custom_nav.cancel') }}
-                    </el-button>
-                    <el-button type="primary" :disabled="isSaveDisabled" @click="handleSave">
+                    </Button>
+                    <Button :disabled="isSaveDisabled" @click="handleSave">
                         {{ t('nav_menu.custom_nav.save') }}
-                    </el-button>
+                    </Button>
                 </div>
             </div>
         </template>
@@ -156,24 +164,26 @@
                         </div>
                         <div class="folder-editor__selected-actions">
                             <div class="custom-nav-entry__move">
-                                <el-button
-                                    circle
-                                    size="small"
+                                <Button
+                                    class="rounded-full text-xs w-6 h-6"
+                                    size="icon-sm"
+                                    variant="outline"
                                     :disabled="index === 0"
                                     @click="handleFolderItemMove(index, -1)">
                                     <i class="ri-arrow-up-line"></i>
-                                </el-button>
-                                <el-button
-                                    circle
-                                    size="small"
+                                </Button>
+                                <Button
+                                    class="rounded-full text-xs w-6 h-6"
+                                    size="icon-sm"
+                                    variant="outline"
                                     :disabled="index === folderEditor.data.items.length - 1"
                                     @click="handleFolderItemMove(index, 1)">
                                     <i class="ri-arrow-down-line"></i>
-                                </el-button>
+                                </Button>
                             </div>
-                            <el-button size="small" text @click="toggleFolderItem(key, false)">
+                            <Button size="sm" variant="outline" @click="toggleFolderItem(key, false)">
                                 {{ t('nav_menu.custom_nav.remove_from_folder') }}
-                            </el-button>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -181,20 +191,20 @@
         </div>
         <template #footer>
             <div class="folder-editor__footer">
-                <el-button
+                <Button
+                    variant="destructive"
                     v-if="folderEditor.isEditing"
-                    type="danger"
                     :disabled="!canDeleteFolder"
                     @click="handleFolderEditorDelete">
                     {{ t('nav_menu.custom_nav.delete_folder') }}
-                </el-button>
+                </Button>
                 <div class="folder-editor__footer-spacer"></div>
-                <el-button @click="closeFolderEditor">
+                <Button variant="secondary" @click="closeFolderEditor">
                     {{ t('nav_menu.custom_nav.cancel') }}
-                </el-button>
-                <el-button type="primary" :disabled="folderEditorSaveDisabled" @click="handleFolderEditorSave">
+                </Button>
+                <Button :disabled="folderEditorSaveDisabled" @click="handleFolderEditorSave">
                     {{ t('nav_menu.custom_nav.save') }}
-                </el-button>
+                </Button>
             </div>
         </template>
     </el-dialog>
@@ -202,6 +212,7 @@
 
 <script setup>
     import { computed, reactive, ref, watch } from 'vue';
+    import { Button } from '@/components/ui/button';
     import { useI18n } from 'vue-i18n';
 
     import dayjs from 'dayjs';

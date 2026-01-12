@@ -37,24 +37,30 @@
 
             <el-table-column :label="t('table.previous_instances.action')" width="90" align="right">
                 <template #default="scope">
-                    <el-button
-                        text
-                        :icon="DataLine"
-                        size="small"
-                        @click="showPreviousInstancesInfoDialog(scope.row.location)" />
-                    <el-button
+                    <Button
+                        size="icon-sm"
+                        class="w-6 h-6 text-xs"
+                        variant="ghost"
+                        @click="showPreviousInstancesInfoDialog(scope.row.location)"
+                        ><i class="ri-information-line"></i
+                    ></Button>
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        class="w-6 h-6 text-xs"
                         v-if="shiftHeld"
                         style="color: #f56c6c"
-                        text
-                        :icon="Close"
-                        size="small"
-                        @click="deleteGameLogGroupInstance(scope.row)" />
-                    <el-button
+                        @click="deleteGameLogGroupInstance(scope.row)"
+                        ><i class="ri-delete-bin-line"></i
+                    ></Button>
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        class="w-6 h-6 text-xs"
                         v-else
-                        text
-                        :icon="Close"
-                        size="small"
-                        @click="deleteGameLogGroupInstancePrompt(scope.row)" />
+                        @click="deleteGameLogGroupInstancePrompt(scope.row)"
+                        ><i class="ri-delete-bin-line"></i
+                    ></Button>
                 </template>
             </el-table-column>
         </DataTable>
@@ -63,7 +69,7 @@
 
 <script setup>
     import { computed, nextTick, reactive, ref, watch } from 'vue';
-    import { Close, DataLine } from '@element-plus/icons-vue';
+    import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { useI18n } from 'vue-i18n';
 
