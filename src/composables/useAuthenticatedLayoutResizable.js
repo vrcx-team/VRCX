@@ -3,6 +3,8 @@ import { storeToRefs } from 'pinia';
 
 import { useAppearanceSettingsStore } from '../stores';
 
+import configRepository from '../service/config';
+
 export function useAuthenticatedLayoutResizable() {
     const navCollapsedPx = 64;
     const navDefaultPx = 240;
@@ -162,10 +164,34 @@ export function useAuthenticatedLayoutResizable() {
             return;
         }
 
-        const storedAsidePx = asideWidth.value;
-        const asideTargetSize =
-            storedAsidePx > 0 ? pxToPercent(storedAsidePx, width, 0) : 0;
-        resizeAsidePanel(asideTargetSize);
+        void syncAsidePanelWidth(width);
+    };
+
+    let asideSyncPromise = null;
+    const syncAsidePanelWidth = async (width) => {
+        if (asideSyncPromise) {
+            return asideSyncPromise;
+        }
+        asideSyncPromise = (async () => {
+            const storedAsidePx = await configRepository.getInt(
+                'VRCX_sidePanelWidth',
+                asideWidth.value
+            );
+            if (
+                Number.isFinite(storedAsidePx) &&
+                storedAsidePx !== asideWidth.value
+            ) {
+                setAsideWidth(storedAsidePx);
+            }
+            const asideTargetSize =
+                storedAsidePx > 0 ? pxToPercent(storedAsidePx, width, 0) : 0;
+            resizeAsidePanel(asideTargetSize);
+        })();
+        try {
+            return await asideSyncPromise;
+        } finally {
+            asideSyncPromise = null;
+        }
     };
 
     watch(isNavCollapsed, async (collapsed) => {
