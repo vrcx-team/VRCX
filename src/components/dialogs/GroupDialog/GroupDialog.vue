@@ -145,7 +145,7 @@
                                 side="top"
                                 :content="t('dialog.group.actions.unrepresent_tooltip')">
                                 <Button
-                                    class="rounded-full"
+                                    class="rounded-full mr-2"
                                     variant="secondary"
                                     size="icon-lg"
                                     style="margin-left: 5px"
@@ -156,10 +156,9 @@
                             <TooltipWrapper v-else side="top" :content="t('dialog.group.actions.represent_tooltip')">
                                 <span>
                                     <Button
-                                        class="rounded-full"
+                                        class="rounded-full mr-2"
                                         variant="outline"
                                         size="icon-lg"
-                                        style="margin-left: 5px"
                                         :disabled="groupDialog.ref.privacy === 'private'"
                                         @click="setGroupRepresentation(groupDialog.id)">
                                         <StarFilled />
@@ -171,10 +170,9 @@
                             <TooltipWrapper side="top" :content="t('dialog.group.actions.cancel_join_request_tooltip')">
                                 <span>
                                     <Button
-                                        class="rounded-full"
+                                        class="rounded-full mr-2"
                                         variant="outline"
                                         size="icon-lg"
-                                        style="margin-left: 5px"
                                         @click="cancelGroupRequest(groupDialog.id)">
                                         <Close />
                                     </Button>
@@ -185,10 +183,9 @@
                             <TooltipWrapper side="top" :content="t('dialog.group.actions.pending_request_tooltip')">
                                 <span>
                                     <Button
-                                        class="rounded-full"
+                                        class="rounded-full mr-2"
                                         variant="outline"
                                         size="icon-lg"
-                                        style="margin-left: 5px"
                                         @click="joinGroup(groupDialog.id)">
                                         <Check />
                                     </Button>
@@ -201,10 +198,9 @@
                                 side="top"
                                 :content="t('dialog.group.actions.request_join_tooltip')">
                                 <Button
-                                    class="rounded-full"
+                                    class="rounded-full mr-2"
                                     variant="outline"
                                     size="icon-lg"
-                                    style="margin-left: 5px"
                                     @click="joinGroup(groupDialog.id)">
                                     <Message />
                                 </Button>
@@ -214,12 +210,7 @@
                                 side="top"
                                 :content="t('dialog.group.actions.invite_required_tooltip')">
                                 <span>
-                                    <Button
-                                        class="rounded-full"
-                                        variant="outline"
-                                        size="icon-lg"
-                                        disabled
-                                        style="margin-left: 5px">
+                                    <Button class="rounded-full mr-2" variant="outline" size="icon-lg" disabled>
                                         <Message />
                                     </Button>
                                 </span>
@@ -229,10 +220,9 @@
                                 side="top"
                                 :content="t('dialog.group.actions.join_group_tooltip')">
                                 <Button
-                                    class="rounded-full"
+                                    class="rounded-full mr-2"
                                     variant="outline"
                                     size="icon-lg"
-                                    style="margin-left: 5px"
                                     @click="joinGroup(groupDialog.id)">
                                     <Check />
                                 </Button>
@@ -245,8 +235,7 @@
                                     :variant="
                                         groupDialog.ref.membershipStatus === 'userblocked' ? 'destructive' : 'outline'
                                     "
-                                    size="icon-lg"
-                                    style="margin-left: 5px">
+                                    size="icon-lg">
                                     <MoreFilled />
                                 </Button>
                             </DropdownMenuTrigger>

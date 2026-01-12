@@ -13,6 +13,7 @@
 
 <template>
     <Button
+        type="button"
         :data-size="props.size"
         :variant="props.variant"
         :class="cn(inputGroupButtonVariants({ size: props.size }), props.class)">

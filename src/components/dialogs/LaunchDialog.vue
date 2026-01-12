@@ -1,63 +1,68 @@
 <template>
     <el-dialog :z-index="launchDialogIndex" v-model="isVisible" :title="t('dialog.launch.header')" width="450px">
-        <el-form :model="launchDialog" label-width="100px">
-            <el-form-item :label="t('dialog.launch.url')">
-                <InputGroupField
-                    v-model="launchDialog.url"
-                    size="sm"
-                    style="width: 230px"
-                    @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
-                    <Button
-                        class="rounded-full ml-1"
-                        size="icon-sm"
-                        variant="ghost"
-                        @click="copyInstanceMessage(launchDialog.url)"
-                        ><Copy
-                    /></Button>
-                </TooltipWrapper>
-            </el-form-item>
-            <el-form-item v-if="launchDialog.shortUrl">
-                <template #label>
-                    <div class="flex items-center">
+        <FieldGroup class="gap-4">
+            <Field>
+                <FieldLabel>{{ t('dialog.launch.url') }}</FieldLabel>
+                <FieldContent class="flex-row items-center gap-2">
+                    <InputGroupField
+                        v-model="launchDialog.url"
+                        size="sm"
+                        @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
+                    <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
+                        <Button
+                            class="rounded-full"
+                            size="icon-sm"
+                            variant="ghost"
+                            @click="copyInstanceMessage(launchDialog.url)"
+                            ><Copy
+                        /></Button>
+                    </TooltipWrapper>
+                </FieldContent>
+            </Field>
+            <Field v-if="launchDialog.shortUrl">
+                <FieldLabel>
+                    <span class="flex items-center gap-1">
                         <span>{{ t('dialog.launch.short_url') }}</span>
                         <TooltipWrapper side="top" :content="t('dialog.launch.short_url_notice')">
-                            <el-icon style="display: inline-block; margin-left: 5px"><Warning /></el-icon>
+                            <el-icon><Warning /></el-icon>
                         </TooltipWrapper>
-                    </div>
-                </template>
-                <InputGroupField
-                    v-model="launchDialog.shortUrl"
-                    size="sm"
-                    style="width: 230px"
-                    @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
-                    <Button
-                        class="rounded-full ml-1"
-                        size="icon-sm"
-                        variant="ghost"
-                        @click="copyInstanceMessage(launchDialog.shortUrl)"
-                        ><Copy
-                    /></Button>
-                </TooltipWrapper>
-            </el-form-item>
-            <el-form-item :label="t('dialog.launch.location')">
-                <InputGroupField
-                    v-model="launchDialog.location"
-                    size="sm"
-                    style="width: 230px"
-                    @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
-                    <Button
-                        class="rounded-full ml-1"
-                        size="icon-sm"
-                        variant="ghost"
-                        @click="copyInstanceMessage(launchDialog.location)"
-                        ><Copy
-                    /></Button>
-                </TooltipWrapper>
-            </el-form-item>
-        </el-form>
+                    </span>
+                </FieldLabel>
+                <FieldContent class="flex-row items-center gap-2">
+                    <InputGroupField
+                        v-model="launchDialog.shortUrl"
+                        size="sm"
+                        @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
+                    <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
+                        <Button
+                            class="rounded-full"
+                            size="icon-sm"
+                            variant="ghost"
+                            @click="copyInstanceMessage(launchDialog.shortUrl)"
+                            ><Copy
+                        /></Button>
+                    </TooltipWrapper>
+                </FieldContent>
+            </Field>
+            <Field>
+                <FieldLabel>{{ t('dialog.launch.location') }}</FieldLabel>
+                <FieldContent class="flex-row items-center gap-2">
+                    <InputGroupField
+                        v-model="launchDialog.location"
+                        size="sm"
+                        @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
+                    <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
+                        <Button
+                            class="rounded-full"
+                            size="icon-sm"
+                            variant="ghost"
+                            @click="copyInstanceMessage(launchDialog.location)"
+                            ><Copy
+                        /></Button>
+                    </TooltipWrapper>
+                </FieldContent>
+            </Field>
+        </FieldGroup>
         <template #footer>
             <div class="flex justify-end">
                 <Button
@@ -126,6 +131,7 @@
         DropdownMenuItem,
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
+    import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Copy } from 'lucide-vue-next';

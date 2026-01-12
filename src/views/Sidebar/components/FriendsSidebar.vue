@@ -312,9 +312,9 @@
     .x-link:hover {
         text-decoration: none;
     }
-    .x-link:hover span {
+    /* .x-link:hover span {
         text-decoration: underline;
-    }
+    } */
     .is-rotated {
         transform: rotate(90deg);
     }

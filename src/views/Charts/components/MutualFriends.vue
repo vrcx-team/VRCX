@@ -51,65 +51,77 @@
             <p class="mutual-graph__force-description">
                 {{ t('view.charts.mutual_friend.force_dialog.description') }}
             </p>
-            <el-form label-position="top" size="small" class="mutual-graph__force-form">
-                <el-form-item :label="t('view.charts.mutual_friend.force_dialog.repulsion')">
-                    <NumberField
-                        v-model="forceForm.repulsion"
-                        :step="1"
-                        :format-options="{ maximumFractionDigits: 0 }"
-                        class="mutual-graph__number-input">
-                        <NumberFieldContent>
-                            <NumberFieldInput />
-                        </NumberFieldContent>
-                    </NumberField>
-                    <div class="mutual-graph__helper">
-                        {{ t('view.charts.mutual_friend.force_dialog.repulsion_help') }}
-                    </div>
-                </el-form-item>
-                <el-form-item :label="t('view.charts.mutual_friend.force_dialog.edge_length_min')">
-                    <NumberField
-                        v-model="forceForm.edgeLengthMin"
-                        :step="1"
-                        :format-options="{ maximumFractionDigits: 0 }"
-                        class="mutual-graph__number-input">
-                        <NumberFieldContent>
-                            <NumberFieldInput />
-                        </NumberFieldContent>
-                    </NumberField>
-                    <div class="mutual-graph__helper">
-                        {{ t('view.charts.mutual_friend.force_dialog.edge_length_min_help') }}
-                    </div>
-                </el-form-item>
-                <el-form-item :label="t('view.charts.mutual_friend.force_dialog.edge_length_max')">
-                    <NumberField
-                        v-model="forceForm.edgeLengthMax"
-                        :step="1"
-                        :format-options="{ maximumFractionDigits: 0 }"
-                        class="mutual-graph__number-input">
-                        <NumberFieldContent>
-                            <NumberFieldInput />
-                        </NumberFieldContent>
-                    </NumberField>
-                    <div class="mutual-graph__helper">
-                        {{ t('view.charts.mutual_friend.force_dialog.edge_length_max_help') }}
-                    </div>
-                </el-form-item>
-                <el-form-item :label="t('view.charts.mutual_friend.force_dialog.gravity')">
-                    <NumberField
-                        v-model="forceForm.gravity"
-                        :max="1"
-                        :step="0.1"
-                        :format-options="{ maximumFractionDigits: 1 }"
-                        class="mutual-graph__number-input">
-                        <NumberFieldContent>
-                            <NumberFieldInput />
-                        </NumberFieldContent>
-                    </NumberField>
-                    <div class="mutual-graph__helper">
-                        {{ t('view.charts.mutual_friend.force_dialog.gravity_help') }}
-                    </div>
-                </el-form-item>
-            </el-form>
+            <FieldGroup class="mutual-graph__force-form">
+                <Field>
+                    <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.repulsion') }}</FieldLabel>
+                    <FieldContent>
+                        <NumberField
+                            v-model="forceForm.repulsion"
+                            :step="1"
+                            :format-options="{ maximumFractionDigits: 0 }"
+                            class="mutual-graph__number-input">
+                            <NumberFieldContent>
+                                <NumberFieldInput />
+                            </NumberFieldContent>
+                        </NumberField>
+                        <FieldDescription class="mutual-graph__helper">
+                            {{ t('view.charts.mutual_friend.force_dialog.repulsion_help') }}
+                        </FieldDescription>
+                    </FieldContent>
+                </Field>
+                <Field>
+                    <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.edge_length_min') }}</FieldLabel>
+                    <FieldContent>
+                        <NumberField
+                            v-model="forceForm.edgeLengthMin"
+                            :step="1"
+                            :format-options="{ maximumFractionDigits: 0 }"
+                            class="mutual-graph__number-input">
+                            <NumberFieldContent>
+                                <NumberFieldInput />
+                            </NumberFieldContent>
+                        </NumberField>
+                        <FieldDescription class="mutual-graph__helper">
+                            {{ t('view.charts.mutual_friend.force_dialog.edge_length_min_help') }}
+                        </FieldDescription>
+                    </FieldContent>
+                </Field>
+                <Field>
+                    <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.edge_length_max') }}</FieldLabel>
+                    <FieldContent>
+                        <NumberField
+                            v-model="forceForm.edgeLengthMax"
+                            :step="1"
+                            :format-options="{ maximumFractionDigits: 0 }"
+                            class="mutual-graph__number-input">
+                            <NumberFieldContent>
+                                <NumberFieldInput />
+                            </NumberFieldContent>
+                        </NumberField>
+                        <FieldDescription class="mutual-graph__helper">
+                            {{ t('view.charts.mutual_friend.force_dialog.edge_length_max_help') }}
+                        </FieldDescription>
+                    </FieldContent>
+                </Field>
+                <Field>
+                    <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.gravity') }}</FieldLabel>
+                    <FieldContent>
+                        <NumberField
+                            v-model="forceForm.gravity"
+                            :max="1"
+                            :step="0.1"
+                            :format-options="{ maximumFractionDigits: 1 }"
+                            class="mutual-graph__number-input">
+                            <NumberFieldContent>
+                                <NumberFieldInput />
+                            </NumberFieldContent>
+                        </NumberField>
+                        <FieldDescription class="mutual-graph__helper">
+                            {{ t('view.charts.mutual_friend.force_dialog.gravity_help') }}
+                        </FieldDescription>
+                    </FieldContent>
+                </Field>
+            </FieldGroup>
 
             <template #footer>
                 <div class="mutual-graph__dialog-footer">
@@ -127,6 +139,7 @@
 
 <script setup>
     import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+    import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { NumberField, NumberFieldContent, NumberFieldInput } from '@/components/ui/number-field';
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';

@@ -21,65 +21,83 @@
             </Select>
         </div>
         <br />
-        <el-form label-position="top" label-width="120px" size="small" style="margin-bottom: 12px">
-            <el-form-item :label="t('dialog.translation_api.mode')">
-                <Select :model-value="form.translationApiType" @update:modelValue="handleTranslationApiTypeChange">
-                    <SelectTrigger size="sm" style="width: 100%">
-                        <SelectValue :placeholder="t('dialog.translation_api.mode')" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem value="google" :text-value="t('dialog.translation_api.mode_google')">
-                                {{ t('dialog.translation_api.mode_google') }}
-                            </SelectItem>
-                            <SelectItem value="openai" :text-value="t('dialog.translation_api.mode_openai')">
-                                {{ t('dialog.translation_api.mode_openai') }}
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </el-form-item>
-        </el-form>
+        <FieldGroup class="mb-3">
+            <Field>
+                <FieldLabel>{{ t('dialog.translation_api.mode') }}</FieldLabel>
+                <FieldContent>
+                    <Select :model-value="form.translationApiType" @update:modelValue="handleTranslationApiTypeChange">
+                        <SelectTrigger size="sm" style="width: 100%">
+                            <SelectValue :placeholder="t('dialog.translation_api.mode')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="google" :text-value="t('dialog.translation_api.mode_google')">
+                                    {{ t('dialog.translation_api.mode_google') }}
+                                </SelectItem>
+                                <SelectItem value="openai" :text-value="t('dialog.translation_api.mode_openai')">
+                                    {{ t('dialog.translation_api.mode_openai') }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </FieldContent>
+            </Field>
+        </FieldGroup>
 
         <template v-if="form.translationApiType === 'google'">
-            <el-form label-position="top" label-width="120px" size="small">
-                <el-form-item :label="t('dialog.translation_api.description')">
-                    <InputGroupField
-                        v-model="form.translationApiKey"
-                        type="password"
-                        show-password
-                        placeholder="AIzaSy..."
-                        clearable />
-                </el-form-item>
-            </el-form>
+            <FieldGroup>
+                <Field>
+                    <FieldLabel>{{ t('dialog.translation_api.description') }}</FieldLabel>
+                    <FieldContent>
+                        <InputGroupField
+                            v-model="form.translationApiKey"
+                            type="password"
+                            show-password
+                            placeholder="AIzaSy..."
+                            clearable />
+                    </FieldContent>
+                </Field>
+            </FieldGroup>
         </template>
 
         <template v-if="form.translationApiType === 'openai'">
-            <el-form label-position="top" label-width="120px" size="small">
-                <el-form-item :label="t('dialog.translation_api.openai.endpoint')">
-                    <InputGroupField
-                        v-model="form.translationApiEndpoint"
-                        placeholder="https://api.openai.com/v1/chat/completions"
-                        clearable />
-                </el-form-item>
+            <FieldGroup>
+                <Field>
+                    <FieldLabel>{{ t('dialog.translation_api.openai.endpoint') }}</FieldLabel>
+                    <FieldContent>
+                        <InputGroupField
+                            v-model="form.translationApiEndpoint"
+                            placeholder="https://api.openai.com/v1/chat/completions"
+                            clearable />
+                    </FieldContent>
+                </Field>
 
-                <el-form-item :label="t('dialog.translation_api.openai.api_key')">
-                    <InputGroupField
-                        v-model="form.translationApiKey"
-                        type="password"
-                        show-password
-                        placeholder="sk-..."
-                        clearable />
-                </el-form-item>
+                <Field>
+                    <FieldLabel>{{ t('dialog.translation_api.openai.api_key') }}</FieldLabel>
+                    <FieldContent>
+                        <InputGroupField
+                            v-model="form.translationApiKey"
+                            type="password"
+                            show-password
+                            placeholder="sk-..."
+                            clearable />
+                    </FieldContent>
+                </Field>
 
-                <el-form-item :label="t('dialog.translation_api.openai.model')">
-                    <InputGroupField v-model="form.translationApiModel" clearable />
-                </el-form-item>
+                <Field>
+                    <FieldLabel>{{ t('dialog.translation_api.openai.model') }}</FieldLabel>
+                    <FieldContent>
+                        <InputGroupField v-model="form.translationApiModel" clearable />
+                    </FieldContent>
+                </Field>
 
-                <el-form-item :label="t('dialog.translation_api.openai.prompt_optional')">
-                    <InputGroupTextareaField v-model="form.translationApiPrompt" :rows="3" clearable />
-                </el-form-item>
-            </el-form>
+                <Field>
+                    <FieldLabel>{{ t('dialog.translation_api.openai.prompt_optional') }}</FieldLabel>
+                    <FieldContent>
+                        <InputGroupTextareaField v-model="form.translationApiPrompt" :rows="3" clearable />
+                    </FieldContent>
+                </Field>
+            </FieldGroup>
         </template>
 
         <template #footer>
@@ -94,14 +112,14 @@
                     ">
                     {{ t('dialog.translation_api.guide') }}
                 </Button>
+                <Button
+                    variant="outline"
+                    class="mr-2"
+                    v-if="form.translationApiType === 'openai'"
+                    @click="testOpenAiTranslation">
+                    {{ t('dialog.translation_api.test') }}
+                </Button>
                 <div>
-                    <Button
-                        variant="secondary"
-                        class="mr-2"
-                        v-if="form.translationApiType === 'openai'"
-                        @click="testOpenAiTranslation">
-                        {{ t('dialog.translation_api.test') }}
-                    </Button>
                     <Button style="margin-left: auto" @click="saveTranslationApiConfig">
                         {{ t('dialog.translation_api.save') }}
                     </Button>
@@ -113,9 +131,10 @@
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
+    import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { reactive, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

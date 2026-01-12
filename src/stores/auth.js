@@ -42,21 +42,7 @@ export const useAuthStore = defineStore('Auth', () => {
         endpoint: '',
         websocket: '',
         saveCredentials: false,
-        lastUserLoggedIn: '',
-        rules: {
-            username: [
-                {
-                    required: true,
-                    trigger: 'blur'
-                }
-            ],
-            password: [
-                {
-                    required: true,
-                    trigger: 'blur'
-                }
-            ]
-        }
+        lastUserLoggedIn: ''
     });
 
     const enablePrimaryPasswordDialog = ref({

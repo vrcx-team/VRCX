@@ -766,8 +766,8 @@
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { Ellipsis, RefreshCcw, Star, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
-    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { ElMessageBox } from 'element-plus';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

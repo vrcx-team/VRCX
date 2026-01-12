@@ -16,71 +16,101 @@
             <div class="x-login-form-container">
                 <div>
                     <h2 style="font-weight: bold; text-align: center; margin: 0">{{ t('view.login.login') }}</h2>
-                    <el-form
-                        ref="loginFormRef"
-                        :model="loginForm"
-                        :rules="loginForm.rules"
-                        @submit.prevent="handleLogin()">
-                        <el-form-item
-                            :label="t('view.login.field.username')"
-                            prop="username"
-                            required
-                            style="display: block">
-                            <InputGroupField
-                                v-model="loginForm.username"
-                                name="username"
-                                :placeholder="t('view.login.field.username')"
-                                clearable />
-                        </el-form-item>
-                        <el-form-item
-                            :label="t('view.login.field.password')"
-                            prop="password"
-                            required
-                            style="display: block; margin-top: 10px">
-                            <InputGroupField
-                                v-model="loginForm.password"
-                                type="password"
-                                name="password"
-                                :placeholder="t('view.login.field.password')"
-                                clearable
-                                show-password />
-                        </el-form-item>
+                    <form id="login-form" @submit.prevent="onSubmit">
+                        <FieldGroup class="gap-3">
+                            <VeeField v-slot="{ field, errors }" name="username">
+                                <Field :data-invalid="!!errors.length">
+                                    <FieldLabel for="login-form-username">
+                                        {{ t('view.login.field.username') }}
+                                    </FieldLabel>
+                                    <FieldContent>
+                                        <InputGroupField
+                                            id="login-form-username"
+                                            :model-value="field.value"
+                                            name="username"
+                                            :placeholder="t('view.login.field.username')"
+                                            :aria-invalid="!!errors.length"
+                                            clearable
+                                            @update:modelValue="field.onChange"
+                                            @blur="field.onBlur" />
+                                        <FieldError v-if="errors.length" :errors="errors" />
+                                    </FieldContent>
+                                </Field>
+                            </VeeField>
+                            <VeeField v-slot="{ field, errors }" name="password">
+                                <Field :data-invalid="!!errors.length">
+                                    <FieldLabel for="login-form-password">
+                                        {{ t('view.login.field.password') }}
+                                    </FieldLabel>
+                                    <FieldContent>
+                                        <InputGroupField
+                                            id="login-form-password"
+                                            :model-value="field.value"
+                                            type="password"
+                                            name="password"
+                                            :placeholder="t('view.login.field.password')"
+                                            :aria-invalid="!!errors.length"
+                                            clearable
+                                            show-password
+                                            @update:modelValue="field.onChange"
+                                            @blur="field.onBlur" />
+                                        <FieldError v-if="errors.length" :errors="errors" />
+                                    </FieldContent>
+                                </Field>
+                            </VeeField>
+                        </FieldGroup>
                         <label class="inline-flex items-center gap-2 mr-2">
                             <Checkbox v-model="loginForm.saveCredentials" />
                             <span>{{ t('view.login.field.saveCredentials') }}</span>
                         </label>
                         <label class="inline-flex items-center gap-2" style="margin-top: 10px">
-                            <Checkbox v-model="enableCustomEndpoint" @update:modelValue="toggleCustomEndpoint" />
+                            <Checkbox v-model="enableCustomEndpoint" @update:modelValue="handleCustomEndpointToggle" />
                             <span>{{ t('view.login.field.devEndpoint') }}</span>
                         </label>
-                        <el-form-item
-                            v-if="enableCustomEndpoint"
-                            :label="t('view.login.field.endpoint')"
-                            prop="endpoint"
-                            style="margin-top: 10px">
-                            <InputGroupField
-                                v-model="loginForm.endpoint"
-                                name="endpoint"
-                                :placeholder="AppDebug.endpointDomainVrchat"
-                                clearable />
-                        </el-form-item>
-                        <el-form-item
-                            v-if="enableCustomEndpoint"
-                            :label="t('view.login.field.websocket')"
-                            prop="websocket"
-                            style="margin-top: 10px">
-                            <InputGroupField
-                                v-model="loginForm.websocket"
-                                name="websocket"
-                                :placeholder="AppDebug.websocketDomainVrchat"
-                                clearable />
-                        </el-form-item>
-                        <el-form-item>
-                            <Button class="mt-2" type="submit" size="lg" style="width: 100%">{{
-                                t('view.login.login')
-                            }}</Button>
-                        </el-form-item>
-                    </el-form>
+                        <FieldGroup v-if="enableCustomEndpoint" class="mt-3 gap-3">
+                            <VeeField v-slot="{ field, errors }" name="endpoint">
+                                <Field :data-invalid="!!errors.length">
+                                    <FieldLabel for="login-form-endpoint">
+                                        {{ t('view.login.field.endpoint') }}
+                                    </FieldLabel>
+                                    <FieldContent>
+                                        <InputGroupField
+                                            id="login-form-endpoint"
+                                            :model-value="field.value"
+                                            name="endpoint"
+                                            :placeholder="AppDebug.endpointDomainVrchat"
+                                            :aria-invalid="!!errors.length"
+                                            clearable
+                                            @update:modelValue="field.onChange"
+                                            @blur="field.onBlur" />
+                                        <FieldError v-if="errors.length" :errors="errors" />
+                                    </FieldContent>
+                                </Field>
+                            </VeeField>
+                            <VeeField v-slot="{ field, errors }" name="websocket">
+                                <Field :data-invalid="!!errors.length">
+                                    <FieldLabel for="login-form-websocket">
+                                        {{ t('view.login.field.websocket') }}
+                                    </FieldLabel>
+                                    <FieldContent>
+                                        <InputGroupField
+                                            id="login-form-websocket"
+                                            :model-value="field.value"
+                                            name="websocket"
+                                            :placeholder="AppDebug.websocketDomainVrchat"
+                                            :aria-invalid="!!errors.length"
+                                            clearable
+                                            @update:modelValue="field.onChange"
+                                            @blur="field.onBlur" />
+                                        <FieldError v-if="errors.length" :errors="errors" />
+                                    </FieldContent>
+                                </Field>
+                            </VeeField>
+                        </FieldGroup>
+                        <Field class="mt-2">
+                            <Button type="submit" size="lg" style="width: 100%">{{ t('view.login.login') }}</Button>
+                        </Field>
+                    </form>
                     <Button
                         variant="Secondary"
                         size="lg"
@@ -147,14 +177,18 @@
 </template>
 
 <script setup>
+    import { Field, FieldContent, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
     import { CircleArrowDown, Route } from 'lucide-vue-next';
+    import { Field as VeeField, useForm } from 'vee-validate';
     import { useRoute, useRouter } from 'vue-router';
     import { Button } from '@/components/ui/button';
-    import { InputGroupField } from '@/components/ui/input-group';
     import { Checkbox } from '@/components/ui/checkbox';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
+    import { toTypedSchema } from '@vee-validate/zod';
     import { useI18n } from 'vue-i18n';
+    import { z } from 'zod';
 
     import { useAuthStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '../../stores';
     import { openExternalLink, userImage } from '../../shared/utils';
@@ -171,8 +205,27 @@
 
     const { t } = useI18n();
 
-    const loginFormRef = ref(null);
     const savedCredentials = ref({});
+    const requiredMessage = 'Required';
+
+    const formSchema = toTypedSchema(
+        z.object({
+            username: z.string().min(1, requiredMessage),
+            password: z.string().min(1, requiredMessage),
+            endpoint: z.string().optional(),
+            websocket: z.string().optional()
+        })
+    );
+
+    const { handleSubmit, resetForm, setValues, values } = useForm({
+        validationSchema: formSchema,
+        initialValues: {
+            username: loginForm.value.username,
+            password: loginForm.value.password,
+            endpoint: loginForm.value.endpoint,
+            websocket: loginForm.value.websocket
+        }
+    });
 
     async function clickDeleteSavedLogin(userId) {
         await deleteSavedLogin(userId);
@@ -184,15 +237,22 @@
         await updateSavedCredentials();
     }
 
-    function handleLogin() {
-        if (loginFormRef.value) {
-            loginFormRef.value.validate(async (valid) => {
-                if (valid) {
-                    await login();
-                    await updateSavedCredentials();
-                }
-            });
-        }
+    const onSubmit = handleSubmit(async (formValues) => {
+        loginForm.value.username = formValues.username ?? '';
+        loginForm.value.password = formValues.password ?? '';
+        loginForm.value.endpoint = formValues.endpoint ?? '';
+        loginForm.value.websocket = formValues.websocket ?? '';
+        await login();
+        await updateSavedCredentials();
+    });
+
+    async function handleCustomEndpointToggle() {
+        await toggleCustomEndpoint();
+        setValues({
+            ...values,
+            endpoint: loginForm.value.endpoint,
+            websocket: loginForm.value.websocket
+        });
     }
 
     async function updateSavedCredentials() {
@@ -224,9 +284,29 @@
     });
 
     onBeforeUnmount(() => {
-        if (loginFormRef.value) {
-            loginFormRef.value.resetFields();
-        }
+        resetForm({
+            values: {
+                username: '',
+                password: '',
+                endpoint: '',
+                websocket: ''
+            }
+        });
+        loginForm.value.username = '';
+        loginForm.value.password = '';
+        loginForm.value.endpoint = '';
+        loginForm.value.websocket = '';
         savedCredentials.value = {};
     });
+
+    watch(
+        values,
+        (formValues) => {
+            loginForm.value.username = formValues.username ?? '';
+            loginForm.value.password = formValues.password ?? '';
+            loginForm.value.endpoint = formValues.endpoint ?? '';
+            loginForm.value.websocket = formValues.websocket ?? '';
+        },
+        { deep: true }
+    );
 </script>
