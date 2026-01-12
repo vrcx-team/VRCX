@@ -29,13 +29,13 @@
                 <span>{{ t('dialog.set_avatar_tags.content_sex') }}</span>
             </label>
             <br />
-            <el-input
+            <InputGroupTextareaField
                 v-model="setAvatarTagsDialog.selectedTagsCsv"
-                size="small"
-                :autosize="{ minRows: 2, maxRows: 5 }"
+                :rows="2"
                 :placeholder="t('dialog.set_avatar_tags.custom_tags_placeholder')"
                 style="margin-top: 10px"
-                @input="updateInputAvatarTags"></el-input>
+                input-class="resize-none"
+                @input="updateInputAvatarTags" />
             <br />
             <br />
             <template
@@ -101,6 +101,7 @@
 <script setup>
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { Loading } from '@element-plus/icons-vue';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

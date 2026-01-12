@@ -105,14 +105,14 @@
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
-                        <el-input
+                        <InputGroupField
                             v-model="memberSearch"
                             :disabled="!hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')"
                             clearable
-                            size="small"
+                            size="sm"
                             :placeholder="t('dialog.group.members.search')"
                             style="margin-top: 10px; margin-bottom: 10px"
-                            @input="groupMembersSearch"></el-input>
+                            @input="groupMembersSearch" />
                         <br />
                         <Button size="sm" variant="outline" @click="selectAllGroupMembers">{{
                             t('dialog.group_member_moderation.select_all')
@@ -225,12 +225,12 @@
                             groupBansModerationTable.data.length
                         }}</span>
                         <br />
-                        <el-input
+                        <InputGroupField
                             v-model="groupBansModerationTable.filters[0].value"
                             clearable
-                            size="small"
+                            size="sm"
                             :placeholder="t('dialog.group.members.search')"
-                            style="margin-top: 10px; margin-bottom: 10px"></el-input>
+                            style="margin-top: 10px; margin-bottom: 10px" />
                         <br />
                         <Button size="sm" variant="outline" @click="selectAllGroupBans">{{
                             t('dialog.group_member_moderation.select_all')
@@ -644,12 +644,12 @@
                                 }}</Button>
                             </div>
                         </div>
-                        <el-input
+                        <InputGroupField
                             v-model="groupLogsModerationTable.filters[0].value"
                             clearable
-                            size="small"
+                            size="sm"
                             :placeholder="t('dialog.group.members.search')"
-                            style="margin-top: 10px; margin-bottom: 10px"></el-input>
+                            style="margin-top: 10px; margin-bottom: 10px" />
                         <br />
                         <DataTable v-bind="groupLogsModerationTable" style="margin-top: 10px">
                             <el-table-column
@@ -708,12 +708,12 @@
             <br />
             <span class="name">{{ t('dialog.group_member_moderation.user_id') }}</span>
             <br />
-            <el-input
+            <InputGroupField
                 v-model="selectUserId"
-                size="small"
+                size="sm"
                 style="margin-top: 5px; width: 340px"
                 :placeholder="t('dialog.group_member_moderation.user_id_placeholder')"
-                clearable></el-input>
+                clearable />
             <Button
                 size="sm"
                 variant="outline"
@@ -765,16 +765,13 @@
             <br />
             <br />
             <span class="name">{{ t('dialog.group_member_moderation.notes') }}</span>
-            <el-input
+            <InputGroupTextareaField
                 v-model="note"
                 class="extra"
-                type="textarea"
                 :rows="2"
-                :autosize="{ minRows: 1, maxRows: 20 }"
                 :placeholder="t('dialog.group_member_moderation.note_placeholder')"
-                size="small"
-                resize="none"
-                style="margin-top: 5px"></el-input>
+                style="margin-top: 5px"
+                input-class="resize-none min-h-0" />
             <br />
             <br />
             <span class="name">{{ t('dialog.group_member_moderation.selected_roles') }}</span>
@@ -870,6 +867,7 @@
 <script setup>
     import { ArrowDown, Loading, Refresh, Warning } from '@element-plus/icons-vue';
     import { reactive, ref, watch } from 'vue';
+    import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
     import { Spinner } from '@/components/ui/spinner';
     import { Trash2 } from 'lucide-vue-next';

@@ -6,7 +6,11 @@ export { default as InputGroupButton } from './InputGroupButton.vue';
 export { default as InputGroupInput } from './InputGroupInput.vue';
 export { default as InputGroupText } from './InputGroupText.vue';
 export { default as InputGroupTextarea } from './InputGroupTextarea.vue';
-export { default as InputGroupCharCount } from './InputGroupCharCount.vue';
+export { default as InputGroupField } from './InputGroupField.vue';
+export { default as InputGroupTextareaField } from './InputGroupTextareaField.vue';
+export { default as InputGroupSearch } from './InputGroupSearch.vue';
+export { default as InputGroupAffix } from './InputGroupAffix.vue';
+export { default as InputGroupAction } from './InputGroupAction.vue';
 
 export const inputGroupAddonVariants = cva(
     "text-muted-foreground flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium select-none [&>svg:not([class*='size-'])]:size-4 [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:opacity-50",

@@ -19,12 +19,12 @@
                     }}</SelectItem>
                 </SelectContent>
             </Select>
-            <el-input
+            <InputGroupField
                 v-model="photonEventTableFilter"
                 :placeholder="t('view.player_list.photon.search_placeholder')"
                 clearable
                 style="width: 150px"
-                @input="photonEventTableFilterChange"></el-input>
+                @input="photonEventTableFilterChange" />
             <Button variant="outline" @click="emitShowChatboxBlacklist">{{
                 t('view.player_list.photon.chatbox_blacklist')
             }}</Button>
@@ -390,6 +390,7 @@
 <script setup>
     import { ArrowRight, Download } from '@element-plus/icons-vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

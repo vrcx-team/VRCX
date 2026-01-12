@@ -6,25 +6,29 @@
         width="600px"
         append-to-body>
         <div v-loading="bioDialog.loading">
-            <InputGroupCharCount
+            <InputGroupTextareaField
                 v-model="bioDialog.bio"
                 :maxlength="512"
-                multiline
-                rows="5"
+                :rows="5"
                 :placeholder="t('dialog.bio.bio_placeholder')"
-                class="mb-2.5" />
+                class="mb-2.5"
+                show-count />
 
-            <el-input
+            <InputGroupAction
                 v-for="(link, index) in bioDialog.bioLinks"
                 :key="index"
                 v-model="bioDialog.bioLinks[index]"
-                size="small"
                 maxlength="64"
-                show-word-limit
+                show-count
+                size="sm"
                 style="margin-top: 5px">
-                <img :src="getFaviconUrl(link)" style="width: 16px; height: 16px; vertical-align: middle" />
-                <Button variant="outline" @click="bioDialog.bioLinks.splice(index, 1)" />
-            </el-input>
+                <template #leading>
+                    <img :src="getFaviconUrl(link)" style="width: 16px; height: 16px; vertical-align: middle" />
+                </template>
+                <template #actions>
+                    <Button variant="outline" @click="bioDialog.bioLinks.splice(index, 1)" />
+                </template>
+            </InputGroupAction>
 
             <Button
                 variant="outline"
@@ -46,8 +50,7 @@
 
 <script setup>
     import { Button } from '@/components/ui/button';
-    import { Delete } from '@element-plus/icons-vue';
-    import { InputGroupCharCount } from '@/components/ui/input-group';
+    import { InputGroupAction, InputGroupTextareaField } from '@/components/ui/input-group';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

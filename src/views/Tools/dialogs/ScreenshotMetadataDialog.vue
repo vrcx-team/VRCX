@@ -56,10 +56,9 @@
 
             <div class="flex items-center">
                 <!-- Search bar input -->
-                <el-input
+                <InputGroupSearch
                     v-model="screenshotMetadataDialog.search"
                     placeholder="Search"
-                    clearable
                     style="width: 200px"
                     @input="screenshotMetadataSearch" />
                 <!-- Search type dropdown -->
@@ -167,6 +166,7 @@
     import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
     import { reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupSearch } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

@@ -2,9 +2,9 @@
     <el-dialog :z-index="launchDialogIndex" v-model="isVisible" :title="t('dialog.launch.header')" width="450px">
         <el-form :model="launchDialog" label-width="100px">
             <el-form-item :label="t('dialog.launch.url')">
-                <el-input
+                <InputGroupField
                     v-model="launchDialog.url"
-                    size="small"
+                    size="sm"
                     style="width: 230px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
@@ -26,9 +26,9 @@
                         </TooltipWrapper>
                     </div>
                 </template>
-                <el-input
+                <InputGroupField
                     v-model="launchDialog.shortUrl"
-                    size="small"
+                    size="sm"
                     style="width: 230px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
@@ -42,9 +42,9 @@
                 </TooltipWrapper>
             </el-form-item>
             <el-form-item :label="t('dialog.launch.location')">
-                <el-input
+                <InputGroupField
                     v-model="launchDialog.location"
-                    size="small"
+                    size="sm"
                     style="width: 230px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
@@ -130,6 +130,7 @@
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Copy } from 'lucide-vue-next';
     import { ElMessageBox } from 'element-plus';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { MoreHorizontal } from 'lucide-vue-next';
     import { Warning } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';

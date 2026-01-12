@@ -44,10 +44,9 @@
         <template v-if="form.translationApiType === 'google'">
             <el-form label-position="top" label-width="120px" size="small">
                 <el-form-item :label="t('dialog.translation_api.description')">
-                    <el-input
+                    <InputGroupField
                         v-model="form.translationApiKey"
-                        type="textarea"
-                        :rows="4"
+                        type="password"
                         show-password
                         placeholder="AIzaSy..."
                         clearable />
@@ -58,29 +57,27 @@
         <template v-if="form.translationApiType === 'openai'">
             <el-form label-position="top" label-width="120px" size="small">
                 <el-form-item :label="t('dialog.translation_api.openai.endpoint')">
-                    <el-input
+                    <InputGroupField
                         v-model="form.translationApiEndpoint"
                         placeholder="https://api.openai.com/v1/chat/completions"
-                        clearable
-                        textarea />
+                        clearable />
                 </el-form-item>
 
                 <el-form-item :label="t('dialog.translation_api.openai.api_key')">
-                    <el-input
+                    <InputGroupField
                         v-model="form.translationApiKey"
-                        type="textarea"
-                        :rows="4"
+                        type="password"
                         show-password
                         placeholder="sk-..."
                         clearable />
                 </el-form-item>
 
                 <el-form-item :label="t('dialog.translation_api.openai.model')">
-                    <el-input v-model="form.translationApiModel" clearable />
+                    <InputGroupField v-model="form.translationApiModel" clearable />
                 </el-form-item>
 
                 <el-form-item :label="t('dialog.translation_api.openai.prompt_optional')">
-                    <el-input v-model="form.translationApiPrompt" type="textarea" :rows="3" clearable />
+                    <InputGroupTextareaField v-model="form.translationApiPrompt" :rows="3" clearable />
                 </el-form-item>
             </el-form>
         </template>
@@ -118,6 +115,7 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { reactive, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

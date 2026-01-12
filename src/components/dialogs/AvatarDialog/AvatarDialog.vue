@@ -402,16 +402,13 @@
                         <div class="x-friend-item" style="width: 100%; cursor: default">
                             <div class="detail">
                                 <span class="name" style="margin-bottom: 5px">{{ t('dialog.avatar.info.memo') }}</span>
-                                <el-input
+                                <InputGroupTextareaField
                                     v-model="memo"
                                     class="extra"
-                                    size="small"
-                                    type="textarea"
                                     :rows="2"
-                                    :autosize="{ minRows: 1, maxRows: 20 }"
                                     :placeholder="t('dialog.avatar.info.memo_placeholder')"
-                                    resize="none"
-                                    @change="onAvatarMemoChange"></el-input>
+                                    input-class="resize-none min-h-0"
+                                    @change="onAvatarMemoChange" />
                             </div>
                         </div>
                         <div class="x-friend-item" style="width: 100%; cursor: default">
@@ -545,6 +542,7 @@
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

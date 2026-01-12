@@ -8,20 +8,19 @@
         <div style="font-size: 12px">
             {{ t('dialog.discord_names.description') }}
         </div>
-        <el-input
+        <InputGroupTextareaField
             v-model="discordNamesContent"
-            type="textarea"
-            size="small"
             :rows="15"
-            resize="none"
             readonly
-            style="margin-top: 15px" />
+            style="margin-top: 15px"
+            input-class="resize-none" />
     </el-dialog>
 </template>
 
 <script setup>
     import { ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { useI18n } from 'vue-i18n';
 
     import { useUserStore } from '../../../stores';

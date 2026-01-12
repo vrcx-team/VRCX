@@ -7,10 +7,10 @@
         append-to-body>
         <div style="display: flex; align-items: center; justify-content: space-between">
             <span style="font-size: 14px" v-text="previousInstancesUserDialog.userRef.displayName"></span>
-            <el-input
+            <InputGroupField
                 v-model="previousInstancesUserDialogTable.filters[0].value"
                 :placeholder="t('dialog.previous_instances.search_placeholder')"
-                style="display: block; width: 150px"></el-input>
+                style="display: block; width: 150px" />
         </div>
         <DataTable :loading="loading" v-bind="previousInstancesUserDialogTable" style="margin-top: 10px">
             <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="170">
@@ -78,6 +78,7 @@
 <script setup>
     import { computed, nextTick, reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

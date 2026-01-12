@@ -27,13 +27,13 @@
                             :label="t('view.feed.filters.' + type)"
                             :value="type"></el-option>
                     </el-select>
-                    <el-input
+                    <InputGroupField
                         v-model="feedTable.search"
                         :placeholder="t('view.feed.search_placeholder')"
                         clearable
                         style="flex: 0.4; margin-left: 10px"
                         @keyup.enter="feedTableLookup"
-                        @change="feedTableLookup"></el-input>
+                        @change="feedTableLookup" />
                 </div>
             </template>
         </DataTableLayout>
@@ -46,6 +46,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAppearanceSettingsStore, useFeedStore, useVrcxStore } from '../../stores';
+    import { InputGroupField } from '../../components/ui/input-group';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { Switch } from '../../components/ui/switch';
     import { columns as baseColumns } from './columns.jsx';

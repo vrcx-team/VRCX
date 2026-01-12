@@ -20,13 +20,11 @@
                 </Button>
             </div>
         </div>
-        <el-input
+        <InputGroupTextareaField
             v-model="friendImportDialog.input"
-            type="textarea"
-            size="small"
             :rows="10"
-            resize="none"
-            style="margin-top: 10px" />
+            style="margin-top: 10px"
+            input-class="resize-none" />
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
             <div>
                 <Select
@@ -121,6 +119,7 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { Loading } from '@element-plus/icons-vue';
     import { Trash2 } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';

@@ -6,14 +6,14 @@
         width="600px">
         <div v-if="chatboxBlacklistDialog.visible" v-loading="chatboxBlacklistDialog.loading">
             <h2>{{ t('dialog.chatbox_blacklist.keyword_blacklist') }}</h2>
-            <el-input
+            <InputGroupAction
                 v-for="(item, index) in chatboxBlacklist"
                 :key="index"
                 v-model="chatboxBlacklist[index]"
-                size="small"
+                size="sm"
                 style="margin-top: 5px"
                 @change="saveChatboxBlacklist">
-                <template #append>
+                <template #actions>
                     <Button
                         variant="outline"
                         @click="
@@ -22,7 +22,7 @@
                         ">
                     </Button>
                 </template>
-            </el-input>
+            </InputGroupAction>
             <Button size="sm" variant="outline" style="margin-top: 5px" @click="chatboxBlacklist.push('')">
                 {{ t('dialog.chatbox_blacklist.add_item') }}
             </Button>
@@ -56,6 +56,7 @@
 
 <script setup>
     import { Button } from '@/components/ui/button';
+    import { InputGroupAction } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

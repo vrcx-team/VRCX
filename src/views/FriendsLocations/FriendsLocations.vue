@@ -3,12 +3,10 @@
         <div v-if="settingsReady" class="friend-view__toolbar">
             <el-segmented v-model="activeSegment" :options="segmentedOptions" />
             <div class="friend-view__actions">
-                <el-input
+                <InputGroupSearch
                     v-model="searchTerm"
                     class="friend-view__search"
-                    :prefix-icon="Search"
-                    clearable
-                    placeholder="Search Friend"></el-input>
+                    placeholder="Search Friend" />
                 <Popover>
                     <PopoverTrigger asChild>
                         <div>
@@ -163,8 +161,9 @@
 
 <script setup>
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-    import { Loading, Search } from '@element-plus/icons-vue';
+    import { Loading } from '@element-plus/icons-vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupSearch } from '@/components/ui/input-group';
     import { Settings } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

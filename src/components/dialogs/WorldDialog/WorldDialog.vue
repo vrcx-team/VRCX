@@ -437,15 +437,12 @@
                                 <span class="name">
                                     {{ t('dialog.world.info.memo') }}
                                 </span>
-                                <el-input
+                                <InputGroupTextareaField
                                     v-model="memo"
                                     class="extra"
-                                    type="textarea"
                                     :rows="2"
-                                    :autosize="{ minRows: 1, maxRows: 20 }"
                                     :placeholder="t('dialog.world.info.memo_placeholder')"
-                                    size="small"
-                                    resize="none"
+                                    input-class="resize-none min-h-0"
                                     @change="onWorldMemoChange" />
                             </div>
                         </div>
@@ -769,6 +766,7 @@
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { Ellipsis, RefreshCcw, Star, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

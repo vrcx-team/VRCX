@@ -56,14 +56,13 @@
 
             <div style="font-size: 12px">{{ t('dialog.set_world_tags.author_tags') }}</div>
 
-            <el-input
+            <InputGroupTextareaField
                 :model-value="setAvatarStylesDialog.authorTags"
-                type="textarea"
-                size="small"
-                show-word-limit
                 :autosize="{ minRows: 2, maxRows: 5 }"
+                :rows="2"
                 placeholder=""
                 style="margin-top: 10px"
+                input-class="resize-none"
                 @update:modelValue="(v) => updateDialog({ authorTags: v })" />
         </template>
 
@@ -80,6 +79,7 @@
 
 <script setup>
     import { Button } from '@/components/ui/button';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
     import { watch } from 'vue';

@@ -256,12 +256,12 @@
                 :value="isTestTTSVisible"
                 @change="isTestTTSVisible = !isTestTTSVisible" />
             <div v-if="isTestTTSVisible" style="margin-top: 5px">
-                <el-input
+                <InputGroupTextareaField
                     v-model="notificationTTSTest"
-                    type="textarea"
                     :placeholder="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')"
                     :rows="1"
-                    style="width: 175px; display: inline-block"></el-input>
+                    style="width: 175px; display: inline-block"
+                    input-class="resize-none min-h-0" />
                 <Button size="sm" variant="outline" style="margin-left: 10px" @click="testNotificationTTS">{{
                     t('view.settings.notifications.notifications.text_to_speech.play')
                 }}</Button>
@@ -276,6 +276,7 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

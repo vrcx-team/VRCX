@@ -2,25 +2,21 @@
     <el-dialog :title="t('dialog.export_friends_list.header')" v-model="isVisible" width="650px">
         <el-tabs>
             <el-tab-pane :label="t('dialog.export_friends_list.csv')">
-                <el-input
+                <InputGroupTextareaField
                     v-model="exportFriendsListCsv"
-                    type="textarea"
-                    size="small"
                     :rows="15"
-                    resize="none"
                     readonly
                     style="margin-top: 15px"
+                    input-class="resize-none"
                     @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
             </el-tab-pane>
             <el-tab-pane :label="t('dialog.export_friends_list.json')">
-                <el-input
+                <InputGroupTextareaField
                     v-model="exportFriendsListJson"
-                    type="textarea"
-                    size="small"
                     :rows="15"
-                    resize="none"
                     readonly
                     style="margin-top: 15px"
+                    input-class="resize-none"
                     @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
             </el-tab-pane>
         </el-tabs>
@@ -30,6 +26,7 @@
 <script setup>
     import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { useI18n } from 'vue-i18n';
 
     import { useUserStore } from '../../../stores';

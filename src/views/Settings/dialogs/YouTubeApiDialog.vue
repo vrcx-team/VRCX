@@ -7,13 +7,13 @@
         @close="closeDialog">
         <div style="font-size: 12px">{{ t('dialog.youtube_api.description') }} <br /></div>
 
-        <InputGroupCharCount
+        <InputGroupTextareaField
             v-model="youTubeApiKey"
             :placeholder="t('dialog.youtube_api.placeholder')"
             :maxlength="39"
-            multiline
-            rows="2"
-            class="mt-2.5" />
+            :rows="2"
+            class="mt-2.5"
+            show-count />
 
         <template #footer>
             <div class="flex items-center justify-between">
@@ -30,7 +30,7 @@
 
 <script setup>
     import { Button } from '@/components/ui/button';
-    import { InputGroupCharCount } from '@/components/ui/input-group';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

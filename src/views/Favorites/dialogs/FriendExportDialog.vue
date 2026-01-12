@@ -21,15 +21,13 @@
 
         <br />
 
-        <el-input
+        <InputGroupTextareaField
             v-model="friendExportContent"
-            type="textarea"
-            size="small"
             :rows="15"
-            resize="none"
             readonly
             style="margin-top: 15px"
-            @click="handleCopyFriendExportData"></el-input>
+            input-class="resize-none"
+            @click="handleCopyFriendExportData" />
     </el-dialog>
 </template>
 
@@ -37,6 +35,7 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

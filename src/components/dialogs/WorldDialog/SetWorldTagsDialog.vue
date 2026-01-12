@@ -20,14 +20,12 @@
             <span>{{ t('dialog.set_world_tags.enable_debugging') }}</span>
         </label>
         <div style="font-size: 12px; margin-top: 10px">{{ t('dialog.set_world_tags.author_tags') }}<br /></div>
-        <el-input
+        <InputGroupTextareaField
             v-model="setWorldTagsDialog.authorTags"
-            type="textarea"
-            size="small"
-            show-word-limit
-            :autosize="{ minRows: 2, maxRows: 5 }"
+            :rows="2"
             placeholder=""
-            style="margin-top: 10px"></el-input>
+            style="margin-top: 10px"
+            input-class="resize-none" />
         <div style="font-size: 12px; margin-top: 10px">{{ t('dialog.set_world_tags.content_tags') }}<br /></div>
         <label class="inline-flex items-center gap-2">
             <Checkbox v-model="setWorldTagsDialog.contentHorror" />
@@ -106,6 +104,7 @@
 <script setup>
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { Checkbox } from '@/components/ui/checkbox';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

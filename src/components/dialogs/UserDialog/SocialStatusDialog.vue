@@ -41,11 +41,12 @@
                 </SelectContent>
             </Select>
 
-            <InputGroupCharCount
+            <InputGroupField
                 v-model="socialStatusDialog.statusDescription"
                 :placeholder="t('dialog.social_status.status_placeholder')"
                 :maxlength="32"
                 clearable
+                show-count
                 class="mt-2.5" />
             <Collapsible v-model:open="isOpen" class="mt-3 flex w-full flex-col gap-2">
                 <div class="flex items-center justify-between gap-4 px-4">
@@ -88,8 +89,8 @@
     import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { ChevronsUpDown } from 'lucide-vue-next';
-    import { InputGroupCharCount } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

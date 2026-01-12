@@ -6,14 +6,16 @@
         destroy-on-close
         append-to-body>
         <div>
-            <el-input
+            <InputGroupAction
                 v-for="(domain, index) in urlList"
                 :key="index"
                 v-model="urlList[index]"
-                size="small"
+                size="sm"
                 style="margin-top: 5px">
-                <Button variant="outline" @click="urlList.splice(index, 1)"></Button>
-            </el-input>
+                <template #actions>
+                    <Button variant="outline" @click="urlList.splice(index, 1)"></Button>
+                </template>
+            </InputGroupAction>
             <Button size="sm" variant="outline" style="margin-top: 5px" @click="urlList.push('')">
                 {{ t('dialog.allowed_video_player_domains.add_domain') }}
             </Button>
@@ -29,6 +31,7 @@
 <script setup>
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupAction } from '@/components/ui/input-group';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

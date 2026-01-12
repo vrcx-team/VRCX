@@ -20,12 +20,12 @@
                             :label="type"
                             :value="type"></el-option>
                     </el-select>
-                    <el-input
+                    <InputGroupField
                         v-model="friendsListSearch"
                         :placeholder="t('view.friend_list.search_placeholder')"
                         clearable
                         style="width: 250px"
-                        @change="friendsListSearchChange"></el-input>
+                        @change="friendsListSearchChange" />
                 </div>
                 <div class="flex items-center">
                     <div v-if="friendsListBulkUnfriendMode" class="inline-block mr-10">
@@ -261,6 +261,7 @@
 <script setup>
     import { computed, nextTick, reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

@@ -7,7 +7,13 @@
         @close="closeDialog">
         <div style="font-size: 12px">
             <span>{{ t('dialog.edit_invite_message.description') }}</span>
-            <InputGroupCharCount v-model="message" :maxlength="64" multiline rows="2" class="mt-2.5" placeholder="" />
+            <InputGroupTextareaField
+                v-model="message"
+                :maxlength="64"
+                :rows="2"
+                class="mt-2.5"
+                placeholder=""
+                show-count />
         </div>
         <template #footer>
             <Button variant="secondary" class="mr-2" @click="closeDialog">{{
@@ -21,7 +27,7 @@
 <script setup>
     import { ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { InputGroupCharCount } from '@/components/ui/input-group';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

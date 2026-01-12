@@ -18,14 +18,12 @@
             </label>
         </div>
         <br />
-        <el-input
+        <InputGroupTextareaField
             v-model="groupLogsExportContent"
-            type="textarea"
-            size="small"
             :rows="15"
-            resize="none"
             readonly
             style="margin-top: 15px"
+            input-class="resize-none"
             @click="handleCopyGroupLogsExportContent" />
     </el-dialog>
 </template>
@@ -33,6 +31,7 @@
 <script setup>
     import { ref, watch } from 'vue';
     import { Checkbox } from '@/components/ui/checkbox';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { useI18n } from 'vue-i18n';
 
     import { copyToClipboard } from '../../../shared/utils';

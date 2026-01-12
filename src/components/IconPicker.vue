@@ -7,9 +7,8 @@
         </PopoverTrigger>
         <PopoverContent side="bottom" align="start" class="w-155">
             <div class="icon-picker">
-                <el-input
+                <InputGroupSearch
                     v-model="search"
-                    clearable
                     class="icon-picker__search"
                     :placeholder="t('nav_menu.icon_picker.search_placeholder')" />
                 <el-scrollbar v-if="filteredCategories.length" height="600px" class="icon-picker__scroll">
@@ -47,6 +46,7 @@
 <script setup>
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupSearch } from '@/components/ui/input-group';
     import { useI18n } from 'vue-i18n';
 
     import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';

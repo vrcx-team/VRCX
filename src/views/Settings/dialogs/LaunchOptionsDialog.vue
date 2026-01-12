@@ -13,28 +13,25 @@
             </Badge>
         </div>
 
-        <el-input
+        <InputGroupTextareaField
             v-model="launchOptionsDialog.launchArguments"
-            type="textarea"
-            size="small"
-            show-word-limit
             :autosize="{ minRows: 2, maxRows: 5 }"
+            :rows="2"
             placeholder=""
-            style="margin-top: 10px">
-        </el-input>
+            style="margin-top: 10px"
+            input-class="resize-none" />
 
         <template v-if="!isLinux">
             <div style="font-size: 12px; margin-top: 10px">
                 {{ t('dialog.launch_options.path_override') }}
             </div>
 
-            <el-input
+            <InputGroupTextareaField
                 v-model="launchOptionsDialog.vrcLaunchPathOverride"
-                type="textarea"
                 placeholder="C:\Program Files (x86)\Steam\steamapps\common\VRChat"
                 :rows="1"
-                style="display: block; margin-top: 10px">
-            </el-input>
+                style="display: block; margin-top: 10px"
+                input-class="resize-none min-h-0" />
         </template>
 
         <template #footer>
@@ -63,6 +60,7 @@
 <script setup>
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

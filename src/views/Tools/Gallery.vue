@@ -418,15 +418,13 @@
                             {{ t('dialog.gallery_icons.upload') }}
                         </Button>
                     </ButtonGroup>
-                    <el-input
-                        type="textarea"
+                    <InputGroupTextareaField
                         v-model="printUploadNote"
-                        size="small"
                         :rows="1"
-                        resize="none"
                         maxlength="32"
                         style="margin-left: 10px; width: 300px"
-                        :placeholder="t('dialog.gallery_icons.note')"></el-input>
+                        :placeholder="t('dialog.gallery_icons.note')"
+                        input-class="resize-none min-h-0" />
                     <label class="inline-flex items-center gap-2" style="margin-left: 10px; margin-right: 10px">
                         <Checkbox v-model="printCropBorder" />
                         <span>{{ t('dialog.gallery_icons.crop_print_border') }}</span>
@@ -556,6 +554,7 @@
     import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
     import { Maximize2, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Checkbox } from '@/components/ui/checkbox';
     import { ElMessageBox } from 'element-plus';

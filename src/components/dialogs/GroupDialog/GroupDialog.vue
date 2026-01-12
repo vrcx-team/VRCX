@@ -723,10 +723,10 @@
                         <span style="margin-right: 10px; vertical-align: top"
                             >{{ t('dialog.group.posts.posts_count') }} {{ groupDialog.posts.length }}</span
                         >
-                        <el-input
+                        <InputGroupField
                             v-model="groupDialog.postsSearch"
                             clearable
-                            size="small"
+                            size="sm"
                             :placeholder="t('dialog.group.posts.search_placeholder')"
                             style="width: 89%; margin-bottom: 10px"
                             @input="updateGroupPostSearch" />
@@ -908,11 +908,11 @@
                                     </VirtualCombobox>
                                 </div>
                             </div>
-                            <el-input
+                            <InputGroupField
                                 v-model="groupDialog.memberSearch"
                                 :disabled="!hasGroupPermission(groupDialog.ref, 'group-members-manage')"
                                 clearable
-                                size="small"
+                                size="sm"
                                 :placeholder="t('dialog.group.members.search')"
                                 style="margin-top: 10px; margin-bottom: 10px"
                                 @input="groupMembersSearch" />
@@ -1162,6 +1162,7 @@
     import { computed, nextTick, reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { RefreshCcw } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
     import { VirtualCombobox } from '@/components/ui/virtual-combobox';

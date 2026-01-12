@@ -9,13 +9,13 @@
         <div style="font-size: 12px">
             <span>{{ t('dialog.edit_send_invite_response_message.description') }}</span>
         </div>
-        <InputGroupCharCount
+        <InputGroupTextareaField
             v-model="editAndSendInviteResponseDialog.newMessage"
             :maxlength="64"
-            multiline
-            rows="2"
+            :rows="2"
             class="mt-2.5"
-            placeholder="" />
+            placeholder=""
+            show-count />
         <template #footer>
             <Button variant="secondary" class="mr-2" @click="cancelEditAndSendInviteResponse">{{
                 t('dialog.edit_send_invite_response_message.cancel')
@@ -29,7 +29,7 @@
 
 <script setup>
     import { Button } from '@/components/ui/button';
-    import { InputGroupCharCount } from '@/components/ui/input-group';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

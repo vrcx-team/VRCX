@@ -28,7 +28,7 @@
                             :label="t('view.friend_log.filters.' + type)"
                             :value="type" />
                     </el-select>
-                    <el-input
+                    <InputGroupField
                         v-model="friendLogTable.filters[1].value"
                         :placeholder="t('view.friend_log.search_placeholder')"
                         style="flex: 0.4; margin-left: 10px" />
@@ -48,6 +48,7 @@
 
     import { useAppearanceSettingsStore, useFriendStore, useVrcxStore } from '../../stores';
     import { DataTableLayout } from '../../components/ui/data-table';
+    import { InputGroupField } from '../../components/ui/input-group';
     import { createColumns } from './columns.jsx';
     import { database } from '../../service/database';
     import { removeFromArray } from '../../shared/utils';

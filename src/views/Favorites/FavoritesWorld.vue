@@ -27,9 +27,8 @@
                 </Select>
             </div>
             <div class="favorites-toolbar__right">
-                <el-input
+                <InputGroupSearch
                     v-model="worldFavoriteSearch"
-                    clearable
                     class="favorites-toolbar__search"
                     :placeholder="t('view.favorite.worlds.search')"
                     @input="searchWorldFavorites" />
@@ -266,11 +265,11 @@
                                 <el-icon><Plus /></el-icon>
                                 <span>{{ t('view.favorite.worlds.new_group') }}</span>
                             </div>
-                            <el-input
+                            <InputGroupField
                                 v-else
                                 ref="newLocalGroupInput"
                                 v-model="newLocalGroupName"
-                                size="small"
+                                size="sm"
                                 class="group-item__input"
                                 :placeholder="t('view.favorite.worlds.new_group')"
                                 @keyup.enter="handleLocalGroupCreationConfirm"
@@ -428,6 +427,7 @@
     import { MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
     import { Ellipsis, RefreshCcw } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
+    import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
     import { ElMessageBox } from 'element-plus';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';

@@ -8,16 +8,14 @@
             <h3 v-text="groupPostEditDialog.groupRef.name"></h3>
             <el-form :model="groupPostEditDialog" label-width="150px">
                 <el-form-item :label="t('dialog.group_post_edit.title')">
-                    <el-input v-model="groupPostEditDialog.title" size="small"></el-input>
+                    <InputGroupField v-model="groupPostEditDialog.title" size="sm" />
                 </el-form-item>
                 <el-form-item :label="t('dialog.group_post_edit.message')">
-                    <el-input
+                    <InputGroupTextareaField
                         v-model="groupPostEditDialog.text"
-                        type="textarea"
                         :rows="4"
-                        :autosize="{ minRows: 4, maxRows: 20 }"
                         style="margin-top: 10px"
-                        resize="none"></el-input>
+                        input-class="resize-none" />
                 </el-form-item>
                 <el-form-item>
                     <label v-if="!groupPostEditDialog.postId" class="inline-flex items-center gap-2">
@@ -111,6 +109,7 @@
 <script setup>
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { Checkbox } from '@/components/ui/checkbox';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

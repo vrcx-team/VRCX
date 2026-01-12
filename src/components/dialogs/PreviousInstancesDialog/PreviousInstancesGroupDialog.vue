@@ -7,7 +7,7 @@
         append-to-body>
         <div style="display: flex; align-items: center; justify-content: space-between">
             <span style="font-size: 14px" v-text="previousInstancesGroupDialog.groupRef.name"></span>
-            <el-input
+            <InputGroupField
                 v-model="previousInstancesGroupDialogTable.filters[0].value"
                 :placeholder="t('dialog.previous_instances.search_placeholder')"
                 style="width: 150px" />
@@ -70,6 +70,7 @@
 <script setup>
     import { computed, nextTick, reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { ElMessageBox } from 'element-plus';
     import { useI18n } from 'vue-i18n';
 

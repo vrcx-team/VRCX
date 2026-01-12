@@ -14,7 +14,7 @@
                     :label="t('view.moderation.filters.' + item)"
                     :value="item" />
             </el-select>
-            <el-input
+            <InputGroupField
                 v-model="playerModerationTable.filters[1].value"
                 :placeholder="t('view.moderation.search_placeholder')"
                 class="filter-input" />
@@ -44,6 +44,7 @@
 <script setup>
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { ElMessageBox } from 'element-plus';
     import { Refresh } from '@element-plus/icons-vue';
     import { Spinner } from '@/components/ui/spinner';

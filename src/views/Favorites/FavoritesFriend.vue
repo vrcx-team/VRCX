@@ -27,9 +27,8 @@
                 </Select>
             </div>
             <div class="favorites-toolbar__right">
-                <el-input
+                <InputGroupSearch
                     v-model="friendFavoriteSearch"
-                    clearable
                     class="favorites-toolbar__search"
                     :placeholder="t('view.favorite.worlds.search')"
                     @input="searchFriendFavorites" />
@@ -297,6 +296,7 @@
     import { computed, onBeforeMount, ref, watch } from 'vue';
     import { MoreFilled, Refresh } from '@element-plus/icons-vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupSearch } from '@/components/ui/input-group';
     import { ElMessageBox } from 'element-plus';
     import { Ellipsis } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';

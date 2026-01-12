@@ -1,13 +1,13 @@
 <template>
     <div class="x-container">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
-            <el-input
+            <InputGroupField
                 :model-value="searchText"
                 :placeholder="t('view.search.search_placeholder')"
                 style="flex: 1"
                 clearable
                 @input="updateSearchText"
-                @keyup.enter="search"></el-input>
+                @keyup.enter="search" />
             <TooltipWrapper side="bottom" :content="t('view.search.clear_results_tooltip')">
                 <Button class="rounded-full mr-2" size="icon-sm" variant="ghost" @click="handleClearSearch"
                     ><Trash2
@@ -347,6 +347,7 @@
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Checkbox } from '@/components/ui/checkbox';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { Spinner } from '@/components/ui/spinner';
     import { Trash2 } from 'lucide-vue-next';
     import { ref } from 'vue';

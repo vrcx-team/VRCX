@@ -156,6 +156,7 @@ export const createColumns = ({
                             class={[
                                 'x-user-status',
                                 'shrink-0',
+                                'mr-1',
                                 status ? statusClass(status) : null
                             ]}
                         ></i>
@@ -339,7 +340,7 @@ export const createColumns = ({
                 const userRef = row.original?.ref;
                 const langs = userRef?.$languages ?? [];
                 return (
-                    <div>
+                    <div class="flex items-center gap-0.5">
                         {langs.map((item) => (
                             <TooltipWrapper
                                 key={item.key}

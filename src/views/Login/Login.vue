@@ -26,24 +26,24 @@
                             prop="username"
                             required
                             style="display: block">
-                            <el-input
+                            <InputGroupField
                                 v-model="loginForm.username"
                                 name="username"
                                 :placeholder="t('view.login.field.username')"
-                                clearable></el-input>
+                                clearable />
                         </el-form-item>
                         <el-form-item
                             :label="t('view.login.field.password')"
                             prop="password"
                             required
                             style="display: block; margin-top: 10px">
-                            <el-input
+                            <InputGroupField
                                 v-model="loginForm.password"
                                 type="password"
                                 name="password"
                                 :placeholder="t('view.login.field.password')"
                                 clearable
-                                show-password></el-input>
+                                show-password />
                         </el-form-item>
                         <label class="inline-flex items-center gap-2 mr-2">
                             <Checkbox v-model="loginForm.saveCredentials" />
@@ -58,22 +58,22 @@
                             :label="t('view.login.field.endpoint')"
                             prop="endpoint"
                             style="margin-top: 10px">
-                            <el-input
+                            <InputGroupField
                                 v-model="loginForm.endpoint"
                                 name="endpoint"
                                 :placeholder="AppDebug.endpointDomainVrchat"
-                                clearable></el-input>
+                                clearable />
                         </el-form-item>
                         <el-form-item
                             v-if="enableCustomEndpoint"
                             :label="t('view.login.field.websocket')"
                             prop="websocket"
                             style="margin-top: 10px">
-                            <el-input
+                            <InputGroupField
                                 v-model="loginForm.websocket"
                                 name="websocket"
                                 :placeholder="AppDebug.websocketDomainVrchat"
-                                clearable></el-input>
+                                clearable />
                         </el-form-item>
                         <el-form-item>
                             <Button class="mt-2" type="submit" size="lg" style="width: 100%">{{
@@ -151,6 +151,7 @@
     import { CircleArrowDown, Route } from 'lucide-vue-next';
     import { useRoute, useRouter } from 'vue-router';
     import { Button } from '@/components/ui/button';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { Checkbox } from '@/components/ui/checkbox';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

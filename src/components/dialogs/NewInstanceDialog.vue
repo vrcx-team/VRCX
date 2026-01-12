@@ -115,12 +115,12 @@
                             @update:modelValue="buildInstance" />
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.display_name')">
-                        <el-input
+                        <InputGroupField
                             :disabled="!isLocalUserVrcPlusSupporter"
                             v-model="newInstanceDialog.displayName"
-                            size="small"
+                            size="sm"
                             @click="$event.target.tagName === 'INPUT' && $event.target.select()"
-                            @change="buildInstance"></el-input>
+                            @change="buildInstance" />
                     </el-form-item>
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
@@ -177,14 +177,14 @@
                     </el-form-item>
                     <template v-if="newInstanceDialog.instanceCreated">
                         <el-form-item :label="t('dialog.new_instance.location')">
-                            <el-input
+                            <InputGroupField
                                 v-model="newInstanceDialog.location"
-                                size="small"
+                                size="sm"
                                 readonly
-                                @click="$event.target.tagName === 'INPUT' && $event.target.select()"></el-input>
+                                @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                         </el-form-item>
                         <el-form-item :label="t('dialog.new_instance.url')">
-                            <el-input v-model="newInstanceDialog.url" size="small" readonly></el-input>
+                            <InputGroupField v-model="newInstanceDialog.url" size="sm" readonly />
                         </el-form-item>
                     </template>
                 </el-form>
@@ -275,18 +275,18 @@
                         <Checkbox v-model="newInstanceDialog.ageGate" @update:modelValue="buildInstance" />
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.world_id')">
-                        <el-input
+                        <InputGroupField
                             v-model="newInstanceDialog.worldId"
-                            size="small"
+                            size="sm"
                             @click="$event.target.tagName === 'INPUT' && $event.target.select()"
-                            @change="buildLegacyInstance"></el-input>
+                            @change="buildLegacyInstance" />
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.instance_id')">
-                        <el-input
+                        <InputGroupField
                             v-model="newInstanceDialog.instanceName"
                             :placeholder="t('dialog.new_instance.instance_id_placeholder')"
-                            size="small"
-                            @change="buildLegacyInstance"></el-input>
+                            size="sm"
+                            @change="buildLegacyInstance" />
                     </el-form-item>
                     <el-form-item
                         v-if="
@@ -352,14 +352,14 @@
                         </VirtualCombobox>
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.location')">
-                        <el-input
+                        <InputGroupField
                             v-model="newInstanceDialog.location"
-                            size="small"
+                            size="sm"
                             readonly
-                            @click="$event.target.tagName === 'INPUT' && $event.target.select()"></el-input>
+                            @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.url')">
-                        <el-input v-model="newInstanceDialog.url" size="small" readonly></el-input>
+                        <InputGroupField v-model="newInstanceDialog.url" size="sm" readonly />
                     </el-form-item>
                 </el-form>
             </el-tab-pane>
@@ -443,6 +443,7 @@
 <script setup>
     import { computed, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { Checkbox } from '@/components/ui/checkbox';
     import { Check as CheckIcon } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';

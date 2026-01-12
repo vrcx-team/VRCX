@@ -11,26 +11,24 @@
         <template v-if="!hideUserNotes || (hideUserNotes && hideUserMemos)">
             <span class="name">{{ t('dialog.user.info.note') }}</span>
             <br />
-            <InputGroupCharCount
+            <InputGroupTextareaField
                 v-model="note"
+                :autosize="{ minRows: 6, maxRows: 20 }"
                 :maxlength="256"
-                multiline
-                rows="6"
+                :rows="6"
                 :placeholder="t('dialog.user.info.note_placeholder')"
-                input-class="extra resize-none" />
+                input-class="extra resize-none"
+                show-count />
         </template>
         <template v-if="!hideUserMemos || (hideUserNotes && hideUserMemos)">
             <span class="name">{{ t('dialog.user.info.memo') }}</span>
             <br />
-            <el-input
+            <InputGroupTextareaField
                 v-model="memo"
                 class="extra"
-                type="textarea"
                 :rows="6"
-                :autosize="{ minRows: 2, maxRows: 20 }"
                 :placeholder="t('dialog.user.info.memo_placeholder')"
-                size="small"
-                resize="none"></el-input>
+                input-class="resize-none min-h-0" />
         </template>
         <template #footer>
             <div class="dialog-footer">
@@ -44,7 +42,7 @@
 <script setup>
     import { ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { InputGroupCharCount } from '@/components/ui/input-group';
+    import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

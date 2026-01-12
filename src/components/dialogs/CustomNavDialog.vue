@@ -120,7 +120,7 @@
         destroy-on-close>
         <div class="folder-editor">
             <div class="folder-editor__form">
-                <el-input
+                <InputGroupField
                     v-model="folderEditor.data.name"
                     :placeholder="t('nav_menu.custom_nav.folder_name_placeholder')" />
                 <IconPicker v-model="folderEditor.data.icon" class="folder-editor__icon-picker" />
@@ -219,6 +219,7 @@
 
     import { Badge } from '../ui/badge';
     import { Checkbox } from '../ui/checkbox';
+    import { InputGroupField } from '../ui/input-group';
     import { navDefinitions } from '../../shared/constants/ui.js';
 
     import IconPicker from '../IconPicker.vue';

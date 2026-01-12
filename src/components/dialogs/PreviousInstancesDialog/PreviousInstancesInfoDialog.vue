@@ -9,11 +9,11 @@
         @close="closeDialog">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <Location :location="location.tag" style="font-size: 14px" />
-            <el-input
+            <InputGroupField
                 v-model="dataTable.filters[0].value"
                 :placeholder="t('dialog.previous_instances.search_placeholder')"
                 style="width: 150px"
-                clearable></el-input>
+                clearable />
         </div>
         <DataTable :loading="loading" v-bind="dataTable" style="margin-top: 10px">
             <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="130">
@@ -64,6 +64,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { compareByCreatedAt, formatDateFilter, parseLocation, timeToText } from '../../../shared/utils';
+    import { InputGroupField } from '../../../components/ui/input-group';
     import { useGameLogStore, useInstanceStore, useUserStore } from '../../../stores';
     import { database } from '../../../service/database';
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
