@@ -359,7 +359,7 @@
     function addFavoriteWorld(ref, group, message) {
         return favoriteRequest
             .addFavorite({
-                type: 'world',
+                type: group.type,
                 favoriteId: ref.id,
                 tags: group.name
             })

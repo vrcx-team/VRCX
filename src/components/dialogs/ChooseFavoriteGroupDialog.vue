@@ -145,7 +145,7 @@
         loading.value = true;
         favoriteRequest
             .addFavorite({
-                type: D.type,
+                type: group.type,
                 favoriteId: D.objectId,
                 tags: group.name
             })

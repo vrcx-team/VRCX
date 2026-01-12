@@ -112,7 +112,7 @@
     function addFavoriteWorld(groupAPI) {
         return favoriteRequest
             .addFavorite({
-                type: 'world',
+                type: groupAPI.type,
                 favoriteId: props.currentFavorite.id,
                 tags: groupAPI.name
             })

@@ -426,8 +426,8 @@
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
     import { Ellipsis, RefreshCcw } from 'lucide-vue-next';
-    import { Button } from '@/components/ui/button';
     import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
+    import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
@@ -1023,10 +1023,10 @@
         getLocalWorldFavorites();
     }
 
-    function changeWorldGroupVisibility(name, visibility, menuKey = null) {
+    function changeWorldGroupVisibility(group, visibility, menuKey = null) {
         const params = {
-            type: 'world',
-            group: name,
+            type: group.type,
+            group: group.name,
             visibility
         };
         favoriteRequest.saveFavoriteGroup(params).then((args) => {
@@ -1120,7 +1120,7 @@
 
     function handleVisibilitySelection(group, visibility) {
         const menuKey = remoteGroupMenuKey(group.key);
-        changeWorldGroupVisibility(group.name, visibility, menuKey);
+        changeWorldGroupVisibility(group, visibility, menuKey);
     }
 
     function handleRemoteRename(group) {
@@ -1164,7 +1164,7 @@
                 }
                 favoriteRequest
                     .saveFavoriteGroup({
-                        type: 'world',
+                        type: group.type,
                         group: group.name,
                         displayName: newName
                     })
