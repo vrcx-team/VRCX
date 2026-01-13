@@ -108,54 +108,13 @@
             </h2>
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="worldImportDialog.errors"></pre>
         </template>
-        <DataTable :loading="worldImportDialog.loading" v-bind="worldImportTable" style="margin-top: 10px">
-            <el-table-column :label="t('table.import.image')" width="70" prop="thumbnailImageUrl">
-                <template #default="{ row }">
-                    <el-popover placement="right" :width="500" trigger="hover">
-                        <template #reference>
-                            <img :src="row.thumbnailImageUrl" class="friends-list-avatar" loading="lazy" />
-                        </template>
-                        <img
-                            :src="row.imageUrl"
-                            :class="['friends-list-avatar', 'x-popover-image']"
-                            style="cursor: pointer"
-                            @click="showFullscreenImageDialog(row.imageUrl)"
-                            loading="lazy" />
-                    </el-popover>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.import.name')" prop="name">
-                <template #default="{ row }">
-                    <span class="x-link" @click="showWorldDialog(row.id)" v-text="row.name"></span>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.import.author')" width="120" prop="authorName">
-                <template #default="{ row }">
-                    <span class="x-link" @click="showUserDialog(row.authorId)" v-text="row.authorName"></span>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.import.status')" width="70" prop="releaseStatus">
-                <template #default="{ row }">
-                    <span
-                        :style="{
-                            color:
-                                row.releaseStatus === 'public'
-                                    ? '#67c23a'
-                                    : row.releaseStatus === 'private'
-                                      ? '#f56c6c'
-                                      : undefined
-                        }"
-                        v-text="row.releaseStatus.charAt(0).toUpperCase() + row.releaseStatus.slice(1)"></span>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.import.action')" width="90" align="right">
-                <template #default="{ row }">
-                    <Button size="icon-sm" class="w-6 h-6" variant="ghost" @click="deleteItemWorldImport(row)"
-                        ><Trash2
-                    /></Button>
-                </template>
-            </el-table-column>
-        </DataTable>
+        <DataTableLayout
+            class="min-w-0 w-full"
+            :table="table"
+            :loading="worldImportDialog.loading"
+            :table-style="tableStyle"
+            :show-pagination="false"
+            style="margin-top: 10px" />
     </el-dialog>
 </template>
 
@@ -163,17 +122,19 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { DataTableLayout } from '@/components/ui/data-table';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { Loading } from '@element-plus/icons-vue';
-    import { Trash2 } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useFavoriteStore, useGalleryStore, useUserStore, useWorldStore } from '../../../stores';
     import { favoriteRequest, worldRequest } from '../../../api';
+    import { createColumns } from './worldImportColumns.jsx';
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { removeFromArray } from '../../../shared/utils';
+    import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     const { showUserDialog } = useUserStore();
     const { favoriteWorldGroups, worldImportDialogInput, worldImportDialogVisible, localWorldFavoriteGroups } =
@@ -211,6 +172,30 @@
             size: 'small'
         },
         layout: 'table'
+    });
+
+    const tableStyle = { maxHeight: '400px' };
+
+    const rows = computed(() =>
+        Array.isArray(worldImportTable.value?.data) ? worldImportTable.value.data.slice() : []
+    );
+
+    const columns = computed(() =>
+        createColumns({
+            onShowWorld: showWorldDialog,
+            onShowUser: showUserDialog,
+            onShowFullscreenImage: showFullscreenImageDialog,
+            onDelete: deleteItemWorldImport
+        })
+    );
+
+    const { table } = useVrcxVueTable({
+        persistKey: 'worldImportDialog',
+        data: rows,
+        columns: columns.value,
+        getRowId: (row) => String(row?.id ?? ''),
+        enablePagination: false,
+        enableSorting: false
     });
 
     const isVisible = computed({

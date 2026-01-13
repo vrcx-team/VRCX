@@ -103,57 +103,13 @@
             </h2>
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="avatarImportDialog.errors"></pre>
         </template>
-        <DataTable :loading="avatarImportDialog.loading" v-bind="avatarImportTable" style="margin-top: 10px">
-            <el-table-column :label="t('table.import.image')" width="70" prop="thumbnailImageUrl">
-                <template #default="{ row }">
-                    <el-popover placement="right" :width="500" trigger="hover">
-                        <template #reference>
-                            <img :src="row.thumbnailImageUrl" class="friends-list-avatar" loading="lazy" />
-                        </template>
-                        <img
-                            :src="row.imageUrl"
-                            :class="['friends-list-avatar', 'x-popover-image']"
-                            style="cursor: pointer"
-                            @click="showFullscreenImageDialog(row.imageUrl)"
-                            loading="lazy" />
-                    </el-popover>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.import.name')" prop="name">
-                <template #default="{ row }">
-                    <span class="x-link" @click="showAvatarDialog(row.id)">
-                        {{ row.name }}
-                    </span>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.import.author')" width="120" prop="authorName">
-                <template #default="{ row }">
-                    <span class="x-link" @click="showUserDialog(row.authorId)">
-                        {{ row.authorName }}
-                    </span>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.import.status')" width="70" prop="releaseStatus">
-                <template #default="{ row }">
-                    <span
-                        :style="{
-                            color:
-                                row.releaseStatus === 'public'
-                                    ? '#67c23a'
-                                    : row.releaseStatus === 'private'
-                                      ? '#f56c6c'
-                                      : undefined
-                        }">
-                        {{ row.releaseStatus.charAt(0).toUpperCase() + row.releaseStatus.slice(1) }}
-                    </span>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.import.action')" width="90" align="right">
-                <template #default="{ row }">
-                    <Button size="icon-sm" variant="ghost" @click="deleteItemAvatarImport(row)"><Trash2 /> </Button>
-                </template>
-            </el-table-column>
-        </DataTable>
+        <DataTableLayout
+            class="min-w-0 w-full"
+            :table="table"
+            :loading="avatarImportDialog.loading"
+            :table-style="tableStyle"
+            :show-pagination="false"
+            style="margin-top: 10px" />
     </el-dialog>
 </template>
 
@@ -161,17 +117,19 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { DataTableLayout } from '@/components/ui/data-table';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { Loading } from '@element-plus/icons-vue';
-    import { Trash2 } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
     import { avatarRequest, favoriteRequest } from '../../../api';
+    import { createColumns } from './avatarImportColumns.jsx';
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { removeFromArray } from '../../../shared/utils';
+    import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     const emit = defineEmits(['update:avatarImportDialogInput']);
     const { t } = useI18n();
@@ -205,6 +163,30 @@
             size: 'small'
         },
         layout: 'table'
+    });
+
+    const tableStyle = { maxHeight: '400px' };
+
+    const rows = computed(() =>
+        Array.isArray(avatarImportTable.value?.data) ? avatarImportTable.value.data.slice() : []
+    );
+
+    const columns = computed(() =>
+        createColumns({
+            onShowAvatar: showAvatarDialog,
+            onShowUser: showUserDialog,
+            onShowFullscreenImage: showFullscreenImageDialog,
+            onDelete: deleteItemAvatarImport
+        })
+    );
+
+    const { table } = useVrcxVueTable({
+        persistKey: 'avatarImportDialog',
+        data: rows,
+        columns: columns.value,
+        getRowId: (row) => String(row?.id ?? ''),
+        enablePagination: false,
+        enableSorting: false
     });
 
     const avatarImportDialogIndex = ref(2000);

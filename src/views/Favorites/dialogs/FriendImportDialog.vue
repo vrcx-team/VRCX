@@ -84,34 +84,13 @@
             <h2 style="font-weight: bold; margin: 5px 0">{{ t('dialog.friend_import.errors') }}</h2>
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="friendImportDialog.errors"></pre>
         </template>
-        <DataTable :loading="friendImportDialog.loading" v-bind="friendImportTable" style="margin-top: 10px">
-            <el-table-column :label="t('table.import.image')" width="70" prop="currentAvatarThumbnailImageUrl">
-                <template #default="{ row }">
-                    <el-popover placement="right" :width="500" trigger="hover">
-                        <template #reference>
-                            <img class="friends-list-avatar" :src="userImage(row)" />
-                        </template>
-                        <img
-                            :src="userImageFull(row)"
-                            :class="['friends-list-avatar', 'x-popover-image']"
-                            style="cursor: pointer"
-                            @click="showFullscreenImageDialog(userImageFull(row))" />
-                    </el-popover>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.import.name')" prop="displayName">
-                <template #default="{ row }">
-                    <span class="x-link" :title="row.displayName" @click="showUserDialog(row.id)">
-                        {{ row.displayName }}
-                    </span>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.import.action')" width="90" align="right">
-                <template #default="{ row }">
-                    <Button size="icon-sm" variant="ghost" @click="deleteItemFriendImport(row)"><Trash2 /></Button>
-                </template>
-            </el-table-column>
-        </DataTable>
+        <DataTableLayout
+            class="min-w-0 w-full"
+            :table="table"
+            :loading="friendImportDialog.loading"
+            :table-style="tableStyle"
+            :show-pagination="false"
+            style="margin-top: 10px" />
     </el-dialog>
 </template>
 
@@ -119,9 +98,9 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { DataTableLayout } from '@/components/ui/data-table';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { Loading } from '@element-plus/icons-vue';
-    import { Trash2 } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -129,7 +108,9 @@
     import { removeFromArray, userImage, userImageFull } from '../../../shared/utils';
     import { useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
     import { favoriteRequest, userRequest } from '../../../api';
+    import { createColumns } from './friendImportColumns.jsx';
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
+    import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     const { t } = useI18n();
 
@@ -161,6 +142,31 @@
             size: 'small'
         },
         layout: 'table'
+    });
+
+    const tableStyle = { maxHeight: '400px' };
+
+    const rows = computed(() =>
+        Array.isArray(friendImportTable.value?.data) ? friendImportTable.value.data.slice() : []
+    );
+
+    const columns = computed(() =>
+        createColumns({
+            userImage,
+            userImageFull,
+            onShowFullscreenImage: showFullscreenImageDialog,
+            onShowUser: showUserDialog,
+            onDelete: deleteItemFriendImport
+        })
+    );
+
+    const { table } = useVrcxVueTable({
+        persistKey: 'friendImportDialog',
+        data: rows,
+        columns: columns.value,
+        getRowId: (row) => String(row?.id ?? ''),
+        enablePagination: false,
+        enableSorting: false
     });
 
     const friendImportDialogIndex = ref(2000);
