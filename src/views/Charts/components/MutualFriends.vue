@@ -35,7 +35,7 @@
                 <strong>{{ fetchState.processedFriends }} / {{ totalFriends }}</strong>
             </div>
 
-            <el-progress :percentage="progressPercent" :status="progressStatus" :stroke-width="14"> </el-progress>
+            <Progress :model-value="progressPercent" class="h-3" />
         </div>
 
         <div ref="chartRef" class="mutual-graph__canvas"></div>
@@ -144,6 +144,7 @@
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { Settings } from 'lucide-vue-next';
+    import { Progress } from '@/components/ui/progress';
     import { Spinner } from '@/components/ui/spinner';
     import { onBeforeRouteLeave } from 'vue-router';
     import { storeToRefs } from 'pinia';
@@ -213,7 +214,6 @@
     const progressPercent = computed(() =>
         totalFriends.value ? Math.min(100, Math.round((fetchState.processedFriends / totalFriends.value) * 100)) : 0
     );
-    const progressStatus = computed(() => (isFetching.value ? 'warning' : ''));
     const forceDefaults = computed(() =>
         computeForceOptions(graphPayload.value?.nodes ?? [], graphPayload.value?.links ?? [])
     );

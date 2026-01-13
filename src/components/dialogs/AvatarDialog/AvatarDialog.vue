@@ -345,17 +345,9 @@
                                 :disabled="avatarDialog.galleryLoading"
                                 class="ml-1"
                                 @click="displayAvatarGalleryUpload">
-                                <Spinner v-if="avatarDialog.galleryLoading" />
-                                <Upload v-else />
+                                <Upload />
                                 {{ t('dialog.screenshot_metadata.upload') }}
                             </Button>
-                            <el-progress
-                                v-if="avatarDialog.galleryLoading"
-                                :show-text="false"
-                                :indeterminate="true"
-                                :percentage="100"
-                                :stroke-width="3"
-                                style="margin: 10px 0" />
                             <div class="mt-2 w-[80%] ml-20">
                                 <Carousel v-if="avatarDialog.galleryImages.length" class="w-full">
                                     <CarouselContent class="h-50">
@@ -543,7 +535,6 @@
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
-    import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -1092,14 +1083,17 @@
             try {
                 avatarDialog.value.galleryLoading = true;
                 const base64Body = btoa(r.result.toString());
-                avatarRequest
-                    .uploadAvatarGalleryImage(base64Body, avatarDialog.value.id)
-                    .then(async (args) => {
-                        toast.success(t('message.avatar_gallery.uploaded'));
-                        console.log(args);
-                        avatarDialog.value.galleryImages = await getAvatarGallery(avatarDialog.value.id);
-                        return args;
-                    })
+                const uploadPromise = (async () => {
+                    const args = await avatarRequest.uploadAvatarGalleryImage(base64Body, avatarDialog.value.id);
+                    avatarDialog.value.galleryImages = await getAvatarGallery(avatarDialog.value.id);
+                    return args;
+                })();
+                toast.promise(uploadPromise, {
+                    loading: t('message.upload.loading'),
+                    success: t('message.upload.success'),
+                    error: t('message.upload.error')
+                });
+                uploadPromise
                     .catch((error) => {
                         console.error('Failed to upload image', error);
                     })

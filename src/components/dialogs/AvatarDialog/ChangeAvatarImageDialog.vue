@@ -13,13 +13,6 @@
                 accept="image/*"
                 style="display: none"
                 @change="onFileChangeAvatarImage" />
-            <el-progress
-                v-if="changeAvatarImageDialogLoading"
-                :show-text="false"
-                :indeterminate="true"
-                :percentage="100"
-                :stroke-width="3"
-                style="margin-bottom: 12px" />
             <span>{{ t('dialog.change_content_image.description') }}</span>
             <br />
             <Button
@@ -27,8 +20,7 @@
                 size="icon-sm"
                 :disabled="changeAvatarImageDialogLoading"
                 @click="uploadAvatarImage">
-                <Spinner v-if="changeAvatarImageDialogLoading" />
-                <Upload v-else />
+                <Upload />
                 {{ t('dialog.change_content_image.upload') }}
             </Button>
             <br />
@@ -41,7 +33,6 @@
 
 <script setup>
     import { Button } from '@/components/ui/button';
-    import { Spinner } from '@/components/ui/spinner';
     import { Upload } from '@element-plus/icons-vue';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
@@ -114,7 +105,7 @@
         r.onerror = finalize;
         r.onabort = finalize;
         r.onload = async function () {
-            try {
+            const uploadPromise = (async () => {
                 const base64File = await resizeImageToFitLimits(btoa(r.result.toString()));
                 // 10MB
                 if (LINUX) {
@@ -124,6 +115,14 @@
                     return;
                 }
                 await initiateUploadLegacy(base64File, file);
+            })();
+            toast.promise(uploadPromise, {
+                loading: t('message.upload.loading'),
+                success: t('message.upload.success'),
+                error: t('message.upload.error')
+            });
+            try {
+                await uploadPromise;
             } catch (error) {
                 console.error('avatar image upload process failed:', error);
             } finally {
@@ -286,7 +285,6 @@
     function avatarImageSet(args) {
         changeAvatarImageDialogLoading.value = false;
         if (args.json.imageUrl === args.params.imageUrl) {
-            toast.success(t('message.avatar.image_changed'));
             emit('update:previousImageUrl', args.json.imageUrl);
         } else {
             $throw(0, 'avatar image change failed', args.params.imageUrl);
@@ -305,7 +303,6 @@
         const ref = applyAvatar(avatarArgs.json);
         changeAvatarImageDialogLoading.value = false;
         emit('update:previousImageUrl', ref.imageUrl);
-        toast.success(t('message.avatar.image_changed'));
 
         // closeDialog();
     }

@@ -13,18 +13,10 @@
                 accept="image/*"
                 style="display: none"
                 @change="onFileChangeWorldImage" />
-            <el-progress
-                v-if="changeWorldImageDialogLoading"
-                :show-text="false"
-                :indeterminate="true"
-                :percentage="100"
-                :stroke-width="3"
-                style="margin-bottom: 12px" />
             <span>{{ t('dialog.change_content_image.description') }}</span>
             <br />
             <Button variant="outline" size="sm" :disabled="changeWorldImageDialogLoading" @click="uploadWorldImage">
-                <Spinner v-if="changeWorldImageDialogLoading" />
-                <Upload v-else />
+                <Upload />
                 {{ t('dialog.change_content_image.upload') }}
             </Button>
             <br />
@@ -37,7 +29,6 @@
 
 <script setup>
     import { Button } from '@/components/ui/button';
-    import { Spinner } from '@/components/ui/spinner';
     import { Upload } from '@element-plus/icons-vue';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
@@ -110,11 +101,19 @@
         r.onerror = finalize;
         r.onabort = finalize;
         r.onload = async function () {
-            try {
+            const uploadPromise = (async () => {
                 const base64File = await resizeImageToFitLimits(btoa(r.result.toString()));
                 // 10MB
                 await initiateUploadLegacy(base64File, file);
                 // await initiateUpload(base64File);
+            })();
+            toast.promise(uploadPromise, {
+                loading: t('message.upload.loading'),
+                success: t('message.upload.success'),
+                error: t('message.upload.error')
+            });
+            try {
+                await uploadPromise;
             } catch (error) {
                 console.error('World image upload process failed:', error);
             } finally {
@@ -277,7 +276,6 @@
     function worldImageSet(args) {
         changeWorldImageDialogLoading.value = false;
         if (args.json.imageUrl === args.params.imageUrl) {
-            toast.success(t('message.world.image_changed'));
             emit('update:previousImageUrl', args.json.imageUrl);
         } else {
             $throw(0, 'World image change failed', args.params.imageUrl);
@@ -296,7 +294,6 @@
         const ref = applyWorld(worldArgs.json);
         changeWorldImageDialogLoading.value = false;
         emit('update:previousImageUrl', ref.imageUrl);
-        toast.success(t('message.world.image_changed'));
 
         // closeDialog();
     }

@@ -8,7 +8,8 @@
         width="400px">
         <div v-loading="checkingForVRCXUpdate" style="margin-top: 15px">
             <template v-if="updateInProgress">
-                <el-progress :percentage="updateProgress" :format="updateProgressText"></el-progress>
+                <Progress :model-value="updateProgress" class="w-full" />
+                <div class="mt-2 text-xs" v-text="updateProgressText()"></div>
                 <br />
             </template>
             <template v-else>
@@ -73,6 +74,7 @@
 <script setup>
     import { nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Progress } from '@/components/ui/progress';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

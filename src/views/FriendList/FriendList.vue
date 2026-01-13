@@ -241,10 +241,10 @@
                 :show-close="false"
                 align-center>
                 <div style="margin-bottom: 10px" v-text="t('view.friend_list.load_dialog_message')"></div>
-                <el-progress
-                    :percentage="friendsListLoadingPercent"
-                    :text-inside="true"
-                    :stroke-width="16"></el-progress>
+                <div class="flex items-center gap-2">
+                    <Progress :model-value="friendsListLoadingPercent" class="h-4 w-full" />
+                    <span class="text-xs w-10 text-right">{{ friendsListLoadingPercent }}%</span>
+                </div>
                 <div style="margin-top: 10px; text-align: right">
                     <span>{{ friendsListLoadingCurrent }} / {{ friendsListLoadingTotal }}</span>
                 </div>
@@ -262,6 +262,7 @@
     import { computed, nextTick, reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupField } from '@/components/ui/input-group';
+    import { Progress } from '@/components/ui/progress';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

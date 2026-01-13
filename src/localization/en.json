@@ -1971,6 +1971,11 @@
             "already_last": "Already last image",
             "reordered": "Successfully reordered avatar gallery images"
         },
+        "upload": {
+            "loading": "Uploading",
+            "success": "Upload completed",
+            "error": "Upload failed"
+        },
         "world": {
             "image_changed": "World image changed",
             "image_invalid": "Current world image invalid"

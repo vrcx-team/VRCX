@@ -6,13 +6,6 @@
             </Button>
             <span class="header">{{ t('dialog.gallery_icons.header') }}</span>
         </div>
-        <el-progress
-            v-if="isUploading"
-            :show-text="false"
-            :indeterminate="true"
-            :percentage="100"
-            :stroke-width="3"
-            style="margin-bottom: 12px" />
         <el-tabs>
             <el-tab-pane v-loading="galleryDialogGalleryLoading">
                 <template #label>
@@ -680,13 +673,16 @@
         r.onload = function () {
             try {
                 const base64Body = btoa(r.result.toString());
-                vrcPlusImageRequest
-                    .uploadGalleryImage(base64Body)
-                    .then((args) => {
-                        handleGalleryImageAdd(args);
-                        toast.success(t('message.gallery.uploaded'));
-                        return args;
-                    })
+                const uploadPromise = vrcPlusImageRequest.uploadGalleryImage(base64Body).then((args) => {
+                    handleGalleryImageAdd(args);
+                    return args;
+                });
+                toast.promise(uploadPromise, {
+                    loading: t('message.upload.loading'),
+                    success: t('message.upload.success'),
+                    error: t('message.upload.error')
+                });
+                uploadPromise
                     .catch((error) => {
                         console.error('Failed to upload', error);
                     })
@@ -772,15 +768,18 @@
         r.onload = function () {
             try {
                 const base64Body = btoa(r.result.toString());
-                vrcPlusIconRequest
-                    .uploadVRCPlusIcon(base64Body)
-                    .then((args) => {
-                        if (Object.keys(VRCPlusIconsTable.value).length !== 0) {
-                            VRCPlusIconsTable.value.unshift(args.json);
-                        }
-                        toast.success(t('message.icon.uploaded'));
-                        return args;
-                    })
+                const uploadPromise = vrcPlusIconRequest.uploadVRCPlusIcon(base64Body).then((args) => {
+                    if (Object.keys(VRCPlusIconsTable.value).length !== 0) {
+                        VRCPlusIconsTable.value.unshift(args.json);
+                    }
+                    return args;
+                });
+                toast.promise(uploadPromise, {
+                    loading: t('message.upload.loading'),
+                    success: t('message.upload.success'),
+                    error: t('message.upload.error')
+                });
+                uploadPromise
                     .catch((error) => {
                         console.error('Failed to upload VRC+ icon', error);
                     })
@@ -902,15 +901,18 @@
                     params.loopStyle = 'pingpong';
                 }
                 const base64Body = btoa(r.result.toString());
-                vrcPlusImageRequest
-                    .uploadEmoji(base64Body, params)
-                    .then((args) => {
-                        if (Object.keys(emojiTable.value).length !== 0) {
-                            emojiTable.value.unshift(args.json);
-                        }
-                        toast.success(t('message.emoji.uploaded'));
-                        return args;
-                    })
+                const uploadPromise = vrcPlusImageRequest.uploadEmoji(base64Body, params).then((args) => {
+                    if (Object.keys(emojiTable.value).length !== 0) {
+                        emojiTable.value.unshift(args.json);
+                    }
+                    return args;
+                });
+                toast.promise(uploadPromise, {
+                    loading: t('message.upload.loading'),
+                    success: t('message.upload.success'),
+                    error: t('message.upload.error')
+                });
+                uploadPromise
                     .catch((error) => {
                         console.error('Failed to upload', error);
                     })
@@ -969,13 +971,16 @@
                     maskTag: 'square'
                 };
                 const base64Body = btoa(r.result.toString());
-                vrcPlusImageRequest
-                    .uploadSticker(base64Body, params)
-                    .then((args) => {
-                        handleStickerAdd(args);
-                        toast.success(t('message.sticker.uploaded'));
-                        return args;
-                    })
+                const uploadPromise = vrcPlusImageRequest.uploadSticker(base64Body, params).then((args) => {
+                    handleStickerAdd(args);
+                    return args;
+                });
+                toast.promise(uploadPromise, {
+                    loading: t('message.upload.loading'),
+                    success: t('message.upload.success'),
+                    error: t('message.upload.error')
+                });
+                uploadPromise
                     .catch((error) => {
                         console.error('Failed to upload', error);
                     })
@@ -1041,16 +1046,20 @@
                 };
                 const base64Body = btoa(r.result.toString());
                 const cropWhiteBorder = printCropBorder.value;
-                vrcPlusImageRequest
+                const uploadPromise = vrcPlusImageRequest
                     .uploadPrint(base64Body, cropWhiteBorder, params)
                     .then((args) => {
-                        toast.success(t('message.print.uploaded'));
                         if (Object.keys(printTable.value).length !== 0) {
                             printTable.value.unshift(args.json);
                         }
-
                         return args;
-                    })
+                    });
+                toast.promise(uploadPromise, {
+                    loading: t('message.upload.loading'),
+                    success: t('message.upload.success'),
+                    error: t('message.upload.error')
+                });
+                uploadPromise
                     .catch((error) => {
                         console.error('Failed to upload', error);
                     })
