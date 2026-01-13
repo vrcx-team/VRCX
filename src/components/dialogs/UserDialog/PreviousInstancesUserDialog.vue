@@ -5,79 +5,31 @@
         :title="t('dialog.previous_instances.header')"
         width="1000px"
         append-to-body>
-        <div style="display: flex; align-items: center; justify-content: space-between">
-            <span style="font-size: 14px" v-text="previousInstancesUserDialog.userRef.displayName"></span>
-            <InputGroupField
-                v-model="previousInstancesUserDialogTable.filters[0].value"
-                :placeholder="t('dialog.previous_instances.search_placeholder')"
-                style="display: block; width: 150px" />
-        </div>
-        <DataTable :loading="loading" v-bind="previousInstancesUserDialogTable" style="margin-top: 10px">
-            <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="170">
-                <template #default="scope">
-                    <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.previous_instances.world')" prop="name" sortable>
-                <template #default="scope">
-                    <Location
-                        :location="scope.row.location"
-                        :hint="scope.row.worldName"
-                        :grouphint="scope.row.groupName" />
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.previous_instances.instance_creator')" prop="location" width="170">
-                <template #default="scope">
-                    <DisplayName :userid="scope.row.$location.userId" :location="scope.row.$location.tag" />
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.previous_instances.time')" prop="time" width="100" sortable>
-                <template #default="scope">
-                    <span v-text="scope.row.timer"></span>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.previous_instances.action')" width="120" align="right">
-                <template #default="scope">
-                    <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        class="button-pd-0 w-6 h-6 text-xs"
-                        @click="showLaunchDialog(scope.row.location)"
-                        ><i class="ri-door-open-line"></i
-                    ></Button>
-                    <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        class="button-pd-0 w-6 h-6 text-xs"
-                        @click="showPreviousInstancesInfoDialog(scope.row.location)"
-                        ><i class="ri-information-line"></i
-                    ></Button>
-                    <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        v-if="shiftHeld"
-                        style="color: #f56c6c"
-                        class="button-pd-0 w-6 h-6 text-xs"
-                        @click="deleteGameLogUserInstance(scope.row)"
-                        ><i class="ri-delete-bin-line"></i
-                    ></Button>
-                    <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        v-else
-                        class="button-pd-0 w-6 h-6 text-xs"
-                        @click="deleteGameLogUserInstancePrompt(scope.row)"
-                        ><i class="ri-delete-bin-line"></i
-                    ></Button>
-                </template>
-            </el-table-column>
-        </DataTable>
+        <DataTableLayout
+            class="min-w-0 w-full"
+            :table="table"
+            :loading="loading"
+            :table-style="tableStyle"
+            :page-sizes="pageSizes"
+            :total-items="totalItems"
+            :on-page-size-change="handlePageSizeChange">
+            <template #toolbar>
+                <div style="display: flex; align-items: center; justify-content: space-between">
+                    <span style="font-size: 14px" v-text="previousInstancesUserDialog.userRef.displayName"></span>
+                    <InputGroupField
+                        v-model="search"
+                        :placeholder="t('dialog.previous_instances.search_placeholder')"
+                        clearable
+                        class="w-1/3"
+                        style="display: block" />
+                </div>
+            </template>
+        </DataTableLayout>
     </el-dialog>
 </template>
 
 <script setup>
-    import { computed, nextTick, reactive, ref, watch } from 'vue';
-    import { Button } from '@/components/ui/button';
+    import { computed, nextTick, ref, watch } from 'vue';
     import { ElMessageBox } from 'element-plus';
     import { InputGroupField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
@@ -85,14 +37,17 @@
 
     import {
         compareByCreatedAt,
-        formatDateFilter,
+        localeIncludes,
         parseLocation,
         removeFromArray,
         timeToText
     } from '../../../shared/utils';
-    import { useInstanceStore, useLaunchStore, useUiStore } from '../../../stores';
+    import { useInstanceStore, useLaunchStore, useSearchStore, useUiStore, useVrcxStore } from '../../../stores';
+    import { DataTableLayout } from '../../ui/data-table';
+    import { createColumns } from './previousInstancesUserColumns.jsx';
     import { database } from '../../../service/database';
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
+    import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     const props = defineProps({
         previousInstancesUserDialog: {
@@ -114,23 +69,17 @@
 
     const emit = defineEmits(['update:previous-instances-user-dialog']);
     const loading = ref(false);
-    const previousInstancesUserDialogTable = reactive({
-        data: [],
-        filters: [{ prop: 'worldName', value: '' }],
-        tableProps: {
-            stripe: true,
-            size: 'small',
-            defaultSort: { prop: 'created_at', order: 'descending' }
-        },
-        pageSize: 10,
-        paginationProps: {
-            layout: 'sizes,prev,pager,next,total'
-        }
-    });
+    const rawRows = ref([]);
+    const search = ref('');
+    const pageSizes = [10, 25, 50, 100];
+    const pageSize = ref(10);
+    const tableStyle = { maxHeight: '400px' };
 
     const { showLaunchDialog } = useLaunchStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { shiftHeld } = storeToRefs(useUiStore());
+    const { stringComparer } = storeToRefs(useSearchStore());
+    const vrcxStore = useVrcxStore();
     const { t } = useI18n();
 
     const previousInstancesUserDialogIndex = ref(2000);
@@ -145,6 +94,64 @@
         }
     });
 
+    const displayRows = computed(() => {
+        const q = String(search.value ?? '')
+            .trim()
+            .toLowerCase();
+        const rows = Array.isArray(rawRows.value) ? rawRows.value : [];
+        if (!q) return rows;
+        return rows.filter((row) => {
+            return (
+                localeIncludes(row?.worldName ?? '', q, stringComparer.value) ||
+                localeIncludes(row?.groupName ?? '', q, stringComparer.value) ||
+                localeIncludes(row?.location ?? '', q, stringComparer.value)
+            );
+        });
+    });
+
+    const columns = computed(() =>
+        createColumns({
+            shiftHeld,
+            onLaunch: showLaunchDialog,
+            onShowInfo: showPreviousInstancesInfoDialog,
+            onDelete: deleteGameLogUserInstance,
+            onDeletePrompt: deleteGameLogUserInstancePrompt
+        })
+    );
+
+    const { table } = useVrcxVueTable({
+        persistKey: 'previousInstancesUserDialog',
+        data: displayRows,
+        columns: columns.value,
+        getRowId: (row) => `${row?.location ?? ''}:${row?.created_at ?? ''}`,
+        initialSorting: [{ id: 'created_at', desc: true }],
+        initialPagination: {
+            pageIndex: 0,
+            pageSize: pageSize.value
+        }
+    });
+
+    watch(
+        columns,
+        (next) => {
+            table.setOptions((prev) => ({
+                ...prev,
+                columns: next
+            }));
+        },
+        { immediate: true }
+    );
+
+    const totalItems = computed(() => {
+        const length = table.getFilteredRowModel().rows.length;
+        const max = vrcxStore.maxTableSize;
+        return length > max && length < max + 51 ? max : length;
+    });
+
+    const handlePageSizeChange = (size) => {
+        pageSize.value = size;
+    };
+
     const refreshPreviousInstancesUserTable = async () => {
         loading.value = true;
         const data = await database.getPreviousInstancesByUserId(props.previousInstancesUserDialog.userRef);
@@ -155,7 +162,7 @@
             array.push(item);
         }
         array.sort(compareByCreatedAt);
-        previousInstancesUserDialogTable.data = array;
+        rawRows.value = array;
         loading.value = false;
     };
 
@@ -178,7 +185,7 @@
             location: row.location,
             events: row.events
         });
-        removeFromArray(previousInstancesUserDialogTable.data, row);
+        removeFromArray(rawRows.value, row);
     }
 
     function deleteGameLogUserInstancePrompt(row) {

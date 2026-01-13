@@ -1,8 +1,8 @@
 <script setup>
     import { computed, nextTick, onMounted, ref, useAttrs, watch } from 'vue';
-    import { useVModel } from '@vueuse/core';
     import { X } from 'lucide-vue-next';
     import { cn } from '@/lib/utils';
+    import { useVModel } from '@vueuse/core';
 
     import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupText, InputGroupTextarea } from '.';
 
@@ -29,8 +29,43 @@
     const textareaRef = ref(null);
     const valueLength = computed(() => String(modelValue.value ?? '').length);
     const maxLength = computed(() => props.maxlength ?? attrs.maxlength);
-    const wrapperClass = computed(() => cn(props.class, attrs.class));
+    const wrapperClass = computed(() => cn(props.class, attrs.class, 'flex-nowrap'));
     const inputClass = computed(() => cn(props.inputClass));
+    const wrapperStyle = computed(() => {
+        const raw = attrs.style;
+        if (!raw) return undefined;
+        if (typeof raw === 'string') {
+            const filtered = raw
+                .split(';')
+                .map((s) => s.trim())
+                .filter((s) => s && !s.toLowerCase().startsWith('display:'))
+                .join('; ');
+            return filtered || undefined;
+        }
+        if (Array.isArray(raw)) {
+            return raw.map((s) => {
+                if (typeof s === 'string') {
+                    return s
+                        .split(';')
+                        .map((p) => p.trim())
+                        .filter((p) => p && !p.toLowerCase().startsWith('display:'))
+                        .join('; ');
+                }
+                if (s && typeof s === 'object') {
+                    const next = { ...s };
+                    delete next.display;
+                    return next;
+                }
+                return s;
+            });
+        }
+        if (raw && typeof raw === 'object') {
+            const next = { ...raw };
+            delete next.display;
+            return next;
+        }
+        return raw;
+    });
     const showCount = computed(() => Boolean(maxLength.value) && props.showCount);
     const autosizeConfig = computed(() => {
         if (!props.autosize) return null;
@@ -38,21 +73,19 @@
     });
 
     const inputAttrs = computed(() => {
-        const {
-            class: _class,
-            style: _style,
-            maxlength: _maxlength,
-            onInput: _onInput,
-            onChange: _onChange,
-            ...rest
-        } = attrs;
+        const rest = { ...(attrs ?? {}) };
+        delete rest.class;
+        delete rest.style;
+        delete rest.maxlength;
+        delete rest.onInput;
+        delete rest.onChange;
         return {
             ...rest,
             maxlength: maxLength.value
         };
     });
 
-    const isDisabled = computed(() => Boolean(inputAttrs.value.disabled));
+    const isDisabled = computed(() => Boolean(/** @type {any} */ (inputAttrs.value)?.disabled));
 
     function resolveTextareaEl() {
         const instance = textareaRef.value;
@@ -114,7 +147,7 @@
 </script>
 
 <template>
-    <InputGroup :class="wrapperClass" :style="attrs.style" :data-disabled="isDisabled ? 'true' : undefined">
+    <InputGroup :class="wrapperClass" :style="wrapperStyle" :data-disabled="isDisabled ? 'true' : undefined">
         <InputGroupAddon v-if="$slots.leading" align="block-start">
             <slot name="leading" />
         </InputGroupAddon>

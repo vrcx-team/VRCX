@@ -5,104 +5,63 @@
         :title="t('dialog.previous_instances.header')"
         width="1000px"
         append-to-body>
-        <div style="display: flex; align-items: center; justify-content: space-between">
-            <span style="font-size: 14px" v-text="previousInstancesGroupDialog.groupRef.name"></span>
-            <InputGroupField
-                v-model="previousInstancesGroupDialogTable.filters[0].value"
-                :placeholder="t('dialog.previous_instances.search_placeholder')"
-                style="width: 150px" />
-        </div>
-
-        <DataTable :loading="loading" v-bind="previousInstancesGroupDialogTable" style="margin-top: 10px">
-            <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="170">
-                <template #default="scope">
-                    <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.previous_instances.instance_name')" prop="name">
-                <template #default="scope">
-                    <Location
-                        :location="scope.row.$location.tag"
-                        :grouphint="scope.row.groupName"
-                        :hint="scope.row.worldName" />
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.previous_instances.time')" prop="time" width="100" sortable>
-                <template #default="scope">
-                    <span v-text="scope.row.timer"></span>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.previous_instances.action')" width="120" align="right">
-                <template #default="scope">
-                    <Button
-                        size="icon-sm"
-                        class="w-6 h-6 text-xs"
-                        variant="ghost"
-                        @click="showPreviousInstancesInfoDialog(scope.row.location)"
-                        ><i class="ri-information-line"></i
-                    ></Button>
-                    <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        class="w-6 h-6 text-xs"
-                        v-if="shiftHeld"
-                        style="color: #f56c6c"
-                        @click="deleteGameLogGroupInstance(scope.row)"
-                        ><i class="ri-delete-bin-line"></i
-                    ></Button>
-                    <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        class="w-6 h-6 text-xs"
-                        v-else
-                        @click="deleteGameLogGroupInstancePrompt(scope.row)"
-                        ><i class="ri-delete-bin-line"></i
-                    ></Button>
-                </template>
-            </el-table-column>
-        </DataTable>
+        <DataTableLayout
+            class="min-w-0 w-full"
+            :table="table"
+            :loading="loading"
+            :table-style="tableStyle"
+            :page-sizes="pageSizes"
+            :total-items="totalItems"
+            :on-page-size-change="handlePageSizeChange">
+            <template #toolbar>
+                <div style="display: flex; align-items: center; justify-content: space-between">
+                    <span style="font-size: 14px" v-text="previousInstancesGroupDialog.groupRef.name"></span>
+                    <InputGroupField
+                        class="w-1/3"
+                        v-model="search"
+                        :placeholder="t('dialog.previous_instances.search_placeholder')"
+                        clearable />
+                </div>
+            </template>
+        </DataTableLayout>
     </el-dialog>
 </template>
 
 <script setup>
-    import { computed, nextTick, reactive, ref, watch } from 'vue';
-    import { Button } from '@/components/ui/button';
+    import { computed, nextTick, ref, watch } from 'vue';
     import { ElMessageBox } from 'element-plus';
     import { InputGroupField } from '@/components/ui/input-group';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import {
         compareByCreatedAt,
-        formatDateFilter,
+        localeIncludes,
         parseLocation,
         removeFromArray,
         timeToText
     } from '../../../shared/utils';
-    import { useInstanceStore, useUiStore } from '../../../stores';
+    import { useInstanceStore, useSearchStore, useUiStore, useVrcxStore } from '../../../stores';
+    import { DataTableLayout } from '../../ui/data-table';
+    import { createColumns } from './previousInstancesGroupColumns.jsx';
     import { database } from '../../../service/database';
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
+    import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { shiftHeld } = useUiStore();
+    const { stringComparer } = storeToRefs(useSearchStore());
     const { t } = useI18n();
 
     const previousInstancesGroupDialogIndex = ref(2000);
     const loading = ref(false);
 
-    const previousInstancesGroupDialogTable = reactive({
-        data: [],
-        filters: [{ prop: 'groupName', value: '' }],
-        tableProps: {
-            stripe: true,
-            size: 'small',
-            defaultSort: { prop: 'created_at', order: 'descending' }
-        },
-        pageSize: 10,
-        paginationProps: { layout: 'sizes,prev,pager,next,total' }
-    });
+    const vrcxStore = useVrcxStore();
+    const rawRows = ref([]);
+    const search = ref('');
+    const pageSizes = [10, 25, 50, 100];
+    const pageSize = ref(10);
+    const tableStyle = { maxHeight: '400px' };
 
     const props = defineProps({
         previousInstancesGroupDialog: { type: Object, required: true }
@@ -118,6 +77,63 @@
             });
         }
     });
+
+    const displayRows = computed(() => {
+        const q = String(search.value ?? '')
+            .trim()
+            .toLowerCase();
+        const rows = Array.isArray(rawRows.value) ? rawRows.value : [];
+        if (!q) return rows;
+        return rows.filter((row) => {
+            return (
+                localeIncludes(row?.worldName ?? '', q, stringComparer.value) ||
+                localeIncludes(row?.groupName ?? '', q, stringComparer.value) ||
+                localeIncludes(row?.location ?? '', q, stringComparer.value)
+            );
+        });
+    });
+
+    const columns = computed(() =>
+        createColumns({
+            shiftHeld,
+            onShowInfo: showPreviousInstancesInfoDialog,
+            onDelete: deleteGameLogGroupInstance,
+            onDeletePrompt: deleteGameLogGroupInstancePrompt
+        })
+    );
+
+    const { table } = useVrcxVueTable({
+        persistKey: 'previousInstancesGroupDialog',
+        data: displayRows,
+        columns: columns.value,
+        getRowId: (row) => `${row?.location ?? ''}:${row?.created_at ?? ''}`,
+        initialSorting: [{ id: 'created_at', desc: true }],
+        initialPagination: {
+            pageIndex: 0,
+            pageSize: pageSize.value
+        }
+    });
+
+    watch(
+        columns,
+        (next) => {
+            table.setOptions((prev) => ({
+                ...prev,
+                columns: /** @type {any} */ (next)
+            }));
+        },
+        { immediate: true }
+    );
+
+    const totalItems = computed(() => {
+        const length = table.getFilteredRowModel().rows.length;
+        const max = vrcxStore.maxTableSize;
+        return length > max && length < max + 51 ? max : length;
+    });
+
+    const handlePageSizeChange = (size) => {
+        pageSize.value = size;
+    };
 
     watch(
         () => props.previousInstancesGroupDialog.openFlg,
@@ -142,14 +158,14 @@
                 array.push(ref);
             }
             array.sort(compareByCreatedAt);
-            previousInstancesGroupDialogTable.data = array;
+            rawRows.value = array;
             loading.value = false;
         });
     }
 
     function deleteGameLogGroupInstance(row) {
         database.deleteGameLogInstanceByInstanceId({ location: row.location });
-        removeFromArray(previousInstancesGroupDialogTable.data, row);
+        removeFromArray(rawRows.value, row);
     }
 
     function deleteGameLogGroupInstancePrompt(row) {
