@@ -7,7 +7,7 @@ import {
     isFunction,
     useVueTable
 } from '@tanstack/vue-table';
-import { ref, unref, watch } from 'vue';
+import { computed, ref, unref, watch } from 'vue';
 
 function safeJsonParse(str) {
     if (!str) {
@@ -233,12 +233,13 @@ export function useVrcxVueTable(options) {
         });
     }
 
+    const dataSource = computed(() => resolveMaybeGetter(options.data));
+    const columnsSource = computed(() => resolveMaybeGetter(options.columns));
+
     const table = useVueTable({
-        get data() {
-            return resolveMaybeGetter(options.data);
-        },
+        data: dataSource,
         get columns() {
-            const cols = resolveMaybeGetter(options.columns);
+            const cols = columnsSource.value;
 
             const stretchAfterId = findStretchColumnId(cols);
 
@@ -260,6 +261,23 @@ export function useVrcxVueTable(options) {
 
         ...tableOptions
     });
+
+    watch(
+        columnsSource,
+        (next) => {
+            table.setOptions((prev) => ({
+                ...prev,
+                columns: withSpacerColumn(
+                    next,
+                    fillRemainingSpace,
+                    spacerColumnId,
+                    findStretchColumnId(next)
+                )
+            }));
+            table.setState((prev) => ({ ...prev }));
+        },
+        { immediate: true }
+    );
 
     const persistWrite = debounce(
         (payload) => writePersisted(payload),

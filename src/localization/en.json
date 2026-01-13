@@ -1538,7 +1538,7 @@
             "branch_stable": "Stable",
             "branch_nightly": "Nightly",
             "nightly_title": "Nightly builds",
-            "nightly_notice": "Nightly builds are for testing. For stability, use Stable.",
+            "nightly_notice": "Nightly builds are for testing. For stability, use stable build.",
             "release": "Release",
             "download": "Download",
             "install": "Install",

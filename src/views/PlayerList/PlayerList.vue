@@ -150,7 +150,6 @@
 
             <div class="current-instance-table flex min-h-0 min-w-0 flex-1">
                 <DataTableLayout
-                    :key="playerListRenderKey"
                     class="min-w-0 w-full [&_th]:px-2.5! [&_th]:py-0.75! [&_td]:px-2.5! [&_td]:py-0.75! [&_tr]:h-7!"
                     :table="playerListTable"
                     table-class="min-w-max w-max"
@@ -210,8 +209,6 @@
     const playerListRef = ref(null);
     const playerListHeaderRef = ref(null);
     const playerListPhotonRef = ref(null);
-    const playerListRenderKey = ref(0);
-
     const { tableStyle: playerListTableStyle } = useDataTableScrollHeight(playerListRef, {
         offset: 30,
         paginationHeight: 0,
@@ -296,19 +293,6 @@
                 ...prev,
                 columns: next
             }));
-        },
-        { immediate: true }
-    );
-
-    watch(
-        () => currentInstanceUsersData.value,
-        (val) => {
-            console.debug('Player list data updated:', val.length);
-            playerListTable.setOptions((prev) => ({
-                ...prev,
-                data: val
-            }));
-            playerListRenderKey.value += 1;
         },
         { immediate: true }
     );

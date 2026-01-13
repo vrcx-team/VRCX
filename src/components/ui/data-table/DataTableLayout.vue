@@ -15,7 +15,8 @@
                             <TableHead
                                 v-for="header in headerGroup.headers"
                                 :key="header.id"
-                                :class="getHeaderClass(header)">
+                                :class="getHeaderClass(header)"
+                                :style="getPinnedStyle(header.column)">
                                 <template v-if="!header.isPlaceholder">
                                     <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
                                     <div
@@ -37,7 +38,8 @@
                                     <TableCell
                                         v-for="cell in row.getVisibleCells()"
                                         :key="cell.id"
-                                        :class="getCellClass(cell)">
+                                        :class="getCellClass(cell)"
+                                        :style="getPinnedStyle(cell.column)">
                                         <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                                     </TableCell>
                                 </TableRow>
@@ -205,6 +207,31 @@
         return value;
     };
 
+    const getPinnedState = (col) => {
+        try {
+            return col?.getIsPinned?.() ?? false;
+        } catch {
+            return false;
+        }
+    };
+
+    const getPinnedStyle = (col) => {
+        const pinned = getPinnedState(col);
+        if (!pinned) return null;
+
+        if (pinned === 'left') {
+            const left = col?.getStart?.('left') ?? 0;
+            return { left: `${left}px` };
+        }
+
+        if (pinned === 'right') {
+            const right = col?.getAfter?.('right') ?? 0;
+            return { right: `${right}px` };
+        }
+
+        return null;
+    };
+
     const isSpacer = (col) => col?.id === '__spacer';
 
     const isStretch = (col) => {
@@ -226,8 +253,10 @@
     const getHeaderClass = (header) => {
         const columnDef = header?.column?.columnDef;
         const meta = columnDef?.meta ?? {};
+        const pinned = getPinnedState(header?.column);
         return joinClasses(
-            'sticky top-0 z-10 bg-background relative group',
+            'sticky top-0 bg-background relative group',
+            pinned ? 'z-30' : 'z-10',
             isSpacer(header.column) && 'p-0',
             resolveClassValue(meta.class, header?.getContext?.()),
             resolveClassValue(meta.headerClass, header?.getContext?.()),
@@ -240,7 +269,9 @@
     const getCellClass = (cell) => {
         const columnDef = cell?.column?.columnDef;
         const meta = columnDef?.meta ?? {};
+        const pinned = getPinnedState(cell?.column);
         return joinClasses(
+            pinned && 'sticky bg-background z-20',
             isSpacer(cell.column) && 'p-0',
             resolveClassValue(meta.class, cell?.getContext?.()),
             resolveClassValue(meta.cellClass, cell?.getContext?.()),
