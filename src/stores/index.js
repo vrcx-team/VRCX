@@ -121,8 +121,10 @@ async function registerSentryPiniaPlugin() {
 }
 
 export async function initPiniaPlugins() {
-    registerPiniaActionTrailPlugin();
     await registerSentryPiniaPlugin();
+    setTimeout(() => {
+        registerPiniaActionTrailPlugin();
+    }, 60000);
 }
 
 export function createGlobalStores() {

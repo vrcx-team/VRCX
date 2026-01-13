@@ -544,7 +544,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                             scope.setTag('reason', 'crash-recovery');
                             scope.setContext('pinia_actions', {
                                 trailText,
-                                count: trail.length
+                                sessionTime: performance.now() / 1000 / 60
                             });
                             Sentry.captureMessage(
                                 `crash message: ${crashMessage}`
