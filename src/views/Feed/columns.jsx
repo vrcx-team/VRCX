@@ -379,9 +379,13 @@ export const columns = [
 
             if (type === 'Bio') {
                 return (
-                    <span class="block w-full min-w-0 truncate">
-                        {original.bio}
-                    </span>
+                    <span
+                        class="block w-full min-w-0 truncate"
+                        innerHTML={formatDifference(
+                            original.previousBio,
+                            original.bio
+                        )}
+                    ></span>
                 );
             }
 
