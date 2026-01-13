@@ -559,6 +559,7 @@
         useFavoriteStore,
         useGalleryStore,
         useGameStore,
+        useModalStore,
         useUserStore
     } from '../../../stores';
     import {
@@ -591,6 +592,7 @@
     const { deleteVRChatCache } = useGameStore();
     const { showFullscreenImageDialog } = useGalleryStore();
     const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
+    const modalStore = useModalStore();
 
     const { t } = useI18n();
 
@@ -752,15 +754,13 @@
                 showFavoriteDialog('avatar', D.id);
                 break;
             default:
-                ElMessageBox.confirm(`Continue? ${command}`, 'Confirm', {
-                    confirmButtonText: 'Confirm',
-                    cancelButtonText: 'Cancel',
-                    type: 'info'
-                })
-                    .then((action) => {
-                        if (action !== 'confirm') {
-                            return;
-                        }
+                modalStore
+                    .confirm({
+                        title: 'Confirm',
+                        description: `Continue? ${command}`
+                    })
+                    .then(({ ok }) => {
+                        if (!ok) return;
                         switch (command) {
                             case 'Delete Favorite':
                                 favoriteRequest.deleteFavorite({
@@ -897,8 +897,7 @@
                                     });
                                 break;
                         }
-                    })
-                    .catch(() => {});
+                    });
                 break;
         }
     }

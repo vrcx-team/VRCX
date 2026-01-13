@@ -47,7 +47,6 @@
 
 <script setup>
     import { computed, ref, watch } from 'vue';
-    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -61,7 +60,7 @@
         SelectTrigger,
         SelectValue
     } from '../../components/ui/select';
-    import { useAppearanceSettingsStore, useFriendStore, useVrcxStore } from '../../stores';
+    import { useAppearanceSettingsStore, useFriendStore, useModalStore, useVrcxStore } from '../../stores';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { InputGroupField } from '../../components/ui/input-group';
     import { createColumns } from './columns.jsx';
@@ -74,6 +73,7 @@
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();
+    const modalStore = useModalStore();
     const { hideUnfriends } = storeToRefs(appearanceSettingsStore);
     const { friendLogTable } = storeToRefs(useFriendStore());
 
@@ -149,16 +149,12 @@
         saveTableFilters();
     }
     function deleteFriendLogPrompt(row) {
-        ElMessageBox.confirm('Continue? Delete Log', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    deleteFriendLog(row);
-                }
+        modalStore
+            .confirm({
+                description: 'Continue? Delete Log',
+                title: 'Confirm'
             })
+            .then(({ ok }) => ok && deleteFriendLog(row))
             .catch(() => {});
     }
     function deleteFriendLog(row) {

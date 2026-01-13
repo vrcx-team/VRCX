@@ -911,6 +911,11 @@
         "pending_offline": "Pending Offline"
     },
     "dialog": {
+        "alertdialog": {
+            "ok": "OK",
+            "cancel": "Cancel",
+            "confirm": "Confirm"
+        },
         "user": {
             "status": {
                 "active": "Active",

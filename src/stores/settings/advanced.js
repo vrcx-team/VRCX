@@ -8,6 +8,7 @@ import { AppDebug } from '../../service/appConfig';
 import { database } from '../../service/database';
 import { languageCodes } from '../../localization';
 import { useGameStore } from '../game';
+import { useModalStore } from '../modal';
 import { useVRCXUpdaterStore } from '../vrcxUpdater';
 import { useVrcxStore } from '../vrcx';
 import { watchState } from '../../service/watchState';
@@ -19,6 +20,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const gameStore = useGameStore();
     const vrcxStore = useVrcxStore();
     const VRCXUpdaterStore = useVRCXUpdaterStore();
+    const modalStore = useModalStore();
 
     const { t } = useI18n();
 
@@ -466,68 +468,58 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     async function checkSentryConsent() {
-        const { action: consentAction } = await ElMessageBox.confirm(
-            'Help improve VRCX by allowing anonymous error reporting?</br></br>' +
-                '• Only collects crash and error information.</br>' +
-                '• No personal data or VRChat information is collected.</br>' +
-                '• Only enabled in nightly builds.</br>' +
-                '• Can be disabled at anytime in Advanced Settings.',
-            'Anonymous Error Reporting',
-            {
-                type: 'warning',
-                center: true,
-                dangerouslyUseHTMLString: true,
-                closeOnClickModal: false,
-                closeOnPressEscape: false,
-                distinguishCancelAndClose: true
-            }
-        ).catch(() => ({ action: 'cancel' }));
+        modalStore
+            .confirm({
+                description:
+                    'Help improve VRCX by allowing anonymous error reporting?</br></br>' +
+                    '• Only collects crash and error information.</br>' +
+                    '• No personal data or VRChat information is collected.</br>' +
+                    '• Only enabled in nightly builds.</br>' +
+                    '• Can be disabled at anytime in Advanced Settings.',
+                title: 'Anonymous Error Reporting'
+            })
+            .then(async ({ ok }) => {
+                if (!ok) return;
+                modalStore
+                    .confirm({
+                        description:
+                            'Error reporting setting has been enabled. Would you like to restart VRCX now for the change to take effect?',
+                        title: 'Restart Required',
+                        confirmText: 'Restart Now',
+                        cancelText: 'Later'
+                    })
+                    .then(async ({ ok }) => {
+                        if (!ok) return;
 
-        if (consentAction === 'cancel') return;
+                        sentryErrorReporting.value = true;
+                        configRepository.setBool('VRCX_SentryEnabled', true);
 
-        const { action: restartAction } = await ElMessageBox.confirm(
-            'Error reporting setting has been enabled. Would you like to restart VRCX now for the change to take effect?',
-            'Restart Required',
-            {
-                confirmButtonText: 'Restart Now',
-                cancelButtonText: 'Later',
-                type: 'warning',
-                center: true,
-                closeOnClickModal: false,
-                closeOnPressEscape: false
-            }
-        ).catch(() => ({ action: 'cancel' }));
-
-        if (restartAction === 'cancel') return;
-
-        sentryErrorReporting.value = true;
-        configRepository.setBool('VRCX_SentryEnabled', true);
-
-        VRCXUpdaterStore.restartVRCX(false);
+                        VRCXUpdaterStore.restartVRCX(false);
+                    });
+            });
     }
 
     async function setSentryErrorReporting() {
         if (VRCXUpdaterStore.branch !== 'Nightly') return;
 
-        const { action: restartAction } = await ElMessageBox.confirm(
-            'Error reporting setting has been disabled. Would you like to restart VRCX now for the change to take effect?',
-            'Restart Required',
-            {
-                confirmButtonText: 'Restart Now',
-                cancelButtonText: 'Later',
-                type: 'info',
-                center: true
-            }
-        ).catch(() => ({ action: 'cancel' }));
+        modalStore
+            .confirm({
+                description:
+                    'Error reporting setting has been disabled. Would you like to restart VRCX now for the change to take effect?',
+                title: 'Restart Required',
+                confirmText: 'Restart Now',
+                cancelText: 'Later'
+            })
+            .then(async ({ ok }) => {
+                if (!ok) return;
 
-        if (restartAction === 'cancel') return;
-
-        sentryErrorReporting.value = !sentryErrorReporting.value;
-        await configRepository.setBool(
-            'VRCX_SentryEnabled',
-            sentryErrorReporting.value
-        );
-        VRCXUpdaterStore.restartVRCX(false);
+                sentryErrorReporting.value = !sentryErrorReporting.value;
+                await configRepository.setBool(
+                    'VRCX_SentryEnabled',
+                    sentryErrorReporting.value
+                );
+                VRCXUpdaterStore.restartVRCX(false);
+            });
     }
 
     async function getSqliteTableSizes() {
@@ -735,96 +727,87 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
     function cropPrintsChanged() {
         if (!cropInstancePrints.value) return;
-        ElMessageBox.confirm(
-            t(
-                'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old'
-            ),
-            {
-                confirmButtonText: t(
+        modalStore
+            .confirm({
+                description: t(
+                    'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old'
+                ),
+                title: '',
+                confirmText: t(
                     'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_confirm'
                 ),
-                cancelButtonText: t(
+                cancelText: t(
                     'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_cancel'
-                ),
-                type: 'info',
-                showInput: false
-            }
-        )
-            .then(async ({ action }) => {
-                if (action === 'confirm') {
-                    const msgBox = toast.warning(
-                        'Batch print cropping in progress...',
-                        { duration: Infinity, position: 'bottom-right' }
-                    );
-                    try {
-                        await AppApi.CropAllPrints(ugcFolderPath.value);
-                        toast.success('Batch print cropping complete');
-                    } catch (err) {
-                        console.error(err);
-                        toast.error(`Batch print cropping failed: ${err}`);
-                    } finally {
-                        toast.dismiss(msgBox);
-                    }
+                )
+            })
+            .then(async ({ ok }) => {
+                if (!ok) return;
+                const msgBox = toast.warning(
+                    'Batch print cropping in progress...',
+                    { duration: Infinity, position: 'bottom-right' }
+                );
+                try {
+                    await AppApi.CropAllPrints(ugcFolderPath.value);
+                    toast.success('Batch print cropping complete');
+                } catch (err) {
+                    console.error(err);
+                    toast.error(`Batch print cropping failed: ${err}`);
+                } finally {
+                    toast.dismiss(msgBox);
                 }
             })
             .catch(() => {});
     }
 
     function askDeleteAllScreenshotMetadata() {
-        ElMessageBox.confirm(
-            t(
-                'view.settings.advanced.advanced.delete_all_screenshot_metadata.ask'
-            ),
-            {
-                confirmButtonText: t(
+        modalStore
+            .confirm({
+                description: t(
+                    'view.settings.advanced.advanced.delete_all_screenshot_metadata.ask'
+                ),
+                title: '',
+                confirmText: t(
                     'view.settings.advanced.advanced.delete_all_screenshot_metadata.confirm_yes'
                 ),
-                cancelButtonText: t(
+                cancelText: t(
                     'view.settings.advanced.advanced.delete_all_screenshot_metadata.confirm_no'
-                ),
-                type: 'warning',
-                showInput: false
-            }
-        )
-            .then(({ action }) => {
-                if (action === 'confirm') {
-                    deleteAllScreenshotMetadata();
-                }
+                )
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
+                deleteAllScreenshotMetadata();
             })
             .catch(() => {});
     }
 
     function deleteAllScreenshotMetadata() {
-        ElMessageBox.confirm(
-            t(
-                'view.settings.advanced.advanced.delete_all_screenshot_metadata.confirm'
-            ),
-            {
-                confirmButtonText: t(
+        modalStore
+            .confirm({
+                description: t(
+                    'view.settings.advanced.advanced.delete_all_screenshot_metadata.confirm'
+                ),
+                title: '',
+                confirmText: t(
                     'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_confirm'
                 ),
-                cancelButtonText: t(
+                cancelText: t(
                     'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_cancel'
-                ),
-                type: 'warning',
-                showInput: false
-            }
-        )
-            .then(async ({ action }) => {
-                if (action === 'confirm') {
-                    const msgBox = toast.warning(
-                        'Batch metadata removal in progress...',
-                        { duration: Infinity, position: 'bottom-right' }
-                    );
-                    try {
-                        await AppApi.DeleteAllScreenshotMetadata();
-                        toast.success('Batch metadata removal complete');
-                    } catch (err) {
-                        console.error(err);
-                        toast.error(`Batch metadata removal failed: ${err}`);
-                    } finally {
-                        toast.dismiss(msgBox);
-                    }
+                )
+            })
+            .then(async ({ ok }) => {
+                if (!ok) return;
+                const msgBox = toast.warning(
+                    'Batch metadata removal in progress...',
+                    { duration: Infinity, position: 'bottom-right' }
+                );
+                try {
+                    await AppApi.DeleteAllScreenshotMetadata();
+                    toast.success('Batch metadata removal complete');
+                } catch (err) {
+                    console.error(err);
+                    toast.error(`Batch metadata removal failed: ${err}`);
+                } finally {
+                    toast.dismiss(msgBox);
                 }
             })
             .catch(() => {});

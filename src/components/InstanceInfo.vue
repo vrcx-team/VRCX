@@ -67,11 +67,10 @@
     import { reactive, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { CaretBottom } from '@element-plus/icons-vue';
-    import { ElMessageBox } from 'element-plus';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { useGroupStore, useInstanceStore, useLocationStore, useUserStore } from '../stores';
+    import { useGroupStore, useInstanceStore, useLocationStore, useModalStore, useUserStore } from '../stores';
     import { formatDateFilter, hasGroupPermission } from '../shared/utils';
     import { miscRequest } from '../api';
 
@@ -81,6 +80,7 @@
     const userStore = useUserStore();
     const groupStore = useGroupStore();
     const instanceStore = useInstanceStore();
+    const modalStore = useModalStore();
 
     const props = defineProps({
         location: String,
@@ -126,13 +126,13 @@
     }
 
     function closeInstance(location) {
-        ElMessageBox.confirm('Continue? Close Instance, nobody will be able to join', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'warning'
-        })
-            .then(async (action) => {
-                if (action !== 'confirm') return;
+        modalStore
+            .confirm({
+                description: 'Continue? Close Instance, nobody will be able to join',
+                title: 'Confirm'
+            })
+            .then(async ({ ok }) => {
+                if (!ok) return;
                 const args = await miscRequest.closeInstance({ location, hardClose: false });
                 if (args.json) {
                     toast.success(t('message.instance.closed'));

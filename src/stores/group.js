@@ -1,5 +1,4 @@
 import { nextTick, reactive, ref, watch } from 'vue';
-import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 
@@ -18,6 +17,7 @@ import { database } from '../service/database.js';
 import { groupDialogFilterOptions } from '../shared/constants/';
 import { useGameStore } from './game';
 import { useInstanceStore } from './instance';
+import { useModalStore } from './modal';
 import { useNotificationStore } from './notification';
 import { useUserStore } from './user';
 import { watchState } from '../service/watchState';
@@ -31,6 +31,7 @@ export const useGroupStore = defineStore('Group', () => {
     const gameStore = useGameStore();
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
+    const modalStore = useModalStore();
 
     let cachedGroups = new Map();
 
@@ -555,16 +556,13 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     function leaveGroupPrompt(groupId) {
-        ElMessageBox.confirm(
-            'Are you sure you want to leave this group?',
-            'Confirm',
-            {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                type: 'info'
-            }
-        )
-            .then(() => {
+        modalStore
+            .confirm({
+                description: 'Are you sure you want to leave this group?',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
                 leaveGroup(groupId);
             })
             .catch(() => {});

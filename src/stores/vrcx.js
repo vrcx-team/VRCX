@@ -1,5 +1,4 @@
 import { reactive, ref, watch } from 'vue';
-import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -26,6 +25,7 @@ import { useGameStore } from './game';
 import { useGroupStore } from './group';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
+import { useModalStore } from './modal';
 import { useNotificationStore } from './notification';
 import { usePhotonStore } from './photon';
 import { useSearchStore } from './search';
@@ -58,6 +58,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     const vrcStatusStore = useVrcStatusStore();
     const galleryStore = useGalleryStore();
     const { t } = useI18n();
+    const modalStore = useModalStore();
 
     const state = reactive({
         databaseVersion: 0,
@@ -711,10 +712,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 return;
             }
             // popup message about auto restore
-            ElMessageBox.alert(
-                t('dialog.registry_backup.restore_prompt'),
-                t('dialog.registry_backup.header')
-            ).catch(() => {});
+            modalStore.alert({
+                description: t('dialog.registry_backup.restore_prompt'),
+                title: t('dialog.registry_backup.header')
+            });
             showRegistryBackupDialog();
             await AppApi.FocusWindow();
             await configRepository.setString(

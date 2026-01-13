@@ -87,12 +87,11 @@
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Check as CheckIcon } from 'lucide-vue-next';
-    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { useFriendStore, useGalleryStore, useInviteStore, useUserStore } from '../../../stores';
+    import { useFriendStore, useGalleryStore, useInviteStore, useModalStore, useUserStore } from '../../../stores';
     import { parseLocation, userImage, userStatusClass } from '../../../shared/utils';
     import { instanceRequest, notificationRequest } from '../../../api';
     import { VirtualCombobox } from '../../ui/virtual-combobox';
@@ -103,6 +102,8 @@
     const { refreshInviteMessageTableData } = useInviteStore();
     const { currentUser } = storeToRefs(useUserStore());
     const { clearInviteImageUpload } = useGalleryStore();
+
+    const modalStore = useModalStore();
 
     const { t } = useI18n();
     const props = defineProps({
@@ -233,14 +234,15 @@
     }
 
     function sendInvite() {
-        ElMessageBox.confirm('Continue? Invite', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
+        modalStore
+            .confirm({
+                description: 'Continue? Invite',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
                 const D = props.inviteDialog;
-                if (action !== 'confirm' || D.loading === true) {
+                if (D.loading === true) {
                     return;
                 }
                 D.loading = true;
@@ -275,7 +277,8 @@
                     }
                 };
                 inviteLoop();
-            })
-            .catch(() => {});
+            });
     }
 </script>
+
+}) .catch(() => {});

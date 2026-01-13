@@ -142,16 +142,21 @@
     import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { NumberField, NumberFieldContent, NumberFieldInput } from '@/components/ui/number-field';
     import { Button } from '@/components/ui/button';
-    import { ElMessageBox } from 'element-plus';
-    import { Settings } from 'lucide-vue-next';
     import { Progress } from '@/components/ui/progress';
+    import { Settings } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
     import { onBeforeRouteLeave } from 'vue-router';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { useAppearanceSettingsStore, useChartsStore, useFriendStore, useUserStore } from '../../../stores';
+    import {
+        useAppearanceSettingsStore,
+        useChartsStore,
+        useFriendStore,
+        useModalStore,
+        useUserStore
+    } from '../../../stores';
     import { applyForceOverrides, computeForceOptions, useMutualGraphChart } from '../composables/useMutualGraphChart';
     import { createRateLimiter, executeWithBackoff } from '../../../shared/utils';
     import { database } from '../../../service/database';
@@ -164,6 +169,7 @@
     const { t } = useI18n();
     const friendStore = useFriendStore();
     const userStore = useUserStore();
+    const modalStore = useModalStore();
     const chartsStore = useChartsStore();
     const appearanceStore = useAppearanceSettingsStore();
     const { friends } = storeToRefs(friendStore);
@@ -396,39 +402,35 @@
         if (isFetching.value || hasFetched.value || !totalFriends.value) {
             return;
         }
-        try {
-            await ElMessageBox.confirm(
-                t('view.charts.mutual_friend.prompt.message'),
-                t('view.charts.mutual_friend.prompt.title'),
-                {
-                    confirmButtonText: t('view.charts.mutual_friend.prompt.confirm'),
-                    cancelButtonText: t('view.charts.mutual_friend.prompt.cancel'),
-                    type: 'warning'
-                }
-            );
-            await startFetch();
-        } catch {
-            // cancelled
-        }
+
+        modalStore
+            .confirm({
+                description: t('view.charts.mutual_friend.prompt.message'),
+                title: t('view.charts.mutual_friend.prompt.title'),
+                confirmText: t('view.charts.mutual_friend.prompt.confirm'),
+                cancelText: t('view.charts.mutual_friend.prompt.cancel')
+            })
+            .then(async ({ ok }) => {
+                if (!ok) return;
+
+                await startFetch();
+            });
     }
 
     function promptEnableMutualFriendsSharing() {
-        ElMessageBox.confirm(
-            t('view.charts.mutual_friend.enable_sharing_prompt.message'),
-            t('view.charts.mutual_friend.enable_sharing_prompt.title'),
-            {
-                confirmButtonText: t('view.charts.mutual_friend.enable_sharing_prompt.confirm'),
-                cancelButtonText: t('view.charts.mutual_friend.enable_sharing_prompt.cancel'),
-                type: 'info'
-            }
-        )
-            .then(() => {
+        modalStore
+            .confirm({
+                description: t('view.charts.mutual_friend.enable_sharing_prompt.message'),
+                title: t('view.charts.mutual_friend.enable_sharing_prompt.title'),
+                confirmText: t('view.charts.mutual_friend.enable_sharing_prompt.confirm'),
+                cancelText: t('view.charts.mutual_friend.enable_sharing_prompt.cancel')
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
                 userStore.toggleSharedConnectionsOptOut();
                 promptInitialFetch();
             })
-            .catch(() => {
-                // cancelled
-            });
+            .catch(() => {});
     }
 
     function cancelFetch() {

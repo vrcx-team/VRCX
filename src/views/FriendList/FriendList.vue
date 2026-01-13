@@ -108,7 +108,6 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { ElMessageBox } from 'element-plus';
     import { InputGroupField } from '@/components/ui/input-group';
     import { Progress } from '@/components/ui/progress';
     import { storeToRefs } from 'pinia';
@@ -119,6 +118,7 @@
     import {
         useAppearanceSettingsStore,
         useFriendStore,
+        useModalStore,
         useSearchStore,
         useUserStore,
         useVrcxStore
@@ -138,6 +138,7 @@
     const emit = defineEmits(['lookup-user']);
 
     const { friends } = storeToRefs(useFriendStore());
+    const modalStore = useModalStore();
     const { getAllUserStats, getAllUserMutualCount, confirmDeleteFriend, handleFriendDelete } = useFriendStore();
     const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const vrcxStore = useVrcxStore();
@@ -324,25 +325,18 @@
             .filter((item) => selectedFriends.value.has(item.id))
             .map((item) => item.displayName);
         if (!pending.length) return;
-        ElMessageBox.confirm(
-            `Are you sure you want to delete ${pending.length} friends?
-            This can negatively affect your trust rank,
-            This action cannot be undone.`,
-            `Delete ${pending.length} friends?`,
-            {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                type: 'info',
-                showInput: true,
-                inputType: 'textarea',
-                inputValue: pending.join('\r\n')
-            }
-        )
-            .then(({ action }) => {
-                if (action === 'confirm') {
-                    bulkUnfriendSelection();
-                }
+        const description =
+            `Are you sure you want to delete ${pending.length} friends?\n` +
+            'This can negatively affect your trust rank,\n' +
+            'This action cannot be undone.\n\n' +
+            pending.join('\n');
+
+        modalStore
+            .confirm({
+                description,
+                title: `Delete ${pending.length} friends?`
             })
+            .then(({ ok }) => ok && bulkUnfriendSelection())
             .catch(() => {});
     }
 
@@ -355,9 +349,9 @@
                 selectedFriends.value.delete(item.id);
             }
         }
-        ElMessageBox.alert(`Unfriended ${selectedFriends.value.size} friends.`, 'Bulk Unfriend Complete', {
-            confirmButtonText: 'OK',
-            type: 'success'
+        modalStore.alert({
+            description: `Unfriended ${selectedFriends.value.size} friends.`,
+            title: 'Bulk Unfriend Complete'
         });
         selectedFriends.value.clear();
     }

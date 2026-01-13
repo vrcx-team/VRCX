@@ -51,14 +51,13 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { ElMessageBox } from 'element-plus';
     import { InputGroupField } from '@/components/ui/input-group';
     import { Refresh } from '@element-plus/icons-vue';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useAppearanceSettingsStore, useModerationStore, useVrcxStore } from '../../stores';
+    import { useAppearanceSettingsStore, useModalStore, useModerationStore, useVrcxStore } from '../../stores';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { createColumns } from './columns.jsx';
     import { moderationTypes } from '../../shared/constants';
@@ -73,6 +72,7 @@
     const { refreshPlayerModerations, handlePlayerModerationDelete } = useModerationStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();
+    const modalStore = useModalStore();
 
     const moderationRef = ref(null);
     const { tableStyle: tableHeightStyle } = useDataTableScrollHeight(moderationRef, {
@@ -110,16 +110,12 @@
     }
 
     function deletePlayerModerationPrompt(row) {
-        ElMessageBox.confirm(`Continue? Delete Moderation ${row.type}`, 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    deletePlayerModeration(row);
-                }
+        modalStore
+            .confirm({
+                description: `Continue? Delete Moderation ${row.type}`,
+                title: 'Confirm'
             })
+            .then(({ ok }) => ok && deletePlayerModeration(row))
             .catch(() => {});
     }
 

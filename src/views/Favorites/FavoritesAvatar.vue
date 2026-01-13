@@ -521,18 +521,7 @@
 </template>
 
 <script setup>
-    import {
-        computed,
-        h,
-        markRaw,
-        nextTick,
-        onBeforeMount,
-        onBeforeUnmount,
-        onMounted,
-        reactive,
-        ref,
-        watch
-    } from 'vue';
+    import { computed, markRaw, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
     import { Ellipsis, Loader, RefreshCcw } from 'lucide-vue-next';
     import { MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
     import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
@@ -558,7 +547,13 @@
         DropdownMenuSeparator,
         DropdownMenuTrigger
     } from '../../components/ui/dropdown-menu';
-    import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useUserStore } from '../../stores';
+    import {
+        useAppearanceSettingsStore,
+        useAvatarStore,
+        useFavoriteStore,
+        useModalStore,
+        useUserStore
+    } from '../../stores';
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { avatarRequest, favoriteRequest } from '../../api';
@@ -597,6 +592,7 @@
     const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
     const favoriteStore = useFavoriteStore();
+    const modalStore = useModalStore();
     const {
         favoriteAvatars,
         favoriteAvatarGroups,
@@ -1183,26 +1179,22 @@
         showAvatarImportDialog();
     }
 
-    function showAvatarBulkUnfavoriteSelectionConfirm() {
+    async function showAvatarBulkUnfavoriteSelectionConfirm() {
         if (!selectedFavoriteAvatars.value.length) {
             return;
         }
         const total = selectedFavoriteAvatars.value.length;
-        ElMessageBox.confirm(
-            `Are you sure you want to unfavorite ${total} favorites?\n            This action cannot be undone.`,
-            `Delete ${total} favorites?`,
-            {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                type: 'info'
-            }
-        )
-            .then((action) => {
-                if (action === 'confirm') {
-                    bulkUnfavoriteSelectedAvatars([...selectedFavoriteAvatars.value]);
-                }
-            })
-            .catch(() => {});
+
+        const result = await modalStore.confirm({
+            description: `Are you sure you want to unfavorite ${total} favorites?\nThis action cannot be undone.`,
+            title: `Delete ${total} favorites?`
+        });
+
+        if (!result.ok) {
+            return;
+        }
+
+        bulkUnfavoriteSelectedAvatars([...selectedFavoriteAvatars.value]);
     }
 
     function bulkUnfavoriteSelectedAvatars(ids) {
@@ -1252,17 +1244,14 @@
     async function handleCheckInvalidAvatars(groupName) {
         handleGroupMenuVisible(localGroupMenuKey(groupName), false);
 
-        try {
-            await ElMessageBox.confirm(
-                t('view.favorite.avatars.check_description'),
-                t('view.favorite.avatars.check_invalid'),
-                {
-                    confirmButtonText: t('confirm.confirm_button'),
-                    cancelButtonText: t('confirm.cancel_button'),
-                    type: 'info'
-                }
-            );
-        } catch {
+        const startCheckResult = await modalStore.confirm({
+            description: t('view.favorite.avatars.check_description'),
+            title: t('view.favorite.avatars.check_invalid'),
+            confirmText: t('confirm.confirm_button'),
+            cancelText: t('confirm.cancel_button')
+        });
+
+        if (!startCheckResult.ok) {
             return;
         }
 
@@ -1299,54 +1288,29 @@
                 return;
             }
 
-            const confirmDelete = await ElMessageBox.confirm(
-                h('div', [
-                    h(
-                        'p',
-                        { style: 'margin-bottom: 12px;' },
-                        t('view.favorite.avatars.confirm_delete_description', { count: result.invalid })
-                    ),
-                    h(
-                        'div',
-                        { style: 'margin-top: 12px; margin-bottom: 8px; font-weight: 600;' },
-                        t('view.favorite.avatars.removed_list_header')
-                    ),
-                    h(
-                        'div',
-                        {
-                            style: 'max-height: 200px; overflow-y: auto; background: var(--el-fill-color-lighter); padding: 8px; border-radius: 4px;'
-                        },
-                        result.invalidIds.map((id) =>
-                            h('div', { style: 'font-family: monospace; font-size: 12px; padding: 2px 0;' }, id)
-                        )
-                    )
-                ]),
-                t('view.favorite.avatars.confirm_delete_invalid'),
-                {
-                    confirmButtonText: t('confirm.confirm_button'),
-                    cancelButtonText: t('view.favorite.avatars.copy_removed_ids'),
-                    distinguishCancelAndClose: true,
-                    type: 'warning',
-                    beforeClose: (action, instance, done) => {
-                        if (action === 'cancel') {
-                            navigator.clipboard
-                                .writeText(result.invalidIds.join('\n'))
-                                .then(() => {
-                                    toast.success(t('view.favorite.avatars.copied_ids'));
-                                })
-                                .catch(() => {
-                                    toast.error(t('view.favorite.avatars.copy_failed'));
-                                });
-                            return;
-                        }
-                        done();
-                    }
-                }
-            )
-                .then(() => true)
-                .catch(() => false);
+            const invalidIdsText = result.invalidIds.join('\n');
 
-            if (!confirmDelete) {
+            const confirmDeleteResult = await modalStore.confirm({
+                description:
+                    `${t('view.favorite.avatars.confirm_delete_description', { count: result.invalid })}` +
+                    `\n\n${t('view.favorite.avatars.removed_list_header')}\n` +
+                    invalidIdsText,
+                title: t('view.favorite.avatars.confirm_delete_invalid'),
+                confirmText: t('confirm.confirm_button'),
+                cancelText: t('view.favorite.avatars.copy_removed_ids')
+            });
+
+            if (!confirmDeleteResult.ok) {
+                if (confirmDeleteResult.reason === 'cancel') {
+                    navigator.clipboard
+                        .writeText(invalidIdsText)
+                        .then(() => {
+                            toast.success(t('view.favorite.avatars.copied_ids'));
+                        })
+                        .catch(() => {
+                            toast.error(t('view.favorite.avatars.copy_failed'));
+                        });
+                }
                 toast.info(t('view.favorite.avatars.delete_cancelled'));
                 return;
             }
@@ -1434,18 +1398,16 @@
     }
 
     function clearFavoriteGroup(ctx) {
-        ElMessageBox.confirm('Continue? Clear Group', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    favoriteRequest.clearFavoriteGroup({
-                        type: ctx.type,
-                        group: ctx.name
-                    });
-                }
+        modalStore
+            .confirm({
+                description: 'Continue? Clear Group',
+                title: 'Confirm'
+            })
+            .then(() => {
+                favoriteRequest.clearFavoriteGroup({
+                    type: ctx.type,
+                    group: ctx.name
+                });
             })
             .catch(() => {});
     }
@@ -1477,16 +1439,12 @@
     }
 
     function promptLocalAvatarFavoriteGroupDelete(group) {
-        ElMessageBox.confirm(`Delete Group? ${group}`, 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    deleteLocalAvatarFavoriteGroup(group);
-                }
+        modalStore
+            .confirm({
+                description: `Delete Group? ${group}`,
+                title: 'Confirm'
             })
+            .then(() => deleteLocalAvatarFavoriteGroup(group))
             .catch(() => {});
     }
 

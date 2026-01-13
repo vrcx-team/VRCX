@@ -14,6 +14,8 @@
                 <RouterView></RouterView>
                 <Toaster position="top-center"></Toaster>
 
+                <AlertDialogModal></AlertDialogModal>
+
                 <VRCXUpdateDialog></VRCXUpdateDialog>
             </div>
         </el-config-provider>
@@ -29,6 +31,7 @@
     import { createGlobalStores } from './stores';
     import { initNoty } from './plugin/noty';
 
+    import AlertDialogModal from './components/ui/alert-dialog/AlertDialogModal.vue';
     import MacOSTitleBar from './components/MacOSTitleBar.vue';
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
 

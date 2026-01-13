@@ -1,5 +1,4 @@
 import { reactive, ref } from 'vue';
-import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 
@@ -14,6 +13,7 @@ import { useGameLogStore } from './gameLog';
 import { useInstanceStore } from './instance';
 import { useLaunchStore } from './launch';
 import { useLocationStore } from './location';
+import { useModalStore } from './modal';
 import { useNotificationStore } from './notification';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
@@ -36,6 +36,7 @@ export const useGameStore = defineStore('Game', () => {
     const vrStore = useVrStore();
     const userStore = useUserStore();
     const updateLoopStore = useUpdateLoopStore();
+    const modalStore = useModalStore();
 
     const state = reactive({
         lastCrashedTime: null
@@ -218,17 +219,19 @@ export const useGameStore = defineStore('Game', () => {
             );
             if (!result) {
                 // failed to set key
-                ElMessageBox.alert(
-                    'VRCX has noticed VRChat debug logging is disabled. VRCX requires debug logging in order to function correctly. Please enable debug logging in VRChat quick menu settings > debug > enable debug logging, then rejoin the instance or restart VRChat.',
-                    'Enable debug logging'
-                ).catch(() => {});
+                modalStore.alert({
+                    description:
+                        'VRCX has noticed VRChat debug logging is disabled. VRCX requires debug logging in order to function correctly. Please enable debug logging in VRChat quick menu settings > debug > enable debug logging, then rejoin the instance or restart VRChat.',
+                    title: 'Enable debug logging'
+                });
                 console.error('Failed to enable debug logging', result);
                 return;
             }
-            ElMessageBox.alert(
-                'VRCX has noticed VRChat debug logging is disabled and automatically re-enabled it. VRCX requires debug logging in order to function correctly.',
-                'Enabled debug logging'
-            ).catch(() => {});
+            modalStore.alert({
+                description:
+                    'VRCX has noticed VRChat debug logging is disabled and automatically re-enabled it. VRCX requires debug logging in order to function correctly.',
+                title: 'Enabled debug logging'
+            });
             console.log('Enabled debug logging');
         } catch (e) {
             console.error(e);

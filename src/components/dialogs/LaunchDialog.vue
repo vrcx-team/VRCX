@@ -135,7 +135,6 @@
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Copy } from 'lucide-vue-next';
-    import { ElMessageBox } from 'element-plus';
     import { InputGroupField } from '@/components/ui/input-group';
     import { MoreHorizontal } from 'lucide-vue-next';
     import { Warning } from '@element-plus/icons-vue';
@@ -143,7 +142,14 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { useFriendStore, useGameStore, useInviteStore, useLaunchStore, useLocationStore } from '../../stores';
+    import {
+        useFriendStore,
+        useGameStore,
+        useInviteStore,
+        useLaunchStore,
+        useLocationStore,
+        useModalStore
+    } from '../../stores';
     import { checkCanInvite, getLaunchURL, isRealInstance, parseLocation } from '../../shared/utils';
     import { instanceRequest, worldRequest } from '../../api';
     import { getNextDialogIndex } from '../../shared/utils/base/ui';
@@ -152,6 +158,8 @@
     import configRepository from '../../service/config';
 
     const { t } = useI18n();
+
+    const modalStore = useModalStore();
 
     const { friends } = storeToRefs(useFriendStore());
     const { lastLocation } = storeToRefs(useLocationStore());
@@ -245,16 +253,17 @@
     }
     function handleLaunchGame(location, shortName, desktop) {
         if (isGameRunning.value) {
-            ElMessageBox.confirm(t('dialog.launch.game_running_warning'), t('dialog.launch.header'), {
-                confirmButtonText: t('dialog.launch.confirm_yes'),
-                cancelButtonText: t('dialog.launch.confirm_no'),
-                type: 'warning'
-            })
-                .then((action) => {
-                    if (action === 'confirm') {
-                        launchGame(location, shortName, desktop);
-                        isVisible.value = false;
-                    }
+            modalStore
+                .confirm({
+                    description: t('dialog.launch.game_running_warning'),
+                    title: t('dialog.launch.header'),
+                    confirmText: t('dialog.launch.confirm_yes'),
+                    cancelText: t('dialog.launch.confirm_no')
+                })
+                .then(({ ok }) => {
+                    if (!ok) return;
+                    launchGame(location, shortName, desktop);
+                    isVisible.value = false;
                 })
                 .catch(() => {});
             return;

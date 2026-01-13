@@ -1,5 +1,4 @@
 import { nextTick, ref, watch } from 'vue';
-import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 
@@ -18,6 +17,7 @@ import { database } from '../service/database';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useFavoriteStore } from './favorite';
+import { useModalStore } from './modal';
 import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
 import { watchState } from '../service/watchState';
@@ -30,6 +30,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     const vrcxUpdaterStore = useVRCXUpdaterStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
     const userStore = useUserStore();
+    const modalStore = useModalStore();
 
     let cachedAvatarModerations = new Map();
     let cachedAvatars = new Map();
@@ -389,12 +390,13 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     function promptClearAvatarHistory() {
-        ElMessageBox.confirm('Continue? Clear Avatar History', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then(() => {
+        modalStore
+            .confirm({
+                description: 'Continue? Clear Avatar History',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
                 clearAvatarHistory();
             })
             .catch(() => {});
@@ -552,12 +554,13 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     function selectAvatarWithConfirmation(id) {
-        ElMessageBox.confirm(`Continue? Select Avatar`, 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then(() => {
+        modalStore
+            .confirm({
+                description: 'Continue? Select Avatar',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
                 selectAvatarWithoutConfirmation(id);
             })
             .catch(() => {});

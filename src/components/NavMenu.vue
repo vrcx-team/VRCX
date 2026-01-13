@@ -246,8 +246,8 @@
 
 <script setup>
     import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
-    import { ElMessageBox, dayjs } from 'element-plus';
     import { Button } from '@/components/ui/button';
+    import { dayjs } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { useRouter } from 'vue-router';
@@ -255,6 +255,7 @@
     import {
         useAppearanceSettingsStore,
         useAuthStore,
+        useModalStore,
         useSearchStore,
         useUiStore,
         useVRCXUpdaterStore
@@ -269,6 +270,7 @@
 
     const { t, locale } = useI18n();
     const router = useRouter();
+    const modalStore = useModalStore();
 
     const createDefaultNavLayout = () => [
         { type: 'item', key: 'feed' },
@@ -559,12 +561,15 @@
     };
 
     const handleCustomNavReset = () => {
-        ElMessageBox.confirm(t('nav_menu.custom_nav.restore_default_confirm'), {
-            type: 'warning',
-            confirmButtonText: t('nav_menu.custom_nav.restore_default'),
-            cancelButtonText: t('nav_menu.custom_nav.cancel')
-        })
-            .then(async () => {
+        modalStore
+            .confirm({
+                description: t('nav_menu.custom_nav.restore_default_confirm'),
+                title: t('confirm.title'),
+                confirmText: t('nav_menu.custom_nav.restore_default'),
+                cancelText: t('nav_menu.custom_nav.cancel')
+            })
+            .then(async ({ ok }) => {
+                if (!ok) return;
                 const defaults = sanitizeLayout(createDefaultNavLayout());
                 navLayout.value = defaults;
                 await saveNavLayout(defaults);

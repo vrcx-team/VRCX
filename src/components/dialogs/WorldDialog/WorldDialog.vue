@@ -795,6 +795,7 @@
         useInstanceStore,
         useInviteStore,
         useLocationStore,
+        useModalStore,
         useUserStore,
         useWorldStore
     } from '../../../stores';
@@ -809,6 +810,8 @@
     import { formatJsonVars, getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { Badge } from '../../ui/badge';
     import { database } from '../../../service/database.js';
+
+    const modalStore = useModalStore();
 
     const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog.vue'));
     const PreviousInstancesWorldDialog = defineAsyncComponent(
@@ -988,15 +991,13 @@
             case 'Unpublish':
             case 'Delete Persistent Data':
             case 'Delete':
-                ElMessageBox.confirm(`Continue? ${command}`, 'Confirm', {
-                    confirmButtonText: 'Confirm',
-                    cancelButtonText: 'Cancel',
-                    type: 'info'
-                })
-                    .then((action) => {
-                        if (action !== 'confirm') {
-                            return;
-                        }
+                modalStore
+                    .confirm({
+                        description: `Continue? ${command}`,
+                        title: 'Confirm'
+                    })
+                    .then(({ ok }) => {
+                        if (!ok) return;
                         switch (command) {
                             case 'Delete Favorite':
                                 favoriteRequest.deleteFavorite({

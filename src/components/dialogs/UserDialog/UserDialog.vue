@@ -1318,7 +1318,6 @@
     import { Download, LogOut, RefreshCcw } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
-    import { ElMessageBox } from 'element-plus';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -1358,6 +1357,7 @@
         useGroupStore,
         useInviteStore,
         useLocationStore,
+        useModalStore,
         useModerationStore,
         useUiStore,
         useUserStore,
@@ -1392,6 +1392,8 @@
     const EditNoteAndMemoDialog = defineAsyncComponent(() => import('./EditNoteAndMemoDialog.vue'));
 
     const { t } = useI18n();
+
+    const modalStore = useModalStore();
 
     const { hideUserNotes, hideUserMemos, isDarkMode } = storeToRefs(useAppearanceSettingsStore());
     const { bioLanguage, avatarRemoteDatabase, translationApi, translationApiType } =
@@ -1894,19 +1896,17 @@
                 ? command
                 : t(`${i18nPreFix}${formattedCommand}`);
 
-            ElMessageBox.confirm(
-                t('confirm.message', {
-                    command: displayCommandText
-                }),
-                t('confirm.title'),
-                {
-                    confirmButtonText: t('confirm.confirm_button'),
-                    cancelButtonText: t('confirm.cancel_button'),
-                    type: 'info'
-                }
-            )
-                .then((action) => {
-                    if (action === 'confirm') {
+            modalStore
+                .confirm({
+                    description: t('confirm.message', {
+                        command: displayCommandText
+                    }),
+                    title: t('confirm.title'),
+                    confirmText: t('confirm.confirm_button'),
+                    cancelText: t('confirm.cancel_button')
+                })
+                .then(({ ok }) => {
+                    if (ok) {
                         performUserDialogCommand(command, D.id);
                     }
                 })
@@ -2422,22 +2422,21 @@
     }
 
     function resetHome() {
-        ElMessageBox.confirm('Continue? Reset Home', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    userRequest
-                        .saveCurrentUser({
-                            homeLocation: ''
-                        })
-                        .then((args) => {
-                            toast.success('Home world has been reset');
-                            return args;
-                        });
-                }
+        modalStore
+            .confirm({
+                description: 'Continue? Reset Home',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
+                userRequest
+                    .saveCurrentUser({
+                        homeLocation: ''
+                    })
+                    .then((args) => {
+                        toast.success('Home world has been reset');
+                        return args;
+                    });
             })
             .catch(() => {});
     }

@@ -29,7 +29,6 @@
 
 <script setup>
     import { computed, nextTick, ref, watch } from 'vue';
-    import { ElMessageBox } from 'element-plus';
     import { InputGroupField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -41,7 +40,7 @@
         removeFromArray,
         timeToText
     } from '../../../shared/utils';
-    import { useInstanceStore, useSearchStore, useUiStore, useVrcxStore } from '../../../stores';
+    import { useInstanceStore, useModalStore, useSearchStore, useUiStore, useVrcxStore } from '../../../stores';
     import { DataTableLayout } from '../../ui/data-table';
     import { createColumns } from './previousInstancesGroupColumns.jsx';
     import { database } from '../../../service/database';
@@ -55,6 +54,8 @@
 
     const previousInstancesGroupDialogIndex = ref(2000);
     const loading = ref(false);
+
+    const modalStore = useModalStore();
 
     const vrcxStore = useVrcxStore();
     const rawRows = ref([]);
@@ -169,15 +170,14 @@
     }
 
     function deleteGameLogGroupInstancePrompt(row) {
-        ElMessageBox.confirm('Continue? Delete GameLog Instance', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    deleteGameLogGroupInstance(row);
-                }
+        modalStore
+            .confirm({
+                description: 'Continue? Delete GameLog Instance',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
+                deleteGameLogGroupInstance(row);
             })
             .catch(() => {});
     }

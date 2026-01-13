@@ -57,14 +57,13 @@
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
-    import { ElMessageBox } from 'element-plus';
     import { Switch } from '@/components/ui/switch';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import dayjs from 'dayjs';
 
-    import { useAppearanceSettingsStore, useGameLogStore, useVrcxStore } from '../../stores';
+    import { useAppearanceSettingsStore, useGameLogStore, useModalStore, useVrcxStore } from '../../stores';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { InputGroupField } from '../../components/ui/input-group';
     import { createColumns } from './columns.jsx';
@@ -77,6 +76,7 @@
     const { gameLogTable } = storeToRefs(useGameLogStore());
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();
+    const modalStore = useModalStore();
 
     function getGameLogCreatedAt(row) {
         if (typeof row?.created_at === 'string' && row.created_at.length > 0) {
@@ -134,16 +134,12 @@
     });
 
     function deleteGameLogEntryPrompt(row) {
-        ElMessageBox.confirm('Continue? Delete Log', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    deleteGameLogEntry(row);
-                }
+        modalStore
+            .confirm({
+                description: 'Continue? Delete Log',
+                title: 'Confirm'
             })
+            .then(({ ok }) => ok && deleteGameLogEntry(row))
             .catch(() => {});
     }
 

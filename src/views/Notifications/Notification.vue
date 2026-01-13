@@ -85,7 +85,6 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { ElMessageBox } from 'element-plus';
     import { InputGroupField } from '@/components/ui/input-group';
     import { Refresh } from '@element-plus/icons-vue';
     import { Spinner } from '@/components/ui/spinner';
@@ -102,6 +101,7 @@
         useGroupStore,
         useInviteStore,
         useLocationStore,
+        useModalStore,
         useNotificationStore,
         useUserStore,
         useVrcxStore
@@ -129,6 +129,7 @@
     const { currentUser } = storeToRefs(useUserStore());
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();
+    const modalStore = useModalStore();
 
     const { t } = useI18n();
 
@@ -321,17 +322,18 @@
 
     function acceptFriendRequestNotification(row) {
         // FIXME: 메시지 수정
-        ElMessageBox.confirm('Continue? Accept Friend Request', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    notificationRequest.acceptFriendRequestNotification({
-                        notificationId: row.id
-                    });
+        modalStore
+            .confirm({
+                description: 'Continue? Accept Friend Request',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) {
+                    return;
                 }
+                notificationRequest.acceptFriendRequestNotification({
+                    notificationId: row.id
+                });
             })
             .catch(() => {});
     }
@@ -345,46 +347,47 @@
     }
 
     function acceptRequestInvite(row) {
-        ElMessageBox.confirm('Continue? Send Invite', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    let currentLocation = lastLocation.value.location;
-                    if (lastLocation.value.location === 'traveling') {
-                        currentLocation = lastLocationDestination.value;
-                    }
-                    if (!currentLocation) {
-                        // game log disabled, use API location
-                        currentLocation = currentUser.$locationTag;
-                    }
-                    const L = parseLocation(currentLocation);
-                    worldRequest
-                        .getCachedWorld({
-                            worldId: L.worldId
-                        })
-                        .then((args) => {
-                            notificationRequest
-                                .sendInvite(
-                                    {
-                                        instanceId: L.tag,
-                                        worldId: L.tag,
-                                        worldName: args.ref.name,
-                                        rsvp: true
-                                    },
-                                    row.senderUserId
-                                )
-                                .then((_args) => {
-                                    toast('Invite sent');
-                                    notificationRequest.hideNotification({
-                                        notificationId: row.id
-                                    });
-                                    return _args;
-                                });
-                        });
+        modalStore
+            .confirm({
+                description: 'Continue? Send Invite',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) {
+                    return;
                 }
+                let currentLocation = lastLocation.value.location;
+                if (lastLocation.value.location === 'traveling') {
+                    currentLocation = lastLocationDestination.value;
+                }
+                if (!currentLocation) {
+                    // game log disabled, use API location
+                    currentLocation = currentUser.$locationTag;
+                }
+                const L = parseLocation(currentLocation);
+                worldRequest
+                    .getCachedWorld({
+                        worldId: L.worldId
+                    })
+                    .then((args) => {
+                        notificationRequest
+                            .sendInvite(
+                                {
+                                    instanceId: L.tag,
+                                    worldId: L.tag,
+                                    worldName: args.ref.name,
+                                    rsvp: true
+                                },
+                                row.senderUserId
+                            )
+                            .then((_args) => {
+                                toast('Invite sent');
+                                notificationRequest.hideNotification({
+                                    notificationId: row.id
+                                });
+                                return _args;
+                            });
+                    });
             })
             .catch(() => {});
     }
@@ -454,13 +457,13 @@
     }
 
     function hideNotificationPrompt(row) {
-        ElMessageBox.confirm(`Continue? Decline ${row.type}`, 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
+        modalStore
+            .confirm({
+                description: `Continue? Decline ${row.type}`,
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (ok) {
                     hideNotification(row);
                 }
             })
@@ -478,13 +481,13 @@
     }
 
     function deleteNotificationLogPrompt(row) {
-        ElMessageBox.confirm(`Continue? Delete ${row.type}`, 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
+        modalStore
+            .confirm({
+                description: `Continue? Delete ${row.type}`,
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (ok) {
                     deleteNotificationLog(row);
                 }
             })

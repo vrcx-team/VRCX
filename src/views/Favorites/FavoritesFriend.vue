@@ -331,9 +331,9 @@
         DropdownMenuSeparator,
         DropdownMenuTrigger
     } from '../../components/ui/dropdown-menu';
+    import { useAppearanceSettingsStore, useFavoriteStore, useModalStore, useUserStore } from '../../stores';
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
-    import { useAppearanceSettingsStore, useFavoriteStore, useUserStore } from '../../stores';
     import { Badge } from '../../components/ui/badge';
     import { Slider } from '../../components/ui/slider';
     import { Switch } from '../../components/ui/switch';
@@ -358,6 +358,7 @@
     const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
     const favoriteStore = useFavoriteStore();
+    const modalStore = useModalStore();
     const {
         favoriteFriends,
         favoriteFriendGroups,
@@ -751,20 +752,12 @@
             return;
         }
         const total = selectedFavoriteFriends.value.length;
-        ElMessageBox.confirm(
-            `Are you sure you want to unfavorite ${total} favorites?\n            This action cannot be undone.`,
-            `Delete ${total} favorites?`,
-            {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                type: 'info'
-            }
-        )
-            .then((action) => {
-                if (action === 'confirm') {
-                    bulkUnfavoriteSelectedFriends([...selectedFavoriteFriends.value]);
-                }
+        modalStore
+            .confirm({
+                description: `Are you sure you want to unfavorite ${total} favorites?\n            This action cannot be undone.`,
+                title: `Delete ${total} favorites?`
             })
+            .then(({ ok }) => ok && bulkUnfavoriteSelectedFriends([...selectedFavoriteFriends.value]))
             .catch(() => {});
     }
 
@@ -779,18 +772,16 @@
     }
 
     function clearFavoriteGroup(ctx) {
-        ElMessageBox.confirm('Continue? Clear Group', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    favoriteRequest.clearFavoriteGroup({
-                        type: ctx.type,
-                        group: ctx.name
-                    });
-                }
+        modalStore
+            .confirm({
+                description: 'Continue? Clear Group',
+                title: 'Confirm'
+            })
+            .then(() => {
+                favoriteRequest.clearFavoriteGroup({
+                    type: ctx.type,
+                    group: ctx.name
+                });
             })
             .catch(() => {});
     }

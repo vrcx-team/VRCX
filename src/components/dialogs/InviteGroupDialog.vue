@@ -79,14 +79,13 @@
     import { computed, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Check as CheckIcon } from 'lucide-vue-next';
-    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import { hasGroupPermission, userImage, userStatusClass } from '../../shared/utils';
+    import { useFriendStore, useGroupStore, useModalStore } from '../../stores';
     import { groupRequest, userRequest } from '../../api';
-    import { useFriendStore, useGroupStore } from '../../stores';
     import { VirtualCombobox } from '../ui/virtual-combobox';
     import { getNextDialogIndex } from '../../shared/utils/base/ui';
 
@@ -96,6 +95,7 @@
     const { currentUserGroups, inviteGroupDialog } = storeToRefs(useGroupStore());
     const { applyGroup } = useGroupStore();
     const { t } = useI18n();
+    const modalStore = useModalStore();
 
     watch(
         () => inviteGroupDialog.value.visible,
@@ -272,14 +272,15 @@
             });
     }
     function sendGroupInvite() {
-        ElMessageBox.confirm('Continue? Invite User(s) To Group', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
+        modalStore
+            .confirm({
+                description: 'Continue? Invite User(s) To Group',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
                 const D = inviteGroupDialog.value;
-                if (action !== 'confirm' || D.loading === true) {
+                if (D.loading === true) {
                     return;
                 }
                 D.loading = true;

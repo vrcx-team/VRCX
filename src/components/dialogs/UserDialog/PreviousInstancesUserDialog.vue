@@ -30,11 +30,18 @@
 
 <script setup>
     import { computed, nextTick, ref, watch } from 'vue';
-    import { ElMessageBox } from 'element-plus';
     import { InputGroupField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import {
+        useInstanceStore,
+        useLaunchStore,
+        useModalStore,
+        useSearchStore,
+        useUiStore,
+        useVrcxStore
+    } from '../../../stores';
     import {
         compareByCreatedAt,
         localeIncludes,
@@ -42,7 +49,6 @@
         removeFromArray,
         timeToText
     } from '../../../shared/utils';
-    import { useInstanceStore, useLaunchStore, useSearchStore, useUiStore, useVrcxStore } from '../../../stores';
     import { DataTableLayout } from '../../ui/data-table';
     import { createColumns } from './previousInstancesUserColumns.jsx';
     import { database } from '../../../service/database';
@@ -68,6 +74,8 @@
     });
 
     const emit = defineEmits(['update:previous-instances-user-dialog']);
+
+    const modalStore = useModalStore();
     const loading = ref(false);
     const rawRows = ref([]);
     const search = ref('');
@@ -189,13 +197,14 @@
     }
 
     function deleteGameLogUserInstancePrompt(row) {
-        ElMessageBox.confirm('Continue? Delete User From GameLog Instance', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') deleteGameLogUserInstance(row);
+        modalStore
+            .confirm({
+                description: 'Continue? Delete User From GameLog Instance',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
+                deleteGameLogUserInstance(row);
             })
             .catch(() => {});
     }

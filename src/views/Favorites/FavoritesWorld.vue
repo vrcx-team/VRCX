@@ -461,9 +461,9 @@
         DropdownMenuSeparator,
         DropdownMenuTrigger
     } from '../../components/ui/dropdown-menu';
+    import { useAppearanceSettingsStore, useFavoriteStore, useModalStore, useWorldStore } from '../../stores';
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
-    import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../stores';
     import { favoriteRequest, worldRequest } from '../../api';
     import { Badge } from '../../components/ui/badge';
     import { Slider } from '../../components/ui/slider';
@@ -490,6 +490,7 @@
     const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
     const favoriteStore = useFavoriteStore();
+    const modalStore = useModalStore();
     const {
         favoriteWorlds,
         favoriteWorldGroups,
@@ -1054,21 +1055,13 @@
             return;
         }
         const total = selectedFavoriteWorlds.value.length;
-        ElMessageBox.confirm(
-            `Are you sure you want to unfavorite ${total} favorites?
+        modalStore
+            .confirm({
+                description: `Are you sure you want to unfavorite ${total} favorites?
             This action cannot be undone.`,
-            `Delete ${total} favorites?`,
-            {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                type: 'info'
-            }
-        )
-            .then((action) => {
-                if (action === 'confirm') {
-                    bulkUnfavoriteSelectedWorlds([...selectedFavoriteWorlds.value]);
-                }
+                title: `Delete ${total} favorites?`
             })
+            .then(() => bulkUnfavoriteSelectedWorlds([...selectedFavoriteWorlds.value]))
             .catch(() => {});
     }
 
@@ -1175,32 +1168,26 @@
     }
 
     function promptLocalWorldFavoriteGroupDelete(group) {
-        ElMessageBox.confirm(`Delete Group? ${group}`, 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    deleteLocalWorldFavoriteGroup(group);
-                }
+        modalStore
+            .confirm({
+                description: `Delete Group? ${group}`,
+                title: 'Confirm'
             })
+            .then(() => deleteLocalWorldFavoriteGroup(group))
             .catch(() => {});
     }
 
     function clearFavoriteGroup(ctx) {
-        ElMessageBox.confirm('Continue? Clear Group', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    favoriteRequest.clearFavoriteGroup({
-                        type: ctx.type,
-                        group: ctx.name
-                    });
-                }
+        modalStore
+            .confirm({
+                description: 'Continue? Clear Group',
+                title: 'Confirm'
+            })
+            .then(() => {
+                favoriteRequest.clearFavoriteGroup({
+                    type: ctx.type,
+                    group: ctx.name
+                });
             })
             .catch(() => {});
     }

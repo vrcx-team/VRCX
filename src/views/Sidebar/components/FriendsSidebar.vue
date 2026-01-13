@@ -91,7 +91,7 @@
                 <div v-for="friendArr in friendsInSameInstance" :key="friendArr[0].ref.$location.tag">
                     <div class="mb-1 flex items-center">
                         <Location
-                            class="extra text-neutral-300!"
+                            class="extra text-muted-foreground!"
                             :location="getFriendsLocations(friendArr)"
                             style="display: inline" />
                         <span class="extra" style="margin-left: 5px">{{ `(${friendArr.length})` }}</span>

@@ -13,6 +13,7 @@ import { database } from '../service/database';
 import { escapeTag } from '../shared/utils';
 import { request } from '../service/request';
 import { useAdvancedSettingsStore } from './settings/advanced';
+import { useModalStore } from './modal';
 import { useNotificationStore } from './notification';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
@@ -27,6 +28,7 @@ export const useAuthStore = defineStore('Auth', () => {
     const notificationStore = useNotificationStore();
     const userStore = useUserStore();
     const updateLoopStore = useUpdateLoopStore();
+    const modalStore = useModalStore();
 
     const { t } = useI18n();
     const state = reactive({
@@ -405,21 +407,20 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     function logout() {
-        ElMessageBox.confirm('Continue? Logout', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    const existingStyle = document.getElementById(
-                        'login-container-style'
-                    );
-                    if (existingStyle) {
-                        existingStyle.parentNode.removeChild(existingStyle);
-                    }
-                    handleLogoutEvent();
+        modalStore
+            .confirm({
+                description: 'Continue? Logout',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
+                const existingStyle = document.getElementById(
+                    'login-container-style'
+                );
+                if (existingStyle) {
+                    existingStyle.parentNode.removeChild(existingStyle);
                 }
+                handleLogoutEvent();
             })
             .catch(() => {});
     }

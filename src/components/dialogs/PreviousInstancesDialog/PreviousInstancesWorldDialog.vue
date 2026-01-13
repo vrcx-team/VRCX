@@ -30,11 +30,18 @@
 
 <script setup>
     import { computed, nextTick, ref, watch } from 'vue';
-    import { ElMessageBox } from 'element-plus';
     import { InputGroupField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import {
+        useInstanceStore,
+        useModalStore,
+        useSearchStore,
+        useUiStore,
+        useUserStore,
+        useVrcxStore
+    } from '../../../stores';
     import {
         compareByCreatedAt,
         localeIncludes,
@@ -42,7 +49,6 @@
         removeFromArray,
         timeToText
     } from '../../../shared/utils';
-    import { useInstanceStore, useSearchStore, useUiStore, useUserStore, useVrcxStore } from '../../../stores';
     import { DataTableLayout } from '../../ui/data-table';
     import { createColumns } from './previousInstancesWorldColumns.jsx';
     import { database } from '../../../service/database';
@@ -50,6 +56,8 @@
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     const { t } = useI18n();
+
+    const modalStore = useModalStore();
 
     const props = defineProps({
         previousInstancesWorldDialog: {
@@ -164,15 +172,14 @@
     }
 
     function deleteGameLogWorldInstancePrompt(row) {
-        ElMessageBox.confirm('Continue? Delete GameLog Instance', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    deleteGameLogWorldInstance(row);
-                }
+        modalStore
+            .confirm({
+                description: 'Continue? Delete GameLog Instance',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
+                deleteGameLogWorldInstance(row);
             })
             .catch(() => {});
     }

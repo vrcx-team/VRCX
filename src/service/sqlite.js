@@ -1,22 +1,20 @@
-import { ElMessageBox } from 'element-plus';
-
 import { openExternalLink } from '../shared/utils';
+import { useModalStore } from '../stores';
 
 // requires binding of SQLite
 class SQLiteService {
     handleSQLiteError(e) {
         if (typeof e.message === 'string') {
+            const modalStore = useModalStore();
             if (e.message.includes('database disk image is malformed')) {
-                ElMessageBox.confirm(
-                    'Please repair or delete your database file by following these instructions.',
-                    'Your database is corrupted',
-                    {
-                        confirmButtonText: 'Confirm',
-                        type: 'warning'
-                    }
-                )
-                    .then(async (action) => {
-                        if (action !== 'confirm') return;
+                modalStore
+                    .confirm({
+                        description:
+                            'Please repair or delete your database file by following these instructions.',
+                        title: 'Your database is corrupted'
+                    })
+                    .then(({ ok }) => {
+                        if (!ok) return;
                         openExternalLink(
                             'https://github.com/vrcx-team/VRCX/wiki#how-to-repair-vrcx-database'
                         );
@@ -24,37 +22,26 @@ class SQLiteService {
                     .catch(() => {});
             }
             if (e.message.includes('database or disk is full')) {
-                ElMessageBox.alert(
-                    'Please free up some disk space.',
-                    'Disk containing database is full',
-                    {
-                        confirmButtonText: 'OK',
-                        type: 'warning'
-                    }
-                ).catch(() => {});
+                modalStore.alert({
+                    description: 'Please free up some disk space.',
+                    title: 'Disk containing database is full'
+                });
             }
             if (
                 e.message.includes('database is locked') ||
                 e.message.includes('attempt to write a readonly database')
             ) {
-                ElMessageBox.alert(
-                    'Please close other applications that might be using the database file.',
-                    'Database is locked',
-                    {
-                        confirmButtonText: 'OK',
-                        type: 'warning'
-                    }
-                ).catch(() => {});
+                modalStore.alert({
+                    description:
+                        'Please close other applications that might be using the database file.',
+                    title: 'Database is locked'
+                });
             }
             if (e.message.includes('disk I/O error')) {
-                ElMessageBox.alert(
-                    'Please check your disk for errors.',
-                    'Disk I/O error',
-                    {
-                        confirmButtonText: 'OK',
-                        type: 'warning'
-                    }
-                ).catch(() => {});
+                modalStore.alert({
+                    description: 'Please check your disk for errors.',
+                    title: 'Disk I/O error'
+                });
             }
         }
         throw e;

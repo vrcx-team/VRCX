@@ -1,5 +1,4 @@
 import { reactive, ref, shallowReactive, watch } from 'vue';
-import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 
@@ -23,6 +22,7 @@ import { useGameStore } from './game';
 import { useGeneralSettingsStore } from './settings/general';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
+import { useModalStore } from './modal';
 import { useNotificationStore } from './notification';
 import { usePhotonStore } from './photon';
 import { useSharedFeedStore } from './sharedFeed';
@@ -54,6 +54,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     const galleryStore = useGalleryStore();
     const photonStore = usePhotonStore();
     const sharedFeedStore = useSharedFeedStore();
+    const modalStore = useModalStore();
 
     const state = reactive({
         lastLocationAvatarList: new Map()
@@ -1414,15 +1415,14 @@ export const useGameLogStore = defineStore('GameLog', () => {
             return;
         }
         if (!advancedSettingsStore.gameLogDisabled) {
-            ElMessageBox.confirm('Continue? Disable GameLog', 'Confirm', {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                type: 'info'
-            })
-                .then(({ action }) => {
-                    if (action === 'confirm') {
-                        advancedSettingsStore.setGameLogDisabled();
-                    }
+            modalStore
+                .confirm({
+                    description: 'Continue? Disable GameLog',
+                    title: 'Confirm'
+                })
+                .then(({ ok }) => {
+                    if (!ok) return;
+                    advancedSettingsStore.setGameLogDisabled();
                 })
                 .catch(() => {});
         } else {

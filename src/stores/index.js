@@ -21,6 +21,7 @@ import { useInstanceStore } from './instance';
 import { useInviteStore } from './invite';
 import { useLaunchStore } from './launch';
 import { useLocationStore } from './location';
+import { useModalStore } from './modal';
 import { useModerationStore } from './moderation';
 import { useNotificationStore } from './notification';
 import { useNotificationsSettingsStore } from './settings/notifications';
@@ -162,7 +163,8 @@ export function createGlobalStores() {
         updateLoop: useUpdateLoopStore(),
         auth: useAuthStore(),
         vrcStatus: useVrcStatusStore(),
-        charts: useChartsStore()
+        charts: useChartsStore(),
+        modal: useModalStore()
     };
 }
 
@@ -200,5 +202,6 @@ export {
     useWorldStore,
     useSharedFeedStore,
     useUpdateLoopStore,
-    useVrcStatusStore
+    useVrcStatusStore,
+    useModalStore
 };

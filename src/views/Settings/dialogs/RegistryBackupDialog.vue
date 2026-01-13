@@ -55,8 +55,8 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import { useAdvancedSettingsStore, useModalStore, useVrcxStore } from '../../../stores';
     import { downloadAndSaveJson, removeFromArray } from '../../../shared/utils';
-    import { useAdvancedSettingsStore, useVrcxStore } from '../../../stores';
     import { Switch } from '../../../components/ui/switch';
     import { createColumns } from './registryBackupColumns.jsx';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
@@ -67,6 +67,7 @@
     const { isRegistryBackupDialogVisible } = storeToRefs(useVrcxStore());
     const { vrcRegistryAutoBackup, vrcRegistryAskRestore } = storeToRefs(useAdvancedSettingsStore());
     const { setVrcRegistryAutoBackup, setVrcRegistryAskRestore } = useAdvancedSettingsStore();
+    const modalStore = useModalStore();
 
     const { t } = useI18n();
 
@@ -121,13 +122,13 @@
     }
 
     function restoreVrcRegistryBackup(row) {
-        ElMessageBox.confirm('Continue? Restore Backup', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'warning'
-        })
-            .then((action) => {
-                if (action !== 'confirm') {
+        modalStore
+            .confirm({
+                description: 'Continue? Restore Backup',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) {
                     return;
                 }
                 const data = JSON.stringify(row.data);
@@ -155,13 +156,13 @@
     }
 
     function deleteVrcRegistry() {
-        ElMessageBox.confirm('Continue? Delete VRC Registry Settings', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'warning'
-        })
-            .then((action) => {
-                if (action !== 'confirm') {
+        modalStore
+            .confirm({
+                description: 'Continue? Delete VRC Registry Settings',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) {
                     return;
                 }
                 AppApi.DeleteVRChatRegistryFolder().then(() => {
@@ -178,8 +179,6 @@
 
     function promptVrcRegistryBackupName() {
         ElMessageBox.prompt('Enter a name for the backup', 'Backup Name', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
             inputPattern: /\S+/,
             inputErrorMessage: 'Name is required',
             inputValue: 'Backup'

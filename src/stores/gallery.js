@@ -1,5 +1,4 @@
 import { reactive, ref, shallowReactive, watch } from 'vue';
-import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { useI18n } from 'vue-i18n';
 
@@ -19,9 +18,10 @@ import {
 } from '../api';
 import { AppDebug } from '../service/appConfig';
 import { handleImageUploadInput } from '../shared/utils/imageUpload';
-import { useAdvancedSettingsStore } from './settings/advanced';
-import { watchState } from '../service/watchState';
 import { router } from '../plugin/router';
+import { useAdvancedSettingsStore } from './settings/advanced';
+import { useModalStore } from './modal';
+import { watchState } from '../service/watchState';
 
 import miscReq from '../api/misc';
 
@@ -30,6 +30,7 @@ import * as workerTimers from 'worker-timers';
 export const useGalleryStore = defineStore('Gallery', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
     const { t } = useI18n();
+    const modalStore = useModalStore();
 
     const state = reactive({
         printCache: [],
@@ -515,17 +516,15 @@ export const useGalleryStore = defineStore('Gallery', () => {
             }
         } catch (e) {
             if (e.message.includes('Could not find file')) {
-                ElMessageBox.confirm(
-                    'Windows has blocked VRCX from creating files on your system. Please allow VRCX to create files to save emojis, would you like to see instructions on how to fix this?',
-                    'Failed to create emoji folder',
-                    {
-                        confirmButtonText: 'Confirm',
-                        cancelButtonText: 'Ignore',
-                        type: 'warning'
-                    }
-                )
-                    .then(async (action) => {
-                        if (action !== 'confirm') return;
+                modalStore
+                    .confirm({
+                        description:
+                            'Windows has blocked VRCX from creating files on your system. Please allow VRCX to create files to save emojis, would you like to see instructions on how to fix this?',
+                        title: 'Failed to create emoji folder',
+                        cancelText: 'Ignore'
+                    })
+                    .then(({ ok }) => {
+                        if (!ok) return;
                         openExternalLink(
                             'https://www.youtube.com/watch?v=1mwmmCdA4D8&t=213s'
                         );

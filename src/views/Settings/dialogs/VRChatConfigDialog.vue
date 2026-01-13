@@ -173,23 +173,23 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { InputGroupAction } from '@/components/ui/input-group';
     import { Checkbox } from '@/components/ui/checkbox';
-    import { ElMessageBox } from 'element-plus';
+    import { InputGroupAction } from '@/components/ui/input-group';
     import { Refresh } from '@element-plus/icons-vue';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import { useAdvancedSettingsStore, useGameStore, useModalStore } from '../../../stores';
     import { VRChatCameraResolutions, VRChatScreenshotResolutions } from '../../../shared/constants';
     import { getVRChatResolution, openExternalLink } from '../../../shared/utils';
-    import { useAdvancedSettingsStore, useGameStore } from '../../../stores';
 
     const { VRChatUsedCacheSize, VRChatTotalCacheSize, VRChatCacheSizeLoading } = storeToRefs(useGameStore());
     const { sweepVRChatCache, getVRChatCacheSize } = useGameStore();
     const { folderSelectorDialog } = useAdvancedSettingsStore();
     const { isVRChatConfigDialogVisible } = storeToRefs(useAdvancedSettingsStore());
+    const modalStore = useModalStore();
 
     const { t } = useI18n();
 
@@ -322,13 +322,13 @@
     });
 
     function showDeleteAllVRChatCacheConfirm() {
-        ElMessageBox.confirm(`Continue? Delete all VRChat cache`, 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
+        modalStore
+            .confirm({
+                description: 'Continue? Delete all VRChat cache',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (ok) {
                     deleteAllVRChatCache();
                 }
             })

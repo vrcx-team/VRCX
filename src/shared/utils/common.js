@@ -1,4 +1,3 @@
-import { ElMessageBox } from 'element-plus';
 import { storeToRefs } from 'pinia';
 import { toast } from 'vue-sonner';
 
@@ -7,6 +6,7 @@ import Noty from 'noty';
 import {
     useAvatarStore,
     useInstanceStore,
+    useModalStore,
     useSearchStore,
     useWorldStore
 } from '../../stores';
@@ -395,24 +395,22 @@ function openExternalLink(link) {
         return;
     }
 
-    ElMessageBox.confirm(`${link}`, 'Open External Link', {
-        distinguishCancelAndClose: true,
-        confirmButtonText: 'Open',
-        cancelButtonText: 'Copy',
-        type: 'info',
-        beforeClose: (action, instance, done) => {
-            if (action === 'cancel') {
-                copyToClipboard(link);
-            }
-            done();
-        }
-    })
-        .then((action) => {
-            if (action === 'confirm') {
-                AppApi.OpenLink(link);
-            }
+    const modalStore = useModalStore();
+    modalStore
+        .confirm({
+            description: `${link}`,
+            title: 'Open External Link',
+            confirmText: 'Open',
+            cancelText: 'Copy'
         })
-        .catch(() => {});
+        // TODO: beforeClose alert dialog
+        .then(({ ok }) => {
+            if (!ok) {
+                copyToClipboard(link, 'Link copied to clipboard!');
+                return;
+            }
+            AppApi.OpenLink(link);
+        });
 }
 
 /**

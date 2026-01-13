@@ -1146,11 +1146,10 @@
         View,
         Warning
     } from '@element-plus/icons-vue';
-    import { Card } from '@/components/ui/card';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, nextTick, reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { ElMessageBox } from 'element-plus';
+    import { Card } from '@/components/ui/card';
     import { InputGroupField } from '@/components/ui/input-group';
     import { RefreshCcw } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
@@ -1177,19 +1176,20 @@
         userStatusClass
     } from '../../../shared/utils';
     import {
+        useAppearanceSettingsStore,
+        useGalleryStore,
+        useGroupStore,
+        useLocationStore,
+        useModalStore,
+        useUserStore
+    } from '../../../stores';
+    import {
         DropdownMenu,
         DropdownMenuContent,
         DropdownMenuItem,
         DropdownMenuSeparator,
         DropdownMenuTrigger
     } from '../../ui/dropdown-menu';
-    import {
-        useAppearanceSettingsStore,
-        useGalleryStore,
-        useGroupStore,
-        useLocationStore,
-        useUserStore
-    } from '../../../stores';
     import { formatJsonVars, getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import { Badge } from '../../ui/badge';
@@ -1202,6 +1202,8 @@
     import * as workerTimers from 'worker-timers';
 
     const { t } = useI18n();
+
+    const modalStore = useModalStore();
 
     const { showUserDialog } = useUserStore();
     const { currentUser } = storeToRefs(useUserStore());
@@ -1469,43 +1471,42 @@
             });
     }
     function confirmDeleteGroupPost(post) {
-        ElMessageBox.confirm('Are you sure you want to delete this post?', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    groupRequest
-                        .deleteGroupPost({
-                            groupId: post.groupId,
-                            postId: post.id
-                        })
-                        .then((args) => {
-                            const D = groupDialog.value;
-                            if (D.id !== args.params.groupId) {
-                                return;
-                            }
+        modalStore
+            .confirm({
+                description: 'Are you sure you want to delete this post?',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
+                groupRequest
+                    .deleteGroupPost({
+                        groupId: post.groupId,
+                        postId: post.id
+                    })
+                    .then((args) => {
+                        const D = groupDialog.value;
+                        if (D.id !== args.params.groupId) {
+                            return;
+                        }
 
-                            const postId = args.params.postId;
-                            // remove existing post
-                            for (const item of D.posts) {
-                                if (item.id === postId) {
-                                    removeFromArray(D.posts, item);
-                                    break;
-                                }
+                        const postId = args.params.postId;
+                        // remove existing post
+                        for (const item of D.posts) {
+                            if (item.id === postId) {
+                                removeFromArray(D.posts, item);
+                                break;
                             }
-                            // remove/update announcement
-                            if (postId === D.announcement.id) {
-                                if (D.posts.length > 0) {
-                                    D.announcement = D.posts[0];
-                                } else {
-                                    D.announcement = {};
-                                }
+                        }
+                        // remove/update announcement
+                        if (postId === D.announcement.id) {
+                            if (D.posts.length > 0) {
+                                D.announcement = D.posts[0];
+                            } else {
+                                D.announcement = {};
                             }
-                            updateGroupPostSearch();
-                        });
-                }
+                        }
+                        updateGroupPostSearch();
+                    });
             })
             .catch(() => {});
     }
@@ -1571,46 +1572,44 @@
     }
 
     function blockGroup(groupId) {
-        ElMessageBox.confirm('Are you sure you want to block this group?', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    groupRequest
-                        .blockGroup({
-                            groupId
-                        })
-                        .then((args) => {
-                            if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
-                                showGroupDialog(args.params.groupId);
-                            }
-                        });
-                }
+        modalStore
+            .confirm({
+                description: 'Are you sure you want to block this group?',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
+                groupRequest
+                    .blockGroup({
+                        groupId
+                    })
+                    .then((args) => {
+                        if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
+                            showGroupDialog(args.params.groupId);
+                        }
+                    });
             })
             .catch(() => {});
     }
 
     function unblockGroup(groupId) {
-        ElMessageBox.confirm('Are you sure you want to unblock this group?', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info'
-        })
-            .then((action) => {
-                if (action === 'confirm') {
-                    groupRequest
-                        .unblockGroup({
-                            groupId,
-                            userId: currentUser.value.id
-                        })
-                        .then((args) => {
-                            if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
-                                showGroupDialog(args.params.groupId);
-                            }
-                        });
-                }
+        modalStore
+            .confirm({
+                description: 'Are you sure you want to unblock this group?',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
+                groupRequest
+                    .unblockGroup({
+                        groupId,
+                        userId: currentUser.value.id
+                    })
+                    .then((args) => {
+                        if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
+                            showGroupDialog(args.params.groupId);
+                        }
+                    });
             })
             .catch(() => {});
     }
