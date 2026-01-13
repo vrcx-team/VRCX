@@ -17,32 +17,17 @@ export const createColumns = ({ userImage, userImageFull, onShowFullscreenImage,
             const full = userImageFull?.(original);
 
             return (
-                <el-popover
-                    placement="right"
-                    width={500}
-                    trigger="hover"
-                    v-slots={{
-                        reference: () => (
-                            <img
-                                class="friends-list-avatar"
-                                src={thumb}
-                                loading="lazy"
-                            />
-                        )
+                <img
+                    class="friends-list-avatar"
+                    src={thumb}
+                    loading="lazy"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (full) {
+                            onShowFullscreenImage?.(full);
+                        }
                     }}
-                >
-                    <img
-                        src={full}
-                        class={['friends-list-avatar', 'x-popover-image']}
-                        style="cursor: pointer"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            if (full) {
-                                onShowFullscreenImage?.(full);
-                            }
-                        }}
-                    />
-                </el-popover>
+                />
             );
         }
     },
