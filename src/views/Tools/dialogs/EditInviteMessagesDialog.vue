@@ -7,104 +7,36 @@
         @close="closeDialog">
         <el-tabs v-model="activeTab" style="margin-top: 10px">
             <el-tab-pane :label="t('dialog.edit_invite_messages.invite_message_tab')" name="message">
-                <DataTable
-                    v-bind="inviteMessageTable"
+                <DataTableLayout
                     style="margin-top: 10px; cursor: pointer"
-                    @row-click="showEditInviteMessageDialog">
-                    <el-table-column
-                        :label="t('table.profile.invite_messages.slot')"
-                        prop="slot"
-                        :sortable="true"
-                        width="70"></el-table-column>
-                    <el-table-column
-                        :label="t('table.profile.invite_messages.message')"
-                        prop="message"></el-table-column>
-                    <el-table-column
-                        :label="t('table.profile.invite_messages.cool_down')"
-                        prop="updatedAt"
-                        :sortable="true"
-                        width="110"
-                        align="right">
-                        <template #default="scope">
-                            <countdown-timer :datetime="scope.row.updatedAt" :hours="1"></countdown-timer>
-                        </template>
-                    </el-table-column>
-                </DataTable>
+                    :table="inviteMessageTanstackTable"
+                    :loading="false"
+                    :show-pagination="false"
+                    :on-row-click="handleEditInviteMessageRowClick" />
             </el-tab-pane>
             <el-tab-pane :label="t('dialog.edit_invite_messages.invite_request_tab')" name="request">
-                <DataTable
-                    v-bind="inviteRequestMessageTable"
+                <DataTableLayout
                     style="margin-top: 10px; cursor: pointer"
-                    @row-click="showEditInviteMessageDialog">
-                    <el-table-column
-                        :label="t('table.profile.invite_messages.slot')"
-                        prop="slot"
-                        :sortable="true"
-                        width="70"></el-table-column>
-                    <el-table-column
-                        :label="t('table.profile.invite_messages.message')"
-                        prop="message"></el-table-column>
-                    <el-table-column
-                        :label="t('table.profile.invite_messages.cool_down')"
-                        prop="updatedAt"
-                        :sortable="true"
-                        width="110"
-                        align="right">
-                        <template #default="scope">
-                            <countdown-timer :datetime="scope.row.updatedAt" :hours="1"></countdown-timer>
-                        </template>
-                    </el-table-column>
-                </DataTable>
+                    :table="inviteRequestTanstackTable"
+                    :loading="false"
+                    :show-pagination="false"
+                    :on-row-click="handleEditInviteMessageRowClick" />
             </el-tab-pane>
             <el-tab-pane :label="t('dialog.edit_invite_messages.invite_request_response_tab')" name="requestResponse">
-                <DataTable
-                    v-bind="inviteRequestResponseMessageTable"
+                <DataTableLayout
                     style="margin-top: 10px; cursor: pointer"
-                    @row-click="showEditInviteMessageDialog">
-                    <el-table-column
-                        :label="t('table.profile.invite_messages.slot')"
-                        prop="slot"
-                        :sortable="true"
-                        width="70"></el-table-column>
-                    <el-table-column
-                        :label="t('table.profile.invite_messages.message')"
-                        prop="message"></el-table-column>
-                    <el-table-column
-                        :label="t('table.profile.invite_messages.cool_down')"
-                        prop="updatedAt"
-                        :sortable="true"
-                        width="110"
-                        align="right">
-                        <template #default="scope">
-                            <countdown-timer :datetime="scope.row.updatedAt" :hours="1"></countdown-timer>
-                        </template>
-                    </el-table-column>
-                </DataTable>
+                    :table="inviteRequestResponseTanstackTable"
+                    :loading="false"
+                    :show-pagination="false"
+                    :on-row-click="handleEditInviteMessageRowClick" />
             </el-tab-pane>
             <el-tab-pane :label="t('dialog.edit_invite_messages.invite_response_tab')" name="response">
-                <DataTable
-                    v-bind="inviteResponseMessageTable"
+                <DataTableLayout
                     style="margin-top: 10px; cursor: pointer"
-                    @row-click="showEditInviteMessageDialog">
-                    <el-table-column
-                        :label="t('table.profile.invite_messages.slot')"
-                        prop="slot"
-                        :sortable="true"
-                        width="70"></el-table-column>
-                    <el-table-column
-                        :label="t('table.profile.invite_messages.message')"
-                        prop="message"></el-table-column>
-                    <el-table-column
-                        :label="t('table.profile.invite_messages.cool_down')"
-                        prop="updatedAt"
-                        :sortable="true"
-                        width="110"
-                        align="right">
-                        <template #default="scope">
-                            <countdown-timer :datetime="scope.row.updatedAt" :hours="1"></countdown-timer>
-                        </template>
-                    </el-table-column>
-                </DataTable>
+                    :table="inviteResponseTanstackTable"
+                    :loading="false"
+                    :show-pagination="false"
+                    :on-row-click="handleEditInviteMessageRowClick" />
             </el-tab-pane>
         </el-tabs>
     </el-dialog>
@@ -118,14 +50,19 @@
 </template>
 
 <script setup>
-    import { ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
+    import { DataTableLayout } from '@/components/ui/data-table';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
+    import { useVrcxVueTable } from '@/lib/table/useVrcxVueTable';
 
+    import { columns as inviteMessageColumns } from './editInviteMessagesMessageColumns.jsx';
+    import { columns as inviteRequestColumns } from './editInviteMessagesRequestColumns.jsx';
+    import { columns as inviteRequestResponseColumns } from './editInviteMessagesRequestResponseColumns.jsx';
+    import { columns as inviteResponseColumns } from './editInviteMessagesResponseColumns.jsx';
     import { useInviteStore } from '../../../stores';
 
-    import DataTable from '../../../components/DataTable.vue';
     import EditInviteMessageDialog from './EditInviteMessageDialog.vue';
 
     const {
@@ -165,6 +102,51 @@
 
     function closeDialog() {
         emit('close');
+    }
+
+    const inviteMessageRows = computed(() => inviteMessageTable.value?.data ?? []);
+    const inviteRequestRows = computed(() => inviteRequestMessageTable.value?.data ?? []);
+    const inviteRequestResponseRows = computed(() => inviteRequestResponseMessageTable.value?.data ?? []);
+    const inviteResponseRows = computed(() => inviteResponseMessageTable.value?.data ?? []);
+
+    const { table: inviteMessageTanstackTable } = useVrcxVueTable({
+        persistKey: 'edit-invite-messages:message',
+        data: inviteMessageRows,
+        columns: inviteMessageColumns,
+        getRowId: (row) => String(row?.slot ?? ''),
+        enablePagination: false,
+        initialSorting: [{ id: 'slot', desc: false }]
+    });
+
+    const { table: inviteRequestTanstackTable } = useVrcxVueTable({
+        persistKey: 'edit-invite-messages:request',
+        data: inviteRequestRows,
+        columns: inviteRequestColumns,
+        getRowId: (row) => String(row?.slot ?? ''),
+        enablePagination: false,
+        initialSorting: [{ id: 'slot', desc: false }]
+    });
+
+    const { table: inviteRequestResponseTanstackTable } = useVrcxVueTable({
+        persistKey: 'edit-invite-messages:request-response',
+        data: inviteRequestResponseRows,
+        columns: inviteRequestResponseColumns,
+        getRowId: (row) => String(row?.slot ?? ''),
+        enablePagination: false,
+        initialSorting: [{ id: 'slot', desc: false }]
+    });
+
+    const { table: inviteResponseTanstackTable } = useVrcxVueTable({
+        persistKey: 'edit-invite-messages:response',
+        data: inviteResponseRows,
+        columns: inviteResponseColumns,
+        getRowId: (row) => String(row?.slot ?? ''),
+        enablePagination: false,
+        initialSorting: [{ id: 'slot', desc: false }]
+    });
+
+    function handleEditInviteMessageRowClick(row) {
+        showEditInviteMessageDialog(row?.original);
     }
 
     function showEditInviteMessageDialog(row) {

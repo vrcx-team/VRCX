@@ -10,30 +10,12 @@
             <input class="inviteImageUploadButton" type="file" accept="image/*" @change="inviteImageUpload" />
         </template>
 
-        <DataTable
-            v-bind="inviteResponseMessageTable"
-            style="margin-top: 10px; cursor: pointer"
-            @row-click="showSendInviteResponseConfirmDialog">
-            <el-table-column :label="t('table.profile.invite_messages.slot')" prop="slot" :sortable="true" width="70" />
-            <el-table-column :label="t('table.profile.invite_messages.message')" prop="message" />
-            <el-table-column
-                :label="t('table.profile.invite_messages.cool_down')"
-                prop="updatedAt"
-                :sortable="true"
-                width="110"
-                align="right">
-                <template #default="scope">
-                    <countdown-timer :datetime="scope.row.updatedAt" :hours="1" />
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.profile.invite_messages.action')" width="70" align="right">
-                <template #default="scope">
-                    <Button size="icon-sm" variant="ghost" @click.stop="showEditAndSendInviteResponseDialog(scope.row)">
-                        <SquarePen
-                    /></Button>
-                </template>
-            </el-table-column>
-        </DataTable>
+        <DataTableLayout
+            style="margin-top: 10px"
+            :table="inviteResponseTable"
+            :loading="false"
+            :show-pagination="false"
+            :on-row-click="handleInviteResponseRowClick" />
 
         <template #footer>
             <Button variant="secondary" class="mr-2" @click="cancelSendInviteResponse">{{
@@ -57,13 +39,15 @@
 </template>
 
 <script setup>
+    import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { SquarePen } from 'lucide-vue-next';
-    import { ref } from 'vue';
+    import { DataTableLayout } from '@/components/ui/data-table';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+    import { useVrcxVueTable } from '@/lib/table/useVrcxVueTable';
 
     import { useGalleryStore, useInviteStore, useUserStore } from '../../../stores';
+    import { createColumns } from './sendInviteResponseColumns.jsx';
 
     import EditAndSendInviteResponseDialog from './EditAndSendInviteResponseDialog.vue';
     import SendInviteResponseConfirmDialog from './SendInviteResponseConfirmDialog.vue';
@@ -98,6 +82,26 @@
     const sendInviteResponseConfirmDialog = ref({
         visible: false
     });
+
+    const inviteResponseRows = computed(() => inviteResponseMessageTable.value?.data ?? []);
+    const inviteResponseColumns = computed(() =>
+        createColumns({
+            onEdit: showEditAndSendInviteResponseDialog
+        })
+    );
+
+    const { table: inviteResponseTable } = useVrcxVueTable({
+        persistKey: 'invite-response-message',
+        data: inviteResponseRows,
+        columns: inviteResponseColumns,
+        getRowId: (row) => String(row?.slot ?? ''),
+        enablePagination: false,
+        initialSorting: [{ id: 'slot', desc: false }]
+    });
+
+    function handleInviteResponseRowClick(row) {
+        showSendInviteResponseConfirmDialog(row?.original);
+    }
 
     function closeInviteDialog() {
         cancelSendInviteResponse();

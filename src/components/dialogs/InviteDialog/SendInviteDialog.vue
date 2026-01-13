@@ -35,38 +35,12 @@
             <input class="inviteImageUploadButton" type="file" accept="image/*" @change="inviteImageUpload" />
         </template>
 
-        <DataTable
-            v-bind="inviteMessageTable"
-            style="margin-top: 10px; cursor: pointer"
-            @row-click="showSendInviteConfirmDialog">
-            <el-table-column
-                :label="t('table.profile.invite_messages.slot')"
-                prop="slot"
-                :sortable="true"
-                width="70"></el-table-column>
-            <el-table-column :label="t('table.profile.invite_messages.message')" prop="message"></el-table-column>
-            <el-table-column
-                :label="t('table.profile.invite_messages.cool_down')"
-                prop="updatedAt"
-                :sortable="true"
-                width="110"
-                align="right">
-                <template #default="scope">
-                    <countdown-timer :datetime="scope.row.updatedAt" :hours="1"></countdown-timer>
-                </template>
-            </el-table-column>
-            <el-table-column :label="t('table.profile.invite_messages.action')" width="70" align="right">
-                <template #default="scope">
-                    <Button
-                        size="icon-sm"
-                        class="w-6 h-6"
-                        variant="ghost"
-                        @click.stop="showEditAndSendInviteDialog(scope.row)">
-                        <SquarePen />
-                    </Button>
-                </template>
-            </el-table-column>
-        </DataTable>
+        <DataTableLayout
+            style="margin-top: 10px"
+            :table="inviteMessageTanstackTable"
+            :loading="false"
+            :show-pagination="false"
+            :on-row-click="handleInviteMessageRowClick" />
 
         <template #footer>
             <Button variant="secondary" @click="cancelSendInvite">
@@ -92,13 +66,15 @@
 </template>
 
 <script setup>
+    import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { SquarePen } from 'lucide-vue-next';
-    import { ref } from 'vue';
+    import { DataTableLayout } from '@/components/ui/data-table';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+    import { useVrcxVueTable } from '@/lib/table/useVrcxVueTable';
 
     import { useGalleryStore, useInviteStore, useUserStore } from '../../../stores';
+    import { createColumns } from './sendInviteColumns.jsx';
 
     import EditAndSendInviteDialog from './EditAndSendInviteDialog.vue';
     import SendInviteConfirmDialog from './SendInviteConfirmDialog.vue';
@@ -134,6 +110,26 @@
         visible: false,
         newMessage: ''
     });
+
+    const inviteMessageRows = computed(() => inviteMessageTable.value?.data ?? []);
+    const inviteMessageColumns = computed(() =>
+        createColumns({
+            onEdit: showEditAndSendInviteDialog
+        })
+    );
+
+    const { table: inviteMessageTanstackTable } = useVrcxVueTable({
+        persistKey: 'invite-message',
+        data: inviteMessageRows,
+        columns: inviteMessageColumns,
+        getRowId: (row) => String(row?.slot ?? ''),
+        enablePagination: false,
+        initialSorting: [{ id: 'slot', desc: false }]
+    });
+
+    function handleInviteMessageRowClick(row) {
+        showSendInviteConfirmDialog(row?.original);
+    }
 
     function showSendInviteConfirmDialog(row) {
         emit('update:sendInviteDialog', { ...props.sendInviteDialog, messageSlot: row });

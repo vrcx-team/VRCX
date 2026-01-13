@@ -2,7 +2,6 @@ import { TooltipWrapper } from '../components/ui/tooltip';
 
 import AvatarInfo from '../components/AvatarInfo.vue';
 import CountdownTimer from '../components/CountdownTimer.vue';
-import DataTable from '../components/DataTable.vue';
 import DisplayName from '../components/DisplayName.vue';
 import InstanceInfo from '../components/InstanceInfo.vue';
 import InviteYourself from '../components/InviteYourself.vue';
@@ -23,6 +22,5 @@ export function initComponents(app) {
     app.component('InviteYourself', InviteYourself);
     app.component('Launch', Launch);
     app.component('LocationWorld', LocationWorld);
-    app.component('DataTable', DataTable);
     app.component('TooltipWrapper', TooltipWrapper);
 }

@@ -117,94 +117,13 @@
                         <Button size="sm" variant="outline" @click="selectAllGroupMembers">{{
                             t('dialog.group_member_moderation.select_all')
                         }}</Button>
-                        <DataTable
+                        <DataTableLayout
                             v-if="groupMemberModerationTable.data.length"
-                            v-bind="groupMemberModerationTable"
-                            style="margin-top: 10px">
-                            <el-table-column width="55" prop="$selected">
-                                <template #default="scope">
-                                    <Checkbox
-                                        v-model="scope.row.$selected"
-                                        @update:modelValue="groupMemberModerationTableSelectionChange(scope.row)" />
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                :label="t('dialog.group_member_moderation.avatar')"
-                                width="70"
-                                prop="photo">
-                                <template #default="scope">
-                                    <el-popover placement="right" :width="500" trigger="hover">
-                                        <template #reference>
-                                            <img
-                                                :src="userImage(scope.row.user)"
-                                                class="friends-list-avatar"
-                                                loading="lazy" />
-                                        </template>
-                                        <img
-                                            :src="userImageFull(scope.row.user)"
-                                            :class="['friends-list-avatar', 'x-popover-image']"
-                                            style="cursor: pointer"
-                                            @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
-                                            loading="lazy" />
-                                    </el-popover>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                :label="t('dialog.group_member_moderation.display_name')"
-                                width="160"
-                                prop="$displayName"
-                                sortable>
-                                <template #default="scope">
-                                    <span style="cursor: pointer" @click="showUserDialog(scope.row.userId)">
-                                        <span
-                                            v-if="randomUserColours"
-                                            :style="{ color: scope.row.user.$userColour }"
-                                            v-text="scope.row.user.displayName"></span>
-                                        <span v-else v-text="scope.row.user?.displayName"></span>
-                                    </span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column :label="t('dialog.group_member_moderation.roles')" prop="roleIds" sortable>
-                                <template #default="scope">
-                                    <template v-for="(roleId, index) in scope.row.roleIds" :key="roleId">
-                                        <template
-                                            v-for="(role, rIndex) in groupMemberModeration.groupRef.roles"
-                                            :key="roleId + rIndex">
-                                            <span v-if="role?.id === roleId"
-                                                >{{ role.name
-                                                }}<span v-if="index < scope.row.roleIds.length - 1">, </span></span
-                                            ></template
-                                        >
-                                    </template>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                :label="t('dialog.group_member_moderation.notes')"
-                                prop="managerNotes"
-                                sortable>
-                                <template #default="scope">
-                                    <span @click.stop v-text="scope.row.managerNotes"></span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                :label="t('dialog.group_member_moderation.joined_at')"
-                                width="170"
-                                prop="joinedAt"
-                                sortable>
-                                <template #default="scope">
-                                    <span>{{ formatDateFilter(scope.row.joinedAt, 'long') }}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                :label="t('dialog.group_member_moderation.visibility')"
-                                width="120"
-                                prop="visibility"
-                                sortable>
-                                <template #default="scope">
-                                    <span v-text="scope.row.visibility"></span>
-                                </template>
-                            </el-table-column>
-                        </DataTable>
+                            style="margin-top: 10px"
+                            :table="groupMemberModerationTanstackTable"
+                            :loading="isGroupMembersLoading"
+                            :page-sizes="pageSizes"
+                            :total-items="groupMemberModerationTotalItems" />
                     </div>
                 </el-tab-pane>
 
@@ -235,90 +154,12 @@
                         <Button size="sm" variant="outline" @click="selectAllGroupBans">{{
                             t('dialog.group_member_moderation.select_all')
                         }}</Button>
-                        <DataTable v-bind="groupBansModerationTable" style="margin-top: 10px">
-                            <el-table-column width="55" prop="$selected">
-                                <template #default="scope">
-                                    <Checkbox
-                                        v-model="scope.row.$selected"
-                                        @update:modelValue="groupMemberModerationTableSelectionChange(scope.row)" />
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                :label="t('dialog.group_member_moderation.avatar')"
-                                width="70"
-                                prop="photo">
-                                <template #default="scope">
-                                    <el-popover placement="right" :width="500" trigger="hover">
-                                        <template #reference>
-                                            <img
-                                                :src="userImage(scope.row.user)"
-                                                class="friends-list-avatar"
-                                                loading="lazy" />
-                                        </template>
-                                        <img
-                                            :src="userImageFull(scope.row.user)"
-                                            :class="['friends-list-avatar', 'x-popover-image']"
-                                            style="cursor: pointer"
-                                            @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
-                                            loading="lazy" />
-                                    </el-popover>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                :label="t('dialog.group_member_moderation.display_name')"
-                                width="160"
-                                prop="$displayName"
-                                sortable>
-                                <template #default="scope">
-                                    <span style="cursor: pointer" @click="showUserDialog(scope.row.userId)">
-                                        <span
-                                            v-if="randomUserColours"
-                                            :style="{ color: scope.row.user?.$userColour }"
-                                            v-text="scope.row.user?.displayName"></span>
-                                        <span v-else v-text="scope.row.user?.displayName"></span>
-                                    </span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column :label="t('dialog.group_member_moderation.roles')" prop="roleIds" sortable>
-                                <template #default="scope">
-                                    <template v-for="(roleId, index) in scope.row.roleIds" :key="roleId">
-                                        <span
-                                            v-for="(role, rIndex) in groupMemberModeration.groupRef.roles"
-                                            v-if="role.id === roleId"
-                                            :key="rIndex + roleId"
-                                            >{{ role.name }}</span
-                                        >
-                                        <span v-if="index < scope.row.roleIds.length - 1">, </span>
-                                    </template>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                :label="t('dialog.group_member_moderation.notes')"
-                                prop="managerNotes"
-                                sortable>
-                                <template #default="scope">
-                                    <span @click.stop v-text="scope.row.managerNotes"></span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                :label="t('dialog.group_member_moderation.joined_at')"
-                                width="170"
-                                prop="joinedAt"
-                                sortable>
-                                <template #default="scope">
-                                    <span>{{ formatDateFilter(scope.row.joinedAt, 'long') }}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                :label="t('dialog.group_member_moderation.banned_at')"
-                                width="170"
-                                prop="bannedAt"
-                                sortable>
-                                <template #default="scope">
-                                    <span>{{ formatDateFilter(scope.row.bannedAt, 'long') }}</span>
-                                </template>
-                            </el-table-column>
-                        </DataTable>
+                        <DataTableLayout
+                            style="margin-top: 10px"
+                            :table="groupBansModerationTanstackTable"
+                            :loading="isGroupMembersLoading"
+                            :page-sizes="pageSizes"
+                            :total-items="groupBansModerationTotalItems" />
                     </div>
                 </el-tab-pane>
 
@@ -349,61 +190,12 @@
                                 <Button size="sm" variant="outline" @click="selectAllGroupInvites">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</Button>
-                                <DataTable v-bind="groupInvitesModerationTable" style="margin-top: 10px">
-                                    <el-table-column width="55" prop="$selected">
-                                        <template #default="scope">
-                                            <Checkbox
-                                                v-model="scope.row.$selected"
-                                                @update:modelValue="
-                                                    groupMemberModerationTableSelectionChange(scope.row)
-                                                " />
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                        :label="t('dialog.group_member_moderation.avatar')"
-                                        width="70"
-                                        prop="photo">
-                                        <template #default="scope">
-                                            <el-popover placement="right" :width="500" trigger="hover">
-                                                <template #reference>
-                                                    <img
-                                                        :src="userImage(scope.row.user)"
-                                                        class="friends-list-avatar"
-                                                        loading="lazy" />
-                                                </template>
-                                                <img
-                                                    :src="userImageFull(scope.row.user)"
-                                                    :class="['friends-list-avatar', 'x-popover-image']"
-                                                    style="cursor: pointer"
-                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
-                                                    loading="lazy" />
-                                            </el-popover>
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                        :label="t('dialog.group_member_moderation.display_name')"
-                                        width="160"
-                                        prop="$displayName"
-                                        sortable>
-                                        <template #default="scope">
-                                            <span style="cursor: pointer" @click="showUserDialog(scope.row.userId)">
-                                                <span
-                                                    v-if="randomUserColours"
-                                                    :style="{ color: scope.row.user.$userColour }"
-                                                    v-text="scope.row.user.displayName"></span>
-                                                <span v-else v-text="scope.row.user?.displayName"></span>
-                                            </span>
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                        :label="t('dialog.group_member_moderation.notes')"
-                                        prop="managerNotes"
-                                        sortable>
-                                        <template #default="scope">
-                                            <span @click.stop v-text="scope.row.managerNotes"></span>
-                                        </template>
-                                    </el-table-column>
-                                </DataTable>
+                                <DataTableLayout
+                                    style="margin-top: 10px"
+                                    :table="groupInvitesModerationTanstackTable"
+                                    :loading="isGroupMembersLoading"
+                                    :page-sizes="pageSizes"
+                                    :total-items="groupInvitesModerationTotalItems" />
                                 <br />
                                 <Button
                                     variant="outline"
@@ -430,61 +222,12 @@
                                 <Button size="sm" variant="outline" @click="selectAllGroupJoinRequests">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</Button>
-                                <DataTable v-bind="groupJoinRequestsModerationTable" style="margin-top: 10px">
-                                    <el-table-column width="55" prop="$selected">
-                                        <template #default="scope">
-                                            <Checkbox
-                                                v-model="scope.row.$selected"
-                                                @update:modelValue="
-                                                    groupMemberModerationTableSelectionChange(scope.row)
-                                                " />
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                        :label="t('dialog.group_member_moderation.avatar')"
-                                        width="70"
-                                        prop="photo">
-                                        <template #default="scope">
-                                            <el-popover placement="right" :width="500" trigger="hover">
-                                                <template #reference>
-                                                    <img
-                                                        :src="userImage(scope.row.user)"
-                                                        class="friends-list-avatar"
-                                                        loading="lazy" />
-                                                </template>
-                                                <img
-                                                    :src="userImageFull(scope.row.user)"
-                                                    :class="['friends-list-avatar', 'x-popover-image']"
-                                                    style="cursor: pointer"
-                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
-                                                    loading="lazy" />
-                                            </el-popover>
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                        :label="t('dialog.group_member_moderation.display_name')"
-                                        width="160"
-                                        prop="$displayName"
-                                        sortable>
-                                        <template #default="scope">
-                                            <span style="cursor: pointer" @click="showUserDialog(scope.row.userId)">
-                                                <span
-                                                    v-if="randomUserColours"
-                                                    :style="{ color: scope.row.user.$userColour }"
-                                                    v-text="scope.row.user.displayName"></span>
-                                                <span v-else v-text="scope.row.user?.displayName"></span>
-                                            </span>
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                        :label="t('dialog.group_member_moderation.notes')"
-                                        prop="managerNotes"
-                                        sortable>
-                                        <template #default="scope">
-                                            <span @click.stop v-text="scope.row.managerNotes"></span>
-                                        </template>
-                                    </el-table-column>
-                                </DataTable>
+                                <DataTableLayout
+                                    style="margin-top: 10px"
+                                    :table="groupJoinRequestsModerationTanstackTable"
+                                    :loading="isGroupMembersLoading"
+                                    :page-sizes="pageSizes"
+                                    :total-items="groupJoinRequestsModerationTotalItems" />
                                 <br />
                                 <Button
                                     variant="outline"
@@ -533,61 +276,12 @@
                                 <Button size="sm" variant="outline" @click="selectAllGroupBlocked">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</Button>
-                                <DataTable v-bind="groupBlockedModerationTable" style="margin-top: 10px">
-                                    <el-table-column width="55" prop="$selected">
-                                        <template #default="scope">
-                                            <Checkbox
-                                                v-model="scope.row.$selected"
-                                                @update:modelValue="
-                                                    groupMemberModerationTableSelectionChange(scope.row)
-                                                " />
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                        :label="t('dialog.group_member_moderation.avatar')"
-                                        width="70"
-                                        prop="photo">
-                                        <template #default="scope">
-                                            <el-popover placement="right" :width="500" trigger="hover">
-                                                <template #reference>
-                                                    <img
-                                                        :src="userImage(scope.row.user)"
-                                                        class="friends-list-avatar"
-                                                        loading="lazy" />
-                                                </template>
-                                                <img
-                                                    :src="userImageFull(scope.row.user)"
-                                                    :class="['friends-list-avatar', 'x-popover-image']"
-                                                    style="cursor: pointer"
-                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
-                                                    loading="lazy" />
-                                            </el-popover>
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                        :label="t('dialog.group_member_moderation.display_name')"
-                                        width="160"
-                                        prop="$displayName"
-                                        sortable>
-                                        <template #default="scope">
-                                            <span style="cursor: pointer" @click="showUserDialog(scope.row.userId)">
-                                                <span
-                                                    v-if="randomUserColours"
-                                                    :style="{ color: scope.row.user.$userColour }"
-                                                    v-text="scope.row.user.displayName"></span>
-                                                <span v-else v-text="scope.row.user?.displayName"></span>
-                                            </span>
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                        :label="t('dialog.group_member_moderation.notes')"
-                                        prop="managerNotes"
-                                        sortable>
-                                        <template #default="scope">
-                                            <span @click.stop v-text="scope.row.managerNotes"></span>
-                                        </template>
-                                    </el-table-column>
-                                </DataTable>
+                                <DataTableLayout
+                                    style="margin-top: 10px"
+                                    :table="groupBlockedModerationTanstackTable"
+                                    :loading="isGroupMembersLoading"
+                                    :page-sizes="pageSizes"
+                                    :total-items="groupBlockedModerationTotalItems" />
                                 <br />
                                 <Button
                                     variant="secondary"
@@ -651,55 +345,12 @@
                             :placeholder="t('dialog.group.members.search')"
                             style="margin-top: 10px; margin-bottom: 10px" />
                         <br />
-                        <DataTable v-bind="groupLogsModerationTable" style="margin-top: 10px">
-                            <el-table-column
-                                :label="t('dialog.group_member_moderation.created_at')"
-                                width="170"
-                                prop="created_at"
-                                sortable>
-                                <template #default="scope">
-                                    <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                :label="t('dialog.group_member_moderation.type')"
-                                width="190"
-                                prop="eventType"
-                                sortable>
-                                <template #default="scope">
-                                    <span v-text="scope.row.eventType"></span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                :label="t('dialog.group_member_moderation.display_name')"
-                                width="160"
-                                prop="actorDisplayName"
-                                sortable>
-                                <template #default="scope">
-                                    <span style="cursor: pointer" @click="showUserDialog(scope.row.actorId)">
-                                        <span v-text="scope.row.actorDisplayName"></span>
-                                    </span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                :label="t('dialog.group_member_moderation.description')"
-                                prop="description">
-                                <template #default="scope">
-                                    <Location
-                                        v-if="scope.row?.targetId.startsWith('wrld_')"
-                                        :location="scope.row.targetId" />
-                                    <span v-text="scope.row.description"></span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column :label="t('dialog.group_member_moderation.data')" prop="data">
-                                <template #default="scope">
-                                    <span v-if="Object.keys(scope.row.data).length">{{
-                                        JSON.stringify(scope.row.data)
-                                    }}</span>
-                                    <span v-else></span>
-                                </template>
-                            </el-table-column>
-                        </DataTable>
+                        <DataTableLayout
+                            style="margin-top: 10px"
+                            :table="groupLogsModerationTanstackTable"
+                            :loading="isGroupMembersLoading"
+                            :page-sizes="pageSizes"
+                            :total-items="groupLogsModerationTotalItems" />
                     </div>
                 </el-tab-pane>
             </el-tabs>
@@ -878,7 +529,7 @@
 
 <script setup>
     import { ArrowDown, Loading, Refresh, Warning } from '@element-plus/icons-vue';
-    import { reactive, ref, watch } from 'vue';
+    import { computed, reactive, ref, watch } from 'vue';
     import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
     import { Spinner } from '@/components/ui/spinner';
@@ -894,13 +545,21 @@
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import { groupRequest, userRequest } from '../../../api';
     import { Badge } from '../../ui/badge';
-    import { Checkbox } from '../../ui/checkbox';
+    import { DataTableLayout } from '../../ui/data-table';
+    import { createColumns as createMembersColumns } from './groupMemberModerationMembersColumns.jsx';
+    import { createColumns as createBansColumns } from './groupMemberModerationBansColumns.jsx';
+    import { createColumns as createInvitesColumns } from './groupMemberModerationInvitesColumns.jsx';
+    import { createColumns as createJoinRequestsColumns } from './groupMemberModerationJoinRequestsColumns.jsx';
+    import { createColumns as createBlockedColumns } from './groupMemberModerationBlockedColumns.jsx';
+    import { createColumns as createLogsColumns } from './groupMemberModerationLogsColumns.jsx';
+    import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     import GroupMemberModerationExportDialog from './GroupMemberModerationExportDialog.vue';
 
     import * as workerTimers from 'worker-timers';
 
-    const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
+    const appearanceSettingsStore = useAppearanceSettingsStore();
+    const { randomUserColours } = storeToRefs(appearanceSettingsStore);
     const { showUserDialog } = useUserStore();
     const { currentUser } = storeToRefs(useUserStore());
     const { groupDialog, groupMemberModeration } = storeToRefs(useGroupStore());
@@ -922,6 +581,8 @@
     });
     const members = ref([]);
     const memberSearch = ref('');
+
+    const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
 
     let loadMoreGroupMembersParams = ref({
         n: 100,
@@ -1013,6 +674,188 @@
             layout: 'sizes,prev,pager,next,total'
         }
     });
+
+    const rolesText = (roleIds) => {
+        const ids = Array.isArray(roleIds) ? roleIds : [];
+        const roles = groupMemberModeration.value?.groupRef?.roles ?? [];
+        const names = [];
+        for (const id of ids) {
+            const role = roles.find((r) => r?.id === id);
+            if (role?.name) {
+                names.push(role.name);
+            }
+        }
+        return names.join(', ');
+    };
+
+    const groupMemberModerationColumns = computed(() =>
+        createMembersColumns({
+            randomUserColours,
+            rolesText,
+            userImage,
+            userImageFull,
+            onShowFullscreenImage: showFullscreenImageDialog,
+            onShowUser: showUserDialog,
+            onSelectionChange: groupMemberModerationTableSelectionChange
+        })
+    );
+
+    const { table: groupMemberModerationTanstackTable } = useVrcxVueTable({
+        persistKey: 'group-moderation:members',
+        data: computed(() => groupMemberModerationTable.data ?? []),
+        columns: groupMemberModerationColumns,
+        getRowId: (row) => String(row?.userId ?? ''),
+        initialPagination: { pageIndex: 0, pageSize: groupMemberModerationTable.pageSize ?? 15 }
+    });
+
+    const groupMemberModerationTotalItems = computed(
+        () => groupMemberModerationTanstackTable.getFilteredRowModel().rows.length
+    );
+
+    const bansSearch = computed(() =>
+        String(groupBansModerationTable.filters?.[0]?.value ?? '')
+            .trim()
+            .toLowerCase()
+    );
+    const groupBansFilteredRows = computed(() => {
+        const rows = Array.isArray(groupBansModerationTable.data) ? groupBansModerationTable.data : [];
+        const q = bansSearch.value;
+        if (!q) {
+            return rows;
+        }
+        return rows.filter((r) => {
+            const name = (r?.$displayName ?? r?.user?.displayName ?? '').toString().toLowerCase();
+            return name.includes(q);
+        });
+    });
+
+    const groupBansModerationColumns = computed(() =>
+        createBansColumns({
+            randomUserColours,
+            rolesText,
+            userImage,
+            userImageFull,
+            onShowFullscreenImage: showFullscreenImageDialog,
+            onShowUser: showUserDialog,
+            onSelectionChange: groupMemberModerationTableSelectionChange
+        })
+    );
+
+    const { table: groupBansModerationTanstackTable } = useVrcxVueTable({
+        persistKey: 'group-moderation:bans',
+        data: groupBansFilteredRows,
+        columns: groupBansModerationColumns,
+        getRowId: (row) => String(row?.userId ?? row?.id ?? ''),
+        initialPagination: { pageIndex: 0, pageSize: groupBansModerationTable.pageSize ?? 15 }
+    });
+
+    const groupBansModerationTotalItems = computed(
+        () => groupBansModerationTanstackTable.getFilteredRowModel().rows.length
+    );
+
+    const groupInvitesModerationColumns = computed(() =>
+        createInvitesColumns({
+            randomUserColours,
+            userImage,
+            userImageFull,
+            onShowFullscreenImage: showFullscreenImageDialog,
+            onShowUser: showUserDialog,
+            onSelectionChange: groupMemberModerationTableSelectionChange
+        })
+    );
+
+    const { table: groupInvitesModerationTanstackTable } = useVrcxVueTable({
+        persistKey: 'group-moderation:invites',
+        data: computed(() => groupInvitesModerationTable.data ?? []),
+        columns: groupInvitesModerationColumns,
+        getRowId: (row) => String(row?.userId ?? row?.id ?? ''),
+        initialPagination: { pageIndex: 0, pageSize: groupInvitesModerationTable.pageSize ?? 15 }
+    });
+
+    const groupInvitesModerationTotalItems = computed(
+        () => groupInvitesModerationTanstackTable.getFilteredRowModel().rows.length
+    );
+
+    const groupJoinRequestsModerationColumns = computed(() =>
+        createJoinRequestsColumns({
+            randomUserColours,
+            userImage,
+            userImageFull,
+            onShowFullscreenImage: showFullscreenImageDialog,
+            onShowUser: showUserDialog,
+            onSelectionChange: groupMemberModerationTableSelectionChange
+        })
+    );
+
+    const { table: groupJoinRequestsModerationTanstackTable } = useVrcxVueTable({
+        persistKey: 'group-moderation:join-requests',
+        data: computed(() => groupJoinRequestsModerationTable.data ?? []),
+        columns: groupJoinRequestsModerationColumns,
+        getRowId: (row) => String(row?.userId ?? row?.id ?? ''),
+        initialPagination: { pageIndex: 0, pageSize: groupJoinRequestsModerationTable.pageSize ?? 15 }
+    });
+
+    const groupJoinRequestsModerationTotalItems = computed(
+        () => groupJoinRequestsModerationTanstackTable.getFilteredRowModel().rows.length
+    );
+
+    const groupBlockedModerationColumns = computed(() =>
+        createBlockedColumns({
+            randomUserColours,
+            userImage,
+            userImageFull,
+            onShowFullscreenImage: showFullscreenImageDialog,
+            onShowUser: showUserDialog,
+            onSelectionChange: groupMemberModerationTableSelectionChange
+        })
+    );
+
+    const { table: groupBlockedModerationTanstackTable } = useVrcxVueTable({
+        persistKey: 'group-moderation:blocked',
+        data: computed(() => groupBlockedModerationTable.data ?? []),
+        columns: groupBlockedModerationColumns,
+        getRowId: (row) => String(row?.userId ?? row?.id ?? ''),
+        initialPagination: { pageIndex: 0, pageSize: groupBlockedModerationTable.pageSize ?? 15 }
+    });
+
+    const groupBlockedModerationTotalItems = computed(
+        () => groupBlockedModerationTanstackTable.getFilteredRowModel().rows.length
+    );
+
+    const logsSearch = computed(() =>
+        String(groupLogsModerationTable.filters?.[0]?.value ?? '')
+            .trim()
+            .toLowerCase()
+    );
+    const groupLogsFilteredRows = computed(() => {
+        const rows = Array.isArray(groupLogsModerationTable.data) ? groupLogsModerationTable.data : [];
+        const q = logsSearch.value;
+        if (!q) {
+            return rows;
+        }
+        return rows.filter((r) => {
+            const desc = (r?.description ?? '').toString().toLowerCase();
+            return desc.includes(q);
+        });
+    });
+
+    const groupLogsModerationColumns = computed(() =>
+        createLogsColumns({
+            onShowUser: showUserDialog
+        })
+    );
+
+    const { table: groupLogsModerationTanstackTable } = useVrcxVueTable({
+        persistKey: 'group-moderation:logs',
+        data: groupLogsFilteredRows,
+        columns: groupLogsModerationColumns,
+        getRowId: (row) => String(row?.id ?? `${row?.created_at ?? ''}:${row?.eventType ?? ''}`),
+        initialPagination: { pageIndex: 0, pageSize: groupLogsModerationTable.pageSize ?? 15 }
+    });
+
+    const groupLogsModerationTotalItems = computed(
+        () => groupLogsModerationTanstackTable.getFilteredRowModel().rows.length
+    );
 
     function deselectGroupMember(userId) {
         const deselectInTable = (tableData) => {
