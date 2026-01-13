@@ -22,50 +22,18 @@
                 <span class="name" style="margin-right: 24px">{{ t('dialog.registry_backup.ask_to_restore') }}</span>
                 <Switch :model-value="vrcRegistryAskRestore" @update:modelValue="setVrcRegistryAskRestore" />
             </div>
-            <DataTable v-bind="registryBackupTable" style="margin-top: 10px">
-                <el-table-column :label="t('dialog.registry_backup.name')" prop="name"></el-table-column>
-                <el-table-column :label="t('dialog.registry_backup.date')" prop="date">
-                    <template #default="scope">
-                        <span>{{ formatDateFilter(scope.row.date, 'long') }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column :label="t('dialog.registry_backup.action')" width="90" align="right">
-                    <template #default="scope">
-                        <TooltipWrapper side="top" :content="t('dialog.registry_backup.restore')">
-                            <Button
-                                size="sm"
-                                variant="ghost"
-                                class="button-pd-0"
-                                @click="restoreVrcRegistryBackup(scope.row)">
-                                <RotateCcw
-                            /></Button>
-                        </TooltipWrapper>
-                        <TooltipWrapper side="top" :content="t('dialog.registry_backup.save_to_file')">
-                            <Button
-                                size="icon-sm"
-                                variant="ghost"
-                                class="button-pd-0"
-                                @click="saveVrcRegistryBackupToFile(scope.row)">
-                                <Download
-                            /></Button>
-                        </TooltipWrapper>
-                        <TooltipWrapper side="top" :content="t('dialog.registry_backup.delete')">
-                            <Button
-                                size="icon-sm"
-                                variant="ghost"
-                                class="button-pd-0"
-                                @click="deleteVrcRegistryBackup(scope.row)"
-                                ><Trash2
-                            /></Button>
-                        </TooltipWrapper>
-                    </template>
-                </el-table-column>
-            </DataTable>
+            <DataTableLayout
+                class="min-w-0 w-full"
+                :table="table"
+                :loading="false"
+                :table-style="tableStyle"
+                :show-pagination="false"
+                style="margin-top: 10px" />
             <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px">
                 <Button size="sm" variant="destructive" @click="deleteVrcRegistry">{{
                     t('dialog.registry_backup.reset')
                 }}</Button>
-                <div>
+                <div class="flex gap-2">
                     <Button size="sm" variant="outline" @click="promptVrcRegistryBackupName">{{
                         t('dialog.registry_backup.backup')
                     }}</Button>
@@ -79,17 +47,19 @@
 </template>
 
 <script setup>
-    import { Download, RotateCcw, Trash2 } from 'lucide-vue-next';
-    import { ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { DataTableLayout } from '@/components/ui/data-table';
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { downloadAndSaveJson, formatDateFilter, removeFromArray } from '../../../shared/utils';
+    import { downloadAndSaveJson, removeFromArray } from '../../../shared/utils';
     import { useAdvancedSettingsStore, useVrcxStore } from '../../../stores';
     import { Switch } from '../../../components/ui/switch';
+    import { createColumns } from './registryBackupColumns.jsx';
+    import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     import configRepository from '../../../service/config';
 
@@ -111,6 +81,29 @@
             }
         },
         layout: 'table'
+    });
+
+    const tableStyle = { maxHeight: '320px' };
+
+    const rows = computed(() =>
+        Array.isArray(registryBackupTable.value?.data) ? registryBackupTable.value.data.slice() : []
+    );
+
+    const columns = computed(() =>
+        createColumns({
+            onRestore: restoreVrcRegistryBackup,
+            onSaveToFile: saveVrcRegistryBackupToFile,
+            onDelete: deleteVrcRegistryBackup
+        })
+    );
+
+    const { table } = useVrcxVueTable({
+        persistKey: 'registryBackupDialog',
+        data: rows,
+        columns: columns.value,
+        getRowId: (row) => String(row?.name ?? ''),
+        enablePagination: false,
+        initialSorting: [{ id: 'date', desc: true }]
     });
 
     watch(

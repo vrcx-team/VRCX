@@ -18,13 +18,20 @@
 
         <Button
             size="sm"
+            class="mr-2"
             variant="outline"
             :disabled="loading"
             style="margin-top: 10px"
             @click="updateNoteExportDialog">
             {{ t('dialog.note_export.refresh') }}
         </Button>
-        <Button size="sm" variant="outline" :disabled="loading" style="margin-top: 10px" @click="exportNoteExport">
+        <Button
+            size="sm"
+            class="mr-2"
+            variant="outline"
+            :disabled="loading"
+            style="margin-top: 10px"
+            @click="exportNoteExport">
             {{ t('dialog.note_export.export') }}
         </Button>
         <Button v-if="loading" size="sm" variant="outline" style="margin-top: 10px" @click="cancelNoteExport">
@@ -45,60 +52,29 @@
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="errors"></pre>
         </template>
 
-        <DataTable :loading="loading" v-bind="noteExportTable" style="margin-top: 10px">
-            <el-table-column :label="t('table.import.image')" width="70" prop="currentAvatarThumbnailImageUrl">
-                <template #default="{ row }">
-                    <el-popover placement="right" :width="500" trigger="hover">
-                        <template #reference>
-                            <img :src="userImage(row.ref)" class="friends-list-avatar" loading="lazy" />
-                        </template>
-                        <img
-                            :src="userImageFull(row.ref)"
-                            :class="['friends-list-avatar', 'x-popover-image']"
-                            style="cursor: pointer"
-                            loading="lazy"
-                            @click="showFullscreenImageDialog(userImageFull(row.ref))" />
-                    </el-popover>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.import.name')" width="170" prop="name">
-                <template #default="{ row }">
-                    <span class="x-link" @click="showUserDialog(row.id)" v-text="row.name"></span>
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.import.note')" prop="memo">
-                <template #default="{ row }">
-                    <InputGroupTextareaField
-                        v-model="row.memo"
-                        :maxlength="256"
-                        :rows="2"
-                        input-class="min-h-0 py-1 resize-none"
-                        show-count />
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="t('table.import.skip_export')" width="90" align="right">
-                <template #default="{ row }">
-                    <Button size="sm" variant="ghost" @click="removeFromNoteExportTable(row)"></Button>
-                </template>
-            </el-table-column>
-        </DataTable>
+        <DataTableLayout
+            class="min-w-0 w-full"
+            :table="table"
+            :loading="loading"
+            :table-style="tableStyle"
+            :show-pagination="false"
+            style="margin-top: 10px" />
     </el-dialog>
 </template>
 
 <script setup>
-    import { ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { InputGroupTextareaField } from '@/components/ui/input-group';
+    import { DataTableLayout } from '@/components/ui/data-table';
     import { Loading } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { removeFromArray, userImage, userImageFull } from '../../../shared/utils';
     import { useFriendStore, useGalleryStore, useUserStore } from '../../../stores';
+    import { createColumns } from './noteExportColumns.jsx';
     import { miscRequest } from '../../../api';
+    import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     import * as workerTimers from 'worker-timers';
 
@@ -121,6 +97,29 @@
             size: 'small'
         },
         layout: 'table'
+    });
+
+    const tableStyle = { maxHeight: '500px' };
+
+    const rows = computed(() => (Array.isArray(noteExportTable.value?.data) ? noteExportTable.value.data.slice() : []));
+
+    const columns = computed(() =>
+        createColumns({
+            userImage,
+            userImageFull,
+            onShowFullscreenImage: showFullscreenImageDialog,
+            onShowUser: showUserDialog,
+            onRemove: removeFromNoteExportTable
+        })
+    );
+
+    const { table } = useVrcxVueTable({
+        persistKey: 'noteExportDialog',
+        data: rows,
+        columns: columns.value,
+        getRowId: (row) => String(row?.id ?? ''),
+        enablePagination: false,
+        enableSorting: false
     });
 
     const progress = ref(0);

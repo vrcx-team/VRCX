@@ -222,6 +222,7 @@
 
     const { t } = useI18n();
     const router = useRouter();
+    const route = useRoute();
 
     const { showGalleryPage } = useGalleryStore();
     const { friends } = storeToRefs(useFriendStore());
@@ -239,11 +240,7 @@
     const isExportFriendsListDialogVisible = ref(false);
     const isExportAvatarsListDialogVisible = ref(false);
     const isEditInviteMessagesDialogVisible = ref(false);
-    const isToolsTabVisible = computed(() => {
-        const route = useRoute();
-        if (!route) return false;
-        return route.name === 'tools';
-    });
+    const isToolsTabVisible = computed(() => route.name === 'tools');
 
     const showGroupCalendarDialog = () => {
         isGroupCalendarDialogVisible.value = true;
