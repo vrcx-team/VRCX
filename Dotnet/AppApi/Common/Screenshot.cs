@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -100,12 +101,7 @@ public partial class AppApi
         var searchPath = GetVRChatPhotosLocation();
         var screenshots = ScreenshotHelper.FindScreenshots(searchQuery, searchPath, (ScreenshotHelper.ScreenshotSearchType)searchType);
 
-        JArray json = new JArray();
-
-        foreach (var screenshot in screenshots)
-        {
-            json.Add(screenshot.SourceFile);
-        }
+        var json = new JArray(screenshots.Select(s => s.SourceFile).ToArray());
 
         stopwatch.Stop();
 
@@ -114,7 +110,9 @@ public partial class AppApi
         return json.ToString();
     }
 
-    public string GetLastScreenshot()
+    public string GetLastScreenshot() => GetScreenshotsList().FirstOrDefault();
+
+    public List<String> GetScreenshotsList()
     {
         // Get the last screenshot taken by VRChat
         var path = GetVRChatPhotosLocation();
@@ -124,9 +122,8 @@ public partial class AppApi
         // exclude folder names that contain "Prints", "Stickers" or "Emoji"
         var imageFiles = Directory.GetFiles(path, "*.png", SearchOption.AllDirectories)
             .Where(x => !ScreenshotRegex().IsMatch(x));
-        var lastScreenshot = imageFiles.OrderByDescending(Directory.GetCreationTime).FirstOrDefault();
 
-        return lastScreenshot;
+        return imageFiles.OrderByDescending(Directory.GetCreationTime).ToList();
     }
     
     public bool DeleteScreenshotMetadata(string path)
