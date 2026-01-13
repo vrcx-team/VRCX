@@ -2,21 +2,20 @@
     <div class="x-menu-container nav-menu-container" :class="{ 'is-collapsed': isCollapsed }">
         <template v-if="navLayoutReady">
             <div class="nav-menu-body mt-5">
-                <div v-if="updateInProgress" class="pending-update" @click="showVRCXUpdateDialog">
-                    <el-progress
-                        type="circle"
-                        :width="50"
-                        :stroke-width="3"
-                        :percentage="updateProgress"
-                        :format="updateProgressText"
-                        style="padding: 7px"></el-progress>
-                </div>
-                <div v-else-if="pendingVRCXUpdate || pendingVRCXInstall" class="pending-update">
+                <div v-if="pendingVRCXUpdate || pendingVRCXInstall" class="pending-update">
                     <Button
-                        variant="outline"
-                        style="font-size: 19px; height: 36px; width: 44px; margin: 10px"
+                        variant="ghost"
+                        size="icon"
+                        class="hover:bg-transparent"
+                        style="font-size: 19px; height: 36px; margin: 10px"
                         @click="showVRCXUpdateDialog">
-                        <i class="ri-download-line"></i>
+                        <span class="relative inline-flex items-center justify-center">
+                            <i class="ri-arrow-down-circle-line text-muted-foreground text-[20px]"></i>
+                            <span class="absolute top-0.5 -right-1 h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                        </span>
+                        <span v-if="!isCollapsed" class="text-[13px] text-muted-foreground">{{
+                            t('nav_menu.update_available')
+                        }}</span>
                     </Button>
                 </div>
 
