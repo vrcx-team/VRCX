@@ -39,14 +39,12 @@
                 max-height: 600px;
                 overflow-y: auto;
             ">
-            <el-card
+            <div
                 v-for="image in emojiTable"
                 :key="image.id"
-                :body-style="{ padding: '0' }"
                 :class="image.id === fileId ? 'x-image-selected' : ''"
-                style="cursor: pointer"
-                @click="fileId = image.id"
-                shadow="hover">
+                style="cursor: pointer; border: 1px solid transparent; border-radius: 8px"
+                @click="fileId = image.id">
                 <div
                     v-if="
                         image.versions &&
@@ -57,7 +55,7 @@
                     style="padding: 8px">
                     <Emoji :imageUrl="image.versions[image.versions.length - 1].file.url" :size="100"></Emoji>
                 </div>
-            </el-card>
+            </div>
         </div>
 
         <template #footer>

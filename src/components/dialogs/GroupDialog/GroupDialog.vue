@@ -1076,17 +1076,16 @@
                                         max-height: 600px;
                                         overflow-y: auto;
                                     ">
-                                    <el-card
+                                    <Card
                                         v-for="image in groupDialog.galleries[gallery.id]"
                                         :key="image.id"
-                                        :body-style="{ padding: '0' }"
-                                        shadow="hover">
+                                        class="p-0 overflow-hidden transition-shadow hover:shadow-md">
                                         <img
                                             :src="image.imageUrl"
                                             :class="['x-link', 'x-popover-image']"
                                             @click="showFullscreenImageDialog(image.imageUrl)"
                                             loading="lazy" />
-                                    </el-card>
+                                    </Card>
                                 </div>
                             </el-tab-pane>
                         </template>
@@ -1147,6 +1146,7 @@
         View,
         Warning
     } from '@element-plus/icons-vue';
+    import { Card } from '@/components/ui/card';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, nextTick, reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';

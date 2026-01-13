@@ -1,5 +1,5 @@
 <template>
-    <el-card :body-style="{ padding: '0px' }" class="event-card" :class="cardClass">
+    <Card class="event-card p-0 gap-0" :class="cardClass">
         <img :src="bannerUrl" @click="showFullscreenImageDialog(bannerUrl)" class="banner" />
         <div class="event-content">
             <div class="event-title">
@@ -69,12 +69,13 @@
                 <el-icon><StarFilled /></el-icon>
             </div>
         </div>
-    </el-card>
+    </Card>
 </template>
 
 <script setup>
     import { Calendar, Download, Share, Star, StarFilled } from '@element-plus/icons-vue';
     import { Button } from '@/components/ui/button';
+    import { Card } from '@/components/ui/card';
     import { computed } from 'vue';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -205,6 +206,7 @@
         position: relative;
         overflow: visible;
         border-radius: 8px;
+        width: 100%;
     }
 
     .event-card:hover {
@@ -224,10 +226,6 @@
     .event-card.group-dialog-grid-card {
         flex: 0 0 320px;
         max-width: 320px;
-    }
-
-    .event-card :deep(.el-card__body) {
-        overflow: visible;
     }
 
     .event-card .banner {
@@ -351,9 +349,4 @@
         color: var(--el-color-primary);
     }
 
-    :deep(.el-card) {
-        border-radius: 8px;
-        width: 100%;
-        overflow: visible;
-    }
 </style>

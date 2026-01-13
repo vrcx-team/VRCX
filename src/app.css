@@ -624,9 +624,6 @@ html.dark .x-friend-item > .detail > .extra,
     word-break: break-word;
 }
 
-.el-card.x-image-selected {
-    border-color: var(--el-color-primary) !important;
-}
 
 .el-popper.x-quick-search .el-select-dropdown__item {
     width: 100%;

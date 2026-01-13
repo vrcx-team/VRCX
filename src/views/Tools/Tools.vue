@@ -12,7 +12,7 @@
                         <span class="category-title">{{ t('view.tools.group.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['group']">
-                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                        <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showGroupCalendarDialog">
                                 <div class="tool-icon">
                                     <i class="ri-calendar-event-line"></i>
@@ -22,7 +22,7 @@
                                     <div class="tool-description">{{ t('view.tools.group.calendar_description') }}</div>
                                 </div>
                             </div>
-                        </el-card>
+                        </Card>
                     </div>
                 </div>
 
@@ -34,7 +34,7 @@
                         <span class="category-title">{{ t('view.tools.pictures.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
-                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                        <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showScreenshotMetadataPage">
                                 <div class="tool-icon">
                                     <i class="ri-screenshot-2-line"></i>
@@ -46,8 +46,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </el-card>
-                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                        </Card>
+                        <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showGalleryPage">
                                 <div class="tool-icon">
                                     <i class="ri-multi-image-line"></i>
@@ -59,8 +59,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </el-card>
-                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                        </Card>
+                        <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="openVrcPhotosFolder">
                                 <div class="tool-icon">
                                     <i class="ri-folder-image-line"></i>
@@ -72,8 +72,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </el-card>
-                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                        </Card>
+                        <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="openVrcScreenshotsFolder">
                                 <div class="tool-icon">
                                     <i class="ri-folder-image-line"></i>
@@ -87,7 +87,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </el-card>
+                        </Card>
                     </div>
                 </div>
 
@@ -100,7 +100,7 @@
                     </div>
 
                     <div class="tools-grid" v-show="!categoryCollapsed['user']">
-                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                        <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportDiscordNamesDialog">
                                 <div class="tool-icon">
                                     <i class="ri-discord-line"></i>
@@ -112,8 +112,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </el-card>
-                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                        </Card>
+                        <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showNoteExportDialog">
                                 <div class="tool-icon">
                                     <i class="ri-user-shared-line"></i>
@@ -125,9 +125,9 @@
                                     </div>
                                 </div>
                             </div>
-                        </el-card>
+                        </Card>
 
-                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                        <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportFriendsListDialog">
                                 <div class="tool-icon">
                                     <i class="ri-user-shared-line"></i>
@@ -139,8 +139,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </el-card>
-                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                        </Card>
+                        <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportAvatarsListDialog">
                                 <div class="tool-icon">
                                     <i class="ri-user-shared-line"></i>
@@ -152,7 +152,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </el-card>
+                        </Card>
                     </div>
                 </div>
 
@@ -164,7 +164,7 @@
                         <span class="category-title">{{ t('view.tools.other.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['other']">
-                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                        <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showEditInviteMessageDialog">
                                 <div class="tool-icon">
                                     <i class="ri-edit-box-line"></i>
@@ -176,7 +176,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </el-card>
+                        </Card>
                     </div>
                 </div>
             </div>
@@ -206,6 +206,7 @@
     import { computed, defineAsyncComponent, ref } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import { ArrowRight } from '@element-plus/icons-vue';
+    import { Card } from '@/components/ui/card';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -347,14 +348,11 @@
         overflow: visible;
         border-radius: 8px;
         cursor: pointer;
+        width: 100%;
 
         &:hover {
             transform: translateY(-2px);
             box-shadow: var(--el-box-shadow-light);
-        }
-
-        :deep(.el-card__body) {
-            overflow: visible;
         }
 
         .tool-content {
@@ -396,12 +394,6 @@
                 }
             }
         }
-    }
-
-    :deep(.el-card) {
-        border-radius: 8px;
-        width: 100%;
-        overflow: visible;
     }
 
     .is-rotated {

@@ -3,21 +3,22 @@
         <div class="options-container instance-activity" style="margin-top: 0">
             <div>
                 <span>{{ t('view.charts.instance_activity.header') }}</span>
-                <el-popover placement="bottom-start" trigger="hover" :width="300">
-                    <div class="tips-popover">
-                        <div>{{ t('view.charts.instance_activity.tips.online_time') }}</div>
-                        <div>{{ t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
-                        <div>{{ t('view.charts.instance_activity.tips.click_instance_name') }}</div>
-                        <div>
-                            <el-icon><WarningFilled /></el-icon
-                            ><i>{{ t('view.charts.instance_activity.tips.accuracy_notice') }}</i>
-                        </div>
-                    </div>
-
-                    <template #reference>
+                <HoverCard>
+                    <HoverCardTrigger as-child>
                         <el-icon style="margin-left: 5px; font-size: 12px; opacity: 0.7"><InfoFilled /></el-icon>
-                    </template>
-                </el-popover>
+                    </HoverCardTrigger>
+                    <HoverCardContent side="bottom" align="start" class="w-[300px]">
+                        <div class="tips-popover">
+                            <div>{{ t('view.charts.instance_activity.tips.online_time') }}</div>
+                            <div>{{ t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
+                            <div>{{ t('view.charts.instance_activity.tips.click_instance_name') }}</div>
+                            <div>
+                                <el-icon><WarningFilled /></el-icon
+                                ><i>{{ t('view.charts.instance_activity.tips.accuracy_notice') }}</i>
+                            </div>
+                        </div>
+                    </HoverCardContent>
+                </HoverCard>
             </div>
 
             <div>
@@ -145,6 +146,7 @@
 <script setup>
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { ArrowLeft, ArrowRight, InfoFilled, WarningFilled } from '@element-plus/icons-vue';
+    import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
     import { RefreshCcw, Settings } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
