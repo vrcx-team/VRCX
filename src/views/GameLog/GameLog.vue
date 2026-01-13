@@ -14,28 +14,33 @@
                             <Switch v-model="gameLogTable.vip" @update:modelValue="gameLogTableLookup" />
                         </TooltipWrapper>
                     </div>
-                    <el-select
-                        v-model="gameLogTable.filter"
+                    <Select
                         multiple
-                        clearable
-                        style="flex: 1"
-                        :placeholder="t('view.game_log.filter_placeholder')"
-                        @change="gameLogTableLookup">
-                        <el-option
-                            v-for="type in [
-                                'Location',
-                                'OnPlayerJoined',
-                                'OnPlayerLeft',
-                                'VideoPlay',
-                                'Event',
-                                'External',
-                                'StringLoad',
-                                'ImageLoad'
-                            ]"
-                            :key="type"
-                            :label="t('view.game_log.filters.' + type)"
-                            :value="type"></el-option>
-                    </el-select>
+                        :model-value="Array.isArray(gameLogTable.filter) ? gameLogTable.filter : []"
+                        @update:modelValue="handleGameLogFilterChange">
+                        <SelectTrigger class="w-full" style="flex: 1">
+                            <SelectValue :placeholder="t('view.game_log.filter_placeholder')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="type in [
+                                        'Location',
+                                        'OnPlayerJoined',
+                                        'OnPlayerLeft',
+                                        'VideoPlay',
+                                        'Event',
+                                        'External',
+                                        'StringLoad',
+                                        'ImageLoad'
+                                    ]"
+                                    :key="type"
+                                    :value="type">
+                                    {{ t('view.game_log.filters.' + type) }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                     <InputGroupField
                         v-model="gameLogTable.search"
                         :placeholder="t('view.game_log.search_placeholder')"
@@ -50,6 +55,7 @@
 </template>
 
 <script setup>
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
     import { ElMessageBox } from 'element-plus';
     import { Switch } from '@/components/ui/switch';
@@ -151,6 +157,11 @@
         onDelete: deleteGameLogEntry,
         onDeletePrompt: deleteGameLogEntryPrompt
     });
+
+    function handleGameLogFilterChange(value) {
+        gameLogTable.value.filter = Array.isArray(value) ? value : [];
+        gameLogTableLookup();
+    }
 
     const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
     const pageSize = computed(() =>

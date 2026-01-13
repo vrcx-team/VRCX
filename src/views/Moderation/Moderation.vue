@@ -1,19 +1,25 @@
 <template>
     <div class="x-container" ref="moderationRef">
         <div class="tool-slot">
-            <el-select
-                v-model="playerModerationTable.filters[0].value"
-                @change="saveTableFilters()"
+            <Select
                 multiple
-                clearable
-                style="flex: 1"
-                :placeholder="t('view.moderation.filter_placeholder')">
-                <el-option
-                    v-for="item in moderationTypes"
-                    :key="item"
-                    :label="t('view.moderation.filters.' + item)"
-                    :value="item" />
-            </el-select>
+                :model-value="
+                    Array.isArray(playerModerationTable.filters?.[0]?.value)
+                        ? playerModerationTable.filters[0].value
+                        : []
+                "
+                @update:modelValue="handleModerationFilterChange">
+                <SelectTrigger class="w-full" style="flex: 1">
+                    <SelectValue :placeholder="t('view.moderation.filter_placeholder')" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectItem v-for="item in moderationTypes" :key="item" :value="item">
+                            {{ t('view.moderation.filters.' + item) }}
+                        </SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
             <InputGroupField
                 v-model="playerModerationTable.filters[1].value"
                 :placeholder="t('view.moderation.search_placeholder')"
@@ -42,10 +48,11 @@
 </template>
 
 <script setup>
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { InputGroupField } from '@/components/ui/input-group';
     import { ElMessageBox } from 'element-plus';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { Refresh } from '@element-plus/icons-vue';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
@@ -87,6 +94,11 @@
             'VRCX_playerModerationTableFilters',
             JSON.stringify(playerModerationTable.value.filters[0].value)
         );
+    }
+
+    function handleModerationFilterChange(value) {
+        playerModerationTable.value.filters[0].value = Array.isArray(value) ? value : [];
+        saveTableFilters();
     }
 
     async function deletePlayerModeration(row) {

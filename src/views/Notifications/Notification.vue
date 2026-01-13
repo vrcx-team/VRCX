@@ -9,39 +9,48 @@
             :on-page-size-change="handlePageSizeChange">
             <template #toolbar>
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
-                    <el-select
-                        v-model="notificationTable.filters[0].value"
+                    <Select
                         multiple
-                        clearable
-                        style="flex: 1"
-                        :placeholder="t('view.notification.filter_placeholder')"
-                        @change="saveTableFilters">
-                        <el-option
-                            v-for="type in [
-                                'requestInvite',
-                                'invite',
-                                'requestInviteResponse',
-                                'inviteResponse',
-                                'friendRequest',
-                                'ignoredFriendRequest',
-                                'message',
-                                'boop',
-                                'event.announcement',
-                                'groupChange',
-                                'group.announcement',
-                                'group.informative',
-                                'group.invite',
-                                'group.joinRequest',
-                                'group.transfer',
-                                'group.queueReady',
-                                'moderation.warning.group',
-                                'moderation.report.closed',
-                                'instance.closed'
-                            ]"
-                            :key="type"
-                            :label="t('view.notification.filters.' + type)"
-                            :value="type" />
-                    </el-select>
+                        :model-value="
+                            Array.isArray(notificationTable.filters?.[0]?.value)
+                                ? notificationTable.filters[0].value
+                                : []
+                        "
+                        @update:modelValue="handleNotificationFilterChange">
+                        <SelectTrigger class="w-full" style="flex: 1">
+                            <SelectValue :placeholder="t('view.notification.filter_placeholder')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="type in [
+                                        'requestInvite',
+                                        'invite',
+                                        'requestInviteResponse',
+                                        'inviteResponse',
+                                        'friendRequest',
+                                        'ignoredFriendRequest',
+                                        'message',
+                                        'boop',
+                                        'event.announcement',
+                                        'groupChange',
+                                        'group.announcement',
+                                        'group.informative',
+                                        'group.invite',
+                                        'group.joinRequest',
+                                        'group.transfer',
+                                        'group.queueReady',
+                                        'moderation.warning.group',
+                                        'moderation.report.closed',
+                                        'instance.closed'
+                                    ]"
+                                    :key="type"
+                                    :value="type">
+                                    {{ t('view.notification.filters.' + type) }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                     <InputGroupField
                         v-model="notificationTable.filters[1].value"
                         :placeholder="t('view.notification.search_placeholder')"
@@ -73,10 +82,11 @@
 </template>
 
 <script setup>
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { InputGroupField } from '@/components/ui/input-group';
     import { ElMessageBox } from 'element-plus';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { Refresh } from '@element-plus/icons-vue';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
@@ -270,6 +280,11 @@
             'VRCX_notificationTableFilters',
             JSON.stringify(notificationTable.value.filters[0].value)
         );
+    }
+
+    function handleNotificationFilterChange(value) {
+        notificationTable.value.filters[0].value = Array.isArray(value) ? value : [];
+        saveTableFilters();
     }
 
     function openNotificationLink(link) {

@@ -8,26 +8,33 @@
             :on-page-size-change="handlePageSizeChange">
             <template #toolbar>
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
-                    <el-select
-                        v-model="friendLogTable.filters[0].value"
+                    <Select
                         multiple
-                        clearable
-                        style="flex: 1"
-                        :placeholder="t('view.friend_log.filter_placeholder')"
-                        @change="saveTableFilters">
-                        <el-option
-                            v-for="type in [
-                                'Friend',
-                                'Unfriend',
-                                'FriendRequest',
-                                'CancelFriendRequest',
-                                'DisplayName',
-                                'TrustLevel'
-                            ]"
-                            :key="type"
-                            :label="t('view.friend_log.filters.' + type)"
-                            :value="type" />
-                    </el-select>
+                        :model-value="
+                            Array.isArray(friendLogTable.filters?.[0]?.value) ? friendLogTable.filters[0].value : []
+                        "
+                        @update:modelValue="handleFriendLogFilterChange">
+                        <SelectTrigger class="w-full" style="flex: 1">
+                            <SelectValue :placeholder="t('view.friend_log.filter_placeholder')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="type in [
+                                        'Friend',
+                                        'Unfriend',
+                                        'FriendRequest',
+                                        'CancelFriendRequest',
+                                        'DisplayName',
+                                        'TrustLevel'
+                                    ]"
+                                    :key="type"
+                                    :value="type">
+                                    {{ t('view.friend_log.filters.' + type) }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                     <InputGroupField
                         v-model="friendLogTable.filters[1].value"
                         :placeholder="t('view.friend_log.search_placeholder')"
@@ -46,6 +53,14 @@
 
     import dayjs from 'dayjs';
 
+    import {
+        Select,
+        SelectContent,
+        SelectGroup,
+        SelectItem,
+        SelectTrigger,
+        SelectValue
+    } from '../../components/ui/select';
     import { useAppearanceSettingsStore, useFriendStore, useVrcxStore } from '../../stores';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { InputGroupField } from '../../components/ui/input-group';
@@ -128,6 +143,10 @@
     const { t } = useI18n();
     function saveTableFilters() {
         configRepository.setString('VRCX_friendLogTableFilters', JSON.stringify(friendLogTable.value.filters[0].value));
+    }
+    function handleFriendLogFilterChange(value) {
+        friendLogTable.value.filters[0].value = Array.isArray(value) ? value : [];
+        saveTableFilters();
     }
     function deleteFriendLogPrompt(row) {
         ElMessageBox.confirm('Continue? Delete Log', 'Confirm', {

@@ -14,19 +14,24 @@
                             <Switch v-model="feedTable.vip" @update:modelValue="feedTableLookup" />
                         </TooltipWrapper>
                     </div>
-                    <el-select
-                        v-model="feedTable.filter"
+                    <Select
                         multiple
-                        clearable
-                        style="flex: 1"
-                        :placeholder="t('view.feed.filter_placeholder')"
-                        @change="feedTableLookup">
-                        <el-option
-                            v-for="type in ['GPS', 'Online', 'Offline', 'Status', 'Avatar', 'Bio']"
-                            :key="type"
-                            :label="t('view.feed.filters.' + type)"
-                            :value="type"></el-option>
-                    </el-select>
+                        :model-value="Array.isArray(feedTable.filter) ? feedTable.filter : []"
+                        @update:modelValue="handleFeedFilterChange">
+                        <SelectTrigger class="w-full" style="flex: 1">
+                            <SelectValue :placeholder="t('view.feed.filter_placeholder')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="type in ['GPS', 'Online', 'Offline', 'Status', 'Avatar', 'Bio']"
+                                    :key="type"
+                                    :value="type">
+                                    {{ t('view.feed.filters.' + type) }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                     <InputGroupField
                         v-model="feedTable.search"
                         :placeholder="t('view.feed.search_placeholder')"
@@ -45,9 +50,17 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import {
+        Select,
+        SelectContent,
+        SelectGroup,
+        SelectItem,
+        SelectTrigger,
+        SelectValue
+    } from '../../components/ui/select';
     import { useAppearanceSettingsStore, useFeedStore, useVrcxStore } from '../../stores';
-    import { InputGroupField } from '../../components/ui/input-group';
     import { DataTableLayout } from '../../components/ui/data-table';
+    import { InputGroupField } from '../../components/ui/input-group';
     import { Switch } from '../../components/ui/switch';
     import { columns as baseColumns } from './columns.jsx';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
@@ -104,6 +117,11 @@
             feedTable.value.pageSize = size;
         }
     };
+
+    function handleFeedFilterChange(value) {
+        feedTable.value.filter = Array.isArray(value) ? value : [];
+        feedTableLookup();
+    }
 
     watch(pageSize, (size) => {
         if (pagination.value.pageSize === size) {

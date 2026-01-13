@@ -6,20 +6,32 @@
                     <TooltipWrapper side="bottom" :content="t('view.friend_list.favorites_only_tooltip')">
                         <Switch v-model="friendsListSearchFilterVIP" @update:modelValue="friendsListSearchChange" />
                     </TooltipWrapper>
-                    <el-select
-                        v-model="friendsListSearchFilters"
+                    <Select
                         multiple
-                        clearable
-                        collapse-tags
-                        style="margin: 0 10px; width: 150px"
-                        :placeholder="t('view.friend_list.filter_placeholder')"
-                        @change="friendsListSearchChange">
-                        <el-option
-                            v-for="type in ['Display Name', 'User Name', 'Rank', 'Status', 'Bio', 'Note', 'Memo']"
-                            :key="type"
-                            :label="type"
-                            :value="type"></el-option>
-                    </el-select>
+                        :model-value="Array.isArray(friendsListSearchFilters) ? friendsListSearchFilters : []"
+                        @update:modelValue="handleFriendListFilterChange">
+                        <SelectTrigger style="margin: 0 10px; width: 150px">
+                            <SelectValue :placeholder="t('view.friend_list.filter_placeholder')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="type in [
+                                        'Display Name',
+                                        'User Name',
+                                        'Rank',
+                                        'Status',
+                                        'Bio',
+                                        'Note',
+                                        'Memo'
+                                    ]"
+                                    :key="type"
+                                    :value="type">
+                                    {{ type }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                     <InputGroupField
                         v-model="friendsListSearch"
                         :placeholder="t('view.friend_list.search_placeholder')"
@@ -259,11 +271,12 @@
 </template>
 
 <script setup>
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, nextTick, reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { ElMessageBox } from 'element-plus';
     import { InputGroupField } from '@/components/ui/input-group';
     import { Progress } from '@/components/ui/progress';
-    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -567,6 +580,11 @@
         }
 
         friendsListTable.data = sortedData;
+    }
+
+    function handleFriendListFilterChange(value) {
+        friendsListSearchFilters.value = Array.isArray(value) ? value : [];
+        friendsListSearchChange();
     }
 </script>
 
