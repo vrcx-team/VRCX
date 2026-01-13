@@ -20,6 +20,7 @@ import Search from './../views/Search/Search.vue';
 import Settings from './../views/Settings/Settings.vue';
 import Tools from './../views/Tools/Tools.vue';
 import Gallery from './../views/Tools/Gallery.vue';
+import ScreenshotMetadata from './../views/Tools/ScreenshotMetadata.vue';
 
 const routes = [
     {
@@ -88,6 +89,12 @@ const routes = [
                 path: 'tools/gallery',
                 name: 'gallery',
                 component: Gallery,
+                meta: { navKey: 'tools' }
+            },
+            {
+                path: 'tools/screenshot-metadata',
+                name: 'screenshot-metadata',
+                component: ScreenshotMetadata,
                 meta: { navKey: 'tools' }
             },
             { path: 'settings', name: 'settings', component: Settings }

@@ -35,7 +35,7 @@
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
                         <el-card :body-style="{ padding: '0px' }" class="tool-card">
-                            <div class="tool-content" @click="showScreenshotMetadataDialog">
+                            <div class="tool-content" @click="showScreenshotMetadataPage">
                                 <div class="tool-icon">
                                     <i class="ri-screenshot-2-line"></i>
                                 </div>
@@ -185,9 +185,6 @@
             <GroupCalendarDialog
                 :visible="isGroupCalendarDialogVisible"
                 @close="isGroupCalendarDialogVisible = false" />
-            <ScreenshotMetadataDialog
-                :isScreenshotMetadataDialogVisible="isScreenshotMetadataDialogVisible"
-                @close="isScreenshotMetadataDialogVisible = false" />
             <NoteExportDialog
                 :isNoteExportDialogVisible="isNoteExportDialogVisible"
                 @close="isNoteExportDialogVisible = false" />
@@ -207,16 +204,15 @@
 
 <script setup>
     import { computed, defineAsyncComponent, ref } from 'vue';
+    import { useRoute, useRouter } from 'vue-router';
     import { ArrowRight } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
-    import { useRoute } from 'vue-router';
 
     import { useFriendStore, useGalleryStore } from '../../stores';
 
     const GroupCalendarDialog = defineAsyncComponent(() => import('./dialogs/GroupCalendarDialog.vue'));
-    const ScreenshotMetadataDialog = defineAsyncComponent(() => import('./dialogs/ScreenshotMetadataDialog.vue'));
     const NoteExportDialog = defineAsyncComponent(() => import('./dialogs/NoteExportDialog.vue'));
     const EditInviteMessageDialog = defineAsyncComponent(() => import('./dialogs/EditInviteMessagesDialog.vue'));
     const ExportDiscordNamesDialog = defineAsyncComponent(() => import('./dialogs/ExportDiscordNamesDialog.vue'));
@@ -224,6 +220,7 @@
     const ExportAvatarsListDialog = defineAsyncComponent(() => import('./dialogs/ExportAvatarsListDialog.vue'));
 
     const { t } = useI18n();
+    const router = useRouter();
 
     const { showGalleryPage } = useGalleryStore();
     const { friends } = storeToRefs(useFriendStore());
@@ -236,7 +233,6 @@
     });
 
     const isGroupCalendarDialogVisible = ref(false);
-    const isScreenshotMetadataDialogVisible = ref(false);
     const isNoteExportDialogVisible = ref(false);
     const isExportDiscordNamesDialogVisible = ref(false);
     const isExportFriendsListDialogVisible = ref(false);
@@ -252,8 +248,8 @@
         isGroupCalendarDialogVisible.value = true;
     };
 
-    const showScreenshotMetadataDialog = () => {
-        isScreenshotMetadataDialogVisible.value = true;
+    const showScreenshotMetadataPage = () => {
+        router.push({ name: 'screenshot-metadata' });
     };
 
     const showNoteExportDialog = () => {

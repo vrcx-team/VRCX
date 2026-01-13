@@ -1,16 +1,12 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="isScreenshotMetadataDialogVisible"
-        :title="t('dialog.screenshot_metadata.header')"
-        width="1050px"
-        @close="closeDialog">
-        <div
-            v-loading="screenshotMetadataDialog.loading"
-            style="-webkit-app-region: drag"
-            @dragover.prevent
-            @dragenter.prevent
-            @drop="handleDrop">
+    <div class="screenshot-metadata-page x-container">
+        <div class="screenshot-metadata-page__header">
+            <Button variant="ghost" class="screenshot-metadata-page__back" @click="goBack">
+                {{ t('nav_tooltip.tools') }}
+            </Button>
+            <span class="header">{{ t('dialog.screenshot_metadata.header') }}</span>
+        </div>
+        <div v-loading="screenshotMetadataDialog.loading" @dragover.prevent @dragenter.prevent @drop="handleDrop">
             <span style="margin-left: 5px; color: var(--el-text-color-secondary); font-family: monospace">{{
                 t('dialog.screenshot_metadata.drag')
             }}</span>
@@ -55,13 +51,11 @@
             <br />
 
             <div class="flex items-center">
-                <!-- Search bar input -->
                 <InputGroupSearch
                     v-model="screenshotMetadataDialog.search"
                     placeholder="Search"
                     style="width: 200px"
                     @input="screenshotMetadataSearch" />
-                <!-- Search type dropdown -->
                 <Select :model-value="screenshotMetadataDialog.searchType" @update:modelValue="handleSearchTypeChange">
                     <SelectTrigger size="sm" style="width: 150px; margin-left: 10px">
                         <SelectValue placeholder="Search Type" />
@@ -75,7 +69,6 @@
                     </SelectContent>
                 </Select>
             </div>
-            <!-- Search index/total label -->
             <template v-if="screenshotMetadataDialog.searchIndex !== null">
                 <span style="white-space: pre-wrap; font-size: 12px; margin-left: 10px">{{
                     screenshotMetadataDialog.searchIndex + 1 + '/' + screenshotMetadataDialog.searchResults.length
@@ -110,7 +103,7 @@
                 :hint="screenshotMetadataDialog.metadata.author.displayName"
                 style="color: var(--el-text-color-secondary); font-family: monospace" />
             <br />
-            <div class="my-2 w-[95%] ml-6.5">
+            <div class="my-2 w-[90%] ml-17">
                 <Carousel :opts="{ loop: false }" @init-api="handleScreenshotMetadataCarouselInit">
                     <CarouselContent class="h-150">
                         <CarouselItem>
@@ -158,60 +151,36 @@
                 <br />
             </span>
         </div>
-    </el-dialog>
+    </div>
 </template>
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-    import { reactive, ref, watch } from 'vue';
+    import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+    import { useGalleryStore, useUserStore, useVrcxStore } from '@/stores';
+    import { Badge } from '@/components/ui/badge';
     import { Button } from '@/components/ui/button';
     import { InputGroupSearch } from '@/components/ui/input-group';
+    import { formatDateFilter } from '@/shared/utils';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
+    import { useRouter } from 'vue-router';
+    import { vrcPlusImageRequest } from '@/api';
 
-    import { useGalleryStore, useUserStore, useVrcxStore } from '../../../stores';
-    import { Badge } from '../../../components/ui/badge';
-    import { formatDateFilter } from '../../../shared/utils';
-    import { vrcPlusImageRequest } from '../../../api';
+    const router = useRouter();
+    const { t } = useI18n();
 
     const { showFullscreenImageDialog, handleGalleryImageAdd } = useGalleryStore();
     const { currentlyDroppingFile } = storeToRefs(useVrcxStore());
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
-
-    const { t } = useI18n();
+    const { fullscreenImageDialog } = storeToRefs(useGalleryStore());
 
     const userStore = useUserStore();
     const { lookupUser } = userStore;
 
-    const { fullscreenImageDialog } = storeToRefs(useGalleryStore());
-
-    const props = defineProps({
-        isScreenshotMetadataDialogVisible: {
-            type: Boolean,
-            required: true
-        }
-    });
-
-    const emit = defineEmits(['close']);
-
-    watch(
-        () => props.isScreenshotMetadataDialogVisible,
-        (newVal) => {
-            if (newVal) {
-                if (!screenshotMetadataDialog.metadata.filePath) {
-                    getAndDisplayLastScreenshot();
-                }
-                window.addEventListener('keyup', handleComponentKeyup);
-            } else {
-                window.removeEventListener('keyup', handleComponentKeyup);
-            }
-        }
-    );
-
     const screenshotMetadataDialog = reactive({
-        // visible: false,
         loading: false,
         search: '',
         searchType: 'Player Name',
@@ -226,9 +195,20 @@
     const screenshotMetadataCarouselApi = ref(null);
     const ignoreCarouselSelect = ref(false);
 
+    onMounted(() => {
+        if (!screenshotMetadataDialog.metadata.filePath) {
+            getAndDisplayLastScreenshot();
+        }
+        window.addEventListener('keyup', handleComponentKeyup);
+    });
+
+    onBeforeUnmount(() => {
+        window.removeEventListener('keyup', handleComponentKeyup);
+    });
+
     const handleComponentKeyup = (event) => {
         const carouselNavigation = { ArrowLeft: 0, ArrowRight: 2 }[event.key];
-        if (typeof carouselNavigation !== 'undefined' && props.isScreenshotMetadataDialogVisible) {
+        if (typeof carouselNavigation !== 'undefined') {
             if (screenshotMetadataCarouselApi.value) {
                 if (event.key === 'ArrowLeft') {
                     screenshotMetadataCarouselApi.value.scrollPrev();
@@ -241,8 +221,8 @@
         }
     };
 
-    function closeDialog() {
-        emit('close');
+    function goBack() {
+        router.push({ name: 'tools' });
     }
 
     function handleDrop(event) {
@@ -261,7 +241,7 @@
         let filePath = '';
 
         if (LINUX) {
-            filePath = await window.electron.openFileDialog(); // PNG filter is applied in main.js
+            filePath = await window.electron.openFileDialog();
         } else {
             filePath = await AppApi.OpenFileSelectorDialog(
                 await AppApi.GetVRChatPhotosLocation(),
@@ -347,7 +327,6 @@
     function screenshotMetadataSearch() {
         const D = screenshotMetadataDialog;
 
-        // Don't search if user is still typing
         screenshotMetadataSearchInputs.value++;
         let current = screenshotMetadataSearchInputs.value;
         setTimeout(() => {
@@ -359,13 +338,12 @@
             if (D.search === '') {
                 screenshotMetadataResetSearch();
                 if (D.metadata.filePath !== null) {
-                    // Re-retrieve the current screenshot metadata and get previous/next files for regular carousel directory navigation
                     getAndDisplayScreenshot(D.metadata.filePath, true);
                 }
                 return;
             }
 
-            const searchType = D.searchTypes.indexOf(D.searchType); // Matches the search type enum in .NET
+            const searchType = D.searchTypes.indexOf(D.searchType);
             D.loading = true;
             AppApi.FindScreenshotsBySearch(D.search, searchType)
                 .then((json) => {
@@ -383,7 +361,6 @@
                     D.searchIndex = 0;
                     D.searchResults = results;
 
-                    // console.log("Search results", results)
                     getAndDisplayScreenshot(results[0], false);
                 })
                 .finally(() => {
@@ -530,14 +507,11 @@
             return;
         }
 
-        // Get extra data for display dialog like resolution, file size, etc
         D.loading = true;
         const extraData = await AppApi.GetExtraScreenshotData(metadata.sourceFile, needsCarouselFiles);
         D.loading = false;
         const extraDataObj = JSON.parse(extraData);
         Object.assign(metadata, extraDataObj);
-
-        // console.log("Displaying screenshot metadata", json, "extra data", extraDataObj, "path", json.filePath)
 
         D.metadata = metadata;
 
@@ -546,19 +520,13 @@
         );
         if (regex) {
             if (typeof regex[2] !== 'undefined' && regex[4].length === 4) {
-                // old format
-                // VRChat_3840x2160_2022-02-02_03-21-39.771
                 date = `${regex[4]}-${regex[5]}-${regex[6]}`;
                 time = `${regex[7]}:${regex[8]}:${regex[9]}`;
                 D.metadata.dateTime = Date.parse(`${date} ${time}`);
-                // D.metadata.resolution = `${regex[2]}x${regex[3]}`;
             } else if (typeof regex[11] !== 'undefined' && regex[11].length === 4) {
-                // new format
-                // VRChat_2023-02-16_10-39-25.274_3840x2160
                 date = `${regex[11]}-${regex[12]}-${regex[13]}`;
                 time = `${regex[14]}:${regex[15]}:${regex[16]}`;
                 D.metadata.dateTime = Date.parse(`${date} ${time}`);
-                // D.metadata.resolution = `${regex[18]}x${regex[19]}`;
             }
         }
         if (metadata.timestamp) {
@@ -573,3 +541,12 @@
         }
     }
 </script>
+
+<style scoped>
+    .screenshot-metadata-page__header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+</style>
