@@ -1,5 +1,4 @@
 import { computed, reactive, ref, watch } from 'vue';
-import { ElNotification } from 'element-plus';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -58,18 +57,16 @@ export const useChartsStore = defineStore('Charts', () => {
                 !mutualGraphStatus.completionNotified
             ) {
                 mutualGraphStatus.completionNotified = true;
-                ElNotification({
-                    title: t(
+                toast.success(
+                    t(
                         'view.charts.mutual_friend.notifications.mutual_friend_graph_ready_title'
                     ),
-                    message: t(
-                        'view.charts.mutual_friend.notifications.mutual_friend_graph_ready_message'
-                    ),
-                    type: 'success',
-                    position: 'top-right',
-                    duration: 5000,
-                    showClose: true
-                });
+                    {
+                        description: t(
+                            'view.charts.mutual_friend.notifications.mutual_friend_graph_ready_message'
+                        )
+                    }
+                );
             }
         }
     );

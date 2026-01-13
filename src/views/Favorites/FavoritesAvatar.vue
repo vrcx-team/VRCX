@@ -521,13 +521,23 @@
 </template>
 
 <script setup>
-    import { computed, h, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-    import { ElMessageBox, ElNotification, ElProgress } from 'element-plus';
+    import {
+        computed,
+        h,
+        markRaw,
+        nextTick,
+        onBeforeMount,
+        onBeforeUnmount,
+        onMounted,
+        reactive,
+        ref,
+        watch
+    } from 'vue';
+    import { Ellipsis, Loader, RefreshCcw } from 'lucide-vue-next';
     import { MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
-    import { Ellipsis, RefreshCcw } from 'lucide-vue-next';
     import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
-    import { Loader } from 'lucide-vue-next';
+    import { ElMessageBox } from 'element-plus';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -560,6 +570,7 @@
     import AvatarExportDialog from './dialogs/AvatarExportDialog.vue';
     import FavoritesAvatarItem from './components/FavoritesAvatarItem.vue';
     import FavoritesAvatarLocalHistoryItem from './components/FavoritesAvatarLocalHistoryItem.vue';
+    import InvalidAvatarsProgressToast from './components/InvalidAvatarsProgressToast.jsx';
     import configRepository from '../../service/config.js';
 
     import * as workerTimers from 'worker-timers';
@@ -1261,58 +1272,30 @@
             percentage: 0
         });
 
-        const ProgressContent = {
-            setup() {
-                return () =>
-                    h('div', { style: 'padding: 4px 0;' }, [
-                        h(
-                            'p',
-                            {
-                                style: 'margin: 0 0 12px 0; font-size: 14px; color: var(--el-text-color-primary);'
-                            },
-                            t('view.favorite.avatars.checking_progress', {
-                                current: progressState.current,
-                                total: progressState.total
-                            })
-                        ),
-                        h(ElProgress, {
-                            percentage: progressState.percentage,
-                            style: 'margin-top: 8px;'
-                        })
-                    ]);
-            }
-        };
-
-        let progressNotification = null;
+        let progressToastId;
 
         try {
-            progressNotification = ElNotification({
-                title: t('view.favorite.avatars.checking'),
-                message: h(ProgressContent),
-                duration: 0,
-                type: 'info',
-                position: 'bottom-right'
+            progressToastId = toast(markRaw(InvalidAvatarsProgressToast), {
+                duration: Infinity,
+                componentProps: {
+                    t,
+                    progress: progressState,
+                    onDismiss: () => progressToastId && toast.dismiss(progressToastId)
+                }
             });
 
             const result = await checkInvalidLocalAvatars(groupName, (current, total) => {
                 progressState.current = current;
                 progressState.total = total;
-                progressState.percentage = Math.floor((current / total) * 100);
+                progressState.percentage = total ? Math.floor((current / total) * 100) : 0;
             });
 
-            if (progressNotification) {
-                progressNotification.close();
-                progressNotification = null;
+            if (progressToastId) {
+                toast.dismiss(progressToastId);
             }
 
             if (result.invalid === 0) {
-                ElNotification({
-                    title: t('view.favorite.avatars.check_complete'),
-                    message: t('view.favorite.avatars.no_invalid_found'),
-                    type: 'success',
-                    duration: 5000,
-                    position: 'bottom-right'
-                });
+                toast.success(t('view.favorite.avatars.no_invalid_found'));
                 return;
             }
 
@@ -1352,7 +1335,7 @@
                                     toast.success(t('view.favorite.avatars.copied_ids'));
                                 })
                                 .catch(() => {
-                                    toast.error('Failed to copy');
+                                    toast.error(t('view.favorite.avatars.copy_failed'));
                                 });
                             return;
                         }
@@ -1364,39 +1347,23 @@
                 .catch(() => false);
 
             if (!confirmDelete) {
-                ElNotification({
-                    title: t('view.favorite.avatars.check_complete'),
-                    message: t('view.favorite.avatars.delete_cancelled'),
-                    type: 'info',
-                    duration: 5000,
-                    position: 'bottom-right'
-                });
+                toast.info(t('view.favorite.avatars.delete_cancelled'));
                 return;
             }
 
             const removeResult = await removeInvalidLocalAvatars(result.invalidIds, groupName);
 
-            ElNotification({
-                title: t('view.favorite.avatars.check_complete'),
-                message: t('view.favorite.avatars.delete_summary', {
+            toast.success(
+                t('view.favorite.avatars.delete_summary', {
                     removed: removeResult.removed
-                }),
-                type: 'success',
-                duration: 5000,
-                position: 'bottom-right'
-            });
+                })
+            );
         } catch (err) {
-            if (progressNotification) {
-                progressNotification.close();
+            if (progressToastId) {
+                toast.dismiss(progressToastId);
             }
             console.error(err);
-            ElNotification({
-                title: t('message.api_handler.avatar_private_or_deleted'),
-                message: String(err.message || err),
-                type: 'error',
-                duration: 5000,
-                position: 'bottom-right'
-            });
+            toast.error(String(err.message || err));
         }
     }
 
