@@ -111,11 +111,14 @@
             </div>
         </div>
         <div class="status-online">
-            <el-statistic
-                :title="t('view.charts.instance_activity.online_time')"
-                :formatter="(val) => timeToText(val, true)"
-                :value="totalOnlineTime">
-            </el-statistic>
+            <div class="text-center">
+                <div class="text-sm text-muted-foreground">
+                    {{ t('view.charts.instance_activity.online_time') }}
+                </div>
+                <div class="text-2xl font-semibold">
+                    {{ timeToText(totalOnlineTime, true) }}
+                </div>
+            </div>
         </div>
 
         <div ref="activityChartRef" style="width: 100%"></div>
@@ -713,9 +716,6 @@
     .status-online {
         display: flex;
         justify-content: center;
-        :deep(.el-statistic__head) {
-            display: flex;
-            justify-content: center;
-        }
+        text-align: center;
     }
 </style>

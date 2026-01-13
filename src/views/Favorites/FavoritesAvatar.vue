@@ -72,8 +72,19 @@
                 </DropdownMenu>
             </div>
         </div>
-        <el-splitter class="favorites-splitter" @resize-end="handleAvatarSplitterResize">
-            <el-splitter-panel :size="avatarSplitterSize" :min="0" :max="360" collapsible>
+        <ResizablePanelGroup
+            ref="avatarSplitterGroupRef"
+            direction="horizontal"
+            class="favorites-splitter"
+            @layout="handleAvatarSplitterLayout">
+            <ResizablePanel
+                ref="avatarSplitterPanelRef"
+                :default-size="avatarSplitterDefaultSize"
+                :min-size="avatarSplitterMinSize"
+                :max-size="avatarSplitterMaxSize"
+                :collapsed-size="0"
+                collapsible
+                :order="1">
                 <div class="favorites-groups-panel">
                     <div class="group-section">
                         <div class="group-section__header">
@@ -329,8 +340,9 @@
                         </div>
                     </div>
                 </div>
-            </el-splitter-panel>
-            <el-splitter-panel>
+            </ResizablePanel>
+            <ResizableHandle with-handle @dragging="setAvatarSplitterDragging" />
+            <ResizablePanel :order="2">
                 <div class="favorites-content">
                     <div class="favorites-content__header">
                         <div class="favorites-content__title">
@@ -502,8 +514,8 @@
                         </template>
                     </div>
                 </div>
-            </el-splitter-panel>
-        </el-splitter>
+            </ResizablePanel>
+        </ResizablePanelGroup>
         <AvatarExportDialog v-model:avatarExportDialogVisible="avatarExportDialogVisible" />
     </div>
 </template>
@@ -513,8 +525,8 @@
     import { ElMessageBox, ElNotification, ElProgress } from 'element-plus';
     import { MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
     import { Ellipsis, RefreshCcw } from 'lucide-vue-next';
-    import { Button } from '@/components/ui/button';
     import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
+    import { Button } from '@/components/ui/button';
     import { Loader } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
@@ -538,6 +550,7 @@
     } from '../../components/ui/dropdown-menu';
     import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useUserStore } from '../../stores';
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
+    import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { avatarRequest, favoriteRequest } from '../../api';
     import { Badge } from '../../components/ui/badge';
     import { Slider } from '../../components/ui/slider';
@@ -563,6 +576,12 @@
     const avatarGroupVisibilityOptions = ref(['public', 'friends', 'private']);
     const historyGroupKey = 'local-history';
     const avatarSplitterSize = ref(260);
+    const avatarSplitterFallbackWidth = typeof window !== 'undefined' && window.innerWidth ? window.innerWidth : 1200;
+    const avatarSplitterGroupRef = ref(null);
+    const avatarSplitterPanelRef = ref(null);
+    const avatarSplitterWidth = ref(avatarSplitterFallbackWidth);
+    const avatarSplitterDraggingCount = ref(0);
+    let avatarSplitterObserver = null;
 
     const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
@@ -698,22 +717,108 @@
 
     async function loadAvatarSplitterPreferences() {
         const storedSize = await configRepository.getString('VRCX_FavoritesAvatarSplitter', '260');
-        if (typeof storedSize === 'string' && !Number.isNaN(Number(storedSize)) && Number(storedSize) > 0) {
-            avatarSplitterSize.value = Number(storedSize);
+        const parsedSize = Number(storedSize);
+        if (Number.isFinite(parsedSize) && parsedSize >= 0) {
+            avatarSplitterSize.value = parsedSize;
         }
     }
 
-    function handleAvatarSplitterResize(panelIndex, sizes) {
+    const getAvatarSplitterWidthRaw = () => {
+        const element = avatarSplitterGroupRef.value?.$el ?? avatarSplitterGroupRef.value;
+        const width = element?.getBoundingClientRect?.().width;
+        return Number.isFinite(width) ? width : null;
+    };
+
+    const getAvatarSplitterWidth = () => {
+        const width = getAvatarSplitterWidthRaw();
+        return Number.isFinite(width) && width > 0 ? width : avatarSplitterFallbackWidth;
+    };
+
+    const resolveDraggingPayload = (payload) => {
+        if (typeof payload === 'boolean') {
+            return payload;
+        }
+        if (payload && typeof payload === 'object') {
+            if (typeof payload.detail === 'boolean') {
+                return payload.detail;
+            }
+            if (typeof payload.dragging === 'boolean') {
+                return payload.dragging;
+            }
+        }
+        return Boolean(payload);
+    };
+
+    const setAvatarSplitterDragging = (payload) => {
+        const isDragging = resolveDraggingPayload(payload);
+        const next = avatarSplitterDraggingCount.value + (isDragging ? 1 : -1);
+        avatarSplitterDraggingCount.value = Math.max(0, next);
+    };
+
+    const pxToPercent = (px, groupWidth, min = 0) => {
+        const width = groupWidth ?? getAvatarSplitterWidth();
+        return Math.min(100, Math.max(min, (px / width) * 100));
+    };
+
+    const percentToPx = (percent, groupWidth) => (percent / 100) * groupWidth;
+
+    const avatarSplitterDefaultSize = computed(() =>
+        pxToPercent(avatarSplitterSize.value, avatarSplitterWidth.value, 0)
+    );
+    const avatarSplitterMinSize = computed(() => pxToPercent(0, avatarSplitterWidth.value, 0));
+    const avatarSplitterMaxSize = computed(() => pxToPercent(360, avatarSplitterWidth.value, 0));
+
+    const handleAvatarSplitterLayout = (sizes) => {
         if (!Array.isArray(sizes) || !sizes.length) {
             return;
         }
-        const nextSize = sizes[0];
-        if (nextSize <= 0) {
+
+        if (avatarSplitterDraggingCount.value === 0) {
             return;
         }
-        avatarSplitterSize.value = nextSize;
-        configRepository.setString('VRCX_FavoritesAvatarSplitter', nextSize.toString());
-    }
+
+        const rawWidth = getAvatarSplitterWidthRaw();
+        if (!Number.isFinite(rawWidth) || rawWidth <= 0) {
+            return;
+        }
+
+        const nextSize = sizes[0];
+        if (!Number.isFinite(nextSize)) {
+            return;
+        }
+
+        const nextPx = Math.round(percentToPx(nextSize, rawWidth));
+        const clampedPx = Math.min(360, Math.max(0, nextPx));
+        avatarSplitterSize.value = clampedPx;
+        configRepository.setString('VRCX_FavoritesAvatarSplitter', clampedPx.toString());
+    };
+
+    const updateAvatarSplitterWidth = () => {
+        const width = getAvatarSplitterWidth();
+        avatarSplitterWidth.value = width;
+        const targetSize = pxToPercent(avatarSplitterSize.value, width, 0);
+        avatarSplitterPanelRef.value?.resize?.(targetSize);
+    };
+
+    onMounted(async () => {
+        await nextTick();
+        updateAvatarSplitterWidth();
+        const element = avatarSplitterGroupRef.value?.$el ?? avatarSplitterGroupRef.value;
+        if (element && typeof ResizeObserver !== 'undefined') {
+            avatarSplitterObserver = new ResizeObserver(updateAvatarSplitterWidth);
+            avatarSplitterObserver.observe(element);
+        }
+    });
+
+    watch(avatarSplitterSize, (value, previous) => {
+        if (value === previous) {
+            return;
+        }
+        if (avatarSplitterDraggingCount.value > 0) {
+            return;
+        }
+        updateAvatarSplitterWidth();
+    });
 
     const groupedAvatarFavorites = computed(() => {
         const grouped = {};
@@ -1535,6 +1640,10 @@
         cancelLocalAvatarRefresh();
         if (typeof window !== 'undefined') {
             window.removeEventListener('resize', maybeFillLocalAvatarViewport);
+        }
+        if (avatarSplitterObserver) {
+            avatarSplitterObserver.disconnect();
+            avatarSplitterObserver = null;
         }
     });
 

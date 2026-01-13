@@ -72,8 +72,19 @@
                 </DropdownMenu>
             </div>
         </div>
-        <el-splitter class="favorites-splitter" @resize-end="handleFriendSplitterResize">
-            <el-splitter-panel :size="friendSplitterSize" :min="0" :max="360" collapsible>
+        <ResizablePanelGroup
+            ref="friendSplitterGroupRef"
+            direction="horizontal"
+            class="favorites-splitter"
+            @layout="handleFriendSplitterLayout">
+            <ResizablePanel
+                ref="friendSplitterPanelRef"
+                :default-size="friendSplitterDefaultSize"
+                :min-size="friendSplitterMinSize"
+                :max-size="friendSplitterMaxSize"
+                :collapsed-size="0"
+                collapsible
+                :order="1">
                 <div class="favorites-groups-panel">
                     <div class="group-section">
                         <div class="group-section__header">
@@ -174,8 +185,9 @@
                         </div>
                     </div>
                 </div>
-            </el-splitter-panel>
-            <el-splitter-panel>
+            </ResizablePanel>
+            <ResizableHandle with-handle @dragging="setFriendSplitterDragging" />
+            <ResizablePanel :order="2">
                 <div class="favorites-content">
                     <div class="favorites-content__header">
                         <div class="favorites-content__title">
@@ -286,19 +298,19 @@
                         </template>
                     </div>
                 </div>
-            </el-splitter-panel>
-        </el-splitter>
+            </ResizablePanel>
+        </ResizablePanelGroup>
         <FriendExportDialog v-model:friendExportDialogVisible="friendExportDialogVisible" />
     </div>
 </template>
 
 <script setup>
-    import { computed, onBeforeMount, ref, watch } from 'vue';
+    import { computed, nextTick, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue';
     import { MoreFilled, Refresh } from '@element-plus/icons-vue';
     import { Button } from '@/components/ui/button';
-    import { InputGroupSearch } from '@/components/ui/input-group';
     import { ElMessageBox } from 'element-plus';
     import { Ellipsis } from 'lucide-vue-next';
+    import { InputGroupSearch } from '@/components/ui/input-group';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -320,6 +332,7 @@
         DropdownMenuTrigger
     } from '../../components/ui/dropdown-menu';
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
+    import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { useAppearanceSettingsStore, useFavoriteStore, useUserStore } from '../../stores';
     import { Badge } from '../../components/ui/badge';
     import { Slider } from '../../components/ui/slider';
@@ -335,6 +348,12 @@
     const friendGroupVisibilityOptions = ref(['public', 'friends', 'private']);
 
     const friendSplitterSize = ref(260);
+    const friendSplitterFallbackWidth = typeof window !== 'undefined' && window.innerWidth ? window.innerWidth : 1200;
+    const friendSplitterGroupRef = ref(null);
+    const friendSplitterPanelRef = ref(null);
+    const friendSplitterWidth = ref(friendSplitterFallbackWidth);
+    const friendSplitterDraggingCount = ref(0);
+    let friendSplitterObserver = null;
 
     const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
@@ -437,22 +456,115 @@
 
     async function loadFriendSplitterPreferences() {
         const storedSize = await configRepository.getString('VRCX_FavoritesFriendSplitter', '260');
-        if (typeof storedSize === 'string' && !Number.isNaN(Number(storedSize)) && Number(storedSize) > 0) {
-            friendSplitterSize.value = Number(storedSize);
+        const parsedSize = Number(storedSize);
+        if (Number.isFinite(parsedSize) && parsedSize >= 0) {
+            friendSplitterSize.value = parsedSize;
         }
     }
 
-    function handleFriendSplitterResize(panelIndex, sizes) {
+    const getFriendSplitterWidthRaw = () => {
+        const element = friendSplitterGroupRef.value?.$el ?? friendSplitterGroupRef.value;
+        const width = element?.getBoundingClientRect?.().width;
+        return Number.isFinite(width) ? width : null;
+    };
+
+    const getFriendSplitterWidth = () => {
+        const width = getFriendSplitterWidthRaw();
+        return Number.isFinite(width) && width > 0 ? width : friendSplitterFallbackWidth;
+    };
+
+    const resolveDraggingPayload = (payload) => {
+        if (typeof payload === 'boolean') {
+            return payload;
+        }
+        if (payload && typeof payload === 'object') {
+            if (typeof payload.detail === 'boolean') {
+                return payload.detail;
+            }
+            if (typeof payload.dragging === 'boolean') {
+                return payload.dragging;
+            }
+        }
+        return Boolean(payload);
+    };
+
+    const setFriendSplitterDragging = (payload) => {
+        const isDragging = resolveDraggingPayload(payload);
+        const next = friendSplitterDraggingCount.value + (isDragging ? 1 : -1);
+        friendSplitterDraggingCount.value = Math.max(0, next);
+    };
+
+    const pxToPercent = (px, groupWidth, min = 0) => {
+        const width = groupWidth ?? getFriendSplitterWidth();
+        return Math.min(100, Math.max(min, (px / width) * 100));
+    };
+
+    const percentToPx = (percent, groupWidth) => (percent / 100) * groupWidth;
+
+    const friendSplitterDefaultSize = computed(() =>
+        pxToPercent(friendSplitterSize.value, friendSplitterWidth.value, 0)
+    );
+    const friendSplitterMinSize = computed(() => pxToPercent(0, friendSplitterWidth.value, 0));
+    const friendSplitterMaxSize = computed(() => pxToPercent(360, friendSplitterWidth.value, 0));
+
+    const handleFriendSplitterLayout = (sizes) => {
         if (!Array.isArray(sizes) || !sizes.length) {
             return;
         }
-        const nextSize = sizes[0];
-        if (nextSize <= 0) {
+
+        if (friendSplitterDraggingCount.value === 0) {
             return;
         }
-        friendSplitterSize.value = nextSize;
-        configRepository.setString('VRCX_FavoritesFriendSplitter', nextSize.toString());
-    }
+
+        const rawWidth = getFriendSplitterWidthRaw();
+        if (!Number.isFinite(rawWidth) || rawWidth <= 0) {
+            return;
+        }
+
+        const nextSize = sizes[0];
+        if (!Number.isFinite(nextSize)) {
+            return;
+        }
+
+        const nextPx = Math.round(percentToPx(nextSize, rawWidth));
+        const clampedPx = Math.min(360, Math.max(0, nextPx));
+        friendSplitterSize.value = clampedPx;
+        configRepository.setString('VRCX_FavoritesFriendSplitter', clampedPx.toString());
+    };
+
+    const updateFriendSplitterWidth = () => {
+        const width = getFriendSplitterWidth();
+        friendSplitterWidth.value = width;
+        const targetSize = pxToPercent(friendSplitterSize.value, width, 0);
+        friendSplitterPanelRef.value?.resize?.(targetSize);
+    };
+
+    onMounted(async () => {
+        await nextTick();
+        updateFriendSplitterWidth();
+        const element = friendSplitterGroupRef.value?.$el ?? friendSplitterGroupRef.value;
+        if (element && typeof ResizeObserver !== 'undefined') {
+            friendSplitterObserver = new ResizeObserver(updateFriendSplitterWidth);
+            friendSplitterObserver.observe(element);
+        }
+    });
+
+    onUnmounted(() => {
+        if (friendSplitterObserver) {
+            friendSplitterObserver.disconnect();
+            friendSplitterObserver = null;
+        }
+    });
+
+    watch(friendSplitterSize, (value, previous) => {
+        if (value === previous) {
+            return;
+        }
+        if (friendSplitterDraggingCount.value > 0) {
+            return;
+        }
+        updateFriendSplitterWidth();
+    });
 
     const remoteGroupMenuKey = (key) => `remote:${key}`;
 

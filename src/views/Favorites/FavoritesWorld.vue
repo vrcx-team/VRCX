@@ -72,8 +72,19 @@
                 </DropdownMenu>
             </div>
         </div>
-        <el-splitter class="favorites-splitter" @resize-end="handleWorldSplitterResize">
-            <el-splitter-panel :size="worldSplitterSize" :min="0" :max="360" collapsible>
+        <ResizablePanelGroup
+            ref="worldSplitterGroupRef"
+            direction="horizontal"
+            class="favorites-splitter"
+            @layout="handleWorldSplitterLayout">
+            <ResizablePanel
+                ref="worldSplitterPanelRef"
+                :default-size="worldSplitterDefaultSize"
+                :min-size="worldSplitterMinSize"
+                :max-size="worldSplitterMaxSize"
+                :collapsed-size="0"
+                collapsible
+                :order="1">
                 <div class="favorites-groups-panel">
                     <div class="group-section">
                         <div class="group-section__header">
@@ -278,8 +289,9 @@
                         </div>
                     </div>
                 </div>
-            </el-splitter-panel>
-            <el-splitter-panel>
+            </ResizablePanel>
+            <ResizableHandle with-handle @dragging="setWorldSplitterDragging" />
+            <ResizablePanel :order="2">
                 <div class="favorites-content">
                     <div class="favorites-content__header">
                         <div class="favorites-content__title">
@@ -416,8 +428,8 @@
                         </template>
                     </div>
                 </div>
-            </el-splitter-panel>
-        </el-splitter>
+            </ResizablePanel>
+        </ResizablePanelGroup>
         <WorldExportDialog v-model:worldExportDialogVisible="worldExportDialogVisible" />
     </div>
 </template>
@@ -450,6 +462,7 @@
         DropdownMenuTrigger
     } from '../../components/ui/dropdown-menu';
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
+    import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../stores';
     import { favoriteRequest, worldRequest } from '../../api';
     import { Badge } from '../../components/ui/badge';
@@ -548,6 +561,12 @@
 
     const worldGroupVisibilityOptions = ref(['public', 'friends', 'private']);
     const worldSplitterSize = ref(260);
+    const worldSplitterFallbackWidth = typeof window !== 'undefined' && window.innerWidth ? window.innerWidth : 1200;
+    const worldSplitterGroupRef = ref(null);
+    const worldSplitterPanelRef = ref(null);
+    const worldSplitterWidth = ref(worldSplitterFallbackWidth);
+    const worldSplitterDraggingCount = ref(0);
+    let worldSplitterObserver = null;
     const worldExportDialogVisible = ref(false);
     const worldFavoriteSearch = ref('');
     const worldFavoriteSearchResults = ref([]);
@@ -595,22 +614,106 @@
 
     async function loadWorldSplitterPreferences() {
         const storedSize = await configRepository.getString('VRCX_FavoritesWorldSplitter', '260');
-        if (typeof storedSize === 'string' && !Number.isNaN(Number(storedSize)) && Number(storedSize) > 0) {
-            worldSplitterSize.value = Number(storedSize);
+        const parsedSize = Number(storedSize);
+        if (Number.isFinite(parsedSize) && parsedSize >= 0) {
+            worldSplitterSize.value = parsedSize;
         }
     }
 
-    function handleWorldSplitterResize(panelIndex, sizes) {
+    const getWorldSplitterWidthRaw = () => {
+        const element = worldSplitterGroupRef.value?.$el ?? worldSplitterGroupRef.value;
+        const width = element?.getBoundingClientRect?.().width;
+        return Number.isFinite(width) ? width : null;
+    };
+
+    const getWorldSplitterWidth = () => {
+        const width = getWorldSplitterWidthRaw();
+        return Number.isFinite(width) && width > 0 ? width : worldSplitterFallbackWidth;
+    };
+
+    const resolveDraggingPayload = (payload) => {
+        if (typeof payload === 'boolean') {
+            return payload;
+        }
+        if (payload && typeof payload === 'object') {
+            if (typeof payload.detail === 'boolean') {
+                return payload.detail;
+            }
+            if (typeof payload.dragging === 'boolean') {
+                return payload.dragging;
+            }
+        }
+        return Boolean(payload);
+    };
+
+    const setWorldSplitterDragging = (payload) => {
+        const isDragging = resolveDraggingPayload(payload);
+        const next = worldSplitterDraggingCount.value + (isDragging ? 1 : -1);
+        worldSplitterDraggingCount.value = Math.max(0, next);
+    };
+
+    const pxToPercent = (px, groupWidth, min = 0) => {
+        const width = groupWidth ?? getWorldSplitterWidth();
+        return Math.min(100, Math.max(min, (px / width) * 100));
+    };
+
+    const percentToPx = (percent, groupWidth) => (percent / 100) * groupWidth;
+
+    const worldSplitterDefaultSize = computed(() => pxToPercent(worldSplitterSize.value, worldSplitterWidth.value, 0));
+    const worldSplitterMinSize = computed(() => pxToPercent(0, worldSplitterWidth.value, 0));
+    const worldSplitterMaxSize = computed(() => pxToPercent(360, worldSplitterWidth.value, 0));
+
+    const handleWorldSplitterLayout = (sizes) => {
         if (!Array.isArray(sizes) || !sizes.length) {
             return;
         }
-        const nextSize = sizes[0];
-        if (nextSize <= 0) {
+
+        if (worldSplitterDraggingCount.value === 0) {
             return;
         }
-        worldSplitterSize.value = nextSize;
-        configRepository.setString('VRCX_FavoritesWorldSplitter', nextSize.toString());
-    }
+
+        const rawWidth = getWorldSplitterWidthRaw();
+        if (!Number.isFinite(rawWidth) || rawWidth <= 0) {
+            return;
+        }
+
+        const nextSize = sizes[0];
+        if (!Number.isFinite(nextSize)) {
+            return;
+        }
+
+        const nextPx = Math.round(percentToPx(nextSize, rawWidth));
+        const clampedPx = Math.min(360, Math.max(0, nextPx));
+        worldSplitterSize.value = clampedPx;
+        configRepository.setString('VRCX_FavoritesWorldSplitter', clampedPx.toString());
+    };
+
+    const updateWorldSplitterWidth = () => {
+        const width = getWorldSplitterWidth();
+        worldSplitterWidth.value = width;
+        const targetSize = pxToPercent(worldSplitterSize.value, width, 0);
+        worldSplitterPanelRef.value?.resize?.(targetSize);
+    };
+
+    onMounted(async () => {
+        await nextTick();
+        updateWorldSplitterWidth();
+        const element = worldSplitterGroupRef.value?.$el ?? worldSplitterGroupRef.value;
+        if (element && typeof ResizeObserver !== 'undefined') {
+            worldSplitterObserver = new ResizeObserver(updateWorldSplitterWidth);
+            worldSplitterObserver.observe(element);
+        }
+    });
+
+    watch(worldSplitterSize, (value, previous) => {
+        if (value === previous) {
+            return;
+        }
+        if (worldSplitterDraggingCount.value > 0) {
+            return;
+        }
+        updateWorldSplitterWidth();
+    });
 
     const groupedWorldFavorites = computed(() => {
         const grouped = {};
@@ -1248,6 +1351,10 @@
         cancelLocalWorldRefresh();
         if (typeof window !== 'undefined') {
             window.removeEventListener('resize', maybeFillLocalFavoritesViewport);
+        }
+        if (worldSplitterObserver) {
+            worldSplitterObserver.disconnect();
+            worldSplitterObserver = null;
         }
     });
 </script>
