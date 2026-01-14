@@ -19,28 +19,28 @@
                             size="icon-sm"
                             variant="outline"
                             :disabled="currentUser.currentAvatar === favorite.id"
-                            class="favorites-search-card__action-btn rounded-full"
+                            class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                             @click.stop="selectAvatarWithConfirmation(favorite.id)">
-                            <Check
-                        /></Button>
+                            <i class="ri-check-line"></i
+                        ></Button>
                     </TooltipWrapper>
                 </div>
                 <div class="favorites-search-card__action">
-                    <TooltipWrapper side="bottom" :content="t('view.favorite.favorite_tooltip')">
+                    <TooltipWrapper side="bottom" :content="t('view.favorite.edit_favorite_tooltip')">
                         <Button
                             v-if="favoriteExists"
                             size="icon-sm"
                             variant="outline"
-                            class="favorites-search-card__action-btn rounded-full"
+                            class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                             @click.stop="showFavoriteDialog('avatar', favorite.id)">
-                            <Star />
+                            <i class="ri-star-line"></i>
                         </Button>
                         <Button
-                            else
+                            v-else
                             size="icon-sm"
-                            class="favorites-search-card__action-btn rounded-full"
+                            class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                             @click.stop="showFavoriteDialog('avatar', favorite.id)">
-                            <Star />
+                            <i class="ri-star-line"></i>
                         </Button>
                     </TooltipWrapper>
                 </div>

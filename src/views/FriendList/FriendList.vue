@@ -12,8 +12,8 @@
                 :on-page-size-change="handlePageSizeChange"
                 :on-row-click="handleRowClick">
                 <template #toolbar>
-                    <div style="display: flex; align-items: center; justify-content: space-between">
-                        <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
+                    <div class="flex items-center justify-between">
+                        <div class="flex flex-none mr-2 items-center">
                             <TooltipWrapper side="bottom" :content="t('view.friend_list.favorites_only_tooltip')">
                                 <Switch
                                     v-model="friendsListSearchFilterVIP"
@@ -23,7 +23,7 @@
                                 multiple
                                 :model-value="Array.isArray(friendsListSearchFilters) ? friendsListSearchFilters : []"
                                 @update:modelValue="handleFriendListFilterChange">
-                                <SelectTrigger style="margin: 0 10px; width: 150px">
+                                <SelectTrigger class="mx-2 w-[150px]">
                                     <SelectValue :placeholder="t('view.friend_list.filter_placeholder')" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -49,24 +49,24 @@
                                 v-model="friendsListSearch"
                                 :placeholder="t('view.friend_list.search_placeholder')"
                                 clearable
-                                style="width: 250px"
+                                class="w-[250px]"
                                 @change="friendsListSearchChange" />
                         </div>
                         <div class="flex items-center">
-                            <div v-if="friendsListBulkUnfriendMode" class="inline-block mr-10">
+                            <div v-if="friendsListBulkUnfriendMode" class="inline-block mr-2">
                                 <Button variant="outline" @click="showBulkUnfriendSelectionConfirm">
                                     {{ t('view.friend_list.bulk_unfriend_selection') }}
                                 </Button>
                                 <!-- el-button(size="small" @click="showBulkUnfriendAllConfirm" style="margin-right:5px") Bulk Unfriend All-->
                             </div>
-                            <div class="flex items-center mr-3">
+                            <div class="flex items-center mr-2">
                                 <span class="name mr-2 text-xs">{{ t('view.friend_list.bulk_unfriend') }}</span>
                                 <Switch
                                     v-model="friendsListBulkUnfriendMode"
                                     @update:modelValue="toggleFriendsListBulkUnfriendMode" />
                             </div>
                             <div class="flex items-center">
-                                <Button variant="outline" @click="openChartsTab">
+                                <Button variant="outline" class="mr-2" @click="openChartsTab">
                                     {{ t('view.friend_list.load_mutual_friends') }}
                                 </Button>
 

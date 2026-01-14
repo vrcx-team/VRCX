@@ -45,7 +45,7 @@ export const createColumns = ({ onRestore, onSaveToFile, onDelete }) => [
         id: 'action',
         header: () => t('dialog.registry_backup.action'),
         enableSorting: false,
-        size: 90,
+        size: 120,
         meta: {
             tdClass: 'text-right'
         },

@@ -113,7 +113,6 @@
                             :placeholder="t('dialog.group.members.search')"
                             style="margin-top: 10px; margin-bottom: 10px"
                             @input="groupMembersSearch" />
-                        <br />
                         <Button size="sm" variant="outline" @click="selectAllGroupMembers">{{
                             t('dialog.group_member_moderation.select_all')
                         }}</Button>
@@ -150,7 +149,6 @@
                             size="sm"
                             :placeholder="t('dialog.group.members.search')"
                             style="margin-top: 10px; margin-bottom: 10px" />
-                        <br />
                         <Button size="sm" variant="outline" @click="selectAllGroupBans">{{
                             t('dialog.group_member_moderation.select_all')
                         }}</Button>
@@ -237,6 +235,7 @@
                                             !hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')
                                         )
                                     "
+                                    class="mr-2"
                                     @click="groupMembersAcceptInviteRequest"
                                     >{{ t('dialog.group_member_moderation.accept_join_requests') }}</Button
                                 >
@@ -248,6 +247,7 @@
                                             !hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')
                                         )
                                     "
+                                    class="mr-2"
                                     @click="groupMembersRejectInviteRequest"
                                     >{{ t('dialog.group_member_moderation.reject_join_requests') }}</Button
                                 >
@@ -284,7 +284,7 @@
                                     :total-items="groupBlockedModerationTotalItems" />
                                 <br />
                                 <Button
-                                    variant="secondary"
+                                    variant="outline"
                                     :disabled="
                                         Boolean(
                                             progressCurrent ||
@@ -362,13 +362,13 @@
             <InputGroupField
                 v-model="selectUserId"
                 size="sm"
-                style="margin-top: 5px; width: 340px"
+                style="margin-top: 5px"
                 :placeholder="t('dialog.group_member_moderation.user_id_placeholder')"
                 clearable />
             <Button
                 size="sm"
                 variant="outline"
-                style="margin-top: 5px; margin-left: 5px"
+                style="margin-top: 10px"
                 :disabled="!selectUserId"
                 @click="selectGroupMemberUserId"
                 >{{ t('dialog.group_member_moderation.select_user') }}</Button
@@ -539,8 +539,8 @@
     import { useI18n } from 'vue-i18n';
 
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
-    import { debounce, formatDateFilter, hasGroupPermission, userImage, userImageFull } from '../../../shared/utils';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../ui/dropdown-menu';
+    import { debounce, hasGroupPermission, userImage, userImageFull } from '../../../shared/utils';
     import { useAppearanceSettingsStore, useGalleryStore, useGroupStore, useUserStore } from '../../../stores';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import { groupRequest, userRequest } from '../../../api';

@@ -12,12 +12,12 @@
         </div>
         <div class="options-container-item">
             <span>{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.description') }}</span>
-            <br />
-            <br />
+        </div>
+        <div class="options-container-item">
             <span>{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.grip') }}</span>
-            <br />
+        </div>
+        <div class="options-container-item">
             <span>{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.menu') }}</span>
-            <br />
         </div>
         <simple-switch
             :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.steamvr_overlay')"

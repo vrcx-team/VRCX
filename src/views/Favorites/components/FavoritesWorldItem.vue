@@ -83,7 +83,7 @@
                                     variant="destructive"
                                     class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                                     @click.stop="handleDeleteFavorite"
-                                    ><i class="ri-star-line"></i
+                                    ><i class="ri-delete-bin-line"></i
                                 ></Button>
                             </TooltipWrapper>
                             <TooltipWrapper v-else side="top" :content="t('view.favorite.edit_favorite_tooltip')">
@@ -92,7 +92,7 @@
                                     variant="outline"
                                     class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                                     @click.stop="showFavoriteDialog('world', favorite.id)"
-                                    ><i class="ri-delete-bin-line"></i
+                                    ><i class="ri-star-line"></i
                                 ></Button>
                             </TooltipWrapper>
                         </div>
