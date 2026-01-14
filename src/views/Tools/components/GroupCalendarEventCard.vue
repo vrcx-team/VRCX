@@ -92,20 +92,20 @@
         </div>
         <div class="badges">
             <div @click="copyEventLink(event)" class="share-badge">
-                <el-icon><Share /></el-icon>
+                <Share2 />
             </div>
             <div v-if="isFollowing" @click="toggleEventFollow(event)" class="following-badge is-following">
-                <el-icon><Star /></el-icon>
+                <Star />
             </div>
             <div v-else @click="toggleEventFollow(event)" class="following-badge">
-                <el-icon><StarFilled /></el-icon>
+                <Star />
             </div>
         </div>
     </Card>
 </template>
 
 <script setup>
-    import { Calendar, Download, Share, Star, StarFilled } from '@element-plus/icons-vue';
+    import { Calendar, Download, Share2, Star } from 'lucide-vue-next';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';

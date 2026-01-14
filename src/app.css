@@ -843,7 +843,7 @@ html.dark .x-friend-item > .detail > .extra,
     background: var(--color-zinc-300);
 }
 
-.el-icon.is-loading {
+.lucide.is-loading {
     animation: rotating 2s linear infinite;
 }
 
@@ -980,11 +980,11 @@ hr.x-vertical-divider {
     overflow: hidden auto;
 }
 
-.x-friend-group > .el-icon-arrow-right {
+.x-friend-group > .rotation-transition {
     transition: transform 0.3s;
 }
 
-.x-friend-group > .el-icon-arrow-right.rotate {
+.x-friend-group > .rotation-transition.is-rotated {
     transform: rotate(90deg);
 }
 

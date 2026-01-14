@@ -24,7 +24,7 @@
                     <span class="flex items-center gap-1">
                         <span>{{ t('dialog.launch.short_url') }}</span>
                         <TooltipWrapper side="top" :content="t('dialog.launch.short_url_notice')">
-                            <el-icon><Warning /></el-icon>
+                            <AlertTriangle />
                         </TooltipWrapper>
                     </span>
                 </FieldLabel>
@@ -132,12 +132,10 @@
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
+    import { AlertTriangle, Copy, MoreHorizontal } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
-    import { Copy } from 'lucide-vue-next';
     import { InputGroupField } from '@/components/ui/input-group';
-    import { MoreHorizontal } from 'lucide-vue-next';
-    import { Warning } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

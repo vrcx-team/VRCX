@@ -220,7 +220,7 @@
                         <SelectItem value="Sort by Status">{{
                             t('view.settings.appearance.side_panel.sorting.status')
                         }}</SelectItem>
-                        <SelectItem value="Sort Private to Bottom">{{
+                        <SelectItem value="Sort Private to ArrowDown">{{
                             t('view.settings.appearance.side_panel.sorting.private_to_bottom')
                         }}</SelectItem>
                         <SelectItem value="Sort by Last Active">{{
@@ -237,7 +237,7 @@
                         }}</SelectItem>
                     </SelectContent>
                 </Select>
-                <el-icon style="margin: 5px"><ArrowRight /></el-icon>
+                <ArrowRight style="margin: 5px" />
                 <Select
                     :model-value="sidebarSortMethod2"
                     :disabled="!sidebarSortMethod1"
@@ -253,7 +253,7 @@
                         <SelectItem value="Sort by Status">{{
                             t('view.settings.appearance.side_panel.sorting.status')
                         }}</SelectItem>
-                        <SelectItem value="Sort Private to Bottom">{{
+                        <SelectItem value="Sort Private to ArrowDown">{{
                             t('view.settings.appearance.side_panel.sorting.private_to_bottom')
                         }}</SelectItem>
                         <SelectItem value="Sort by Last Active">{{
@@ -270,7 +270,7 @@
                         }}</SelectItem>
                     </SelectContent>
                 </Select>
-                <el-icon style="margin: 5px"><ArrowRight /></el-icon>
+                <ArrowRight style="margin: 5px" />
                 <Select
                     :model-value="sidebarSortMethod3"
                     :disabled="!sidebarSortMethod2"
@@ -286,7 +286,7 @@
                         <SelectItem value="Sort by Status">{{
                             t('view.settings.appearance.side_panel.sorting.status')
                         }}</SelectItem>
-                        <SelectItem value="Sort Private to Bottom">{{
+                        <SelectItem value="Sort Private to ArrowDown">{{
                             t('view.settings.appearance.side_panel.sorting.private_to_bottom')
                         }}</SelectItem>
                         <SelectItem value="Sort by Last Active">{{
@@ -438,9 +438,8 @@
     } from '@/components/ui/tags-input';
     import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { computed, onBeforeUnmount, ref, watch } from 'vue';
-    import { CheckIcon, ChevronDown } from 'lucide-vue-next';
+    import { ArrowRight, CheckIcon, ChevronDown } from 'lucide-vue-next';
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-    import { ArrowRight } from '@element-plus/icons-vue';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

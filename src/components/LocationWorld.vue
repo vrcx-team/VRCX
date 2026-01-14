@@ -2,19 +2,19 @@
     <span class="x-location-world">
         <span v-if="region" :class="['flags', 'inline-block', 'mr-1.25', region]"></span>
         <span @click="showLaunchDialog" class="x-link">
-            <el-icon v-if="isUnlocked" :class="['inline-block', 'mr-1.25']"><Unlock /></el-icon>
+            <Unlock v-if="isUnlocked" :class="['inline-block', 'mr-1.25']" />
             <span> {{ accessTypeName }} #{{ instanceName }}</span>
         </span>
         <span v-if="groupName" @click="showGroupDialog" class="x-link">({{ groupName }})</span>
         <TooltipWrapper v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
-            <el-icon :class="['inline-block', 'ml-5']" style="color: lightcoral"><WarnTriangleFilled /></el-icon>
+            <AlertTriangle :class="['inline-block', 'ml-5']" style="color: lightcoral" />
         </TooltipWrapper>
-        <el-icon v-if="strict" style="display: inline-block; margin-left: 5px"><Lock /></el-icon>
+        <Lock v-if="strict" style="display: inline-block; margin-left: 5px" />
     </span>
 </template>
 
 <script setup>
-    import { Lock, Unlock, WarnTriangleFilled } from '@element-plus/icons-vue';
+    import { Lock, Unlock, AlertTriangle } from 'lucide-vue-next';
     import { ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

@@ -38,7 +38,7 @@
             {{ t('dialog.note_export.cancel') }}
         </Button>
         <span v-if="loading" style="margin: 10px">
-            <el-icon style="margin-right: 5px"><Loading /></el-icon>
+            <Loader2 style="margin-right: 5px" />
             {{ t('dialog.note_export.progress') }} {{ progress }}/{{ progressTotal }}
         </span>
 
@@ -66,7 +66,7 @@
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { DataTableLayout } from '@/components/ui/data-table';
-    import { Loading } from '@element-plus/icons-vue';
+    import { Loader2 } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

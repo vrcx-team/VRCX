@@ -12,7 +12,7 @@
                     :class="['x-location', { 'x-link': link && location !== 'private' && location !== 'offline' }]"
                     class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden"
                     @click="handleShowWorldDialog">
-                    <el-icon :class="['is-loading']" class="mr-1" v-if="isTraveling"><Loading /></el-icon>
+                    <Loader2 :class="['is-loading']" class="mr-1" v-if="isTraveling" />
                     <span class="min-w-0 truncate">{{ text }}</span>
                     <span v-if="showInstanceIdInLocation && instanceName" class="ml-1 whitespace-nowrap">{{
                         ` · #${instanceName}`
@@ -23,15 +23,15 @@
                 </div>
             </TooltipWrapper>
             <TooltipWrapper v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
-                <el-icon :class="['inline-block', 'ml-5']" style="color: lightcoral"><WarnTriangleFilled /></el-icon>
+                <AlertTriangle :class="['inline-block', 'ml-5']" style="color: lightcoral" />
             </TooltipWrapper>
-            <el-icon v-if="strict" :class="['inline-block', 'ml-5']"><Lock /></el-icon>
+            <Lock v-if="strict" :class="['inline-block', 'ml-5']" />
         </div>
     </div>
 </template>
 
 <script setup>
-    import { Loading, Lock, WarnTriangleFilled } from '@element-plus/icons-vue';
+    import { Loader2, Lock, AlertTriangle } from 'lucide-vue-next';
     import { onBeforeUnmount, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

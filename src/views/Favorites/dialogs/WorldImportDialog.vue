@@ -11,7 +11,7 @@
                 <div v-if="worldImportDialog.progress">
                     {{ t('dialog.world_import.process_progress') }}
                     {{ worldImportDialog.progress }} / {{ worldImportDialog.progressTotal }}
-                    <el-icon style="margin: 0 5px"><Loading /></el-icon>
+                    <Loader2 style="margin: 0 5px" />
                 </div>
                 <Button v-if="worldImportDialog.loading" size="sm" variant="outline" @click="cancelWorldImport">
                     {{ t('dialog.world_import.cancel') }}
@@ -94,7 +94,7 @@
             </div>
         </div>
         <span v-if="worldImportDialog.importProgress" style="margin: 10px">
-            <el-icon style="margin-right: 5px"><Loading /></el-icon>
+            <Loader2 style="margin-right: 5px" />
             {{ t('dialog.world_import.import_progress') }}
             {{ worldImportDialog.importProgress }}/{{ worldImportDialog.importProgressTotal }}
         </span>
@@ -124,7 +124,7 @@
     import { Button } from '@/components/ui/button';
     import { DataTableLayout } from '@/components/ui/data-table';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
-    import { Loading } from '@element-plus/icons-vue';
+    import { Loader2 } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

@@ -40,7 +40,7 @@
                                     >
                                 </div>
                             </template>
-                            <el-icon><CaretBottom /></el-icon>
+                            <ChevronDown />
                         </TooltipWrapper>
                     </template>
                     <span
@@ -260,7 +260,7 @@
 </template>
 
 <script setup>
-    import { CaretBottom } from '@element-plus/icons-vue';
+    import { ChevronDown } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

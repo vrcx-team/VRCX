@@ -40,7 +40,7 @@
                     </template>
                 </div>
             </template>
-            <el-icon><CaretBottom /></el-icon>
+            <ChevronDown />
         </TooltipWrapper>
         <span v-if="props.location === locationStore.lastLocation.location" style="margin-left: 5px"
             >{{ locationStore.lastLocation.playerList.size }}/{{ props.instance.capacity }}</span
@@ -66,7 +66,7 @@
 <script setup>
     import { reactive, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { CaretBottom } from '@element-plus/icons-vue';
+    import { ChevronDown } from 'lucide-vue-next';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
@@ -128,7 +128,7 @@
     function closeInstance(location) {
         modalStore
             .confirm({
-                description: 'Continue? Close Instance, nobody will be able to join',
+                description: 'Continue? X Instance, nobody will be able to join',
                 title: 'Confirm'
             })
             .then(async ({ ok }) => {

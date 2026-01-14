@@ -33,7 +33,6 @@
     "homepage": "https://github.com/vrcx-team/VRCX#readme",
     "devDependencies": {
         "@electron/rebuild": "^4.0.2",
-        "@element-plus/icons-vue": "^2.3.2",
         "@eslint/js": "^9.39.2",
         "@fontsource-variable/inter": "^5.2.8",
         "@fontsource-variable/noto-sans-jp": "^5.2.9",

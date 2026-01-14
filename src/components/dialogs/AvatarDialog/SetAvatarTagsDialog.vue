@@ -53,9 +53,7 @@
                 >{{ props.setAvatarTagsDialog.selectedAvatarIds.length }} /
                 {{ setAvatarTagsDialog.ownAvatars.length }}</span
             >
-            <el-icon v-if="setAvatarTagsDialog.loading" class="is-loading" style="margin-left: 5px"
-                ><Loading
-            /></el-icon>
+            <Loader2 v-if="setAvatarTagsDialog.loading" class="is-loading" style="margin-left: 5px" />
             <br />
             <div class="x-friend-list" style="margin-top: 10px; min-height: 60px; max-height: 280px">
                 <div
@@ -102,7 +100,7 @@
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
-    import { Loading } from '@element-plus/icons-vue';
+    import { Loader2 } from 'lucide-vue-next';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
     import { watch } from 'vue';

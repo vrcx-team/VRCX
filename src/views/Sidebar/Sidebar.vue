@@ -68,7 +68,7 @@
                         style="margin-right: 10px"
                         @click="refreshFriendsList">
                         <Spinner v-if="isRefreshFriendsLoading" />
-                        <Refresh v-else />
+                        <RefreshCw v-else />
                     </Button>
                 </TooltipWrapper>
             </div>
@@ -108,7 +108,7 @@
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Input } from '@/components/ui/input';
-    import { Refresh } from '@element-plus/icons-vue';
+    import { RefreshCw } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';

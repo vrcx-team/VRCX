@@ -18,25 +18,21 @@
             @load="handleImageLoad"
             @close="closeDialog">
             <template #toolbar="{ actions }">
-                <el-icon @click="copyImageToClipboard(fullscreenImageDialog.imageUrl)" class="toolbar-icon">
-                    <CopyDocument />
-                </el-icon>
-                <el-icon
+                <Copy @click="copyImageToClipboard(fullscreenImageDialog.imageUrl)" class="toolbar-icon" />
+                <Download 
                     @click="downloadAndSaveImage(fullscreenImageDialog.imageUrl, fullscreenImageDialog.fileName)"
-                    class="toolbar-icon">
-                    <Download />
-                </el-icon>
-                <el-icon @click="actions('zoomOut')" class="toolbar-icon"><ZoomOut /></el-icon>
-                <el-icon @click="actions('zoomIn')" class="toolbar-icon"><ZoomIn /></el-icon>
-                <el-icon @click="actions('clockwise')" class="toolbar-icon"><RefreshRight /></el-icon>
-                <el-icon @click="actions('anticlockwise')" class="toolbar-icon"><RefreshLeft /></el-icon>
+                    class="toolbar-icon" />
+                <ZoomOut @click="actions('zoomOut')" class="toolbar-icon" />
+                <ZoomIn @click="actions('zoomIn')" class="toolbar-icon" />
+                <RotateCw @click="actions('clockwise')" class="toolbar-icon" />
+                <RotateCcw @click="actions('anticlockwise')" class="toolbar-icon" />
             </template>
         </el-image>
     </div>
 </template>
 
 <script setup>
-    import { CopyDocument, Download, RefreshLeft, RefreshRight, ZoomIn, ZoomOut } from '@element-plus/icons-vue';
+    import { Copy, Download, RotateCcw, RotateCw, ZoomIn, ZoomOut } from 'lucide-vue-next';
     import { nextTick, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

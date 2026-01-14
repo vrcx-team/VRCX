@@ -17,13 +17,11 @@
                 <span v-if="isFriendActiveOrOffline" class="extra">{{ friend.ref.statusDescription }}</span>
                 <template v-else>
                     <div v-if="friend.pendingOffline" class="extra">
-                        <el-icon><WarningFilled /></el-icon> {{ t('side_panel.pending_offline') }}
+                        <AlertTriangle /> {{ t('side_panel.pending_offline') }}
                     </div>
                     <template v-else-if="isGroupByInstance">
                         <div class="flex items-center">
-                            <el-icon v-if="isFriendTraveling" class="is-loading" style="margin-right: 3px"
-                                ><Loading
-                            /></el-icon>
+                            <Loader2 v-if="isFriendTraveling" class="is-loading" style="margin-right: 3px" />
                             <Timer
                                 class="extra"
                                 :epoch="epoch"
@@ -62,7 +60,7 @@
 </template>
 
 <script setup>
-    import { Loading, WarningFilled } from '@element-plus/icons-vue';
+    import { Loader2, AlertTriangle } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';

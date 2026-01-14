@@ -6,9 +6,7 @@
             <div class="tool-categories">
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('group')">
-                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['group'] }"
-                            ><ArrowRight
-                        /></el-icon>
+                        <ArrowRight class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['group'] }" />
                         <span class="category-title">{{ t('view.tools.group.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['group']">
@@ -28,9 +26,7 @@
 
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('image')">
-                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['image'] }"
-                            ><ArrowRight
-                        /></el-icon>
+                        <ArrowRight class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['image'] }" />
                         <span class="category-title">{{ t('view.tools.pictures.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
@@ -93,9 +89,7 @@
 
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('user')">
-                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['user'] }"
-                            ><ArrowRight
-                        /></el-icon>
+                        <ArrowRight class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['user'] }" />
                         <span class="category-title">{{ t('view.tools.export.header') }}</span>
                     </div>
 
@@ -158,9 +152,7 @@
 
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('other')">
-                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['other'] }"
-                            ><ArrowRight
-                        /></el-icon>
+                        <ArrowRight class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['other'] }" />
                         <span class="category-title">{{ t('view.tools.other.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['other']">
@@ -205,7 +197,7 @@
 <script setup>
     import { computed, defineAsyncComponent, ref } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
-    import { ArrowRight } from '@element-plus/icons-vue';
+    import { ArrowRight } from 'lucide-vue-next';
     import { Card } from '@/components/ui/card';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -317,7 +309,7 @@
                 background-color: var(--el-color-primary-light-9);
             }
 
-            .el-icon-arrow-right {
+            .rotation-transition {
                 font-size: 14px;
                 margin-right: 8px;
                 transition: transform 0.3s;

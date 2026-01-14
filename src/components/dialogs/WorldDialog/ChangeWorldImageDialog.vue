@@ -29,7 +29,7 @@
 
 <script setup>
     import { Button } from '@/components/ui/button';
-    import { Upload } from '@element-plus/icons-vue';
+    import { Upload } from 'lucide-vue-next';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

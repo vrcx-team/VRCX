@@ -67,7 +67,7 @@
         <TooltipWrapper
             side="top"
             :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-            <el-icon><InfoFilled /></el-icon>
+            <Info />
         </TooltipWrapper>
         <simple-switch
             :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')"
@@ -93,7 +93,7 @@
         <TooltipWrapper
             side="top"
             :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-            <el-icon><InfoFilled /></el-icon>
+            <Info />
         </TooltipWrapper>
         <simple-switch
             :label="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')"
@@ -105,7 +105,7 @@
 
 <script setup>
     import { Button } from '@/components/ui/button';
-    import { InfoFilled } from '@element-plus/icons-vue';
+    import { Info } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

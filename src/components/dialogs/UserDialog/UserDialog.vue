@@ -96,7 +96,7 @@
                                             :style="{ color: user.$userColour }"
                                             v-text="user.displayName"></span>
                                         <span v-if="user.location === 'traveling'" class="extra">
-                                            <el-icon class="is-loading" style="margin-right: 3px"><Loading /></el-icon>
+                                            <Loader2 class="is-loading" style="margin-right: 3px" />
                                             <Timer :epoch="user.$travelingToTime" />
                                         </span>
                                         <span v-else class="extra">
@@ -173,7 +173,7 @@
                                         "
                                         side="top"
                                         :content="t('dialog.user.info.vrcplus_hides_avatar')">
-                                        <el-icon><Warning /></el-icon>
+                                        <AlertTriangle />
                                     </TooltipWrapper>
                                 </div>
                             </div>
@@ -289,7 +289,7 @@
                                     <span class="name">
                                         {{ t('dialog.user.info.last_seen') }}
                                         <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
+                                            <AlertTriangle style="margin-left: 3px" />
                                         </TooltipWrapper>
                                     </span>
                                     <span class="extra">{{ formatDateFilter(userDialog.lastSeen, 'long') }}</span>
@@ -304,14 +304,14 @@
                                         <div>
                                             {{ t('dialog.user.info.join_count') }}
                                             <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                                <el-icon style="margin-left: 3px"><Warning /></el-icon>
+                                                <AlertTriangle style="margin-left: 3px" />
                                             </TooltipWrapper>
                                         </div>
 
                                         <TooltipWrapper
                                             side="top"
                                             :content="t('dialog.user.info.open_previous_instance')">
-                                            <el-icon style="margin-right: 16px"><MoreFilled /></el-icon>
+                                            <MoreHorizontal style="margin-right: 16px" />
                                         </TooltipWrapper>
                                     </div>
                                     <span v-if="userDialog.joinCount === 0" class="extra">-</span>
@@ -324,7 +324,7 @@
                                     <span class="name">
                                         {{ t('dialog.user.info.time_together') }}
                                         <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
+                                            <AlertTriangle style="margin-left: 3px" />
                                         </TooltipWrapper>
                                     </span>
                                     <span v-if="userDialog.timeSpent === 0" class="extra">-</span>
@@ -342,7 +342,7 @@
                                         <span class="name">
                                             {{ t('dialog.user.info.play_time') }}
                                             <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                                <el-icon style="margin-left: 3px"><Warning /></el-icon>
+                                                <AlertTriangle style="margin-left: 3px" />
                                             </TooltipWrapper>
                                         </span>
                                         <span v-if="userDialog.timeSpent === 0" class="extra">-</span>
@@ -362,13 +362,13 @@
                                         class="name">
                                         {{ t('dialog.user.info.online_for') }}
                                         <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
+                                            <AlertTriangle style="margin-left: 3px" />
                                         </TooltipWrapper>
                                     </span>
                                     <span v-else class="name">
                                         {{ t('dialog.user.info.offline_for') }}
                                         <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
+                                            <AlertTriangle style="margin-left: 3px" />
                                         </TooltipWrapper>
                                     </span>
                                     <span class="extra">{{ userOnlineFor(userDialog.ref) }}</span>
@@ -415,13 +415,13 @@
                                     <span v-if="userDialog.unFriended" class="name">
                                         {{ t('dialog.user.info.unfriended') }}
                                         <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
+                                            <AlertTriangle style="margin-left: 3px" />
                                         </TooltipWrapper>
                                     </span>
                                     <span v-else class="name">
                                         {{ t('dialog.user.info.friended') }}
                                         <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
+                                            <AlertTriangle style="margin-left: 3px" />
                                         </TooltipWrapper>
                                     </span>
                                     <span class="extra">{{ formatDateFilter(userDialog.dateFriended, 'long') }}</span>
@@ -562,7 +562,7 @@
                                 :disabled="userDialog.isMutualFriendsLoading"
                                 @click="getUserMutualFriends(userDialog.id)">
                                 <Spinner v-if="userDialog.isMutualFriendsLoading" />
-                                <Refresh v-else />
+                                <RefreshCw v-else />
                             </Button>
                             <span style="margin-left: 5px">{{
                                 t('dialog.user.groups.total_count', { count: userDialog.mutualFriends.length })
@@ -599,7 +599,7 @@
                             color: #f56c6c;
                             cursor: pointer;
                         ">
-                        <el-icon style="margin-right: 5px"><Warning /></el-icon>
+                        <AlertTriangle style="margin-right: 5px" />
                         <span>Mutual Friends unavailable due to VRChat staged rollout, click for more info</span>
                     </div>
                     <ul
@@ -633,7 +633,7 @@
                                 :disabled="userDialog.isGroupsLoading"
                                 @click="getUserGroups(userDialog.id)">
                                 <Spinner v-if="userDialog.isGroupsLoading" />
-                                <Refresh v-else />
+                                <RefreshCw v-else />
                             </Button>
                             <span style="margin-left: 5px">{{
                                 t('dialog.user.groups.total_count', { count: userGroups.groups.length })
@@ -771,14 +771,14 @@
                                             variant="outline"
                                             style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
                                             @click="moveGroupUp(group.id)">
-                                            <Top />
+                                            <ArrowUp />
                                         </Button>
                                         <Button
                                             size="icon-sm"
                                             variant="outline"
                                             style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
                                             @click="moveGroupDown(group.id)">
-                                            <Bottom />
+                                            <ArrowDown />
                                         </Button>
                                     </div>
                                     <div class="avatar">
@@ -791,7 +791,7 @@
                                                 v-if="group.isRepresenting"
                                                 side="top"
                                                 :content="t('dialog.group.members.representing')">
-                                                <el-icon style="margin-right: 5px"><CollectionTag /></el-icon>
+                                                <Tag style="margin-right: 5px" />
                                             </TooltipWrapper>
                                             <TooltipWrapper v-if="group.myMember?.visibility !== 'visible'" side="top">
                                                 <template #content>
@@ -800,7 +800,7 @@
                                                         {{ group.myMember.visibility }}</span
                                                     >
                                                 </template>
-                                                <el-icon style="margin-right: 5px"><View /></el-icon>
+                                                <Eye style="margin-right: 5px" />
                                             </TooltipWrapper>
                                             <span>({{ group.memberCount }})</span>
                                         </span>
@@ -840,11 +840,11 @@
                                             setGroupSubscription(group.id, !group.myMember.isSubscribedToAnnouncements)
                                         ">
                                         <span v-if="group.myMember.isSubscribedToAnnouncements"
-                                            ><el-icon style="margin-left: 5px"><MuteNotification /></el-icon>
+                                            ><BellOff style="margin-left: 5px" />
                                             {{ t('dialog.group.tags.subscribed') }}</span
                                         >
                                         <span v-else
-                                            ><el-icon style="margin-left: 5px"><Bell /></el-icon>
+                                            ><Bell style="margin-left: 5px" />
                                             {{ t('dialog.group.tags.unsubscribed') }}</span
                                         >
                                     </Button> -->
@@ -899,7 +899,7 @@
                                                     v-if="group.isRepresenting"
                                                     side="top"
                                                     :content="t('dialog.group.members.representing')">
-                                                    <el-icon style="margin-right: 5px"><CollectionTag /></el-icon>
+                                                    <Tag style="margin-right: 5px" />
                                                 </TooltipWrapper>
                                                 <TooltipWrapper v-if="group.memberVisibility !== 'visible'" side="top">
                                                     <template #content>
@@ -908,7 +908,7 @@
                                                             {{ group.memberVisibility }}</span
                                                         >
                                                     </template>
-                                                    <el-icon style="margin-right: 5px"><View /></el-icon>
+                                                    <Eye style="margin-right: 5px" />
                                                 </TooltipWrapper>
                                                 <span>({{ group.memberCount }})</span>
                                             </span>
@@ -942,7 +942,7 @@
                                                     v-if="group.isRepresenting"
                                                     side="top"
                                                     :content="t('dialog.group.members.representing')">
-                                                    <el-icon style="margin-right: 5px"><CollectionTag /></el-icon>
+                                                    <Tag style="margin-right: 5px" />
                                                 </TooltipWrapper>
                                                 <TooltipWrapper v-if="group.memberVisibility !== 'visible'" side="top">
                                                     <template #content>
@@ -951,7 +951,7 @@
                                                             {{ group.memberVisibility }}</span
                                                         >
                                                     </template>
-                                                    <el-icon style="margin-right: 5px"><View /></el-icon>
+                                                    <Eye style="margin-right: 5px" />
                                                 </TooltipWrapper>
                                                 <span>({{ group.memberCount }})</span>
                                             </span>
@@ -993,7 +993,7 @@
                                                     v-if="group.isRepresenting"
                                                     side="top"
                                                     :content="t('dialog.group.members.representing')">
-                                                    <el-icon style="margin-right: 5px"><CollectionTag /></el-icon>
+                                                    <Tag style="margin-right: 5px" />
                                                 </TooltipWrapper>
                                                 <TooltipWrapper v-if="group.memberVisibility !== 'visible'" side="top">
                                                     <template #content>
@@ -1002,7 +1002,7 @@
                                                             {{ group.memberVisibility }}</span
                                                         >
                                                     </template>
-                                                    <el-icon style="margin-right: 5px"><View /></el-icon>
+                                                    <Eye style="margin-right: 5px" />
                                                 </TooltipWrapper>
                                                 <span>({{ group.memberCount }})</span>
                                             </span>
@@ -1024,7 +1024,7 @@
                                 :disabled="userDialog.isWorldsLoading"
                                 @click="refreshUserDialogWorlds()">
                                 <Spinner v-if="userDialog.isWorldsLoading" />
-                                <Refresh v-else />
+                                <RefreshCw v-else />
                             </Button>
                             <span style="margin-left: 5px">{{
                                 t('dialog.user.worlds.total_count', { count: userDialog.worlds.length })
@@ -1094,7 +1094,7 @@
                         type="default"
                         :loading="userDialog.isFavoriteWorldsLoading"
                         size="small"
-                        :icon="Refresh"
+                        :icon="RefreshCw"
                         circle
                         style="position: absolute; right: 15px; bottom: 15px; z-index: 99"
                         @click="getUserFavoriteWorlds(userDialog.id)">
@@ -1166,7 +1166,7 @@
                                 :disabled="userDialog.isAvatarsLoading"
                                 @click="refreshUserDialogAvatars()">
                                 <Spinner v-if="userDialog.isAvatarsLoading" />
-                                <Refresh v-else />
+                                <RefreshCw v-else />
                             </Button>
                             <Button
                                 v-else
@@ -1176,7 +1176,7 @@
                                 :disabled="userDialog.isAvatarsLoading"
                                 @click="setUserDialogAvatarsRemote(userDialog.id)">
                                 <Spinner v-if="userDialog.isAvatarsLoading" />
-                                <Refresh v-else />
+                                <RefreshCw v-else />
                             </Button>
                             <span style="margin-left: 5px">{{
                                 t('dialog.user.avatars.total_count', { count: userDialogAvatars.length })
@@ -1299,16 +1299,18 @@
 
 <script setup>
     import {
-        Bottom,
-        CollectionTag,
-        Download as DownloadIcon,
-        Loading,
-        MoreFilled,
-        Refresh,
-        Top,
-        View,
-        Warning
-    } from '@element-plus/icons-vue';
+        AlertTriangle,
+        ArrowDown,
+        ArrowUp,
+        Download,
+        Eye,
+        Loader2,
+        LogOut,
+        MoreHorizontal,
+        RefreshCcw,
+        RefreshCw,
+        Tag
+    } from 'lucide-vue-next';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import {
@@ -1317,7 +1319,6 @@
         DropdownMenuItem,
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
-    import { Download, LogOut, RefreshCcw } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import { Spinner } from '@/components/ui/spinner';
@@ -1800,19 +1801,19 @@
         if (D.visible === false) {
             return;
         }
-        if (command === 'Refresh') {
+        if (command === 'RefreshCw') {
             showUserDialog(D.id);
-        } else if (command === 'Share') {
+        } else if (command === 'Share2') {
             copyUserURL(D.id);
         } else if (command === 'Add Favorite') {
             showFavoriteDialog('friend', D.id);
-        } else if (command === 'Edit Social Status') {
+        } else if (command === 'Pencil Social Status') {
             showSocialStatusDialog();
-        } else if (command === 'Edit Language') {
+        } else if (command === 'Pencil Language') {
             showLanguageDialog();
-        } else if (command === 'Edit Bio') {
+        } else if (command === 'Pencil Bio') {
             showBioDialog();
-        } else if (command === 'Edit Pronouns') {
+        } else if (command === 'Pencil Pronouns') {
             showPronounsDialog();
         } else if (command === 'Logout') {
             logout();
@@ -1828,7 +1829,7 @@
                     toast('Request invite sent');
                     return args;
                 });
-        } else if (command === 'Invite Message') {
+        } else if (command === 'Invite MessageSquare') {
             L = parseLocation(lastLocation.value.location);
             worldRequest
                 .getCachedWorld({
@@ -1844,7 +1845,7 @@
                         D.id
                     );
                 });
-        } else if (command === 'Request Invite Message') {
+        } else if (command === 'Request Invite MessageSquare') {
             showSendInviteRequestDialog(
                 {
                     platform: 'standalonewindows'
@@ -1909,7 +1910,7 @@
             } else {
                 setPlayerModeration(D.id, 5);
             }
-        } else if (command === 'Edit Note Memo') {
+        } else if (command === 'Pencil Note Memo') {
             isEditNoteAndMemoDialogVisible.value = true;
         } else {
             const i18nPreFix = 'dialog.user.actions.';
@@ -2003,7 +2004,7 @@
         let args;
         let key;
         switch (command) {
-            case 'Delete Favorite':
+            case 'Trash2 Favorite':
                 favoriteRequest.deleteFavorite({
                     objectId: userId
                 });
@@ -2070,7 +2071,7 @@
                 });
                 handlePlayerModerationDelete(args);
                 break;
-            case 'Moderation Mute': {
+            case 'Moderation VolumeX': {
                 args = await playerModerationRequest.sendPlayerModeration({
                     moderated: userId,
                     type: 'mute'

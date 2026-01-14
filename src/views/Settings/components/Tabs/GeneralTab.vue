@@ -244,7 +244,7 @@
                         side="top"
                         style="margin-left: 5px"
                         :content="t('view.settings.general.automation.auto_invite_request_accept_tooltip')">
-                        <el-icon><InfoFilled /></el-icon>
+                        <Info />
                     </TooltipWrapper>
                 </span>
                 <br />
@@ -303,7 +303,7 @@
 <script setup>
     import { computed, defineAsyncComponent, ref } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { InfoFilled } from '@element-plus/icons-vue';
+    import { Info } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

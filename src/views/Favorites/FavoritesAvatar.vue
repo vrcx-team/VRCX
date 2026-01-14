@@ -97,7 +97,7 @@
                                     :disabled="isFavoriteLoading"
                                     @click.stop="handleRefreshFavorites">
                                     <Spinner v-if="isFavoriteLoading" />
-                                    <Refresh v-else />
+                                    <RefreshCw v-else />
                                 </Button>
                             </TooltipWrapper>
                         </div>
@@ -126,7 +126,7 @@
                                             ">
                                             <DropdownMenuTrigger asChild>
                                                 <Button class="rounded-full" variant="ghost" size="icon-sm" @click.stop>
-                                                    <MoreFilled />
+                                                    <MoreHorizontal />
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent side="right" class="w-55 p-1 rounded-lg">
@@ -290,7 +290,7 @@
                                         { 'is-disabled': !isLocalUserVrcPlusSupporter }
                                     ]"
                                     @click="startLocalGroupCreation">
-                                    <el-icon><Plus /></el-icon>
+                                    <Plus />
                                     <span>{{ t('view.favorite.avatars.new_group') }}</span>
                                 </div>
                             </TooltipWrapper>
@@ -526,8 +526,7 @@
 
 <script setup>
     import { computed, markRaw, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-    import { Ellipsis, Loader, RefreshCcw } from 'lucide-vue-next';
-    import { MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
+    import { Ellipsis, Loader, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
     import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
@@ -1194,7 +1193,7 @@
 
         const result = await modalStore.confirm({
             description: `Are you sure you want to unfavorite ${total} favorites?\nThis action cannot be undone.`,
-            title: `Delete ${total} favorites?`
+            title: `Trash2 ${total} favorites?`
         });
 
         if (!result.ok) {
@@ -1448,7 +1447,7 @@
     function promptLocalAvatarFavoriteGroupDelete(group) {
         modalStore
             .confirm({
-                description: `Delete Group? ${group}`,
+                description: `Trash2 Group? ${group}`,
                 title: 'Confirm'
             })
             .then(() => deleteLocalAvatarFavoriteGroup(group))

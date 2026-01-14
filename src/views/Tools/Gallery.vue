@@ -62,7 +62,7 @@
                     <br />
                     <ButtonGroup>
                         <Button variant="outline" size="sm" @click="refreshGalleryTable">
-                            <Refresh />
+                            <RefreshCw />
                             {{ t('dialog.gallery_icons.refresh') }}
                         </Button>
                         <Button
@@ -78,7 +78,7 @@
                             size="sm"
                             :disabled="!currentUser.profilePicOverride"
                             @click="setProfilePicOverride('')">
-                            <Close />
+                            <X />
                             {{ t('dialog.gallery_icons.clear') }}
                         </Button>
                     </ButtonGroup>
@@ -135,7 +135,7 @@
                     <br />
                     <ButtonGroup>
                         <Button variant="outline" size="sm" @click="refreshVRCPlusIconsTable">
-                            <Refresh />
+                            <RefreshCw />
                             {{ t('dialog.gallery_icons.refresh') }}
                         </Button>
                         <Button
@@ -151,7 +151,7 @@
                             size="sm"
                             :disabled="!currentUser.userIcon"
                             @click="setVRCPlusIcon('')">
-                            <Close />
+                            <X />
                             {{ t('dialog.gallery_icons.clear') }}
                         </Button>
                     </ButtonGroup>
@@ -208,7 +208,7 @@
                     <div>
                         <ButtonGroup style="margin-right: 10px">
                             <Button variant="outline" size="sm" @click="refreshEmojiTable">
-                                <Refresh />
+                                <RefreshCw />
                                 {{ t('dialog.gallery_icons.refresh') }}
                             </Button>
                             <Button
@@ -316,7 +316,7 @@
                             </div>
                             <div style="display: inline-block; margin: 5px">
                                 <span v-if="image.loopStyle === 'pingpong'">
-                                    <el-icon style="margin-right: 5px"><Refresh /></el-icon>
+                                    <RefreshCw style="margin-right: 5px" />
                                 </span>
                                 <span style="margin-right: 5px">{{ image.animationStyle }}</span>
                                 <span v-if="image.framesOverTime" style="margin-right: 5px"
@@ -363,7 +363,7 @@
                     <br />
                     <ButtonGroup>
                         <Button variant="outline" size="sm" @click="refreshStickerTable">
-                            <Refresh />
+                            <RefreshCw />
                             {{ t('dialog.gallery_icons.refresh') }}
                         </Button>
                         <Button
@@ -428,7 +428,7 @@
                     <div style="display: flex; align-items: center">
                         <ButtonGroup>
                             <Button variant="outline" size="sm" @click="refreshPrintTable">
-                                <Refresh />
+                                <RefreshCw />
                                 {{ t('dialog.gallery_icons.refresh') }}
                             </Button>
                             <Button
@@ -516,11 +516,11 @@
                     <div style="display: flex; align-items: center">
                         <ButtonGroup>
                             <Button variant="outline" size="sm" @click="getInventory">
-                                <Refresh />
+                                <RefreshCw />
                                 {{ t('dialog.gallery_icons.refresh') }}
                             </Button>
                             <Button variant="outline" size="sm" @click="redeemReward">
-                                <Present />
+                                <Gift />
                                 {{ t('dialog.gallery_icons.redeem') }}
                             </Button>
                         </ButtonGroup>
@@ -568,6 +568,7 @@
 </template>
 
 <script setup>
+    import { Gift, Maximize2, RefreshCw, Trash2, Upload, X } from 'lucide-vue-next';
     import {
         NumberField,
         NumberFieldContent,
@@ -575,9 +576,7 @@
         NumberFieldIncrement,
         NumberFieldInput
     } from '@/components/ui/number-field';
-    import { Close, Present, Refresh, Upload } from '@element-plus/icons-vue';
     import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-    import { Maximize2, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Checkbox } from '@/components/ui/checkbox';

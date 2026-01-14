@@ -148,16 +148,12 @@
                 <div v-else class="friend-view__empty">{{ t('view.friends_locations.no_matching_friends') }}</div>
             </template>
             <div v-if="isLoadingMore" class="friend-view__loading">
-                <el-icon class="friend-view__loading-icon" :size="18">
-                    <Loading />
-                </el-icon>
+                <Loader2 class="friend-view__loading-icon" :size="18" />
                 <span>{{ t('view.friends_locations.loading_more') }}</span>
             </div>
         </el-scrollbar>
         <div v-else class="friend-view__initial-loading">
-            <el-icon class="friend-view__loading-icon" :size="22">
-                <Loading />
-            </el-icon>
+            <Loader2 class="friend-view__loading-icon" :size="22" />
         </div>
     </div>
 </template>
@@ -165,10 +161,9 @@
 <script setup>
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+    import { Loader2, Settings } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { InputGroupSearch } from '@/components/ui/input-group';
-    import { Loading } from '@element-plus/icons-vue';
-    import { Settings } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

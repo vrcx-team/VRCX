@@ -21,14 +21,12 @@
                                 class="dialog-title"
                                 style="margin-right: 5px; cursor: pointer"
                                 @click="copyWorldName">
-                                <el-icon
+                                <Home
                                     v-if="
                                         currentUser.$homeLocation &&
                                         currentUser.$homeLocation.worldId === worldDialog.id
                                     "
-                                    style="margin-right: 5px"
-                                    ><HomeFilled
-                                /></el-icon>
+                                    style="margin-right: 5px" />
                                 {{ worldDialog.ref.name }}
                             </span>
                         </div>
@@ -198,12 +196,12 @@
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                                <DropdownMenuItem @click="worldDialogCommand('Refresh')">
-                                    <Refresh class="size-4" />
+                                <DropdownMenuItem @click="worldDialogCommand('RefreshCw')">
+                                    <RefreshCw class="size-4" />
                                     {{ t('dialog.world.actions.refresh') }}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem @click="worldDialogCommand('Share')">
-                                    <Share class="size-4" />
+                                <DropdownMenuItem @click="worldDialogCommand('Share2')">
+                                    <Share2 class="size-4" />
                                     {{ t('dialog.world.actions.share') }}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
@@ -212,7 +210,7 @@
                                     {{ t('dialog.world.actions.new_instance') }}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem @click="worldDialogCommand('New Instance and Self Invite')">
-                                    <Message class="size-4" />
+                                    <MessageSquare class="size-4" />
                                     {{
                                         canOpenInstanceInGame
                                             ? t('dialog.world.actions.new_instance_and_open_ingame')
@@ -226,56 +224,56 @@
                                         currentUser.$homeLocation.worldId === worldDialog.id
                                     "
                                     @click="worldDialogCommand('Reset Home')">
-                                    <MagicStick class="size-4" />
+                                    <Wand2 class="size-4" />
                                     {{ t('dialog.world.actions.reset_home') }}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem v-else @click="worldDialogCommand('Make Home')">
-                                    <HomeFilled class="size-4" />
+                                    <Home class="size-4" />
                                     {{ t('dialog.world.actions.make_home') }}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem @click="worldDialogCommand('Previous Instances')">
-                                    <DataLine class="size-4" />
+                                    <LineChart class="size-4" />
                                     {{ t('dialog.world.actions.show_previous_instances') }}
                                 </DropdownMenuItem>
                                 <template v-if="currentUser.id !== worldDialog.ref.authorId">
                                     <DropdownMenuItem
                                         :disabled="!worldDialog.hasPersistData"
-                                        @click="worldDialogCommand('Delete Persistent Data')">
+                                        @click="worldDialogCommand('Trash2 Persistent Data')">
                                         <Upload class="size-4" />
                                         {{ t('dialog.world.actions.delete_persistent_data') }}
                                     </DropdownMenuItem>
                                 </template>
                                 <template v-else>
                                     <DropdownMenuItem @click="worldDialogCommand('Rename')">
-                                        <Edit class="size-4" />
+                                        <Pencil class="size-4" />
                                         {{ t('dialog.world.actions.rename') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem @click="worldDialogCommand('Change Description')">
-                                        <Edit class="size-4" />
+                                        <Pencil class="size-4" />
                                         {{ t('dialog.world.actions.change_description') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem @click="worldDialogCommand('Change Capacity')">
-                                        <Edit class="size-4" />
+                                        <Pencil class="size-4" />
                                         {{ t('dialog.world.actions.change_capacity') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem @click="worldDialogCommand('Change Recommended Capacity')">
-                                        <Edit class="size-4" />
+                                        <Pencil class="size-4" />
                                         {{ t('dialog.world.actions.change_recommended_capacity') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem @click="worldDialogCommand('Change YouTube Preview')">
-                                        <Edit class="size-4" />
+                                        <Pencil class="size-4" />
                                         {{ t('dialog.world.actions.change_preview') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem @click="worldDialogCommand('Change Tags')">
-                                        <Edit class="size-4" />
+                                        <Pencil class="size-4" />
                                         {{ t('dialog.world.actions.change_warnings_settings_tags') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem @click="worldDialogCommand('Change Allowed Domains')">
-                                        <Edit class="size-4" />
+                                        <Pencil class="size-4" />
                                         {{ t('dialog.world.actions.change_allowed_video_player_domains') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem v-if="isWindows" @click="worldDialogCommand('Change Image')">
-                                        <Picture class="size-4" />
+                                        <Image class="size-4" />
                                         {{ t('dialog.world.actions.change_image') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
@@ -291,21 +289,21 @@
                                             worldDialog.ref?.tags?.includes('system_labs')
                                         "
                                         @click="worldDialogCommand('Unpublish')">
-                                        <View class="size-4" />
+                                        <Eye class="size-4" />
                                         {{ t('dialog.world.actions.unpublish') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem v-else @click="worldDialogCommand('Publish')">
-                                        <View class="size-4" />
+                                        <Eye class="size-4" />
                                         {{ t('dialog.world.actions.publish_to_labs') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                         :disabled="!worldDialog.hasPersistData"
-                                        @click="worldDialogCommand('Delete Persistent Data')">
+                                        @click="worldDialogCommand('Trash2 Persistent Data')">
                                         <Upload class="size-4" />
                                         {{ t('dialog.world.actions.delete_persistent_data') }}
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem variant="destructive" @click="worldDialogCommand('Delete')">
-                                        <Delete class="size-4" />
+                                    <DropdownMenuItem variant="destructive" @click="worldDialogCommand('Trash2')">
+                                        <Trash2 class="size-4" />
                                         {{ t('dialog.world.actions.delete') }}
                                     </DropdownMenuItem>
                                 </template>
@@ -320,16 +318,16 @@
                 :unmount-on-hide="false"
                 @update:modelValue="worldDialogTabClick">
                 <template #Instances>
-                    <div class="">
-                        <el-icon><User /></el-icon>
+                    <div>
+                        <User />
                         {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
-                        <el-icon style="margin-left: 10px"><UserFilled /></el-icon>
+                        <User style="margin-left: 10px" />
                         {{
                             t('dialog.world.instances.private_count', {
                                 count: worldDialog.ref.privateOccupants
                             })
                         }}
-                        <el-icon style="margin-left: 10px"><Check /></el-icon>
+                        <Check style="margin-left: 10px" />
                         {{
                             t('dialog.world.instances.capacity_count', {
                                 count: worldDialog.ref.recommendedCapacity,
@@ -419,9 +417,7 @@
                                                 :style="{ color: user.$userColour }"
                                                 v-text="user.displayName" />
                                             <span v-if="user.location === 'traveling'" class="extra">
-                                                <el-icon class="is-loading" style="margin-right: 3px"
-                                                    ><Loading
-                                                /></el-icon>
+                                                <Loader2 class="is-loading" style="margin-right: 3px" />
                                                 <Timer :epoch="user.$travelingToTime" />
                                             </span>
                                             <span v-else class="extra">
@@ -615,7 +611,7 @@
                                             {{ timeInLab }}
                                         </span>
                                     </template>
-                                    <el-icon><ArrowDown /></el-icon>
+                                    <ArrowDown />
                                 </TooltipWrapper>
                                 <span class="extra">
                                     {{ formatDateFilter(worldDialog.ref.publicationDate, 'long') }}
@@ -664,33 +660,7 @@
                                 <span class="name">
                                     {{ t('dialog.world.info.last_visited') }}
                                     <TooltipWrapper side="top" :content="t('dialog.world.info.accuracy_notice')"
-                                        ><el-icon style="margin-left: 3px"><Warning /></el-icon
-                                    ></TooltipWrapper>
-                                </span>
-                                <span class="extra">{{ formatDateFilter(worldDialog.lastVisit, 'long') }}</span>
-                            </div>
-                        </div>
-                        <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
-                            <div class="x-friend-item" @click="showPreviousInstancesWorldDialog(worldDialog.ref)">
-                                <div class="detail">
-                                    <span class="name">
-                                        {{ t('dialog.world.info.visit_count') }}
-                                        <TooltipWrapper side="top" :content="t('dialog.world.info.accuracy_notice')"
-                                            ><el-icon style="margin-left: 3px"><Warning /></el-icon
-                                        ></TooltipWrapper>
-                                    </span>
-                                    <span class="extra">
-                                        {{ worldDialog.visitCount }}
-                                    </span>
-                                </div>
-                            </div>
-                        </TooltipWrapper>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name"
-                                    >{{ t('dialog.world.info.time_spent') }}
-                                    <TooltipWrapper side="top" :content="t('dialog.world.info.accuracy_notice')">
-                                        <el-icon style="margin-left: 3px"><Warning /></el-icon>
+                                        ><AlertTriangle style="margin-left: 3px" />
                                     </TooltipWrapper>
                                 </span>
                                 <span class="extra">
@@ -747,28 +717,29 @@
 
 <script setup>
     import {
+        AlertTriangle,
         ArrowDown,
         Check,
-        DataLine,
-        Delete,
         Download,
-        Edit,
+        Ellipsis,
+        Eye,
         Flag,
-        HomeFilled,
-        Loading,
-        MagicStick,
-        Message,
-        Picture,
-        Refresh,
-        Share,
+        Home,
+        Image,
+        LineChart,
+        Loader2,
+        MessageSquare,
+        Pencil,
+        RefreshCcw,
+        RefreshCw,
+        Share2,
+        Star,
+        Trash2,
         Upload,
         User,
-        UserFilled,
-        View,
-        Warning
-    } from '@element-plus/icons-vue';
+        Wand2
+    } from 'lucide-vue-next';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
-    import { Ellipsis, RefreshCcw, Star, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
@@ -993,13 +964,13 @@
             return;
         }
         switch (command) {
-            case 'Delete Favorite':
+            case 'Trash2 Favorite':
             case 'Make Home':
             case 'Reset Home':
             case 'Publish':
             case 'Unpublish':
-            case 'Delete Persistent Data':
-            case 'Delete':
+            case 'Trash2 Persistent Data':
+            case 'Trash2':
                 modalStore
                     .confirm({
                         description: `Continue? ${command}`,
@@ -1008,7 +979,7 @@
                     .then(({ ok }) => {
                         if (!ok) return;
                         switch (command) {
-                            case 'Delete Favorite':
+                            case 'Trash2 Favorite':
                                 favoriteRequest.deleteFavorite({
                                     objectId: D.id
                                 });
@@ -1053,7 +1024,7 @@
                                         return args;
                                     });
                                 break;
-                            case 'Delete Persistent Data':
+                            case 'Trash2 Persistent Data':
                                 miscRequest
                                     .deleteWorldPersistData({
                                         worldId: D.id
@@ -1066,7 +1037,7 @@
                                         return args;
                                     });
                                 break;
-                            case 'Delete':
+                            case 'Trash2':
                                 worldRequest
                                     .deleteWorld({
                                         worldId: D.id
@@ -1096,7 +1067,7 @@
             case 'Previous Instances':
                 showPreviousInstancesWorldDialog(D.ref);
                 break;
-            case 'Share':
+            case 'Share2':
                 copyWorldUrl();
                 break;
             case 'Change Allowed Domains':
@@ -1111,7 +1082,7 @@
             case 'Change Image':
                 showChangeWorldImageDialog();
                 break;
-            case 'Refresh':
+            case 'RefreshCw':
                 showWorldDialog(D.id);
                 break;
             case 'New Instance':

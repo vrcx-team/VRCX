@@ -21,7 +21,7 @@
                             :disabled="isGroupMembersLoading"
                             @click="loadAllGroupMembers">
                             <Spinner v-if="isGroupMembersLoading" />
-                            <Refresh v-else />
+                            <RefreshCw v-else />
                         </Button>
                         <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">
                             {{ groupMemberModerationTable.data.length }}/{{
@@ -53,7 +53,7 @@
                                         @click.stop>
                                         <span>
                                             {{ t(memberSortOrder.name) }}
-                                            <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
+                                            <ArrowDown style="margin-left: 5px" />
                                         </span>
                                     </Button>
                                 </DropdownMenuTrigger>
@@ -90,7 +90,7 @@
                                         @click.stop>
                                         <span>
                                             {{ t(memberFilter.name) }}
-                                            <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
+                                            <ArrowDown style="margin-left: 5px" />
                                         </span>
                                     </Button>
                                 </DropdownMenuTrigger>
@@ -139,7 +139,7 @@
                             :disabled="isGroupMembersLoading"
                             @click="getAllGroupBans(groupMemberModeration.id)">
                             <Spinner v-if="isGroupMembersLoading" />
-                            <Refresh v-else />
+                            <RefreshCw v-else />
                         </Button>
                         <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
                             groupBansModerationTable.data.length
@@ -172,7 +172,7 @@
                             :disabled="isGroupMembersLoading"
                             @click="getAllGroupInvitesAndJoinRequests(groupMemberModeration.id)">
                             <Spinner v-if="isGroupMembersLoading" />
-                            <Refresh v-else />
+                            <RefreshCw v-else />
                         </Button>
                         <br />
                         <TabsUnderline default-value="sent" :items="groupInvitesTabs" :unmount-on-hide="false">
@@ -308,7 +308,7 @@
                             :disabled="isGroupMembersLoading"
                             @click="getAllGroupLogs(groupMemberModeration.id)">
                             <Spinner v-if="isGroupMembersLoading" />
-                            <Refresh v-else />
+                            <RefreshCw v-else />
                         </Button>
                         <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
                             groupLogsModerationTable.data.length
@@ -392,7 +392,7 @@
                     <template #content>
                         <span>{{ t('dialog.group_member_moderation.user_isnt_in_group') }}</span>
                     </template>
-                    <el-icon style="margin-left: 3px; display: inline-block"><Warning /></el-icon>
+                    <AlertTriangle style="margin-left: 3px; display: inline-block" />
                 </TooltipWrapper>
                 <span v-text="user.user?.displayName || user.userId" style="font-weight: bold; margin-left: 5px"></span>
                 <button
@@ -507,7 +507,7 @@
                     >{{ t('dialog.group_member_moderation.unban') }}</Button
                 >
                 <span v-if="progressCurrent" style="margin-top: 10px">
-                    <el-icon class="is-loading" style="margin-left: 5px; margin-right: 5px"><Loading /></el-icon>
+                    <Loader2 class="is-loading" style="margin-left: 5px; margin-right: 5px" />
                     {{ t('dialog.group_member_moderation.progress') }} {{ progressCurrent }}/{{ progressTotal }}
                 </span>
                 <Button
@@ -526,13 +526,12 @@
 </template>
 
 <script setup>
-    import { ArrowDown, Loading, Refresh, Warning } from '@element-plus/icons-vue';
+    import { AlertTriangle, ArrowDown, Loader2, RefreshCw, Trash2 } from 'lucide-vue-next';
     import { computed, reactive, ref, watch } from 'vue';
     import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
     import { Spinner } from '@/components/ui/spinner';
     import { TabsUnderline } from '@/components/ui/tabs';
-    import { Trash2 } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

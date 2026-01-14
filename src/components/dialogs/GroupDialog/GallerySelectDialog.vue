@@ -17,11 +17,11 @@
                 @change="onFileChangeGallery" />
             <ButtonGroup>
                 <Button variant="outline" size="sm" @click="selectImageGallerySelect('', '')">
-                    <Close />
+                    <X />
                     {{ t('dialog.gallery_select.none') }}
                 </Button>
                 <Button variant="outline" size="sm" @click="refreshGalleryTable">
-                    <Refresh />
+                    <RefreshCw />
                     {{ t('dialog.gallery_select.refresh') }}
                 </Button>
                 <Button
@@ -55,7 +55,7 @@
 </template>
 
 <script setup>
-    import { Close, Refresh, Upload } from '@element-plus/icons-vue';
+    import { X, RefreshCw, Upload } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { storeToRefs } from 'pinia';

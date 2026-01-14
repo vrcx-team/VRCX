@@ -5,7 +5,7 @@
                 <span>{{ t('view.charts.instance_activity.header') }}</span>
                 <HoverCard>
                     <HoverCardTrigger as-child>
-                        <el-icon style="margin-left: 5px; font-size: 12px; opacity: 0.7"><InfoFilled /></el-icon>
+                        <Info style="margin-left: 5px; font-size: 12px; opacity: 0.7" />
                     </HoverCardTrigger>
                     <HoverCardContent side="bottom" align="start" class="w-[300px]">
                         <div class="tips-popover">
@@ -13,8 +13,8 @@
                             <div>{{ t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
                             <div>{{ t('view.charts.instance_activity.tips.click_instance_name') }}</div>
                             <div>
-                                <el-icon><WarningFilled /></el-icon
-                                ><i>{{ t('view.charts.instance_activity.tips.accuracy_notice') }}</i>
+                                <AlertTriangle />
+                                <i>{{ t('view.charts.instance_activity.tips.accuracy_notice') }}</i>
                             </div>
                         </div>
                     </HoverCardContent>
@@ -145,9 +145,8 @@
 
 <script setup>
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-    import { ArrowLeft, ArrowRight, InfoFilled, WarningFilled } from '@element-plus/icons-vue';
+    import { AlertTriangle, ArrowLeft, ArrowRight, Info, RefreshCcw, Settings } from 'lucide-vue-next';
     import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-    import { RefreshCcw, Settings } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { storeToRefs } from 'pinia';
@@ -670,9 +669,6 @@
             i {
                 margin-right: 3px;
             }
-        }
-        & .el-icon-warning-outline {
-            font-size: 12px;
         }
     }
     .settings {

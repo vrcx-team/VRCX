@@ -1,4 +1,4 @@
-import { ArrowRight, Download } from '@element-plus/icons-vue';
+import { ArrowRight, Download } from 'lucide-vue-next';
 
 import Location from '@/components/Location.vue';
 import { TooltipWrapper } from '@/components/ui/tooltip';
@@ -46,9 +46,7 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
                 &nbsp;
                 {!r.inCache ? (
                     <span style="color: #aaa">
-                        <el-icon>
-                            <Download />
-                        </el-icon>
+                        <Download />
                         &nbsp;
                     </span>
                 ) : null}
@@ -90,9 +88,7 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
                             ></i>
                         </TooltipWrapper>
                         <span>
-                            <el-icon>
-                                <ArrowRight />
-                            </el-icon>
+                            <ArrowRight / />
                         </span>
                         <TooltipWrapper
                             side="top"
@@ -130,9 +126,7 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
                     {r.previousGroupName || r.previousGroupId}
                 </span>
                 <span>
-                    <el-icon>
-                        <ArrowRight />
-                    </el-icon>
+                    <ArrowRight / />
                 </span>
                 <span
                     class="x-link"
@@ -198,9 +192,7 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
                 &nbsp;
                 {!r.inCache ? (
                     <span style="color: #aaa">
-                        <el-icon>
-                            <Download />
-                        </el-icon>
+                        <Download / />
                         &nbsp;
                     </span>
                 ) : null}

@@ -54,18 +54,12 @@
                                 <div class="date">
                                     <div
                                         class="calendar-date-content"
-                                        :class="{
-                                            'has-events': filteredCalendar[formatDateKey(data.date)]?.length
-                                        }">
+                                        :class="{ 'has-events': filteredCalendar[formatDateKey(data.date)]?.length }">
                                         {{ dayjs(data.date).format('D') }}
                                         <div
                                             v-if="filteredCalendar[formatDateKey(data.date)]?.length"
                                             class="calendar-event-badge"
-                                            :class="
-                                                followingCalendarDate[formatDateKey(data.date)]
-                                                    ? 'has-following'
-                                                    : 'no-following'
-                                            ">
+                                            :class="followingCalendarDate[formatDateKey(data.date)] ? 'has-following' : 'no-following'">
                                             {{ filteredCalendar[formatDateKey(data.date)]?.length }}
                                         </div>
                                     </div>
@@ -87,11 +81,9 @@
                         <div v-if="filteredGroupEvents.length" class="groups-container">
                             <div v-for="group in filteredGroupEvents" :key="group.groupId" class="group-row">
                                 <div class="group-header" @click="toggleGroup(group.groupId)">
-                                    <el-icon
-                                        class="el-icon-arrow-right rotation-transition"
-                                        :class="{ rotate: !groupCollapsed[group.groupId] }"
-                                        ><ArrowRight
-                                    /></el-icon>
+                                    <ArrowRight
+                                        class="rotation-transition"
+                                        :class="{ rotate: !groupCollapsed[group.groupId] }" />
                                     {{ group.groupName }}
                                 </div>
                                 <div class="events-row" v-show="!groupCollapsed[group.groupId]">
@@ -123,7 +115,7 @@
 
 <script setup>
     import { computed, onMounted, ref, watch } from 'vue';
-    import { ArrowRight } from '@element-plus/icons-vue';
+    import { ArrowRight } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { InputGroupSearch } from '@/components/ui/input-group';
     import { useI18n } from 'vue-i18n';
@@ -638,7 +630,7 @@
                         display: flex;
                         align-items: center;
 
-                        .el-icon-arrow-right {
+                        .rotation-transition {
                             font-size: 14px;
                             margin-right: 8px;
                             transition: transform 0.3s;

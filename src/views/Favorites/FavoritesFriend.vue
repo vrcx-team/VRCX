@@ -97,7 +97,7 @@
                                     :disabled="isFavoriteLoading"
                                     @click.stop="handleRefreshFavorites">
                                     <Spinner v-if="isFavoriteLoading" />
-                                    <Refresh v-else />
+                                    <RefreshCw v-else />
                                 </Button>
                             </TooltipWrapper>
                         </div>
@@ -106,10 +106,7 @@
                                 <div
                                     v-for="group in favoriteFriendGroups"
                                     :key="group.key"
-                                    :class="[
-                                        'group-item',
-                                        { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
-                                    ]"
+                                    :class="[ 'group-item', { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) } ]"
                                     @click="handleGroupClick('remote', group.key)">
                                     <div class="group-item__top">
                                         <span class="group-item__name">{{ group.displayName }}</span>
@@ -126,7 +123,7 @@
                                             ">
                                             <DropdownMenuTrigger asChild>
                                                 <Button class="rounded-full" variant="ghost" size="icon-sm" @click.stop>
-                                                    <MoreFilled />
+                                                    <MoreHorizontal />
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent side="right" class="w-55 p-1 rounded-lg">
@@ -152,13 +149,7 @@
                                                                         v-for="visibility in friendGroupVisibilityOptions"
                                                                         :key="visibility"
                                                                         type="button"
-                                                                        :class="[
-                                                                            'group-visibility-menu__item',
-                                                                            {
-                                                                                'is-active':
-                                                                                    group.visibility === visibility
-                                                                            }
-                                                                        ]"
+                                                                        :class="[ 'group-visibility-menu__item', { 'is-active': group.visibility === visibility } ]"
                                                                         @click="
                                                                             handleVisibilitySelection(group, visibility)
                                                                         ">
@@ -310,7 +301,7 @@
 
 <script setup>
     import { computed, nextTick, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue';
-    import { MoreFilled, Refresh } from '@element-plus/icons-vue';
+    import { MoreHorizontal, RefreshCw } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { Ellipsis } from 'lucide-vue-next';
@@ -762,7 +753,7 @@
         modalStore
             .confirm({
                 description: `Are you sure you want to unfavorite ${total} favorites?\n            This action cannot be undone.`,
-                title: `Delete ${total} favorites?`
+                title: `Trash2 ${total} favorites?`
             })
             .then(({ ok }) => ok && bulkUnfavoriteSelectedFriends([...selectedFavoriteFriends.value]))
             .catch(() => {});

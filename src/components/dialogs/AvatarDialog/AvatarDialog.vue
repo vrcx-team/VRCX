@@ -219,7 +219,7 @@
                                 variant="outline"
                                 :disabled="currentUser.currentAvatar === avatarDialog.id"
                                 @click="selectAvatarWithoutConfirmation(avatarDialog.id)">
-                                <CircleCheck
+                                <CheckCircle
                             /></Button>
                         </TooltipWrapper>
                         <DropdownMenu>
@@ -232,12 +232,12 @@
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                                <DropdownMenuItem @click="avatarDialogCommand('Refresh')">
-                                    <Refresh class="size-4" />
+                                <DropdownMenuItem @click="avatarDialogCommand('RefreshCw')">
+                                    <RefreshCw class="size-4" />
                                     {{ t('dialog.avatar.actions.refresh') }}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem @click="avatarDialogCommand('Share')">
-                                    <Share class="size-4" />
+                                <DropdownMenuItem @click="avatarDialogCommand('Share2')">
+                                    <Share2 class="size-4" />
                                     {{ t('dialog.avatar.actions.share') }}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
@@ -245,11 +245,11 @@
                                     v-if="avatarDialog.isBlocked"
                                     variant="destructive"
                                     @click="avatarDialogCommand('Unblock Avatar')">
-                                    <CircleCheck class="size-4" />
+                                    <CheckCircle class="size-4" />
                                     {{ t('dialog.avatar.actions.unblock') }}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem v-else @click="avatarDialogCommand('Block Avatar')">
-                                    <CircleClose class="size-4" />
+                                    <XCircle class="size-4" />
                                     {{ t('dialog.avatar.actions.block') }}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
@@ -271,23 +271,23 @@
                                         {{ t('dialog.avatar.actions.make_public') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem @click="avatarDialogCommand('Rename')">
-                                        <Edit class="size-4" />
+                                        <Pencil class="size-4" />
                                         {{ t('dialog.avatar.actions.rename') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem @click="avatarDialogCommand('Change Description')">
-                                        <Edit class="size-4" />
+                                        <Pencil class="size-4" />
                                         {{ t('dialog.avatar.actions.change_description') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem @click="avatarDialogCommand('Change Content Tags')">
-                                        <Edit class="size-4" />
+                                        <Pencil class="size-4" />
                                         {{ t('dialog.avatar.actions.change_content_tags') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem @click="avatarDialogCommand('Change Styles and Author Tags')">
-                                        <Edit class="size-4" />
+                                        <Pencil class="size-4" />
                                         {{ t('dialog.avatar.actions.change_styles_author_tags') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem @click="avatarDialogCommand('Change Image')">
-                                        <Picture class="size-4" />
+                                        <Image class="size-4" />
                                         {{ t('dialog.avatar.actions.change_image') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
@@ -301,22 +301,22 @@
                                         v-if="avatarDialog.hasImposter"
                                         variant="destructive"
                                         @click="avatarDialogCommand('Regenerate Imposter')">
-                                        <Refresh class="size-4" />
+                                        <RefreshCw class="size-4" />
                                         {{ t('dialog.avatar.actions.regenerate_impostor') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                         v-if="avatarDialog.hasImposter"
                                         variant="destructive"
-                                        @click="avatarDialogCommand('Delete Imposter')">
-                                        <Delete class="size-4" />
+                                        @click="avatarDialogCommand('Trash2 Imposter')">
+                                        <Trash2 class="size-4" />
                                         {{ t('dialog.avatar.actions.delete_impostor') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem v-else @click="avatarDialogCommand('Create Imposter')">
                                         <User class="size-4" />
                                         {{ t('dialog.avatar.actions.create_impostor') }}
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem variant="destructive" @click="avatarDialogCommand('Delete')">
-                                        <Delete class="size-4" />
+                                    <DropdownMenuItem variant="destructive" @click="avatarDialogCommand('Trash2')">
+                                        <Trash2 class="size-4" />
                                         {{ t('dialog.avatar.actions.delete') }}
                                     </DropdownMenuItem>
                                 </template>
@@ -468,7 +468,7 @@
                                 <span class="name"
                                     >{{ t('dialog.avatar.info.time_spent')
                                     }}<TooltipWrapper side="top" :content="t('dialog.world.info.accuracy_notice')">
-                                        <el-icon style="margin-left: 3px"><Warning /></el-icon> </TooltipWrapper
+                                        <AlertTriangle style="margin-left: 3px" /> </TooltipWrapper
                                 ></span>
 
                                 <span v-if="timeSpent === 0" class="extra">-</span>
@@ -522,18 +522,22 @@
 
 <script setup>
     import {
-        CircleClose,
-        Delete,
+        AlertTriangle,
+        Check,
+        CheckCircle,
         Download,
-        Edit,
-        Picture,
-        Refresh,
-        Share,
+        Ellipsis,
+        Image,
+        Pencil,
+        RefreshCcw,
+        RefreshCw,
+        Share2,
+        Star,
+        Trash2,
         Upload,
         User,
-        Warning
-    } from '@element-plus/icons-vue';
-    import { Check, CircleCheck, Ellipsis, RefreshCcw, Star, Trash2 } from 'lucide-vue-next';
+        XCircle
+    } from 'lucide-vue-next';
     import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
@@ -734,10 +738,10 @@
     function avatarDialogCommand(command) {
         const D = avatarDialog.value;
         switch (command) {
-            case 'Refresh':
+            case 'RefreshCw':
                 showAvatarDialog(D.id);
                 break;
-            case 'Share':
+            case 'Share2':
                 copyAvatarUrl(D.id);
                 break;
             case 'Rename':
@@ -770,7 +774,7 @@
                     .then(({ ok }) => {
                         if (!ok) return;
                         switch (command) {
-                            case 'Delete Favorite':
+                            case 'Trash2 Favorite':
                                 favoriteRequest.deleteFavorite({
                                     objectId: D.id
                                 });
@@ -839,7 +843,7 @@
                                         return args;
                                     });
                                 break;
-                            case 'Delete':
+                            case 'Trash2':
                                 avatarRequest
                                     .deleteAvatar({
                                         avatarId: D.id
@@ -863,7 +867,7 @@
                                         return args;
                                     });
                                 break;
-                            case 'Delete Imposter':
+                            case 'Trash2 Imposter':
                                 avatarRequest
                                     .deleteImposter({
                                         avatarId: D.id

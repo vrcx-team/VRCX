@@ -5,15 +5,15 @@
             <div class="options-container-item" style="margin-top: 15px">
                 <ButtonGroup>
                     <Button variant="outline" size="sm" @click="showVRChatConfig()">
-                        <Operation />
+                        <Settings />
                         VRChat config.json
                     </Button>
                     <Button variant="outline" size="sm" @click="showLaunchOptions()">
-                        <Operation />
+                        <Settings />
                         {{ t('view.settings.advanced.advanced.launch_options') }}
                     </Button>
                     <Button variant="outline" size="sm" @click="showRegistryBackupDialog()">
-                        <Goods />
+                        <Package />
                         {{ t('view.settings.advanced.advanced.vrc_registry_backup') }}
                     </Button>
                 </ButtonGroup>
@@ -384,9 +384,8 @@
 </template>
 
 <script setup>
-    import { Folder, Goods, Operation } from '@element-plus/icons-vue';
+    import { Folder, Package, RefreshCcw, Settings, Trash2 } from 'lucide-vue-next';
     import { computed, reactive, ref } from 'vue';
-    import { RefreshCcw, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { storeToRefs } from 'pinia';

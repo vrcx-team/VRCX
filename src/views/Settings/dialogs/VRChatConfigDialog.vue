@@ -25,7 +25,7 @@
                     style="margin-left: 5px"
                     @click="getVRChatCacheSize">
                     <Spinner v-if="VRChatCacheSizeLoading" />
-                    <Refresh v-else />
+                    <RefreshCw v-else />
                 </Button>
             </TooltipWrapper>
 
@@ -175,7 +175,7 @@
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupAction } from '@/components/ui/input-group';
-    import { Refresh } from '@element-plus/icons-vue';
+    import { RefreshCw } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -324,7 +324,7 @@
     function showDeleteAllVRChatCacheConfirm() {
         modalStore
             .confirm({
-                description: 'Continue? Delete all VRChat cache',
+                description: 'Continue? Trash2 all VRChat cache',
                 title: 'Confirm'
             })
             .then(({ ok }) => {

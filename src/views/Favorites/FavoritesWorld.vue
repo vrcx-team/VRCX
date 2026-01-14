@@ -97,7 +97,7 @@
                                     :disabled="isFavoriteLoading"
                                     @click.stop="handleRefreshFavorites">
                                     <Spinner v-if="isFavoriteLoading" />
-                                    <Refresh v-else />
+                                    <RefreshCw v-else />
                                 </Button>
                             </TooltipWrapper>
                         </div>
@@ -126,7 +126,7 @@
                                             ">
                                             <DropdownMenuTrigger asChild>
                                                 <Button class="rounded-full" variant="ghost" size="icon-sm" @click.stop>
-                                                    <MoreFilled />
+                                                    <MoreHorizontal />
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent side="right" class="w-50 p-1 rounded-lg">
@@ -274,7 +274,7 @@
                                 v-if="!isCreatingLocalGroup"
                                 class="group-item group-item--new"
                                 @click="startLocalGroupCreation">
-                                <el-icon><Plus /></el-icon>
+                                <Plus />
                                 <span>{{ t('view.favorite.worlds.new_group') }}</span>
                             </div>
                             <InputGroupField
@@ -437,8 +437,7 @@
 
 <script setup>
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-    import { MoreFilled, Plus, Refresh } from '@element-plus/icons-vue';
-    import { Ellipsis, RefreshCcw } from 'lucide-vue-next';
+    import { Ellipsis, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
     import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
@@ -1063,7 +1062,7 @@
             .confirm({
                 description: `Are you sure you want to unfavorite ${total} favorites?
             This action cannot be undone.`,
-                title: `Delete ${total} favorites?`
+                title: `Trash2 ${total} favorites?`
             })
             .then(() => bulkUnfavoriteSelectedWorlds([...selectedFavoriteWorlds.value]))
             .catch(() => {});
@@ -1174,7 +1173,7 @@
     function promptLocalWorldFavoriteGroupDelete(group) {
         modalStore
             .confirm({
-                description: `Delete Group? ${group}`,
+                description: `Trash2 Group? ${group}`,
                 title: 'Confirm'
             })
             .then(() => deleteLocalWorldFavoriteGroup(group))

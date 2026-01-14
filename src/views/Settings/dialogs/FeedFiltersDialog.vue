@@ -14,8 +14,8 @@
                         side="top"
                         style="margin-left: 5px"
                         :content="setting.tooltip">
-                        <el-icon v-if="setting.tooltipWarning"><Warning /></el-icon>
-                        <el-icon v-else><InfoFilled /></el-icon>
+                        <AlertTriangle v-if="setting.tooltipWarning" />
+                        <Info v-else />
                     </TooltipWrapper>
                 </span>
 
@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-    import { InfoFilled, Warning } from '@element-plus/icons-vue';
+    import { Info, AlertTriangle } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';

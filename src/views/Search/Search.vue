@@ -60,7 +60,7 @@
                             size="sm"
                             :disabled="!searchUserParams.offset"
                             @click="handleMoreSearchUser(-1)">
-                            <Back />
+                            <ArrowLeft />
                             {{ t('view.search.prev_page') }}
                         </Button>
                         <Button
@@ -68,7 +68,7 @@
                             size="sm"
                             :disabled="searchUserResults.length < 10"
                             @click="handleMoreSearchUser(1)">
-                            <Right />
+                            <ArrowRight />
                             {{ t('view.search.next_page') }}
                         </Button>
                     </ButtonGroup>
@@ -124,7 +124,7 @@
                             size="sm"
                             :disabled="!searchWorldParams.offset"
                             @click="moreSearchWorld(-1)">
-                            <Back />
+                            <ArrowLeft />
                             {{ t('view.search.prev_page') }}
                         </Button>
                         <Button
@@ -132,7 +132,7 @@
                             size="sm"
                             :disabled="searchWorldResults.length < 10"
                             @click="moreSearchWorld(1)">
-                            <Right />
+                            <ArrowRight />
                             {{ t('view.search.next_page') }}
                         </Button>
                     </ButtonGroup>
@@ -169,7 +169,7 @@
                                     :disabled="userDialog.isAvatarsLoading"
                                     @click="refreshUserDialogAvatars">
                                     <Spinner v-if="userDialog.isAvatarsLoading" />
-                                    <Refresh v-else />
+                                    <RefreshCw v-else />
                                 </Button>
                             </TooltipWrapper>
                             <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
@@ -281,7 +281,7 @@
                             size="sm"
                             :disabled="!searchAvatarPageNum"
                             @click="moreSearchAvatar(-1)">
-                            <Back />
+                            <ArrowLeft />
                             {{ t('view.search.prev_page') }}
                         </Button>
                         <Button
@@ -292,7 +292,7 @@
                                 (searchAvatarPageNum + 1) * 10 >= searchAvatarResults.length
                             "
                             @click="moreSearchAvatar(1)">
-                            <Right />
+                            <ArrowRight />
                             {{ t('view.search.next_page') }}
                         </Button>
                     </ButtonGroup>
@@ -334,7 +334,7 @@
                             size="sm"
                             :disabled="!searchGroupParams.offset"
                             @click="moreSearchGroup(-1)">
-                            <Back />
+                            <ArrowLeft />
                             {{ t('view.search.prev_page') }}
                         </Button>
                         <Button
@@ -342,7 +342,7 @@
                             size="sm"
                             :disabled="searchGroupResults.length < 10"
                             @click="moreSearchGroup(1)">
-                            <Right />
+                            <ArrowRight />
                             {{ t('view.search.next_page') }}
                         </Button>
                     </ButtonGroup>
@@ -354,7 +354,7 @@
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { Back, Refresh, Right } from '@element-plus/icons-vue';
+    import { ArrowLeft, ArrowRight, RefreshCw, Trash2 } from 'lucide-vue-next';
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
@@ -363,7 +363,6 @@
     import { InputGroupField } from '@/components/ui/input-group';
     import { Spinner } from '@/components/ui/spinner';
     import { TabsUnderline } from '@/components/ui/tabs';
-    import { Trash2 } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

@@ -25,14 +25,12 @@
                                 line-clamp: 1;
                             "
                             @click="showWorldDialog(currentInstanceWorld.ref.id)">
-                            <el-icon
+                            <Home
                                 v-if="
                                     currentUser.$homeLocation &&
                                     currentUser.$homeLocation.worldId === currentInstanceWorld.ref.id
                                 "
-                                style="margin-right: 5px"
-                                ><HomeFilled
-                            /></el-icon>
+                                style="margin-right: 5px" />
                             {{ currentInstanceWorld.ref.name }}
                         </span>
                     </div>
@@ -169,7 +167,7 @@
 
 <script setup>
     import { computed, defineAsyncComponent, onActivated, onMounted, ref, watch } from 'vue';
-    import { HomeFilled } from '@element-plus/icons-vue';
+    import { Home } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
