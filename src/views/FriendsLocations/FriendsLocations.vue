@@ -1,12 +1,15 @@
 <template>
     <div class="friend-view x-container">
         <div v-if="settingsReady" class="friend-view__toolbar">
-            <el-segmented v-model="activeSegment" :options="segmentedOptions" />
+            <Tabs v-model="activeSegment" class="friend-view__tabs">
+                <TabsList>
+                    <TabsTrigger v-for="option in segmentedOptions" :key="option.value" :value="option.value">
+                        {{ option.label }}
+                    </TabsTrigger>
+                </TabsList>
+            </Tabs>
             <div class="friend-view__actions">
-                <InputGroupSearch
-                    v-model="searchTerm"
-                    class="friend-view__search"
-                    placeholder="Search Friend" />
+                <InputGroupSearch v-model="searchTerm" class="friend-view__search" placeholder="Search Friend" />
                 <Popover>
                     <PopoverTrigger asChild>
                         <div>
@@ -161,9 +164,10 @@
 
 <script setup>
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-    import { Loading } from '@element-plus/icons-vue';
+    import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
     import { Button } from '@/components/ui/button';
     import { InputGroupSearch } from '@/components/ui/input-group';
+    import { Loading } from '@element-plus/icons-vue';
     import { Settings } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -722,6 +726,10 @@
         gap: 20px;
         align-items: center;
         padding: 6px 2px 0 2px;
+    }
+
+    .friend-view__tabs {
+        gap: 0;
     }
 
     .friend-view__toolbar--loading {

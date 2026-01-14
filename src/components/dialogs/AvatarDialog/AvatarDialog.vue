@@ -325,8 +325,12 @@
                     </div>
                 </div>
             </div>
-            <el-tabs v-model="avatarDialogLastActiveTab" @tab-click="avatarDialogTabClick">
-                <el-tab-pane name="Info" :label="t('dialog.avatar.info.header')">
+            <TabsUnderline
+                v-model="avatarDialogLastActiveTab"
+                :items="avatarDialogTabs"
+                :unmount-on-hide="false"
+                @update:modelValue="avatarDialogTabClick">
+                <template #Info>
                     <div class="x-friend-list" style="max-height: unset">
                         <div
                             v-if="avatarDialog.galleryImages.length || avatarDialog.ref.authorId === currentUser.id"
@@ -479,8 +483,8 @@
                             </div>
                         </div>
                     </div>
-                </el-tab-pane>
-                <el-tab-pane name="JSON" :label="t('dialog.avatar.json.header')" style="max-height: 50vh" lazy>
+                </template>
+                <template #JSON>
                     <Button
                         class="rounded-full h-6 w-6 mr-2"
                         size="icon-sm"
@@ -503,8 +507,8 @@
                         :deep="2"
                         :theme="isDarkMode ? 'dark' : 'light'"
                         show-icon />
-                </el-tab-pane>
-            </el-tabs>
+                </template>
+            </TabsUnderline>
         </div>
         <template v-if="avatarDialog.visible">
             <SetAvatarTagsDialog v-model:setAvatarTagsDialog="setAvatarTagsDialog" />
@@ -535,6 +539,7 @@
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
+    import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -595,6 +600,10 @@
     const modalStore = useModalStore();
 
     const { t } = useI18n();
+    const avatarDialogTabs = computed(() => [
+        { value: 'Info', label: t('dialog.avatar.info.header') },
+        { value: 'JSON', label: t('dialog.avatar.json.header') }
+    ]);
 
     const avatarDialogIndex = ref(2000);
     const avatarDialogLastActiveTab = ref('Info');
@@ -680,12 +689,11 @@
         handleAvatarDialogTab(avatarDialogLastActiveTab.value);
     }
 
-    function avatarDialogTabClick(obj) {
-        if (obj.props.name === avatarDialogLastActiveTab.value) {
+    function avatarDialogTabClick(tabName) {
+        if (tabName === avatarDialogLastActiveTab.value) {
             return;
         }
-        handleAvatarDialogTab(obj.props.name);
-        avatarDialogLastActiveTab.value = obj.props.name;
+        handleAvatarDialogTab(tabName);
     }
 
     function getImageUrlFromImageId(imageId) {

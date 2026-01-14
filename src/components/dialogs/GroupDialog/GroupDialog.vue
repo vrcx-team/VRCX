@@ -335,8 +335,12 @@
                     </div>
                 </div>
             </div>
-            <el-tabs v-model="groupDialogLastActiveTab" @tab-click="groupDialogTabClick">
-                <el-tab-pane name="Info" :label="t('dialog.group.info.header')">
+            <TabsUnderline
+                v-model="groupDialogLastActiveTab"
+                :items="groupDialogTabs"
+                :unmount-on-hide="false"
+                @update:modelValue="groupDialogTabClick">
+                <template #Info>
                     <div class="group-banner-image-info">
                         <img
                             :src="groupDialog.ref.bannerUrl"
@@ -706,8 +710,8 @@
                             </div>
                         </div>
                     </div>
-                </el-tab-pane>
-                <el-tab-pane name="Posts" :label="t('dialog.group.posts.header')" lazy>
+                </template>
+                <template #Posts>
                     <template v-if="groupDialog.visible">
                         <span style="margin-right: 10px; vertical-align: top"
                             >{{ t('dialog.group.posts.posts_count') }} {{ groupDialog.posts.length }}</span
@@ -822,8 +826,8 @@
                             </div>
                         </div>
                     </template>
-                </el-tab-pane>
-                <el-tab-pane name="Members" :label="t('dialog.group.members.header')" lazy>
+                </template>
+                <template #Members>
                     <template v-if="groupDialog.visible">
                         <span
                             v-if="hasGroupPermission(groupDialog.ref, 'group-members-viewall')"
@@ -1039,8 +1043,8 @@
                             </div>
                         </ul>
                     </template>
-                </el-tab-pane>
-                <el-tab-pane name="Photos" :label="t('dialog.group.gallery.header')" lazy>
+                </template>
+                <template #Photos>
                     <Button
                         class="rounded-full"
                         variant="outline"
@@ -1050,48 +1054,51 @@
                         <Spinner v-if="isGroupGalleryLoading" />
                         <Refresh v-else />
                     </Button>
-                    <el-tabs
+                    <TabsUnderline
                         v-model="groupDialogGalleryCurrentName"
+                        :items="groupGalleryTabs"
+                        :unmount-on-hide="false"
                         v-loading="isGroupGalleryLoading"
-                        style="margin-top: 10px">
-                        <template v-for="(gallery, index) in groupDialog.ref.galleries" :key="index">
-                            <el-tab-pane>
-                                <template #label>
-                                    <span style="font-weight: bold; font-size: 16px" v-text="gallery.name" />
-                                    <i
-                                        class="x-status-icon"
-                                        style="margin-left: 5px"
-                                        :class="groupGalleryStatus(gallery)" />
-                                    <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
-                                        groupDialog.galleries[gallery.id] ? groupDialog.galleries[gallery.id].length : 0
-                                    }}</span>
-                                </template>
-                                <span style="color: #c7c7c7; padding: 10px" v-text="gallery.description" />
-                                <div
-                                    style="
-                                        display: grid;
-                                        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                                        gap: 15px;
-                                        margin-top: 10px;
-                                        max-height: 600px;
-                                        overflow-y: auto;
-                                    ">
-                                    <Card
-                                        v-for="image in groupDialog.galleries[gallery.id]"
-                                        :key="image.id"
-                                        class="p-0 overflow-hidden transition-shadow hover:shadow-md">
-                                        <img
-                                            :src="image.imageUrl"
-                                            :class="['x-link', 'x-popover-image']"
-                                            @click="showFullscreenImageDialog(image.imageUrl)"
-                                            loading="lazy" />
-                                    </Card>
-                                </div>
-                            </el-tab-pane>
+                        class="mt-2.5">
+                        <template
+                            v-for="(gallery, index) in groupDialog.ref.galleries"
+                            :key="`label-${index}`"
+                            v-slot:[`label-${index}`]>
+                            <span style="font-weight: bold; font-size: 16px" v-text="gallery.name" />
+                            <i class="x-status-icon" style="margin-left: 5px" :class="groupGalleryStatus(gallery)" />
+                            <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
+                                groupDialog.galleries[gallery.id] ? groupDialog.galleries[gallery.id].length : 0
+                            }}</span>
                         </template>
-                    </el-tabs>
-                </el-tab-pane>
-                <el-tab-pane name="JSON" :label="t('dialog.group.json.header')" lazy>
+                        <template
+                            v-for="(gallery, index) in groupDialog.ref.galleries"
+                            :key="`content-${index}`"
+                            v-slot:[String(index)]>
+                            <span style="color: #c7c7c7; padding: 10px" v-text="gallery.description" />
+                            <div
+                                style="
+                                    display: grid;
+                                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                                    gap: 15px;
+                                    margin-top: 10px;
+                                    max-height: 600px;
+                                    overflow-y: auto;
+                                ">
+                                <Card
+                                    v-for="image in groupDialog.galleries[gallery.id]"
+                                    :key="image.id"
+                                    class="p-0 overflow-hidden transition-shadow hover:shadow-md">
+                                    <img
+                                        :src="image.imageUrl"
+                                        :class="['x-link', 'x-popover-image']"
+                                        @click="showFullscreenImageDialog(image.imageUrl)"
+                                        loading="lazy" />
+                                </Card>
+                            </div>
+                        </template>
+                    </TabsUnderline>
+                </template>
+                <template #JSON>
                     <Button
                         class="rounded-full h-6 w-6 mr-2"
                         size="icon-sm"
@@ -1111,8 +1118,8 @@
                         :deep="2"
                         :theme="isDarkMode ? 'dark' : 'light'"
                         show-icon />
-                </el-tab-pane>
-            </el-tabs>
+                </template>
+            </TabsUnderline>
         </div>
         <GroupPostEditDialog :dialog-data="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
         <PreviousInstancesGroupDialog
@@ -1153,6 +1160,7 @@
     import { InputGroupField } from '@/components/ui/input-group';
     import { RefreshCcw } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
+    import { TabsUnderline } from '@/components/ui/tabs';
     import { VirtualCombobox } from '@/components/ui/virtual-combobox';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -1202,6 +1210,19 @@
     import * as workerTimers from 'worker-timers';
 
     const { t } = useI18n();
+    const groupDialogTabs = computed(() => [
+        { value: 'Info', label: t('dialog.group.info.header') },
+        { value: 'Posts', label: t('dialog.group.posts.header') },
+        { value: 'Members', label: t('dialog.group.members.header') },
+        { value: 'Photos', label: t('dialog.group.gallery.header') },
+        { value: 'JSON', label: t('dialog.group.json.header') }
+    ]);
+    const groupGalleryTabs = computed(() =>
+        (groupDialog.value?.ref?.galleries || []).map((gallery, index) => ({
+            value: String(index),
+            label: gallery?.name ?? ''
+        }))
+    );
 
     const modalStore = useModalStore();
 
@@ -1654,12 +1675,12 @@
         handleGroupDialogTab(groupDialogLastActiveTab.value);
     }
 
-    function groupDialogTabClick(obj) {
-        if (obj.props.name === groupDialogTabCurrentName.value) {
+    function groupDialogTabClick(tabName) {
+        if (tabName === groupDialogTabCurrentName.value) {
             return;
         }
-        handleGroupDialogTab(obj.props.name);
-        groupDialogTabCurrentName.value = obj.props.name;
+        handleGroupDialogTab(tabName);
+        groupDialogTabCurrentName.value = tabName;
     }
 
     function showGroupPostEditDialog(groupId, post) {

@@ -14,8 +14,12 @@
                 :toggle-badge-showcased="toggleBadgeShowcased"
                 :user-dialog-command="userDialogCommand" />
 
-            <el-tabs v-model="userDialogLastActiveTab" @tab-click="userDialogTabClick">
-                <el-tab-pane name="Info" :label="t('dialog.user.info.header')">
+            <TabsUnderline
+                v-model="userDialogLastActiveTab"
+                :items="userDialogTabs"
+                :unmount-on-hide="false"
+                @update:modelValue="userDialogTabClick">
+                <template #Info>
                     <template v-if="isFriendOnline(userDialog.friend) || currentUser.id === userDialog.id">
                         <div
                             v-if="userDialog.ref.location"
@@ -546,13 +550,9 @@
                             </div>
                         </div>
                     </div>
-                </el-tab-pane>
+                </template>
 
-                <el-tab-pane
-                    name="Mutual Friends"
-                    v-if="userDialog.id !== currentUser.id && !currentUser.hasSharedConnectionsOptOut"
-                    :label="t('dialog.user.mutual_friends.header')"
-                    lazy>
+                <template v-if="userDialog.id !== currentUser.id && !currentUser.hasSharedConnectionsOptOut" #mutual>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
                             <Button
@@ -621,9 +621,9 @@
                             </div>
                         </li>
                     </ul>
-                </el-tab-pane>
+                </template>
 
-                <el-tab-pane name="Groups" :label="t('dialog.user.groups.header')" lazy>
+                <template #Groups>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
                             <Button
@@ -1012,9 +1012,9 @@
                             </template>
                         </template>
                     </div>
-                </el-tab-pane>
+                </template>
 
-                <el-tab-pane name="Worlds" :label="t('dialog.user.worlds.header')" lazy>
+                <template #Worlds>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
                             <Button
@@ -1085,9 +1085,9 @@
                             </div>
                         </div>
                     </div>
-                </el-tab-pane>
+                </template>
 
-                <el-tab-pane name="Favorite Worlds" :label="t('dialog.user.favorite_worlds.header')" lazy>
+                <template #favorite-worlds>
                     <!-- <Button
                         variant="outline"
                         v-if="userFavoriteWorlds && userFavoriteWorlds.length > 0"
@@ -1099,33 +1099,35 @@
                         style="position: absolute; right: 15px; bottom: 15px; z-index: 99"
                         @click="getUserFavoriteWorlds(userDialog.id)">
                     </Button> -->
-                    <el-tabs
-                        ref="favoriteWorldsRef"
-                        v-loading="userDialog.isFavoriteWorldsLoading"
-                        class="zero-margin-tabs"
-                        type="card"
-                        stretch
-                        style="margin-top: 10px; height: 50vh">
-                        <template v-if="userFavoriteWorlds && userFavoriteWorlds.length > 0">
-                            <el-tab-pane v-for="(list, index) in userFavoriteWorlds" :key="index" lazy>
-                                <template #label>
-                                    <span>
-                                        <i
-                                            class="x-status-icon"
-                                            style="margin-right: 6px"
-                                            :class="userFavoriteWorldsStatus(list[1])">
-                                        </i>
-                                        <span style="font-weight: bold; font-size: 14px" v-text="list[0]"></span>
-                                        <span
-                                            style="
-                                                color: var(--el-text-color-secondary);
-                                                font-size: 10px;
-                                                margin-left: 5px;
-                                            "
-                                            >{{ list[2].length }}/{{ favoriteLimits.maxFavoritesPerGroup.world }}</span
-                                        >
-                                    </span>
-                                </template>
+                    <template v-if="userFavoriteWorlds && userFavoriteWorlds.length > 0">
+                        <TabsUnderline
+                            v-model="favoriteWorldsTab"
+                            :items="favoriteWorldTabs"
+                            :unmount-on-hide="false"
+                            v-loading="userDialog.isFavoriteWorldsLoading"
+                            class="zero-margin-tabs"
+                            style="margin-top: 10px; height: 50vh">
+                            <template
+                                v-for="(list, index) in userFavoriteWorlds"
+                                :key="`favorite-worlds-label-${index}`"
+                                v-slot:[`label-${index}`]>
+                                <span>
+                                    <i
+                                        class="x-status-icon"
+                                        style="margin-right: 6px"
+                                        :class="userFavoriteWorldsStatus(list[1])">
+                                    </i>
+                                    <span style="font-weight: bold; font-size: 14px" v-text="list[0]"></span>
+                                    <span
+                                        style="color: var(--el-text-color-secondary); font-size: 10px; margin-left: 5px"
+                                        >{{ list[2].length }}/{{ favoriteLimits.maxFavoritesPerGroup.world }}</span
+                                    >
+                                </span>
+                            </template>
+                            <template
+                                v-for="(list, index) in userFavoriteWorlds"
+                                :key="`favorite-worlds-content-${index}`"
+                                v-slot:[String(index)]>
                                 <div
                                     class="x-friend-list"
                                     style="margin-top: 10px; margin-bottom: 15px; min-height: 60px; max-height: none">
@@ -1143,17 +1145,17 @@
                                         </div>
                                     </div>
                                 </div>
-                            </el-tab-pane>
-                        </template>
-                        <template v-else-if="!userDialog.isFavoriteWorldsLoading">
-                            <div style="display: flex; justify-content: center; align-items: center; height: 100%">
-                                <span style="font-size: 16px">No favorite worlds found.</span>
-                            </div>
-                        </template>
-                    </el-tabs>
-                </el-tab-pane>
+                            </template>
+                        </TabsUnderline>
+                    </template>
+                    <template v-else-if="!userDialog.isFavoriteWorldsLoading">
+                        <div style="display: flex; justify-content: center; align-items: center; height: 100%">
+                            <span style="font-size: 16px">No favorite worlds found.</span>
+                        </div>
+                    </template>
+                </template>
 
-                <el-tab-pane name="Avatars" :label="t('dialog.user.avatars.header')" lazy>
+                <template #Avatars>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
                             <Button
@@ -1250,9 +1252,9 @@
                             </div>
                         </div>
                     </div>
-                </el-tab-pane>
+                </template>
 
-                <el-tab-pane name="JSON" :label="t('dialog.user.json.header')" lazy style="height: 50vh">
+                <template #JSON>
                     <Button
                         class="rounded-full h-6 w-6 mr-2"
                         size="icon-sm"
@@ -1272,8 +1274,8 @@
                         :deep="2"
                         :theme="isDarkMode ? 'dark' : 'light'"
                         show-icon />
-                </el-tab-pane>
-            </el-tabs>
+                </template>
+            </TabsUnderline>
         </div>
         <SendInviteDialog
             v-model:sendInviteDialogVisible="sendInviteDialogVisible"
@@ -1319,6 +1321,7 @@
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import { Spinner } from '@/components/ui/spinner';
+    import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -1392,6 +1395,26 @@
     const EditNoteAndMemoDialog = defineAsyncComponent(() => import('./EditNoteAndMemoDialog.vue'));
 
     const { t } = useI18n();
+    const userDialogTabs = computed(() => {
+        const tabs = [
+            { value: 'Info', label: t('dialog.user.info.header') },
+            { value: 'Groups', label: t('dialog.user.groups.header') },
+            { value: 'Worlds', label: t('dialog.user.worlds.header') },
+            { value: 'favorite-worlds', label: t('dialog.user.favorite_worlds.header') },
+            { value: 'Avatars', label: t('dialog.user.avatars.header') },
+            { value: 'JSON', label: t('dialog.user.json.header') }
+        ];
+        if (userDialog.value.id !== currentUser.value.id && !currentUser.value.hasSharedConnectionsOptOut) {
+            tabs.splice(1, 0, { value: 'mutual', label: t('dialog.user.mutual_friends.header') });
+        }
+        return tabs;
+    });
+    const favoriteWorldTabs = computed(() =>
+        (userFavoriteWorlds.value || []).map((list, index) => ({
+            value: String(index),
+            label: list?.[0] ?? ''
+        }))
+    );
 
     const modalStore = useModalStore();
 
@@ -1476,7 +1499,7 @@
         remainingGroups: []
     });
 
-    const favoriteWorldsRef = ref(null);
+    const favoriteWorldsTab = ref('0');
 
     const sendInviteDialogVisible = ref(false);
     const sendInviteDialog = ref({
@@ -1588,7 +1611,7 @@
             if (vrchatCredit.value === null) {
                 getVRChatCredits();
             }
-        } else if (tabName === 'Mutual Friends') {
+        } else if (tabName === 'mutual') {
             if (userId === currentUser.value.id) {
                 userDialogLastActiveTab.value = 'Info';
                 return;
@@ -1618,7 +1641,7 @@
                 userDialogLastWorld.value = userId;
                 refreshUserDialogWorlds();
             }
-        } else if (tabName === 'Favorite Worlds') {
+        } else if (tabName === 'favorite-worlds') {
             if (userDialogLastFavoriteWorld.value !== userId) {
                 userDialogLastFavoriteWorld.value = userId;
                 getUserFavoriteWorlds(userId);
@@ -1632,12 +1655,11 @@
         handleUserDialogTab(userDialogLastActiveTab.value);
     }
 
-    function userDialogTabClick(obj) {
-        if (obj.props.name === userDialogLastActiveTab.value) {
+    function userDialogTabClick(tabName) {
+        if (tabName === userDialogLastActiveTab.value) {
             return;
         }
-        handleUserDialogTab(obj.props.name);
-        userDialogLastActiveTab.value = obj.props.name;
+        handleUserDialogTab(tabName);
     }
 
     function showPronounsDialog() {
@@ -2318,9 +2340,7 @@
 
     async function getUserFavoriteWorlds(userId) {
         userDialog.value.isFavoriteWorldsLoading = true;
-        if (favoriteWorldsRef.value) {
-            favoriteWorldsRef.value.currentName = '0'; // select first tab
-        }
+        favoriteWorldsTab.value = '0';
         userFavoriteWorlds.value = [];
         const worldLists = [];
         let params = {

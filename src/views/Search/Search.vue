@@ -14,329 +14,341 @@
                 /></Button>
             </TooltipWrapper>
         </div>
-        <el-tabs ref="searchTabRef" style="margin-top: 15px" @tab-click="searchText = ''">
-            <el-tab-pane v-loading="isSearchUserLoading" :label="t('view.search.user.header')" style="min-height: 60px">
-                <label class="inline-flex items-center gap-2" style="margin-left: 10px">
-                    <Checkbox v-model="searchUserByBio" />
-                    <span>{{ t('view.search.user.search_by_bio') }}</span>
-                </label>
-                <label class="inline-flex items-center gap-2" style="margin-left: 10px">
-                    <Checkbox v-model="searchUserSortByLastLoggedIn" />
-                    <span>{{ t('view.search.user.sort_by_last_logged_in') }}</span>
-                </label>
-                <div class="x-friend-list" style="min-height: 500px">
-                    <div
-                        v-for="user in searchUserResults"
-                        :key="user.id"
-                        class="x-friend-item"
-                        @click="showUserDialog(user.id)">
-                        <div class="avatar">
-                            <img :src="userImage(user, true)" loading="lazy" />
-                        </div>
-                        <div class="detail">
-                            <span class="name" v-text="user.displayName"></span>
-                            <span
-                                v-if="randomUserColours"
-                                class="extra"
-                                :class="user.$trustClass"
-                                v-text="user.$trustLevel"></span>
-                            <span
-                                v-else
-                                class="extra"
-                                :style="{ color: user.$userColour }"
-                                v-text="user.$trustLevel"></span>
-                        </div>
-                    </div>
-                </div>
-                <ButtonGroup v-if="searchUserResults.length" style="margin-top: 15px">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        :disabled="!searchUserParams.offset"
-                        @click="handleMoreSearchUser(-1)">
-                        <Back />
-                        {{ t('view.search.prev_page') }}
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        :disabled="searchUserResults.length < 10"
-                        @click="handleMoreSearchUser(1)">
-                        <Right />
-                        {{ t('view.search.next_page') }}
-                    </Button>
-                </ButtonGroup>
-            </el-tab-pane>
-            <el-tab-pane
-                v-loading="isSearchWorldLoading"
-                :label="t('view.search.world.header')"
-                style="min-height: 60px">
-                <div class="inline-flex justify-between mb-4 w-full">
-                    <Select
-                        :model-value="searchWorldCategoryIndex"
-                        @update:modelValue="handleSearchWorldCategorySelect"
-                        style="margin-bottom: 15px">
-                        <SelectTrigger size="sm">
-                            <SelectValue :placeholder="t('view.search.world.category')" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem
-                                    v-for="row in cachedConfig.dynamicWorldRows"
-                                    :key="row.index"
-                                    :value="row.index">
-                                    {{ row.name }}
-                                </SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+        <TabsUnderline
+            v-model="activeSearchTab"
+            :items="searchTabs"
+            aria-label="Search tabs"
+            :unmount-on-hide="false"
+            style="margin-top: 15px">
+            <template #user>
+                <div v-loading="isSearchUserLoading" style="min-height: 60px">
                     <label class="inline-flex items-center gap-2" style="margin-left: 10px">
-                        <Checkbox v-model="searchWorldLabs" />
-                        <span>{{ t('view.search.world.community_lab') }}</span>
+                        <Checkbox v-model="searchUserByBio" />
+                        <span>{{ t('view.search.user.search_by_bio') }}</span>
                     </label>
-                </div>
-                <div class="x-friend-list" style="min-height: 500px">
-                    <div
-                        v-for="world in searchWorldResults"
-                        :key="world.id"
-                        class="x-friend-item"
-                        @click="showWorldDialog(world.id)">
-                        <div class="avatar">
-                            <img :src="world.thumbnailImageUrl" loading="lazy" />
-                        </div>
-                        <div class="detail">
-                            <span class="name" v-text="world.name"></span>
-                            <span v-if="world.occupants" class="extra"
-                                >{{ world.authorName }} ({{ world.occupants }})</span
-                            >
-                            <span v-else class="extra" v-text="world.authorName"></span>
+                    <label class="inline-flex items-center gap-2" style="margin-left: 10px">
+                        <Checkbox v-model="searchUserSortByLastLoggedIn" />
+                        <span>{{ t('view.search.user.sort_by_last_logged_in') }}</span>
+                    </label>
+                    <div class="x-friend-list" style="min-height: 500px">
+                        <div
+                            v-for="user in searchUserResults"
+                            :key="user.id"
+                            class="x-friend-item"
+                            @click="showUserDialog(user.id)">
+                            <div class="avatar">
+                                <img :src="userImage(user, true)" loading="lazy" />
+                            </div>
+                            <div class="detail">
+                                <span class="name" v-text="user.displayName"></span>
+                                <span
+                                    v-if="randomUserColours"
+                                    class="extra"
+                                    :class="user.$trustClass"
+                                    v-text="user.$trustLevel"></span>
+                                <span
+                                    v-else
+                                    class="extra"
+                                    :style="{ color: user.$userColour }"
+                                    v-text="user.$trustLevel"></span>
+                            </div>
                         </div>
                     </div>
+                    <ButtonGroup v-if="searchUserResults.length" style="margin-top: 15px">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            :disabled="!searchUserParams.offset"
+                            @click="handleMoreSearchUser(-1)">
+                            <Back />
+                            {{ t('view.search.prev_page') }}
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            :disabled="searchUserResults.length < 10"
+                            @click="handleMoreSearchUser(1)">
+                            <Right />
+                            {{ t('view.search.next_page') }}
+                        </Button>
+                    </ButtonGroup>
                 </div>
-                <ButtonGroup v-if="searchWorldResults.length" style="margin-top: 15px">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        :disabled="!searchWorldParams.offset"
-                        @click="moreSearchWorld(-1)">
-                        <Back />
-                        {{ t('view.search.prev_page') }}
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        :disabled="searchWorldResults.length < 10"
-                        @click="moreSearchWorld(1)">
-                        <Right />
-                        {{ t('view.search.next_page') }}
-                    </Button>
-                </ButtonGroup>
-            </el-tab-pane>
-            <el-tab-pane
-                v-loading="isSearchAvatarLoading"
-                :label="t('view.search.avatar.header')"
-                style="min-height: 60px">
-                <div style="display: flex; align-items: center; justify-content: space-between">
-                    <div style="display: flex; align-items: center">
+            </template>
+            <template #world>
+                <div v-loading="isSearchWorldLoading" style="min-height: 60px">
+                    <div class="inline-flex justify-between mb-4 w-full">
                         <Select
-                            v-if="avatarRemoteDatabaseProviderList.length > 1"
-                            :model-value="avatarRemoteDatabaseProvider"
-                            @update:modelValue="setAvatarProvider"
-                            style="margin-right: 5px">
+                            :model-value="searchWorldCategoryIndex"
+                            @update:modelValue="handleSearchWorldCategorySelect"
+                            style="margin-bottom: 15px">
                             <SelectTrigger size="sm">
-                                <SelectValue :placeholder="t('view.search.avatar.search_provider')" />
+                                <SelectValue :placeholder="t('view.search.world.category')" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectItem
-                                        v-for="provider in avatarRemoteDatabaseProviderList"
-                                        :key="provider"
-                                        :value="provider">
-                                        {{ provider }}
+                                        v-for="row in cachedConfig.dynamicWorldRows"
+                                        :key="row.index"
+                                        :value="row.index">
+                                        {{ row.name }}
                                     </SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
-                        <TooltipWrapper side="bottom" :content="t('view.search.avatar.refresh_tooltip')">
-                            <Button
-                                class="rounded-full ml-1"
-                                variant="outline"
-                                size="icon-sm"
-                                :disabled="userDialog.isAvatarsLoading"
-                                @click="refreshUserDialogAvatars">
-                                <Spinner v-if="userDialog.isAvatarsLoading" />
-                                <Refresh v-else />
-                            </Button>
-                        </TooltipWrapper>
-                        <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
-                            t('view.search.avatar.result_count', {
-                                count: searchAvatarResults.length
-                            })
-                        }}</span>
+                        <label class="inline-flex items-center gap-2" style="margin-left: 10px">
+                            <Checkbox v-model="searchWorldLabs" />
+                            <span>{{ t('view.search.world.community_lab') }}</span>
+                        </label>
                     </div>
-                    <div style="display: flex; align-items: center">
-                        <RadioGroup
-                            :model-value="searchAvatarFilter"
-                            class="flex items-center gap-4"
-                            style="margin: 5px"
-                            @update:modelValue="handleSearchAvatarFilterChange">
-                            <div class="flex items-center space-x-2">
-                                <RadioGroupItem id="searchAvatarFilter-all" value="all" />
-                                <label for="searchAvatarFilter-all">{{ t('view.search.avatar.all') }}</label>
+                    <div class="x-friend-list" style="min-height: 500px">
+                        <div
+                            v-for="world in searchWorldResults"
+                            :key="world.id"
+                            class="x-friend-item"
+                            @click="showWorldDialog(world.id)">
+                            <div class="avatar">
+                                <img :src="world.thumbnailImageUrl" loading="lazy" />
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <RadioGroupItem id="searchAvatarFilter-public" value="public" />
-                                <label for="searchAvatarFilter-public">{{ t('view.search.avatar.public') }}</label>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <RadioGroupItem id="searchAvatarFilter-private" value="private" />
-                                <label for="searchAvatarFilter-private">{{ t('view.search.avatar.private') }}</label>
-                            </div>
-                        </RadioGroup>
-                        <el-divider direction="vertical"></el-divider>
-                        <RadioGroup
-                            :model-value="searchAvatarFilterRemote"
-                            class="flex items-center gap-4"
-                            style="margin: 5px"
-                            @update:modelValue="handleSearchAvatarFilterRemoteChange">
-                            <div class="flex items-center space-x-2">
-                                <RadioGroupItem id="searchAvatarFilterRemote-all" value="all" />
-                                <label for="searchAvatarFilterRemote-all">{{ t('view.search.avatar.all') }}</label>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <RadioGroupItem id="searchAvatarFilterRemote-local" value="local" />
-                                <label for="searchAvatarFilterRemote-local">{{ t('view.search.avatar.local') }}</label>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <RadioGroupItem
-                                    id="searchAvatarFilterRemote-remote"
-                                    value="remote"
-                                    :disabled="!avatarRemoteDatabase" />
-                                <label for="searchAvatarFilterRemote-remote">{{
-                                    t('view.search.avatar.remote')
-                                }}</label>
-                            </div>
-                        </RadioGroup>
-                    </div>
-                </div>
-                <div style="display: flex; justify-content: end">
-                    <RadioGroup
-                        :model-value="searchAvatarSort"
-                        :disabled="searchAvatarFilterRemote !== 'local'"
-                        class="flex items-center gap-4"
-                        style="margin: 5px"
-                        @update:modelValue="handleSearchAvatarSortChange">
-                        <div class="flex items-center space-x-2">
-                            <RadioGroupItem id="searchAvatarSort-name" value="name" />
-                            <label for="searchAvatarSort-name">{{ t('view.search.avatar.sort_name') }}</label>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <RadioGroupItem id="searchAvatarSort-update" value="update" />
-                            <label for="searchAvatarSort-update">{{ t('view.search.avatar.sort_update') }}</label>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <RadioGroupItem id="searchAvatarSort-created" value="created" />
-                            <label for="searchAvatarSort-created">{{ t('view.search.avatar.sort_created') }}</label>
-                        </div>
-                    </RadioGroup>
-                </div>
-                <div class="x-friend-list" style="margin-top: 20px; min-height: 500px">
-                    <div
-                        v-for="avatar in searchAvatarPage"
-                        :key="avatar.id"
-                        class="x-friend-item"
-                        @click="showAvatarDialog(avatar.id)">
-                        <div class="avatar">
-                            <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
-                            <img v-else-if="avatar.imageUrl" :src="avatar.imageUrl" loading="lazy" />
-                        </div>
-                        <div class="detail">
-                            <span class="name" v-text="avatar.name"></span>
-                            <span
-                                v-if="avatar.releaseStatus === 'public'"
-                                class="extra"
-                                style="color: var(--el-color-success)"
-                                v-text="avatar.releaseStatus"></span>
-                            <span
-                                v-else-if="avatar.releaseStatus === 'private'"
-                                class="extra"
-                                style="color: var(--el-color-danger)"
-                                v-text="avatar.releaseStatus"></span>
-                            <span v-else class="extra" v-text="avatar.releaseStatus"></span>
-                            <span class="extra" v-text="avatar.authorName"></span>
-                        </div>
-                    </div>
-                </div>
-                <ButtonGroup v-if="searchAvatarPage.length" style="margin-top: 15px">
-                    <Button variant="outline" size="sm" :disabled="!searchAvatarPageNum" @click="moreSearchAvatar(-1)">
-                        <Back />
-                        {{ t('view.search.prev_page') }}
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        :disabled="
-                            searchAvatarResults.length < 10 ||
-                            (searchAvatarPageNum + 1) * 10 >= searchAvatarResults.length
-                        "
-                        @click="moreSearchAvatar(1)">
-                        <Right />
-                        {{ t('view.search.next_page') }}
-                    </Button>
-                </ButtonGroup>
-            </el-tab-pane>
-            <el-tab-pane
-                v-loading="isSearchGroupLoading"
-                :label="t('view.search.group.header')"
-                style="min-height: 60px">
-                <div class="x-friend-list" style="min-height: 500px">
-                    <div
-                        v-for="group in searchGroupResults"
-                        :key="group.id"
-                        class="x-friend-item"
-                        @click="showGroupDialog(group.id)">
-                        <div class="avatar">
-                            <img :src="getSmallThumbnailUrl(group.iconUrl)" loading="lazy" />
-                        </div>
-                        <div class="detail">
-                            <span class="name">
-                                <span v-text="group.name"></span>
-                                <span style="margin-left: 5px; font-weight: normal">({{ group.memberCount }})</span>
-                                <span
-                                    style="
-                                        margin-left: 5px;
-                                        color: #909399;
-                                        font-weight: normal;
-                                        font-family: monospace;
-                                        font-size: 12px;
-                                    "
-                                    >{{ group.shortCode }}.{{ group.discriminator }}</span
+                            <div class="detail">
+                                <span class="name" v-text="world.name"></span>
+                                <span v-if="world.occupants" class="extra"
+                                    >{{ world.authorName }} ({{ world.occupants }})</span
                                 >
-                            </span>
-                            <span class="extra" v-text="group.description"></span>
+                                <span v-else class="extra" v-text="world.authorName"></span>
+                            </div>
                         </div>
                     </div>
+                    <ButtonGroup v-if="searchWorldResults.length" style="margin-top: 15px">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            :disabled="!searchWorldParams.offset"
+                            @click="moreSearchWorld(-1)">
+                            <Back />
+                            {{ t('view.search.prev_page') }}
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            :disabled="searchWorldResults.length < 10"
+                            @click="moreSearchWorld(1)">
+                            <Right />
+                            {{ t('view.search.next_page') }}
+                        </Button>
+                    </ButtonGroup>
                 </div>
-                <ButtonGroup v-if="searchGroupResults.length" style="margin-top: 15px">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        :disabled="!searchGroupParams.offset"
-                        @click="moreSearchGroup(-1)">
-                        <Back />
-                        {{ t('view.search.prev_page') }}
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        :disabled="searchGroupResults.length < 10"
-                        @click="moreSearchGroup(1)">
-                        <Right />
-                        {{ t('view.search.next_page') }}
-                    </Button>
-                </ButtonGroup>
-            </el-tab-pane>
-        </el-tabs>
+            </template>
+            <template #avatar>
+                <div v-loading="isSearchAvatarLoading" style="min-height: 60px">
+                    <div style="display: flex; align-items: center; justify-content: space-between">
+                        <div style="display: flex; align-items: center">
+                            <Select
+                                v-if="avatarRemoteDatabaseProviderList.length > 1"
+                                :model-value="avatarRemoteDatabaseProvider"
+                                @update:modelValue="setAvatarProvider"
+                                style="margin-right: 5px">
+                                <SelectTrigger size="sm">
+                                    <SelectValue :placeholder="t('view.search.avatar.search_provider')" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectItem
+                                            v-for="provider in avatarRemoteDatabaseProviderList"
+                                            :key="provider"
+                                            :value="provider">
+                                            {{ provider }}
+                                        </SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            <TooltipWrapper side="bottom" :content="t('view.search.avatar.refresh_tooltip')">
+                                <Button
+                                    class="rounded-full ml-1"
+                                    variant="outline"
+                                    size="icon-sm"
+                                    :disabled="userDialog.isAvatarsLoading"
+                                    @click="refreshUserDialogAvatars">
+                                    <Spinner v-if="userDialog.isAvatarsLoading" />
+                                    <Refresh v-else />
+                                </Button>
+                            </TooltipWrapper>
+                            <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
+                                t('view.search.avatar.result_count', {
+                                    count: searchAvatarResults.length
+                                })
+                            }}</span>
+                        </div>
+                        <div style="display: flex; align-items: center">
+                            <RadioGroup
+                                :model-value="searchAvatarFilter"
+                                class="flex items-center gap-4"
+                                style="margin: 5px"
+                                @update:modelValue="handleSearchAvatarFilterChange">
+                                <div class="flex items-center space-x-2">
+                                    <RadioGroupItem id="searchAvatarFilter-all" value="all" />
+                                    <label for="searchAvatarFilter-all">{{ t('view.search.avatar.all') }}</label>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <RadioGroupItem id="searchAvatarFilter-public" value="public" />
+                                    <label for="searchAvatarFilter-public">{{ t('view.search.avatar.public') }}</label>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <RadioGroupItem id="searchAvatarFilter-private" value="private" />
+                                    <label for="searchAvatarFilter-private">{{
+                                        t('view.search.avatar.private')
+                                    }}</label>
+                                </div>
+                            </RadioGroup>
+                            <el-divider direction="vertical"></el-divider>
+                            <RadioGroup
+                                :model-value="searchAvatarFilterRemote"
+                                class="flex items-center gap-4"
+                                style="margin: 5px"
+                                @update:modelValue="handleSearchAvatarFilterRemoteChange">
+                                <div class="flex items-center space-x-2">
+                                    <RadioGroupItem id="searchAvatarFilterRemote-all" value="all" />
+                                    <label for="searchAvatarFilterRemote-all">{{ t('view.search.avatar.all') }}</label>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <RadioGroupItem id="searchAvatarFilterRemote-local" value="local" />
+                                    <label for="searchAvatarFilterRemote-local">{{
+                                        t('view.search.avatar.local')
+                                    }}</label>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <RadioGroupItem
+                                        id="searchAvatarFilterRemote-remote"
+                                        value="remote"
+                                        :disabled="!avatarRemoteDatabase" />
+                                    <label for="searchAvatarFilterRemote-remote">{{
+                                        t('view.search.avatar.remote')
+                                    }}</label>
+                                </div>
+                            </RadioGroup>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: end">
+                        <RadioGroup
+                            :model-value="searchAvatarSort"
+                            :disabled="searchAvatarFilterRemote !== 'local'"
+                            class="flex items-center gap-4"
+                            style="margin: 5px"
+                            @update:modelValue="handleSearchAvatarSortChange">
+                            <div class="flex items-center space-x-2">
+                                <RadioGroupItem id="searchAvatarSort-name" value="name" />
+                                <label for="searchAvatarSort-name">{{ t('view.search.avatar.sort_name') }}</label>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <RadioGroupItem id="searchAvatarSort-update" value="update" />
+                                <label for="searchAvatarSort-update">{{ t('view.search.avatar.sort_update') }}</label>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <RadioGroupItem id="searchAvatarSort-created" value="created" />
+                                <label for="searchAvatarSort-created">{{ t('view.search.avatar.sort_created') }}</label>
+                            </div>
+                        </RadioGroup>
+                    </div>
+                    <div class="x-friend-list" style="margin-top: 20px; min-height: 500px">
+                        <div
+                            v-for="avatar in searchAvatarPage"
+                            :key="avatar.id"
+                            class="x-friend-item"
+                            @click="showAvatarDialog(avatar.id)">
+                            <div class="avatar">
+                                <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
+                                <img v-else-if="avatar.imageUrl" :src="avatar.imageUrl" loading="lazy" />
+                            </div>
+                            <div class="detail">
+                                <span class="name" v-text="avatar.name"></span>
+                                <span
+                                    v-if="avatar.releaseStatus === 'public'"
+                                    class="extra"
+                                    style="color: var(--el-color-success)"
+                                    v-text="avatar.releaseStatus"></span>
+                                <span
+                                    v-else-if="avatar.releaseStatus === 'private'"
+                                    class="extra"
+                                    style="color: var(--el-color-danger)"
+                                    v-text="avatar.releaseStatus"></span>
+                                <span v-else class="extra" v-text="avatar.releaseStatus"></span>
+                                <span class="extra" v-text="avatar.authorName"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <ButtonGroup v-if="searchAvatarPage.length" style="margin-top: 15px">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            :disabled="!searchAvatarPageNum"
+                            @click="moreSearchAvatar(-1)">
+                            <Back />
+                            {{ t('view.search.prev_page') }}
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            :disabled="
+                                searchAvatarResults.length < 10 ||
+                                (searchAvatarPageNum + 1) * 10 >= searchAvatarResults.length
+                            "
+                            @click="moreSearchAvatar(1)">
+                            <Right />
+                            {{ t('view.search.next_page') }}
+                        </Button>
+                    </ButtonGroup>
+                </div>
+            </template>
+            <template #group>
+                <div v-loading="isSearchGroupLoading" style="min-height: 60px">
+                    <div class="x-friend-list" style="min-height: 500px">
+                        <div
+                            v-for="group in searchGroupResults"
+                            :key="group.id"
+                            class="x-friend-item"
+                            @click="showGroupDialog(group.id)">
+                            <div class="avatar">
+                                <img :src="getSmallThumbnailUrl(group.iconUrl)" loading="lazy" />
+                            </div>
+                            <div class="detail">
+                                <span class="name">
+                                    <span v-text="group.name"></span>
+                                    <span style="margin-left: 5px; font-weight: normal">({{ group.memberCount }})</span>
+                                    <span
+                                        style="
+                                            margin-left: 5px;
+                                            color: #909399;
+                                            font-weight: normal;
+                                            font-family: monospace;
+                                            font-size: 12px;
+                                        "
+                                        >{{ group.shortCode }}.{{ group.discriminator }}</span
+                                    >
+                                </span>
+                                <span class="extra" v-text="group.description"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <ButtonGroup v-if="searchGroupResults.length" style="margin-top: 15px">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            :disabled="!searchGroupParams.offset"
+                            @click="moreSearchGroup(-1)">
+                            <Back />
+                            {{ t('view.search.prev_page') }}
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            :disabled="searchGroupResults.length < 10"
+                            @click="moreSearchGroup(1)">
+                            <Right />
+                            {{ t('view.search.next_page') }}
+                        </Button>
+                    </ButtonGroup>
+                </div>
+            </template>
+        </TabsUnderline>
     </div>
 </template>
 
@@ -344,13 +356,14 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Back, Refresh, Right } from '@element-plus/icons-vue';
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+    import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupField } from '@/components/ui/input-group';
     import { Spinner } from '@/components/ui/spinner';
+    import { TabsUnderline } from '@/components/ui/tabs';
     import { Trash2 } from 'lucide-vue-next';
-    import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -390,7 +403,13 @@
 
     const { t } = useI18n();
 
-    const searchTabRef = ref(null);
+    const activeSearchTab = ref('user');
+    const searchTabs = computed(() => [
+        { value: 'user', label: t('view.search.user.header') },
+        { value: 'world', label: t('view.search.world.header') },
+        { value: 'avatar', label: t('view.search.avatar.header') },
+        { value: 'group', label: t('view.search.group.header') }
+    ]);
 
     const searchUserParams = ref({});
     const searchUserByBio = ref(false);
@@ -453,18 +472,23 @@
         searchText.value = text;
     }
 
+    function handleSearchTabChange(tabName) {
+        searchText.value = '';
+        activeSearchTab.value = tabName;
+    }
+
     function search() {
-        switch (searchTabRef.value.currentName) {
-            case '0':
+        switch (activeSearchTab.value) {
+            case 'user':
                 searchUser();
                 break;
-            case '1':
+            case 'world':
                 searchWorld({});
                 break;
-            case '2':
+            case 'avatar':
                 searchAvatar();
                 break;
-            case '3':
+            case 'group':
                 searchGroup();
                 break;
         }

@@ -314,8 +314,12 @@
                     </div>
                 </div>
             </div>
-            <el-tabs v-model="worldDialogLastActiveTab" @tab-click="worldDialogTabClick">
-                <el-tab-pane name="Instances" :label="t('dialog.world.instances.header')">
+            <TabsUnderline
+                v-model="worldDialogLastActiveTab"
+                :items="worldDialogTabs"
+                :unmount-on-hide="false"
+                @update:modelValue="worldDialogTabClick">
+                <template #Instances>
                     <div class="">
                         <el-icon><User /></el-icon>
                         {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
@@ -429,8 +433,8 @@
                             </div>
                         </template>
                     </div>
-                </el-tab-pane>
-                <el-tab-pane name="Info" :label="t('dialog.world.info.header')" lazy>
+                </template>
+                <template #Info>
                     <div class="x-friend-list" style="max-height: none">
                         <div class="x-friend-item" style="width: 100%; cursor: default">
                             <div class="detail">
@@ -695,8 +699,8 @@
                             </div>
                         </div>
                     </div>
-                </el-tab-pane>
-                <el-tab-pane name="JSON" :label="t('dialog.world.json.header')" style="max-height: 50vh" lazy>
+                </template>
+                <template #JSON>
                     <Button
                         class="rounded-full h-6 w-6 mr-2"
                         size="icon-sm"
@@ -719,8 +723,8 @@
                         :deep="2"
                         :theme="isDarkMode ? 'dark' : 'light'"
                         show-icon />
-                </el-tab-pane>
-            </el-tabs>
+                </template>
+            </TabsUnderline>
         </div>
 
         <template v-if="isDialogVisible">
@@ -768,6 +772,7 @@
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
+    import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -834,6 +839,11 @@
     const { isGameRunning } = storeToRefs(useGameStore());
     const { showFullscreenImageDialog } = useGalleryStore();
     const { t } = useI18n();
+    const worldDialogTabs = computed(() => [
+        { value: 'Instances', label: t('dialog.world.instances.header') },
+        { value: 'Info', label: t('dialog.world.info.header') },
+        { value: 'JSON', label: t('dialog.world.json.header') }
+    ]);
 
     const treeData = ref({});
     const worldAllowedDomainsDialog = ref({
@@ -954,12 +964,11 @@
         handleWorldDialogTab(worldDialogLastActiveTab.value);
     }
 
-    function worldDialogTabClick(obj) {
-        if (obj.props.name === worldDialogLastActiveTab.value) {
+    function worldDialogTabClick(tabName) {
+        if (tabName === worldDialogLastActiveTab.value) {
             return;
         }
-        handleWorldDialogTab(obj.props.name);
-        worldDialogLastActiveTab.value = obj.props.name;
+        handleWorldDialogTab(tabName);
     }
 
     function handleDialogOpen() {

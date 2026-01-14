@@ -5,40 +5,40 @@
         :title="t('dialog.edit_invite_messages.header')"
         width="1000px"
         @close="closeDialog">
-        <el-tabs v-model="activeTab" style="margin-top: 10px">
-            <el-tab-pane :label="t('dialog.edit_invite_messages.invite_message_tab')" name="message">
+        <TabsUnderline v-model="activeTab" :items="editInviteTabs" :unmount-on-hide="false" class="mt-2.5">
+            <template #message>
                 <DataTableLayout
                     style="margin-top: 10px; cursor: pointer"
                     :table="inviteMessageTanstackTable"
                     :loading="false"
                     :show-pagination="false"
                     :on-row-click="handleEditInviteMessageRowClick" />
-            </el-tab-pane>
-            <el-tab-pane :label="t('dialog.edit_invite_messages.invite_request_tab')" name="request">
+            </template>
+            <template #request>
                 <DataTableLayout
                     style="margin-top: 10px; cursor: pointer"
                     :table="inviteRequestTanstackTable"
                     :loading="false"
                     :show-pagination="false"
                     :on-row-click="handleEditInviteMessageRowClick" />
-            </el-tab-pane>
-            <el-tab-pane :label="t('dialog.edit_invite_messages.invite_request_response_tab')" name="requestResponse">
+            </template>
+            <template #requestResponse>
                 <DataTableLayout
                     style="margin-top: 10px; cursor: pointer"
                     :table="inviteRequestResponseTanstackTable"
                     :loading="false"
                     :show-pagination="false"
                     :on-row-click="handleEditInviteMessageRowClick" />
-            </el-tab-pane>
-            <el-tab-pane :label="t('dialog.edit_invite_messages.invite_response_tab')" name="response">
+            </template>
+            <template #response>
                 <DataTableLayout
                     style="margin-top: 10px; cursor: pointer"
                     :table="inviteResponseTanstackTable"
                     :loading="false"
                     :show-pagination="false"
                     :on-row-click="handleEditInviteMessageRowClick" />
-            </el-tab-pane>
-        </el-tabs>
+            </template>
+        </TabsUnderline>
     </el-dialog>
     <template v-if="isEditInviteMessagesDialogVisible">
         <EditInviteMessageDialog
@@ -52,6 +52,7 @@
 <script setup>
     import { computed, ref, watch } from 'vue';
     import { DataTableLayout } from '@/components/ui/data-table';
+    import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -82,6 +83,12 @@
     });
 
     const activeTab = ref('message');
+    const editInviteTabs = computed(() => [
+        { value: 'message', label: t('dialog.edit_invite_messages.invite_message_tab') },
+        { value: 'request', label: t('dialog.edit_invite_messages.invite_request_tab') },
+        { value: 'requestResponse', label: t('dialog.edit_invite_messages.invite_request_response_tab') },
+        { value: 'response', label: t('dialog.edit_invite_messages.invite_response_tab') }
+    ]);
 
     const isEditInviteMessageDialogVisible = ref(false);
     const inviteMessage = ref({});

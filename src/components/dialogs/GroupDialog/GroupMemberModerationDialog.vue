@@ -7,8 +7,12 @@
         width="90vw">
         <div>
             <h3>{{ groupMemberModeration.groupRef.name }}</h3>
-            <el-tabs style="height: 100%">
-                <el-tab-pane :label="t('dialog.group_member_moderation.members')">
+            <TabsUnderline
+                default-value="members"
+                :items="groupModerationTabs"
+                :unmount-on-hide="false"
+                style="height: 100%">
+                <template #members>
                     <div style="margin-top: 10px">
                         <Button
                             class="rounded-full"
@@ -124,11 +128,9 @@
                             :page-sizes="pageSizes"
                             :total-items="groupMemberModerationTotalItems" />
                     </div>
-                </el-tab-pane>
+                </template>
 
-                <el-tab-pane
-                    :label="t('dialog.group_member_moderation.bans')"
-                    :disabled="!hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')">
+                <template #bans>
                     <div style="margin-top: 10px">
                         <Button
                             class="rounded-full"
@@ -159,11 +161,9 @@
                             :page-sizes="pageSizes"
                             :total-items="groupBansModerationTotalItems" />
                     </div>
-                </el-tab-pane>
+                </template>
 
-                <el-tab-pane
-                    :label="t('dialog.group_member_moderation.invites')"
-                    :disabled="!hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')">
+                <template #invites>
                     <div style="margin-top: 10px">
                         <Button
                             class="rounded-full"
@@ -175,16 +175,32 @@
                             <Refresh v-else />
                         </Button>
                         <br />
-                        <el-tabs>
-                            <el-tab-pane>
-                                <template #label>
-                                    <span style="font-weight: bold; font-size: 16px">{{
-                                        t('dialog.group_member_moderation.sent_invites')
-                                    }}</span>
-                                    <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
-                                        groupInvitesModerationTable.data.length
-                                    }}</span>
-                                </template>
+                        <TabsUnderline default-value="sent" :items="groupInvitesTabs" :unmount-on-hide="false">
+                            <template #label-sent>
+                                <span style="font-weight: bold; font-size: 16px">{{
+                                    t('dialog.group_member_moderation.sent_invites')
+                                }}</span>
+                                <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
+                                    groupInvitesModerationTable.data.length
+                                }}</span>
+                            </template>
+                            <template #label-join>
+                                <span style="font-weight: bold; font-size: 16px">{{
+                                    t('dialog.group_member_moderation.join_requests')
+                                }}</span>
+                                <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
+                                    groupJoinRequestsModerationTable.data.length
+                                }}</span>
+                            </template>
+                            <template #label-blocked>
+                                <span style="font-weight: bold; font-size: 16px">{{
+                                    t('dialog.group_member_moderation.blocked_requests')
+                                }}</span>
+                                <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
+                                    groupBlockedModerationTable.data.length
+                                }}</span>
+                            </template>
+                            <template #sent>
                                 <Button size="sm" variant="outline" @click="selectAllGroupInvites">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</Button>
@@ -206,17 +222,9 @@
                                     @click="groupMembersDeleteSentInvite"
                                     >{{ t('dialog.group_member_moderation.delete_sent_invite') }}</Button
                                 >
-                            </el-tab-pane>
+                            </template>
 
-                            <el-tab-pane>
-                                <template #label>
-                                    <span style="font-weight: bold; font-size: 16px">{{
-                                        t('dialog.group_member_moderation.join_requests')
-                                    }}</span>
-                                    <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
-                                        groupJoinRequestsModerationTable.data.length
-                                    }}</span>
-                                </template>
+                            <template #join>
                                 <Button size="sm" variant="outline" @click="selectAllGroupJoinRequests">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</Button>
@@ -262,17 +270,9 @@
                                     @click="groupMembersBlockJoinRequest"
                                     >{{ t('dialog.group_member_moderation.block_join_requests') }}</Button
                                 >
-                            </el-tab-pane>
+                            </template>
 
-                            <el-tab-pane>
-                                <template #label>
-                                    <span style="font-weight: bold; font-size: 16px">{{
-                                        t('dialog.group_member_moderation.blocked_requests')
-                                    }}</span>
-                                    <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
-                                        groupBlockedModerationTable.data.length
-                                    }}</span>
-                                </template>
+                            <template #blocked>
                                 <Button size="sm" variant="outline" @click="selectAllGroupBlocked">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</Button>
@@ -294,14 +294,12 @@
                                     @click="groupMembersDeleteBlockedRequest"
                                     >{{ t('dialog.group_member_moderation.delete_blocked_requests') }}</Button
                                 >
-                            </el-tab-pane>
-                        </el-tabs>
+                            </template>
+                        </TabsUnderline>
                     </div>
-                </el-tab-pane>
+                </template>
 
-                <el-tab-pane
-                    :label="t('dialog.group_member_moderation.logs')"
-                    :disabled="!hasGroupPermission(groupMemberModeration.groupRef, 'group-audit-view')">
+                <template #logs>
                     <div style="margin-top: 10px">
                         <Button
                             class="rounded-full"
@@ -352,8 +350,8 @@
                             :page-sizes="pageSizes"
                             :total-items="groupLogsModerationTotalItems" />
                     </div>
-                </el-tab-pane>
-            </el-tabs>
+                </template>
+            </TabsUnderline>
 
             <br />
             <br />
@@ -533,6 +531,7 @@
     import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
     import { Spinner } from '@/components/ui/spinner';
+    import { TabsUnderline } from '@/components/ui/tabs';
     import { Trash2 } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -566,6 +565,29 @@
     const { applyGroupMember, handleGroupMember, handleGroupMemberProps } = useGroupStore();
     const { showFullscreenImageDialog } = useGalleryStore();
     const { t } = useI18n();
+    const groupModerationTabs = computed(() => [
+        { value: 'members', label: t('dialog.group_member_moderation.members') },
+        {
+            value: 'bans',
+            label: t('dialog.group_member_moderation.bans'),
+            disabled: !hasGroupPermission(groupMemberModeration.value?.groupRef, 'group-bans-manage')
+        },
+        {
+            value: 'invites',
+            label: t('dialog.group_member_moderation.invites'),
+            disabled: !hasGroupPermission(groupMemberModeration.value?.groupRef, 'group-invites-manage')
+        },
+        {
+            value: 'logs',
+            label: t('dialog.group_member_moderation.logs'),
+            disabled: !hasGroupPermission(groupMemberModeration.value?.groupRef, 'group-audit-view')
+        }
+    ]);
+    const groupInvitesTabs = computed(() => [
+        { value: 'sent', label: t('dialog.group_member_moderation.sent_invites') },
+        { value: 'join', label: t('dialog.group_member_moderation.join_requests') },
+        { value: 'blocked', label: t('dialog.group_member_moderation.blocked_requests') }
+    ]);
     const selectedUsers = reactive({});
     const selectedUsersArray = ref([]);
     const isGroupMembersLoading = ref(false);

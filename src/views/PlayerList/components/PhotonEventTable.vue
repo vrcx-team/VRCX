@@ -36,8 +36,8 @@
                 </div>
             </TooltipWrapper>
         </div>
-        <el-tabs type="card">
-            <el-tab-pane :label="t('view.player_list.photon.current')">
+        <TabsUnderline default-value="current" :items="photonTabs" :unmount-on-hide="false">
+            <template #current>
                 <DataTableLayout
                     class="min-w-0 w-full"
                     :table="currentTable"
@@ -47,8 +47,8 @@
                     :total-items="currentTotal"
                     :on-page-size-change="handleCurrentPageSizeChange"
                     style="margin-bottom: 10px" />
-            </el-tab-pane>
-            <el-tab-pane :label="t('view.player_list.photon.previous')">
+            </template>
+            <template #previous>
                 <DataTableLayout
                     class="min-w-0 w-full"
                     :table="previousTable"
@@ -58,8 +58,8 @@
                     :total-items="previousTotal"
                     :on-page-size-change="handlePreviousPageSizeChange"
                     style="margin-bottom: 10px" />
-            </el-tab-pane>
-        </el-tabs>
+            </template>
+        </TabsUnderline>
     </div>
 </template>
 
@@ -68,6 +68,7 @@
     import { Button } from '@/components/ui/button';
     import { DataTableLayout } from '@/components/ui/data-table';
     import { InputGroupField } from '@/components/ui/input-group';
+    import { TabsUnderline } from '@/components/ui/tabs';
     import { localeIncludes } from '@/shared/utils';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -91,6 +92,10 @@
     const { t } = useI18n();
 
     const photonStore = usePhotonStore();
+    const photonTabs = computed(() => [
+        { value: 'current', label: t('view.player_list.photon.current') },
+        { value: 'previous', label: t('view.player_list.photon.previous') }
+    ]);
     const {
         photonEventTableTypeFilter,
         photonEventTableFilter,

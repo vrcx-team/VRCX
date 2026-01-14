@@ -5,8 +5,12 @@
         :title="t('dialog.new_instance.header')"
         width="650px"
         append-to-body>
-        <el-tabs v-model="newInstanceDialog.selectedTab" @tab-click="newInstanceTabClick">
-            <el-tab-pane name="Normal" :label="t('dialog.new_instance.normal')">
+        <TabsUnderline
+            v-model="newInstanceDialog.selectedTab"
+            :items="newInstanceTabs"
+            :unmount-on-hide="false"
+            @update:modelValue="newInstanceTabClick">
+            <template #Normal>
                 <FieldGroup class="gap-4">
                     <Field>
                         <FieldLabel>{{ t('dialog.new_instance.access_type') }}</FieldLabel>
@@ -221,8 +225,8 @@
                         </Field>
                     </template>
                 </FieldGroup>
-            </el-tab-pane>
-            <el-tab-pane name="Legacy" :label="t('dialog.new_instance.legacy')">
+            </template>
+            <template #Legacy>
                 <FieldGroup class="gap-4">
                     <Field>
                         <FieldLabel>{{ t('dialog.new_instance.access_type') }}</FieldLabel>
@@ -429,8 +433,8 @@
                         </FieldContent>
                     </Field>
                 </FieldGroup>
-            </el-tab-pane>
-        </el-tabs>
+            </template>
+        </TabsUnderline>
         <template v-if="newInstanceDialog.selectedTab === 'Normal'" #footer>
             <template v-if="newInstanceDialog.instanceCreated">
                 <Button variant="outline" class="mr-2" @click="copyInstanceUrl(newInstanceDialog.location)">{{
@@ -514,6 +518,7 @@
     import { Check as CheckIcon } from 'lucide-vue-next';
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupField } from '@/components/ui/input-group';
+    import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -551,6 +556,10 @@
             required: true
         }
     });
+    const newInstanceTabs = computed(() => [
+        { value: 'Normal', label: t('dialog.new_instance.normal') },
+        { value: 'Legacy', label: t('dialog.new_instance.legacy') }
+    ]);
 
     const { t } = useI18n();
 
@@ -858,8 +867,8 @@
         configRepository.setBool('instanceDialogAgeGate', ageGate);
         configRepository.setString('instanceDialogDisplayName', displayName);
     }
-    function newInstanceTabClick(obj) {
-        if (obj.props.name === 'Normal') {
+    function newInstanceTabClick(tabName) {
+        if (tabName === 'Normal') {
             buildInstance();
         } else {
             buildLegacyInstance();

@@ -73,33 +73,44 @@
                 </TooltipWrapper>
             </div>
         </div>
-        <el-tabs class="zero-margin-tabs" stretch style="height: calc(100% - 70px); margin-top: 5px">
-            <el-tab-pane>
-                <template #label>
-                    <span>{{ t('side_panel.friends') }}</span>
-                    <span class="sidebar-tab-count"> ({{ onlineFriendCount }}/{{ friends.size }}) </span>
-                </template>
-                <el-backtop target=".zero-margin-tabs .el-tabs__content" :bottom="20" :right="20"></el-backtop>
-                <FriendsSidebar @confirm-delete-friend="confirmDeleteFriend" />
-            </el-tab-pane>
-            <el-tab-pane lazy>
-                <template #label>
-                    <span>{{ t('side_panel.groups') }}</span>
-                    <span class="sidebar-tab-count"> ({{ groupInstances.length }}) </span>
-                </template>
-                <GroupsSidebar :group-instances="groupInstances" :group-order="inGameGroupOrder" />
-            </el-tab-pane>
-        </el-tabs>
+        <TabsUnderline
+            default-value="friends"
+            :items="sidebarTabs"
+            :unmount-on-hide="false"
+            variant="equal"
+            class="zero-margin-tabs"
+            style="height: calc(100% - 70px); margin-top: 5px">
+            <template #label-friends>
+                <span>{{ t('side_panel.friends') }}</span>
+                <span class="sidebar-tab-count"> ({{ onlineFriendCount }}/{{ friends.size }}) </span>
+            </template>
+            <template #label-groups>
+                <span>{{ t('side_panel.groups') }}</span>
+                <span class="sidebar-tab-count"> ({{ groupInstances.length }}) </span>
+            </template>
+            <template #friends>
+                <div class="el-tabs__content">
+                    <el-backtop target=".zero-margin-tabs .el-tabs__content" :bottom="20" :right="20"></el-backtop>
+                    <FriendsSidebar @confirm-delete-friend="confirmDeleteFriend" />
+                </div>
+            </template>
+            <template #groups>
+                <div class="el-tabs__content">
+                    <GroupsSidebar :group-instances="groupInstances" :group-order="inGameGroupOrder" />
+                </div>
+            </template>
+        </TabsUnderline>
     </div>
 </template>
 
 <script setup>
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-    import { ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Input } from '@/components/ui/input';
     import { Refresh } from '@element-plus/icons-vue';
     import { Spinner } from '@/components/ui/spinner';
+    import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -115,6 +126,10 @@
     const { quickSearchItems } = storeToRefs(useSearchStore());
     const { inGameGroupOrder, groupInstances } = storeToRefs(useGroupStore());
     const { t } = useI18n();
+    const sidebarTabs = computed(() => [
+        { value: 'friends', label: t('side_panel.friends') },
+        { value: 'groups', label: t('side_panel.groups') }
+    ]);
 
     const quickSearchQuery = ref('');
     const isQuickSearchOpen = ref(false);
