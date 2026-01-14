@@ -137,38 +137,41 @@
                                                         @click="handleRemoteRename(group)">
                                                         <span>{{ t('view.favorite.rename_tooltip') }}</span>
                                                     </button>
-                                                    <el-popover
-                                                        placement="right"
-                                                        trigger="hover"
-                                                        :width="180"
-                                                        popper-style="padding: 4px; border-radius: 8px;">
-                                                        <div class="group-visibility-menu">
-                                                            <button
-                                                                v-for="visibility in avatarGroupVisibilityOptions"
-                                                                :key="visibility"
-                                                                type="button"
-                                                                :class="[
-                                                                    'group-visibility-menu__item',
-                                                                    { 'is-active': group.visibility === visibility }
-                                                                ]"
-                                                                @click="handleVisibilitySelection(group, visibility)">
-                                                                <span>{{ formatVisibility(visibility) }}</span>
-                                                                <span
-                                                                    v-if="group.visibility === visibility"
-                                                                    class="group-visibility-menu__check">
-                                                                    <i class="ri-check-line"></i>
-                                                                </span>
-                                                            </button>
-                                                        </div>
-                                                        <template #reference>
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger as-child>
                                                             <button
                                                                 type="button"
                                                                 class="favorites-group-menu__item favorites-group-menu__item--submenu">
                                                                 <span>{{ t('view.favorite.visibility_tooltip') }}</span>
                                                                 <span class="favorites-group-menu__arrow">›</span>
                                                             </button>
-                                                        </template>
-                                                    </el-popover>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent
+                                                            side="right"
+                                                            align="start"
+                                                            class="w-[180px] p-1 rounded-lg">
+                                                            <div class="group-visibility-menu">
+                                                                <button
+                                                                    v-for="visibility in avatarGroupVisibilityOptions"
+                                                                    :key="visibility"
+                                                                    type="button"
+                                                                    :class="[
+                                                                        'group-visibility-menu__item',
+                                                                        { 'is-active': group.visibility === visibility }
+                                                                    ]"
+                                                                    @click="
+                                                                        handleVisibilitySelection(group, visibility)
+                                                                    ">
+                                                                    <span>{{ formatVisibility(visibility) }}</span>
+                                                                    <span
+                                                                        v-if="group.visibility === visibility"
+                                                                        class="group-visibility-menu__check">
+                                                                        <i class="ri-check-line"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
                                                     <button
                                                         type="button"
                                                         class="favorites-group-menu__item favorites-group-menu__item--danger"

@@ -6,48 +6,71 @@
                 <div v-if="showGroupName" class="event-group-name" @click="onGroupClick">
                     {{ groupName }}
                 </div>
-                <el-popover placement="right" :width="500" trigger="hover">
-                    <el-descriptions :title="event.title" size="small" :column="2" class="event-title-popover">
-                        <template #extra>
-                            <div>
-                                {{ formatTimeRange(event.startsAt, event.endsAt) }}
-                            </div>
-                        </template>
-
-                        <el-descriptions-item>
-                            <Button variant="outline" size="sm" @click="openCalendarEvent(event)">
-                                <Calendar />
-                                {{ t('dialog.group_calendar.event_card.export_to_calendar') }}
-                            </Button>
-                        </el-descriptions-item>
-                        <el-descriptions-item>
-                            <Button variant="outline" size="sm" @click="downloadEventIcs(event)">
-                                <Download />
-                                {{ t('dialog.group_calendar.event_card.download_ics') }}
-                            </Button>
-                        </el-descriptions-item>
-                        <el-descriptions-item :label="t('dialog.group_calendar.event_card.category')">
-                            {{ capitalizeFirst(event.category) }}
-                        </el-descriptions-item>
-                        <el-descriptions-item :label="t('dialog.group_calendar.event_card.interested_user')">
-                            {{ event.interestedUserCount }}
-                        </el-descriptions-item>
-                        <el-descriptions-item :label="t('dialog.group_calendar.event_card.close_time')">
-                            {{ event.closeInstanceAfterEndMinutes + ' min' }}
-                        </el-descriptions-item>
-                        <el-descriptions-item :label="t('dialog.group_calendar.event_card.created')">
-                            {{ formatDateFilter(event.createdAt, 'long') }}
-                        </el-descriptions-item>
-                        <el-descriptions-item :label="t('dialog.group_calendar.event_card.description')">
-                            {{ event.description }}
-                        </el-descriptions-item>
-                    </el-descriptions>
-                    <template #reference>
+                <Popover>
+                    <PopoverTrigger as-child>
                         <div class="event-title-content" @click="onGroupClick">
                             {{ event.title }}
                         </div>
-                    </template>
-                </el-popover>
+                    </PopoverTrigger>
+                    <PopoverContent side="right" align="start" class="w-[500px] p-3">
+                        <div class="flex items-baseline justify-between gap-3 text-xs">
+                            <div class="text-[13px] font-semibold">{{ event.title }}</div>
+                            <div class="whitespace-nowrap text-[var(--el-text-color-regular)]">
+                                {{ formatTimeRange(event.startsAt, event.endsAt) }}
+                            </div>
+                        </div>
+                        <div class="mt-2 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
+                            <div class="flex min-w-0 flex-col gap-1">
+                                <Button variant="outline" size="sm" @click="openCalendarEvent(event)">
+                                    <Calendar />
+                                    {{ t('dialog.group_calendar.event_card.export_to_calendar') }}
+                                </Button>
+                            </div>
+                            <div class="flex min-w-0 flex-col gap-1">
+                                <Button variant="outline" size="sm" @click="downloadEventIcs(event)">
+                                    <Download />
+                                    {{ t('dialog.group_calendar.event_card.download_ics') }}
+                                </Button>
+                            </div>
+                            <div class="flex min-w-0 flex-col gap-1">
+                                <div class="text-[var(--el-text-color-regular)]">
+                                    {{ t('dialog.group_calendar.event_card.category') }}
+                                </div>
+                                <div class="font-medium">{{ capitalizeFirst(event.category) }}</div>
+                            </div>
+                            <div class="flex min-w-0 flex-col gap-1">
+                                <div class="text-[var(--el-text-color-regular)]">
+                                    {{ t('dialog.group_calendar.event_card.interested_user') }}
+                                </div>
+                                <div class="font-medium">{{ event.interestedUserCount }}</div>
+                            </div>
+                            <div class="flex min-w-0 flex-col gap-1">
+                                <div class="text-[var(--el-text-color-regular)]">
+                                    {{ t('dialog.group_calendar.event_card.close_time') }}
+                                </div>
+                                <div class="font-medium">
+                                    {{ event.closeInstanceAfterEndMinutes + ' min' }}
+                                </div>
+                            </div>
+                            <div class="flex min-w-0 flex-col gap-1">
+                                <div class="text-[var(--el-text-color-regular)]">
+                                    {{ t('dialog.group_calendar.event_card.created') }}
+                                </div>
+                                <div class="font-medium">
+                                    {{ formatDateFilter(event.createdAt, 'long') }}
+                                </div>
+                            </div>
+                            <div class="col-span-2 flex min-w-0 flex-col gap-1">
+                                <div class="text-[var(--el-text-color-regular)]">
+                                    {{ t('dialog.group_calendar.event_card.description') }}
+                                </div>
+                                <div class="whitespace-pre-wrap break-words font-normal leading-snug">
+                                    {{ event.description }}
+                                </div>
+                            </div>
+                        </div>
+                    </PopoverContent>
+                </Popover>
             </div>
             <div class="event-info">
                 <div :class="timeClass">
@@ -74,6 +97,7 @@
 
 <script setup>
     import { Calendar, Download, Share, Star, StarFilled } from '@element-plus/icons-vue';
+    import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { Button } from '@/components/ui/button';
     import { Card } from '@/components/ui/card';
     import { computed } from 'vue';
@@ -348,5 +372,4 @@
         font-weight: 500;
         color: var(--el-color-primary);
     }
-
 </style>
