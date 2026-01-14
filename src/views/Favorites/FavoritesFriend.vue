@@ -119,17 +119,17 @@
                                         <Badge variant="outline">
                                             {{ formatVisibility(group.visibility) }}
                                         </Badge>
-                                        <Popover
+                                        <DropdownMenu
                                             :open="activeGroupMenu === remoteGroupMenuKey(group.key)"
                                             @update:open="
                                                 handleGroupMenuVisible(remoteGroupMenuKey(group.key), $event)
                                             ">
-                                            <PopoverTrigger asChild>
+                                            <DropdownMenuTrigger asChild>
                                                 <Button class="rounded-full" variant="ghost" size="icon-sm" @click.stop>
                                                     <MoreFilled />
                                                 </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent side="right" class="w-55 p-1 rounded-lg">
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent side="right" class="w-55 p-1 rounded-lg">
                                                 <div class="favorites-group-menu">
                                                     <button
                                                         type="button"
@@ -137,41 +137,42 @@
                                                         @click="handleRemoteRename(group)">
                                                         <span>{{ t('view.favorite.rename_tooltip') }}</span>
                                                     </button>
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger as-child>
-                                                            <button
-                                                                type="button"
-                                                                class="favorites-group-menu__item favorites-group-menu__item--submenu">
-                                                                <span>{{ t('view.favorite.visibility_tooltip') }}</span>
-                                                                <span class="favorites-group-menu__arrow">›</span>
-                                                            </button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent
-                                                            side="right"
-                                                            align="start"
-                                                            class="w-[180px] p-1 rounded-lg">
-                                                            <div class="group-visibility-menu">
-                                                                <button
-                                                                    v-for="visibility in friendGroupVisibilityOptions"
-                                                                    :key="visibility"
-                                                                    type="button"
-                                                                    :class="[
-                                                                        'group-visibility-menu__item',
-                                                                        { 'is-active': group.visibility === visibility }
-                                                                    ]"
-                                                                    @click="
-                                                                        handleVisibilitySelection(group, visibility)
-                                                                    ">
-                                                                    <span>{{ formatVisibility(visibility) }}</span>
-                                                                    <span
-                                                                        v-if="group.visibility === visibility"
-                                                                        class="group-visibility-menu__check">
-                                                                        <i class="ri-check-line"></i>
-                                                                    </span>
-                                                                </button>
-                                                            </div>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
+                                                    <DropdownMenuSub>
+                                                        <DropdownMenuSubTrigger
+                                                            class="favorites-group-menu__item favorites-group-menu__item--submenu">
+                                                            <span>{{ t('view.favorite.visibility_tooltip') }}</span>
+                                                        </DropdownMenuSubTrigger>
+                                                        <DropdownMenuPortal>
+                                                            <DropdownMenuSubContent
+                                                                side="right"
+                                                                align="start"
+                                                                class="w-[180px] p-1 rounded-lg">
+                                                                <div class="group-visibility-menu">
+                                                                    <button
+                                                                        v-for="visibility in friendGroupVisibilityOptions"
+                                                                        :key="visibility"
+                                                                        type="button"
+                                                                        :class="[
+                                                                            'group-visibility-menu__item',
+                                                                            {
+                                                                                'is-active':
+                                                                                    group.visibility === visibility
+                                                                            }
+                                                                        ]"
+                                                                        @click="
+                                                                            handleVisibilitySelection(group, visibility)
+                                                                        ">
+                                                                        <span>{{ formatVisibility(visibility) }}</span>
+                                                                        <span
+                                                                            v-if="group.visibility === visibility"
+                                                                            class="group-visibility-menu__check">
+                                                                            <i class="ri-check-line"></i>
+                                                                        </span>
+                                                                    </button>
+                                                                </div>
+                                                            </DropdownMenuSubContent>
+                                                        </DropdownMenuPortal>
+                                                    </DropdownMenuSub>
                                                     <button
                                                         type="button"
                                                         class="favorites-group-menu__item favorites-group-menu__item--danger"
@@ -179,8 +180,8 @@
                                                         <span>{{ t('view.favorite.clear') }}</span>
                                                     </button>
                                                 </div>
-                                            </PopoverContent>
-                                        </Popover>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </div>
                                 </div>
                             </template>
@@ -320,6 +321,17 @@
     import { useI18n } from 'vue-i18n';
 
     import {
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuPortal,
+        DropdownMenuSeparator,
+        DropdownMenuSub,
+        DropdownMenuSubContent,
+        DropdownMenuSubTrigger,
+        DropdownMenuTrigger
+    } from '../../components/ui/dropdown-menu';
+    import {
         Select,
         SelectContent,
         SelectGroup,
@@ -327,15 +339,7 @@
         SelectTrigger,
         SelectValue
     } from '../../components/ui/select';
-    import {
-        DropdownMenu,
-        DropdownMenuContent,
-        DropdownMenuItem,
-        DropdownMenuSeparator,
-        DropdownMenuTrigger
-    } from '../../components/ui/dropdown-menu';
     import { useAppearanceSettingsStore, useFavoriteStore, useModalStore, useUserStore } from '../../stores';
-    import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { Badge } from '../../components/ui/badge';
     import { Slider } from '../../components/ui/slider';

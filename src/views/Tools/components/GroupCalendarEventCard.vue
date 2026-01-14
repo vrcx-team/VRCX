@@ -6,13 +6,22 @@
                 <div v-if="showGroupName" class="event-group-name" @click="onGroupClick">
                     {{ groupName }}
                 </div>
-                <Popover>
+                <Popover :open="eventPopoverOpen">
                     <PopoverTrigger as-child>
-                        <div class="event-title-content" @click="onGroupClick">
+                        <div
+                            class="event-title-content"
+                            @click="onGroupClick"
+                            @mouseenter="openEventPopover"
+                            @mouseleave="scheduleCloseEventPopover">
                             {{ event.title }}
                         </div>
                     </PopoverTrigger>
-                    <PopoverContent side="right" align="start" class="w-[500px] p-3">
+                    <PopoverContent
+                        side="right"
+                        align="start"
+                        class="w-[500px] p-3"
+                        @mouseenter="openEventPopover"
+                        @mouseleave="scheduleCloseEventPopover">
                         <div class="flex items-baseline justify-between gap-3 text-xs">
                             <div class="text-[13px] font-semibold">{{ event.title }}</div>
                             <div class="whitespace-nowrap text-[var(--el-text-color-regular)]">
@@ -98,9 +107,9 @@
 <script setup>
     import { Calendar, Download, Share, Star, StarFilled } from '@element-plus/icons-vue';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+    import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Card } from '@/components/ui/card';
-    import { computed } from 'vue';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
@@ -140,6 +149,8 @@
     const showGroupName = computed(() => props.mode === 'timeline');
 
     const timeClass = computed(() => (props.mode === 'grid' ? 'event-time' : ''));
+    const eventPopoverOpen = ref(false);
+    let eventPopoverCloseTimer = null;
 
     const bannerUrl = computed(() => {
         if (!props.event) return '';
@@ -221,6 +232,23 @@
 
     const onGroupClick = () => {
         emit('click-action');
+    };
+
+    const openEventPopover = () => {
+        if (eventPopoverCloseTimer) {
+            clearTimeout(eventPopoverCloseTimer);
+            eventPopoverCloseTimer = null;
+        }
+        eventPopoverOpen.value = true;
+    };
+
+    const scheduleCloseEventPopover = () => {
+        if (eventPopoverCloseTimer) {
+            clearTimeout(eventPopoverCloseTimer);
+        }
+        eventPopoverCloseTimer = setTimeout(() => {
+            eventPopoverOpen.value = false;
+        }, 100);
     };
 </script>
 

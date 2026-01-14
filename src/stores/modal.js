@@ -312,4 +312,4 @@ export const useModalStore = defineStore('Modal', () => {
         setAlertOpen,
         setPromptOpen
     };
-};);
+});
