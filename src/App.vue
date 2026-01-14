@@ -15,6 +15,7 @@
                 <Toaster position="top-center"></Toaster>
 
                 <AlertDialogModal></AlertDialogModal>
+                <PromptDialogModal></PromptDialogModal>
 
                 <VRCXUpdateDialog></VRCXUpdateDialog>
             </div>
@@ -33,6 +34,7 @@
 
     import AlertDialogModal from './components/ui/alert-dialog/AlertDialogModal.vue';
     import MacOSTitleBar from './components/MacOSTitleBar.vue';
+    import PromptDialogModal from './components/ui/dialog/PromptDialogModal.vue';
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
 
     import '@/styles/globals.css';

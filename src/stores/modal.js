@@ -33,6 +33,25 @@ function translate(key, fallback) {
  * @property {boolean=} dismissible
  */
 
+/**
+ * @typedef {Object} PromptResult
+ * @property {boolean} ok
+ * @property {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
+ * @property {string} value
+ */
+
+/**
+ * @typedef {Object} PromptOptions
+ * @property {string} title
+ * @property {string} description
+ * @property {string=} confirmText
+ * @property {string=} cancelText
+ * @property {string=} inputValue
+ * @property {RegExp | string=} pattern
+ * @property {string=} errorMessage
+ * @property {boolean=} dismissible
+ */
+
 // TODO: Method chains for confirm
 
 export const useModalStore = defineStore('Modal', () => {
@@ -44,11 +63,27 @@ export const useModalStore = defineStore('Modal', () => {
     const alertCancelText = ref('');
     const alertDismissible = ref(true);
 
+    const promptOpen = ref(false);
+    const promptTitle = ref('');
+    const promptDescription = ref('');
+    const promptOkText = ref('');
+    const promptCancelText = ref('');
+    const promptDismissible = ref(true);
+    const promptInputValue = ref('');
+    const promptPattern = ref(null);
+    const promptErrorMessage = ref('');
+
     /** @type {{ resolve: ((result: ConfirmResult) => void) | null } | null} */
     let pending = null;
+    /** @type {{ resolve: ((result: PromptResult) => void) | null } | null} */
+    let pendingPrompt = null;
 
     function closeDialog() {
         alertOpen.value = false;
+    }
+
+    function closePromptDialog() {
+        promptOpen.value = false;
     }
 
     /**
@@ -68,6 +103,27 @@ export const useModalStore = defineStore('Modal', () => {
         const resolve = pending?.resolve;
         pending = null;
         if (resolve) resolve({ ok: reason === 'ok', reason });
+    }
+
+    /**
+     * @param {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
+     * @param {string} value
+     */
+    function finishPrompt(reason, value) {
+        const resolve = pendingPrompt?.resolve;
+        pendingPrompt = null;
+        closePromptDialog();
+        if (resolve) resolve({ ok: reason === 'ok', reason, value });
+    }
+
+    /**
+     * @param {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
+     * @param {string} value
+     */
+    function finishPromptWithoutClosing(reason, value) {
+        const resolve = pendingPrompt?.resolve;
+        pendingPrompt = null;
+        if (resolve) resolve({ ok: reason === 'ok', reason, value });
     }
 
     /**
@@ -107,6 +163,44 @@ export const useModalStore = defineStore('Modal', () => {
     }
 
     /**
+     * @param {PromptOptions} options
+     * @returns {Promise<PromptResult>}
+     */
+    function openPrompt(options) {
+        if (pendingPrompt) {
+            finishPromptWithoutClosing('replaced', promptInputValue.value);
+        }
+
+        const inputValue = options.inputValue ?? '';
+        const inputValueCopy =
+            typeof inputValue === 'string'
+                ? inputValue.slice()
+                : String(inputValue);
+
+        promptTitle.value = options.title;
+        promptDescription.value = options.description;
+        promptDismissible.value = options.dismissible !== false;
+        promptInputValue.value = inputValueCopy;
+        promptPattern.value = options.pattern ?? null;
+        promptErrorMessage.value =
+            options.errorMessage ||
+            translate('dialog.prompt.input_invalid', '输入错误');
+
+        promptOkText.value =
+            options.confirmText ||
+            translate('dialog.alertdialog.confirm', 'Confirm');
+        promptCancelText.value =
+            options.cancelText ||
+            translate('dialog.alertdialog.cancel', 'Cancel');
+
+        promptOpen.value = true;
+
+        return new Promise((resolve) => {
+            pendingPrompt = { resolve };
+        });
+    }
+
+    /**
      * confirm: always resolve({ok, reason})
      * @param {ConfirmOptions} options
      * @returns {Promise<ConfirmResult>}
@@ -124,9 +218,23 @@ export const useModalStore = defineStore('Modal', () => {
         return openBase('alert', options);
     }
 
+    /**
+     * prompt: always resolve({ok, reason, value})
+     * @param {PromptOptions} options
+     * @returns {Promise<PromptResult>}
+     */
+    function prompt(options) {
+        return openPrompt(options);
+    }
+
     function handleOk() {
         if (!pending) return;
         finish('ok');
+    }
+
+    function handlePromptOk(value) {
+        if (!pendingPrompt) return;
+        finishPrompt('ok', value ?? '');
     }
 
     function handleCancel() {
@@ -139,6 +247,11 @@ export const useModalStore = defineStore('Modal', () => {
         }
 
         finish('cancel');
+    }
+
+    function handlePromptCancel(value) {
+        if (!pendingPrompt) return;
+        finishPrompt('cancel', value ?? '');
     }
 
     function handleDismiss() {
@@ -154,8 +267,18 @@ export const useModalStore = defineStore('Modal', () => {
         finish('dismiss');
     }
 
+    function handlePromptDismiss(value) {
+        if (!pendingPrompt) return;
+        if (!promptDismissible.value) return;
+        finishPrompt('dismiss', value ?? '');
+    }
+
     function setAlertOpen(open) {
         alertOpen.value = !!open;
+    }
+
+    function setPromptOpen(open) {
+        promptOpen.value = !!open;
     }
 
     return {
@@ -166,13 +289,27 @@ export const useModalStore = defineStore('Modal', () => {
         alertOkText,
         alertCancelText,
         alertDismissible,
+        promptOpen,
+        promptTitle,
+        promptDescription,
+        promptOkText,
+        promptCancelText,
+        promptDismissible,
+        promptInputValue,
+        promptPattern,
+        promptErrorMessage,
 
         confirm,
         alert,
+        prompt,
 
         handleOk,
         handleCancel,
         handleDismiss,
-        setAlertOpen
+        handlePromptOk,
+        handlePromptCancel,
+        handlePromptDismiss,
+        setAlertOpen,
+        setPromptOpen
     };
-});
+};);

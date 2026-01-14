@@ -916,6 +916,9 @@
             "cancel": "Cancel",
             "confirm": "Confirm"
         },
+        "prompt": {
+            "input_invalid": "Invalid input"
+        },
         "user": {
             "status": {
                 "active": "Active",
