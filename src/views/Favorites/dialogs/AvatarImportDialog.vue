@@ -137,7 +137,7 @@
     const { showUserDialog } = useUserStore();
     const { favoriteAvatarGroups, avatarImportDialogInput, avatarImportDialogVisible, localAvatarFavoriteGroups } =
         storeToRefs(useFavoriteStore());
-    const { addLocalAvatarFavorite, localAvatarFavGroupLength } = useFavoriteStore();
+    const { addLocalAvatarFavorite, localAvatarFavGroupLength, getCachedFavoritesByObjectId } = useFavoriteStore();
     const { showAvatarDialog, applyAvatar } = useAvatarStore();
     const { showFullscreenImageDialog } = useGalleryStore();
 
@@ -302,7 +302,7 @@
     function addFavoriteAvatar(ref, group, message) {
         return favoriteRequest
             .addFavorite({
-                type: 'avatar',
+                type: group.type,
                 favoriteId: ref.id,
                 tags: group.name
             })
@@ -329,6 +329,9 @@
                 }
                 ref = data[i];
                 if (D.avatarImportFavoriteGroup) {
+                    if (getCachedFavoritesByObjectId(ref.id)) {
+                        throw new Error('Avatar is already in favorites');
+                    }
                     await addFavoriteAvatar(ref, D.avatarImportFavoriteGroup, false);
                 } else if (D.avatarImportLocalFavoriteGroup) {
                     addLocalAvatarFavorite(ref.id, D.avatarImportLocalFavoriteGroup);

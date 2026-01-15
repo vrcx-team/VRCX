@@ -83,14 +83,14 @@
                 addFavoriteAvatar(groupAPI);
             }
         } else {
-            moveFavorite(props.currentFavorite.ref, groupAPI, props.type);
+            moveFavorite(props.currentFavorite.ref, groupAPI);
         }
     }
 
-    function moveFavorite(ref, group, type) {
+    function moveFavorite(ref, group) {
         favoriteRequest.deleteFavorite({ objectId: ref.id }).then(() => {
             favoriteRequest.addFavorite({
-                type,
+                type: group.type,
                 favoriteId: ref.id,
                 tags: group.name
             });
@@ -100,7 +100,7 @@
     function addFavoriteAvatar(groupAPI) {
         return favoriteRequest
             .addFavorite({
-                type: 'avatar',
+                type: groupAPI.type,
                 favoriteId: props.currentFavorite.id,
                 tags: groupAPI.name
             })

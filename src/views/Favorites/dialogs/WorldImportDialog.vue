@@ -139,7 +139,7 @@
     const { showUserDialog } = useUserStore();
     const { favoriteWorldGroups, worldImportDialogInput, worldImportDialogVisible, localWorldFavoriteGroups } =
         storeToRefs(useFavoriteStore());
-    const { localWorldFavGroupLength, addLocalWorldFavorite } = useFavoriteStore();
+    const { localWorldFavGroupLength, addLocalWorldFavorite, getCachedFavoritesByObjectId } = useFavoriteStore();
     const { showWorldDialog } = useWorldStore();
     const { showFullscreenImageDialog } = useGalleryStore();
 
@@ -321,6 +321,9 @@
                 }
                 ref = data[i];
                 if (D.worldImportFavoriteGroup) {
+                    if (getCachedFavoritesByObjectId(ref.id)) {
+                        throw new Error('World is already in favorites');
+                    }
                     await addFavoriteWorld(ref, D.worldImportFavoriteGroup, false);
                 } else if (D.worldImportLocalFavoriteGroup) {
                     addLocalWorldFavorite(ref.id, D.worldImportLocalFavoriteGroup);

@@ -121,6 +121,7 @@
     const { favoriteFriendGroups, friendImportDialogInput, friendImportDialogVisible } =
         storeToRefs(useFavoriteStore());
     const { showFullscreenImageDialog } = useGalleryStore();
+    const { getCachedFavoritesByObjectId } = useFavoriteStore();
 
     const friendImportDialog = ref({
         loading: false,
@@ -234,6 +235,9 @@
                     break;
                 }
                 ref = data[i];
+                if (getCachedFavoritesByObjectId(ref.id)) {
+                    throw new Error('Friend is already in favorites');
+                }
                 await addFavoriteUser(ref, D.friendImportFavoriteGroup, false);
                 removeFromArray(friendImportTable.value.data, ref);
                 D.userIdList.delete(ref.id);
@@ -250,7 +254,7 @@
     function addFavoriteUser(ref, group, message) {
         return favoriteRequest
             .addFavorite({
-                type: 'friend',
+                type: group.type,
                 favoriteId: ref.id,
                 tags: group.name
             })
