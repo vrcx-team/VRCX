@@ -33,6 +33,7 @@
         "github": "GitHub 仓库",
         "discord": "加入 Discord",
         "whats_new": "更新日志",
+        "update_available": "有可用更新",
         "custom_nav": {
             "header": "自定义导航栏",
             "dialog_title": "自定义导航栏",
@@ -185,6 +186,8 @@
                 "removed_list_header": "已删除的模型列表：",
                 "copy_removed_ids": "复制已删除的模型ID",
                 "copied_ids": "模型ID已复制到剪贴板",
+                "copy_failed": "复制到剪贴板失败",
+                "dismiss": "关闭",
                 "checking_progress": "正在检查模型 ({current}/{total})...",
                 "confirm_delete_invalid": "删除失效模型？",
                 "confirm_delete_description": "发现 {count} 个失效模型，是否删除它们？",
@@ -551,6 +554,7 @@
                     "theme_mode_system": "跟随系统",
                     "theme_mode_light": "浅色",
                     "theme_mode_dark": "深色",
+                    "theme_mode_midnight": "Midnight",
                     "theme_mode_blue": "蓝色",
                     "theme_mode_darkblue": "深蓝色",
                     "theme_mode_amoled": "纯黑（Amoled）",
@@ -561,6 +565,7 @@
                     "zoom": "界面缩放",
                     "vrcplus_profile_icons": "VRC+ 个人资料图标",
                     "tooltips": "显示提示",
+                    "show_instance_id": "显示房间 ID",
                     "age_gated_instances": "显示具有年龄限制的房间",
                     "nicknames": "显示本地好友备注",
                     "sort_favorite_by": "收藏排序规则",
@@ -906,6 +911,11 @@
         "pending_offline": "可能离线"
     },
     "dialog": {
+        "alertdialog": {
+            "ok": "确定",
+            "cancel": "取消",
+            "confirm": "确认"
+        },
         "user": {
             "status": {
                 "active": "活跃中",
@@ -1064,6 +1074,7 @@
                 "sort_by": "排序方式：",
                 "sort_by_name": "名称",
                 "sort_by_update": "更新时间",
+                "sort_by_uploaded": "上传时间",
                 "all": "所有",
                 "public": "公开",
                 "private": "私人",
@@ -1531,6 +1542,11 @@
             "header": "VRCX 更新",
             "latest_version": "VRCX 已是最新版本",
             "ready_for_update": "现已准备好安装更新，重启 VRCX 以开始安装",
+            "branch_stable": "稳定版",
+            "branch_nightly": "测试版",
+            "nightly_title": "测试版构建",
+            "nightly_notice": "测试版构建一般用于新功能测试。如果你需要稳定性，请使用稳定版构建。",
+            "release": "发布版",
             "download": "下载",
             "install": "安装",
             "cancel": "取消"
@@ -1895,7 +1911,8 @@
                 "created": "创建日期",
                 "description": "描述",
                 "export_to_calendar": "导出到日历",
-                "download_ics": "下载 .ics 文件"
+                "download_ics": "下载 .ics 文件",
+                "copied_event_link": "相关活动日历的链接已复制到剪贴板"
             },
             "featured_events": "精选活动"
         },
@@ -1966,6 +1983,11 @@
             "already_first": "已是第一张图片",
             "already_last": "已是最后一张图片",
             "reordered": "相册图片排序成功"
+        },
+        "upload": {
+            "loading": "上传中",
+            "success": "上传成功",
+            "error": "上传失败"
         },
         "world": {
             "image_changed": "已更改世界封面",
@@ -2226,6 +2248,9 @@
         }
     },
     "table": {
+        "pagination": {
+            "rows_per_page": "每页行数"
+        },
         "feed": {
             "date": "时间",
             "type": "类型",
