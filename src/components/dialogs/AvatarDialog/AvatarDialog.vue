@@ -326,7 +326,7 @@
                     </div>
                 </div>
                 <TabsUnderline
-                    v-model="avatarDialogLastActiveTab"
+                    v-model="avatarDialogActiveTab"
                     :items="avatarDialogTabs"
                     :unmount-on-hide="false"
                     @update:modelValue="avatarDialogTabClick">
@@ -615,6 +615,7 @@
         { value: 'JSON', label: t('dialog.avatar.json.header') }
     ]);
 
+    const avatarDialogActiveTab = ref('Info');
     const avatarDialogLastActiveTab = ref('Info');
     const changeAvatarImageDialogVisible = ref(false);
     const previousImageUrl = ref('');
@@ -686,6 +687,7 @@
     );
 
     function handleAvatarDialogTab(tabName) {
+        avatarDialogLastActiveTab.value = tabName;
         if (tabName === 'JSON') {
             refreshAvatarDialogTreeData();
         }

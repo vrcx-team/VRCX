@@ -317,7 +317,7 @@
                     </div>
                 </div>
                 <TabsUnderline
-                    v-model="worldDialogLastActiveTab"
+                    v-model="worldDialogActiveTab"
                     :items="worldDialogTabs"
                     :unmount-on-hide="false"
                     @update:modelValue="worldDialogTabClick">
@@ -921,6 +921,7 @@
         return platforms.join(', ');
     });
 
+    const worldDialogActiveTab = ref('Instances');
     const worldDialogLastActiveTab = ref('Instances');
 
     watch(
@@ -934,6 +935,7 @@
     );
 
     function handleWorldDialogTab(tabName) {
+        worldDialogLastActiveTab.value = tabName;
         if (tabName === 'JSON') {
             refreshWorldDialogTreeData();
         }

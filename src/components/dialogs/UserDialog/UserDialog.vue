@@ -19,7 +19,7 @@
                     :user-dialog-command="userDialogCommand" />
 
                 <TabsUnderline
-                    v-model="userDialogLastActiveTab"
+                    v-model="userDialogActiveTab"
                     :items="userDialogTabs"
                     :unmount-on-hide="false"
                     @update:modelValue="userDialogTabClick">
@@ -1515,6 +1515,7 @@
     const userDialogGroupAllSelected = ref(false);
     const userDialogGroupEditSelectedGroupIds = ref([]); // selected groups in edit mode
 
+    const userDialogActiveTab = ref('Info');
     const userDialogLastActiveTab = ref('Info');
     const userDialogLastMutualFriends = ref('');
     const userDialogLastGroup = ref('');
@@ -1636,6 +1637,7 @@
     }
 
     function handleUserDialogTab(tabName) {
+        userDialogLastActiveTab.value = tabName;
         const userId = userDialog.value.id;
         if (tabName === 'Info') {
             if (vrchatCredit.value === null) {
@@ -1643,6 +1645,7 @@
             }
         } else if (tabName === 'mutual') {
             if (userId === currentUser.value.id) {
+                userDialogActiveTab.value = 'Info';
                 userDialogLastActiveTab.value = 'Info';
                 return;
             }

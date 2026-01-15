@@ -349,7 +349,7 @@
                     </div>
                 </div>
                 <TabsUnderline
-                    v-model="groupDialogLastActiveTab"
+                    v-model="groupDialogActiveTab"
                     :items="groupDialogTabs"
                     :unmount-on-hide="false"
                     @update:modelValue="groupDialogTabClick">
@@ -1289,6 +1289,7 @@
 
     const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
 
+    const groupDialogActiveTab = ref('Info');
     const groupDialogLastActiveTab = ref('Info');
     const isGroupMembersDone = ref(false);
     const isGroupMembersLoading = ref(false);
@@ -1693,6 +1694,7 @@
     }
 
     function handleGroupDialogTab(tabName) {
+        groupDialogLastActiveTab.value = tabName;
         if (tabName === 'Members') {
             getGroupDialogGroupMembers();
         } else if (tabName === 'Photos') {
