@@ -199,7 +199,7 @@
                                     }}</label>
                                 </div>
                             </RadioGroup>
-                            <el-divider direction="vertical"></el-divider>
+                            <Separator orientation="vertical" class="mx-2 h-5" />
                             <RadioGroup
                                 :model-value="searchAvatarFilterRemote"
                                 class="flex items-center gap-4"
@@ -361,6 +361,7 @@
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupField } from '@/components/ui/input-group';
+    import { Separator } from '@/components/ui/separator';
     import { Spinner } from '@/components/ui/spinner';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';

@@ -1,0 +1,220 @@
+<script setup>
+    import {
+        CalendarCell,
+        CalendarCellTrigger,
+        CalendarGrid,
+        CalendarGridBody,
+        CalendarGridHead,
+        CalendarGridRow,
+        CalendarHeadCell,
+        CalendarHeader,
+        CalendarHeading,
+        CalendarNextButton,
+        CalendarPrevButton
+    } from '@/components/ui/calendar';
+    import { computed, ref, watch } from 'vue';
+    import { fromDate, getLocalTimeZone } from '@internationalized/date';
+    import { CalendarRoot } from 'reka-ui';
+    import { toDate } from 'reka-ui/date';
+
+    import dayjs from 'dayjs';
+
+    const props = defineProps({
+        modelValue: {
+            type: Date,
+            required: true
+        },
+        isLoading: {
+            type: Boolean,
+            default: false
+        },
+        eventsByDate: {
+            type: Object,
+            default: () => ({})
+        },
+        followingByDate: {
+            type: Object,
+            default: () => ({})
+        }
+    });
+
+    const emit = defineEmits(['update:modelValue']);
+
+    const timeZone = getLocalTimeZone();
+
+    // JSDoc casts: this project can end up with nominal-type mismatches for DateValue
+    // due to duplicate @internationalized/date copies in tooling.
+    /** @type {import('vue').Ref<any>} */
+    const internalValue = ref(fromDate(props.modelValue ?? new Date(), timeZone));
+    /** @type {import('vue').Ref<any>} */
+    const placeholder = ref(fromDate(props.modelValue ?? new Date(), timeZone));
+
+    watch(
+        () => props.modelValue,
+        (next) => {
+            if (!next) return;
+            internalValue.value = fromDate(next, timeZone);
+            placeholder.value = fromDate(next, timeZone);
+        }
+    );
+
+    const selectedDayKey = computed(() => dayjs(props.modelValue).format('YYYY-MM-DD'));
+
+    function toKey(dateValue) {
+        return dayjs(toDate(dateValue, timeZone)).format('YYYY-MM-DD');
+    }
+
+    function eventCountFor(dateValue) {
+        const key = toKey(dateValue);
+        return props.eventsByDate?.[key]?.length ?? 0;
+    }
+
+    function hasFollowingFor(dateValue) {
+        const key = toKey(dateValue);
+        return Boolean(props.followingByDate?.[key]);
+    }
+
+    function onUpdateModelValue(next) {
+        if (!next) return;
+        internalValue.value = next;
+        const asDate = toDate(next, timeZone);
+        placeholder.value = next;
+        emit('update:modelValue', asDate);
+    }
+
+    function onUpdatePlaceholder(next) {
+        if (!next) return;
+        placeholder.value = next;
+        internalValue.value = next;
+        emit('update:modelValue', toDate(next, timeZone));
+    }
+
+    function dayLabel(dateValue) {
+        return dayjs(toDate(dateValue, timeZone)).format('D');
+    }
+</script>
+
+<template>
+    <div v-loading="props.isLoading" class="group-calendar-month">
+        <CalendarRoot
+            v-slot="{ grid, weekDays }"
+            :model-value="internalValue"
+            @update:modelValue="onUpdateModelValue"
+            :placeholder="placeholder"
+            @update:placeholder="onUpdatePlaceholder"
+            :prevent-deselect="true"
+            class="p-4">
+            <CalendarHeader class="pt-0">
+                <nav class="flex items-center gap-1 absolute top-0 inset-x-0 justify-between">
+                    <CalendarPrevButton class="size-9" />
+                    <CalendarNextButton class="size-9" />
+                </nav>
+                <div class="flex items-center justify-center">
+                    <CalendarHeading class="text-base" />
+                </div>
+            </CalendarHeader>
+
+            <div class="flex flex-col gap-y-4 mt-6">
+                <CalendarGrid v-for="month in grid" :key="month.value.toString()" class="w-full">
+                    <CalendarGridHead>
+                        <CalendarGridRow>
+                            <CalendarHeadCell v-for="day in weekDays" :key="day" class="text-sm">
+                                {{ day }}
+                            </CalendarHeadCell>
+                        </CalendarGridRow>
+                    </CalendarGridHead>
+                    <CalendarGridBody>
+                        <CalendarGridRow
+                            v-for="(weekDates, index) in month.rows"
+                            :key="`weekDate-${index}`"
+                            class="mt-2 w-full">
+                            <CalendarCell v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate">
+                                <CalendarCellTrigger
+                                    :day="weekDate"
+                                    :month="month.value"
+                                    class="size-12 cursor-pointer">
+                                    <div class="date">
+                                        <div
+                                            class="calendar-date-content"
+                                            :class="{
+                                                'has-events': eventCountFor(weekDate) > 0,
+                                                'is-selected': toKey(weekDate) === selectedDayKey
+                                            }">
+                                            {{ dayLabel(weekDate) }}
+                                            <div
+                                                v-if="eventCountFor(weekDate) > 0"
+                                                class="calendar-event-badge"
+                                                :class="hasFollowingFor(weekDate) ? 'has-following' : 'no-following'">
+                                                {{ eventCountFor(weekDate) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </CalendarCellTrigger>
+                            </CalendarCell>
+                        </CalendarGridRow>
+                    </CalendarGridBody>
+                </CalendarGrid>
+            </div>
+        </CalendarRoot>
+    </div>
+</template>
+
+<style scoped>
+    .group-calendar-month {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    .date {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .calendar-date-content {
+        width: 80%;
+        height: 80%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 18px;
+        position: relative;
+    }
+
+    .calendar-date-content.has-events {
+        background-color: var(--group-calendar-event-bg, color-mix(in oklch, var(--el-color-primary) 10%, transparent));
+    }
+
+    .calendar-event-badge {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        min-width: 18px;
+        height: 18px;
+        border-radius: 9px;
+        color: var(--el-color-white, #fff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: bold;
+        box-shadow: var(--el-box-shadow-lighter);
+        z-index: 10;
+        padding: 0 5px;
+        line-height: 18px;
+    }
+
+    .calendar-event-badge.has-following {
+        background-color: var(--group-calendar-badge-following, var(--el-color-success));
+    }
+
+    .calendar-event-badge.no-following {
+        background-color: var(--group-calendar-badge-normal, var(--el-color-primary));
+    }
+</style>

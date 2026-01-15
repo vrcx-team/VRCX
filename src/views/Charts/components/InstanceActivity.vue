@@ -7,7 +7,7 @@
                     <HoverCardTrigger as-child>
                         <Info style="margin-left: 5px; font-size: 12px; opacity: 0.7" />
                     </HoverCardTrigger>
-                    <HoverCardContent side="bottom" align="start" class="w-[300px]">
+                    <HoverCardContent side="bottom" align="start" class="w-75">
                         <div class="tips-popover">
                             <div>{{ t('view.charts.instance_activity.tips.online_time') }}</div>
                             <div>{{ t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
@@ -98,13 +98,28 @@
                         </Button>
                     </TooltipWrapper>
                 </ButtonGroup>
-                <el-date-picker
-                    v-model="selectedDate"
-                    type="date"
-                    :clearable="false"
-                    :default-value="dayjs().toDate()"
-                    :disabled-date="getDatePickerDisabledDate"
-                    @change="reloadData"></el-date-picker>
+                <Popover v-model:open="isDatePickerOpen">
+                    <PopoverTrigger asChild>
+                        <div>
+                            <Button
+                                variant="outline"
+                                class="w-50 justify-start text-left font-normal"
+                                :disabled="isLoading">
+                                <CalendarIcon class="mr-2 h-4 w-4" />
+                                {{ dayjs(selectedDate).format('YYYY-MM-DD') }}
+                            </Button>
+                        </div>
+                    </PopoverTrigger>
+                    <PopoverContent class="w-auto p-0" align="end">
+                        <Calendar
+                            :model-value="calendarModelValue"
+                            :default-placeholder="defaultCalendarPlaceholder"
+                            :is-date-disabled="isCalendarDateDisabled"
+                            :prevent-deselect="true"
+                            initial-focus
+                            @update:modelValue="handleCalendarModelUpdate" />
+                    </PopoverContent>
+                </Popover>
             </div>
         </div>
         <div class="status-online">
@@ -125,7 +140,11 @@
 
         <transition name="el-fade-in-linear">
             <div v-show="isDetailVisible && !isLoading && activityData.length !== 0" class="divider">
-                <el-divider>·</el-divider>
+                <div class="flex items-center">
+                    <Separator class="flex-1" />
+                    <span class="px-2 text-muted-foreground">·</span>
+                    <Separator class="flex-1" />
+                </div>
             </div>
         </transition>
         <template v-if="isDetailVisible && activityData.length !== 0">
@@ -141,11 +160,15 @@
 
 <script setup>
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-    import { AlertTriangle, ArrowLeft, ArrowRight, Info, RefreshCcw, Settings } from 'lucide-vue-next';
+    import { ArrowLeft, ArrowRight, Calendar as CalendarIcon, Info, RefreshCcw, Settings } from 'lucide-vue-next';
     import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+    import { fromDate, getLocalTimeZone, today } from '@internationalized/date';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
+    import { Calendar } from '@/components/ui/calendar';
+    import { Separator } from '@/components/ui/separator';
     import { storeToRefs } from 'pinia';
+    import { toDate } from 'reka-ui/date';
     import { useI18n } from 'vue-i18n';
 
     import dayjs from 'dayjs';
@@ -257,6 +280,30 @@
         changeSelectedDateFromBtn,
         getDatePickerDisabledDate
     } = useDateNavigation(allDateOfActivity, () => reloadData());
+
+    const isDatePickerOpen = ref(false);
+    const calendarTimeZone = getLocalTimeZone();
+    const defaultCalendarPlaceholder = today(calendarTimeZone);
+
+    const calendarModelValue = computed(() => {
+        // Keep the rest of the feature using JS Date; adapt to Calendar's DateValue model.
+        return fromDate(selectedDate.value ?? new Date(), calendarTimeZone);
+    });
+
+    function isCalendarDateDisabled(dateValue) {
+        try {
+            return getDatePickerDisabledDate(toDate(dateValue, calendarTimeZone));
+        } catch {
+            return true;
+        }
+    }
+
+    function handleCalendarModelUpdate(dateValue) {
+        if (!dateValue) return;
+        selectedDate.value = toDate(dateValue, calendarTimeZone);
+        isDatePickerOpen.value = false;
+        reloadData();
+    }
 
     const activityChartRef = ref(null);
     const activityDetailChartRef = ref(null);
@@ -702,11 +749,6 @@
     .el-date-editor.el-input__inner {
         width: 200px;
     }
-    .el-divider__text {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-
     .status-online {
         display: flex;
         justify-content: center;

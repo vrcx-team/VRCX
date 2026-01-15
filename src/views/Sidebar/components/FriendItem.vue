@@ -45,23 +45,22 @@
             </Button>
         </template>
 
-        <el-skeleton v-else animated class="skeleton" :throttle="100">
-            <template #template>
+        <div v-else class="skeleton" aria-busy="true" aria-label="Loading">
+            <div>
+                <Skeleton class="h-10 w-10 rounded-full" />
                 <div>
-                    <el-skeleton-item variant="circle" />
-                    <div>
-                        <el-skeleton-item variant="text" />
-                        <el-skeleton-item variant="text" />
-                    </div>
+                    <Skeleton class="h-3.5 w-1/2" />
+                    <Skeleton class="mt-1.5 h-3 w-full" />
                 </div>
-            </template>
-        </el-skeleton>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup>
     import { AlertTriangle, Loader2, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
+    import { Skeleton } from '@/components/ui/skeleton';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -106,20 +105,6 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-            }
-        }
-        .el-skeleton__circle {
-            height: 40px;
-            width: 40px;
-        }
-        .el-skeleton__text {
-            &:first-child {
-                height: 14px;
-                margin-bottom: 6px;
-                width: 50%;
-            }
-            &:last-child {
-                height: 12px;
             }
         }
     }

@@ -1,6 +1,6 @@
 <template>
     <Dialog :open="visible" @update:open="(open) => (open ? null : closeDialog())">
-        <DialogContent class="x-dialog w-[90vw] max-w-[90vw] h-[80vh] overflow-hidden">
+        <DialogContent class="x-dialog w-[90vw] max-w-[90vw] sm:max-w-[70vw] h-[60vh] overflow-hidden">
             <DialogHeader>
                 <div class="dialog-title-container">
                     <DialogTitle>{{ t('dialog.group_calendar.header') }}</DialogTitle>
@@ -46,29 +46,11 @@
                         </div>
 
                         <div class="calendar-container">
-                            <el-calendar v-model="selectedDay" v-loading="isLoading">
-                                <template #date-cell="{ data }">
-                                    <div class="date">
-                                        <div
-                                            class="calendar-date-content"
-                                            :class="{
-                                                'has-events': filteredCalendar[formatDateKey(data.date)]?.length
-                                            }">
-                                            {{ dayjs(data.date).format('D') }}
-                                            <div
-                                                v-if="filteredCalendar[formatDateKey(data.date)]?.length"
-                                                class="calendar-event-badge"
-                                                :class="
-                                                    followingCalendarDate[formatDateKey(data.date)]
-                                                        ? 'has-following'
-                                                        : 'no-following'
-                                                ">
-                                                {{ filteredCalendar[formatDateKey(data.date)]?.length }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </template>
-                            </el-calendar>
+                            <GroupCalendarMonth
+                                v-model="selectedDay"
+                                :is-loading="isLoading"
+                                :events-by-date="filteredCalendar"
+                                :following-by-date="followingCalendarDate" />
                         </div>
                     </div>
                     <div v-else key="grid" class="grid-view">
@@ -134,6 +116,7 @@
     import { useGroupStore } from '../../../stores';
 
     import GroupCalendarEventCard from '../components/GroupCalendarEventCard.vue';
+    import GroupCalendarMonth from '../components/GroupCalendarMonth.vue';
     import configRepository from '../../../service/config';
 
     const { applyGroupEvent, showGroupDialog } = useGroupStore();

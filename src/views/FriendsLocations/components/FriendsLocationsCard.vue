@@ -2,9 +2,10 @@
     <Card class="friend-card p-0 gap-0" :style="cardStyle" @click="showUserDialog(friend.id)">
         <div class="friend-card__header">
             <div class="friend-card__avatar-wrapper">
-                <el-avatar :size="avatarSize" :src="userImage(props.friend.ref, true)" class="friend-card__avatar">
-                    {{ avatarFallback }}
-                </el-avatar>
+                <Avatar class="friend-card__avatar" :style="{ width: `${avatarSize}px`, height: `${avatarSize}px` }">
+                    <AvatarImage :src="userImage(props.friend.ref, true)" />
+                    <AvatarFallback>{{ avatarFallback }}</AvatarFallback>
+                </Avatar>
             </div>
             <span class="friend-card__status-dot" :class="statusDotClass"></span>
             <div class="friend-card__name ml-0.5" :title="friend.name">{{ friend.name }}</div>
@@ -26,6 +27,7 @@
 </template>
 
 <script setup>
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Card } from '@/components/ui/card';
     import { Pencil } from 'lucide-vue-next';
     import { computed } from 'vue';

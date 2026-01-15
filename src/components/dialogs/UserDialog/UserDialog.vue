@@ -194,25 +194,21 @@
                                             (userDialog.representedGroup && userDialog.representedGroup.isRepresenting)
                                         "
                                         class="extra">
-                                        <div style="display: inline-block; flex: none; margin-right: 5px">
-                                            <el-image
-                                                v-loading="userDialog.isRepresentedGroupLoading"
-                                                class="x-link"
-                                                :src="userDialog.representedGroup.$thumbnailUrl"
-                                                style="
-                                                    flex: none;
-                                                    width: 60px;
-                                                    height: 60px;
-                                                    border-radius: 4px;
-                                                    object-fit: cover;
-                                                "
+                                        <div
+                                            v-loading="userDialog.isRepresentedGroupLoading"
+                                            style="display: inline-block; flex: none; margin-right: 5px">
+                                            <Avatar
+                                                class="x-link size-15! rounded-lg!"
                                                 :style="{
                                                     background: userDialog.isRepresentedGroupLoading ? '#f5f7fa' : ''
                                                 }"
-                                                @load="userDialog.isRepresentedGroupLoading = false"
                                                 @click="showFullscreenImageDialog(userDialog.representedGroup.iconUrl)">
-                                                <template #error></template>
-                                            </el-image>
+                                                <AvatarImage
+                                                    :src="userDialog.representedGroup.$thumbnailUrl"
+                                                    @load="userDialog.isRepresentedGroupLoading = false"
+                                                    @error="userDialog.isRepresentedGroupLoading = false" />
+                                                <AvatarFallback class="rounded-lg!" />
+                                            </Avatar>
                                         </div>
                                         <span
                                             v-if="userDialog.representedGroup.isRepresenting"
@@ -1358,6 +1354,7 @@
         DropdownMenuItem,
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import { Spinner } from '@/components/ui/spinner';

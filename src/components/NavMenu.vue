@@ -73,14 +73,14 @@
                                 <span>{{ t('nav_menu.whats_new') }}</span>
                             </button>
                         </div>
-                        <el-divider></el-divider>
+                        <Separator />
                         <div class="nav-menu-support__section">
                             <span class="nav-menu-support__title">{{ t('nav_menu.resources') }}</span>
                             <button type="button" class="nav-menu-settings__item" @click="handleSupportLink('wiki')">
                                 <span>{{ t('nav_menu.wiki') }}</span>
                             </button>
                         </div>
-                        <el-divider></el-divider>
+                        <Separator />
                         <div class="nav-menu-support__section">
                             <span class="nav-menu-support__title">{{ t('nav_menu.get_help') }}</span>
                             <button type="button" class="nav-menu-settings__item" @click="handleSupportLink('github')">
@@ -129,7 +129,7 @@
                                 <span class="nav-menu-settings__version">{{ version }}</span>
                             </div>
                         </div>
-                        <el-divider></el-divider>
+                        <Separator />
                         <button type="button" class="nav-menu-settings__item" @click="handleSettingsClick">
                             <span>{{ t('nav_tooltip.settings') }}</span>
                         </button>
@@ -156,7 +156,7 @@
                                     <span v-if="themeMode === theme" class="nav-menu-theme__check">✓</span>
                                 </button>
 
-                                <el-divider></el-divider>
+                                <Separator />
 
                                 <el-popover
                                     v-model:visible="themeColorMenuVisible"
@@ -247,6 +247,7 @@
 <script setup>
     import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Separator } from '@/components/ui/separator';
     import { dayjs } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -752,10 +753,6 @@
 </script>
 
 <style scoped>
-    :deep(.el-divider) {
-        margin: 0;
-    }
-
     .nav-menu-container {
         position: relative;
         width: 100%;
