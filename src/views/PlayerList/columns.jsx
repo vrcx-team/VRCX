@@ -1,7 +1,13 @@
 import Timer from '../../components/Timer.vue';
 import { Button } from '../../components/ui/button';
 import { TooltipWrapper } from '../../components/ui/tooltip';
-import { ArrowUpDown } from 'lucide-vue-next';
+import {
+    Apple,
+    ArrowUpDown,
+    IdCard,
+    Monitor,
+    Smartphone
+} from 'lucide-vue-next';
 
 import {
     getFaviconUrl,
@@ -285,7 +291,7 @@ export const createColumns = ({
                         ) : null}
                         {r?.ageVerified ? (
                             <TooltipWrapper side="left" content="18+ Verified">
-                                <i class="ri-id-card-line x-tag-age-verification"></i>
+                                <IdCard class="h-4 w-4 x-tag-age-verification" />
                             </TooltipWrapper>
                         ) : null}
                     </div>
@@ -304,11 +310,11 @@ export const createColumns = ({
 
                 const platformIcon =
                     platform === 'standalonewindows' ? (
-                        <i class="ri-computer-line x-tag-platform-pc" />
+                        <Monitor class="h-4 w-4 x-tag-platform-pc" />
                     ) : platform === 'android' ? (
-                        <i class="ri-android-line x-tag-platform-quest" />
+                        <Smartphone class="h-4 w-4 x-tag-platform-quest" />
                     ) : platform === 'ios' ? (
-                        <i class="ri-apple-line x-tag-platform-ios" />
+                        <Apple class="h-4 w-4 x-tag-platform-ios" />
                     ) : platform ? (
                         <span>{String(platform)}</span>
                     ) : null;

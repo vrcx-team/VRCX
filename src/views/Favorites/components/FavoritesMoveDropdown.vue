@@ -2,8 +2,8 @@
     <DropdownMenu v-model:open="moveDropdownOpen" style="margin-left: 5px">
         <DropdownMenuTrigger as-child>
             <Button class="rounded-full w-6 h-6 text-xs" size="icon-sm" variant="ghost"
-                ><i class="ri-arrow-left-line"></i
-            ></Button>
+                ><ArrowLeft class="h-4 w-4"
+            /></Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent class="favorites-dropdown">
             <span style="font-weight: bold; display: block; text-align: center">
@@ -25,6 +25,7 @@
 
 <script setup>
     import { computed, ref } from 'vue';
+    import { ArrowLeft } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

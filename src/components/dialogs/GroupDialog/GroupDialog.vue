@@ -365,8 +365,8 @@
                                         size="icon"
                                         variant="outline"
                                         @click="refreshInstancePlayerCount(room.tag)"
-                                        ><i class="ri-refresh-line"></i
-                                    ></Button>
+                                        ><RefreshCw class="h-4 w-4" />
+                                    </Button>
                                 </TooltipWrapper>
                                 <LastJoin :location="room.tag" :currentlocation="lastLocation.location" />
                                 <InstanceInfo
@@ -629,8 +629,8 @@
                                                 size="icon-sm"
                                                 variant="outline"
                                                 @click="copyToClipboard(groupDialog.ref.$url)"
-                                                ><i class="ri-file-copy-line"></i
-                                            ></Button> </TooltipWrapper
+                                                ><Copy class="h-4 w-4" />
+                                            </Button> </TooltipWrapper
                                     ></span>
                                 </div>
                             </div>
@@ -645,8 +645,8 @@
                                                 size="icon-sm"
                                                 variant="outline"
                                                 @click="copyToClipboard(groupDialog.id)"
-                                                ><i class="ri-file-copy-line"></i
-                                            ></Button> </TooltipWrapper
+                                                ><Copy class="h-4 w-4" />
+                                            </Button> </TooltipWrapper
                                     ></span>
                                 </div>
                             </div>
@@ -806,8 +806,8 @@
                                                     class="h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
                                                     variant="ghost"
                                                     @click="showGroupPostEditDialog(groupDialog.id, post)"
-                                                    ><i class="ri-pencil-line"></i
-                                                ></Button>
+                                                    ><Pencil class="h-4 w-4" />
+                                                </Button>
                                             </TooltipWrapper>
                                             <TooltipWrapper
                                                 side="top"
@@ -817,8 +817,8 @@
                                                     class="h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
                                                     variant="ghost"
                                                     @click="confirmDeleteGroupPost(post)"
-                                                    ><i class="ri-delete-bin-line"></i
-                                                ></Button>
+                                                    ><Trash2 class="h-4 w-4" />
+                                                </Button>
                                             </TooltipWrapper>
                                         </template>
                                     </div>
@@ -1135,6 +1135,7 @@
         BellOff,
         Check,
         CheckCircle,
+        Copy,
         Download,
         Eye,
         Loader2,

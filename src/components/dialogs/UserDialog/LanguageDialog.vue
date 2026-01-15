@@ -26,7 +26,7 @@
                             cursor: pointer;
                         "
                         @click="removeUserLanguage(item.key)">
-                        <i class="ri-close-line" style="font-size: 12px; line-height: 1"></i>
+                        <X class="h-3 w-3" />
                     </button>
                 </Badge>
             </div>
@@ -58,6 +58,7 @@
 </template>
 
 <script setup>
+    import { X } from 'lucide-vue-next';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

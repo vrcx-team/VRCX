@@ -37,7 +37,7 @@
                                 :variant="shiftHeld ? 'destructive' : 'outline'"
                                 class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                                 @click.stop="handlePrimaryDeleteAction">
-                                <i class="ri-delete-bin-line"></i>
+                                <Trash2 class="h-4 w-4" />
                             </Button>
                         </div>
                     </div>
@@ -51,8 +51,8 @@
                                     variant="outline"
                                     class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                                     @click.stop="newInstanceSelfInvite(favorite.id)"
-                                    ><i class="ri-mail-line"></i
-                                ></Button>
+                                    ><Mail class="h-4 w-4"
+                                /></Button>
                             </TooltipWrapper>
                         </div>
                         <div class="favorites-search-card__action">
@@ -65,8 +65,8 @@
                                     variant="destructive"
                                     class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                                     @click.stop="handleDeleteFavorite"
-                                    ><i class="ri-delete-bin-line"></i
-                                ></Button>
+                                    ><Trash2 class="h-4 w-4"
+                                /></Button>
                             </TooltipWrapper>
                             <TooltipWrapper v-else side="top" :content="t('view.favorite.edit_favorite_tooltip')">
                                 <Button
@@ -74,8 +74,8 @@
                                     variant="outline"
                                     class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                                     @click.stop="showFavoriteDialog('world', favorite.id)"
-                                    ><i class="ri-star-line"></i
-                                ></Button>
+                                    ><Star class="h-4 w-4"
+                                /></Button>
                             </TooltipWrapper>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
                         size="icon-sm"
                         variant="outline"
                         @click.stop="handleDeleteFavorite">
-                        <i class="ri-delete-bin-line"></i>
+                        <Trash2 class="h-4 w-4" />
                     </Button>
                 </div>
             </div>
@@ -105,6 +105,7 @@
 </template>
 
 <script setup>
+    import { Mail, Star, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';

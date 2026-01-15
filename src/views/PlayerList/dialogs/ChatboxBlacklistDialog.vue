@@ -47,7 +47,7 @@
                         cursor: pointer;
                     "
                     @click="deleteChatboxUserBlacklist(user[0])">
-                    <i class="ri-close-line" style="font-size: 12px; line-height: 1"></i>
+                    <X class="h-3 w-3" style="line-height: 1" />
                 </button>
             </Badge>
         </div>
@@ -57,6 +57,7 @@
 <script setup>
     import { Button } from '@/components/ui/button';
     import { InputGroupAction } from '@/components/ui/input-group';
+    import { X } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

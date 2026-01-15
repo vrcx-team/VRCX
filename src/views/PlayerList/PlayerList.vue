@@ -59,7 +59,7 @@
                         </Badge>
                         <TooltipWrapper v-if="currentInstanceWorld.isPC" side="top" content="PC">
                             <Badge class="x-tag-platform-pc" variant="outline" style="margin-right: 5px"
-                                ><i class="ri-computer-line"></i>
+                                ><Monitor class="h-4 w-4" />
                                 <span
                                     v-if="currentInstanceWorld.bundleSizes['standalonewindows']"
                                     :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
@@ -69,7 +69,7 @@
                         </TooltipWrapper>
                         <TooltipWrapper v-if="currentInstanceWorld.isQuest" side="top" content="Android">
                             <Badge class="x-tag-platform-quest" variant="outline" style="margin-right: 5px"
-                                ><i class="ri-android-line"></i>
+                                ><Smartphone class="h-4 w-4" />
                                 <span
                                     v-if="currentInstanceWorld.bundleSizes['android']"
                                     :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
@@ -79,7 +79,7 @@
                         </TooltipWrapper>
                         <TooltipWrapper v-if="currentInstanceWorld.isIos" side="top" content="iOS">
                             <Badge class="x-tag-platform-ios" variant="outline" style="margin-right: 5px"
-                                ><i class="ri-apple-line"></i>
+                                ><Apple class="h-4 w-4" />
                                 <span
                                     v-if="currentInstanceWorld.bundleSizes['ios']"
                                     :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']"
@@ -167,7 +167,7 @@
 
 <script setup>
     import { computed, defineAsyncComponent, onActivated, onMounted, ref, watch } from 'vue';
-    import { Home } from 'lucide-vue-next';
+    import { Apple, Home, Monitor, Smartphone } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

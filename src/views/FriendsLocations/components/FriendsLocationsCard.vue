@@ -11,7 +11,7 @@
         </div>
         <div class="friend-card__body">
             <div class="friend-card__signature" :title="friend.ref?.statusDescription">
-                <i v-if="friend.ref?.statusDescription" class="ri-pencil-line mr-0.5" style="opacity: 0.7"></i>
+                <Pencil v-if="friend.ref?.statusDescription" class="h-3.5 w-3.5 mr-0.5" style="opacity: 0.7" />
                 {{ friend.ref?.statusDescription || '&nbsp;' }}
             </div>
             <div v-if="displayInstanceInfo" @click.stop class="friend-card__world" :title="friend.worldName">
@@ -26,8 +26,9 @@
 </template>
 
 <script setup>
-    import { computed } from 'vue';
     import { Card } from '@/components/ui/card';
+    import { Pencil } from 'lucide-vue-next';
+    import { computed } from 'vue';
 
     import { userImage, userStatusClass } from '../../../shared/utils';
     import { useUserStore } from '../../../stores';

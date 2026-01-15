@@ -45,7 +45,7 @@
                                     class="x-tag-platform-pc"
                                     variant="outline"
                                     style="margin-right: 5px; margin-top: 5px"
-                                    ><i class="ri-computer-line"></i>
+                                    ><Monitor class="h-4 w-4 x-tag-platform-pc" />
                                     <span
                                         v-if="avatarDialog.platformInfo.pc"
                                         :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
@@ -63,7 +63,7 @@
                                     class="x-tag-platform-quest"
                                     variant="outline"
                                     style="margin-right: 5px; margin-top: 5px"
-                                    ><i class="ri-android-line"></i>
+                                    ><Smartphone class="h-4 w-4 x-tag-platform-quest" />
                                     <span
                                         v-if="avatarDialog.platformInfo.android"
                                         :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
@@ -81,7 +81,7 @@
                                     class="x-tag-platform-ios"
                                     variant="outline"
                                     style="margin-right: 5px; margin-top: 5px"
-                                    ><i class="ri-apple-line"></i>
+                                    ><Apple class="h-4 w-4 x-tag-platform-ios" />
                                     <span
                                         v-if="avatarDialog.platformInfo.ios"
                                         :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']"
@@ -420,8 +420,8 @@
                                                     size="icon-sm"
                                                     variant="outline"
                                                     @click.stop
-                                                    ><i class="ri-file-copy-line"></i
-                                                ></Button>
+                                                    ><Copy class="h-4 w-4" />
+                                                </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent>
                                                 <DropdownMenuItem @click="copyAvatarId(avatarDialog.id)">
@@ -523,15 +523,19 @@
 <script setup>
     import {
         AlertTriangle,
+        Apple,
         Check,
         CheckCircle,
+        Copy,
         Download,
         Ellipsis,
         Image,
+        Monitor,
         Pencil,
         RefreshCcw,
         RefreshCw,
         Share2,
+        Smartphone,
         Star,
         Trash2,
         Upload,

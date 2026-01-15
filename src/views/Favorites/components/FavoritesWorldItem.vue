@@ -19,14 +19,14 @@
                         <span
                             v-if="favorite.deleted || favorite.ref.releaseStatus === 'private'"
                             class="favorites-search-card__badges">
-                            <i
+                            <AlertTriangle
                                 v-if="favorite.deleted"
                                 :title="t('view.favorite.unavailable_tooltip')"
-                                class="ri-error-warning-line"></i>
-                            <i
+                                class="h-4 w-4" />
+                            <Lock
                                 v-if="favorite.ref.releaseStatus === 'private'"
                                 :title="t('view.favorite.private')"
-                                class="ri-lock-line"></i>
+                                class="h-4 w-4" />
                         </span>
                     </div>
                     <span class="extra">
@@ -55,7 +55,7 @@
                                 variant="outline"
                                 class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                                 @click.stop="handleDeleteFavorite">
-                                <i class="ri-delete-bin-line"></i>
+                                <Trash2 class="h-4 w-4" />
                             </Button>
                         </div>
                     </div>
@@ -69,8 +69,8 @@
                                     variant="outline"
                                     class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                                     @click.stop="newInstanceSelfInvite(favorite.id)"
-                                    ><i class="ri-mail-line"></i
-                                ></Button>
+                                    ><Mail class="h-4 w-4"
+                                /></Button>
                             </TooltipWrapper>
                         </div>
                         <div class="favorites-search-card__action">
@@ -83,8 +83,8 @@
                                     variant="destructive"
                                     class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                                     @click.stop="handleDeleteFavorite"
-                                    ><i class="ri-delete-bin-line"></i
-                                ></Button>
+                                    ><Trash2 class="h-4 w-4"
+                                /></Button>
                             </TooltipWrapper>
                             <TooltipWrapper v-else side="top" :content="t('view.favorite.edit_favorite_tooltip')">
                                 <Button
@@ -92,8 +92,8 @@
                                     variant="outline"
                                     class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                                     @click.stop="showFavoriteDialog('world', favorite.id)"
-                                    ><i class="ri-star-line"></i
-                                ></Button>
+                                    ><Star class="h-4 w-4"
+                                /></Button>
                             </TooltipWrapper>
                         </div>
                     </div>
@@ -105,10 +105,10 @@
                 <div class="favorites-search-card__avatar is-empty"></div>
                 <div class="favorites-search-card__detail" v-once>
                     <span>{{ favorite.name || favorite.id }}</span>
-                    <i
+                    <AlertTriangle
                         v-if="favorite.deleted"
                         :title="t('view.favorite.unavailable_tooltip')"
-                        class="ri-error-warning-line"></i>
+                        class="h-4 w-4" />
                 </div>
             </div>
             <div class="favorites-search-card__actions">
@@ -118,7 +118,7 @@
                         size="icon-sm"
                         variant="outline"
                         @click.stop="handleDeleteFavorite">
-                        <i class="ri-delete-bin-line"></i>
+                        <Trash2 class="h-4 w-4" />
                     </Button>
                 </div>
             </div>
@@ -127,6 +127,7 @@
 </template>
 
 <script setup>
+    import { AlertTriangle, Lock, Mail, Star, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import { computed } from 'vue';

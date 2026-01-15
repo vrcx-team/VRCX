@@ -58,7 +58,7 @@
                                     class="x-tag-platform-pc"
                                     variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
-                                    <i class="ri-computer-line"></i
+                                    <Monitor class="h-4 w-4 x-tag-platform-pc" />
                                     ><span
                                         v-if="worldDialog.bundleSizes['standalonewindows']"
                                         :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']">
@@ -72,7 +72,7 @@
                                     class="x-tag-platform-quest"
                                     variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
-                                    <i class="ri-android-line"></i
+                                    <Smartphone class="h-4 w-4 x-tag-platform-quest" />
                                     ><span
                                         v-if="worldDialog.bundleSizes['android']"
                                         :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']">
@@ -86,7 +86,7 @@
                                     class="x-tag-platform-ios"
                                     variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
-                                    <i class="ri-apple-line"></i
+                                    <Apple class="h-4 w-4 x-tag-platform-ios" />
                                     ><span
                                         v-if="worldDialog.bundleSizes['ios']"
                                         :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']">
@@ -357,8 +357,8 @@
                                             size="icon"
                                             variant="outline"
                                             @click="refreshInstancePlayerCount(room.tag)"
-                                            ><i class="ri-refresh-line"></i
-                                        ></Button>
+                                            ><RefreshCw class="h-4 w-4" />
+                                        </Button>
                                     </TooltipWrapper>
                                     <TooltipWrapper
                                         v-if="instanceJoinHistory.get(room.$location.tag)"
@@ -370,8 +370,8 @@
                                             variant="outline"
                                             style="margin-left: 5px"
                                             @click="showPreviousInstancesInfoDialog(room.location)"
-                                            ><i class="ri-history-line"></i
-                                        ></Button>
+                                            ><History class="h-4 w-4" />
+                                        </Button>
                                     </TooltipWrapper>
                                     <LastJoin :location="room.$location.tag" :currentlocation="lastLocation.location" />
                                     <InstanceInfo
@@ -463,8 +463,8 @@
                                                     size="icon-sm"
                                                     variant="outline"
                                                     @click.stop
-                                                    ><i class="ri-file-copy-line"></i
-                                                ></Button>
+                                                    ><Copy class="h-4 w-4" />
+                                                </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent>
                                                 <DropdownMenuItem @click="copyWorldId()">
@@ -718,21 +718,26 @@
 <script setup>
     import {
         AlertTriangle,
+        Apple,
         ArrowDown,
         Check,
+        Copy,
         Download,
         Ellipsis,
         Eye,
         Flag,
+        History,
         Home,
         Image,
         LineChart,
         Loader2,
         MessageSquare,
+        Monitor,
         Pencil,
         RefreshCcw,
         RefreshCw,
         Share2,
+        Smartphone,
         Star,
         Trash2,
         Upload,

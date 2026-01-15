@@ -41,7 +41,7 @@
                 variant="ghost"
                 class="mr-1 w-6 h-6 text-xs"
                 @click.stop="$emit('confirm-delete-friend', friend.id)"
-                ><i class="ri-delete-bin-2-line"></i>
+                ><Trash2 class="h-4 w-4" />
             </Button>
         </template>
 
@@ -60,7 +60,7 @@
 </template>
 
 <script setup>
-    import { Loader2, AlertTriangle } from 'lucide-vue-next';
+    import { AlertTriangle, Loader2, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';

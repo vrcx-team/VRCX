@@ -7,8 +7,8 @@
                 variant="outline"
                 v-show="isVisible"
                 @click="confirmInvite"
-                ><i class="ri-mail-line"></i
-            ></Button>
+                ><Mail class="h-4 w-4" /> ></Button
+            >
         </TooltipWrapper>
         <TooltipWrapper v-else side="top" :content="t('dialog.user.info.open_in_vrchat_tooltip')">
             <Button
@@ -16,7 +16,7 @@
                 size="icon-sm"
                 variant="outline"
                 v-if="isOpeningInstance">
-                <i class="ri-loader-line"></i>
+                <Loader2 class="h-4 w-4 animate-spin" />
             </Button>
             <Button
                 class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
@@ -24,13 +24,14 @@
                 variant="outline"
                 v-else
                 @click="openInstance"
-                ><i class="ri-mail-line"></i
-            ></Button>
+                ><Mail class="h-4 w-4"
+            /></Button>
         </TooltipWrapper>
     </div>
 </template>
 
 <script setup>
+    import { Loader2, Mail } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';

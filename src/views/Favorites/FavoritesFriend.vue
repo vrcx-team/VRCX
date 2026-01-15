@@ -5,7 +5,7 @@
                 <Select :model-value="sortFavorites" @update:modelValue="handleSortFavoritesChange">
                     <SelectTrigger size="sm" class="favorites-toolbar__select">
                         <span class="flex items-center gap-2">
-                            <i class="ri-sort-asc"></i>
+                            <ArrowUpDown class="h-4 w-4" />
                             <SelectValue
                                 :placeholder="t('view.settings.appearance.appearance.sort_favorite_by_name')" />
                         </span>
@@ -106,7 +106,10 @@
                                 <div
                                     v-for="group in favoriteFriendGroups"
                                     :key="group.key"
-                                    :class="[ 'group-item', { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) } ]"
+                                    :class="[
+                                        'group-item',
+                                        { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
+                                    ]"
                                     @click="handleGroupClick('remote', group.key)">
                                     <div class="group-item__top">
                                         <span class="group-item__name">{{ group.displayName }}</span>
@@ -149,7 +152,13 @@
                                                                         v-for="visibility in friendGroupVisibilityOptions"
                                                                         :key="visibility"
                                                                         type="button"
-                                                                        :class="[ 'group-visibility-menu__item', { 'is-active': group.visibility === visibility } ]"
+                                                                        :class="[
+                                                                            'group-visibility-menu__item',
+                                                                            {
+                                                                                'is-active':
+                                                                                    group.visibility === visibility
+                                                                            }
+                                                                        ]"
                                                                         @click="
                                                                             handleVisibilitySelection(group, visibility)
                                                                         ">
@@ -157,7 +166,7 @@
                                                                         <span
                                                                             v-if="group.visibility === visibility"
                                                                             class="group-visibility-menu__check">
-                                                                            <i class="ri-check-line"></i>
+                                                                            <Check class="h-3 w-3" />
                                                                         </span>
                                                                     </button>
                                                                 </div>
@@ -301,10 +310,9 @@
 
 <script setup>
     import { computed, nextTick, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue';
-    import { MoreHorizontal, RefreshCw } from 'lucide-vue-next';
+    import { ArrowUpDown, Check, Ellipsis, MoreHorizontal, RefreshCw } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';
-    import { Ellipsis } from 'lucide-vue-next';
     import { InputGroupSearch } from '@/components/ui/input-group';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';

@@ -7,7 +7,7 @@ import {
     TooltipProvider,
     TooltipTrigger
 } from '../../components/ui/tooltip';
-import { ArrowUpDown } from 'lucide-vue-next';
+import { ArrowUpDown, FileText, Trash2, X } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
 import { formatDateFilter, openExternalLink } from '../../shared/utils';
@@ -268,13 +268,11 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                                         : onDeletePrompt(original)
                                 }
                             >
-                                <i
-                                    class={
-                                        shiftHeld.value
-                                            ? 'ri-close-line text-red-600'
-                                            : 'ri-delete-bin-line'
-                                    }
-                                />
+                                {shiftHeld.value ? (
+                                    <X class="h-4 w-4 text-red-600" />
+                                ) : (
+                                    <Trash2 class="h-4 w-4" />
+                                )}
                             </button>
                         ) : null}
                         {canShowPrevious ? (
@@ -290,7 +288,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                                                 )
                                             }
                                         >
-                                            <i class="ri-file-list-2-line" />
+                                            <FileText class="h-4 w-4" />
                                         </button>
                                     </TooltipTrigger>
                                     <TooltipContent side="top">

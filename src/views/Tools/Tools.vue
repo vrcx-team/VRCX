@@ -6,14 +6,16 @@
             <div class="tool-categories">
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('group')">
-                        <ArrowRight class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['group'] }" />
+                        <ArrowRight
+                            class="rotation-transition"
+                            :class="{ 'is-rotated': !categoryCollapsed['group'] }" />
                         <span class="category-title">{{ t('view.tools.group.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['group']">
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showGroupCalendarDialog">
                                 <div class="tool-icon">
-                                    <i class="ri-calendar-event-line"></i>
+                                    <CalendarDays />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.group.calendar') }}</div>
@@ -26,14 +28,16 @@
 
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('image')">
-                        <ArrowRight class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['image'] }" />
+                        <ArrowRight
+                            class="rotation-transition"
+                            :class="{ 'is-rotated': !categoryCollapsed['image'] }" />
                         <span class="category-title">{{ t('view.tools.pictures.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showScreenshotMetadataPage">
                                 <div class="tool-icon">
-                                    <i class="ri-screenshot-2-line"></i>
+                                    <Camera />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.pictures.screenshot') }}</div>
@@ -46,7 +50,7 @@
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showGalleryPage">
                                 <div class="tool-icon">
-                                    <i class="ri-multi-image-line"></i>
+                                    <Images />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.pictures.inventory') }}</div>
@@ -59,7 +63,7 @@
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="openVrcPhotosFolder">
                                 <div class="tool-icon">
-                                    <i class="ri-folder-image-line"></i>
+                                    <FolderOpen />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.pictures.pictures.vrc_photos') }}</div>
@@ -72,7 +76,7 @@
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="openVrcScreenshotsFolder">
                                 <div class="tool-icon">
-                                    <i class="ri-folder-image-line"></i>
+                                    <FolderOpen />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">
@@ -97,7 +101,7 @@
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportDiscordNamesDialog">
                                 <div class="tool-icon">
-                                    <i class="ri-discord-line"></i>
+                                    <MessageSquare />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.export.discord_names') }}</div>
@@ -110,7 +114,7 @@
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showNoteExportDialog">
                                 <div class="tool-icon">
-                                    <i class="ri-user-shared-line"></i>
+                                    <UserCheck />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.export.export_notes') }}</div>
@@ -124,7 +128,7 @@
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportFriendsListDialog">
                                 <div class="tool-icon">
-                                    <i class="ri-user-shared-line"></i>
+                                    <UserCheck />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.export.export_friend_list') }}</div>
@@ -137,7 +141,7 @@
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportAvatarsListDialog">
                                 <div class="tool-icon">
-                                    <i class="ri-user-shared-line"></i>
+                                    <UserCheck />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.export.export_own_avatars') }}</div>
@@ -152,14 +156,16 @@
 
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('other')">
-                        <ArrowRight class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['other'] }" />
+                        <ArrowRight
+                            class="rotation-transition"
+                            :class="{ 'is-rotated': !categoryCollapsed['other'] }" />
                         <span class="category-title">{{ t('view.tools.other.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['other']">
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showEditInviteMessageDialog">
                                 <div class="tool-icon">
-                                    <i class="ri-edit-box-line"></i>
+                                    <SquarePen />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.other.edit_invite_message') }}</div>
@@ -195,9 +201,18 @@
 </template>
 
 <script setup>
+    import {
+        ArrowRight,
+        CalendarDays,
+        Camera,
+        FolderOpen,
+        Images,
+        MessageSquare,
+        SquarePen,
+        UserCheck
+    } from 'lucide-vue-next';
     import { computed, defineAsyncComponent, ref } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
-    import { ArrowRight } from 'lucide-vue-next';
     import { Card } from '@/components/ui/card';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

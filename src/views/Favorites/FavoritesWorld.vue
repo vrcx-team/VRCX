@@ -5,7 +5,7 @@
                 <Select :model-value="sortFavorites" @update:modelValue="handleSortFavoritesChange">
                     <SelectTrigger size="sm" class="favorites-toolbar__select">
                         <span class="flex items-center gap-2">
-                            <i class="ri-sort-asc"></i>
+                            <ArrowUpDown class="h-4 w-4" />
                             <SelectValue
                                 :placeholder="t('view.settings.appearance.appearance.sort_favorite_by_name')" />
                         </span>
@@ -437,7 +437,7 @@
 
 <script setup>
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-    import { Ellipsis, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
+    import { ArrowUpDown, Ellipsis, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
     import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';

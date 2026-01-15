@@ -46,8 +46,8 @@
                                                 size="icon"
                                                 variant="outline"
                                                 @click="refreshInstancePlayerCount(userDialog.$location.tag)"
-                                                ><i class="ri-refresh-line"></i
-                                            ></Button>
+                                                ><RefreshCw class="h-4 w-4" />
+                                            </Button>
                                         </TooltipWrapper>
                                         <LastJoin
                                             :location="userDialog.$location.tag"
@@ -250,8 +250,8 @@
                                         variant="ghost"
                                         @click="translateBio">
                                         <Spinner v-if="translateLoading" class="size-1" />
-                                        <i v-else class="ri-translate-2"> </i
-                                    ></Button>
+                                        <Languages v-else class="h-3 w-3" />
+                                    </Button>
                                     <Button
                                         class="w-3 h-6 text-xs"
                                         size="icon-sm"
@@ -259,8 +259,8 @@
                                         v-if="userDialog.id === currentUser.id"
                                         style="margin-left: 5px; padding: 0"
                                         @click="showBioDialog"
-                                        ><i class="ri-pencil-line"></i
-                                    ></Button>
+                                        ><Pencil class="h-3 w-3" />
+                                    </Button>
                                 </div>
                                 <div style="margin-top: 5px" class="flex items-center">
                                     <TooltipWrapper v-for="(link, index) in userDialog.ref.bioLinks" :key="index">
@@ -511,7 +511,7 @@
                                         size="icon-sm"
                                         variant="outline"
                                         @click.stop="resetHome()"
-                                        ><i class="ri-delete-bin-line"></i>
+                                        ><Trash2 class="h-4 w-4" />
                                     </Button>
                                 </span>
                             </div>
@@ -529,8 +529,8 @@
                                                     size="icon-sm"
                                                     variant="outline"
                                                     @click.stop
-                                                    ><i class="ri-file-copy-line"></i
-                                                ></Button>
+                                                    ><Copy class="h-4 w-4" />
+                                                </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent>
                                                 <DropdownMenuItem @click="copyUserId(userDialog.id)">
@@ -1302,14 +1302,18 @@
         AlertTriangle,
         ArrowDown,
         ArrowUp,
+        Copy,
         Download,
         Eye,
+        Languages,
         Loader2,
         LogOut,
         MoreHorizontal,
+        Pencil,
         RefreshCcw,
         RefreshCw,
-        Tag
+        Tag,
+        Trash2
     } from 'lucide-vue-next';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';

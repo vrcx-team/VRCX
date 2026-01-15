@@ -408,7 +408,7 @@
                         cursor: pointer;
                     "
                     @click="deleteSelectedGroupMember(user)">
-                    <i class="ri-close-line" style="font-size: 12px; line-height: 1"></i>
+                    <X class="h-3 w-3" />
                 </button>
             </Badge>
             <br />
@@ -526,7 +526,7 @@
 </template>
 
 <script setup>
-    import { AlertTriangle, ArrowDown, Loader2, RefreshCw, Trash2 } from 'lucide-vue-next';
+    import { AlertTriangle, ArrowDown, Loader2, RefreshCw, Trash2, X } from 'lucide-vue-next';
     import { computed, reactive, ref, watch } from 'vue';
     import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';

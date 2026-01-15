@@ -159,10 +159,10 @@
                 :long-label="true"
                 @change="changeTranslationAPI('VRCX_translationAPI')" />
             <div class="options-container-item">
-                <Button size="sm" variant="outline" @click="showTranslationApiDialog"
-                    ><i class="ri-translate-2" style="margin-right: 5px"></i
-                    >{{ t('view.settings.advanced.advanced.translation_api.translation_api_key') }}</Button
-                >
+                <Button size="sm" variant="outline" @click="showTranslationApiDialog">
+                    <Languages class="h-4 w-4" style="margin-right: 5px" />
+                    {{ t('view.settings.advanced.advanced.translation_api.translation_api_key') }}
+                </Button>
             </div>
         </div>
         <div class="options-container">
@@ -384,7 +384,7 @@
 </template>
 
 <script setup>
-    import { Folder, Package, RefreshCcw, Settings, Trash2 } from 'lucide-vue-next';
+    import { Folder, Languages, Package, RefreshCcw, Settings, Trash2 } from 'lucide-vue-next';
     import { computed, reactive, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';

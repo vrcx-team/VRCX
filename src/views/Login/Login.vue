@@ -147,8 +147,8 @@
                                     variant="ghost"
                                     style="margin-left: 10px"
                                     @click.stop="clickDeleteSavedLogin(user.user.id)"
-                                    ><i class="ri-delete-bin-line h-3 w-3"></i
-                                ></Button>
+                                    ><Trash2 class="h-3 w-3"
+                                /></Button>
                             </div>
                         </div>
                     </div>
@@ -179,7 +179,7 @@
 <script setup>
     import { Field, FieldContent, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
-    import { CircleArrowDown, Route } from 'lucide-vue-next';
+    import { CircleArrowDown, Route, Trash2 } from 'lucide-vue-next';
     import { Field as VeeField, useForm } from 'vee-validate';
     import { useRoute, useRouter } from 'vue-router';
     import { Button } from '@/components/ui/button';

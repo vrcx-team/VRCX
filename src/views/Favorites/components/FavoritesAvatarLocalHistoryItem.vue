@@ -21,8 +21,9 @@
                             :disabled="currentUser.currentAvatar === favorite.id"
                             class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                             @click.stop="selectAvatarWithConfirmation(favorite.id)">
-                            <i class="ri-check-line"></i
-                        ></Button>
+                            <Check class="h-4 w-4" />
+                            ></Button
+                        >
                     </TooltipWrapper>
                 </div>
                 <div class="favorites-search-card__action">
@@ -33,14 +34,14 @@
                             variant="outline"
                             class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                             @click.stop="showFavoriteDialog('avatar', favorite.id)">
-                            <i class="ri-star-line"></i>
+                            <Star class="h-4 w-4" />
                         </Button>
                         <Button
                             v-else
                             size="icon-sm"
                             class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
                             @click.stop="showFavoriteDialog('avatar', favorite.id)">
-                            <i class="ri-star-line"></i>
+                            <Star class="h-4 w-4" />
                         </Button>
                     </TooltipWrapper>
                 </div>

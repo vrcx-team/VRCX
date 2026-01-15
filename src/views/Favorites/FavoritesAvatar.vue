@@ -5,7 +5,7 @@
                 <Select :model-value="sortFavorites" @update:modelValue="handleSortFavoritesChange">
                     <SelectTrigger size="sm" class="favorites-toolbar__select">
                         <span class="flex items-center gap-2">
-                            <i class="ri-sort-asc"></i>
+                            <ArrowUpDown class="h-4 w-4" />
                             <SelectValue
                                 :placeholder="t('view.settings.appearance.appearance.sort_favorite_by_name')" />
                         </span>
@@ -166,7 +166,7 @@
                                                                         <span
                                                                             v-if="group.visibility === visibility"
                                                                             class="group-visibility-menu__check">
-                                                                            <i class="ri-check-line"></i>
+                                                                            <Check class="h-3 w-3" />
                                                                         </span>
                                                                     </button>
                                                                 </div>
@@ -526,7 +526,7 @@
 
 <script setup>
     import { computed, markRaw, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-    import { Ellipsis, Loader, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
+    import { ArrowUpDown, Check, Ellipsis, Loader, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
     import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
     import { ElMessageBox } from 'element-plus';

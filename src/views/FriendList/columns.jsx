@@ -1,4 +1,4 @@
-import { ArrowUpDown } from 'lucide-vue-next';
+import { ArrowUpDown, UserMinus } from 'lucide-vue-next';
 
 import { Button } from '../../components/ui/button';
 import { Checkbox } from '../../components/ui/checkbox';
@@ -154,9 +154,7 @@ export const createColumns = ({
                 }),
             size: 100,
             sortingFn: sortByNumber((row) => row?.$friendNumber ?? 0),
-            cell: ({ row }) => (
-                <span>{row.original?.$friendNumber || ''}</span>
-            )
+            cell: ({ row }) => <span>{row.original?.$friendNumber || ''}</span>
         },
         {
             id: 'avatar',
@@ -292,10 +290,7 @@ export const createColumns = ({
                     {(row.original?.bioLinks ?? [])
                         .filter(Boolean)
                         .map((link, index) => (
-                            <TooltipWrapper
-                                key={index}
-                                content={String(link)}
-                            >
+                            <TooltipWrapper key={index} content={String(link)}>
                                 <img
                                     src={getFaviconUrl(link)}
                                     class="h-4 w-4 mr-1 align-middle cursor-pointer"
@@ -425,13 +420,14 @@ export const createColumns = ({
                 class: 'text-center'
             },
             cell: ({ row }) => (
-                <i
-                    class="ri-user-unfollow-line text-destructive"
+                // TODO(icon): verify unfollow icon replacement
+                <UserMinus
+                    class="h-4 w-4 text-destructive inline-block"
                     onClick={(event) => {
                         event.stopPropagation();
                         onConfirmDeleteFriend?.(row.original?.id);
                     }}
-                ></i>
+                />
             )
         }
     );
