@@ -1,43 +1,43 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="changeLogDialog.visible"
-        :title="t('dialog.change_log.header')"
-        width="800px"
-        append-to-body
-        @close="closeDialog">
-        <div v-loading="!changeLogDialog.changeLog" class="changelog-dialog">
-            <h2 v-text="changeLogDialog.buildName"></h2>
-            <span v-show="changeLogDialog.buildName">
-                {{ t('dialog.change_log.description') }}
-                <a class="x-link" @click="openExternalLink('https://www.patreon.com/Natsumi_VRCX')">Patreon</a>,
-                <a class="x-link" @click="openExternalLink('https://ko-fi.com/natsumi_sama')">Ko-fi</a>.
-            </span>
-            <VueShowdown
-                :markdown="changeLogDialog.changeLog"
-                flavor="github"
-                :options="showdownOptions"
-                @click="handleLinkClick"
-                style="height: 62vh; overflow-y: auto; margin-top: 10px" />
-        </div>
-        <template #footer>
-            <Button
-                variant="ghost"
-                class="mr-2"
-                @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')">
-                {{ t('dialog.change_log.github') }}
-            </Button>
-            <Button variant="outline" class="mr-2" @click="openExternalLink('https://patreon.com/Natsumi_VRCX')">
-                {{ t('dialog.change_log.donate') }}
-            </Button>
-            <Button @click="closeDialog">
-                {{ t('dialog.change_log.close') }}
-            </Button>
-        </template>
-    </el-dialog>
+    <Dialog v-model:open="changeLogDialog.visible">
+        <DialogContent class="sm:max-w-4xl">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.change_log.header') }}</DialogTitle>
+            </DialogHeader>
+            <div v-loading="!changeLogDialog.changeLog" class="changelog-dialog">
+                <h2 v-text="changeLogDialog.buildName"></h2>
+                <span v-show="changeLogDialog.buildName">
+                    {{ t('dialog.change_log.description') }}
+                    <a class="x-link" @click="openExternalLink('https://www.patreon.com/Natsumi_VRCX')">Patreon</a>,
+                    <a class="x-link" @click="openExternalLink('https://ko-fi.com/natsumi_sama')">Ko-fi</a>.
+                </span>
+                <VueShowdown
+                    :markdown="changeLogDialog.changeLog"
+                    flavor="github"
+                    :options="showdownOptions"
+                    @click="handleLinkClick"
+                    style="height: 62vh; overflow-y: auto; margin-top: 10px" />
+            </div>
+            <DialogFooter>
+                <Button
+                    variant="ghost"
+                    class="mr-2"
+                    @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')">
+                    {{ t('dialog.change_log.github') }}
+                </Button>
+                <Button variant="outline" class="mr-2" @click="openExternalLink('https://patreon.com/Natsumi_VRCX')">
+                    {{ t('dialog.change_log.donate') }}
+                </Button>
+                <Button @click="closeDialog">
+                    {{ t('dialog.change_log.close') }}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { defineAsyncComponent } from 'vue';
     import { storeToRefs } from 'pinia';

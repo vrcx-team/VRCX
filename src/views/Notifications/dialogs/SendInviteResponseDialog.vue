@@ -1,44 +1,44 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="sendInviteResponseDialogVisible"
-        :title="t('dialog.invite_response_message.header')"
-        width="800px"
-        append-to-body
-        @close="cancelSendInviteResponse">
-        <template v-if="isLocalUserVrcPlusSupporter">
-            <input class="inviteImageUploadButton" type="file" accept="image/*" @change="inviteImageUpload" />
-        </template>
+    <Dialog :open="sendInviteResponseDialogVisible" @update:open="(open) => (open ? null : cancelSendInviteResponse())">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.invite_response_message.header') }}</DialogTitle>
+            </DialogHeader>
+            <template v-if="isLocalUserVrcPlusSupporter">
+                <input class="inviteImageUploadButton" type="file" accept="image/*" @change="inviteImageUpload" />
+            </template>
 
-        <DataTableLayout
-            style="margin-top: 10px"
-            :table="inviteResponseTable"
-            :loading="false"
-            :show-pagination="false"
-            :on-row-click="handleInviteResponseRowClick" />
+            <DataTableLayout
+                style="margin-top: 10px"
+                :table="inviteResponseTable"
+                :loading="false"
+                :show-pagination="false"
+                :on-row-click="handleInviteResponseRowClick" />
 
-        <template #footer>
-            <Button variant="secondary" class="mr-2" @click="cancelSendInviteResponse">{{
-                t('dialog.invite_response_message.cancel')
-            }}</Button>
-            <Button @click="refreshInviteMessageTableData('response')">{{
-                t('dialog.invite_response_message.refresh')
-            }}</Button>
-        </template>
-        <EditAndSendInviteResponseDialog
-            :edit-and-send-invite-response-dialog="editAndSendInviteResponseDialog"
-            :send-invite-response-dialog="sendInviteResponseDialog"
-            @closeResponseConfirmDialog="closeResponseConfirmDialog"
-            @closeInviteDialog="closeInviteDialog" />
-        <SendInviteResponseConfirmDialog
-            :send-invite-response-dialog="sendInviteResponseDialog"
-            :send-invite-response-confirm-dialog="sendInviteResponseConfirmDialog"
-            @closeResponseConfirmDialog="closeResponseConfirmDialog"
-            @closeInviteDialog="closeInviteDialog" />
-    </el-dialog>
+            <DialogFooter>
+                <Button variant="secondary" class="mr-2" @click="cancelSendInviteResponse">{{
+                    t('dialog.invite_response_message.cancel')
+                }}</Button>
+                <Button @click="refreshInviteMessageTableData('response')">{{
+                    t('dialog.invite_response_message.refresh')
+                }}</Button>
+            </DialogFooter>
+            <EditAndSendInviteResponseDialog
+                :edit-and-send-invite-response-dialog="editAndSendInviteResponseDialog"
+                :send-invite-response-dialog="sendInviteResponseDialog"
+                @closeResponseConfirmDialog="closeResponseConfirmDialog"
+                @closeInviteDialog="closeInviteDialog" />
+            <SendInviteResponseConfirmDialog
+                :send-invite-response-dialog="sendInviteResponseDialog"
+                :send-invite-response-confirm-dialog="sendInviteResponseConfirmDialog"
+                @closeResponseConfirmDialog="closeResponseConfirmDialog"
+                @closeInviteDialog="closeInviteDialog" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { DataTableLayout } from '@/components/ui/data-table';

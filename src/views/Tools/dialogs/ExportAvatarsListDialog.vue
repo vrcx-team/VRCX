@@ -1,20 +1,26 @@
 <template>
-    <el-dialog v-model="isVisible" :title="t('dialog.export_own_avatars.header')" width="650px">
-        <InputGroupTextareaField
-            v-model="exportAvatarsListCsv"
-            v-loading="loading"
-            :rows="15"
-            readonly
-            style="margin-top: 15px"
-            input-class="resize-none"
-            @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
-    </el-dialog>
+    <Dialog v-model:open="isVisible">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.export_own_avatars.header') }}</DialogTitle>
+            </DialogHeader>
+            <InputGroupTextareaField
+                v-model="exportAvatarsListCsv"
+                v-loading="loading"
+                :rows="15"
+                readonly
+                style="margin-top: 15px"
+                input-class="resize-none"
+                @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
-    import { storeToRefs } from 'pinia';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { useAvatarStore, useUserStore } from '../../../stores';

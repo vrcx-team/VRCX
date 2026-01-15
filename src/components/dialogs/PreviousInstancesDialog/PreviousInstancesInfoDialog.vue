@@ -1,35 +1,41 @@
 <template>
-    <el-dialog
-        :z-index="previousInstancesInfoDialogIndex"
-        :model-value="previousInstancesInfoDialogVisible"
-        :title="t('dialog.previous_instances.info')"
-        width="800px"
-        :fullscreen="fullscreen"
-        destroy-on-close
-        @close="closeDialog">
-        <DataTableLayout
-            class="min-w-0 w-full"
-            :table="table"
-            :loading="loading"
-            :table-style="tableStyle"
-            :page-sizes="pageSizes"
-            :total-items="totalItems"
-            :on-page-size-change="handlePageSizeChange">
-            <template #toolbar>
-                <div style="display: flex; align-items: center; justify-content: space-between">
-                    <Location :location="location.tag" style="font-size: 14px" />
-                    <InputGroupField
-                        v-model="search"
-                        :placeholder="t('dialog.previous_instances.search_placeholder')"
-                        style="width: 150px"
-                        clearable />
-                </div>
-            </template>
-        </DataTableLayout>
-    </el-dialog>
+    <Dialog
+        :open="previousInstancesInfoDialogVisible"
+        @update:open="
+            (open) => {
+                if (!open) closeDialog();
+            }
+        ">
+        <DialogContent class="sm:max-w-200">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.previous_instances.info') }}</DialogTitle>
+            </DialogHeader>
+
+            <DataTableLayout
+                class="min-w-0 w-full"
+                :table="table"
+                :loading="loading"
+                :table-style="tableStyle"
+                :page-sizes="pageSizes"
+                :total-items="totalItems"
+                :on-page-size-change="handlePageSizeChange">
+                <template #toolbar>
+                    <div style="display: flex; align-items: center; justify-content: space-between">
+                        <Location :location="location.tag" style="font-size: 14px" />
+                        <InputGroupField
+                            v-model="search"
+                            :placeholder="t('dialog.previous_instances.search_placeholder')"
+                            style="width: 150px"
+                            clearable />
+                    </div>
+                </template>
+            </DataTableLayout>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, nextTick, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -40,7 +46,6 @@
     import { InputGroupField } from '../../../components/ui/input-group';
     import { createColumns } from './previousInstancesInfoColumns.jsx';
     import { database } from '../../../service/database';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     const { lookupUser } = useUserStore();
@@ -48,8 +53,6 @@
         storeToRefs(useInstanceStore());
     const { gameLogIsFriend, gameLogIsFavorite } = useGameLogStore();
     const { t } = useI18n();
-
-    const previousInstancesInfoDialogIndex = ref(2000);
 
     const loading = ref(false);
     const rawRows = ref([]);
@@ -147,7 +150,6 @@
     );
 
     function init() {
-        previousInstancesInfoDialogIndex.value = getNextDialogIndex();
         loading.value = true;
         location.value = parseLocation(previousInstancesInfoDialogInstanceId.value);
     }

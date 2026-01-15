@@ -1,10 +1,9 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        v-model="sendBoopDialog.visible"
-        :title="t('dialog.boop_dialog.header')"
-        width="450px"
-        @close="closeDialog">
+    <Dialog v-model:open="sendBoopDialog.visible">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.boop_dialog.header') }}</DialogTitle>
+            </DialogHeader>
         <span>{{ displayName }}</span>
 
         <br />
@@ -58,7 +57,7 @@
             </div>
         </div>
 
-        <template #footer>
+            <DialogFooter>
             <Button size="sm" variant="outline" class="mr-2" @click="showGalleryPage">{{
                 t('dialog.boop_dialog.emoji_manager')
             }}</Button>
@@ -68,14 +67,16 @@
             <Button size="sm" :disabled="!sendBoopDialog.userId" @click="sendBoop">{{
                 t('dialog.boop_dialog.send')
             }}</Button>
-        </template>
-    </el-dialog>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Check as CheckIcon } from 'lucide-vue-next';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

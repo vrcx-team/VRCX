@@ -1,89 +1,97 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="inviteDialog.visible"
-        @close="closeInviteDialog"
-        :title="t('dialog.invite.header')"
-        width="500px"
-        append-to-body>
-        <div v-if="inviteDialog.visible" v-loading="inviteDialog.loading">
-            <Location :location="inviteDialog.worldId" :link="false" />
-            <br />
-            <Button size="sm" class="mr-2" variant="outline" style="margin-top: 10px" @click="addSelfToInvite">{{
-                t('dialog.invite.add_self')
-            }}</Button>
-            <Button
-                size="sm"
-                class="mr-2"
-                variant="outline"
-                :disabled="inviteDialog.friendsInInstance.length === 0"
-                style="margin-top: 10px"
-                @click="addFriendsInInstanceToInvite"
-                >{{ t('dialog.invite.add_friends_in_instance') }}</Button
-            >
-            <Button
-                size="sm"
-                variant="outline"
-                :disabled="vipFriends.length === 0"
-                style="margin-top: 10px"
-                @click="addFavoriteFriendsToInvite"
-                >{{ t('dialog.invite.add_favorite_friends') }}</Button
-            >
+    <Dialog
+        :open="inviteDialog.visible"
+        @update:open="
+            (open) => {
+                if (!open) closeInviteDialog();
+            }
+        ">
+        <DialogContent class="x-dialog sm:max-w-125">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.invite.header') }}</DialogTitle>
+            </DialogHeader>
 
-            <div style="width: 100%; margin-top: 15px">
-                <VirtualCombobox
-                    :model-value="Array.isArray(inviteDialog.userIds) ? inviteDialog.userIds : []"
-                    @update:modelValue="setInviteUserIds"
-                    :groups="userPickerGroups"
-                    multiple
-                    :disabled="inviteDialog.loading"
-                    :placeholder="t('dialog.invite.select_placeholder')"
-                    :search-placeholder="t('dialog.invite.select_placeholder')"
-                    :clearable="true">
-                    <template #item="{ item, selected }">
-                        <div class="x-friend-item flex w-full items-center">
-                            <template v-if="item.user">
-                                <div :class="['avatar', userStatusClass(item.user)]">
-                                    <img :src="userImage(item.user)" loading="lazy" />
-                                </div>
-                                <div class="detail">
-                                    <span class="name" :style="{ color: item.user.$userColour }">{{
-                                        item.user.displayName
-                                    }}</span>
-                                </div>
-                            </template>
-                            <template v-else>
-                                <span>{{ item.label }}</span>
-                            </template>
+            <div v-if="inviteDialog.visible" v-loading="inviteDialog.loading">
+                <Location :location="inviteDialog.worldId" :link="false" />
+                <br />
+                <Button size="sm" class="mr-2" variant="outline" style="margin-top: 10px" @click="addSelfToInvite">{{
+                    t('dialog.invite.add_self')
+                }}</Button>
+                <Button
+                    size="sm"
+                    class="mr-2"
+                    variant="outline"
+                    :disabled="inviteDialog.friendsInInstance.length === 0"
+                    style="margin-top: 10px"
+                    @click="addFriendsInInstanceToInvite"
+                    >{{ t('dialog.invite.add_friends_in_instance') }}</Button
+                >
+                <Button
+                    size="sm"
+                    variant="outline"
+                    :disabled="vipFriends.length === 0"
+                    style="margin-top: 10px"
+                    @click="addFavoriteFriendsToInvite"
+                    >{{ t('dialog.invite.add_favorite_friends') }}</Button
+                >
 
-                            <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
-                        </div>
-                    </template>
-                </VirtualCombobox>
+                <div style="width: 100%; margin-top: 15px">
+                    <VirtualCombobox
+                        :model-value="Array.isArray(inviteDialog.userIds) ? inviteDialog.userIds : []"
+                        @update:modelValue="setInviteUserIds"
+                        :groups="userPickerGroups"
+                        multiple
+                        :disabled="inviteDialog.loading"
+                        :placeholder="t('dialog.invite.select_placeholder')"
+                        :search-placeholder="t('dialog.invite.select_placeholder')"
+                        :clearable="true">
+                        <template #item="{ item, selected }">
+                            <div class="x-friend-item flex w-full items-center">
+                                <template v-if="item.user">
+                                    <div :class="['avatar', userStatusClass(item.user)]">
+                                        <img :src="userImage(item.user)" loading="lazy" />
+                                    </div>
+                                    <div class="detail">
+                                        <span class="name" :style="{ color: item.user.$userColour }">{{
+                                            item.user.displayName
+                                        }}</span>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <span>{{ item.label }}</span>
+                                </template>
+
+                                <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                            </div>
+                        </template>
+                    </VirtualCombobox>
+                </div>
             </div>
-        </div>
 
-        <template #footer>
-            <Button
-                variant="secondary"
-                class="mr-2"
-                :disabled="inviteDialog.loading || !inviteDialog.userIds.length"
-                @click="showSendInviteDialog"
-                >{{ t('dialog.invite.invite_with_message') }}</Button
-            >
-            <Button :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="sendInvite">{{
-                t('dialog.invite.invite')
-            }}</Button>
-        </template>
+            <DialogFooter>
+                <Button
+                    variant="secondary"
+                    class="mr-2"
+                    :disabled="inviteDialog.loading || !inviteDialog.userIds.length"
+                    @click="showSendInviteDialog"
+                    >{{ t('dialog.invite.invite_with_message') }}</Button
+                >
+                <Button :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="sendInvite">{{
+                    t('dialog.invite.invite')
+                }}</Button>
+            </DialogFooter>
+        </DialogContent>
+
         <SendInviteDialog
             v-model:sendInviteDialogVisible="sendInviteDialogVisible"
             v-model:sendInviteDialog="sendInviteDialog"
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />
-    </el-dialog>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Check as CheckIcon } from 'lucide-vue-next';

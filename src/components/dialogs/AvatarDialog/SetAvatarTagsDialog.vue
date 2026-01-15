@@ -1,102 +1,115 @@
 <template>
-    <el-dialog
-        ref="setAvatarTagsDialog"
-        class="x-dialog"
-        :model-value="setAvatarTagsDialog.visible"
-        @close="closeSetAvatarTagsDialog"
-        :title="t('dialog.set_avatar_tags.header')"
-        width="780px"
-        append-to-body>
-        <template v-if="setAvatarTagsDialog.visible">
-            <label class="inline-flex items-center gap-2">
-                <Checkbox v-model="setAvatarTagsDialog.contentHorror" @update:modelValue="updateSelectedAvatarTags" />
-                <span>{{ t('dialog.set_avatar_tags.content_horror') }}</span>
-            </label>
-            <label class="inline-flex items-center gap-2">
-                <Checkbox v-model="setAvatarTagsDialog.contentGore" @update:modelValue="updateSelectedAvatarTags" />
-                <span>{{ t('dialog.set_avatar_tags.content_gore') }}</span>
-            </label>
-            <label class="inline-flex items-center gap-2">
-                <Checkbox v-model="setAvatarTagsDialog.contentViolence" @update:modelValue="updateSelectedAvatarTags" />
-                <span>{{ t('dialog.set_avatar_tags.content_violence') }}</span>
-            </label>
-            <label class="inline-flex items-center gap-2">
-                <Checkbox v-model="setAvatarTagsDialog.contentAdult" @update:modelValue="updateSelectedAvatarTags" />
-                <span>{{ t('dialog.set_avatar_tags.content_adult') }}</span>
-            </label>
-            <label class="inline-flex items-center gap-2">
-                <Checkbox v-model="setAvatarTagsDialog.contentSex" @update:modelValue="updateSelectedAvatarTags" />
-                <span>{{ t('dialog.set_avatar_tags.content_sex') }}</span>
-            </label>
-            <br />
-            <InputGroupTextareaField
-                v-model="setAvatarTagsDialog.selectedTagsCsv"
-                :rows="2"
-                :placeholder="t('dialog.set_avatar_tags.custom_tags_placeholder')"
-                style="margin-top: 10px"
-                input-class="resize-none"
-                @input="updateInputAvatarTags" />
-            <br />
-            <br />
-            <template
-                v-if="setAvatarTagsDialog.ownAvatars.length === props.setAvatarTagsDialog.selectedAvatarIds.length">
-                <Button size="sm" variant="outline" @click="setAvatarTagsSelectToggle">{{
-                    t('dialog.set_avatar_tags.select_none')
-                }}</Button>
-            </template>
-            <template v-else>
-                <Button size="sm" variant="outline" @click="setAvatarTagsSelectToggle">{{
-                    t('dialog.set_avatar_tags.select_all')
-                }}</Button>
-            </template>
-            <span style="margin-left: 5px"
-                >{{ props.setAvatarTagsDialog.selectedAvatarIds.length }} /
-                {{ setAvatarTagsDialog.ownAvatars.length }}</span
-            >
-            <Loader2 v-if="setAvatarTagsDialog.loading" class="is-loading" style="margin-left: 5px" />
-            <br />
-            <div class="x-friend-list" style="margin-top: 10px; min-height: 60px; max-height: 280px">
-                <div
-                    v-for="avatar in setAvatarTagsDialog.ownAvatars"
-                    :key="avatar.id"
-                    :class="['item-width', 'x-friend-item', 'x-friend-item-border']"
-                    @click="showAvatarDialog(avatar.id)">
-                    <div class="avatar">
-                        <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
+    <Dialog
+        :open="setAvatarTagsDialog.visible"
+        @update:open="
+            (open) => {
+                if (!open) closeSetAvatarTagsDialog();
+            }
+        ">
+        <DialogContent class="x-dialog sm:max-w-195">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.set_avatar_tags.header') }}</DialogTitle>
+            </DialogHeader>
+
+            <template v-if="setAvatarTagsDialog.visible">
+                <label class="inline-flex items-center gap-2">
+                    <Checkbox
+                        v-model="setAvatarTagsDialog.contentHorror"
+                        @update:modelValue="updateSelectedAvatarTags" />
+                    <span>{{ t('dialog.set_avatar_tags.content_horror') }}</span>
+                </label>
+                <label class="inline-flex items-center gap-2">
+                    <Checkbox v-model="setAvatarTagsDialog.contentGore" @update:modelValue="updateSelectedAvatarTags" />
+                    <span>{{ t('dialog.set_avatar_tags.content_gore') }}</span>
+                </label>
+                <label class="inline-flex items-center gap-2">
+                    <Checkbox
+                        v-model="setAvatarTagsDialog.contentViolence"
+                        @update:modelValue="updateSelectedAvatarTags" />
+                    <span>{{ t('dialog.set_avatar_tags.content_violence') }}</span>
+                </label>
+                <label class="inline-flex items-center gap-2">
+                    <Checkbox
+                        v-model="setAvatarTagsDialog.contentAdult"
+                        @update:modelValue="updateSelectedAvatarTags" />
+                    <span>{{ t('dialog.set_avatar_tags.content_adult') }}</span>
+                </label>
+                <label class="inline-flex items-center gap-2">
+                    <Checkbox v-model="setAvatarTagsDialog.contentSex" @update:modelValue="updateSelectedAvatarTags" />
+                    <span>{{ t('dialog.set_avatar_tags.content_sex') }}</span>
+                </label>
+                <br />
+                <InputGroupTextareaField
+                    v-model="setAvatarTagsDialog.selectedTagsCsv"
+                    :rows="2"
+                    :placeholder="t('dialog.set_avatar_tags.custom_tags_placeholder')"
+                    style="margin-top: 10px"
+                    input-class="resize-none"
+                    @input="updateInputAvatarTags" />
+                <br />
+                <br />
+                <template
+                    v-if="setAvatarTagsDialog.ownAvatars.length === props.setAvatarTagsDialog.selectedAvatarIds.length">
+                    <Button size="sm" variant="outline" @click="setAvatarTagsSelectToggle">{{
+                        t('dialog.set_avatar_tags.select_none')
+                    }}</Button>
+                </template>
+                <template v-else>
+                    <Button size="sm" variant="outline" @click="setAvatarTagsSelectToggle">{{
+                        t('dialog.set_avatar_tags.select_all')
+                    }}</Button>
+                </template>
+                <span style="margin-left: 5px"
+                    >{{ props.setAvatarTagsDialog.selectedAvatarIds.length }} /
+                    {{ setAvatarTagsDialog.ownAvatars.length }}</span
+                >
+                <Loader2 v-if="setAvatarTagsDialog.loading" class="is-loading" style="margin-left: 5px" />
+                <br />
+                <div class="x-friend-list" style="margin-top: 10px; min-height: 60px; max-height: 280px">
+                    <div
+                        v-for="avatar in setAvatarTagsDialog.ownAvatars"
+                        :key="avatar.id"
+                        :class="['item-width', 'x-friend-item', 'x-friend-item-border']"
+                        @click="showAvatarDialog(avatar.id)">
+                        <div class="avatar">
+                            <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
+                        </div>
+                        <div class="detail">
+                            <span class="name" v-text="avatar.name"></span>
+                            <span
+                                v-if="avatar.releaseStatus === 'public'"
+                                class="extra"
+                                style="color: var(--el-color-success)"
+                                v-text="avatar.releaseStatus"></span>
+                            <span
+                                v-else-if="avatar.releaseStatus === 'private'"
+                                class="extra"
+                                style="color: var(--el-color-danger)"
+                                v-text="avatar.releaseStatus"></span>
+                            <span v-else class="extra" v-text="avatar.releaseStatus"></span>
+                            <span class="extra" v-text="avatarTagStrings.get(avatar.id)"></span>
+                        </div>
+                        <Button size="sm" variant="ghost" style="margin-left: 5px" @click.stop>
+                            <Checkbox
+                                :model-value="props.setAvatarTagsDialog.selectedAvatarIds.includes(avatar.id)"
+                                @update:modelValue="(val) => toggleAvatarSelection(avatar.id, val)" />
+                        </Button>
                     </div>
-                    <div class="detail">
-                        <span class="name" v-text="avatar.name"></span>
-                        <span
-                            v-if="avatar.releaseStatus === 'public'"
-                            class="extra"
-                            style="color: var(--el-color-success)"
-                            v-text="avatar.releaseStatus"></span>
-                        <span
-                            v-else-if="avatar.releaseStatus === 'private'"
-                            class="extra"
-                            style="color: var(--el-color-danger)"
-                            v-text="avatar.releaseStatus"></span>
-                        <span v-else class="extra" v-text="avatar.releaseStatus"></span>
-                        <span class="extra" v-text="avatarTagStrings.get(avatar.id)"></span>
-                    </div>
-                    <Button size="sm" variant="ghost" style="margin-left: 5px" @click.stop>
-                        <Checkbox
-                            :model-value="props.setAvatarTagsDialog.selectedAvatarIds.includes(avatar.id)"
-                            @update:modelValue="(val) => toggleAvatarSelection(avatar.id, val)" />
-                    </Button>
                 </div>
-            </div>
-        </template>
-        <template #footer>
-            <Button variant="secondary" class="mr-2" @click="closeSetAvatarTagsDialog">{{
-                t('dialog.set_avatar_tags.cancel')
-            }}</Button>
-            <Button @click="saveSetAvatarTagsDialog">{{ t('dialog.set_avatar_tags.save') }}</Button>
-        </template>
-    </el-dialog>
+            </template>
+
+            <DialogFooter>
+                <Button variant="secondary" class="mr-2" @click="closeSetAvatarTagsDialog">{{
+                    t('dialog.set_avatar_tags.cancel')
+                }}</Button>
+                <Button @click="saveSetAvatarTagsDialog">{{ t('dialog.set_avatar_tags.save') }}</Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupTextareaField } from '@/components/ui/input-group';

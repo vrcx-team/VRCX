@@ -1,34 +1,41 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="isGroupLogsExportDialogVisible"
-        :title="t('dialog.group_member_moderation.export_logs')"
-        width="650px"
-        append-to-body
-        @close="setIsGroupLogsExportDialogVisible">
-        <div style="margin-bottom: 10px" class="flex flex-col gap-2">
-            <label
-                v-for="option in checkGroupsLogsExportLogsOptions"
-                :key="option.label"
-                class="inline-flex items-center gap-2">
-                <Checkbox
-                    :model-value="checkedGroupLogsExportLogsOptions.includes(option.label)"
-                    @update:modelValue="(val) => toggleGroupLogsExportOption(option.label, val)" />
-                <span>{{ t(option.text) }}</span>
-            </label>
-        </div>
-        <br />
-        <InputGroupTextareaField
-            v-model="groupLogsExportContent"
-            :rows="15"
-            readonly
-            style="margin-top: 15px"
-            input-class="resize-none"
-            @click="handleCopyGroupLogsExportContent" />
-    </el-dialog>
+    <Dialog
+        :open="isGroupLogsExportDialogVisible"
+        @update:open="
+            (open) => {
+                if (!open) setIsGroupLogsExportDialogVisible();
+            }
+        ">
+        <DialogContent class="x-dialog sm:max-w-162.5">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.group_member_moderation.export_logs') }}</DialogTitle>
+            </DialogHeader>
+
+            <div style="margin-bottom: 10px" class="flex flex-col gap-2">
+                <label
+                    v-for="option in checkGroupsLogsExportLogsOptions"
+                    :key="option.label"
+                    class="inline-flex items-center gap-2">
+                    <Checkbox
+                        :model-value="checkedGroupLogsExportLogsOptions.includes(option.label)"
+                        @update:modelValue="(val) => toggleGroupLogsExportOption(option.label, val)" />
+                    <span>{{ t(option.text) }}</span>
+                </label>
+            </div>
+            <br />
+            <InputGroupTextareaField
+                v-model="groupLogsExportContent"
+                :rows="15"
+                readonly
+                style="margin-top: 15px"
+                input-class="resize-none"
+                @click="handleCopyGroupLogsExportContent" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { ref, watch } from 'vue';
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupTextareaField } from '@/components/ui/input-group';

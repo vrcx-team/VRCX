@@ -1,119 +1,124 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="visible"
-        :title="t('dialog.group_calendar.header')"
-        width="90vw"
-        height="80vh"
-        @close="closeDialog">
-        <template #header>
-            <div class="dialog-title-container">
-                <span>{{ t('dialog.group_calendar.header') }}</span>
-                <Button size="sm" variant="outline" @click="toggleViewMode" class="view-toggle-btn">
-                    {{
-                        viewMode === 'timeline'
-                            ? t('dialog.group_calendar.list_view')
-                            : t('dialog.group_calendar.calendar_view')
-                    }}
-                </Button>
-            </div>
-            <div class="featured-switch">
-                <span class="featured-switch-text">{{ t('dialog.group_calendar.featured_events') }}</span>
-                <Switch v-model="showFeaturedEvents" @update:modelValue="toggleFeaturedEvents" />
-            </div>
-        </template>
-        <div class="top-content">
-            <transition name="el-fade-in-linear" mode="out-in">
-                <div v-if="viewMode === 'timeline'" key="timeline" class="timeline-view">
-                    <div class="timeline-container">
-                        <el-timeline v-if="groupedTimelineEvents.length">
-                            <el-timeline-item
-                                v-for="(timeGroup, key) of groupedTimelineEvents"
-                                :key="key"
-                                :timestamp="dayjs(timeGroup.startsAt).format('MM-DD ddd') + ' ' + timeGroup.startTime"
-                                placement="top">
-                                <div class="time-group-container">
-                                    <GroupCalendarEventCard
-                                        v-for="value in timeGroup.events"
-                                        :key="value.id"
-                                        :event="value"
-                                        mode="timeline"
-                                        :is-following="isEventFollowing(value.id)"
-                                        :card-class="{ 'grouped-card': timeGroup.events.length > 1 }"
-                                        @update-following-calendar-data="updateFollowingCalendarData"
-                                        @click-action="showGroupDialog(value.ownerId)" />
-                                </div>
-                            </el-timeline-item>
-                        </el-timeline>
-                        <div v-else>{{ t('dialog.group_calendar.no_events') }}</div>
-                    </div>
+    <Dialog :open="visible" @update:open="(open) => (open ? null : closeDialog())">
+        <DialogContent class="x-dialog w-[90vw] max-w-[90vw] h-[80vh] overflow-hidden">
+            <DialogHeader>
+                <div class="dialog-title-container">
+                    <DialogTitle>{{ t('dialog.group_calendar.header') }}</DialogTitle>
+                    <Button size="sm" variant="outline" @click="toggleViewMode" class="view-toggle-btn">
+                        {{
+                            viewMode === 'timeline'
+                                ? t('dialog.group_calendar.list_view')
+                                : t('dialog.group_calendar.calendar_view')
+                        }}
+                    </Button>
+                </div>
+                <div class="featured-switch">
+                    <span class="featured-switch-text">{{ t('dialog.group_calendar.featured_events') }}</span>
+                    <Switch v-model="showFeaturedEvents" @update:modelValue="toggleFeaturedEvents" />
+                </div>
+            </DialogHeader>
+            <div class="top-content">
+                <transition name="el-fade-in-linear" mode="out-in">
+                    <div v-if="viewMode === 'timeline'" key="timeline" class="timeline-view">
+                        <div class="timeline-container">
+                            <el-timeline v-if="groupedTimelineEvents.length">
+                                <el-timeline-item
+                                    v-for="(timeGroup, key) of groupedTimelineEvents"
+                                    :key="key"
+                                    :timestamp="
+                                        dayjs(timeGroup.startsAt).format('MM-DD ddd') + ' ' + timeGroup.startTime
+                                    "
+                                    placement="top">
+                                    <div class="time-group-container">
+                                        <GroupCalendarEventCard
+                                            v-for="value in timeGroup.events"
+                                            :key="value.id"
+                                            :event="value"
+                                            mode="timeline"
+                                            :is-following="isEventFollowing(value.id)"
+                                            :card-class="{ 'grouped-card': timeGroup.events.length > 1 }"
+                                            @update-following-calendar-data="updateFollowingCalendarData"
+                                            @click-action="showGroupDialog(value.ownerId)" />
+                                    </div>
+                                </el-timeline-item>
+                            </el-timeline>
+                            <div v-else>{{ t('dialog.group_calendar.no_events') }}</div>
+                        </div>
 
-                    <div class="calendar-container">
-                        <el-calendar v-model="selectedDay" v-loading="isLoading">
-                            <template #date-cell="{ data }">
-                                <div class="date">
-                                    <div
-                                        class="calendar-date-content"
-                                        :class="{ 'has-events': filteredCalendar[formatDateKey(data.date)]?.length }">
-                                        {{ dayjs(data.date).format('D') }}
+                        <div class="calendar-container">
+                            <el-calendar v-model="selectedDay" v-loading="isLoading">
+                                <template #date-cell="{ data }">
+                                    <div class="date">
                                         <div
-                                            v-if="filteredCalendar[formatDateKey(data.date)]?.length"
-                                            class="calendar-event-badge"
-                                            :class="followingCalendarDate[formatDateKey(data.date)] ? 'has-following' : 'no-following'">
-                                            {{ filteredCalendar[formatDateKey(data.date)]?.length }}
+                                            class="calendar-date-content"
+                                            :class="{
+                                                'has-events': filteredCalendar[formatDateKey(data.date)]?.length
+                                            }">
+                                            {{ dayjs(data.date).format('D') }}
+                                            <div
+                                                v-if="filteredCalendar[formatDateKey(data.date)]?.length"
+                                                class="calendar-event-badge"
+                                                :class="
+                                                    followingCalendarDate[formatDateKey(data.date)]
+                                                        ? 'has-following'
+                                                        : 'no-following'
+                                                ">
+                                                {{ filteredCalendar[formatDateKey(data.date)]?.length }}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </template>
-                        </el-calendar>
+                                </template>
+                            </el-calendar>
+                        </div>
                     </div>
-                </div>
-                <div v-else key="grid" class="grid-view">
-                    <div class="search-container">
-                        <InputGroupSearch
-                            v-model="searchQuery"
-                            size="sm"
-                            :placeholder="t('dialog.group_calendar.search_placeholder')"
-                            class="search-input" />
-                    </div>
+                    <div v-else key="grid" class="grid-view">
+                        <div class="search-container">
+                            <InputGroupSearch
+                                v-model="searchQuery"
+                                size="sm"
+                                :placeholder="t('dialog.group_calendar.search_placeholder')"
+                                class="search-input" />
+                        </div>
 
-                    <div class="groups-grid" v-loading="isLoading">
-                        <div v-if="filteredGroupEvents.length" class="groups-container">
-                            <div v-for="group in filteredGroupEvents" :key="group.groupId" class="group-row">
-                                <div class="group-header" @click="toggleGroup(group.groupId)">
-                                    <ArrowRight
-                                        class="rotation-transition"
-                                        :class="{ rotate: !groupCollapsed[group.groupId] }" />
-                                    {{ group.groupName }}
-                                </div>
-                                <div class="events-row" v-show="!groupCollapsed[group.groupId]">
-                                    <GroupCalendarEventCard
-                                        v-for="event in group.events"
-                                        :key="event.id"
-                                        :event="event"
-                                        mode="grid"
-                                        :is-following="isEventFollowing(event.id)"
-                                        @update-following-calendar-data="updateFollowingCalendarData"
-                                        @click-action="showGroupDialog(event.ownerId)"
-                                        card-class="grid-card" />
+                        <div class="groups-grid" v-loading="isLoading">
+                            <div v-if="filteredGroupEvents.length" class="groups-container">
+                                <div v-for="group in filteredGroupEvents" :key="group.groupId" class="group-row">
+                                    <div class="group-header" @click="toggleGroup(group.groupId)">
+                                        <ArrowRight
+                                            class="rotation-transition"
+                                            :class="{ rotate: !groupCollapsed[group.groupId] }" />
+                                        {{ group.groupName }}
+                                    </div>
+                                    <div class="events-row" v-show="!groupCollapsed[group.groupId]">
+                                        <GroupCalendarEventCard
+                                            v-for="event in group.events"
+                                            :key="event.id"
+                                            :event="event"
+                                            mode="grid"
+                                            :is-following="isEventFollowing(event.id)"
+                                            @update-following-calendar-data="updateFollowingCalendarData"
+                                            @click-action="showGroupDialog(event.ownerId)"
+                                            card-class="grid-card" />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div v-else class="no-events">
-                            {{
-                                searchQuery
-                                    ? t('dialog.group_calendar.search_no_matching')
-                                    : t('dialog.group_calendar.search_no_this_month')
-                            }}
+                            <div v-else class="no-events">
+                                {{
+                                    searchQuery
+                                        ? t('dialog.group_calendar.search_no_matching')
+                                        : t('dialog.group_calendar.search_no_this_month')
+                                }}
+                            </div>
                         </div>
                     </div>
-                </div>
-            </transition>
-        </div>
-    </el-dialog>
+                </transition>
+            </div>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, onMounted, ref, watch } from 'vue';
     import { ArrowRight } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';

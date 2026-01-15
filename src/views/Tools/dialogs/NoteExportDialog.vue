@@ -1,68 +1,69 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="isNoteExportDialogVisible"
-        :title="t('dialog.note_export.header')"
-        width="1000px"
-        @close="closeDialog">
-        <div style="font-size: 12px">
-            {{ t('dialog.note_export.description1') }} <br />
-            {{ t('dialog.note_export.description2') }} <br />
-            {{ t('dialog.note_export.description3') }} <br />
-            {{ t('dialog.note_export.description4') }} <br />
-            {{ t('dialog.note_export.description5') }} <br />
-            {{ t('dialog.note_export.description6') }} <br />
-            {{ t('dialog.note_export.description7') }} <br />
-            {{ t('dialog.note_export.description8') }} <br />
-        </div>
+    <Dialog :open="isNoteExportDialogVisible" @update:open="(open) => !open && closeDialog()">
+        <DialogContent class="sm:max-w-5xl">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.note_export.header') }}</DialogTitle>
+            </DialogHeader>
+            <div style="font-size: 12px">
+                {{ t('dialog.note_export.description1') }} <br />
+                {{ t('dialog.note_export.description2') }} <br />
+                {{ t('dialog.note_export.description3') }} <br />
+                {{ t('dialog.note_export.description4') }} <br />
+                {{ t('dialog.note_export.description5') }} <br />
+                {{ t('dialog.note_export.description6') }} <br />
+                {{ t('dialog.note_export.description7') }} <br />
+                {{ t('dialog.note_export.description8') }} <br />
+            </div>
 
-        <Button
-            size="sm"
-            class="mr-2"
-            variant="outline"
-            :disabled="loading"
-            style="margin-top: 10px"
-            @click="updateNoteExportDialog">
-            {{ t('dialog.note_export.refresh') }}
-        </Button>
-        <Button
-            size="sm"
-            class="mr-2"
-            variant="outline"
-            :disabled="loading"
-            style="margin-top: 10px"
-            @click="exportNoteExport">
-            {{ t('dialog.note_export.export') }}
-        </Button>
-        <Button v-if="loading" size="sm" variant="outline" style="margin-top: 10px" @click="cancelNoteExport">
-            {{ t('dialog.note_export.cancel') }}
-        </Button>
-        <span v-if="loading" style="margin: 10px">
-            <Loader2 style="margin-right: 5px" />
-            {{ t('dialog.note_export.progress') }} {{ progress }}/{{ progressTotal }}
-        </span>
-
-        <template v-if="errors">
-            <Button size="sm" variant="outline" @click="errors = ''">
-                {{ t('dialog.note_export.clear_errors') }}
+            <Button
+                size="sm"
+                class="mr-2"
+                variant="outline"
+                :disabled="loading"
+                style="margin-top: 10px"
+                @click="updateNoteExportDialog">
+                {{ t('dialog.note_export.refresh') }}
             </Button>
-            <h2 style="font-weight: bold; margin: 0">
-                {{ t('dialog.note_export.errors') }}
-            </h2>
-            <pre style="white-space: pre-wrap; font-size: 12px" v-text="errors"></pre>
-        </template>
+            <Button
+                size="sm"
+                class="mr-2"
+                variant="outline"
+                :disabled="loading"
+                style="margin-top: 10px"
+                @click="exportNoteExport">
+                {{ t('dialog.note_export.export') }}
+            </Button>
+            <Button v-if="loading" size="sm" variant="outline" style="margin-top: 10px" @click="cancelNoteExport">
+                {{ t('dialog.note_export.cancel') }}
+            </Button>
+            <span v-if="loading" style="margin: 10px">
+                <Loader2 style="margin-right: 5px" />
+                {{ t('dialog.note_export.progress') }} {{ progress }}/{{ progressTotal }}
+            </span>
 
-        <DataTableLayout
-            class="min-w-0 w-full"
-            :table="table"
-            :loading="loading"
-            :table-style="tableStyle"
-            :show-pagination="false"
-            style="margin-top: 10px" />
-    </el-dialog>
+            <template v-if="errors">
+                <Button size="sm" variant="outline" @click="errors = ''">
+                    {{ t('dialog.note_export.clear_errors') }}
+                </Button>
+                <h2 style="font-weight: bold; margin: 0">
+                    {{ t('dialog.note_export.errors') }}
+                </h2>
+                <pre style="white-space: pre-wrap; font-size: 12px" v-text="errors"></pre>
+            </template>
+
+            <DataTableLayout
+                class="min-w-0 w-full"
+                :table="table"
+                :loading="loading"
+                :table-style="tableStyle"
+                :show-pagination="false"
+                style="margin-top: 10px" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { DataTableLayout } from '@/components/ui/data-table';

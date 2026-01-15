@@ -1,11 +1,9 @@
 <template>
-    <el-dialog
-        :model-value="visible"
-        class="custom-nav-dialog"
-        :title="t('nav_menu.custom_nav.dialog_title')"
-        width="600px"
-        @close="handleClose"
-        destroy-on-close>
+    <Dialog :open="visible" @update:open="(open) => (open ? null : handleClose())">
+        <DialogContent class="custom-nav-dialog">
+            <DialogHeader>
+                <DialogTitle>{{ t('nav_menu.custom_nav.dialog_title') }}</DialogTitle>
+            </DialogHeader>
         <div class="custom-nav-dialog__list" v-if="localLayout.length">
             <div
                 v-for="(entry, index) in localLayout"
@@ -90,7 +88,7 @@
             type="warning"
             :closable="false"
             :title="t('nav_menu.custom_nav.invalid_folder')" />
-        <template #footer>
+            <DialogFooter>
             <div class="custom-nav-dialog__footer">
                 <div class="custom-nav-dialog__footer-left">
                     <Button variant="outline" @click="openFolderEditor()">
@@ -109,15 +107,21 @@
                     </Button>
                 </div>
             </div>
-        </template>
-    </el-dialog>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 
-    <el-dialog
-        v-model="folderEditor.visible"
-        class="folder-editor-dialog"
-        :title="folderEditor.isEditing ? t('nav_menu.custom_nav.edit_folder') : t('nav_menu.custom_nav.add_folder')"
-        width="900px"
-        destroy-on-close>
+    <Dialog v-model:open="folderEditor.visible">
+        <DialogContent class="folder-editor-dialog">
+            <DialogHeader>
+                <DialogTitle>
+                    {{
+                        folderEditor.isEditing
+                            ? t('nav_menu.custom_nav.edit_folder')
+                            : t('nav_menu.custom_nav.add_folder')
+                    }}
+                </DialogTitle>
+            </DialogHeader>
         <div class="folder-editor">
             <div class="folder-editor__form">
                 <InputGroupField
@@ -189,7 +193,7 @@
                 </div>
             </div>
         </div>
-        <template #footer>
+            <DialogFooter>
             <div class="folder-editor__footer">
                 <Button
                     variant="destructive"
@@ -206,13 +210,15 @@
                     {{ t('nav_menu.custom_nav.save') }}
                 </Button>
             </div>
-        </template>
-    </el-dialog>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
     import { computed, reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { useI18n } from 'vue-i18n';
 
     import dayjs from 'dayjs';

@@ -44,101 +44,105 @@
             <span>{{ t('view.charts.mutual_friend.progress.no_relationships_discovered') }}</span>
         </div>
 
-        <el-dialog
-            v-model="isForceDialogVisible"
-            :title="t('view.charts.mutual_friend.force_dialog.title')"
-            width="440px">
-            <p class="mutual-graph__force-description">
-                {{ t('view.charts.mutual_friend.force_dialog.description') }}
-            </p>
-            <FieldGroup class="mutual-graph__force-form">
-                <Field>
-                    <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.repulsion') }}</FieldLabel>
-                    <FieldContent>
-                        <NumberField
-                            v-model="forceForm.repulsion"
-                            :step="1"
-                            :format-options="{ maximumFractionDigits: 0 }"
-                            class="mutual-graph__number-input">
-                            <NumberFieldContent>
-                                <NumberFieldInput />
-                            </NumberFieldContent>
-                        </NumberField>
-                        <FieldDescription class="mutual-graph__helper">
-                            {{ t('view.charts.mutual_friend.force_dialog.repulsion_help') }}
-                        </FieldDescription>
-                    </FieldContent>
-                </Field>
-                <Field>
-                    <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.edge_length_min') }}</FieldLabel>
-                    <FieldContent>
-                        <NumberField
-                            v-model="forceForm.edgeLengthMin"
-                            :step="1"
-                            :format-options="{ maximumFractionDigits: 0 }"
-                            class="mutual-graph__number-input">
-                            <NumberFieldContent>
-                                <NumberFieldInput />
-                            </NumberFieldContent>
-                        </NumberField>
-                        <FieldDescription class="mutual-graph__helper">
-                            {{ t('view.charts.mutual_friend.force_dialog.edge_length_min_help') }}
-                        </FieldDescription>
-                    </FieldContent>
-                </Field>
-                <Field>
-                    <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.edge_length_max') }}</FieldLabel>
-                    <FieldContent>
-                        <NumberField
-                            v-model="forceForm.edgeLengthMax"
-                            :step="1"
-                            :format-options="{ maximumFractionDigits: 0 }"
-                            class="mutual-graph__number-input">
-                            <NumberFieldContent>
-                                <NumberFieldInput />
-                            </NumberFieldContent>
-                        </NumberField>
-                        <FieldDescription class="mutual-graph__helper">
-                            {{ t('view.charts.mutual_friend.force_dialog.edge_length_max_help') }}
-                        </FieldDescription>
-                    </FieldContent>
-                </Field>
-                <Field>
-                    <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.gravity') }}</FieldLabel>
-                    <FieldContent>
-                        <NumberField
-                            v-model="forceForm.gravity"
-                            :max="1"
-                            :step="0.1"
-                            :format-options="{ maximumFractionDigits: 1 }"
-                            class="mutual-graph__number-input">
-                            <NumberFieldContent>
-                                <NumberFieldInput />
-                            </NumberFieldContent>
-                        </NumberField>
-                        <FieldDescription class="mutual-graph__helper">
-                            {{ t('view.charts.mutual_friend.force_dialog.gravity_help') }}
-                        </FieldDescription>
-                    </FieldContent>
-                </Field>
-            </FieldGroup>
+        <Dialog v-model:open="isForceDialogVisible">
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{{ t('view.charts.mutual_friend.force_dialog.title') }}</DialogTitle>
+                </DialogHeader>
 
-            <template #footer>
-                <div class="mutual-graph__dialog-footer">
-                    <Button variant="secondary" class="mr-2" @click="resetForceSettings">{{
-                        t('view.charts.mutual_friend.force_dialog.reset')
-                    }}</Button>
-                    <Button :disabled="!graphReady" @click="applyForceSettings">
-                        {{ t('view.charts.mutual_friend.force_dialog.apply') }}
-                    </Button>
-                </div>
-            </template>
-        </el-dialog>
+                <p class="mutual-graph__force-description">
+                    {{ t('view.charts.mutual_friend.force_dialog.description') }}
+                </p>
+                <FieldGroup class="mutual-graph__force-form">
+                    <Field>
+                        <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.repulsion') }}</FieldLabel>
+                        <FieldContent>
+                            <NumberField
+                                v-model="forceForm.repulsion"
+                                :step="1"
+                                :format-options="{ maximumFractionDigits: 0 }"
+                                class="mutual-graph__number-input">
+                                <NumberFieldContent>
+                                    <NumberFieldInput />
+                                </NumberFieldContent>
+                            </NumberField>
+                            <FieldDescription class="mutual-graph__helper">
+                                {{ t('view.charts.mutual_friend.force_dialog.repulsion_help') }}
+                            </FieldDescription>
+                        </FieldContent>
+                    </Field>
+                    <Field>
+                        <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.edge_length_min') }}</FieldLabel>
+                        <FieldContent>
+                            <NumberField
+                                v-model="forceForm.edgeLengthMin"
+                                :step="1"
+                                :format-options="{ maximumFractionDigits: 0 }"
+                                class="mutual-graph__number-input">
+                                <NumberFieldContent>
+                                    <NumberFieldInput />
+                                </NumberFieldContent>
+                            </NumberField>
+                            <FieldDescription class="mutual-graph__helper">
+                                {{ t('view.charts.mutual_friend.force_dialog.edge_length_min_help') }}
+                            </FieldDescription>
+                        </FieldContent>
+                    </Field>
+                    <Field>
+                        <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.edge_length_max') }}</FieldLabel>
+                        <FieldContent>
+                            <NumberField
+                                v-model="forceForm.edgeLengthMax"
+                                :step="1"
+                                :format-options="{ maximumFractionDigits: 0 }"
+                                class="mutual-graph__number-input">
+                                <NumberFieldContent>
+                                    <NumberFieldInput />
+                                </NumberFieldContent>
+                            </NumberField>
+                            <FieldDescription class="mutual-graph__helper">
+                                {{ t('view.charts.mutual_friend.force_dialog.edge_length_max_help') }}
+                            </FieldDescription>
+                        </FieldContent>
+                    </Field>
+                    <Field>
+                        <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.gravity') }}</FieldLabel>
+                        <FieldContent>
+                            <NumberField
+                                v-model="forceForm.gravity"
+                                :max="1"
+                                :step="0.1"
+                                :format-options="{ maximumFractionDigits: 1 }"
+                                class="mutual-graph__number-input">
+                                <NumberFieldContent>
+                                    <NumberFieldInput />
+                                </NumberFieldContent>
+                            </NumberField>
+                            <FieldDescription class="mutual-graph__helper">
+                                {{ t('view.charts.mutual_friend.force_dialog.gravity_help') }}
+                            </FieldDescription>
+                        </FieldContent>
+                    </Field>
+                </FieldGroup>
+
+                <DialogFooter>
+                    <div class="mutual-graph__dialog-footer">
+                        <Button variant="secondary" class="mr-2" @click="resetForceSettings">{{
+                            t('view.charts.mutual_friend.force_dialog.reset')
+                        }}</Button>
+                        <Button :disabled="!graphReady" @click="applyForceSettings">
+                            {{ t('view.charts.mutual_friend.force_dialog.apply') }}
+                        </Button>
+                    </div>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     </div>
 </template>
 
 <script setup>
     import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { NumberField, NumberFieldContent, NumberFieldInput } from '@/components/ui/number-field';
     import { Button } from '@/components/ui/button';

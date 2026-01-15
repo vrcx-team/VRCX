@@ -1,10 +1,9 @@
 <template>
-    <el-dialog
-        :z-index="newInstanceDialogIndex"
-        v-model="newInstanceDialog.visible"
-        :title="t('dialog.new_instance.header')"
-        width="650px"
-        append-to-body>
+    <Dialog v-model:open="newInstanceDialog.visible">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.new_instance.header') }}</DialogTitle>
+            </DialogHeader>
         <TabsUnderline
             v-model="newInstanceDialog.selectedTab"
             :items="newInstanceTabs"
@@ -435,7 +434,7 @@
                 </FieldGroup>
             </template>
         </TabsUnderline>
-        <template v-if="newInstanceDialog.selectedTab === 'Normal'" #footer>
+        <DialogFooter v-if="newInstanceDialog.selectedTab === 'Normal'">
             <template v-if="newInstanceDialog.instanceCreated">
                 <Button variant="outline" class="mr-2" @click="copyInstanceUrl(newInstanceDialog.location)">{{
                     t('dialog.new_instance.copy_url')
@@ -473,8 +472,8 @@
             <template v-else>
                 <Button @click="handleCreateNewInstance">{{ t('dialog.new_instance.create_instance') }}</Button>
             </template>
-        </template>
-        <template v-else-if="newInstanceDialog.selectedTab === 'Legacy'" #footer>
+        </DialogFooter>
+        <DialogFooter v-else-if="newInstanceDialog.selectedTab === 'Legacy'">
             <Button variant="outline" class="mr-2" @click="copyInstanceUrl(newInstanceDialog.location)">{{
                 t('dialog.new_instance.copy_url')
             }}</Button>
@@ -506,14 +505,17 @@
                     t('dialog.new_instance.launch')
                 }}</Button>
             </template>
-        </template>
+        </DialogFooter>
+        </DialogContent>
+
         <InviteDialog :invite-dialog="inviteDialog" @closeInviteDialog="closeInviteDialog" />
-    </el-dialog>
+    </Dialog>
 </template>
 
 <script setup>
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
-    import { computed, nextTick, ref, watch } from 'vue';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Check as CheckIcon } from 'lucide-vue-next';
     import { Checkbox } from '@/components/ui/checkbox';
@@ -545,7 +547,6 @@
     import { groupRequest, instanceRequest, worldRequest } from '../../api';
     import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
     import { VirtualCombobox } from '../ui/virtual-combobox';
-    import { getNextDialogIndex } from '../../shared/utils/base/ui';
 
     import InviteDialog from './InviteDialog/InviteDialog.vue';
     import configRepository from '../../service/config';
@@ -571,8 +572,6 @@
     const { createNewInstance } = useInstanceStore();
     const { currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { canOpenInstanceInGame } = useInviteStore();
-
-    const newInstanceDialogIndex = ref(2000);
 
     const newInstanceDialog = ref({
         visible: false,
@@ -778,9 +777,6 @@
         if (!isRealInstance(tag)) {
             return;
         }
-        nextTick(() => {
-            newInstanceDialogIndex.value = getNextDialogIndex();
-        });
         const D = newInstanceDialog.value;
         const L = parseLocation(tag);
         if (D.worldId === L.worldId) {

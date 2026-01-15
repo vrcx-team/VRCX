@@ -1,5 +1,9 @@
 <template>
-    <el-dialog :z-index="launchDialogIndex" v-model="isVisible" :title="t('dialog.launch.header')" width="450px">
+    <Dialog v-model:open="isVisible">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.launch.header') }}</DialogTitle>
+            </DialogHeader>
         <FieldGroup class="gap-4">
             <Field>
                 <FieldLabel>{{ t('dialog.launch.url') }}</FieldLabel>
@@ -63,8 +67,7 @@
                 </FieldContent>
             </Field>
         </FieldGroup>
-        <template #footer>
-            <div class="flex justify-end">
+            <DialogFooter>
                 <Button
                     class="mr-1.5"
                     variant="outline"
@@ -117,14 +120,16 @@
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </ButtonGroup>
-            </div>
-        </template>
-        <InviteDialog :invite-dialog="inviteDialog" @closeInviteDialog="closeInviteDialog" />
-    </el-dialog>
+            </DialogFooter>
+
+            <InviteDialog :invite-dialog="inviteDialog" @closeInviteDialog="closeInviteDialog" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
-    import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+    import { computed, onBeforeUnmount, ref, watch } from 'vue';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import {
         DropdownMenu,
         DropdownMenuContent,
@@ -150,7 +155,6 @@
     } from '../../stores';
     import { checkCanInvite, getLaunchURL, isRealInstance, parseLocation } from '../../shared/utils';
     import { instanceRequest, worldRequest } from '../../api';
-    import { getNextDialogIndex } from '../../shared/utils/base/ui';
 
     import InviteDialog from './InviteDialog/InviteDialog.vue';
     import configRepository from '../../service/config';
@@ -170,8 +174,6 @@
     const launchModeLabel = computed(() =>
         launchDialog.value.desktop ? t('dialog.launch.start_as_desktop') : t('dialog.launch.launch')
     );
-
-    const launchDialogIndex = ref(2000);
 
     let launchAsDesktopTimeoutId;
 
@@ -312,9 +314,6 @@
         if (!isRealInstance(tag)) {
             return;
         }
-        nextTick(() => {
-            launchDialogIndex.value = getNextDialogIndex();
-        });
         const D = launchDialog.value;
         D.tag = tag;
         D.secureOrShortName = shortName;

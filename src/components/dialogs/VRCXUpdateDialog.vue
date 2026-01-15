@@ -1,12 +1,10 @@
 <template>
-    <el-dialog
-        :z-index="VRCXUpdateDialogIndex"
-        class="x-dialog"
-        v-model="VRCXUpdateDialog.visible"
-        :title="t('dialog.vrcx_updater.header')"
-        append-to-body
-        width="400px">
-        <div v-loading="checkingForVRCXUpdate" style="margin-top: 15px">
+    <Dialog v-model:open="VRCXUpdateDialog.visible">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.vrcx_updater.header') }}</DialogTitle>
+            </DialogHeader>
+            <div v-loading="checkingForVRCXUpdate" style="margin-top: 15px">
             <template v-if="updateInProgress">
                 <Progress :model-value="updateProgress" class="w-full" />
                 <div class="mt-2 text-xs" v-text="updateProgressText()"></div>
@@ -61,9 +59,9 @@
                     <span>{{ t('dialog.vrcx_updater.latest_version') }}</span>
                 </div>
             </template>
-        </div>
+            </div>
 
-        <template #footer>
+            <DialogFooter>
             <Button variant="secondary" class="mr-2" v-if="updateInProgress" @click="cancelUpdate">
                 {{ t('dialog.vrcx_updater.cancel') }}
             </Button>
@@ -77,15 +75,16 @@
             <Button variant="default" v-if="!updateInProgress && pendingVRCXInstall" @click="restartVRCX(true)">
                 {{ t('dialog.vrcx_updater.install') }}
             </Button>
-        </template>
-    </el-dialog>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
     import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-    import { nextTick, ref, watch } from 'vue';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { AlertCircle } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Progress } from '@/components/ui/progress';
@@ -93,7 +92,6 @@
     import { useI18n } from 'vue-i18n';
 
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-    import { getNextDialogIndex } from '../../shared/utils/base/ui';
     import { useVRCXUpdaterStore } from '../../stores';
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
@@ -111,7 +109,6 @@
 
     const { t } = useI18n();
 
-    const VRCXUpdateDialogIndex = ref(2000);
     const handleBranchChange = (value) => {
         if (!value || value === branch.value) {
             return;
@@ -119,15 +116,4 @@
         branch.value = value;
         loadBranchVersions();
     };
-
-    watch(
-        () => VRCXUpdateDialog,
-        (newVal) => {
-            if (newVal.value.visible) {
-                nextTick(() => {
-                    VRCXUpdateDialogIndex.value = getNextDialogIndex();
-                });
-            }
-        }
-    );
 </script>

@@ -1,27 +1,30 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        v-model="pronounsDialog.visible"
-        :title="t('dialog.pronouns.header')"
-        width="600px"
-        append-to-body>
-        <div v-loading="pronounsDialog.loading">
-            <InputGroupTextareaField
-                v-model="pronounsDialog.pronouns"
-                :maxlength="32"
-                :rows="2"
-                :placeholder="t('dialog.pronouns.pronouns_placeholder')"
-                show-count />
-        </div>
-        <template #footer>
-            <Button :disabled="pronounsDialog.loading" @click="savePronouns">
-                {{ t('dialog.pronouns.update') }}
-            </Button>
-        </template>
-    </el-dialog>
+    <Dialog v-model:open="pronounsDialog.visible">
+        <DialogContent class="x-dialog sm:max-w-150">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.pronouns.header') }}</DialogTitle>
+            </DialogHeader>
+
+            <div v-loading="pronounsDialog.loading">
+                <InputGroupTextareaField
+                    v-model="pronounsDialog.pronouns"
+                    :maxlength="32"
+                    :rows="2"
+                    :placeholder="t('dialog.pronouns.pronouns_placeholder')"
+                    show-count />
+            </div>
+
+            <DialogFooter>
+                <Button :disabled="pronounsDialog.loading" @click="savePronouns">
+                    {{ t('dialog.pronouns.update') }}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { toast } from 'vue-sonner';

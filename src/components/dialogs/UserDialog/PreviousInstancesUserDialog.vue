@@ -1,35 +1,37 @@
 <template>
-    <el-dialog
-        :z-index="previousInstancesUserDialogIndex"
-        v-model="isVisible"
-        :title="t('dialog.previous_instances.header')"
-        width="1000px"
-        append-to-body>
-        <DataTableLayout
-            class="min-w-0 w-full"
-            :table="table"
-            :loading="loading"
-            :table-style="tableStyle"
-            :page-sizes="pageSizes"
-            :total-items="totalItems"
-            :on-page-size-change="handlePageSizeChange">
-            <template #toolbar>
-                <div style="display: flex; align-items: center; justify-content: space-between">
-                    <span style="font-size: 14px" v-text="previousInstancesUserDialog.userRef.displayName"></span>
-                    <InputGroupField
-                        v-model="search"
-                        :placeholder="t('dialog.previous_instances.search_placeholder')"
-                        clearable
-                        class="w-1/3"
-                        style="display: block" />
-                </div>
-            </template>
-        </DataTableLayout>
-    </el-dialog>
+    <Dialog v-model:open="isVisible">
+        <DialogContent class="sm:max-w-250">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.previous_instances.header') }}</DialogTitle>
+            </DialogHeader>
+
+            <DataTableLayout
+                class="min-w-0 w-full"
+                :table="table"
+                :loading="loading"
+                :table-style="tableStyle"
+                :page-sizes="pageSizes"
+                :total-items="totalItems"
+                :on-page-size-change="handlePageSizeChange">
+                <template #toolbar>
+                    <div style="display: flex; align-items: center; justify-content: space-between">
+                        <span style="font-size: 14px" v-text="previousInstancesUserDialog.userRef.displayName"></span>
+                        <InputGroupField
+                            v-model="search"
+                            :placeholder="t('dialog.previous_instances.search_placeholder')"
+                            clearable
+                            class="w-1/3"
+                            style="display: block" />
+                    </div>
+                </template>
+            </DataTableLayout>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
-    import { computed, nextTick, ref, watch } from 'vue';
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { computed, ref, watch } from 'vue';
     import { InputGroupField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -52,7 +54,6 @@
     import { DataTableLayout } from '../../ui/data-table';
     import { createColumns } from './previousInstancesUserColumns.jsx';
     import { database } from '../../../service/database';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     const props = defineProps({
@@ -89,8 +90,6 @@
     const { stringComparer } = storeToRefs(useSearchStore());
     const vrcxStore = useVrcxStore();
     const { t } = useI18n();
-
-    const previousInstancesUserDialogIndex = ref(2000);
 
     const isVisible = computed({
         get: () => props.previousInstancesUserDialog.visible,
@@ -178,9 +177,6 @@
         () => props.previousInstancesUserDialog.openFlg,
         () => {
             if (props.previousInstancesUserDialog.visible) {
-                nextTick(() => {
-                    previousInstancesUserDialogIndex.value = getNextDialogIndex();
-                });
                 refreshPreviousInstancesUserTable();
             }
         }

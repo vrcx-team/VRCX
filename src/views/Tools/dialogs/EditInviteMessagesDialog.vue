@@ -1,45 +1,45 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="isEditInviteMessagesDialogVisible"
-        :title="t('dialog.edit_invite_messages.header')"
-        width="1000px"
-        @close="closeDialog">
-        <TabsUnderline v-model="activeTab" :items="editInviteTabs" :unmount-on-hide="false" class="mt-2.5">
-            <template #message>
-                <DataTableLayout
-                    style="margin-top: 10px; cursor: pointer"
-                    :table="inviteMessageTanstackTable"
-                    :loading="false"
-                    :show-pagination="false"
-                    :on-row-click="handleEditInviteMessageRowClick" />
-            </template>
-            <template #request>
-                <DataTableLayout
-                    style="margin-top: 10px; cursor: pointer"
-                    :table="inviteRequestTanstackTable"
-                    :loading="false"
-                    :show-pagination="false"
-                    :on-row-click="handleEditInviteMessageRowClick" />
-            </template>
-            <template #requestResponse>
-                <DataTableLayout
-                    style="margin-top: 10px; cursor: pointer"
-                    :table="inviteRequestResponseTanstackTable"
-                    :loading="false"
-                    :show-pagination="false"
-                    :on-row-click="handleEditInviteMessageRowClick" />
-            </template>
-            <template #response>
-                <DataTableLayout
-                    style="margin-top: 10px; cursor: pointer"
-                    :table="inviteResponseTanstackTable"
-                    :loading="false"
-                    :show-pagination="false"
-                    :on-row-click="handleEditInviteMessageRowClick" />
-            </template>
-        </TabsUnderline>
-    </el-dialog>
+    <Dialog :open="isEditInviteMessagesDialogVisible" @update:open="(open) => !open && closeDialog()">
+        <DialogContent class="sm:max-w-5xl">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.edit_invite_messages.header') }}</DialogTitle>
+            </DialogHeader>
+            <TabsUnderline v-model="activeTab" :items="editInviteTabs" :unmount-on-hide="false" class="mt-2.5">
+                <template #message>
+                    <DataTableLayout
+                        style="margin-top: 10px; cursor: pointer"
+                        :table="inviteMessageTanstackTable"
+                        :loading="false"
+                        :show-pagination="false"
+                        :on-row-click="handleEditInviteMessageRowClick" />
+                </template>
+                <template #request>
+                    <DataTableLayout
+                        style="margin-top: 10px; cursor: pointer"
+                        :table="inviteRequestTanstackTable"
+                        :loading="false"
+                        :show-pagination="false"
+                        :on-row-click="handleEditInviteMessageRowClick" />
+                </template>
+                <template #requestResponse>
+                    <DataTableLayout
+                        style="margin-top: 10px; cursor: pointer"
+                        :table="inviteRequestResponseTanstackTable"
+                        :loading="false"
+                        :show-pagination="false"
+                        :on-row-click="handleEditInviteMessageRowClick" />
+                </template>
+                <template #response>
+                    <DataTableLayout
+                        style="margin-top: 10px; cursor: pointer"
+                        :table="inviteResponseTanstackTable"
+                        :loading="false"
+                        :show-pagination="false"
+                        :on-row-click="handleEditInviteMessageRowClick" />
+                </template>
+            </TabsUnderline>
+        </DialogContent>
+    </Dialog>
     <template v-if="isEditInviteMessagesDialogVisible">
         <EditInviteMessageDialog
             v-model:isEditInviteMessageDialogVisible="isEditInviteMessageDialogVisible"
@@ -50,6 +50,7 @@
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
     import { DataTableLayout } from '@/components/ui/data-table';
     import { TabsUnderline } from '@/components/ui/tabs';

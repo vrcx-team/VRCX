@@ -1,11 +1,11 @@
 <template>
-    <el-dialog
-        :z-index="inviteGroupDialogIndex"
-        v-model="inviteGroupDialog.visible"
-        :title="t('dialog.invite_to_group.header')"
-        width="450px"
-        append-to-body>
-        <div v-if="inviteGroupDialog.visible" v-loading="inviteGroupDialog.loading">
+    <Dialog v-model:open="inviteGroupDialog.visible">
+        <DialogContent class="sm:max-w-112.5">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.invite_to_group.header') }}</DialogTitle>
+            </DialogHeader>
+
+            <div v-if="inviteGroupDialog.visible" v-loading="inviteGroupDialog.loading">
             <span>{{ t('dialog.invite_to_group.description') }}</span>
             <br />
 
@@ -64,20 +64,25 @@
                     </template>
                 </VirtualCombobox>
             </div>
-        </div>
-        <template #footer>
-            <Button
-                :disabled="inviteGroupDialog.loading || !inviteGroupDialog.userIds.length || !inviteGroupDialog.groupId"
-                @click="sendGroupInvite">
-                {{ t('dialog.invite_to_group.invite') }}
-            </Button>
-        </template>
-    </el-dialog>
+            </div>
+
+            <DialogFooter>
+                <Button
+                    :disabled="
+                        inviteGroupDialog.loading || !inviteGroupDialog.userIds.length || !inviteGroupDialog.groupId
+                    "
+                    @click="sendGroupInvite">
+                    {{ t('dialog.invite_to_group.invite') }}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
-    import { computed, nextTick, ref, watch } from 'vue';
+    import { computed, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Check as CheckIcon } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -87,7 +92,6 @@
     import { useFriendStore, useGroupStore, useModalStore } from '../../stores';
     import { groupRequest, userRequest } from '../../api';
     import { VirtualCombobox } from '../ui/virtual-combobox';
-    import { getNextDialogIndex } from '../../shared/utils/base/ui';
 
     import configRepository from '../../service/config';
 
@@ -108,8 +112,6 @@
             }
         }
     );
-
-    const inviteGroupDialogIndex = ref(2000);
 
     const groupsWithInvitePermission = computed(() => {
         return Array.from(currentUserGroups.value.values()).filter((group) =>
@@ -223,9 +225,6 @@
     );
 
     function initDialog() {
-        nextTick(() => {
-            inviteGroupDialogIndex.value = getNextDialogIndex();
-        });
         const D = inviteGroupDialog.value;
         if (D.groupId) {
             groupRequest

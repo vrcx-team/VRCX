@@ -1,34 +1,37 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="isYouTubeApiDialogVisible"
-        :title="t('dialog.youtube_api.header')"
-        width="450px"
-        @close="closeDialog">
-        <div style="font-size: 12px">{{ t('dialog.youtube_api.description') }} <br /></div>
+    <Dialog :open="isYouTubeApiDialogVisible" @update:open="(open) => (open ? null : closeDialog())">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.youtube_api.header') }}</DialogTitle>
+            </DialogHeader>
+            <div style="font-size: 12px">{{ t('dialog.youtube_api.description') }} <br /></div>
 
-        <InputGroupTextareaField
-            v-model="youTubeApiKey"
-            :placeholder="t('dialog.youtube_api.placeholder')"
-            :maxlength="39"
-            :rows="2"
-            class="mt-2.5"
-            show-count />
+            <InputGroupTextareaField
+                v-model="youTubeApiKey"
+                :placeholder="t('dialog.youtube_api.placeholder')"
+                :maxlength="39"
+                :rows="2"
+                class="mt-2.5"
+                show-count />
 
-        <template #footer>
-            <div class="flex items-center justify-between">
-                <Button variant="outline" @click="openExternalLink('https://smashballoon.com/doc/youtube-api-key/')">
-                    {{ t('dialog.youtube_api.guide') }}
-                </Button>
-                <Button style="margin-left: auto" @click="testYouTubeApiKey">
-                    {{ t('dialog.youtube_api.save') }}
-                </Button>
-            </div>
-        </template>
-    </el-dialog>
+            <DialogFooter>
+                <div class="flex items-center justify-between">
+                    <Button
+                        variant="outline"
+                        @click="openExternalLink('https://smashballoon.com/doc/youtube-api-key/')">
+                        {{ t('dialog.youtube_api.guide') }}
+                    </Button>
+                    <Button style="margin-left: auto" @click="testYouTubeApiKey">
+                        {{ t('dialog.youtube_api.save') }}
+                    </Button>
+                </div>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';

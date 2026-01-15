@@ -1,33 +1,40 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="changeWorldImageDialogVisible"
-        :title="t('dialog.change_content_image.world')"
-        width="850px"
-        append-to-body
-        @close="closeDialog">
-        <div>
-            <input
-                id="WorldImageUploadButton"
-                type="file"
-                accept="image/*"
-                style="display: none"
-                @change="onFileChangeWorldImage" />
-            <span>{{ t('dialog.change_content_image.description') }}</span>
-            <br />
-            <Button variant="outline" size="sm" :disabled="changeWorldImageDialogLoading" @click="uploadWorldImage">
-                <Upload />
-                {{ t('dialog.change_content_image.upload') }}
-            </Button>
-            <br />
-            <div class="x-change-image-item">
-                <img :src="previousImageUrl" class="img-size" loading="lazy" />
+    <Dialog
+        :open="changeWorldImageDialogVisible"
+        @update:open="
+            (open) => {
+                if (!open) closeDialog();
+            }
+        ">
+        <DialogContent class="x-dialog sm:max-w-212.5">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.change_content_image.world') }}</DialogTitle>
+            </DialogHeader>
+
+            <div>
+                <input
+                    id="WorldImageUploadButton"
+                    type="file"
+                    accept="image/*"
+                    style="display: none"
+                    @change="onFileChangeWorldImage" />
+                <span>{{ t('dialog.change_content_image.description') }}</span>
+                <br />
+                <Button variant="outline" size="sm" :disabled="changeWorldImageDialogLoading" @click="uploadWorldImage">
+                    <Upload />
+                    {{ t('dialog.change_content_image.upload') }}
+                </Button>
+                <br />
+                <div class="x-change-image-item">
+                    <img :src="previousImageUrl" class="img-size" loading="lazy" />
+                </div>
             </div>
-        </div>
-    </el-dialog>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { Upload } from 'lucide-vue-next';
     import { ref } from 'vue';

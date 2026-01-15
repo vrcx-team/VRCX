@@ -1,61 +1,66 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        v-model="gallerySelectDialog.visible"
-        :title="t('dialog.gallery_select.header')"
-        width="100%"
-        append-to-body>
-        <div>
-            <span>{{ t('dialog.gallery_select.gallery') }}</span>
-            <span style="color: #909399; font-size: 12px; margin-left: 5px">{{ galleryTable.length }}/64</span>
-            <br />
-            <input
-                id="GalleryUploadButton"
-                type="file"
-                accept="image/*"
-                style="display: none"
-                @change="onFileChangeGallery" />
-            <ButtonGroup>
-                <Button variant="outline" size="sm" @click="selectImageGallerySelect('', '')">
-                    <X />
-                    {{ t('dialog.gallery_select.none') }}
-                </Button>
-                <Button variant="outline" size="sm" @click="refreshGalleryTable">
-                    <RefreshCw />
-                    {{ t('dialog.gallery_select.refresh') }}
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    :disabled="!isLocalUserVrcPlusSupporter"
-                    @click="displayGalleryUpload">
-                    <Upload />
-                    {{ t('dialog.gallery_select.upload') }}
-                </Button>
-            </ButtonGroup>
-            <br />
-            <div
-                v-for="image in galleryTable"
-                :key="image.id"
-                class="x-friend-item"
-                style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
-                <template v-if="image.versions && image.versions.length > 0">
-                    <div
-                        v-if="image.versions[image.versions.length - 1].file.url"
-                        class="vrcplus-icon"
-                        @click="selectImageGallerySelect(image.versions[image.versions.length - 1].file.url, image.id)">
-                        <img
-                            :src="image.versions[image.versions.length - 1].file.url"
-                            class="avatar"
-                            loading="lazy" /></div
-                ></template>
+    <Dialog v-model:open="gallerySelectDialog.visible">
+        <DialogContent class="x-dialog w-full sm:max-w-none">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.gallery_select.header') }}</DialogTitle>
+            </DialogHeader>
+
+            <div>
+                <span>{{ t('dialog.gallery_select.gallery') }}</span>
+                <span style="color: #909399; font-size: 12px; margin-left: 5px">{{ galleryTable.length }}/64</span>
+                <br />
+                <input
+                    id="GalleryUploadButton"
+                    type="file"
+                    accept="image/*"
+                    style="display: none"
+                    @change="onFileChangeGallery" />
+                <ButtonGroup>
+                    <Button variant="outline" size="sm" @click="selectImageGallerySelect('', '')">
+                        <X />
+                        {{ t('dialog.gallery_select.none') }}
+                    </Button>
+                    <Button variant="outline" size="sm" @click="refreshGalleryTable">
+                        <RefreshCw />
+                        {{ t('dialog.gallery_select.refresh') }}
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        :disabled="!isLocalUserVrcPlusSupporter"
+                        @click="displayGalleryUpload">
+                        <Upload />
+                        {{ t('dialog.gallery_select.upload') }}
+                    </Button>
+                </ButtonGroup>
+                <br />
+                <div
+                    v-for="image in galleryTable"
+                    :key="image.id"
+                    class="x-friend-item"
+                    style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                    <template v-if="image.versions && image.versions.length > 0">
+                        <div
+                            v-if="image.versions[image.versions.length - 1].file.url"
+                            class="vrcplus-icon"
+                            @click="
+                                selectImageGallerySelect(image.versions[image.versions.length - 1].file.url, image.id)
+                            ">
+                            <img
+                                :src="image.versions[image.versions.length - 1].file.url"
+                                class="avatar"
+                                loading="lazy" />
+                        </div>
+                    </template>
+                </div>
             </div>
-        </div>
-    </el-dialog>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
-    import { X, RefreshCw, Upload } from 'lucide-vue-next';
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { RefreshCw, Upload, X } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { storeToRefs } from 'pinia';

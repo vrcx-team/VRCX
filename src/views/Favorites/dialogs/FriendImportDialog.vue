@@ -1,101 +1,103 @@
 <template>
-    <el-dialog
-        :z-index="friendImportDialogIndex"
-        v-model="isVisible"
-        :title="t('dialog.friend_import.header')"
-        width="650px">
-        <div style="display: flex; align-items: center; justify-content: space-between">
-            <div style="font-size: 12px">{{ t('dialog.friend_import.description') }}</div>
-            <div style="display: flex; align-items: center">
-                <div v-if="friendImportDialog.progress">
-                    {{ t('dialog.friend_import.process_progress') }} {{ friendImportDialog.progress }} /
-                    {{ friendImportDialog.progressTotal }}
-                    <Loader2 style="margin: 0 5px" />
+    <Dialog v-model:open="isVisible">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.friend_import.header') }}</DialogTitle>
+            </DialogHeader>
+            <div style="display: flex; align-items: center; justify-content: space-between">
+                <div style="font-size: 12px">{{ t('dialog.friend_import.description') }}</div>
+                <div style="display: flex; align-items: center">
+                    <div v-if="friendImportDialog.progress">
+                        {{ t('dialog.friend_import.process_progress') }} {{ friendImportDialog.progress }} /
+                        {{ friendImportDialog.progressTotal }}
+                        <Loader2 style="margin: 0 5px" />
+                    </div>
+                    <Button v-if="friendImportDialog.loading" size="sm" variant="secondary" @click="cancelFriendImport">
+                        {{ t('dialog.friend_import.cancel') }}
+                    </Button>
+                    <Button size="sm" v-else :disabled="!friendImportDialog.input" @click="processFriendImportList">
+                        {{ t('dialog.friend_import.process_list') }}
+                    </Button>
                 </div>
-                <Button v-if="friendImportDialog.loading" size="sm" variant="secondary" @click="cancelFriendImport">
-                    {{ t('dialog.friend_import.cancel') }}
-                </Button>
-                <Button size="sm" v-else :disabled="!friendImportDialog.input" @click="processFriendImportList">
-                    {{ t('dialog.friend_import.process_list') }}
-                </Button>
             </div>
-        </div>
-        <InputGroupTextareaField
-            v-model="friendImportDialog.input"
-            :rows="10"
-            style="margin-top: 10px"
-            input-class="resize-none" />
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
-            <div>
-                <Select
-                    :model-value="friendImportFavoriteGroupSelection"
-                    @update:modelValue="handleFriendImportGroupSelect">
-                    <SelectTrigger size="sm">
-                        <SelectValue :placeholder="t('dialog.friend_import.select_group_placeholder')" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem
-                                v-for="groupAPI in favoriteFriendGroups"
-                                :key="groupAPI.name"
-                                :value="groupAPI.name"
-                                :disabled="groupAPI.count >= groupAPI.capacity">
-                                {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-                <span v-if="friendImportDialog.friendImportFavoriteGroup" style="margin-left: 5px">
-                    {{ friendImportTable.data.length }} /
-                    {{
-                        friendImportDialog.friendImportFavoriteGroup.capacity -
-                        friendImportDialog.friendImportFavoriteGroup.count
-                    }}
-                </span>
+            <InputGroupTextareaField
+                v-model="friendImportDialog.input"
+                :rows="10"
+                style="margin-top: 10px"
+                input-class="resize-none" />
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
+                <div>
+                    <Select
+                        :model-value="friendImportFavoriteGroupSelection"
+                        @update:modelValue="handleFriendImportGroupSelect">
+                        <SelectTrigger size="sm">
+                            <SelectValue :placeholder="t('dialog.friend_import.select_group_placeholder')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="groupAPI in favoriteFriendGroups"
+                                    :key="groupAPI.name"
+                                    :value="groupAPI.name"
+                                    :disabled="groupAPI.count >= groupAPI.capacity">
+                                    {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <span v-if="friendImportDialog.friendImportFavoriteGroup" style="margin-left: 5px">
+                        {{ friendImportTable.data.length }} /
+                        {{
+                            friendImportDialog.friendImportFavoriteGroup.capacity -
+                            friendImportDialog.friendImportFavoriteGroup.count
+                        }}
+                    </span>
+                </div>
+                <div>
+                    <Button
+                        size="sm"
+                        class="mr-2"
+                        variant="secondary"
+                        :disabled="friendImportTable.data.length === 0"
+                        @click="clearFriendImportTable">
+                        {{ t('dialog.friend_import.clear_table') }}
+                    </Button>
+                    <Button
+                        size="sm"
+                        :disabled="friendImportTable.data.length === 0 || !friendImportDialog.friendImportFavoriteGroup"
+                        @click="importFriendImportTable">
+                        {{ t('dialog.friend_import.import') }}
+                    </Button>
+                </div>
             </div>
-            <div>
-                <Button
-                    size="sm"
-                    class="mr-2"
-                    variant="secondary"
-                    :disabled="friendImportTable.data.length === 0"
-                    @click="clearFriendImportTable">
-                    {{ t('dialog.friend_import.clear_table') }}
+            <span v-if="friendImportDialog.importProgress" style="margin: 10px">
+                <Loader2 style="margin-right: 5px" />
+                {{ t('dialog.friend_import.import_progress') }} {{ friendImportDialog.importProgress }}/{{
+                    friendImportDialog.importProgressTotal
+                }}
+            </span>
+            <br />
+            <template v-if="friendImportDialog.errors">
+                <Button size="sm" variant="secondary" @click="friendImportDialog.errors = ''">
+                    {{ t('dialog.friend_import.clear_errors') }}
                 </Button>
-                <Button
-                    size="sm"
-                    :disabled="friendImportTable.data.length === 0 || !friendImportDialog.friendImportFavoriteGroup"
-                    @click="importFriendImportTable">
-                    {{ t('dialog.friend_import.import') }}
-                </Button>
-            </div>
-        </div>
-        <span v-if="friendImportDialog.importProgress" style="margin: 10px">
-            <Loader2 style="margin-right: 5px" />
-            {{ t('dialog.friend_import.import_progress') }} {{ friendImportDialog.importProgress }}/{{
-                friendImportDialog.importProgressTotal
-            }}
-        </span>
-        <br />
-        <template v-if="friendImportDialog.errors">
-            <Button size="sm" variant="secondary" @click="friendImportDialog.errors = ''">
-                {{ t('dialog.friend_import.clear_errors') }}
-            </Button>
-            <h2 style="font-weight: bold; margin: 5px 0">{{ t('dialog.friend_import.errors') }}</h2>
-            <pre style="white-space: pre-wrap; font-size: 12px" v-text="friendImportDialog.errors"></pre>
-        </template>
-        <DataTableLayout
-            class="min-w-0 w-full"
-            :table="table"
-            :loading="friendImportDialog.loading"
-            :table-style="tableStyle"
-            :show-pagination="false"
-            style="margin-top: 10px" />
-    </el-dialog>
+                <h2 style="font-weight: bold; margin: 5px 0">{{ t('dialog.friend_import.errors') }}</h2>
+                <pre style="white-space: pre-wrap; font-size: 12px" v-text="friendImportDialog.errors"></pre>
+            </template>
+            <DataTableLayout
+                class="min-w-0 w-full"
+                :table="table"
+                :loading="friendImportDialog.loading"
+                :table-style="tableStyle"
+                :show-pagination="false"
+                style="margin-top: 10px" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { DataTableLayout } from '@/components/ui/data-table';
@@ -109,7 +111,6 @@
     import { useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
     import { favoriteRequest, userRequest } from '../../../api';
     import { createColumns } from './friendImportColumns.jsx';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     const { t } = useI18n();
@@ -169,8 +170,6 @@
         enableSorting: false
     });
 
-    const friendImportDialogIndex = ref(2000);
-
     const isVisible = computed({
         get() {
             return friendImportDialogVisible.value;
@@ -184,7 +183,6 @@
         () => friendImportDialogVisible.value,
         (value) => {
             if (value) {
-                friendImportDialogIndex.value = getNextDialogIndex();
                 clearFriendImportTable();
                 resetFriendImport();
                 friendImportFavoriteGroupSelection.value =

@@ -1,44 +1,46 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="sendInviteRequestResponseDialogVisible"
-        :title="t('dialog.invite_request_response_message.header')"
-        width="800px"
-        append-to-body
-        @close="cancelSendInviteRequestResponse">
-        <template v-if="isLocalUserVrcPlusSupporter">
-            <input class="inviteImageUploadButton" type="file" accept="image/*" @change="inviteImageUpload" />
-        </template>
+    <Dialog
+        :open="sendInviteRequestResponseDialogVisible"
+        @update:open="(open) => (open ? null : cancelSendInviteRequestResponse())">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.invite_request_response_message.header') }}</DialogTitle>
+            </DialogHeader>
+            <template v-if="isLocalUserVrcPlusSupporter">
+                <input class="inviteImageUploadButton" type="file" accept="image/*" @change="inviteImageUpload" />
+            </template>
 
-        <DataTableLayout
-            style="margin-top: 10px"
-            :table="inviteRequestResponseTable"
-            :loading="false"
-            :show-pagination="false"
-            :on-row-click="handleInviteRequestResponseRowClick" />
+            <DataTableLayout
+                style="margin-top: 10px"
+                :table="inviteRequestResponseTable"
+                :loading="false"
+                :show-pagination="false"
+                :on-row-click="handleInviteRequestResponseRowClick" />
 
-        <template #footer>
-            <Button variant="secondary" class="mr-2" @click="cancelSendInviteRequestResponse">
-                {{ t('dialog.invite_request_response_message.cancel') }}
-            </Button>
-            <Button @click="refreshInviteMessageTableData('requestResponse')">
-                {{ t('dialog.invite_request_response_message.refresh') }}
-            </Button>
-        </template>
-        <EditAndSendInviteResponseDialog
-            :edit-and-send-invite-response-dialog="editAndSendInviteResponseDialog"
-            :send-invite-response-dialog="sendInviteResponseDialog"
-            @closeInviteDialog="closeInviteDialog"
-            @closeResponseConfirmDialog="closeResponseConfirmDialog" />
-        <SendInviteResponseConfirmDialog
-            :send-invite-response-dialog="sendInviteResponseDialog"
-            :send-invite-response-confirm-dialog="sendInviteResponseConfirmDialog"
-            @closeInviteDialog="closeInviteDialog"
-            @closeResponseConfirmDialog="closeResponseConfirmDialog" />
-    </el-dialog>
+            <DialogFooter>
+                <Button variant="secondary" class="mr-2" @click="cancelSendInviteRequestResponse">
+                    {{ t('dialog.invite_request_response_message.cancel') }}
+                </Button>
+                <Button @click="refreshInviteMessageTableData('requestResponse')">
+                    {{ t('dialog.invite_request_response_message.refresh') }}
+                </Button>
+            </DialogFooter>
+            <EditAndSendInviteResponseDialog
+                :edit-and-send-invite-response-dialog="editAndSendInviteResponseDialog"
+                :send-invite-response-dialog="sendInviteResponseDialog"
+                @closeInviteDialog="closeInviteDialog"
+                @closeResponseConfirmDialog="closeResponseConfirmDialog" />
+            <SendInviteResponseConfirmDialog
+                :send-invite-response-dialog="sendInviteResponseDialog"
+                :send-invite-response-confirm-dialog="sendInviteResponseConfirmDialog"
+                @closeInviteDialog="closeInviteDialog"
+                @closeResponseConfirmDialog="closeResponseConfirmDialog" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { DataTableLayout } from '@/components/ui/data-table';

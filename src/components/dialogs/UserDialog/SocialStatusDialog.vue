@@ -1,96 +1,98 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        v-model="socialStatusDialog.visible"
-        :title="t('dialog.social_status.header')"
-        append-to-body
-        width="400px">
-        <div v-loading="socialStatusDialog.loading">
-            <Select :model-value="socialStatusDialog.status" @update:modelValue="handleSocialStatusChange">
-                <SelectTrigger size="sm" style="margin-top: 10px; width: 100%">
-                    <span class="flex items-center gap-2">
-                        <i v-if="socialStatusDialog.status === 'join me'" class="x-user-status joinme"></i>
-                        <i v-else-if="socialStatusDialog.status === 'active'" class="x-user-status online"></i>
-                        <i v-else-if="socialStatusDialog.status === 'ask me'" class="x-user-status askme"></i>
-                        <i v-else-if="socialStatusDialog.status === 'busy'" class="x-user-status busy"></i>
-                        <i v-else-if="socialStatusDialog.status === 'offline'" class="x-user-status offline"></i>
-                        <SelectValue :placeholder="t('dialog.social_status.status_placeholder')" />
-                    </span>
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectItem value="join me" :text-value="t('dialog.user.status.join_me')">
-                            <i class="x-user-status joinme"></i> {{ t('dialog.user.status.join_me') }}
-                        </SelectItem>
-                        <SelectItem value="active" :text-value="t('dialog.user.status.online')">
-                            <i class="x-user-status online"></i> {{ t('dialog.user.status.online') }}
-                        </SelectItem>
-                        <SelectItem value="ask me" :text-value="t('dialog.user.status.ask_me')">
-                            <i class="x-user-status askme"></i> {{ t('dialog.user.status.ask_me') }}
-                        </SelectItem>
-                        <SelectItem value="busy" :text-value="t('dialog.user.status.busy')">
-                            <i class="x-user-status busy"></i> {{ t('dialog.user.status.busy') }}
-                        </SelectItem>
-                        <SelectItem
-                            v-if="currentUser.$isModerator"
-                            value="offline"
-                            :text-value="t('dialog.user.status.offline')">
-                            <i class="x-user-status offline"></i> {{ t('dialog.user.status.offline') }}
-                        </SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
+    <Dialog v-model:open="socialStatusDialog.visible">
+        <DialogContent class="x-dialog sm:max-w-100">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.social_status.header') }}</DialogTitle>
+            </DialogHeader>
 
-            <InputGroupField
-                v-model="socialStatusDialog.statusDescription"
-                :placeholder="t('dialog.social_status.status_placeholder')"
-                :maxlength="32"
-                clearable
-                show-count
-                class="mt-2.5" />
-            <Collapsible v-model:open="isOpen" class="mt-3 flex w-full flex-col gap-2">
-                <div class="flex items-center justify-between gap-4 px-4">
-                    <h4 class="text-sm font-semibold">{{ t('dialog.social_status.history') }}</h4>
-                    <CollapsibleTrigger as-child>
-                        <Button variant="ghost" size="icon" class="size-8">
-                            <ChevronsUpDown />
-                            <span class="sr-only">Toggle</span>
-                        </Button>
-                    </CollapsibleTrigger>
-                </div>
-                <div
-                    v-if="!isOpen && latestHistoryItem"
-                    class="cursor-pointer rounded-md border w-full px-4 py-2 font-mono text-sm"
-                    @click="setSocialStatusFromHistory(latestHistoryItem)">
-                    {{ latestHistoryItem.status }}
-                </div>
-                <CollapsibleContent class="flex flex-col gap-2">
-                    <div
-                        v-for="item in historyItems"
-                        :key="item.no ?? item.status"
-                        class="cursor-pointer rounded-md border w-full px-4 py-2 font-mono text-sm"
-                        @click="setSocialStatusFromHistory(item)">
-                        {{ item.status }}
+            <div v-loading="socialStatusDialog.loading">
+                <Select :model-value="socialStatusDialog.status" @update:modelValue="handleSocialStatusChange">
+                    <SelectTrigger size="sm" style="margin-top: 10px; width: 100%">
+                        <span class="flex items-center gap-2">
+                            <i v-if="socialStatusDialog.status === 'join me'" class="x-user-status joinme"></i>
+                            <i v-else-if="socialStatusDialog.status === 'active'" class="x-user-status online"></i>
+                            <i v-else-if="socialStatusDialog.status === 'ask me'" class="x-user-status askme"></i>
+                            <i v-else-if="socialStatusDialog.status === 'busy'" class="x-user-status busy"></i>
+                            <i v-else-if="socialStatusDialog.status === 'offline'" class="x-user-status offline"></i>
+                            <SelectValue :placeholder="t('dialog.social_status.status_placeholder')" />
+                        </span>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem value="join me" :text-value="t('dialog.user.status.join_me')">
+                                <i class="x-user-status joinme"></i> {{ t('dialog.user.status.join_me') }}
+                            </SelectItem>
+                            <SelectItem value="active" :text-value="t('dialog.user.status.online')">
+                                <i class="x-user-status online"></i> {{ t('dialog.user.status.online') }}
+                            </SelectItem>
+                            <SelectItem value="ask me" :text-value="t('dialog.user.status.ask_me')">
+                                <i class="x-user-status askme"></i> {{ t('dialog.user.status.ask_me') }}
+                            </SelectItem>
+                            <SelectItem value="busy" :text-value="t('dialog.user.status.busy')">
+                                <i class="x-user-status busy"></i> {{ t('dialog.user.status.busy') }}
+                            </SelectItem>
+                            <SelectItem
+                                v-if="currentUser.$isModerator"
+                                value="offline"
+                                :text-value="t('dialog.user.status.offline')">
+                                <i class="x-user-status offline"></i> {{ t('dialog.user.status.offline') }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+
+                <InputGroupField
+                    v-model="socialStatusDialog.statusDescription"
+                    :placeholder="t('dialog.social_status.status_placeholder')"
+                    :maxlength="32"
+                    clearable
+                    show-count
+                    class="mt-2.5" />
+                <Collapsible v-model:open="isOpen" class="mt-3 flex w-full flex-col gap-2">
+                    <div class="flex items-center justify-between gap-4 px-4">
+                        <h4 class="text-sm font-semibold">{{ t('dialog.social_status.history') }}</h4>
+                        <CollapsibleTrigger as-child>
+                            <Button variant="ghost" size="icon" class="size-8">
+                                <ChevronsUpDown />
+                                <span class="sr-only">Toggle</span>
+                            </Button>
+                        </CollapsibleTrigger>
                     </div>
-                </CollapsibleContent>
-            </Collapsible>
-        </div>
+                    <div
+                        v-if="!isOpen && latestHistoryItem"
+                        class="cursor-pointer rounded-md border w-full px-4 py-2 font-mono text-sm"
+                        @click="setSocialStatusFromHistory(latestHistoryItem)">
+                        {{ latestHistoryItem.status }}
+                    </div>
+                    <CollapsibleContent class="flex flex-col gap-2">
+                        <div
+                            v-for="item in historyItems"
+                            :key="item.no ?? item.status"
+                            class="cursor-pointer rounded-md border w-full px-4 py-2 font-mono text-sm"
+                            @click="setSocialStatusFromHistory(item)">
+                            {{ item.status }}
+                        </div>
+                    </CollapsibleContent></Collapsible
+                >
+            </div>
 
-        <template #footer>
-            <Button :disabled="socialStatusDialog.loading" @click="saveSocialStatus">
-                {{ t('dialog.social_status.update') }}
-            </Button>
-        </template>
-    </el-dialog>
+            <DialogFooter>
+                <Button :disabled="socialStatusDialog.loading" @click="saveSocialStatus">
+                    {{ t('dialog.social_status.update') }}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup lang="ts">
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { InputGroupField } from '@/components/ui/input-group';
     import { ChevronsUpDown } from 'lucide-vue-next';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

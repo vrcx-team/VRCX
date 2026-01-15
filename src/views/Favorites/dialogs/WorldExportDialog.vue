@@ -1,61 +1,73 @@
 <template>
-    <el-dialog v-model="isDialogVisible" :title="t('dialog.world_export.header')" width="650px">
-        <div style="margin-bottom: 10px" class="flex flex-col gap-2">
-            <label v-for="option in exportSelectOptions" :key="option.value" class="inline-flex items-center gap-2">
-                <Checkbox
-                    :model-value="exportSelectedOptions.includes(option.label)"
-                    @update:modelValue="(val) => toggleWorldExportOption(option.label, val)" />
-                <span>{{ option.label }}</span>
-            </label>
-        </div>
+    <Dialog v-model:open="isDialogVisible">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.world_export.header') }}</DialogTitle>
+            </DialogHeader>
 
-        <div class="flex items-center gap-2">
-            <Select :model-value="worldExportFavoriteGroupSelection" @update:modelValue="handleWorldExportGroupSelect">
-                <SelectTrigger size="sm">
-                    <SelectValue placeholder="All Favorites" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectItem :value="WORLD_EXPORT_ALL_VALUE">None</SelectItem>
-                        <SelectItem v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name" :value="groupAPI.name">
-                            {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                        </SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
+            <div style="margin-bottom: 10px" class="flex flex-col gap-2">
+                <label v-for="option in exportSelectOptions" :key="option.value" class="inline-flex items-center gap-2">
+                    <Checkbox
+                        :model-value="exportSelectedOptions.includes(option.label)"
+                        @update:modelValue="(val) => toggleWorldExportOption(option.label, val)" />
+                    <span>{{ option.label }}</span>
+                </label>
+            </div>
 
-            <Select
-                :model-value="worldExportLocalFavoriteGroupSelection"
-                @update:modelValue="handleWorldExportLocalGroupSelect"
-                style="margin-left: 10px">
-                <SelectTrigger size="sm">
-                    <SelectValue placeholder="Select Group" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectItem :value="WORLD_EXPORT_NONE_VALUE">None</SelectItem>
-                        <SelectItem v-for="group in localWorldFavoriteGroups" :key="group" :value="group">
-                            {{ group }} ({{ localWorldFavorites[group].length }})
-                        </SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
-        </div>
+            <div class="flex items-center gap-2">
+                <Select
+                    :model-value="worldExportFavoriteGroupSelection"
+                    @update:modelValue="handleWorldExportGroupSelect">
+                    <SelectTrigger size="sm">
+                        <SelectValue placeholder="All Favorites" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem :value="WORLD_EXPORT_ALL_VALUE">None</SelectItem>
+                            <SelectItem
+                                v-for="groupAPI in favoriteWorldGroups"
+                                :key="groupAPI.name"
+                                :value="groupAPI.name">
+                                {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
 
-        <br />
+                <Select
+                    :model-value="worldExportLocalFavoriteGroupSelection"
+                    @update:modelValue="handleWorldExportLocalGroupSelect"
+                    style="margin-left: 10px">
+                    <SelectTrigger size="sm">
+                        <SelectValue placeholder="Select Group" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem :value="WORLD_EXPORT_NONE_VALUE">None</SelectItem>
+                            <SelectItem v-for="group in localWorldFavoriteGroups" :key="group" :value="group">
+                                {{ group }} ({{ localWorldFavorites[group].length }})
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </div>
 
-        <InputGroupTextareaField
-            v-model="worldExportContent"
-            :rows="15"
-            readonly
-            style="margin-top: 15px"
-            input-class="resize-none"
-            @click="handleCopyWorldExportData" />
-    </el-dialog>
+            <br />
+
+            <InputGroupTextareaField
+                v-model="worldExportContent"
+                :rows="15"
+                readonly
+                style="margin-top: 15px"
+                input-class="resize-none"
+                @click="handleCopyWorldExportData" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupTextareaField } from '@/components/ui/input-group';

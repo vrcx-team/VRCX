@@ -1,45 +1,49 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="props.visible"
-        title="Edit Note And Memo"
-        :show-close="false"
-        top="30vh"
-        width="500px"
-        append-to-body
-        @close="cancel">
-        <template v-if="!hideUserNotes || (hideUserNotes && hideUserMemos)">
-            <span class="name my-2">{{ t('dialog.user.info.note') }}</span>
-            <br />
-            <InputGroupTextareaField
-                v-model="note"
-                :autosize="{ minRows: 6, maxRows: 20 }"
-                :maxlength="256"
-                :rows="6"
-                :placeholder="t('dialog.user.info.note_placeholder')"
-                input-class="extra resize-none"
-                class="my-2"
-                show-count />
-        </template>
-        <template v-if="!hideUserMemos || (hideUserNotes && hideUserMemos)">
-            <span class="name">{{ t('dialog.user.info.memo') }}</span>
-            <InputGroupTextareaField
-                v-model="memo"
-                class="extra mt-2"
-                :rows="6"
-                :placeholder="t('dialog.user.info.memo_placeholder')"
-                input-class="resize-none min-h-0" />
-        </template>
-        <template #footer>
-            <div class="dialog-footer">
+    <Dialog
+        :open="props.visible"
+        @update:open="
+            (open) => {
+                if (!open) cancel();
+            }
+        ">
+        <DialogContent class="x-dialog sm:max-w-125 translate-y-0" style="top: 30vh" :show-close-button="false">
+            <DialogHeader>
+                <DialogTitle>Edit Note And Memo</DialogTitle>
+            </DialogHeader>
+
+            <template v-if="!hideUserNotes || (hideUserNotes && hideUserMemos)">
+                <span class="name my-2">{{ t('dialog.user.info.note') }}</span>
+                <br />
+                <InputGroupTextareaField
+                    v-model="note"
+                    :autosize="{ minRows: 6, maxRows: 20 }"
+                    :maxlength="256"
+                    :rows="6"
+                    :placeholder="t('dialog.user.info.note_placeholder')"
+                    input-class="extra resize-none"
+                    class="my-2"
+                    show-count />
+            </template>
+            <template v-if="!hideUserMemos || (hideUserNotes && hideUserMemos)">
+                <span class="name">{{ t('dialog.user.info.memo') }}</span>
+                <InputGroupTextareaField
+                    v-model="memo"
+                    class="extra mt-2"
+                    :rows="6"
+                    :placeholder="t('dialog.user.info.memo_placeholder')"
+                    input-class="resize-none min-h-0" />
+            </template>
+
+            <DialogFooter>
                 <Button variant="secondary" @click="cancel" class="mr-2">Cancel</Button>
                 <Button @click="saveChanges">Confirm</Button>
-            </div>
-        </template>
-    </el-dialog>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';

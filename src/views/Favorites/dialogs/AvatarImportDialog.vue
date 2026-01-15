@@ -1,120 +1,122 @@
 <template>
-    <el-dialog
-        :z-index="avatarImportDialogIndex"
-        v-model="isVisible"
-        :title="t('dialog.avatar_import.header')"
-        width="650px">
-        <div style="display: flex; align-items: center; justify-content: space-between">
-            <div style="font-size: 12px">{{ t('dialog.avatar_import.description') }}</div>
-            <div style="display: flex; align-items: center">
-                <div v-if="avatarImportDialog.progress">
-                    {{ t('dialog.avatar_import.process_progress') }} {{ avatarImportDialog.progress }} /
-                    {{ avatarImportDialog.progressTotal }}
-                    <Loader2 style="margin: 0 5px" />
+    <Dialog v-model:open="isVisible">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.avatar_import.header') }}</DialogTitle>
+            </DialogHeader>
+            <div style="display: flex; align-items: center; justify-content: space-between">
+                <div style="font-size: 12px">{{ t('dialog.avatar_import.description') }}</div>
+                <div style="display: flex; align-items: center">
+                    <div v-if="avatarImportDialog.progress">
+                        {{ t('dialog.avatar_import.process_progress') }} {{ avatarImportDialog.progress }} /
+                        {{ avatarImportDialog.progressTotal }}
+                        <Loader2 style="margin: 0 5px" />
+                    </div>
+                    <Button v-if="avatarImportDialog.loading" size="sm" variant="secondary" @click="cancelAvatarImport">
+                        {{ t('dialog.avatar_import.cancel') }}
+                    </Button>
+                    <Button size="sm" v-else :disabled="!avatarImportDialog.input" @click="processAvatarImportList">
+                        {{ t('dialog.avatar_import.process_list') }}
+                    </Button>
                 </div>
-                <Button v-if="avatarImportDialog.loading" size="sm" variant="secondary" @click="cancelAvatarImport">
-                    {{ t('dialog.avatar_import.cancel') }}
-                </Button>
-                <Button size="sm" v-else :disabled="!avatarImportDialog.input" @click="processAvatarImportList">
-                    {{ t('dialog.avatar_import.process_list') }}
-                </Button>
             </div>
-        </div>
-        <InputGroupTextareaField
-            v-model="avatarImportDialog.input"
-            :rows="10"
-            style="margin-top: 10px"
-            input-class="resize-none" />
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
-            <div>
-                <div class="flex items-center gap-2">
-                    <Select
-                        :model-value="avatarImportFavoriteGroupSelection"
-                        @update:modelValue="handleAvatarImportGroupSelect"
-                        style="margin-right: 5px">
-                        <SelectTrigger size="sm">
-                            <SelectValue :placeholder="t('dialog.avatar_import.select_group_placeholder')" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem
-                                    v-for="groupAPI in favoriteAvatarGroups"
-                                    :key="groupAPI.name"
-                                    :value="groupAPI.name"
-                                    :disabled="groupAPI.count >= groupAPI.capacity">
-                                    {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                                </SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+            <InputGroupTextareaField
+                v-model="avatarImportDialog.input"
+                :rows="10"
+                style="margin-top: 10px"
+                input-class="resize-none" />
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <Select
+                            :model-value="avatarImportFavoriteGroupSelection"
+                            @update:modelValue="handleAvatarImportGroupSelect"
+                            style="margin-right: 5px">
+                            <SelectTrigger size="sm">
+                                <SelectValue :placeholder="t('dialog.avatar_import.select_group_placeholder')" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem
+                                        v-for="groupAPI in favoriteAvatarGroups"
+                                        :key="groupAPI.name"
+                                        :value="groupAPI.name"
+                                        :disabled="groupAPI.count >= groupAPI.capacity">
+                                        {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
 
-                    <Select
-                        :model-value="avatarImportLocalFavoriteGroupSelection"
-                        @update:modelValue="handleAvatarImportLocalGroupSelect"
-                        style="margin-left: 10px">
-                        <SelectTrigger size="sm">
-                            <SelectValue :placeholder="t('dialog.avatar_import.select_group_placeholder')" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem v-for="group in localAvatarFavoriteGroups" :key="group" :value="group">
-                                    {{ group }} ({{ localAvatarFavGroupLength(group) }})
-                                </SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+                        <Select
+                            :model-value="avatarImportLocalFavoriteGroupSelection"
+                            @update:modelValue="handleAvatarImportLocalGroupSelect"
+                            style="margin-left: 10px">
+                            <SelectTrigger size="sm">
+                                <SelectValue :placeholder="t('dialog.avatar_import.select_group_placeholder')" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem v-for="group in localAvatarFavoriteGroups" :key="group" :value="group">
+                                        {{ group }} ({{ localAvatarFavGroupLength(group) }})
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <span v-if="avatarImportDialog.avatarImportFavoriteGroup" style="margin-left: 5px">
+                        {{ avatarImportTable.data.length }} /
+                        {{
+                            avatarImportDialog.avatarImportFavoriteGroup.capacity -
+                            avatarImportDialog.avatarImportFavoriteGroup.count
+                        }}
+                    </span>
                 </div>
-                <span v-if="avatarImportDialog.avatarImportFavoriteGroup" style="margin-left: 5px">
-                    {{ avatarImportTable.data.length }} /
-                    {{
-                        avatarImportDialog.avatarImportFavoriteGroup.capacity -
-                        avatarImportDialog.avatarImportFavoriteGroup.count
-                    }}
-                </span>
+                <div>
+                    <Button size="sm" variant="secondary" class="mr-2" @click="clearAvatarImportTable">
+                        {{ t('dialog.avatar_import.clear_table') }}
+                    </Button>
+                    <Button
+                        size="sm"
+                        :disabled="
+                            avatarImportTable.data.length === 0 ||
+                            (!avatarImportDialog.avatarImportFavoriteGroup &&
+                                !avatarImportDialog.avatarImportLocalFavoriteGroup)
+                        "
+                        @click="importAvatarImportTable">
+                        {{ t('dialog.avatar_import.import') }}
+                    </Button>
+                </div>
             </div>
-            <div>
-                <Button size="sm" variant="secondary" class="mr-2" @click="clearAvatarImportTable">
-                    {{ t('dialog.avatar_import.clear_table') }}
+            <span v-if="avatarImportDialog.importProgress" style="margin: 10px">
+                <Loader2 style="margin-right: 5px" />
+                {{ t('dialog.avatar_import.import_progress') }}
+                {{ avatarImportDialog.importProgress }}/{{ avatarImportDialog.importProgressTotal }}
+            </span>
+            <br />
+            <template v-if="avatarImportDialog.errors">
+                <Button size="sm" variant="secondary" @click="avatarImportDialog.errors = ''">
+                    {{ t('dialog.avatar_import.clear_errors') }}
                 </Button>
-                <Button
-                    size="sm"
-                    :disabled="
-                        avatarImportTable.data.length === 0 ||
-                        (!avatarImportDialog.avatarImportFavoriteGroup &&
-                            !avatarImportDialog.avatarImportLocalFavoriteGroup)
-                    "
-                    @click="importAvatarImportTable">
-                    {{ t('dialog.avatar_import.import') }}
-                </Button>
-            </div>
-        </div>
-        <span v-if="avatarImportDialog.importProgress" style="margin: 10px">
-            <Loader2 style="margin-right: 5px" />
-            {{ t('dialog.avatar_import.import_progress') }}
-            {{ avatarImportDialog.importProgress }}/{{ avatarImportDialog.importProgressTotal }}
-        </span>
-        <br />
-        <template v-if="avatarImportDialog.errors">
-            <Button size="sm" variant="secondary" @click="avatarImportDialog.errors = ''">
-                {{ t('dialog.avatar_import.clear_errors') }}
-            </Button>
-            <h2 style="font-weight: bold; margin: 5px 0">
-                {{ t('dialog.avatar_import.errors') }}
-            </h2>
-            <pre style="white-space: pre-wrap; font-size: 12px" v-text="avatarImportDialog.errors"></pre>
-        </template>
-        <DataTableLayout
-            class="min-w-0 w-full"
-            :table="table"
-            :loading="avatarImportDialog.loading"
-            :table-style="tableStyle"
-            :show-pagination="false"
-            style="margin-top: 10px" />
-    </el-dialog>
+                <h2 style="font-weight: bold; margin: 5px 0">
+                    {{ t('dialog.avatar_import.errors') }}
+                </h2>
+                <pre style="white-space: pre-wrap; font-size: 12px" v-text="avatarImportDialog.errors"></pre>
+            </template>
+            <DataTableLayout
+                class="min-w-0 w-full"
+                :table="table"
+                :loading="avatarImportDialog.loading"
+                :table-style="tableStyle"
+                :show-pagination="false"
+                style="margin-top: 10px" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { DataTableLayout } from '@/components/ui/data-table';
@@ -127,7 +129,6 @@
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
     import { avatarRequest, favoriteRequest } from '../../../api';
     import { createColumns } from './avatarImportColumns.jsx';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { removeFromArray } from '../../../shared/utils';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
@@ -189,8 +190,6 @@
         enableSorting: false
     });
 
-    const avatarImportDialogIndex = ref(2000);
-
     const isVisible = computed({
         get() {
             return avatarImportDialogVisible.value;
@@ -204,7 +203,6 @@
         () => avatarImportDialogVisible.value,
         (value) => {
             if (value) {
-                avatarImportDialogIndex.value = getNextDialogIndex();
                 clearAvatarImportTable();
                 resetAvatarImport();
                 if (avatarImportDialogInput.value) {

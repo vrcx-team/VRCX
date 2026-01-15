@@ -1,6 +1,10 @@
 <template>
-    <el-dialog :z-index="favoriteDialogIndex" v-model="isVisible" :title="t('dialog.favorite.header')" width="300px">
-        <div v-loading="loading">
+    <Dialog v-model:open="isVisible">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.favorite.header') }}</DialogTitle>
+            </DialogHeader>
+            <div v-loading="loading">
             <span style="display: block; text-align: center">{{ t('dialog.favorite.vrchat_favorites') }}</span>
             <template v-if="favoriteDialog.currentGroup && favoriteDialog.currentGroup.key">
                 <Button
@@ -23,8 +27,8 @@
                     {{ group.displayName }} ({{ group.count }} / {{ group.capacity }})
                 </Button>
             </template>
-        </div>
-        <div v-if="favoriteDialog.type === 'world'" style="margin-top: 20px">
+            </div>
+            <div v-if="favoriteDialog.type === 'world'" style="margin-top: 20px">
             <span style="display: block; text-align: center">{{ t('dialog.favorite.local_favorites') }}</span>
             <template v-for="group in localWorldFavoriteGroups" :key="group">
                 <Button
@@ -44,8 +48,8 @@
                     {{ group }} ({{ localWorldFavGroupLength(group) }})
                 </Button>
             </template>
-        </div>
-        <div v-if="favoriteDialog.type === 'avatar'" style="margin-top: 20px">
+            </div>
+            <div v-if="favoriteDialog.type === 'avatar'" style="margin-top: 20px">
             <span style="text-align: center">{{ t('dialog.favorite.local_avatar_favorites') }}</span>
             <template v-for="group in localAvatarFavoriteGroups" :key="group">
                 <Button
@@ -66,14 +70,16 @@
                     {{ group }} ({{ localAvatarFavGroupLength(group) }})
                 </Button>
             </template>
-        </div>
-    </el-dialog>
+            </div>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
-    import { computed, nextTick, ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Check } from 'lucide-vue-next';
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -81,7 +87,6 @@
 
     import { useFavoriteStore, useUserStore } from '../../stores';
     import { favoriteRequest } from '../../api';
-    import { getNextDialogIndex } from '../../shared/utils/base/ui';
 
     const { t } = useI18n();
 
@@ -107,7 +112,6 @@
     } = favoriteStore;
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 
-    const favoriteDialogIndex = ref(2000);
     const groups = ref([]);
     const loading = ref(false);
 
@@ -123,9 +127,6 @@
         (value) => {
             if (value) {
                 initFavoriteDialog();
-                nextTick(() => {
-                    favoriteDialogIndex.value = getNextDialogIndex();
-                });
             }
         }
     );

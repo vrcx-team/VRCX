@@ -1,701 +1,707 @@
 <template>
-    <el-dialog
-        :z-index="worldDialogIndex"
-        class="x-dialog x-world-dialog"
-        v-model="isDialogVisible"
-        top="10vh"
-        :show-close="false"
-        width="940px">
-        <div v-loading="worldDialog.loading">
-            <div style="display: flex">
-                <img
-                    :src="worldDialog.ref.thumbnailImageUrl"
-                    class="x-link"
-                    style="flex: none; width: 160px; height: 120px; border-radius: 12px"
-                    @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
-                    loading="lazy" />
-                <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
-                    <div style="flex: 1">
-                        <div>
-                            <span
-                                class="dialog-title"
-                                style="margin-right: 5px; cursor: pointer"
-                                @click="copyWorldName">
-                                <Home
-                                    v-if="
-                                        currentUser.$homeLocation &&
-                                        currentUser.$homeLocation.worldId === worldDialog.id
-                                    "
-                                    style="margin-right: 5px" />
-                                {{ worldDialog.ref.name }}
-                            </span>
-                        </div>
-                        <div style="margin-top: 5px">
-                            <span
-                                class="x-link x-grey"
-                                style="font-family: monospace"
-                                @click="showUserDialog(worldDialog.ref.authorId)"
-                                v-text="worldDialog.ref.authorName" />
-                        </div>
-                        <div>
-                            <Badge
-                                v-if="worldDialog.ref.$isLabs"
-                                variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
-                                {{ t('dialog.world.tags.labs') }}
-                            </Badge>
-                            <Badge
-                                v-else-if="worldDialog.ref.releaseStatus === 'public'"
-                                variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
-                                {{ t('dialog.world.tags.public') }}
-                            </Badge>
-                            <Badge v-else variant="outline" style="margin-right: 5px; margin-top: 5px">
-                                {{ t('dialog.world.tags.private') }}
-                            </Badge>
-                            <TooltipWrapper v-if="worldDialog.isPC" side="top" content="PC">
+    <Dialog v-model:open="isDialogVisible">
+        <DialogContent
+            class="x-dialog x-world-dialog translate-y-0 sm:max-w-235"
+            :show-close-button="false"
+            style="top: 10vh">
+            <div v-loading="worldDialog.loading">
+                <div style="display: flex">
+                    <img
+                        :src="worldDialog.ref.thumbnailImageUrl"
+                        class="x-link"
+                        style="flex: none; width: 160px; height: 120px; border-radius: 12px"
+                        @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
+                        loading="lazy" />
+                    <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
+                        <div style="flex: 1">
+                            <div>
+                                <span
+                                    class="dialog-title"
+                                    style="margin-right: 5px; cursor: pointer"
+                                    @click="copyWorldName">
+                                    <Home
+                                        v-if="
+                                            currentUser.$homeLocation &&
+                                            currentUser.$homeLocation.worldId === worldDialog.id
+                                        "
+                                        style="margin-right: 5px" />
+                                    {{ worldDialog.ref.name }}
+                                </span>
+                            </div>
+                            <div style="margin-top: 5px">
+                                <span
+                                    class="x-link x-grey"
+                                    style="font-family: monospace"
+                                    @click="showUserDialog(worldDialog.ref.authorId)"
+                                    v-text="worldDialog.ref.authorName" />
+                            </div>
+                            <div>
                                 <Badge
-                                    class="x-tag-platform-pc"
+                                    v-if="worldDialog.ref.$isLabs"
                                     variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
-                                    <Monitor class="h-4 w-4 x-tag-platform-pc" />
-                                    ><span
-                                        v-if="worldDialog.bundleSizes['standalonewindows']"
-                                        :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']">
-                                        {{ worldDialog.bundleSizes['standalonewindows'].fileSize }}
-                                    </span>
+                                    {{ t('dialog.world.tags.labs') }}
                                 </Badge>
-                            </TooltipWrapper>
+                                <Badge
+                                    v-else-if="worldDialog.ref.releaseStatus === 'public'"
+                                    variant="outline"
+                                    style="margin-right: 5px; margin-top: 5px">
+                                    {{ t('dialog.world.tags.public') }}
+                                </Badge>
+                                <Badge v-else variant="outline" style="margin-right: 5px; margin-top: 5px">
+                                    {{ t('dialog.world.tags.private') }}
+                                </Badge>
+                                <TooltipWrapper v-if="worldDialog.isPC" side="top" content="PC">
+                                    <Badge
+                                        class="x-tag-platform-pc"
+                                        variant="outline"
+                                        style="margin-right: 5px; margin-top: 5px">
+                                        <Monitor class="h-4 w-4 x-tag-platform-pc" />
+                                        ><span
+                                            v-if="worldDialog.bundleSizes['standalonewindows']"
+                                            :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']">
+                                            {{ worldDialog.bundleSizes['standalonewindows'].fileSize }}
+                                        </span>
+                                    </Badge>
+                                </TooltipWrapper>
 
-                            <TooltipWrapper v-if="worldDialog.isQuest" side="top" content="Quest">
-                                <Badge
-                                    class="x-tag-platform-quest"
-                                    variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px">
-                                    <Smartphone class="h-4 w-4 x-tag-platform-quest" />
-                                    ><span
-                                        v-if="worldDialog.bundleSizes['android']"
-                                        :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']">
-                                        {{ worldDialog.bundleSizes['android'].fileSize }}
-                                    </span>
-                                </Badge>
-                            </TooltipWrapper>
+                                <TooltipWrapper v-if="worldDialog.isQuest" side="top" content="Quest">
+                                    <Badge
+                                        class="x-tag-platform-quest"
+                                        variant="outline"
+                                        style="margin-right: 5px; margin-top: 5px">
+                                        <Smartphone class="h-4 w-4 x-tag-platform-quest" />
+                                        ><span
+                                            v-if="worldDialog.bundleSizes['android']"
+                                            :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']">
+                                            {{ worldDialog.bundleSizes['android'].fileSize }}
+                                        </span>
+                                    </Badge>
+                                </TooltipWrapper>
 
-                            <TooltipWrapper v-if="worldDialog.isIos" side="top" content="iOS">
-                                <Badge
-                                    class="x-tag-platform-ios"
-                                    variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px">
-                                    <Apple class="h-4 w-4 x-tag-platform-ios" />
-                                    ><span
-                                        v-if="worldDialog.bundleSizes['ios']"
-                                        :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']">
-                                        {{ worldDialog.bundleSizes['ios'].fileSize }}
-                                    </span>
-                                </Badge>
-                            </TooltipWrapper>
+                                <TooltipWrapper v-if="worldDialog.isIos" side="top" content="iOS">
+                                    <Badge
+                                        class="x-tag-platform-ios"
+                                        variant="outline"
+                                        style="margin-right: 5px; margin-top: 5px">
+                                        <Apple class="h-4 w-4 x-tag-platform-ios" />
+                                        ><span
+                                            v-if="worldDialog.bundleSizes['ios']"
+                                            :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']">
+                                            {{ worldDialog.bundleSizes['ios'].fileSize }}
+                                        </span>
+                                    </Badge>
+                                </TooltipWrapper>
 
-                            <Badge
-                                v-if="worldDialog.avatarScalingDisabled"
-                                variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
-                                {{ t('dialog.world.tags.avatar_scaling_disabled') }}
-                            </Badge>
-                            <Badge
-                                v-if="worldDialog.focusViewDisabled"
-                                variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
-                                {{ t('dialog.world.tags.focus_view_disabled') }}
-                            </Badge>
-                            <Badge
-                                v-if="worldDialog.ref.unityPackageUrl"
-                                variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
-                                {{ t('dialog.world.tags.future_proofing') }}
-                            </Badge>
-                            <Badge
-                                v-if="worldDialog.inCache"
-                                variant="outline"
-                                class="x-link"
-                                style="margin-right: 5px; margin-top: 5px"
-                                @click="openFolderGeneric(worldDialog.cachePath)">
-                                <span v-text="worldDialog.cacheSize" />
-                                | {{ t('dialog.world.tags.cache') }}
-                            </Badge>
-                        </div>
-                        <div>
-                            <template v-for="tag in worldDialog.ref.tags" :key="tag">
                                 <Badge
-                                    v-if="tag.startsWith('content_')"
+                                    v-if="worldDialog.avatarScalingDisabled"
                                     variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
-                                    <span v-if="tag === 'content_horror'">
-                                        {{ t('dialog.world.tags.content_horror') }}
-                                    </span>
-                                    <span v-else-if="tag === 'content_gore'">
-                                        {{ t('dialog.world.tags.content_gore') }}
-                                    </span>
-                                    <span v-else-if="tag === 'content_violence'">
-                                        {{ t('dialog.world.tags.content_violence') }}
-                                    </span>
-                                    <span v-else-if="tag === 'content_adult'">
-                                        {{ t('dialog.world.tags.content_adult') }}
-                                    </span>
-                                    <span v-else-if="tag === 'content_sex'">
-                                        {{ t('dialog.world.tags.content_sex') }}
-                                    </span>
-                                    <span v-else>
-                                        {{ tag.replace('content_', '') }}
-                                    </span>
+                                    {{ t('dialog.world.tags.avatar_scaling_disabled') }}
                                 </Badge>
-                            </template>
-                        </div>
-                        <div style="margin-top: 5px">
-                            <span
-                                v-show="worldDialog.ref.name !== worldDialog.ref.description"
-                                style="font-size: 12px"
-                                >{{ worldDialog.ref.description }}</span
-                            >
-                        </div>
-                    </div>
-                    <div style="flex: none; margin-left: 10px">
-                        <TooltipWrapper
-                            v-if="worldDialog.inCache"
-                            side="top"
-                            :content="t('dialog.world.actions.delete_cache_tooltip')">
-                            <Button
-                                class="rounded-full mr-2"
-                                size="icon-lg"
-                                variant="outline"
-                                :disabled="isGameRunning && worldDialog.cacheLocked"
-                                @click="deleteVRChatCache(worldDialog.ref)"
-                                ><Trash2
-                            /></Button>
-                        </TooltipWrapper>
-                        <TooltipWrapper
-                            v-if="worldDialog.isFavorite"
-                            side="top"
-                            :content="t('dialog.world.actions.favorites_tooltip')">
-                            <Button class="rounded-full" size="icon-lg" @click="worldDialogCommand('Add Favorite')"
-                                ><Star
-                            /></Button>
-                        </TooltipWrapper>
-                        <TooltipWrapper v-else side="top" :content="t('dialog.world.actions.favorites_tooltip')">
-                            <Button
-                                class="rounded-full"
-                                size="icon-lg"
-                                variant="outline"
-                                @click="worldDialogCommand('Add Favorite')"
-                                ><Star
-                            /></Button>
-                        </TooltipWrapper>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger as-child>
-                                <Button variant="outline" size="icon-lg" class="rounded-full ml-2">
-                                    <Ellipsis />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                <DropdownMenuItem @click="worldDialogCommand('RefreshCw')">
-                                    <RefreshCw class="size-4" />
-                                    {{ t('dialog.world.actions.refresh') }}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem @click="worldDialogCommand('Share2')">
-                                    <Share2 class="size-4" />
-                                    {{ t('dialog.world.actions.share') }}
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem @click="worldDialogCommand('New Instance')">
-                                    <Flag class="size-4" />
-                                    {{ t('dialog.world.actions.new_instance') }}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem @click="worldDialogCommand('New Instance and Self Invite')">
-                                    <MessageSquare class="size-4" />
-                                    {{
-                                        canOpenInstanceInGame
-                                            ? t('dialog.world.actions.new_instance_and_open_ingame')
-                                            : t('dialog.world.actions.new_instance_and_self_invite')
-                                    }}
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                    v-if="
-                                        currentUser.$homeLocation &&
-                                        currentUser.$homeLocation.worldId === worldDialog.id
-                                    "
-                                    @click="worldDialogCommand('Reset Home')">
-                                    <Wand2 class="size-4" />
-                                    {{ t('dialog.world.actions.reset_home') }}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem v-else @click="worldDialogCommand('Make Home')">
-                                    <Home class="size-4" />
-                                    {{ t('dialog.world.actions.make_home') }}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem @click="worldDialogCommand('Previous Instances')">
-                                    <LineChart class="size-4" />
-                                    {{ t('dialog.world.actions.show_previous_instances') }}
-                                </DropdownMenuItem>
-                                <template v-if="currentUser.id !== worldDialog.ref.authorId">
-                                    <DropdownMenuItem
-                                        :disabled="!worldDialog.hasPersistData"
-                                        @click="worldDialogCommand('Trash2 Persistent Data')">
-                                        <Upload class="size-4" />
-                                        {{ t('dialog.world.actions.delete_persistent_data') }}
-                                    </DropdownMenuItem>
+                                <Badge
+                                    v-if="worldDialog.focusViewDisabled"
+                                    variant="outline"
+                                    style="margin-right: 5px; margin-top: 5px">
+                                    {{ t('dialog.world.tags.focus_view_disabled') }}
+                                </Badge>
+                                <Badge
+                                    v-if="worldDialog.ref.unityPackageUrl"
+                                    variant="outline"
+                                    style="margin-right: 5px; margin-top: 5px">
+                                    {{ t('dialog.world.tags.future_proofing') }}
+                                </Badge>
+                                <Badge
+                                    v-if="worldDialog.inCache"
+                                    variant="outline"
+                                    class="x-link"
+                                    style="margin-right: 5px; margin-top: 5px"
+                                    @click="openFolderGeneric(worldDialog.cachePath)">
+                                    <span v-text="worldDialog.cacheSize" />
+                                    | {{ t('dialog.world.tags.cache') }}
+                                </Badge>
+                            </div>
+                            <div>
+                                <template v-for="tag in worldDialog.ref.tags" :key="tag">
+                                    <Badge
+                                        v-if="tag.startsWith('content_')"
+                                        variant="outline"
+                                        style="margin-right: 5px; margin-top: 5px">
+                                        <span v-if="tag === 'content_horror'">
+                                            {{ t('dialog.world.tags.content_horror') }}
+                                        </span>
+                                        <span v-else-if="tag === 'content_gore'">
+                                            {{ t('dialog.world.tags.content_gore') }}
+                                        </span>
+                                        <span v-else-if="tag === 'content_violence'">
+                                            {{ t('dialog.world.tags.content_violence') }}
+                                        </span>
+                                        <span v-else-if="tag === 'content_adult'">
+                                            {{ t('dialog.world.tags.content_adult') }}
+                                        </span>
+                                        <span v-else-if="tag === 'content_sex'">
+                                            {{ t('dialog.world.tags.content_sex') }}
+                                        </span>
+                                        <span v-else>
+                                            {{ tag.replace('content_', '') }}
+                                        </span>
+                                    </Badge>
                                 </template>
-                                <template v-else>
-                                    <DropdownMenuItem @click="worldDialogCommand('Rename')">
-                                        <Pencil class="size-4" />
-                                        {{ t('dialog.world.actions.rename') }}
+                            </div>
+                            <div style="margin-top: 5px">
+                                <span
+                                    v-show="worldDialog.ref.name !== worldDialog.ref.description"
+                                    style="font-size: 12px"
+                                    >{{ worldDialog.ref.description }}</span
+                                >
+                            </div>
+                        </div>
+                        <div style="flex: none; margin-left: 10px">
+                            <TooltipWrapper
+                                v-if="worldDialog.inCache"
+                                side="top"
+                                :content="t('dialog.world.actions.delete_cache_tooltip')">
+                                <Button
+                                    class="rounded-full mr-2"
+                                    size="icon-lg"
+                                    variant="outline"
+                                    :disabled="isGameRunning && worldDialog.cacheLocked"
+                                    @click="deleteVRChatCache(worldDialog.ref)"
+                                    ><Trash2
+                                /></Button>
+                            </TooltipWrapper>
+                            <TooltipWrapper
+                                v-if="worldDialog.isFavorite"
+                                side="top"
+                                :content="t('dialog.world.actions.favorites_tooltip')">
+                                <Button class="rounded-full" size="icon-lg" @click="worldDialogCommand('Add Favorite')"
+                                    ><Star
+                                /></Button>
+                            </TooltipWrapper>
+                            <TooltipWrapper v-else side="top" :content="t('dialog.world.actions.favorites_tooltip')">
+                                <Button
+                                    class="rounded-full"
+                                    size="icon-lg"
+                                    variant="outline"
+                                    @click="worldDialogCommand('Add Favorite')"
+                                    ><Star
+                                /></Button>
+                            </TooltipWrapper>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger as-child>
+                                    <Button variant="outline" size="icon-lg" class="rounded-full ml-2">
+                                        <Ellipsis />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    <DropdownMenuItem @click="worldDialogCommand('RefreshCw')">
+                                        <RefreshCw class="size-4" />
+                                        {{ t('dialog.world.actions.refresh') }}
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem @click="worldDialogCommand('Change Description')">
-                                        <Pencil class="size-4" />
-                                        {{ t('dialog.world.actions.change_description') }}
+                                    <DropdownMenuItem @click="worldDialogCommand('Share2')">
+                                        <Share2 class="size-4" />
+                                        {{ t('dialog.world.actions.share') }}
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem @click="worldDialogCommand('Change Capacity')">
-                                        <Pencil class="size-4" />
-                                        {{ t('dialog.world.actions.change_capacity') }}
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem @click="worldDialogCommand('New Instance')">
+                                        <Flag class="size-4" />
+                                        {{ t('dialog.world.actions.new_instance') }}
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem @click="worldDialogCommand('Change Recommended Capacity')">
-                                        <Pencil class="size-4" />
-                                        {{ t('dialog.world.actions.change_recommended_capacity') }}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem @click="worldDialogCommand('Change YouTube Preview')">
-                                        <Pencil class="size-4" />
-                                        {{ t('dialog.world.actions.change_preview') }}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem @click="worldDialogCommand('Change Tags')">
-                                        <Pencil class="size-4" />
-                                        {{ t('dialog.world.actions.change_warnings_settings_tags') }}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem @click="worldDialogCommand('Change Allowed Domains')">
-                                        <Pencil class="size-4" />
-                                        {{ t('dialog.world.actions.change_allowed_video_player_domains') }}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem v-if="isWindows" @click="worldDialogCommand('Change Image')">
-                                        <Image class="size-4" />
-                                        {{ t('dialog.world.actions.change_image') }}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        v-if="worldDialog.ref.unityPackageUrl"
-                                        @click="worldDialogCommand('Download Unity Package')">
-                                        <Download class="size-4" />
-                                        {{ t('dialog.world.actions.download_package') }}
+                                    <DropdownMenuItem @click="worldDialogCommand('New Instance and Self Invite')">
+                                        <MessageSquare class="size-4" />
+                                        {{
+                                            canOpenInstanceInGame
+                                                ? t('dialog.world.actions.new_instance_and_open_ingame')
+                                                : t('dialog.world.actions.new_instance_and_self_invite')
+                                        }}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem
                                         v-if="
-                                            worldDialog.ref?.tags?.includes('system_approved') ||
-                                            worldDialog.ref?.tags?.includes('system_labs')
+                                            currentUser.$homeLocation &&
+                                            currentUser.$homeLocation.worldId === worldDialog.id
                                         "
-                                        @click="worldDialogCommand('Unpublish')">
-                                        <Eye class="size-4" />
-                                        {{ t('dialog.world.actions.unpublish') }}
+                                        @click="worldDialogCommand('Reset Home')">
+                                        <Wand2 class="size-4" />
+                                        {{ t('dialog.world.actions.reset_home') }}
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem v-else @click="worldDialogCommand('Publish')">
-                                        <Eye class="size-4" />
-                                        {{ t('dialog.world.actions.publish_to_labs') }}
+                                    <DropdownMenuItem v-else @click="worldDialogCommand('Make Home')">
+                                        <Home class="size-4" />
+                                        {{ t('dialog.world.actions.make_home') }}
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        :disabled="!worldDialog.hasPersistData"
-                                        @click="worldDialogCommand('Trash2 Persistent Data')">
-                                        <Upload class="size-4" />
-                                        {{ t('dialog.world.actions.delete_persistent_data') }}
+                                    <DropdownMenuItem @click="worldDialogCommand('Previous Instances')">
+                                        <LineChart class="size-4" />
+                                        {{ t('dialog.world.actions.show_previous_instances') }}
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem variant="destructive" @click="worldDialogCommand('Trash2')">
-                                        <Trash2 class="size-4" />
-                                        {{ t('dialog.world.actions.delete') }}
-                                    </DropdownMenuItem>
-                                </template>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                                    <template v-if="currentUser.id !== worldDialog.ref.authorId">
+                                        <DropdownMenuItem
+                                            :disabled="!worldDialog.hasPersistData"
+                                            @click="worldDialogCommand('Trash2 Persistent Data')">
+                                            <Upload class="size-4" />
+                                            {{ t('dialog.world.actions.delete_persistent_data') }}
+                                        </DropdownMenuItem>
+                                    </template>
+                                    <template v-else>
+                                        <DropdownMenuItem @click="worldDialogCommand('Rename')">
+                                            <Pencil class="size-4" />
+                                            {{ t('dialog.world.actions.rename') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem @click="worldDialogCommand('Change Description')">
+                                            <Pencil class="size-4" />
+                                            {{ t('dialog.world.actions.change_description') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem @click="worldDialogCommand('Change Capacity')">
+                                            <Pencil class="size-4" />
+                                            {{ t('dialog.world.actions.change_capacity') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem @click="worldDialogCommand('Change Recommended Capacity')">
+                                            <Pencil class="size-4" />
+                                            {{ t('dialog.world.actions.change_recommended_capacity') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem @click="worldDialogCommand('Change YouTube Preview')">
+                                            <Pencil class="size-4" />
+                                            {{ t('dialog.world.actions.change_preview') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem @click="worldDialogCommand('Change Tags')">
+                                            <Pencil class="size-4" />
+                                            {{ t('dialog.world.actions.change_warnings_settings_tags') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem @click="worldDialogCommand('Change Allowed Domains')">
+                                            <Pencil class="size-4" />
+                                            {{ t('dialog.world.actions.change_allowed_video_player_domains') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem v-if="isWindows" @click="worldDialogCommand('Change Image')">
+                                            <Image class="size-4" />
+                                            {{ t('dialog.world.actions.change_image') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            v-if="worldDialog.ref.unityPackageUrl"
+                                            @click="worldDialogCommand('Download Unity Package')">
+                                            <Download class="size-4" />
+                                            {{ t('dialog.world.actions.download_package') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                                            v-if="
+                                                worldDialog.ref?.tags?.includes('system_approved') ||
+                                                worldDialog.ref?.tags?.includes('system_labs')
+                                            "
+                                            @click="worldDialogCommand('Unpublish')">
+                                            <Eye class="size-4" />
+                                            {{ t('dialog.world.actions.unpublish') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem v-else @click="worldDialogCommand('Publish')">
+                                            <Eye class="size-4" />
+                                            {{ t('dialog.world.actions.publish_to_labs') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            :disabled="!worldDialog.hasPersistData"
+                                            @click="worldDialogCommand('Trash2 Persistent Data')">
+                                            <Upload class="size-4" />
+                                            {{ t('dialog.world.actions.delete_persistent_data') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem variant="destructive" @click="worldDialogCommand('Trash2')">
+                                            <Trash2 class="size-4" />
+                                            {{ t('dialog.world.actions.delete') }}
+                                        </DropdownMenuItem>
+                                    </template>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <TabsUnderline
-                v-model="worldDialogLastActiveTab"
-                :items="worldDialogTabs"
-                :unmount-on-hide="false"
-                @update:modelValue="worldDialogTabClick">
-                <template #Instances>
-                    <div>
-                        <User />
-                        {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
-                        <User style="margin-left: 10px" />
-                        {{
-                            t('dialog.world.instances.private_count', {
-                                count: worldDialog.ref.privateOccupants
-                            })
-                        }}
-                        <Check style="margin-left: 10px" />
-                        {{
-                            t('dialog.world.instances.capacity_count', {
-                                count: worldDialog.ref.recommendedCapacity,
-                                max: worldDialog.ref.capacity
-                            })
-                        }}
-                    </div>
-                    <div v-for="room in worldDialog.rooms" :key="room.id">
-                        <template
-                            v-if="isAgeGatedInstancesVisible || !(room.ageGate || room.location?.includes('~ageGate'))">
-                            <div style="margin: 5px 0">
-                                <div class="flex-align-center">
-                                    <LocationWorld
-                                        :locationobject="room.$location"
-                                        :currentuserid="currentUser.id"
-                                        :worlddialogshortname="worldDialog.$location.shortName" />
-                                    <Launch :location="room.tag" style="margin-left: 5px" />
-                                    <InviteYourself
-                                        :location="room.$location.tag"
-                                        :shortname="room.$location.shortName"
-                                        style="margin-left: 5px" />
-                                    <TooltipWrapper
-                                        side="top"
-                                        :content="t('dialog.world.instances.refresh_instance_info')">
-                                        <Button
-                                            class="rounded-full ml-1 w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
-                                            size="icon"
-                                            variant="outline"
-                                            @click="refreshInstancePlayerCount(room.tag)"
-                                            ><RefreshCw class="h-4 w-4" />
-                                        </Button>
-                                    </TooltipWrapper>
-                                    <TooltipWrapper
-                                        v-if="instanceJoinHistory.get(room.$location.tag)"
-                                        side="top"
-                                        :content="t('dialog.previous_instances.info')">
-                                        <Button
-                                            class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
-                                            size="icon-sm"
-                                            variant="outline"
-                                            style="margin-left: 5px"
-                                            @click="showPreviousInstancesInfoDialog(room.location)"
-                                            ><History class="h-4 w-4" />
-                                        </Button>
-                                    </TooltipWrapper>
-                                    <LastJoin :location="room.$location.tag" :currentlocation="lastLocation.location" />
-                                    <InstanceInfo
-                                        :location="room.tag"
-                                        :instance="room.ref"
-                                        :friendcount="room.friendCount" />
-                                </div>
-                                <div
-                                    v-if="room.$location.userId || room.users.length"
-                                    class="x-friend-list"
-                                    style="margin: 10px 0; max-height: unset">
+                <TabsUnderline
+                    v-model="worldDialogLastActiveTab"
+                    :items="worldDialogTabs"
+                    :unmount-on-hide="false"
+                    @update:modelValue="worldDialogTabClick">
+                    <template #Instances>
+                        <div>
+                            <User />
+                            {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
+                            <User style="margin-left: 10px" />
+                            {{
+                                t('dialog.world.instances.private_count', {
+                                    count: worldDialog.ref.privateOccupants
+                                })
+                            }}
+                            <Check style="margin-left: 10px" />
+                            {{
+                                t('dialog.world.instances.capacity_count', {
+                                    count: worldDialog.ref.recommendedCapacity,
+                                    max: worldDialog.ref.capacity
+                                })
+                            }}
+                        </div>
+                        <div v-for="room in worldDialog.rooms" :key="room.id">
+                            <template
+                                v-if="
+                                    isAgeGatedInstancesVisible || !(room.ageGate || room.location?.includes('~ageGate'))
+                                ">
+                                <div style="margin: 5px 0">
+                                    <div class="flex-align-center">
+                                        <LocationWorld
+                                            :locationobject="room.$location"
+                                            :currentuserid="currentUser.id"
+                                            :worlddialogshortname="worldDialog.$location.shortName" />
+                                        <Launch :location="room.tag" style="margin-left: 5px" />
+                                        <InviteYourself
+                                            :location="room.$location.tag"
+                                            :shortname="room.$location.shortName"
+                                            style="margin-left: 5px" />
+                                        <TooltipWrapper
+                                            side="top"
+                                            :content="t('dialog.world.instances.refresh_instance_info')">
+                                            <Button
+                                                class="rounded-full ml-1 w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                                                size="icon"
+                                                variant="outline"
+                                                @click="refreshInstancePlayerCount(room.tag)"
+                                                ><RefreshCw class="h-4 w-4" />
+                                            </Button>
+                                        </TooltipWrapper>
+                                        <TooltipWrapper
+                                            v-if="instanceJoinHistory.get(room.$location.tag)"
+                                            side="top"
+                                            :content="t('dialog.previous_instances.info')">
+                                            <Button
+                                                class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                                                size="icon-sm"
+                                                variant="outline"
+                                                style="margin-left: 5px"
+                                                @click="showPreviousInstancesInfoDialog(room.location)"
+                                                ><History class="h-4 w-4" />
+                                            </Button>
+                                        </TooltipWrapper>
+                                        <LastJoin
+                                            :location="room.$location.tag"
+                                            :currentlocation="lastLocation.location" />
+                                        <InstanceInfo
+                                            :location="room.tag"
+                                            :instance="room.ref"
+                                            :friendcount="room.friendCount" />
+                                    </div>
                                     <div
-                                        v-if="room.$location.userId"
-                                        class="x-friend-item x-friend-item-border"
-                                        @click="showUserDialog(room.$location.userId)">
-                                        <template v-if="room.$location.user">
-                                            <div class="avatar" :class="userStatusClass(room.$location.user)">
-                                                <img :src="userImage(room.$location.user, true)" loading="lazy" />
+                                        v-if="room.$location.userId || room.users.length"
+                                        class="x-friend-list"
+                                        style="margin: 10px 0; max-height: unset">
+                                        <div
+                                            v-if="room.$location.userId"
+                                            class="x-friend-item x-friend-item-border"
+                                            @click="showUserDialog(room.$location.userId)">
+                                            <template v-if="room.$location.user">
+                                                <div class="avatar" :class="userStatusClass(room.$location.user)">
+                                                    <img :src="userImage(room.$location.user, true)" loading="lazy" />
+                                                </div>
+                                                <div class="detail">
+                                                    <span
+                                                        class="name"
+                                                        :style="{ color: room.$location.user.$userColour }"
+                                                        v-text="room.$location.user.displayName" />
+                                                    <span class="extra">
+                                                        {{ t('dialog.world.instances.instance_creator') }}
+                                                    </span>
+                                                </div>
+                                            </template>
+                                            <span v-else v-text="room.$location.userId" />
+                                        </div>
+                                        <div
+                                            v-for="user in room.users"
+                                            :key="user.id"
+                                            class="x-friend-item x-friend-item-border"
+                                            @click="showUserDialog(user.id)">
+                                            <div class="avatar" :class="userStatusClass(user)">
+                                                <img :src="userImage(user, true)" loading="lazy" />
                                             </div>
                                             <div class="detail">
                                                 <span
                                                     class="name"
-                                                    :style="{ color: room.$location.user.$userColour }"
-                                                    v-text="room.$location.user.displayName" />
-                                                <span class="extra">
-                                                    {{ t('dialog.world.instances.instance_creator') }}
+                                                    :style="{ color: user.$userColour }"
+                                                    v-text="user.displayName" />
+                                                <span v-if="user.location === 'traveling'" class="extra">
+                                                    <Loader2 class="is-loading" style="margin-right: 3px" />
+                                                    <Timer :epoch="user.$travelingToTime" />
+                                                </span>
+                                                <span v-else class="extra">
+                                                    <Timer :epoch="user.$location_at" />
                                                 </span>
                                             </div>
-                                        </template>
-                                        <span v-else v-text="room.$location.userId" />
-                                    </div>
-                                    <div
-                                        v-for="user in room.users"
-                                        :key="user.id"
-                                        class="x-friend-item x-friend-item-border"
-                                        @click="showUserDialog(user.id)">
-                                        <div class="avatar" :class="userStatusClass(user)">
-                                            <img :src="userImage(user, true)" loading="lazy" />
-                                        </div>
-                                        <div class="detail">
-                                            <span
-                                                class="name"
-                                                :style="{ color: user.$userColour }"
-                                                v-text="user.displayName" />
-                                            <span v-if="user.location === 'traveling'" class="extra">
-                                                <Loader2 class="is-loading" style="margin-right: 3px" />
-                                                <Timer :epoch="user.$travelingToTime" />
-                                            </span>
-                                            <span v-else class="extra">
-                                                <Timer :epoch="user.$location_at" />
-                                            </span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </template>
-                    </div>
-                </template>
-                <template #Info>
-                    <div class="x-friend-list" style="max-height: none">
-                        <div class="x-friend-item" style="width: 100%; cursor: default">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.memo') }}
-                                </span>
-                                <InputGroupTextareaField
-                                    v-model="memo"
-                                    class="extra"
-                                    :rows="2"
-                                    :placeholder="t('dialog.world.info.memo_placeholder')"
-                                    input-class="resize-none min-h-0"
-                                    @change="onWorldMemoChange" />
-                            </div>
+                            </template>
                         </div>
-                        <div style="width: 100%; display: flex">
+                    </template>
+                    <template #Info>
+                        <div class="x-friend-list" style="max-height: none">
                             <div class="x-friend-item" style="width: 100%; cursor: default">
                                 <div class="detail">
                                     <span class="name">
-                                        {{ t('dialog.world.info.id') }}
+                                        {{ t('dialog.world.info.memo') }}
                                     </span>
-                                    <span class="extra" style="display: inline">
-                                        {{ worldDialog.id }}
+                                    <InputGroupTextareaField
+                                        v-model="memo"
+                                        class="extra"
+                                        :rows="2"
+                                        :placeholder="t('dialog.world.info.memo_placeholder')"
+                                        input-class="resize-none min-h-0"
+                                        @change="onWorldMemoChange" />
+                                </div>
+                            </div>
+                            <div style="width: 100%; display: flex">
+                                <div class="x-friend-item" style="width: 100%; cursor: default">
+                                    <div class="detail">
+                                        <span class="name">
+                                            {{ t('dialog.world.info.id') }}
+                                        </span>
+                                        <span class="extra" style="display: inline">
+                                            {{ worldDialog.id }}
+                                        </span>
+                                        <TooltipWrapper side="top" :content="t('dialog.world.info.id_tooltip')">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger as-child>
+                                                    <Button
+                                                        class="rounded-full text-xs"
+                                                        size="icon-sm"
+                                                        variant="outline"
+                                                        @click.stop
+                                                        ><Copy class="h-4 w-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent>
+                                                    <DropdownMenuItem @click="copyWorldId()">
+                                                        {{ t('dialog.world.info.copy_id') }}
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem @click="copyWorldUrl()">
+                                                        {{ t('dialog.world.info.copy_url') }}
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem @click="copyWorldName()">
+                                                        {{ t('dialog.world.info.copy_name') }}
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </TooltipWrapper>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                v-if="worldDialog.ref.previewYoutubeId"
+                                class="x-friend-item"
+                                style="width: 350px"
+                                @click="
+                                    openExternalLink(
+                                        `https://www.youtube.com/watch?v=${worldDialog.ref.previewYoutubeId}`
+                                    )
+                                ">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.world.info.youtube_preview') }}
                                     </span>
-                                    <TooltipWrapper side="top" :content="t('dialog.world.info.id_tooltip')">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger as-child>
-                                                <Button
-                                                    class="rounded-full text-xs"
-                                                    size="icon-sm"
-                                                    variant="outline"
-                                                    @click.stop
-                                                    ><Copy class="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent>
-                                                <DropdownMenuItem @click="copyWorldId()">
-                                                    {{ t('dialog.world.info.copy_id') }}
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem @click="copyWorldUrl()">
-                                                    {{ t('dialog.world.info.copy_url') }}
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem @click="copyWorldName()">
-                                                    {{ t('dialog.world.info.copy_name') }}
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                                    <span class="extra">
+                                        https://www.youtube.com/watch?v={{ worldDialog.ref.previewYoutubeId }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="x-friend-item" style="width: 100%; cursor: default">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.world.info.author_tags') }}
+                                    </span>
+                                    <span
+                                        v-if="
+                                            worldDialog.ref.tags?.filter((tag) => tag.startsWith('author_tag')).length >
+                                            0
+                                        "
+                                        class="extra">
+                                        {{ worldTags }}
+                                    </span>
+                                    <span v-else class="extra"> - </span>
+                                </div>
+                            </div>
+                            <div class="x-friend-item" style="cursor: default">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.world.info.players') }}
+                                    </span>
+                                    <span class="extra">
+                                        {{ commaNumber(worldDialog.ref.occupants) }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="x-friend-item" style="cursor: default">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.world.info.favorites') }}
+                                    </span>
+                                    <span class="extra">
+                                        {{ commaNumber(worldDialog.ref.favorites)
+                                        }}<span
+                                            v-if="worldDialog.ref?.favorites > 0 && worldDialog.ref?.visits > 0"
+                                            class="extra">
+                                            ({{ favoriteRate }}%)
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="x-friend-item" style="cursor: default">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.world.info.visits') }}
+                                    </span>
+                                    <span class="extra">
+                                        {{ commaNumber(worldDialog.ref.visits) }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="x-friend-item" style="cursor: default">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.world.info.capacity') }}
+                                    </span>
+                                    <span class="extra">
+                                        {{ commaNumber(worldDialog.ref.recommendedCapacity) }} ({{
+                                            commaNumber(worldDialog.ref.capacity)
+                                        }})
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="x-friend-item" style="cursor: default">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.world.info.created_at') }}
+                                    </span>
+                                    <span class="extra">
+                                        {{ formatDateFilter(worldDialog.ref.created_at, 'long') }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="x-friend-item" style="cursor: default">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.world.info.last_updated') }}
+                                    </span>
+                                    <span v-if="worldDialog.lastUpdated" class="extra">
+                                        {{ formatDateFilter(worldDialog.lastUpdated, 'long') }}
+                                    </span>
+                                    <span v-else class="extra">
+                                        {{ formatDateFilter(worldDialog.ref.updated_at, 'long') }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div
+                                v-if="worldDialog.ref.labsPublicationDate !== 'none'"
+                                class="x-friend-item"
+                                style="cursor: default">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.world.info.labs_publication_date') }}
+                                    </span>
+                                    <span class="extra">
+                                        {{ formatDateFilter(worldDialog.ref.labsPublicationDate, 'long') }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div
+                                v-if="worldDialog.ref.publicationDate !== 'none'"
+                                class="x-friend-item"
+                                style="cursor: default">
+                                <div class="detail">
+                                    <span class="name" style="display: inline">
+                                        {{ t('dialog.world.info.publication_date') }}
+                                    </span>
+                                    <TooltipWrapper v-if="isTimeInLabVisible" side="top" style="margin-left: 5px">
+                                        <template #content>
+                                            <span>
+                                                {{ t('dialog.world.info.time_in_labs') }}
+                                                {{ timeInLab }}
+                                            </span>
+                                        </template>
+                                        <ArrowDown />
                                     </TooltipWrapper>
+                                    <span class="extra">
+                                        {{ formatDateFilter(worldDialog.ref.publicationDate, 'long') }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="x-friend-item" style="cursor: default">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.world.info.version') }}
+                                    </span>
+                                    <span class="extra" v-text="worldDialog.ref.version" />
+                                </div>
+                            </div>
+                            <div class="x-friend-item" style="cursor: default">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.world.info.heat') }}
+                                    </span>
+                                    <span class="extra">
+                                        {{ commaNumber(worldDialog.ref.heat) }} {{ '🔥'.repeat(worldDialog.ref.heat) }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="x-friend-item" style="cursor: default">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.world.info.popularity') }}
+                                    </span>
+                                    <span class="extra">
+                                        {{ commaNumber(worldDialog.ref.popularity) }}
+                                        {{ '💖'.repeat(worldDialog.ref.popularity) }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="x-friend-item" style="width: 100%; cursor: default">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.world.info.platform') }}
+                                    </span>
+                                    <span class="extra" style="white-space: normal">{{ worldDialogPlatform }}</span>
+                                </div>
+                            </div>
+                            <div class="x-friend-item" style="cursor: default">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.world.info.last_visited') }}
+                                        <TooltipWrapper side="top" :content="t('dialog.world.info.accuracy_notice')"
+                                            ><AlertTriangle style="margin-left: 3px" />
+                                        </TooltipWrapper>
+                                    </span>
+                                    <span class="extra">
+                                        {{ worldDialog.timeSpent === 0 ? ' - ' : timeSpent }}
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                        <div
-                            v-if="worldDialog.ref.previewYoutubeId"
-                            class="x-friend-item"
-                            style="width: 350px"
-                            @click="
-                                openExternalLink(`https://www.youtube.com/watch?v=${worldDialog.ref.previewYoutubeId}`)
-                            ">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.youtube_preview') }}
-                                </span>
-                                <span class="extra">
-                                    https://www.youtube.com/watch?v={{ worldDialog.ref.previewYoutubeId }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="x-friend-item" style="width: 100%; cursor: default">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.author_tags') }}
-                                </span>
-                                <span
-                                    v-if="
-                                        worldDialog.ref.tags?.filter((tag) => tag.startsWith('author_tag')).length > 0
-                                    "
-                                    class="extra">
-                                    {{ worldTags }}
-                                </span>
-                                <span v-else class="extra"> - </span>
-                            </div>
-                        </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.players') }}
-                                </span>
-                                <span class="extra">
-                                    {{ commaNumber(worldDialog.ref.occupants) }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.favorites') }}
-                                </span>
-                                <span class="extra">
-                                    {{ commaNumber(worldDialog.ref.favorites)
-                                    }}<span
-                                        v-if="worldDialog.ref?.favorites > 0 && worldDialog.ref?.visits > 0"
-                                        class="extra">
-                                        ({{ favoriteRate }}%)
-                                    </span>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.visits') }}
-                                </span>
-                                <span class="extra">
-                                    {{ commaNumber(worldDialog.ref.visits) }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.capacity') }}
-                                </span>
-                                <span class="extra">
-                                    {{ commaNumber(worldDialog.ref.recommendedCapacity) }} ({{
-                                        commaNumber(worldDialog.ref.capacity)
-                                    }})
-                                </span>
-                            </div>
-                        </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.created_at') }}
-                                </span>
-                                <span class="extra">
-                                    {{ formatDateFilter(worldDialog.ref.created_at, 'long') }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.last_updated') }}
-                                </span>
-                                <span v-if="worldDialog.lastUpdated" class="extra">
-                                    {{ formatDateFilter(worldDialog.lastUpdated, 'long') }}
-                                </span>
-                                <span v-else class="extra">
-                                    {{ formatDateFilter(worldDialog.ref.updated_at, 'long') }}
-                                </span>
-                            </div>
-                        </div>
-                        <div
-                            v-if="worldDialog.ref.labsPublicationDate !== 'none'"
-                            class="x-friend-item"
-                            style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.labs_publication_date') }}
-                                </span>
-                                <span class="extra">
-                                    {{ formatDateFilter(worldDialog.ref.labsPublicationDate, 'long') }}
-                                </span>
-                            </div>
-                        </div>
-                        <div
-                            v-if="worldDialog.ref.publicationDate !== 'none'"
-                            class="x-friend-item"
-                            style="cursor: default">
-                            <div class="detail">
-                                <span class="name" style="display: inline">
-                                    {{ t('dialog.world.info.publication_date') }}
-                                </span>
-                                <TooltipWrapper v-if="isTimeInLabVisible" side="top" style="margin-left: 5px">
-                                    <template #content>
-                                        <span>
-                                            {{ t('dialog.world.info.time_in_labs') }}
-                                            {{ timeInLab }}
-                                        </span>
-                                    </template>
-                                    <ArrowDown />
-                                </TooltipWrapper>
-                                <span class="extra">
-                                    {{ formatDateFilter(worldDialog.ref.publicationDate, 'long') }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.version') }}
-                                </span>
-                                <span class="extra" v-text="worldDialog.ref.version" />
-                            </div>
-                        </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.heat') }}
-                                </span>
-                                <span class="extra">
-                                    {{ commaNumber(worldDialog.ref.heat) }} {{ '🔥'.repeat(worldDialog.ref.heat) }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.popularity') }}
-                                </span>
-                                <span class="extra">
-                                    {{ commaNumber(worldDialog.ref.popularity) }}
-                                    {{ '💖'.repeat(worldDialog.ref.popularity) }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="x-friend-item" style="width: 100%; cursor: default">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.platform') }}
-                                </span>
-                                <span class="extra" style="white-space: normal">{{ worldDialogPlatform }}</span>
-                            </div>
-                        </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
-                                    {{ t('dialog.world.info.last_visited') }}
-                                    <TooltipWrapper side="top" :content="t('dialog.world.info.accuracy_notice')"
-                                        ><AlertTriangle style="margin-left: 3px" />
-                                    </TooltipWrapper>
-                                </span>
-                                <span class="extra">
-                                    {{ worldDialog.timeSpent === 0 ? ' - ' : timeSpent }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-                <template #JSON>
-                    <Button
-                        class="rounded-full h-6 w-6 mr-2"
-                        size="icon-sm"
-                        variant="outline"
-                        @click="refreshWorldDialogTreeData()">
-                        <RefreshCcw />
-                    </Button>
-                    <Button
-                        class="rounded-full h-6 w-6"
-                        size="icon-sm"
-                        variant="outline"
-                        @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)">
-                        <Download />
-                    </Button>
-                    <vue-json-pretty :data="treeData" :deep="2" :theme="isDarkMode ? 'dark' : 'light'" show-icon />
-                    <br />
-                    <vue-json-pretty
-                        v-if="worldDialog.fileAnalysis.length > 0"
-                        :data="worldDialog.fileAnalysis"
-                        :deep="2"
-                        :theme="isDarkMode ? 'dark' : 'light'"
-                        show-icon />
-                </template>
-            </TabsUnderline>
-        </div>
+                    </template>
+                    <template #JSON>
+                        <Button
+                            class="rounded-full h-6 w-6 mr-2"
+                            size="icon-sm"
+                            variant="outline"
+                            @click="refreshWorldDialogTreeData()">
+                            <RefreshCcw />
+                        </Button>
+                        <Button
+                            class="rounded-full h-6 w-6"
+                            size="icon-sm"
+                            variant="outline"
+                            @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)">
+                            <Download />
+                        </Button>
+                        <vue-json-pretty :data="treeData" :deep="2" :theme="isDarkMode ? 'dark' : 'light'" show-icon />
+                        <br />
+                        <vue-json-pretty
+                            v-if="worldDialog.fileAnalysis.length > 0"
+                            :data="worldDialog.fileAnalysis"
+                            :deep="2"
+                            :theme="isDarkMode ? 'dark' : 'light'"
+                            show-icon />
+                    </template>
+                </TabsUnderline>
+            </div>
+        </DialogContent>
 
         <template v-if="isDialogVisible">
             <WorldAllowedDomainsDialog :world-allowed-domains-dialog="worldAllowedDomainsDialog" />
@@ -712,7 +718,7 @@
                 v-model:change-world-image-dialog-visible="changeWorldImageDialogVisible"
                 v-model:previousImageUrl="previousImageUrl" />
         </template>
-    </el-dialog>
+    </Dialog>
 </template>
 
 <script setup>
@@ -745,6 +751,7 @@
         Wand2
     } from 'lucide-vue-next';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
+    import { Dialog, DialogContent } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { TabsUnderline } from '@/components/ui/tabs';
@@ -787,9 +794,9 @@
         DropdownMenuTrigger
     } from '../../ui/dropdown-menu';
     import { favoriteRequest, miscRequest, userRequest, worldRequest } from '../../../api';
-    import { formatJsonVars, getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { Badge } from '../../ui/badge';
     import { database } from '../../../service/database.js';
+    import { formatJsonVars } from '../../../shared/utils/base/ui';
 
     const modalStore = useModalStore();
 
@@ -913,16 +920,12 @@
         return platforms.join(', ');
     });
 
-    const worldDialogIndex = ref(2000);
     const worldDialogLastActiveTab = ref('Instances');
 
     watch(
         () => worldDialog.value.loading,
         () => {
             if (worldDialog.value.visible) {
-                nextTick(() => {
-                    worldDialogIndex.value = getNextDialogIndex();
-                });
                 handleDialogOpen();
                 !worldDialog.value.loading && loadLastActiveTab();
             }

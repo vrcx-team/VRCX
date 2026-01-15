@@ -1,12 +1,15 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="changeAvatarImageDialogVisible"
-        :title="t('dialog.change_content_image.avatar')"
-        width="850px"
-        append-to-body
-        @close="closeDialog">
-        <div>
+    <Dialog
+        :open="changeAvatarImageDialogVisible"
+        @update:open="(open) => {
+            if (!open) closeDialog();
+        }">
+        <DialogContent class="x-dialog sm:max-w-212.5">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.change_content_image.avatar') }}</DialogTitle>
+            </DialogHeader>
+
+            <div>
             <input
                 id="AvatarImageUploadButton"
                 type="file"
@@ -27,12 +30,14 @@
             <div class="x-change-image-item">
                 <img :src="previousImageUrl" class="img-size" loading="lazy" />
             </div>
-        </div>
-    </el-dialog>
+            </div>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
     import { Button } from '@/components/ui/button';
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Upload } from 'lucide-vue-next';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';

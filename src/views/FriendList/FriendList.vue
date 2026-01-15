@@ -78,34 +78,37 @@
                     </div>
                 </template>
             </DataTableLayout>
-            <el-dialog
-                v-model="friendsListLoadDialogVisible"
-                :title="t('view.friend_list.load_dialog_title')"
-                width="420px"
-                :close-on-click-modal="false"
-                :close-on-press-escape="false"
-                :show-close="false"
-                align-center>
-                <div style="margin-bottom: 10px" v-text="t('view.friend_list.load_dialog_message')"></div>
-                <div class="flex items-center gap-2">
-                    <Progress :model-value="friendsListLoadingPercent" class="h-4 w-full" />
-                    <span class="text-xs w-10 text-right">{{ friendsListLoadingPercent }}%</span>
-                </div>
-                <div style="margin-top: 10px; text-align: right">
-                    <span>{{ friendsListLoadingCurrent }} / {{ friendsListLoadingTotal }}</span>
-                </div>
-                <template #footer>
-                    <Button variant="secondary" @click="cancelFriendsListLoad">
-                        {{ t('view.friend_list.load_cancel') }}
-                    </Button>
-                </template>
-            </el-dialog>
+            <Dialog v-model:open="friendsListLoadDialogVisible">
+                <DialogContent
+                    :show-close-button="false"
+                    @interact-outside.prevent
+                    @escape-key-down.prevent
+                    class="sm:max-w-[420px]">
+                    <DialogHeader>
+                        <DialogTitle>{{ t('view.friend_list.load_dialog_title') }}</DialogTitle>
+                    </DialogHeader>
+                    <div style="margin-bottom: 10px" v-text="t('view.friend_list.load_dialog_message')"></div>
+                    <div class="flex items-center gap-2">
+                        <Progress :model-value="friendsListLoadingPercent" class="h-4 w-full" />
+                        <span class="text-xs w-10 text-right">{{ friendsListLoadingPercent }}%</span>
+                    </div>
+                    <div style="margin-top: 10px; text-align: right">
+                        <span>{{ friendsListLoadingCurrent }} / {{ friendsListLoadingTotal }}</span>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="secondary" @click="cancelFriendsListLoad">
+                            {{ t('view.friend_list.load_cancel') }}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     </div>
 </template>
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupField } from '@/components/ui/input-group';

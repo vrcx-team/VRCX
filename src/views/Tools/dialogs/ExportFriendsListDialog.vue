@@ -1,29 +1,35 @@
 <template>
-    <el-dialog :title="t('dialog.export_friends_list.header')" v-model="isVisible" width="650px">
-        <TabsUnderline default-value="csv" :items="exportFriendsTabs" :unmount-on-hide="false" class="mt-2.5">
-            <template #csv>
-                <InputGroupTextareaField
-                    v-model="exportFriendsListCsv"
-                    :rows="15"
-                    readonly
-                    style="margin-top: 15px"
-                    input-class="resize-none"
-                    @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
-            </template>
-            <template #json>
-                <InputGroupTextareaField
-                    v-model="exportFriendsListJson"
-                    :rows="15"
-                    readonly
-                    style="margin-top: 15px"
-                    input-class="resize-none"
-                    @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
-            </template>
-        </TabsUnderline>
-    </el-dialog>
+    <Dialog v-model:open="isVisible">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.export_friends_list.header') }}</DialogTitle>
+            </DialogHeader>
+            <TabsUnderline default-value="csv" :items="exportFriendsTabs" :unmount-on-hide="false" class="mt-2.5">
+                <template #csv>
+                    <InputGroupTextareaField
+                        v-model="exportFriendsListCsv"
+                        :rows="15"
+                        readonly
+                        style="margin-top: 15px"
+                        input-class="resize-none"
+                        @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
+                </template>
+                <template #json>
+                    <InputGroupTextareaField
+                        v-model="exportFriendsListJson"
+                        :rows="15"
+                        readonly
+                        style="margin-top: 15px"
+                        input-class="resize-none"
+                        @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
+                </template>
+            </TabsUnderline>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { TabsUnderline } from '@/components/ui/tabs';
