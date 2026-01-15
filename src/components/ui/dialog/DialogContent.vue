@@ -1,8 +1,12 @@
 <script setup>
     import { DialogClose, DialogContent, DialogPortal, useForwardPropsEmits } from 'reka-ui';
+    import { inject, onBeforeUnmount, ref, watch } from 'vue';
     import { X } from 'lucide-vue-next';
+    import { acquireModalPortalLayer } from '@/lib/modalPortalLayers';
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
+
+    import { DIALOG_OPEN_INJECTION_KEY } from './context';
 
     import DialogOverlay from './DialogOverlay.vue';
 
@@ -30,10 +34,30 @@
     const delegatedProps = reactiveOmit(props, 'class');
 
     const forwarded = useForwardPropsEmits(delegatedProps, emits);
+
+    const injectedOpen = inject(DIALOG_OPEN_INJECTION_KEY, null);
+    const open = injectedOpen ?? ref(true);
+
+    const portalLayer = acquireModalPortalLayer();
+    const portalTo = portalLayer.element;
+
+    watch(
+        open,
+        (isOpen) => {
+            if (isOpen) {
+                portalLayer.bringToFront();
+            }
+        },
+        { immediate: true }
+    );
+
+    onBeforeUnmount(() => {
+        portalLayer.release();
+    });
 </script>
 
 <template>
-    <DialogPortal>
+    <DialogPortal :to="portalTo">
         <DialogOverlay />
         <DialogContent
             data-slot="dialog-content"

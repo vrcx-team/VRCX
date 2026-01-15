@@ -1,6 +1,8 @@
 <script setup>
     import { DialogRoot, useForwardPropsEmits } from 'reka-ui';
 
+    import DialogStateProvider from './DialogStateProvider.vue';
+
     const props = defineProps({
         open: { type: Boolean, required: false },
         defaultOpen: { type: Boolean, required: false },
@@ -13,6 +15,8 @@
 
 <template>
     <DialogRoot v-slot="slotProps" data-slot="dialog" v-bind="forwarded">
-        <slot v-bind="slotProps" />
+        <DialogStateProvider :open="slotProps.open">
+            <slot v-bind="slotProps" />
+        </DialogStateProvider>
     </DialogRoot>
 </template>

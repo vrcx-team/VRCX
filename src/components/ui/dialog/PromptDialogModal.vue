@@ -29,7 +29,7 @@
         promptErrorMessage
     } = storeToRefs(modalStore);
 
-    const { handleSubmit, resetForm, setValues, values } = useForm({
+    const { handleSubmit, resetForm, values } = useForm({
         initialValues: {
             value: ''
         }
@@ -88,7 +88,11 @@
         [promptOpen, promptInputValue],
         ([open, inputValue]) => {
             if (open) {
-                setValues({ value: inputValue ?? '' });
+                resetForm({
+                    values: {
+                        value: inputValue ?? ''
+                    }
+                });
                 return;
             }
 
@@ -110,12 +114,19 @@
             @pointerDownOutside="onPointerDownOutside"
             @interactOutside="onInteractOutside">
             <form @submit="onSubmit">
-                <DialogHeader>
+                <DialogHeader class="mb-5">
                     <DialogTitle>{{ promptTitle }}</DialogTitle>
                     <DialogDescription>{{ promptDescription }}</DialogDescription>
                 </DialogHeader>
 
-                <FormField name="value" :rules="validateValue" v-slot="{ componentField }">
+                <FormField
+                    name="value"
+                    :rules="validateValue"
+                    :validate-on-blur="false"
+                    :validate-on-change="false"
+                    :validate-on-input="false"
+                    :validate-on-model-update="false"
+                    v-slot="{ componentField }">
                     <FormItem>
                         <FormLabel class="sr-only">Input</FormLabel>
                         <FormControl>
@@ -125,7 +136,7 @@
                     </FormItem>
                 </FormField>
 
-                <DialogFooter>
+                <DialogFooter class="mt-5">
                     <Button type="button" variant="outline" @click="handleCancel">
                         {{ promptCancelText }}
                     </Button>

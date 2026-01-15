@@ -19,6 +19,7 @@
 
                 <VRCXUpdateDialog></VRCXUpdateDialog>
             </div>
+            <div id="x-dialog-portal" class="x-dialog-portal"></div>
         </el-config-provider>
     </TooltipProvider>
 </template>
