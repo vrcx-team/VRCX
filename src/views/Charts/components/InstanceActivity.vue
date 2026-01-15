@@ -12,10 +12,6 @@
                             <div>{{ t('view.charts.instance_activity.tips.online_time') }}</div>
                             <div>{{ t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
                             <div>{{ t('view.charts.instance_activity.tips.click_instance_name') }}</div>
-                            <div>
-                                <AlertTriangle />
-                                <i>{{ t('view.charts.instance_activity.tips.accuracy_notice') }}</i>
-                            </div>
                         </div>
                     </HoverCardContent>
                 </HoverCard>

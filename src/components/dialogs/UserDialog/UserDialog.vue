@@ -178,7 +178,7 @@
                                             "
                                             side="top"
                                             :content="t('dialog.user.info.vrcplus_hides_avatar')">
-                                            <AlertTriangle />
+                                            <Info />
                                         </TooltipWrapper>
                                     </div>
                                 </div>
@@ -293,9 +293,6 @@
                                     <div class="detail">
                                         <span class="name">
                                             {{ t('dialog.user.info.last_seen') }}
-                                            <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                                <AlertTriangle style="margin-left: 3px" />
-                                            </TooltipWrapper>
                                         </span>
                                         <span class="extra">{{ formatDateFilter(userDialog.lastSeen, 'long') }}</span>
                                     </div>
@@ -308,11 +305,6 @@
                                             style="display: flex; justify-content: space-between; align-items: center">
                                             <div>
                                                 {{ t('dialog.user.info.join_count') }}
-                                                <TooltipWrapper
-                                                    side="top"
-                                                    :content="t('dialog.user.info.accuracy_notice')">
-                                                    <AlertTriangle style="margin-left: 3px" />
-                                                </TooltipWrapper>
                                             </div>
 
                                             <TooltipWrapper
@@ -330,9 +322,6 @@
                                     <div class="detail">
                                         <span class="name">
                                             {{ t('dialog.user.info.time_together') }}
-                                            <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                                <AlertTriangle style="margin-left: 3px" />
-                                            </TooltipWrapper>
                                         </span>
                                         <span v-if="userDialog.timeSpent === 0" class="extra">-</span>
                                         <span v-else class="extra">{{ timeToText(userDialog.timeSpent) }}</span>
@@ -348,11 +337,6 @@
                                         <div class="detail">
                                             <span class="name">
                                                 {{ t('dialog.user.info.play_time') }}
-                                                <TooltipWrapper
-                                                    side="top"
-                                                    :content="t('dialog.user.info.accuracy_notice')">
-                                                    <AlertTriangle style="margin-left: 3px" />
-                                                </TooltipWrapper>
                                             </span>
                                             <span v-if="userDialog.timeSpent === 0" class="extra">-</span>
                                             <span v-else class="extra">{{ timeToText(userDialog.timeSpent) }}</span>
@@ -370,15 +354,9 @@
                                             v-if="userDialog.ref.state === 'online' && userDialog.ref.$online_for"
                                             class="name">
                                             {{ t('dialog.user.info.online_for') }}
-                                            <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                                <AlertTriangle style="margin-left: 3px" />
-                                            </TooltipWrapper>
                                         </span>
                                         <span v-else class="name">
                                             {{ t('dialog.user.info.offline_for') }}
-                                            <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                                <AlertTriangle style="margin-left: 3px" />
-                                            </TooltipWrapper>
                                         </span>
                                         <span class="extra">{{ userOnlineFor(userDialog.ref) }}</span>
                                     </div>
@@ -423,15 +401,9 @@
                                     <div class="detail">
                                         <span v-if="userDialog.unFriended" class="name">
                                             {{ t('dialog.user.info.unfriended') }}
-                                            <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                                <AlertTriangle style="margin-left: 3px" />
-                                            </TooltipWrapper>
                                         </span>
                                         <span v-else class="name">
                                             {{ t('dialog.user.info.friended') }}
-                                            <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                                <AlertTriangle style="margin-left: 3px" />
-                                            </TooltipWrapper>
                                         </span>
                                         <span class="extra">{{
                                             formatDateFilter(userDialog.dateFriended, 'long')
@@ -1320,7 +1292,7 @@
                             size="icon-sm"
                             variant="outline"
                             @click="refreshUserDialogTreeData()">
-                            <RefreshCcw />
+                            <RefreshCw />
                         </Button>
                         <Button
                             class="rounded-full h-6 w-6"
@@ -1367,12 +1339,12 @@
         Download,
         DownloadIcon,
         Eye,
+        Info,
         Languages,
         Loader2,
         LogOut,
         MoreHorizontal,
         Pencil,
-        RefreshCcw,
         RefreshCw,
         Tag,
         Trash2
@@ -1719,6 +1691,9 @@
 
     function userDialogTabClick(tabName) {
         if (tabName === userDialogLastActiveTab.value) {
+            if (tabName === 'JSON') {
+                refreshUserDialogTreeData();
+            }
             return;
         }
         handleUserDialogTab(tabName);

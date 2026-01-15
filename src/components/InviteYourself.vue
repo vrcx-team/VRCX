@@ -7,8 +7,8 @@
                 variant="outline"
                 v-show="isVisible"
                 @click="confirmInvite"
-                ><Mail class="h-4 w-4" /> ></Button
-            >
+                ><Mail class="h-4 w-4"
+            /></Button>
         </TooltipWrapper>
         <TooltipWrapper v-else side="top" :content="t('dialog.user.info.open_in_vrchat_tooltip')">
             <Button

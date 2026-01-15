@@ -1,5 +1,5 @@
 <template>
-    <div style="display: inline-block; margin-left: 5px">
+    <div class="flex items-center ml-2">
         <TooltipWrapper v-if="state.isValidInstance" side="bottom">
             <template #content>
                 <div>
@@ -40,7 +40,7 @@
                     </template>
                 </div>
             </template>
-            <ChevronDown />
+            <Info class="text-xs text-accent-foreground" />
         </TooltipWrapper>
         <span v-if="props.location === locationStore.lastLocation.location" style="margin-left: 5px"
             >{{ locationStore.lastLocation.playerList.size }}/{{ props.instance.capacity }}</span
@@ -66,7 +66,7 @@
 <script setup>
     import { reactive, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { ChevronDown } from 'lucide-vue-next';
+    import { Info } from 'lucide-vue-next';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

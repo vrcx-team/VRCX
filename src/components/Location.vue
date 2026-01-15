@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-    import { Loader2, Lock, AlertTriangle } from 'lucide-vue-next';
+    import { AlertTriangle, Loader2, Lock } from 'lucide-vue-next';
     import { onBeforeUnmount, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

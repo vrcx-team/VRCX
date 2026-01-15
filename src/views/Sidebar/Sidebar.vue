@@ -163,15 +163,4 @@
         font-size: 12px;
         margin-left: 10px;
     }
-
-    .group-calendar-button {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        box-shadow: var(--el-box-shadow-lighter);
-        border: none;
-        z-index: 5;
-        width: 40px;
-        height: 40px;
-    }
 </style>

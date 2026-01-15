@@ -1,5 +1,5 @@
 <template>
-    <div style="float: left; margin: 5px; z-index: 3000">
+    <div style="float: left; margin: 5px">
         <TooltipWrapper v-if="!noUpdater" side="top" :content="t('view.login.updater')">
             <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="showVRCXUpdateDialog"
                 ><CircleArrowDown

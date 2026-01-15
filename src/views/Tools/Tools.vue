@@ -6,7 +6,7 @@
             <div class="tool-categories">
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('group')">
-                        <ArrowRight
+                        <ChevronDown
                             class="rotation-transition"
                             :class="{ 'is-rotated': !categoryCollapsed['group'] }" />
                         <span class="category-title">{{ t('view.tools.group.header') }}</span>
@@ -14,7 +14,7 @@
                     <div class="tools-grid" v-show="!categoryCollapsed['group']">
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showGroupCalendarDialog">
-                                <div class="tool-icon">
+                                <div class="tool-icon text-2xl">
                                     <CalendarDays />
                                 </div>
                                 <div class="tool-info">
@@ -27,15 +27,15 @@
                 </div>
 
                 <div class="tool-category">
-                    <div class="category-header" @click="toggleCategory('image')">
-                        <ArrowRight
+                    <div class="category-header text-2xl" @click="toggleCategory('image')">
+                        <ChevronDown
                             class="rotation-transition"
                             :class="{ 'is-rotated': !categoryCollapsed['image'] }" />
                         <span class="category-title">{{ t('view.tools.pictures.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
                         <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="showScreenshotMetadataPage">
+                            <div class="tool-content text-2xl" @click="showScreenshotMetadataPage">
                                 <div class="tool-icon">
                                     <Camera />
                                 </div>
@@ -49,7 +49,7 @@
                         </Card>
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showGalleryPage">
-                                <div class="tool-icon">
+                                <div class="tool-icon text-2xl">
                                     <Images />
                                 </div>
                                 <div class="tool-info">
@@ -62,7 +62,7 @@
                         </Card>
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="openVrcPhotosFolder">
-                                <div class="tool-icon">
+                                <div class="tool-icon text-2xl">
                                     <FolderOpen />
                                 </div>
                                 <div class="tool-info">
@@ -75,7 +75,7 @@
                         </Card>
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="openVrcScreenshotsFolder">
-                                <div class="tool-icon">
+                                <div class="tool-icon text-2xl">
                                     <FolderOpen />
                                 </div>
                                 <div class="tool-info">
@@ -92,15 +92,17 @@
                 </div>
 
                 <div class="tool-category">
-                    <div class="category-header" @click="toggleCategory('user')">
-                        <ArrowRight class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['user'] }" />
+                    <div class="category-header text-2xl" @click="toggleCategory('user')">
+                        <ChevronDown
+                            class="rotation-transition"
+                            :class="{ 'is-rotated': !categoryCollapsed['user'] }" />
                         <span class="category-title">{{ t('view.tools.export.header') }}</span>
                     </div>
 
                     <div class="tools-grid" v-show="!categoryCollapsed['user']">
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportDiscordNamesDialog">
-                                <div class="tool-icon">
+                                <div class="tool-icon text-2xl">
                                     <MessageSquare />
                                 </div>
                                 <div class="tool-info">
@@ -113,7 +115,7 @@
                         </Card>
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showNoteExportDialog">
-                                <div class="tool-icon">
+                                <div class="tool-icon text-2xl">
                                     <UserCheck />
                                 </div>
                                 <div class="tool-info">
@@ -127,7 +129,7 @@
 
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportFriendsListDialog">
-                                <div class="tool-icon">
+                                <div class="tool-icon text-2xl">
                                     <UserCheck />
                                 </div>
                                 <div class="tool-info">
@@ -140,7 +142,7 @@
                         </Card>
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportAvatarsListDialog">
-                                <div class="tool-icon">
+                                <div class="tool-icon text-2xl">
                                     <UserCheck />
                                 </div>
                                 <div class="tool-info">
@@ -156,7 +158,7 @@
 
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('other')">
-                        <ArrowRight
+                        <ChevronDown
                             class="rotation-transition"
                             :class="{ 'is-rotated': !categoryCollapsed['other'] }" />
                         <span class="category-title">{{ t('view.tools.other.header') }}</span>
@@ -164,7 +166,7 @@
                     <div class="tools-grid" v-show="!categoryCollapsed['other']">
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showEditInviteMessageDialog">
-                                <div class="tool-icon">
+                                <div class="tool-icon text-2xl">
                                     <SquarePen />
                                 </div>
                                 <div class="tool-info">
@@ -202,9 +204,9 @@
 
 <script setup>
     import {
-        ArrowRight,
         CalendarDays,
         Camera,
+        ChevronDown,
         FolderOpen,
         Images,
         MessageSquare,
@@ -401,7 +403,7 @@
     }
 
     .is-rotated {
-        transform: rotate(90deg);
+        transform: rotate(-90deg);
     }
 
     .rotation-transition {

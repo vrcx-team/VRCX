@@ -11,7 +11,7 @@
         </div>
         <div class="friend-card__body">
             <div class="friend-card__signature" :title="friend.ref?.statusDescription">
-                <Pencil v-if="friend.ref?.statusDescription" class="h-3.5 w-3.5 mr-0.5" style="opacity: 0.7" />
+                <Pencil v-if="friend.ref?.statusDescription" class="h-3.5 w-3.5 mr-1" style="opacity: 0.7" />
                 {{ friend.ref?.statusDescription || '&nbsp;' }}
             </div>
             <div v-if="displayInstanceInfo" @click.stop class="friend-card__world" :title="friend.worldName">
@@ -184,6 +184,8 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        display: flex;
+        align-items: center;
     }
 
     .friend-card__world {

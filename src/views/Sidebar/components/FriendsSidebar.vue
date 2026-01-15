@@ -1,13 +1,13 @@
 <template>
     <div class="x-friend-list" style="padding: 10px 5px">
         <div
-            class="x-friend-group x-link"
+            class="x-friend-group x-link flex items-center"
             style="padding: 0 0 5px"
             @click="
                 isFriendsGroupMe = !isFriendsGroupMe;
                 saveFriendsGroupStates();
             ">
-            <ArrowRight class="rotation-transition" :class="{ 'is-rotated': isFriendsGroupMe }" />
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': isFriendsGroupMe }" />
             <span style="margin-left: 5px">{{ t('side_panel.me') }}</span>
         </div>
         <div v-show="isFriendsGroupMe">
@@ -38,12 +38,12 @@
         </div>
         <div
             v-show="vipFriendsDisplayNumber"
-            class="x-friend-group x-link"
+            class="x-friend-group x-link flex items-center"
             @click="
                 isVIPFriends = !isVIPFriends;
                 saveFriendsGroupStates();
             ">
-            <ArrowRight class="rotation-transition" :class="{ 'is-rotated': isVIPFriends }" />
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': isVIPFriends }" />
             <span style="margin-left: 5px">
                 {{ t('side_panel.favorite') }} &horbar;
                 {{ vipFriendsDisplayNumber }}
@@ -78,8 +78,8 @@
         </div>
 
         <template v-if="isSidebarGroupByInstance && friendsInSameInstance.length">
-            <div class="x-friend-group x-link" @click="toggleSwitchGroupByInstanceCollapsed">
-                <ArrowRight
+            <div class="x-friend-group x-link flex items-center" @click="toggleSwitchGroupByInstanceCollapsed">
+                <ChevronDown
                     class="rotation-transition"
                     :class="{ 'is-rotated': !isSidebarGroupByInstanceCollapsed }" />
                 <span style="margin-left: 5px"
@@ -111,12 +111,12 @@
         </template>
         <div
             v-show="onlineFriendsByGroupStatus.length"
-            class="x-friend-group x-link"
+            class="x-friend-group x-link flex items-center"
             @click="
                 isOnlineFriends = !isOnlineFriends;
                 saveFriendsGroupStates();
             ">
-            <ArrowRight class="rotation-transition" :class="{ 'is-rotated': isOnlineFriends }" />
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': isOnlineFriends }" />
             <span style="margin-left: 5px"
                 >{{ t('side_panel.online') }} &horbar; {{ onlineFriendsByGroupStatus.length }}</span
             >
@@ -130,12 +130,12 @@
         </div>
         <div
             v-show="activeFriends.length"
-            class="x-friend-group x-link"
+            class="x-friend-group x-link flex items-center"
             @click="
                 isActiveFriends = !isActiveFriends;
                 saveFriendsGroupStates();
             ">
-            <ArrowRight class="rotation-transition" :class="{ 'is-rotated': isActiveFriends }" />
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': isActiveFriends }" />
             <span style="margin-left: 5px">{{ t('side_panel.active') }} &horbar; {{ activeFriends.length }}</span>
         </div>
         <div v-if="isActiveFriends">
@@ -147,12 +147,12 @@
         </div>
         <div
             v-show="offlineFriends.length"
-            class="x-friend-group x-link"
+            class="x-friend-group x-link flex items-center"
             @click="
                 isOfflineFriends = !isOfflineFriends;
                 saveFriendsGroupStates();
             ">
-            <ArrowRight class="rotation-transition" :class="{ 'is-rotated': isOfflineFriends }" />
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': isOfflineFriends }" />
             <span style="margin-left: 5px">{{ t('side_panel.offline') }} &horbar; {{ offlineFriends.length }}</span>
         </div>
         <div v-if="isOfflineFriends">
@@ -167,7 +167,7 @@
 
 <script setup>
     import { computed, ref, watch } from 'vue';
-    import { ArrowRight } from 'lucide-vue-next';
+    import { ChevronDown } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -319,7 +319,7 @@
         text-decoration: underline;
     } */
     .is-rotated {
-        transform: rotate(90deg);
+        transform: rotate(-90deg);
     }
     .rotation-transition {
         transition: transform 0.2s ease-in-out;

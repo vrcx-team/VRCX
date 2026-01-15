@@ -3,6 +3,7 @@
         <DialogContent>
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.new_instance.header') }}</DialogTitle>
+                <DialogDescription class="sr-only">{{ t('dialog.new_instance.header') }}</DialogDescription>
             </DialogHeader>
         <TabsUnderline
             v-model="newInstanceDialog.selectedTab"
@@ -514,7 +515,7 @@
 
 <script setup>
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
-    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Check as CheckIcon } from 'lucide-vue-next';

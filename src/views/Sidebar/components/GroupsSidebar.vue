@@ -3,7 +3,7 @@
         <template v-for="(group, index) in groupedGroupInstances" :key="getGroupId(group)">
             <div class="x-friend-group x-link" :style="{ paddingTop: index === 0 ? '0px' : '10px' }">
                 <div @click="toggleGroupSidebarCollapse(getGroupId(group))" style="display: flex; align-items: center">
-                    <ArrowRight
+                    <ChevronDown
                         class="rotation-transition"
                         :class="{ 'is-rotated': !groupInstancesCfg[getGroupId(group)]?.isCollapsed }" />
                     <span style="margin-left: 5px">{{ group[0].group.name }} – {{ group.length }}</span>
@@ -38,7 +38,7 @@
 
 <script setup>
     import { computed, ref } from 'vue';
-    import { ArrowRight } from 'lucide-vue-next';
+    import { ChevronDown } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
 
     import { useAppearanceSettingsStore, useGroupStore } from '../../../stores';
@@ -100,7 +100,7 @@
         text-decoration: underline;
     }
     .is-rotated {
-        transform: rotate(90deg);
+        transform: rotate(-90deg);
     }
     .rotation-transition {
         transition: transform 0.2s ease-in-out;

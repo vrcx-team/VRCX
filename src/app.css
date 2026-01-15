@@ -881,7 +881,6 @@ html.dark .x-friend-item > .detail > .extra,
 
 .x-login-container {
     position: absolute;
-    z-index: 1999;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -982,10 +981,6 @@ hr.x-vertical-divider {
 
 .x-friend-group > .rotation-transition {
     transition: transform 0.3s;
-}
-
-.x-friend-group > .rotation-transition.is-rotated {
-    transform: rotate(90deg);
 }
 
 .x-aside-container > .x-friend-list {

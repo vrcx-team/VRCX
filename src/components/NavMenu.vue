@@ -766,7 +766,6 @@
         flex-direction: column;
         align-items: stretch;
         justify-content: flex-start;
-        z-index: 600;
         background-color: var(--el-bg-color-page);
         box-shadow: none;
         backdrop-filter: blur(14px) saturate(130%);

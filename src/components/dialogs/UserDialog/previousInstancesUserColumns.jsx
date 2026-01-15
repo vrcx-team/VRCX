@@ -1,4 +1,4 @@
-import { ArrowUpDown, DoorOpen, Info, Trash2 } from 'lucide-vue-next';
+import { ArrowUpDown, Info, LogIn, Trash2 } from 'lucide-vue-next';
 
 import DisplayName from '../../DisplayName.vue';
 import Location from '../../Location.vue';
@@ -115,7 +115,7 @@ export const createColumns = ({
                             onLaunch?.(original?.location);
                         }}
                     >
-                        <DoorOpen class="h-4 w-4" />
+                        <LogIn class="h-4 w-4" />
                     </Button>
 
                     <Button

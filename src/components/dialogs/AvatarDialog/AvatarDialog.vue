@@ -471,11 +471,7 @@
                             </div>
                             <div class="x-friend-item" style="cursor: default">
                                 <div class="detail">
-                                    <span class="name"
-                                        >{{ t('dialog.avatar.info.time_spent')
-                                        }}<TooltipWrapper side="top" :content="t('dialog.world.info.accuracy_notice')">
-                                            <AlertTriangle style="margin-left: 3px" /> </TooltipWrapper
-                                    ></span>
+                                    <span class="name">{{ t('dialog.avatar.info.time_spent') }}</span>
 
                                     <span v-if="timeSpent === 0" class="extra">-</span>
                                     <span v-else class="extra">{{ timeToText(timeSpent) }}</span>
@@ -499,7 +495,7 @@
                             size="icon-sm"
                             variant="outline"
                             @click="refreshAvatarDialogTreeData()">
-                            <RefreshCcw />
+                            <RefreshCw />
                         </Button>
                         <Button
                             class="rounded-full h-6 w-6"
@@ -532,7 +528,6 @@
 
 <script setup>
     import {
-        AlertTriangle,
         Apple,
         Check,
         CheckCircle,
@@ -542,7 +537,6 @@
         Image,
         Monitor,
         Pencil,
-        RefreshCcw,
         RefreshCw,
         Share2,
         Smartphone,
@@ -703,6 +697,9 @@
 
     function avatarDialogTabClick(tabName) {
         if (tabName === avatarDialogLastActiveTab.value) {
+            if (tabName === 'JSON') {
+                refreshAvatarDialogTreeData();
+            }
             return;
         }
         handleAvatarDialogTab(tabName);

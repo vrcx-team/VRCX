@@ -4,6 +4,12 @@
             class="x-dialog x-group-dialog group-body translate-y-0 sm:max-w-235"
             :show-close-button="false"
             style="top: 10vh">
+            <DialogHeader class="sr-only">
+                <DialogTitle>{{ groupDialog.ref?.name || t('dialog.group.info.header') }}</DialogTitle>
+                <DialogDescription>
+                    {{ groupDialog.ref?.description || groupDialog.ref?.name || t('dialog.group.info.header') }}
+                </DialogDescription>
+            </DialogHeader>
             <div v-loading="groupDialog.loading">
                 <div style="display: flex">
                     <img
@@ -605,9 +611,6 @@
                                     <div class="detail">
                                         <span class="name">
                                             {{ t('dialog.group.info.last_visited') }}
-                                            <TooltipWrapper side="top" :content="t('dialog.user.info.accuracy_notice')">
-                                                <AlertTriangle style="margin-left: 3px" />
-                                            </TooltipWrapper>
                                         </span>
                                         <span class="extra">{{ formatDateFilter(groupDialog.lastVisit, 'long') }}</span>
                                     </div>
@@ -1144,7 +1147,7 @@
                             size="icon-sm"
                             variant="outline"
                             @click="refreshGroupDialogTreeData()">
-                            <RefreshCcw />
+                            <RefreshCw />
                         </Button>
                         <Button
                             class="rounded-full h-6 w-6"
@@ -1171,7 +1174,6 @@
 
 <script setup>
     import {
-        AlertTriangle,
         Bell,
         BellOff,
         Check,
@@ -1193,9 +1195,9 @@
         X,
         XCircle
     } from 'lucide-vue-next';
+    import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, nextTick, reactive, ref, watch } from 'vue';
-    import { Dialog, DialogContent } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { Card } from '@/components/ui/card';
     import { InputGroupField } from '@/components/ui/input-group';
@@ -1706,6 +1708,9 @@
 
     function groupDialogTabClick(tabName) {
         if (tabName === groupDialogTabCurrentName.value) {
+            if (tabName === 'JSON') {
+                refreshGroupDialogTreeData();
+            }
             return;
         }
         handleGroupDialogTab(tabName);

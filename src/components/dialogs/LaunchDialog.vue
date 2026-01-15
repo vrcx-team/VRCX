@@ -3,6 +3,7 @@
         <DialogContent>
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.launch.header') }}</DialogTitle>
+                <DialogDescription class="sr-only">{{ t('dialog.launch.header') }}</DialogDescription>
             </DialogHeader>
         <FieldGroup class="gap-4">
             <Field>
@@ -129,7 +130,7 @@
 
 <script setup>
     import { computed, onBeforeUnmount, ref, watch } from 'vue';
-    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import {
         DropdownMenu,
         DropdownMenuContent,

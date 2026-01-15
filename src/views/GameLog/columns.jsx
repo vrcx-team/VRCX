@@ -114,7 +114,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                     <span>
                         {original.displayName ? (
                             <span
-                                class="x-link table-user pr-2.5"
+                                class="x-link table-user mr-1"
                                 onClick={() => lookupUser(original)}
                             >
                                 {original.displayName}

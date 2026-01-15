@@ -4,6 +4,12 @@
             class="x-dialog x-world-dialog translate-y-0 sm:max-w-235"
             :show-close-button="false"
             style="top: 10vh">
+            <DialogHeader class="sr-only">
+                <DialogTitle>{{ worldDialog.ref?.name || t('dialog.world.info.header') }}</DialogTitle>
+                <DialogDescription>
+                    {{ worldDialog.ref?.description || worldDialog.ref?.name || t('dialog.world.info.header') }}
+                </DialogDescription>
+            </DialogHeader>
             <div v-loading="worldDialog.loading">
                 <div style="display: flex">
                     <img
@@ -316,7 +322,7 @@
                     :unmount-on-hide="false"
                     @update:modelValue="worldDialogTabClick">
                     <template #Instances>
-                        <div>
+                        <div class="flex items-center">
                             <User />
                             {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
                             <User style="margin-left: 10px" />
@@ -664,9 +670,6 @@
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.world.info.last_visited') }}
-                                        <TooltipWrapper side="top" :content="t('dialog.world.info.accuracy_notice')"
-                                            ><AlertTriangle style="margin-left: 3px" />
-                                        </TooltipWrapper>
                                     </span>
                                     <span class="extra">
                                         {{ worldDialog.timeSpent === 0 ? ' - ' : timeSpent }}
@@ -681,7 +684,7 @@
                             size="icon-sm"
                             variant="outline"
                             @click="refreshWorldDialogTreeData()">
-                            <RefreshCcw />
+                            <RefreshCw />
                         </Button>
                         <Button
                             class="rounded-full h-6 w-6"
@@ -723,7 +726,6 @@
 
 <script setup>
     import {
-        AlertTriangle,
         Apple,
         ArrowDown,
         Check,
@@ -740,7 +742,6 @@
         MessageSquare,
         Monitor,
         Pencil,
-        RefreshCcw,
         RefreshCw,
         Share2,
         Smartphone,
@@ -750,8 +751,8 @@
         User,
         Wand2
     } from 'lucide-vue-next';
+    import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
-    import { Dialog, DialogContent } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { TabsUnderline } from '@/components/ui/tabs';
@@ -944,6 +945,9 @@
 
     function worldDialogTabClick(tabName) {
         if (tabName === worldDialogLastActiveTab.value) {
+            if (tabName === 'JSON') {
+                refreshWorldDialogTreeData();
+            }
             return;
         }
         handleWorldDialogTab(tabName);
