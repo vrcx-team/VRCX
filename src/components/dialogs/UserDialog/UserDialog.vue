@@ -1304,6 +1304,7 @@
         ArrowUp,
         Copy,
         Download,
+        DownloadIcon,
         Eye,
         Languages,
         Loader2,

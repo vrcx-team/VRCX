@@ -50,7 +50,6 @@
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { DataTableLayout } from '@/components/ui/data-table';
-    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -178,12 +177,16 @@
     }
 
     function promptVrcRegistryBackupName() {
-        ElMessageBox.prompt('Enter a name for the backup', 'Backup Name', {
-            inputPattern: /\S+/,
-            inputErrorMessage: 'Name is required',
-            inputValue: 'Backup'
-        })
-            .then(({ value }) => {
+        modalStore
+            .prompt({
+                title: 'Backup Name',
+                description: 'Enter a name for the backup',
+                inputValue: 'Backup',
+                pattern: /\S+/,
+                errorMessage: 'Name is required'
+            })
+            .then(({ ok, value }) => {
+                if (!ok) return;
                 handleBackupVrcRegistry(value);
             })
             .catch(() => {});

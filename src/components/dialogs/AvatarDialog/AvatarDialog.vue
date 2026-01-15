@@ -545,7 +545,6 @@
     import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { ElMessageBox } from 'element-plus';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
@@ -925,18 +924,17 @@
     }
 
     function promptChangeAvatarDescription(avatar) {
-        ElMessageBox.prompt(
-            t('prompt.change_avatar_description.description'),
-            t('prompt.change_avatar_description.header'),
-            {
-                distinguishCancelAndClose: true,
-                confirmButtonText: t('prompt.change_avatar_description.ok'),
-                cancelButtonText: t('prompt.change_avatar_description.cancel'),
+        modalStore
+            .prompt({
+                title: t('prompt.change_avatar_description.header'),
+                description: t('prompt.change_avatar_description.description'),
+                confirmText: t('prompt.change_avatar_description.ok'),
+                cancelText: t('prompt.change_avatar_description.cancel'),
                 inputValue: avatar.ref.description,
-                inputErrorMessage: t('prompt.change_avatar_description.input_error')
-            }
-        )
-            .then(({ value }) => {
+                errorMessage: t('prompt.change_avatar_description.input_error')
+            })
+            .then(({ ok, value }) => {
+                if (!ok) return;
                 if (value && value !== avatar.ref.description) {
                     avatarRequest
                         .saveAvatar({
@@ -954,14 +952,17 @@
     }
 
     function promptRenameAvatar(avatar) {
-        ElMessageBox.prompt(t('prompt.rename_avatar.description'), t('prompt.rename_avatar.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.rename_avatar.ok'),
-            cancelButtonText: t('prompt.rename_avatar.cancel'),
-            inputValue: avatar.ref.name,
-            inputErrorMessage: t('prompt.rename_avatar.input_error')
-        })
-            .then(({ value }) => {
+        modalStore
+            .prompt({
+                title: t('prompt.rename_avatar.header'),
+                description: t('prompt.rename_avatar.description'),
+                confirmText: t('prompt.rename_avatar.ok'),
+                cancelText: t('prompt.rename_avatar.cancel'),
+                inputValue: avatar.ref.name,
+                errorMessage: t('prompt.rename_avatar.input_error')
+            })
+            .then(({ ok, value }) => {
+                if (!ok) return;
                 if (value && value !== avatar.ref.name) {
                     avatarRequest
                         .saveAvatar({

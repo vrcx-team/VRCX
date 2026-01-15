@@ -7,7 +7,7 @@
         DialogHeader,
         DialogTitle
     } from '@/components/ui/dialog';
-    import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+    import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
     import { Button } from '@/components/ui/button';
     import { Input } from '@/components/ui/input';
     import { storeToRefs } from 'pinia';
@@ -61,7 +61,7 @@
             event.preventDefault();
             return;
         }
-        modalStore.handlePromptDismiss(values.value.value ?? '');
+        modalStore.handlePromptDismiss(values.value ?? '');
     }
 
     function onPointerDownOutside(event) {
@@ -69,7 +69,7 @@
             event.preventDefault();
             return;
         }
-        modalStore.handlePromptDismiss(values.value.value ?? '');
+        modalStore.handlePromptDismiss(values.value ?? '');
     }
 
     function onInteractOutside(event) {
@@ -77,20 +77,21 @@
             event.preventDefault();
             return;
         }
-        modalStore.handlePromptDismiss(values.value.value ?? '');
+        modalStore.handlePromptDismiss(values.value ?? '');
     }
 
     function handleCancel() {
-        modalStore.handlePromptCancel(values.value.value ?? '');
+        modalStore.handlePromptCancel(values.value ?? '');
     }
 
     watch(
-        promptOpen,
-        (open) => {
+        [promptOpen, promptInputValue],
+        ([open, inputValue]) => {
             if (open) {
-                setValues({ value: promptInputValue.value ?? '' });
+                setValues({ value: inputValue ?? '' });
                 return;
             }
+
             resetForm({
                 values: {
                     value: ''
@@ -108,7 +109,7 @@
             @escapeKeyDown="onEscapeKeyDown"
             @pointerDownOutside="onPointerDownOutside"
             @interactOutside="onInteractOutside">
-            <Form @submit="onSubmit">
+            <form @submit="onSubmit">
                 <DialogHeader>
                     <DialogTitle>{{ promptTitle }}</DialogTitle>
                     <DialogDescription>{{ promptDescription }}</DialogDescription>
@@ -132,7 +133,7 @@
                         {{ promptOkText }}
                     </Button>
                 </DialogFooter>
-            </Form>
+            </form>
         </DialogContent>
     </Dialog>
 </template>

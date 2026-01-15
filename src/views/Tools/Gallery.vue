@@ -580,7 +580,6 @@
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Checkbox } from '@/components/ui/checkbox';
-    import { ElMessageBox } from 'element-plus';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { VirtualCombobox } from '@/components/ui/virtual-combobox';
@@ -597,7 +596,7 @@
         openExternalLink
     } from '../../shared/utils';
     import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../api';
-    import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../stores';
+    import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useModalStore, useUserStore } from '../../stores';
     import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../shared/constants';
     import { AppDebug } from '../../service/appConfig';
     import { handleImageUploadInput } from '../../shared/utils/imageUpload';
@@ -606,6 +605,7 @@
 
     const { t } = useI18n();
     const router = useRouter();
+    const modalStore = useModalStore();
 
     const {
         galleryTable,
@@ -1161,11 +1161,15 @@
     }
 
     async function redeemReward() {
-        ElMessageBox.prompt(t('prompt.redeem.description'), t('prompt.redeem.header'), {
-            confirmButtonText: t('prompt.redeem.redeem'),
-            cancelButtonText: t('prompt.redeem.cancel')
-        })
-            .then(({ value }) => {
+        modalStore
+            .prompt({
+                title: t('prompt.redeem.header'),
+                description: t('prompt.redeem.description'),
+                confirmText: t('prompt.redeem.redeem'),
+                cancelText: t('prompt.redeem.cancel')
+            })
+            .then(({ ok, value }) => {
+                if (!ok) return;
                 if (value) {
                     inventoryRequest
                         .redeemReward({

@@ -1,5 +1,4 @@
 import { reactive, ref, watch } from 'vue';
-import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -855,23 +854,22 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     function promptAutoClearVRCXCacheFrequency() {
-        ElMessageBox.prompt(
-            t('prompt.auto_clear_cache.description'),
-            t('prompt.auto_clear_cache.header'),
-            {
-                distinguishCancelAndClose: true,
-                confirmButtonText: t('prompt.auto_clear_cache.ok'),
-                cancelButtonText: t('prompt.auto_clear_cache.cancel'),
+        modalStore
+            .prompt({
+                title: t('prompt.auto_clear_cache.header'),
+                description: t('prompt.auto_clear_cache.description'),
+                confirmText: t('prompt.auto_clear_cache.ok'),
+                cancelText: t('prompt.auto_clear_cache.cancel'),
                 inputValue: (
                     vrcxStore.clearVRCXCacheFrequency /
                     3600 /
                     2
                 ).toString(),
-                inputPattern: /\d+$/,
-                inputErrorMessage: t('prompt.auto_clear_cache.input_error')
-            }
-        )
-            .then(async ({ value }) => {
+                pattern: /\d+$/,
+                errorMessage: t('prompt.auto_clear_cache.input_error')
+            })
+            .then(async ({ ok, value }) => {
+                if (!ok) return;
                 if (value && !isNaN(parseInt(value, 10))) {
                     vrcxStore.clearVRCXCacheFrequency = Math.trunc(
                         parseInt(value, 10) * 3600 * 2

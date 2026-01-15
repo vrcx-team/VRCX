@@ -1,5 +1,4 @@
 import { computed, ref, watch } from 'vue';
-import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
@@ -17,6 +16,7 @@ import { loadLocalizedStrings } from '../../plugin';
 import { useElementTheme } from '../../composables/useElementTheme';
 import { useFeedStore } from '../feed';
 import { useGameLogStore } from '../gameLog';
+import { useModalStore } from '../modal';
 import { useUiStore } from '../ui';
 import { useUserStore } from '../user';
 import { useVrStore } from '../vr';
@@ -36,6 +36,7 @@ export const useAppearanceSettingsStore = defineStore(
         const userStore = useUserStore();
         const router = useRouter();
         const uiStore = useUiStore();
+        const modalStore = useModalStore();
 
         const { t, locale } = useI18n();
 
@@ -746,19 +747,18 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         function promptMaxTableSizeDialog() {
-            ElMessageBox.prompt(
-                t('prompt.change_table_size.description'),
-                t('prompt.change_table_size.header'),
-                {
-                    distinguishCancelAndClose: true,
-                    confirmButtonText: t('prompt.change_table_size.save'),
-                    cancelButtonText: t('prompt.change_table_size.cancel'),
+            modalStore
+                .prompt({
+                    title: t('prompt.change_table_size.header'),
+                    description: t('prompt.change_table_size.description'),
+                    confirmText: t('prompt.change_table_size.save'),
+                    cancelText: t('prompt.change_table_size.cancel'),
                     inputValue: vrcxStore.maxTableSize.toString(),
-                    inputPattern: /\d+$/,
-                    inputErrorMessage: t('prompt.change_table_size.input_error')
-                }
-            )
-                .then(async ({ value }) => {
+                    pattern: /\d+$/,
+                    errorMessage: t('prompt.change_table_size.input_error')
+                })
+                .then(async ({ ok, value }) => {
+                    if (!ok) return;
                     if (value) {
                         let processedValue = Number(value);
                         if (processedValue > 10000) {

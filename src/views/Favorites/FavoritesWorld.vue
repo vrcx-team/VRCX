@@ -440,7 +440,6 @@
     import { ArrowUpDown, Ellipsis, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
     import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
-    import { ElMessageBox } from 'element-plus';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -1145,19 +1144,18 @@
     }
 
     function promptLocalWorldFavoriteGroupRename(group) {
-        ElMessageBox.prompt(
-            t('prompt.local_favorite_group_rename.description'),
-            t('prompt.local_favorite_group_rename.header'),
-            {
-                distinguishCancelAndClose: true,
-                confirmButtonText: t('prompt.local_favorite_group_rename.save'),
-                cancelButtonText: t('prompt.local_favorite_group_rename.cancel'),
-                inputPattern: /\S+/,
-                inputErrorMessage: t('prompt.local_favorite_group_rename.input_error'),
+        modalStore
+            .prompt({
+                title: t('prompt.local_favorite_group_rename.header'),
+                description: t('prompt.local_favorite_group_rename.description'),
+                confirmText: t('prompt.local_favorite_group_rename.save'),
+                cancelText: t('prompt.local_favorite_group_rename.cancel'),
+                pattern: /\S+/,
+                errorMessage: t('prompt.local_favorite_group_rename.input_error'),
                 inputValue: group
-            }
-        )
-            .then(({ value }) => {
+            })
+            .then(({ ok, value }) => {
+                if (!ok) return;
                 if (value) {
                     renameLocalWorldFavoriteGroup(value, group);
                     nextTick(() => {
@@ -1238,19 +1236,18 @@
 
     function changeFavoriteGroupName(group) {
         const currentName = group.displayName || group.name;
-        ElMessageBox.prompt(
-            t('prompt.change_favorite_group_name.description'),
-            t('prompt.change_favorite_group_name.header'),
-            {
-                confirmButtonText: t('prompt.change_favorite_group_name.change'),
-                cancelButtonText: t('prompt.change_favorite_group_name.cancel'),
-                inputPlaceholder: t('prompt.change_favorite_group_name.input_placeholder'),
-                inputPattern: /\S+/,
+        modalStore
+            .prompt({
+                title: t('prompt.change_favorite_group_name.header'),
+                description: t('prompt.change_favorite_group_name.description'),
+                confirmText: t('prompt.change_favorite_group_name.change'),
+                cancelText: t('prompt.change_favorite_group_name.cancel'),
+                pattern: /\S+/,
                 inputValue: currentName,
-                inputErrorMessage: t('prompt.change_favorite_group_name.input_error')
-            }
-        )
-            .then(({ value }) => {
+                errorMessage: t('prompt.change_favorite_group_name.input_error')
+            })
+            .then(({ ok, value }) => {
+                if (!ok) return;
                 const newName = value.trim();
                 if (!newName || newName === currentName) {
                     return;

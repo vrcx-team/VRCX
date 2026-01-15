@@ -746,7 +746,6 @@
     } from 'lucide-vue-next';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { ElMessageBox } from 'element-plus';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
@@ -1120,14 +1119,17 @@
     }
 
     function promptRenameWorld(world) {
-        ElMessageBox.prompt(t('prompt.rename_world.description'), t('prompt.rename_world.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.rename_world.ok'),
-            cancelButtonText: t('prompt.rename_world.cancel'),
-            inputValue: world.ref.name,
-            inputErrorMessage: t('prompt.rename_world.input_error')
-        })
-            .then(({ value }) => {
+        modalStore
+            .prompt({
+                title: t('prompt.rename_world.header'),
+                description: t('prompt.rename_world.description'),
+                confirmText: t('prompt.rename_world.ok'),
+                cancelText: t('prompt.rename_world.cancel'),
+                inputValue: world.ref.name,
+                errorMessage: t('prompt.rename_world.input_error')
+            })
+            .then(({ ok, value }) => {
+                if (!ok) return;
                 if (value && value !== world.ref.name) {
                     worldRequest
                         .saveWorld({
@@ -1143,18 +1145,17 @@
             .catch(() => {});
     }
     function promptChangeWorldDescription(world) {
-        ElMessageBox.prompt(
-            t('prompt.change_world_description.description'),
-            t('prompt.change_world_description.header'),
-            {
-                distinguishCancelAndClose: true,
-                confirmButtonText: t('prompt.change_world_description.ok'),
-                cancelButtonText: t('prompt.change_world_description.cancel'),
+        modalStore
+            .prompt({
+                title: t('prompt.change_world_description.header'),
+                description: t('prompt.change_world_description.description'),
+                confirmText: t('prompt.change_world_description.ok'),
+                cancelText: t('prompt.change_world_description.cancel'),
                 inputValue: world.ref.description,
-                inputErrorMessage: t('prompt.change_world_description.input_error')
-            }
-        )
-            .then(({ value }) => {
+                errorMessage: t('prompt.change_world_description.input_error')
+            })
+            .then(({ ok, value }) => {
+                if (!ok) return;
                 if (value && value !== world.ref.description) {
                     worldRequest
                         .saveWorld({
@@ -1171,15 +1172,18 @@
     }
 
     function promptChangeWorldCapacity(world) {
-        ElMessageBox.prompt(t('prompt.change_world_capacity.description'), t('prompt.change_world_capacity.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.change_world_capacity.ok'),
-            cancelButtonText: t('prompt.change_world_capacity.cancel'),
-            inputValue: world.ref.capacity,
-            inputPattern: /\d+$/,
-            inputErrorMessage: t('prompt.change_world_capacity.input_error')
-        })
-            .then(({ value }) => {
+        modalStore
+            .prompt({
+                title: t('prompt.change_world_capacity.header'),
+                description: t('prompt.change_world_capacity.description'),
+                confirmText: t('prompt.change_world_capacity.ok'),
+                cancelText: t('prompt.change_world_capacity.cancel'),
+                inputValue: world.ref.capacity,
+                pattern: /\d+$/,
+                errorMessage: t('prompt.change_world_capacity.input_error')
+            })
+            .then(({ ok, value }) => {
+                if (!ok) return;
                 if (value && value !== world.ref.capacity) {
                     worldRequest
                         .saveWorld({
@@ -1196,19 +1200,18 @@
     }
 
     function promptChangeWorldRecommendedCapacity(world) {
-        ElMessageBox.prompt(
-            t('prompt.change_world_recommended_capacity.description'),
-            t('prompt.change_world_recommended_capacity.header'),
-            {
-                distinguishCancelAndClose: true,
-                confirmButtonText: t('prompt.change_world_capacity.ok'),
-                cancelButtonText: t('prompt.change_world_capacity.cancel'),
+        modalStore
+            .prompt({
+                title: t('prompt.change_world_recommended_capacity.header'),
+                description: t('prompt.change_world_recommended_capacity.description'),
+                confirmText: t('prompt.change_world_capacity.ok'),
+                cancelText: t('prompt.change_world_capacity.cancel'),
                 inputValue: world.ref.recommendedCapacity,
-                inputPattern: /\d+$/,
-                inputErrorMessage: t('prompt.change_world_recommended_capacity.input_error')
-            }
-        )
-            .then(({ value }) => {
+                pattern: /\d+$/,
+                errorMessage: t('prompt.change_world_recommended_capacity.input_error')
+            })
+            .then(({ ok, value }) => {
+                if (!ok) return;
                 if (value && value !== world.ref.recommendedCapacity) {
                     worldRequest
                         .saveWorld({
@@ -1225,14 +1228,17 @@
     }
 
     function promptChangeWorldYouTubePreview(world) {
-        ElMessageBox.prompt(t('prompt.change_world_preview.description'), t('prompt.change_world_preview.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.change_world_preview.ok'),
-            cancelButtonText: t('prompt.change_world_preview.cancel'),
-            inputValue: world.ref.previewYoutubeId,
-            inputErrorMessage: t('prompt.change_world_preview.input_error')
-        })
-            .then(({ value }) => {
+        modalStore
+            .prompt({
+                title: t('prompt.change_world_preview.header'),
+                description: t('prompt.change_world_preview.description'),
+                confirmText: t('prompt.change_world_preview.ok'),
+                cancelText: t('prompt.change_world_preview.cancel'),
+                inputValue: world.ref.previewYoutubeId,
+                errorMessage: t('prompt.change_world_preview.input_error')
+            })
+            .then(({ ok, value }) => {
+                if (!ok) return;
                 if (value && value !== world.ref.previewYoutubeId) {
                     let processedValue = value;
                     if (value.length > 11) {

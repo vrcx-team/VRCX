@@ -88,7 +88,7 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
                             ></i>
                         </TooltipWrapper>
                         <span>
-                            <ArrowRight / />
+                            <ArrowRight />
                         </span>
                         <TooltipWrapper
                             side="top"
@@ -126,7 +126,7 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
                     {r.previousGroupName || r.previousGroupId}
                 </span>
                 <span>
-                    <ArrowRight / />
+                    <ArrowRight />
                 </span>
                 <span
                     class="x-link"
@@ -179,7 +179,6 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
                         Android&nbsp;
                     </span>
                 ) : null}
-
                 <span
                     class="x-link"
                     onClick={(e) => {
@@ -192,7 +191,7 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
                 &nbsp;
                 {!r.inCache ? (
                     <span style="color: #aaa">
-                        <Download / />
+                        <Download />
                         &nbsp;
                     </span>
                 ) : null}
