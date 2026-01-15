@@ -352,66 +352,52 @@
                 @change="updateTrustColor('', '', true)"></simple-switch>
             <div>
                 <div>
-                    <el-color-picker
+                    <PresetColorPicker
                         :model-value="trustColor.untrusted"
-                        size="small"
-                        :predefine="['#CCCCCC']"
-                        @change="updateTrustColor('untrusted', $event)">
-                    </el-color-picker>
+                        :presets="['#CCCCCC']"
+                        @change="updateTrustColor('untrusted', $event)" />
                     <span class="color-picker x-tag-untrusted">Visitor</span>
                 </div>
                 <div>
-                    <el-color-picker
+                    <PresetColorPicker
                         :model-value="trustColor.basic"
-                        size="small"
-                        :predefine="['#1778ff']"
-                        @change="updateTrustColor('basic', $event)">
-                    </el-color-picker>
+                        :presets="['#1778ff']"
+                        @change="updateTrustColor('basic', $event)" />
                     <span class="color-picker x-tag-basic">New User</span>
                 </div>
                 <div>
-                    <el-color-picker
+                    <PresetColorPicker
                         :model-value="trustColor.known"
-                        size="small"
-                        :predefine="['#2bcf5c']"
-                        @change="updateTrustColor('known', $event)">
-                    </el-color-picker>
+                        :presets="['#2bcf5c']"
+                        @change="updateTrustColor('known', $event)" />
                     <span class="color-picker x-tag-known">User</span>
                 </div>
                 <div>
-                    <el-color-picker
+                    <PresetColorPicker
                         :model-value="trustColor.trusted"
-                        size="small"
-                        :predefine="['#ff7b42']"
-                        @change="updateTrustColor('trusted', $event)">
-                    </el-color-picker>
+                        :presets="['#ff7b42']"
+                        @change="updateTrustColor('trusted', $event)" />
                     <span class="color-picker x-tag-trusted">Known User</span>
                 </div>
                 <div>
-                    <el-color-picker
+                    <PresetColorPicker
                         :model-value="trustColor.veteran"
-                        size="small"
-                        :predefine="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']"
-                        @change="updateTrustColor('veteran', $event)">
-                    </el-color-picker>
+                        :presets="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']"
+                        @change="updateTrustColor('veteran', $event)" />
                     <span class="color-picker x-tag-veteran">Trusted User</span>
                 </div>
                 <div>
-                    <el-color-picker
+                    <PresetColorPicker
                         :model-value="trustColor.vip"
-                        size="small"
-                        :predefine="['#ff2626']"
-                        @change="updateTrustColor('vip', $event)">
-                    </el-color-picker>
+                        :presets="['#ff2626']"
+                        @change="updateTrustColor('vip', $event)" />
                     <span class="color-picker x-tag-vip">VRChat Team</span>
                 </div>
                 <div>
-                    <el-color-picker
+                    <PresetColorPicker
                         :model-value="trustColor.troll"
-                        size="small"
-                        :predefine="['#782f2f']"
-                        @change="updateTrustColor('troll', $event)">
-                    </el-color-picker>
+                        :presets="['#782f2f']"
+                        @change="updateTrustColor('troll', $event)" />
                     <span class="color-picker x-tag-troll">Nuisance</span>
                 </div>
             </div>
@@ -444,6 +430,8 @@
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
+
+    import PresetColorPicker from '@/components/PresetColorPicker.vue';
 
     import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '../../../../stores';
     import { getLanguageName, languageCodes } from '../../../../localization';

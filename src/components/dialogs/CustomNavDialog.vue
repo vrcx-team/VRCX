@@ -4,51 +4,20 @@
             <DialogHeader>
                 <DialogTitle>{{ t('nav_menu.custom_nav.dialog_title') }}</DialogTitle>
             </DialogHeader>
-        <div class="custom-nav-dialog__list" v-if="localLayout.length">
-            <div
-                v-for="(entry, index) in localLayout"
-                :key="entry.key || entry.id"
-                :class="['custom-nav-entry', `custom-nav-entry--${entry.type}`]">
-                <template v-if="entry.type === 'item'">
-                    <div class="custom-nav-entry__info">
-                        <i :class="definitionsMap.get(entry.key)?.icon"></i>
-                        <span>{{ t(definitionsMap.get(entry.key)?.labelKey || entry.key) }}</span>
-                    </div>
-                    <div class="custom-nav-entry__controls">
-                        <div class="custom-nav-entry__move">
-                            <Button
-                                class="rounded-full w-6 h-6 text-xs"
-                                size="icon-sm"
-                                variant="outline"
-                                :disabled="index === 0"
-                                @click="handleMoveEntry(index, -1)">
-                                <i class="ri-arrow-up-line"></i>
-                            </Button>
-                            <Button
-                                class="rounded-full w-6 h-6 text-xs"
-                                size="icon-sm"
-                                variant="outline"
-                                :disabled="index === localLayout.length - 1"
-                                @click="handleMoveEntry(index, 1)">
-                                <i class="ri-arrow-down-line"></i>
-                            </Button>
-                        </div>
-                    </div>
-                </template>
-                <template v-else>
-                    <div class="custom-nav-entry__folder-header">
+            <div class="custom-nav-dialog__list" v-if="localLayout.length">
+                <div
+                    v-for="(entry, index) in localLayout"
+                    :key="entry.key || entry.id"
+                    :class="['custom-nav-entry', `custom-nav-entry--${entry.type}`]">
+                    <template v-if="entry.type === 'item'">
                         <div class="custom-nav-entry__info">
-                            <i :class="entry.icon || defaultFolderIcon"></i>
-                            <span>{{ entry.name?.trim() || t('nav_menu.custom_nav.folder_name_placeholder') }}</span>
+                            <i :class="definitionsMap.get(entry.key)?.icon"></i>
+                            <span>{{ t(definitionsMap.get(entry.key)?.labelKey || entry.key) }}</span>
                         </div>
-                        <div class="custom-nav-entry__actions">
-                            <Button size="icon-sm w-6 h-6 text-xs" variant="outline" @click="openFolderEditor(index)">
-                                <i class="ri-edit-box-line"></i>
-                                {{ t('nav_menu.custom_nav.edit_folder') }}
-                            </Button>
+                        <div class="custom-nav-entry__controls">
                             <div class="custom-nav-entry__move">
                                 <Button
-                                    class="rounded-full text-xs w-6 h-6"
+                                    class="rounded-full w-6 h-6 text-xs"
                                     size="icon-sm"
                                     variant="outline"
                                     :disabled="index === 0"
@@ -56,7 +25,7 @@
                                     <i class="ri-arrow-up-line"></i>
                                 </Button>
                                 <Button
-                                    class="rounded-full text-xs w-6 h-6"
+                                    class="rounded-full w-6 h-6 text-xs"
                                     size="icon-sm"
                                     variant="outline"
                                     :disabled="index === localLayout.length - 1"
@@ -65,54 +34,90 @@
                                 </Button>
                             </div>
                         </div>
-                    </div>
-                    <div class="custom-nav-entry__folder-items">
-                        <template v-if="entry.items?.length">
-                            <Badge
-                                v-for="key in entry.items"
-                                :key="`${entry.id}-${key}`"
-                                variant="outline"
-                                class="custom-nav-entry__folder-tag">
-                                {{ t(definitionsMap.get(key)?.labelKey || key) }}
-                            </Badge>
-                        </template>
-                        <span v-else class="custom-nav-entry__folder-empty">
-                            {{ t('nav_menu.custom_nav.folder_empty') }}
-                        </span>
-                    </div>
-                </template>
+                    </template>
+                    <template v-else>
+                        <div class="custom-nav-entry__folder-header">
+                            <div class="custom-nav-entry__info">
+                                <i :class="entry.icon || defaultFolderIcon"></i>
+                                <span>{{
+                                    entry.name?.trim() || t('nav_menu.custom_nav.folder_name_placeholder')
+                                }}</span>
+                            </div>
+                            <div class="custom-nav-entry__actions">
+                                <Button
+                                    size="icon-sm w-6 h-6 text-xs"
+                                    variant="outline"
+                                    @click="openFolderEditor(index)">
+                                    <i class="ri-edit-box-line"></i>
+                                    {{ t('nav_menu.custom_nav.edit_folder') }}
+                                </Button>
+                                <div class="custom-nav-entry__move">
+                                    <Button
+                                        class="rounded-full text-xs w-6 h-6"
+                                        size="icon-sm"
+                                        variant="outline"
+                                        :disabled="index === 0"
+                                        @click="handleMoveEntry(index, -1)">
+                                        <i class="ri-arrow-up-line"></i>
+                                    </Button>
+                                    <Button
+                                        class="rounded-full text-xs w-6 h-6"
+                                        size="icon-sm"
+                                        variant="outline"
+                                        :disabled="index === localLayout.length - 1"
+                                        @click="handleMoveEntry(index, 1)">
+                                        <i class="ri-arrow-down-line"></i>
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="custom-nav-entry__folder-items">
+                            <template v-if="entry.items?.length">
+                                <Badge
+                                    v-for="key in entry.items"
+                                    :key="`${entry.id}-${key}`"
+                                    variant="outline"
+                                    class="custom-nav-entry__folder-tag">
+                                    {{ t(definitionsMap.get(key)?.labelKey || key) }}
+                                </Badge>
+                            </template>
+                            <span v-else class="custom-nav-entry__folder-empty">
+                                {{ t('nav_menu.custom_nav.folder_empty') }}
+                            </span>
+                        </div>
+                    </template>
+                </div>
             </div>
-        </div>
-        <el-alert
-            v-if="invalidFolders.length"
-            type="warning"
-            :closable="false"
-            :title="t('nav_menu.custom_nav.invalid_folder')" />
+            <!-- <el-alert
+                v-if="invalidFolders.length"
+                type="warning"
+                :closable="false"
+                :title="t('nav_menu.custom_nav.invalid_folder')" /> -->
             <DialogFooter>
-            <div class="custom-nav-dialog__footer">
-                <div class="custom-nav-dialog__footer-left">
-                    <Button variant="outline" @click="openFolderEditor()">
-                        {{ t('nav_menu.custom_nav.add_folder') }}
-                    </Button>
-                    <Button variant="outline" @click="handleReset">
-                        {{ t('nav_menu.custom_nav.restore_default') }}
-                    </Button>
+                <div class="custom-nav-dialog__footer">
+                    <div class="custom-nav-dialog__footer-left">
+                        <Button variant="outline" @click="openFolderEditor()">
+                            {{ t('nav_menu.custom_nav.add_folder') }}
+                        </Button>
+                        <Button variant="outline" @click="handleReset">
+                            {{ t('nav_menu.custom_nav.restore_default') }}
+                        </Button>
+                    </div>
+                    <div class="custom-nav-dialog__footer-right">
+                        <Button variant="secondary" @click="handleClose">
+                            {{ t('nav_menu.custom_nav.cancel') }}
+                        </Button>
+                        <Button :disabled="isSaveDisabled" @click="handleSave">
+                            {{ t('nav_menu.custom_nav.save') }}
+                        </Button>
+                    </div>
                 </div>
-                <div class="custom-nav-dialog__footer-right">
-                    <Button variant="secondary" @click="handleClose">
-                        {{ t('nav_menu.custom_nav.cancel') }}
-                    </Button>
-                    <Button :disabled="isSaveDisabled" @click="handleSave">
-                        {{ t('nav_menu.custom_nav.save') }}
-                    </Button>
-                </div>
-            </div>
             </DialogFooter>
         </DialogContent>
     </Dialog>
 
     <Dialog v-model:open="folderEditor.visible">
-        <DialogContent class="folder-editor-dialog">
+        <DialogContent class="folder-editor-dialog sm:max-w-[50vw]">
             <DialogHeader>
                 <DialogTitle>
                     {{
@@ -122,113 +127,151 @@
                     }}
                 </DialogTitle>
             </DialogHeader>
-        <div class="folder-editor">
-            <div class="folder-editor__form">
-                <InputGroupField
-                    v-model="folderEditor.data.name"
-                    :placeholder="t('nav_menu.custom_nav.folder_name_placeholder')" />
-                <IconPicker v-model="folderEditor.data.icon" class="folder-editor__icon-picker" />
-            </div>
-            <div class="folder-editor__lists">
-                <div class="folder-editor__column">
-                    <div class="folder-editor__column-title">
-                        {{ t('nav_menu.custom_nav.folder_available') }}
-                    </div>
-                    <div v-if="!folderEditorAvailableItems.length" class="folder-editor__empty">
-                        {{ t('nav_menu.custom_nav.folder_empty') }}
-                    </div>
-                    <el-scrollbar v-else always class="folder-editor__scroll">
-                        <div v-for="item in folderEditorAvailableItems" :key="item.key" class="folder-editor__option">
-                            <label class="folder-editor__option-label">
-                                <Checkbox
-                                    :model-value="folderEditor.data.items.includes(item.key)"
-                                    @update:modelValue="(val) => toggleFolderItem(item.key, val)" />
-                                <span>
-                                    <i :class="item.icon"></i>
-                                    {{ t(item.labelKey) }}
-                                </span>
-                            </label>
-                        </div>
-                    </el-scrollbar>
+            <div class="folder-editor">
+                <div class="folder-editor__form">
+                    <InputGroupField
+                        class="col-span-2"
+                        v-model="folderEditor.data.name"
+                        :placeholder="t('nav_menu.custom_nav.folder_name_placeholder')" />
+                    <InputGroupField
+                        class="col-span-2"
+                        v-model="folderEditor.data.icon"
+                        :placeholder="t('nav_menu.custom_nav.folder_icon_placeholder')">
+                        <template #trailing>
+                            <HoverCard>
+                                <HoverCardTrigger as-child>
+                                    <InputGroupButton
+                                        size="icon-xs"
+                                        :aria-label="t('nav_menu.custom_nav.folder_icon_placeholder')">
+                                        <LinkIcon class="size-3.5" />
+                                    </InputGroupButton>
+                                </HoverCardTrigger>
+                                <HoverCardContent side="bottom" align="end" class="w-80">
+                                    <div class="text-sm leading-snug">
+                                        <div>
+                                            Find the icon you want on this site and paste its class name here, e.g.
+                                            <span class="font-mono">ri-arrow-left-up-line</span>
+                                        </div>
+                                        <div class="mt-2">
+                                            <a
+                                                class="x-link"
+                                                @click.prevent="openExternalLink('https://remixicon.com/')">
+                                                https://remixicon.com/
+                                            </a>
+                                        </div>
+                                    </div>
+                                </HoverCardContent>
+                            </HoverCard>
+                        </template>
+                    </InputGroupField>
                 </div>
-                <div class="folder-editor__column folder-editor__column--selected">
-                    <div class="folder-editor__column-title">
-                        {{ t('nav_menu.custom_nav.folder_selected') }}
-                    </div>
-                    <div v-if="!folderEditor.data.items.length" class="folder-editor__empty">
-                        {{ t('nav_menu.custom_nav.folder_selected_empty') }}
-                    </div>
-                    <div
-                        v-for="(key, index) in folderEditor.data.items"
-                        :key="`selected-${key}`"
-                        class="folder-editor__selected-item">
-                        <div class="folder-editor__selected-label">
-                            <i :class="definitionsMap.get(key)?.icon"></i>
-                            <span>{{ t(definitionsMap.get(key)?.labelKey || key) }}</span>
+                <div class="folder-editor__lists">
+                    <div class="folder-editor__column">
+                        <div class="folder-editor__column-title">
+                            {{ t('nav_menu.custom_nav.folder_available') }}
                         </div>
-                        <div class="folder-editor__selected-actions">
-                            <div class="custom-nav-entry__move">
-                                <Button
-                                    class="rounded-full text-xs w-6 h-6"
-                                    size="icon-sm"
-                                    variant="outline"
-                                    :disabled="index === 0"
-                                    @click="handleFolderItemMove(index, -1)">
-                                    <i class="ri-arrow-up-line"></i>
-                                </Button>
-                                <Button
-                                    class="rounded-full text-xs w-6 h-6"
-                                    size="icon-sm"
-                                    variant="outline"
-                                    :disabled="index === folderEditor.data.items.length - 1"
-                                    @click="handleFolderItemMove(index, 1)">
-                                    <i class="ri-arrow-down-line"></i>
+                        <div v-if="!folderEditorAvailableItems.length" class="folder-editor__empty">
+                            {{ t('nav_menu.custom_nav.folder_empty') }}
+                        </div>
+                        <ScrollArea v-else type="always" class="folder-editor__scroll">
+                            <div
+                                v-for="item in folderEditorAvailableItems"
+                                :key="item.key"
+                                class="folder-editor__option">
+                                <label class="folder-editor__option-label">
+                                    <Checkbox
+                                        :model-value="folderEditor.data.items.includes(item.key)"
+                                        @update:modelValue="(val) => toggleFolderItem(item.key, val)" />
+                                    <span>
+                                        <i :class="item.icon"></i>
+                                        {{ t(item.labelKey) }}
+                                    </span>
+                                </label>
+                            </div>
+                        </ScrollArea>
+                    </div>
+                    <div class="folder-editor__column folder-editor__column--selected">
+                        <div class="folder-editor__column-title">
+                            {{ t('nav_menu.custom_nav.folder_selected') }}
+                        </div>
+                        <div v-if="!folderEditor.data.items.length" class="folder-editor__empty">
+                            {{ t('nav_menu.custom_nav.folder_selected_empty') }}
+                        </div>
+                        <div
+                            v-for="(key, index) in folderEditor.data.items"
+                            :key="`selected-${key}`"
+                            class="folder-editor__selected-item">
+                            <div class="folder-editor__selected-label">
+                                <i :class="definitionsMap.get(key)?.icon"></i>
+                                <span>{{ t(definitionsMap.get(key)?.labelKey || key) }}</span>
+                            </div>
+                            <div class="folder-editor__selected-actions">
+                                <div class="custom-nav-entry__move">
+                                    <Button
+                                        class="rounded-full text-xs w-6 h-6"
+                                        size="icon-sm"
+                                        variant="outline"
+                                        :disabled="index === 0"
+                                        @click="handleFolderItemMove(index, -1)">
+                                        <i class="ri-arrow-up-line"></i>
+                                    </Button>
+                                    <Button
+                                        class="rounded-full text-xs w-6 h-6"
+                                        size="icon-sm"
+                                        variant="outline"
+                                        :disabled="index === folderEditor.data.items.length - 1"
+                                        @click="handleFolderItemMove(index, 1)">
+                                        <i class="ri-arrow-down-line"></i>
+                                    </Button>
+                                </div>
+                                <Button size="sm" variant="outline" @click="toggleFolderItem(key, false)">
+                                    {{ t('nav_menu.custom_nav.remove_from_folder') }}
                                 </Button>
                             </div>
-                            <Button size="sm" variant="outline" @click="toggleFolderItem(key, false)">
-                                {{ t('nav_menu.custom_nav.remove_from_folder') }}
-                            </Button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
             <DialogFooter>
-            <div class="folder-editor__footer">
-                <Button
-                    variant="destructive"
-                    v-if="folderEditor.isEditing"
-                    :disabled="!canDeleteFolder"
-                    @click="handleFolderEditorDelete">
-                    {{ t('nav_menu.custom_nav.delete_folder') }}
-                </Button>
-                <div class="folder-editor__footer-spacer"></div>
-                <Button variant="secondary" class="mr-2" @click="closeFolderEditor">
-                    {{ t('nav_menu.custom_nav.cancel') }}
-                </Button>
-                <Button :disabled="folderEditorSaveDisabled" @click="handleFolderEditorSave">
-                    {{ t('nav_menu.custom_nav.save') }}
-                </Button>
-            </div>
+                <div class="folder-editor__footer">
+                    <Button
+                        variant="destructive"
+                        v-if="folderEditor.isEditing"
+                        :disabled="!canDeleteFolder"
+                        @click="handleFolderEditorDelete">
+                        {{ t('nav_menu.custom_nav.delete_folder') }}
+                    </Button>
+                    <div class="folder-editor__footer-spacer"></div>
+                    <Button variant="secondary" class="mr-2" @click="closeFolderEditor">
+                        {{ t('nav_menu.custom_nav.cancel') }}
+                    </Button>
+                    <Button :disabled="folderEditorSaveDisabled" @click="handleFolderEditorSave">
+                        {{ t('nav_menu.custom_nav.save') }}
+                    </Button>
+                </div>
             </DialogFooter>
         </DialogContent>
     </Dialog>
 </template>
 
 <script setup>
-    import { computed, reactive, ref, watch } from 'vue';
-    import { Button } from '@/components/ui/button';
     import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { computed, reactive, ref, watch } from 'vue';
+    import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+    import { Button } from '@/components/ui/button';
+    import { Link as LinkIcon } from 'lucide-vue-next';
+    import { openExternalLink } from '@/shared/utils/common';
     import { useI18n } from 'vue-i18n';
 
     import dayjs from 'dayjs';
 
+    import { InputGroupButton, InputGroupField } from '../ui/input-group';
     import { Badge } from '../ui/badge';
     import { Checkbox } from '../ui/checkbox';
-    import { InputGroupField } from '../ui/input-group';
+    import { ScrollArea } from '../ui/scroll-area';
     import { navDefinitions } from '../../shared/constants/ui.js';
 
-    import IconPicker from '../IconPicker.vue';
+    // import IconPicker from '../IconPicker.vue';
 
     const props = defineProps({
         visible: {
@@ -240,8 +283,7 @@
             default: () => []
         },
         defaultFolderIcon: {
-            type: String,
-            default: 'ri-menu-fold-line'
+            type: String
         }
     });
 
@@ -258,7 +300,7 @@
                     type: 'folder',
                     id: entry.id,
                     name: entry.name,
-                    icon: entry.icon || props.defaultFolderIcon,
+                    icon: entry.icon,
                     items: Array.isArray(entry.items) ? [...entry.items] : []
                 };
             }
@@ -358,14 +400,14 @@
             folderEditor.data = {
                 id: entry.id,
                 name: entry.name,
-                icon: entry.icon || props.defaultFolderIcon,
+                icon: entry.icon,
                 items: Array.isArray(entry.items) ? [...entry.items] : []
             };
         } else {
             folderEditor.data = {
                 id: `custom-folder-${dayjs().toISOString()}-${Math.random().toString().slice(2, 7)}`,
                 name: '',
-                icon: props.defaultFolderIcon,
+                icon: '',
                 items: []
             };
         }
@@ -399,6 +441,7 @@
 
     const applyFolderChanges = () => {
         const sanitizedItems = folderEditor.data.items.filter((key) => definitionsMap.value.has(key));
+        const sanitizedIcon = folderEditor.data.icon?.trim() || '';
         const entries = [...localLayout.value];
 
         if (folderEditor.isEditing) {
@@ -421,7 +464,7 @@
                 type: 'folder',
                 id: folderEditor.data.id,
                 name: folderEditor.data.name.trim(),
-                icon: folderEditor.data.icon || props.defaultFolderIcon,
+                icon: sanitizedIcon,
                 items: sanitizedItems
             });
 
@@ -442,7 +485,7 @@
             type: 'folder',
             id: folderEditor.data.id,
             name: folderEditor.data.name.trim(),
-            icon: folderEditor.data.icon || props.defaultFolderIcon,
+            icon: sanitizedIcon,
             items: sanitizedItems
         });
 

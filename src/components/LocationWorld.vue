@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-    import { Lock, Unlock, AlertTriangle } from 'lucide-vue-next';
+    import { AlertTriangle, Lock, Unlock } from 'lucide-vue-next';
     import { ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

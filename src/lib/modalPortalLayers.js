@@ -1,7 +1,7 @@
 const MODAL_PORTAL_ROOT_ID = 'vrcx-modal-portal-root';
 const APP_PORTAL_ROOT_ID = 'x-dialog-portal';
 
-const BASE_Z_INDEX = 50;
+const BASE_Z_INDEX = 10000;
 const Z_STEP = 10;
 
 let nextLayerIndex = 0;
@@ -15,11 +15,15 @@ function ensureModalPortalRoot() {
     if (root) {
         root.style.position ||= 'relative';
         root.style.isolation ||= 'isolate';
+        root.style.zIndex ||= String(BASE_Z_INDEX);
         return root;
     }
 
     root = document.getElementById(MODAL_PORTAL_ROOT_ID);
     if (root) {
+        root.style.position ||= 'relative';
+        root.style.isolation ||= 'isolate';
+        root.style.zIndex ||= String(BASE_Z_INDEX);
         return root;
     }
 
@@ -27,6 +31,7 @@ function ensureModalPortalRoot() {
     root.id = MODAL_PORTAL_ROOT_ID;
     root.style.position = 'relative';
     root.style.isolation = 'isolate';
+    root.style.zIndex = String(BASE_Z_INDEX);
     document.body.appendChild(root);
     return root;
 }

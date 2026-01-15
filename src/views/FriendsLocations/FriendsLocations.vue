@@ -58,7 +58,7 @@
         <div v-else class="friend-view__toolbar friend-view__toolbar--loading">
             <span class="friend-view__loading-text">{{ t('view.friends_locations.loading_more') }}</span>
         </div>
-        <el-scrollbar v-if="settingsReady" ref="scrollbarRef" class="friend-view__scroll" @scroll="handleScroll">
+        <ScrollArea v-if="settingsReady" ref="scrollbarRef" class="friend-view__scroll" @scroll="handleScroll">
             <template v-if="isSameInstanceView">
                 <div v-if="visibleSameInstanceGroups.length" class="friend-view__instances">
                     <section
@@ -151,7 +151,7 @@
                 <Loader2 class="friend-view__loading-icon" :size="18" />
                 <span>{{ t('view.friends_locations.loading_more') }}</span>
             </div>
-        </el-scrollbar>
+        </ScrollArea>
         <div v-else class="friend-view__initial-loading">
             <Loader2 class="friend-view__loading-icon" :size="22" />
         </div>
@@ -164,6 +164,7 @@
     import { Loader2, Settings } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { InputGroupSearch } from '@/components/ui/input-group';
+    import { ScrollArea } from '@/components/ui/scroll-area';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -262,7 +263,7 @@
     let cleanupResize;
 
     const updateGridWidth = () => {
-        const wrap = scrollbarRef.value?.wrapRef;
+        const wrap = scrollbarRef.value?.viewportEl?.value;
         if (!wrap) {
             return;
         }
@@ -276,7 +277,7 @@
             cleanupResize = undefined;
         }
 
-        const wrap = scrollbarRef.value?.wrapRef;
+        const wrap = scrollbarRef.value?.viewportEl?.value;
         if (!wrap) {
             return;
         }
@@ -559,7 +560,7 @@
             return;
         }
 
-        const wrap = scrollbarRef.value?.wrapRef;
+        const wrap = scrollbarRef.value?.viewportEl?.value;
 
         if (!wrap) {
             return;
@@ -590,7 +591,7 @@
 
     function maybeFillViewport() {
         nextTick(() => {
-            const wrap = scrollbarRef.value?.wrapRef;
+            const wrap = scrollbarRef.value?.viewportEl?.value;
             if (!wrap) {
                 return;
             }
@@ -634,7 +635,6 @@
             return;
         }
         nextTick(() => {
-            scrollbarRef.value?.update?.();
             updateGridWidth();
             maybeFillViewport();
         });
@@ -697,7 +697,6 @@
             settingsReady.value = true;
             nextTick(() => {
                 setupResizeHandling();
-                scrollbarRef.value?.update?.();
                 updateGridWidth();
                 maybeFillViewport();
             });

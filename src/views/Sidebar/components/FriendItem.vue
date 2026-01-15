@@ -45,7 +45,7 @@
             </Button>
         </template>
 
-        <div v-else class="skeleton" aria-busy="true" aria-label="Loading">
+        <!-- <div v-else class="skeleton" aria-busy="true" aria-label="Loading">
             <div>
                 <Skeleton class="h-10 w-10 rounded-full" />
                 <div>
@@ -53,7 +53,7 @@
                     <Skeleton class="mt-1.5 h-3 w-full" />
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 

@@ -1,5 +1,6 @@
 <template>
     <div ref="instanceActivityRef" class="pt-12">
+        <BackToTop :target="instanceActivityRef" :right="30" :bottom="30" :teleport="false" />
         <div class="options-container instance-activity" style="margin-top: 0">
             <div>
                 <span>{{ t('view.charts.instance_activity.header') }}</span>
@@ -171,6 +172,7 @@
     import { toDate } from 'reka-ui/date';
     import { useI18n } from 'vue-i18n';
 
+    import BackToTop from '@/components/BackToTop.vue';
     import dayjs from 'dayjs';
 
     import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/popover';
@@ -204,7 +206,7 @@
 
     function setInstanceActivityHeight() {
         if (instanceActivityRef.value) {
-            const availableHeight = window.innerHeight - 100;
+            const availableHeight = window.innerHeight - 110;
             instanceActivityRef.value.style.height = `${availableHeight}px`;
             instanceActivityRef.value.style.overflowY = 'auto';
         }

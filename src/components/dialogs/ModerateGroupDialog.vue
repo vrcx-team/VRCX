@@ -6,37 +6,37 @@
             </DialogHeader>
 
             <div v-if="moderateGroupDialog.visible">
-            <div class="x-friend-item" style="cursor: default">
-                <div class="avatar">
-                    <img :src="userImage(moderateGroupDialog.userObject)" loading="lazy" />
+                <div class="x-friend-item" style="cursor: default">
+                    <div class="avatar">
+                        <img :src="userImage(moderateGroupDialog.userObject)" loading="lazy" />
+                    </div>
+                    <div class="detail">
+                        <span
+                            v-if="moderateGroupDialog.userObject.id"
+                            class="name"
+                            :style="{ color: moderateGroupDialog.userObject.$userColour }"
+                            v-text="moderateGroupDialog.userObject.displayName"></span>
+                        <span v-else v-text="moderateGroupDialog.userId"></span>
+                    </div>
                 </div>
-                <div class="detail">
-                    <span
-                        v-if="moderateGroupDialog.userObject.id"
-                        class="name"
-                        :style="{ color: moderateGroupDialog.userObject.$userColour }"
-                        v-text="moderateGroupDialog.userObject.displayName"></span>
-                    <span v-else v-text="moderateGroupDialog.userId"></span>
-                </div>
-            </div>
 
-            <div style="margin-top: 15px; width: 100%">
-                <VirtualCombobox
-                    :model-value="moderateGroupDialog.groupId"
-                    @update:modelValue="setGroupId"
-                    :groups="groupPickerGroups"
-                    :placeholder="t('dialog.moderate_group.choose_group_placeholder')"
-                    :search-placeholder="t('dialog.moderate_group.choose_group_placeholder')"
-                    :close-on-select="true">
-                    <template #item="{ item, selected }">
-                        <div class="flex w-full items-center gap-2">
-                            <img :src="item.iconUrl" loading="lazy" class="size-5 rounded-sm" />
-                            <span class="truncate text-sm" v-text="item.label"></span>
-                            <span v-if="selected" class="ml-auto opacity-70">✓</span>
-                        </div>
-                    </template>
-                </VirtualCombobox>
-            </div>
+                <div style="margin-top: 15px; width: 100%">
+                    <VirtualCombobox
+                        :model-value="moderateGroupDialog.groupId"
+                        @update:modelValue="setGroupId"
+                        :groups="groupPickerGroups"
+                        :placeholder="t('dialog.moderate_group.choose_group_placeholder')"
+                        :search-placeholder="t('dialog.moderate_group.choose_group_placeholder')"
+                        :close-on-select="true">
+                        <template #item="{ item, selected }">
+                            <div class="flex w-full items-center gap-2">
+                                <img :src="item.iconUrl" loading="lazy" class="size-5 rounded-sm" />
+                                <span class="truncate text-sm" v-text="item.label"></span>
+                                <span v-if="selected" class="ml-auto opacity-70">✓</span>
+                            </div>
+                        </template>
+                    </VirtualCombobox>
+                </div>
             </div>
 
             <DialogFooter>
@@ -54,9 +54,9 @@
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

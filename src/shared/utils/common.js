@@ -403,13 +403,15 @@ function openExternalLink(link) {
             confirmText: 'Open',
             cancelText: 'Copy'
         })
-        // TODO: beforeClose alert dialog
-        .then(({ ok }) => {
-            if (!ok) {
+        .then(({ ok, reason }) => {
+            if (reason === 'cancel') {
                 copyToClipboard(link, 'Link copied to clipboard!');
                 return;
             }
-            AppApi.OpenLink(link);
+            if (ok) {
+                AppApi.OpenLink(link);
+                return;
+            }
         });
 }
 

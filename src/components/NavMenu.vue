@@ -239,13 +239,13 @@
     <CustomNavDialog
         v-model:visible="customNavDialogVisible"
         :layout="navLayout"
-        :default-folder-icon="DEFAULT_FOLDER_ICON"
         @save="handleCustomNavSave"
         @reset="handleCustomNavReset" />
 </template>
 
 <script setup>
     import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
+    import { ElMenu, ElMenuItem, ElPopover, ElSubMenu } from 'element-plus';
     import { Button } from '@/components/ui/button';
     import { Separator } from '@/components/ui/separator';
     import { dayjs } from 'element-plus';

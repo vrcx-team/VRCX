@@ -404,7 +404,7 @@
                                 </template>
                                 <div v-else class="favorites-empty">No Data</div>
                             </div>
-                            <el-scrollbar
+                            <ScrollArea
                                 v-else-if="activeLocalGroupName && isLocalGroupSelected"
                                 ref="localFavoritesScrollbarRef"
                                 class="favorites-content__scroll"
@@ -424,7 +424,7 @@
                                     </div>
                                 </template>
                                 <div v-else class="favorites-empty">No Data</div>
-                            </el-scrollbar>
+                            </ScrollArea>
                             <div v-else class="favorites-empty">No Data</div>
                         </template>
                     </div>
@@ -440,6 +440,7 @@
     import { ArrowUpDown, Ellipsis, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
     import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
+    import { ScrollArea } from '@/components/ui/scroll-area';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -1004,7 +1005,7 @@
         if (!isLocalGroupSelected.value || isSearchActive.value) {
             return;
         }
-        const wrap = localFavoritesScrollbarRef.value?.wrapRef;
+        const wrap = localFavoritesScrollbarRef.value?.viewportEl?.value;
         if (!wrap) {
             return;
         }
@@ -1097,7 +1098,7 @@
             if (!isLocalGroupSelected.value || isSearchActive.value) {
                 return;
             }
-            const wrap = localFavoritesScrollbarRef.value?.wrapRef;
+            const wrap = localFavoritesScrollbarRef.value?.viewportEl?.value;
             if (!wrap) {
                 return;
             }

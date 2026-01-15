@@ -4,10 +4,7 @@
             <div style="flex: 1; padding: 10px; padding-left: 0">
                 <Popover v-model:open="isQuickSearchOpen">
                     <PopoverTrigger as-child>
-                        <Input
-                            v-model="quickSearchQuery"
-                            :placeholder="t('side_panel.search_placeholder')"
-                            @focus="handleQuickSearchFocus" />
+                        <Input v-model="quickSearchQuery" :placeholder="t('side_panel.search_placeholder')" />
                     </PopoverTrigger>
                     <PopoverContent
                         side="bottom"
@@ -78,6 +75,7 @@
             :items="sidebarTabs"
             :unmount-on-hide="false"
             variant="equal"
+            fill
             class="zero-margin-tabs"
             style="height: calc(100% - 70px); margin-top: 5px">
             <template #label-friends>
@@ -89,14 +87,19 @@
                 <span class="sidebar-tab-count"> ({{ groupInstances.length }}) </span>
             </template>
             <template #friends>
-                <div class="el-tabs__content">
-                    <el-backtop target=".zero-margin-tabs .el-tabs__content" :bottom="20" :right="20"></el-backtop>
-                    <FriendsSidebar @confirm-delete-friend="confirmDeleteFriend" />
+                <div class="h-full overflow-hidden">
+                    <ScrollArea ref="friendsScrollAreaRef" class="h-full">
+                        <FriendsSidebar @confirm-delete-friend="confirmDeleteFriend" />
+                    </ScrollArea>
+                    <BackToTop :target="friendsScrollTarget" :bottom="20" :right="20" :teleport="false" />
                 </div>
             </template>
             <template #groups>
-                <div class="el-tabs__content">
-                    <GroupsSidebar :group-instances="groupInstances" :group-order="inGameGroupOrder" />
+                <div class="h-full overflow-hidden">
+                    <ScrollArea ref="groupsScrollAreaRef" class="h-full">
+                        <GroupsSidebar :group-instances="groupInstances" :group-order="inGameGroupOrder" />
+                    </ScrollArea>
+                    <BackToTop :target="groupsScrollTarget" :bottom="20" :right="20" :teleport="false" />
                 </div>
             </template>
         </TabsUnderline>
@@ -104,15 +107,18 @@
 </template>
 
 <script setup>
+    import { computed, nextTick, onMounted, ref, watch } from 'vue';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-    import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Input } from '@/components/ui/input';
     import { RefreshCw } from 'lucide-vue-next';
+    import { ScrollArea } from '@/components/ui/scroll-area';
     import { Spinner } from '@/components/ui/spinner';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
+    import BackToTop from '@/components/BackToTop.vue';
 
     import { useFriendStore, useGroupStore, useSearchStore } from '../../stores';
     import { userImage } from '../../shared/utils';
@@ -134,6 +140,25 @@
     const quickSearchQuery = ref('');
     const isQuickSearchOpen = ref(false);
 
+    const friendsScrollAreaRef = ref(null);
+    const groupsScrollAreaRef = ref(null);
+    const friendsScrollTarget = ref(null);
+    const groupsScrollTarget = ref(null);
+
+    function resolveScrollViewport(scrollAreaComponentRef) {
+        // Our ScrollArea renders a DOM element root; the viewport is marked by data-slot.
+        const rootEl = scrollAreaComponentRef?.$el ?? null;
+        if (!rootEl || typeof rootEl.querySelector !== 'function') return null;
+        return rootEl.querySelector('[data-slot="scroll-area-viewport"]');
+    }
+
+    onMounted(async () => {
+        // Ensure child components are mounted before querying their DOM.
+        await nextTick();
+        friendsScrollTarget.value = resolveScrollViewport(friendsScrollAreaRef.value);
+        groupsScrollTarget.value = resolveScrollViewport(groupsScrollAreaRef.value);
+    });
+
     watch(
         quickSearchQuery,
         (value) => {
@@ -141,11 +166,6 @@
         },
         { immediate: true }
     );
-
-    function handleQuickSearchFocus() {
-        isQuickSearchOpen.value = true;
-        quickSearchRemoteMethod(String(quickSearchQuery.value ?? ''));
-    }
 
     function handleQuickSearchSelect(value) {
         if (!value) {

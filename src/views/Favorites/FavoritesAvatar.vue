@@ -146,7 +146,7 @@
                                                             <DropdownMenuSubContent
                                                                 side="right"
                                                                 align="start"
-                                                                class="w-[180px] p-1 rounded-lg">
+                                                                class="w-45 p-1 rounded-lg">
                                                                 <div class="group-visibility-menu">
                                                                     <button
                                                                         v-for="visibility in avatarGroupVisibilityOptions"
@@ -476,7 +476,7 @@
                             </div>
                         </template>
                         <template v-else-if="activeLocalGroupName">
-                            <el-scrollbar
+                            <ScrollArea
                                 ref="localAvatarScrollbarRef"
                                 class="favorites-content__scroll"
                                 @scroll="handleLocalAvatarScroll">
@@ -495,7 +495,7 @@
                                     </div>
                                 </template>
                                 <div v-else class="favorites-empty">No Data</div>
-                            </el-scrollbar>
+                            </ScrollArea>
                         </template>
                         <template v-else-if="isHistorySelected">
                             <div class="favorites-content__scroll favorites-content__scroll--native">
@@ -529,6 +529,7 @@
     import { ArrowUpDown, Check, Ellipsis, Loader, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
     import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
+    import { ScrollArea } from '@/components/ui/scroll-area';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -1101,7 +1102,7 @@
         if (!isLocalGroupSelected.value || isSearchActive.value) {
             return;
         }
-        const wrap = localAvatarScrollbarRef.value?.wrapRef;
+        const wrap = localAvatarScrollbarRef.value?.viewportEl?.value;
         if (!wrap) {
             return;
         }
@@ -1135,7 +1136,7 @@
             if (!isLocalGroupSelected.value || isSearchActive.value) {
                 return;
             }
-            const wrap = localAvatarScrollbarRef.value?.wrapRef;
+            const wrap = localAvatarScrollbarRef.value?.viewportEl?.value;
             if (!wrap) {
                 return;
             }

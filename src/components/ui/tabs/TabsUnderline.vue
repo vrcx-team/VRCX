@@ -20,17 +20,20 @@
         ariaLabel: { type: String, default: '' },
 
         variant: { type: String, default: 'fit' },
-        unmountOnHide: { type: Boolean, default: false }
+        unmountOnHide: { type: Boolean, default: false },
+        fill: { type: Boolean, default: false }
     });
 
     const emit = defineEmits(['update:modelValue']);
-    const { modelValue, defaultValue, items, ariaLabel, variant, unmountOnHide } = toRefs(props);
+    const { modelValue, defaultValue, items, ariaLabel, variant, unmountOnHide, fill } = toRefs(props);
+
+    const itemsList = computed(() => (Array.isArray(items.value) ? items.value : []));
 
     const resolvedDefault = computed(() => {
-        return defaultValue.value ?? items.value?.[0]?.value;
+        return defaultValue.value ?? itemsList.value?.[0]?.value;
     });
 
-    const isValueValid = (value) => items.value?.some((item) => item?.value === value);
+    const isValueValid = (value) => itemsList.value.some((item) => item?.value === value);
 
     const innerValue = ref(isValueValid(modelValue.value) ? modelValue.value : resolvedDefault.value);
 
@@ -40,12 +43,13 @@
         }
     });
 
-    watch([items, defaultValue], () => {
+    watch([itemsList, defaultValue], () => {
         if (!isValueValid(innerValue.value)) {
             innerValue.value = resolvedDefault.value;
             return;
         }
-        if (!isValueValid(modelValue.value)) {
+
+        if (modelValue.value !== undefined && modelValue.value !== null && !isValueValid(modelValue.value)) {
             innerValue.value = resolvedDefault.value;
         }
     });
@@ -79,7 +83,7 @@
     <TabsRoot
         :model-value="innerValue"
         :default-value="resolvedDefault"
-        class="w-full"
+        :class="['w-full', fill ? 'flex min-h-0 flex-col' : '']"
         :unmount-on-hide="unmountOnHide"
         @update:modelValue="onValueChange">
         <TabsList :class="listClass" :aria-label="ariaLabel || undefined">
@@ -89,7 +93,7 @@
             </TabsIndicator>
 
             <TabsTrigger
-                v-for="it in items"
+                v-for="it in itemsList"
                 :key="it.value"
                 :value="it.value"
                 :disabled="it.disabled"
@@ -99,10 +103,13 @@
         </TabsList>
 
         <TabsContent
-            v-for="it in items"
+            v-for="it in itemsList"
             :key="it.value"
             :value="it.value"
-            class="pt-4 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background">
+            :class="[
+                'pt-4 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background',
+                fill ? 'min-h-0 flex-1' : ''
+            ]">
             <slot :name="it.value" />
         </TabsContent>
     </TabsRoot>

@@ -306,6 +306,7 @@ export const columns = [
                             location={original.location}
                             hint={original.worldName}
                             grouphint={original.groupName}
+                            disableTooltip
                         />
                     </div>
                 ) : null;
@@ -318,6 +319,7 @@ export const columns = [
                             location={original.location}
                             hint={original.worldName}
                             grouphint={original.groupName}
+                            disableTooltip
                         />
                     </div>
                 ) : null;
@@ -350,7 +352,7 @@ export const columns = [
                 }
 
                 return (
-                    <span class="block w-full min-w-0 truncate">
+                    <div class="block w-full min-w-0 truncate">
                         <i
                             class={[
                                 'x-user-status',
@@ -359,7 +361,7 @@ export const columns = [
                             ]}
                         ></i>
                         <span>{original.statusDescription}</span>
-                    </span>
+                    </div>
                 );
             }
 
@@ -379,13 +381,9 @@ export const columns = [
 
             if (type === 'Bio') {
                 return (
-                    <span
-                        class="block w-full min-w-0 truncate"
-                        innerHTML={formatDifference(
-                            original.previousBio,
-                            original.bio
-                        )}
-                    ></span>
+                    <div class="block w-full min-w-0 truncate">
+                        {original.bio}
+                    </div>
                 );
             }
 

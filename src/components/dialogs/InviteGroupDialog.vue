@@ -6,64 +6,64 @@
             </DialogHeader>
 
             <div v-if="inviteGroupDialog.visible" v-loading="inviteGroupDialog.loading">
-            <span>{{ t('dialog.invite_to_group.description') }}</span>
-            <br />
+                <span>{{ t('dialog.invite_to_group.description') }}</span>
+                <br />
 
-            <div style="margin-top: 15px; width: 100%">
-                <VirtualCombobox
-                    v-model="inviteGroupDialog.groupId"
-                    :groups="groupPickerGroups"
-                    :disabled="inviteGroupDialog.loading"
-                    :placeholder="t('dialog.invite_to_group.choose_group_placeholder')"
-                    :search-placeholder="t('dialog.invite_to_group.choose_group_placeholder')"
-                    :clearable="true"
-                    :close-on-select="true"
-                    :deselect-on-reselect="true">
-                    <template #item="{ item, selected }">
-                        <div class="x-friend-item flex w-full items-center">
-                            <div class="avatar">
-                                <img :src="item.iconUrl" loading="lazy" />
-                            </div>
-                            <div class="detail">
-                                <span class="name" v-text="item.label"></span>
-                            </div>
-                            <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
-                        </div>
-                    </template>
-                </VirtualCombobox>
-            </div>
-
-            <div style="width: 100%; margin-top: 15px">
-                <VirtualCombobox
-                    v-model="inviteGroupDialog.userIds"
-                    :groups="friendPickerGroups"
-                    multiple
-                    :disabled="inviteGroupDialog.loading"
-                    :placeholder="t('dialog.invite_to_group.choose_friends_placeholder')"
-                    :search-placeholder="t('dialog.invite_to_group.choose_friends_placeholder')"
-                    :clearable="true">
-                    <template #item="{ item, selected }">
-                        <div class="x-friend-item flex w-full items-center">
-                            <template v-if="item.user">
-                                <div class="avatar" :class="userStatusClass(item.user)">
-                                    <img :src="userImage(item.user)" loading="lazy" />
+                <div style="margin-top: 15px; width: 100%">
+                    <VirtualCombobox
+                        v-model="inviteGroupDialog.groupId"
+                        :groups="groupPickerGroups"
+                        :disabled="inviteGroupDialog.loading"
+                        :placeholder="t('dialog.invite_to_group.choose_group_placeholder')"
+                        :search-placeholder="t('dialog.invite_to_group.choose_group_placeholder')"
+                        :clearable="true"
+                        :close-on-select="true"
+                        :deselect-on-reselect="true">
+                        <template #item="{ item, selected }">
+                            <div class="x-friend-item flex w-full items-center">
+                                <div class="avatar">
+                                    <img :src="item.iconUrl" loading="lazy" />
                                 </div>
                                 <div class="detail">
-                                    <span
-                                        class="name"
-                                        :style="{ color: item.user.$userColour }"
-                                        v-text="item.user.displayName"></span>
+                                    <span class="name" v-text="item.label"></span>
                                 </div>
-                            </template>
-                            <template v-else>
-                                <span v-text="item.label"></span>
-                            </template>
+                                <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                            </div>
+                        </template>
+                    </VirtualCombobox>
+                </div>
 
-                            <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
-                        </div>
-                    </template>
-                </VirtualCombobox>
-            </div>
+                <div style="width: 100%; margin-top: 15px">
+                    <VirtualCombobox
+                        v-model="inviteGroupDialog.userIds"
+                        :groups="friendPickerGroups"
+                        multiple
+                        :disabled="inviteGroupDialog.loading"
+                        :placeholder="t('dialog.invite_to_group.choose_friends_placeholder')"
+                        :search-placeholder="t('dialog.invite_to_group.choose_friends_placeholder')"
+                        :clearable="true">
+                        <template #item="{ item, selected }">
+                            <div class="x-friend-item flex w-full items-center">
+                                <template v-if="item.user">
+                                    <div class="avatar" :class="userStatusClass(item.user)">
+                                        <img :src="userImage(item.user)" loading="lazy" />
+                                    </div>
+                                    <div class="detail">
+                                        <span
+                                            class="name"
+                                            :style="{ color: item.user.$userColour }"
+                                            v-text="item.user.displayName"></span>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <span v-text="item.label"></span>
+                                </template>
+
+                                <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                            </div>
+                        </template>
+                    </VirtualCombobox>
+                </div>
             </div>
 
             <DialogFooter>
@@ -80,9 +80,9 @@
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Check as CheckIcon } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

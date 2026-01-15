@@ -42,11 +42,7 @@
 
     const timeZone = getLocalTimeZone();
 
-    // JSDoc casts: this project can end up with nominal-type mismatches for DateValue
-    // due to duplicate @internationalized/date copies in tooling.
-    /** @type {import('vue').Ref<any>} */
     const internalValue = ref(fromDate(props.modelValue ?? new Date(), timeZone));
-    /** @type {import('vue').Ref<any>} */
     const placeholder = ref(fromDate(props.modelValue ?? new Date(), timeZone));
 
     watch(
@@ -147,6 +143,10 @@
                                                 :class="hasFollowingFor(weekDate) ? 'has-following' : 'no-following'">
                                                 {{ eventCountFor(weekDate) }}
                                             </div>
+                                            <!-- <div
+                                                v-if="eventCountFor(weekDate) > 0"
+                                                class="calendar-event-dot"
+                                                aria-hidden="true" /> -->
                                         </div>
                                     </div>
                                 </CalendarCellTrigger>
@@ -165,7 +165,6 @@
         width: 100%;
         display: flex;
         align-items: flex-start;
-        justify-content: center;
     }
 
     .date {
@@ -193,21 +192,20 @@
 
     .calendar-event-badge {
         position: absolute;
-        top: 2px;
-        right: 2px;
-        min-width: 18px;
-        height: 18px;
+        top: -4px;
+        right: -4px;
+        min-width: 14px;
+        height: 14px;
         border-radius: 9px;
         color: var(--el-color-white, #fff);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 11px;
-        font-weight: bold;
+        font-size: 10px;
         box-shadow: var(--el-box-shadow-lighter);
         z-index: 10;
         padding: 0 5px;
-        line-height: 18px;
+        line-height: 14px;
     }
 
     .calendar-event-badge.has-following {
@@ -216,5 +214,19 @@
 
     .calendar-event-badge.no-following {
         background-color: var(--group-calendar-badge-normal, var(--el-color-primary));
+    }
+
+    .calendar-event-dot {
+        position: absolute;
+        left: 50%;
+        bottom: 4px;
+        transform: translateX(-50%);
+        width: 6px;
+        height: 6px;
+        border-radius: 9999px;
+        background-color: var(--group-calendar-event-dot, #ef4444);
+        box-shadow: var(--el-box-shadow-lighter);
+        z-index: 5;
+        pointer-events: none;
     }
 </style>

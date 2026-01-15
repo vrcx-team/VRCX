@@ -25,8 +25,8 @@
                 :rows="10"
                 style="margin-top: 10px"
                 input-class="resize-none" />
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
-                <div>
+            <div>
+                <div class="mb-2">
                     <div class="flex items-center gap-2">
                         <Select
                             :model-value="worldImportFavoriteGroupSelection"

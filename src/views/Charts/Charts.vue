@@ -8,7 +8,7 @@
                 <MutualFriends />
             </template>
         </TabsUnderline>
-        <el-backtop target="#chart" :right="30" :bottom="30"></el-backtop>
+        <BackToTop target="#chart" :right="30" :bottom="30" />
     </div>
 </template>
 
@@ -17,6 +17,8 @@
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
+    import BackToTop from '@/components/BackToTop.vue';
 
     import { useChartsStore } from '../../stores';
 

@@ -1,6 +1,6 @@
 <template>
     <Dialog :open="visible" @update:open="(open) => (open ? null : closeDialog())">
-        <DialogContent class="x-dialog w-[90vw] max-w-[90vw] sm:max-w-[70vw] h-[60vh] overflow-hidden">
+        <DialogContent class="x-dialog sm:max-w-[50vw] h-[60vh] overflow-hidden">
             <DialogHeader>
                 <div class="dialog-title-container">
                     <DialogTitle>{{ t('dialog.group_calendar.header') }}</DialogTitle>
@@ -18,82 +18,77 @@
                 </div>
             </DialogHeader>
             <div class="top-content">
-                <transition name="el-fade-in-linear" mode="out-in">
-                    <div v-if="viewMode === 'timeline'" key="timeline" class="timeline-view">
-                        <div class="timeline-container">
-                            <el-timeline v-if="groupedTimelineEvents.length">
-                                <el-timeline-item
-                                    v-for="(timeGroup, key) of groupedTimelineEvents"
-                                    :key="key"
-                                    :timestamp="
-                                        dayjs(timeGroup.startsAt).format('MM-DD ddd') + ' ' + timeGroup.startTime
-                                    "
-                                    placement="top">
-                                    <div class="time-group-container">
-                                        <GroupCalendarEventCard
-                                            v-for="value in timeGroup.events"
-                                            :key="value.id"
-                                            :event="value"
-                                            mode="timeline"
-                                            :is-following="isEventFollowing(value.id)"
-                                            :card-class="{ 'grouped-card': timeGroup.events.length > 1 }"
-                                            @update-following-calendar-data="updateFollowingCalendarData"
-                                            @click-action="showGroupDialog(value.ownerId)" />
-                                    </div>
-                                </el-timeline-item>
-                            </el-timeline>
-                            <div v-else>{{ t('dialog.group_calendar.no_events') }}</div>
-                        </div>
-
-                        <div class="calendar-container">
-                            <GroupCalendarMonth
-                                v-model="selectedDay"
-                                :is-loading="isLoading"
-                                :events-by-date="filteredCalendar"
-                                :following-by-date="followingCalendarDate" />
-                        </div>
-                    </div>
-                    <div v-else key="grid" class="grid-view">
-                        <div class="search-container">
-                            <InputGroupSearch
-                                v-model="searchQuery"
-                                size="sm"
-                                :placeholder="t('dialog.group_calendar.search_placeholder')"
-                                class="search-input" />
-                        </div>
-
-                        <div class="groups-grid" v-loading="isLoading">
-                            <div v-if="filteredGroupEvents.length" class="groups-container">
-                                <div v-for="group in filteredGroupEvents" :key="group.groupId" class="group-row">
-                                    <div class="group-header" @click="toggleGroup(group.groupId)">
-                                        <ArrowRight
-                                            class="rotation-transition"
-                                            :class="{ rotate: !groupCollapsed[group.groupId] }" />
-                                        {{ group.groupName }}
-                                    </div>
-                                    <div class="events-row" v-show="!groupCollapsed[group.groupId]">
-                                        <GroupCalendarEventCard
-                                            v-for="event in group.events"
-                                            :key="event.id"
-                                            :event="event"
-                                            mode="grid"
-                                            :is-following="isEventFollowing(event.id)"
-                                            @update-following-calendar-data="updateFollowingCalendarData"
-                                            @click-action="showGroupDialog(event.ownerId)"
-                                            card-class="grid-card" />
-                                    </div>
+                <div v-if="viewMode === 'timeline'" key="timeline" class="timeline-view">
+                    <div class="timeline-container">
+                        <div v-if="groupedTimelineEvents.length" class="timeline-list">
+                            <div v-for="(timeGroup, key) of groupedTimelineEvents" :key="key" class="timeline-group">
+                                <div class="timeline-timestamp">
+                                    {{ dayjs(timeGroup.startsAt).format('MM-DD ddd') }} {{ timeGroup.startTime }}
+                                </div>
+                                <div class="time-group-container">
+                                    <GroupCalendarEventCard
+                                        v-for="value in timeGroup.events"
+                                        :key="value.id"
+                                        :event="value"
+                                        mode="timeline"
+                                        :is-following="isEventFollowing(value.id)"
+                                        :card-class="{ 'grouped-card': timeGroup.events.length > 1 }"
+                                        @update-following-calendar-data="updateFollowingCalendarData"
+                                        @click-action="showGroupDialog(value.ownerId)" />
                                 </div>
                             </div>
-                            <div v-else class="no-events">
-                                {{
-                                    searchQuery
-                                        ? t('dialog.group_calendar.search_no_matching')
-                                        : t('dialog.group_calendar.search_no_this_month')
-                                }}
+                        </div>
+                        <div v-else class="timeline-empty">{{ t('dialog.group_calendar.no_events') }}</div>
+                    </div>
+
+                    <div class="calendar-container">
+                        <GroupCalendarMonth
+                            v-model="selectedDay"
+                            :is-loading="isLoading"
+                            :events-by-date="filteredCalendar"
+                            :following-by-date="followingCalendarDate" />
+                    </div>
+                </div>
+                <div v-else key="grid" class="grid-view">
+                    <div class="search-container">
+                        <InputGroupSearch
+                            v-model="searchQuery"
+                            size="sm"
+                            :placeholder="t('dialog.group_calendar.search_placeholder')"
+                            class="search-input" />
+                    </div>
+
+                    <div class="groups-grid" v-loading="isLoading">
+                        <div v-if="filteredGroupEvents.length" class="groups-container">
+                            <div v-for="group in filteredGroupEvents" :key="group.groupId" class="group-row">
+                                <div class="group-header" @click="toggleGroup(group.groupId)">
+                                    <ArrowRight
+                                        class="rotation-transition"
+                                        :class="{ rotate: !groupCollapsed[group.groupId] }" />
+                                    {{ group.groupName }}
+                                </div>
+                                <div class="events-row" v-show="!groupCollapsed[group.groupId]">
+                                    <GroupCalendarEventCard
+                                        v-for="event in group.events"
+                                        :key="event.id"
+                                        :event="event"
+                                        mode="grid"
+                                        :is-following="isEventFollowing(event.id)"
+                                        @update-following-calendar-data="updateFollowingCalendarData"
+                                        @click-action="showGroupDialog(event.ownerId)"
+                                        card-class="grid-card" />
+                                </div>
                             </div>
                         </div>
+                        <div v-else class="no-events">
+                            {{
+                                searchQuery
+                                    ? t('dialog.group_calendar.search_no_matching')
+                                    : t('dialog.group_calendar.search_no_this_month')
+                            }}
+                        </div>
                     </div>
-                </transition>
+                </div>
             </div>
         </DialogContent>
     </Dialog>
@@ -334,7 +329,8 @@
             .sort((a, b) => dayjs(a.startsAt).diff(dayjs(b.startsAt)));
     });
 
-    const formatDateKey = (date) => formatDateFilter(date, 'date');
+    // Use a stable key for calendar maps (independent of locale/appearance date formatting).
+    const formatDateKey = (date) => dayjs(date).format('YYYY-MM-DD');
 
     function getGroupNameFromCache(groupId) {
         if (!groupNamesCache.has(groupId)) {
@@ -462,18 +458,36 @@
             overflow: hidden;
             .timeline-view {
                 .timeline-container {
-                    :deep(.el-timeline) {
-                        width: 100%;
+                    min-width: 200px;
+                    padding-left: 4px;
+                    padding-right: 16px;
+                    margin-left: 10px;
+                    margin-right: 6px;
+                    overflow: auto;
+
+                    .timeline-list {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 14px;
+                    }
+
+                    .timeline-group {
+                        padding: 0 20px 6px 10px;
+                    }
+
+                    .timeline-timestamp {
+                        font-size: 13px;
+                        font-weight: 600;
+                        color: var(--el-text-color-secondary);
+                        margin-bottom: 8px;
+                    }
+
+                    .timeline-empty {
                         height: 100%;
-                        min-width: 200px;
-                        padding-left: 4px;
-                        padding-right: 16px;
-                        margin-left: 10px;
-                        margin-right: 6px;
-                        overflow: auto;
-                        .el-timeline-item {
-                            padding: 0 20px 20px 10px;
-                        }
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: var(--el-text-color-secondary);
                     }
                     .time-group-container {
                         display: flex;
@@ -571,7 +585,6 @@
             height: 100%;
             display: flex;
             justify-content: center;
-            align-items: center;
         }
         .calendar-container {
             width: 609px;
