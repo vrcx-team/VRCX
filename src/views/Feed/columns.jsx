@@ -352,15 +352,18 @@ export const columns = [
                 }
 
                 return (
-                    <div class="block w-full min-w-0 truncate">
+                    <div class="w-full min-w-0 truncate">
                         <i
+                            style="display:-webkit-inline-box"
                             class={[
                                 'x-user-status',
                                 'mr-2',
                                 statusClass(original.status)
                             ]}
                         ></i>
-                        <span>{original.statusDescription}</span>
+                        <span style="display:-webkit-inline-box">
+                            {original.statusDescription}
+                        </span>
                     </div>
                 );
             }

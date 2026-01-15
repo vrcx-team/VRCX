@@ -40,7 +40,7 @@
                                     >
                                 </div>
                             </template>
-                            <ChevronDown />
+                            <ChevronDown class="inline-block" />
                         </TooltipWrapper>
                     </template>
                     <span
