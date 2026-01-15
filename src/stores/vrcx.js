@@ -211,6 +211,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     function clearVRCXCache() {
+        console.log('Clearing VRCX cache...');
         failedGetRequests.clear();
         userStore.cachedUsers.forEach((ref, id) => {
             if (

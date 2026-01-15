@@ -8,6 +8,7 @@ import { database } from '../../service/database';
 import { languageCodes } from '../../localization';
 import { useGameStore } from '../game';
 import { useModalStore } from '../modal';
+import { useUpdateLoopStore } from '../updateLoop';
 import { useVRCXUpdaterStore } from '../vrcxUpdater';
 import { useVrcxStore } from '../vrcx';
 import { watchState } from '../../service/watchState';
@@ -20,6 +21,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const vrcxStore = useVrcxStore();
     const VRCXUpdaterStore = useVRCXUpdaterStore();
     const modalStore = useModalStore();
+    const updateLoopStore = useUpdateLoopStore();
 
     const { t } = useI18n();
 
@@ -873,6 +875,9 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 if (value && !isNaN(parseInt(value, 10))) {
                     vrcxStore.clearVRCXCacheFrequency = Math.trunc(
                         parseInt(value, 10) * 3600 * 2
+                    );
+                    updateLoopStore.setNextClearVRCXCacheCheck(
+                        vrcxStore.clearVRCXCacheFrequency / 2
                     );
                     await configRepository.setString(
                         'VRCX_clearVRCXCacheFrequency',
