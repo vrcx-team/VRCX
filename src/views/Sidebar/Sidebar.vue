@@ -26,16 +26,16 @@
                                             <span class="name" :style="{ color: item.ref.$userColour }">{{
                                                 item.ref.displayName
                                             }}</span>
-                                            <span v-if="!item.ref.isFriend" class="extra"></span>
-                                            <span v-else-if="item.ref.state === 'offline'" class="extra">{{
+                                            <span v-if="!item.ref.isFriend" class="block truncate text-xs"></span>
+                                            <span v-else-if="item.ref.state === 'offline'" class="block truncate text-xs">{{
                                                 t('side_panel.search_result_active')
                                             }}</span>
-                                            <span v-else-if="item.ref.state === 'active'" class="extra">{{
+                                            <span v-else-if="item.ref.state === 'active'" class="block truncate text-xs">{{
                                                 t('side_panel.search_result_offline')
                                             }}</span>
                                             <Location
                                                 v-else
-                                                class="extra"
+                                                class="text-xs"
                                                 :location="item.ref.location"
                                                 :traveling="item.ref.travelingToLocation"
                                                 :link="false" />
@@ -178,6 +178,16 @@
 </script>
 
 <style scoped>
+    .x-aside-container {
+        display: flex;
+        flex: none;
+        flex-direction: column;
+        padding: 13px 5px 5px 5px;
+        order: 99;
+        height: 100%;
+        box-sizing: border-box;
+    }
+
     .sidebar-tab-count {
         font-size: 12px;
         margin-left: 10px;

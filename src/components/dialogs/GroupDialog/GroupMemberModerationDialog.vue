@@ -444,7 +444,7 @@
                 <span class="name">{{ t('dialog.group_member_moderation.notes') }}</span>
                 <InputGroupTextareaField
                     v-model="note"
-                    class="extra"
+                    class="text-xs"
                     :rows="2"
                     :placeholder="t('dialog.group_member_moderation.note_placeholder')"
                     style="margin-top: 5px"

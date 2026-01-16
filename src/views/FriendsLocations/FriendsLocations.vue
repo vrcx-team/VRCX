@@ -71,7 +71,7 @@
                         <template v-if="virtualRows[vRow.index]?.type === 'header'">
                             <header class="friend-view__instance-header">
                                 <Location
-                                    class="extra"
+                                    class="text-xs"
                                     :location="virtualRows[vRow.index].instanceId"
                                     style="display: inline" />
                                 <span class="friend-view__instance-count">{{ virtualRows[vRow.index].count }}</span>

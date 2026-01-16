@@ -19,7 +19,7 @@
                     <span class="name" :style="{ color: currentUser.$userColour }">{{ currentUser.displayName }}</span>
                     <Location
                         v-if="isGameRunning && !gameLogDisabled"
-                        class="extra"
+                        class="text-xs"
                         :location="lastLocation.location"
                         :traveling="lastLocationDestination"
                         :link="false" />
@@ -27,12 +27,12 @@
                         v-else-if="
                             isRealInstance(currentUser.$locationTag) || isRealInstance(currentUser.$travelingToLocation)
                         "
-                        class="extra"
+                        class="text-xs"
                         :location="currentUser.$locationTag"
                         :traveling="currentUser.$travelingToLocation"
                         :link="false" />
 
-                    <span v-else class="extra">{{ currentUser.statusDescription }}</span>
+                    <span v-else class="text-xs">{{ currentUser.statusDescription }}</span>
                 </div>
             </div>
         </div>
@@ -54,8 +54,8 @@
                 <div v-for="group in vipFriendsDivideByGroup" :key="group[0].key">
                     <transition name="el-fade-in-linear">
                         <div v-show="group[0].groupName !== ''" style="margin-bottom: 3px">
-                            <span class="extra">{{ group[0].groupName }}</span>
-                            <span class="extra" style="margin-left: 5px">{{ `(${group.length})` }}</span>
+                            <span class="text-xs">{{ group[0].groupName }}</span>
+                            <span class="text-xs" style="margin-left: 5px">{{ `(${group.length})` }}</span>
                         </div>
                     </transition>
                     <div v-if="group.length" style="margin-bottom: 10px">
@@ -91,10 +91,10 @@
                 <div v-for="friendArr in friendsInSameInstance" :key="friendArr[0].ref.$location.tag">
                     <div class="mb-1 flex items-center">
                         <Location
-                            class="extra text-muted-foreground!"
+                            class="text-xs text-muted-foreground"
                             :location="getFriendsLocations(friendArr)"
                             style="display: inline" />
-                        <span class="extra" style="margin-left: 5px">{{ `(${friendArr.length})` }}</span>
+                        <span class="text-xs" style="margin-left: 5px">{{ `(${friendArr.length})` }}</span>
                     </div>
                     <div v-if="friendArr && friendArr.length">
                         <friend-item

@@ -743,4 +743,14 @@
         max-height: 360px;
         overflow: hidden auto;
     }
+
+    .notify::after {
+        position: absolute;
+        top: 45%;
+        left: 8px;
+        width: 4px;
+        height: 4px;
+        content: '';
+        border-radius: 50%;
+    }
 </style>

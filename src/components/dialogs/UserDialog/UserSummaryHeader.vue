@@ -44,7 +44,7 @@
                         </TooltipWrapper>
                     </template>
                     <span
-                        class="dialog-title"
+                        class="font-bold"
                         style="margin-left: 5px; margin-right: 5px; cursor: pointer"
                         v-text="userDialog.ref.displayName"
                         @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
@@ -152,8 +152,11 @@
                         </Badge>
                     </TooltipWrapper>
                     <TooltipWrapper v-else-if="userDialog.ref.$platform === 'ios'" side="top" content="iOS">
-                        <Badge variant="outline" class="x-tag-platform-ios" style="margin-right: 5px; margin-top: 5px">
-                            <Apple class="h-4 w-4 x-tag-platform-ios" />
+                        <Badge
+                            variant="outline"
+                            class="text-[#8e8e93] border-[#8e8e93]"
+                            style="margin-right: 5px; margin-top: 5px">
+                            <Apple class="h-4 w-4 text-[#8e8e93]" />
                         </Badge>
                     </TooltipWrapper>
                     <Badge
@@ -185,7 +188,7 @@
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <img
-                                        class="x-link x-user-badge"
+                                        class="x-link hover:grayscale-0"
                                         :src="badge.badgeImageUrl"
                                         style="
                                             flex: none;
@@ -196,13 +199,13 @@
                                             margin-top: 5px;
                                             margin-right: 5px;
                                         "
-                                        :class="{ 'x-user-badge-hidden': badge.hidden }"
+                                        :class="{ grayscale: badge.hidden }"
                                         loading="lazy" />
                                 </PopoverTrigger>
                                 <PopoverContent side="bottom" class="w-75">
                                     <img
                                         :src="badge.badgeImageUrl"
-                                        :class="['x-link', 'x-popover-image']"
+                                        :class="['x-link', 'max-w-full', 'max-h-full']"
                                         @click="showFullscreenImageDialog(badge.badgeImageUrl)"
                                         loading="lazy" />
                                     <br />

@@ -507,7 +507,4 @@
         border-radius: 4px;
         object-fit: cover;
     }
-    .table-user-text {
-        color: var(--x-table-user-text-color);
-    }
 </style>

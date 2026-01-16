@@ -90,12 +90,12 @@
                         style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
                         <template v-if="image.versions && image.versions.length > 0">
                             <div
-                                class="vrcplus-icon"
+                                class="h-[200px] w-[200px] rounded-[20px] overflow-hidden"
                                 v-if="image.versions[image.versions.length - 1].file.url"
                                 @click="setProfilePicOverride(image.id)"
-                                :class="{ 'current-vrcplus-icon': compareCurrentProfilePic(image.id) }">
+                                :class="compareCurrentProfilePic(image.id) ? 'cursor-default' : 'cursor-pointer'">
                                 <img
-                                    class="avatar"
+                                    class="h-full w-full rounded-[15px] object-cover"
                                     :src="image.versions[image.versions.length - 1].file.url"
                                     loading="lazy" />
                             </div>
@@ -163,12 +163,12 @@
                         style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
                         <template v-if="image.versions && image.versions.length > 0"
                             ><div
-                                class="vrcplus-icon"
+                                class="h-[200px] w-[200px] rounded-[20px] overflow-hidden"
                                 v-if="image.versions[image.versions.length - 1].file.url"
                                 @click="setVRCPlusIcon(image.id)"
-                                :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(image.id) }">
+                                :class="compareCurrentVRCPlusIcon(image.id) ? 'cursor-default' : 'cursor-pointer'">
                                 <img
-                                    class="avatar"
+                                    class="h-full w-full rounded-[15px] object-cover"
                                     :src="image.versions[image.versions.length - 1].file.url"
                                     loading="lazy" />
                             </div>
@@ -301,9 +301,8 @@
                         style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
                         <template v-if="image.versions && image.versions.length > 0">
                             <div
-                                class="vrcplus-icon"
+                                class="h-[200px] w-[200px] rounded-[20px] overflow-hidden cursor-pointer"
                                 v-if="image.versions[image.versions.length - 1].file.url"
-                                style="overflow: hidden"
                                 @click="
                                     showFullscreenImageDialog(
                                         image.versions[image.versions.length - 1].file.url,
@@ -383,12 +382,11 @@
                         style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
                         <template v-if="image.versions && image.versions.length > 0">
                             <div
-                                class="vrcplus-icon"
+                                class="h-[200px] w-[200px] rounded-[20px] overflow-hidden cursor-pointer"
                                 v-if="image.versions[image.versions.length - 1].file.url"
-                                style="overflow: hidden"
                                 @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)">
                                 <img
-                                    class="avatar"
+                                    class="h-full w-full rounded-[15px] object-cover"
                                     :src="image.versions[image.versions.length - 1].file.url"
                                     loading="lazy" />
                             </div>
@@ -459,35 +457,30 @@
                         :key="image.id"
                         style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
                         <div
-                            class="vrcplus-icon"
-                            style="overflow: hidden"
+                            class="h-[200px] w-[200px] rounded-[20px] overflow-hidden cursor-pointer"
                             @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))">
-                            <img class="avatar" :src="image.files.image" loading="lazy" />
+                            <img class="h-full w-full rounded-[15px] object-cover" :src="image.files.image" loading="lazy" />
                         </div>
                         <div style="margin-top: 5px; width: 208px">
-                            <span
-                                class="x-ellipsis"
-                                v-if="image.note"
-                                v-text="image.note"
-                                style="display: block"></span>
-                            <span v-else style="display: block">&nbsp;</span>
+                            <span class="block truncate" v-if="image.note" v-text="image.note"></span>
+                            <span v-else class="block">&nbsp;</span>
                             <Location
-                                class="x-ellipsis"
+                                class="block truncate"
                                 v-if="image.worldId"
                                 :location="image.worldId"
                                 :hint="image.worldName"
-                                style="display: block" />
-                            <span v-else style="display: block">&nbsp;</span>
+                                />
+                            <span v-else class="block">&nbsp;</span>
                             <DisplayName
-                                class="x-ellipsis gallery-meta"
+                                class="block truncate gallery-meta"
                                 v-if="image.authorId"
                                 :userid="image.authorId"
                                 :hint="image.authorName" />
                             <span v-else class="gallery-meta">&nbsp;</span>
-                            <span v-if="image.createdAt" class="x-ellipsis gallery-meta gallery-meta--small">
+                            <span v-if="image.createdAt" class="block truncate gallery-meta gallery-meta--small">
                                 {{ formatDateFilter(image.createdAt, 'long') }}
                             </span>
-                            <span v-else style="display: block">&nbsp;</span>
+                            <span v-else class="block">&nbsp;</span>
                         </div>
                         <div class="float-right">
                             <Button
@@ -531,18 +524,18 @@
                         v-for="item in inventoryTable"
                         :key="item.id"
                         style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
-                        <div class="vrcplus-icon" style="overflow: hidden; cursor: default">
-                            <img class="avatar" :src="item.imageUrl" loading="lazy" />
+                        <div class="h-[200px] w-[200px] rounded-[20px] overflow-hidden cursor-default">
+                            <img class="h-full w-full rounded-[15px] object-cover" :src="item.imageUrl" loading="lazy" />
                         </div>
                         <div style="margin-top: 5px; width: 208px">
-                            <span class="x-ellipsis" v-text="item.name" style="display: block"></span>
+                            <span class="block truncate" v-text="item.name"></span>
                             <span
                                 v-if="item.description"
-                                class="x-ellipsis"
+                                class="block truncate"
                                 v-text="item.description"
-                                style="display: block"></span>
-                            <span v-else style="display: block">&nbsp;</span>
-                            <span class="x-ellipsis gallery-meta gallery-meta--small">
+                                ></span>
+                            <span v-else class="block">&nbsp;</span>
+                            <span class="block truncate gallery-meta gallery-meta--small">
                                 {{ formatDateFilter(item.created_at, 'long') }}
                             </span>
                             <span v-if="item.itemType === 'prop'">{{ t('dialog.gallery_icons.item') }}</span>

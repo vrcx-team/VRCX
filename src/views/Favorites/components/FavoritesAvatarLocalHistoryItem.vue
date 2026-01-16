@@ -8,7 +8,7 @@
                 <div class="favorites-search-card__title">
                     <span class="name">{{ favorite.name }}</span>
                 </div>
-                <span class="extra">{{ favorite.authorName }}</span>
+                <span class="text-xs">{{ favorite.authorName }}</span>
             </div>
         </div>
         <div class="favorites-search-card__actions">

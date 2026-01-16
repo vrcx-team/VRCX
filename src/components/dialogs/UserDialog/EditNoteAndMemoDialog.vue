@@ -20,7 +20,7 @@
                     :maxlength="256"
                     :rows="6"
                     :placeholder="t('dialog.user.info.note_placeholder')"
-                    input-class="extra resize-none"
+                    input-class="text-xs resize-none"
                     class="my-2"
                     show-count />
             </template>
@@ -28,7 +28,7 @@
                 <span class="name">{{ t('dialog.user.info.memo') }}</span>
                 <InputGroupTextareaField
                     v-model="memo"
-                    class="extra mt-2"
+                    class="text-xs mt-2"
                     :rows="6"
                     :placeholder="t('dialog.user.info.memo_placeholder')"
                     input-class="resize-none min-h-0" />

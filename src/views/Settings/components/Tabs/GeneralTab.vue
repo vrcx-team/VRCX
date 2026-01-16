@@ -6,14 +6,14 @@
                 <div class="x-friend-item" style="cursor: default">
                     <div class="detail">
                         <span class="name">{{ t('view.settings.general.general.version') }}</span>
-                        <span class="extra" v-text="appVersion"></span>
+                        <span class="block truncate text-xs" v-text="appVersion"></span>
                     </div>
                 </div>
                 <div class="x-friend-item" @click="checkForVRCXUpdate">
                     <div class="detail">
                         <span class="name">{{ t('view.settings.general.general.latest_app_version') }}</span>
-                        <span v-if="latestAppVersion" class="extra" v-text="latestAppVersion"></span>
-                        <span v-else class="extra">{{
+                        <span v-if="latestAppVersion" class="block truncate text-xs" v-text="latestAppVersion"></span>
+                        <span v-else class="block truncate text-xs">{{
                             t('view.settings.general.general.latest_app_version_refresh')
                         }}</span>
                     </div>
@@ -21,13 +21,13 @@
                 <div class="x-friend-item" @click="openExternalLink(links.github)">
                     <div class="detail">
                         <span class="name">{{ t('view.settings.general.general.repository_url') }}</span>
-                        <span v-once class="extra">{{ links.github }}</span>
+                        <span v-once class="block truncate text-xs">{{ links.github }}</span>
                     </div>
                 </div>
                 <div class="x-friend-item" @click="openExternalLink(links.discord)">
                     <div class="detail">
                         <span class="name">{{ t('view.settings.general.general.support') }}</span>
-                        <span v-once class="extra">{{ links.discord }}</span>
+                        <span v-once class="block truncate text-xs">{{ links.discord }}</span>
                     </div>
                 </div>
             </div>

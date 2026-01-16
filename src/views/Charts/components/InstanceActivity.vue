@@ -189,6 +189,7 @@
 
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
 
+
     import * as echarts from 'echarts';
 
     const appearanceSettingsStore = useAppearanceSettingsStore();

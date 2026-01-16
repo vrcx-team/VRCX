@@ -78,11 +78,11 @@
                             </Badge>
                         </TooltipWrapper>
                         <TooltipWrapper v-if="currentInstanceWorld.isIos" side="top" content="iOS">
-                            <Badge class="x-tag-platform-ios" variant="outline" style="margin-right: 5px"
-                                ><Apple class="h-4 w-4" />
+                            <Badge class="text-[#8e8e93] border-[#8e8e93]" variant="outline" style="margin-right: 5px"
+                                ><Apple class="h-4 w-4 text-[#8e8e93]" />
                                 <span
                                     v-if="currentInstanceWorld.bundleSizes['ios']"
-                                    :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']"
+                                    :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']"
                                     >{{ currentInstanceWorld.bundleSizes['ios'].fileSize }}</span
                                 >
                             </Badge>
@@ -110,7 +110,7 @@
                     <div style="margin-top: 5px">
                         <span
                             v-show="currentInstanceWorld.ref.name !== currentInstanceWorld.ref.description"
-                            class="description"
+                            class="inline-block max-w-full truncate align-middle text-xs"
                             v-text="currentInstanceWorld.ref.description"></span>
                     </div>
                 </div>
@@ -118,7 +118,7 @@
                     <div class="x-friend-item" style="cursor: default">
                         <div class="detail">
                             <span class="name">{{ t('dialog.world.info.capacity') }}</span>
-                            <span class="extra"
+                            <span class="block truncate text-xs"
                                 >{{ commaNumber(currentInstanceWorld.ref.recommendedCapacity) }} ({{
                                     commaNumber(currentInstanceWorld.ref.capacity)
                                 }})</span
@@ -128,13 +128,13 @@
                     <div class="x-friend-item" style="cursor: default">
                         <div class="detail">
                             <span class="name">{{ t('dialog.world.info.last_updated') }}</span>
-                            <span class="extra">{{ formatDateFilter(currentInstanceWorld.lastUpdated, 'long') }}</span>
+                            <span class="block truncate text-xs">{{ formatDateFilter(currentInstanceWorld.lastUpdated, 'long') }}</span>
                         </div>
                     </div>
                     <div class="x-friend-item" style="cursor: default">
                         <div class="detail">
                             <span class="name">{{ t('dialog.world.info.created_at') }}</span>
-                            <span class="extra">{{
+                            <span class="block truncate text-xs">{{
                                 formatDateFilter(currentInstanceWorld.ref.created_at, 'long')
                             }}</span>
                         </div>
@@ -309,15 +309,3 @@
         getCurrentInstanceUserList();
     });
 </script>
-
-<style>
-    .description {
-        font-size: 12px;
-        display: inline-block;
-        max-width: 100%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        vertical-align: middle;
-    }
-</style>

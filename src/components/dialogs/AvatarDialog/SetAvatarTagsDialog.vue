@@ -78,14 +78,14 @@
                             <span class="name" v-text="avatar.name"></span>
                             <span
                                 v-if="avatar.releaseStatus === 'public'"
-                                class="extra"
+                                class="block truncate text-xs"
                                 v-text="avatar.releaseStatus"></span>
                             <span
                                 v-else-if="avatar.releaseStatus === 'private'"
-                                class="extra"
+                                class="block truncate text-xs"
                                 v-text="avatar.releaseStatus"></span>
-                            <span v-else class="extra" v-text="avatar.releaseStatus"></span>
-                            <span class="extra" v-text="avatarTagStrings.get(avatar.id)"></span>
+                            <span v-else class="block truncate text-xs" v-text="avatar.releaseStatus"></span>
+                            <span class="block truncate text-xs" v-text="avatarTagStrings.get(avatar.id)"></span>
                         </div>
                         <Button size="sm" variant="ghost" style="margin-left: 5px" @click.stop>
                             <Checkbox

@@ -138,8 +138,8 @@
                                 </div>
                                 <div class="detail">
                                     <span class="name" v-text="user.user.displayName"></span>
-                                    <span class="extra" v-text="user.user.username"></span>
-                                    <span class="extra" v-text="user.loginParams.endpoint"></span>
+                                    <span class="block truncate text-xs" v-text="user.user.username"></span>
+                                    <span class="block truncate text-xs" v-text="user.loginParams.endpoint"></span>
                                 </div>
                                 <Button
                                     class="rounded-full"
@@ -310,3 +310,64 @@
         { deep: true }
     );
 </script>
+
+<style scoped>
+    .x-login-container {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .x-login {
+        display: grid;
+        grid-template-rows: repeat(2, auto);
+        align-items: center;
+        max-width: clamp(600px, 60svw, 800px);
+    }
+
+    .x-login-form-container {
+        display: grid;
+        gap: 8px;
+        height: 380px;
+    }
+
+    .x-login-form-container:has(> div:nth-child(3)) {
+        grid-template-columns: 1fr 1px 1fr;
+    }
+
+    .x-login-form-container > div {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        padding: 16px;
+        overflow-y: auto;
+    }
+
+    .x-scroll-wrapper {
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    hr.x-vertical-divider {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        border: 0;
+    }
+
+    .x-saved-account-list {
+        display: grid;
+    }
+
+    .x-saved-account-list > .x-friend-item {
+        width: 100%;
+    }
+
+    .x-legal-notice-container {
+        margin-top: 8px;
+    }
+</style>

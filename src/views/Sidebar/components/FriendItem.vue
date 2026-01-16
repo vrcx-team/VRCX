@@ -14,23 +14,23 @@
                     >{{ friend.ref.displayName }}{{ isGroupByInstance && friend.isVIP ? ' ⭐' : '' }}</span
                 >
 
-                <span v-if="isFriendActiveOrOffline" class="extra">{{ friend.ref.statusDescription }}</span>
+                <span v-if="isFriendActiveOrOffline" class="block truncate text-xs">{{ friend.ref.statusDescription }}</span>
                 <template v-else>
-                    <div v-if="friend.pendingOffline" class="extra">
+                    <div v-if="friend.pendingOffline" class="text-xs">
                         <AlertTriangle class="inline-block" /> {{ t('side_panel.pending_offline') }}
                     </div>
                     <template v-else-if="isGroupByInstance">
                         <div class="flex items-center">
                             <Loader2 v-if="isFriendTraveling" class="is-loading" style="margin-right: 3px" />
                             <Timer
-                                class="extra"
+                                class="text-xs"
                                 :epoch="epoch"
                                 :style="
                                     isFriendTraveling ? { display: 'inline-block', overflow: 'unset' } : undefined
                                 " />
                         </div>
                     </template>
-                    <Location v-else class="extra" :location="locationProp" :traveling="travelingProp" :link="false" />
+                    <Location v-else class="text-xs" :location="locationProp" :traveling="travelingProp" :link="false" />
                 </template>
             </div>
         </template>
@@ -89,23 +89,3 @@
     const locationProp = computed(() => props.friend.ref?.location || '');
     const travelingProp = computed(() => props.friend.ref?.travelingToLocation || '');
 </script>
-
-<style>
-    .skeleton {
-        height: 40px;
-        width: 100%;
-        & > div {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            & > div {
-                width: calc(100% - 48px);
-                height: 100%;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-        }
-    }
-</style>

@@ -4,9 +4,9 @@
             <DialogHeader>
                 <DialogTitle>{{ dialogTitle }}</DialogTitle>
             </DialogHeader>
-            <div class="toggle-list" style="height: 75vh; overflow-y: auto">
-                <div v-for="setting in currentOptions" :key="setting.key" class="toggle-item">
-                    <span class="toggle-name"
+            <div class="text-[15px] h-[75vh] overflow-y-auto">
+                <div v-for="setting in currentOptions" :key="setting.key" class="mb-[5px] flex items-center">
+                    <span class="inline-block min-w-[190px] pr-2.5 text-right"
                         >{{ setting.name
                         }}<TooltipWrapper
                             v-if="setting.tooltip"
@@ -38,11 +38,14 @@
 
                 <template v-if="photonLoggingEnabled">
                     <br />
-                    <div class="toggle-item">
-                        <span class="toggle-name">Photon Event Logging</span>
+                    <div class="mb-[5px] flex items-center">
+                        <span class="inline-block min-w-[190px] pr-2.5 text-right">Photon Event Logging</span>
                     </div>
-                    <div v-for="setting in photonFeedFiltersOptions" :key="setting.key" class="toggle-item">
-                        <span class="toggle-name">{{ setting.name }}</span>
+                    <div
+                        v-for="setting in photonFeedFiltersOptions"
+                        :key="setting.key"
+                        class="mb-[5px] flex items-center">
+                        <span class="inline-block min-w-[190px] pr-2.5 text-right">{{ setting.name }}</span>
                         <ToggleGroup
                             type="single"
                             required
@@ -154,11 +157,3 @@
         emit('update:feedFiltersDialogMode', '');
     }
 </script>
-
-<style scoped>
-    .toggle-list .toggle-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
-    }
-</style>

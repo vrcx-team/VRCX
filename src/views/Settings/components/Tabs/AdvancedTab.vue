@@ -90,10 +90,10 @@
                 <div class="x-friend-item">
                     <div class="detail" @click="getVisits">
                         <span class="name">{{ t('view.profile.game_info.online_users') }}</span>
-                        <span v-if="visits" class="extra">{{
+                        <span v-if="visits" class="block truncate text-xs">{{
                             t('view.profile.game_info.user_online', { count: visits })
                         }}</span>
-                        <span v-else class="extra">{{ t('view.profile.game_info.refresh') }}</span>
+                        <span v-else class="block truncate text-xs">{{ t('view.profile.game_info.refresh') }}</span>
                     </div>
                 </div>
             </div>

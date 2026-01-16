@@ -27,7 +27,7 @@
                 {{ t('dialog.change_content_image.upload') }}
             </Button>
             <br />
-            <div class="x-change-image-item">
+            <div class="inline-block p-1 pb-0 hover:rounded-sm">
                 <img :src="previousImageUrl" class="img-size" loading="lazy" />
             </div>
             </div>

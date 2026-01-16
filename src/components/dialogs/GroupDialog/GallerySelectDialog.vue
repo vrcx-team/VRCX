@@ -42,13 +42,13 @@
                     <template v-if="image.versions && image.versions.length > 0">
                         <div
                             v-if="image.versions[image.versions.length - 1].file.url"
-                            class="vrcplus-icon"
+                            class="h-[200px] w-[200px] rounded-[20px] cursor-pointer overflow-hidden"
                             @click="
                                 selectImageGallerySelect(image.versions[image.versions.length - 1].file.url, image.id)
                             ">
                             <img
                                 :src="image.versions[image.versions.length - 1].file.url"
-                                class="avatar"
+                                class="h-full w-full rounded-[15px] object-cover"
                                 loading="lazy" />
                         </div>
                     </template>

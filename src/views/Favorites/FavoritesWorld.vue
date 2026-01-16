@@ -370,7 +370,7 @@
                                             </div>
                                             <div class="favorites-search-card__detail">
                                                 <span class="name">{{ favorite.name || favorite.id }}</span>
-                                                <span class="extra">
+                                                <span class="text-xs">
                                                     {{ favorite.authorName }}
                                                     <template v-if="favorite.occupants">
                                                         ({{ favorite.occupants }})

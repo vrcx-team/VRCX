@@ -43,12 +43,12 @@
                                 <span class="name" v-text="user.displayName"></span>
                                 <span
                                     v-if="randomUserColours"
-                                    class="extra"
+                                    class="block truncate text-xs"
                                     :class="user.$trustClass"
                                     v-text="user.$trustLevel"></span>
                                 <span
                                     v-else
-                                    class="extra"
+                                    class="block truncate text-xs"
                                     :style="{ color: user.$userColour }"
                                     v-text="user.$trustLevel"></span>
                             </div>
@@ -111,10 +111,10 @@
                             </div>
                             <div class="detail">
                                 <span class="name" v-text="world.name"></span>
-                                <span v-if="world.occupants" class="extra"
+                                <span v-if="world.occupants" class="block truncate text-xs"
                                     >{{ world.authorName }} ({{ world.occupants }})</span
                                 >
-                                <span v-else class="extra" v-text="world.authorName"></span>
+                                <span v-else class="block truncate text-xs" v-text="world.authorName"></span>
                             </div>
                         </div>
                     </div>
@@ -262,14 +262,14 @@
                                 <span class="name" v-text="avatar.name"></span>
                                 <span
                                     v-if="avatar.releaseStatus === 'public'"
-                                    class="extra"
+                                    class="block truncate text-xs"
                                     v-text="avatar.releaseStatus"></span>
                                 <span
                                     v-else-if="avatar.releaseStatus === 'private'"
-                                    class="extra"
+                                    class="block truncate text-xs"
                                     v-text="avatar.releaseStatus"></span>
-                                <span v-else class="extra" v-text="avatar.releaseStatus"></span>
-                                <span class="extra" v-text="avatar.authorName"></span>
+                                <span v-else class="block truncate text-xs" v-text="avatar.releaseStatus"></span>
+                                <span class="block truncate text-xs" v-text="avatar.authorName"></span>
                             </div>
                         </div>
                     </div>
@@ -322,7 +322,7 @@
                                         >{{ group.shortCode }}.{{ group.discriminator }}</span
                                     >
                                 </span>
-                                <span class="extra" v-text="group.description"></span>
+                                <span class="block truncate text-xs" v-text="group.description"></span>
                             </div>
                         </div>
                     </div>

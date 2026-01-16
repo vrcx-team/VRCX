@@ -22,7 +22,7 @@
                         <div class="group-header" style="flex: 1">
                             <span v-if="groupDialog.ref.ownerId === currentUser.id" style="margin-right: 5px">👑</span>
                             <span
-                                class="dialog-title"
+                                class="font-bold"
                                 style="margin-right: 5px; cursor: pointer"
                                 v-text="groupDialog.ref.name"
                                 @click="copyToClipboard(groupDialog.ref.name)"></span>
@@ -1133,7 +1133,7 @@
                                         class="p-0 overflow-hidden transition-shadow hover:shadow-md">
                                         <img
                                             :src="image.imageUrl"
-                                            :class="['x-link', 'x-popover-image']"
+                                            :class="['x-link', 'max-w-full', 'max-h-full']"
                                             @click="showFullscreenImageDialog(image.imageUrl)"
                                             loading="lazy" />
                                     </Card>

@@ -14,7 +14,7 @@
                     <div class="favorites-search-card__title">
                         <span class="name">{{ props.favorite.name }}</span>
                     </div>
-                    <span class="extra">
+                    <span class="text-xs">
                         {{ props.favorite.authorName }}
                         <template v-if="props.favorite.occupants"> ({{ props.favorite.occupants }}) </template>
                     </span>

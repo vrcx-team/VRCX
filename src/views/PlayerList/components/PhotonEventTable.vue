@@ -1,5 +1,5 @@
 <template>
-    <div class="photon-event-table">
+    <div class="mt-5">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap">
             <Select
                 :model-value="photonEventTableTypeFilter"

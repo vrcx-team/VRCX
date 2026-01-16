@@ -1,70 +1,9 @@
-@import 'animate.css/animate.min.css';
-@import 'noty/lib/noty.css';
-@import 'remixicon/fonts/remixicon.css';
-@import 'vue-sonner/style.css';
-@import 'vue-json-pretty/lib/styles.css';
-
-@import './styles/flags.css';
-@import './styles/animated-emoji.css';
-@import './styles/fonts.css';
-@import './styles/noty.css';
-
-:root {
-    --font-western:
-        'ellipsis-font', -apple-system, 'Inter', 'Segoe UI', 'Roboto', 'Ubuntu',
-        'Cantarell', 'DejaVu Sans', sans-serif;
-    --font-symbol: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-    --font-fallback-cjk: sans-serif;
-    --font-primary-cjk:
-        'Noto Sans JP Variable', 'Noto Sans SC Variable',
-        'Noto Sans KR Variable', 'Noto Sans TC Variable';
-}
-:root[lang='zh-CN'] {
-    --font-primary-cjk:
-        'Noto Sans SC Variable', 'Noto Sans JP Variable',
-        'Noto Sans KR Variable', 'Noto Sans TC Variable';
-}
-:root[lang='ja'] {
-    --font-primary-cjk:
-        'Noto Sans JP Variable', 'Noto Sans KR Variable',
-        'Noto Sans TC Variable', 'Noto Sans SC Variable';
-}
-:root[lang='ko'] {
-    --font-primary-cjk:
-        'Noto Sans KR Variable', 'Noto Sans JP Variable',
-        'Noto Sans TC Variable', 'Noto Sans SC Variable';
-}
-:root[lang='zh-TW'] {
-    --font-primary-cjk:
-        'Noto Sans TC Variable', 'Noto Sans JP Variable',
-        'Noto Sans KR Variable', 'Noto Sans SC Variable';
-}
-
-
 html {
     overflow: hidden;
 }
 
-body {
-    font-family:
-        var(--font-western), var(--font-symbol), var(--font-primary-cjk),
-        var(--font-fallback-cjk);
-
-    margin: 0;
-}
-
-
 .lucide.is-loading {
     animation: rotating 2s linear infinite;
-}
-
-
-
-
-.x-ellipsis {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .x-app {
@@ -84,95 +23,6 @@ body {
     height: 100%;
 }
 
-.x-login-container {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-}
-
-.x-login {
-    display: grid;
-    grid-template-rows: repeat(2, auto);
-    align-items: center;
-    max-width: clamp(600px, 60svw, 800px);
-}
-
-.x-login-form-container {
-    display: grid;
-    gap: 8px;
-    height: 380px;
-}
-
-.x-login-form-container:has(> div:nth-child(3)) {
-    grid-template-columns: 1fr 1px 1fr;
-}
-
-.x-login-form-container > div {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    padding: 16px;
-    overflow-y: auto;
-}
-
-.x-scroll-wrapper {
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-}
-
-hr.x-vertical-divider {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    border: 0;
-}
-
-.x-saved-account-list {
-    display: grid;
-
-    > .x-friend-item {
-        width: 100%;
-    }
-}
-
-.x-legal-notice-container {
-    margin-top: 8px;
-}
-
-.x-menu-container {
-    flex: none;
-    overflow: hidden auto;
-}
-
-.notify::after {
-    position: absolute;
-    top: 45%;
-    left: 8px;
-    width: 4px;
-    height: 4px;
-    content: '';
-    border-radius: 50%;
-}
-
-.pending-update {
-    height: 56px;
-    width: 64px;
-    cursor: pointer;
-}
-
-.x-aside-container {
-    display: flex;
-    flex: none;
-    flex-direction: column;
-    padding: 13px 5px 5px 5px;
-    order: 99;
-    height: 100%;
-    box-sizing: border-box;
-}
 
 .x-friend-list {
     padding: 0 10px;
@@ -181,10 +31,6 @@ hr.x-vertical-divider {
 
 .x-friend-group > .rotation-transition {
     transition: transform 0.3s;
-}
-
-.x-aside-container > .x-friend-list {
-    flex: 1;
 }
 
 .x-dialog .x-friend-list {
@@ -339,32 +185,15 @@ img.friends-list-avatar {
     line-height: 16px;
 }
 
-.x-friend-item > .detail > .extra,
-.extra {
+.x-friend-item > .detail > .extra {
     font-size: 12px;
-    & > span > span:first-child {
-        scale: 0.9;
-        margin-right: 2px;
-    }
 }
 
-.x-friend-item > .vrcplus-icon {
-    border-radius: 20px;
-    width: 200px;
-    height: 200px;
-    cursor: pointer;
+.x-friend-item > .detail > .extra > span > span:first-child {
+    scale: 0.9;
+    margin-right: 2px;
 }
 
-.x-friend-item > .current-vrcplus-icon {
-    cursor: default;
-}
-
-.x-friend-item > .vrcplus-icon > img {
-    width: 100%;
-    height: 100%;
-    border-radius: 15px;
-    object-fit: cover;
-}
 
 .x-friend-item:hover {
     border-radius: 8px;
@@ -381,30 +210,9 @@ img.friends-list-avatar {
     border-bottom-left-radius: 25px;
 }
 
-.x-aside-container > .x-friend-list > .x-friend-item:hover {
-}
-
 .x-dialog .x-friend-item {
     width: 167px;
 }
-
-.x-user-badge-hidden {
-    filter: grayscale(1);
-}
-
-.x-user-badge:hover {
-    filter: none;
-}
-
-.x-change-image-item {
-    display: inline-block;
-    padding: 4px 4px 0 4px;
-}
-
-.x-change-image-item:hover {
-    border-radius: 2px;
-}
-
 
 
 i.x-user-status,
@@ -470,7 +278,6 @@ i.x-status-icon.red {
     border-color: var(--color-amber-400) !important;
 }
 
-
 .x-tag-age-verification {
     color: #3b82f6;
     border-color: #3b82f6 !important;
@@ -481,13 +288,6 @@ i.x-status-icon.red {
     margin-left: 5px;
     padding-left: 5px;
     padding-bottom: 0.5px;
-}
-
-
-
-.x-popover-image {
-    max-width: 100%;
-    max-height: 100%;
 }
 
 .options-container {
@@ -522,77 +322,7 @@ i.x-status-icon.red {
     width: 235px;
 }
 
-.toggle-switch {
-    display: inline-block;
-}
-
-.toggle-list {
-    font-size: 15px;
-}
-
-.toggle-list .toggle-item {
-    margin-bottom: 5px;
-}
-
-.toggle-list .toggle-name {
-    display: inline-block;
-    min-width: 190px;
-    padding-right: 10px;
-    text-align: right;
-}
-
-.color-picker {
-    font-size: 18px;
-    vertical-align: top;
-}
-
-.avatar-info {
-    cursor: pointer;
-    width: fit-content;
-    vertical-align: top;
-}
-
-
-
-.photon-event-table {
-    margin-top: 20px;
-}
-
-.current-instance-table img.friends-list-avatar {
-    width: unset;
-    height: 16px;
-    margin-right: 0;
-    margin-left: 1px;
-    margin-top: 4px;
-    border-radius: 2px;
-    margin-bottom: -1px;
-}
-
-.dialog-title {
-    font-weight: bold;
-}
-
-.vrc-instance-queue-message {
-    padding: 3px;
-    top: 0 !important;
-}
-
-
-
 .x-app > .x-container {
     padding-top: 15px;
 }
-
-.x-text-removed {
-    text-decoration: line-through;
-
-    padding: 2px 2px;
-    border-radius: 4px;
-}
-
-.x-text-added {
-    padding: 2px 2px;
-    border-radius: 4px;
-}
-
 

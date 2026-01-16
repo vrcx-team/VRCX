@@ -50,7 +50,7 @@
                             image.versions.length > 0 &&
                             image.versions[image.versions.length - 1].file.url
                         "
-                        class="x-popover-image"
+                        class="max-w-full max-h-full"
                         style="padding: 8px">
                         <Emoji :imageUrl="image.versions[image.versions.length - 1].file.url" :size="100"></Emoji>
                     </div>

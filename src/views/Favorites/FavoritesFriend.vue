@@ -292,7 +292,7 @@
                                                         :traveling="favorite.travelingToLocation"
                                                         :link="false" />
                                                 </div>
-                                                <span v-else class="extra">{{ favorite.statusDescription }}</span>
+                                                <span v-else class="text-xs">{{ favorite.statusDescription }}</span>
                                             </div>
                                         </div>
                                     </div>

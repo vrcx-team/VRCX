@@ -115,14 +115,7 @@ export const createColumns = ({
                 const style = randomUserColours?.value
                     ? { color: userRef?.$userColour }
                     : null;
-                return (
-                    <span
-                        class="text-(--x-table-user-text-color)"
-                        style={style}
-                    >
-                        {userRef?.displayName ?? ''}
-                    </span>
-                );
+                return <span style={style}>{userRef?.displayName ?? ''}</span>;
             }
         },
         {

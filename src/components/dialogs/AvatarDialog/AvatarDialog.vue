@@ -16,7 +16,7 @@
                         <div style="flex: 1">
                             <div>
                                 <span
-                                    class="dialog-title"
+                                    class="font-bold"
                                     style="margin-right: 5px; cursor: pointer"
                                     v-text="avatarDialog.ref.name"
                                     @click="copyToClipboard(avatarDialog.ref.name)"></span>
@@ -76,18 +76,18 @@
                                 </TooltipWrapper>
                                 <TooltipWrapper v-if="avatarDialog.isIos" side="top" content="iOS">
                                     <Badge
-                                        class="x-tag-platform-ios"
+                                        class="text-[#8e8e93] border-[#8e8e93]"
                                         variant="outline"
                                         style="margin-right: 5px; margin-top: 5px"
-                                        ><Apple class="h-4 w-4 x-tag-platform-ios" />
+                                        ><Apple class="h-4 w-4 text-[#8e8e93]" />
                                         <span
                                             v-if="avatarDialog.platformInfo.ios"
-                                            :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']"
+                                            :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']"
                                             >{{ avatarDialog.platformInfo.ios.performanceRating }}</span
                                         >
                                         <span
                                             v-if="avatarDialog.bundleSizes['ios']"
-                                            :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']"
+                                            :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']"
                                             >{{ avatarDialog.bundleSizes['ios'].fileSize }}</span
                                         >
                                     </Badge>
