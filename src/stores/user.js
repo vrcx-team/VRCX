@@ -630,17 +630,11 @@ export const useUserStore = defineStore('User', () => {
                     ...ref
                 });
                 currentTravelers.set(ref.id, travelRef);
-                sharedFeedStore.sharedFeed.pendingUpdate = true;
-                sharedFeedStore.updateSharedFeed(false);
                 onPlayerTraveling(travelRef);
             }
         } else {
             ref.$location = parseLocation(ref.location);
-            if (currentTravelers.has(ref.id)) {
-                currentTravelers.delete(ref.id);
-                sharedFeedStore.sharedFeed.pendingUpdate = true;
-                sharedFeedStore.updateSharedFeed(false);
-            }
+            currentTravelers.delete(ref.id);
         }
         if (
             !instanceStore.cachedInstances.has(ref.$location.tag) &&
@@ -1651,7 +1645,7 @@ export const useUserStore = defineStore('User', () => {
             ref.$customTag = data.Tag;
             ref.$customTagColour = data.TagColour;
         }
-        sharedFeedStore.updateSharedFeed(true);
+        sharedFeedStore.addTag(data.UserId, data.TagColour);
     }
 
     async function initUserNotes() {

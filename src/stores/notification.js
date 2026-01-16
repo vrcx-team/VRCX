@@ -146,10 +146,10 @@ export const useNotificationStore = defineStore('Notification', () => {
                 }
                 unseenNotifications.value.push(ref.id);
                 queueNotificationNoty(ref);
+                sharedFeedStore.addEntry(ref);
             }
         }
         notificationTable.value.data.push(ref);
-        sharedFeedStore.updateSharedFeed(true);
         const D = userStore.userDialog;
         if (
             D.visible === false ||

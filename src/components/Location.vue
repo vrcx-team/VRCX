@@ -174,15 +174,11 @@
             groupName.value = props.grouphint;
         } else if (L.groupId) {
             groupName.value = L.groupId;
-            getGroupName(instanceId)
-                .then((name) => {
-                    if (!isDisposed && name && currentInstanceId() === L.tag) {
-                        groupName.value = name;
-                    }
-                })
-                .catch((e) => {
-                    console.error(e);
-                });
+            getGroupName(instanceId).then((name) => {
+                if (!isDisposed && name && currentInstanceId() === L.tag) {
+                    groupName.value = name;
+                }
+            });
         }
         region.value = '';
         if (!L.isOffline && !L.isPrivate && !L.isTraveling) {
@@ -217,19 +213,15 @@
             }
             const ref = cachedWorlds.get(L.worldId);
             if (typeof ref === 'undefined') {
-                getWorldName(L.worldId)
-                    .then((name) => {
-                        if (!isDisposed && name && currentInstanceId() === L.tag) {
-                            if (L.instanceId) {
-                                text.value = `${name} · ${translateAccessType(L.accessTypeName)}`;
-                            } else {
-                                text.value = name;
-                            }
+                getWorldName(L.worldId).then((name) => {
+                    if (!isDisposed && name && currentInstanceId() === L.tag) {
+                        if (L.instanceId) {
+                            text.value = `${name} · ${translateAccessType(L.accessTypeName)}`;
+                        } else {
+                            text.value = name;
                         }
-                    })
-                    .catch((e) => {
-                        console.error(e);
-                    });
+                    }
+                });
             } else if (L.instanceId) {
                 text.value = `${ref.name} · ${accessTypeLabel}`;
             } else {

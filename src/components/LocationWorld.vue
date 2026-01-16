@@ -84,15 +84,11 @@
             groupName.value = props.grouphint;
         } else if (locObj.groupId) {
             groupName.value = locObj.groupId;
-            getGroupName(locObj.groupId)
-                .then((name) => {
-                    if (name && props.locationobject.tag === locObj.tag) {
-                        groupName.value = name;
-                    }
-                })
-                .catch((e) => {
-                    console.error(e);
-                });
+            getGroupName(locObj.groupId).then((name) => {
+                if (name && props.locationobject.tag === locObj.tag) {
+                    groupName.value = name;
+                }
+            });
         } else {
             groupName.value = '';
         }

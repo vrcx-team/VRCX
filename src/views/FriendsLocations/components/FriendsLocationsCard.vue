@@ -65,7 +65,7 @@
         padding: `${16 * props.cardScale * props.cardSpacing}px`
     }));
 
-    const avatarFallback = computed(() => props.friend.name.charAt(0) ?? '?');
+    const avatarFallback = computed(() => props.friend?.name?.charAt(0) ?? '?');
 
     const statusDotClass = computed(() => {
         const status = userStatusClass(props.friend.ref, props.friend.pendingOffline);

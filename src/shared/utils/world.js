@@ -12,10 +12,14 @@ async function getWorldName(location) {
 
     const L = parseLocation(location);
     if (L.isRealInstance && L.worldId) {
-        const args = await worldRequest.getCachedWorld({
-            worldId: L.worldId
-        });
-        worldName = args.ref.name;
+        try {
+            const args = await worldRequest.getCachedWorld({
+                worldId: L.worldId
+            });
+            worldName = args.ref.name;
+        } catch (e) {
+            console.error('getWorldName failed location', location, e);
+        }
     }
 
     return worldName;

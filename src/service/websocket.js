@@ -573,7 +573,7 @@ function handlePipeline(args) {
             }
             notificationStore.queueNotificationNoty(noty);
             notificationStore.notificationTable.data.push(noty);
-            sharedFeedStore.updateSharedFeed(true);
+            sharedFeedStore.addEntry(noty);
             break;
 
         default:
