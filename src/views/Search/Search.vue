@@ -21,7 +21,7 @@
             :unmount-on-hide="false"
             style="margin-top: 15px">
             <template #user>
-                <div v-loading="isSearchUserLoading" style="min-height: 60px">
+                <div style="min-height: 60px">
                     <label class="inline-flex items-center gap-2" style="margin-left: 10px">
                         <Checkbox v-model="searchUserByBio" />
                         <span>{{ t('view.search.user.search_by_bio') }}</span>
@@ -75,7 +75,7 @@
                 </div>
             </template>
             <template #world>
-                <div v-loading="isSearchWorldLoading" style="min-height: 60px">
+                <div style="min-height: 60px">
                     <div class="inline-flex justify-between mb-4 w-full">
                         <Select
                             :model-value="searchWorldCategoryIndex"
@@ -139,7 +139,7 @@
                 </div>
             </template>
             <template #avatar>
-                <div v-loading="isSearchAvatarLoading" style="min-height: 60px">
+                <div style="min-height: 60px">
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
                             <Select
@@ -297,7 +297,7 @@
                 </div>
             </template>
             <template #group>
-                <div v-loading="isSearchGroupLoading" style="min-height: 60px">
+                <div style="min-height: 60px">
                     <div class="x-friend-list" style="min-height: 500px">
                         <div
                             v-for="group in searchGroupResults"

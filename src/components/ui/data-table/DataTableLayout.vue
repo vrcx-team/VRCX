@@ -5,7 +5,7 @@
         </div>
 
         <div class="rounded-md border">
-            <div v-loading="loading" class="overflow-auto" :style="tableStyle">
+            <div class="overflow-auto" :style="tableStyle">
                 <Table :class="tableClassValue" :style="tableElementStyle">
                     <colgroup>
                         <col v-for="col in table.getVisibleLeafColumns()" :key="col.id" :style="getColStyle(col)" />

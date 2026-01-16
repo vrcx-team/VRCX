@@ -32,7 +32,7 @@
                                     @click="handleMenuItemClick(item)">
                                     <i
                                         :class="item.icon"
-                                        class="inline-flex size-6 items-center justify-center text-[19px]" />
+                                        class="inline-flex size-6 items-center justify-center text-lg" />
                                     <span v-show="!isCollapsed">{{
                                         item.titleIsCustom ? item.title : t(item.title || '')
                                     }}</span>
@@ -53,7 +53,7 @@
                                                 :class="isNavItemNotified(item) ? 'notify' : undefined">
                                                 <i
                                                     :class="item.icon"
-                                                    class="inline-flex size-6 items-center justify-center text-[19px]" />
+                                                    class="inline-flex size-6 items-center justify-center text-lg" />
                                                 <span v-show="!isCollapsed">{{
                                                     item.titleIsCustom ? item.title : t(item.title || '')
                                                 }}</span>
@@ -72,7 +72,7 @@
                                                         <i
                                                             v-if="entry.icon"
                                                             :class="entry.icon"
-                                                            class="inline-flex size-5 items-center justify-center text-[16px]" />
+                                                            class="inline-flex size-5 items-center justify-center text-base" />
                                                         <span>{{ t(entry.label) }}</span>
                                                     </SidebarMenuSubButton>
                                                 </SidebarMenuSubItem>
@@ -93,8 +93,7 @@
                     <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                             <SidebarMenuButton :tooltip="t('nav_tooltip.help_support')">
-                                <i
-                                    class="ri-question-line inline-flex size-6 items-center justify-center text-[19px]" />
+                                <i class="ri-question-line inline-flex size-6 items-center justify-center text-lg" />
                                 <span v-show="!isCollapsed">{{ t('nav_tooltip.help_support') }}</span>
                             </SidebarMenuButton>
                         </DropdownMenuTrigger>
@@ -123,8 +122,7 @@
                     <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                             <SidebarMenuButton :tooltip="t('nav_tooltip.manage')">
-                                <i
-                                    class="ri-settings-3-line inline-flex size-6 items-center justify-center text-[19px]" />
+                                <i class="ri-settings-3-line inline-flex size-6 items-center justify-center text-lg" />
                                 <span v-show="!isCollapsed">{{ t('nav_tooltip.manage') }}</span>
                             </SidebarMenuButton>
                         </DropdownMenuTrigger>
@@ -209,7 +207,7 @@
                 <SidebarMenuItem>
                     <SidebarMenuButton :tooltip="t('nav_tooltip.toggle_theme')" @click="handleThemeToggle">
                         <i
-                            :class="currentThemeIsDark ? 'ri-moon-line' : 'ri-sun-line'"
+                            :class="isDarkMode ? 'ri-moon-line' : 'ri-sun-line'"
                             class="inline-flex size-6 items-center justify-center text-[19px]" />
                         <span v-show="!isCollapsed">{{ t('nav_tooltip.toggle_theme') }}</span>
                     </SidebarMenuButton>
@@ -416,7 +414,6 @@
 
     const themes = computed(() => Object.keys(THEME_CONFIG));
     const { themeColors, currentThemeColor, isApplyingThemeColor, applyThemeColor, initThemeColor } = useThemeColor();
-    const currentThemeIsDark = computed(() => isDarkMode.value);
 
     watch(
         () => locale.value,

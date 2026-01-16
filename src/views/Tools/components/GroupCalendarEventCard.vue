@@ -314,9 +314,6 @@
         cursor: pointer;
     }
 
-    .event-card .badges .following-badge.is-following {
-    }
-
     .event-card .badges .share-badge {
         display: flex;
         align-items: center;

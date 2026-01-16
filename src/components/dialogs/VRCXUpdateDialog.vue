@@ -4,7 +4,7 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.vrcx_updater.header') }}</DialogTitle>
             </DialogHeader>
-            <div v-loading="checkingForVRCXUpdate" style="margin-top: 15px">
+            <div style="margin-top: 15px">
                 <template v-if="updateInProgress">
                     <Progress :model-value="updateProgress" class="w-full" />
                     <div class="mt-2 text-xs" v-text="updateProgressText()"></div>

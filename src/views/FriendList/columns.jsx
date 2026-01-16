@@ -91,16 +91,26 @@ const sortByLanguages = (rowA, rowB) =>
 
 export const createColumns = ({
     randomUserColours,
-    bulkUnfriendMode,
     selectedFriends,
     onToggleFriendSelection,
     onConfirmDeleteFriend
 }) => {
-    /** @type {import('@tanstack/vue-table').ColumnDef<any, any>[]} */
     const cols = [];
 
-    if (bulkUnfriendMode?.value) {
-        cols.push({
+    cols.push(
+        {
+            id: 'leftSpacer',
+            header: () => null,
+            size: 20,
+            enableSorting: false,
+            enableResizing: false,
+            meta: {
+                thClass: 'p-0',
+                tdClass: 'p-0'
+            },
+            cell: () => null
+        },
+        {
             id: 'bulkSelect',
             header: () => null,
             size: 55,
@@ -127,21 +137,6 @@ export const createColumns = ({
                     </div>
                 );
             }
-        });
-    }
-
-    cols.push(
-        {
-            id: 'leftSpacer',
-            header: () => null,
-            size: 20,
-            enableSorting: false,
-            enableResizing: false,
-            meta: {
-                thClass: 'p-0',
-                tdClass: 'p-0'
-            },
-            cell: () => null
         },
         {
             id: 'friendNumber',

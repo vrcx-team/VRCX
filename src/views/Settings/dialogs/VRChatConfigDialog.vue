@@ -4,7 +4,7 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.config_json.header') }}</DialogTitle>
             </DialogHeader>
-            <div v-loading="loading">
+            <div>
                 <div style="font-size: 12px; word-break: keep-all">
                     {{ t('dialog.config_json.description1') }} <br />
                     {{ t('dialog.config_json.description2') }}

@@ -8,7 +8,7 @@
                     <div class="category-header" @click="toggleCategory('group')">
                         <ChevronDown
                             class="rotation-transition"
-                            :class="{ 'is-rotated': !categoryCollapsed['group'] }" />
+                            :class="{ 'is-rotated': categoryCollapsed['group'] }" />
                         <span class="category-title">{{ t('view.tools.group.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['group']">
@@ -30,7 +30,7 @@
                     <div class="category-header text-2xl" @click="toggleCategory('image')">
                         <ChevronDown
                             class="rotation-transition"
-                            :class="{ 'is-rotated': !categoryCollapsed['image'] }" />
+                            :class="{ 'is-rotated': categoryCollapsed['image'] }" />
                         <span class="category-title">{{ t('view.tools.pictures.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
@@ -93,9 +93,7 @@
 
                 <div class="tool-category">
                     <div class="category-header text-2xl" @click="toggleCategory('user')">
-                        <ChevronDown
-                            class="rotation-transition"
-                            :class="{ 'is-rotated': !categoryCollapsed['user'] }" />
+                        <ChevronDown class="rotation-transition" :class="{ 'is-rotated': categoryCollapsed['user'] }" />
                         <span class="category-title">{{ t('view.tools.export.header') }}</span>
                     </div>
 
@@ -160,7 +158,7 @@
                     <div class="category-header" @click="toggleCategory('other')">
                         <ChevronDown
                             class="rotation-transition"
-                            :class="{ 'is-rotated': !categoryCollapsed['other'] }" />
+                            :class="{ 'is-rotated': categoryCollapsed['other'] }" />
                         <span class="category-title">{{ t('view.tools.other.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['other']">

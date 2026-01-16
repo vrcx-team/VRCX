@@ -6,7 +6,7 @@
             </Button>
             <span class="header">{{ t('dialog.screenshot_metadata.header') }}</span>
         </div>
-        <div v-loading="screenshotMetadataDialog.loading" @dragover.prevent @dragenter.prevent @drop="handleDrop">
+        <div @dragover.prevent @dragenter.prevent @drop="handleDrop">
             <span>{{
                 t('dialog.screenshot_metadata.drag')
             }}</span>

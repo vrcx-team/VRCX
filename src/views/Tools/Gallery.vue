@@ -50,7 +50,7 @@
                 </span>
             </template>
             <template #gallery>
-                <div v-loading="galleryDialogGalleryLoading">
+                <div>
                     <input
                         id="GalleryUploadButton"
                         type="file"
@@ -123,7 +123,7 @@
             </template>
 
             <template #icons>
-                <div v-loading="galleryDialogIconsLoading">
+                <div>
                     <input
                         id="VRCPlusIconUploadButton"
                         type="file"
@@ -195,7 +195,7 @@
             </template>
 
             <template #emojis>
-                <div v-loading="galleryDialogEmojisLoading">
+                <div>
                     <input
                         id="EmojiUploadButton"
                         type="file"
@@ -350,7 +350,7 @@
             </template>
 
             <template #stickers>
-                <div v-loading="galleryDialogStickersLoading">
+                <div>
                     <input
                         id="StickerUploadButton"
                         type="file"
@@ -413,7 +413,7 @@
             </template>
 
             <template #prints>
-                <div v-loading="galleryDialogPrintsLoading">
+                <div>
                     <input
                         id="PrintUploadButton"
                         type="file"
@@ -503,7 +503,7 @@
             </template>
 
             <template #inventory>
-                <div v-loading="galleryDialogInventoryLoading">
+                <div>
                     <br />
                     <br />
                     <div style="display: flex; align-items: center">

@@ -1,5 +1,5 @@
 <template>
-    <div class="favorites-page x-container" v-loading="isFavoriteLoading">
+    <div class="favorites-page x-container">
         <div class="favorites-toolbar">
             <div>
                 <Select :model-value="sortFavorites" @update:modelValue="handleSortFavoritesChange">

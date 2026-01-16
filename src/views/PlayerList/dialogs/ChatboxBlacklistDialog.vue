@@ -4,7 +4,7 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.chatbox_blacklist.header') }}</DialogTitle>
             </DialogHeader>
-            <div v-if="chatboxBlacklistDialog.visible" v-loading="chatboxBlacklistDialog.loading">
+            <div v-if="chatboxBlacklistDialog.visible">
                 <h2>{{ t('dialog.chatbox_blacklist.keyword_blacklist') }}</h2>
                 <InputGroupAction
                     v-for="(item, index) in chatboxBlacklist"

@@ -10,7 +10,7 @@
                     {{ groupDialog.ref?.description || groupDialog.ref?.name || t('dialog.group.info.header') }}
                 </DialogDescription>
             </DialogHeader>
-            <div v-loading="groupDialog.loading">
+            <div>
                 <div style="display: flex">
                     <img
                         :src="groupDialog.ref.iconUrl"
@@ -950,7 +950,6 @@
                             </div>
                             <div
                                 v-if="groupDialog.memberSearch.length"
-                                v-loading="isGroupMembersLoading"
                                 class="x-friend-list"
                                 style="margin-top: 10px; overflow: auto; max-height: 250px; min-width: 130px">
                                 <div
@@ -1012,7 +1011,6 @@
                             </div>
                             <ul
                                 v-else-if="groupDialog.members.length > 0"
-                                v-infinite-scroll="loadMoreGroupMembers"
                                 class="infinite-list x-friend-list"
                                 style="margin-top: 10px; overflow: auto; max-height: 250px; min-width: 130px">
                                 <li
@@ -1073,7 +1071,6 @@
                                 </li>
                                 <div
                                     v-if="!isGroupMembersDone"
-                                    v-loading="isGroupMembersLoading"
                                     class="x-friend-item"
                                     style="width: 100%; height: 45px; text-align: center"
                                     @click="loadMoreGroupMembers">
@@ -1098,7 +1095,6 @@
                             v-model="groupDialogGalleryCurrentName"
                             :items="groupGalleryTabs"
                             :unmount-on-hide="false"
-                            v-loading="isGroupGalleryLoading"
                             class="mt-2.5">
                             <template
                                 v-for="(gallery, index) in groupDialog.ref.galleries"

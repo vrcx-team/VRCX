@@ -10,7 +10,7 @@
                     {{ worldDialog.ref?.description || worldDialog.ref?.name || t('dialog.world.info.header') }}
                 </DialogDescription>
             </DialogHeader>
-            <div v-loading="worldDialog.loading">
+            <div>
                 <div style="display: flex">
                     <img
                         :src="worldDialog.ref.thumbnailImageUrl"

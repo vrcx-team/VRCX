@@ -4,7 +4,7 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.change_log.header') }}</DialogTitle>
             </DialogHeader>
-            <div v-loading="!changeLogDialog.changeLog" class="changelog-dialog">
+            <div class="changelog-dialog">
                 <h2 v-text="changeLogDialog.buildName"></h2>
                 <span v-show="changeLogDialog.buildName">
                     {{ t('dialog.change_log.description') }}

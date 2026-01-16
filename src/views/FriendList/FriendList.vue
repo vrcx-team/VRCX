@@ -181,7 +181,6 @@
     const friendsListColumns = computed(() =>
         createColumns({
             randomUserColours,
-            bulkUnfriendMode: friendsListBulkUnfriendMode,
             selectedFriends,
             onToggleFriendSelection: toggleFriendSelection,
             onConfirmDeleteFriend: confirmDeleteFriend
@@ -223,6 +222,18 @@
                 ...prev,
                 columns: /** @type {any} */ (next)
             }));
+        },
+        { immediate: true }
+    );
+
+    watch(
+        friendsListBulkUnfriendMode,
+        (enabled) => {
+            const column = table?.getColumn?.('bulkSelect');
+            if (!column) {
+                return;
+            }
+            column.toggleVisibility(Boolean(enabled));
         },
         { immediate: true }
     );

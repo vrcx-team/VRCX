@@ -5,7 +5,7 @@
                 <DialogTitle>{{ t('dialog.invite_to_group.header') }}</DialogTitle>
             </DialogHeader>
 
-            <div v-if="inviteGroupDialog.visible" v-loading="inviteGroupDialog.loading">
+            <div v-if="inviteGroupDialog.visible">
                 <span>{{ t('dialog.invite_to_group.description') }}</span>
                 <br />
 

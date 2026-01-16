@@ -5,7 +5,7 @@
                 <DialogTitle>{{ t('dialog.social_status.header') }}</DialogTitle>
             </DialogHeader>
 
-            <div v-loading="socialStatusDialog.loading">
+            <div>
                 <Select :model-value="socialStatusDialog.status" @update:modelValue="handleSocialStatusChange">
                     <SelectTrigger size="sm" style="margin-top: 10px; width: 100%">
                         <span class="flex items-center gap-2">

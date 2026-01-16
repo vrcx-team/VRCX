@@ -58,7 +58,7 @@
                             class="search-input" />
                     </div>
 
-                    <div class="groups-grid" v-loading="isLoading">
+                    <div class="groups-grid">
                         <div v-if="filteredGroupEvents.length" class="groups-container">
                             <div v-for="group in filteredGroupEvents" :key="group.groupId" class="group-row">
                                 <div class="group-header" @click="toggleGroup(group.groupId)">

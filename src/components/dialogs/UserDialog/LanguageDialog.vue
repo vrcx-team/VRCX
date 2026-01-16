@@ -5,7 +5,7 @@
                 <DialogTitle>{{ t('dialog.language.header') }}</DialogTitle>
             </DialogHeader>
 
-            <div v-loading="languageDialog.loading">
+            <div>
                 <div v-for="item in currentUser.$languages" :key="item.key" style="margin: 6px 0">
                     <Badge variant="outline" style="margin-right: 5px">
                         <span

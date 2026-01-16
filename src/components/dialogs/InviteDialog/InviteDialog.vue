@@ -11,7 +11,7 @@
                 <DialogTitle>{{ t('dialog.invite.header') }}</DialogTitle>
             </DialogHeader>
 
-            <div v-if="inviteDialog.visible" v-loading="inviteDialog.loading">
+            <div v-if="inviteDialog.visible">
                 <Location :location="inviteDialog.worldId" :link="false" />
                 <br />
                 <Button size="sm" class="mr-2" variant="outline" style="margin-top: 10px" @click="addSelfToInvite">{{

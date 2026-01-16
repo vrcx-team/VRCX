@@ -4,7 +4,7 @@
             class="x-dialog x-avatar-dialog sm:max-w-235 translate-y-0"
             style="top: 10vh"
             :show-close-button="false">
-            <div v-loading="avatarDialog.loading">
+            <div>
                 <div style="display: flex">
                     <img
                         :src="avatarDialog.ref.thumbnailImageUrl"

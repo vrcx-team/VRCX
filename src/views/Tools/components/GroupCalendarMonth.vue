@@ -91,7 +91,7 @@
 </script>
 
 <template>
-    <div v-loading="props.isLoading" class="group-calendar-month">
+    <div class="group-calendar-month">
         <CalendarRoot
             v-slot="{ grid, weekDays }"
             :model-value="internalValue"

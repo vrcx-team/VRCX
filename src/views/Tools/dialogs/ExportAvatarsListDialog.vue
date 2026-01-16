@@ -6,7 +6,7 @@
             </DialogHeader>
             <InputGroupTextareaField
                 v-model="exportAvatarsListCsv"
-                v-loading="loading"
+                
                 :rows="15"
                 readonly
                 style="margin-top: 15px"

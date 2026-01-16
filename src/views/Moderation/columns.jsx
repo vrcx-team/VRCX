@@ -32,7 +32,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         },
         {
             accessorKey: 'created',
-            size: 90,
+            size: 100,
             header: ({ column }) => (
                 <Button
                     variant="ghost"
@@ -65,7 +65,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         },
         {
             accessorKey: 'type',
-            size: 90,
+            size: 100,
             header: () => t('table.moderation.type'),
             cell: ({ row }) => {
                 const type = row.getValue('type');

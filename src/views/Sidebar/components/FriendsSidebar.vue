@@ -7,7 +7,7 @@
                 isFriendsGroupMe = !isFriendsGroupMe;
                 saveFriendsGroupStates();
             ">
-            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': isFriendsGroupMe }" />
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': !isFriendsGroupMe }" />
             <span style="margin-left: 5px">{{ t('side_panel.me') }}</span>
         </div>
         <div v-show="isFriendsGroupMe">
@@ -43,7 +43,7 @@
                 isVIPFriends = !isVIPFriends;
                 saveFriendsGroupStates();
             ">
-            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': isVIPFriends }" />
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': !isVIPFriends }" />
             <span style="margin-left: 5px">
                 {{ t('side_panel.favorite') }} &horbar;
                 {{ vipFriendsDisplayNumber }}
@@ -79,9 +79,7 @@
 
         <template v-if="isSidebarGroupByInstance && friendsInSameInstance.length">
             <div class="x-friend-group x-link flex items-center" @click="toggleSwitchGroupByInstanceCollapsed">
-                <ChevronDown
-                    class="rotation-transition"
-                    :class="{ 'is-rotated': !isSidebarGroupByInstanceCollapsed }" />
+                <ChevronDown class="rotation-transition" :class="{ 'is-rotated': isSidebarGroupByInstanceCollapsed }" />
                 <span style="margin-left: 5px"
                     >{{ t('side_panel.same_instance') }} &horbar; {{ friendsInSameInstance.length }}</span
                 >
@@ -116,7 +114,7 @@
                 isOnlineFriends = !isOnlineFriends;
                 saveFriendsGroupStates();
             ">
-            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': isOnlineFriends }" />
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': !isOnlineFriends }" />
             <span style="margin-left: 5px"
                 >{{ t('side_panel.online') }} &horbar; {{ onlineFriendsByGroupStatus.length }}</span
             >
@@ -135,7 +133,7 @@
                 isActiveFriends = !isActiveFriends;
                 saveFriendsGroupStates();
             ">
-            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': isActiveFriends }" />
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': !isActiveFriends }" />
             <span style="margin-left: 5px">{{ t('side_panel.active') }} &horbar; {{ activeFriends.length }}</span>
         </div>
         <div v-if="isActiveFriends">
@@ -152,7 +150,7 @@
                 isOfflineFriends = !isOfflineFriends;
                 saveFriendsGroupStates();
             ">
-            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': isOfflineFriends }" />
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': !isOfflineFriends }" />
             <span style="margin-left: 5px">{{ t('side_panel.offline') }} &horbar; {{ offlineFriends.length }}</span>
         </div>
         <div v-if="isOfflineFriends">
@@ -315,9 +313,6 @@
     .x-link:hover {
         text-decoration: none;
     }
-    /* .x-link:hover span {
-        text-decoration: underline;
-    } */
     .is-rotated {
         transform: rotate(-90deg);
     }

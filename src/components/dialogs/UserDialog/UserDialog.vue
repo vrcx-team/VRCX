@@ -4,7 +4,7 @@
             class="x-dialog x-user-dialog sm:max-w-235 translate-y-0"
             style="top: 10vh"
             :show-close-button="false">
-            <div v-loading="userDialog.loading">
+            <div>
                 <DialogHeader class="sr-only">
                     <DialogTitle>{{
                         userDialog.ref?.displayName || userDialog.id || t('dialog.user.info.header')
@@ -194,7 +194,7 @@
                                         "
                                         class="extra">
                                         <div
-                                            v-loading="userDialog.isRepresentedGroupLoading"
+                                            
                                             style="display: inline-block; flex: none; margin-right: 5px">
                                             <Avatar
                                                 class="x-link size-15! rounded-lg!"
@@ -658,7 +658,7 @@
                                 </Button>
                             </div>
                         </div>
-                        <div v-loading="userDialog.isGroupsLoading" style="margin-top: 10px">
+                        <div style="margin-top: 10px">
                             <template v-if="userDialogGroupEditMode">
                                 <div
                                     class="x-friend-list"
@@ -1056,7 +1056,7 @@
                             </div>
                         </div>
                         <div
-                            v-loading="userDialog.isWorldsLoading"
+                            
                             class="x-friend-list"
                             style="margin-top: 10px; min-height: 60px">
                             <div
@@ -1092,7 +1092,7 @@
                                 v-model="favoriteWorldsTab"
                                 :items="favoriteWorldTabs"
                                 :unmount-on-hide="false"
-                                v-loading="userDialog.isFavoriteWorldsLoading"
+                                
                                 class="zero-margin-tabs"
                                 style="margin-top: 10px; height: 50vh">
                                 <template

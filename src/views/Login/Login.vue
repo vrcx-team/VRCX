@@ -11,7 +11,7 @@
             /></Button>
         </TooltipWrapper>
     </div>
-    <div v-loading="loginForm.loading" class="x-login-container">
+    <div class="x-login-container">
         <div class="x-login">
             <div class="x-login-form-container">
                 <div>

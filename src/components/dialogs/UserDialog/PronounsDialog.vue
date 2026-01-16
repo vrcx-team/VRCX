@@ -5,7 +5,7 @@
                 <DialogTitle>{{ t('dialog.pronouns.header') }}</DialogTitle>
             </DialogHeader>
 
-            <div v-loading="pronounsDialog.loading">
+            <div>
                 <InputGroupTextareaField
                     v-model="pronounsDialog.pronouns"
                     :maxlength="32"

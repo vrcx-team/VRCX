@@ -5,7 +5,7 @@
                 <DialogTitle>{{ t('dialog.bio.header') }}</DialogTitle>
             </DialogHeader>
 
-            <div v-loading="bioDialog.loading">
+            <div>
                 <InputGroupTextareaField
                     v-model="bioDialog.bio"
                     :maxlength="512"
