@@ -1,10 +1,10 @@
 import {
-    changeAppDarkStyle,
+    // changeAppDarkStyle,
     changeAppThemeStyle,
     changeHtmlLangAttribute,
     getThemeMode,
-    refreshCustomCss,
-    setLoginContainerStyle
+    refreshCustomCss
+    // setLoginContainerStyle
 } from '../shared/utils/base/ui';
 import { i18n, loadLocalizedStrings } from './i18n';
 
@@ -23,7 +23,7 @@ export async function initUi() {
 
         const { initThemeMode, isDarkMode } =
             await getThemeMode(configRepository);
-        setLoginContainerStyle(isDarkMode);
+        // setLoginContainerStyle(isDarkMode);
         changeAppThemeStyle(initThemeMode);
     } catch (error) {
         console.error('Error initializing locale and theme:', error);

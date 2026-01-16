@@ -947,7 +947,6 @@
     }
 
     .group-item {
-        border: 1px solid var(--el-border-color);
         border-radius: 8px;
         padding: 8px;
         cursor: pointer;
@@ -976,7 +975,6 @@
 
     .group-item__count {
         font-size: 12px;
-        color: var(--el-text-color-secondary);
     }
 
     .group-item__bottom {
@@ -987,13 +985,10 @@
     }
 
     .group-item.is-active {
-        border-color: var(--el-color-primary);
-        background-color: var(--el-color-primary-light-9, rgba(64, 158, 255, 0.12));
     }
 
     .group-empty {
         text-align: center;
-        color: var(--el-text-color-secondary);
         font-size: 12px;
         padding: 12px 0;
     }
@@ -1021,11 +1016,9 @@
     }
 
     .favorites-group-menu__item:hover {
-        background-color: var(--el-menu-hover-bg-color);
     }
 
     .favorites-group-menu__item--danger {
-        color: var(--el-color-danger);
     }
 
     .favorites-group-menu__item--submenu {
@@ -1034,7 +1027,6 @@
 
     .favorites-group-menu__arrow {
         margin-left: auto;
-        color: var(--el-text-color-secondary);
         font-size: 12px;
     }
 
@@ -1062,12 +1054,10 @@
 
     .group-visibility-menu__item:hover,
     .group-visibility-menu__item.is-active {
-        background-color: var(--el-menu-hover-bg-color);
     }
 
     .group-visibility-menu__check {
         font-size: 12px;
-        color: var(--el-color-primary);
     }
 
     .favorites-content {
@@ -1098,7 +1088,6 @@
     .favorites-content__title small {
         font-size: 12px;
         font-weight: normal;
-        color: var(--el-text-color-secondary);
     }
 
     .favorites-content__edit {
@@ -1106,7 +1095,6 @@
         align-items: center;
         gap: 8px;
         font-size: 13px;
-        color: var(--el-text-color-regular);
     }
 
     .favorites-content__edit-actions {
@@ -1120,10 +1108,6 @@
         flex-wrap: wrap;
         gap: 8px;
         margin-bottom: 12px;
-    }
-
-    .favorites-content__actions .el-button {
-        margin: 0;
     }
 
     .favorites-content__list {
@@ -1175,11 +1159,9 @@
         display: flex;
         align-items: center;
         box-sizing: border-box;
-        border: 1px solid var(--el-border-color);
         border-radius: calc(8px * var(--favorites-card-scale, 1));
         padding: var(--favorites-card-padding-y, 8px) var(--favorites-card-padding-x, 10px);
         cursor: pointer;
-        background: var(--el-bg-color);
         transition:
             border-color 0.2s ease,
             box-shadow 0.2s ease;
@@ -1195,8 +1177,6 @@
     }
 
     :deep(.favorites-search-card.is-selected) {
-        border-color: var(--el-color-primary);
-        box-shadow: 0 0 0 1px var(--el-color-primary-light-3, rgba(64, 158, 255, 0.4));
     }
 
     :deep(.favorites-search-card__content) {
@@ -1212,7 +1192,6 @@
         height: calc(48px * var(--favorites-card-scale, 1));
         border-radius: calc(6px * var(--favorites-card-scale, 1));
         overflow: hidden;
-        background: var(--el-fill-color-lighter);
         flex-shrink: 0;
     }
 
@@ -1249,7 +1228,6 @@
 
     :deep(.favorites-search-card__detail .extra) {
         font-size: calc(12px * var(--favorites-card-scale, 1));
-        color: var(--el-text-color-secondary);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -1265,7 +1243,6 @@
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        color: var(--el-text-color-secondary);
         font-size: 14px;
     }
 
@@ -1316,7 +1293,6 @@
 
     :deep(.favorites-search-card__location) {
         font-size: 12px;
-        color: var(--el-text-color-secondary);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -1326,7 +1302,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--el-text-color-secondary);
         font-size: 13px;
         height: 100%;
     }
@@ -1339,7 +1314,6 @@
     }
 
     .favorites-dropdown__control:not(:last-child) {
-        border-bottom: 1px solid var(--el-border-color-lighter);
     }
 
     .favorites-dropdown__control-header {
@@ -1348,20 +1322,14 @@
         justify-content: space-between;
         font-size: 13px;
         font-weight: 600;
-        color: var(--el-text-color-primary);
         margin-bottom: 6px;
     }
 
     .favorites-dropdown__control-value {
         font-size: 12px;
-        color: var(--el-text-color-secondary);
     }
 
     .favorites-dropdown__slider {
         padding: 0 4px 4px;
-    }
-
-    .favorites-dropdown__slider :deep(.el-slider__runway) {
-        margin: 0;
     }
 </style>

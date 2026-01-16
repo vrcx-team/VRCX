@@ -499,9 +499,7 @@
     .button-pd-0 {
         padding: 0;
     }
-    .ml-5 {
-        margin-left: 5px !important; /* due to ".el-button + .el-button" */
-    }
+
     .notification-image {
         flex: none;
         height: 30px;

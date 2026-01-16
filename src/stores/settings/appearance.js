@@ -13,7 +13,6 @@ import { database } from '../../service/database';
 import { getNameColour } from '../../shared/utils';
 import { languageCodes } from '../../localization';
 import { loadLocalizedStrings } from '../../plugin';
-import { useElementTheme } from '../../composables/useElementTheme';
 import { useFeedStore } from '../feed';
 import { useGameLogStore } from '../gameLog';
 import { useModalStore } from '../modal';
@@ -42,7 +41,7 @@ export const useAppearanceSettingsStore = defineStore(
 
         const MAX_TABLE_PAGE_SIZE = 1000;
         const DEFAULT_TABLE_PAGE_SIZES = [10, 15, 20, 25, 50, 100];
-        const { initPrimaryColor } = useElementTheme();
+        // const { initPrimaryColor } = useElementTheme();
 
         const appLanguage = ref('en');
         const themeMode = ref('');
@@ -204,7 +203,7 @@ export const useAppearanceSettingsStore = defineStore(
 
             themeMode.value = themeModeConfig;
             setThemeMode(themeModeConfig);
-            await initPrimaryColor();
+            // await initPrimaryColor();
 
             displayVRCPlusIconsAsAvatar.value =
                 displayVRCPlusIconsAsAvatarConfig;

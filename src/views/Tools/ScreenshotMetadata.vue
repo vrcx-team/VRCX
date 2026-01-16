@@ -7,7 +7,7 @@
             <span class="header">{{ t('dialog.screenshot_metadata.header') }}</span>
         </div>
         <div v-loading="screenshotMetadataDialog.loading" @dragover.prevent @dragenter.prevent @drop="handleDrop">
-            <span style="margin-left: 5px; color: var(--el-text-color-secondary); font-family: monospace">{{
+            <span>{{
                 t('dialog.screenshot_metadata.drag')
             }}</span>
             <br />
@@ -101,7 +101,7 @@
                 v-if="screenshotMetadataDialog.metadata.author"
                 :userid="screenshotMetadataDialog.metadata.author.id"
                 :hint="screenshotMetadataDialog.metadata.author.displayName"
-                style="color: var(--el-text-color-secondary); font-family: monospace" />
+            />
             <br />
             <div class="my-2 w-[90%] ml-17">
                 <Carousel :opts="{ loop: false }" @init-api="handleScreenshotMetadataCarouselInit">
@@ -146,7 +146,6 @@
                 <span class="x-link" @click="lookupUser(user)" v-text="user.displayName"></span>
                 <span
                     v-if="user.pos"
-                    style="margin-left: 5px; color: var(--el-text-color-secondary); font-family: monospace"
                     v-text="'(' + user.pos.x + ', ' + user.pos.y + ', ' + user.pos.z + ')'"></span>
                 <br />
             </span>

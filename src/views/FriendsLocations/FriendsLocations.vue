@@ -770,7 +770,6 @@
 
     .friend-view__toolbar--loading {
         justify-content: flex-end;
-        color: var(--el-text-color-secondary);
         font-size: 13px;
         font-weight: 500;
     }
@@ -786,7 +785,6 @@
         flex: 1;
         flex-wrap: wrap;
         justify-content: flex-end;
-        color: var(--el-text-color-regular);
     }
 
     .friend-view__virtual {
@@ -836,7 +834,6 @@
     .friend-view__scale-value {
         font-size: 12px;
         font-weight: 600;
-        color: var(--el-text-color-secondary);
         min-width: 42px;
         text-align: right;
     }
@@ -859,7 +856,6 @@
         display: grid;
         place-items: center;
         min-height: 240px;
-        color: var(--el-text-color-secondary);
     }
 
     .friend-view__grid {
@@ -892,7 +888,6 @@
         margin: 5px 10px;
         font-weight: 600;
         font-size: 13px;
-        color: var(--el-text-color-primary);
     }
 
     .friend-view__divider {
@@ -900,7 +895,6 @@
         align-items: center;
         gap: 12px;
         margin: 16px 4px;
-        color: var(--el-text-color-regular);
         font-size: 13px;
         font-weight: 600;
     }
@@ -910,7 +904,6 @@
         content: '';
         flex: 1;
         height: 1px;
-        background: var(--el-border-color);
     }
 
     .friend-view__divider-text {
@@ -919,14 +912,12 @@
 
     .friend-view__instance-count {
         font-size: 12px;
-        color: var(--el-text-color-secondary);
     }
 
     .friend-view__empty {
         display: grid;
         place-items: center;
         min-height: 240px;
-        color: var(--el-text-color-secondary);
         font-size: 15px;
         letter-spacing: 0.5px;
     }
@@ -937,7 +928,6 @@
         justify-content: center;
         gap: 8px;
         padding: 18px 0 12px;
-        color: var(--el-text-color-secondary);
         font-size: 14px;
     }
 

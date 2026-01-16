@@ -323,14 +323,12 @@
             transition: all 0.2s ease;
 
             &:hover {
-                background-color: var(--el-color-primary-light-9);
             }
 
             .rotation-transition {
                 font-size: 14px;
                 margin-right: 8px;
                 transition: transform 0.3s;
-                color: var(--el-color-primary);
             }
 
             .category-title {
@@ -358,7 +356,6 @@
 
         &:hover {
             transform: translateY(-2px);
-            box-shadow: var(--el-box-shadow-light);
         }
 
         .tool-content {
@@ -372,14 +369,11 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background-color: var(--el-color-primary-light-9);
                 border-radius: 12px;
                 margin-right: 20px;
-                box-shadow: var(--el-box-shadow-lighter);
 
                 i {
                     font-size: 28px;
-                    color: var(--el-color-primary);
                 }
             }
 
@@ -389,13 +383,11 @@
                 .tool-name {
                     font-size: 18px;
                     font-weight: 600;
-                    color: var(--el-text-color-primary);
                     margin-bottom: 4px;
                 }
 
                 .tool-description {
                     font-size: 14px;
-                    color: var(--el-text-color-secondary);
                     opacity: 0.8;
                 }
             }

@@ -5,7 +5,7 @@ import colors from 'tailwindcss/colors';
 import configRepository from '../service/config';
 
 // Tailwind indigo-500 in OKLCH
-export const DEFAULT_PRIMARY_COLOR = 'oklch(58.5% 0.233 277.117)';
+const DEFAULT_PRIMARY_COLOR = 'oklch(58.5% 0.233 277.117)';
 const DARK_WEIGHT = 0.2;
 const CONFIG_KEY = 'VRCX_elPrimaryColor';
 const STYLE_ID = 'el-dynamic-theme';

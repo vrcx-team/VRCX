@@ -24,7 +24,7 @@
                         @mouseleave="scheduleCloseEventPopover">
                         <div class="flex items-baseline justify-between gap-3 text-xs">
                             <div class="text-[13px] font-semibold">{{ event.title }}</div>
-                            <div class="whitespace-nowrap text-[var(--el-text-color-regular)]">
+                            <div class="whitespace-nowrap">
                                 {{ formatTimeRange(event.startsAt, event.endsAt) }}
                             </div>
                         </div>
@@ -42,19 +42,19 @@
                                 </Button>
                             </div>
                             <div class="flex min-w-0 flex-col gap-1">
-                                <div class="text-[var(--el-text-color-regular)]">
+                                <div>
                                     {{ t('dialog.group_calendar.event_card.category') }}
                                 </div>
                                 <div class="font-medium">{{ capitalizeFirst(event.category) }}</div>
                             </div>
                             <div class="flex min-w-0 flex-col gap-1">
-                                <div class="text-[var(--el-text-color-regular)]">
+                                <div>
                                     {{ t('dialog.group_calendar.event_card.interested_user') }}
                                 </div>
                                 <div class="font-medium">{{ event.interestedUserCount }}</div>
                             </div>
                             <div class="flex min-w-0 flex-col gap-1">
-                                <div class="text-[var(--el-text-color-regular)]">
+                                <div>
                                     {{ t('dialog.group_calendar.event_card.close_time') }}
                                 </div>
                                 <div class="font-medium">
@@ -62,7 +62,7 @@
                                 </div>
                             </div>
                             <div class="flex min-w-0 flex-col gap-1">
-                                <div class="text-[var(--el-text-color-regular)]">
+                                <div>
                                     {{ t('dialog.group_calendar.event_card.created') }}
                                 </div>
                                 <div class="font-medium">
@@ -70,7 +70,7 @@
                                 </div>
                             </div>
                             <div class="col-span-2 flex min-w-0 flex-col gap-1">
-                                <div class="text-[var(--el-text-color-regular)]">
+                                <div>
                                     {{ t('dialog.group_calendar.event_card.description') }}
                                 </div>
                                 <div class="whitespace-pre-wrap break-words font-normal leading-snug">
@@ -263,7 +263,6 @@
 
     .event-card:hover {
         transform: translateY(-2px);
-        box-shadow: var(--el-box-shadow-light);
     }
 
     .event-card.grouped-card {
@@ -312,14 +311,10 @@
         height: 24px;
         gap: 4px;
         border-radius: 50%;
-        background-color: var(--el-text-color-regular);
-        color: var(--el-bg-color);
-        box-shadow: var(--el-box-shadow-lighter);
         cursor: pointer;
     }
 
     .event-card .badges .following-badge.is-following {
-        background-color: var(--group-calendar-badge-following, var(--el-color-success));
     }
 
     .event-card .badges .share-badge {
@@ -330,9 +325,6 @@
         height: 24px;
         gap: 4px;
         border-radius: 50%;
-        background-color: var(--el-text-color-regular);
-        color: var(--el-bg-color);
-        box-shadow: var(--el-box-shadow-lighter);
         cursor: pointer;
         margin-right: 5px;
     }
@@ -378,7 +370,6 @@
     }
 
     .event-card .event-title-content:hover {
-        color: var(--el-color-primary);
     }
 
     .event-card .event-info {
@@ -393,11 +384,9 @@
 
     .grid-view .event-card .event-info {
         font-size: 11px;
-        color: var(--el-text-color-regular);
     }
 
     .event-card .event-time {
         font-weight: 500;
-        color: var(--el-color-primary);
     }
 </style>

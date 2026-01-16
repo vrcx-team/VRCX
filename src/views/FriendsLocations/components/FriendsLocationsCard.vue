@@ -95,9 +95,6 @@
         display: grid;
         gap: calc(14px * var(--card-scale) * var(--card-spacing));
         border-radius: 8px;
-        background: var(--el-bg-color-overlay);
-        border: 1px solid var(--el-border-color);
-        box-shadow: var(--el-box-shadow-lighter);
         transition:
             box-shadow 0.2s ease,
             transform 0.2s ease;
@@ -105,7 +102,6 @@
         min-width: var(--friend-card-min-width, 220px);
 
         &:hover {
-            box-shadow: var(--el-box-shadow-light);
             transform: translateY(calc(-2px * var(--card-scale)));
         }
     }
@@ -123,8 +119,6 @@
     }
 
     .friend-card__avatar {
-        border: 1px solid var(--el-border-color);
-        box-shadow: var(--el-box-shadow-lighter);
     }
 
     .friend-card__status-dot {
@@ -134,8 +128,6 @@
         inline-size: calc(12px * var(--card-scale));
         block-size: calc(12px * var(--card-scale));
         border-radius: 999px;
-        border: calc(2px * var(--card-scale)) solid var(--el-bg-color-overlay);
-        box-shadow: var(--el-box-shadow-lighter);
         pointer-events: none;
     }
 
@@ -171,7 +163,6 @@
     .friend-card__name {
         font-size: calc(17px * var(--card-scale));
         font-weight: 600;
-        color: var(--el-text-color-primary);
         line-height: 1.2;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -181,7 +172,6 @@
     .friend-card__signature {
         margin-top: calc(6px * var(--card-spacing));
         font-size: calc(13px * var(--card-scale));
-        color: var(--el-text-color-secondary);
         line-height: 1.4;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -197,7 +187,6 @@
         min-height: calc(40px * var(--card-scale));
         padding: calc(6px * var(--card-scale)) calc(10px * var(--card-scale));
         border-radius: calc(10px * var(--card-scale));
-        color: var(--el-text-color-regular);
         font-size: calc(12px * var(--card-scale));
         line-height: 1.3;
         box-sizing: border-box;

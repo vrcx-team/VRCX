@@ -5,7 +5,7 @@
             <Unlock v-else-if="avatarType === '(public)'" class="h-4 w-4" />
         </span>
         <span class="mr-2">{{ avatarName }}</span>
-        <span v-if="avatarTags" style="color: var(--el-text-color-secondary); font-size: 12px">{{ avatarTags }}</span>
+        <span v-if="avatarTags" style="font-size: 12px">{{ avatarTags }}</span>
     </div>
 </template>
 

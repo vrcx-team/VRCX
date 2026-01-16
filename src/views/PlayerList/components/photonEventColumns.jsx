@@ -169,15 +169,11 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
         return (
             <>
                 {r.platform === 'Desktop' ? (
-                    <span style="color: var(--el-color-primary)">
-                        Desktop&nbsp;
-                    </span>
+                    <span>Desktop&nbsp;</span>
                 ) : r.platform === 'VR' ? (
-                    <span style="color: var(--el-color-primary)">VR&nbsp;</span>
+                    <span>VR&nbsp;</span>
                 ) : r.platform === 'Quest' ? (
-                    <span style="color: var(--el-color-success)">
-                        Android&nbsp;
-                    </span>
+                    <span>Android&nbsp;</span>
                 ) : null}
                 <span
                     class="x-link"

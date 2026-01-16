@@ -739,18 +739,12 @@
         align-items: center;
         justify-content: center;
         margin-top: 100px;
-        color: var(--el-text-color-secondary);
     }
     .divider {
         padding: 0 400px;
         transition: top 0.3s ease;
     }
 
-    // override el-ui
-    .el-date-editor.el-input,
-    .el-date-editor.el-input__inner {
-        width: 200px;
-    }
     .status-online {
         display: flex;
         justify-content: center;

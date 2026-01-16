@@ -446,12 +446,6 @@
 
 <style scoped>
     .x-dialog {
-        :deep(.el-dialog) {
-            max-height: 750px;
-            .el-dialog__body {
-                height: 680px;
-            }
-        }
         .top-content {
             height: 640px;
             position: relative;
@@ -478,7 +472,6 @@
                     .timeline-timestamp {
                         font-size: 13px;
                         font-weight: 600;
-                        color: var(--el-text-color-secondary);
                         margin-bottom: 8px;
                     }
 
@@ -487,7 +480,6 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        color: var(--el-text-color-secondary);
                     }
                     .time-group-container {
                         display: flex;
@@ -516,7 +508,6 @@
                             &.has-events {
                                 background-color: var(
                                     --group-calendar-event-bg,
-                                    color-mix(in oklch, var(--el-color-primary) 10%, transparent)
                                 );
                             }
                             .calendar-event-badge {
@@ -526,21 +517,17 @@
                                 min-width: 16px;
                                 height: 16px;
                                 border-radius: 8px;
-                                color: var(--el-color-white, #fff);
                                 display: flex;
                                 align-items: center;
                                 justify-content: center;
                                 font-size: 10px;
                                 font-weight: bold;
-                                box-shadow: var(--el-box-shadow-lighter);
                                 z-index: 10;
                                 padding: 0 4px;
                                 line-height: 16px;
                                 &.has-following {
-                                    background-color: var(--group-calendar-badge-following, var(--el-color-success));
                                 }
                                 &.no-following {
-                                    background-color: var(--group-calendar-badge-normal, var(--el-color-primary));
                                 }
                             }
                         }
@@ -603,7 +590,6 @@
         flex-direction: column;
         .search-container {
             padding: 2px 20px 12px 20px;
-            border-bottom: 1px solid var(--el-border-color-lighter);
             display: flex;
             justify-content: flex-end;
             .search-input {
@@ -623,7 +609,6 @@
                     .group-header {
                         font-size: 16px;
                         font-weight: bold;
-                        color: var(--el-text-color-primary);
                         padding: 4px 12px 10px 12px;
                         cursor: pointer;
                         border-radius: 4px;
@@ -635,7 +620,6 @@
                             font-size: 14px;
                             margin-right: 8px;
                             transition: transform 0.3s;
-                            color: var(--el-color-primary);
                         }
                     }
                     .events-row {
@@ -652,7 +636,6 @@
                 align-items: center;
                 height: 200px;
                 font-size: 16px;
-                color: var(--el-text-color-secondary);
             }
         }
     }

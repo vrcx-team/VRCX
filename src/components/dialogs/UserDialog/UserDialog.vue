@@ -410,13 +410,10 @@
                                 <div class="x-friend-item" @click="toggleAvatarCopying">
                                     <div class="detail">
                                         <span class="name">{{ t('dialog.user.info.avatar_cloning') }}</span>
-                                        <span
-                                            v-if="currentUser.allowAvatarCopying"
-                                            class="extra"
-                                            style="color: var(--el-color-success)"
-                                            >{{ t('dialog.user.info.avatar_cloning_allow') }}</span
-                                        >
-                                        <span v-else class="extra" style="color: var(--el-color-danger)">{{
+                                        <span v-if="currentUser.allowAvatarCopying" class="extra">{{
+                                            t('dialog.user.info.avatar_cloning_allow')
+                                        }}</span>
+                                        <span v-else class="extra">{{
                                             t('dialog.user.info.avatar_cloning_deny')
                                         }}</span>
                                     </div>
@@ -424,13 +421,10 @@
                                 <div class="x-friend-item" @click="toggleAllowBooping">
                                     <div class="detail">
                                         <span class="name">{{ t('dialog.user.info.booping') }}</span>
-                                        <span
-                                            v-if="currentUser.isBoopingEnabled"
-                                            class="extra"
-                                            style="color: var(--el-color-success)"
-                                            >{{ t('dialog.user.info.avatar_cloning_allow') }}</span
-                                        >
-                                        <span v-else class="extra" style="color: var(--el-color-danger)">{{
+                                        <span v-if="currentUser.isBoopingEnabled" class="extra">{{
+                                            t('dialog.user.info.avatar_cloning_allow')
+                                        }}</span>
+                                        <span v-else class="extra">{{
                                             t('dialog.user.info.avatar_cloning_deny')
                                         }}</span>
                                     </div>
@@ -438,13 +432,10 @@
                                 <div class="x-friend-item" @click="toggleSharedConnectionsOptOut">
                                     <div class="detail">
                                         <span class="name">{{ t('dialog.user.info.show_mutual_friends') }}</span>
-                                        <span
-                                            v-if="!currentUser.hasSharedConnectionsOptOut"
-                                            class="extra"
-                                            style="color: var(--el-color-success)"
-                                            >{{ t('dialog.user.info.avatar_cloning_allow') }}</span
-                                        >
-                                        <span v-else class="extra" style="color: var(--el-color-danger)">{{
+                                        <span v-if="!currentUser.hasSharedConnectionsOptOut" class="extra">{{
+                                            t('dialog.user.info.avatar_cloning_allow')
+                                        }}</span>
+                                        <span v-else class="extra">{{
                                             t('dialog.user.info.avatar_cloning_deny')
                                         }}</span>
                                     </div>
@@ -454,13 +445,10 @@
                                 <div class="x-friend-item" style="cursor: default">
                                     <div class="detail">
                                         <span class="name">{{ t('dialog.user.info.avatar_cloning') }}</span>
-                                        <span
-                                            v-if="userDialog.ref.allowAvatarCopying"
-                                            class="extra"
-                                            style="color: var(--el-color-success)"
-                                            >{{ t('dialog.user.info.avatar_cloning_allow') }}</span
-                                        >
-                                        <span v-else class="extra" style="color: var(--el-color-danger)">{{
+                                        <span v-if="userDialog.ref.allowAvatarCopying" class="extra">{{
+                                            t('dialog.user.info.avatar_cloning_allow')
+                                        }}</span>
+                                        <span v-else class="extra">{{
                                             t('dialog.user.info.avatar_cloning_deny')
                                         }}</span>
                                     </div>
@@ -622,7 +610,7 @@
                                     <span
                                         style="
                                             margin-left: 10px;
-                                            color: var(--el-text-color-secondary);
+
                                             font-size: 10px;
                                         "
                                         >{{ t('dialog.user.groups.hold_shift') }}</span
@@ -849,7 +837,7 @@
                                                 size="icon-sm"
                                                 variant="outline"
                                                 v-if="shiftHeld"
-                                                style="color: var(--el-color-danger); margin-left: 5px"
+                                                style="margin-left: 5px"
                                                 @click.stop="leaveGroup(group.id)">
                                                 <LogOut />
                                             </Button>
@@ -871,8 +859,7 @@
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.user.groups.own_groups')
                                     }}</span>
-                                    <span
-                                        style="color: var(--el-text-color-secondary); font-size: 12px; margin-left: 5px"
+                                    <span style="font-size: 12px; margin-left: 5px"
                                         >{{ userGroups.ownGroups.length }}/{{
                                             cachedConfig?.constants?.GROUPS?.MAX_OWNED
                                         }}</span
@@ -918,10 +905,9 @@
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.user.groups.mutual_groups')
                                     }}</span>
-                                    <span
-                                        style="color: var(--el-text-color-secondary); font-size: 12px; margin-left: 5px"
-                                        >{{ userGroups.mutualGroups.length }}</span
-                                    >
+                                    <span style="font-size: 12px; margin-left: 5px">{{
+                                        userGroups.mutualGroups.length
+                                    }}</span>
                                     <div
                                         class="x-friend-list"
                                         style="margin-top: 10px; margin-bottom: 15px; min-height: 60px">
@@ -963,12 +949,7 @@
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.user.groups.groups')
                                     }}</span>
-                                    <span
-                                        style="
-                                            color: var(--el-text-color-secondary);
-                                            font-size: 12px;
-                                            margin-left: 5px;
-                                        ">
+                                    <span style="font-size: 12px; margin-left: 5px">
                                         {{ userGroups.remainingGroups.length }}
                                         <template v-if="currentUser.id === userDialog.id">
                                             /
@@ -1125,12 +1106,7 @@
                                             :class="userFavoriteWorldsStatus(list[1])">
                                         </i>
                                         <span style="font-weight: bold; font-size: 14px" v-text="list[0]"></span>
-                                        <span
-                                            style="
-                                                color: var(--el-text-color-secondary);
-                                                font-size: 10px;
-                                                margin-left: 5px;
-                                            "
+                                        <span style="font-size: 10px; margin-left: 5px"
                                             >{{ list[2].length }}/{{ favoriteLimits.maxFavoritesPerGroup.world }}</span
                                         >
                                     </span>
@@ -1266,13 +1242,11 @@
                                     <span
                                         v-if="avatar.releaseStatus === 'public'"
                                         class="extra"
-                                        style="color: var(--el-color-success)"
                                         v-text="avatar.releaseStatus">
                                     </span>
                                     <span
                                         v-else-if="avatar.releaseStatus === 'private'"
                                         class="extra"
-                                        style="color: var(--el-color-danger)"
                                         v-text="avatar.releaseStatus">
                                     </span>
                                     <span v-else class="extra" v-text="avatar.releaseStatus"></span>

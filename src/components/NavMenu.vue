@@ -42,7 +42,9 @@
                             <SidebarMenuItem v-else>
                                 <Collapsible
                                     class="group/collapsible"
-                                    :default-open="activeMenuIndex && item.children?.some((e) => e.index === activeMenuIndex)">
+                                    :default-open="
+                                        activeMenuIndex && item.children?.some((e) => e.index === activeMenuIndex)
+                                    ">
                                     <template #default="{ open }">
                                         <CollapsibleTrigger as-child>
                                             <SidebarMenuButton
@@ -63,9 +65,7 @@
                                         </CollapsibleTrigger>
                                         <CollapsibleContent>
                                             <SidebarMenuSub>
-                                                <SidebarMenuSubItem
-                                                    v-for="entry in item.children"
-                                                    :key="entry.index">
+                                                <SidebarMenuSubItem v-for="entry in item.children" :key="entry.index">
                                                     <SidebarMenuSubButton
                                                         :is-active="activeMenuIndex === entry.index"
                                                         @click="handleSubmenuClick(entry, item.index)">
@@ -93,7 +93,8 @@
                     <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                             <SidebarMenuButton :tooltip="t('nav_tooltip.help_support')">
-                                <i class="ri-question-line inline-flex size-6 items-center justify-center text-[19px]" />
+                                <i
+                                    class="ri-question-line inline-flex size-6 items-center justify-center text-[19px]" />
                                 <span v-show="!isCollapsed">{{ t('nav_tooltip.help_support') }}</span>
                             </SidebarMenuButton>
                         </DropdownMenuTrigger>
@@ -122,7 +123,8 @@
                     <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                             <SidebarMenuButton :tooltip="t('nav_tooltip.manage')">
-                                <i class="ri-settings-3-line inline-flex size-6 items-center justify-center text-[19px]" />
+                                <i
+                                    class="ri-settings-3-line inline-flex size-6 items-center justify-center text-[19px]" />
                                 <span v-show="!isCollapsed">{{ t('nav_tooltip.manage') }}</span>
                             </SidebarMenuButton>
                         </DropdownMenuTrigger>
@@ -166,17 +168,24 @@
                                         <DropdownMenuSubTrigger>
                                             <span>{{ t('view.settings.appearance.theme_color.header') }}</span>
                                         </DropdownMenuSubTrigger>
-                                        <DropdownMenuSubContent side="right" align="start" class="w-72 max-h-80 overflow-auto">
+                                        <DropdownMenuSubContent
+                                            side="right"
+                                            align="start"
+                                            class="w-72 max-h-80 overflow-auto">
                                             <DropdownMenuItem
                                                 v-for="color in colorFamilies"
                                                 :key="color.name"
                                                 :disabled="isApplyingPrimaryColor"
                                                 @click="handleThemeColorSelect(color)">
                                                 <span class="flex items-center gap-2 min-w-0 flex-1">
-                                                    <span class="h-3 w-3 shrink-0 rounded-sm" :style="{ backgroundColor: color.base }" />
+                                                    <span
+                                                        class="h-3 w-3 shrink-0 rounded-sm"
+                                                        :style="{ backgroundColor: color.base }" />
                                                     <span class="truncate">{{ color.name }}</span>
                                                 </span>
-                                                <span v-if="currentPrimary === color.base" class="text-muted-foreground">✓</span>
+                                                <span v-if="currentPrimary === color.base" class="text-muted-foreground"
+                                                    >✓</span
+                                                >
                                             </DropdownMenuItem>
                                         </DropdownMenuSubContent>
                                     </DropdownMenuSub>
@@ -213,26 +222,6 @@
 </template>
 
 <script setup>
-    import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
-    import dayjs from 'dayjs';
-    import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n';
-    import { useRouter } from 'vue-router';
-
-    import { ChevronRight } from 'lucide-vue-next';
-
-    import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-    import {
-        DropdownMenu,
-        DropdownMenuContent,
-        DropdownMenuItem,
-        DropdownMenuLabel,
-        DropdownMenuSeparator,
-        DropdownMenuSub,
-        DropdownMenuSubContent,
-        DropdownMenuSubTrigger,
-        DropdownMenuTrigger
-    } from '@/components/ui/dropdown-menu';
     import {
         Sidebar,
         SidebarContent,
@@ -247,6 +236,25 @@
         SidebarMenuSubItem,
         SidebarRail
     } from '@/components/ui/sidebar';
+    import {
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuLabel,
+        DropdownMenuSeparator,
+        DropdownMenuSub,
+        DropdownMenuSubContent,
+        DropdownMenuSubTrigger,
+        DropdownMenuTrigger
+    } from '@/components/ui/dropdown-menu';
+    import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
+    import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+    import { ChevronRight } from 'lucide-vue-next';
+    import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
+    import { useRouter } from 'vue-router';
+
+    import dayjs from 'dayjs';
 
     import {
         useAppearanceSettingsStore,
@@ -258,7 +266,6 @@
     } from '../stores';
     import { THEME_CONFIG, links, navDefinitions } from '../shared/constants';
     import { openExternalLink } from '../shared/utils';
-    import { useThemePrimaryColor } from '../composables/useElementTheme';
 
     import configRepository from '../service/config';
 
@@ -388,14 +395,14 @@
 
     const themes = computed(() => Object.keys(THEME_CONFIG));
 
-    const {
-        currentPrimary,
-        isApplying: isApplyingPrimaryColor,
-        applyCustomPrimaryColor,
-        initPrimaryColor,
-        colorFamilies,
-        selectPaletteColor
-    } = useThemePrimaryColor();
+    // const {
+    //     currentPrimary,
+    //     isApplying: isApplyingPrimaryColor,
+    //     applyCustomPrimaryColor,
+    //     initPrimaryColor,
+    //     colorFamilies,
+    //     selectPaletteColor
+    // } = useThemePrimaryColor();
 
     watch(
         () => locale.value,
@@ -495,9 +502,9 @@
         appearanceSettingsStore.setThemeMode(theme);
     };
 
-    const handleThemeColorSelect = async (colorFamily) => {
-        await selectPaletteColor(colorFamily);
-    };
+    // const handleThemeColorSelect = async (colorFamily) => {
+    //     await selectPaletteColor(colorFamily);
+    // };
 
     const openGithub = () => {
         openExternalLink('https://github.com/vrcx-team/VRCX');
@@ -680,7 +687,7 @@
     };
 
     onMounted(async () => {
-        await initPrimaryColor();
+        // await initPrimaryColor();
         await loadNavMenuConfig();
     });
 </script>
@@ -712,7 +719,6 @@
             inline-size: 14px;
             block-size: 14px;
             border-radius: 4px;
-            border: 1px solid var(--el-border-color-lighter);
             flex: none;
         }
 
@@ -726,7 +732,6 @@
 
         .nav-menu-theme__custom-label {
             font-size: 13px;
-            color: var(--el-text-color-regular);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;

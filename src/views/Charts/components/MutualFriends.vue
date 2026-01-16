@@ -754,7 +754,6 @@
         margin-top: 12px;
         padding: 12px 16px;
         border-radius: 6px;
-        border: 1px solid var(--el-border-color);
         background: transparent;
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -784,7 +783,6 @@
         margin-top: 12px;
         padding: 40px;
         text-align: center;
-        border: 1px dashed var(--el-border-color);
         border-radius: 8px;
         flex: 1;
         display: flex;
@@ -794,7 +792,6 @@
 
     .mutual-graph__force-description {
         margin: 0 0 12px 0;
-        color: var(--el-text-color-regular);
         font-size: 13px;
     }
 
@@ -817,7 +814,6 @@
     .mutual-graph__helper {
         margin-top: 4px;
         font-size: 12px;
-        color: var(--el-text-color-secondary);
         line-height: 1.4;
     }
 </style>

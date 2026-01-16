@@ -179,7 +179,6 @@
 
 <style scoped>
     .sidebar-tab-count {
-        color: var(--el-text-color-secondary);
         font-size: 12px;
         margin-left: 10px;
     }

@@ -49,17 +49,13 @@
             >{{ props.instance.userCount }}/{{ props.instance.capacity }}</span
         >
         <span v-if="props.friendcount" style="margin-left: 5px">({{ props.friendcount }})</span>
-        <span
-            v-if="state.isValidInstance && !props.instance.hasCapacityForYou"
-            style="margin-left: 5px; color: var(--el-color-danger)"
-            >{{ t('dialog.user.info.instance_full') }}</span
-        >
+        <span v-if="state.isValidInstance && !props.instance.hasCapacityForYou" style="margin-left: 5px">{{
+            t('dialog.user.info.instance_full')
+        }}</span>
         <span v-if="props.instance.queueSize" style="margin-left: 5px"
             >{{ t('dialog.user.info.instance_queue') }} {{ props.instance.queueSize }}</span
         >
-        <span v-if="state.isAgeGated" style="margin-left: 5px; color: var(--el-color-danger)">{{
-            t('dialog.user.info.instance_age_gated')
-        }}</span>
+        <span v-if="state.isAgeGated" style="margin-left: 5px">{{ t('dialog.user.info.instance_age_gated') }}</span>
     </div>
 </template>
 

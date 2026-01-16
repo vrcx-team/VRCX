@@ -187,7 +187,6 @@
     }
 
     .calendar-date-content.has-events {
-        background-color: var(--group-calendar-event-bg, color-mix(in oklch, var(--el-color-primary) 10%, transparent));
     }
 
     .calendar-event-badge {
@@ -197,23 +196,19 @@
         min-width: 14px;
         height: 14px;
         border-radius: 9px;
-        color: var(--el-color-white, #fff);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 10px;
-        box-shadow: var(--el-box-shadow-lighter);
         z-index: 10;
         padding: 0 5px;
         line-height: 14px;
     }
 
     .calendar-event-badge.has-following {
-        background-color: var(--group-calendar-badge-following, var(--el-color-success));
     }
 
     .calendar-event-badge.no-following {
-        background-color: var(--group-calendar-badge-normal, var(--el-color-primary));
     }
 
     .calendar-event-dot {
@@ -225,7 +220,6 @@
         height: 6px;
         border-radius: 9999px;
         background-color: var(--group-calendar-event-dot, #ef4444);
-        box-shadow: var(--el-box-shadow-lighter);
         z-index: 5;
         pointer-events: none;
     }

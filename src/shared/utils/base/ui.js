@@ -260,51 +260,9 @@ function formatJsonVars(ref) {
     return sortedRef;
 }
 
-function getNextDialogIndex() {
-    let z = 2000;
-    document.querySelectorAll('.el-overlay,.el-modal-dialog').forEach((v) => {
-        // @ts-ignore
-        if (v.style.display === 'none') {
-            return;
-        }
-        // @ts-ignore
-        const _z = Number(v.style.zIndex) || 0;
-        if (_z > z) {
-            z = _z;
-        }
-    });
-    return z + 1;
-}
-
 function changeHtmlLangAttribute(language) {
     const htmlElement = document.documentElement;
     htmlElement.setAttribute('lang', language);
-}
-
-// prevent flicker on login page
-function setLoginContainerStyle(isDarkMode) {
-    const loginContainerStyle = document.createElement('style');
-    loginContainerStyle.id = 'login-container-style';
-    loginContainerStyle.type = 'text/css';
-
-    const backgroundFallback = isDarkMode ? '#101010' : '#ffffff';
-    const inputBackgroundFallback = isDarkMode ? '#1f1f1f' : '#ffffff';
-    const borderFallback = isDarkMode ? '#3b3b3b' : '#DCDFE6';
-
-    loginContainerStyle.innerHTML = `
-    .x-login-container {
-        background-color: var(--el-bg-color-page, ${backgroundFallback}) !important;
-        transition: background-color 0.3s ease;
-    }
-
-    .x-login-container .el-input__wrapper {
-        background-color: var(--el-bg-color, ${inputBackgroundFallback}) !important;
-        border: 1px solid var(--el-border-color, ${borderFallback}) !important;
-        transition: background-color 0.3s ease, border-color 0.3s ease;
-    }
-        `;
-
-    document.head.insertBefore(loginContainerStyle, document.head.firstChild);
 }
 
 async function getThemeMode(configRepository) {
@@ -340,9 +298,7 @@ export {
     HueToHex,
     HSVtoRGB,
     formatJsonVars,
-    getNextDialogIndex,
     changeHtmlLangAttribute,
-    setLoginContainerStyle,
     getThemeMode,
     redirectToToolsTab
 };
