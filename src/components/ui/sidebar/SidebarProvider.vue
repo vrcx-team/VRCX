@@ -22,6 +22,14 @@
             type: Boolean,
             default: undefined
         },
+        width: {
+            type: [String, Number],
+            default: undefined
+        },
+        widthIcon: {
+            type: [String, Number],
+            default: undefined
+        },
         class: {
             type: [String, Array, Object],
             default: undefined
@@ -33,10 +41,18 @@
     const isMobile = useMediaQuery('(max-width: 768px)');
     const openMobile = ref(false);
 
-    const open = useVModel(props, 'open', emits, {
-        defaultValue: props.defaultOpen ?? false,
-        passive: props.open === undefined
-    });
+    let open;
+    if (props.open === undefined) {
+        open = useVModel(props, 'open', emits, {
+            defaultValue: props.defaultOpen ?? false,
+            passive: true
+        });
+    } else {
+        open = useVModel(props, 'open', emits, {
+            defaultValue: props.defaultOpen ?? false,
+            passive: false
+        });
+    }
 
     function setOpen(value) {
         open.value = value; // emits('update:open', value)
@@ -65,6 +81,23 @@
     // This makes it easier to style the sidebar with Tailwind classes.
     const state = computed(() => (open.value ? 'expanded' : 'collapsed'));
 
+    const normalizeCssSize = (value) => {
+        if (value === null || value === undefined) {
+            return undefined;
+        }
+        if (typeof value === 'number' && Number.isFinite(value)) {
+            return `${value}px`;
+        }
+        if (typeof value === 'string') {
+            const trimmed = value.trim();
+            return trimmed || undefined;
+        }
+        return undefined;
+    };
+
+    const cssSidebarWidth = computed(() => normalizeCssSize(props.width) ?? SIDEBAR_WIDTH);
+    const cssSidebarWidthIcon = computed(() => normalizeCssSize(props.widthIcon) ?? SIDEBAR_WIDTH_ICON);
+
     provideSidebarContext({
         state,
         open,
@@ -81,8 +114,8 @@
         <div
             data-slot="sidebar-wrapper"
             :style="{
-                '--sidebar-width': SIDEBAR_WIDTH,
-                '--sidebar-width-icon': SIDEBAR_WIDTH_ICON
+                '--sidebar-width': cssSidebarWidth,
+                '--sidebar-width-icon': cssSidebarWidthIcon
             }"
             :class="cn('group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full', props.class)"
             v-bind="$attrs">

@@ -1,46 +1,56 @@
 <template>
     <template v-if="watchState.isLoggedIn">
-        <ResizablePanelGroup
-            ref="panelGroupRef"
-            direction="horizontal"
-            class="group/main-layout flex-1 h-full min-w-0"
-            @layout="handleLayout">
-            <template #default="{ layout }">
-                <ResizablePanel ref="navPanelRef" :min-size="navMinSize" :max-size="navMaxSize" :order="1">
-                    <NavMenu></NavMenu>
-                </ResizablePanel>
-                <ResizableHandle
-                    :disabled="isNavCollapsed"
-                    class="opacity-0"
-                    @dragging="setIsDragging"></ResizableHandle>
-                <ResizablePanel :default-size="mainDefaultSize" :order="2">
-                    <RouterView v-slot="{ Component }">
-                        <KeepAlive exclude="Charts">
-                            <component :is="Component" />
-                        </KeepAlive>
-                    </RouterView>
-                </ResizablePanel>
+        <SidebarProvider
+            :open="sidebarOpen"
+            :width="navWidth"
+            width-icon="64"
+            class="relative flex-1 h-full min-w-0"
+            @update:open="handleSidebarOpenChange">
+            <NavMenu />
 
-                <template v-if="isSideBarTabShow">
-                    <ResizableHandle
-                        with-handle
-                        :class="[
-                            isAsideCollapsed(layout) ? 'opacity-100' : 'opacity-0',
-                            'z-20 [&>div]:-translate-x-1/2'
-                        ]"
-                        @dragging="setIsDragging"></ResizableHandle>
-                    <ResizablePanel
-                        ref="asidePanelRef"
-                        :default-size="asideDefaultSize"
-                        :max-size="asideMaxSize"
-                        :collapsed-size="0"
-                        collapsible
-                        :order="3">
-                        <Sidebar></Sidebar>
-                    </ResizablePanel>
-                </template>
-            </template>
-        </ResizablePanelGroup>
+            <div
+                v-show="sidebarOpen"
+                class="absolute top-0 bottom-0 z-30 w-1 cursor-col-resize select-none hover:bg-border/60"
+                :style="{ left: 'var(--sidebar-width)' }"
+                @pointerdown.prevent="startNavResize" />
+
+            <SidebarInset class="min-w-0">
+                <ResizablePanelGroup
+                    ref="panelGroupRef"
+                    direction="horizontal"
+                    class="group/main-layout flex-1 h-full min-w-0"
+                    @layout="handleLayout">
+                    <template #default="{ layout }">
+                        <ResizablePanel :default-size="mainDefaultSize" :order="1">
+                            <RouterView v-slot="{ Component }">
+                                <KeepAlive exclude="Charts">
+                                    <component :is="Component" />
+                                </KeepAlive>
+                            </RouterView>
+                        </ResizablePanel>
+
+                        <template v-if="isSideBarTabShow">
+                            <ResizableHandle
+                                with-handle
+                                :class="[
+                                    isAsideCollapsed(layout) ? 'opacity-100' : 'opacity-0',
+                                    'z-20 [&>div]:-translate-x-1/2'
+                                ]"
+                                @dragging="setIsDragging"></ResizableHandle>
+                            <ResizablePanel
+                                ref="asidePanelRef"
+                                :default-size="asideDefaultSize"
+                                :max-size="asideMaxSize"
+                                :collapsed-size="0"
+                                collapsible
+                                :order="2">
+                                <Sidebar></Sidebar>
+                            </ResizablePanel>
+                        </template>
+                    </template>
+                </ResizablePanelGroup>
+            </SidebarInset>
+        </SidebarProvider>
 
         <!-- ## Dialogs ## -->
         <UserDialog></UserDialog>
@@ -82,10 +92,13 @@
 </template>
 
 <script setup>
+    import { computed, onUnmounted, watch } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useRouter } from 'vue-router';
-    import { watch } from 'vue';
 
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
+    import { SidebarInset, SidebarProvider } from '../../components/ui/sidebar';
+    import { useAppearanceSettingsStore } from '../../stores';
     import { useAuthenticatedLayoutResizable } from '../../composables/useAuthenticatedLayoutResizable';
     import { watchState } from '../../service/watchState';
 
@@ -112,19 +125,64 @@
 
     const router = useRouter();
 
+    const appearanceSettingsStore = useAppearanceSettingsStore();
+    const { navWidth, isNavCollapsed } = storeToRefs(appearanceSettingsStore);
+
+    const sidebarOpen = computed(() => !isNavCollapsed.value);
+
+    const handleSidebarOpenChange = (open) => {
+        appearanceSettingsStore.setNavCollapsed(!open);
+    };
+
+    let isResizingNav = false;
+    let cleanupNavResize = null;
+
+    const startNavResize = (event) => {
+        if (!sidebarOpen.value) {
+            return;
+        }
+
+        isResizingNav = true;
+        const prevUserSelect = document.body.style.userSelect;
+        const prevCursor = document.body.style.cursor;
+        document.body.style.userSelect = 'none';
+        document.body.style.cursor = 'col-resize';
+
+        const handleMove = (e) => {
+            if (!isResizingNav) {
+                return;
+            }
+            appearanceSettingsStore.setNavWidth(e.clientX);
+        };
+
+        const handleUp = () => {
+            isResizingNav = false;
+            document.body.style.userSelect = prevUserSelect;
+            document.body.style.cursor = prevCursor;
+            window.removeEventListener('pointermove', handleMove);
+            window.removeEventListener('pointerup', handleUp);
+            cleanupNavResize = null;
+        };
+
+        window.addEventListener('pointermove', handleMove);
+        window.addEventListener('pointerup', handleUp);
+        cleanupNavResize = handleUp;
+        appearanceSettingsStore.setNavWidth(event.clientX);
+    };
+
+    onUnmounted(() => {
+        cleanupNavResize?.();
+    });
+
     const {
         panelGroupRef,
-        navPanelRef,
         asidePanelRef,
-        navMinSize,
-        navMaxSize,
         asideDefaultSize,
         asideMaxSize,
         mainDefaultSize,
         handleLayout,
         setIsDragging,
         isAsideCollapsed,
-        isNavCollapsed,
         isSideBarTabShow
     } = useAuthenticatedLayoutResizable();
 
