@@ -7,6 +7,7 @@ import {
     HueToHex,
     changeAppThemeStyle,
     changeHtmlLangAttribute,
+    getThemeMode,
     updateTrustColorClasses
 } from '../../shared/utils/base/ui';
 import { database } from '../../service/database';
@@ -41,7 +42,6 @@ export const useAppearanceSettingsStore = defineStore(
 
         const MAX_TABLE_PAGE_SIZE = 1000;
         const DEFAULT_TABLE_PAGE_SIZES = [10, 15, 20, 25, 50, 100];
-        // const { initPrimaryColor } = useElementTheme();
 
         const appLanguage = ref('en');
         const themeMode = ref('');
@@ -102,9 +102,10 @@ export const useAppearanceSettingsStore = defineStore(
         };
 
         async function initAppearanceSettings() {
+            const { initThemeMode, isDarkMode: initDarkMode } =
+                await getThemeMode(configRepository);
             const [
                 appLanguageConfig,
-                themeModeConfig,
                 displayVRCPlusIconsAsAvatarConfig,
                 hideNicknamesConfig,
                 showInstanceIdInLocationConfig,
@@ -131,7 +132,6 @@ export const useAppearanceSettingsStore = defineStore(
                 navIsCollapsedConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_appLanguage'),
-                configRepository.getString('VRCX_ThemeMode', 'system'),
                 configRepository.getBool('displayVRCPlusIconsAsAvatar', true),
                 configRepository.getBool('VRCX_hideNicknames', false),
                 configRepository.getBool(
@@ -201,9 +201,8 @@ export const useAppearanceSettingsStore = defineStore(
                 await changeAppLanguage(appLanguageConfig);
             }
 
-            themeMode.value = themeModeConfig;
-            setThemeMode(themeModeConfig);
-            // await initPrimaryColor();
+            themeMode.value = initThemeMode;
+            isDarkMode.value = initDarkMode;
 
             displayVRCPlusIconsAsAvatar.value =
                 displayVRCPlusIconsAsAvatarConfig;

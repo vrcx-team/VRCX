@@ -1,13 +1,94 @@
+import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { toast } from 'vue-sonner';
 
-import { THEME_CONFIG } from '../../constants';
+import { THEME_COLORS, THEME_CONFIG } from '../../constants';
 import { i18n } from '../../../plugin/i18n';
 import { router } from '../../../plugin/router';
 import { textToHex } from './string';
 import { useAppearanceSettingsStore } from '../../../stores';
 
 import configRepository from '../../../service/config.js';
+
+const THEME_COLOR_STORAGE_KEY = 'VRCX_themeColor';
+const THEME_COLOR_STYLE_ID = 'app-theme-color-style';
+const DEFAULT_THEME_COLOR_KEY = 'default';
+
+const themeColors = THEME_COLORS.map((theme) => ({
+    ...theme,
+    href: theme.file
+        ? new URL(`../../../styles/themes/${theme.file}`, import.meta.url).href
+        : null
+}));
+
+const currentThemeColor = ref(DEFAULT_THEME_COLOR_KEY);
+const isApplyingThemeColor = ref(false);
+
+function resolveThemeColor(themeKey) {
+    const normalized = String(themeKey).trim().toLowerCase();
+    return (
+        themeColors.find((theme) => theme.key === normalized) ||
+        themeColors.find((theme) => theme.key === DEFAULT_THEME_COLOR_KEY)
+    );
+}
+
+function applyThemeColorStyle(theme) {
+    const root = document.documentElement;
+    root.setAttribute('data-theme-color', theme.key);
+
+    let styleEl = document.getElementById(THEME_COLOR_STYLE_ID);
+    if (!theme.href) {
+        styleEl?.remove();
+        return;
+    }
+
+    if (!styleEl) {
+        styleEl = document.createElement('link');
+        styleEl.id = THEME_COLOR_STYLE_ID;
+        styleEl.rel = 'stylesheet';
+        document.head.appendChild(styleEl);
+    }
+
+    if (styleEl.getAttribute('href') !== theme.href) {
+        styleEl.setAttribute('href', theme.href);
+    }
+}
+
+async function applyThemeColor(themeKey, { persist = true } = {}) {
+    const resolved = resolveThemeColor(themeKey);
+    isApplyingThemeColor.value = true;
+    applyThemeColorStyle(resolved);
+    currentThemeColor.value = resolved.key;
+    if (persist) {
+        try {
+            await configRepository.setString(
+                THEME_COLOR_STORAGE_KEY,
+                resolved.key
+            );
+        } catch (error) {
+            console.warn('Failed to persist theme color', error);
+        }
+    }
+    isApplyingThemeColor.value = false;
+    return resolved;
+}
+
+async function initThemeColor() {
+    const storedKey = await configRepository.getString(THEME_COLOR_STORAGE_KEY);
+    const resolved = resolveThemeColor(storedKey || DEFAULT_THEME_COLOR_KEY);
+    applyThemeColorStyle(resolved);
+    currentThemeColor.value = resolved.key;
+}
+
+function useThemeColor() {
+    return {
+        themeColors,
+        currentThemeColor,
+        isApplyingThemeColor,
+        applyThemeColor,
+        initThemeColor
+    };
+}
 
 /**
  *
@@ -292,6 +373,9 @@ export {
     systemIsDarkMode,
     changeAppDarkStyle,
     changeAppThemeStyle,
+    useThemeColor,
+    applyThemeColor,
+    initThemeColor,
     updateTrustColorClasses,
     refreshCustomCss,
     refreshCustomScript,

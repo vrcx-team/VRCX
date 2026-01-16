@@ -128,7 +128,7 @@
                                 <span v-show="!isCollapsed">{{ t('nav_tooltip.manage') }}</span>
                             </SidebarMenuButton>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent side="right" align="start" class="w-64">
+                        <DropdownMenuContent side="right" align="start" class="w-54">
                             <div class="flex items-center gap-2 px-2 py-1.5">
                                 <img class="h-6 w-6 cursor-pointer" :src="vrcxLogo" alt="VRCX" @click="openGithub" />
                                 <div class="flex min-w-0 flex-col">
@@ -145,23 +145,20 @@
                             <DropdownMenuItem @click="handleSettingsClick">
                                 <span>{{ t('nav_tooltip.settings') }}</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem @click="handleOpenCustomNavDialog">
-                                <span>{{ t('nav_menu.custom_nav.header') }}</span>
-                            </DropdownMenuItem>
 
                             <DropdownMenuSub>
                                 <DropdownMenuSubTrigger>
                                     <span>{{ t('view.settings.appearance.appearance.theme_mode') }}</span>
                                 </DropdownMenuSubTrigger>
-                                <DropdownMenuSubContent side="right" align="start" class="w-72">
-                                    <DropdownMenuItem
+                                <DropdownMenuSubContent side="right" align="start" class="w-54">
+                                    <DropdownMenuCheckboxItem
                                         v-for="theme in themes"
                                         :key="theme"
-                                        :class="themeMode === theme ? 'font-medium' : undefined"
-                                        @click="handleThemeSelect(theme)">
-                                        <span class="flex-1">{{ themeDisplayName(theme) }}</span>
-                                        <span v-if="themeMode === theme" class="text-muted-foreground">✓</span>
-                                    </DropdownMenuItem>
+                                        :model-value="themeMode === theme"
+                                        indicator-position="right"
+                                        @select="handleThemeSelect(theme)">
+                                        <span>{{ themeDisplayName(theme) }}</span>
+                                    </DropdownMenuCheckboxItem>
                                     <DropdownMenuSeparator />
 
                                     <DropdownMenuSub>
@@ -171,26 +168,35 @@
                                         <DropdownMenuSubContent
                                             side="right"
                                             align="start"
-                                            class="w-72 max-h-80 overflow-auto">
-                                            <DropdownMenuItem
-                                                v-for="color in colorFamilies"
-                                                :key="color.name"
-                                                :disabled="isApplyingPrimaryColor"
-                                                @click="handleThemeColorSelect(color)">
+                                            class="w-54 max-h-80 overflow-auto">
+                                            <DropdownMenuCheckboxItem
+                                                v-for="theme in themeColors"
+                                                :key="theme.key"
+                                                :model-value="currentThemeColor === theme.key"
+                                                :disabled="isApplyingThemeColor"
+                                                indicator-position="right"
+                                                @select="handleThemeColorSelect(theme)">
                                                 <span class="flex items-center gap-2 min-w-0 flex-1">
                                                     <span
                                                         class="h-3 w-3 shrink-0 rounded-sm"
-                                                        :style="{ backgroundColor: color.base }" />
-                                                    <span class="truncate">{{ color.name }}</span>
+                                                        :style="{ backgroundColor: theme.swatch }" />
+                                                    <span class="truncate">{{ theme.label }}</span>
                                                 </span>
-                                                <span v-if="currentPrimary === color.base" class="text-muted-foreground"
-                                                    >✓</span
-                                                >
-                                            </DropdownMenuItem>
+                                            </DropdownMenuCheckboxItem>
                                         </DropdownMenuSubContent>
                                     </DropdownMenuSub>
                                 </DropdownMenuSubContent>
                             </DropdownMenuSub>
+
+                            <DropdownMenuCheckboxItem
+                                :model-value="compactTableMode"
+                                indicator-position="right"
+                                @update:modelValue="handleCompactModeToggle">
+                                <span>{{ t('view.settings.appearance.appearance.compact_table_mode') }}</span>
+                            </DropdownMenuCheckboxItem>
+                            <DropdownMenuItem @click="handleOpenCustomNavDialog">
+                                <span>{{ t('nav_menu.custom_nav.header') }}</span>
+                            </DropdownMenuItem>
 
                             <DropdownMenuSeparator />
                             <DropdownMenuItem variant="destructive" @click="handleLogoutClick">
@@ -198,6 +204,15 @@
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
+                </SidebarMenuItem>
+
+                <SidebarMenuItem>
+                    <SidebarMenuButton :tooltip="t('nav_tooltip.toggle_theme')" @click="handleThemeToggle">
+                        <i
+                            :class="currentThemeIsDark ? 'ri-moon-line' : 'ri-sun-line'"
+                            class="inline-flex size-6 items-center justify-center text-[19px]" />
+                        <span v-show="!isCollapsed">{{ t('nav_tooltip.toggle_theme') }}</span>
+                    </SidebarMenuButton>
                 </SidebarMenuItem>
 
                 <SidebarMenuItem>
@@ -238,6 +253,7 @@
     } from '@/components/ui/sidebar';
     import {
         DropdownMenu,
+        DropdownMenuCheckboxItem,
         DropdownMenuContent,
         DropdownMenuItem,
         DropdownMenuLabel,
@@ -253,6 +269,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { useRouter } from 'vue-router';
+    import { useThemeColor } from '@/shared/utils/base/ui';
 
     import dayjs from 'dayjs';
 
@@ -307,15 +324,19 @@
     const DEFAULT_FOLDER_ICON = 'ri-menu-fold-line';
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
-    const { pendingVRCXUpdate, pendingVRCXInstall, updateInProgress, updateProgress, branch, appVersion } =
-        storeToRefs(VRCXUpdaterStore);
-    const { showVRCXUpdateDialog, updateProgressText, showChangeLogDialog } = VRCXUpdaterStore;
+    const { pendingVRCXUpdate, pendingVRCXInstall, appVersion } = storeToRefs(VRCXUpdaterStore);
+    const { showVRCXUpdateDialog, showChangeLogDialog } = VRCXUpdaterStore;
     const uiStore = useUiStore();
     const { notifiedMenus } = storeToRefs(uiStore);
     const { directAccessPaste } = useSearchStore();
     const { logout } = useAuthStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const { themeMode, isNavCollapsed: isCollapsed } = storeToRefs(appearanceSettingsStore);
+    const {
+        themeMode,
+        compactTableMode,
+        isDarkMode,
+        isNavCollapsed: isCollapsed
+    } = storeToRefs(appearanceSettingsStore);
     const navLayout = ref([]);
     const navLayoutReady = ref(false);
 
@@ -394,15 +415,8 @@
     const vrcxLogo = new URL('../../images/VRCX.png', import.meta.url).href;
 
     const themes = computed(() => Object.keys(THEME_CONFIG));
-
-    // const {
-    //     currentPrimary,
-    //     isApplying: isApplyingPrimaryColor,
-    //     applyCustomPrimaryColor,
-    //     initPrimaryColor,
-    //     colorFamilies,
-    //     selectPaletteColor
-    // } = useThemePrimaryColor();
+    const { themeColors, currentThemeColor, isApplyingThemeColor, applyThemeColor, initThemeColor } = useThemeColor();
+    const currentThemeIsDark = computed(() => isDarkMode.value);
 
     watch(
         () => locale.value,
@@ -502,9 +516,20 @@
         appearanceSettingsStore.setThemeMode(theme);
     };
 
-    // const handleThemeColorSelect = async (colorFamily) => {
-    //     await selectPaletteColor(colorFamily);
-    // };
+    const handleThemeToggle = () => {
+        appearanceSettingsStore.setThemeMode(isDarkMode.value ? 'light' : 'dark');
+    };
+
+    const handleCompactModeToggle = () => {
+        appearanceSettingsStore.setCompactTableMode();
+    };
+
+    const handleThemeColorSelect = async (theme) => {
+        if (!theme) {
+            return;
+        }
+        await applyThemeColor(theme.key);
+    };
 
     const openGithub = () => {
         openExternalLink('https://github.com/vrcx-team/VRCX');
@@ -687,63 +712,12 @@
     };
 
     onMounted(async () => {
-        // await initPrimaryColor();
+        await initThemeColor();
         await loadNavMenuConfig();
     });
 </script>
 
 <style scoped>
-    .nav-menu-container {
-        position: relative;
-        width: 100%;
-        min-width: 64px;
-        height: 100%;
-        display: flex;
-
-        .nav-menu-theme__label--swatch {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 0;
-        }
-
-        .nav-menu-theme__label-text {
-            min-width: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            text-transform: capitalize;
-        }
-
-        .nav-menu-theme__swatch {
-            inline-size: 14px;
-            block-size: 14px;
-            border-radius: 4px;
-            flex: none;
-        }
-
-        .nav-menu-theme__custom {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 6px 10px;
-            border-radius: 6px;
-        }
-
-        .nav-menu-theme__custom-label {
-            font-size: 13px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            padding-right: 10px;
-        }
-    }
-
-    .nav-menu-theme--colors {
-        max-height: 360px;
-        overflow: hidden auto;
-    }
-
     .notify::after {
         position: absolute;
         top: 45%;

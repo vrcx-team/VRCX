@@ -166,10 +166,6 @@
                     </ListboxRoot>
                 </Popover>
             </div>
-            <simple-switch
-                :label="t('view.settings.appearance.appearance.compact_table_mode')"
-                :value="compactTableMode"
-                @change="setCompactTableMode" />
             <div class="options-container-item">
                 <Button size="sm" variant="outline" @click="promptMaxTableSizeDialog">{{
                     t('view.settings.appearance.appearance.table_max_size')
@@ -467,8 +463,7 @@
         randomUserColours,
         trustColor,
         notificationIconDot,
-        tablePageSizes,
-        compactTableMode
+        tablePageSizes
     } = storeToRefs(appearanceSettingsStore);
 
     const appLanguageDisplayName = computed(() => getLanguageName(String(appLanguage.value)));
@@ -497,8 +492,7 @@
         changeAppLanguage,
         promptMaxTableSizeDialog,
         setNotificationIconDot,
-        setTablePageSizes,
-        setCompactTableMode
+        setTablePageSizes
     } = appearanceSettingsStore;
 
     const zoomLevel = ref(100);

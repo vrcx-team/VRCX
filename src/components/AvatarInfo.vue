@@ -1,6 +1,6 @@
 <template>
-    <div @click="confirm" class="cursor-pointer w-fit align-top">
-        <span v-if="avatarType" :class="color" class="mr-2">
+    <div @click="confirm" class="cursor-pointer w-fit align-top flex items-center">
+        <span v-if="avatarType" :class="color" class="mr-1.5">
             <Lock v-if="avatarType === '(own)'" class="h-4 w-4" />
             <Unlock v-else-if="avatarType === '(public)'" class="h-4 w-4" />
         </span>

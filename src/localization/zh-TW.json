@@ -574,7 +574,7 @@
                     "table_page_sizes": "表格每頁筆數",
                     "table_page_sizes_error": "每頁筆數必須是 1 到 1000 之間的數字",
                     "show_notification_icon_dot": "顯示通知圖示提示點",
-                    "compact_table_mode": "精簡表格模式"
+                    "compact_table_mode": "精簡模式"
                 },
                 "timedate": {
                     "header": "時間 / 日期",

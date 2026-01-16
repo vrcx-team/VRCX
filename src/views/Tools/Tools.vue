@@ -220,7 +220,6 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-
     import { useFriendStore, useGalleryStore } from '../../stores';
 
     const GroupCalendarDialog = defineAsyncComponent(() => import('./dialogs/GroupCalendarDialog.vue'));

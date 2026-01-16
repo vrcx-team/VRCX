@@ -38,7 +38,6 @@
     import { TabsUnderline } from '@/components/ui/tabs';
     import { useI18n } from 'vue-i18n';
 
-
     import AdvancedTab from './components/Tabs/AdvancedTab.vue';
     import AppearanceTab from './components/Tabs/AppearanceTab.vue';
     import DiscordPresenceTab from './components/Tabs/DiscordPresenceTab.vue';

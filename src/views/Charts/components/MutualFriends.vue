@@ -166,7 +166,6 @@
     import { database } from '../../../service/database';
     import { userRequest } from '../../../api';
 
-
     import configRepository from '../../../service/config';
 
     import * as echarts from 'echarts';

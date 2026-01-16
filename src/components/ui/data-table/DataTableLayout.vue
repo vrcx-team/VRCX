@@ -271,6 +271,7 @@
         const meta = columnDef?.meta ?? {};
         const pinned = getPinnedState(cell?.column);
         return joinClasses(
+            'py-1.5',
             pinned && 'sticky bg-background z-20',
             isSpacer(cell.column) && 'p-0',
             resolveClassValue(meta.class, cell?.getContext?.()),

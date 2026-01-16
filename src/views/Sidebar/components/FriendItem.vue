@@ -14,7 +14,9 @@
                     >{{ friend.ref.displayName }}{{ isGroupByInstance && friend.isVIP ? ' ⭐' : '' }}</span
                 >
 
-                <span v-if="isFriendActiveOrOffline" class="block truncate text-xs">{{ friend.ref.statusDescription }}</span>
+                <span v-if="isFriendActiveOrOffline" class="block truncate text-xs">{{
+                    friend.ref.statusDescription
+                }}</span>
                 <template v-else>
                     <div v-if="friend.pendingOffline" class="text-xs">
                         <AlertTriangle class="inline-block" /> {{ t('side_panel.pending_offline') }}
@@ -30,7 +32,12 @@
                                 " />
                         </div>
                     </template>
-                    <Location v-else class="text-xs" :location="locationProp" :traveling="travelingProp" :link="false" />
+                    <Location
+                        v-else
+                        class="text-xs"
+                        :location="locationProp"
+                        :traveling="travelingProp"
+                        :link="false" />
                 </template>
             </div>
         </template>

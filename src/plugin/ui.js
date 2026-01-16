@@ -3,6 +3,7 @@ import {
     changeAppThemeStyle,
     changeHtmlLangAttribute,
     getThemeMode,
+    initThemeColor,
     refreshCustomCss
     // setLoginContainerStyle
 } from '../shared/utils/base/ui';
@@ -25,6 +26,7 @@ export async function initUi() {
             await getThemeMode(configRepository);
         // setLoginContainerStyle(isDarkMode);
         changeAppThemeStyle(initThemeMode);
+        await initThemeColor();
     } catch (error) {
         console.error('Error initializing locale and theme:', error);
     }
