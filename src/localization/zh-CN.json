@@ -572,8 +572,7 @@
                     "table_max_size": "最大显示记录",
                     "table_page_sizes": "显示记录大小",
                     "table_page_sizes_error": "记录大小必须是 1 到 1000 之间的数字",
-                    "show_notification_icon_dot": "显示托盘通知",
-                    "compact_table_mode": "紧凑模式"
+                    "show_notification_icon_dot": "显示托盘通知"
                 },
                 "timedate": {
                     "header": "时间 / 日期",

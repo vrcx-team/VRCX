@@ -579,7 +579,10 @@
                     "table_page_sizes": "Table Page Sizes",
                     "table_page_sizes_error": "Page size must be a number between 1 and 1000",
                     "show_notification_icon_dot": "Show Tray Notification Dot",
-                    "compact_table_mode": "Compact Mode"
+                    "table_density": "Table Density",
+                    "table_density_standard": "Standard",
+                    "table_density_comfortable": "Comfortable",
+                    "table_density_compact": "Compact"
                 },
                 "timedate": {
                     "header": "Time/Date",

@@ -3,7 +3,7 @@
         <SidebarProvider
             :open="sidebarOpen"
             :width="navWidth"
-            width-icon="64"
+            :width-icon="64"
             class="relative flex-1 h-full min-w-0"
             @update:open="handleSidebarOpenChange">
             <NavMenu />

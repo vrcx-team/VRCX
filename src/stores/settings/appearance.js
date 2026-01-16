@@ -73,7 +73,7 @@ export const useAppearanceSettingsStore = defineStore(
         const hideUserMemos = ref(false);
         const hideUnfriends = ref(false);
         const randomUserColours = ref(false);
-        const compactTableMode = ref(false);
+        const tableDensity = ref('standard');
         const TRUST_COLOR_DEFAULTS = Object.freeze({
             untrusted: '#CCCCCC',
             basic: '#1778FF',
@@ -126,6 +126,7 @@ export const useAppearanceSettingsStore = defineStore(
                 hideUserMemosConfig,
                 hideUnfriendsConfig,
                 randomUserColoursConfig,
+                tableDensityConfig,
                 compactTableModeConfig,
                 trustColorConfig,
                 notificationIconDotConfig,
@@ -177,6 +178,7 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getBool('VRCX_hideUserMemos', false),
                 configRepository.getBool('VRCX_hideUnfriends', false),
                 configRepository.getBool('VRCX_randomUserColours', false),
+                configRepository.getString('VRCX_tableDensity'),
                 configRepository.getBool('VRCX_compactTableMode', false),
                 configRepository.getString(
                     'VRCX_trustColor',
@@ -250,8 +252,18 @@ export const useAppearanceSettingsStore = defineStore(
             hideUnfriends.value = hideUnfriendsConfig;
             randomUserColours.value = randomUserColoursConfig;
             notificationIconDot.value = notificationIconDotConfig;
-            compactTableMode.value = compactTableModeConfig;
-            applyCompactTableMode(compactTableMode.value);
+            const resolvedTableDensity = normalizeTableDensity(
+                tableDensityConfig ||
+                    (compactTableModeConfig ? 'compact' : 'standard')
+            );
+            tableDensity.value = resolvedTableDensity;
+            applyTableDensity(tableDensity.value);
+            if (!tableDensityConfig) {
+                configRepository.setString(
+                    'VRCX_tableDensity',
+                    tableDensity.value
+                );
+            }
             isNavCollapsed.value = navIsCollapsedConfig;
 
             await configRepository.remove('VRCX_navWidth');
@@ -649,13 +661,22 @@ export const useAppearanceSettingsStore = defineStore(
                 randomUserColours.value
             );
         }
-        function setCompactTableMode() {
-            compactTableMode.value = !compactTableMode.value;
-            applyCompactTableMode(compactTableMode.value);
-            configRepository.setBool(
-                'VRCX_compactTableMode',
-                compactTableMode.value
-            );
+        function normalizeTableDensity(value) {
+            if (
+                value === 'compact' ||
+                value === 'comfortable' ||
+                value === 'standard'
+            ) {
+                return value;
+            }
+            return 'standard';
+        }
+
+        function setTableDensity(density) {
+            const normalized = normalizeTableDensity(density);
+            tableDensity.value = normalized;
+            applyTableDensity(tableDensity.value);
+            configRepository.setString('VRCX_tableDensity', tableDensity.value);
         }
         /**
          * @param {object} color
@@ -784,12 +805,14 @@ export const useAppearanceSettingsStore = defineStore(
             await userColourInit();
         }
 
-        function applyCompactTableMode(isCompact) {
-            const className = 'is-compact-table';
-            if (isCompact) {
-                document.documentElement.classList.add(className);
-            } else {
-                document.documentElement.classList.remove(className);
+        function applyTableDensity(density) {
+            const classList = document.documentElement.classList;
+            classList.remove('is-compact-table', 'is-comfortable-table');
+            if (density === 'compact') {
+                classList.add('is-compact-table');
+            }
+            if (density === 'comfortable') {
+                classList.add('is-comfortable-table');
             }
         }
 
@@ -820,7 +843,7 @@ export const useAppearanceSettingsStore = defineStore(
             hideUserMemos,
             hideUnfriends,
             randomUserColours,
-            compactTableMode,
+            tableDensity,
             trustColor,
             currentCulture,
             isSideBarTabShow,
@@ -851,7 +874,7 @@ export const useAppearanceSettingsStore = defineStore(
             setHideUserMemos,
             setHideUnfriends,
             setRandomUserColours,
-            setCompactTableMode,
+            setTableDensity,
             setTrustColor,
             tryInitUserColours,
             updateTrustColor,
@@ -860,7 +883,7 @@ export const useAppearanceSettingsStore = defineStore(
             changeAppLanguage,
             promptMaxTableSizeDialog,
             setNotificationIconDot,
-            applyCompactTableMode,
+            applyTableDensity,
             setNavCollapsed,
             toggleNavCollapsed,
             setThemeMode

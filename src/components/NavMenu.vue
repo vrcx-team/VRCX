@@ -186,12 +186,37 @@
                                 </DropdownMenuSubContent>
                             </DropdownMenuSub>
 
-                            <DropdownMenuCheckboxItem
-                                :model-value="compactTableMode"
-                                indicator-position="right"
-                                @update:modelValue="handleCompactModeToggle">
-                                <span>{{ t('view.settings.appearance.appearance.compact_table_mode') }}</span>
-                            </DropdownMenuCheckboxItem>
+                            <DropdownMenuSub>
+                                <DropdownMenuSubTrigger>
+                                    <span>{{ t('view.settings.appearance.appearance.table_density') }}</span>
+                                </DropdownMenuSubTrigger>
+                                <DropdownMenuSubContent side="right" align="start" class="w-54">
+                                    <DropdownMenuCheckboxItem
+                                        :model-value="tableDensity === 'standard'"
+                                        indicator-position="right"
+                                        @select="handleTableDensitySelect('standard')">
+                                        <span>{{
+                                            t('view.settings.appearance.appearance.table_density_standard')
+                                        }}</span>
+                                    </DropdownMenuCheckboxItem>
+                                    <DropdownMenuCheckboxItem
+                                        :model-value="tableDensity === 'comfortable'"
+                                        indicator-position="right"
+                                        @select="handleTableDensitySelect('comfortable')">
+                                        <span>{{
+                                            t('view.settings.appearance.appearance.table_density_comfortable')
+                                        }}</span>
+                                    </DropdownMenuCheckboxItem>
+                                    <DropdownMenuCheckboxItem
+                                        :model-value="tableDensity === 'compact'"
+                                        indicator-position="right"
+                                        @select="handleTableDensitySelect('compact')">
+                                        <span>{{
+                                            t('view.settings.appearance.appearance.table_density_compact')
+                                        }}</span>
+                                    </DropdownMenuCheckboxItem>
+                                </DropdownMenuSubContent>
+                            </DropdownMenuSub>
                             <DropdownMenuItem @click="handleOpenCustomNavDialog">
                                 <span>{{ t('nav_menu.custom_nav.header') }}</span>
                             </DropdownMenuItem>
@@ -329,12 +354,7 @@
     const { directAccessPaste } = useSearchStore();
     const { logout } = useAuthStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const {
-        themeMode,
-        compactTableMode,
-        isDarkMode,
-        isNavCollapsed: isCollapsed
-    } = storeToRefs(appearanceSettingsStore);
+    const { themeMode, tableDensity, isDarkMode, isNavCollapsed: isCollapsed } = storeToRefs(appearanceSettingsStore);
     const navLayout = ref([]);
     const navLayoutReady = ref(false);
 
@@ -517,8 +537,8 @@
         appearanceSettingsStore.setThemeMode(isDarkMode.value ? 'light' : 'dark');
     };
 
-    const handleCompactModeToggle = () => {
-        appearanceSettingsStore.setCompactTableMode();
+    const handleTableDensitySelect = (density) => {
+        appearanceSettingsStore.setTableDensity(density);
     };
 
     const handleThemeColorSelect = async (theme) => {
