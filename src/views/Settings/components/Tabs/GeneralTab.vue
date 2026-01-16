@@ -269,20 +269,22 @@
             </div>
         </div>
         <div class="options-container">
-            <span class="header">Avatar Safety</span>
+            <span class="header">{{ t('view.settings.general.avatarSafety.header') }}</span>
             <simple-switch
-                label="Enable Avatar Safety"
+                :label="t('view.settings.general.avatarSafety.enable')"
                 :value="avatarSafetyEnabled"
-                tooltip="Automatically switches to a safe avatar when entering non-age-gated instances while wearing NSFW avatars."
+                :tooltip="t('view.settings.general.avatarSafety.tooltip')"
                 @change="setAvatarSafetyEnabled" />
             <div class="options-container-item">
-                <span class="name">Safe Avatar ID</span>
+                <span class="name">{{ t('view.settings.general.avatarSafety.safeAvatarId') }}</span>
                 <div class="flex gap-2" style="margin-top: 5px">
                     <Input
                         :model-value="avatarSafetySafeAvatarId"
                         placeholder="avtr_..."
                         @update:model-value="setAvatarSafetySafeAvatarId" />
-                    <Button size="sm" variant="outline" @click="setAvatarToCurrent">Use Current</Button>
+                    <Button size="sm" variant="outline" @click="setAvatarToCurrent">{{
+                        t('view.settings.general.avatarSafety.useCurrent')
+                    }}</Button>
                 </div>
             </div>
         </div>

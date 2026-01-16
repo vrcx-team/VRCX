@@ -534,6 +534,13 @@
                     "auto_invite_request_accept_favs": "All Favorites",
                     "auto_invite_request_accept_selected_favs": "VRCX Favorites"
                 },
+                "avatarSafety": {
+                    "header": "Avatar Safety",
+                    "enable": "Enable Avatar Safety",
+                    "tooltip": "Automatically switches to a safe avatar when entering non-age-gated public instances while wearing NSFW avatars.",
+                    "safeAvatarId": "Safe Avatar ID",
+                    "useCurrent": "Use Current"
+                },
                 "legal_notice": {
                     "header": "Legal Notice",
                     "info": "VRCX is an assistant application for VRChat that provides information about and managing friendship. This application makes use of the unofficial VRChat API SDK.",
