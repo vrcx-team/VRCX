@@ -70,6 +70,69 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         externalNotifierVersion: 0
     });
 
+    watch(
+        [
+            () => userStore?.currentUser?.currentAvatar,
+            () => locationStore?.lastLocation?.location
+        ],
+        async ([newAvatar, newLocation], [oldAvatar, oldLocation]) => {
+            const { useGeneralSettingsStore } =
+                await import('./settings/general');
+            const genSettings = useGeneralSettingsStore();
+
+            if (
+                !genSettings?.avatarSafetyEnabled ||
+                !genSettings?.avatarSafetySafeAvatarId ||
+                !newLocation ||
+                newLocation === 'traveling'
+            ) {
+                return;
+            }
+
+            const isPlainPublic =
+                !newLocation.includes('~private') &&
+                !newLocation.includes('~friends') &&
+                !newLocation.includes('~hidden');
+
+            const groupAccessTypeMatch = newLocation.match(
+                /~groupAccessType\(([^)]+)\)/
+            );
+
+            const groupAccessType = groupAccessTypeMatch
+                ? groupAccessTypeMatch[1]
+                : null;
+
+            const isGroupInstance =
+                newLocation.includes('~group(') || groupAccessType !== null;
+
+            const isGroupPublic = groupAccessType === 'public';
+
+            const allow = (isPlainPublic && !isGroupInstance) || isGroupPublic;
+
+            if (!allow) return;
+            const currentAvatarTags =
+                userStore?.currentUser?.currentAvatarTags || [];
+            const isAvatarNSFW = currentAvatarTags.includes('content_sex');
+            const isInstanceAgeGated = newLocation.includes('~ageGate~');
+
+            if (isAvatarNSFW && !isInstanceAgeGated) {
+                if (genSettings.avatarSafetySafeAvatarId !== newAvatar) {
+                    const isWorldChange = newLocation !== oldLocation;
+                    const waitTime = isWorldChange ? 15000 : 2000;
+
+                    await new Promise((resolve) =>
+                        setTimeout(resolve, waitTime)
+                    );
+
+                    avatarStore.selectAvatarWithoutConfirmation(
+                        genSettings.avatarSafetySafeAvatarId
+                    );
+                }
+            }
+        },
+        { immediate: false }
+    );
+
     const currentlyDroppingFile = ref(null);
     const isRegistryBackupDialogVisible = ref(false);
     const ipcEnabled = ref(false);

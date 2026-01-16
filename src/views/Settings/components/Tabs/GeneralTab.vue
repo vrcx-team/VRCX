@@ -269,6 +269,24 @@
             </div>
         </div>
         <div class="options-container">
+            <span class="header">Avatar Safety</span>
+            <simple-switch
+                label="Enable Avatar Safety"
+                :value="avatarSafetyEnabled"
+                tooltip="Automatically switches to a safe avatar when entering non-age-gated instances while wearing NSFW avatars."
+                @change="setAvatarSafetyEnabled" />
+            <div class="options-container-item">
+                <span class="name">Safe Avatar ID</span>
+                <div class="flex gap-2" style="margin-top: 5px">
+                    <Input
+                        :model-value="avatarSafetySafeAvatarId"
+                        placeholder="avtr_..."
+                        @update:model-value="setAvatarSafetySafeAvatarId" />
+                    <Button size="sm" variant="outline" @click="setAvatarToCurrent">Use Current</Button>
+                </div>
+            </div>
+        </div>
+        <div class="options-container">
             <span class="header">{{ t('view.settings.general.contributors.header') }}</span>
             <div class="options-container-item">
                 <img
@@ -304,11 +322,12 @@
     import { computed, defineAsyncComponent, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InfoFilled } from '@element-plus/icons-vue';
+    import { Input } from '@/components/ui/input';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../../components/ui/select';
-    import { useFavoriteStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '../../../../stores';
+    import { useFavoriteStore, useGeneralSettingsStore, useUserStore, useVRCXUpdaterStore } from '../../../../stores';
     import { RadioGroup, RadioGroupItem } from '../../../../components/ui/radio-group';
     import { ToggleGroup, ToggleGroupItem } from '../../../../components/ui/toggle-group';
     import { links } from '../../../../shared/constants';
@@ -321,6 +340,7 @@
     const generalSettingsStore = useGeneralSettingsStore();
     const vrcxUpdaterStore = useVRCXUpdaterStore();
     const favoriteStore = useFavoriteStore();
+    const userStore = useUserStore();
 
     const {
         isStartAtWindowsStartup,
@@ -337,7 +357,9 @@
         autoStateChangeCompanyStatus,
         autoStateChangeInstanceTypes,
         autoStateChangeNoFriends,
-        autoAcceptInviteRequests
+        autoAcceptInviteRequests,
+        avatarSafetyEnabled,
+        avatarSafetySafeAvatarId
     } = storeToRefs(generalSettingsStore);
 
     const {
@@ -355,6 +377,8 @@
         setAutoStateChangeInstanceTypes,
         setAutoStateChangeNoFriends,
         setAutoAcceptInviteRequests,
+        setAvatarSafetyEnabled,
+        setAvatarSafetySafeAvatarId,
         setLocalFavoriteFriendsGroups,
         promptProxySettings
     } = generalSettingsStore;
@@ -394,5 +418,8 @@
         if (nextValue !== autoStateChangeNoFriends.value) {
             setAutoStateChangeNoFriends();
         }
+    }
+    function setAvatarToCurrent() {
+        setAvatarSafetySafeAvatarId(userStore.currentUser.currentAvatar);
     }
 </script>

@@ -33,6 +33,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     const autoStateChangeInstanceTypes = ref([]);
     const autoStateChangeNoFriends = ref(false);
     const autoAcceptInviteRequests = ref('Off');
+    const avatarSafetyEnabled = ref(false);
+    const avatarSafetySafeAvatarId = ref('');
 
     async function initGeneralSettings() {
         const [
@@ -51,7 +53,9 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             autoStateChangeCompanyStatusConfig,
             autoStateChangeInstanceTypesStrConfig,
             autoStateChangeNoFriendsConfig,
-            autoAcceptInviteRequestsConfig
+            autoAcceptInviteRequestsConfig,
+            avatarSafetyEnabledConfig,
+            avatarSafetySafeAvatarIdConfig
         ] = await Promise.all([
             configRepository.getBool('VRCX_StartAtWindowsStartup', false),
             VRCXStorage.Get('VRCX_StartAsMinimizedState'),
@@ -77,8 +81,13 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
                 '[]'
             ),
             configRepository.getBool('VRCX_autoStateChangeNoFriends', false),
-            configRepository.getString('VRCX_autoAcceptInviteRequests', 'Off')
+            configRepository.getString('VRCX_autoAcceptInviteRequests', 'Off'),
+            configRepository.getBool('VRCX_avatarSafetyEnabled', false),
+            configRepository.getString('VRCX_avatarSafetySafeAvatarId', '')
         ]);
+
+        avatarSafetyEnabled.value = avatarSafetyEnabledConfig;
+        avatarSafetySafeAvatarId.value = avatarSafetySafeAvatarIdConfig;
 
         isStartAtWindowsStartup.value = isStartAtWindowsStartupConfig;
         isStartAsMinimizedState.value =
@@ -230,6 +239,18 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         );
     }
 
+    function setAvatarSafetyEnabled() {
+        avatarSafetyEnabled.value = !avatarSafetyEnabled.value;
+        configRepository.setBool(
+            'VRCX_avatarSafetyEnabled',
+            avatarSafetyEnabled.value
+        );
+    }
+    function setAvatarSafetySafeAvatarId(value) {
+        avatarSafetySafeAvatarId.value = value;
+        configRepository.setString('VRCX_avatarSafetySafeAvatarId', value);
+    }
+
     function promptProxySettings() {
         ElMessageBox.prompt(
             t('prompt.proxy_settings.description'),
@@ -287,6 +308,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         autoStateChangeInstanceTypes,
         autoStateChangeNoFriends,
         autoAcceptInviteRequests,
+        avatarSafetyEnabled,
+        avatarSafetySafeAvatarId,
 
         setIsStartAtWindowsStartup,
         setIsStartAsMinimizedState,
@@ -303,6 +326,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         setAutoStateChangeInstanceTypes,
         setAutoStateChangeNoFriends,
         setAutoAcceptInviteRequests,
-        promptProxySettings
+        promptProxySettings,
+        setAvatarSafetyEnabled,
+        setAvatarSafetySafeAvatarId
     };
 });
