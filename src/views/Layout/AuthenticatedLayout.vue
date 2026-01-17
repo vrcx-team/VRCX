@@ -3,7 +3,7 @@
         <SidebarProvider
             :open="sidebarOpen"
             :width="navWidth"
-            :width-icon="64"
+            :width-icon="48"
             class="relative flex-1 h-full min-w-0"
             @update:open="handleSidebarOpenChange">
             <NavMenu />
@@ -14,7 +14,7 @@
                 :style="{ left: 'var(--sidebar-width)' }"
                 @pointerdown.prevent="startNavResize" />
 
-            <SidebarInset class="min-w-0">
+            <SidebarInset class="min-w-0 bg-sidebar">
                 <ResizablePanelGroup
                     ref="panelGroupRef"
                     direction="horizontal"

@@ -27,12 +27,16 @@
                                                 item.ref.displayName
                                             }}</span>
                                             <span v-if="!item.ref.isFriend" class="block truncate text-xs"></span>
-                                            <span v-else-if="item.ref.state === 'offline'" class="block truncate text-xs">{{
-                                                t('side_panel.search_result_active')
-                                            }}</span>
-                                            <span v-else-if="item.ref.state === 'active'" class="block truncate text-xs">{{
-                                                t('side_panel.search_result_offline')
-                                            }}</span>
+                                            <span
+                                                v-else-if="item.ref.state === 'offline'"
+                                                class="block truncate text-xs"
+                                                >{{ t('side_panel.search_result_active') }}</span
+                                            >
+                                            <span
+                                                v-else-if="item.ref.state === 'active'"
+                                                class="block truncate text-xs"
+                                                >{{ t('side_panel.search_result_offline') }}</span
+                                            >
                                             <Location
                                                 v-else
                                                 class="text-xs"
@@ -182,7 +186,7 @@
         display: flex;
         flex: none;
         flex-direction: column;
-        padding: 13px 5px 5px 5px;
+        padding: 10px 5px 5px 5px;
         order: 99;
         height: 100%;
         box-sizing: border-box;

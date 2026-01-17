@@ -33,7 +33,16 @@
                 </Select>
             </div>
             <div class="options-container-item">
-                <span class="name">{{ t('view.settings.appearance.appearance.font_family') }}</span>
+                <span class="name flex! items-center!">
+                    {{ t('view.settings.appearance.appearance.font_family') }}
+
+                    <TooltipWrapper
+                        side="top"
+                        style="margin-left: 5px"
+                        :content="t('view.settings.appearance.appearance.font_family_tooltip')">
+                        <Info />
+                    </TooltipWrapper>
+                </span>
                 <Select :model-value="appFontFamily" @update:modelValue="setAppFontFamily">
                     <SelectTrigger size="sm">
                         <SelectValue
@@ -41,10 +50,7 @@
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem
-                                v-for="fontKey in appFontFamilyOptions"
-                                :key="fontKey"
-                                :value="fontKey">
+                            <SelectItem v-for="fontKey in appFontFamilyOptions" :key="fontKey" :value="fontKey">
                                 {{ t(`view.settings.appearance.appearance.font_family_${fontKey}`) }}
                             </SelectItem>
                         </SelectGroup>
@@ -437,9 +443,9 @@
         TagsInputItemDelete,
         TagsInputItemText
     } from '@/components/ui/tags-input';
+    import { ArrowRight, CheckIcon, ChevronDown, Info } from 'lucide-vue-next';
     import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { computed, onBeforeUnmount, ref, watch } from 'vue';
-    import { ArrowRight, CheckIcon, ChevronDown } from 'lucide-vue-next';
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
@@ -449,8 +455,8 @@
     import PresetColorPicker from '@/components/PresetColorPicker.vue';
 
     import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '../../../../stores';
-    import { getLanguageName, languageCodes } from '../../../../localization';
     import { APP_FONT_FAMILIES, THEME_CONFIG } from '../../../../shared/constants';
+    import { getLanguageName, languageCodes } from '../../../../localization';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 

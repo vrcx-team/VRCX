@@ -8,7 +8,7 @@
                     :class="['x-location', { 'x-link': link && location !== 'private' && location !== 'offline' }]"
                     class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden"
                     @click="handleShowWorldDialog">
-                    <Loader2 :class="['is-loading']" class="mr-1" v-if="isTraveling" />
+                    <Spinner v-if="isTraveling" class="mr-1" />
                     <span class="min-w-0 truncate">{{ text }}</span>
                     <span v-if="showInstanceIdInLocation && instanceName" class="ml-1 whitespace-nowrap">{{
                         ` · #${instanceName}`
@@ -31,7 +31,7 @@
                         :class="['x-location', { 'x-link': link && location !== 'private' && location !== 'offline' }]"
                         class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden"
                         @click="handleShowWorldDialog">
-                        <Loader2 :class="['is-loading']" class="mr-1" v-if="isTraveling" />
+                        <Spinner v-if="isTraveling" class="mr-1" />
                         <span class="min-w-0 truncate">{{ text }}</span>
                         <span v-if="showInstanceIdInLocation && instanceName" class="ml-1 whitespace-nowrap">{{
                             ` · #${instanceName}`
@@ -54,8 +54,8 @@
 </template>
 
 <script setup>
-    import { AlertTriangle, Loader2, Lock } from 'lucide-vue-next';
     import { onBeforeUnmount, ref, watch } from 'vue';
+    import { AlertTriangle, Lock } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -67,6 +67,7 @@
         useWorldStore
     } from '../stores';
     import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
+    import { Spinner } from './ui/spinner';
     import { accessTypeLocaleKeyMap } from '../shared/constants';
 
     const { t } = useI18n();

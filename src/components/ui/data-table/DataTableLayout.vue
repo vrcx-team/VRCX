@@ -124,8 +124,8 @@
         PaginationPrevious
     } from '../pagination';
     import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../table';
-    import { ScrollArea } from '../scroll-area';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../select';
+    import { ScrollArea } from '../scroll-area';
 
     const props = defineProps({
         table: {

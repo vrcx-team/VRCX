@@ -58,13 +58,11 @@ const sortInstanceIcon = (a, b) =>
 
 export const createColumns = ({
     randomUserColours,
-    photonLoggingEnabled,
     chatboxUserBlacklist,
     onBlockChatbox,
     onUnblockChatbox,
     sortAlphabetically
 }) => {
-    /** @type {import('@tanstack/vue-table').ColumnDef<any, any>[]} */
     const cols = [
         {
             id: 'avatar',
@@ -72,7 +70,6 @@ export const createColumns = ({
             header: () => t('table.playerList.avatar'),
             size: 70,
             enableSorting: false,
-            enableResizing: false,
             cell: ({ row }) => {
                 const userRef = row.original?.ref;
                 const src = userImage(userRef);
@@ -94,7 +91,6 @@ export const createColumns = ({
             header: ({ column }) =>
                 sortButton({ column, label: t('table.playerList.timer') }),
             size: 90,
-            enableResizing: false,
             sortingFn: (rowA, rowB) =>
                 (rowA.original?.timer ?? 0) - (rowB.original?.timer ?? 0),
             cell: ({ row }) => <Timer epoch={row.original?.timer} />
@@ -144,7 +140,11 @@ export const createColumns = ({
             id: 'status',
             accessorFn: (row) => row?.ref?.statusDescription,
             header: () => t('table.playerList.status'),
-            minSize: 200,
+            size:200,
+            minSize: 100,
+            meta: {
+                stretch: true
+            },
             enableSorting: false,
             cell: ({ row }) => {
                 const userRef = row.original?.ref;
@@ -165,16 +165,14 @@ export const createColumns = ({
                     </span>
                 );
             }
-        }
-    ];
-
-    if (photonLoggingEnabled?.value) {
-        cols.push({
+        },
+        {
             id: 'photonId',
             accessorFn: (row) => row?.photonId,
             header: ({ column }) =>
                 sortButton({ column, label: t('table.playerList.photonId') }),
             size: 110,
+            enableHiding: true,
             sortingFn: (rowA, rowB) =>
                 (rowA.original?.photonId ?? 0) - (rowB.original?.photonId ?? 0),
             cell: ({ row }) => {
@@ -208,10 +206,7 @@ export const createColumns = ({
                     </div>
                 );
             }
-        });
-    }
-
-    cols.push(
+        },
         {
             id: 'icon',
             header: ({ column }) =>
@@ -295,6 +290,10 @@ export const createColumns = ({
             id: 'platform',
             header: () => t('table.playerList.platform'),
             size: 90,
+            meta: {
+                stretch: true
+            },
+            minSize: 20,
             enableSorting: false,
             cell: ({ row }) => {
                 const userRef = row.original?.ref;
@@ -405,7 +404,7 @@ export const createColumns = ({
             accessorFn: (row) => row?.ref?.note,
             header: () => t('table.playerList.note'),
             size: 150,
-            minSize: 40,
+            minSize: 20,
             meta: {
                 stretch: true
             },
@@ -419,7 +418,7 @@ export const createColumns = ({
                 return <span>{text}</span>;
             }
         }
-    );
+    ];
 
     return cols;
 };

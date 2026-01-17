@@ -1,4 +1,4 @@
-const APP_FONT_DEFAULT_KEY = 'noto_sans';
+const APP_FONT_DEFAULT_KEY = 'inter';
 
 const APP_FONT_CONFIG = Object.freeze({
     inter: {
@@ -8,6 +8,16 @@ const APP_FONT_CONFIG = Object.freeze({
     noto_sans: {
         cssName: "'Noto Sans Variable'",
         link: null
+    },
+    source_sans_3: {
+        cssName: "'Source Sans 3'",
+        cssImport:
+            "@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');"
+    },
+    ibm_plex_sans: {
+        cssName: "'IBM Plex Sans'",
+        cssImport:
+            "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');"
     },
     harmonyos_sans: {
         cssName: "'HarmonyOS Sans'",

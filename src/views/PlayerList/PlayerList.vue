@@ -128,7 +128,9 @@
                     <div class="x-friend-item" style="cursor: default">
                         <div class="detail">
                             <span class="name">{{ t('dialog.world.info.last_updated') }}</span>
-                            <span class="block truncate text-xs">{{ formatDateFilter(currentInstanceWorld.lastUpdated, 'long') }}</span>
+                            <span class="block truncate text-xs">{{
+                                formatDateFilter(currentInstanceWorld.lastUpdated, 'long')
+                            }}</span>
                         </div>
                     </div>
                     <div class="x-friend-item" style="cursor: default">
@@ -148,13 +150,10 @@
 
             <div class="current-instance-table flex min-h-0 min-w-0 flex-1">
                 <DataTableLayout
-                    class="min-w-0 w-full [&_th]:px-2.5! [&_th]:py-0.75! [&_td]:px-2.5! [&_td]:py-0.75! [&_tr]:h-7!"
+                    class="[&_th]:px-2.5! [&_th]:py-0.75! [&_td]:px-2.5! [&_td]:py-0.75! [&_tr]:h-7!"
                     :table="playerListTable"
-                    table-class="min-w-max w-max"
-                    :use-table-min-width="true"
                     :table-style="playerListTableStyle"
                     :loading="false"
-                    :total-items="playerListTotalItems"
                     :show-pagination="false"
                     :on-row-click="handlePlayerListRowClick" />
             </div>
@@ -255,15 +254,9 @@
         return a[field].toLowerCase().localeCompare(b[field].toLowerCase());
     }
 
-    const initialColumnPinning = {
-        left: ['avatar', 'timer', 'displayName'],
-        right: []
-    };
-
     const playerListColumns = computed(() =>
         createColumns({
             randomUserColours,
-            photonLoggingEnabled,
             chatboxUserBlacklist,
             onBlockChatbox: addChatboxUserBlacklist,
             onUnblockChatbox: deleteChatboxUserBlacklist,
@@ -274,14 +267,8 @@
     const { table: playerListTable } = useVrcxVueTable({
         persistKey: 'playerList',
         data: currentInstanceUsersData,
-        columns: playerListColumns.value,
-        getRowId: (row) => `${row?.ref?.id ?? ''}:${row?.displayName ?? ''}`,
-        enablePinning: true,
-        initialColumnPinning,
-        initialPagination: {
-            pageIndex: 0,
-            pageSize: 500
-        }
+        columns: playerListColumns,
+        getRowId: (row) => `${row?.ref?.id ?? ''}:${row?.displayName ?? ''}`
     });
 
     watch(
@@ -291,6 +278,18 @@
                 ...prev,
                 columns: next
             }));
+        },
+        { immediate: true }
+    );
+
+    watch(
+        photonLoggingEnabled,
+        (enabled) => {
+            const column = playerListTable?.getColumn?.('photonId');
+            if (!column) {
+                return;
+            }
+            column.toggleVisibility(Boolean(enabled));
         },
         { immediate: true }
     );

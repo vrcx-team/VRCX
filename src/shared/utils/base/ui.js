@@ -152,26 +152,36 @@ function resolveAppFontFamily(fontKey) {
     };
 }
 
-function ensureAppFontLinks() {
+function ensureAppFontLinks(fontKey) {
     const head = document.head;
     if (!head) {
         return;
     }
-    Object.entries(APP_FONT_CONFIG).forEach(([key, config]) => {
-        if (!config?.cssImport) {
-            return;
-        }
-        const existing = document.querySelector(
-            `style[${APP_FONT_LINK_ATTR}="${key}"]`
-        );
-        if (existing) {
-            return;
-        }
-        const styleEl = document.createElement('style');
-        styleEl.setAttribute(APP_FONT_LINK_ATTR, key);
-        styleEl.textContent = config.cssImport;
-        head.appendChild(styleEl);
-    });
+
+    document
+        .querySelectorAll(`style[${APP_FONT_LINK_ATTR}]`)
+        .forEach((styleEl) => {
+            if (styleEl.getAttribute(APP_FONT_LINK_ATTR) !== fontKey) {
+                styleEl.remove();
+            }
+        });
+
+    const config = APP_FONT_CONFIG[fontKey];
+    if (!config?.cssImport) {
+        return;
+    }
+
+    const existing = document.querySelector(
+        `style[${APP_FONT_LINK_ATTR}="${fontKey}"]`
+    );
+    if (existing) {
+        return;
+    }
+
+    const styleEl = document.createElement('style');
+    styleEl.setAttribute(APP_FONT_LINK_ATTR, fontKey);
+    styleEl.textContent = config.cssImport;
+    head.appendChild(styleEl);
 }
 
 function applyAppFontFamily(fontKey) {
@@ -179,7 +189,7 @@ function applyAppFontFamily(fontKey) {
     const root = document.documentElement;
     root.style.setProperty('--font-western-primary', resolved.cssName);
 
-    ensureAppFontLinks();
+    ensureAppFontLinks(resolved.key);
 
     return resolved;
 }

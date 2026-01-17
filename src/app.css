@@ -16,12 +16,18 @@ html {
 
 .x-container {
     position: relative;
-    flex: 1;
     padding: 10px;
     overflow: hidden auto;
     box-sizing: border-box;
+    background: var(--background);
+    height: calc(100vh - 20px);
+    margin: 10px 10px 10px 0;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+html.dark .x-container {
     background: var(--sidebar);
-    height: 100%;
 }
 
 

@@ -1,6 +1,6 @@
 <template>
     <Sidebar side="left" variant="sidebar" collapsible="icon">
-        <SidebarContent class="pt-4">
+        <SidebarContent class="pt-2">
             <div v-if="navLayoutReady" class="px-2">
                 <SidebarMenu>
                     <SidebarMenuItem v-if="pendingVRCXUpdate || pendingVRCXInstall">
@@ -40,7 +40,39 @@
                             </SidebarMenuItem>
 
                             <SidebarMenuItem v-else>
+                                <DropdownMenu
+                                    v-if="isCollapsed"
+                                    :open="collapsedDropdownOpenId === item.index"
+                                    @update:open="(value) => handleCollapsedDropdownOpenChange(item.index, value)">
+                                    <DropdownMenuTrigger as-child>
+                                        <SidebarMenuButton
+                                            :is-active="item.children?.some((e) => e.index === activeMenuIndex)"
+                                            :tooltip="item.titleIsCustom ? item.title : t(item.title || '')"
+                                            :class="isNavItemNotified(item) ? 'notify' : undefined">
+                                            <i
+                                                :class="item.icon"
+                                                class="inline-flex size-6 items-center justify-center text-lg" />
+                                            <span v-show="!isCollapsed">{{
+                                                item.titleIsCustom ? item.title : t(item.title || '')
+                                            }}</span>
+                                        </SidebarMenuButton>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent side="right" align="start" class="w-56">
+                                        <DropdownMenuItem
+                                            v-for="entry in item.children"
+                                            :key="entry.index"
+                                            @select="(event) => handleCollapsedSubmenuSelect(event, entry, item.index)">
+                                            <i
+                                                v-if="entry.icon"
+                                                :class="entry.icon"
+                                                class="inline-flex size-4 items-center justify-center text-base" />
+                                            <span>{{ t(entry.label) }}</span>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+
                                 <Collapsible
+                                    v-else
                                     class="group/collapsible"
                                     :default-open="
                                         activeMenuIndex && item.children?.some((e) => e.index === activeMenuIndex)
@@ -87,7 +119,7 @@
             </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter class="p-2">
+        <SidebarFooter class="px-2 py-3">
             <SidebarMenu>
                 <SidebarMenuItem>
                     <DropdownMenu>
@@ -249,8 +281,6 @@
                 </SidebarMenuItem>
             </SidebarMenu>
         </SidebarFooter>
-
-        <SidebarRail />
     </Sidebar>
 
     <CustomNavDialog
@@ -272,8 +302,7 @@
         SidebarMenuItem,
         SidebarMenuSub,
         SidebarMenuSubButton,
-        SidebarMenuSubItem,
-        SidebarRail
+        SidebarMenuSubItem
     } from '@/components/ui/sidebar';
     import {
         DropdownMenu,
@@ -358,6 +387,7 @@
     const { themeMode, tableDensity, isDarkMode, isNavCollapsed: isCollapsed } = storeToRefs(appearanceSettingsStore);
     const navLayout = ref([]);
     const navLayoutReady = ref(false);
+    const collapsedDropdownOpenId = ref(null);
 
     const menuItems = computed(() => {
         const items = [];
@@ -451,6 +481,15 @@
                 }
                 return entry;
             });
+        }
+    );
+
+    watch(
+        () => isCollapsed.value,
+        (value) => {
+            if (!value) {
+                collapsedDropdownOpenId.value = null;
+            }
         }
     );
 
@@ -719,6 +758,17 @@
     const handleSubmenuClick = (entry, index) => {
         const navIndex = index || entry?.index;
         triggerNavAction(entry, navIndex);
+    };
+
+    const handleCollapsedDropdownOpenChange = (index, value) => {
+        collapsedDropdownOpenId.value = value ? index : null;
+    };
+
+    const handleCollapsedSubmenuSelect = (event, entry, index) => {
+        if (event?.preventDefault) {
+            event.preventDefault();
+        }
+        handleSubmenuClick(entry, index);
     };
 
     const handleMenuItemClick = (item) => {

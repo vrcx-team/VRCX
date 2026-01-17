@@ -533,13 +533,15 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             if (advancedSettingsStore.sentryErrorReporting) {
                 try {
                     import('@sentry/vue').then((Sentry) => {
-                        const trail = getPiniaActionTrail().filter((entry) => {
-                            if (!entry) return false;
-                            return (
-                                typeof entry.t === 'string' &&
-                                typeof entry.a === 'string'
-                            );
-                        });
+                        const trail = getPiniaActionTrail()
+                            .filter((entry) => {
+                                if (!entry) return false;
+                                return (
+                                    typeof entry.t === 'string' &&
+                                    typeof entry.a === 'string'
+                                );
+                            })
+                            .reverse();
                         const trailText = JSON.stringify(trail);
                         Sentry.withScope((scope) => {
                             scope.setLevel('fatal');
