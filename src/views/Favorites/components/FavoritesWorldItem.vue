@@ -15,7 +15,7 @@
                 </div>
                 <div class="favorites-search-card__detail" v-once>
                     <div class="favorites-search-card__title">
-                        <span class="name">{{ props.favorite.ref.name }}</span>
+                        <span class="name text-sm">{{ props.favorite.ref.name }}</span>
                         <span
                             v-if="favorite.deleted || favorite.ref.releaseStatus === 'private'"
                             class="favorites-search-card__badges">
@@ -29,7 +29,7 @@
                                 class="h-4 w-4" />
                         </span>
                     </div>
-                    <span class="text-xs">
+                    <span class="text-xs text-gray-600">
                         {{ props.favorite.ref.authorName }}
                         <template v-if="props.favorite.ref.occupants"> ({{ props.favorite.ref.occupants }}) </template>
                     </span>

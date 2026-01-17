@@ -7,7 +7,7 @@
                 </div>
                 <div class="favorites-search-card__detail">
                     <div class="favorites-search-card__title">
-                        <span class="name">{{ localFavFakeRef.name }}</span>
+                        <span class="name text-sm">{{ localFavFakeRef.name }}</span>
                         <span class="favorites-search-card__badges">
                             <TooltipWrapper
                                 v-if="favorite.deleted"
@@ -23,7 +23,7 @@
                             </TooltipWrapper>
                         </span>
                     </div>
-                    <span class="text-xs">{{ localFavFakeRef.authorName }}</span>
+                    <span class="text-xs text-gray-600">{{ localFavFakeRef.authorName }}</span>
                 </div>
             </div>
             <div class="favorites-search-card__actions">

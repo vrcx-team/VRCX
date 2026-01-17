@@ -98,8 +98,10 @@
         transition:
             box-shadow 0.2s ease,
             transform 0.2s ease;
+        width: 100%;
         max-width: var(--friend-card-target-width, 220px);
         min-width: var(--friend-card-min-width, 220px);
+        box-sizing: border-box;
 
         &:hover {
             transform: translateY(calc(-2px * var(--card-scale)));
@@ -116,9 +118,6 @@
     .friend-card__avatar-wrapper {
         position: static;
         flex: none;
-    }
-
-    .friend-card__avatar {
     }
 
     .friend-card__status-dot {

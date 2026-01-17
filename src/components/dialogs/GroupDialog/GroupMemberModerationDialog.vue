@@ -1,17 +1,13 @@
 <template>
     <Dialog v-model:open="groupMemberModeration.visible">
-        <DialogContent class="x-dialog max-w-none w-[90vw]">
+        <DialogContent class="x-dialog max-w-none sm:min-w-[90vw] sm:max-w-[90vw] sm:min-h-[90vh] sm:max-h-[90vh]">
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.group_member_moderation.header') }}</DialogTitle>
             </DialogHeader>
 
             <div>
                 <h3>{{ groupMemberModeration.groupRef.name }}</h3>
-                <TabsUnderline
-                    default-value="members"
-                    :items="groupModerationTabs"
-                    :unmount-on-hide="false"
-                    style="height: 100%">
+                <TabsUnderline default-value="members" :items="groupModerationTabs" :unmount-on-hide="false">
                     <template #members>
                         <div style="margin-top: 10px">
                             <Button
@@ -54,10 +50,8 @@
                                                 )
                                             "
                                             @click.stop>
-                                            <span>
-                                                {{ t(memberSortOrder.name) }}
-                                                <ArrowDown style="margin-left: 5px" />
-                                            </span>
+                                            {{ t(memberSortOrder.name) }}
+                                            <ArrowDown style="margin-left: 5px" />
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>
@@ -96,10 +90,8 @@
                                                 )
                                             "
                                             @click.stop>
-                                            <span>
-                                                {{ t(memberFilter.name) }}
-                                                <ArrowDown style="margin-left: 5px" />
-                                            </span>
+                                            {{ t(memberFilter.name) }}
+                                            <ArrowDown style="margin-left: 5px" />
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>

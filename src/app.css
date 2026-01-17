@@ -20,6 +20,7 @@ html {
     padding: 10px;
     overflow: hidden auto;
     box-sizing: border-box;
+    background: var(--sidebar);
     height: 100%;
 }
 

@@ -93,7 +93,12 @@
                                         <Apple class="h-4 w-4 text-[#8e8e93]" />
                                         ><span
                                             v-if="worldDialog.bundleSizes['ios']"
-                                            :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']">
+                                            :class="[
+                                                'x-grey',
+                                                'x-tag-border-left',
+                                                'text-[#8e8e93]',
+                                                'border-[#8e8e93]'
+                                            ]">
                                             {{ worldDialog.bundleSizes['ios'].fileSize }}
                                         </span>
                                     </Badge>
@@ -680,14 +685,14 @@
                     </template>
                     <template #JSON>
                         <Button
-                            class="rounded-full h-6 w-6 mr-2"
+                            class="rounded-full mr-2"
                             size="icon-sm"
                             variant="outline"
                             @click="refreshWorldDialogTreeData()">
                             <RefreshCw />
                         </Button>
                         <Button
-                            class="rounded-full h-6 w-6"
+                            class="rounded-full"
                             size="icon-sm"
                             variant="outline"
                             @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)">

@@ -1139,14 +1139,14 @@
                     </template>
                     <template #JSON>
                         <Button
-                            class="rounded-full h-6 w-6 mr-2"
+                            class="rounded-full mr-2"
                             size="icon-sm"
                             variant="outline"
                             @click="refreshGroupDialogTreeData()">
                             <RefreshCw />
                         </Button>
                         <Button
-                            class="rounded-full h-6 w-6"
+                            class="rounded-full"
                             size="icon-sm"
                             variant="outline"
                             @click="downloadAndSaveJson(groupDialog.id, groupDialog.ref)">

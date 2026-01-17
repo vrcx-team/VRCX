@@ -1,17 +1,16 @@
 <template>
     <div @click="confirm" class="cursor-pointer w-fit align-top flex items-center">
-        <span v-if="avatarType" :class="color" class="mr-1.5">
-            <Lock v-if="avatarType === '(own)'" class="h-4 w-4" />
-            <Unlock v-else-if="avatarType === '(public)'" class="h-4 w-4" />
+        <span>{{ avatarName }}</span>
+        <span v-if="avatarType === '(own)'" :class="color" class="mx-1">
+            <Lock v-if="avatarType" class="h-4 w-4" />
         </span>
-        <span class="mr-2">{{ avatarName }}</span>
         <span v-if="avatarTags" style="font-size: 12px">{{ avatarTags }}</span>
     </div>
 </template>
 
 <script setup>
-    import { Lock, Unlock } from 'lucide-vue-next';
     import { ref, watch } from 'vue';
+    import { Lock } from 'lucide-vue-next';
 
     import { useAvatarStore } from '../stores';
 

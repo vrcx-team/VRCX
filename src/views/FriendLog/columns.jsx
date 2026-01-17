@@ -31,7 +31,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         },
         {
             accessorKey: 'created_at',
-            size: 100,
+            size: 120,
             header: ({ column }) => (
                 <Button
                     variant="ghost"
@@ -65,7 +65,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         {
             accessorKey: 'type',
 
-            size: 120,
+            size: 160,
             header: () => t('table.friendLog.type'),
             cell: ({ row }) => {
                 const type = row.getValue('type');

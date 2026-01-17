@@ -175,8 +175,6 @@
     });
 
     const {
-        panelGroupRef,
-        asidePanelRef,
         asideDefaultSize,
         asideMaxSize,
         mainDefaultSize,

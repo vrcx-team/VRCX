@@ -15,7 +15,7 @@
                             :traveling="favorite.ref.travelingToLocation"
                             :link="false" />
                     </div>
-                    <span v-else class="text-xs">{{ favorite.ref.statusDescription }}</span>
+                    <span v-else class="text-xs text-gray-600">{{ favorite.ref.statusDescription }}</span>
                 </div>
             </div>
             <div class="favorites-search-card__actions">

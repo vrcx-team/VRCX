@@ -32,6 +32,25 @@
                     </SelectContent>
                 </Select>
             </div>
+            <div class="options-container-item">
+                <span class="name">{{ t('view.settings.appearance.appearance.font_family') }}</span>
+                <Select :model-value="appFontFamily" @update:modelValue="setAppFontFamily">
+                    <SelectTrigger size="sm">
+                        <SelectValue
+                            :placeholder="t(`view.settings.appearance.appearance.font_family_${appFontFamily}`)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem
+                                v-for="fontKey in appFontFamilyOptions"
+                                :key="fontKey"
+                                :value="fontKey">
+                                {{ t(`view.settings.appearance.appearance.font_family_${fontKey}`) }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </div>
             <div v-if="!isLinux" class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.zoom') }}</span>
                 <NumberField
@@ -431,7 +450,7 @@
 
     import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '../../../../stores';
     import { getLanguageName, languageCodes } from '../../../../localization';
-    import { THEME_CONFIG } from '../../../../shared/constants';
+    import { APP_FONT_FAMILIES, THEME_CONFIG } from '../../../../shared/constants';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 
@@ -444,6 +463,7 @@
         appLanguage,
         themeMode,
         displayVRCPlusIconsAsAvatar,
+        appFontFamily,
         hideNicknames,
         showInstanceIdInLocation,
         isAgeGatedInstancesVisible,
@@ -492,8 +512,11 @@
         changeAppLanguage,
         promptMaxTableSizeDialog,
         setNotificationIconDot,
-        setTablePageSizes
+        setTablePageSizes,
+        setAppFontFamily
     } = appearanceSettingsStore;
+
+    const appFontFamilyOptions = APP_FONT_FAMILIES;
 
     const zoomLevel = ref(100);
     const isLinux = computed(() => LINUX);

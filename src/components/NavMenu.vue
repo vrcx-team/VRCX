@@ -132,9 +132,10 @@
                                 <div class="flex min-w-0 flex-col">
                                     <button
                                         type="button"
-                                        class="text-left text-sm font-medium truncate"
+                                        class="text-left text-sm font-medium truncate flex items-center gap-1"
                                         @click="openGithub">
                                         VRCX
+                                        <Heart class="text-primary fill-current stroke-none" />
                                     </button>
                                     <span class="text-xs text-muted-foreground">{{ version }}</span>
                                 </div>
@@ -288,7 +289,7 @@
     } from '@/components/ui/dropdown-menu';
     import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
     import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-    import { ChevronRight } from 'lucide-vue-next';
+    import { ChevronRight, Heart } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { useRouter } from 'vue-router';

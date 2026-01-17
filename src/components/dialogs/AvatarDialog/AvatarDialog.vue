@@ -82,12 +82,22 @@
                                         ><Apple class="h-4 w-4 text-[#8e8e93]" />
                                         <span
                                             v-if="avatarDialog.platformInfo.ios"
-                                            :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']"
+                                            :class="[
+                                                'x-grey',
+                                                'x-tag-border-left',
+                                                'text-[#8e8e93]',
+                                                'border-[#8e8e93]'
+                                            ]"
                                             >{{ avatarDialog.platformInfo.ios.performanceRating }}</span
                                         >
                                         <span
                                             v-if="avatarDialog.bundleSizes['ios']"
-                                            :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']"
+                                            :class="[
+                                                'x-grey',
+                                                'x-tag-border-left',
+                                                'text-[#8e8e93]',
+                                                'border-[#8e8e93]'
+                                            ]"
                                             >{{ avatarDialog.bundleSizes['ios'].fileSize }}</span
                                         >
                                     </Badge>
@@ -491,14 +501,14 @@
                     </template>
                     <template #JSON>
                         <Button
-                            class="rounded-full h-6 w-6 mr-2"
+                            class="rounded-full mr-2"
                             size="icon-sm"
                             variant="outline"
                             @click="refreshAvatarDialogTreeData()">
                             <RefreshCw />
                         </Button>
                         <Button
-                            class="rounded-full h-6 w-6"
+                            class="rounded-full"
                             size="icon-sm"
                             variant="outline"
                             @click="downloadAndSaveJson(avatarDialog.id, avatarDialog.ref)">

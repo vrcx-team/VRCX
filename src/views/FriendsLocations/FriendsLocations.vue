@@ -60,40 +60,29 @@
         </div>
         <ScrollArea v-if="settingsReady" ref="scrollbarRef" class="friend-view__scroll">
             <div v-if="virtualRows.length" class="friend-view__virtual" :style="virtualListStyle">
-                <div class="friend-view__virtual-spacer" :style="virtualSpacerStyle">
-                    <div
-                        v-for="vRow in virtualItems"
-                        :key="String(virtualRows[vRow.index]?.key ?? vRow.key)"
-                        class="friend-view__virtual-row"
-                        :data-index="vRow.index"
-                        :ref="(el) => onVirtualRowRef(el)"
-                        :style="virtualRowStyle(vRow.start)">
-                        <template v-if="virtualRows[vRow.index]?.type === 'header'">
-                            <header class="friend-view__instance-header">
-                                <Location
-                                    class="text-xs"
-                                    :location="virtualRows[vRow.index].instanceId"
-                                    style="display: inline" />
-                                <span class="friend-view__instance-count">{{ virtualRows[vRow.index].count }}</span>
-                            </header>
-                        </template>
+                <div v-for="row in virtualRows" :key="String(row.key)" class="friend-view__virtual-row">
+                    <template v-if="row.type === 'header'">
+                        <header class="friend-view__instance-header">
+                            <Location class="text-xs" :location="row.instanceId" style="display: inline" />
+                            <span class="friend-view__instance-count">{{ row.count }}</span>
+                        </header>
+                    </template>
 
-                        <template v-else-if="virtualRows[vRow.index]?.type === 'divider'">
-                            <div class="friend-view__divider"><span class="friend-view__divider-text"></span></div>
-                        </template>
+                    <template v-else-if="row.type === 'divider'">
+                        <div class="friend-view__divider"><span class="friend-view__divider-text"></span></div>
+                    </template>
 
-                        <template v-else>
-                            <div class="friend-view__row">
-                                <FriendLocationCard
-                                    v-for="item in virtualRows[vRow.index]?.items ?? []"
-                                    :key="item.key"
-                                    :friend="item.friend"
-                                    :card-scale="cardScale"
-                                    :card-spacing="cardSpacing"
-                                    :display-instance-info="item.displayInstanceInfo" />
-                            </div>
-                        </template>
-                    </div>
+                    <template v-else>
+                        <div class="friend-view__row">
+                            <FriendLocationCard
+                                v-for="item in row.items ?? []"
+                                :key="item.key"
+                                :friend="item.friend"
+                                :card-scale="cardScale"
+                                :card-spacing="cardSpacing"
+                                :display-instance-info="item.displayInstanceInfo" />
+                        </div>
+                    </template>
                 </div>
             </div>
             <div v-else class="friend-view__empty">{{ t('view.friends_locations.no_matching_friends') }}</div>
@@ -113,7 +102,6 @@
     import { ScrollArea } from '@/components/ui/scroll-area';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { useVirtualizer } from '@tanstack/vue-virtual';
 
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { Slider } from '../../components/ui/slider';
@@ -598,46 +586,6 @@
         return rows;
     });
 
-    const estimatedRowHeight = computed(() => {
-        const base = 148;
-        return Math.max(64, Math.round(base * cardScale.value * cardSpacing.value));
-    });
-
-    const virtualizerRef = useVirtualizer(
-        computed(() => ({
-            count: virtualRows.value.length,
-            getScrollElement: () => scrollViewportRef.value,
-            estimateSize: (index) => {
-                const row = virtualRows.value[index];
-                if (row?.type === 'header') return 34;
-                if (row?.type === 'divider') return 18;
-                return estimatedRowHeight.value;
-            },
-            overscan: 10
-        }))
-    );
-
-    const virtualizer = computed(() => virtualizerRef.value);
-    const virtualItems = computed(() => virtualizer.value?.getVirtualItems?.() ?? []);
-
-    const virtualSpacerStyle = computed(() => {
-        const height = `${virtualizer.value?.getTotalSize?.() ?? 0}px`;
-        return `height:${height};position:relative;width:100%;`;
-    });
-
-    function virtualRowStyle(start) {
-        const y = Number(start) || 0;
-        return `transform:translateY(${y}px);position:absolute;top:0;left:0;width:100%;`;
-    }
-
-    function onVirtualRowRef(el) {
-        const target = el?.$el ?? el;
-        if (!target) {
-            return;
-        }
-        virtualizer.value?.measureElement?.(/** @type {Element} */ (target));
-    }
-
     const virtualListStyle = computed(() => {
         const styleFn = gridStyle.value;
         const total = filteredFriends.value.length;
@@ -650,11 +598,9 @@
     });
 
     watch([searchTerm, activeSegment], () => {
-        virtualizer.value?.scrollToOffset?.(0);
         nextTick(() => {
             resolveScrollViewport();
             updateGridWidth();
-            virtualizer.value?.measure?.();
         });
     });
 
@@ -666,11 +612,9 @@
             activeSegment.value = 'online';
         }
 
-        virtualizer.value?.scrollToOffset?.(0);
         nextTick(() => {
             resolveScrollViewport();
             updateGridWidth();
-            virtualizer.value?.measure?.();
         });
     });
 
@@ -680,7 +624,6 @@
             nextTick(() => {
                 resolveScrollViewport();
                 updateGridWidth();
-                virtualizer.value?.measure?.();
             });
         }
     );
@@ -691,7 +634,6 @@
         }
         nextTick(() => {
             updateGridWidth();
-            virtualizer.value?.measure?.();
         });
     });
 
@@ -700,7 +642,6 @@
             resolveScrollViewport();
             setupResizeHandling();
             updateGridWidth();
-            virtualizer.value?.measure?.();
         });
     });
 
@@ -740,7 +681,6 @@
                 resolveScrollViewport();
                 setupResizeHandling();
                 updateGridWidth();
-                virtualizer.value?.measure?.();
             });
         }
     }
@@ -791,6 +731,8 @@
         width: 100%;
         padding: 2px;
         box-sizing: border-box;
+        display: grid;
+        row-gap: calc(var(--friend-card-gap) - 4px);
     }
 
     .friend-view__virtual-spacer {
@@ -803,10 +745,13 @@
     }
 
     .friend-view__row {
-        display: flex;
-        flex-wrap: nowrap;
+        display: grid;
+        grid-template-columns: repeat(
+            var(--friend-grid-columns, 1),
+            minmax(var(--friend-card-min-width, 200px), var(--friend-card-target-width, 1fr))
+        );
         gap: var(--friend-card-gap, 14px);
-        align-items: stretch;
+        justify-content: start;
         padding: 2px;
         box-sizing: border-box;
     }

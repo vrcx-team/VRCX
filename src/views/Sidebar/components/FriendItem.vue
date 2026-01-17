@@ -19,7 +19,7 @@
                 }}</span>
                 <template v-else>
                     <div v-if="friend.pendingOffline" class="text-xs">
-                        <AlertTriangle class="inline-block" /> {{ t('side_panel.pending_offline') }}
+                        {{ t('side_panel.pending_offline') }}
                     </div>
                     <template v-else-if="isGroupByInstance">
                         <div class="flex items-center">
@@ -65,9 +65,8 @@
 </template>
 
 <script setup>
-    import { AlertTriangle, Loader2, Trash2 } from 'lucide-vue-next';
+    import { Loader2, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
-    import { Skeleton } from '@/components/ui/skeleton';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

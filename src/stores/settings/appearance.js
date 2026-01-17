@@ -5,11 +5,16 @@ import { useRouter } from 'vue-router';
 
 import {
     HueToHex,
+    applyAppFontFamily,
     changeAppThemeStyle,
     changeHtmlLangAttribute,
     getThemeMode,
     updateTrustColorClasses
 } from '../../shared/utils/base/ui';
+import {
+    APP_FONT_DEFAULT_KEY,
+    APP_FONT_FAMILIES
+} from '../../shared/constants';
 import { database } from '../../service/database';
 import { getNameColour } from '../../shared/utils';
 import { languageCodes } from '../../localization';
@@ -46,6 +51,7 @@ export const useAppearanceSettingsStore = defineStore(
         const appLanguage = ref('en');
         const themeMode = ref('');
         const isDarkMode = ref(false);
+        const appFontFamily = ref('inter');
         const displayVRCPlusIconsAsAvatar = ref(false);
         const hideNicknames = ref(false);
         const showInstanceIdInLocation = ref(false);
@@ -130,7 +136,8 @@ export const useAppearanceSettingsStore = defineStore(
                 compactTableModeConfig,
                 trustColorConfig,
                 notificationIconDotConfig,
-                navIsCollapsedConfig
+                navIsCollapsedConfig,
+                appFontFamilyConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_appLanguage'),
                 configRepository.getBool('displayVRCPlusIconsAsAvatar', true),
@@ -185,7 +192,11 @@ export const useAppearanceSettingsStore = defineStore(
                     JSON.stringify(TRUST_COLOR_DEFAULTS)
                 ),
                 configRepository.getBool('VRCX_notificationIconDot', true),
-                configRepository.getBool('VRCX_navIsCollapsed', true)
+                configRepository.getBool('VRCX_navIsCollapsed', true),
+                configRepository.getString(
+                    'VRCX_fontFamily',
+                    APP_FONT_DEFAULT_KEY
+                )
             ]);
 
             if (!appLanguageConfig) {
@@ -205,6 +216,8 @@ export const useAppearanceSettingsStore = defineStore(
 
             themeMode.value = initThemeMode;
             isDarkMode.value = initDarkMode;
+            appFontFamily.value = normalizeAppFontFamily(appFontFamilyConfig);
+            applyAppFontFamily(appFontFamily.value);
 
             displayVRCPlusIconsAsAvatar.value =
                 displayVRCPlusIconsAsAvatarConfig;
@@ -454,6 +467,19 @@ export const useAppearanceSettingsStore = defineStore(
             isDarkMode.value = isDark;
             vrStore.updateVRConfigVars();
             updateTrustColor(undefined, undefined);
+        }
+
+        function normalizeAppFontFamily(value) {
+            return APP_FONT_FAMILIES.includes(value)
+                ? value
+                : APP_FONT_DEFAULT_KEY;
+        }
+
+        function setAppFontFamily(value) {
+            const normalized = normalizeAppFontFamily(value);
+            appFontFamily.value = normalized;
+            configRepository.setString('VRCX_fontFamily', normalized);
+            applyAppFontFamily(normalized);
         }
 
         function setDisplayVRCPlusIconsAsAvatar() {
@@ -820,6 +846,7 @@ export const useAppearanceSettingsStore = defineStore(
             appLanguage,
             themeMode,
             isDarkMode,
+            appFontFamily,
             displayVRCPlusIconsAsAvatar,
             hideNicknames,
             showInstanceIdInLocation,
@@ -886,6 +913,7 @@ export const useAppearanceSettingsStore = defineStore(
             applyTableDensity,
             setNavCollapsed,
             toggleNavCollapsed,
+            setAppFontFamily,
             setThemeMode
         };
     }

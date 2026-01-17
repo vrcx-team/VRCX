@@ -48,9 +48,10 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
+    --font-western-primary: 'Inter';
     --font-western:
-        'ellipsis-font', -apple-system, 'Inter', 'Segoe UI', 'Roboto', 'Ubuntu',
-        'Cantarell', 'DejaVu Sans', sans-serif;
+        'ellipsis-font', -apple-system, var(--font-western-primary), 'Segoe UI',
+        'Roboto', 'Ubuntu', 'Cantarell', 'DejaVu Sans', sans-serif;
     --font-symbol: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
     --font-fallback-cjk: sans-serif;
     --font-primary-cjk:
@@ -168,6 +169,19 @@
             var(--font-western), var(--font-symbol), var(--font-primary-cjk),
             var(--font-fallback-cjk);
         margin: 0;
+    }
+}
+
+@layer utilities {
+    .scrollbar-hidden {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .scrollbar-hidden::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+        display: none;
     }
 }
 

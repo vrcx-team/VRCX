@@ -2,7 +2,12 @@ import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { toast } from 'vue-sonner';
 
-import { THEME_COLORS, THEME_CONFIG } from '../../constants';
+import {
+    APP_FONT_CONFIG,
+    APP_FONT_DEFAULT_KEY,
+    THEME_COLORS,
+    THEME_CONFIG
+} from '../../constants';
 import { i18n } from '../../../plugin/i18n';
 import { router } from '../../../plugin/router';
 import { textToHex } from './string';
@@ -13,6 +18,8 @@ import configRepository from '../../../service/config.js';
 const THEME_COLOR_STORAGE_KEY = 'VRCX_themeColor';
 const THEME_COLOR_STYLE_ID = 'app-theme-color-style';
 const DEFAULT_THEME_COLOR_KEY = 'default';
+
+const APP_FONT_LINK_ATTR = 'data-app-font';
 
 const themeColors = THEME_COLORS.map((theme) => ({
     ...theme,
@@ -130,6 +137,51 @@ function applyThemeFonts(themeKey, fontLinks = []) {
         fontLink.dataset.themeFont = themeKey;
         head.appendChild(fontLink);
     });
+}
+
+function resolveAppFontFamily(fontKey) {
+    const normalized = String(fontKey || '')
+        .trim()
+        .toLowerCase();
+    if (APP_FONT_CONFIG[normalized]) {
+        return { key: normalized, ...APP_FONT_CONFIG[normalized] };
+    }
+    return {
+        key: APP_FONT_DEFAULT_KEY,
+        ...APP_FONT_CONFIG[APP_FONT_DEFAULT_KEY]
+    };
+}
+
+function ensureAppFontLinks() {
+    const head = document.head;
+    if (!head) {
+        return;
+    }
+    Object.entries(APP_FONT_CONFIG).forEach(([key, config]) => {
+        if (!config?.cssImport) {
+            return;
+        }
+        const existing = document.querySelector(
+            `style[${APP_FONT_LINK_ATTR}="${key}"]`
+        );
+        if (existing) {
+            return;
+        }
+        const styleEl = document.createElement('style');
+        styleEl.setAttribute(APP_FONT_LINK_ATTR, key);
+        styleEl.textContent = config.cssImport;
+        head.appendChild(styleEl);
+    });
+}
+
+function applyAppFontFamily(fontKey) {
+    const resolved = resolveAppFontFamily(fontKey);
+    const root = document.documentElement;
+    root.style.setProperty('--font-western-primary', resolved.cssName);
+
+    ensureAppFontLinks();
+
+    return resolved;
 }
 
 function changeAppThemeStyle(themeMode) {
@@ -379,6 +431,7 @@ export {
     updateTrustColorClasses,
     refreshCustomCss,
     refreshCustomScript,
+    applyAppFontFamily,
     HueToHex,
     HSVtoRGB,
     formatJsonVars,

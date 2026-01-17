@@ -193,9 +193,7 @@
                                             (userDialog.representedGroup && userDialog.representedGroup.isRepresenting)
                                         "
                                         class="extra">
-                                        <div
-                                            
-                                            style="display: inline-block; flex: none; margin-right: 5px">
+                                        <div style="display: inline-block; flex: none; margin-right: 5px">
                                             <Avatar
                                                 class="x-link size-15! rounded-lg!"
                                                 :style="{
@@ -1055,10 +1053,7 @@
                                 </Select>
                             </div>
                         </div>
-                        <div
-                            
-                            class="x-friend-list"
-                            style="margin-top: 10px; min-height: 60px">
+                        <div class="x-friend-list" style="margin-top: 10px; min-height: 60px">
                             <div
                                 v-for="world in userDialog.worlds"
                                 :key="world.id"
@@ -1092,7 +1087,6 @@
                                 v-model="favoriteWorldsTab"
                                 :items="favoriteWorldTabs"
                                 :unmount-on-hide="false"
-                                
                                 class="zero-margin-tabs"
                                 style="margin-top: 10px; height: 50vh">
                                 <template
@@ -1257,14 +1251,14 @@
 
                     <template #JSON>
                         <Button
-                            class="rounded-full h-6 w-6 mr-2"
+                            class="rounded-full mr-2"
                             size="icon-sm"
                             variant="outline"
                             @click="refreshUserDialogTreeData()">
                             <RefreshCw />
                         </Button>
                         <Button
-                            class="rounded-full h-6 w-6"
+                            class="rounded-full"
                             size="icon-sm"
                             variant="outline"
                             @click="downloadAndSaveJson(userDialog.id, userDialog.ref)">
