@@ -170,6 +170,10 @@
                 :label="t('view.settings.appearance.appearance.compact_table_mode')"
                 :value="compactTableMode"
                 @change="setCompactTableMode" />
+            <simple-switch
+                :label="t('view.settings.appearance.appearance.striped_data_table_mode')"
+                :value="isDataTableStriped"
+                @change="toggleStripedDataTable" />
             <div class="options-container-item">
                 <Button size="sm" variant="outline" @click="promptMaxTableSizeDialog">{{
                     t('view.settings.appearance.appearance.table_max_size')
@@ -446,9 +450,9 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '../../../../stores';
-    import { getLanguageName, languageCodes } from '../../../../localization';
-    import { THEME_CONFIG } from '../../../../shared/constants';
+    import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '@/stores';
+    import { getLanguageName, languageCodes } from '@/localization';
+    import { THEME_CONFIG } from '@/shared/constants';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 
@@ -481,7 +485,8 @@
         trustColor,
         notificationIconDot,
         tablePageSizes,
-        compactTableMode
+        compactTableMode,
+        isDataTableStriped
     } = storeToRefs(appearanceSettingsStore);
 
     const appLanguageDisplayName = computed(() => getLanguageName(String(appLanguage.value)));
@@ -511,7 +516,8 @@
         promptMaxTableSizeDialog,
         setNotificationIconDot,
         setTablePageSizes,
-        setCompactTableMode
+        setCompactTableMode,
+        toggleStripedDataTable
     } = appearanceSettingsStore;
 
     const zoomLevel = ref(100);

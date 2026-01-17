@@ -96,6 +96,8 @@ export const useAppearanceSettingsStore = defineStore(
             );
         });
 
+        const isDataTableStriped = ref(false);
+
         const clampInt = (value, min, max) => {
             const n = parseInt(value, 10);
             return Math.min(max, Math.max(min, n));
@@ -128,7 +130,8 @@ export const useAppearanceSettingsStore = defineStore(
                 compactTableModeConfig,
                 trustColorConfig,
                 notificationIconDotConfig,
-                navIsCollapsedConfig
+                navIsCollapsedConfig,
+                dataTableStripedConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_appLanguage'),
                 configRepository.getString('VRCX_ThemeMode', 'system'),
@@ -183,7 +186,8 @@ export const useAppearanceSettingsStore = defineStore(
                     JSON.stringify(TRUST_COLOR_DEFAULTS)
                 ),
                 configRepository.getBool('VRCX_notificationIconDot', true),
-                configRepository.getBool('VRCX_navIsCollapsed', true)
+                configRepository.getBool('VRCX_navIsCollapsed', true),
+                configRepository.getBool('VRCX_dataTableStriped', false)
             ]);
 
             if (!appLanguageConfig) {
@@ -254,6 +258,7 @@ export const useAppearanceSettingsStore = defineStore(
             compactTableMode.value = compactTableModeConfig;
             applyCompactTableMode(compactTableMode.value);
             isNavCollapsed.value = navIsCollapsedConfig;
+            isDataTableStriped.value = dataTableStripedConfig;
 
             await configRepository.remove('VRCX_navWidth');
 
@@ -658,6 +663,14 @@ export const useAppearanceSettingsStore = defineStore(
                 compactTableMode.value
             );
         }
+
+        function toggleStripedDataTable() {
+            isDataTableStriped.value = !isDataTableStriped.value;
+            configRepository.setBool(
+                'VRCX_dataTableStriped',
+                isDataTableStriped.value
+            );
+        }
         /**
          * @param {object} color
          */
@@ -828,6 +841,7 @@ export const useAppearanceSettingsStore = defineStore(
             isSideBarTabShow,
             notificationIconDot,
             isNavCollapsed,
+            isDataTableStriped,
 
             setAppLanguage,
             setDisplayVRCPlusIconsAsAvatar,
@@ -854,6 +868,7 @@ export const useAppearanceSettingsStore = defineStore(
             setHideUnfriends,
             setRandomUserColours,
             setCompactTableMode,
+            toggleStripedDataTable,
             setTrustColor,
             tryInitUserColours,
             updateTrustColor,
