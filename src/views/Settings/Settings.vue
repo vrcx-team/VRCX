@@ -3,34 +3,39 @@
         <div class="options-container" style="margin-top: 0; padding: 5px">
             <span class="header">{{ t('view.settings.header') }}</span>
         </div>
-        <el-tabs style="height: calc(100% - 51px)">
-            <el-tab-pane :label="t('view.settings.category.general')">
+        <TabsUnderline
+            default-value="general"
+            :items="settingsTabs"
+            :unmount-on-hide="false"
+            style="height: calc(100% - 51px)">
+            <template #general>
                 <GeneralTab />
-            </el-tab-pane>
-            <el-tab-pane lazy :label="t('view.settings.category.appearance')">
+            </template>
+            <template #appearance>
                 <AppearanceTab />
-            </el-tab-pane>
-            <el-tab-pane lazy :label="t('view.settings.category.notifications')">
+            </template>
+            <template #notifications>
                 <NotificationsTab />
-            </el-tab-pane>
-            <el-tab-pane lazy :label="t('view.settings.category.wrist_overlay')">
+            </template>
+            <template #wrist-overlay>
                 <WristOverlayTab />
-            </el-tab-pane>
-            <el-tab-pane lazy :label="t('view.settings.category.discord_presence')">
+            </template>
+            <template #discord>
                 <DiscordPresenceTab />
-            </el-tab-pane>
-            <el-tab-pane lazy :label="t('view.settings.category.pictures')">
+            </template>
+            <template #pictures>
                 <PicturesTab />
-            </el-tab-pane>
-            <el-tab-pane lazy :label="t('view.settings.category.advanced')">
+            </template>
+            <template #advanced>
                 <AdvancedTab />
-            </el-tab-pane>
-        </el-tabs>
+            </template>
+        </TabsUnderline>
     </div>
 </template>
 
 <script setup>
-    import { onBeforeMount } from 'vue';
+    import { computed, onBeforeMount } from 'vue';
+    import { TabsUnderline } from '@/components/ui/tabs';
     import { useI18n } from 'vue-i18n';
 
     import AdvancedTab from './components/Tabs/AdvancedTab.vue';
@@ -42,6 +47,15 @@
     import WristOverlayTab from './components/Tabs/WristOverlayTab.vue';
 
     const { t } = useI18n();
+    const settingsTabs = computed(() => [
+        { value: 'general', label: t('view.settings.category.general') },
+        { value: 'appearance', label: t('view.settings.category.appearance') },
+        { value: 'notifications', label: t('view.settings.category.notifications') },
+        { value: 'wrist-overlay', label: t('view.settings.category.wrist_overlay') },
+        { value: 'discord', label: t('view.settings.category.discord_presence') },
+        { value: 'pictures', label: t('view.settings.category.pictures') },
+        { value: 'advanced', label: t('view.settings.category.advanced') }
+    ]);
 
     onBeforeMount(() => {
         const menuItem = document.querySelector('li[role="menuitem"].is-active');

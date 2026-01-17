@@ -1,13 +1,13 @@
 <template>
     <div class="x-friend-list" style="padding: 10px 5px">
         <div
-            class="x-friend-group x-link"
+            class="x-friend-group x-link flex items-center"
             style="padding: 0 0 5px"
             @click="
                 isFriendsGroupMe = !isFriendsGroupMe;
                 saveFriendsGroupStates();
             ">
-            <el-icon class="rotation-transition" :class="{ 'is-rotated': isFriendsGroupMe }"><ArrowRight /></el-icon>
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': !isFriendsGroupMe }" />
             <span style="margin-left: 5px">{{ t('side_panel.me') }}</span>
         </div>
         <div v-show="isFriendsGroupMe">
@@ -19,7 +19,7 @@
                     <span class="name" :style="{ color: currentUser.$userColour }">{{ currentUser.displayName }}</span>
                     <Location
                         v-if="isGameRunning && !gameLogDisabled"
-                        class="extra"
+                        class="text-xs"
                         :location="lastLocation.location"
                         :traveling="lastLocationDestination"
                         :link="false" />
@@ -27,23 +27,23 @@
                         v-else-if="
                             isRealInstance(currentUser.$locationTag) || isRealInstance(currentUser.$travelingToLocation)
                         "
-                        class="extra"
+                        class="text-xs"
                         :location="currentUser.$locationTag"
                         :traveling="currentUser.$travelingToLocation"
                         :link="false" />
 
-                    <span v-else class="extra">{{ currentUser.statusDescription }}</span>
+                    <span v-else class="text-xs">{{ currentUser.statusDescription }}</span>
                 </div>
             </div>
         </div>
         <div
             v-show="vipFriendsDisplayNumber"
-            class="x-friend-group x-link"
+            class="x-friend-group x-link flex items-center"
             @click="
                 isVIPFriends = !isVIPFriends;
                 saveFriendsGroupStates();
             ">
-            <el-icon class="rotation-transition" :class="{ 'is-rotated': isVIPFriends }"><ArrowRight /></el-icon>
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': !isVIPFriends }" />
             <span style="margin-left: 5px">
                 {{ t('side_panel.favorite') }} &horbar;
                 {{ vipFriendsDisplayNumber }}
@@ -54,8 +54,8 @@
                 <div v-for="group in vipFriendsDivideByGroup" :key="group[0].key">
                     <transition name="el-fade-in-linear">
                         <div v-show="group[0].groupName !== ''" style="margin-bottom: 3px">
-                            <span class="extra">{{ group[0].groupName }}</span>
-                            <span class="extra" style="margin-left: 5px">{{ `(${group.length})` }}</span>
+                            <span class="text-xs">{{ group[0].groupName }}</span>
+                            <span class="text-xs" style="margin-left: 5px">{{ `(${group.length})` }}</span>
                         </div>
                     </transition>
                     <div v-if="group.length" style="margin-bottom: 10px">
@@ -78,10 +78,8 @@
         </div>
 
         <template v-if="isSidebarGroupByInstance && friendsInSameInstance.length">
-            <div class="x-friend-group x-link" @click="toggleSwitchGroupByInstanceCollapsed">
-                <el-icon class="rotation-transition" :class="{ 'is-rotated': !isSidebarGroupByInstanceCollapsed }"
-                    ><ArrowRight
-                /></el-icon>
+            <div class="x-friend-group x-link flex items-center" @click="toggleSwitchGroupByInstanceCollapsed">
+                <ChevronDown class="rotation-transition" :class="{ 'is-rotated': isSidebarGroupByInstanceCollapsed }" />
                 <span style="margin-left: 5px"
                     >{{ t('side_panel.same_instance') }} &horbar; {{ friendsInSameInstance.length }}</span
                 >
@@ -91,10 +89,10 @@
                 <div v-for="friendArr in friendsInSameInstance" :key="friendArr[0].ref.$location.tag">
                     <div class="mb-1 flex items-center">
                         <Location
-                            class="extra text-muted-foreground!"
+                            class="text-xs text-muted-foreground"
                             :location="getFriendsLocations(friendArr)"
                             style="display: inline" />
-                        <span class="extra" style="margin-left: 5px">{{ `(${friendArr.length})` }}</span>
+                        <span class="text-xs" style="margin-left: 5px">{{ `(${friendArr.length})` }}</span>
                     </div>
                     <div v-if="friendArr && friendArr.length">
                         <friend-item
@@ -111,12 +109,12 @@
         </template>
         <div
             v-show="onlineFriendsByGroupStatus.length"
-            class="x-friend-group x-link"
+            class="x-friend-group x-link flex items-center"
             @click="
                 isOnlineFriends = !isOnlineFriends;
                 saveFriendsGroupStates();
             ">
-            <el-icon class="rotation-transition" :class="{ 'is-rotated': isOnlineFriends }"><ArrowRight /></el-icon>
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': !isOnlineFriends }" />
             <span style="margin-left: 5px"
                 >{{ t('side_panel.online') }} &horbar; {{ onlineFriendsByGroupStatus.length }}</span
             >
@@ -130,12 +128,12 @@
         </div>
         <div
             v-show="activeFriends.length"
-            class="x-friend-group x-link"
+            class="x-friend-group x-link flex items-center"
             @click="
                 isActiveFriends = !isActiveFriends;
                 saveFriendsGroupStates();
             ">
-            <el-icon class="rotation-transition" :class="{ 'is-rotated': isActiveFriends }"><ArrowRight /></el-icon>
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': !isActiveFriends }" />
             <span style="margin-left: 5px">{{ t('side_panel.active') }} &horbar; {{ activeFriends.length }}</span>
         </div>
         <div v-if="isActiveFriends">
@@ -147,12 +145,12 @@
         </div>
         <div
             v-show="offlineFriends.length"
-            class="x-friend-group x-link"
+            class="x-friend-group x-link flex items-center"
             @click="
                 isOfflineFriends = !isOfflineFriends;
                 saveFriendsGroupStates();
             ">
-            <el-icon class="rotation-transition" :class="{ 'is-rotated': isOfflineFriends }"><ArrowRight /></el-icon>
+            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': !isOfflineFriends }" />
             <span style="margin-left: 5px">{{ t('side_panel.offline') }} &horbar; {{ offlineFriends.length }}</span>
         </div>
         <div v-if="isOfflineFriends">
@@ -167,7 +165,7 @@
 
 <script setup>
     import { computed, ref, watch } from 'vue';
-    import { ArrowRight } from '@element-plus/icons-vue';
+    import { ChevronDown } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -315,11 +313,8 @@
     .x-link:hover {
         text-decoration: none;
     }
-    /* .x-link:hover span {
-        text-decoration: underline;
-    } */
     .is-rotated {
-        transform: rotate(90deg);
+        transform: rotate(-90deg);
     }
     .rotation-transition {
         transition: transform 0.2s ease-in-out;

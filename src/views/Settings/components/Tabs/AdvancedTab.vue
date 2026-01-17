@@ -5,15 +5,15 @@
             <div class="options-container-item" style="margin-top: 15px">
                 <ButtonGroup>
                     <Button variant="outline" size="sm" @click="showVRChatConfig()">
-                        <Operation />
+                        <Settings />
                         VRChat config.json
                     </Button>
                     <Button variant="outline" size="sm" @click="showLaunchOptions()">
-                        <Operation />
+                        <Settings />
                         {{ t('view.settings.advanced.advanced.launch_options') }}
                     </Button>
                     <Button variant="outline" size="sm" @click="showRegistryBackupDialog()">
-                        <Goods />
+                        <Package />
                         {{ t('view.settings.advanced.advanced.vrc_registry_backup') }}
                     </Button>
                 </ButtonGroup>
@@ -90,10 +90,10 @@
                 <div class="x-friend-item">
                     <div class="detail" @click="getVisits">
                         <span class="name">{{ t('view.profile.game_info.online_users') }}</span>
-                        <span v-if="visits" class="extra">{{
+                        <span v-if="visits" class="block truncate text-xs">{{
                             t('view.profile.game_info.user_online', { count: visits })
                         }}</span>
-                        <span v-else class="extra">{{ t('view.profile.game_info.refresh') }}</span>
+                        <span v-else class="block truncate text-xs">{{ t('view.profile.game_info.refresh') }}</span>
                     </div>
                 </div>
             </div>
@@ -159,10 +159,10 @@
                 :long-label="true"
                 @change="changeTranslationAPI('VRCX_translationAPI')" />
             <div class="options-container-item">
-                <Button size="sm" variant="outline" @click="showTranslationApiDialog"
-                    ><i class="ri-translate-2" style="margin-right: 5px"></i
-                    >{{ t('view.settings.advanced.advanced.translation_api.translation_api_key') }}</Button
-                >
+                <Button size="sm" variant="outline" @click="showTranslationApiDialog">
+                    <Languages class="h-4 w-4" style="margin-right: 5px" />
+                    {{ t('view.settings.advanced.advanced.translation_api.translation_api_key') }}
+                </Button>
             </div>
         </div>
         <div class="options-container">
@@ -384,9 +384,8 @@
 </template>
 
 <script setup>
-    import { Folder, Goods, Operation } from '@element-plus/icons-vue';
+    import { Folder, Languages, Package, RefreshCcw, Settings, Trash2 } from 'lucide-vue-next';
     import { computed, reactive, ref } from 'vue';
-    import { RefreshCcw, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { storeToRefs } from 'pinia';

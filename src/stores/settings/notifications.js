@@ -1,9 +1,9 @@
-import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { sharedFeedFiltersDefaults } from '../../shared/constants';
+import { useModalStore } from '../modal';
 import { useVrStore } from '../vr';
 
 import configRepository from '../../service/config';
@@ -12,6 +12,7 @@ export const useNotificationsSettingsStore = defineStore(
     'NotificationsSettings',
     () => {
         const vrStore = useVrStore();
+        const modalStore = useModalStore();
 
         const { t } = useI18n();
 
@@ -410,21 +411,18 @@ export const useNotificationsSettingsStore = defineStore(
         }
 
         function promptNotificationTimeout() {
-            ElMessageBox.prompt(
-                t('prompt.notification_timeout.description'),
-                t('prompt.notification_timeout.header'),
-                {
-                    distinguishCancelAndClose: true,
-                    confirmButtonText: t('prompt.notification_timeout.ok'),
-                    cancelButtonText: t('prompt.notification_timeout.cancel'),
+            modalStore
+                .prompt({
+                    title: t('prompt.notification_timeout.header'),
+                    description: t('prompt.notification_timeout.description'),
+                    confirmText: t('prompt.notification_timeout.ok'),
+                    cancelText: t('prompt.notification_timeout.cancel'),
                     inputValue: notificationTimeout.value / 1000,
-                    inputPattern: /\d+$/,
-                    inputErrorMessage: t(
-                        'prompt.notification_timeout.input_error'
-                    )
-                }
-            )
-                .then(async ({ value }) => {
+                    pattern: /\d+$/,
+                    errorMessage: t('prompt.notification_timeout.input_error')
+                })
+                .then(async ({ ok, value }) => {
+                    if (!ok) return;
                     if (value && !isNaN(value)) {
                         notificationTimeout.value = Math.trunc(
                             Number(value) * 1000

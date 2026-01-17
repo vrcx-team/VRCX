@@ -1,14 +1,16 @@
 <template>
-    <el-dialog
-        ref="setAvatarStylesDialog"
-        class="x-dialog"
-        :model-value="setAvatarStylesDialog.visible"
-        :title="t('dialog.set_avatar_styles.header')"
-        width="400px"
-        append-to-body
-        @close="closeSetAvatarStylesDialog">
-        <template v-if="setAvatarStylesDialog.visible">
-            <div>
+    <Dialog
+        :open="setAvatarStylesDialog.visible"
+        @update:open="(open) => {
+            if (!open) closeSetAvatarStylesDialog();
+        }">
+        <DialogContent class="x-dialog sm:max-w-100">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.set_avatar_styles.header') }}</DialogTitle>
+            </DialogHeader>
+
+            <template v-if="setAvatarStylesDialog.visible">
+                <div>
                 <span>{{ t('dialog.set_avatar_styles.primary_style') }}</span>
                 <br />
                 <Select
@@ -64,21 +66,23 @@
                 style="margin-top: 10px"
                 input-class="resize-none"
                 @update:modelValue="(v) => updateDialog({ authorTags: v })" />
-        </template>
+            </template>
 
-        <template #footer>
-            <Button variant="secondary" class="mr-2" @click="closeSetAvatarStylesDialog">{{
-                t('dialog.set_avatar_styles.cancel')
-            }}</Button>
-            <Button @click="saveSetAvatarStylesDialog">
-                {{ t('dialog.set_avatar_styles.save') }}
-            </Button>
-        </template>
-    </el-dialog>
+            <DialogFooter>
+                <Button variant="secondary" class="mr-2" @click="closeSetAvatarStylesDialog">{{
+                    t('dialog.set_avatar_styles.cancel')
+                }}</Button>
+                <Button @click="saveSetAvatarStylesDialog">
+                    {{ t('dialog.set_avatar_styles.save') }}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
     import { Button } from '@/components/ui/button';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

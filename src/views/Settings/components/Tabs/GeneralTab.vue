@@ -6,14 +6,14 @@
                 <div class="x-friend-item" style="cursor: default">
                     <div class="detail">
                         <span class="name">{{ t('view.settings.general.general.version') }}</span>
-                        <span class="extra" v-text="appVersion"></span>
+                        <span class="block truncate text-xs" v-text="appVersion"></span>
                     </div>
                 </div>
                 <div class="x-friend-item" @click="checkForVRCXUpdate">
                     <div class="detail">
                         <span class="name">{{ t('view.settings.general.general.latest_app_version') }}</span>
-                        <span v-if="latestAppVersion" class="extra" v-text="latestAppVersion"></span>
-                        <span v-else class="extra">{{
+                        <span v-if="latestAppVersion" class="block truncate text-xs" v-text="latestAppVersion"></span>
+                        <span v-else class="block truncate text-xs">{{
                             t('view.settings.general.general.latest_app_version_refresh')
                         }}</span>
                     </div>
@@ -21,13 +21,13 @@
                 <div class="x-friend-item" @click="openExternalLink(links.github)">
                     <div class="detail">
                         <span class="name">{{ t('view.settings.general.general.repository_url') }}</span>
-                        <span v-once class="extra">{{ links.github }}</span>
+                        <span v-once class="block truncate text-xs">{{ links.github }}</span>
                     </div>
                 </div>
                 <div class="x-friend-item" @click="openExternalLink(links.discord)">
                     <div class="detail">
                         <span class="name">{{ t('view.settings.general.general.support') }}</span>
-                        <span v-once class="extra">{{ links.discord }}</span>
+                        <span v-once class="block truncate text-xs">{{ links.discord }}</span>
                     </div>
                 </div>
             </div>
@@ -244,7 +244,7 @@
                         side="top"
                         style="margin-left: 5px"
                         :content="t('view.settings.general.automation.auto_invite_request_accept_tooltip')">
-                        <el-icon><InfoFilled /></el-icon>
+                        <Info />
                     </TooltipWrapper>
                 </span>
                 <br />
@@ -303,7 +303,7 @@
 <script setup>
     import { computed, defineAsyncComponent, ref } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { InfoFilled } from '@element-plus/icons-vue';
+    import { Info } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

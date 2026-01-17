@@ -1,4 +1,4 @@
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useAppearanceSettingsStore } from '../stores';
@@ -6,16 +6,11 @@ import { useAppearanceSettingsStore } from '../stores';
 import configRepository from '../service/config';
 
 export function useAuthenticatedLayoutResizable() {
-    const navCollapsedPx = 64;
-    const navDefaultPx = 240;
-    const navMinPx = 180;
-    const navMaxPx = 300;
     const asideMaxPx = 500;
 
     const appearanceStore = useAppearanceSettingsStore();
-    const { setAsideWidth, setNavWidth } = appearanceStore;
-    const { asideWidth, isNavCollapsed, isSideBarTabShow, navWidth } =
-        storeToRefs(appearanceStore);
+    const { setAsideWidth } = appearanceStore;
+    const { asideWidth, isSideBarTabShow, isNavCollapsed } = storeToRefs(appearanceStore);
 
     const fallbackWidth =
         typeof window !== 'undefined' && window.innerWidth
@@ -23,9 +18,7 @@ export function useAuthenticatedLayoutResizable() {
             : 1200;
 
     const panelGroupRef = ref(null);
-    const navPanelRef = ref(null);
     const asidePanelRef = ref(null);
-    const navExpandedSize = ref(null);
     const groupWidth = ref(fallbackWidth);
     const draggingCount = ref(0);
     let resizeObserver = null;
@@ -70,27 +63,7 @@ export function useAuthenticatedLayoutResizable() {
     const percentToPx = (percent, groupWidth) => (percent / 100) * groupWidth;
 
     const isAsideCollapsed = (layout) =>
-        Array.isArray(layout) &&
-        layout.length >= 3 &&
-        layout[layout.length - 1] <= 1;
-
-    const navCollapsedSize = computed(() =>
-        pxToPercent(navCollapsedPx, groupWidth.value)
-    );
-    const navExpandedPx = computed(() => navWidth.value || navDefaultPx);
-
-    const navDefaultSize = computed(() =>
-        isNavCollapsed.value
-            ? navCollapsedSize.value
-            : pxToPercent(navExpandedPx.value)
-    );
-
-    const navMinSize = computed(() =>
-        isNavCollapsed.value ? navCollapsedSize.value : pxToPercent(navMinPx)
-    );
-    const navMaxSize = computed(() =>
-        isNavCollapsed.value ? navCollapsedSize.value : pxToPercent(navMaxPx)
-    );
+        Array.isArray(layout) && layout.length >= 2 && layout[layout.length - 1] <= 1;
 
     const asideDefaultSize = computed(() =>
         pxToPercent(asideWidth.value, undefined, 0)
@@ -98,18 +71,19 @@ export function useAuthenticatedLayoutResizable() {
     const asideMaxSize = computed(() => pxToPercent(asideMaxPx, undefined, 0));
 
     const mainDefaultSize = computed(
-        () =>
-            100 -
-            navDefaultSize.value -
-            (isSideBarTabShow.value ? asideDefaultSize.value : 0)
+        () => 100 - (isSideBarTabShow.value ? asideDefaultSize.value : 0)
     );
 
     const handleLayout = (sizes) => {
-        if (!Array.isArray(sizes) || sizes.length < 2) {
+        if (!Array.isArray(sizes) || sizes.length < 1) {
             return;
         }
 
         if (draggingCount.value === 0) {
+            return;
+        }
+
+        if (!isSideBarTabShow.value || sizes.length < 2) {
             return;
         }
 
@@ -118,16 +92,6 @@ export function useAuthenticatedLayoutResizable() {
             return;
         }
         const width = rawWidth;
-
-        const navSize = sizes[0];
-        if (!isNavCollapsed.value && Number.isFinite(navSize) && navSize > 0) {
-            navExpandedSize.value = navSize;
-            setNavWidth(Math.round(percentToPx(navSize, width)));
-        }
-
-        if (!isSideBarTabShow.value || sizes.length < 3) {
-            return;
-        }
 
         const asideSize = sizes[sizes.length - 1];
         if (!Number.isFinite(asideSize)) {
@@ -142,23 +106,12 @@ export function useAuthenticatedLayoutResizable() {
         setAsideWidth(Math.round(percentToPx(asideSize, width)));
     };
 
-    const resizeNavPanel = (targetSize) =>
-        navPanelRef.value?.resize?.(targetSize);
-
     const resizeAsidePanel = (targetSize) =>
         asidePanelRef.value?.resize?.(targetSize);
 
     const updateGroupWidth = () => {
         const width = getGroupWidth();
         groupWidth.value = width;
-
-        if (isNavCollapsed.value) {
-            resizeNavPanel(navCollapsedSize.value);
-        } else {
-            const targetSize = pxToPercent(navExpandedPx.value, width);
-            navExpandedSize.value = targetSize;
-            resizeNavPanel(targetSize);
-        }
 
         if (!isSideBarTabShow.value) {
             return;
@@ -194,27 +147,9 @@ export function useAuthenticatedLayoutResizable() {
         }
     };
 
-    watch(isNavCollapsed, async (collapsed) => {
-        await nextTick();
-        if (collapsed) {
-            resizeNavPanel(navCollapsedSize.value);
-            return;
-        }
-        const targetSize =
-            navExpandedSize.value ?? pxToPercent(navExpandedPx.value);
-        resizeNavPanel(targetSize);
-    });
-
     onMounted(async () => {
         await nextTick();
         updateGroupWidth();
-        let panelSize = null;
-        panelSize = navPanelRef.value?.getSize?.() ?? null;
-
-        navExpandedSize.value = panelSize ?? navDefaultSize.value;
-        if (isNavCollapsed.value) {
-            resizeNavPanel(navCollapsedSize.value);
-        }
 
         const element = panelGroupRef.value?.$el ?? panelGroupRef.value;
         if (element && typeof ResizeObserver !== 'undefined') {
@@ -232,11 +167,7 @@ export function useAuthenticatedLayoutResizable() {
 
     return {
         panelGroupRef,
-        navPanelRef,
         asidePanelRef,
-        navDefaultSize,
-        navMinSize,
-        navMaxSize,
         asideDefaultSize,
         asideMaxSize,
         mainDefaultSize,

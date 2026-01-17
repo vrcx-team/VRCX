@@ -1,183 +1,184 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        v-model="groupMemberModeration.visible"
-        :title="t('dialog.group_member_moderation.header')"
-        append-to-body
-        width="90vw">
-        <div>
-            <h3>{{ groupMemberModeration.groupRef.name }}</h3>
-            <el-tabs style="height: 100%">
-                <el-tab-pane :label="t('dialog.group_member_moderation.members')">
-                    <div style="margin-top: 10px">
-                        <Button
-                            class="rounded-full"
-                            variant="outline"
-                            size="icon-sm"
-                            :disabled="isGroupMembersLoading"
-                            @click="loadAllGroupMembers">
-                            <Spinner v-if="isGroupMembersLoading" />
-                            <Refresh v-else />
-                        </Button>
-                        <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">
-                            {{ groupMemberModerationTable.data.length }}/{{
-                                groupMemberModeration.groupRef.memberCount
-                            }}
-                        </span>
-                        <div style="float: right; margin-top: 5px">
-                            <span style="margin-right: 5px">{{ t('dialog.group.members.sort_by') }}</span>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger
-                                    as-child
-                                    :disabled="
-                                        Boolean(
-                                            isGroupMembersLoading ||
-                                            memberSearch.length ||
-                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
-                                        )
-                                    ">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
+    <Dialog v-model:open="groupMemberModeration.visible">
+        <DialogContent class="x-dialog max-w-none sm:min-w-[90vw] sm:max-w-[90vw] sm:min-h-[90vh] sm:max-h-[90vh]">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.group_member_moderation.header') }}</DialogTitle>
+            </DialogHeader>
+
+            <div>
+                <h3>{{ groupMemberModeration.groupRef.name }}</h3>
+                <TabsUnderline default-value="members" :items="groupModerationTabs" :unmount-on-hide="false">
+                    <template #members>
+                        <div style="margin-top: 10px">
+                            <Button
+                                class="rounded-full"
+                                variant="outline"
+                                size="icon-sm"
+                                :disabled="isGroupMembersLoading"
+                                @click="loadAllGroupMembers">
+                                <Spinner v-if="isGroupMembersLoading" />
+                                <RefreshCw v-else />
+                            </Button>
+                            <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">
+                                {{ groupMemberModerationTable.data.length }}/{{
+                                    groupMemberModeration.groupRef.memberCount
+                                }}
+                            </span>
+                            <div style="float: right; margin-top: 5px">
+                                <span style="margin-right: 5px">{{ t('dialog.group.members.sort_by') }}</span>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger
+                                        as-child
                                         :disabled="
                                             Boolean(
                                                 isGroupMembersLoading ||
                                                 memberSearch.length ||
                                                 !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
                                             )
-                                        "
-                                        @click.stop>
-                                        <span>
+                                        ">
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            :disabled="
+                                                Boolean(
+                                                    isGroupMembersLoading ||
+                                                    memberSearch.length ||
+                                                    !hasGroupPermission(
+                                                        groupMemberModeration.groupRef,
+                                                        'group-bans-manage'
+                                                    )
+                                                )
+                                            "
+                                            @click.stop>
                                             {{ t(memberSortOrder.name) }}
-                                            <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
-                                        </span>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    <DropdownMenuItem
-                                        v-for="item in groupDialogSortingOptions"
-                                        :key="item.name"
-                                        @click="setGroupMemberSortOrder(item)">
-                                        {{ t(item.name) }}
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                            <span class="ml-2" style="margin-right: 5px">{{ t('dialog.group.members.filter') }}</span>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger
-                                    as-child
-                                    :disabled="
-                                        Boolean(
-                                            isGroupMembersLoading ||
-                                            memberSearch.length ||
-                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
-                                        )
-                                    ">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
+                                            <ArrowDown style="margin-left: 5px" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuItem
+                                            v-for="item in groupDialogSortingOptions"
+                                            :key="item.name"
+                                            @click="setGroupMemberSortOrder(item)">
+                                            {{ t(item.name) }}
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                                <span class="ml-2" style="margin-right: 5px">{{
+                                    t('dialog.group.members.filter')
+                                }}</span>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger
+                                        as-child
                                         :disabled="
                                             Boolean(
                                                 isGroupMembersLoading ||
                                                 memberSearch.length ||
                                                 !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
                                             )
-                                        "
-                                        @click.stop>
-                                        <span>
+                                        ">
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            :disabled="
+                                                Boolean(
+                                                    isGroupMembersLoading ||
+                                                    memberSearch.length ||
+                                                    !hasGroupPermission(
+                                                        groupMemberModeration.groupRef,
+                                                        'group-bans-manage'
+                                                    )
+                                                )
+                                            "
+                                            @click.stop>
                                             {{ t(memberFilter.name) }}
-                                            <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
-                                        </span>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    <DropdownMenuItem
-                                        v-for="item in groupDialogFilterOptions"
-                                        :key="item.name"
-                                        @click="setGroupMemberFilter(item)">
-                                        {{ t(item.name) }}
-                                    </DropdownMenuItem>
-                                    <template v-for="role in groupMemberModeration.groupRef.roles" :key="role.name">
-                                        <DropdownMenuItem v-if="!role.defaultRole" @click="setGroupMemberFilter(role)">
-                                            {{ t(role.name) }}
+                                            <ArrowDown style="margin-left: 5px" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuItem
+                                            v-for="item in groupDialogFilterOptions"
+                                            :key="item.name"
+                                            @click="setGroupMemberFilter(item)">
+                                            {{ t(item.name) }}
                                         </DropdownMenuItem>
-                                    </template>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                                        <template v-for="role in groupMemberModeration.groupRef.roles" :key="role.name">
+                                            <DropdownMenuItem
+                                                v-if="!role.defaultRole"
+                                                @click="setGroupMemberFilter(role)">
+                                                {{ t(role.name) }}
+                                            </DropdownMenuItem>
+                                        </template>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                            <InputGroupField
+                                v-model="memberSearch"
+                                :disabled="!hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')"
+                                clearable
+                                size="sm"
+                                :placeholder="t('dialog.group.members.search')"
+                                style="margin-top: 10px; margin-bottom: 10px"
+                                @input="groupMembersSearch" />
+                            <Button size="sm" variant="outline" @click="selectAllGroupMembers">{{
+                                t('dialog.group_member_moderation.select_all')
+                            }}</Button>
+                            <DataTableLayout
+                                v-if="groupMemberModerationTable.data.length"
+                                style="margin-top: 10px"
+                                :table="groupMemberModerationTanstackTable"
+                                :loading="isGroupMembersLoading"
+                                :page-sizes="pageSizes"
+                                :total-items="groupMemberModerationTotalItems" />
                         </div>
-                        <InputGroupField
-                            v-model="memberSearch"
-                            :disabled="!hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')"
-                            clearable
-                            size="sm"
-                            :placeholder="t('dialog.group.members.search')"
-                            style="margin-top: 10px; margin-bottom: 10px"
-                            @input="groupMembersSearch" />
-                        <Button size="sm" variant="outline" @click="selectAllGroupMembers">{{
-                            t('dialog.group_member_moderation.select_all')
-                        }}</Button>
-                        <DataTableLayout
-                            v-if="groupMemberModerationTable.data.length"
-                            style="margin-top: 10px"
-                            :table="groupMemberModerationTanstackTable"
-                            :loading="isGroupMembersLoading"
-                            :page-sizes="pageSizes"
-                            :total-items="groupMemberModerationTotalItems" />
-                    </div>
-                </el-tab-pane>
+                    </template>
 
-                <el-tab-pane
-                    :label="t('dialog.group_member_moderation.bans')"
-                    :disabled="!hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')">
-                    <div style="margin-top: 10px">
-                        <Button
-                            class="rounded-full"
-                            variant="outline"
-                            size="icon-sm"
-                            :disabled="isGroupMembersLoading"
-                            @click="getAllGroupBans(groupMemberModeration.id)">
-                            <Spinner v-if="isGroupMembersLoading" />
-                            <Refresh v-else />
-                        </Button>
-                        <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
-                            groupBansModerationTable.data.length
-                        }}</span>
-                        <br />
-                        <InputGroupField
-                            v-model="groupBansModerationTable.filters[0].value"
-                            clearable
-                            size="sm"
-                            :placeholder="t('dialog.group.members.search')"
-                            style="margin-top: 10px; margin-bottom: 10px" />
-                        <Button size="sm" variant="outline" @click="selectAllGroupBans">{{
-                            t('dialog.group_member_moderation.select_all')
-                        }}</Button>
-                        <DataTableLayout
-                            style="margin-top: 10px"
-                            :table="groupBansModerationTanstackTable"
-                            :loading="isGroupMembersLoading"
-                            :page-sizes="pageSizes"
-                            :total-items="groupBansModerationTotalItems" />
-                    </div>
-                </el-tab-pane>
+                    <template #bans>
+                        <div style="margin-top: 10px">
+                            <Button
+                                class="rounded-full"
+                                variant="outline"
+                                size="icon-sm"
+                                :disabled="isGroupMembersLoading"
+                                @click="getAllGroupBans(groupMemberModeration.id)">
+                                <Spinner v-if="isGroupMembersLoading" />
+                                <RefreshCw v-else />
+                            </Button>
+                            <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
+                                groupBansModerationTable.data.length
+                            }}</span>
+                            <br />
+                            <InputGroupField
+                                v-model="groupBansModerationTable.filters[0].value"
+                                clearable
+                                size="sm"
+                                :placeholder="t('dialog.group.members.search')"
+                                style="margin-top: 10px; margin-bottom: 10px" />
+                            <Button size="sm" variant="outline" @click="selectAllGroupBans">{{
+                                t('dialog.group_member_moderation.select_all')
+                            }}</Button>
+                            <DataTableLayout
+                                style="margin-top: 10px"
+                                :table="groupBansModerationTanstackTable"
+                                :loading="isGroupMembersLoading"
+                                :page-sizes="pageSizes"
+                                :total-items="groupBansModerationTotalItems" />
+                        </div>
+                    </template>
 
-                <el-tab-pane
-                    :label="t('dialog.group_member_moderation.invites')"
-                    :disabled="!hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')">
-                    <div style="margin-top: 10px">
-                        <Button
-                            class="rounded-full"
-                            variant="outline"
-                            size="icon-sm"
-                            :disabled="isGroupMembersLoading"
-                            @click="getAllGroupInvitesAndJoinRequests(groupMemberModeration.id)">
-                            <Spinner v-if="isGroupMembersLoading" />
-                            <Refresh v-else />
-                        </Button>
-                        <br />
-                        <el-tabs>
-                            <el-tab-pane>
-                                <template #label>
+                    <template #invites>
+                        <div style="margin-top: 10px">
+                            <Button
+                                class="rounded-full"
+                                variant="outline"
+                                size="icon-sm"
+                                :disabled="isGroupMembersLoading"
+                                @click="getAllGroupInvitesAndJoinRequests(groupMemberModeration.id)">
+                                <Spinner v-if="isGroupMembersLoading" />
+                                <RefreshCw v-else />
+                            </Button>
+                            <br />
+                            <TabsUnderline default-value="sent" :items="groupInvitesTabs" :unmount-on-hide="false">
+                                <template #label-sent>
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.sent_invites')
                                     }}</span>
@@ -185,31 +186,7 @@
                                         groupInvitesModerationTable.data.length
                                     }}</span>
                                 </template>
-                                <Button size="sm" variant="outline" @click="selectAllGroupInvites">{{
-                                    t('dialog.group_member_moderation.select_all')
-                                }}</Button>
-                                <DataTableLayout
-                                    style="margin-top: 10px"
-                                    :table="groupInvitesModerationTanstackTable"
-                                    :loading="isGroupMembersLoading"
-                                    :page-sizes="pageSizes"
-                                    :total-items="groupInvitesModerationTotalItems" />
-                                <br />
-                                <Button
-                                    variant="outline"
-                                    :disabled="
-                                        Boolean(
-                                            progressCurrent ||
-                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')
-                                        )
-                                    "
-                                    @click="groupMembersDeleteSentInvite"
-                                    >{{ t('dialog.group_member_moderation.delete_sent_invite') }}</Button
-                                >
-                            </el-tab-pane>
-
-                            <el-tab-pane>
-                                <template #label>
+                                <template #label-join>
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.join_requests')
                                     }}</span>
@@ -217,55 +194,7 @@
                                         groupJoinRequestsModerationTable.data.length
                                     }}</span>
                                 </template>
-                                <Button size="sm" variant="outline" @click="selectAllGroupJoinRequests">{{
-                                    t('dialog.group_member_moderation.select_all')
-                                }}</Button>
-                                <DataTableLayout
-                                    style="margin-top: 10px"
-                                    :table="groupJoinRequestsModerationTanstackTable"
-                                    :loading="isGroupMembersLoading"
-                                    :page-sizes="pageSizes"
-                                    :total-items="groupJoinRequestsModerationTotalItems" />
-                                <br />
-                                <Button
-                                    variant="outline"
-                                    :disabled="
-                                        Boolean(
-                                            progressCurrent ||
-                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')
-                                        )
-                                    "
-                                    class="mr-2"
-                                    @click="groupMembersAcceptInviteRequest"
-                                    >{{ t('dialog.group_member_moderation.accept_join_requests') }}</Button
-                                >
-                                <Button
-                                    variant="outline"
-                                    :disabled="
-                                        Boolean(
-                                            progressCurrent ||
-                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')
-                                        )
-                                    "
-                                    class="mr-2"
-                                    @click="groupMembersRejectInviteRequest"
-                                    >{{ t('dialog.group_member_moderation.reject_join_requests') }}</Button
-                                >
-                                <Button
-                                    variant="outline"
-                                    :disabled="
-                                        Boolean(
-                                            progressCurrent ||
-                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')
-                                        )
-                                    "
-                                    @click="groupMembersBlockJoinRequest"
-                                    >{{ t('dialog.group_member_moderation.block_join_requests') }}</Button
-                                >
-                            </el-tab-pane>
-
-                            <el-tab-pane>
-                                <template #label>
+                                <template #label-blocked>
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.blocked_requests')
                                     }}</span>
@@ -273,267 +202,364 @@
                                         groupBlockedModerationTable.data.length
                                     }}</span>
                                 </template>
-                                <Button size="sm" variant="outline" @click="selectAllGroupBlocked">{{
-                                    t('dialog.group_member_moderation.select_all')
-                                }}</Button>
-                                <DataTableLayout
-                                    style="margin-top: 10px"
-                                    :table="groupBlockedModerationTanstackTable"
-                                    :loading="isGroupMembersLoading"
-                                    :page-sizes="pageSizes"
-                                    :total-items="groupBlockedModerationTotalItems" />
-                                <br />
-                                <Button
-                                    variant="outline"
-                                    :disabled="
-                                        Boolean(
-                                            progressCurrent ||
-                                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-invites-manage')
-                                        )
-                                    "
-                                    @click="groupMembersDeleteBlockedRequest"
-                                    >{{ t('dialog.group_member_moderation.delete_blocked_requests') }}</Button
-                                >
-                            </el-tab-pane>
-                        </el-tabs>
-                    </div>
-                </el-tab-pane>
+                                <template #sent>
+                                    <Button size="sm" variant="outline" @click="selectAllGroupInvites">{{
+                                        t('dialog.group_member_moderation.select_all')
+                                    }}</Button>
+                                    <DataTableLayout
+                                        style="margin-top: 10px"
+                                        :table="groupInvitesModerationTanstackTable"
+                                        :loading="isGroupMembersLoading"
+                                        :page-sizes="pageSizes"
+                                        :total-items="groupInvitesModerationTotalItems" />
+                                    <br />
+                                    <Button
+                                        variant="outline"
+                                        :disabled="
+                                            Boolean(
+                                                progressCurrent ||
+                                                !hasGroupPermission(
+                                                    groupMemberModeration.groupRef,
+                                                    'group-invites-manage'
+                                                )
+                                            )
+                                        "
+                                        @click="groupMembersDeleteSentInvite"
+                                        >{{ t('dialog.group_member_moderation.delete_sent_invite') }}</Button
+                                    >
+                                </template>
 
-                <el-tab-pane
-                    :label="t('dialog.group_member_moderation.logs')"
-                    :disabled="!hasGroupPermission(groupMemberModeration.groupRef, 'group-audit-view')">
-                    <div style="margin-top: 10px">
-                        <Button
-                            class="rounded-full"
-                            variant="outline"
-                            size="icon-sm"
-                            :disabled="isGroupMembersLoading"
-                            @click="getAllGroupLogs(groupMemberModeration.id)">
-                            <Spinner v-if="isGroupMembersLoading" />
-                            <Refresh v-else />
-                        </Button>
-                        <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
-                            groupLogsModerationTable.data.length
-                        }}</span>
-                        <br />
-                        <div style="display: flex; justify-content: space-between; align-items: center">
-                            <div>
-                                <Select v-model="selectedAuditLogTypes" multiple>
-                                    <SelectTrigger style="margin: 10px 0; width: 250px">
-                                        <SelectValue :placeholder="t('dialog.group_member_moderation.filter_type')" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem
-                                            v-for="type in groupMemberModeration.auditLogTypes"
-                                            :key="type"
-                                            :value="type">
-                                            {{ getAuditLogTypeName(type) }}
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div>
-                                <Button variant="outline" @click="showGroupLogsExportDialog">{{
-                                    t('dialog.group_member_moderation.export_logs')
-                                }}</Button>
-                            </div>
+                                <template #join>
+                                    <Button size="sm" variant="outline" @click="selectAllGroupJoinRequests">{{
+                                        t('dialog.group_member_moderation.select_all')
+                                    }}</Button>
+                                    <DataTableLayout
+                                        style="margin-top: 10px"
+                                        :table="groupJoinRequestsModerationTanstackTable"
+                                        :loading="isGroupMembersLoading"
+                                        :page-sizes="pageSizes"
+                                        :total-items="groupJoinRequestsModerationTotalItems" />
+                                    <br />
+                                    <Button
+                                        variant="outline"
+                                        :disabled="
+                                            Boolean(
+                                                progressCurrent ||
+                                                !hasGroupPermission(
+                                                    groupMemberModeration.groupRef,
+                                                    'group-invites-manage'
+                                                )
+                                            )
+                                        "
+                                        class="mr-2"
+                                        @click="groupMembersAcceptInviteRequest"
+                                        >{{ t('dialog.group_member_moderation.accept_join_requests') }}</Button
+                                    >
+                                    <Button
+                                        variant="outline"
+                                        :disabled="
+                                            Boolean(
+                                                progressCurrent ||
+                                                !hasGroupPermission(
+                                                    groupMemberModeration.groupRef,
+                                                    'group-invites-manage'
+                                                )
+                                            )
+                                        "
+                                        class="mr-2"
+                                        @click="groupMembersRejectInviteRequest"
+                                        >{{ t('dialog.group_member_moderation.reject_join_requests') }}</Button
+                                    >
+                                    <Button
+                                        variant="outline"
+                                        :disabled="
+                                            Boolean(
+                                                progressCurrent ||
+                                                !hasGroupPermission(
+                                                    groupMemberModeration.groupRef,
+                                                    'group-invites-manage'
+                                                )
+                                            )
+                                        "
+                                        @click="groupMembersBlockJoinRequest"
+                                        >{{ t('dialog.group_member_moderation.block_join_requests') }}</Button
+                                    >
+                                </template>
+
+                                <template #blocked>
+                                    <Button size="sm" variant="outline" @click="selectAllGroupBlocked">{{
+                                        t('dialog.group_member_moderation.select_all')
+                                    }}</Button>
+                                    <DataTableLayout
+                                        style="margin-top: 10px"
+                                        :table="groupBlockedModerationTanstackTable"
+                                        :loading="isGroupMembersLoading"
+                                        :page-sizes="pageSizes"
+                                        :total-items="groupBlockedModerationTotalItems" />
+                                    <br />
+                                    <Button
+                                        variant="outline"
+                                        :disabled="
+                                            Boolean(
+                                                progressCurrent ||
+                                                !hasGroupPermission(
+                                                    groupMemberModeration.groupRef,
+                                                    'group-invites-manage'
+                                                )
+                                            )
+                                        "
+                                        @click="groupMembersDeleteBlockedRequest"
+                                        >{{ t('dialog.group_member_moderation.delete_blocked_requests') }}</Button
+                                    >
+                                </template>
+                            </TabsUnderline>
                         </div>
-                        <InputGroupField
-                            v-model="groupLogsModerationTable.filters[0].value"
-                            clearable
-                            size="sm"
-                            :placeholder="t('dialog.group.members.search')"
-                            style="margin-top: 10px; margin-bottom: 10px" />
-                        <br />
-                        <DataTableLayout
-                            style="margin-top: 10px"
-                            :table="groupLogsModerationTanstackTable"
-                            :loading="isGroupMembersLoading"
-                            :page-sizes="pageSizes"
-                            :total-items="groupLogsModerationTotalItems" />
-                    </div>
-                </el-tab-pane>
-            </el-tabs>
-
-            <br />
-            <br />
-            <span class="name">{{ t('dialog.group_member_moderation.user_id') }}</span>
-            <br />
-            <InputGroupField
-                v-model="selectUserId"
-                size="sm"
-                style="margin-top: 5px"
-                :placeholder="t('dialog.group_member_moderation.user_id_placeholder')"
-                clearable />
-            <Button
-                size="sm"
-                variant="outline"
-                style="margin-top: 10px"
-                :disabled="!selectUserId"
-                @click="selectGroupMemberUserId"
-                >{{ t('dialog.group_member_moderation.select_user') }}</Button
-            >
-            <br />
-            <br />
-            <span class="name">{{ t('dialog.group_member_moderation.selected_users') }}</span>
-            <Button
-                class="rounded-full"
-                size="icon-sm"
-                variant="outline"
-                style="margin-left: 5px"
-                @click="clearSelectedGroupMembers">
-                <Trash2
-            /></Button>
-            <br />
-            <Badge
-                v-for="user in selectedUsersArray"
-                :key="user.id"
-                variant="outline"
-                style="margin-right: 5px; margin-top: 5px">
-                <TooltipWrapper v-if="user.membershipStatus !== 'member'" side="top">
-                    <template #content>
-                        <span>{{ t('dialog.group_member_moderation.user_isnt_in_group') }}</span>
                     </template>
-                    <el-icon style="margin-left: 3px; display: inline-block"><Warning /></el-icon>
-                </TooltipWrapper>
-                <span v-text="user.user?.displayName || user.userId" style="font-weight: bold; margin-left: 5px"></span>
-                <button
-                    type="button"
-                    style="
-                        margin-left: 6px;
-                        border: none;
-                        background: transparent;
-                        padding: 0;
-                        display: inline-flex;
-                        align-items: center;
-                        color: inherit;
-                        cursor: pointer;
-                    "
-                    @click="deleteSelectedGroupMember(user)">
-                    <i class="ri-close-line" style="font-size: 12px; line-height: 1"></i>
-                </button>
-            </Badge>
-            <br />
-            <br />
-            <span class="name">{{ t('dialog.group_member_moderation.notes') }}</span>
-            <InputGroupTextareaField
-                v-model="note"
-                class="extra"
-                :rows="2"
-                :placeholder="t('dialog.group_member_moderation.note_placeholder')"
-                style="margin-top: 5px"
-                input-class="resize-none min-h-0" />
-            <br />
-            <br />
-            <span class="name">{{ t('dialog.group_member_moderation.selected_roles') }}</span>
-            <br />
-            <Select v-model="selectedRoles" multiple>
-                <SelectTrigger style="margin-top: 5px">
-                    <SelectValue :placeholder="t('dialog.group_member_moderation.choose_roles_placeholder')" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem v-for="role in groupMemberModeration.groupRef.roles" :key="role.id" :value="role.id">
-                        {{ role.name }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
-            <br />
-            <br />
-            <span class="name">{{ t('dialog.group_member_moderation.actions') }}</span>
-            <br />
-            <div class="flex gap-2">
+
+                    <template #logs>
+                        <div style="margin-top: 10px">
+                            <Button
+                                class="rounded-full"
+                                variant="outline"
+                                size="icon-sm"
+                                :disabled="isGroupMembersLoading"
+                                @click="getAllGroupLogs(groupMemberModeration.id)">
+                                <Spinner v-if="isGroupMembersLoading" />
+                                <RefreshCw v-else />
+                            </Button>
+                            <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
+                                groupLogsModerationTable.data.length
+                            }}</span>
+                            <br />
+                            <div style="display: flex; justify-content: space-between; align-items: center">
+                                <div>
+                                    <Select v-model="selectedAuditLogTypes" multiple>
+                                        <SelectTrigger style="margin: 10px 0; width: 250px">
+                                            <SelectValue
+                                                :placeholder="t('dialog.group_member_moderation.filter_type')" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem
+                                                v-for="type in groupMemberModeration.auditLogTypes"
+                                                :key="type"
+                                                :value="type">
+                                                {{ getAuditLogTypeName(type) }}
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div>
+                                    <Button variant="outline" @click="showGroupLogsExportDialog">{{
+                                        t('dialog.group_member_moderation.export_logs')
+                                    }}</Button>
+                                </div>
+                            </div>
+                            <InputGroupField
+                                v-model="groupLogsModerationTable.filters[0].value"
+                                clearable
+                                size="sm"
+                                :placeholder="t('dialog.group.members.search')"
+                                style="margin-top: 10px; margin-bottom: 10px" />
+                            <br />
+                            <DataTableLayout
+                                style="margin-top: 10px"
+                                :table="groupLogsModerationTanstackTable"
+                                :loading="isGroupMembersLoading"
+                                :page-sizes="pageSizes"
+                                :total-items="groupLogsModerationTotalItems" />
+                        </div>
+                    </template>
+                </TabsUnderline>
+
+                <br />
+                <br />
+                <span class="name">{{ t('dialog.group_member_moderation.user_id') }}</span>
+                <br />
+                <InputGroupField
+                    v-model="selectUserId"
+                    size="sm"
+                    style="margin-top: 5px"
+                    :placeholder="t('dialog.group_member_moderation.user_id_placeholder')"
+                    clearable />
                 <Button
+                    size="sm"
                     variant="outline"
-                    :disabled="
-                        Boolean(
-                            !selectedRoles.length ||
-                            progressCurrent ||
-                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-roles-assign')
-                        )
-                    "
-                    @click="groupMembersAddRoles"
-                    >{{ t('dialog.group_member_moderation.add_roles') }}</Button
+                    style="margin-top: 10px"
+                    :disabled="!selectUserId"
+                    @click="selectGroupMemberUserId"
+                    >{{ t('dialog.group_member_moderation.select_user') }}</Button
                 >
+                <br />
+                <br />
+                <span class="name">{{ t('dialog.group_member_moderation.selected_users') }}</span>
                 <Button
-                    variant="secondary"
-                    :disabled="
-                        Boolean(
-                            !selectedRoles.length ||
-                            progressCurrent ||
-                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-roles-assign')
-                        )
-                    "
-                    @click="groupMembersRemoveRoles"
-                    >{{ t('dialog.group_member_moderation.remove_roles') }}</Button
-                >
-                <Button
+                    class="rounded-full"
+                    size="icon-sm"
                     variant="outline"
-                    :disabled="
-                        Boolean(
-                            progressCurrent ||
-                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-members-manage')
-                        )
-                    "
-                    @click="groupMembersSaveNote"
-                    >{{ t('dialog.group_member_moderation.save_note') }}</Button
-                >
-                <Button
-                    variant="outline"
-                    :disabled="
-                        Boolean(
-                            progressCurrent ||
-                            !hasGroupPermission(groupMemberModeration.groupRef, 'group-members-remove')
-                        )
-                    "
-                    @click="groupMembersKick"
-                    >{{ t('dialog.group_member_moderation.kick') }}</Button
-                >
-                <Button
-                    variant="outline"
-                    :disabled="
-                        Boolean(
-                            progressCurrent || !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
-                        )
-                    "
-                    @click="groupMembersBan"
-                    >{{ t('dialog.group_member_moderation.ban') }}</Button
-                >
-                <Button
-                    variant="outline"
-                    :disabled="
-                        Boolean(
-                            progressCurrent || !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
-                        )
-                    "
-                    @click="groupMembersUnban"
-                    >{{ t('dialog.group_member_moderation.unban') }}</Button
-                >
-                <span v-if="progressCurrent" style="margin-top: 10px">
-                    <el-icon class="is-loading" style="margin-left: 5px; margin-right: 5px"><Loading /></el-icon>
-                    {{ t('dialog.group_member_moderation.progress') }} {{ progressCurrent }}/{{ progressTotal }}
-                </span>
-                <Button
-                    variant="secondary"
-                    v-if="progressCurrent"
                     style="margin-left: 5px"
-                    @click="progressTotal = 0"
-                    >{{ t('dialog.group_member_moderation.cancel') }}</Button
-                >
+                    @click="clearSelectedGroupMembers">
+                    <Trash2
+                /></Button>
+                <br />
+                <Badge
+                    v-for="user in selectedUsersArray"
+                    :key="user.id"
+                    variant="outline"
+                    style="margin-right: 5px; margin-top: 5px">
+                    <TooltipWrapper v-if="user.membershipStatus !== 'member'" side="top">
+                        <template #content>
+                            <span>{{ t('dialog.group_member_moderation.user_isnt_in_group') }}</span>
+                        </template>
+                        <AlertTriangle style="margin-left: 3px; display: inline-block" />
+                    </TooltipWrapper>
+                    <span
+                        v-text="user.user?.displayName || user.userId"
+                        style="font-weight: bold; margin-left: 5px"></span>
+                    <button
+                        type="button"
+                        style="
+                            margin-left: 6px;
+                            border: none;
+                            background: transparent;
+                            padding: 0;
+                            display: inline-flex;
+                            align-items: center;
+                            color: inherit;
+                            cursor: pointer;
+                        "
+                        @click="deleteSelectedGroupMember(user)">
+                        <X class="h-3 w-3" />
+                    </button>
+                </Badge>
+                <br />
+                <br />
+                <span class="name">{{ t('dialog.group_member_moderation.notes') }}</span>
+                <InputGroupTextareaField
+                    v-model="note"
+                    class="text-xs"
+                    :rows="2"
+                    :placeholder="t('dialog.group_member_moderation.note_placeholder')"
+                    style="margin-top: 5px"
+                    input-class="resize-none min-h-0" />
+                <br />
+                <br />
+                <span class="name">{{ t('dialog.group_member_moderation.selected_roles') }}</span>
+                <br />
+                <Select v-model="selectedRoles" multiple>
+                    <SelectTrigger style="margin-top: 5px">
+                        <SelectValue :placeholder="t('dialog.group_member_moderation.choose_roles_placeholder')" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem
+                            v-for="role in groupMemberModeration.groupRef.roles"
+                            :key="role.id"
+                            :value="role.id">
+                            {{ role.name }}
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
+                <br />
+                <br />
+                <span class="name">{{ t('dialog.group_member_moderation.actions') }}</span>
+                <br />
+                <div class="flex gap-2">
+                    <Button
+                        variant="outline"
+                        :disabled="
+                            Boolean(
+                                !selectedRoles.length ||
+                                progressCurrent ||
+                                !hasGroupPermission(groupMemberModeration.groupRef, 'group-roles-assign')
+                            )
+                        "
+                        @click="groupMembersAddRoles"
+                        >{{ t('dialog.group_member_moderation.add_roles') }}</Button
+                    >
+                    <Button
+                        variant="secondary"
+                        :disabled="
+                            Boolean(
+                                !selectedRoles.length ||
+                                progressCurrent ||
+                                !hasGroupPermission(groupMemberModeration.groupRef, 'group-roles-assign')
+                            )
+                        "
+                        @click="groupMembersRemoveRoles"
+                        >{{ t('dialog.group_member_moderation.remove_roles') }}</Button
+                    >
+                    <Button
+                        variant="outline"
+                        :disabled="
+                            Boolean(
+                                progressCurrent ||
+                                !hasGroupPermission(groupMemberModeration.groupRef, 'group-members-manage')
+                            )
+                        "
+                        @click="groupMembersSaveNote"
+                        >{{ t('dialog.group_member_moderation.save_note') }}</Button
+                    >
+                    <Button
+                        variant="outline"
+                        :disabled="
+                            Boolean(
+                                progressCurrent ||
+                                !hasGroupPermission(groupMemberModeration.groupRef, 'group-members-remove')
+                            )
+                        "
+                        @click="groupMembersKick"
+                        >{{ t('dialog.group_member_moderation.kick') }}</Button
+                    >
+                    <Button
+                        variant="outline"
+                        :disabled="
+                            Boolean(
+                                progressCurrent ||
+                                !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
+                            )
+                        "
+                        @click="groupMembersBan"
+                        >{{ t('dialog.group_member_moderation.ban') }}</Button
+                    >
+                    <Button
+                        variant="outline"
+                        :disabled="
+                            Boolean(
+                                progressCurrent ||
+                                !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
+                            )
+                        "
+                        @click="groupMembersUnban"
+                        >{{ t('dialog.group_member_moderation.unban') }}</Button
+                    >
+                    <span v-if="progressCurrent" style="margin-top: 10px">
+                        <Loader2 class="is-loading" style="margin-left: 5px; margin-right: 5px" />
+                        {{ t('dialog.group_member_moderation.progress') }} {{ progressCurrent }}/{{ progressTotal }}
+                    </span>
+                    <Button
+                        variant="secondary"
+                        v-if="progressCurrent"
+                        style="margin-left: 5px"
+                        @click="progressTotal = 0"
+                        >{{ t('dialog.group_member_moderation.cancel') }}</Button
+                    >
+                </div>
             </div>
-        </div>
-        <group-member-moderation-export-dialog
-            v-model:isGroupLogsExportDialogVisible="isGroupLogsExportDialogVisible"
-            :group-logs-moderation-table="groupLogsModerationTable" />
-    </el-dialog>
+
+            <group-member-moderation-export-dialog
+                v-model:isGroupLogsExportDialogVisible="isGroupLogsExportDialogVisible"
+                :group-logs-moderation-table="groupLogsModerationTable" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
-    import { ArrowDown, Loading, Refresh, Warning } from '@element-plus/icons-vue';
+    import { AlertTriangle, ArrowDown, Loader2, RefreshCw, Trash2, X } from 'lucide-vue-next';
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, reactive, ref, watch } from 'vue';
     import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
     import { Spinner } from '@/components/ui/spinner';
-    import { Trash2 } from 'lucide-vue-next';
+    import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -566,6 +592,29 @@
     const { applyGroupMember, handleGroupMember, handleGroupMemberProps } = useGroupStore();
     const { showFullscreenImageDialog } = useGalleryStore();
     const { t } = useI18n();
+    const groupModerationTabs = computed(() => [
+        { value: 'members', label: t('dialog.group_member_moderation.members') },
+        {
+            value: 'bans',
+            label: t('dialog.group_member_moderation.bans'),
+            disabled: !hasGroupPermission(groupMemberModeration.value?.groupRef, 'group-bans-manage')
+        },
+        {
+            value: 'invites',
+            label: t('dialog.group_member_moderation.invites'),
+            disabled: !hasGroupPermission(groupMemberModeration.value?.groupRef, 'group-invites-manage')
+        },
+        {
+            value: 'logs',
+            label: t('dialog.group_member_moderation.logs'),
+            disabled: !hasGroupPermission(groupMemberModeration.value?.groupRef, 'group-audit-view')
+        }
+    ]);
+    const groupInvitesTabs = computed(() => [
+        { value: 'sent', label: t('dialog.group_member_moderation.sent_invites') },
+        { value: 'join', label: t('dialog.group_member_moderation.join_requests') },
+        { value: 'blocked', label: t('dialog.group_member_moderation.blocked_requests') }
+    ]);
     const selectedUsers = reactive({});
     const selectedUsersArray = ref([]);
     const isGroupMembersLoading = ref(false);

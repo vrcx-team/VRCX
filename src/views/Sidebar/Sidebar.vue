@@ -4,10 +4,7 @@
             <div style="flex: 1; padding: 10px; padding-left: 0">
                 <Popover v-model:open="isQuickSearchOpen">
                     <PopoverTrigger as-child>
-                        <Input
-                            v-model="quickSearchQuery"
-                            :placeholder="t('side_panel.search_placeholder')"
-                            @focus="handleQuickSearchFocus" />
+                        <Input v-model="quickSearchQuery" :placeholder="t('side_panel.search_placeholder')" />
                     </PopoverTrigger>
                     <PopoverContent
                         side="bottom"
@@ -29,16 +26,20 @@
                                             <span class="name" :style="{ color: item.ref.$userColour }">{{
                                                 item.ref.displayName
                                             }}</span>
-                                            <span v-if="!item.ref.isFriend" class="extra"></span>
-                                            <span v-else-if="item.ref.state === 'offline'" class="extra">{{
-                                                t('side_panel.search_result_active')
-                                            }}</span>
-                                            <span v-else-if="item.ref.state === 'active'" class="extra">{{
-                                                t('side_panel.search_result_offline')
-                                            }}</span>
+                                            <span v-if="!item.ref.isFriend" class="block truncate text-xs"></span>
+                                            <span
+                                                v-else-if="item.ref.state === 'offline'"
+                                                class="block truncate text-xs"
+                                                >{{ t('side_panel.search_result_active') }}</span
+                                            >
+                                            <span
+                                                v-else-if="item.ref.state === 'active'"
+                                                class="block truncate text-xs"
+                                                >{{ t('side_panel.search_result_offline') }}</span
+                                            >
                                             <Location
                                                 v-else
-                                                class="extra"
+                                                class="text-xs"
                                                 :location="item.ref.location"
                                                 :traveling="item.ref.travelingToLocation"
                                                 :link="false" />
@@ -68,40 +69,60 @@
                         style="margin-right: 10px"
                         @click="refreshFriendsList">
                         <Spinner v-if="isRefreshFriendsLoading" />
-                        <Refresh v-else />
+                        <RefreshCw v-else />
                     </Button>
                 </TooltipWrapper>
             </div>
         </div>
-        <el-tabs class="zero-margin-tabs" stretch style="height: calc(100% - 70px); margin-top: 5px">
-            <el-tab-pane>
-                <template #label>
-                    <span>{{ t('side_panel.friends') }}</span>
-                    <span class="sidebar-tab-count"> ({{ onlineFriendCount }}/{{ friends.size }}) </span>
-                </template>
-                <el-backtop target=".zero-margin-tabs .el-tabs__content" :bottom="20" :right="20"></el-backtop>
-                <FriendsSidebar @confirm-delete-friend="confirmDeleteFriend" />
-            </el-tab-pane>
-            <el-tab-pane lazy>
-                <template #label>
-                    <span>{{ t('side_panel.groups') }}</span>
-                    <span class="sidebar-tab-count"> ({{ groupInstances.length }}) </span>
-                </template>
-                <GroupsSidebar :group-instances="groupInstances" :group-order="inGameGroupOrder" />
-            </el-tab-pane>
-        </el-tabs>
+        <TabsUnderline
+            default-value="friends"
+            :items="sidebarTabs"
+            :unmount-on-hide="false"
+            variant="equal"
+            fill
+            class="zero-margin-tabs"
+            style="height: calc(100% - 70px); margin-top: 5px">
+            <template #label-friends>
+                <span>{{ t('side_panel.friends') }}</span>
+                <span class="sidebar-tab-count"> ({{ onlineFriendCount }}/{{ friends.size }}) </span>
+            </template>
+            <template #label-groups>
+                <span>{{ t('side_panel.groups') }}</span>
+                <span class="sidebar-tab-count"> ({{ groupInstances.length }}) </span>
+            </template>
+            <template #friends>
+                <div class="h-full overflow-hidden">
+                    <ScrollArea ref="friendsScrollAreaRef" class="h-full">
+                        <FriendsSidebar @confirm-delete-friend="confirmDeleteFriend" />
+                    </ScrollArea>
+                    <BackToTop :target="friendsScrollTarget" :bottom="20" :right="20" :teleport="false" />
+                </div>
+            </template>
+            <template #groups>
+                <div class="h-full overflow-hidden">
+                    <ScrollArea ref="groupsScrollAreaRef" class="h-full">
+                        <GroupsSidebar :group-instances="groupInstances" :group-order="inGameGroupOrder" />
+                    </ScrollArea>
+                    <BackToTop :target="groupsScrollTarget" :bottom="20" :right="20" :teleport="false" />
+                </div>
+            </template>
+        </TabsUnderline>
     </div>
 </template>
 
 <script setup>
+    import { computed, nextTick, onMounted, ref, watch } from 'vue';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-    import { ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Input } from '@/components/ui/input';
-    import { Refresh } from '@element-plus/icons-vue';
+    import { RefreshCw } from 'lucide-vue-next';
+    import { ScrollArea } from '@/components/ui/scroll-area';
     import { Spinner } from '@/components/ui/spinner';
+    import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+
+    import BackToTop from '@/components/BackToTop.vue';
 
     import { useFriendStore, useGroupStore, useSearchStore } from '../../stores';
     import { userImage } from '../../shared/utils';
@@ -115,9 +136,32 @@
     const { quickSearchItems } = storeToRefs(useSearchStore());
     const { inGameGroupOrder, groupInstances } = storeToRefs(useGroupStore());
     const { t } = useI18n();
+    const sidebarTabs = computed(() => [
+        { value: 'friends', label: t('side_panel.friends') },
+        { value: 'groups', label: t('side_panel.groups') }
+    ]);
 
     const quickSearchQuery = ref('');
     const isQuickSearchOpen = ref(false);
+
+    const friendsScrollAreaRef = ref(null);
+    const groupsScrollAreaRef = ref(null);
+    const friendsScrollTarget = ref(null);
+    const groupsScrollTarget = ref(null);
+
+    function resolveScrollViewport(scrollAreaComponentRef) {
+        // Our ScrollArea renders a DOM element root; the viewport is marked by data-slot.
+        const rootEl = scrollAreaComponentRef?.$el ?? null;
+        if (!rootEl || typeof rootEl.querySelector !== 'function') return null;
+        return rootEl.querySelector('[data-slot="scroll-area-viewport"]');
+    }
+
+    onMounted(async () => {
+        // Ensure child components are mounted before querying their DOM.
+        await nextTick();
+        friendsScrollTarget.value = resolveScrollViewport(friendsScrollAreaRef.value);
+        groupsScrollTarget.value = resolveScrollViewport(groupsScrollAreaRef.value);
+    });
 
     watch(
         quickSearchQuery,
@@ -126,11 +170,6 @@
         },
         { immediate: true }
     );
-
-    function handleQuickSearchFocus() {
-        isQuickSearchOpen.value = true;
-        quickSearchRemoteMethod(String(quickSearchQuery.value ?? ''));
-    }
 
     function handleQuickSearchSelect(value) {
         if (!value) {
@@ -143,20 +182,18 @@
 </script>
 
 <style scoped>
-    .sidebar-tab-count {
-        color: var(--el-text-color-secondary);
-        font-size: 12px;
-        margin-left: 10px;
+    .x-aside-container {
+        display: flex;
+        flex: none;
+        flex-direction: column;
+        padding: 10px 5px 5px 5px;
+        order: 99;
+        height: 100%;
+        box-sizing: border-box;
     }
 
-    .group-calendar-button {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        box-shadow: var(--el-box-shadow-lighter);
-        border: none;
-        z-index: 5;
-        width: 40px;
-        height: 40px;
+    .sidebar-tab-count {
+        font-size: 12px;
+        margin-left: 10px;
     }
 </style>

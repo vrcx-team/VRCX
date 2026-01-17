@@ -6,7 +6,7 @@ import {
     TooltipProvider,
     TooltipTrigger
 } from '../../components/ui/tooltip';
-import { ArrowUpDown } from 'lucide-vue-next';
+import { ArrowUpDown, Trash2, X } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
 import { formatDateFilter } from '../../shared/utils';
@@ -32,7 +32,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         },
         {
             accessorKey: 'created',
-            size: 90,
+            size: 120,
             header: ({ column }) => (
                 <Button
                     variant="ghost"
@@ -65,7 +65,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         },
         {
             accessorKey: 'type',
-            size: 90,
+            size: 140,
             header: () => t('table.moderation.type'),
             cell: ({ row }) => {
                 const type = row.getValue('type');
@@ -143,13 +143,11 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
                                     : onDeletePrompt(original)
                             }
                         >
-                            <i
-                                class={
-                                    shiftHeld.value
-                                        ? 'ri-close-line text-red-600'
-                                        : 'ri-delete-bin-line'
-                                }
-                            />
+                            {shiftHeld.value ? (
+                                <X class="h-4 w-4 text-red-600" />
+                            ) : (
+                                <Trash2 class="h-4 w-4" />
+                            )}
                         </button>
                     </div>
                 );

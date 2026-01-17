@@ -1,13 +1,16 @@
 <template>
-    <div @click="confirm" class="avatar-info">
-        <span v-if="avatarType" :class="color" class="mr-2"><i :class="avatarTypeIcons" /></span>
-        <span class="mr-2">{{ avatarName }}</span>
-        <span v-if="avatarTags" style="color: var(--el-text-color-secondary); font-size: 12px">{{ avatarTags }}</span>
+    <div @click="confirm" class="cursor-pointer w-fit align-top flex items-center">
+        <span>{{ avatarName }}</span>
+        <span v-if="avatarType === '(own)'" :class="color" class="mx-1">
+            <Lock v-if="avatarType" class="h-4 w-4" />
+        </span>
+        <span v-if="avatarTags" style="font-size: 12px">{{ avatarTags }}</span>
     </div>
 </template>
 
 <script setup>
-    import { computed, ref, watch } from 'vue';
+    import { ref, watch } from 'vue';
+    import { Lock } from 'lucide-vue-next';
 
     import { useAvatarStore } from '../stores';
 
@@ -26,14 +29,6 @@
     const avatarTags = ref('');
     const color = ref('');
     let ownerId = '';
-
-    const avatarTypeIcons = computed(() => {
-        return avatarType.value === '(own)'
-            ? 'ri-lock-line'
-            : avatarType.value === '(public)'
-              ? 'ri-lock-unlock-line'
-              : '';
-    });
 
     const parse = async () => {
         ownerId = '';

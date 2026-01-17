@@ -1,7 +1,13 @@
 import Timer from '../../components/Timer.vue';
 import { Button } from '../../components/ui/button';
 import { TooltipWrapper } from '../../components/ui/tooltip';
-import { ArrowUpDown } from 'lucide-vue-next';
+import {
+    Apple,
+    ArrowUpDown,
+    IdCard,
+    Monitor,
+    Smartphone
+} from 'lucide-vue-next';
 
 import {
     getFaviconUrl,
@@ -52,13 +58,11 @@ const sortInstanceIcon = (a, b) =>
 
 export const createColumns = ({
     randomUserColours,
-    photonLoggingEnabled,
     chatboxUserBlacklist,
     onBlockChatbox,
     onUnblockChatbox,
     sortAlphabetically
 }) => {
-    /** @type {import('@tanstack/vue-table').ColumnDef<any, any>[]} */
     const cols = [
         {
             id: 'avatar',
@@ -66,7 +70,6 @@ export const createColumns = ({
             header: () => t('table.playerList.avatar'),
             size: 70,
             enableSorting: false,
-            enableResizing: false,
             cell: ({ row }) => {
                 const userRef = row.original?.ref;
                 const src = userImage(userRef);
@@ -88,7 +91,6 @@ export const createColumns = ({
             header: ({ column }) =>
                 sortButton({ column, label: t('table.playerList.timer') }),
             size: 90,
-            enableResizing: false,
             sortingFn: (rowA, rowB) =>
                 (rowA.original?.timer ?? 0) - (rowB.original?.timer ?? 0),
             cell: ({ row }) => <Timer epoch={row.original?.timer} />
@@ -109,14 +111,7 @@ export const createColumns = ({
                 const style = randomUserColours?.value
                     ? { color: userRef?.$userColour }
                     : null;
-                return (
-                    <span
-                        class="text-(--x-table-user-text-color)"
-                        style={style}
-                    >
-                        {userRef?.displayName ?? ''}
-                    </span>
-                );
+                return <span style={style}>{userRef?.displayName ?? ''}</span>;
             }
         },
         {
@@ -145,7 +140,11 @@ export const createColumns = ({
             id: 'status',
             accessorFn: (row) => row?.ref?.statusDescription,
             header: () => t('table.playerList.status'),
-            minSize: 200,
+            size:200,
+            minSize: 100,
+            meta: {
+                stretch: true
+            },
             enableSorting: false,
             cell: ({ row }) => {
                 const userRef = row.original?.ref;
@@ -166,16 +165,14 @@ export const createColumns = ({
                     </span>
                 );
             }
-        }
-    ];
-
-    if (photonLoggingEnabled?.value) {
-        cols.push({
+        },
+        {
             id: 'photonId',
             accessorFn: (row) => row?.photonId,
             header: ({ column }) =>
                 sortButton({ column, label: t('table.playerList.photonId') }),
             size: 110,
+            enableHiding: true,
             sortingFn: (rowA, rowB) =>
                 (rowA.original?.photonId ?? 0) - (rowB.original?.photonId ?? 0),
             cell: ({ row }) => {
@@ -209,10 +206,7 @@ export const createColumns = ({
                     </div>
                 );
             }
-        });
-    }
-
-    cols.push(
+        },
         {
             id: 'icon',
             header: ({ column }) =>
@@ -285,7 +279,7 @@ export const createColumns = ({
                         ) : null}
                         {r?.ageVerified ? (
                             <TooltipWrapper side="left" content="18+ Verified">
-                                <i class="ri-id-card-line x-tag-age-verification"></i>
+                                <IdCard class="h-4 w-4 x-tag-age-verification" />
                             </TooltipWrapper>
                         ) : null}
                     </div>
@@ -296,6 +290,10 @@ export const createColumns = ({
             id: 'platform',
             header: () => t('table.playerList.platform'),
             size: 90,
+            meta: {
+                stretch: true
+            },
+            minSize: 20,
             enableSorting: false,
             cell: ({ row }) => {
                 const userRef = row.original?.ref;
@@ -304,11 +302,11 @@ export const createColumns = ({
 
                 const platformIcon =
                     platform === 'standalonewindows' ? (
-                        <i class="ri-computer-line x-tag-platform-pc" />
+                        <Monitor class="h-4 w-4 x-tag-platform-pc" />
                     ) : platform === 'android' ? (
-                        <i class="ri-android-line x-tag-platform-quest" />
+                        <Smartphone class="h-4 w-4 x-tag-platform-quest" />
                     ) : platform === 'ios' ? (
-                        <i class="ri-apple-line x-tag-platform-ios" />
+                        <Apple class="h-4 w-4 x-tag-platform-ios" />
                     ) : platform ? (
                         <span>{String(platform)}</span>
                     ) : null;
@@ -406,7 +404,7 @@ export const createColumns = ({
             accessorFn: (row) => row?.ref?.note,
             header: () => t('table.playerList.note'),
             size: 150,
-            minSize: 40,
+            minSize: 20,
             meta: {
                 stretch: true
             },
@@ -420,7 +418,7 @@ export const createColumns = ({
                 return <span>{text}</span>;
             }
         }
-    );
+    ];
 
     return cols;
 };

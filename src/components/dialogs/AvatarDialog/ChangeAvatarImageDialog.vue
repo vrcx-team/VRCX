@@ -1,12 +1,15 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="changeAvatarImageDialogVisible"
-        :title="t('dialog.change_content_image.avatar')"
-        width="850px"
-        append-to-body
-        @close="closeDialog">
-        <div>
+    <Dialog
+        :open="changeAvatarImageDialogVisible"
+        @update:open="(open) => {
+            if (!open) closeDialog();
+        }">
+        <DialogContent class="x-dialog sm:max-w-212.5">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.change_content_image.avatar') }}</DialogTitle>
+            </DialogHeader>
+
+            <div>
             <input
                 id="AvatarImageUploadButton"
                 type="file"
@@ -24,16 +27,18 @@
                 {{ t('dialog.change_content_image.upload') }}
             </Button>
             <br />
-            <div class="x-change-image-item">
+            <div class="inline-block p-1 pb-0 hover:rounded-sm">
                 <img :src="previousImageUrl" class="img-size" loading="lazy" />
             </div>
-        </div>
-    </el-dialog>
+            </div>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
     import { Button } from '@/components/ui/button';
-    import { Upload } from '@element-plus/icons-vue';
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { Upload } from 'lucide-vue-next';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -194,9 +199,7 @@
             uploadFilePUT: true,
             fileData: avatarImage.value.base64File,
             fileMIME: 'image/png',
-            headers: {
-                'Content-MD5': avatarImage.value.fileMd5
-            }
+            fileMD5: avatarImage.value.fileMd5
         });
 
         if (json.status !== 200) {
@@ -247,9 +250,7 @@
             uploadFilePUT: true,
             fileData: avatarImage.value.base64SignatureFile,
             fileMIME: 'application/x-rsync-signature',
-            headers: {
-                'Content-MD5': avatarImage.value.signatureMd5
-            }
+            fileMD5: avatarImage.value.signatureMd5
         });
 
         if (json.status !== 200) {

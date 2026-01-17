@@ -7,7 +7,18 @@ import {
     TooltipProvider,
     TooltipTrigger
 } from '../../components/ui/tooltip';
-import { ArrowUpDown } from 'lucide-vue-next';
+import {
+    ArrowUpDown,
+    Ban,
+    BellOff,
+    Check,
+    Link,
+    MessageCircle,
+    Reply,
+    Tag,
+    Trash2,
+    X
+} from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
 import { checkCanInvite, formatDateFilter } from '../../shared/utils';
@@ -58,25 +69,23 @@ export const createColumns = ({
         );
     };
 
-    const getResponseIconClass = (response, notificationType) => {
+    const getResponseIcon = (response, notificationType) => {
         if (response?.type === 'link') {
-            return 'ri-link-m';
+            return Link;
         }
         switch (response?.icon) {
             case 'check':
-                return 'ri-check-line';
+                return Check;
             case 'cancel':
-                return 'ri-close-line';
+                return X;
             case 'ban':
-                return 'ri-forbid-2-line';
+                return Ban;
             case 'bell-slash':
-                return 'ri-notification-off-line';
+                return BellOff;
             case 'reply':
-                return notificationType === 'boop'
-                    ? 'ri-chat-1-line'
-                    : 'ri-reply-line';
+                return notificationType === 'boop' ? MessageCircle : Reply;
             default:
-                return 'ri-price-tag-3-line';
+                return Tag;
         }
     };
 
@@ -532,7 +541,7 @@ export const createColumns = ({
                                                         )
                                                     }
                                                 >
-                                                    <i class="ri-check-line" />
+                                                    <Check class="h-4 w-4" />
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
@@ -555,7 +564,7 @@ export const createColumns = ({
                                                         )
                                                     }
                                                 >
-                                                    <i class="ri-chat-1-line" />
+                                                    <MessageCircle class="h-4 w-4" />
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
@@ -582,7 +591,7 @@ export const createColumns = ({
                                                                 )
                                                             }
                                                         >
-                                                            <i class="ri-check-line" />
+                                                            <Check class="h-4 w-4" />
                                                         </button>
                                                     </TooltipTrigger>
                                                     <TooltipContent side="top">
@@ -603,7 +612,7 @@ export const createColumns = ({
                                                             )
                                                         }
                                                     >
-                                                        <i class="ri-chat-1-line" />
+                                                        <MessageCircle class="h-4 w-4" />
                                                     </button>
                                                 </TooltipTrigger>
                                                 <TooltipContent side="top">
@@ -641,11 +650,10 @@ export const createColumns = ({
                                               );
                                           };
 
-                                          const iconClass =
-                                              getResponseIconClass(
-                                                  response,
-                                                  original.type
-                                              );
+                                          const ResponseIcon = getResponseIcon(
+                                              response,
+                                              original.type
+                                          );
 
                                           return (
                                               <TooltipProvider
@@ -658,11 +666,7 @@ export const createColumns = ({
                                                               class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
                                                               onClick={onClick}
                                                           >
-                                                              <i
-                                                                  class={
-                                                                      iconClass
-                                                                  }
-                                                              />
+                                                              <ResponseIcon class="h-4 w-4" />
                                                           </button>
                                                       </TooltipTrigger>
                                                       <TooltipContent side="top">
@@ -693,11 +697,11 @@ export const createColumns = ({
                                                               )
                                                     }
                                                 >
-                                                    <i
+                                                    <X
                                                         class={
                                                             shiftHeld.value
-                                                                ? 'ri-close-line text-red-600'
-                                                                : 'ri-close-line'
+                                                                ? 'h-4 w-4 text-red-600'
+                                                                : 'h-4 w-4'
                                                         }
                                                     />
                                                 </button>
@@ -726,13 +730,11 @@ export const createColumns = ({
                                                               )
                                                     }
                                                 >
-                                                    <i
-                                                        class={
-                                                            shiftHeld.value
-                                                                ? 'ri-close-line text-red-600'
-                                                                : 'ri-delete-bin-line'
-                                                        }
-                                                    />
+                                                    {shiftHeld.value ? (
+                                                        <X class="h-4 w-4 text-red-600" />
+                                                    ) : (
+                                                        <Trash2 class="h-4 w-4" />
+                                                    )}
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
@@ -759,13 +761,11 @@ export const createColumns = ({
                                                               )
                                                     }
                                                 >
-                                                    <i
-                                                        class={
-                                                            shiftHeld.value
-                                                                ? 'ri-close-line text-red-600'
-                                                                : 'ri-delete-bin-line'
-                                                        }
-                                                    />
+                                                    {shiftHeld.value ? (
+                                                        <X class="h-4 w-4 text-red-600" />
+                                                    ) : (
+                                                        <Trash2 class="h-4 w-4" />
+                                                    )}
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">

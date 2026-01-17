@@ -5,7 +5,7 @@
         </div>
 
         <div class="rounded-md border">
-            <div v-loading="loading" class="overflow-auto" :style="tableStyle">
+            <ScrollArea class="max-w-full" :style="tableStyle">
                 <Table :class="tableClassValue" :style="tableElementStyle">
                     <colgroup>
                         <col v-for="col in table.getVisibleLeafColumns()" :key="col.id" :style="getColStyle(col)" />
@@ -67,7 +67,7 @@
                         </TableRow>
                     </TableBody>
                 </Table>
-            </div>
+            </ScrollArea>
         </div>
 
         <div v-if="showPagination" class="mt-4 flex w-full items-center gap-3">
@@ -132,6 +132,7 @@
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { isDataTableStriped } = storeToRefs(appearanceSettingsStore);
+    import { ScrollArea } from '../scroll-area';
 
     const props = defineProps({
         table: {

@@ -1,35 +1,42 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="editAndSendInviteDialog.visible"
-        :title="t('dialog.edit_send_invite_message.header')"
-        width="400px"
-        append-to-body
-        @close="cancelEditAndSendInvite">
-        <div style="font-size: 12px">
-            <span>{{ t('dialog.edit_send_invite_message.description') }}</span>
-        </div>
+    <Dialog
+        :open="editAndSendInviteDialog.visible"
+        @update:open="
+            (open) => {
+                if (!open) cancelEditAndSendInvite();
+            }
+        ">
+        <DialogContent class="x-dialog sm:max-w-100">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.edit_send_invite_message.header') }}</DialogTitle>
+            </DialogHeader>
 
-        <InputGroupTextareaField
-            v-model="editAndSendInviteDialog.newMessage"
-            :maxlength="64"
-            :rows="2"
-            class="mt-2.5"
-            placeholder=""
-            show-count />
+            <div style="font-size: 12px">
+                <span>{{ t('dialog.edit_send_invite_message.description') }}</span>
+            </div>
 
-        <template #footer>
-            <Button variant="secondary" class="mr-2" @click="cancelEditAndSendInvite">
-                {{ t('dialog.edit_send_invite_message.cancel') }}
-            </Button>
-            <Button @click="saveEditAndSendInvite" :disabled="!editAndSendInviteDialog.newMessage">
-                {{ t('dialog.edit_send_invite_message.send') }}
-            </Button>
-        </template>
-    </el-dialog>
+            <InputGroupTextareaField
+                v-model="editAndSendInviteDialog.newMessage"
+                :maxlength="64"
+                :rows="2"
+                class="mt-2.5"
+                placeholder=""
+                show-count />
+
+            <DialogFooter>
+                <Button variant="secondary" class="mr-2" @click="cancelEditAndSendInvite">
+                    {{ t('dialog.edit_send_invite_message.cancel') }}
+                </Button>
+                <Button @click="saveEditAndSendInvite" :disabled="!editAndSendInviteDialog.newMessage">
+                    {{ t('dialog.edit_send_invite_message.send') }}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';

@@ -6,16 +6,16 @@
             <div class="tool-categories">
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('group')">
-                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['group'] }"
-                            ><ArrowRight
-                        /></el-icon>
+                        <ChevronDown
+                            class="rotation-transition"
+                            :class="{ 'is-rotated': categoryCollapsed['group'] }" />
                         <span class="category-title">{{ t('view.tools.group.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['group']">
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showGroupCalendarDialog">
-                                <div class="tool-icon">
-                                    <i class="ri-calendar-event-line"></i>
+                                <div class="tool-icon text-2xl">
+                                    <CalendarDays />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.group.calendar') }}</div>
@@ -27,17 +27,17 @@
                 </div>
 
                 <div class="tool-category">
-                    <div class="category-header" @click="toggleCategory('image')">
-                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['image'] }"
-                            ><ArrowRight
-                        /></el-icon>
+                    <div class="category-header text-2xl" @click="toggleCategory('image')">
+                        <ChevronDown
+                            class="rotation-transition"
+                            :class="{ 'is-rotated': categoryCollapsed['image'] }" />
                         <span class="category-title">{{ t('view.tools.pictures.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
                         <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="showScreenshotMetadataPage">
+                            <div class="tool-content text-2xl" @click="showScreenshotMetadataPage">
                                 <div class="tool-icon">
-                                    <i class="ri-screenshot-2-line"></i>
+                                    <Camera />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.pictures.screenshot') }}</div>
@@ -49,8 +49,8 @@
                         </Card>
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showGalleryPage">
-                                <div class="tool-icon">
-                                    <i class="ri-multi-image-line"></i>
+                                <div class="tool-icon text-2xl">
+                                    <Images />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.pictures.inventory') }}</div>
@@ -62,8 +62,8 @@
                         </Card>
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="openVrcPhotosFolder">
-                                <div class="tool-icon">
-                                    <i class="ri-folder-image-line"></i>
+                                <div class="tool-icon text-2xl">
+                                    <FolderOpen />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.pictures.pictures.vrc_photos') }}</div>
@@ -75,8 +75,8 @@
                         </Card>
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="openVrcScreenshotsFolder">
-                                <div class="tool-icon">
-                                    <i class="ri-folder-image-line"></i>
+                                <div class="tool-icon text-2xl">
+                                    <FolderOpen />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">
@@ -92,18 +92,16 @@
                 </div>
 
                 <div class="tool-category">
-                    <div class="category-header" @click="toggleCategory('user')">
-                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['user'] }"
-                            ><ArrowRight
-                        /></el-icon>
+                    <div class="category-header text-2xl" @click="toggleCategory('user')">
+                        <ChevronDown class="rotation-transition" :class="{ 'is-rotated': categoryCollapsed['user'] }" />
                         <span class="category-title">{{ t('view.tools.export.header') }}</span>
                     </div>
 
                     <div class="tools-grid" v-show="!categoryCollapsed['user']">
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportDiscordNamesDialog">
-                                <div class="tool-icon">
-                                    <i class="ri-discord-line"></i>
+                                <div class="tool-icon text-2xl">
+                                    <MessageSquare />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.export.discord_names') }}</div>
@@ -115,8 +113,8 @@
                         </Card>
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showNoteExportDialog">
-                                <div class="tool-icon">
-                                    <i class="ri-user-shared-line"></i>
+                                <div class="tool-icon text-2xl">
+                                    <UserCheck />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.export.export_notes') }}</div>
@@ -129,8 +127,8 @@
 
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportFriendsListDialog">
-                                <div class="tool-icon">
-                                    <i class="ri-user-shared-line"></i>
+                                <div class="tool-icon text-2xl">
+                                    <UserCheck />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.export.export_friend_list') }}</div>
@@ -142,8 +140,8 @@
                         </Card>
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportAvatarsListDialog">
-                                <div class="tool-icon">
-                                    <i class="ri-user-shared-line"></i>
+                                <div class="tool-icon text-2xl">
+                                    <UserCheck />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.export.export_own_avatars') }}</div>
@@ -158,16 +156,16 @@
 
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('other')">
-                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['other'] }"
-                            ><ArrowRight
-                        /></el-icon>
+                        <ChevronDown
+                            class="rotation-transition"
+                            :class="{ 'is-rotated': categoryCollapsed['other'] }" />
                         <span class="category-title">{{ t('view.tools.other.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['other']">
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showEditInviteMessageDialog">
-                                <div class="tool-icon">
-                                    <i class="ri-edit-box-line"></i>
+                                <div class="tool-icon text-2xl">
+                                    <SquarePen />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.other.edit_invite_message') }}</div>
@@ -203,9 +201,18 @@
 </template>
 
 <script setup>
+    import {
+        CalendarDays,
+        Camera,
+        ChevronDown,
+        FolderOpen,
+        Images,
+        MessageSquare,
+        SquarePen,
+        UserCheck
+    } from 'lucide-vue-next';
     import { computed, defineAsyncComponent, ref } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
-    import { ArrowRight } from '@element-plus/icons-vue';
     import { Card } from '@/components/ui/card';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -314,14 +321,12 @@
             transition: all 0.2s ease;
 
             &:hover {
-                background-color: var(--el-color-primary-light-9);
             }
 
-            .el-icon-arrow-right {
+            .rotation-transition {
                 font-size: 14px;
                 margin-right: 8px;
                 transition: transform 0.3s;
-                color: var(--el-color-primary);
             }
 
             .category-title {
@@ -349,7 +354,6 @@
 
         &:hover {
             transform: translateY(-2px);
-            box-shadow: var(--el-box-shadow-light);
         }
 
         .tool-content {
@@ -363,14 +367,11 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background-color: var(--el-color-primary-light-9);
                 border-radius: 12px;
                 margin-right: 20px;
-                box-shadow: var(--el-box-shadow-lighter);
 
                 i {
                     font-size: 28px;
-                    color: var(--el-color-primary);
                 }
             }
 
@@ -380,13 +381,11 @@
                 .tool-name {
                     font-size: 18px;
                     font-weight: 600;
-                    color: var(--el-text-color-primary);
                     margin-bottom: 4px;
                 }
 
                 .tool-description {
                     font-size: 14px;
-                    color: var(--el-text-color-secondary);
                     opacity: 0.8;
                 }
             }
@@ -394,7 +393,7 @@
     }
 
     .is-rotated {
-        transform: rotate(90deg);
+        transform: rotate(-90deg);
     }
 
     .rotation-transition {

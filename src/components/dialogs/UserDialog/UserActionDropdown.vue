@@ -17,7 +17,7 @@
             <DropdownMenuTrigger as-child>
                 <div class="ml-2">
                     <Button variant="outline" size="icon-lg" class="rounded-full">
-                        <Ellipsis />
+                        <MoreHorizontal />
                         <span
                             v-if="dotClass"
                             class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-background"
@@ -26,43 +26,43 @@
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-                <DropdownMenuItem @click="onCommand('Refresh')">
-                    <Refresh class="size-4" />
+                <DropdownMenuItem @click="onCommand('RefreshCw')">
+                    <RefreshCw class="size-4" />
                     {{ t('dialog.user.actions.refresh') }}
                 </DropdownMenuItem>
-                <DropdownMenuItem @click="onCommand('Share')">
-                    <Share class="size-4" />
+                <DropdownMenuItem @click="onCommand('Share2')">
+                    <Share2 class="size-4" />
                     {{ t('dialog.user.actions.share') }}
                 </DropdownMenuItem>
                 <template v-if="userDialog.ref.id === currentUser.id">
                     <DropdownMenuItem @click="onCommand('Show Avatar Author')">
-                        <UserFilled class="size-4" />
+                        <User class="size-4" />
                         {{ t('dialog.user.actions.show_avatar_author') }}
                     </DropdownMenuItem>
                     <DropdownMenuItem @click="onCommand('Show Fallback Avatar Details')">
-                        <UserFilled class="size-4" />
+                        <User class="size-4" />
                         {{ t('dialog.user.actions.show_fallback_avatar') }}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem @click="onCommand('Edit Social Status')">
-                        <Edit class="size-4" />
+                    <DropdownMenuItem @click="onCommand('Pencil Social Status')">
+                        <Pencil class="size-4" />
                         {{ t('dialog.user.actions.edit_status') }}
                     </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Edit Language')">
-                        <Edit class="size-4" />
+                    <DropdownMenuItem @click="onCommand('Pencil Language')">
+                        <Pencil class="size-4" />
                         {{ t('dialog.user.actions.edit_language') }}
                     </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Edit Bio')">
-                        <Edit class="size-4" />
+                    <DropdownMenuItem @click="onCommand('Pencil Bio')">
+                        <Pencil class="size-4" />
                         {{ t('dialog.user.actions.edit_bio') }}
                     </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Edit Pronouns')">
-                        <Edit class="size-4" />
+                    <DropdownMenuItem @click="onCommand('Pencil Pronouns')">
+                        <Pencil class="size-4" />
                         {{ t('dialog.user.actions.edit_pronouns') }}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem @click="onCommand('Logout')">
-                        <SwitchButton class="size-4" />
+                        <Power class="size-4" />
                         {{ t('dialog.user.actions.logout') }}
                     </DropdownMenuItem>
                 </template>
@@ -70,29 +70,29 @@
                     <template v-if="userDialog.isFriend">
                         <DropdownMenuSeparator />
                         <DropdownMenuItem @click="onCommand('Request Invite')">
-                            <Postcard class="size-4" />
+                            <Mail class="size-4" />
                             {{ t('dialog.user.actions.request_invite') }}
                         </DropdownMenuItem>
-                        <DropdownMenuItem @click="onCommand('Request Invite Message')">
-                            <Postcard class="size-4" />
+                        <DropdownMenuItem @click="onCommand('Request Invite MessageSquare')">
+                            <Mail class="size-4" />
                             {{ t('dialog.user.actions.request_invite_with_message') }}
                         </DropdownMenuItem>
                         <template v-if="isGameRunning">
                             <DropdownMenuItem
                                 :disabled="!checkCanInvite(lastLocation.location)"
                                 @click="onCommand('Invite')">
-                                <Message class="size-4" />
+                                <MessageSquare class="size-4" />
                                 {{ t('dialog.user.actions.invite') }}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 :disabled="!checkCanInvite(lastLocation.location)"
-                                @click="onCommand('Invite Message')">
-                                <Message class="size-4" />
+                                @click="onCommand('Invite MessageSquare')">
+                                <MessageSquare class="size-4" />
                                 {{ t('dialog.user.actions.invite_with_message') }}
                             </DropdownMenuItem>
                         </template>
                         <DropdownMenuItem :disabled="!currentUser.isBoopingEnabled" @click="onCommand('Send Boop')">
-                            <Pointer class="size-4" />
+                            <MousePointer class="size-4" />
                             {{ t('dialog.user.actions.send_boop') }}
                         </DropdownMenuItem>
                     </template>
@@ -102,14 +102,14 @@
                             {{ t('dialog.user.actions.accept_friend_request') }}
                         </DropdownMenuItem>
                         <DropdownMenuItem @click="onCommand('Decline Friend Request')">
-                            <Close class="size-4" />
+                            <X class="size-4" />
                             {{ t('dialog.user.actions.decline_friend_request') }}
                         </DropdownMenuItem>
                     </template>
                     <DropdownMenuItem
                         v-else-if="userDialog.outgoingRequest"
                         @click="onCommand('Cancel Friend Request')">
-                        <Close class="size-4" />
+                        <X class="size-4" />
                         {{ t('dialog.user.actions.cancel_friend_request') }}
                     </DropdownMenuItem>
                     <DropdownMenuItem v-else @click="onCommand('Send Friend Request')">
@@ -117,28 +117,28 @@
                         {{ t('dialog.user.actions.send_friend_request') }}
                     </DropdownMenuItem>
                     <DropdownMenuItem @click="onCommand('Invite To Group')">
-                        <Message class="size-4" />
+                        <MessageSquare class="size-4" />
                         {{ t('dialog.user.actions.invite_to_group') }}
                     </DropdownMenuItem>
                     <DropdownMenuItem @click="onCommand('Group Moderation')">
-                        <Operation class="size-4" />
+                        <Settings class="size-4" />
                         {{ t('dialog.user.actions.group_moderation') }}
                     </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Edit Note Memo')">
-                        <Edit class="size-4" />
-                        Edit Note and Memo
+                    <DropdownMenuItem @click="onCommand('Pencil Note Memo')">
+                        <Pencil class="size-4" />
+                        Pencil Note and Memo
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem @click="onCommand('Show Avatar Author')">
-                        <UserFilled class="size-4" />
+                        <User class="size-4" />
                         {{ t('dialog.user.actions.show_avatar_author') }}
                     </DropdownMenuItem>
                     <DropdownMenuItem @click="onCommand('Show Fallback Avatar Details')">
-                        <UserFilled class="size-4" />
+                        <User class="size-4" />
                         {{ t('dialog.user.actions.show_fallback_avatar') }}
                     </DropdownMenuItem>
                     <DropdownMenuItem @click="onCommand('Previous Instances')">
-                        <DataLine class="size-4" />
+                        <LineChart class="size-4" />
                         {{ t('dialog.user.actions.show_previous_instances') }}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -146,39 +146,39 @@
                         v-if="userDialog.isBlock"
                         variant="destructive"
                         @click="onCommand('Moderation Unblock')">
-                        <CircleCheck class="size-4" />
+                        <CheckCircle class="size-4" />
                         {{ t('dialog.user.actions.moderation_unblock') }}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         v-else
                         :disabled="userDialog.ref.$isModerator"
                         @click="onCommand('Moderation Block')">
-                        <CircleClose class="size-4" />
+                        <XCircle class="size-4" />
                         {{ t('dialog.user.actions.moderation_block') }}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         v-if="userDialog.isMute"
                         variant="destructive"
                         @click="onCommand('Moderation Unmute')">
-                        <Microphone class="size-4" />
+                        <Mic class="size-4" />
                         {{ t('dialog.user.actions.moderation_unmute') }}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         v-else
                         :disabled="userDialog.ref.$isModerator"
-                        @click="onCommand('Moderation Mute')">
-                        <Mute class="size-4" />
+                        @click="onCommand('Moderation VolumeX')">
+                        <VolumeX class="size-4" />
                         {{ t('dialog.user.actions.moderation_mute') }}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         v-if="userDialog.isMuteChat"
                         variant="destructive"
                         @click="onCommand('Moderation Enable Chatbox')">
-                        <ChatLineRound class="size-4" />
+                        <MessageCircle class="size-4" />
                         {{ t('dialog.user.actions.moderation_enable_chatbox') }}
                     </DropdownMenuItem>
                     <DropdownMenuItem v-else @click="onCommand('Moderation Disable Chatbox')">
-                        <ChatDotRound class="size-4" />
+                        <MessageCircle class="size-4" />
                         {{ t('dialog.user.actions.moderation_disable_chatbox') }}
                     </DropdownMenuItem>
                     <DropdownMenuItem @click="onCommand('Show Avatar')">
@@ -195,11 +195,11 @@
                         v-if="userDialog.isInteractOff"
                         variant="destructive"
                         @click="onCommand('Moderation Enable Avatar Interaction')">
-                        <Pointer class="size-4" />
+                        <MousePointer class="size-4" />
                         {{ t('dialog.user.actions.moderation_enable_avatar_interaction') }}
                     </DropdownMenuItem>
                     <DropdownMenuItem v-else @click="onCommand('Moderation Disable Avatar Interaction')">
-                        <CircleClose class="size-4" />
+                        <XCircle class="size-4" />
                         {{ t('dialog.user.actions.moderation_disable_avatar_interaction') }}
                     </DropdownMenuItem>
                     <DropdownMenuItem :disabled="userDialog.ref.$isModerator" @click="onCommand('Report Hacking')">
@@ -209,7 +209,7 @@
                     <template v-if="userDialog.isFriend">
                         <DropdownMenuSeparator />
                         <DropdownMenuItem variant="destructive" @click="onCommand('Unfriend')">
-                            <Delete class="size-4" />
+                            <Trash2 class="size-4" />
                             {{ t('dialog.user.actions.unfriend') }}
                         </DropdownMenuItem>
                     </template>
@@ -221,30 +221,29 @@
 
 <script setup>
     import {
-        ChatDotRound,
-        ChatLineRound,
         Check,
-        CircleCheck,
-        CircleClose,
-        Close,
-        DataLine,
-        Delete,
-        Edit,
+        CheckCircle,
         Flag,
-        Message,
-        Microphone,
-        Mute,
-        Operation,
+        LineChart,
+        Mail,
+        MessageCircle,
+        MessageSquare,
+        Mic,
+        MoreHorizontal,
+        MousePointer,
+        Pencil,
         Plus,
-        Pointer,
-        Postcard,
-        Refresh,
-        Share,
-        SwitchButton,
+        Power,
+        RefreshCw,
+        Settings,
+        Share2,
+        Star,
+        Trash2,
         User,
-        UserFilled
-    } from '@element-plus/icons-vue';
-    import { MoreHorizontal as Ellipsis, Star } from 'lucide-vue-next';
+        VolumeX,
+        X,
+        XCircle
+    } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';

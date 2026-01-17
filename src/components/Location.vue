@@ -3,16 +3,12 @@
         <div v-if="!text" class="transparent">-</div>
         <div v-show="text" class="flex items-center">
             <div v-if="region" :class="['flags', 'mr-1.5', region]"></div>
-            <TooltipWrapper
-                :content="`${t('dialog.new_instance.instance_id')}: #${instanceName}`"
-                :disabled="!instanceName || showInstanceIdInLocation"
-                :delay-duration="300"
-                side="top">
+            <template v-if="disableTooltip">
                 <div
                     :class="['x-location', { 'x-link': link && location !== 'private' && location !== 'offline' }]"
                     class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden"
                     @click="handleShowWorldDialog">
-                    <el-icon :class="['is-loading']" class="mr-1" v-if="isTraveling"><Loading /></el-icon>
+                    <Spinner v-if="isTraveling" class="mr-1" />
                     <span class="min-w-0 truncate">{{ text }}</span>
                     <span v-if="showInstanceIdInLocation && instanceName" class="ml-1 whitespace-nowrap">{{
                         ` · #${instanceName}`
@@ -21,18 +17,45 @@
                         ({{ groupName }})
                     </span>
                 </div>
-            </TooltipWrapper>
-            <TooltipWrapper v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
-                <el-icon :class="['inline-block', 'ml-5']" style="color: lightcoral"><WarnTriangleFilled /></el-icon>
-            </TooltipWrapper>
-            <el-icon v-if="strict" :class="['inline-block', 'ml-5']"><Lock /></el-icon>
+
+                <AlertTriangle v-if="isClosed" :class="['inline-block', 'ml-5']" style="color: lightcoral" />
+            </template>
+
+            <template v-else>
+                <TooltipWrapper
+                    :content="`${t('dialog.new_instance.instance_id')}: #${instanceName}`"
+                    :disabled="!instanceName || showInstanceIdInLocation"
+                    :delay-duration="300"
+                    side="top">
+                    <div
+                        :class="['x-location', { 'x-link': link && location !== 'private' && location !== 'offline' }]"
+                        class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden"
+                        @click="handleShowWorldDialog">
+                        <Spinner v-if="isTraveling" class="mr-1" />
+                        <span class="min-w-0 truncate">{{ text }}</span>
+                        <span v-if="showInstanceIdInLocation && instanceName" class="ml-1 whitespace-nowrap">{{
+                            ` · #${instanceName}`
+                        }}</span>
+                        <span
+                            v-if="groupName"
+                            class="ml-0.5 whitespace-nowrap x-link"
+                            @click.stop="handleShowGroupDialog">
+                            ({{ groupName }})
+                        </span>
+                    </div>
+                </TooltipWrapper>
+                <TooltipWrapper v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
+                    <AlertTriangle :class="['inline-block', 'ml-5']" style="color: lightcoral" />
+                </TooltipWrapper>
+            </template>
+            <Lock v-if="strict" :class="['inline-block', 'ml-5']" />
         </div>
     </div>
 </template>
 
 <script setup>
-    import { Loading, Lock, WarnTriangleFilled } from '@element-plus/icons-vue';
     import { onBeforeUnmount, ref, watch } from 'vue';
+    import { AlertTriangle, Lock } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -44,6 +67,7 @@
         useWorldStore
     } from '../stores';
     import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
+    import { Spinner } from './ui/spinner';
     import { accessTypeLocaleKeyMap } from '../shared/constants';
 
     const { t } = useI18n();
@@ -70,6 +94,10 @@
         link: {
             type: Boolean,
             default: true
+        },
+        disableTooltip: {
+            type: Boolean,
+            default: false
         },
         isOpenPreviousInstanceInfoDialog: {
             type: Boolean,

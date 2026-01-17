@@ -36,7 +36,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         nextGroupInstanceRefresh: 0,
         nextAppUpdateCheck: 3600,
         ipcTimeout: 0,
-        nextClearVRCXCacheCheck: 0,
+        nextClearVRCXCacheCheck: 86400,
         nextDiscordUpdate: 0,
         nextAutoStateChange: 0,
         nextGetLogCheck: 0,
@@ -147,6 +147,10 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         workerTimers.setTimeout(() => updateLoop(), 1000);
     }
 
+    function setNextClearVRCXCacheCheck(value) {
+        state.nextClearVRCXCacheCheck = value;
+    }
+
     return {
         // state,
 
@@ -154,6 +158,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         nextCurrentUserRefresh,
         nextDiscordUpdate,
         ipcTimeout,
-        updateLoop
+        updateLoop,
+        setNextClearVRCXCacheCheck
     };
 });

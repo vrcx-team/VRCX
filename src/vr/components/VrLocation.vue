@@ -9,12 +9,13 @@
             style="display: inline-block; margin-bottom: 2px; margin-left: 5px">
         </span>
 
-        <i v-if="strict" style="display: inline-block; margin-left: 5px" class="ri-lock-line"></i>
+        <Lock v-if="strict" class="h-4 w-4" style="display: inline-block; margin-left: 5px" />
     </span>
 </template>
 
 <script setup>
     import { onMounted, ref, watch } from 'vue';
+    import { Lock } from 'lucide-vue-next';
 
     import { parseLocation } from '../../shared/utils/location';
 

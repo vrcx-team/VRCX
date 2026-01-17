@@ -24,7 +24,8 @@
         "manage": "Manage",
         "help_support": "Help & Support",
         "expand_menu": "Expand Menu",
-        "collapse_menu": "Collapse Menu"
+        "collapse_menu": "Collapse Menu",
+        "toggle_theme": "Toggle Theme"
     },
     "nav_menu": {
         "resources": "RESOURCES",
@@ -551,6 +552,13 @@
                     "language": "Language",
                     "bio_language": "Target Language",
                     "theme_mode": "Theme",
+                    "font_family": "Font",
+                    "font_family_tooltip": "Does not change CJK fonts",
+                    "font_family_inter": "Inter",
+                    "font_family_noto_sans": "Noto Sans",
+                    "font_family_source_sans_3": "Source Sans 3",
+                    "font_family_ibm_plex_sans": "IBM Plex Sans",
+                    "font_family_harmonyos_sans": "HarmonyOS Sans",
                     "theme_mode_system": "System",
                     "theme_mode_light": "Light",
                     "theme_mode_dark": "Dark",
@@ -578,8 +586,11 @@
                     "table_page_sizes": "Table Page Sizes",
                     "table_page_sizes_error": "Page size must be a number between 1 and 1000",
                     "show_notification_icon_dot": "Show Tray Notification Dot",
-                    "compact_table_mode": "Compact Table Mode",
-                    "striped_data_table_mode": "Striped Table Mode"
+                    "striped_data_table_mode": "Striped Table Mode",
+                    "table_density": "Table Density",
+                    "table_density_standard": "Standard",
+                    "table_density_comfortable": "Comfortable",
+                    "table_density_compact": "Compact"
                 },
                 "timedate": {
                     "header": "Time/Date",
@@ -916,6 +927,9 @@
             "ok": "OK",
             "cancel": "Cancel",
             "confirm": "Confirm"
+        },
+        "prompt": {
+            "input_invalid": "Invalid input"
         },
         "user": {
             "status": {

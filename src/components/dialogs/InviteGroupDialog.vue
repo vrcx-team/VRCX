@@ -1,82 +1,87 @@
 <template>
-    <el-dialog
-        :z-index="inviteGroupDialogIndex"
-        v-model="inviteGroupDialog.visible"
-        :title="t('dialog.invite_to_group.header')"
-        width="450px"
-        append-to-body>
-        <div v-if="inviteGroupDialog.visible" v-loading="inviteGroupDialog.loading">
-            <span>{{ t('dialog.invite_to_group.description') }}</span>
-            <br />
+    <Dialog v-model:open="inviteGroupDialog.visible">
+        <DialogContent class="sm:max-w-112.5">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.invite_to_group.header') }}</DialogTitle>
+            </DialogHeader>
 
-            <div style="margin-top: 15px; width: 100%">
-                <VirtualCombobox
-                    v-model="inviteGroupDialog.groupId"
-                    :groups="groupPickerGroups"
-                    :disabled="inviteGroupDialog.loading"
-                    :placeholder="t('dialog.invite_to_group.choose_group_placeholder')"
-                    :search-placeholder="t('dialog.invite_to_group.choose_group_placeholder')"
-                    :clearable="true"
-                    :close-on-select="true"
-                    :deselect-on-reselect="true">
-                    <template #item="{ item, selected }">
-                        <div class="x-friend-item flex w-full items-center">
-                            <div class="avatar">
-                                <img :src="item.iconUrl" loading="lazy" />
-                            </div>
-                            <div class="detail">
-                                <span class="name" v-text="item.label"></span>
-                            </div>
-                            <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
-                        </div>
-                    </template>
-                </VirtualCombobox>
-            </div>
+            <div v-if="inviteGroupDialog.visible">
+                <span>{{ t('dialog.invite_to_group.description') }}</span>
+                <br />
 
-            <div style="width: 100%; margin-top: 15px">
-                <VirtualCombobox
-                    v-model="inviteGroupDialog.userIds"
-                    :groups="friendPickerGroups"
-                    multiple
-                    :disabled="inviteGroupDialog.loading"
-                    :placeholder="t('dialog.invite_to_group.choose_friends_placeholder')"
-                    :search-placeholder="t('dialog.invite_to_group.choose_friends_placeholder')"
-                    :clearable="true">
-                    <template #item="{ item, selected }">
-                        <div class="x-friend-item flex w-full items-center">
-                            <template v-if="item.user">
-                                <div class="avatar" :class="userStatusClass(item.user)">
-                                    <img :src="userImage(item.user)" loading="lazy" />
+                <div style="margin-top: 15px; width: 100%">
+                    <VirtualCombobox
+                        v-model="inviteGroupDialog.groupId"
+                        :groups="groupPickerGroups"
+                        :disabled="inviteGroupDialog.loading"
+                        :placeholder="t('dialog.invite_to_group.choose_group_placeholder')"
+                        :search-placeholder="t('dialog.invite_to_group.choose_group_placeholder')"
+                        :clearable="true"
+                        :close-on-select="true"
+                        :deselect-on-reselect="true">
+                        <template #item="{ item, selected }">
+                            <div class="x-friend-item flex w-full items-center">
+                                <div class="avatar">
+                                    <img :src="item.iconUrl" loading="lazy" />
                                 </div>
                                 <div class="detail">
-                                    <span
-                                        class="name"
-                                        :style="{ color: item.user.$userColour }"
-                                        v-text="item.user.displayName"></span>
+                                    <span class="name" v-text="item.label"></span>
                                 </div>
-                            </template>
-                            <template v-else>
-                                <span v-text="item.label"></span>
-                            </template>
+                                <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                            </div>
+                        </template>
+                    </VirtualCombobox>
+                </div>
 
-                            <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
-                        </div>
-                    </template>
-                </VirtualCombobox>
+                <div style="width: 100%; margin-top: 15px">
+                    <VirtualCombobox
+                        v-model="inviteGroupDialog.userIds"
+                        :groups="friendPickerGroups"
+                        multiple
+                        :disabled="inviteGroupDialog.loading"
+                        :placeholder="t('dialog.invite_to_group.choose_friends_placeholder')"
+                        :search-placeholder="t('dialog.invite_to_group.choose_friends_placeholder')"
+                        :clearable="true">
+                        <template #item="{ item, selected }">
+                            <div class="x-friend-item flex w-full items-center">
+                                <template v-if="item.user">
+                                    <div class="avatar" :class="userStatusClass(item.user)">
+                                        <img :src="userImage(item.user)" loading="lazy" />
+                                    </div>
+                                    <div class="detail">
+                                        <span
+                                            class="name"
+                                            :style="{ color: item.user.$userColour }"
+                                            v-text="item.user.displayName"></span>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <span v-text="item.label"></span>
+                                </template>
+
+                                <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                            </div>
+                        </template>
+                    </VirtualCombobox>
+                </div>
             </div>
-        </div>
-        <template #footer>
-            <Button
-                :disabled="inviteGroupDialog.loading || !inviteGroupDialog.userIds.length || !inviteGroupDialog.groupId"
-                @click="sendGroupInvite">
-                {{ t('dialog.invite_to_group.invite') }}
-            </Button>
-        </template>
-    </el-dialog>
+
+            <DialogFooter>
+                <Button
+                    :disabled="
+                        inviteGroupDialog.loading || !inviteGroupDialog.userIds.length || !inviteGroupDialog.groupId
+                    "
+                    @click="sendGroupInvite">
+                    {{ t('dialog.invite_to_group.invite') }}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
-    import { computed, nextTick, ref, watch } from 'vue';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { computed, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Check as CheckIcon } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
@@ -87,7 +92,6 @@
     import { useFriendStore, useGroupStore, useModalStore } from '../../stores';
     import { groupRequest, userRequest } from '../../api';
     import { VirtualCombobox } from '../ui/virtual-combobox';
-    import { getNextDialogIndex } from '../../shared/utils/base/ui';
 
     import configRepository from '../../service/config';
 
@@ -108,8 +112,6 @@
             }
         }
     );
-
-    const inviteGroupDialogIndex = ref(2000);
 
     const groupsWithInvitePermission = computed(() => {
         return Array.from(currentUserGroups.value.values()).filter((group) =>
@@ -223,9 +225,6 @@
     );
 
     function initDialog() {
-        nextTick(() => {
-            inviteGroupDialogIndex.value = getNextDialogIndex();
-        });
         const D = inviteGroupDialog.value;
         if (D.groupId) {
             groupRequest

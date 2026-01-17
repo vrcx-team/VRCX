@@ -728,6 +728,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 friendStore.updateLocalFavoriteFriends();
                 isFavoriteLoading.value = false;
                 watchState.isFavoritesLoaded = true;
+                countFavoriteGroups();
             }
         });
     }
@@ -789,9 +790,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 friendStore.updateSidebarFavorites();
             }
             ref.$groupKey = `${ref.type}:${String(ref.tags[0])}`;
-            const group = getCachedFavoriteGroupsByTypeName()[ref.$groupKey];
-            if (typeof group !== 'undefined') {
-                ++group.count;
+            if (!isFavoriteLoading.value) {
+                countFavoriteGroups();
             }
         } else {
             if (ref.favoriteId !== json.favoriteId) {
@@ -1631,6 +1631,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         handleFavoriteAdd,
         getCachedFavoritesByObjectId,
         checkInvalidLocalAvatars,
-        removeInvalidLocalAvatars
+        removeInvalidLocalAvatars,
+        getCachedFavoriteGroupsByTypeName
     };
 });

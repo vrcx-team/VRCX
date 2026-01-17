@@ -309,7 +309,7 @@ export function $throw(code, error, endpoint) {
     if (endpoint?.startsWith('analysis/')) {
         ignoreError = true;
     }
-    if (endpoint.endsWith('/mutuals') && (code === 403 || code === -1)) {
+    if (endpoint?.endsWith('/mutuals') && (code === 403 || code === -1)) {
         ignoreError = true;
     }
     const text = message.map((s) => escapeTag(s)).join('<br>');

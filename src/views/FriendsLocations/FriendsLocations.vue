@@ -1,12 +1,15 @@
 <template>
     <div class="friend-view x-container">
         <div v-if="settingsReady" class="friend-view__toolbar">
-            <el-segmented v-model="activeSegment" :options="segmentedOptions" />
+            <Tabs v-model="activeSegment" class="friend-view__tabs">
+                <TabsList>
+                    <TabsTrigger v-for="option in segmentedOptions" :key="option.value" :value="option.value">
+                        {{ option.label }}
+                    </TabsTrigger>
+                </TabsList>
+            </Tabs>
             <div class="friend-view__actions">
-                <InputGroupSearch
-                    v-model="searchTerm"
-                    class="friend-view__search"
-                    placeholder="Search Friend" />
+                <InputGroupSearch v-model="searchTerm" class="friend-view__search" placeholder="Search Friend" />
                 <Popover>
                     <PopoverTrigger asChild>
                         <div>
@@ -55,116 +58,48 @@
         <div v-else class="friend-view__toolbar friend-view__toolbar--loading">
             <span class="friend-view__loading-text">{{ t('view.friends_locations.loading_more') }}</span>
         </div>
-        <el-scrollbar v-if="settingsReady" ref="scrollbarRef" class="friend-view__scroll" @scroll="handleScroll">
-            <template v-if="isSameInstanceView">
-                <div v-if="visibleSameInstanceGroups.length" class="friend-view__instances">
-                    <section
-                        v-for="group in visibleSameInstanceGroups"
-                        :key="group.instanceId"
-                        class="friend-view__instance">
+        <ScrollArea v-if="settingsReady" ref="scrollbarRef" class="friend-view__scroll">
+            <div v-if="virtualRows.length" class="friend-view__virtual" :style="virtualListStyle">
+                <div v-for="row in virtualRows" :key="String(row.key)" class="friend-view__virtual-row">
+                    <template v-if="row.type === 'header'">
                         <header class="friend-view__instance-header">
-                            <Location class="extra" :location="group.instanceId" style="display: inline" />
-                            <span class="friend-view__instance-count">{{ group.friends.length }}</span>
+                            <Location class="text-xs" :location="row.instanceId" style="display: inline" />
+                            <span class="friend-view__instance-count">{{ row.count }}</span>
                         </header>
-                        <div
-                            class="friend-view__grid"
-                            :style="
-                                gridStyle(group.friends.length, {
-                                    preferredColumns: sameInstanceColumnTarget,
-                                    disableAutoStretch: true,
-                                    matchMaxColumnWidth: true
-                                })
-                            ">
+                    </template>
+
+                    <template v-else-if="row.type === 'divider'">
+                        <div class="friend-view__divider"><span class="friend-view__divider-text"></span></div>
+                    </template>
+
+                    <template v-else>
+                        <div class="friend-view__row">
                             <FriendLocationCard
-                                v-for="friend in group.friends"
-                                :key="friend.id ?? friend.userId ?? friend.displayName"
-                                :friend="friend"
-                                :card-scale="cardScale"
-                                :card-spacing="cardSpacing" />
-                        </div>
-                    </section>
-                </div>
-                <div v-else class="friend-view__empty">{{ t('view.friends_locations.no_matching_friends') }}</div>
-            </template>
-            <template v-else-if="shouldMergeSameInstance">
-                <div v-if="mergedSameInstanceGroups.length" class="friend-view__instances">
-                    <section
-                        v-for="group in mergedSameInstanceGroups"
-                        :key="group.instanceId"
-                        class="friend-view__instance">
-                        <header class="friend-view__instance-header">
-                            <Location class="extra" :location="group.instanceId" style="display: inline" />
-                            <span class="friend-view__instance-count">{{ group.friends.length }}</span>
-                        </header>
-                        <div
-                            class="friend-view__grid"
-                            :style="
-                                gridStyle(group.friends.length, {
-                                    preferredColumns: sameInstanceColumnTarget,
-                                    disableAutoStretch: true,
-                                    matchMaxColumnWidth: true
-                                })
-                            ">
-                            <FriendLocationCard
-                                v-for="friend in group.friends"
-                                :key="friend.id ?? friend.userId ?? friend.displayName"
-                                :friend="friend"
+                                v-for="item in row.items ?? []"
+                                :key="item.key"
+                                :friend="item.friend"
                                 :card-scale="cardScale"
                                 :card-spacing="cardSpacing"
-                                :display-instance-info="false" />
+                                :display-instance-info="item.displayInstanceInfo" />
                         </div>
-                    </section>
+                    </template>
                 </div>
-                <div v-if="mergedSameInstanceGroups.length && mergedOnlineEntries.length" class="friend-view__divider">
-                    <span class="friend-view__divider-text"></span>
-                </div>
-                <div
-                    v-if="mergedOnlineEntries.length"
-                    class="friend-view__grid"
-                    :style="gridStyle(mergedOnlineEntries.length)">
-                    <FriendLocationCard
-                        v-for="entry in mergedOnlineEntries"
-                        :key="entry.id ?? entry.friend.id ?? entry.friend.displayName"
-                        :friend="entry.friend"
-                        :card-scale="cardScale"
-                        :card-spacing="cardSpacing" />
-                </div>
-                <div v-if="!mergedSameInstanceGroups.length && !mergedOnlineEntries.length" class="friend-view__empty">
-                    {{ t('view.friends_locations.no_matching_friends') }}
-                </div>
-            </template>
-            <template v-else>
-                <div v-if="visibleFriends.length" class="friend-view__grid" :style="gridStyle(visibleFriends.length)">
-                    <FriendLocationCard
-                        v-for="entry in visibleFriends"
-                        :key="entry.id ?? entry.friend.id ?? entry.friend.displayName"
-                        :friend="entry.friend"
-                        :card-scale="cardScale"
-                        :card-spacing="cardSpacing" />
-                </div>
-                <div v-else class="friend-view__empty">{{ t('view.friends_locations.no_matching_friends') }}</div>
-            </template>
-            <div v-if="isLoadingMore" class="friend-view__loading">
-                <el-icon class="friend-view__loading-icon" :size="18">
-                    <Loading />
-                </el-icon>
-                <span>{{ t('view.friends_locations.loading_more') }}</span>
             </div>
-        </el-scrollbar>
+            <div v-else class="friend-view__empty">{{ t('view.friends_locations.no_matching_friends') }}</div>
+        </ScrollArea>
         <div v-else class="friend-view__initial-loading">
-            <el-icon class="friend-view__loading-icon" :size="22">
-                <Loading />
-            </el-icon>
+            <Loader2 class="friend-view__loading-icon" :size="22" />
         </div>
     </div>
 </template>
 
 <script setup>
-    import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-    import { Loading } from '@element-plus/icons-vue';
+    import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
+    import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+    import { Loader2, Settings } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { InputGroupSearch } from '@/components/ui/input-group';
-    import { Settings } from 'lucide-vue-next';
+    import { ScrollArea } from '@/components/ui/scroll-area';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -249,21 +184,17 @@
 
     const settingsReady = ref(false);
 
-    const PAGE_SIZE = 18;
-    const VIEWPORT_BUFFER = 32;
-
     const activeSegment = ref('online');
     const searchTerm = ref('');
 
-    const itemsToShow = ref(PAGE_SIZE);
-    const isLoadingMore = ref(false);
     const scrollbarRef = ref();
+    const scrollViewportRef = shallowRef(null);
     const gridWidth = ref(0);
     let resizeObserver;
     let cleanupResize;
 
     const updateGridWidth = () => {
-        const wrap = scrollbarRef.value?.wrapRef;
+        const wrap = scrollViewportRef.value;
         if (!wrap) {
             return;
         }
@@ -277,7 +208,7 @@
             cleanupResize = undefined;
         }
 
-        const wrap = scrollbarRef.value?.wrapRef;
+        const wrap = scrollViewportRef.value;
         if (!wrap) {
             return;
         }
@@ -418,8 +349,6 @@
         }
     });
 
-    const visibleFriends = computed(() => filteredFriends.value.slice(0, itemsToShow.value));
-
     const isSameInstanceView = computed(
         () => showSameInstance.value && activeSegment.value === 'same-instance' && !normalizedSearchTerm.value
     );
@@ -454,54 +383,32 @@
             }));
     };
 
-    const visibleSameInstanceGroups = computed(() => {
+    const sameInstanceGroupsForVirtual = computed(() => {
         if (!isSameInstanceView.value) {
             return [];
         }
-
-        return buildSameInstanceGroups(visibleFriends.value);
+        return buildSameInstanceGroups(filteredFriends.value);
     });
 
     const mergedSameInstanceEntries = computed(() => {
         if (!shouldMergeSameInstance.value) {
             return [];
         }
-
-        return visibleFriends.value.filter((entry) => entry.section === 'same-instance');
+        return filteredFriends.value.filter((entry) => entry.section === 'same-instance');
     });
 
     const mergedOnlineEntries = computed(() => {
         if (!shouldMergeSameInstance.value) {
             return [];
         }
-
-        return visibleFriends.value.filter((entry) => entry.section !== 'same-instance');
+        return filteredFriends.value.filter((entry) => entry.section !== 'same-instance');
     });
 
     const mergedSameInstanceGroups = computed(() => {
         if (!shouldMergeSameInstance.value) {
             return [];
         }
-
         return buildSameInstanceGroups(mergedSameInstanceEntries.value);
-    });
-
-    const sameInstanceColumnTarget = computed(() => {
-        const groups = isSameInstanceView.value
-            ? visibleSameInstanceGroups.value
-            : shouldMergeSameInstance.value
-              ? mergedSameInstanceGroups.value
-              : [];
-
-        let maxCount = 0;
-        for (const group of groups) {
-            const size = Array.isArray(group?.friends) ? group.friends.length : 0;
-            if (size > maxCount) {
-                maxCount = size;
-            }
-        }
-
-        return maxCount > 0 ? maxCount : null;
     });
 
     const gridStyle = computed(() => {
@@ -551,93 +458,149 @@
         };
     });
 
-    const handleScroll = () => {
-        if (
-            isLoadingMore.value ||
-            filteredFriends.value.length === 0 ||
-            itemsToShow.value >= filteredFriends.value.length
-        ) {
+    function resolveScrollViewport() {
+        const rootEl = scrollbarRef.value?.$el ?? null;
+        if (!rootEl) {
+            scrollViewportRef.value = null;
             return;
         }
-
-        const wrap = scrollbarRef.value?.wrapRef;
-
-        if (!wrap) {
-            return;
-        }
-
-        const { scrollHeight, scrollTop, clientHeight } = wrap;
-
-        if (scrollTop + clientHeight >= scrollHeight - 120) {
-            loadMoreFriends();
-        }
-    };
-
-    function loadMoreFriends() {
-        if (isLoadingMore.value || itemsToShow.value >= filteredFriends.value.length) {
-            return;
-        }
-
-        isLoadingMore.value = true;
-
-        window.setTimeout(() => {
-            if (itemsToShow.value < filteredFriends.value.length) {
-                itemsToShow.value = Math.min(itemsToShow.value + PAGE_SIZE, filteredFriends.value.length);
-            }
-            isLoadingMore.value = false;
-            maybeFillViewport();
-        }, 350);
+        scrollViewportRef.value = rootEl.querySelector('[data-slot="scroll-area-viewport"]');
     }
 
-    function maybeFillViewport() {
-        nextTick(() => {
-            const wrap = scrollbarRef.value?.wrapRef;
-            if (!wrap) {
-                return;
-            }
+    const maxColumns = computed(() => {
+        const styleFn = gridStyle.value;
+        if (typeof styleFn !== 'function') {
+            return 1;
+        }
 
-            const { scrollHeight, clientHeight } = wrap;
-            const hasSpace = scrollHeight <= clientHeight + VIEWPORT_BUFFER;
+        const containerWidth = Math.max(gridWidth.value ?? 0, 0);
 
-            if (!hasSpace || isLoadingMore.value) {
-                return;
-            }
+        const baseWidth = 220;
+        const baseGap = 14;
+        const scale = cardScale.value;
+        const spacing = cardSpacing.value;
+        const minWidth = baseWidth * scale;
+        const gap = Math.max(6, (baseGap + (scale - 1) * 10) * spacing);
 
-            if (filteredFriends.value.length > visibleFriends.value.length) {
-                loadMoreFriends();
-            }
-        });
-    }
-
-    watch([searchTerm, activeSegment], () => {
-        itemsToShow.value = PAGE_SIZE;
-        nextTick(() => {
-            updateGridWidth();
-            maybeFillViewport();
-        });
+        return Math.max(1, Math.floor((containerWidth + gap) / (minWidth + gap)) || 1);
     });
 
-    watch(
-        () => filteredFriends.value.length,
-        (length) => {
-            if (itemsToShow.value > length) {
-                itemsToShow.value = length;
+    const chunk = (items = [], size = 1) => {
+        const out = [];
+        const n = Math.max(1, Math.floor(size) || 1);
+        for (let i = 0; i < items.length; i += n) {
+            out.push(items.slice(i, i + n));
+        }
+        return out;
+    };
+
+    const virtualRows = computed(() => {
+        const rows = [];
+        const columns = maxColumns.value;
+
+        if (isSameInstanceView.value) {
+            for (const group of sameInstanceGroupsForVirtual.value) {
+                rows.push({
+                    type: 'header',
+                    key: `h:${group.instanceId}`,
+                    instanceId: group.instanceId,
+                    count: Array.isArray(group.friends) ? group.friends.length : 0
+                });
+
+                const friends = Array.isArray(group.friends) ? group.friends : [];
+                for (const rowFriends of chunk(friends, Math.min(columns, friends.length || 1))) {
+                    rows.push({
+                        type: 'cards',
+                        key: `g:${group.instanceId}:${rowFriends
+                            .map((f) => f?.id ?? f?.userId ?? f?.displayName ?? '')
+                            .join('|')}`,
+                        items: rowFriends.map((friend) => ({
+                            key: `f:${friend?.id ?? friend?.userId ?? friend?.displayName ?? Math.random()}`,
+                            friend,
+                            displayInstanceInfo: true
+                        }))
+                    });
+                }
             }
-            nextTick(() => {
-                updateGridWidth();
-                maybeFillViewport();
+
+            return rows;
+        }
+
+        if (shouldMergeSameInstance.value) {
+            for (const group of mergedSameInstanceGroups.value) {
+                rows.push({
+                    type: 'header',
+                    key: `h:${group.instanceId}`,
+                    instanceId: group.instanceId,
+                    count: Array.isArray(group.friends) ? group.friends.length : 0
+                });
+
+                const friends = Array.isArray(group.friends) ? group.friends : [];
+                for (const rowFriends of chunk(friends, Math.min(columns, friends.length || 1))) {
+                    rows.push({
+                        type: 'cards',
+                        key: `mg:${group.instanceId}:${rowFriends
+                            .map((f) => f?.id ?? f?.userId ?? f?.displayName ?? '')
+                            .join('|')}`,
+                        items: rowFriends.map((friend) => ({
+                            key: `f:${friend?.id ?? friend?.userId ?? friend?.displayName ?? Math.random()}`,
+                            friend,
+                            displayInstanceInfo: false
+                        }))
+                    });
+                }
+            }
+
+            if (mergedSameInstanceGroups.value.length && mergedOnlineEntries.value.length) {
+                rows.push({ type: 'divider', key: 'divider:merged' });
+            }
+
+            const online = mergedOnlineEntries.value;
+            for (const rowEntries of chunk(online, Math.min(columns, online.length || 1))) {
+                rows.push({
+                    type: 'cards',
+                    key: `o:${rowEntries.map((e) => e?.id ?? '').join('|')}`,
+                    items: rowEntries.map((entry) => ({
+                        key: `e:${entry?.id ?? entry?.friend?.id ?? entry?.friend?.displayName ?? Math.random()}`,
+                        friend: entry.friend,
+                        displayInstanceInfo: true
+                    }))
+                });
+            }
+
+            return rows;
+        }
+
+        const entries = filteredFriends.value;
+        for (const rowEntries of chunk(entries, Math.min(columns, entries.length || 1))) {
+            rows.push({
+                type: 'cards',
+                key: `r:${rowEntries.map((e) => e?.id ?? '').join('|')}`,
+                items: rowEntries.map((entry) => ({
+                    key: `e:${entry?.id ?? entry?.friend?.id ?? entry?.friend?.displayName ?? Math.random()}`,
+                    friend: entry.friend,
+                    displayInstanceInfo: true
+                }))
             });
         }
-    );
+        return rows;
+    });
 
-    watch([cardScale, cardSpacing], () => {
-        if (!settingsReady.value) {
-            return;
-        }
+    const virtualListStyle = computed(() => {
+        const styleFn = gridStyle.value;
+        const total = filteredFriends.value.length;
+
+        // Use matchMaxColumnWidth so rows don't collapse to minWidth on short rows.
+        const vars = typeof styleFn === 'function' ? styleFn(total, { matchMaxColumnWidth: true }) : {};
+        return {
+            ...vars
+        };
+    });
+
+    watch([searchTerm, activeSegment], () => {
         nextTick(() => {
-            scrollbarRef.value?.update?.();
+            resolveScrollViewport();
             updateGridWidth();
-            maybeFillViewport();
         });
     });
 
@@ -649,18 +612,36 @@
             activeSegment.value = 'online';
         }
 
-        itemsToShow.value = PAGE_SIZE;
+        nextTick(() => {
+            resolveScrollViewport();
+            updateGridWidth();
+        });
+    });
 
+    watch(
+        () => filteredFriends.value.length,
+        () => {
+            nextTick(() => {
+                resolveScrollViewport();
+                updateGridWidth();
+            });
+        }
+    );
+
+    watch([cardScale, cardSpacing], () => {
+        if (!settingsReady.value) {
+            return;
+        }
         nextTick(() => {
             updateGridWidth();
-            maybeFillViewport();
         });
     });
 
     onMounted(() => {
         nextTick(() => {
+            resolveScrollViewport();
             setupResizeHandling();
-            maybeFillViewport();
+            updateGridWidth();
         });
     });
 
@@ -697,10 +678,9 @@
         } finally {
             settingsReady.value = true;
             nextTick(() => {
+                resolveScrollViewport();
                 setupResizeHandling();
-                scrollbarRef.value?.update?.();
                 updateGridWidth();
-                maybeFillViewport();
             });
         }
     }
@@ -724,9 +704,12 @@
         padding: 6px 2px 0 2px;
     }
 
+    .friend-view__tabs {
+        gap: 0;
+    }
+
     .friend-view__toolbar--loading {
         justify-content: flex-end;
-        color: var(--el-text-color-secondary);
         font-size: 13px;
         font-weight: 500;
     }
@@ -742,7 +725,35 @@
         flex: 1;
         flex-wrap: wrap;
         justify-content: flex-end;
-        color: var(--el-text-color-regular);
+    }
+
+    .friend-view__virtual {
+        width: 100%;
+        padding: 2px;
+        box-sizing: border-box;
+        display: grid;
+        row-gap: calc(var(--friend-card-gap) - 4px);
+    }
+
+    .friend-view__virtual-spacer {
+        width: 100%;
+    }
+
+    .friend-view__virtual-row {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .friend-view__row {
+        display: grid;
+        grid-template-columns: repeat(
+            var(--friend-grid-columns, 1),
+            minmax(var(--friend-card-min-width, 200px), var(--friend-card-target-width, 1fr))
+        );
+        gap: var(--friend-card-gap, 14px);
+        justify-content: start;
+        padding: 2px;
+        box-sizing: border-box;
     }
 
     .friend-view__settings-label {
@@ -768,7 +779,6 @@
     .friend-view__scale-value {
         font-size: 12px;
         font-weight: 600;
-        color: var(--el-text-color-secondary);
         min-width: 42px;
         text-align: right;
     }
@@ -791,7 +801,6 @@
         display: grid;
         place-items: center;
         min-height: 240px;
-        color: var(--el-text-color-secondary);
     }
 
     .friend-view__grid {
@@ -824,7 +833,6 @@
         margin: 5px 10px;
         font-weight: 600;
         font-size: 13px;
-        color: var(--el-text-color-primary);
     }
 
     .friend-view__divider {
@@ -832,7 +840,6 @@
         align-items: center;
         gap: 12px;
         margin: 16px 4px;
-        color: var(--el-text-color-regular);
         font-size: 13px;
         font-weight: 600;
     }
@@ -842,7 +849,6 @@
         content: '';
         flex: 1;
         height: 1px;
-        background: var(--el-border-color);
     }
 
     .friend-view__divider-text {
@@ -851,14 +857,12 @@
 
     .friend-view__instance-count {
         font-size: 12px;
-        color: var(--el-text-color-secondary);
     }
 
     .friend-view__empty {
         display: grid;
         place-items: center;
         min-height: 240px;
-        color: var(--el-text-color-secondary);
         font-size: 15px;
         letter-spacing: 0.5px;
     }
@@ -869,7 +873,6 @@
         justify-content: center;
         gap: 8px;
         padding: 18px 0 12px;
-        color: var(--el-text-color-secondary);
         font-size: 14px;
     }
 

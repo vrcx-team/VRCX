@@ -1,8 +1,12 @@
 <script setup>
     import { DialogClose, DialogContent, DialogPortal, useForwardPropsEmits } from 'reka-ui';
+    import { inject, onBeforeUnmount, ref, watch } from 'vue';
     import { X } from 'lucide-vue-next';
+    import { acquireModalPortalLayer } from '@/lib/modalPortalLayers';
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
+
+    import { DIALOG_OPEN_INJECTION_KEY } from './context';
 
     import DialogOverlay from './DialogOverlay.vue';
 
@@ -30,10 +34,30 @@
     const delegatedProps = reactiveOmit(props, 'class');
 
     const forwarded = useForwardPropsEmits(delegatedProps, emits);
+
+    const injectedOpen = inject(DIALOG_OPEN_INJECTION_KEY, null);
+    const open = injectedOpen ?? ref(true);
+
+    const portalLayer = acquireModalPortalLayer();
+    const portalTo = portalLayer.element;
+
+    watch(
+        open,
+        (isOpen) => {
+            if (isOpen) {
+                portalLayer.bringToFront();
+            }
+        },
+        { immediate: true }
+    );
+
+    onBeforeUnmount(() => {
+        portalLayer.release();
+    });
 </script>
 
 <template>
-    <DialogPortal>
+    <DialogPortal :to="portalTo">
         <DialogOverlay />
         <DialogContent
             data-slot="dialog-content"
@@ -41,7 +65,8 @@
             :class="
                 cn(
                     'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg',
-                    props.class
+                    props.class,
+                    'max-h-[85vh] overflow-y-auto scrollbar-hidden'
                 )
             ">
             <slot />

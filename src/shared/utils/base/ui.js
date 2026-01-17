@@ -1,13 +1,101 @@
+import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { toast } from 'vue-sonner';
 
-import { THEME_CONFIG } from '../../constants';
+import {
+    APP_FONT_CONFIG,
+    APP_FONT_DEFAULT_KEY,
+    THEME_COLORS,
+    THEME_CONFIG
+} from '../../constants';
 import { i18n } from '../../../plugin/i18n';
 import { router } from '../../../plugin/router';
 import { textToHex } from './string';
 import { useAppearanceSettingsStore } from '../../../stores';
 
 import configRepository from '../../../service/config.js';
+
+const THEME_COLOR_STORAGE_KEY = 'VRCX_themeColor';
+const THEME_COLOR_STYLE_ID = 'app-theme-color-style';
+const DEFAULT_THEME_COLOR_KEY = 'default';
+
+const APP_FONT_LINK_ATTR = 'data-app-font';
+
+const themeColors = THEME_COLORS.map((theme) => ({
+    ...theme,
+    href: theme.file
+        ? new URL(`../../../styles/themes/${theme.file}`, import.meta.url).href
+        : null
+}));
+
+const currentThemeColor = ref(DEFAULT_THEME_COLOR_KEY);
+const isApplyingThemeColor = ref(false);
+
+function resolveThemeColor(themeKey) {
+    const normalized = String(themeKey).trim().toLowerCase();
+    return (
+        themeColors.find((theme) => theme.key === normalized) ||
+        themeColors.find((theme) => theme.key === DEFAULT_THEME_COLOR_KEY)
+    );
+}
+
+function applyThemeColorStyle(theme) {
+    const root = document.documentElement;
+    root.setAttribute('data-theme-color', theme.key);
+
+    let styleEl = document.getElementById(THEME_COLOR_STYLE_ID);
+    if (!theme.href) {
+        styleEl?.remove();
+        return;
+    }
+
+    if (!styleEl) {
+        styleEl = document.createElement('link');
+        styleEl.id = THEME_COLOR_STYLE_ID;
+        styleEl.rel = 'stylesheet';
+        document.head.appendChild(styleEl);
+    }
+
+    if (styleEl.getAttribute('href') !== theme.href) {
+        styleEl.setAttribute('href', theme.href);
+    }
+}
+
+async function applyThemeColor(themeKey, { persist = true } = {}) {
+    const resolved = resolveThemeColor(themeKey);
+    isApplyingThemeColor.value = true;
+    applyThemeColorStyle(resolved);
+    currentThemeColor.value = resolved.key;
+    if (persist) {
+        try {
+            await configRepository.setString(
+                THEME_COLOR_STORAGE_KEY,
+                resolved.key
+            );
+        } catch (error) {
+            console.warn('Failed to persist theme color', error);
+        }
+    }
+    isApplyingThemeColor.value = false;
+    return resolved;
+}
+
+async function initThemeColor() {
+    const storedKey = await configRepository.getString(THEME_COLOR_STORAGE_KEY);
+    const resolved = resolveThemeColor(storedKey || DEFAULT_THEME_COLOR_KEY);
+    applyThemeColorStyle(resolved);
+    currentThemeColor.value = resolved.key;
+}
+
+function useThemeColor() {
+    return {
+        themeColors,
+        currentThemeColor,
+        isApplyingThemeColor,
+        applyThemeColor,
+        initThemeColor
+    };
+}
 
 /**
  *
@@ -49,6 +137,61 @@ function applyThemeFonts(themeKey, fontLinks = []) {
         fontLink.dataset.themeFont = themeKey;
         head.appendChild(fontLink);
     });
+}
+
+function resolveAppFontFamily(fontKey) {
+    const normalized = String(fontKey || '')
+        .trim()
+        .toLowerCase();
+    if (APP_FONT_CONFIG[normalized]) {
+        return { key: normalized, ...APP_FONT_CONFIG[normalized] };
+    }
+    return {
+        key: APP_FONT_DEFAULT_KEY,
+        ...APP_FONT_CONFIG[APP_FONT_DEFAULT_KEY]
+    };
+}
+
+function ensureAppFontLinks(fontKey) {
+    const head = document.head;
+    if (!head) {
+        return;
+    }
+
+    document
+        .querySelectorAll(`style[${APP_FONT_LINK_ATTR}]`)
+        .forEach((styleEl) => {
+            if (styleEl.getAttribute(APP_FONT_LINK_ATTR) !== fontKey) {
+                styleEl.remove();
+            }
+        });
+
+    const config = APP_FONT_CONFIG[fontKey];
+    if (!config?.cssImport) {
+        return;
+    }
+
+    const existing = document.querySelector(
+        `style[${APP_FONT_LINK_ATTR}="${fontKey}"]`
+    );
+    if (existing) {
+        return;
+    }
+
+    const styleEl = document.createElement('style');
+    styleEl.setAttribute(APP_FONT_LINK_ATTR, fontKey);
+    styleEl.textContent = config.cssImport;
+    head.appendChild(styleEl);
+}
+
+function applyAppFontFamily(fontKey) {
+    const resolved = resolveAppFontFamily(fontKey);
+    const root = document.documentElement;
+    root.style.setProperty('--font-western-primary', resolved.cssName);
+
+    ensureAppFontLinks(resolved.key);
+
+    return resolved;
 }
 
 function changeAppThemeStyle(themeMode) {
@@ -260,51 +403,9 @@ function formatJsonVars(ref) {
     return sortedRef;
 }
 
-function getNextDialogIndex() {
-    let z = 2000;
-    document.querySelectorAll('.el-overlay,.el-modal-dialog').forEach((v) => {
-        // @ts-ignore
-        if (v.style.display === 'none') {
-            return;
-        }
-        // @ts-ignore
-        const _z = Number(v.style.zIndex) || 0;
-        if (_z > z) {
-            z = _z;
-        }
-    });
-    return z + 1;
-}
-
 function changeHtmlLangAttribute(language) {
     const htmlElement = document.documentElement;
     htmlElement.setAttribute('lang', language);
-}
-
-// prevent flicker on login page
-function setLoginContainerStyle(isDarkMode) {
-    const loginContainerStyle = document.createElement('style');
-    loginContainerStyle.id = 'login-container-style';
-    loginContainerStyle.type = 'text/css';
-
-    const backgroundFallback = isDarkMode ? '#101010' : '#ffffff';
-    const inputBackgroundFallback = isDarkMode ? '#1f1f1f' : '#ffffff';
-    const borderFallback = isDarkMode ? '#3b3b3b' : '#DCDFE6';
-
-    loginContainerStyle.innerHTML = `
-    .x-login-container {
-        background-color: var(--el-bg-color-page, ${backgroundFallback}) !important;
-        transition: background-color 0.3s ease;
-    }
-
-    .x-login-container .el-input__wrapper {
-        background-color: var(--el-bg-color, ${inputBackgroundFallback}) !important;
-        border: 1px solid var(--el-border-color, ${borderFallback}) !important;
-        transition: background-color 0.3s ease, border-color 0.3s ease;
-    }
-        `;
-
-    document.head.insertBefore(loginContainerStyle, document.head.firstChild);
 }
 
 async function getThemeMode(configRepository) {
@@ -334,15 +435,17 @@ export {
     systemIsDarkMode,
     changeAppDarkStyle,
     changeAppThemeStyle,
+    useThemeColor,
+    applyThemeColor,
+    initThemeColor,
     updateTrustColorClasses,
     refreshCustomCss,
     refreshCustomScript,
+    applyAppFontFamily,
     HueToHex,
     HSVtoRGB,
     formatJsonVars,
-    getNextDialogIndex,
     changeHtmlLangAttribute,
-    setLoginContainerStyle,
     getThemeMode,
     redirectToToolsTab
 };

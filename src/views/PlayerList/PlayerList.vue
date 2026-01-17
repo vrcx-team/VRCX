@@ -25,14 +25,12 @@
                                 line-clamp: 1;
                             "
                             @click="showWorldDialog(currentInstanceWorld.ref.id)">
-                            <el-icon
+                            <Home
                                 v-if="
                                     currentUser.$homeLocation &&
                                     currentUser.$homeLocation.worldId === currentInstanceWorld.ref.id
                                 "
-                                style="margin-right: 5px"
-                                ><HomeFilled
-                            /></el-icon>
+                                style="margin-right: 5px" />
                             {{ currentInstanceWorld.ref.name }}
                         </span>
                     </div>
@@ -61,7 +59,7 @@
                         </Badge>
                         <TooltipWrapper v-if="currentInstanceWorld.isPC" side="top" content="PC">
                             <Badge class="x-tag-platform-pc" variant="outline" style="margin-right: 5px"
-                                ><i class="ri-computer-line"></i>
+                                ><Monitor class="h-4 w-4" />
                                 <span
                                     v-if="currentInstanceWorld.bundleSizes['standalonewindows']"
                                     :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
@@ -71,7 +69,7 @@
                         </TooltipWrapper>
                         <TooltipWrapper v-if="currentInstanceWorld.isQuest" side="top" content="Android">
                             <Badge class="x-tag-platform-quest" variant="outline" style="margin-right: 5px"
-                                ><i class="ri-android-line"></i>
+                                ><Smartphone class="h-4 w-4" />
                                 <span
                                     v-if="currentInstanceWorld.bundleSizes['android']"
                                     :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
@@ -80,11 +78,11 @@
                             </Badge>
                         </TooltipWrapper>
                         <TooltipWrapper v-if="currentInstanceWorld.isIos" side="top" content="iOS">
-                            <Badge class="x-tag-platform-ios" variant="outline" style="margin-right: 5px"
-                                ><i class="ri-apple-line"></i>
+                            <Badge class="text-[#8e8e93] border-[#8e8e93]" variant="outline" style="margin-right: 5px"
+                                ><Apple class="h-4 w-4 text-[#8e8e93]" />
                                 <span
                                     v-if="currentInstanceWorld.bundleSizes['ios']"
-                                    :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']"
+                                    :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']"
                                     >{{ currentInstanceWorld.bundleSizes['ios'].fileSize }}</span
                                 >
                             </Badge>
@@ -112,7 +110,7 @@
                     <div style="margin-top: 5px">
                         <span
                             v-show="currentInstanceWorld.ref.name !== currentInstanceWorld.ref.description"
-                            class="description"
+                            class="inline-block max-w-full truncate align-middle text-xs"
                             v-text="currentInstanceWorld.ref.description"></span>
                     </div>
                 </div>
@@ -120,7 +118,7 @@
                     <div class="x-friend-item" style="cursor: default">
                         <div class="detail">
                             <span class="name">{{ t('dialog.world.info.capacity') }}</span>
-                            <span class="extra"
+                            <span class="block truncate text-xs"
                                 >{{ commaNumber(currentInstanceWorld.ref.recommendedCapacity) }} ({{
                                     commaNumber(currentInstanceWorld.ref.capacity)
                                 }})</span
@@ -130,13 +128,15 @@
                     <div class="x-friend-item" style="cursor: default">
                         <div class="detail">
                             <span class="name">{{ t('dialog.world.info.last_updated') }}</span>
-                            <span class="extra">{{ formatDateFilter(currentInstanceWorld.lastUpdated, 'long') }}</span>
+                            <span class="block truncate text-xs">{{
+                                formatDateFilter(currentInstanceWorld.lastUpdated, 'long')
+                            }}</span>
                         </div>
                     </div>
                     <div class="x-friend-item" style="cursor: default">
                         <div class="detail">
                             <span class="name">{{ t('dialog.world.info.created_at') }}</span>
-                            <span class="extra">{{
+                            <span class="block truncate text-xs">{{
                                 formatDateFilter(currentInstanceWorld.ref.created_at, 'long')
                             }}</span>
                         </div>
@@ -150,13 +150,10 @@
 
             <div class="current-instance-table flex min-h-0 min-w-0 flex-1">
                 <DataTableLayout
-                    class="min-w-0 w-full [&_th]:px-2.5! [&_th]:py-0.75! [&_td]:px-2.5! [&_td]:py-0.75! [&_tr]:h-7!"
+                    class="[&_th]:px-2.5! [&_th]:py-0.75! [&_td]:px-2.5! [&_td]:py-0.75! [&_tr]:h-7!"
                     :table="playerListTable"
-                    table-class="min-w-max w-max"
-                    :use-table-min-width="true"
                     :table-style="playerListTableStyle"
                     :loading="false"
-                    :total-items="playerListTotalItems"
                     :show-pagination="false"
                     :on-row-click="handlePlayerListRowClick" />
             </div>
@@ -169,7 +166,7 @@
 
 <script setup>
     import { computed, defineAsyncComponent, onActivated, onMounted, ref, watch } from 'vue';
-    import { HomeFilled } from '@element-plus/icons-vue';
+    import { Apple, Home, Monitor, Smartphone } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -257,15 +254,9 @@
         return a[field].toLowerCase().localeCompare(b[field].toLowerCase());
     }
 
-    const initialColumnPinning = {
-        left: ['avatar', 'timer', 'displayName'],
-        right: []
-    };
-
     const playerListColumns = computed(() =>
         createColumns({
             randomUserColours,
-            photonLoggingEnabled,
             chatboxUserBlacklist,
             onBlockChatbox: addChatboxUserBlacklist,
             onUnblockChatbox: deleteChatboxUserBlacklist,
@@ -276,14 +267,8 @@
     const { table: playerListTable } = useVrcxVueTable({
         persistKey: 'playerList',
         data: currentInstanceUsersData,
-        columns: playerListColumns.value,
-        getRowId: (row) => `${row?.ref?.id ?? ''}:${row?.displayName ?? ''}`,
-        enablePinning: true,
-        initialColumnPinning,
-        initialPagination: {
-            pageIndex: 0,
-            pageSize: 500
-        }
+        columns: playerListColumns,
+        getRowId: (row) => `${row?.ref?.id ?? ''}:${row?.displayName ?? ''}`
     });
 
     watch(
@@ -293,6 +278,18 @@
                 ...prev,
                 columns: next
             }));
+        },
+        { immediate: true }
+    );
+
+    watch(
+        photonLoggingEnabled,
+        (enabled) => {
+            const column = playerListTable?.getColumn?.('photonId');
+            if (!column) {
+                return;
+            }
+            column.toggleVisibility(Boolean(enabled));
         },
         { immediate: true }
     );
@@ -311,15 +308,3 @@
         getCurrentInstanceUserList();
     });
 </script>
-
-<style>
-    .description {
-        font-size: 12px;
-        display: inline-block;
-        max-width: 100%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        vertical-align: middle;
-    }
-</style>

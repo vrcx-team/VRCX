@@ -66,7 +66,7 @@
                             style="flex: none"
                             @click="refreshNotifications()">
                             <Spinner v-if="isNotificationsLoading" />
-                            <Refresh v-else />
+                            <RefreshCw v-else />
                         </Button>
                     </TooltipWrapper>
                 </div>
@@ -86,7 +86,7 @@
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupField } from '@/components/ui/input-group';
-    import { Refresh } from '@element-plus/icons-vue';
+    import { RefreshCw } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -483,7 +483,7 @@
     function deleteNotificationLogPrompt(row) {
         modalStore
             .confirm({
-                description: `Continue? Delete ${row.type}`,
+                description: `Continue? Trash2 ${row.type}`,
                 title: 'Confirm'
             })
             .then(({ ok }) => {
@@ -499,17 +499,12 @@
     .button-pd-0 {
         padding: 0;
     }
-    .ml-5 {
-        margin-left: 5px !important; /* due to ".el-button + .el-button" */
-    }
+
     .notification-image {
         flex: none;
         height: 30px;
         width: 30px;
         border-radius: 4px;
         object-fit: cover;
-    }
-    .table-user-text {
-        color: var(--x-table-user-text-color);
     }
 </style>

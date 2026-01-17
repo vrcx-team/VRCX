@@ -20,7 +20,6 @@ function getAssetLanguage(assetId) {
     }
 
     const language =
-        assetId.split('element-plus/es/locale/lang/')[1]?.split('.')[0] ||
         // Font assets, e.g., noto-sans-jp-regular.woff2 mapped to language code.
         {
             jp: 'ja',
