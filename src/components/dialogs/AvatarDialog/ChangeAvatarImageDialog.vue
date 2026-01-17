@@ -194,9 +194,7 @@
             uploadFilePUT: true,
             fileData: avatarImage.value.base64File,
             fileMIME: 'image/png',
-            headers: {
-                'Content-MD5': avatarImage.value.fileMd5
-            }
+            fileMD5: avatarImage.value.fileMd5
         });
 
         if (json.status !== 200) {
@@ -247,9 +245,7 @@
             uploadFilePUT: true,
             fileData: avatarImage.value.base64SignatureFile,
             fileMIME: 'application/x-rsync-signature',
-            headers: {
-                'Content-MD5': avatarImage.value.signatureMd5
-            }
+            fileMD5: avatarImage.value.signatureMd5
         });
 
         if (json.status !== 200) {

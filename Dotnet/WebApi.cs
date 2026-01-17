@@ -283,6 +283,8 @@ namespace VRCX
             var sentData = Convert.FromBase64CharArray(fileData.ToCharArray(), 0, fileData.Length);
             var content = new ByteArrayContent(sentData);
             content.Headers.ContentType = new MediaTypeHeaderValue(options["fileMIME"] as string);
+            if (options.TryGetValue("fileMD5", out var fileMd5))
+                content.Headers.ContentMD5 = Convert.FromBase64String(fileMd5 as string);
             request.Content = content;
             return request;
         }
