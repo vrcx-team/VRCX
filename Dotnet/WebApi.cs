@@ -32,7 +32,7 @@ namespace VRCX
         public static string ProxyUrl = "";
         public static IWebProxy Proxy = WebRequest.DefaultWebProxy;
 
-        public CookieContainer _cookieContainer;
+        public CookieContainer CookieContainer;
         private bool _cookieDirty;
         private Timer _timer;
 
@@ -51,7 +51,7 @@ namespace VRCX
             if (Instance == null)
                 Instance = this;
 #endif
-            _cookieContainer = new CookieContainer();
+            CookieContainer = new CookieContainer();
             _timer = new Timer(TimerCallback, null, -1, -1);
         }
 
@@ -79,11 +79,10 @@ namespace VRCX
         {
             _httpHandler = new SocketsHttpHandler
             {
-                CookieContainer = _cookieContainer,
+                CookieContainer = CookieContainer,
                 UseCookies = true,
                 AutomaticDecompression = DecompressionMethods.All,
                 PooledConnectionLifetime = TimeSpan.FromMinutes(5),
-                PooledConnectionIdleTimeout = TimeSpan.FromMinutes(2),
                 MaxConnectionsPerServer = 10
             };
 
@@ -142,8 +141,8 @@ namespace VRCX
 #if !LINUX
             Cef.GetGlobalCookieManager().DeleteCookies();
 #endif
-            _cookieContainer = new CookieContainer();
-            _httpHandler.CookieContainer = _cookieContainer;
+            CookieContainer = new CookieContainer();
+            InitializeHttpClient();
             SaveCookies();
         }
 
@@ -161,9 +160,9 @@ namespace VRCX
             {
                 var item = values[0];
                 using var stream = new MemoryStream(Convert.FromBase64String((string)item[0]));
-                _cookieContainer = new CookieContainer();
-                _cookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));
-                _httpHandler.CookieContainer = _cookieContainer;
+                CookieContainer = new CookieContainer();
+                CookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));
+                InitializeHttpClient();
             }
             catch (Exception e)
             {
@@ -173,12 +172,12 @@ namespace VRCX
 
         private List<Cookie> GetAllCookies()
         {
-            var cookieTable = (Hashtable)_cookieContainer.GetType().InvokeMember("m_domainTable",
+            var cookieTable = (Hashtable)CookieContainer.GetType().InvokeMember("m_domainTable",
                 BindingFlags.NonPublic |
                 BindingFlags.GetField |
                 BindingFlags.Instance,
                 null,
-                _cookieContainer,
+                CookieContainer,
                 new object[] { });
 
             var uniqueCookies = new Dictionary<string, Cookie>();
@@ -195,7 +194,7 @@ namespace VRCX
                 if (!Uri.TryCreate(address, UriKind.Absolute, out var uri))
                     continue;
 
-                foreach (Cookie cookie in _cookieContainer.GetCookies(uri))
+                foreach (Cookie cookie in CookieContainer.GetCookies(uri))
                 {
                     var key = $"{domain}.{cookie.Name}";
                     if (!uniqueCookies.TryGetValue(key, out var value) ||
@@ -250,9 +249,7 @@ namespace VRCX
         {
             using (var stream = new MemoryStream(Convert.FromBase64String(cookies)))
             {
-                _cookieContainer = new CookieContainer();
-                _cookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));
-                _httpHandler.CookieContainer = _cookieContainer;
+                CookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));
             }
 
             _cookieDirty = true; // force cookies to be saved for lastUserLoggedIn
