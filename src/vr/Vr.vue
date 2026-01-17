@@ -12,7 +12,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <span class="name" v-text="feed.displayName"></span>
                                         <Loader2 v-if="feed.isTraveling" class="is-loading ml-5 h-4 w-4" />
@@ -30,7 +30,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <span class="name" v-text="feed.displayName"></span>
                                         <X class="h-5 w-5" />
@@ -42,7 +42,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <span class="name" v-text="feed.displayName"></span>
                                         <Check class="h-5 w-5" />
@@ -63,7 +63,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <span class="name" v-text="feed.displayName" style="margin-right: 5px"></span>
                                         <template v-if="feed.statusDescription === feed.previousStatusDescription">
@@ -83,7 +83,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Play class="mr-5 h-5 w-5" />
                                         <span
@@ -98,7 +98,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Play class="mr-5 h-5 w-5 rotate-180" />
                                         <span
@@ -113,7 +113,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Play class="h-5 w-5" />
                                         <Loader2 class="is-loading mr-5 h-4 w-4" />
@@ -126,7 +126,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <VrLocation
                                             :location="feed.location"
@@ -141,9 +141,9 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Youtube class="mr-5 h-5 w-5" />
+                                        <TvMinimalPlay class="mr-5 h-5 w-5" />
                                         <span
                                             v-if="feed.displayName"
                                             class="name"
@@ -164,7 +164,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Send class="mr-5 h-5 w-5" />
                                         <span class="name mr-5" v-text="feed.senderUsername"></span>
@@ -181,7 +181,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Send class="mr-5 h-5 w-5" />
                                         <span class="name mr-5" v-text="feed.senderUsername"></span>
@@ -194,7 +194,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Send class="mr-5 h-5 w-5" />
                                         <span class="name mr-5" v-text="feed.senderUsername"></span>
@@ -207,7 +207,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Send class="mr-5 h-5 w-5" />
                                         <span class="name mr-5" v-text="feed.senderUsername"></span>
@@ -220,7 +220,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <HeartPlus class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.senderUsername"></span>
@@ -232,7 +232,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Heart class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.displayName"></span>
@@ -244,7 +244,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <ThumbsDown class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.displayName"></span>
@@ -256,7 +256,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Pencil class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.previousDisplayName"></span>
@@ -270,7 +270,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <GraduationCap class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.displayName"></span>
@@ -285,7 +285,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <HeartHandshake class="mr-5 h-5 w-5" />
                                         <span class="name mr-5" v-text="feed.senderUsername"></span>
@@ -298,7 +298,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Tag class="mr-5 h-5 w-5" />
                                         <span class="name mr-5" v-text="feed.senderUsername"></span>
@@ -311,7 +311,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Megaphone class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
@@ -323,7 +323,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Megaphone class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
@@ -335,7 +335,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Tag class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
@@ -347,7 +347,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Tag class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
@@ -359,7 +359,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Tag class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
@@ -371,7 +371,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Send class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
@@ -383,7 +383,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <XCircle class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
@@ -395,7 +395,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <template v-if="feed.displayName">
                                             <Music class="mr-5 h-5 w-5" />
@@ -419,7 +419,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Footprints class="mr-5 h-5 w-5" />
                                         <span
@@ -444,7 +444,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <MessageSquare class="mr-5 h-5 w-5" />
                                         <span
@@ -457,7 +457,7 @@
                             </div>
                             <div v-else-if="feed.type === 'Event'" class="x-friend-item">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <AlertTriangle class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.data"></span>
@@ -466,7 +466,7 @@
                             </div>
                             <div v-else-if="feed.type === 'External'" class="x-friend-item">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Info class="mr-5 h-5 w-5" />
                                         <span
@@ -482,7 +482,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Play class="mr-1 h-5 w-5 inline-block" /><Ban class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.displayName"></span>
@@ -494,7 +494,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Play class="mr-1 inline-block h-5 w-5 rotate-180" /><Ban
                                             class="mr-5 h-5 w-5" />
@@ -507,7 +507,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Play class="mr-1 h-5 w-5 inline-block" /><VolumeX class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.displayName"></span>
@@ -519,7 +519,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Play class="mr-1 inline-block h-5 w-5 rotate-180" /><VolumeX
                                             class="mr-5 h-5 w-5" />
@@ -532,7 +532,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Ban class="mr-5 h-5 w-5" />
                                         <span
@@ -547,7 +547,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Circle class="mr-5 h-5 w-5" />
                                         <span
@@ -562,7 +562,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <VolumeX class="mr-5 h-5 w-5" />
                                         <span
@@ -577,7 +577,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Volume2 class="mr-5 h-5 w-5" />
                                         <span
@@ -598,7 +598,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <template v-if="feed.isTraveling">
                                             <span class="name" v-text="feed.displayName"></span> is traveling to
@@ -635,7 +635,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <span class="name" v-text="feed.displayName"></span>
                                         <span style="margin-left: 5px; margin-right: 5px">has logged in</span>
@@ -658,7 +658,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <span class="name" v-text="feed.displayName" style="margin-right: 5px"></span>
                                         <template v-if="feed.statusDescription === feed.previousStatusDescription">
@@ -719,7 +719,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <VrLocation
                                             :location="feed.location"
@@ -755,7 +755,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <span class="name" v-text="feed.senderUsername"></span> has invited you to
                                         <VrLocation
@@ -966,7 +966,7 @@
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
                                 <div class="detail">
-                                    <span class="extra">
+                                    <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <template v-if="feed.displayName">
                                             <span
@@ -1431,12 +1431,13 @@
         Pencil,
         Play,
         Send,
+        Tag,
         ThumbsDown,
+        TvMinimalPlay,
         VolumeX,
         Volume2,
         X,
-        XCircle,
-        Youtube
+        XCircle
     } from 'lucide-vue-next';
     import { nextTick, onBeforeUnmount, onMounted, reactive, toRefs } from 'vue';
     import { useI18n } from 'vue-i18n';
