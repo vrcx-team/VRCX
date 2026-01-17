@@ -103,6 +103,7 @@ jobs:
                   mv Installer/VRCX_Setup.exe $file_name
             - name: Sign Cef setup
               uses: azure/trusted-signing-action@v0
+              if: ${{ secrets.AZURE_CLIENT_ID != '' }}
               with:
                   azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
                   azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
