@@ -101,9 +101,13 @@ jobs:
                   file_name="VRCX_${{ needs.set_version.outputs.version }}_Setup.exe"
                   echo "Setup FileName: ${file_name}"
                   mv Installer/VRCX_Setup.exe $file_name
+            - name: Check if we want to sign
+              id: check_sign
+              run: |
+                echo "sign=${{ secrets.AZURE_CLIENT_ID != '' }}" >> $GITHUB_OUTPUT
             - name: Sign Cef setup
               uses: azure/trusted-signing-action@v0
-              if: ${{ secrets.AZURE_CLIENT_ID != '' }}
+              if: steps.check_sign.outputs.sign == 'true'
               with:
                   azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
                   azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
