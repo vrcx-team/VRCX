@@ -192,9 +192,7 @@
             uploadFilePUT: true,
             fileData: worldImage.value.base64File,
             fileMIME: 'image/png',
-            headers: {
-                'Content-MD5': worldImage.value.fileMd5
-            }
+            fileMD5: worldImage.value.fileMd5
         });
 
         if (json.status !== 200) {
@@ -245,9 +243,7 @@
             uploadFilePUT: true,
             fileData: worldImage.value.base64SignatureFile,
             fileMIME: 'application/x-rsync-signature',
-            headers: {
-                'Content-MD5': worldImage.value.signatureMd5
-            }
+            fileMD5: worldImage.value.signatureMd5
         });
 
         if (json.status !== 200) {

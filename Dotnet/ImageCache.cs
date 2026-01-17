@@ -57,10 +57,10 @@ internal static class ImageCache
             
         var cookieString = string.Empty;
         if (WebApi.Instance != null &&
-            WebApi.Instance._cookieContainer != null &&
+            WebApi.Instance.CookieContainer != null &&
             uri.Host == "api.vrchat.cloud")
         {
-            CookieCollection cookies = WebApi.Instance._cookieContainer.GetCookies(new Uri("https://api.vrchat.cloud"));
+            CookieCollection cookies = WebApi.Instance.CookieContainer.GetCookies(new Uri("https://api.vrchat.cloud"));
             foreach (Cookie cookie in cookies)
                 cookieString += $"{cookie.Name}={cookie.Value};";
         }
