@@ -336,6 +336,7 @@ i.x-status-icon.red {
 .force-pointer-on-hover [role='button'],
 .force-pointer-on-hover label,
 .force-pointer-on-hover summary,
+.force-pointer-on-hover .x-link,
 .force-pointer-on-hover input[type='submit'] {
     cursor: pointer !important;
 }
