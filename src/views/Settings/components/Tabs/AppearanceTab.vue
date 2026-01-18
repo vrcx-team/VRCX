@@ -50,9 +50,12 @@
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem v-for="fontKey in appFontFamilyOptions" :key="fontKey" :value="fontKey">
-                                {{ t(`view.settings.appearance.appearance.font_family_${fontKey}`) }}
-                            </SelectItem>
+                            <template v-for="option in appFontFamilyOptions" :key="option.key">
+                                <SelectSeparator v-if="option.type === 'separator'" />
+                                <SelectItem v-else :value="option.key">
+                                    {{ t(`view.settings.appearance.appearance.font_family_${option.key}`) }}
+                                </SelectItem>
+                            </template>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
@@ -427,8 +430,16 @@
 </template>
 
 <script setup>
+    import {
+        Select,
+        SelectContent,
+        SelectGroup,
+        SelectItem,
+        SelectSeparator,
+        SelectTrigger,
+        SelectValue
+    } from '@/components/ui/select';
     import { ListboxContent, ListboxFilter, ListboxItem, ListboxItemIndicator, ListboxRoot, useFilter } from 'reka-ui';
-    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import {
         NumberField,
         NumberFieldContent,
@@ -522,7 +533,14 @@
         setAppFontFamily
     } = appearanceSettingsStore;
 
-    const appFontFamilyOptions = APP_FONT_FAMILIES;
+    const appFontFamilyOptions = computed(() => {
+        const fontKeys = APP_FONT_FAMILIES.filter((key) => key !== 'system_ui');
+        return [
+            ...fontKeys.map((key) => ({ type: 'item', key })),
+            { type: 'separator', key: 'separator-system-ui' },
+            { type: 'item', key: 'system_ui' }
+        ];
+    });
 
     const zoomLevel = ref(100);
     const isLinux = computed(() => LINUX);
