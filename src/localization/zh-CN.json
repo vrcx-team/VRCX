@@ -574,10 +574,11 @@
                     "sort_instance_users_by": "房间玩家排序规则",
                     "sort_instance_users_by_time": "时间",
                     "sort_instance_users_by_alphabet": "字母顺序",
-                    "table_max_size": "最大显示记录",
-                    "table_page_sizes": "显示记录大小",
-                    "table_page_sizes_error": "记录大小必须是 1 到 1000 之间的数字",
-                    "show_notification_icon_dot": "显示托盘通知"
+                    "table_max_size": "最大显示行数",
+                    "table_page_sizes": "每页显示行数",
+                    "table_page_sizes_error": "行数必须是 1 到 1000 之间的数字",
+                    "show_notification_icon_dot": "显示托盘通知",
+                    "compact_table_mode": "紧凑表格模式"
                 },
                 "timedate": {
                     "header": "时间 / 日期",
@@ -2248,7 +2249,7 @@
     },
     "table": {
         "pagination": {
-            "rows_per_page": "每页行数"
+            "rows_per_page": "每页显示行数"
         },
         "feed": {
             "date": "时间",
