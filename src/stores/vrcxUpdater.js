@@ -41,6 +41,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     const pendingVRCXInstall = ref('');
     const updateInProgress = ref(false);
     const updateProgress = ref(0);
+    const updateToastRelease = ref('');
 
     async function initVRCXUpdaterSettings() {
         if (!WINDOWS) {
@@ -243,6 +244,17 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 }
                 pendingVRCXUpdate.value = true;
                 uiStore.notifyMenu('settings');
+                if (updateToastRelease.value !== releaseName) {
+                    updateToastRelease.value = releaseName;
+                    toast(t('nav_menu.update_available'), {
+                        description: releaseName,
+                        duration: 5000,
+                        action: {
+                            label: t('nav_menu.update'),
+                            onClick: () => showVRCXUpdateDialog()
+                        }
+                    });
+                }
                 if (autoUpdateVRCX.value === 'Notify') {
                     // this.showVRCXUpdateDialog();
                 } else if (autoUpdateVRCX.value === 'Auto Download') {

@@ -35,6 +35,7 @@
         "discord": "Join our Discord",
         "whats_new": "What's New?",
         "update_available": "Update available",
+        "update": "Update",
         "custom_nav": {
             "header": "Custom Navigation",
             "dialog_title": "Customize Navigation Menu",

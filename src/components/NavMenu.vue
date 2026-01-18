@@ -1,25 +1,6 @@
 <template>
     <Sidebar side="left" variant="sidebar" collapsible="icon">
         <SidebarContent class="pt-2">
-            <div v-if="navLayoutReady" class="px-2">
-                <SidebarMenu>
-                    <SidebarMenuItem v-if="pendingVRCXUpdate || pendingVRCXInstall">
-                        <SidebarMenuButton
-                            :tooltip="t('nav_menu.update_available')"
-                            variant="default"
-                            @click="showVRCXUpdateDialog">
-                            <span class="relative inline-flex size-6 items-center justify-center">
-                                <i class="ri-arrow-down-circle-line text-muted-foreground text-[20px]"></i>
-                                <span class="absolute top-0.5 -right-1 h-1.5 w-1.5 rounded-full bg-red-500"></span>
-                            </span>
-                            <span v-show="!isCollapsed" class="text-[13px] text-muted-foreground">{{
-                                t('nav_menu.update_available')
-                            }}</span>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </div>
-
             <SidebarGroup>
                 <SidebarGroupContent>
                     <SidebarMenu v-if="navLayoutReady">
@@ -154,7 +135,12 @@
                     <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                             <SidebarMenuButton :tooltip="t('nav_tooltip.manage')">
-                                <i class="ri-settings-3-line inline-flex size-6 items-center justify-center text-lg" />
+                                <span class="relative inline-flex size-6 items-center justify-center">
+                                    <i class="ri-settings-3-line text-lg" />
+                                    <span
+                                        v-if="pendingVRCXUpdate || pendingVRCXInstall"
+                                        class="absolute top-0.5 -right-1 h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                                </span>
                                 <span v-show="!isCollapsed">{{ t('nav_tooltip.manage') }}</span>
                             </SidebarMenuButton>
                         </DropdownMenuTrigger>
@@ -173,6 +159,12 @@
                                 </div>
                             </div>
                             <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                v-if="pendingVRCXUpdate || pendingVRCXInstall"
+                                @click="showVRCXUpdateDialog">
+                                <span>{{ t('nav_menu.update_available') }}</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator v-if="pendingVRCXUpdate || pendingVRCXInstall" />
                             <DropdownMenuItem @click="handleSettingsClick">
                                 <span>{{ t('nav_tooltip.settings') }}</span>
                             </DropdownMenuItem>
