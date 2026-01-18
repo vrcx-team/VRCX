@@ -957,6 +957,10 @@
         clearSelectedAvatars();
     }
 
+    function clearSelectedAvatars() {
+        selectedFavoriteAvatars.value = [];
+    }
+
     function isGroupActive(type, key) {
         return selectedGroup.value?.type === type && selectedGroup.value?.key === key;
     }
@@ -1416,6 +1420,16 @@
         min-height: 0;
     }
 
+    .favorites-splitter :deep([data-slot='resizable-handle']) {
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .favorites-splitter :deep([data-slot='resizable-handle']:hover),
+    .favorites-splitter :deep([data-slot='resizable-handle']:focus-visible) {
+        opacity: 1;
+    }
+
     .favorites-groups-panel {
         height: 100%;
         padding-right: 8px;
@@ -1452,6 +1466,7 @@
 
     .group-item {
         border-radius: 8px;
+        border: 1px solid var(--border);
         padding: 8px;
         cursor: pointer;
         box-shadow: 0 0 6px rgba(15, 23, 42, 0.04);

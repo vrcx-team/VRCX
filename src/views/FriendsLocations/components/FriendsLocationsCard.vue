@@ -1,7 +1,7 @@
 <template>
     <Card class="friend-card p-0 gap-0" :style="cardStyle" @click="showUserDialog(friend.id)">
         <div class="friend-card__header">
-            <div class="friend-card__avatar-wrapper">
+            <div>
                 <Avatar class="friend-card__avatar" :style="{ width: `${avatarSize}px`, height: `${avatarSize}px` }">
                     <AvatarImage :src="userImage(props.friend.ref, true)" />
                     <AvatarFallback>{{ avatarFallback }}</AvatarFallback>
@@ -62,7 +62,7 @@
         '--card-scale': props.cardScale,
         '--card-spacing': props.cardSpacing,
         cursor: 'pointer',
-        padding: `${16 * props.cardScale * props.cardSpacing}px`
+        padding: `${24 * props.cardScale * props.cardSpacing}px`
     }));
 
     const avatarFallback = computed(() => props.friend?.name?.charAt(0) ?? '?');
@@ -113,11 +113,6 @@
         grid-template-columns: auto 1fr;
         align-items: flex-start;
         gap: calc(12px * var(--card-scale) * var(--card-spacing));
-    }
-
-    .friend-card__avatar-wrapper {
-        position: static;
-        flex: none;
     }
 
     .friend-card__status-dot {

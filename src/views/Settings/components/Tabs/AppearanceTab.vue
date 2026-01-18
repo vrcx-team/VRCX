@@ -17,21 +17,7 @@
                     </SelectContent>
                 </Select>
             </div>
-            <div class="options-container-item">
-                <span class="name">{{ t('view.settings.appearance.appearance.theme_mode') }}</span>
-                <Select :model-value="themeMode" @update:modelValue="setThemeMode">
-                    <SelectTrigger size="sm">
-                        <SelectValue :placeholder="themeDisplayName(themeMode)" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem v-for="(config, themeKey) in THEME_CONFIG" :key="themeKey" :value="themeKey">
-                                {{ themeDisplayName(themeKey) }}
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </div>
+
             <div class="options-container-item">
                 <span class="name flex! items-center!">
                     {{ t('view.settings.appearance.appearance.font_family') }}
@@ -466,28 +452,18 @@
     import PresetColorPicker from '@/components/PresetColorPicker.vue';
 
     import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '../../../../stores';
-    import { APP_FONT_FAMILIES, THEME_CONFIG } from '../../../../shared/constants';
     import { getLanguageName, languageCodes } from '../../../../localization';
+    import { APP_FONT_FAMILIES } from '../../../../shared/constants';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 
     const { t } = useI18n();
-
-    const themeDisplayName = (themeKey) => {
-        const i18nKey = `view.settings.appearance.appearance.theme_mode_${themeKey}`;
-        const translated = t(i18nKey);
-        if (translated !== i18nKey) {
-            return translated;
-        }
-        return THEME_CONFIG[themeKey]?.name ?? themeKey;
-    };
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { saveOpenVROption, updateVRConfigVars } = useVrStore();
 
     const {
         appLanguage,
-        themeMode,
         displayVRCPlusIconsAsAvatar,
         appFontFamily,
         hideNicknames,
@@ -534,7 +510,6 @@
         setHideUserMemos,
         setHideUnfriends,
         updateTrustColor,
-        setThemeMode,
         changeAppLanguage,
         promptMaxTableSizeDialog,
         setNotificationIconDot,

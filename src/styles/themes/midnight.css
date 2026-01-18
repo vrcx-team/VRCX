@@ -1,4 +1,4 @@
-.dark {
+:root[data-theme='midnight'] {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.145 0 0);
@@ -32,4 +32,67 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(0.269 0 0);
     --sidebar-ring: oklch(0.439 0 0);
+}
+
+/* blue */
+:root[data-theme='midnight'][data-theme-color='blue'] {
+  --primary: oklch(0.488 0.243 264.376);
+  --primary-foreground: oklch(0.97 0.014 254.604);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.556 0 0);
+}
+
+/* green */
+:root[data-theme='midnight'][data-theme-color='green'] {
+  --primary: oklch(0.648 0.2 131.684);
+  --primary-foreground: oklch(0.986 0.031 120.757);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.405 0.101 131.063);
+}
+
+/* orange */
+:root[data-theme='midnight'][data-theme-color='orange'] {
+  --primary: oklch(0.705 0.213 47.604);
+  --primary-foreground: oklch(0.98 0.016 73.684);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.408 0.123 38.172);
+}
+
+/* red */
+:root[data-theme='midnight'][data-theme-color='red'] {
+  --primary: oklch(0.637 0.237 25.331);
+  --primary-foreground: oklch(0.971 0.013 17.38);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.396 0.141 25.723);
+}
+
+/* rose */
+:root[data-theme='midnight'][data-theme-color='rose'] {
+  --primary: oklch(0.645 0.246 16.439);
+  --primary-foreground: oklch(0.969 0.015 12.422);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.41 0.159 10.272);
+}
+
+/* violet */
+:root[data-theme='midnight'][data-theme-color='violet'] {
+  --primary: oklch(0.606 0.25 292.717);
+  --primary-foreground: oklch(0.969 0.016 293.756);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.38 0.189 293.745);
+}
+
+/* yellow */
+:root[data-theme='midnight'][data-theme-color='yellow'] {
+  --primary: oklch(0.795 0.184 86.047);
+  --primary-foreground: oklch(0.421 0.095 57.708);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.421 0.095 57.708);
 }

@@ -379,25 +379,39 @@
                                 </template>
                                 <div v-else class="favorites-empty">No Data</div>
                             </div>
-                            <ScrollArea
+                            <div
                                 v-else-if="activeLocalGroupName && isLocalGroupSelected"
-                                class="favorites-content__scroll">
+                                ref="localFavoritesViewportRef"
+                                class="favorites-content__scroll favorites-content__scroll--native favorites-content__scroll--local focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
+                                data-reka-scroll-area-viewport=""
+                                data-slot="scroll-area-viewport"
+                                tabindex="0"
+                                style="overflow: hidden scroll">
                                 <template v-if="currentLocalFavorites.length">
-                                    <div
-                                        class="favorites-card-list"
-                                        :style="worldFavoritesGridStyle(currentLocalFavorites.length)">
-                                        <FavoritesWorldLocalItem
-                                            v-for="favorite in currentLocalFavorites"
-                                            :key="favorite.id"
-                                            :group="activeLocalGroupName"
-                                            :favorite="favorite"
-                                            :edit-mode="worldEditMode"
-                                            @remove-local-world-favorite="removeLocalWorldFavorite"
-                                            @click="showWorldDialog(favorite.id)" />
+                                    <div class="favorites-card-virtual" :style="localVirtualContainerStyle">
+                                        <template v-for="item in localVirtualItems" :key="String(item.virtualItem.key)">
+                                            <div
+                                                v-if="item.row"
+                                                class="favorites-card-virtual-row"
+                                                :data-index="item.virtualItem.index"
+                                                :ref="localVirtualizer.measureElement"
+                                                :style="{ transform: `translateY(${item.virtualItem.start}px)` }">
+                                                <div class="favorites-card-virtual-row-grid">
+                                                    <FavoritesWorldLocalItem
+                                                        v-for="favorite in getLocalRowItems(item.row)"
+                                                        :key="favorite.key"
+                                                        :group="activeLocalGroupName"
+                                                        :favorite="favorite.favorite"
+                                                        :edit-mode="worldEditMode"
+                                                        @remove-local-world-favorite="removeLocalWorldFavorite"
+                                                        @click="showWorldDialog(favorite.favorite.id)" />
+                                                </div>
+                                            </div>
+                                        </template>
                                     </div>
                                 </template>
                                 <div v-else class="favorites-empty">No Data</div>
-                            </ScrollArea>
+                            </div>
                             <div v-else class="favorites-empty">No Data</div>
                         </template>
                     </div>
@@ -413,11 +427,11 @@
     import { ArrowUpDown, Ellipsis, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
     import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
-    import { ScrollArea } from '@/components/ui/scroll-area';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
+    import { useVirtualizer } from '@tanstack/vue-virtual';
 
     import {
         DropdownMenu,
@@ -757,6 +771,86 @@
         return localWorldFavorites.value[activeLocalGroupName.value] || [];
     });
 
+    const localFavoritesViewportRef = ref(null);
+
+    const getFavoritesGridMetrics = (count = 1, options = {}) => {
+        const styleFn = worldFavoritesGridStyle.value;
+        const styles = typeof styleFn === 'function' ? styleFn(count, options) : {};
+        const columnsRaw = styles['--favorites-grid-columns'] ?? 1;
+        const gapRaw = styles['--favorites-card-gap'] ?? 12;
+        const columns = Math.max(1, Number(columnsRaw) || 1);
+        const gap = Number(String(gapRaw).replace('px', '')) || 0;
+
+        return {
+            columns,
+            gap,
+            styles
+        };
+    };
+
+    const chunkLocalFavorites = (favorites = []) => {
+        const items = Array.isArray(favorites) ? favorites : [];
+        if (!items.length) {
+            return [];
+        }
+        const { columns } = getFavoritesGridMetrics(items.length, { matchMaxColumnWidth: true });
+        const safeColumns = Math.max(1, columns || 1);
+        const rows = [];
+
+        for (let index = 0; index < items.length; index += safeColumns) {
+            rows.push({
+                type: 'cards',
+                key: `local:${activeLocalGroupName.value}:${index}`,
+                items: items.slice(index, index + safeColumns).map((favorite) => ({
+                    key: favorite.id ?? favorite.worldId ?? favorite.name ?? `${index}:${Math.random()}`,
+                    favorite
+                }))
+            });
+        }
+
+        return rows;
+    };
+
+    const localVirtualRows = computed(() => chunkLocalFavorites(currentLocalFavorites.value));
+
+    const estimateLocalRowSize = (row) => {
+        if (!row) {
+            return 120;
+        }
+        const itemCount = Array.isArray(row.items) ? row.items.length : 0;
+        const { columns, gap } = getFavoritesGridMetrics(itemCount, { matchMaxColumnWidth: true });
+        const safeColumns = Math.max(1, columns || 1);
+        const rows = Math.max(1, Math.ceil(itemCount / safeColumns));
+        const baseCardHeight = 220;
+        const rowGap = Math.max(0, gap);
+
+        return rows * baseCardHeight + (rows - 1) * rowGap + 8;
+    };
+
+    const localVirtualizer = useVirtualizer(
+        computed(() => ({
+            count: localVirtualRows.value.length,
+            getScrollElement: () => localFavoritesViewportRef.value,
+            estimateSize: (index) => estimateLocalRowSize(localVirtualRows.value[index]),
+            overscan: 8
+        }))
+    );
+
+    const localVirtualItems = computed(() => {
+        const items = localVirtualizer.value?.getVirtualItems?.() ?? [];
+        return items.map((virtualItem) => ({
+            virtualItem,
+            row: localVirtualRows.value[virtualItem.index]
+        }));
+    });
+
+    const localVirtualContainerStyle = computed(() => ({
+        ...getFavoritesGridMetrics(currentLocalFavorites.value.length, { matchMaxColumnWidth: true }).styles,
+        height: `${localVirtualizer.value?.getTotalSize?.() ?? 0}px`
+    }));
+
+    const getLocalRowItems = (row) => (row && Array.isArray(row.items) ? row.items : []);
+
     function handleSortFavoritesChange(value) {
         const next = Boolean(value);
         if (next !== sortFavorites.value) {
@@ -795,6 +889,12 @@
         if (active && worldEditMode.value) {
             worldEditMode.value = false;
         }
+    });
+
+    watch([currentLocalFavorites, worldCardScale, worldCardSpacing, activeLocalGroupName], () => {
+        nextTick(() => {
+            localVirtualizer.value?.measure?.();
+        });
     });
 
     watch(
@@ -1248,6 +1348,16 @@
         min-height: 0;
     }
 
+    .favorites-splitter :deep([data-slot='resizable-handle']) {
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .favorites-splitter :deep([data-slot='resizable-handle']:hover),
+    .favorites-splitter :deep([data-slot='resizable-handle']:focus-visible) {
+        opacity: 1;
+    }
+
     .favorites-dropdown {
         padding: 10px;
     }
@@ -1284,6 +1394,7 @@
 
     .group-item {
         border-radius: 8px;
+        border: 1px solid var(--border);
         padding: 8px;
         cursor: pointer;
         box-shadow: 0 0 6px rgba(15, 23, 42, 0.04);
@@ -1423,6 +1534,26 @@
         overflow: auto;
     }
 
+    .favorites-content__scroll--local {
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+    }
+
+    .favorites-content__scroll--local::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .favorites-content__scroll--local::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .favorites-content__scroll--local::-webkit-scrollbar-thumb {
+        background-color: var(--border);
+        border-radius: 999px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+    }
+
     .favorites-search-grid {
         display: grid;
         grid-template-columns: repeat(
@@ -1443,6 +1574,33 @@
         gap: var(--favorites-card-gap, 12px);
         justify-content: start;
         padding: 4px 2px 12px 2px;
+    }
+
+    .favorites-card-virtual {
+        width: 100%;
+        position: relative;
+        box-sizing: border-box;
+    }
+
+    .favorites-card-virtual-row {
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        box-sizing: border-box;
+        padding-bottom: var(--favorites-card-gap, 12px);
+    }
+
+    .favorites-card-virtual-row-grid {
+        display: grid;
+        grid-template-columns: repeat(
+            var(--favorites-grid-columns, 1),
+            minmax(var(--favorites-card-min-width, 260px), var(--favorites-card-target-width, 1fr))
+        );
+        gap: var(--favorites-card-gap, 12px);
+        justify-content: start;
+        padding: 4px 2px 0 2px;
+        box-sizing: border-box;
     }
 
     .favorites-card-list::after {

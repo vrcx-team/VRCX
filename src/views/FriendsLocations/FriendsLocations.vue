@@ -74,35 +74,46 @@
         <div v-else class="friend-view__toolbar friend-view__toolbar--loading">
             <span class="friend-view__loading-text">{{ t('view.friends_locations.loading_more') }}</span>
         </div>
-        <ScrollArea v-if="settingsReady" ref="scrollbarRef" class="friend-view__scroll">
-            <div v-if="virtualRows.length" class="friend-view__virtual" :style="virtualListStyle">
-                <div v-for="row in virtualRows" :key="String(row.key)" class="friend-view__virtual-row">
-                    <template v-if="row.type === 'header'">
-                        <header class="friend-view__instance-header">
-                            <Location class="text-xs" :location="row.instanceId" style="display: inline" />
-                            <span class="friend-view__instance-count">({{ row.count }})</span>
-                        </header>
-                    </template>
+        <div v-if="settingsReady" ref="scrollbarRef" class="friend-view__scroll">
+            <div v-if="virtualRows.length" class="friend-view__virtual" :style="virtualContainerStyle">
+                <template v-for="item in virtualItems" :key="String(item.virtualItem.key)">
+                    <div
+                        v-if="item.row"
+                        class="friend-view__virtual-row"
+                        :class="`friend-view__virtual-row--${item.row.type}`"
+                        :data-index="item.virtualItem.index"
+                        :ref="virtualizer.measureElement"
+                        :style="{ transform: `translateY(${item.virtualItem.start}px)` }">
+                        <template v-if="item.row.type === 'header'">
+                            <header class="friend-view__instance-header">
+                                <Location
+                                    class="text-xs"
+                                    :location="getRowInstanceId(item.row)"
+                                    style="display: inline" />
+                                <span class="friend-view__instance-count">({{ getRowCount(item.row) }})</span>
+                            </header>
+                        </template>
 
-                    <template v-else-if="row.type === 'divider'">
-                        <div class="friend-view__divider"><span class="friend-view__divider-text"></span></div>
-                    </template>
+                        <template v-else-if="item.row.type === 'divider'">
+                            <div class="friend-view__divider"><span class="friend-view__divider-text"></span></div>
+                        </template>
 
-                    <template v-else>
-                        <div class="friend-view__row">
-                            <FriendLocationCard
-                                v-for="item in row.items ?? []"
-                                :key="item.key"
-                                :friend="item.friend"
-                                :card-scale="cardScale"
-                                :card-spacing="cardSpacing"
-                                :display-instance-info="item.displayInstanceInfo" />
-                        </div>
-                    </template>
-                </div>
+                        <template v-else>
+                            <div class="friend-view__row">
+                                <FriendLocationCard
+                                    v-for="card in getRowItems(item.row)"
+                                    :key="card.key"
+                                    :friend="card.friend"
+                                    :card-scale="cardScale"
+                                    :card-spacing="cardSpacing"
+                                    :display-instance-info="card.displayInstanceInfo" />
+                            </div>
+                        </template>
+                    </div>
+                </template>
             </div>
             <div v-else class="friend-view__empty">{{ t('view.friends_locations.no_matching_friends') }}</div>
-        </ScrollArea>
+        </div>
         <div v-else class="friend-view__initial-loading">
             <Loader2 class="friend-view__loading-icon" :size="22" />
         </div>
@@ -110,15 +121,15 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
+    import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { Field, FieldContent, FieldLabel } from '@/components/ui/field';
     import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
     import { Loader2, Settings } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { InputGroupSearch } from '@/components/ui/input-group';
-    import { ScrollArea } from '@/components/ui/scroll-area';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+    import { useVirtualizer } from '@tanstack/vue-virtual';
 
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { Slider } from '../../components/ui/slider';
@@ -205,13 +216,12 @@
     const searchTerm = ref('');
 
     const scrollbarRef = ref();
-    const scrollViewportRef = shallowRef(null);
     const gridWidth = ref(0);
     let resizeObserver;
     let cleanupResize;
 
     const updateGridWidth = () => {
-        const wrap = scrollViewportRef.value;
+        const wrap = scrollbarRef.value;
         if (!wrap) {
             return;
         }
@@ -225,7 +235,7 @@
             cleanupResize = undefined;
         }
 
-        const wrap = scrollViewportRef.value;
+        const wrap = scrollbarRef.value;
         if (!wrap) {
             return;
         }
@@ -475,14 +485,69 @@
         };
     });
 
-    function resolveScrollViewport() {
-        const rootEl = scrollbarRef.value?.$el ?? null;
-        if (!rootEl) {
-            scrollViewportRef.value = null;
-            return;
+    const getGridMetrics = (count = 1, options = {}) => {
+        const baseWidth = 220;
+        const baseGap = 14;
+        const scale = cardScale.value;
+        const spacing = cardSpacing.value;
+        const minWidth = baseWidth * scale;
+        const gap = Math.max(6, (baseGap + (scale - 1) * 10) * spacing);
+
+        const containerWidth = Math.max(gridWidth.value ?? 0, 0);
+        const itemCount = Math.max(Number(count) || 0, 0);
+        const safeCount = itemCount > 0 ? itemCount : 1;
+        const maxColumns = Math.max(1, Math.floor((containerWidth + gap) / (minWidth + gap)) || 1);
+        const preferredColumns = options?.preferredColumns;
+        const requestedColumns = preferredColumns
+            ? Math.max(1, Math.min(Math.round(preferredColumns), maxColumns))
+            : maxColumns;
+        const columns = Math.max(1, Math.min(safeCount, requestedColumns));
+        const forceStretch = Boolean(options?.forceStretch);
+        const disableAutoStretch = Boolean(options?.disableAutoStretch);
+        const matchMaxColumnWidth = Boolean(options?.matchMaxColumnWidth);
+        const shouldStretch = !disableAutoStretch && (forceStretch || itemCount >= maxColumns);
+
+        let cardWidth = minWidth;
+        const maxColumnWidth = maxColumns > 0 ? (containerWidth - gap * (maxColumns - 1)) / maxColumns : minWidth;
+
+        if (shouldStretch && columns > 0) {
+            const columnsWidth = containerWidth - gap * (columns - 1);
+            const rawWidth = columnsWidth > 0 ? columnsWidth / columns : minWidth;
+
+            if (Number.isFinite(rawWidth) && rawWidth > 0) {
+                cardWidth = Math.max(minWidth, rawWidth);
+            }
+        } else if (matchMaxColumnWidth && Number.isFinite(maxColumnWidth) && maxColumnWidth > 0) {
+            cardWidth = Math.max(minWidth, maxColumnWidth);
         }
-        scrollViewportRef.value = rootEl.querySelector('[data-slot="scroll-area-viewport"]');
-    }
+
+        return {
+            minWidth,
+            gap,
+            columns,
+            cardWidth
+        };
+    };
+
+    const chunkCardItems = (items = [], keyPrefix = 'row') => {
+        const safeItems = Array.isArray(items) ? items : [];
+        if (!safeItems.length) {
+            return [];
+        }
+        const { columns } = getGridMetrics(safeItems.length, { matchMaxColumnWidth: true });
+        const safeColumns = Math.max(1, columns || 1);
+        const rows = [];
+
+        for (let index = 0; index < safeItems.length; index += safeColumns) {
+            rows.push({
+                type: 'cards',
+                key: `${keyPrefix}:${index}`,
+                items: safeItems.slice(index, index + safeColumns)
+            });
+        }
+
+        return rows;
+    };
 
     const virtualRows = computed(() => {
         const rows = [];
@@ -498,15 +563,12 @@
 
                 const friends = Array.isArray(group.friends) ? group.friends : [];
                 if (friends.length) {
-                    rows.push({
-                        type: 'cards',
-                        key: `g:${group.instanceId}`,
-                        items: friends.map((friend) => ({
-                            key: `f:${friend?.id ?? friend?.userId ?? friend?.displayName ?? Math.random()}`,
-                            friend,
-                            displayInstanceInfo: true
-                        }))
-                    });
+                    const items = friends.map((friend) => ({
+                        key: `f:${friend?.id ?? friend?.userId ?? friend?.displayName ?? Math.random()}`,
+                        friend,
+                        displayInstanceInfo: true
+                    }));
+                    rows.push(...chunkCardItems(items, `g:${group.instanceId}`));
                 }
             }
 
@@ -524,15 +586,12 @@
 
                 const friends = Array.isArray(group.friends) ? group.friends : [];
                 if (friends.length) {
-                    rows.push({
-                        type: 'cards',
-                        key: `mg:${group.instanceId}`,
-                        items: friends.map((friend) => ({
-                            key: `f:${friend?.id ?? friend?.userId ?? friend?.displayName ?? Math.random()}`,
-                            friend,
-                            displayInstanceInfo: false
-                        }))
-                    });
+                    const items = friends.map((friend) => ({
+                        key: `f:${friend?.id ?? friend?.userId ?? friend?.displayName ?? Math.random()}`,
+                        friend,
+                        displayInstanceInfo: false
+                    }));
+                    rows.push(...chunkCardItems(items, `mg:${group.instanceId}`));
                 }
             }
 
@@ -542,15 +601,12 @@
 
             const online = mergedOnlineEntries.value;
             if (online.length) {
-                rows.push({
-                    type: 'cards',
-                    key: 'o:merged',
-                    items: online.map((entry) => ({
-                        key: `e:${entry?.id ?? entry?.friend?.id ?? entry?.friend?.displayName ?? Math.random()}`,
-                        friend: entry.friend,
-                        displayInstanceInfo: true
-                    }))
-                });
+                const items = online.map((entry) => ({
+                    key: `e:${entry?.id ?? entry?.friend?.id ?? entry?.friend?.displayName ?? Math.random()}`,
+                    friend: entry.friend,
+                    displayInstanceInfo: true
+                }));
+                rows.push(...chunkCardItems(items, 'o:merged'));
             }
 
             return rows;
@@ -558,15 +614,12 @@
 
         const entries = filteredFriends.value;
         if (entries.length) {
-            rows.push({
-                type: 'cards',
-                key: 'r:all',
-                items: entries.map((entry) => ({
-                    key: `e:${entry?.id ?? entry?.friend?.id ?? entry?.friend?.displayName ?? Math.random()}`,
-                    friend: entry.friend,
-                    displayInstanceInfo: true
-                }))
-            });
+            const items = entries.map((entry) => ({
+                key: `e:${entry?.id ?? entry?.friend?.id ?? entry?.friend?.displayName ?? Math.random()}`,
+                friend: entry.friend,
+                displayInstanceInfo: true
+            }));
+            rows.push(...chunkCardItems(items, 'r:all'));
         }
         return rows;
     });
@@ -582,10 +635,60 @@
         };
     });
 
+    const estimateRowSize = (row) => {
+        if (!row) {
+            return 48;
+        }
+        if (row.type === 'header') {
+            return 32;
+        }
+        if (row.type === 'divider') {
+            return 36;
+        }
+
+        const itemCount = Array.isArray(row.items) ? row.items.length : 0;
+        const { columns, gap } = getGridMetrics(itemCount, { matchMaxColumnWidth: true });
+        const safeColumns = Math.max(1, columns || 1);
+        const rows = Math.max(1, Math.ceil(itemCount / safeColumns));
+        const scale = cardScale.value;
+        const spacing = cardSpacing.value;
+        const baseCardHeight = 150;
+        const cardHeight = baseCardHeight * scale * spacing;
+        const rowGap = Math.max(0, gap - 4);
+
+        return rows * cardHeight + (rows - 1) * rowGap + 8;
+    };
+
+    const virtualizer = useVirtualizer(
+        computed(() => ({
+            count: virtualRows.value.length,
+            getScrollElement: () => scrollbarRef.value,
+            estimateSize: (index) => estimateRowSize(virtualRows.value[index]),
+            overscan: 5
+        }))
+    );
+
+    const virtualItems = computed(() => {
+        const items = virtualizer.value?.getVirtualItems?.() ?? [];
+        return items.map((virtualItem) => ({
+            virtualItem,
+            row: virtualRows.value[virtualItem.index]
+        }));
+    });
+
+    const virtualContainerStyle = computed(() => ({
+        ...virtualListStyle.value,
+        height: `${virtualizer.value?.getTotalSize?.() ?? 0}px`
+    }));
+
+    const getRowItems = (row) => (row && Array.isArray(row.items) ? row.items : []);
+    const getRowInstanceId = (row) => (row && row.type === 'header' ? row.instanceId : '');
+    const getRowCount = (row) => (row && row.type === 'header' ? row.count : 0);
+
     watch([searchTerm, activeSegment], () => {
         nextTick(() => {
-            resolveScrollViewport();
             updateGridWidth();
+            virtualizer.value?.measure?.();
         });
     });
 
@@ -598,8 +701,8 @@
         }
 
         nextTick(() => {
-            resolveScrollViewport();
             updateGridWidth();
+            virtualizer.value?.measure?.();
         });
     });
 
@@ -607,8 +710,8 @@
         () => filteredFriends.value.length,
         () => {
             nextTick(() => {
-                resolveScrollViewport();
                 updateGridWidth();
+                virtualizer.value?.measure?.();
             });
         }
     );
@@ -619,14 +722,21 @@
         }
         nextTick(() => {
             updateGridWidth();
+            virtualizer.value?.measure?.();
+        });
+    });
+
+    watch(virtualRows, () => {
+        nextTick(() => {
+            virtualizer.value?.measure?.();
         });
     });
 
     onMounted(() => {
         nextTick(() => {
-            resolveScrollViewport();
             setupResizeHandling();
             updateGridWidth();
+            virtualizer.value?.measure?.();
         });
     });
 
@@ -663,9 +773,9 @@
         } finally {
             settingsReady.value = true;
             nextTick(() => {
-                resolveScrollViewport();
                 setupResizeHandling();
                 updateGridWidth();
+                virtualizer.value?.measure?.();
             });
         }
     }
@@ -680,6 +790,13 @@
         display: grid;
         grid-template-rows: auto 1fr;
         gap: 16px;
+        min-height: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .friend-view.x-container {
+        overflow: hidden;
     }
 
     .friend-view__toolbar {
@@ -721,17 +838,31 @@
         width: 100%;
         padding: 2px;
         box-sizing: border-box;
-        display: grid;
-        row-gap: calc(var(--friend-card-gap) - 4px);
-    }
-
-    .friend-view__virtual-spacer {
-        width: 100%;
+        position: relative;
     }
 
     .friend-view__virtual-row {
         width: 100%;
         box-sizing: border-box;
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding-bottom: calc(var(--friend-card-gap, 14px) - 4px);
+    }
+
+    .friend-view__virtual-row--header {
+        padding: 4px 10px;
+        padding-bottom: calc(var(--friend-card-gap, 14px) - 4px);
+    }
+
+    .friend-view__virtual-row--divider {
+        padding: 16px 4px;
+        padding-bottom: calc(var(--friend-card-gap, 14px) - 4px);
+    }
+
+    .friend-view__virtual-row--cards {
+        padding: 2px;
+        padding-bottom: calc(var(--friend-card-gap, 14px) - 4px);
     }
 
     .friend-view__row {
@@ -784,7 +915,9 @@
     }
 
     .friend-view__scroll {
-        padding: 2px;
+        overflow: auto;
+        min-height: 0;
+        height: 100%;
     }
 
     .friend-view__initial-loading {
@@ -793,33 +926,10 @@
         min-height: 240px;
     }
 
-    .friend-view__grid {
-        display: grid;
-        grid-template-columns: repeat(
-            var(--friend-grid-columns, 1),
-            minmax(var(--friend-card-min-width, 200px), var(--friend-card-target-width, 1fr))
-        );
-        gap: var(--friend-card-gap, 18px);
-        justify-content: start;
-        padding: 2px;
-    }
-
-    .friend-view__instances {
-        display: grid;
-        gap: 18px;
-        box-sizing: border-box;
-    }
-
-    .friend-view__instance {
-        display: grid;
-        gap: 10px;
-    }
-
     .friend-view__instance-header {
         display: flex;
         align-items: center;
         padding: 4px 2px;
-        margin: 5px 10px;
         font-weight: 600;
         font-size: 13px;
     }
@@ -828,7 +938,6 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        margin: 16px 4px;
         font-size: 13px;
         font-weight: 600;
     }
@@ -854,15 +963,6 @@
         min-height: 240px;
         font-size: 15px;
         letter-spacing: 0.5px;
-    }
-
-    .friend-view__loading {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 18px 0 12px;
-        font-size: 14px;
     }
 
     .friend-view__loading-icon {

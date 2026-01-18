@@ -1,6 +1,6 @@
 <template>
     <Dialog :open="visible" @update:open="(open) => (open ? null : handleClose())">
-        <DialogContent class="custom-nav-dialog">
+        <DialogContent class="custom-nav-dialog sm:min-w-[50vw]">
             <DialogHeader>
                 <DialogTitle>{{ t('nav_menu.custom_nav.dialog_title') }}</DialogTitle>
             </DialogHeader>
@@ -154,7 +154,7 @@
                                         </div>
                                         <div class="mt-2">
                                             <a
-                                                class="cursor-pointer"
+                                                class="cursor-pointer text-blue-600"
                                                 @click.prevent="openExternalLink('https://remixicon.com/')">
                                                 https://remixicon.com/
                                             </a>
@@ -542,18 +542,18 @@
         flex-direction: column;
         align-items: center;
         gap: 12px;
-        max-height: 430px;
         overflow-y: auto;
         padding-right: 4px;
     }
 
     .custom-nav-entry {
+        background: var(--card);
+        border: 1px solid var(--border);
         border-radius: 8px;
         padding: 10px 12px;
         display: flex;
         flex-direction: column;
         gap: 8px;
-        max-width: 420px;
         width: 100%;
         margin: 0 auto;
     }

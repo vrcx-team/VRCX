@@ -9,8 +9,7 @@
                 :placeholder="t('dialog.primary_password.password_placeholder')"
                 type="password"
                 size="sm"
-                maxlength="32"
-                show-password
+                :maxlength="32"
                 autofocus />
             <InputGroupField
                 v-model="enablePrimaryPasswordDialog.rePassword"
@@ -18,8 +17,7 @@
                 type="password"
                 style="margin-top: 5px"
                 size="sm"
-                maxlength="32"
-                show-password />
+                :maxlength="32" />
             <DialogFooter>
                 <Button
                     :disabled="
