@@ -154,7 +154,7 @@
                                         </div>
                                         <div class="mt-2">
                                             <a
-                                                class="x-link"
+                                                class="cursor-pointer"
                                                 @click.prevent="openExternalLink('https://remixicon.com/')">
                                                 https://remixicon.com/
                                             </a>

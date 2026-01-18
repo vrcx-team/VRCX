@@ -8,8 +8,9 @@
                 <h2 v-text="changeLogDialog.buildName"></h2>
                 <span v-show="changeLogDialog.buildName">
                     {{ t('dialog.change_log.description') }}
-                    <a class="x-link" @click="openExternalLink('https://www.patreon.com/Natsumi_VRCX')">Patreon</a>,
-                    <a class="x-link" @click="openExternalLink('https://ko-fi.com/natsumi_sama')">Ko-fi</a>.
+                    <a class="cursor-pointer" @click="openExternalLink('https://www.patreon.com/Natsumi_VRCX')"
+                        >Patreon</a
+                    >, <a class="cursor-pointer" @click="openExternalLink('https://ko-fi.com/natsumi_sama')">Ko-fi</a>.
                 </span>
                 <VueShowdown
                     :markdown="changeLogDialog.changeLog"

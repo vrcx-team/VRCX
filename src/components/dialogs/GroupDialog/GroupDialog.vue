@@ -15,7 +15,7 @@
                     <img
                         :src="groupDialog.ref.iconUrl"
                         style="flex: none; width: 120px; height: 120px; border-radius: 12px"
-                        class="x-link"
+                        class="cursor-pointer"
                         @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)"
                         loading="lazy" />
                     <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
@@ -42,7 +42,7 @@
                             </TooltipWrapper>
                             <div style="margin-top: 5px">
                                 <span
-                                    class="x-link x-grey"
+                                    class="cursor-pointer x-grey"
                                     style="font-family: monospace"
                                     @click="showUserDialog(groupDialog.ref.ownerId)"
                                     v-text="groupDialog.ownerDisplayName"></span>
@@ -357,7 +357,7 @@
                         <div class="group-banner-image-info">
                             <img
                                 :src="groupDialog.ref.bannerUrl"
-                                class="x-link"
+                                class="cursor-pointer"
                                 style="
                                     flex: none;
                                     width: 100%;
@@ -424,7 +424,7 @@
                                         style="display: inline-block; margin-right: 5px">
                                         <img
                                             :src="groupDialog.announcement.imageUrl"
-                                            class="x-link"
+                                            class="cursor-pointer"
                                             style="
                                                 flex: none;
                                                 width: 60px;
@@ -760,7 +760,7 @@
                                         <div v-if="post.imageUrl" style="display: inline-block; margin-right: 5px">
                                             <img
                                                 :src="post.imageUrl"
-                                                class="x-link"
+                                                class="cursor-pointer"
                                                 style="
                                                     flex: none;
                                                     width: 60px;
@@ -1123,7 +1123,7 @@
                                         class="p-0 overflow-hidden transition-shadow hover:shadow-md">
                                         <img
                                             :src="image.imageUrl"
-                                            :class="['x-link', 'max-w-full', 'max-h-full']"
+                                            :class="[' cursor-pointer', 'max-w-full', 'max-h-full']"
                                             @click="showFullscreenImageDialog(image.imageUrl)"
                                             loading="lazy" />
                                     </Card>

@@ -7,9 +7,7 @@
             <span class="header">{{ t('dialog.screenshot_metadata.header') }}</span>
         </div>
         <div @dragover.prevent @dragenter.prevent @drop="handleDrop">
-            <span>{{
-                t('dialog.screenshot_metadata.drag')
-            }}</span>
+            <span>{{ t('dialog.screenshot_metadata.drag') }}</span>
             <br />
             <br />
             <Button size="sm" variant="outline" class="mr-2" @click="getAndDisplayScreenshotFromFile">{{
@@ -100,8 +98,7 @@
             <DisplayName
                 v-if="screenshotMetadataDialog.metadata.author"
                 :userid="screenshotMetadataDialog.metadata.author.id"
-                :hint="screenshotMetadataDialog.metadata.author.displayName"
-            />
+                :hint="screenshotMetadataDialog.metadata.author.displayName" />
             <br />
             <div class="my-2 w-[90%] ml-17">
                 <Carousel :opts="{ loop: false }" @init-api="handleScreenshotMetadataCarouselInit">
@@ -109,7 +106,6 @@
                         <CarouselItem>
                             <div class="h-150 w-full">
                                 <img
-                                    class="x-link"
                                     :src="screenshotMetadataDialog.metadata.previousFilePath"
                                     style="width: 100%; height: 100%; object-fit: contain" />
                             </div>
@@ -117,7 +113,7 @@
                         <CarouselItem>
                             <div class="h-150 w-full">
                                 <img
-                                    class="x-link"
+                                    class="cursor-pointer"
                                     :src="screenshotMetadataDialog.metadata.filePath"
                                     style="width: 100%; height: 100%; object-fit: contain"
                                     @click="showFullscreenImageDialog(screenshotMetadataDialog.metadata.filePath)" />
@@ -126,7 +122,6 @@
                         <CarouselItem>
                             <div class="h-150 w-full">
                                 <img
-                                    class="x-link"
                                     :src="screenshotMetadataDialog.metadata.nextFilePath"
                                     style="width: 100%; height: 100%; object-fit: contain" />
                             </div>
@@ -143,10 +138,8 @@
                 <br />
             </template>
             <span v-for="user in screenshotMetadataDialog.metadata.players" :key="user.id" style="margin-top: 5px">
-                <span class="x-link" @click="lookupUser(user)" v-text="user.displayName"></span>
-                <span
-                    v-if="user.pos"
-                    v-text="'(' + user.pos.x + ', ' + user.pos.y + ', ' + user.pos.z + ')'"></span>
+                <span class="cursor-pointer" @click="lookupUser(user)" v-text="user.displayName"></span>
+                <span v-if="user.pos" v-text="'(' + user.pos.x + ', ' + user.pos.y + ', ' + user.pos.z + ')'"></span>
                 <br />
             </span>
         </div>

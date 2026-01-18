@@ -167,7 +167,7 @@ export const createColumns = ({
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <span
-                                            class="x-link"
+                                            class="cursor-pointer"
                                             onClick={() =>
                                                 showWorldDialog(
                                                     original.location
@@ -200,7 +200,7 @@ export const createColumns = ({
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <span
-                                            class="x-link"
+                                            class="cursor-pointer"
                                             onClick={() =>
                                                 openNotificationLink(
                                                     original.link
@@ -242,7 +242,7 @@ export const createColumns = ({
                     return (
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
-                                class="x-link block w-full min-w-0 truncate"
+                                class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() =>
                                     showUserDialog(original.senderUserId)
                                 }
@@ -257,7 +257,7 @@ export const createColumns = ({
                     return (
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
-                                class="x-link block w-full min-w-0 truncate"
+                                class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() =>
                                     openNotificationLink(original.link)
                                 }
@@ -306,7 +306,7 @@ export const createColumns = ({
                     return (
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
-                                class="x-link block w-full min-w-0 truncate"
+                                class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() =>
                                     showGroupDialog(original.senderUserId)
                                 }
@@ -332,7 +332,7 @@ export const createColumns = ({
                     return (
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
-                                class="x-link block w-full min-w-0 truncate"
+                                class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() =>
                                     openNotificationLink(original.link)
                                 }
@@ -347,7 +347,7 @@ export const createColumns = ({
                     return (
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
-                                class="x-link block w-full min-w-0 truncate"
+                                class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() =>
                                     openNotificationLink(original.link)
                                 }
@@ -400,7 +400,7 @@ export const createColumns = ({
                     }
                     return (
                         <Emoji
-                            class="x-link h-7.5 w-7.5 rounded object-cover"
+                            class="cursor-pointer h-7.5 w-7.5 rounded object-cover"
                             onClick={() => showFullscreenImageDialog(imageUrl)}
                             imageUrl={imageUrl}
                             size={30}
@@ -411,7 +411,7 @@ export const createColumns = ({
                 if (original.details?.imageUrl) {
                     return (
                         <img
-                            class="x-link h-7.5 w-7.5 rounded object-cover"
+                            class="cursor-pointer h-7.5 w-7.5 rounded object-cover"
                             src={getSmallThumbnailUrl(
                                 original.details.imageUrl
                             )}
@@ -428,7 +428,7 @@ export const createColumns = ({
                 if (original.imageUrl) {
                     return (
                         <img
-                            class="x-link h-7.5 w-7.5 rounded object-cover"
+                            class="cursor-pointer h-7.5 w-7.5 rounded object-cover"
                             src={getSmallThumbnailUrl(original.imageUrl)}
                             onClick={() =>
                                 showFullscreenImageDialog(original.imageUrl)

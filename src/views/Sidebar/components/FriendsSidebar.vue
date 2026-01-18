@@ -1,7 +1,7 @@
 <template>
     <div class="x-friend-list" style="padding: 10px 5px">
         <div
-            class="x-friend-group x-link flex items-center"
+            class="x-friend-group cursor-pointer flex items-center"
             style="padding: 0 0 5px"
             @click="
                 isFriendsGroupMe = !isFriendsGroupMe;
@@ -38,7 +38,7 @@
         </div>
         <div
             v-show="vipFriendsDisplayNumber"
-            class="x-friend-group x-link flex items-center"
+            class="x-friend-group cursor-pointer flex items-center"
             @click="
                 isVIPFriends = !isVIPFriends;
                 saveFriendsGroupStates();
@@ -78,7 +78,7 @@
         </div>
 
         <template v-if="isSidebarGroupByInstance && friendsInSameInstance.length">
-            <div class="x-friend-group x-link flex items-center" @click="toggleSwitchGroupByInstanceCollapsed">
+            <div class="x-friend-group cursor-pointer flex items-center" @click="toggleSwitchGroupByInstanceCollapsed">
                 <ChevronDown class="rotation-transition" :class="{ 'is-rotated': isSidebarGroupByInstanceCollapsed }" />
                 <span style="margin-left: 5px"
                     >{{ t('side_panel.same_instance') }} &horbar; {{ friendsInSameInstance.length }}</span
@@ -109,7 +109,7 @@
         </template>
         <div
             v-show="onlineFriendsByGroupStatus.length"
-            class="x-friend-group x-link flex items-center"
+            class="x-friend-group cursor-pointer flex items-center"
             @click="
                 isOnlineFriends = !isOnlineFriends;
                 saveFriendsGroupStates();
@@ -128,7 +128,7 @@
         </div>
         <div
             v-show="activeFriends.length"
-            class="x-friend-group x-link flex items-center"
+            class="x-friend-group cursor-pointer flex items-center"
             @click="
                 isActiveFriends = !isActiveFriends;
                 saveFriendsGroupStates();
@@ -145,7 +145,7 @@
         </div>
         <div
             v-show="offlineFriends.length"
-            class="x-friend-group x-link flex items-center"
+            class="x-friend-group cursor-pointer flex items-center"
             @click="
                 isOfflineFriends = !isOfflineFriends;
                 saveFriendsGroupStates();
@@ -310,9 +310,6 @@
 </script>
 
 <style scoped>
-    .x-link:hover {
-        text-decoration: none;
-    }
     .is-rotated {
         transform: rotate(-90deg);
     }

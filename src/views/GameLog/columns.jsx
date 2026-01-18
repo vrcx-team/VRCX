@@ -91,7 +91,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                 return (
                     <Badge variant="outline" class="text-muted-foreground">
                         <span
-                            class={isLink ? 'x-link' : undefined}
+                            class={isLink ? 'cursor-pointer' : undefined}
                             onClick={() =>
                                 isLink && showWorldDialog(original.location)
                             }
@@ -111,10 +111,10 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                 const isFriend = original.isFriend;
                 const isFavorite = original.isFavorite;
                 return (
-                    <span>
+                    <span class="cursor-pointer">
                         {original.displayName ? (
                             <span
-                                class="x-link table-user mr-1"
+                                class="cursor-pointer table-user mr-1"
                                 onClick={() => lookupUser(original)}
                             >
                                 {original.displayName}
@@ -183,13 +183,13 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                         original.videoId !== 'PopcornPalace';
                     const label = original.videoName || original.videoUrl;
                     return (
-                        <span class="block w-full min-w-0 truncate">
+                        <span class="block w-full min-w-0 truncate cursor-pointer">
                             {original.videoId ? (
                                 <span class="mr-1.5">{original.videoId}:</span>
                             ) : null}
                             {showLink ? (
                                 <span
-                                    class="x-link"
+                                    class="cursor-pointer"
                                     onClick={() =>
                                         openExternalLink(original.videoUrl)
                                     }
@@ -208,9 +208,9 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                     original.type === 'StringLoad'
                 ) {
                     return (
-                        <span class="block w-full min-w-0 truncate">
+                        <span class="block w-full min-w-0 truncate cursor-pointer">
                             <span
-                                class="x-link"
+                                class="cursor-pointer"
                                 onClick={() =>
                                     openExternalLink(original.resourceUrl)
                                 }
@@ -230,7 +230,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                 }
 
                 return (
-                    <span class="x-link block w-full min-w-0 truncate">
+                    <span class="block w-full min-w-0 truncate">
                         {original.data}
                     </span>
                 );

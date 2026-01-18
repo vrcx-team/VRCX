@@ -348,7 +348,8 @@
                     "stop_fetching": "Stop fetching"
                 },
                 "status": {
-                    "no_friends_to_process": "You have no friends to process"
+                    "no_friends_to_process": "You have no friends to process",
+                    "loading_cache": "Loading cached mutual friends from database"
                 },
                 "progress": {
                     "friends_processed": "Friends processed",

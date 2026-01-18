@@ -66,10 +66,6 @@
                         {{ t('dialog.user.actions.edit_pronouns') }}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem @click="onCommand('Logout')">
-                        <Power class="size-4" />
-                        {{ t('dialog.user.actions.logout') }}
-                    </DropdownMenuItem>
                 </template>
                 <template v-else>
                     <template v-if="userDialog.isFriend">

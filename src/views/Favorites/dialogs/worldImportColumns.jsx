@@ -42,7 +42,7 @@ export const createColumns = ({ onShowWorld, onShowUser, onDelete, onShowFullscr
             const original = row.original;
             return (
                 <span
-                    class="x-link"
+                    class="cursor-pointer"
                     title={original?.name}
                     onClick={(e) => {
                         e.stopPropagation();
@@ -63,7 +63,7 @@ export const createColumns = ({ onShowWorld, onShowUser, onDelete, onShowFullscr
             const original = row.original;
             return (
                 <span
-                    class="x-link"
+                    class="cursor-pointer"
                     title={original?.authorName}
                     onClick={(e) => {
                         e.stopPropagation();

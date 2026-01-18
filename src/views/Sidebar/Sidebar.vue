@@ -190,6 +190,7 @@
         order: 99;
         height: 100%;
         box-sizing: border-box;
+        padding-left: 10px;
     }
 
     .sidebar-tab-count {

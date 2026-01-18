@@ -41,7 +41,7 @@ export const createColumns = ({ userImage, userImageFull, onShowFullscreenImage,
             const original = row.original;
             return (
                 <span
-                    class="x-link"
+                    class="cursor-pointer"
                     onClick={(e) => {
                         e.stopPropagation();
                         onShowUser?.(original?.id);

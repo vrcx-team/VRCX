@@ -178,7 +178,7 @@
                                         class="extra">
                                         <div style="display: inline-block; flex: none; margin-right: 5px">
                                             <Avatar
-                                                class="x-link size-15! rounded-lg!"
+                                                class="cursor-pointer size-15! rounded-lg!"
                                                 :style="{
                                                     background: userDialog.isRepresentedGroupLoading ? '#f5f7fa' : ''
                                                 }"
@@ -1442,7 +1442,6 @@
     const { getFriendRequest, handleFriendDelete } = useFriendStore();
     const { clearInviteImageUpload, showFullscreenImageDialog, showGalleryPage } = useGalleryStore();
 
-    const { logout } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
     const { applyPlayerModeration, handlePlayerModerationDelete } = useModerationStore();
     const { shiftHeld } = storeToRefs(useUiStore());
@@ -1802,8 +1801,6 @@
             showBioDialog();
         } else if (command === 'Pencil Pronouns') {
             showPronounsDialog();
-        } else if (command === 'Logout') {
-            logout();
         } else if (command === 'Request Invite') {
             notificationRequest
                 .sendRequestInvite(

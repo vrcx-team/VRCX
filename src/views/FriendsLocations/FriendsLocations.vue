@@ -10,49 +10,65 @@
             </Tabs>
             <div class="friend-view__actions">
                 <InputGroupSearch v-model="searchTerm" class="friend-view__search" placeholder="Search Friend" />
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <div>
-                            <TooltipWrapper :content="t('view.charts.instance_activity.settings.header')" side="top">
+                <TooltipWrapper :content="t('view.charts.instance_activity.settings.header')" side="top">
+                    <div>
+                        <Popover>
+                            <PopoverTrigger asChild>
                                 <Button class="rounded-full mr-2" size="icon" variant="outline">
                                     <Settings />
                                 </Button>
-                            </TooltipWrapper>
-                        </div>
-                    </PopoverTrigger>
-                    <PopoverContent side="bottom" class="w-87.5">
-                        <div style="display: flex; justify-content: space-between; align-items: center">
-                            <span class="friend-view__settings-label">{{
-                                t('view.friends_locations.separate_same_instance_friends')
-                            }}</span>
-                            <Switch v-model="showSameInstance" />
-                        </div>
-                        <div class="friend-view__settings-row">
-                            <span class="friend-view__settings-label">{{ t('view.friends_locations.scale') }}</span>
-                            <div class="friend-view__scale-control">
-                                <span class="friend-view__scale-value">{{ cardScalePercentLabel }}&nbsp;</span>
-                                <Slider
-                                    v-model="cardScaleValue"
-                                    class="friend-view__slider"
-                                    :min="0.5"
-                                    :max="1.0"
-                                    :step="0.01" />
-                            </div>
-                        </div>
-                        <div class="friend-view__settings-row">
-                            <span class="friend-view__settings-label">{{ t('view.friends_locations.spacing') }}</span>
-                            <div class="friend-view__scale-control">
-                                <span class="friend-view__scale-value">{{ cardSpacingPercentLabel }}&nbsp;</span>
-                                <Slider
-                                    v-model="cardSpacingValue"
-                                    class="friend-view__slider"
-                                    :min="0.25"
-                                    :max="1.0"
-                                    :step="0.05" />
-                            </div>
-                        </div>
-                    </PopoverContent>
-                </Popover>
+                            </PopoverTrigger>
+                            <PopoverContent side="bottom" class="w-87.5">
+                                <div class="friend-view__settings">
+                                    <Field orientation="horizontal" class="friend-view__settings-row">
+                                        <FieldLabel class="friend-view__settings-label">{{
+                                            t('view.friends_locations.separate_same_instance_friends')
+                                        }}</FieldLabel>
+                                        <FieldContent>
+                                            <Switch v-model="showSameInstance" />
+                                        </FieldContent>
+                                    </Field>
+                                    <Field orientation="horizontal" class="friend-view__settings-row">
+                                        <FieldLabel class="friend-view__settings-label">
+                                            {{ t('view.friends_locations.scale') }}
+                                        </FieldLabel>
+                                        <FieldContent>
+                                            <div class="friend-view__scale-control">
+                                                <span class="friend-view__scale-value"
+                                                    >{{ cardScalePercentLabel }}&nbsp;</span
+                                                >
+                                                <Slider
+                                                    v-model="cardScaleValue"
+                                                    class="friend-view__slider"
+                                                    :min="0.5"
+                                                    :max="1.0"
+                                                    :step="0.01" />
+                                            </div>
+                                        </FieldContent>
+                                    </Field>
+                                    <Field orientation="horizontal" class="friend-view__settings-row">
+                                        <FieldLabel class="friend-view__settings-label">
+                                            {{ t('view.friends_locations.spacing') }}
+                                        </FieldLabel>
+                                        <FieldContent>
+                                            <div class="friend-view__scale-control">
+                                                <span class="friend-view__scale-value"
+                                                    >{{ cardSpacingPercentLabel }}&nbsp;</span
+                                                >
+                                                <Slider
+                                                    v-model="cardSpacingValue"
+                                                    class="friend-view__slider"
+                                                    :min="0.25"
+                                                    :max="1.0"
+                                                    :step="0.05" />
+                                            </div>
+                                        </FieldContent>
+                                    </Field>
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                </TooltipWrapper>
             </div>
         </div>
         <div v-else class="friend-view__toolbar friend-view__toolbar--loading">
@@ -64,7 +80,7 @@
                     <template v-if="row.type === 'header'">
                         <header class="friend-view__instance-header">
                             <Location class="text-xs" :location="row.instanceId" style="display: inline" />
-                            <span class="friend-view__instance-count">{{ row.count }}</span>
+                            <span class="friend-view__instance-count">({{ row.count }})</span>
                         </header>
                     </template>
 
@@ -95,6 +111,7 @@
 
 <script setup>
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
+    import { Field, FieldContent, FieldLabel } from '@/components/ui/field';
     import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
     import { Loader2, Settings } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
@@ -714,6 +731,11 @@
         font-weight: 500;
     }
 
+    .friend-view__settings {
+        display: grid;
+        gap: 12px;
+    }
+
     .friend-view__loading-text {
         padding-right: 12px;
     }
@@ -828,7 +850,6 @@
     .friend-view__instance-header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
         padding: 4px 2px;
         margin: 5px 10px;
         font-weight: 600;

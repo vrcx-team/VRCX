@@ -12,7 +12,7 @@
             </DialogHeader>
 
             <div v-if="inviteDialog.visible">
-                <Location :location="inviteDialog.worldId" :link="false" />
+                <Location :location="inviteDialog.worldId" :link="false" class="cursor-default" />
                 <br />
                 <Button size="sm" class="mr-2" variant="outline" style="margin-top: 10px" @click="addSelfToInvite">{{
                     t('dialog.invite.add_self')

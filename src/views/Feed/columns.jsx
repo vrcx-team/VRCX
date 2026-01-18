@@ -92,7 +92,7 @@ const expandedRow = ({ row }) => {
                                     src={
                                         original.previousCurrentAvatarThumbnailImageUrl
                                     }
-                                    class="x-link h-30 w-40 rounded pointer"
+                                    class="cursor-pointer h-30 w-40 rounded pointer"
                                     loading="lazy"
                                     onClick={() =>
                                         showFullscreenImageDialog(
@@ -125,7 +125,7 @@ const expandedRow = ({ row }) => {
                                     src={
                                         original.currentAvatarThumbnailImageUrl
                                     }
-                                    class="x-link h-30 w-40 rounded pointer"
+                                    class="cursor-pointer h-30 w-40 rounded pointer"
                                     loading="lazy"
                                     onClick={() =>
                                         showFullscreenImageDialog(
@@ -280,7 +280,7 @@ export const columns = [
             const original = row.original;
             return (
                 <span
-                    class="x-link pr-2.5 cursor-pointer"
+                    class="cursor-pointer pr-2.5 cursor-pointer"
                     onClick={() => showUserDialog(original.userId)}
                 >
                     {original.displayName}

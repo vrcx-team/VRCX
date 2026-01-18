@@ -3,9 +3,9 @@
         <div v-if="!text" class="transparent">-</div>
         <div v-show="text" class="flex items-center">
             <div v-if="region" :class="['flags', 'mr-1.5', region]"></div>
-            <template v-if="disableTooltip">
+            <TooltipWrapper :content="tooltipContent" :disabled="tooltipDisabled" :delay-duration="300" side="top">
                 <div
-                    :class="['x-location', { 'x-link': link && location !== 'private' && location !== 'offline' }]"
+                    :class="locationClasses"
                     class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden"
                     @click="handleShowWorldDialog">
                     <Spinner v-if="isTraveling" class="mr-1" />
@@ -13,48 +13,25 @@
                     <span v-if="showInstanceIdInLocation && instanceName" class="ml-1 whitespace-nowrap">{{
                         ` · #${instanceName}`
                     }}</span>
-                    <span v-if="groupName" class="ml-0.5 whitespace-nowrap x-link" @click.stop="handleShowGroupDialog">
+                    <span
+                        v-if="groupName"
+                        class="ml-0.5 whitespace-nowrap cursor-pointer"
+                        @click.stop="handleShowGroupDialog">
                         ({{ groupName }})
                     </span>
                 </div>
+            </TooltipWrapper>
 
-                <AlertTriangle v-if="isClosed" :class="['inline-block', 'ml-5']" style="color: lightcoral" />
-            </template>
-
-            <template v-else>
-                <TooltipWrapper
-                    :content="`${t('dialog.new_instance.instance_id')}: #${instanceName}`"
-                    :disabled="!instanceName || showInstanceIdInLocation"
-                    :delay-duration="300"
-                    side="top">
-                    <div
-                        :class="['x-location', { 'x-link': link && location !== 'private' && location !== 'offline' }]"
-                        class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden"
-                        @click="handleShowWorldDialog">
-                        <Spinner v-if="isTraveling" class="mr-1" />
-                        <span class="min-w-0 truncate">{{ text }}</span>
-                        <span v-if="showInstanceIdInLocation && instanceName" class="ml-1 whitespace-nowrap">{{
-                            ` · #${instanceName}`
-                        }}</span>
-                        <span
-                            v-if="groupName"
-                            class="ml-0.5 whitespace-nowrap x-link"
-                            @click.stop="handleShowGroupDialog">
-                            ({{ groupName }})
-                        </span>
-                    </div>
-                </TooltipWrapper>
-                <TooltipWrapper v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
-                    <AlertTriangle :class="['inline-block', 'ml-5']" style="color: lightcoral" />
-                </TooltipWrapper>
-            </template>
-            <Lock v-if="strict" :class="['inline-block', 'ml-5']" />
+            <TooltipWrapper v-if="isClosed" :content="closedTooltip" :disabled="disableTooltip">
+                <AlertTriangle class="inline-block ml-2 text-muted-foreground" />
+            </TooltipWrapper>
+            <Lock v-if="strict" class="inline-block ml-2 text-muted-foreground" />
         </div>
     </div>
 </template>
 
 <script setup>
-    import { onBeforeUnmount, ref, watch } from 'vue';
+    import { computed, onBeforeUnmount, ref, watch } from 'vue';
     import { AlertTriangle, Lock } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -113,6 +90,19 @@
     const isClosed = ref(false);
     const instanceName = ref('');
 
+    const isLocationLink = computed(() => props.link && props.location !== 'private' && props.location !== 'offline');
+    const locationClasses = computed(() => [
+        'x-location',
+        {
+            'cursor-pointer': isLocationLink.value
+        }
+    ]);
+    const tooltipContent = computed(() => `${t('dialog.new_instance.instance_id')}: #${instanceName.value}`);
+    const tooltipDisabled = computed(
+        () => props.disableTooltip || !instanceName.value || showInstanceIdInLocation.value
+    );
+    const closedTooltip = computed(() => t('dialog.user.info.instance_closed'));
+
     let isDisposed = false;
     onBeforeUnmount(() => {
         isDisposed = true;
@@ -136,16 +126,21 @@
         return props.location;
     }
 
-    function parse() {
-        if (isDisposed) {
-            return;
-        }
+    function resetState() {
         text.value = '';
         region.value = '';
         strict.value = false;
         isTraveling.value = false;
         groupName.value = '';
         isClosed.value = false;
+        instanceName.value = '';
+    }
+
+    function parse() {
+        if (isDisposed) {
+            return;
+        }
+        resetState();
 
         let instanceId = props.location;
         if (typeof props.traveling !== 'undefined' && props.location === 'traveling') {
@@ -159,27 +154,43 @@
             return;
         }
 
-        const instanceRef = cachedInstances.get(L.tag);
-        if (typeof instanceRef !== 'undefined') {
-            if (instanceRef.displayName) {
-                setText(L);
-                instanceName.value = instanceRef.displayName;
-            }
-            if (instanceRef.closedAt) {
-                isClosed.value = true;
-            }
-        }
+        applyInstanceRef(L);
+        updateGroupName(L, instanceId);
+        updateRegion(L);
+        strict.value = L.strict;
+    }
 
+    function applyInstanceRef(L) {
+        const instanceRef = cachedInstances.get(L.tag);
+        if (typeof instanceRef === 'undefined') {
+            return;
+        }
+        if (instanceRef.displayName) {
+            setText(L);
+            instanceName.value = instanceRef.displayName;
+        }
+        if (instanceRef.closedAt) {
+            isClosed.value = true;
+        }
+    }
+
+    function updateGroupName(L, instanceId) {
         if (props.grouphint) {
             groupName.value = props.grouphint;
-        } else if (L.groupId) {
-            groupName.value = L.groupId;
-            getGroupName(instanceId).then((name) => {
-                if (!isDisposed && name && currentInstanceId() === L.tag) {
-                    groupName.value = name;
-                }
-            });
+            return;
         }
+        if (!L.groupId) {
+            return;
+        }
+        groupName.value = L.groupId;
+        getGroupName(instanceId).then((name) => {
+            if (!isDisposed && name && currentInstanceId() === L.tag) {
+                groupName.value = name;
+            }
+        });
+    }
+
+    function updateRegion(L) {
         region.value = '';
         if (!L.isOffline && !L.isPrivate && !L.isTraveling) {
             region.value = L.region;
@@ -187,7 +198,6 @@
                 region.value = 'us';
             }
         }
-        strict.value = L.strict;
     }
 
     function setText(L) {

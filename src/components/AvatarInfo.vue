@@ -3,7 +3,12 @@
         <span class="flex items-center"
             >{{ avatarName }} <Lock v-if="avatarType && avatarType === '(own)'" class="h-4 w-4 mx-1"
         /></span>
-        <span v-if="avatarTags" style="font-size: 12px">{{ avatarTags }}</span>
+        <TooltipWrapper v-if="avatarTags">
+            <template #content>
+                <span>{{ avatarTags }}</span>
+            </template>
+            <span v-if="avatarTags" style="font-size: 12px" class="truncate">{{ avatarTags }}</span>
+        </TooltipWrapper>
     </div>
 </template>
 
@@ -11,6 +16,7 @@
     import { ref, watch } from 'vue';
     import { Lock } from 'lucide-vue-next';
 
+    import { TooltipWrapper } from './ui/tooltip';
     import { useAvatarStore } from '../stores';
 
     const avatarStore = useAvatarStore();

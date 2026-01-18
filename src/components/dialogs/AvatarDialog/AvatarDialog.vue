@@ -8,7 +8,7 @@
                 <div style="display: flex">
                     <img
                         :src="avatarDialog.ref.thumbnailImageUrl"
-                        class="x-link"
+                        class="cursor-pointer"
                         @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)"
                         style="flex: none; width: 160px; height: 120px; border-radius: 12px"
                         loading="lazy" />
@@ -23,7 +23,7 @@
                             </div>
                             <div style="margin-top: 5px">
                                 <span
-                                    class="x-link x-grey"
+                                    class="cursor-pointer x-grey"
                                     style="font-family: monospace"
                                     @click="showUserDialog(avatarDialog.ref.authorId)"
                                     v-text="avatarDialog.ref.authorName"></span>
@@ -105,7 +105,7 @@
                                 <Badge
                                     v-if="avatarDialog.inCache"
                                     variant="outline"
-                                    class="x-link"
+                                    class="cursor-pointer"
                                     style="margin-right: 5px; margin-top: 5px"
                                     @click="openFolderGeneric(avatarDialog.cachePath)">
                                     <span v-text="avatarDialog.cacheSize"></span>

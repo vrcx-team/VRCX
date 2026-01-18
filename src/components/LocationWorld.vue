@@ -1,11 +1,11 @@
 <template>
     <span class="x-location-world">
         <span v-if="region" :class="['flags', 'inline-block', 'mr-1.25', region]"></span>
-        <span @click="showLaunchDialog" class="x-link">
+        <span @click="showLaunchDialog" class="cursor-pointer">
             <Unlock v-if="isUnlocked" :class="['inline-block', 'mr-1.25']" />
             <span> {{ accessTypeName }} #{{ instanceName }}</span>
         </span>
-        <span v-if="groupName" @click="showGroupDialog" class="x-link">({{ groupName }})</span>
+        <span v-if="groupName" @click="showGroupDialog" class="cursor-pointer">({{ groupName }})</span>
         <TooltipWrapper v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
             <AlertTriangle :class="['inline-block', 'ml-5']" style="color: lightcoral" />
         </TooltipWrapper>
