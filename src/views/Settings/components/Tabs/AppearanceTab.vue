@@ -17,21 +17,7 @@
                     </SelectContent>
                 </Select>
             </div>
-            <div class="options-container-item">
-                <span class="name">{{ t('view.settings.appearance.appearance.theme_mode') }}</span>
-                <Select :model-value="themeMode" @update:modelValue="setThemeMode">
-                    <SelectTrigger size="sm">
-                        <SelectValue :placeholder="t(`view.settings.appearance.appearance.theme_mode_${themeMode}`)" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem v-for="(config, themeKey) in THEME_CONFIG" :key="themeKey" :value="themeKey">
-                                {{ t(`view.settings.appearance.appearance.theme_mode_${themeKey}`) }}
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </div>
+
             <div class="options-container-item">
                 <span class="name flex! items-center!">
                     {{ t('view.settings.appearance.appearance.font_family') }}
@@ -50,9 +36,12 @@
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem v-for="fontKey in appFontFamilyOptions" :key="fontKey" :value="fontKey">
-                                {{ t(`view.settings.appearance.appearance.font_family_${fontKey}`) }}
-                            </SelectItem>
+                            <template v-for="option in appFontFamilyOptions" :key="option.key">
+                                <SelectSeparator v-if="option.type === 'separator'" />
+                                <SelectItem v-else :value="option.key">
+                                    {{ t(`view.settings.appearance.appearance.font_family_${option.key}`) }}
+                                </SelectItem>
+                            </template>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
@@ -435,8 +424,16 @@
 </template>
 
 <script setup>
+    import {
+        Select,
+        SelectContent,
+        SelectGroup,
+        SelectItem,
+        SelectSeparator,
+        SelectTrigger,
+        SelectValue
+    } from '@/components/ui/select';
     import { ListboxContent, ListboxFilter, ListboxItem, ListboxItemIndicator, ListboxRoot, useFilter } from 'reka-ui';
-    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import {
         NumberField,
         NumberFieldContent,
@@ -462,7 +459,7 @@
 
     import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '@/stores';
     import { getLanguageName, languageCodes } from '@/localization';
-    import { APP_FONT_FAMILIES, THEME_CONFIG } from '@/shared/constants';
+    import { APP_FONT_FAMILIES } from '@/shared/constants';
     import PresetColorPicker from '@/components/PresetColorPicker.vue';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
@@ -474,7 +471,6 @@
 
     const {
         appLanguage,
-        themeMode,
         displayVRCPlusIconsAsAvatar,
         appFontFamily,
         hideNicknames,
@@ -523,7 +519,6 @@
         setHideUserMemos,
         setHideUnfriends,
         updateTrustColor,
-        setThemeMode,
         changeAppLanguage,
         promptMaxTableSizeDialog,
         setNotificationIconDot,
@@ -533,7 +528,14 @@
         setAppFontFamily
     } = appearanceSettingsStore;
 
-    const appFontFamilyOptions = APP_FONT_FAMILIES;
+    const appFontFamilyOptions = computed(() => {
+        const fontKeys = APP_FONT_FAMILIES.filter((key) => key !== 'system_ui');
+        return [
+            ...fontKeys.map((key) => ({ type: 'item', key })),
+            { type: 'separator', key: 'separator-system-ui' },
+            { type: 'item', key: 'system_ui' }
+        ];
+    });
 
     const zoomLevel = ref(100);
     const isLinux = computed(() => LINUX);

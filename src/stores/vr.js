@@ -44,12 +44,11 @@ export const useVrStore = defineStore('Vr', () => {
         updateVRLastLocation();
         updateVrNowPlaying();
         // run these methods again to send data to the overlay
-        sharedFeedStore.updateSharedFeed(true);
+        sharedFeedStore.sendSharedFeed();
         friendStore.updateOnlineFriendCounter(true); // force an update
     }
 
     async function saveOpenVROption() {
-        sharedFeedStore.updateSharedFeed(true);
         updateVRConfigVars();
         updateVRLastLocation();
         AppApi.ExecuteVrOverlayFunction('notyClear', '');

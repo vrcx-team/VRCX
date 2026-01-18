@@ -671,7 +671,12 @@ const gameLog = {
      * @returns {Promise<any[]>} The game log data
      */
 
-    async lookupGameLogDatabase(search, filters, vipList = []) {
+    async lookupGameLogDatabase(
+        search,
+        filters,
+        vipList,
+        maxEntries = dbVars.maxTableSize
+    ) {
         search = search.replaceAll("'", "''");
         if (search.startsWith('wrld_') || search.startsWith('grp_')) {
             return this.getGameLogByLocation(search, filters);
@@ -752,7 +757,7 @@ const gameLog = {
                     groupName: dbRow[6]
                 };
                 gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_location WHERE world_name LIKE '%${search}%' OR group_name LIKE '%${search}%' ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM gamelog_location WHERE world_name LIKE '%${search}%' OR group_name LIKE '%${search}%' ORDER BY id DESC LIMIT ${maxEntries}`);
         }
         if (onplayerjoined || onplayerleft) {
             var query = '';
@@ -774,7 +779,7 @@ const gameLog = {
                     time: dbRow[6]
                 };
                 gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_join_leave WHERE (display_name LIKE '%${search}%' AND user_id != '${dbVars.userId}') ${vipQuery} ${query} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM gamelog_join_leave WHERE (display_name LIKE '%${search}%' AND user_id != '${dbVars.userId}') ${vipQuery} ${query} ORDER BY id DESC LIMIT ${maxEntries}`);
         }
         if (portalspawn) {
             await sqliteService.execute((dbRow) => {
@@ -789,7 +794,7 @@ const gameLog = {
                     worldName: dbRow[6]
                 };
                 gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_portal_spawn WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM gamelog_portal_spawn WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${maxEntries}`);
         }
         if (msgevent) {
             await sqliteService.execute((dbRow) => {
@@ -800,7 +805,7 @@ const gameLog = {
                     data: dbRow[2]
                 };
                 gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_event WHERE data LIKE '%${search}%' ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM gamelog_event WHERE data LIKE '%${search}%' ORDER BY id DESC LIMIT ${maxEntries}`);
         }
         if (external) {
             await sqliteService.execute((dbRow) => {
@@ -814,7 +819,7 @@ const gameLog = {
                     location: dbRow[5]
                 };
                 gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_external WHERE (display_name LIKE '%${search}%' OR message LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM gamelog_external WHERE (display_name LIKE '%${search}%' OR message LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${maxEntries}`);
         }
         if (videoplay) {
             await sqliteService.execute((dbRow) => {
@@ -830,7 +835,7 @@ const gameLog = {
                     userId: dbRow[7]
                 };
                 gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_video_play WHERE (video_url LIKE '%${search}%' OR video_name LIKE '%${search}%' OR display_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM gamelog_video_play WHERE (video_url LIKE '%${search}%' OR video_name LIKE '%${search}%' OR display_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${maxEntries}`);
         }
         if (resourceload_string || resourceload_image) {
             var checkString = '';
@@ -850,7 +855,7 @@ const gameLog = {
                     location: dbRow[4]
                 };
                 gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_resource_load WHERE resource_url LIKE '%${search}%' ${checkString} ${checkImage} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM gamelog_resource_load WHERE resource_url LIKE '%${search}%' ${checkString} ${checkImage} ORDER BY id DESC LIMIT ${maxEntries}`);
         }
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
@@ -864,7 +869,9 @@ const gameLog = {
             return 0;
         };
         gamelogDatabase.sort(compareByCreatedAt);
-        gamelogDatabase.splice(0, gamelogDatabase.length - dbVars.maxTableSize);
+        if (gamelogDatabase.length > maxEntries) {
+            gamelogDatabase.splice(0, gamelogDatabase.length - maxEntries);
+        }
         return gamelogDatabase;
     },
 

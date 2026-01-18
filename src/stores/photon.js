@@ -1645,6 +1645,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                     type
                 };
                 notificationStore.queueModerationNoty(noty);
+                sharedFeedStore.addEntry(noty);
                 const entry = {
                     created_at: gameLogDate,
                     userId: ref.id,
@@ -1652,9 +1653,6 @@ export const usePhotonStore = defineStore('Photon', () => {
                     type
                 };
                 moderationAgainstTable.value.push(entry);
-            }
-            if (block || mute || block !== row.block || mute !== row.mute) {
-                sharedFeedStore.updateSharedFeed(true);
             }
             if (block || mute) {
                 database.setModeration({

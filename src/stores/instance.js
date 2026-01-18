@@ -387,11 +387,15 @@ export const useInstanceStore = defineStore('Instance', () => {
 
         const L = parseLocation(location);
         if (L.isRealInstance && L.worldId && L.instanceId) {
-            const args = await instanceRequest.getCachedInstance({
-                worldId: L.worldId,
-                instanceId: L.instanceId
-            });
-            instanceName = args.ref.displayName;
+            try {
+                const args = await instanceRequest.getCachedInstance({
+                    worldId: L.worldId,
+                    instanceId: L.instanceId
+                });
+                instanceName = args.ref.displayName;
+            } catch (e) {
+                console.error('getInstanceName failed location', location, e);
+            }
         }
 
         return instanceName;
@@ -976,8 +980,8 @@ export const useInstanceStore = defineStore('Instance', () => {
             uiStore.notifyMenu('notification');
         }
         notificationStore.queueNotificationNoty(noty);
+        sharedFeedStore.addEntry(noty);
         notificationStore.notificationTable.data.push(noty);
-        sharedFeedStore.updateSharedFeed(true);
     }
 
     /**

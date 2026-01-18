@@ -993,6 +993,7 @@ export const useFriendStore = defineStore('Friend', () => {
                     friendLogTable.value.data.push(friendLogHistory);
                     database.addFriendLogHistory(friendLogHistory);
                     notificationStore.queueFriendLogNoty(friendLogHistory);
+                    sharedFeedStore.addEntry(friendLogHistory);
                     const friendLogCurrent = {
                         userId: id,
                         displayName: ref.displayName,
@@ -1003,7 +1004,6 @@ export const useFriendStore = defineStore('Friend', () => {
                     database.setFriendLogCurrent(friendLogCurrent);
                     uiStore.notifyMenu('friend-log');
                     deleteFriendRequest(id);
-                    sharedFeedStore.updateSharedFeed(true);
                     userRequest
                         .getUser({
                             userId: id
@@ -1067,13 +1067,13 @@ export const useFriendStore = defineStore('Friend', () => {
                     friendLogTable.value.data.push(friendLogHistory);
                     database.addFriendLogHistory(friendLogHistory);
                     notificationStore.queueFriendLogNoty(friendLogHistory);
+                    sharedFeedStore.addEntry(friendLogHistory);
                     friendLog.delete(id);
                     database.deleteFriendLogCurrent(id);
                     favoriteStore.handleFavoriteDelete(id);
                     if (!appearanceSettingsStore.hideUnfriends) {
                         uiStore.notifyMenu('friend-log');
                     }
-                    sharedFeedStore.updateSharedFeed(true);
                     deleteFriend(id);
                 }
             });
@@ -1130,6 +1130,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 notificationStore.queueFriendLogNoty(
                     friendLogHistoryDisplayName
                 );
+                sharedFeedStore.addEntry(friendLogHistoryDisplayName);
                 const friendLogCurrent = {
                     userId: ref.id,
                     displayName: ref.displayName,
@@ -1140,7 +1141,6 @@ export const useFriendStore = defineStore('Friend', () => {
                 database.setFriendLogCurrent(friendLogCurrent);
                 ctx.displayName = ref.displayName;
                 uiStore.notifyMenu('friend-log');
-                sharedFeedStore.updateSharedFeed(true);
             }
         }
         if (
@@ -1176,6 +1176,7 @@ export const useFriendStore = defineStore('Friend', () => {
             friendLogTable.value.data.push(friendLogHistoryTrustLevel);
             database.addFriendLogHistory(friendLogHistoryTrustLevel);
             notificationStore.queueFriendLogNoty(friendLogHistoryTrustLevel);
+            sharedFeedStore.addEntry(friendLogHistoryTrustLevel);
             const friendLogCurrent2 = {
                 userId: ref.id,
                 displayName: ref.displayName,
@@ -1185,7 +1186,6 @@ export const useFriendStore = defineStore('Friend', () => {
             friendLog.set(ref.id, friendLogCurrent2);
             database.setFriendLogCurrent(friendLogCurrent2);
             uiStore.notifyMenu('friend-log');
-            sharedFeedStore.updateSharedFeed(true);
         }
         ctx.trustLevel = ref.$trustLevel;
     }

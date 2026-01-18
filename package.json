@@ -178,7 +178,6 @@
         }
     },
     "dependencies": {
-        "@fontsource-variable/noto-sans": "^5.2.10",
         "hazardous": "^0.3.0",
         "node-api-dotnet": "^0.9.18"
     }

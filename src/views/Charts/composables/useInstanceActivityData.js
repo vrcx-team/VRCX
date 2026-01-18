@@ -30,15 +30,7 @@ export function useInstanceActivityData() {
     async function getWorldNameData() {
         worldNameArray.value = await Promise.all(
             activityData.value.map(async (item) => {
-                try {
-                    return await getWorldName(item.location);
-                } catch {
-                    console.error(
-                        'getWorldName failed location',
-                        item.location
-                    );
-                    return 'Unknown world';
-                }
+                return await getWorldName(item.location);
             })
         );
     }

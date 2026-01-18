@@ -177,7 +177,12 @@ const feed = {
         );
     },
 
-    async lookupFeedDatabase(search, filters, vipList) {
+    async lookupFeedDatabase(
+        search,
+        filters,
+        vipList,
+        maxEntries = dbVars.maxTableSize
+    ) {
         search = search.replaceAll("'", "''");
         if (search.startsWith('wrld_') || search.startsWith('grp_')) {
             return this.getFeedByInstanceId(search, filters, vipList);
@@ -247,7 +252,7 @@ const feed = {
                     groupName: dbRow[8]
                 };
                 feedDatabase.push(row);
-            }, `SELECT * FROM ${dbVars.userPrefix}_feed_gps WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%' OR group_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_gps WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%' OR group_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${maxEntries}`);
         }
         if (status) {
             await sqliteService.execute((dbRow) => {
@@ -263,7 +268,7 @@ const feed = {
                     previousStatusDescription: dbRow[7]
                 };
                 feedDatabase.push(row);
-            }, `SELECT * FROM ${dbVars.userPrefix}_feed_status WHERE (display_name LIKE '%${search}%' OR status LIKE '%${search}%' OR status_description LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_status WHERE (display_name LIKE '%${search}%' OR status LIKE '%${search}%' OR status_description LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${maxEntries}`);
         }
         if (bio) {
             await sqliteService.execute((dbRow) => {
@@ -277,7 +282,7 @@ const feed = {
                     previousBio: dbRow[5]
                 };
                 feedDatabase.push(row);
-            }, `SELECT * FROM ${dbVars.userPrefix}_feed_bio WHERE (display_name LIKE '%${search}%' OR bio LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_bio WHERE (display_name LIKE '%${search}%' OR bio LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${maxEntries}`);
         }
         if (avatar) {
             var avatarQuery = '';
@@ -301,7 +306,7 @@ const feed = {
                     previousCurrentAvatarThumbnailImageUrl: dbRow[9]
                 };
                 feedDatabase.push(row);
-            }, `SELECT * FROM ${dbVars.userPrefix}_feed_avatar WHERE ((display_name LIKE '%${search}%' OR avatar_name LIKE '%${search}%') ${avatarQuery}) ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_avatar WHERE ((display_name LIKE '%${search}%' OR avatar_name LIKE '%${search}%') ${avatarQuery}) ${vipQuery} ORDER BY id DESC LIMIT ${maxEntries}`);
         }
         if (online || offline) {
             var query = '';
@@ -325,7 +330,7 @@ const feed = {
                     groupName: dbRow[8]
                 };
                 feedDatabase.push(row);
-            }, `SELECT * FROM ${dbVars.userPrefix}_feed_online_offline WHERE ((display_name LIKE '%${search}%' OR world_name LIKE '%${search}%' OR group_name LIKE '%${search}%') ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_online_offline WHERE ((display_name LIKE '%${search}%' OR world_name LIKE '%${search}%' OR group_name LIKE '%${search}%') ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${maxEntries}`);
         }
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
@@ -339,8 +344,8 @@ const feed = {
             return 0;
         };
         feedDatabase.sort(compareByCreatedAt);
-        if (feedDatabase.length > dbVars.maxTableSize) {
-            feedDatabase.splice(0, feedDatabase.length - dbVars.maxTableSize);
+        if (feedDatabase.length > maxEntries) {
+            feedDatabase.splice(0, feedDatabase.length - maxEntries);
         }
         return feedDatabase;
     },

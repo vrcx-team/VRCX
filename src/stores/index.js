@@ -73,8 +73,7 @@ async function registerSentryPiniaPlugin() {
                 GameLog: {
                     // @ts-ignore
                     ...state.GameLog,
-                    gameLogTable: null,
-                    gameLogSessionTable: null
+                    gameLogTable: null
                 },
                 Notification: {
                     // @ts-ignore
@@ -92,7 +91,7 @@ async function registerSentryPiniaPlugin() {
                 SharedFeed: {
                     // @ts-ignore
                     ...state.SharedFeed,
-                    sharedFeed: null
+                    sharedFeedData: null
                 },
                 Group: {
                     // @ts-ignore

@@ -100,7 +100,7 @@
     const { photonLoggingEnabled } = storeToRefs(usePhotonStore());
     const { notyFeedFiltersOptions, wristFeedFiltersOptions, photonFeedFiltersOptions } = feedFiltersOptions();
     const { sharedFeedFilters } = storeToRefs(useNotificationsSettingsStore());
-    const { updateSharedFeed } = useSharedFeedStore();
+    const { loadSharedFeed } = useSharedFeedStore();
 
     const props = defineProps({
         feedFiltersDialogMode: {
@@ -136,7 +136,7 @@
 
     function saveSharedFeedFilters() {
         configRepository.setString('sharedFeedFilters', JSON.stringify(sharedFeedFilters.value));
-        updateSharedFeed(true);
+        loadSharedFeed();
     }
 
     function resetNotyFeedFilters() {

@@ -15,9 +15,11 @@
                     <div class="flex items-center justify-between">
                         <div class="flex flex-none mr-2 items-center">
                             <TooltipWrapper side="bottom" :content="t('view.friend_list.favorites_only_tooltip')">
-                                <Switch
-                                    v-model="friendsListSearchFilterVIP"
-                                    @update:modelValue="friendsListSearchChange" />
+                                <span class="inline-flex">
+                                    <Switch
+                                        v-model="friendsListSearchFilterVIP"
+                                        @update:modelValue="friendsListSearchChange" />
+                                </span>
                             </TooltipWrapper>
                             <Select
                                 multiple

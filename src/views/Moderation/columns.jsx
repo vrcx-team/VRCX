@@ -87,7 +87,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
                 const original = row.original;
                 return (
                     <span
-                        class="x-link block w-full min-w-0 truncate pr-2.5"
+                        class="cursor-pointer block w-full min-w-0 truncate pr-2.5 cursor-pointer"
                         onClick={() => showUserDialog(original.sourceUserId)}
                     >
                         {original.sourceDisplayName}
@@ -107,7 +107,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
                 const original = row.original;
                 return (
                     <span
-                        class="x-link block w-full whitespace-normal break-words pr-2.5"
+                        class="cursor-pointer block w-full whitespace-normal wrap-break-word pr-2.5 cursor-pointer"
                         onClick={() => showUserDialog(original.targetUserId)}
                     >
                         {original.targetDisplayName}
@@ -124,7 +124,6 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             minSize: 80,
             maxSize: 80,
             enableSorting: false,
-            enableResizing: false,
             header: () => t('table.moderation.action'),
             cell: ({ row }) => {
                 const original = row.original;

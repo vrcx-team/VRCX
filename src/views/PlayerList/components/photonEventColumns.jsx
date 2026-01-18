@@ -35,7 +35,7 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
         return (
             <>
                 <span
-                    class="x-link"
+                    class="cursor-pointer"
                     onClick={(e) => {
                         e.stopPropagation();
                         onShowAvatar?.(r.avatar?.id);
@@ -116,7 +116,7 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
         return (
             <>
                 <span
-                    class="x-link"
+                    class="cursor-pointer"
                     style="margin-right: 5px"
                     onClick={(e) => {
                         e.stopPropagation();
@@ -129,7 +129,7 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
                     <ArrowRight />
                 </span>
                 <span
-                    class="x-link"
+                    class="cursor-pointer"
                     style="margin-left: 5px"
                     onClick={(e) => {
                         e.stopPropagation();
@@ -145,7 +145,7 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
     if (r.type === 'PortalSpawn') {
         return (
             <span
-                class="x-link"
+                class="cursor-pointer"
                 onClick={(e) => {
                     e.stopPropagation();
                     onShowWorld?.(r.location, r.shortName);
@@ -176,7 +176,7 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
                     <span>Android&nbsp;</span>
                 ) : null}
                 <span
-                    class="x-link"
+                    class="cursor-pointer"
                     onClick={(e) => {
                         e.stopPropagation();
                         onShowAvatar?.(r.avatar?.id);
@@ -233,7 +233,14 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
     return <span>{r.text}</span>;
 }
 
-export const createColumns = ({ isPrevious, onShowUser, onShowAvatar, onShowGroup, onShowWorld, onShowImage }) => [
+export const createColumns = ({
+    isPrevious,
+    onShowUser,
+    onShowAvatar,
+    onShowGroup,
+    onShowWorld,
+    onShowImage
+}) => [
     {
         id: 'created_at',
         accessorFn: (row) => (row?.created_at ? Date.parse(row.created_at) : 0),
@@ -250,7 +257,9 @@ export const createColumns = ({ isPrevious, onShowUser, onShowAvatar, onShowGrou
                     )
                 }}
             >
-                <span>{formatDateFilter(row.original?.created_at, 'short')}</span>
+                <span>
+                    {formatDateFilter(row.original?.created_at, 'short')}
+                </span>
             </TooltipWrapper>
         )
     },
@@ -261,7 +270,7 @@ export const createColumns = ({ isPrevious, onShowUser, onShowAvatar, onShowGrou
         enableSorting: false,
         cell: ({ row }) => (
             <span
-                class="x-link"
+                class="cursor-pointer"
                 style="padding-right: 10px"
                 onClick={(e) => {
                     e.stopPropagation();

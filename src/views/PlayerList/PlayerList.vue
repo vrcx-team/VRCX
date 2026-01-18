@@ -8,14 +8,14 @@
                 class="mb-7">
                 <img
                     :src="currentInstanceWorld.ref.thumbnailImageUrl"
-                    class="x-link"
+                    class="cursor-pointer"
                     style="flex: none; width: 160px; height: 120px; border-radius: 4px"
                     @click="showFullscreenImageDialog(currentInstanceWorld.ref.imageUrl)"
                     loading="lazy" />
                 <div style="margin-left: 10px; display: flex; flex-direction: column; min-width: 320px; width: 100%">
                     <div>
                         <span
-                            class="x-link"
+                            class="cursor-pointer"
                             style="
                                 font-weight: bold;
                                 overflow: hidden;
@@ -36,7 +36,7 @@
                     </div>
                     <div>
                         <span
-                            class="x-link x-grey"
+                            class="cursor-pointer x-grey"
                             style="font-family: monospace"
                             @click="showUserDialog(currentInstanceWorld.ref.authorId)"
                             v-text="currentInstanceWorld.ref.authorName"></span>
@@ -268,6 +268,7 @@
         persistKey: 'playerList',
         data: currentInstanceUsersData,
         columns: playerListColumns,
+        enablePagination: false,
         getRowId: (row) => `${row?.ref?.id ?? ''}:${row?.displayName ?? ''}`
     });
 

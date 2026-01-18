@@ -52,8 +52,8 @@
                         <div class="favorites-search-card__action">
                             <Button
                                 size="icon-sm"
-                                variant="outline"
-                                class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
+                                variant="ghost"
+                                class="rounded-full text-xs h-6 w-6"
                                 @click.stop="handleDeleteFavorite">
                                 <Trash2 class="h-4 w-4" />
                             </Button>
@@ -66,8 +66,8 @@
                             <TooltipWrapper side="top" :content="inviteOrLaunchText">
                                 <Button
                                     size="icon-sm"
-                                    variant="outline"
-                                    class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
+                                    variant="ghost"
+                                    class="rounded-full text-xs h-6 w-6"
                                     @click.stop="newInstanceSelfInvite(favorite.id)"
                                     ><Mail class="h-4 w-4"
                                 /></Button>
@@ -81,7 +81,7 @@
                                 <Button
                                     size="icon-sm"
                                     variant="destructive"
-                                    class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
+                                    class="rounded-full text-xs h-6 w-6"
                                     @click.stop="handleDeleteFavorite"
                                     ><Trash2 class="h-4 w-4"
                                 /></Button>
@@ -89,8 +89,8 @@
                             <TooltipWrapper v-else side="top" :content="t('view.favorite.edit_favorite_tooltip')">
                                 <Button
                                     size="icon-sm"
-                                    variant="outline"
-                                    class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
+                                    variant="ghost"
+                                    class="rounded-full text-xs h-6 w-6"
                                     @click.stop="showFavoriteDialog('world', favorite.id)"
                                     ><Star class="h-4 w-4"
                                 /></Button>
@@ -116,7 +116,7 @@
                     <Button
                         class="rounded-full text-xs h-6 w-6"
                         size="icon-sm"
-                        variant="outline"
+                        variant="ghost"
                         @click.stop="handleDeleteFavorite">
                         <Trash2 class="h-4 w-4" />
                     </Button>

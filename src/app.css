@@ -21,9 +21,13 @@ html {
     box-sizing: border-box;
     background: var(--background);
     height: calc(100vh - 20px);
-    margin: 10px 10px 10px 0;
+    margin: 10px 0 10px 0;
     border-radius: var(--radius);
     border: 1px solid var(--border);
+}
+
+.aside-collapsed .x-container {
+    margin-right: 10px;
 }
 
 html.dark .x-container {

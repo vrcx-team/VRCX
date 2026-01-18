@@ -139,7 +139,7 @@
                                             {{ dayLabel(weekDate) }}
                                             <div
                                                 v-if="eventCountFor(weekDate) > 0"
-                                                class="calendar-event-badge"
+                                                class="calendar-event-badge text-zinc-900"
                                                 :class="hasFollowingFor(weekDate) ? 'has-following' : 'no-following'">
                                                 {{ eventCountFor(weekDate) }}
                                             </div>
@@ -165,6 +165,7 @@
         width: 100%;
         display: flex;
         align-items: flex-start;
+        padding: 0 12x 0 12px;
     }
 
     .date {
@@ -186,9 +187,6 @@
         position: relative;
     }
 
-    .calendar-date-content.has-events {
-    }
-
     .calendar-event-badge {
         position: absolute;
         top: -4px;
@@ -203,12 +201,7 @@
         z-index: 10;
         padding: 0 5px;
         line-height: 14px;
-    }
-
-    .calendar-event-badge.has-following {
-    }
-
-    .calendar-event-badge.no-following {
+        background-color: var(--color-accent);
     }
 
     .calendar-event-dot {

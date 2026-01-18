@@ -19,7 +19,7 @@
                     <PopoverContent
                         side="right"
                         align="start"
-                        class="w-[500px] p-3"
+                        class="w-125 p-3"
                         @mouseenter="openEventPopover"
                         @mouseleave="scheduleCloseEventPopover">
                         <div class="flex items-baseline justify-between gap-3 text-xs">
@@ -312,6 +312,7 @@
         gap: 4px;
         border-radius: 50%;
         cursor: pointer;
+        background-color: var(--color-accent);
     }
 
     .event-card .badges .share-badge {
@@ -324,6 +325,7 @@
         border-radius: 50%;
         cursor: pointer;
         margin-right: 5px;
+        background-color: var(--color-accent);
     }
 
     .event-card .event-content {
@@ -364,9 +366,6 @@
 
     .timeline-view .event-card .event-title-content {
         margin-bottom: 2px;
-    }
-
-    .event-card .event-title-content:hover {
     }
 
     .event-card .event-info {

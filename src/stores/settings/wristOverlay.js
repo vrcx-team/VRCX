@@ -1,11 +1,15 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
+import { useSharedFeedStore } from '../sharedFeed';
+
 import configRepository from '../../service/config';
 
 export const useWristOverlaySettingsStore = defineStore(
     'WristOverlaySettings',
     () => {
+        const sharedFeed = useSharedFeedStore();
+
         const overlayWrist = ref(true);
         const hidePrivateFromFeed = ref(false);
         const openVRAlways = ref(false);
@@ -68,6 +72,7 @@ export const useWristOverlaySettingsStore = defineStore(
                 'VRCX_hidePrivateFromFeed',
                 hidePrivateFromFeed.value
             );
+            sharedFeed.loadSharedFeed();
         }
         function setOpenVRAlways() {
             openVRAlways.value = !openVRAlways.value;

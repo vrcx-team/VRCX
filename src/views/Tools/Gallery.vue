@@ -1,7 +1,8 @@
 <template>
     <div class="gallery-page x-container">
-        <div class="gallery-page__header">
-            <Button variant="ghost" class="gallery-page__back" @click="goBack">
+        <div class="flex items-center gap-2 ml-2">
+            <Button variant="ghost" size="sm" class="mr-3" @click="goBack">
+                <ArrowLeft />
                 {{ t('nav_tooltip.tools') }}
             </Button>
             <span class="header">{{ t('dialog.gallery_icons.header') }}</span>
@@ -441,7 +442,7 @@
                         <InputGroupTextareaField
                             v-model="printUploadNote"
                             :rows="1"
-                            maxlength="32"
+                            :maxlength="32"
                             style="margin-left: 10px; width: 300px"
                             :placeholder="t('dialog.gallery_icons.note')"
                             input-class="resize-none min-h-0" />
@@ -459,7 +460,10 @@
                         <div
                             class="h-[200px] w-[200px] rounded-[20px] overflow-hidden cursor-pointer"
                             @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))">
-                            <img class="h-full w-full rounded-[15px] object-cover" :src="image.files.image" loading="lazy" />
+                            <img
+                                class="h-full w-full rounded-[15px] object-cover"
+                                :src="image.files.image"
+                                loading="lazy" />
                         </div>
                         <div style="margin-top: 5px; width: 208px">
                             <span class="block truncate" v-if="image.note" v-text="image.note"></span>
@@ -468,8 +472,7 @@
                                 class="block truncate"
                                 v-if="image.worldId"
                                 :location="image.worldId"
-                                :hint="image.worldName"
-                                />
+                                :hint="image.worldName" />
                             <span v-else class="block">&nbsp;</span>
                             <DisplayName
                                 class="block truncate gallery-meta"
@@ -525,15 +528,14 @@
                         :key="item.id"
                         style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
                         <div class="h-[200px] w-[200px] rounded-[20px] overflow-hidden cursor-default">
-                            <img class="h-full w-full rounded-[15px] object-cover" :src="item.imageUrl" loading="lazy" />
+                            <img
+                                class="h-full w-full rounded-[15px] object-cover"
+                                :src="item.imageUrl"
+                                loading="lazy" />
                         </div>
                         <div style="margin-top: 5px; width: 208px">
                             <span class="block truncate" v-text="item.name"></span>
-                            <span
-                                v-if="item.description"
-                                class="block truncate"
-                                v-text="item.description"
-                                ></span>
+                            <span v-if="item.description" class="block truncate" v-text="item.description"></span>
                             <span v-else class="block">&nbsp;</span>
                             <span class="block truncate gallery-meta gallery-meta--small">
                                 {{ formatDateFilter(item.created_at, 'long') }}
@@ -561,7 +563,7 @@
 </template>
 
 <script setup>
-    import { Gift, Maximize2, RefreshCw, Trash2, Upload, X } from 'lucide-vue-next';
+    import { ArrowLeft, Gift, Maximize2, RefreshCw, Trash2, Upload, X } from 'lucide-vue-next';
     import {
         NumberField,
         NumberFieldContent,
@@ -603,12 +605,6 @@
     const {
         galleryTable,
         galleryDialogVisible,
-        galleryDialogGalleryLoading,
-        galleryDialogIconsLoading,
-        galleryDialogEmojisLoading,
-        galleryDialogStickersLoading,
-        galleryDialogPrintsLoading,
-        galleryDialogInventoryLoading,
         VRCPlusIconsTable,
         printUploadNote,
         printCropBorder,
@@ -1183,13 +1179,6 @@
 </script>
 
 <style scoped>
-    .gallery-page__header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 12px;
-    }
-
     .gallery-tab-count {
         font-size: 12px;
         margin-left: 5px;
