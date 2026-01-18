@@ -23,7 +23,7 @@
                             </TooltipWrapper>
                         </span>
                     </div>
-                    <span class="text-xs text-gray-600">{{ localFavFakeRef.authorName }}</span>
+                    <span class="text-xs text-muted-foreground">{{ localFavFakeRef.authorName }}</span>
                 </div>
             </div>
             <div class="favorites-search-card__actions">

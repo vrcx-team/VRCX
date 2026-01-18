@@ -968,6 +968,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             imageUrl: group?.iconUrl,
             message: `Instance ready to join ${location}`,
             location: instanceId,
+            senderUserId: L.groupId,
             groupName,
             worldName
         };

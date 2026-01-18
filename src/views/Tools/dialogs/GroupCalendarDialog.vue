@@ -62,9 +62,9 @@
                         <div v-if="filteredGroupEvents.length" class="groups-container">
                             <div v-for="group in filteredGroupEvents" :key="group.groupId" class="group-row">
                                 <div class="group-header" @click="toggleGroup(group.groupId)">
-                                    <ArrowRight
+                                    <ChevronDown
                                         class="rotation-transition"
-                                        :class="{ rotate: !groupCollapsed[group.groupId] }" />
+                                        :class="{ 'is-rotated': groupCollapsed[group.groupId] }" />
                                     {{ group.groupName }}
                                 </div>
                                 <div class="events-row" v-show="!groupCollapsed[group.groupId]">
@@ -97,8 +97,8 @@
 <script setup>
     import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, onMounted, ref, watch } from 'vue';
-    import { ArrowRight } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
+    import { ChevronDown } from 'lucide-vue-next';
     import { InputGroupSearch } from '@/components/ui/input-group';
     import { useI18n } from 'vue-i18n';
 
@@ -332,11 +332,9 @@
     // Use a stable key for calendar maps (independent of locale/appearance date formatting).
     const formatDateKey = (date) => dayjs(date).format('YYYY-MM-DD');
 
-    function getGroupNameFromCache(groupId) {
+    async function getGroupNameFromCache(groupId) {
         if (!groupNamesCache.has(groupId)) {
-            getGroupName(groupId).then((name) => {
-                groupNamesCache.set(groupId, name);
-            });
+            groupNamesCache.set(groupId, await getGroupName(groupId));
         }
     }
 
@@ -351,13 +349,13 @@
                     offset: 0,
                     date: dayjs(selectedDay.value).format('YYYY-MM-DDTHH:mm:ss[Z]') // this need to be local time because UTC time may cause month shift
                 },
-                handle(args) {
-                    args.results.forEach((event) => {
+                async handle(args) {
+                    for (const event of args.results) {
                         event.title = replaceBioSymbols(event.title);
                         event.description = replaceBioSymbols(event.description);
                         applyGroupEvent(event);
-                        getGroupNameFromCache(event.ownerId);
-                    });
+                        await getGroupNameFromCache(event.ownerId);
+                    }
                     calendar.value.push(...args.results);
                 }
             });
@@ -377,11 +375,11 @@
                     offset: 0,
                     date: dayjs(selectedDay.value).format('YYYY-MM-DDTHH:mm:ss[Z]')
                 },
-                handle(args) {
-                    args.results.forEach((event) => {
+                async handle(args) {
+                    for (const event of args.results) {
                         applyGroupEvent(event);
-                        getGroupNameFromCache(event.ownerId);
-                    });
+                        await getGroupNameFromCache(event.ownerId);
+                    }
                     followingCalendar.value.push(...args.results);
                 }
             });
@@ -401,11 +399,11 @@
                     offset: 0,
                     date: dayjs(selectedDay.value).format('YYYY-MM-DDTHH:mm:ss[Z]')
                 },
-                handle(args) {
-                    args.results.forEach((event) => {
+                async handle(args) {
+                    for (const event of args.results) {
                         applyGroupEvent(event);
-                        getGroupNameFromCache(event.ownerId);
-                    });
+                        await getGroupNameFromCache(event.ownerId);
+                    }
                     featuredCalendar.value.push(...args.results);
                 }
             });
@@ -622,8 +620,8 @@
         }
     }
 
-    .rotate {
-        transform: rotate(90deg);
+    .is-rotated {
+        transform: rotate(-90deg);
     }
 
     .rotation-transition {

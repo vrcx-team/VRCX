@@ -1,6 +1,6 @@
 <template>
     <Dialog :open="!!feedFiltersDialogMode" @update:open="(open) => !open && handleDialogClose()">
-        <DialogContent>
+        <DialogContent class="sm:max-w-140">
             <DialogHeader>
                 <DialogTitle>{{ dialogTitle }}</DialogTitle>
             </DialogHeader>
@@ -13,8 +13,8 @@
                             side="top"
                             style="margin-left: 5px"
                             :content="setting.tooltip">
-                            <AlertTriangle v-if="setting.tooltipWarning" />
-                            <Info v-else />
+                            <AlertTriangle class="inline-block" v-if="setting.tooltipWarning" />
+                            <Info class="inline-block" v-else />
                         </TooltipWrapper>
                     </span>
 

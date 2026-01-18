@@ -3,7 +3,7 @@
         <div class="name" :style="{ width: longLabel ? '300px' : undefined }">
             {{ label }}
             <TooltipWrapper v-if="tooltip" side="top" :content="tooltip">
-                <Info size="small" class="tooltip" />
+                <Info class="tooltip" />
             </TooltipWrapper>
         </div>
 

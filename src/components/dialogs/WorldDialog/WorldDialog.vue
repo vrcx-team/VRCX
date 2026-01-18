@@ -63,7 +63,7 @@
                                         variant="outline"
                                         style="margin-right: 5px; margin-top: 5px">
                                         <Monitor class="h-4 w-4 x-tag-platform-pc" />
-                                        ><span
+                                        <span
                                             v-if="worldDialog.bundleSizes['standalonewindows']"
                                             :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']">
                                             {{ worldDialog.bundleSizes['standalonewindows'].fileSize }}
@@ -77,7 +77,7 @@
                                         variant="outline"
                                         style="margin-right: 5px; margin-top: 5px">
                                         <Smartphone class="h-4 w-4 x-tag-platform-quest" />
-                                        ><span
+                                        <span
                                             v-if="worldDialog.bundleSizes['android']"
                                             :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']">
                                             {{ worldDialog.bundleSizes['android'].fileSize }}
@@ -91,7 +91,7 @@
                                         variant="outline"
                                         style="margin-right: 5px; margin-top: 5px">
                                         <Apple class="h-4 w-4 text-[#8e8e93]" />
-                                        ><span
+                                        <span
                                             v-if="worldDialog.bundleSizes['ios']"
                                             :class="[
                                                 'x-grey',
@@ -413,7 +413,7 @@
                                                     :style="{ color: user.$userColour }"
                                                     v-text="user.displayName" />
                                                 <span v-if="user.location === 'traveling'" class="extra">
-                                                    <Loader2 class="is-loading" style="margin-right: 3px" />
+                                                    <Spinner class="inline-block mr-1" />
                                                     <Timer :epoch="user.$travelingToTime" />
                                                 </span>
                                                 <span v-else class="extra">
@@ -722,11 +722,9 @@
         Ellipsis,
         Eye,
         Flag,
-        History,
         Home,
         Image,
         LineChart,
-        Loader2,
         MessageSquare,
         Monitor,
         Pencil,
@@ -743,6 +741,7 @@
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
+    import { Spinner } from '@/components/ui/spinner';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

@@ -244,7 +244,7 @@
                         side="top"
                         style="margin-left: 5px"
                         :content="t('view.settings.general.automation.auto_invite_request_accept_tooltip')">
-                        <Info />
+                        <Info class="inline-block" />
                     </TooltipWrapper>
                 </span>
                 <br />

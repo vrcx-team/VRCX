@@ -83,7 +83,7 @@
                                                 :style="{ color: user.$userColour }"
                                                 v-text="user.displayName"></span>
                                             <span v-if="user.location === 'traveling'" class="extra">
-                                                <Loader2 class="is-loading" style="margin-right: 3px" />
+                                                <Spinner class="inline-block mr-1" />
                                                 <Timer :epoch="user.$travelingToTime" />
                                             </span>
                                             <span v-else class="extra">
@@ -1287,7 +1287,6 @@
         Eye,
         Info,
         Languages,
-        Loader2,
         LogOut,
         MoreHorizontal,
         Pencil,

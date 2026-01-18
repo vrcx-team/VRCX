@@ -362,53 +362,53 @@
                 @change="updateTrustColor('', '', true)"></simple-switch>
             <div>
                 <div>
+                    <span class="text-[18px] align-top x-tag-untrusted">Visitor</span>
                     <PresetColorPicker
                         :model-value="trustColor.untrusted"
                         :presets="['#CCCCCC']"
                         @change="updateTrustColor('untrusted', $event)" />
-                    <span class="text-[18px] align-top x-tag-untrusted">Visitor</span>
                 </div>
                 <div>
+                    <span class="text-[18px] align-top x-tag-basic">New User</span>
                     <PresetColorPicker
                         :model-value="trustColor.basic"
                         :presets="['#1778ff']"
                         @change="updateTrustColor('basic', $event)" />
-                    <span class="text-[18px] align-top x-tag-basic">New User</span>
                 </div>
                 <div>
+                    <span class="text-[18px] align-top x-tag-known">User</span>
                     <PresetColorPicker
                         :model-value="trustColor.known"
                         :presets="['#2bcf5c']"
                         @change="updateTrustColor('known', $event)" />
-                    <span class="text-[18px] align-top x-tag-known">User</span>
                 </div>
                 <div>
+                    <span class="text-[18px] align-top x-tag-trusted">Known User</span>
                     <PresetColorPicker
                         :model-value="trustColor.trusted"
                         :presets="['#ff7b42']"
                         @change="updateTrustColor('trusted', $event)" />
-                    <span class="text-[18px] align-top x-tag-trusted">Known User</span>
                 </div>
                 <div>
+                    <span class="text-[18px] align-top x-tag-veteran">Trusted User</span>
                     <PresetColorPicker
                         :model-value="trustColor.veteran"
                         :presets="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']"
                         @change="updateTrustColor('veteran', $event)" />
-                    <span class="text-[18px] align-top x-tag-veteran">Trusted User</span>
                 </div>
                 <div>
+                    <span class="text-[18px] align-top x-tag-vip">VRChat Team</span>
                     <PresetColorPicker
                         :model-value="trustColor.vip"
                         :presets="['#ff2626']"
                         @change="updateTrustColor('vip', $event)" />
-                    <span class="text-[18px] align-top x-tag-vip">VRChat Team</span>
                 </div>
                 <div>
+                    <span class="text-[18px] align-top x-tag-troll">Nuisance</span>
                     <PresetColorPicker
                         :model-value="trustColor.troll"
                         :presets="['#782f2f']"
                         @change="updateTrustColor('troll', $event)" />
-                    <span class="text-[18px] align-top x-tag-troll">Nuisance</span>
                 </div>
             </div>
         </div>

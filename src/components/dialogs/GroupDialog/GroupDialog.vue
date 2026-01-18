@@ -405,7 +405,7 @@
                                                 :style="{ color: user.$userColour }"
                                                 v-text="user.displayName" />
                                             <span v-if="user.location === 'traveling'" class="extra">
-                                                <Loader2 class="is-loading" style="margin-right: 3px" />
+                                                <Spinner class="inline-block mr-1" />
                                                 <Timer :epoch="user.$travelingToTime" />
                                             </span>
                                             <span v-else class="extra">
@@ -1171,7 +1171,6 @@
         Copy,
         Download,
         Eye,
-        Loader2,
         MessageSquare,
         MoreHorizontal,
         Pencil,

@@ -5,7 +5,7 @@
                 <div @click="toggleGroupSidebarCollapse(getGroupId(group))" style="display: flex; align-items: center">
                     <ChevronDown
                         class="rotation-transition"
-                        :class="{ 'is-rotated': !groupInstancesCfg[getGroupId(group)]?.isCollapsed }" />
+                        :class="{ 'is-rotated': groupInstancesCfg[getGroupId(group)]?.isCollapsed }" />
                     <span style="margin-left: 5px">{{ group[0].group.name }} – {{ group.length }}</span>
                 </div>
             </div>

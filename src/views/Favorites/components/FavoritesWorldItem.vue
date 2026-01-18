@@ -29,7 +29,7 @@
                                 class="h-4 w-4" />
                         </span>
                     </div>
-                    <span class="text-xs text-gray-600">
+                    <span class="text-xs text-muted-foreground">
                         {{ props.favorite.ref.authorName }}
                         <template v-if="props.favorite.ref.occupants"> ({{ props.favorite.ref.occupants }}) </template>
                     </span>
