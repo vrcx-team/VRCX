@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="cursor-pointer">
         <div v-if="!text" class="transparent">-</div>
         <div v-show="text" class="flex items-center">
             <div v-if="region" :class="['flags', 'mr-1.5', region]"></div>

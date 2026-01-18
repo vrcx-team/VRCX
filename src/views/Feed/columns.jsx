@@ -280,7 +280,7 @@ export const columns = [
             const original = row.original;
             return (
                 <span
-                    class="x-link pr-2.5"
+                    class="x-link pr-2.5 cursor-pointer"
                     onClick={() => showUserDialog(original.userId)}
                 >
                     {original.displayName}

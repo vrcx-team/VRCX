@@ -124,7 +124,6 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             minSize: 80,
             maxSize: 80,
             enableSorting: false,
-            enableResizing: false,
             header: () => t('table.moderation.action'),
             cell: ({ row }) => {
                 const original = row.original;

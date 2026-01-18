@@ -4,10 +4,15 @@
             <TooltipWrapper
                 v-if="userDialog.isFavorite"
                 side="top"
+                :ignore-non-keyboard-focus="true"
                 :content="t('dialog.user.actions.unfavorite_tooltip')">
                 <Button class="rounded-full" size="icon-lg" @click="userDialogCommand('Add Favorite')"><Star /></Button>
             </TooltipWrapper>
-            <TooltipWrapper v-else side="top" :content="t('dialog.user.actions.favorite_tooltip')">
+            <TooltipWrapper
+                v-else
+                side="top"
+                :ignore-non-keyboard-focus="true"
+                :content="t('dialog.user.actions.favorite_tooltip')">
                 <Button class="rounded-full" size="icon-lg" variant="outline" @click="userDialogCommand('Add Favorite')"
                     ><Star
                 /></Button>

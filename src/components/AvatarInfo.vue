@@ -1,9 +1,8 @@
 <template>
     <div @click="confirm" class="cursor-pointer w-fit align-top flex items-center">
-        <span>{{ avatarName }}</span>
-        <span v-if="avatarType === '(own)'" :class="color" class="mx-1">
-            <Lock v-if="avatarType" class="h-4 w-4" />
-        </span>
+        <span class="flex items-center"
+            >{{ avatarName }} <Lock v-if="avatarType && avatarType === '(own)'" class="h-4 w-4 mx-1"
+        /></span>
         <span v-if="avatarTags" style="font-size: 12px">{{ avatarTags }}</span>
     </div>
 </template>
@@ -27,14 +26,12 @@
     const avatarName = ref('');
     const avatarType = ref('');
     const avatarTags = ref('');
-    const color = ref('');
     let ownerId = '';
 
     const parse = async () => {
         ownerId = '';
         avatarName.value = '';
         avatarType.value = '';
-        color.value = '';
         avatarTags.value = '';
 
         if (!props.imageurl) {
@@ -55,13 +52,10 @@
         }
 
         if (typeof props.userid === 'undefined' || !ownerId) {
-            color.value = '';
             avatarType.value = '';
         } else if (ownerId === props.userid) {
-            color.value = 'avatar-info-own';
             avatarType.value = '(own)';
         } else {
-            color.value = 'avatar-info-public';
             avatarType.value = '(public)';
         }
 

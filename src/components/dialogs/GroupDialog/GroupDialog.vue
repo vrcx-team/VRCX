@@ -377,21 +377,15 @@
                             <div v-for="room in groupDialog.instances" :key="room.tag" style="width: 100%">
                                 <div style="margin: 5px 0">
                                     <Location :location="room.tag" style="display: inline-block" />
-                                    <InviteYourself :location="room.tag" style="margin-left: 5px" />
-                                    <TooltipWrapper side="top" content="RefreshCw player count">
-                                        <Button
-                                            class="rounded-full ml-1 w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
-                                            size="icon"
-                                            variant="outline"
-                                            @click="refreshInstancePlayerCount(room.tag)"
-                                            ><RefreshCw class="h-4 w-4" />
-                                        </Button>
-                                    </TooltipWrapper>
-                                    <LastJoin :location="room.tag" :currentlocation="lastLocation.location" />
-                                    <InstanceInfo
+                                    <InstanceActionBar
+                                        class="ml-1"
                                         :location="room.tag"
+                                        :currentlocation="lastLocation.location"
                                         :instance="room.ref"
-                                        :friendcount="room.friendCount" />
+                                        :friendcount="room.friendCount"
+                                        :show-launch="false"
+                                        refresh-tooltip="RefreshCw player count"
+                                        :on-refresh="() => refreshInstancePlayerCount(room.tag)" />
                                 </div>
                                 <div
                                     v-if="room.users.length"
@@ -1244,6 +1238,7 @@
 
     import GroupCalendarEventCard from '../../../views/Tools/components/GroupCalendarEventCard.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
+    import InstanceActionBar from '../../InstanceActionBar.vue';
     import PreviousInstancesGroupDialog from '../PreviousInstancesDialog/PreviousInstancesGroupDialog.vue';
 
     import * as workerTimers from 'worker-timers';

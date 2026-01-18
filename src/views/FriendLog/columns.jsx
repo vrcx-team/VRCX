@@ -118,7 +118,6 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             meta: {
                 class: 'w-[80px] max-w-[80px] text-right'
             },
-            enableResizing: false,
             size: 80,
             maxSize: 80,
             header: () => t('table.friendLog.action'),

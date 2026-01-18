@@ -21,12 +21,12 @@
                 <span class="name">{{ t('view.settings.appearance.appearance.theme_mode') }}</span>
                 <Select :model-value="themeMode" @update:modelValue="setThemeMode">
                     <SelectTrigger size="sm">
-                        <SelectValue :placeholder="t(`view.settings.appearance.appearance.theme_mode_${themeMode}`)" />
+                        <SelectValue :placeholder="themeDisplayName(themeMode)" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
                             <SelectItem v-for="(config, themeKey) in THEME_CONFIG" :key="themeKey" :value="themeKey">
-                                {{ t(`view.settings.appearance.appearance.theme_mode_${themeKey}`) }}
+                                {{ themeDisplayName(themeKey) }}
                             </SelectItem>
                         </SelectGroup>
                     </SelectContent>
@@ -472,6 +472,15 @@
     import SimpleSwitch from '../SimpleSwitch.vue';
 
     const { t } = useI18n();
+
+    const themeDisplayName = (themeKey) => {
+        const i18nKey = `view.settings.appearance.appearance.theme_mode_${themeKey}`;
+        const translated = t(i18nKey);
+        if (translated !== i18nKey) {
+            return translated;
+        }
+        return THEME_CONFIG[themeKey]?.name ?? themeKey;
+    };
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { saveOpenVROption, updateVRConfigVars } = useVrStore();

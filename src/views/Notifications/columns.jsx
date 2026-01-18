@@ -389,7 +389,6 @@ export const createColumns = ({
         },
         {
             accessorKey: 'photo',
-            enableResizing: false,
             size: 80,
             header: () => t('table.notification.photo'),
             cell: ({ row }) => {
@@ -502,7 +501,6 @@ export const createColumns = ({
             size: 120,
             minSize: 120,
             maxSize: 120,
-            enableResizing: false,
             header: () => t('table.notification.action'),
             enableSorting: false,
             cell: ({ row }) => {

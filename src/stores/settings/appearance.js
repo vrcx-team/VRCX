@@ -13,7 +13,8 @@ import {
 } from '../../shared/utils/base/ui';
 import {
     APP_FONT_DEFAULT_KEY,
-    APP_FONT_FAMILIES
+    APP_FONT_FAMILIES,
+    THEME_CONFIG
 } from '../../shared/constants';
 import { database } from '../../service/database';
 import { getNameColour } from '../../shared/utils';
@@ -51,6 +52,7 @@ export const useAppearanceSettingsStore = defineStore(
         const appLanguage = ref('en');
         const themeMode = ref('');
         const isDarkMode = ref(false);
+        const lastDarkTheme = ref('dark');
         const appFontFamily = ref('inter');
         const displayVRCPlusIconsAsAvatar = ref(false);
         const hideNicknames = ref(false);
@@ -107,9 +109,20 @@ export const useAppearanceSettingsStore = defineStore(
             return Math.min(max, Math.max(min, n));
         };
 
+        const resolveLastDarkTheme = (value, fallback = 'dark') => {
+            const normalized = String(value || '').trim();
+            return THEME_CONFIG[normalized]?.isDark === true
+                ? normalized
+                : fallback;
+        };
+
         async function initAppearanceSettings() {
             const { initThemeMode, isDarkMode: initDarkMode } =
                 await getThemeMode(configRepository);
+            const fallbackDarkTheme =
+                THEME_CONFIG[initThemeMode]?.isDark === true
+                    ? initThemeMode
+                    : 'dark';
             const [
                 appLanguageConfig,
                 displayVRCPlusIconsAsAvatarConfig,
@@ -137,7 +150,8 @@ export const useAppearanceSettingsStore = defineStore(
                 trustColorConfig,
                 notificationIconDotConfig,
                 navIsCollapsedConfig,
-                appFontFamilyConfig
+                appFontFamilyConfig,
+                lastDarkThemeConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_appLanguage'),
                 configRepository.getBool('displayVRCPlusIconsAsAvatar', true),
@@ -196,6 +210,10 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getString(
                     'VRCX_fontFamily',
                     APP_FONT_DEFAULT_KEY
+                ),
+                configRepository.getString(
+                    'VRCX_lastDarkTheme',
+                    fallbackDarkTheme
                 )
             ]);
 
@@ -216,6 +234,10 @@ export const useAppearanceSettingsStore = defineStore(
 
             themeMode.value = initThemeMode;
             isDarkMode.value = initDarkMode;
+            lastDarkTheme.value = resolveLastDarkTheme(
+                lastDarkThemeConfig,
+                fallbackDarkTheme
+            );
             appFontFamily.value = normalizeAppFontFamily(appFontFamilyConfig);
             applyAppFontFamily(appFontFamily.value);
 
@@ -463,10 +485,22 @@ export const useAppearanceSettingsStore = defineStore(
         function setThemeMode(mode) {
             themeMode.value = mode;
             configRepository.setString('VRCX_ThemeMode', mode);
+            if (THEME_CONFIG[mode]?.isDark === true) {
+                const normalized = resolveLastDarkTheme(mode);
+                lastDarkTheme.value = normalized;
+                configRepository.setString('VRCX_lastDarkTheme', normalized);
+            }
             const { isDark } = changeAppThemeStyle(mode);
             isDarkMode.value = isDark;
             vrStore.updateVRConfigVars();
             updateTrustColor(undefined, undefined);
+        }
+
+        function toggleThemeMode() {
+            const nextMode = isDarkMode.value
+                ? 'light'
+                : resolveLastDarkTheme(lastDarkTheme.value);
+            setThemeMode(nextMode);
         }
 
         function normalizeAppFontFamily(value) {
@@ -914,7 +948,8 @@ export const useAppearanceSettingsStore = defineStore(
             setNavCollapsed,
             toggleNavCollapsed,
             setAppFontFamily,
-            setThemeMode
+            setThemeMode,
+            toggleThemeMode
         };
     }
 );

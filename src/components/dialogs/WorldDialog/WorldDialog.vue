@@ -184,12 +184,17 @@
                             <TooltipWrapper
                                 v-if="worldDialog.isFavorite"
                                 side="top"
+                                :ignore-non-keyboard-focus="true"
                                 :content="t('dialog.world.actions.favorites_tooltip')">
                                 <Button class="rounded-full" size="icon-lg" @click="worldDialogCommand('Add Favorite')"
                                     ><Star
                                 /></Button>
                             </TooltipWrapper>
-                            <TooltipWrapper v-else side="top" :content="t('dialog.world.actions.favorites_tooltip')">
+                            <TooltipWrapper
+                                v-else
+                                side="top"
+                                :ignore-non-keyboard-focus="true"
+                                :content="t('dialog.world.actions.favorites_tooltip')">
                                 <Button
                                     class="rounded-full"
                                     size="icon-lg"
@@ -355,42 +360,20 @@
                                             :locationobject="room.$location"
                                             :currentuserid="currentUser.id"
                                             :worlddialogshortname="worldDialog.$location.shortName" />
-                                        <Launch :location="room.tag" style="margin-left: 5px" />
-                                        <InviteYourself
+                                        <InstanceActionBar
+                                            class="ml-1"
                                             :location="room.$location.tag"
+                                            :launch-location="room.tag"
+                                            :instance-location="room.tag"
                                             :shortname="room.$location.shortName"
-                                            style="margin-left: 5px" />
-                                        <TooltipWrapper
-                                            side="top"
-                                            :content="t('dialog.world.instances.refresh_instance_info')">
-                                            <Button
-                                                class="rounded-full ml-1 w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
-                                                size="icon"
-                                                variant="outline"
-                                                @click="refreshInstancePlayerCount(room.tag)"
-                                                ><RefreshCw class="h-4 w-4" />
-                                            </Button>
-                                        </TooltipWrapper>
-                                        <TooltipWrapper
-                                            v-if="instanceJoinHistory.get(room.$location.tag)"
-                                            side="top"
-                                            :content="t('dialog.previous_instances.info')">
-                                            <Button
-                                                class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
-                                                size="icon-sm"
-                                                variant="outline"
-                                                style="margin-left: 5px"
-                                                @click="showPreviousInstancesInfoDialog(room.location)"
-                                                ><History class="h-4 w-4" />
-                                            </Button>
-                                        </TooltipWrapper>
-                                        <LastJoin
-                                            :location="room.$location.tag"
-                                            :currentlocation="lastLocation.location" />
-                                        <InstanceInfo
-                                            :location="room.tag"
+                                            :currentlocation="lastLocation.location"
                                             :instance="room.ref"
-                                            :friendcount="room.friendCount" />
+                                            :friendcount="room.friendCount"
+                                            :refresh-tooltip="t('dialog.world.instances.refresh_instance_info')"
+                                            :show-history="!!instanceJoinHistory.get(room.$location.tag)"
+                                            :history-tooltip="t('dialog.previous_instances.info')"
+                                            :on-refresh="() => refreshInstancePlayerCount(room.tag)"
+                                            :on-history="() => showPreviousInstancesInfoDialog(room.location)" />
                                     </div>
                                     <div
                                         v-if="room.$location.userId || room.users.length"
@@ -803,6 +786,8 @@
     import { Badge } from '../../ui/badge';
     import { database } from '../../../service/database.js';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
+
+    import InstanceActionBar from '../../InstanceActionBar.vue';
 
     const modalStore = useModalStore();
 

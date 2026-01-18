@@ -241,7 +241,6 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             meta: {
                 class: 'text-right'
             },
-            enableResizing: false,
             size: 90,
             minSize: 90,
             maxSize: 90,

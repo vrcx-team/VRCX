@@ -574,7 +574,7 @@
     };
 
     const handleThemeToggle = () => {
-        appearanceSettingsStore.setThemeMode(isDarkMode.value ? 'light' : 'dark');
+        appearanceSettingsStore.toggleThemeMode();
     };
 
     const handleTableDensitySelect = (density) => {

@@ -36,31 +36,15 @@
                                 ">
                                 <div style="flex: none">
                                     <template v-if="isRealInstance(userDialog.$location.tag)">
-                                        <div class="flex items-center mb-1">
-                                            <Launch :location="userDialog.$location.tag" />
-                                            <InviteYourself
-                                                :location="userDialog.$location.tag"
-                                                :shortname="userDialog.$location.shortName"
-                                                style="margin-left: 5px" />
-                                            <TooltipWrapper
-                                                side="top"
-                                                :content="t('dialog.user.info.refresh_instance_info')"
-                                                ><Button
-                                                    class="rounded-full ml-1 w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
-                                                    size="icon"
-                                                    variant="outline"
-                                                    @click="refreshInstancePlayerCount(userDialog.$location.tag)"
-                                                    ><RefreshCw class="h-4 w-4" />
-                                                </Button>
-                                            </TooltipWrapper>
-                                            <LastJoin
-                                                :location="userDialog.$location.tag"
-                                                :currentlocation="lastLocation.location" />
-                                            <InstanceInfo
-                                                :location="userDialog.$location.tag"
-                                                :instance="userDialog.instance.ref"
-                                                :friendcount="userDialog.instance.friendCount" />
-                                        </div>
+                                        <InstanceActionBar
+                                            class="mb-1"
+                                            :location="userDialog.$location.tag"
+                                            :shortname="userDialog.$location.shortName"
+                                            :currentlocation="lastLocation.location"
+                                            :instance="userDialog.instance.ref"
+                                            :friendcount="userDialog.instance.friendCount"
+                                            :refresh-tooltip="t('dialog.user.info.refresh_instance_info')"
+                                            :on-refresh="() => refreshInstancePlayerCount(userDialog.$location.tag)" />
                                     </template>
                                     <Location
                                         :location="userDialog.ref.location"
@@ -154,22 +138,14 @@
                             </div>
                             <div class="x-friend-item" style="width: 100%; cursor: default">
                                 <div class="detail">
-                                    <span
-                                        v-if="
+                                    <span class="name">
+                                        {{
                                             userDialog.id !== currentUser.id &&
                                             userDialog.ref.profilePicOverride &&
                                             userDialog.ref.currentAvatarImageUrl
-                                        "
-                                        class="name">
-                                        {{ t('dialog.user.info.avatar_info_last_seen') }}
-                                    </span>
-                                    <span v-else class="name">{{ t('dialog.user.info.avatar_info') }}</span>
-                                    <div class="extra">
-                                        <AvatarInfo
-                                            :imageurl="userDialog.ref.currentAvatarImageUrl"
-                                            :userid="userDialog.id"
-                                            :avatartags="userDialog.ref.currentAvatarTags"
-                                            style="display: inline-block" />
+                                                ? t('dialog.user.info.avatar_info_last_seen')
+                                                : t('dialog.user.info.avatar_info')
+                                        }}
                                         <TooltipWrapper
                                             v-if="
                                                 userDialog.ref.profilePicOverride &&
@@ -179,6 +155,13 @@
                                             :content="t('dialog.user.info.vrcplus_hides_avatar')">
                                             <Info />
                                         </TooltipWrapper>
+                                    </span>
+                                    <div class="extra">
+                                        <AvatarInfo
+                                            :imageurl="userDialog.ref.currentAvatarImageUrl"
+                                            :userid="userDialog.id"
+                                            :avatartags="userDialog.ref.currentAvatarTags"
+                                            style="display: inline-block" />
                                     </div>
                                 </div>
                             </div>
@@ -1385,6 +1368,7 @@
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import { database } from '../../../service/database';
 
+    import InstanceActionBar from '../../InstanceActionBar.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
     import UserSummaryHeader from './UserSummaryHeader.vue';
 

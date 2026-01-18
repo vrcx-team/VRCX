@@ -111,7 +111,10 @@
                         v-if="userDialog.mutualFriendCount"
                         side="top"
                         :content="t('dialog.user.tags.mutual_friends')">
-                        <Badge variant="outline" class="x-tag-mutual-friend" style="margin-right: 5px; margin-top: 5px">
+                        <Badge
+                            variant="outline"
+                            class="x-tag-mutual-friend border-zinc-500/50! dark:border-zinc-400!"
+                            style="margin-right: 5px; margin-top: 5px">
                             <Users class="mr-1 h-4 w-4 inline-block" />
                             {{ userDialog.mutualFriendCount }}
                         </Badge>

@@ -25,6 +25,21 @@ const APP_FONT_CONFIG = Object.freeze({
         cssImport:
             "@import url('https://fonts.cdnfonts.com/css/harmonyos-sans');"
     },
+    jetbrains_mono: {
+        cssName: "'JetBrains Mono'",
+        cssImport:
+            "@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');"
+    },
+    roboto: {
+        cssName: "'Roboto'",
+        cssImport:
+            "@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');"
+    },
+    fantasque_sans_mono: {
+        cssName: "'Fantasque Sans Mono'",
+        cssImport:
+            "@import url('https://fonts.cdnfonts.com/css/fantasque-sans-mono');"
+    },
     system_ui: {
         cssName: 'system-ui',
         link: null
