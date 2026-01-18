@@ -484,36 +484,8 @@
         scrollViewportRef.value = rootEl.querySelector('[data-slot="scroll-area-viewport"]');
     }
 
-    const maxColumns = computed(() => {
-        const styleFn = gridStyle.value;
-        if (typeof styleFn !== 'function') {
-            return 1;
-        }
-
-        const containerWidth = Math.max(gridWidth.value ?? 0, 0);
-
-        const baseWidth = 220;
-        const baseGap = 14;
-        const scale = cardScale.value;
-        const spacing = cardSpacing.value;
-        const minWidth = baseWidth * scale;
-        const gap = Math.max(6, (baseGap + (scale - 1) * 10) * spacing);
-
-        return Math.max(1, Math.floor((containerWidth + gap) / (minWidth + gap)) || 1);
-    });
-
-    const chunk = (items = [], size = 1) => {
-        const out = [];
-        const n = Math.max(1, Math.floor(size) || 1);
-        for (let i = 0; i < items.length; i += n) {
-            out.push(items.slice(i, i + n));
-        }
-        return out;
-    };
-
     const virtualRows = computed(() => {
         const rows = [];
-        const columns = maxColumns.value;
 
         if (isSameInstanceView.value) {
             for (const group of sameInstanceGroupsForVirtual.value) {
@@ -525,13 +497,11 @@
                 });
 
                 const friends = Array.isArray(group.friends) ? group.friends : [];
-                for (const rowFriends of chunk(friends, Math.min(columns, friends.length || 1))) {
+                if (friends.length) {
                     rows.push({
                         type: 'cards',
-                        key: `g:${group.instanceId}:${rowFriends
-                            .map((f) => f?.id ?? f?.userId ?? f?.displayName ?? '')
-                            .join('|')}`,
-                        items: rowFriends.map((friend) => ({
+                        key: `g:${group.instanceId}`,
+                        items: friends.map((friend) => ({
                             key: `f:${friend?.id ?? friend?.userId ?? friend?.displayName ?? Math.random()}`,
                             friend,
                             displayInstanceInfo: true
@@ -553,13 +523,11 @@
                 });
 
                 const friends = Array.isArray(group.friends) ? group.friends : [];
-                for (const rowFriends of chunk(friends, Math.min(columns, friends.length || 1))) {
+                if (friends.length) {
                     rows.push({
                         type: 'cards',
-                        key: `mg:${group.instanceId}:${rowFriends
-                            .map((f) => f?.id ?? f?.userId ?? f?.displayName ?? '')
-                            .join('|')}`,
-                        items: rowFriends.map((friend) => ({
+                        key: `mg:${group.instanceId}`,
+                        items: friends.map((friend) => ({
                             key: `f:${friend?.id ?? friend?.userId ?? friend?.displayName ?? Math.random()}`,
                             friend,
                             displayInstanceInfo: false
@@ -573,11 +541,11 @@
             }
 
             const online = mergedOnlineEntries.value;
-            for (const rowEntries of chunk(online, Math.min(columns, online.length || 1))) {
+            if (online.length) {
                 rows.push({
                     type: 'cards',
-                    key: `o:${rowEntries.map((e) => e?.id ?? '').join('|')}`,
-                    items: rowEntries.map((entry) => ({
+                    key: 'o:merged',
+                    items: online.map((entry) => ({
                         key: `e:${entry?.id ?? entry?.friend?.id ?? entry?.friend?.displayName ?? Math.random()}`,
                         friend: entry.friend,
                         displayInstanceInfo: true
@@ -589,11 +557,11 @@
         }
 
         const entries = filteredFriends.value;
-        for (const rowEntries of chunk(entries, Math.min(columns, entries.length || 1))) {
+        if (entries.length) {
             rows.push({
                 type: 'cards',
-                key: `r:${rowEntries.map((e) => e?.id ?? '').join('|')}`,
-                items: rowEntries.map((entry) => ({
+                key: 'r:all',
+                items: entries.map((entry) => ({
                     key: `e:${entry?.id ?? entry?.friend?.id ?? entry?.friend?.displayName ?? Math.random()}`,
                     friend: entry.friend,
                     displayInstanceInfo: true

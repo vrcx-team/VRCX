@@ -5,7 +5,7 @@
         </div>
 
         <div class="rounded-md border">
-            <ScrollArea class="max-w-full" :style="tableStyle">
+            <div class="max-w-full overflow-auto" :style="tableStyle">
                 <Table :class="tableClassValue" :style="tableElementStyle">
                     <colgroup>
                         <col v-for="col in table.getVisibleLeafColumns()" :key="col.id" :style="getColStyle(col)" />
@@ -65,7 +65,7 @@
                         </TableRow>
                     </TableBody>
                 </Table>
-            </ScrollArea>
+            </div>
         </div>
 
         <div v-if="showPagination" class="mt-4 flex w-full items-center gap-3">
@@ -125,7 +125,6 @@
     } from '../pagination';
     import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../table';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../select';
-    import { ScrollArea } from '../scroll-area';
 
     const props = defineProps({
         table: {
@@ -256,7 +255,7 @@
         const meta = columnDef?.meta ?? {};
         const pinned = getPinnedState(header?.column);
         return joinClasses(
-            'sticky top-0 bg-background relative group',
+            'sticky top-0 bg-background dark:bg-sidebar border-b border-border group',
             pinned ? 'z-30' : 'z-10',
             isSpacer(header.column) && 'p-0',
             resolveClassValue(meta.class, header?.getContext?.()),

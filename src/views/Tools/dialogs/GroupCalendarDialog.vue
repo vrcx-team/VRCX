@@ -1,9 +1,13 @@
 <template>
     <Dialog :open="visible" @update:open="(open) => (open ? null : closeDialog())">
-        <DialogContent class="x-dialog sm:max-w-[50vw] h-[60vh] overflow-hidden">
+        <DialogContent class="x-dialog sm:max-w-[50vw] h-[70vh] overflow-hidden">
             <DialogHeader>
                 <div class="dialog-title-container">
                     <DialogTitle>{{ t('dialog.group_calendar.header') }}</DialogTitle>
+                </div>
+                <div class="featured-switch">
+                    <span class="featured-switch-text">{{ t('dialog.group_calendar.featured_events') }}</span>
+                    <Switch v-model="showFeaturedEvents" @update:modelValue="toggleFeaturedEvents" class="mr-2" />
                     <Button size="sm" variant="outline" @click="toggleViewMode" class="view-toggle-btn">
                         {{
                             viewMode === 'timeline'
@@ -11,10 +15,6 @@
                                 : t('dialog.group_calendar.calendar_view')
                         }}
                     </Button>
-                </div>
-                <div class="featured-switch">
-                    <span class="featured-switch-text">{{ t('dialog.group_calendar.featured_events') }}</span>
-                    <Switch v-model="showFeaturedEvents" @update:modelValue="toggleFeaturedEvents" />
                 </div>
             </DialogHeader>
             <div class="top-content">
@@ -458,6 +458,7 @@
                     margin-left: 10px;
                     margin-right: 6px;
                     overflow: auto;
+                    height: 50vh;
 
                     .timeline-list {
                         display: flex;
@@ -506,9 +507,7 @@
                             position: relative;
 
                             &.has-events {
-                                background-color: var(
-                                    --group-calendar-event-bg,
-                                );
+                                background-color: var(--group-calendar-event-bg,);
                             }
                             .calendar-event-badge {
                                 position: absolute;
@@ -525,10 +524,6 @@
                                 z-index: 10;
                                 padding: 0 4px;
                                 line-height: 16px;
-                                &.has-following {
-                                }
-                                &.no-following {
-                                }
                             }
                         }
                     }
@@ -551,6 +546,7 @@
     .featured-switch {
         display: flex;
         justify-content: flex-end;
+        align-items: center;
         margin-top: 10px;
         .featured-switch-text {
             font-size: 13px;
@@ -559,24 +555,10 @@
     }
 
     .timeline-view {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
         display: flex;
         align-items: center;
         .timeline-container {
             flex: 1;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-        }
-        .calendar-container {
-            width: 609px;
-            height: 100%;
-            flex-shrink: 0;
         }
     }
 

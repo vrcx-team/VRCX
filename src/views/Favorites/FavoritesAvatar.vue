@@ -150,7 +150,9 @@
                                                         </DropdownMenuSubContent>
                                                     </DropdownMenuPortal>
                                                 </DropdownMenuSub>
-                                                <DropdownMenuItem variant="destructive" @click="handleRemoteClear(group)">
+                                                <DropdownMenuItem
+                                                    variant="destructive"
+                                                    @click="handleRemoteClear(group)">
                                                     <span>{{ t('view.favorite.clear') }}</span>
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
@@ -231,7 +233,9 @@
                                                     <DropdownMenuItem @click="handleCheckInvalidAvatars(group)">
                                                         <span>{{ t('view.favorite.avatars.check_invalid') }}</span>
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem variant="destructive" @click="handleLocalDelete(group)">
+                                                    <DropdownMenuItem
+                                                        variant="destructive"
+                                                        @click="handleLocalDelete(group)">
                                                         <span>{{ t('view.favorite.delete_tooltip') }}</span>
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
@@ -433,10 +437,7 @@
                             </div>
                         </template>
                         <template v-else-if="activeLocalGroupName">
-                            <ScrollArea
-                                ref="localAvatarScrollbarRef"
-                                class="favorites-content__scroll"
-                                @scroll="handleLocalAvatarScroll">
+                            <ScrollArea class="favorites-content__scroll">
                                 <template v-if="currentLocalFavorites.length">
                                     <div
                                         class="favorites-card-list"
@@ -539,10 +540,6 @@
         displayName: `Group ${index + 1}`
     }));
 
-    const LOCAL_AVATAR_PAGE_SIZE = 20;
-    const LOCAL_AVATAR_SCROLL_THRESHOLD = 120;
-    const LOCAL_AVATAR_VIEWPORT_BUFFER = 32;
-
     const avatarGroupVisibilityOptions = ref(['public', 'friends', 'private']);
     const historyGroupKey = 'local-history';
     const avatarSplitterSize = ref(260);
@@ -640,12 +637,9 @@
     const isCreatingLocalGroup = ref(false);
     const newLocalGroupName = ref('');
     const newLocalGroupInput = ref(null);
-    const sliceLocalAvatarFavoritesLoadMoreNumber = ref(60);
     const refreshingLocalFavorites = ref(false);
     const worker = ref(null);
     const refreshCancelToken = ref(null);
-    const localAvatarScrollbarRef = ref(null);
-    const localAvatarLoadingMore = ref(false);
     const avatarGroupPlaceholders = AVATAR_GROUP_PLACEHOLDERS;
     const hasUserSelectedAvatarGroup = ref(false);
     const remoteAvatarGroupsResolved = ref(false);
@@ -805,16 +799,6 @@
         return grouped;
     });
 
-    const sliceLocalAvatarFavorites = computed(() => {
-        return (group) => {
-            const favorites = localAvatarFavorites.value[group];
-            if (!favorites) {
-                return [];
-            }
-            return favorites.slice(0, sliceLocalAvatarFavoritesLoadMoreNumber.value);
-        };
-    });
-
     const activeRemoteGroup = computed(() => {
         if (!isRemoteGroupSelected.value) {
             return null;
@@ -848,7 +832,7 @@
         if (!activeLocalGroupName.value) {
             return [];
         }
-        return sliceLocalAvatarFavorites.value(activeLocalGroupName.value);
+        return localAvatarFavorites.value[activeLocalGroupName.value] || [];
     });
 
     const isAllAvatarsSelected = computed(() => {
@@ -886,11 +870,6 @@
         if (active && avatarEditMode.value) {
             avatarEditMode.value = false;
         }
-        if (!active) {
-            nextTick(() => {
-                maybeFillLocalAvatarViewport();
-            });
-        }
     });
 
     watch(
@@ -901,30 +880,6 @@
             }
         }
     );
-
-    watch(
-        () => ({
-            group: activeLocalGroupName.value,
-            visible: currentLocalFavorites.value.length,
-            total: activeLocalGroupCount.value,
-            slice: sliceLocalAvatarFavoritesLoadMoreNumber.value,
-            isLocal: isLocalGroupSelected.value
-        }),
-        () => {
-            nextTick(() => {
-                maybeFillLocalAvatarViewport();
-            });
-        }
-    );
-
-    onMounted(() => {
-        if (typeof window !== 'undefined') {
-            window.addEventListener('resize', maybeFillLocalAvatarViewport);
-        }
-        nextTick(() => {
-            maybeFillLocalAvatarViewport();
-        });
-    });
 
     function handleGroupMenuVisible(key, visible) {
         if (visible) {
@@ -999,18 +954,7 @@
         if (options.userInitiated) {
             hasUserSelectedAvatarGroup.value = true;
         }
-        resetLoadMoreCounters();
         clearSelectedAvatars();
-        if (type === 'local') {
-            nextTick(() => {
-                maybeFillLocalAvatarViewport();
-            });
-        }
-    }
-
-    function resetLoadMoreCounters() {
-        sliceLocalAvatarFavoritesLoadMoreNumber.value = 60;
-        localAvatarLoadingMore.value = false;
     }
 
     function isGroupActive(type, key) {
@@ -1056,59 +1000,6 @@
         });
     }
 
-    function handleLocalAvatarScroll() {
-        if (!isLocalGroupSelected.value || isSearchActive.value) {
-            return;
-        }
-        const wrap = localAvatarScrollbarRef.value?.viewportEl?.value;
-        if (!wrap) {
-            return;
-        }
-        const { scrollTop, clientHeight, scrollHeight } = wrap;
-        if (scrollTop + clientHeight >= scrollHeight - LOCAL_AVATAR_SCROLL_THRESHOLD) {
-            if (loadMoreLocalAvatarFavorites()) {
-                nextTick(() => {
-                    maybeFillLocalAvatarViewport();
-                });
-            }
-        }
-    }
-
-    function loadMoreLocalAvatarFavorites() {
-        if (localAvatarLoadingMore.value) {
-            return false;
-        }
-        if (sliceLocalAvatarFavoritesLoadMoreNumber.value >= activeLocalGroupCount.value) {
-            return false;
-        }
-        localAvatarLoadingMore.value = true;
-        sliceLocalAvatarFavoritesLoadMoreNumber.value += LOCAL_AVATAR_PAGE_SIZE;
-        nextTick(() => {
-            localAvatarLoadingMore.value = false;
-        });
-        return true;
-    }
-
-    function maybeFillLocalAvatarViewport() {
-        nextTick(() => {
-            if (!isLocalGroupSelected.value || isSearchActive.value) {
-                return;
-            }
-            const wrap = localAvatarScrollbarRef.value?.viewportEl?.value;
-            if (!wrap) {
-                return;
-            }
-            if (wrap.scrollHeight > wrap.clientHeight + LOCAL_AVATAR_VIEWPORT_BUFFER) {
-                return;
-            }
-            if (loadMoreLocalAvatarFavorites()) {
-                nextTick(() => {
-                    maybeFillLocalAvatarViewport();
-                });
-            }
-        });
-    }
-
     function toggleAvatarSelection(id, value) {
         if (value) {
             if (!selectedFavoriteAvatars.value.includes(id)) {
@@ -1117,58 +1008,6 @@
         } else {
             selectedFavoriteAvatars.value = selectedFavoriteAvatars.value.filter((selectedId) => selectedId !== id);
         }
-    }
-
-    function clearSelectedAvatars() {
-        selectedFavoriteAvatars.value = [];
-    }
-
-    function toggleSelectAllAvatars() {
-        if (!activeRemoteGroup.value) {
-            return;
-        }
-        if (isAllAvatarsSelected.value) {
-            selectedFavoriteAvatars.value = [];
-        } else {
-            selectedFavoriteAvatars.value = currentRemoteFavorites.value.map((fav) => fav.id);
-        }
-    }
-
-    function copySelectedAvatars() {
-        if (!selectedFavoriteAvatars.value.length) {
-            return;
-        }
-        const idList = selectedFavoriteAvatars.value.map((id) => `${id}\n`).join('');
-        avatarImportDialogInput.value = idList;
-        showAvatarImportDialog();
-    }
-
-    async function showAvatarBulkUnfavoriteSelectionConfirm() {
-        if (!selectedFavoriteAvatars.value.length) {
-            return;
-        }
-        const total = selectedFavoriteAvatars.value.length;
-
-        const result = await modalStore.confirm({
-            description: `Are you sure you want to unfavorite ${total} favorites?\nThis action cannot be undone.`,
-            title: `Trash2 ${total} favorites?`
-        });
-
-        if (!result.ok) {
-            return;
-        }
-
-        bulkUnfavoriteSelectedAvatars([...selectedFavoriteAvatars.value]);
-    }
-
-    function bulkUnfavoriteSelectedAvatars(ids) {
-        ids.forEach((id) => {
-            favoriteRequest.deleteFavorite({
-                objectId: id
-            });
-        });
-        selectedFavoriteAvatars.value = [];
-        avatarEditMode.value = false;
     }
 
     function showAvatarExportDialog() {
@@ -1525,9 +1364,6 @@
 
     onBeforeUnmount(() => {
         cancelLocalAvatarRefresh();
-        if (typeof window !== 'undefined') {
-            window.removeEventListener('resize', maybeFillLocalAvatarViewport);
-        }
         if (avatarSplitterObserver) {
             avatarSplitterObserver.disconnect();
             avatarSplitterObserver = null;

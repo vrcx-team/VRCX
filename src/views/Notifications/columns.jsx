@@ -183,7 +183,7 @@ export const createColumns = ({
                                                 location={original.location}
                                                 hint={original.worldName}
                                                 grouphint={original.groupName}
-                                                link={false}
+                                                link={true}
                                             />
                                         ) : null}
                                     </TooltipContent>

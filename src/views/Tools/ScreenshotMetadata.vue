@@ -1,7 +1,8 @@
 <template>
     <div class="screenshot-metadata-page x-container">
-        <div class="screenshot-metadata-page__header">
-            <Button variant="ghost" class="screenshot-metadata-page__back" @click="goBack">
+        <div class="flex items-center gap-2 ml-2">
+            <Button variant="ghost" size="sm" class="mr-3" @click="goBack">
+                <ArrowLeft />
                 {{ t('nav_tooltip.tools') }}
             </Button>
             <span class="header">{{ t('dialog.screenshot_metadata.header') }}</span>
@@ -151,6 +152,7 @@
     import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
     import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
     import { useGalleryStore, useUserStore, useVrcxStore } from '@/stores';
+    import { ArrowLeft } from 'lucide-vue-next';
     import { Badge } from '@/components/ui/badge';
     import { Button } from '@/components/ui/button';
     import { InputGroupSearch } from '@/components/ui/input-group';
@@ -533,12 +535,3 @@
         }
     }
 </script>
-
-<style scoped>
-    .screenshot-metadata-page__header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 12px;
-    }
-</style>

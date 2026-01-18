@@ -36,8 +36,8 @@
                             <TooltipWrapper side="left" :content="t('view.favorite.unfavorite_tooltip')">
                                 <Button
                                     size="icon-sm"
-                                    variant="outline"
-                                    class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
+                                    variant="ghost"
+                                    class="rounded-full text-xs h-6 w-6"
                                     @click.stop="handleDeleteFavorite">
                                     <Trash2 class="h-4 w-4" />
                                 </Button>
@@ -50,8 +50,8 @@
                         <TooltipWrapper side="right" :content="t('view.favorite.edit_favorite_tooltip')">
                             <Button
                                 size="icon-sm"
-                                variant="outline"
-                                class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
+                                variant="ghost"
+                                class="rounded-full text-xs h-6 w-6"
                                 @click.stop="showFavoriteDialog('friend', favorite.id)"
                                 ><Star class="h-4 w-4"
                             /></Button>

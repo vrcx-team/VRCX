@@ -138,7 +138,10 @@
                                                         <span>{{ t('view.favorite.visibility_tooltip') }}</span>
                                                     </DropdownMenuSubTrigger>
                                                     <DropdownMenuPortal>
-                                                        <DropdownMenuSubContent side="right" align="start" class="w-[200px]">
+                                                        <DropdownMenuSubContent
+                                                            side="right"
+                                                            align="start"
+                                                            class="w-[200px]">
                                                             <DropdownMenuCheckboxItem
                                                                 v-for="visibility in worldGroupVisibilityOptions"
                                                                 :key="visibility"
@@ -150,7 +153,9 @@
                                                         </DropdownMenuSubContent>
                                                     </DropdownMenuPortal>
                                                 </DropdownMenuSub>
-                                                <DropdownMenuItem variant="destructive" @click="handleRemoteClear(group)">
+                                                <DropdownMenuItem
+                                                    variant="destructive"
+                                                    @click="handleRemoteClear(group)">
                                                     <span>{{ t('view.favorite.clear') }}</span>
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
@@ -227,7 +232,9 @@
                                                         <DropdownMenuItem @click="handleLocalRename(group)">
                                                             <span>{{ t('view.favorite.rename_tooltip') }}</span>
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuItem variant="destructive" @click="handleLocalDelete(group)">
+                                                        <DropdownMenuItem
+                                                            variant="destructive"
+                                                            @click="handleLocalDelete(group)">
                                                             <span>{{ t('view.favorite.delete_tooltip') }}</span>
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
@@ -374,9 +381,7 @@
                             </div>
                             <ScrollArea
                                 v-else-if="activeLocalGroupName && isLocalGroupSelected"
-                                ref="localFavoritesScrollbarRef"
-                                class="favorites-content__scroll"
-                                @scroll="handleLocalFavoritesScroll">
+                                class="favorites-content__scroll">
                                 <template v-if="currentLocalFavorites.length">
                                     <div
                                         class="favorites-card-list"
@@ -453,10 +458,6 @@
         key: `world:worlds${index + 1}`,
         displayName: `Group ${index + 1}`
     }));
-
-    const LOCAL_FAVORITES_PAGE_SIZE = 20;
-    const LOCAL_FAVORITES_SCROLL_THRESHOLD = 120;
-    const LOCAL_FAVORITES_VIEWPORT_BUFFER = 32;
 
     const { t } = useI18n();
     const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
@@ -550,15 +551,12 @@
     const worldGroupPlaceholders = WORLD_GROUP_PLACEHOLDERS;
     const hasUserSelectedWorldGroup = ref(false);
     const remoteGroupsResolved = ref(false);
-    const sliceLocalWorldFavoritesLoadMoreNumber = ref(60);
     const refreshingLocalFavorites = ref(false);
     const worker = ref(null);
     const refreshCancelToken = ref(null);
     const worldEditMode = ref(false);
     const activeGroupMenu = ref(null);
-    const localFavoritesScrollbarRef = ref(null);
     const worldToolbarMenuOpen = ref(false);
-    const localFavoritesLoadingMore = ref(false);
     const hasWorldSelection = computed(() => selectedFavoriteWorlds.value.length > 0);
     const hasSearchInput = computed(() => worldFavoriteSearch.value.trim().length > 0);
     const isSearchActive = computed(() => worldFavoriteSearch.value.trim().length >= 3);
@@ -723,16 +721,6 @@
         return entries;
     });
 
-    const sliceLocalWorldFavorites = computed(() => {
-        return (group) => {
-            const favorites = localWorldFavorites.value[group];
-            if (!favorites) {
-                return [];
-            }
-            return favorites.slice(0, sliceLocalWorldFavoritesLoadMoreNumber.value);
-        };
-    });
-
     const activeRemoteGroup = computed(() => {
         if (!isRemoteGroupSelected.value) {
             return null;
@@ -766,7 +754,7 @@
         if (!activeLocalGroupName.value) {
             return [];
         }
-        return sliceLocalWorldFavorites.value(activeLocalGroupName.value);
+        return localWorldFavorites.value[activeLocalGroupName.value] || [];
     });
 
     function handleSortFavoritesChange(value) {
@@ -807,11 +795,6 @@
         if (active && worldEditMode.value) {
             worldEditMode.value = false;
         }
-        if (!active) {
-            nextTick(() => {
-                maybeFillLocalFavoritesViewport();
-            });
-        }
     });
 
     watch(
@@ -823,29 +806,7 @@
         }
     );
 
-    watch(
-        () => ({
-            group: activeLocalGroupName.value,
-            visible: currentLocalFavorites.value.length,
-            total: activeLocalGroupCount.value,
-            slice: sliceLocalWorldFavoritesLoadMoreNumber.value,
-            isLocal: isLocalGroupSelected.value
-        }),
-        () => {
-            nextTick(() => {
-                maybeFillLocalFavoritesViewport();
-            });
-        }
-    );
-
-    onMounted(() => {
-        if (typeof window !== 'undefined') {
-            window.addEventListener('resize', maybeFillLocalFavoritesViewport);
-        }
-        nextTick(() => {
-            maybeFillLocalFavoritesViewport();
-        });
-    });
+    onMounted(() => {});
 
     function handleGroupMenuVisible(key, visible) {
         if (visible) {
@@ -916,18 +877,7 @@
         if (options.userInitiated) {
             hasUserSelectedWorldGroup.value = true;
         }
-        resetLocalFavoritesLoadMoreCounter();
         clearSelectedWorlds();
-        if (type === 'local') {
-            nextTick(() => {
-                maybeFillLocalFavoritesViewport();
-            });
-        }
-    }
-
-    function resetLocalFavoritesLoadMoreCounter() {
-        sliceLocalWorldFavoritesLoadMoreNumber.value = 60;
-        localFavoritesLoadingMore.value = false;
     }
 
     function isGroupActive(type, key) {
@@ -968,24 +918,6 @@
         nextTick(() => {
             selectGroup('local', name, { userInitiated: true });
         });
-    }
-
-    function handleLocalFavoritesScroll() {
-        if (!isLocalGroupSelected.value || isSearchActive.value) {
-            return;
-        }
-        const wrap = localFavoritesScrollbarRef.value?.viewportEl?.value;
-        if (!wrap) {
-            return;
-        }
-        const { scrollTop, clientHeight, scrollHeight } = wrap;
-        if (scrollTop + clientHeight >= scrollHeight - LOCAL_FAVORITES_SCROLL_THRESHOLD) {
-            if (loadMoreLocalWorldFavorites()) {
-                nextTick(() => {
-                    maybeFillLocalFavoritesViewport();
-                });
-            }
-        }
     }
 
     function toggleWorldSelection(id, value) {
@@ -1045,41 +977,6 @@
         });
         selectedFavoriteWorlds.value = [];
         worldEditMode.value = false;
-    }
-
-    function loadMoreLocalWorldFavorites() {
-        if (localFavoritesLoadingMore.value) {
-            return false;
-        }
-        if (sliceLocalWorldFavoritesLoadMoreNumber.value >= activeLocalGroupCount.value) {
-            return false;
-        }
-        localFavoritesLoadingMore.value = true;
-        sliceLocalWorldFavoritesLoadMoreNumber.value += LOCAL_FAVORITES_PAGE_SIZE;
-        nextTick(() => {
-            localFavoritesLoadingMore.value = false;
-        });
-        return true;
-    }
-
-    function maybeFillLocalFavoritesViewport() {
-        nextTick(() => {
-            if (!isLocalGroupSelected.value || isSearchActive.value) {
-                return;
-            }
-            const wrap = localFavoritesScrollbarRef.value?.viewportEl?.value;
-            if (!wrap) {
-                return;
-            }
-            if (wrap.scrollHeight > wrap.clientHeight + LOCAL_FAVORITES_VIEWPORT_BUFFER) {
-                return;
-            }
-            if (loadMoreLocalWorldFavorites()) {
-                nextTick(() => {
-                    maybeFillLocalFavoritesViewport();
-                });
-            }
-        });
     }
 
     function showExportDialog() {
@@ -1306,9 +1203,6 @@
 
     onBeforeUnmount(() => {
         cancelLocalWorldRefresh();
-        if (typeof window !== 'undefined') {
-            window.removeEventListener('resize', maybeFillLocalFavoritesViewport);
-        }
         if (worldSplitterObserver) {
             worldSplitterObserver.disconnect();
             worldSplitterObserver = null;

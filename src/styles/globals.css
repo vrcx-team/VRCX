@@ -205,8 +205,7 @@
 }
 
 [data-slot='table-header'],
-[data-slot='table-header'] [data-slot='table-row'],
-[data-slot='table-head'] {
+[data-slot='table-header'] [data-slot='table-row'] {
     background-color: transparent;
 }
 
