@@ -1,7 +1,5 @@
 import { createApp } from 'vue';
 
-import ElementPlus from 'element-plus';
-
 import {
     i18n,
     initComponents,
@@ -20,7 +18,7 @@ await initPiniaPlugins();
 
 const app = createApp(App);
 
-app.use(pinia).use(i18n).use(ElementPlus);
+app.use(pinia).use(i18n);
 initComponents(app);
 initRouter(app);
 await initSentry(app);

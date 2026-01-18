@@ -51,13 +51,19 @@ jobs:
                       ${{ runner.os }}-nuget-
             - name: Build Cef .NET Application
               run: dotnet build Dotnet/VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
+            - name: Check if we want to sign
+              id: check_sign
+              run: |
+                echo "sign=${{ secrets.AZURE_CLIENT_ID != '' }}" >> $GITHUB_OUTPUT
             - name: Azure login
+              if: steps.check_sign.outputs.sign == 'true'
               uses: azure/login@v2
               with:
                   client-id: ${{ secrets.AZURE_CLIENT_ID }}
                   tenant-id: ${{ secrets.AZURE_TENANT_ID }}
                   subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
             - name: Sign Dotnet executables
+              if: steps.check_sign.outputs.sign == 'true'
               uses: azure/trusted-signing-action@v0
               with:
                   azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -103,6 +109,7 @@ jobs:
                   mv Installer/VRCX_Setup.exe $file_name
             - name: Sign Cef setup
               uses: azure/trusted-signing-action@v0
+              if: steps.check_sign.outputs.sign == 'true'
               with:
                   azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
                   azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}

@@ -32,6 +32,31 @@
                     </SelectContent>
                 </Select>
             </div>
+            <div class="options-container-item">
+                <span class="name flex! items-center!">
+                    {{ t('view.settings.appearance.appearance.font_family') }}
+
+                    <TooltipWrapper
+                        side="top"
+                        style="margin-left: 5px"
+                        :content="t('view.settings.appearance.appearance.font_family_tooltip')">
+                        <Info />
+                    </TooltipWrapper>
+                </span>
+                <Select :model-value="appFontFamily" @update:modelValue="setAppFontFamily">
+                    <SelectTrigger size="sm">
+                        <SelectValue
+                            :placeholder="t(`view.settings.appearance.appearance.font_family_${appFontFamily}`)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem v-for="fontKey in appFontFamilyOptions" :key="fontKey" :value="fontKey">
+                                {{ t(`view.settings.appearance.appearance.font_family_${fontKey}`) }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </div>
             <div v-if="!isLinux" class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.zoom') }}</span>
                 <NumberField
@@ -166,10 +191,6 @@
                     </ListboxRoot>
                 </Popover>
             </div>
-            <simple-switch
-                :label="t('view.settings.appearance.appearance.compact_table_mode')"
-                :value="compactTableMode"
-                @change="setCompactTableMode" />
             <div class="options-container-item">
                 <Button size="sm" variant="outline" @click="promptMaxTableSizeDialog">{{
                     t('view.settings.appearance.appearance.table_max_size')
@@ -220,7 +241,7 @@
                         <SelectItem value="Sort by Status">{{
                             t('view.settings.appearance.side_panel.sorting.status')
                         }}</SelectItem>
-                        <SelectItem value="Sort Private to Bottom">{{
+                        <SelectItem value="Sort Private to ArrowDown">{{
                             t('view.settings.appearance.side_panel.sorting.private_to_bottom')
                         }}</SelectItem>
                         <SelectItem value="Sort by Last Active">{{
@@ -237,7 +258,7 @@
                         }}</SelectItem>
                     </SelectContent>
                 </Select>
-                <el-icon style="margin: 5px"><ArrowRight /></el-icon>
+                <ArrowRight style="margin: 5px" />
                 <Select
                     :model-value="sidebarSortMethod2"
                     :disabled="!sidebarSortMethod1"
@@ -253,7 +274,7 @@
                         <SelectItem value="Sort by Status">{{
                             t('view.settings.appearance.side_panel.sorting.status')
                         }}</SelectItem>
-                        <SelectItem value="Sort Private to Bottom">{{
+                        <SelectItem value="Sort Private to ArrowDown">{{
                             t('view.settings.appearance.side_panel.sorting.private_to_bottom')
                         }}</SelectItem>
                         <SelectItem value="Sort by Last Active">{{
@@ -270,7 +291,7 @@
                         }}</SelectItem>
                     </SelectContent>
                 </Select>
-                <el-icon style="margin: 5px"><ArrowRight /></el-icon>
+                <ArrowRight style="margin: 5px" />
                 <Select
                     :model-value="sidebarSortMethod3"
                     :disabled="!sidebarSortMethod2"
@@ -286,7 +307,7 @@
                         <SelectItem value="Sort by Status">{{
                             t('view.settings.appearance.side_panel.sorting.status')
                         }}</SelectItem>
-                        <SelectItem value="Sort Private to Bottom">{{
+                        <SelectItem value="Sort Private to ArrowDown">{{
                             t('view.settings.appearance.side_panel.sorting.private_to_bottom')
                         }}</SelectItem>
                         <SelectItem value="Sort by Last Active">{{
@@ -352,67 +373,53 @@
                 @change="updateTrustColor('', '', true)"></simple-switch>
             <div>
                 <div>
-                    <el-color-picker
+                    <PresetColorPicker
                         :model-value="trustColor.untrusted"
-                        size="small"
-                        :predefine="['#CCCCCC']"
-                        @change="updateTrustColor('untrusted', $event)">
-                    </el-color-picker>
-                    <span class="color-picker x-tag-untrusted">Visitor</span>
+                        :presets="['#CCCCCC']"
+                        @change="updateTrustColor('untrusted', $event)" />
+                    <span class="text-[18px] align-top x-tag-untrusted">Visitor</span>
                 </div>
                 <div>
-                    <el-color-picker
+                    <PresetColorPicker
                         :model-value="trustColor.basic"
-                        size="small"
-                        :predefine="['#1778ff']"
-                        @change="updateTrustColor('basic', $event)">
-                    </el-color-picker>
-                    <span class="color-picker x-tag-basic">New User</span>
+                        :presets="['#1778ff']"
+                        @change="updateTrustColor('basic', $event)" />
+                    <span class="text-[18px] align-top x-tag-basic">New User</span>
                 </div>
                 <div>
-                    <el-color-picker
+                    <PresetColorPicker
                         :model-value="trustColor.known"
-                        size="small"
-                        :predefine="['#2bcf5c']"
-                        @change="updateTrustColor('known', $event)">
-                    </el-color-picker>
-                    <span class="color-picker x-tag-known">User</span>
+                        :presets="['#2bcf5c']"
+                        @change="updateTrustColor('known', $event)" />
+                    <span class="text-[18px] align-top x-tag-known">User</span>
                 </div>
                 <div>
-                    <el-color-picker
+                    <PresetColorPicker
                         :model-value="trustColor.trusted"
-                        size="small"
-                        :predefine="['#ff7b42']"
-                        @change="updateTrustColor('trusted', $event)">
-                    </el-color-picker>
-                    <span class="color-picker x-tag-trusted">Known User</span>
+                        :presets="['#ff7b42']"
+                        @change="updateTrustColor('trusted', $event)" />
+                    <span class="text-[18px] align-top x-tag-trusted">Known User</span>
                 </div>
                 <div>
-                    <el-color-picker
+                    <PresetColorPicker
                         :model-value="trustColor.veteran"
-                        size="small"
-                        :predefine="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']"
-                        @change="updateTrustColor('veteran', $event)">
-                    </el-color-picker>
-                    <span class="color-picker x-tag-veteran">Trusted User</span>
+                        :presets="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']"
+                        @change="updateTrustColor('veteran', $event)" />
+                    <span class="text-[18px] align-top x-tag-veteran">Trusted User</span>
                 </div>
                 <div>
-                    <el-color-picker
+                    <PresetColorPicker
                         :model-value="trustColor.vip"
-                        size="small"
-                        :predefine="['#ff2626']"
-                        @change="updateTrustColor('vip', $event)">
-                    </el-color-picker>
-                    <span class="color-picker x-tag-vip">VRChat Team</span>
+                        :presets="['#ff2626']"
+                        @change="updateTrustColor('vip', $event)" />
+                    <span class="text-[18px] align-top x-tag-vip">VRChat Team</span>
                 </div>
                 <div>
-                    <el-color-picker
+                    <PresetColorPicker
                         :model-value="trustColor.troll"
-                        size="small"
-                        :predefine="['#782f2f']"
-                        @change="updateTrustColor('troll', $event)">
-                    </el-color-picker>
-                    <span class="color-picker x-tag-troll">Nuisance</span>
+                        :presets="['#782f2f']"
+                        @change="updateTrustColor('troll', $event)" />
+                    <span class="text-[18px] align-top x-tag-troll">Nuisance</span>
                 </div>
             </div>
         </div>
@@ -436,19 +443,20 @@
         TagsInputItemDelete,
         TagsInputItemText
     } from '@/components/ui/tags-input';
+    import { ArrowRight, CheckIcon, ChevronDown, Info } from 'lucide-vue-next';
     import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { computed, onBeforeUnmount, ref, watch } from 'vue';
-    import { CheckIcon, ChevronDown } from 'lucide-vue-next';
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-    import { ArrowRight } from '@element-plus/icons-vue';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import PresetColorPicker from '@/components/PresetColorPicker.vue';
+
     import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '../../../../stores';
+    import { APP_FONT_FAMILIES, THEME_CONFIG } from '../../../../shared/constants';
     import { getLanguageName, languageCodes } from '../../../../localization';
-    import { THEME_CONFIG } from '../../../../shared/constants';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 
@@ -461,6 +469,7 @@
         appLanguage,
         themeMode,
         displayVRCPlusIconsAsAvatar,
+        appFontFamily,
         hideNicknames,
         showInstanceIdInLocation,
         isAgeGatedInstancesVisible,
@@ -480,8 +489,7 @@
         randomUserColours,
         trustColor,
         notificationIconDot,
-        tablePageSizes,
-        compactTableMode
+        tablePageSizes
     } = storeToRefs(appearanceSettingsStore);
 
     const appLanguageDisplayName = computed(() => getLanguageName(String(appLanguage.value)));
@@ -511,8 +519,10 @@
         promptMaxTableSizeDialog,
         setNotificationIconDot,
         setTablePageSizes,
-        setCompactTableMode
+        setAppFontFamily
     } = appearanceSettingsStore;
+
+    const appFontFamilyOptions = APP_FONT_FAMILIES;
 
     const zoomLevel = ref(100);
     const isLinux = computed(() => LINUX);

@@ -1,37 +1,30 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="visible"
-        :title="t('dialog.group_calendar.header')"
-        width="90vw"
-        height="80vh"
-        @close="closeDialog">
-        <template #header>
-            <div class="dialog-title-container">
-                <span>{{ t('dialog.group_calendar.header') }}</span>
-                <Button size="sm" variant="outline" @click="toggleViewMode" class="view-toggle-btn">
-                    {{
-                        viewMode === 'timeline'
-                            ? t('dialog.group_calendar.list_view')
-                            : t('dialog.group_calendar.calendar_view')
-                    }}
-                </Button>
-            </div>
-            <div class="featured-switch">
-                <span class="featured-switch-text">{{ t('dialog.group_calendar.featured_events') }}</span>
-                <Switch v-model="showFeaturedEvents" @update:modelValue="toggleFeaturedEvents" />
-            </div>
-        </template>
-        <div class="top-content">
-            <transition name="el-fade-in-linear" mode="out-in">
+    <Dialog :open="visible" @update:open="(open) => (open ? null : closeDialog())">
+        <DialogContent class="x-dialog sm:max-w-[50vw] h-[60vh] overflow-hidden">
+            <DialogHeader>
+                <div class="dialog-title-container">
+                    <DialogTitle>{{ t('dialog.group_calendar.header') }}</DialogTitle>
+                    <Button size="sm" variant="outline" @click="toggleViewMode" class="view-toggle-btn">
+                        {{
+                            viewMode === 'timeline'
+                                ? t('dialog.group_calendar.list_view')
+                                : t('dialog.group_calendar.calendar_view')
+                        }}
+                    </Button>
+                </div>
+                <div class="featured-switch">
+                    <span class="featured-switch-text">{{ t('dialog.group_calendar.featured_events') }}</span>
+                    <Switch v-model="showFeaturedEvents" @update:modelValue="toggleFeaturedEvents" />
+                </div>
+            </DialogHeader>
+            <div class="top-content">
                 <div v-if="viewMode === 'timeline'" key="timeline" class="timeline-view">
                     <div class="timeline-container">
-                        <el-timeline v-if="groupedTimelineEvents.length">
-                            <el-timeline-item
-                                v-for="(timeGroup, key) of groupedTimelineEvents"
-                                :key="key"
-                                :timestamp="dayjs(timeGroup.startsAt).format('MM-DD ddd') + ' ' + timeGroup.startTime"
-                                placement="top">
+                        <div v-if="groupedTimelineEvents.length" class="timeline-list">
+                            <div v-for="(timeGroup, key) of groupedTimelineEvents" :key="key" class="timeline-group">
+                                <div class="timeline-timestamp">
+                                    {{ dayjs(timeGroup.startsAt).format('MM-DD ddd') }} {{ timeGroup.startTime }}
+                                </div>
                                 <div class="time-group-container">
                                     <GroupCalendarEventCard
                                         v-for="value in timeGroup.events"
@@ -43,35 +36,17 @@
                                         @update-following-calendar-data="updateFollowingCalendarData"
                                         @click-action="showGroupDialog(value.ownerId)" />
                                 </div>
-                            </el-timeline-item>
-                        </el-timeline>
-                        <div v-else>{{ t('dialog.group_calendar.no_events') }}</div>
+                            </div>
+                        </div>
+                        <div v-else class="timeline-empty">{{ t('dialog.group_calendar.no_events') }}</div>
                     </div>
 
                     <div class="calendar-container">
-                        <el-calendar v-model="selectedDay" v-loading="isLoading">
-                            <template #date-cell="{ data }">
-                                <div class="date">
-                                    <div
-                                        class="calendar-date-content"
-                                        :class="{
-                                            'has-events': filteredCalendar[formatDateKey(data.date)]?.length
-                                        }">
-                                        {{ dayjs(data.date).format('D') }}
-                                        <div
-                                            v-if="filteredCalendar[formatDateKey(data.date)]?.length"
-                                            class="calendar-event-badge"
-                                            :class="
-                                                followingCalendarDate[formatDateKey(data.date)]
-                                                    ? 'has-following'
-                                                    : 'no-following'
-                                            ">
-                                            {{ filteredCalendar[formatDateKey(data.date)]?.length }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-                        </el-calendar>
+                        <GroupCalendarMonth
+                            v-model="selectedDay"
+                            :is-loading="isLoading"
+                            :events-by-date="filteredCalendar"
+                            :following-by-date="followingCalendarDate" />
                     </div>
                 </div>
                 <div v-else key="grid" class="grid-view">
@@ -83,15 +58,13 @@
                             class="search-input" />
                     </div>
 
-                    <div class="groups-grid" v-loading="isLoading">
+                    <div class="groups-grid">
                         <div v-if="filteredGroupEvents.length" class="groups-container">
                             <div v-for="group in filteredGroupEvents" :key="group.groupId" class="group-row">
                                 <div class="group-header" @click="toggleGroup(group.groupId)">
-                                    <el-icon
-                                        class="el-icon-arrow-right rotation-transition"
-                                        :class="{ rotate: !groupCollapsed[group.groupId] }"
-                                        ><ArrowRight
-                                    /></el-icon>
+                                    <ArrowRight
+                                        class="rotation-transition"
+                                        :class="{ rotate: !groupCollapsed[group.groupId] }" />
                                     {{ group.groupName }}
                                 </div>
                                 <div class="events-row" v-show="!groupCollapsed[group.groupId]">
@@ -116,14 +89,15 @@
                         </div>
                     </div>
                 </div>
-            </transition>
-        </div>
-    </el-dialog>
+            </div>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, onMounted, ref, watch } from 'vue';
-    import { ArrowRight } from '@element-plus/icons-vue';
+    import { ArrowRight } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { InputGroupSearch } from '@/components/ui/input-group';
     import { useI18n } from 'vue-i18n';
@@ -137,6 +111,7 @@
     import { useGroupStore } from '../../../stores';
 
     import GroupCalendarEventCard from '../components/GroupCalendarEventCard.vue';
+    import GroupCalendarMonth from '../components/GroupCalendarMonth.vue';
     import configRepository from '../../../service/config';
 
     const { applyGroupEvent, showGroupDialog } = useGroupStore();
@@ -354,7 +329,8 @@
             .sort((a, b) => dayjs(a.startsAt).diff(dayjs(b.startsAt)));
     });
 
-    const formatDateKey = (date) => formatDateFilter(date, 'date');
+    // Use a stable key for calendar maps (independent of locale/appearance date formatting).
+    const formatDateKey = (date) => dayjs(date).format('YYYY-MM-DD');
 
     function getGroupNameFromCache(groupId) {
         if (!groupNamesCache.has(groupId)) {
@@ -470,30 +446,40 @@
 
 <style scoped>
     .x-dialog {
-        :deep(.el-dialog) {
-            max-height: 750px;
-            .el-dialog__body {
-                height: 680px;
-            }
-        }
         .top-content {
             height: 640px;
             position: relative;
             overflow: hidden;
             .timeline-view {
                 .timeline-container {
-                    :deep(.el-timeline) {
-                        width: 100%;
+                    min-width: 200px;
+                    padding-left: 4px;
+                    padding-right: 16px;
+                    margin-left: 10px;
+                    margin-right: 6px;
+                    overflow: auto;
+
+                    .timeline-list {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 14px;
+                    }
+
+                    .timeline-group {
+                        padding: 0 20px 6px 10px;
+                    }
+
+                    .timeline-timestamp {
+                        font-size: 13px;
+                        font-weight: 600;
+                        margin-bottom: 8px;
+                    }
+
+                    .timeline-empty {
                         height: 100%;
-                        min-width: 200px;
-                        padding-left: 4px;
-                        padding-right: 16px;
-                        margin-left: 10px;
-                        margin-right: 6px;
-                        overflow: auto;
-                        .el-timeline-item {
-                            padding: 0 20px 20px 10px;
-                        }
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                     }
                     .time-group-container {
                         display: flex;
@@ -522,7 +508,6 @@
                             &.has-events {
                                 background-color: var(
                                     --group-calendar-event-bg,
-                                    color-mix(in oklch, var(--el-color-primary) 10%, transparent)
                                 );
                             }
                             .calendar-event-badge {
@@ -532,21 +517,17 @@
                                 min-width: 16px;
                                 height: 16px;
                                 border-radius: 8px;
-                                color: var(--el-color-white, #fff);
                                 display: flex;
                                 align-items: center;
                                 justify-content: center;
                                 font-size: 10px;
                                 font-weight: bold;
-                                box-shadow: var(--el-box-shadow-lighter);
                                 z-index: 10;
                                 padding: 0 4px;
                                 line-height: 16px;
                                 &.has-following {
-                                    background-color: var(--group-calendar-badge-following, var(--el-color-success));
                                 }
                                 &.no-following {
-                                    background-color: var(--group-calendar-badge-normal, var(--el-color-primary));
                                 }
                             }
                         }
@@ -591,7 +572,6 @@
             height: 100%;
             display: flex;
             justify-content: center;
-            align-items: center;
         }
         .calendar-container {
             width: 609px;
@@ -610,7 +590,6 @@
         flex-direction: column;
         .search-container {
             padding: 2px 20px 12px 20px;
-            border-bottom: 1px solid var(--el-border-color-lighter);
             display: flex;
             justify-content: flex-end;
             .search-input {
@@ -630,7 +609,6 @@
                     .group-header {
                         font-size: 16px;
                         font-weight: bold;
-                        color: var(--el-text-color-primary);
                         padding: 4px 12px 10px 12px;
                         cursor: pointer;
                         border-radius: 4px;
@@ -638,11 +616,10 @@
                         display: flex;
                         align-items: center;
 
-                        .el-icon-arrow-right {
+                        .rotation-transition {
                             font-size: 14px;
                             margin-right: 8px;
                             transition: transform 0.3s;
-                            color: var(--el-color-primary);
                         }
                     }
                     .events-row {
@@ -659,7 +636,6 @@
                 align-items: center;
                 height: 200px;
                 font-size: 16px;
-                color: var(--el-text-color-secondary);
             }
         }
     }

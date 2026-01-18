@@ -1,4 +1,4 @@
-import { ArrowUpDown } from 'lucide-vue-next';
+import { ArrowUpDown, Info, Trash2 } from 'lucide-vue-next';
 
 import Location from '../../Location.vue';
 import { Button } from '../../ui/button';
@@ -57,7 +57,9 @@ export const createColumns = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt 
         },
         cell: ({ row }) => (
             <Location
-                location={row.original?.$location?.tag ?? row.original?.location}
+                location={
+                    row.original?.$location?.tag ?? row.original?.location
+                }
                 grouphint={row.original?.groupName}
                 hint={row.original?.worldName}
             />
@@ -95,7 +97,7 @@ export const createColumns = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt 
                             onShowInfo?.(original?.location);
                         }}
                     >
-                        <i class="ri-information-line"></i>
+                        <Info class="h-4 w-4" />
                     </Button>
 
                     <Button
@@ -112,7 +114,7 @@ export const createColumns = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt 
                             }
                         }}
                     >
-                        <i class="ri-delete-bin-line"></i>
+                        <Trash2 class="h-4 w-4" />
                     </Button>
                 </div>
             );

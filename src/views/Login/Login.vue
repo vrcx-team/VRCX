@@ -1,5 +1,5 @@
 <template>
-    <div style="float: left; margin: 5px; z-index: 3000">
+    <div style="float: left; margin: 5px">
         <TooltipWrapper v-if="!noUpdater" side="top" :content="t('view.login.updater')">
             <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="showVRCXUpdateDialog"
                 ><CircleArrowDown
@@ -11,7 +11,7 @@
             /></Button>
         </TooltipWrapper>
     </div>
-    <div v-loading="loginForm.loading" class="x-login-container">
+    <div class="x-login-container">
         <div class="x-login">
             <div class="x-login-form-container">
                 <div>
@@ -138,8 +138,8 @@
                                 </div>
                                 <div class="detail">
                                     <span class="name" v-text="user.user.displayName"></span>
-                                    <span class="extra" v-text="user.user.username"></span>
-                                    <span class="extra" v-text="user.loginParams.endpoint"></span>
+                                    <span class="block truncate text-xs" v-text="user.user.username"></span>
+                                    <span class="block truncate text-xs" v-text="user.loginParams.endpoint"></span>
                                 </div>
                                 <Button
                                     class="rounded-full"
@@ -147,8 +147,8 @@
                                     variant="ghost"
                                     style="margin-left: 10px"
                                     @click.stop="clickDeleteSavedLogin(user.user.id)"
-                                    ><i class="ri-delete-bin-line h-3 w-3"></i
-                                ></Button>
+                                    ><Trash2 class="h-3 w-3"
+                                /></Button>
                             </div>
                         </div>
                     </div>
@@ -179,7 +179,7 @@
 <script setup>
     import { Field, FieldContent, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
-    import { CircleArrowDown, Route } from 'lucide-vue-next';
+    import { CircleArrowDown, Route, Trash2 } from 'lucide-vue-next';
     import { Field as VeeField, useForm } from 'vee-validate';
     import { useRoute, useRouter } from 'vue-router';
     import { Button } from '@/components/ui/button';
@@ -310,3 +310,64 @@
         { deep: true }
     );
 </script>
+
+<style scoped>
+    .x-login-container {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .x-login {
+        display: grid;
+        grid-template-rows: repeat(2, auto);
+        align-items: center;
+        max-width: clamp(600px, 60svw, 800px);
+    }
+
+    .x-login-form-container {
+        display: grid;
+        gap: 8px;
+        height: 380px;
+    }
+
+    .x-login-form-container:has(> div:nth-child(3)) {
+        grid-template-columns: 1fr 1px 1fr;
+    }
+
+    .x-login-form-container > div {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        padding: 16px;
+        overflow-y: auto;
+    }
+
+    .x-scroll-wrapper {
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    hr.x-vertical-divider {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        border: 0;
+    }
+
+    .x-saved-account-list {
+        display: grid;
+    }
+
+    .x-saved-account-list > .x-friend-item {
+        width: 100%;
+    }
+
+    .x-legal-notice-container {
+        margin-top: 8px;
+    }
+</style>

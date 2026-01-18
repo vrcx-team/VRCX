@@ -1,30 +1,28 @@
 <template>
     <TooltipProvider>
-        <el-config-provider
-            :locale="/** @type {import('element-plus/es/locale').Language} */ (messages[locale].elementPlus)">
-            <MacOSTitleBar></MacOSTitleBar>
+        <MacOSTitleBar></MacOSTitleBar>
 
-            <div
-                id="x-app"
-                class="x-app"
-                :class="{ 'with-macos-titlebar': isMacOS }"
-                ondragenter="event.preventDefault()"
-                ondragover="event.preventDefault()"
-                ondrop="event.preventDefault()">
-                <RouterView></RouterView>
-                <Toaster position="top-center"></Toaster>
+        <div
+            id="x-app"
+            class="x-app"
+            :class="{ 'with-macos-titlebar': isMacOS }"
+            ondragenter="event.preventDefault()"
+            ondragover="event.preventDefault()"
+            ondrop="event.preventDefault()">
+            <RouterView></RouterView>
+            <Toaster position="top-center"></Toaster>
 
-                <AlertDialogModal></AlertDialogModal>
+            <AlertDialogModal></AlertDialogModal>
+            <PromptDialogModal></PromptDialogModal>
 
-                <VRCXUpdateDialog></VRCXUpdateDialog>
-            </div>
-        </el-config-provider>
+            <VRCXUpdateDialog></VRCXUpdateDialog>
+        </div>
+        <div id="x-dialog-portal" class="x-dialog-portal"></div>
     </TooltipProvider>
 </template>
 
 <script setup>
     import { computed, onBeforeMount, onMounted } from 'vue';
-    import { useI18n } from 'vue-i18n';
 
     import { Toaster } from './components/ui/sonner';
     import { TooltipProvider } from './components/ui/tooltip';
@@ -33,6 +31,7 @@
 
     import AlertDialogModal from './components/ui/alert-dialog/AlertDialogModal.vue';
     import MacOSTitleBar from './components/MacOSTitleBar.vue';
+    import PromptDialogModal from './components/ui/dialog/PromptDialogModal.vue';
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
 
     import '@/styles/globals.css';
@@ -41,8 +40,6 @@
     console.log(`isLinux: ${LINUX}`);
 
     const isMacOS = computed(() => navigator.platform.includes('Mac'));
-
-    const { locale, messages } = useI18n();
 
     initNoty();
 

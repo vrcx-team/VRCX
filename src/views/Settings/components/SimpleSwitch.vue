@@ -2,9 +2,9 @@
     <div class="simple-switch">
         <div class="name" :style="{ width: longLabel ? '300px' : undefined }">
             {{ label }}
-            <TooltipWrapper v-if="tooltip" side="top" :content="tooltip"
-                ><el-icon size="small" class="tooltip"><InfoFilled /></el-icon
-            ></TooltipWrapper>
+            <TooltipWrapper v-if="tooltip" side="top" :content="tooltip">
+                <Info size="small" class="tooltip" />
+            </TooltipWrapper>
         </div>
 
         <Switch class="switch" :model-value="value" @update:modelValue="change" :disabled="disabled" />
@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-    import { InfoFilled } from '@element-plus/icons-vue';
+    import { Info } from 'lucide-vue-next';
 
     import { Switch } from '../../../components/ui/switch';
     defineProps({

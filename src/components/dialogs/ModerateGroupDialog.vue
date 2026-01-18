@@ -1,58 +1,61 @@
 <template>
-    <el-dialog
-        :z-index="moderateGroupDialogIndex"
-        v-model="moderateGroupDialog.visible"
-        :title="t('dialog.moderate_group.header')"
-        width="450px"
-        append-to-body>
-        <div v-if="moderateGroupDialog.visible">
-            <div class="x-friend-item" style="cursor: default">
-                <div class="avatar">
-                    <img :src="userImage(moderateGroupDialog.userObject)" loading="lazy" />
+    <Dialog v-model:open="moderateGroupDialog.visible">
+        <DialogContent class="sm:max-w-112.5">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.moderate_group.header') }}</DialogTitle>
+            </DialogHeader>
+
+            <div v-if="moderateGroupDialog.visible">
+                <div class="x-friend-item" style="cursor: default">
+                    <div class="avatar">
+                        <img :src="userImage(moderateGroupDialog.userObject)" loading="lazy" />
+                    </div>
+                    <div class="detail">
+                        <span
+                            v-if="moderateGroupDialog.userObject.id"
+                            class="name"
+                            :style="{ color: moderateGroupDialog.userObject.$userColour }"
+                            v-text="moderateGroupDialog.userObject.displayName"></span>
+                        <span v-else v-text="moderateGroupDialog.userId"></span>
+                    </div>
                 </div>
-                <div class="detail">
-                    <span
-                        v-if="moderateGroupDialog.userObject.id"
-                        class="name"
-                        :style="{ color: moderateGroupDialog.userObject.$userColour }"
-                        v-text="moderateGroupDialog.userObject.displayName"></span>
-                    <span v-else v-text="moderateGroupDialog.userId"></span>
+
+                <div style="margin-top: 15px; width: 100%">
+                    <VirtualCombobox
+                        :model-value="moderateGroupDialog.groupId"
+                        @update:modelValue="setGroupId"
+                        :groups="groupPickerGroups"
+                        :placeholder="t('dialog.moderate_group.choose_group_placeholder')"
+                        :search-placeholder="t('dialog.moderate_group.choose_group_placeholder')"
+                        :close-on-select="true">
+                        <template #item="{ item, selected }">
+                            <div class="flex w-full items-center gap-2">
+                                <img :src="item.iconUrl" loading="lazy" class="size-5 rounded-sm" />
+                                <span class="truncate text-sm" v-text="item.label"></span>
+                                <span v-if="selected" class="ml-auto opacity-70">✓</span>
+                            </div>
+                        </template>
+                    </VirtualCombobox>
                 </div>
             </div>
 
-            <div style="margin-top: 15px; width: 100%">
-                <VirtualCombobox
-                    :model-value="moderateGroupDialog.groupId"
-                    @update:modelValue="setGroupId"
-                    :groups="groupPickerGroups"
-                    :placeholder="t('dialog.moderate_group.choose_group_placeholder')"
-                    :search-placeholder="t('dialog.moderate_group.choose_group_placeholder')"
-                    :close-on-select="true">
-                    <template #item="{ item, selected }">
-                        <div class="flex w-full items-center gap-2">
-                            <img :src="item.iconUrl" loading="lazy" class="size-5 rounded-sm" />
-                            <span class="truncate text-sm" v-text="item.label"></span>
-                            <span v-if="selected" class="ml-auto opacity-70">✓</span>
-                        </div>
-                    </template>
-                </VirtualCombobox>
-            </div>
-        </div>
-        <template #footer>
-            <Button
-                :disabled="!moderateGroupDialog.userId || !moderateGroupDialog.groupId"
-                @click="
-                    showGroupMemberModerationDialog(moderateGroupDialog.groupId, moderateGroupDialog.userId);
-                    moderateGroupDialog.visible = false;
-                ">
-                {{ t('dialog.moderate_group.moderation_tools') }}
-            </Button>
-        </template>
-    </el-dialog>
+            <DialogFooter>
+                <Button
+                    :disabled="!moderateGroupDialog.userId || !moderateGroupDialog.groupId"
+                    @click="
+                        showGroupMemberModerationDialog(moderateGroupDialog.groupId, moderateGroupDialog.userId);
+                        moderateGroupDialog.visible = false;
+                    ">
+                    {{ t('dialog.moderate_group.moderation_tools') }}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
-    import { computed, nextTick, ref, watch } from 'vue';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { computed, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -60,7 +63,6 @@
     import { groupRequest, userRequest } from '../../api';
     import { hasGroupModerationPermission, userImage } from '../../shared/utils';
     import { VirtualCombobox } from '../ui/virtual-combobox';
-    import { getNextDialogIndex } from '../../shared/utils/base/ui';
     import { useGroupStore } from '../../stores';
 
     const { currentUserGroups, moderateGroupDialog } = storeToRefs(useGroupStore());
@@ -99,12 +101,7 @@
         }
     );
 
-    const moderateGroupDialogIndex = ref(2000);
-
     function initDialog() {
-        nextTick(() => {
-            moderateGroupDialogIndex.value = getNextDialogIndex();
-        });
         const D = moderateGroupDialog.value;
         if (D.groupId) {
             groupRequest

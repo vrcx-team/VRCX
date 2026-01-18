@@ -1,41 +1,47 @@
 <template>
-    <el-dialog
-        v-model="isDialogVisible"
-        class="x-dialog"
-        :title="t('dialog.friend_export.header')"
-        width="650px"
-        destroy-on-close>
-        <Select :model-value="friendExportFavoriteGroupSelection" @update:modelValue="handleFriendExportGroupSelect">
-            <SelectTrigger size="sm">
-                <SelectValue placeholder="All Favorites" />
-            </SelectTrigger>
-            <SelectContent>
-                <SelectGroup>
-                    <SelectItem :value="FRIEND_EXPORT_ALL_VALUE">All Favorites</SelectItem>
-                    <SelectItem v-for="groupAPI in favoriteFriendGroups" :key="groupAPI.name" :value="groupAPI.name">
-                        {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                    </SelectItem>
-                </SelectGroup>
-            </SelectContent>
-        </Select>
+    <Dialog v-model:open="isDialogVisible">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.friend_export.header') }}</DialogTitle>
+            </DialogHeader>
+            <Select
+                :model-value="friendExportFavoriteGroupSelection"
+                @update:modelValue="handleFriendExportGroupSelect">
+                <SelectTrigger size="sm">
+                    <SelectValue placeholder="All Favorites" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectItem :value="FRIEND_EXPORT_ALL_VALUE">All Favorites</SelectItem>
+                        <SelectItem
+                            v-for="groupAPI in favoriteFriendGroups"
+                            :key="groupAPI.name"
+                            :value="groupAPI.name">
+                            {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                        </SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
 
-        <br />
+            <br />
 
-        <InputGroupTextareaField
-            v-model="friendExportContent"
-            :rows="15"
-            readonly
-            style="margin-top: 15px"
-            input-class="resize-none"
-            @click="handleCopyFriendExportData" />
-    </el-dialog>
+            <InputGroupTextareaField
+                v-model="friendExportContent"
+                :rows="15"
+                readonly
+                style="margin-top: 15px"
+                input-class="resize-none"
+                @click="handleCopyFriendExportData" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
-    import { storeToRefs } from 'pinia';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
+    import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 

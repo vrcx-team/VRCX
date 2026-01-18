@@ -1,131 +1,144 @@
 <template>
-    <el-dialog
-        v-model="groupPostEditDialog.visible"
-        :title="t('dialog.group_post_edit.header')"
-        width="650px"
-        append-to-body>
-        <div v-if="groupPostEditDialog.visible">
-            <FieldGroup class="gap-4">
-                <Field>
-                    <FieldLabel>{{ t('dialog.group_post_edit.title') }}</FieldLabel>
-                    <FieldContent>
-                        <InputGroupField v-model="groupPostEditDialog.title" size="sm" />
-                    </FieldContent>
-                </Field>
-                <Field>
-                    <FieldLabel>{{ t('dialog.group_post_edit.message') }}</FieldLabel>
-                    <FieldContent>
-                        <InputGroupTextareaField
-                            v-model="groupPostEditDialog.text"
-                            :rows="4"
-                            style="margin-top: 10px"
-                            input-class="resize-none" />
-                    </FieldContent>
-                </Field>
-                <Field v-if="!groupPostEditDialog.postId">
-                    <FieldLabel class="sr-only">{{ t('dialog.group_post_edit.send_notification') }}</FieldLabel>
-                    <FieldContent>
-                        <label class="inline-flex items-center gap-2">
-                            <Checkbox v-model="groupPostEditDialog.sendNotification" />
-                            <span>{{ t('dialog.group_post_edit.send_notification') }}</span>
-                        </label>
-                    </FieldContent>
-                </Field>
-                <Field>
-                    <FieldLabel>{{ t('dialog.group_post_edit.post_visibility') }}</FieldLabel>
-                    <FieldContent>
-                        <RadioGroup v-model="groupPostEditDialog.visibility" class="flex items-center gap-4">
-                            <div class="flex items-center space-x-2">
-                                <RadioGroupItem id="groupPostVisibility-public" value="public" />
-                                <label for="groupPostVisibility-public">
-                                    {{ t('dialog.group_post_edit.visibility_public') }}
-                                </label>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <RadioGroupItem id="groupPostVisibility-group" value="group" />
-                                <label for="groupPostVisibility-group">
-                                    {{ t('dialog.group_post_edit.visibility_group') }}
-                                </label>
-                            </div>
-                        </RadioGroup>
-                    </FieldContent>
-                </Field>
-                <Field v-if="groupPostEditDialog.visibility === 'group'">
-                    <FieldLabel>{{ t('dialog.new_instance.roles') }}</FieldLabel>
-                    <FieldContent>
-                        <Select
-                            multiple
-                            :model-value="Array.isArray(groupPostEditDialog.roleIds) ? groupPostEditDialog.roleIds : []"
-                            @update:modelValue="handleRoleIdsChange">
-                            <SelectTrigger size="sm" class="w-full">
-                                <SelectValue>
-                                    <span class="truncate">
-                                        {{ selectedRoleSummary || t('dialog.new_instance.role_placeholder') }}
-                                    </span>
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectItem
-                                        v-for="role in groupPostEditDialog.groupRef?.roles ?? []"
-                                        :key="role.id"
-                                        :value="role.id">
-                                        {{ role.name }}
-                                    </SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    </FieldContent>
-                </Field>
-                <Field>
-                    <FieldLabel>{{ t('dialog.group_post_edit.image') }}</FieldLabel>
-                    <FieldContent>
-                        <template v-if="gallerySelectDialog.selectedFileId">
-                            <div style="display: inline-block; flex: none; margin-right: 5px">
-                                <img
-                                    :src="gallerySelectDialog.selectedImageUrl"
-                                    style="flex: none; width: 60px; height: 60px; border-radius: 4px; object-fit: cover"
-                                    @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)"
-                                    loading="lazy" />
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    style="vertical-align: top"
-                                    @click="clearImageGallerySelect">
-                                    {{ t('dialog.invite_message.clear_selected_image') }}
+    <Dialog v-model:open="groupPostEditDialog.visible">
+        <DialogContent class="sm:max-w-162.5">
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.group_post_edit.header') }}</DialogTitle>
+            </DialogHeader>
+
+            <div v-if="groupPostEditDialog.visible">
+                <FieldGroup class="gap-4">
+                    <Field>
+                        <FieldLabel>{{ t('dialog.group_post_edit.title') }}</FieldLabel>
+                        <FieldContent>
+                            <InputGroupField v-model="groupPostEditDialog.title" size="sm" />
+                        </FieldContent>
+                    </Field>
+                    <Field>
+                        <FieldLabel>{{ t('dialog.group_post_edit.message') }}</FieldLabel>
+                        <FieldContent>
+                            <InputGroupTextareaField
+                                v-model="groupPostEditDialog.text"
+                                :rows="4"
+                                style="margin-top: 10px"
+                                input-class="resize-none" />
+                        </FieldContent>
+                    </Field>
+                    <Field v-if="!groupPostEditDialog.postId">
+                        <FieldLabel class="sr-only">{{ t('dialog.group_post_edit.send_notification') }}</FieldLabel>
+                        <FieldContent>
+                            <label class="inline-flex items-center gap-2">
+                                <Checkbox v-model="groupPostEditDialog.sendNotification" />
+                                <span>{{ t('dialog.group_post_edit.send_notification') }}</span>
+                            </label>
+                        </FieldContent>
+                    </Field>
+                    <Field>
+                        <FieldLabel>{{ t('dialog.group_post_edit.post_visibility') }}</FieldLabel>
+                        <FieldContent>
+                            <RadioGroup v-model="groupPostEditDialog.visibility" class="flex items-center gap-4">
+                                <div class="flex items-center space-x-2">
+                                    <RadioGroupItem id="groupPostVisibility-public" value="public" />
+                                    <label for="groupPostVisibility-public">
+                                        {{ t('dialog.group_post_edit.visibility_public') }}
+                                    </label>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <RadioGroupItem id="groupPostVisibility-group" value="group" />
+                                    <label for="groupPostVisibility-group">
+                                        {{ t('dialog.group_post_edit.visibility_group') }}
+                                    </label>
+                                </div>
+                            </RadioGroup>
+                        </FieldContent>
+                    </Field>
+                    <Field v-if="groupPostEditDialog.visibility === 'group'">
+                        <FieldLabel>{{ t('dialog.new_instance.roles') }}</FieldLabel>
+                        <FieldContent>
+                            <Select
+                                multiple
+                                :model-value="
+                                    Array.isArray(groupPostEditDialog.roleIds) ? groupPostEditDialog.roleIds : []
+                                "
+                                @update:modelValue="handleRoleIdsChange">
+                                <SelectTrigger size="sm" class="w-full">
+                                    <SelectValue>
+                                        <span class="truncate">
+                                            {{ selectedRoleSummary || t('dialog.new_instance.role_placeholder') }}
+                                        </span>
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectItem
+                                            v-for="role in groupPostEditDialog.groupRef?.roles ?? []"
+                                            :key="role.id"
+                                            :value="role.id">
+                                            {{ role.name }}
+                                        </SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </FieldContent>
+                    </Field>
+                    <Field>
+                        <FieldLabel>{{ t('dialog.group_post_edit.image') }}</FieldLabel>
+                        <FieldContent>
+                            <template v-if="gallerySelectDialog.selectedFileId">
+                                <div style="display: inline-block; flex: none; margin-right: 5px">
+                                    <img
+                                        :src="gallerySelectDialog.selectedImageUrl"
+                                        style="
+                                            flex: none;
+                                            width: 60px;
+                                            height: 60px;
+                                            border-radius: 4px;
+                                            object-fit: cover;
+                                        "
+                                        @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)"
+                                        loading="lazy" />
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        style="vertical-align: top"
+                                        @click="clearImageGallerySelect">
+                                        {{ t('dialog.invite_message.clear_selected_image') }}
+                                    </Button>
+                                </div>
+                            </template>
+                            <template v-else>
+                                <Button size="sm" variant="outline" @click="showGallerySelectDialog">
+                                    {{ t('dialog.invite_message.select_image') }}
                                 </Button>
-                            </div>
-                        </template>
-                        <template v-else>
-                            <Button size="sm" variant="outline" @click="showGallerySelectDialog">
-                                {{ t('dialog.invite_message.select_image') }}
-                            </Button>
-                        </template>
-                    </FieldContent>
-                </Field>
-            </FieldGroup>
-        </div>
-        <template #footer>
-            <div class="flex gap-2">
-                <Button variant="secondary" @click="groupPostEditDialog.visible = false">
-                    {{ t('dialog.group_post_edit.cancel') }}
-                </Button>
-                <Button v-if="groupPostEditDialog.postId" @click="editGroupPost">
-                    {{ t('dialog.group_post_edit.edit_post') }}
-                </Button>
-                <Button v-else @click="createGroupPost">
-                    {{ t('dialog.group_post_edit.create_post') }}
-                </Button>
+                            </template>
+                        </FieldContent>
+                    </Field>
+                </FieldGroup>
             </div>
-        </template>
-        <GallerySelectDialog
-            :gallery-select-dialog="gallerySelectDialog"
-            :gallery-table="galleryTable"
-            @refresh-gallery-table="refreshGalleryTable" />
-    </el-dialog>
+
+            <DialogFooter>
+                <div class="flex gap-2">
+                    <Button variant="secondary" @click="groupPostEditDialog.visible = false">
+                        {{ t('dialog.group_post_edit.cancel') }}
+                    </Button>
+                    <Button v-if="groupPostEditDialog.postId" @click="editGroupPost">
+                        {{ t('dialog.group_post_edit.edit_post') }}
+                    </Button>
+                    <Button v-else @click="createGroupPost">
+                        {{ t('dialog.group_post_edit.create_post') }}
+                    </Button>
+                </div>
+            </DialogFooter>
+
+            <GallerySelectDialog
+                :gallery-select-dialog="gallerySelectDialog"
+                :gallery-table="galleryTable"
+                @refresh-gallery-table="refreshGalleryTable" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { computed, ref } from 'vue';

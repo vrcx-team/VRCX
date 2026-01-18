@@ -1,4 +1,4 @@
-import { ArrowUpDown } from 'lucide-vue-next';
+import { ArrowUpDown, Info, Trash2 } from 'lucide-vue-next';
 
 import DisplayName from '../../DisplayName.vue';
 import LocationWorld from '../../LocationWorld.vue';
@@ -116,7 +116,7 @@ export const createColumns = ({
                             onShowInfo?.(original?.location);
                         }}
                     >
-                        <i class="ri-information-line"></i>
+                        <Info class="h-4 w-4" />
                     </Button>
 
                     <Button
@@ -133,7 +133,7 @@ export const createColumns = ({
                             }
                         }}
                     >
-                        <i class="ri-delete-bin-line"></i>
+                        <Trash2 class="h-4 w-4" />
                     </Button>
                 </div>
             );

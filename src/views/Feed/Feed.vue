@@ -135,9 +135,3 @@
         table.setPageSize(size);
     });
 </script>
-
-<style scoped>
-    .table-user {
-        color: var(--x-table-user-text-color) !important;
-    }
-</style>

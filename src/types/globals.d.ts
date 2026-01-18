@@ -408,10 +408,11 @@ declare global {
             uploadFilePUT?: boolean;
             fileData?: string;
             fileMIME?: string;
+            fileMD5?: string;
             headers?: Record<string, string>;
             data?: any;
         }): Promise<{ status: number; data: string }>;
     };
 }
 
-export { };
+export {};

@@ -4,13 +4,15 @@
             <template #content>
                 <span>{{ t('dialog.user.info.last_join') }} <Timer :epoch="lastJoin" /></span>
             </template>
-            <i class="ri-map-pin-time-line text-muted-foreground"></i>
+            <MapPin class="h-4 w-4 text-muted-foreground" />
         </TooltipWrapper>
     </span>
 </template>
 
 <script setup>
+    // TODO(icon): time aspect lost (map pin with time)
     import { ref, watch } from 'vue';
+    import { MapPin } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

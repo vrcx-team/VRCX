@@ -1,5 +1,4 @@
 import { computed, ref, watch } from 'vue';
-import { ElMessageBox } from 'element-plus';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -13,6 +12,7 @@ import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAvatarStore } from './avatar';
 import { useFriendStore } from './friend';
 import { useGroupStore } from './group';
+import { useModalStore } from './modal';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
 import { watchState } from '../service/watchState';
@@ -25,6 +25,7 @@ export const useSearchStore = defineStore('Search', () => {
     const worldStore = useWorldStore();
     const avatarStore = useAvatarStore();
     const groupStore = useGroupStore();
+    const modalStore = useModalStore();
     const { t } = useI18n();
 
     const searchText = ref('');
@@ -350,22 +351,20 @@ export const useSearchStore = defineStore('Search', () => {
     async function promptOmniDirectDialog() {
         if (directAccessPrompt.value) return;
 
-        directAccessPrompt.value = ElMessageBox.prompt(
-            t('prompt.direct_access_omni.description'),
-            t('prompt.direct_access_omni.header'),
-            {
-                distinguishCancelAndClose: true,
-                confirmButtonText: t('prompt.direct_access_omni.ok'),
-                cancelButtonText: t('prompt.direct_access_omni.cancel'),
-                inputPattern: /\S+/,
-                inputErrorMessage: t('prompt.direct_access_omni.input_error')
-            }
-        );
+        // Element Plus: prompt(message, title, options)
+        directAccessPrompt.value = modalStore.prompt({
+            title: t('prompt.direct_access_omni.header'),
+            description: t('prompt.direct_access_omni.description'),
+            confirmText: t('prompt.direct_access_omni.ok'),
+            cancelText: t('prompt.direct_access_omni.cancel'),
+            pattern: /\S+/,
+            errorMessage: t('prompt.direct_access_omni.input_error')
+        });
 
         try {
-            const { value, action } = await directAccessPrompt.value;
+            const { ok, value } = await directAccessPrompt.value;
 
-            if (action === 'confirm' && value) {
+            if (ok && value) {
                 const input = value.trim();
                 if (!directAccessParse(input)) {
                     toast.error(t('prompt.direct_access_omni.message.error'));

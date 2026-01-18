@@ -1,64 +1,71 @@
 <template>
-    <el-dialog v-model="isDialogVisible" :title="t('dialog.avatar_export.header')" width="650px">
-        <div style="margin-bottom: 10px" class="flex flex-col gap-2">
-            <label v-for="option in exportSelectOptions" :key="option.value" class="inline-flex items-center gap-2">
-                <Checkbox
-                    :model-value="exportSelectedOptions.includes(option.label)"
-                    @update:modelValue="(val) => toggleAvatarExportOption(option.label, val)" />
-                <span>{{ option.label }}</span>
-            </label>
-        </div>
+    <Dialog v-model:open="isDialogVisible">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.avatar_export.header') }}</DialogTitle>
+            </DialogHeader>
 
-        <div class="flex items-center gap-2">
-            <Select
-                :model-value="avatarExportFavoriteGroupSelection"
-                @update:modelValue="handleAvatarExportFavoriteGroupSelect">
-                <SelectTrigger size="sm">
-                    <SelectValue placeholder="All Favorites" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectItem :value="AVATAR_EXPORT_ALL_VALUE">All Favorites</SelectItem>
-                        <SelectItem
-                            v-for="groupAPI in favoriteAvatarGroups"
-                            :key="groupAPI.name"
-                            :value="groupAPI.name">
-                            {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                        </SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
+            <div style="margin-bottom: 10px" class="flex flex-col gap-2">
+                <label v-for="option in exportSelectOptions" :key="option.value" class="inline-flex items-center gap-2">
+                    <Checkbox
+                        :model-value="exportSelectedOptions.includes(option.label)"
+                        @update:modelValue="(val) => toggleAvatarExportOption(option.label, val)" />
+                    <span>{{ option.label }}</span>
+                </label>
+            </div>
 
-            <Select
-                :model-value="avatarExportLocalFavoriteGroupSelection"
-                @update:modelValue="handleAvatarExportLocalFavoriteGroupSelect"
-                style="margin-left: 10px">
-                <SelectTrigger size="sm">
-                    <SelectValue placeholder="Select Group" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectItem :value="AVATAR_EXPORT_NONE_VALUE">None</SelectItem>
-                        <SelectItem v-for="group in localAvatarFavoriteGroups" :key="group" :value="group">
-                            {{ group }} ({{ localAvatarFavGroupLength(group) }})
-                        </SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
-        </div>
-        <br />
-        <InputGroupTextareaField
-            v-model="avatarExportContent"
-            :rows="15"
-            readonly
-            style="margin-top: 15px"
-            input-class="resize-none"
-            @click="handleCopyAvatarExportData" />
-    </el-dialog>
+            <div class="flex items-center gap-2">
+                <Select
+                    :model-value="avatarExportFavoriteGroupSelection"
+                    @update:modelValue="handleAvatarExportFavoriteGroupSelect">
+                    <SelectTrigger size="sm">
+                        <SelectValue placeholder="All Favorites" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem :value="AVATAR_EXPORT_ALL_VALUE">All Favorites</SelectItem>
+                            <SelectItem
+                                v-for="groupAPI in favoriteAvatarGroups"
+                                :key="groupAPI.name"
+                                :value="groupAPI.name">
+                                {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+
+                <Select
+                    :model-value="avatarExportLocalFavoriteGroupSelection"
+                    @update:modelValue="handleAvatarExportLocalFavoriteGroupSelect"
+                    style="margin-left: 10px">
+                    <SelectTrigger size="sm">
+                        <SelectValue placeholder="Select Group" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem :value="AVATAR_EXPORT_NONE_VALUE">None</SelectItem>
+                            <SelectItem v-for="group in localAvatarFavoriteGroups" :key="group" :value="group">
+                                {{ group }} ({{ localAvatarFavGroupLength(group) }})
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </div>
+            <br />
+            <InputGroupTextareaField
+                v-model="avatarExportContent"
+                :rows="15"
+                readonly
+                style="margin-top: 15px"
+                input-class="resize-none"
+                @click="handleCopyAvatarExportData" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupTextareaField } from '@/components/ui/input-group';

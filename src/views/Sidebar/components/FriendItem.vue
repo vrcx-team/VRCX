@@ -14,25 +14,30 @@
                     >{{ friend.ref.displayName }}{{ isGroupByInstance && friend.isVIP ? ' ⭐' : '' }}</span
                 >
 
-                <span v-if="isFriendActiveOrOffline" class="extra">{{ friend.ref.statusDescription }}</span>
+                <span v-if="isFriendActiveOrOffline" class="block truncate text-xs">{{
+                    friend.ref.statusDescription
+                }}</span>
                 <template v-else>
-                    <div v-if="friend.pendingOffline" class="extra">
-                        <el-icon><WarningFilled /></el-icon> {{ t('side_panel.pending_offline') }}
+                    <div v-if="friend.pendingOffline" class="text-xs">
+                        {{ t('side_panel.pending_offline') }}
                     </div>
                     <template v-else-if="isGroupByInstance">
                         <div class="flex items-center">
-                            <el-icon v-if="isFriendTraveling" class="is-loading" style="margin-right: 3px"
-                                ><Loading
-                            /></el-icon>
+                            <Loader2 v-if="isFriendTraveling" class="is-loading" style="margin-right: 3px" />
                             <Timer
-                                class="extra"
+                                class="text-xs"
                                 :epoch="epoch"
                                 :style="
                                     isFriendTraveling ? { display: 'inline-block', overflow: 'unset' } : undefined
                                 " />
                         </div>
                     </template>
-                    <Location v-else class="extra" :location="locationProp" :traveling="travelingProp" :link="false" />
+                    <Location
+                        v-else
+                        class="text-xs"
+                        :location="locationProp"
+                        :traveling="travelingProp"
+                        :link="false" />
                 </template>
             </div>
         </template>
@@ -43,26 +48,24 @@
                 variant="ghost"
                 class="mr-1 w-6 h-6 text-xs"
                 @click.stop="$emit('confirm-delete-friend', friend.id)"
-                ><i class="ri-delete-bin-2-line"></i>
+                ><Trash2 class="h-4 w-4" />
             </Button>
         </template>
 
-        <el-skeleton v-else animated class="skeleton" :throttle="100">
-            <template #template>
+        <!-- <div v-else class="skeleton" aria-busy="true" aria-label="Loading">
+            <div>
+                <Skeleton class="h-10 w-10 rounded-full" />
                 <div>
-                    <el-skeleton-item variant="circle" />
-                    <div>
-                        <el-skeleton-item variant="text" />
-                        <el-skeleton-item variant="text" />
-                    </div>
+                    <Skeleton class="h-3.5 w-1/2" />
+                    <Skeleton class="mt-1.5 h-3 w-full" />
                 </div>
-            </template>
-        </el-skeleton>
+            </div>
+        </div> -->
     </div>
 </template>
 
 <script setup>
-    import { Loading, WarningFilled } from '@element-plus/icons-vue';
+    import { Loader2, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
@@ -92,37 +95,3 @@
     const locationProp = computed(() => props.friend.ref?.location || '');
     const travelingProp = computed(() => props.friend.ref?.travelingToLocation || '');
 </script>
-
-<style>
-    .skeleton {
-        height: 40px;
-        width: 100%;
-        & > div {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            & > div {
-                width: calc(100% - 48px);
-                height: 100%;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-        }
-        .el-skeleton__circle {
-            height: 40px;
-            width: 40px;
-        }
-        .el-skeleton__text {
-            &:first-child {
-                height: 14px;
-                margin-bottom: 6px;
-                width: 50%;
-            }
-            &:last-child {
-                height: 12px;
-            }
-        }
-    }
-</style>

@@ -1,25 +1,27 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="sendInviteResponseConfirmDialog.visible"
-        :title="t('dialog.invite_response_message.header')"
-        width="400px"
-        append-to-body
-        @close="cancelInviteResponseConfirm">
-        <div style="font-size: 12px">
-            <span>{{ t('dialog.invite_response_message.confirmation') }}</span>
-        </div>
+    <Dialog
+        :open="sendInviteResponseConfirmDialog.visible"
+        @update:open="(open) => (open ? null : cancelInviteResponseConfirm())">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.invite_response_message.header') }}</DialogTitle>
+            </DialogHeader>
+            <div style="font-size: 12px">
+                <span>{{ t('dialog.invite_response_message.confirmation') }}</span>
+            </div>
 
-        <template #footer>
-            <Button variant="secondary" class="mr-2" @click="cancelInviteResponseConfirm">{{
-                t('dialog.invite_response_message.cancel')
-            }}</Button>
-            <Button @click="sendInviteResponseConfirm">{{ t('dialog.invite_response_message.confirm') }}</Button>
-        </template>
-    </el-dialog>
+            <DialogFooter>
+                <Button variant="secondary" class="mr-2" @click="cancelInviteResponseConfirm">{{
+                    t('dialog.invite_response_message.cancel')
+                }}</Button>
+                <Button @click="sendInviteResponseConfirm">{{ t('dialog.invite_response_message.confirm') }}</Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

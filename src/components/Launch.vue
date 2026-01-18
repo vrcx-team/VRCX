@@ -3,17 +3,18 @@
         <TooltipWrapper side="top" :content="t('dialog.user.info.launch_invite_tooltip')"
             ><Button
                 class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
-                size="icon"
+                size="icon-sm"
                 variant="outline"
                 @click="confirm"
-                ><i class="ri-login-box-line"></i
-            ></Button>
+                ><LogIn />
+            </Button>
         </TooltipWrapper>
     </div>
 </template>
 
 <script setup>
     import { Button } from '@/components/ui/button';
+    import { LogIn } from 'lucide-vue-next';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
 

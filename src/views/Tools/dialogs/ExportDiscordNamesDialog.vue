@@ -1,26 +1,27 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="discordNamesDialogVisible"
-        :title="t('dialog.discord_names.header')"
-        width="650px"
-        @close="closeDialog">
-        <div style="font-size: 12px">
-            {{ t('dialog.discord_names.description') }}
-        </div>
-        <InputGroupTextareaField
-            v-model="discordNamesContent"
-            :rows="15"
-            readonly
-            style="margin-top: 15px"
-            input-class="resize-none" />
-    </el-dialog>
+    <Dialog :open="discordNamesDialogVisible" @update:open="(open) => !open && closeDialog()">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.discord_names.header') }}</DialogTitle>
+            </DialogHeader>
+            <div style="font-size: 12px">
+                {{ t('dialog.discord_names.description') }}
+            </div>
+            <InputGroupTextareaField
+                v-model="discordNamesContent"
+                :rows="15"
+                readonly
+                style="margin-top: 15px"
+                input-class="resize-none" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { ref, watch } from 'vue';
-    import { storeToRefs } from 'pinia';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { useUserStore } from '../../../stores';

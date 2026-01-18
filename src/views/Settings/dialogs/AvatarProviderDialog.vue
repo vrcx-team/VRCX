@@ -1,33 +1,34 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="isAvatarProviderDialogVisible"
-        :title="t('dialog.avatar_database_provider.header')"
-        width="600px"
-        @close="closeDialog">
-        <div>
-            <InputGroupAction
-                v-for="(provider, index) in avatarRemoteDatabaseProviderList"
-                :key="index"
-                v-model="avatarRemoteDatabaseProviderList[index]"
-                size="sm"
-                style="margin-top: 5px"
-                @change="saveAvatarProviderList">
-                <template #actions>
-                    <Button variant="outline" size="icon" @click="removeAvatarProvider(provider)">
-                        <Trash2 />
-                    </Button>
-                </template>
-            </InputGroupAction>
+    <Dialog :open="isAvatarProviderDialogVisible" @update:open="(open) => (open ? null : closeDialog())">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.avatar_database_provider.header') }}</DialogTitle>
+            </DialogHeader>
+            <div>
+                <InputGroupAction
+                    v-for="(provider, index) in avatarRemoteDatabaseProviderList"
+                    :key="index"
+                    v-model="avatarRemoteDatabaseProviderList[index]"
+                    size="sm"
+                    style="margin-top: 5px"
+                    @change="saveAvatarProviderList">
+                    <template #actions>
+                        <Button variant="outline" size="icon" @click="removeAvatarProvider(provider)">
+                            <Trash2 />
+                        </Button>
+                    </template>
+                </InputGroupAction>
 
-            <Button size="sm" style="margin-top: 5px" @click="avatarRemoteDatabaseProviderList.push('')">
-                {{ t('dialog.avatar_database_provider.add_provider') }}
-            </Button>
-        </div>
-    </el-dialog>
+                <Button size="sm" style="margin-top: 5px" @click="avatarRemoteDatabaseProviderList.push('')">
+                    {{ t('dialog.avatar_database_provider.add_provider') }}
+                </Button>
+            </div>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { InputGroupAction } from '@/components/ui/input-group';
     import { Trash2 } from 'lucide-vue-next';

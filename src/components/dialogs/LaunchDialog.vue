@@ -1,70 +1,74 @@
 <template>
-    <el-dialog :z-index="launchDialogIndex" v-model="isVisible" :title="t('dialog.launch.header')" width="450px">
-        <FieldGroup class="gap-4">
-            <Field>
-                <FieldLabel>{{ t('dialog.launch.url') }}</FieldLabel>
-                <FieldContent class="flex-row items-center gap-2">
-                    <InputGroupField
-                        v-model="launchDialog.url"
-                        size="sm"
-                        @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                    <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
-                        <Button
-                            class="rounded-full"
-                            size="icon-sm"
-                            variant="ghost"
-                            @click="copyInstanceMessage(launchDialog.url)"
-                            ><Copy
-                        /></Button>
-                    </TooltipWrapper>
-                </FieldContent>
-            </Field>
-            <Field v-if="launchDialog.shortUrl">
-                <FieldLabel>
-                    <span class="flex items-center gap-1">
-                        <span>{{ t('dialog.launch.short_url') }}</span>
-                        <TooltipWrapper side="top" :content="t('dialog.launch.short_url_notice')">
-                            <el-icon><Warning /></el-icon>
+    <Dialog v-model:open="isVisible">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.launch.header') }}</DialogTitle>
+                <DialogDescription class="sr-only">{{ t('dialog.launch.header') }}</DialogDescription>
+            </DialogHeader>
+            <FieldGroup class="gap-4">
+                <Field>
+                    <FieldLabel>{{ t('dialog.launch.url') }}</FieldLabel>
+                    <FieldContent class="flex-row items-center gap-2">
+                        <InputGroupField
+                            v-model="launchDialog.url"
+                            size="sm"
+                            @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
+                        <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
+                            <Button
+                                class="rounded-full"
+                                size="icon-sm"
+                                variant="ghost"
+                                @click="copyInstanceMessage(launchDialog.url)"
+                                ><Copy
+                            /></Button>
                         </TooltipWrapper>
-                    </span>
-                </FieldLabel>
-                <FieldContent class="flex-row items-center gap-2">
-                    <InputGroupField
-                        v-model="launchDialog.shortUrl"
-                        size="sm"
-                        @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                    <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
-                        <Button
-                            class="rounded-full"
-                            size="icon-sm"
-                            variant="ghost"
-                            @click="copyInstanceMessage(launchDialog.shortUrl)"
-                            ><Copy
-                        /></Button>
-                    </TooltipWrapper>
-                </FieldContent>
-            </Field>
-            <Field>
-                <FieldLabel>{{ t('dialog.launch.location') }}</FieldLabel>
-                <FieldContent class="flex-row items-center gap-2">
-                    <InputGroupField
-                        v-model="launchDialog.location"
-                        size="sm"
-                        @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                    <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
-                        <Button
-                            class="rounded-full"
-                            size="icon-sm"
-                            variant="ghost"
-                            @click="copyInstanceMessage(launchDialog.location)"
-                            ><Copy
-                        /></Button>
-                    </TooltipWrapper>
-                </FieldContent>
-            </Field>
-        </FieldGroup>
-        <template #footer>
-            <div class="flex justify-end">
+                    </FieldContent>
+                </Field>
+                <Field v-if="launchDialog.shortUrl">
+                    <FieldLabel>
+                        <span class="flex items-center gap-1">
+                            <span>{{ t('dialog.launch.short_url') }}</span>
+                            <TooltipWrapper side="top" :content="t('dialog.launch.short_url_notice')">
+                                <AlertTriangle />
+                            </TooltipWrapper>
+                        </span>
+                    </FieldLabel>
+                    <FieldContent class="flex-row items-center gap-2">
+                        <InputGroupField
+                            v-model="launchDialog.shortUrl"
+                            size="sm"
+                            @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
+                        <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
+                            <Button
+                                class="rounded-full"
+                                size="icon-sm"
+                                variant="ghost"
+                                @click="copyInstanceMessage(launchDialog.shortUrl)"
+                                ><Copy
+                            /></Button>
+                        </TooltipWrapper>
+                    </FieldContent>
+                </Field>
+                <Field>
+                    <FieldLabel>{{ t('dialog.launch.location') }}</FieldLabel>
+                    <FieldContent class="flex-row items-center gap-2">
+                        <InputGroupField
+                            v-model="launchDialog.location"
+                            size="sm"
+                            @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
+                        <TooltipWrapper side="right" :content="t('dialog.launch.copy_tooltip')">
+                            <Button
+                                class="rounded-full"
+                                size="icon-sm"
+                                variant="ghost"
+                                @click="copyInstanceMessage(launchDialog.location)"
+                                ><Copy
+                            /></Button>
+                        </TooltipWrapper>
+                    </FieldContent>
+                </Field>
+            </FieldGroup>
+            <DialogFooter>
                 <Button
                     class="mr-1.5"
                     variant="outline"
@@ -117,14 +121,22 @@
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </ButtonGroup>
-            </div>
-        </template>
-        <InviteDialog :invite-dialog="inviteDialog" @closeInviteDialog="closeInviteDialog" />
-    </el-dialog>
+            </DialogFooter>
+
+            <InviteDialog :invite-dialog="inviteDialog" @closeInviteDialog="closeInviteDialog" />
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
-    import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+    import {
+        Dialog,
+        DialogContent,
+        DialogDescription,
+        DialogFooter,
+        DialogHeader,
+        DialogTitle
+    } from '@/components/ui/dialog';
     import {
         DropdownMenu,
         DropdownMenuContent,
@@ -132,12 +144,11 @@
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
+    import { computed, onBeforeUnmount, ref, watch } from 'vue';
+    import { AlertTriangle, Copy, MoreHorizontal } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
-    import { Copy } from 'lucide-vue-next';
     import { InputGroupField } from '@/components/ui/input-group';
-    import { MoreHorizontal } from 'lucide-vue-next';
-    import { Warning } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -152,7 +163,6 @@
     } from '../../stores';
     import { checkCanInvite, getLaunchURL, isRealInstance, parseLocation } from '../../shared/utils';
     import { instanceRequest, worldRequest } from '../../api';
-    import { getNextDialogIndex } from '../../shared/utils/base/ui';
 
     import InviteDialog from './InviteDialog/InviteDialog.vue';
     import configRepository from '../../service/config';
@@ -172,8 +182,6 @@
     const launchModeLabel = computed(() =>
         launchDialog.value.desktop ? t('dialog.launch.start_as_desktop') : t('dialog.launch.launch')
     );
-
-    const launchDialogIndex = ref(2000);
 
     let launchAsDesktopTimeoutId;
 
@@ -314,9 +322,6 @@
         if (!isRealInstance(tag)) {
             return;
         }
-        nextTick(() => {
-            launchDialogIndex.value = getNextDialogIndex();
-        });
         const D = launchDialog.value;
         D.tag = tag;
         D.secureOrShortName = shortName;

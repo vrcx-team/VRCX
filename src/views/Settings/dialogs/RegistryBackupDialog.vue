@@ -1,56 +1,57 @@
 <template>
-    <el-dialog
-        class="x-dialog"
-        :model-value="isRegistryBackupDialogVisible"
-        :title="t('dialog.registry_backup.header')"
-        width="600px"
-        @close="closeDialog"
-        @closed="clearVrcRegistryDialog">
-        <div style="margin-top: 10px">
-            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px">
-                <span class="name" style="margin-right: 24px">{{ t('dialog.registry_backup.auto_backup') }}</span>
-                <Switch :model-value="vrcRegistryAutoBackup" @update:modelValue="setVrcRegistryAutoBackup" />
-            </div>
-            <div
-                style="
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    font-size: 12px;
-                    margin-top: 5px;
-                ">
-                <span class="name" style="margin-right: 24px">{{ t('dialog.registry_backup.ask_to_restore') }}</span>
-                <Switch :model-value="vrcRegistryAskRestore" @update:modelValue="setVrcRegistryAskRestore" />
-            </div>
-            <DataTableLayout
-                class="min-w-0 w-full"
-                :table="table"
-                :loading="false"
-                :table-style="tableStyle"
-                :show-pagination="false"
-                style="margin-top: 10px" />
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px">
-                <Button size="sm" variant="destructive" @click="deleteVrcRegistry">{{
-                    t('dialog.registry_backup.reset')
-                }}</Button>
-                <div class="flex gap-2">
-                    <Button size="sm" variant="outline" @click="promptVrcRegistryBackupName">{{
-                        t('dialog.registry_backup.backup')
+    <Dialog :open="isRegistryBackupDialogVisible" @update:open="(open) => !open && closeAndClearDialog()">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{{ t('dialog.registry_backup.header') }}</DialogTitle>
+            </DialogHeader>
+            <div style="margin-top: 10px">
+                <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px">
+                    <span class="name" style="margin-right: 24px">{{ t('dialog.registry_backup.auto_backup') }}</span>
+                    <Switch :model-value="vrcRegistryAutoBackup" @update:modelValue="setVrcRegistryAutoBackup" />
+                </div>
+                <div
+                    style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        font-size: 12px;
+                        margin-top: 5px;
+                    ">
+                    <span class="name" style="margin-right: 24px">{{
+                        t('dialog.registry_backup.ask_to_restore')
+                    }}</span>
+                    <Switch :model-value="vrcRegistryAskRestore" @update:modelValue="setVrcRegistryAskRestore" />
+                </div>
+                <DataTableLayout
+                    class="min-w-0 w-full"
+                    :table="table"
+                    :loading="false"
+                    :table-style="tableStyle"
+                    :show-pagination="false"
+                    style="margin-top: 10px" />
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px">
+                    <Button size="sm" variant="destructive" @click="deleteVrcRegistry">{{
+                        t('dialog.registry_backup.reset')
                     }}</Button>
-                    <Button size="sm" variant="outline" @click="restoreVrcRegistryFromFile">{{
-                        t('dialog.registry_backup.restore_from_file')
-                    }}</Button>
+                    <div class="flex gap-2">
+                        <Button size="sm" variant="outline" @click="promptVrcRegistryBackupName">{{
+                            t('dialog.registry_backup.backup')
+                        }}</Button>
+                        <Button size="sm" variant="outline" @click="restoreVrcRegistryFromFile">{{
+                            t('dialog.registry_backup.restore_from_file')
+                        }}</Button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </el-dialog>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
+    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { DataTableLayout } from '@/components/ui/data-table';
-    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -178,12 +179,16 @@
     }
 
     function promptVrcRegistryBackupName() {
-        ElMessageBox.prompt('Enter a name for the backup', 'Backup Name', {
-            inputPattern: /\S+/,
-            inputErrorMessage: 'Name is required',
-            inputValue: 'Backup'
-        })
-            .then(({ value }) => {
+        modalStore
+            .prompt({
+                title: 'Backup Name',
+                description: 'Enter a name for the backup',
+                inputValue: 'Backup',
+                pattern: /\S+/,
+                errorMessage: 'Name is required'
+            })
+            .then(({ ok, value }) => {
+                if (!ok) return;
                 handleBackupVrcRegistry(value);
             })
             .catch(() => {});
@@ -198,7 +203,8 @@
             document.body.appendChild(fileInput);
 
             fileInput.onchange = function (event) {
-                const file = event.target.files[0];
+                const target = /** @type {HTMLInputElement | null} */ (event.target);
+                const file = target?.files?.[0];
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function () {
@@ -258,6 +264,13 @@
 
     function clearVrcRegistryDialog() {
         registryBackupTable.value.data = [];
+    }
+
+    function closeAndClearDialog() {
+        closeDialog();
+        // TODO: Element Plus had a distinct @closed event after animation.
+        // If you ever need exact timing, wrap DialogContent with a Transition and call clear on after-leave.
+        clearVrcRegistryDialog();
     }
 
     function closeDialog() {

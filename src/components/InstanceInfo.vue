@@ -1,5 +1,5 @@
 <template>
-    <div style="display: inline-block; margin-left: 5px">
+    <div class="flex items-center ml-2">
         <TooltipWrapper v-if="state.isValidInstance" side="bottom">
             <template #content>
                 <div>
@@ -40,7 +40,7 @@
                     </template>
                 </div>
             </template>
-            <el-icon><CaretBottom /></el-icon>
+            <Info class="text-xs text-accent-foreground" />
         </TooltipWrapper>
         <span v-if="props.location === locationStore.lastLocation.location" style="margin-left: 5px"
             >{{ locationStore.lastLocation.playerList.size }}/{{ props.instance.capacity }}</span
@@ -49,24 +49,20 @@
             >{{ props.instance.userCount }}/{{ props.instance.capacity }}</span
         >
         <span v-if="props.friendcount" style="margin-left: 5px">({{ props.friendcount }})</span>
-        <span
-            v-if="state.isValidInstance && !props.instance.hasCapacityForYou"
-            style="margin-left: 5px; color: var(--el-color-danger)"
-            >{{ t('dialog.user.info.instance_full') }}</span
-        >
+        <span v-if="state.isValidInstance && !props.instance.hasCapacityForYou" style="margin-left: 5px">{{
+            t('dialog.user.info.instance_full')
+        }}</span>
         <span v-if="props.instance.queueSize" style="margin-left: 5px"
             >{{ t('dialog.user.info.instance_queue') }} {{ props.instance.queueSize }}</span
         >
-        <span v-if="state.isAgeGated" style="margin-left: 5px; color: var(--el-color-danger)">{{
-            t('dialog.user.info.instance_age_gated')
-        }}</span>
+        <span v-if="state.isAgeGated" style="margin-left: 5px">{{ t('dialog.user.info.instance_age_gated') }}</span>
     </div>
 </template>
 
 <script setup>
     import { reactive, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { CaretBottom } from '@element-plus/icons-vue';
+    import { Info } from 'lucide-vue-next';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
@@ -128,7 +124,7 @@
     function closeInstance(location) {
         modalStore
             .confirm({
-                description: 'Continue? Close Instance, nobody will be able to join',
+                description: 'Continue? X Instance, nobody will be able to join',
                 title: 'Confirm'
             })
             .then(async ({ ok }) => {
