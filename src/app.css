@@ -30,7 +30,6 @@ html.dark .x-container {
     background: var(--sidebar);
 }
 
-
 .x-friend-list {
     padding: 0 10px;
     overflow: hidden auto;
@@ -201,7 +200,6 @@ img.friends-list-avatar {
     margin-right: 2px;
 }
 
-
 .x-friend-item:hover {
     border-radius: 8px;
 }
@@ -220,7 +218,6 @@ img.friends-list-avatar {
 .x-dialog .x-friend-item {
     width: 167px;
 }
-
 
 i.x-user-status,
 i.x-status-icon {
@@ -333,3 +330,12 @@ i.x-status-icon.red {
     padding-top: 15px;
 }
 
+/*FIXME: this is a nasty temporary hack*/
+.force-pointer-on-hover a,
+.force-pointer-on-hover button,
+.force-pointer-on-hover [role='button'],
+.force-pointer-on-hover label,
+.force-pointer-on-hover summary,
+.force-pointer-on-hover input[type='submit'] {
+    cursor: pointer !important;
+}

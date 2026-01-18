@@ -200,6 +200,10 @@
                     t('view.settings.appearance.appearance.table_max_size')
                 }}</Button>
             </div>
+            <simple-switch
+                :label="t('view.settings.appearance.appearance.toggle_pointer_on_hover')"
+                :value="showPointerOnHover"
+                @change="togglePointerOnHover" />
         </div>
         <div class="options-container">
             <span class="header">{{ t('view.settings.appearance.timedate.header') }}</span>
@@ -493,7 +497,8 @@
         trustColor,
         notificationIconDot,
         tablePageSizes,
-        isDataTableStriped
+        isDataTableStriped,
+        showPointerOnHover
     } = storeToRefs(appearanceSettingsStore);
 
     const appLanguageDisplayName = computed(() => getLanguageName(String(appLanguage.value)));
@@ -524,6 +529,7 @@
         setNotificationIconDot,
         setTablePageSizes,
         toggleStripedDataTable,
+        togglePointerOnHover,
         setAppFontFamily
     } = appearanceSettingsStore;
 

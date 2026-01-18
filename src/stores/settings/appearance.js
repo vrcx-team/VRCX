@@ -103,6 +103,7 @@ export const useAppearanceSettingsStore = defineStore(
         });
 
         const isDataTableStriped = ref(false);
+        const showPointerOnHover = ref(false);
 
         const clampInt = (value, min, max) => {
             const n = parseInt(value, 10);
@@ -140,6 +141,7 @@ export const useAppearanceSettingsStore = defineStore(
                 notificationIconDotConfig,
                 navIsCollapsedConfig,
                 dataTableStripedConfig,
+                showPointerOnHoverConfig,
                 appFontFamilyConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_appLanguage'),
@@ -197,6 +199,7 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getBool('VRCX_notificationIconDot', true),
                 configRepository.getBool('VRCX_navIsCollapsed', true),
                 configRepository.getBool('VRCX_dataTableStriped', false),
+                configRepository.getBool('VRCX_showPointerOnHover', false),
                 configRepository.getString(
                     'VRCX_fontFamily',
                     APP_FONT_DEFAULT_KEY
@@ -283,6 +286,9 @@ export const useAppearanceSettingsStore = defineStore(
             }
             isNavCollapsed.value = navIsCollapsedConfig;
             isDataTableStriped.value = dataTableStripedConfig;
+            showPointerOnHover.value = showPointerOnHoverConfig;
+
+            applyPointerHoverClass();
 
             await configRepository.remove('VRCX_navWidth');
 
@@ -717,6 +723,26 @@ export const useAppearanceSettingsStore = defineStore(
                 isDataTableStriped.value
             );
         }
+
+        // FIXME: this is nasty, there should be a better way of doing this
+        function applyPointerHoverClass() {
+            const classList = document.documentElement.classList;
+            classList.remove('force-pointer-on-hover');
+
+            if (showPointerOnHover.value) {
+                classList.add('force-pointer-on-hover');
+            }
+        }
+
+        function togglePointerOnHover() {
+            showPointerOnHover.value = !showPointerOnHover.value;
+            configRepository.setBool(
+                'VRCX_showPointerOnHover',
+                showPointerOnHover.value
+            );
+            applyPointerHoverClass();
+        }
+
         /**
          * @param {object} color
          */
@@ -890,6 +916,7 @@ export const useAppearanceSettingsStore = defineStore(
             notificationIconDot,
             isNavCollapsed,
             isDataTableStriped,
+            showPointerOnHover,
 
             setAppLanguage,
             setDisplayVRCPlusIconsAsAvatar,
@@ -916,6 +943,7 @@ export const useAppearanceSettingsStore = defineStore(
             setHideUnfriends,
             setRandomUserColours,
             toggleStripedDataTable,
+            togglePointerOnHover,
             setTableDensity,
             setTrustColor,
             tryInitUserColours,
