@@ -10,7 +10,7 @@
             ondragover="event.preventDefault()"
             ondrop="event.preventDefault()">
             <RouterView></RouterView>
-            <Toaster position="top-center"></Toaster>
+            <Toaster position="top" :theme="sonnerTheme" :data-theme="themeMode"></Toaster>
 
             <AlertDialogModal></AlertDialogModal>
             <PromptDialogModal></PromptDialogModal>
@@ -23,6 +23,7 @@
 
 <script setup>
     import { computed, onBeforeMount, onMounted } from 'vue';
+    import { storeToRefs } from 'pinia';
 
     import { Toaster } from './components/ui/sonner';
     import { TooltipProvider } from './components/ui/tooltip';
@@ -44,6 +45,8 @@
     initNoty();
 
     const store = createGlobalStores();
+    const { isDarkMode, themeMode } = storeToRefs(store.appearanceSettings);
+    const sonnerTheme = computed(() => (isDarkMode.value ? 'dark' : 'light'));
 
     if (typeof window !== 'undefined') {
         window.$pinia = store;
