@@ -325,7 +325,7 @@
         modalStore
             .confirm({
                 description: t('confirm.accept_friend_request'),
-                title: 'Confirm'
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) {
@@ -350,7 +350,7 @@
         modalStore
             .confirm({
                 description: t('confirm.send_invite'),
-                title: 'Confirm'
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) {
@@ -460,7 +460,7 @@
         modalStore
             .confirm({
                 description: t('confirm.decline_type', { type: row.type }),
-                title: 'Confirm'
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (ok) {
@@ -484,7 +484,7 @@
         modalStore
             .confirm({
                 description: t('confirm.delete_type', { type: row.type }),
-                title: 'Confirm'
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (ok) {
