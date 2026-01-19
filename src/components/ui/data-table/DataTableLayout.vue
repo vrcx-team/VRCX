@@ -34,7 +34,9 @@
                     <TableBody>
                         <template v-if="table.getRowModel().rows?.length">
                             <template v-for="row in table.getRowModel().rows" :key="row.id">
-                                <TableRow @click="handleRowClick(row)">
+                                <TableRow
+                                    @click="handleRowClick(row)"
+                                    :class="isDataTableStriped ? 'even:bg-muted/20' : ''">
                                     <TableCell
                                         v-for="cell in row.getVisibleCells()"
                                         :key="cell.id"
@@ -125,6 +127,11 @@
     } from '../pagination';
     import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../table';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../select';
+    import { useAppearanceSettingsStore } from '@/stores/';
+    import { storeToRefs } from 'pinia';
+
+    const appearanceSettingsStore = useAppearanceSettingsStore();
+    const { isDataTableStriped } = storeToRefs(appearanceSettingsStore);
 
     const props = defineProps({
         table: {

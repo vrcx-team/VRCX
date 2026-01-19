@@ -180,11 +180,19 @@
                     </ListboxRoot>
                 </Popover>
             </div>
+            <simple-switch
+                :label="t('view.settings.appearance.appearance.striped_data_table_mode')"
+                :value="isDataTableStriped"
+                @change="toggleStripedDataTable" />
             <div class="options-container-item">
                 <Button size="sm" variant="outline" @click="promptMaxTableSizeDialog">{{
                     t('view.settings.appearance.appearance.table_max_size')
                 }}</Button>
             </div>
+            <simple-switch
+                :label="t('view.settings.appearance.appearance.toggle_pointer_on_hover')"
+                :value="showPointerOnHover"
+                @change="togglePointerOnHover" />
         </div>
         <div class="options-container">
             <span class="header">{{ t('view.settings.appearance.timedate.header') }}</span>
@@ -449,11 +457,10 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '@/stores';
+    import { getLanguageName, languageCodes } from '@/localization';
+    import { APP_FONT_FAMILIES } from '@/shared/constants';
     import PresetColorPicker from '@/components/PresetColorPicker.vue';
-
-    import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '../../../../stores';
-    import { getLanguageName, languageCodes } from '../../../../localization';
-    import { APP_FONT_FAMILIES } from '../../../../shared/constants';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 
@@ -485,7 +492,9 @@
         randomUserColours,
         trustColor,
         notificationIconDot,
-        tablePageSizes
+        tablePageSizes,
+        isDataTableStriped,
+        showPointerOnHover
     } = storeToRefs(appearanceSettingsStore);
 
     const appLanguageDisplayName = computed(() => getLanguageName(String(appLanguage.value)));
@@ -514,6 +523,8 @@
         promptMaxTableSizeDialog,
         setNotificationIconDot,
         setTablePageSizes,
+        toggleStripedDataTable,
+        togglePointerOnHover,
         setAppFontFamily
     } = appearanceSettingsStore;
 

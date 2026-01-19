@@ -592,6 +592,8 @@
                     "table_page_sizes": "Table Page Sizes",
                     "table_page_sizes_error": "Page size must be a number between 1 and 1000",
                     "show_notification_icon_dot": "Show Tray Notification Dot",
+                    "striped_data_table_mode": "Striped Table Mode",
+                    "toggle_pointer_on_hover": "Force pointer on hover",
                     "table_density": "Table Density",
                     "table_density_standard": "Standard",
                     "table_density_comfortable": "Comfortable",
