@@ -1,6 +1,7 @@
 import { nextTick, reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
+import { useI18n } from 'vue-i18n';
 
 import {
     groupRequest,
@@ -32,6 +33,7 @@ export const useGroupStore = defineStore('Group', () => {
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
     const modalStore = useModalStore();
+    const { t } = useI18n();
 
     let cachedGroups = new Map();
 
@@ -152,7 +154,7 @@ export const useGroupStore = defineStore('Group', () => {
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
-                toast.error('Failed to load group');
+                toast.error(t('message.group.load_failed'));
                 throw err;
             })
             .then((args) => {

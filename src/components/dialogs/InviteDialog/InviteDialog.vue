@@ -244,7 +244,7 @@
     function sendInvite() {
         modalStore
             .confirm({
-                description: 'Continue? Invite',
+                description: t('confirm.invite'),
                 title: 'Confirm'
             })
             .then(({ ok }) => {
@@ -281,7 +281,7 @@
                     } else {
                         D.loading = false;
                         D.visible = false;
-                        toast.success('Invite sent');
+                        toast.success(t('message.invite.sent'));
                     }
                 };
                 inviteLoop();

@@ -543,7 +543,11 @@ export const createColumns = ({
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
-                                                <span>Accept</span>
+                                                <span>
+                                                    {t(
+                                                        'view.notification.actions.accept'
+                                                    )}
+                                                </span>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
@@ -567,7 +571,9 @@ export const createColumns = ({
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
                                                 <span>
-                                                    Decline with message
+                                                    {t(
+                                                        'view.notification.actions.decline_with_message'
+                                                    )}
                                                 </span>
                                             </TooltipContent>
                                         </Tooltip>
@@ -593,7 +599,11 @@ export const createColumns = ({
                                                         </button>
                                                     </TooltipTrigger>
                                                     <TooltipContent side="top">
-                                                        <span>Invite</span>
+                                                        <span>
+                                                            {t(
+                                                                'view.notification.actions.invite'
+                                                            )}
+                                                        </span>
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </TooltipProvider>
@@ -615,7 +625,9 @@ export const createColumns = ({
                                                 </TooltipTrigger>
                                                 <TooltipContent side="top">
                                                     <span>
-                                                        Decline with message
+                                                        {t(
+                                                            'view.notification.actions.decline_with_message'
+                                                        )}
                                                     </span>
                                                 </TooltipContent>
                                             </Tooltip>
@@ -705,7 +717,11 @@ export const createColumns = ({
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
-                                                <span>Decline</span>
+                                                <span>
+                                                    {t(
+                                                        'view.notification.actions.decline'
+                                                    )}
+                                                </span>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
@@ -736,7 +752,11 @@ export const createColumns = ({
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
-                                                <span>Delete log</span>
+                                                <span>
+                                                    {t(
+                                                        'view.notification.actions.delete_log'
+                                                    )}
+                                                </span>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
@@ -767,7 +787,11 @@ export const createColumns = ({
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
-                                                <span>Delete log</span>
+                                                <span>
+                                                    {t(
+                                                        'view.notification.actions.delete_log'
+                                                    )}
+                                                </span>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>

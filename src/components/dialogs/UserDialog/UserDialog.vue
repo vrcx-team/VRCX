@@ -1854,7 +1854,7 @@
                             D.id
                         )
                         .then((_args) => {
-                            toast('Invite sent');
+                            toast(t('message.invite.sent'));
                             return _args;
                         });
                 });

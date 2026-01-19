@@ -737,7 +737,7 @@
 
     function setProfilePicOverride(fileId) {
         if (!isLocalUserVrcPlusSupporter.value) {
-            toast.error('VRCPlus required');
+            toast.error(t('message.vrcplus.required'));
             return;
         }
         let profilePicOverride = '';
@@ -834,7 +834,7 @@
 
     function setVRCPlusIcon(fileId) {
         if (!isLocalUserVrcPlusSupporter.value) {
-            toast.error('VRCPlus required');
+            toast.error(t('message.vrcplus.required'));
             return;
         }
         let userIcon = '';

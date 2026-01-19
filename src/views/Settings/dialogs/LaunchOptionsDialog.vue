@@ -111,7 +111,7 @@
             D.vrcLaunchPathOverride.endsWith('.exe') &&
             !D.vrcLaunchPathOverride.endsWith('launch.exe')
         ) {
-            toast.error('Invalid path, you must enter VRChat folder or launch.exe');
+            toast.error(t('message.launch.invalid_path'));
             return;
         }
         configRepository.setString('vrcLaunchPathOverride', D.vrcLaunchPathOverride);

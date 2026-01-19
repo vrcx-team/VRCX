@@ -1,6 +1,7 @@
 import { computed, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
+import { useI18n } from 'vue-i18n';
 
 import { instanceRequest, inviteMessagesRequest } from '../api';
 import { parseLocation } from '../shared/utils';
@@ -15,6 +16,7 @@ export const useInviteStore = defineStore('Invite', () => {
     const gameStore = useGameStore();
     const launchStore = useLaunchStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
+    const { t } = useI18n();
 
     const inviteMessageTable = ref({
         data: [],
@@ -95,7 +97,7 @@ export const useInviteStore = defineStore('Invite', () => {
         instanceStore.createNewInstance(worldId).then((args) => {
             const location = args?.json?.location;
             if (!location) {
-                toast.error('Failed to create instance');
+                toast.error(t('message.instance.create_failed'));
                 return;
             }
             // self invite
@@ -115,7 +117,7 @@ export const useInviteStore = defineStore('Invite', () => {
                     worldId: L.worldId
                 })
                 .then((args) => {
-                    toast.success('Self invite sent');
+                    toast.success(t('message.invite.self_sent'));
                     return args;
                 });
         });

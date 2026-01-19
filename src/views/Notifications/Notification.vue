@@ -324,7 +324,7 @@
         // FIXME: 메시지 수정
         modalStore
             .confirm({
-                description: 'Continue? Accept Friend Request',
+                description: t('confirm.accept_friend_request'),
                 title: 'Confirm'
             })
             .then(({ ok }) => {
@@ -349,7 +349,7 @@
     function acceptRequestInvite(row) {
         modalStore
             .confirm({
-                description: 'Continue? Send Invite',
+                description: t('confirm.send_invite'),
                 title: 'Confirm'
             })
             .then(({ ok }) => {
@@ -381,7 +381,7 @@
                                 row.senderUserId
                             )
                             .then((_args) => {
-                                toast('Invite sent');
+                                toast(t('message.invite.sent'));
                                 notificationRequest.hideNotification({
                                     notificationId: row.id
                                 });
@@ -459,7 +459,7 @@
     function hideNotificationPrompt(row) {
         modalStore
             .confirm({
-                description: `Continue? Decline ${row.type}`,
+                description: t('confirm.decline_type', { type: row.type }),
                 title: 'Confirm'
             })
             .then(({ ok }) => {
@@ -483,7 +483,7 @@
     function deleteNotificationLogPrompt(row) {
         modalStore
             .confirm({
-                description: `Continue? Trash2 ${row.type}`,
+                description: t('confirm.delete_type', { type: row.type }),
                 title: 'Confirm'
             })
             .then(({ ok }) => {

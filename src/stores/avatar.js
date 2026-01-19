@@ -1,6 +1,7 @@
 import { nextTick, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
+import { useI18n } from 'vue-i18n';
 
 import {
     checkVRChatCache,
@@ -31,6 +32,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
     const userStore = useUserStore();
     const modalStore = useModalStore();
+    const { t } = useI18n();
 
     let cachedAvatarModerations = new Map();
     let cachedAvatars = new Map();
@@ -392,7 +394,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     function promptClearAvatarHistory() {
         modalStore
             .confirm({
-                description: 'Continue? Clear Avatar History',
+                description: t('confirm.clear_avatar_history'),
                 title: 'Confirm'
             })
             .then(({ ok }) => {
@@ -556,7 +558,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     function selectAvatarWithConfirmation(id) {
         modalStore
             .confirm({
-                description: 'Continue? Select Avatar',
+                description: t('confirm.select_avatar'),
                 title: 'Confirm'
             })
             .then(({ ok }) => {

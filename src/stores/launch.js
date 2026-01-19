@@ -1,6 +1,7 @@
 import { nextTick, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
+import { useI18n } from 'vue-i18n';
 
 import { instanceRequest } from '../api';
 import { parseLocation } from '../shared/utils';
@@ -11,6 +12,7 @@ import configRepository from '../service/config';
 export const useLaunchStore = defineStore('Launch', () => {
     const isLaunchOptionsDialogVisible = ref(false);
     const isOpeningInstance = ref(false);
+    const { t } = useI18n();
     const launchDialogData = ref({
         visible: false,
         loading: false,
@@ -114,7 +116,7 @@ export const useLaunchStore = defineStore('Launch', () => {
                     worldId: L.worldId,
                     shortName
                 });
-                toast.success('Self invite sent');
+                toast.success(t('message.invite.self_sent'));
             } catch (e) {
                 console.error(e);
             }

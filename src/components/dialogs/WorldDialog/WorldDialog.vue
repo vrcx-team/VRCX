@@ -975,7 +975,9 @@
             case 'Trash2':
                 modalStore
                     .confirm({
-                        description: `Continue? ${command}`,
+                        description: t('confirm.command_question', {
+                            command
+                        }),
                         title: 'Confirm'
                     })
                     .then(({ ok }) => {

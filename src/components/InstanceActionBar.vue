@@ -311,7 +311,7 @@
                 shortName: props.shortname
             })
             .then((args) => {
-                toast.success('Self invite sent');
+                toast.success(t('message.invite.self_sent'));
                 return args;
             });
     };

@@ -138,7 +138,7 @@
     function deleteGameLogEntryPrompt(row) {
         modalStore
             .confirm({
-                description: 'Continue? Delete Log',
+                description: t('confirm.delete_log'),
                 title: 'Confirm'
             })
             .then(({ ok }) => ok && deleteGameLogEntry(row))
