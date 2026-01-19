@@ -81,6 +81,7 @@
         delete rest.onChange;
         return {
             ...rest,
+            ...(autosizeConfig.value ? { 'data-autosize': 'true' } : {}),
             maxlength: maxLength.value
         };
     });
