@@ -24,7 +24,8 @@
         "manage": "管理",
         "help_support": "帮助 & 支持",
         "expand_menu": "展开菜单",
-        "collapse_menu": "折叠菜单"
+        "collapse_menu": "折叠菜单",
+        "toggle_theme": "切换主题"
     },
     "nav_menu": {
         "resources": "帮助资源",
@@ -34,6 +35,7 @@
         "discord": "加入 Discord",
         "whats_new": "更新日志",
         "update_available": "有可用更新",
+        "update": "更新",
         "custom_nav": {
             "header": "自定义导航栏",
             "dialog_title": "自定义导航栏",
@@ -179,10 +181,10 @@
                 "cancel_refresh": "清除缓存",
                 "check_invalid": "检查这个分组的失效模型",
                 "check_description": "检测并删除这个分组中的失效模型",
-                "checking": "正在检查失效模型...",
-                "check_progress": "检查进度：{current}/{total}",
-                "check_complete": "检查完成！",
-                "check_summary": "共检查 {total} 个模型，发现 {invalid} 个失效模型",
+                "checking": "正在检测失效模型...",
+                "check_progress": "检测进度：{current}/{total}",
+                "check_complete": "检测完成！",
+                "check_summary": "共检测 {total} 个模型，发现 {invalid} 个失效模型",
                 "removed_list_header": "已删除的模型列表：",
                 "copy_removed_ids": "复制已删除的模型ID",
                 "copied_ids": "模型ID已复制到剪贴板",
@@ -190,7 +192,7 @@
                 "dismiss": "关闭",
                 "checking_progress": "正在检查模型 ({current}/{total})...",
                 "confirm_delete_invalid": "删除失效模型？",
-                "confirm_delete_description": "发现 {count} 个失效模型，是否删除它们？",
+                "confirm_delete_description": "发现 {count} 个失效模型，是否要删除它们？",
                 "delete_summary": "已成功删除 {removed} 个失效模型",
                 "no_invalid_found": "未发现失效模型",
                 "delete_cancelled": "已取消删除操作"
@@ -248,6 +250,13 @@
             "filter_placeholder": "筛选通知",
             "search_placeholder": "搜索通知",
             "refresh_tooltip": "刷新",
+            "actions": {
+                "accept": "接受",
+                "invite": "邀请",
+                "decline": "拒绝",
+                "delete_log": "删除日志",
+                "decline_with_message": "拒绝并附带消息"
+            },
             "filters": {
                 "requestInvite": "申请加入",
                 "invite": "邀请",
@@ -347,7 +356,8 @@
                     "stop_fetching": "停止拉取"
                 },
                 "status": {
-                    "no_friends_to_process": "目前没有好友需要处理"
+                    "no_friends_to_process": "目前没有好友需要处理",
+                    "loading_cache": "正在从数据库加载缓存的共同好友关系"
                 },
                 "progress": {
                     "friends_processed": "处理进度",
@@ -551,6 +561,17 @@
                     "language": "语言 (Language)",
                     "bio_language": "目标语言",
                     "theme_mode": "主题",
+                    "font_family": "字体",
+                    "font_family_tooltip": "只有系统字体会影响 CJK （也就是中/日/韩文）字符",
+                    "font_family_inter": "Inter",
+                    "font_family_noto_sans": "Noto Sans",
+                    "font_family_source_sans_3": "Source Sans 3",
+                    "font_family_ibm_plex_sans": "IBM Plex Sans",
+                    "font_family_harmonyos_sans": "HarmonyOS Sans",
+                    "font_family_jetbrains_mono": "JetBrains Mono",
+                    "font_family_roboto": "Roboto",
+                    "font_family_fantasque_sans_mono": "Fantasque Sans Mono",
+                    "font_family_system_ui": "系统字体",
                     "theme_mode_system": "跟随系统",
                     "theme_mode_light": "浅色",
                     "theme_mode_dark": "深色",
@@ -578,7 +599,12 @@
                     "table_page_sizes": "每页显示行数",
                     "table_page_sizes_error": "行数必须是 1 到 1000 之间的数字",
                     "show_notification_icon_dot": "显示托盘通知",
-                    "compact_table_mode": "紧凑表格模式"
+                    "striped_data_table_mode": "条纹表格模式",
+                    "toggle_pointer_on_hover": "悬停时强制显示指针",
+                    "table_density": "表格宽度",
+                    "table_density_standard": "标准",
+                    "table_density_comfortable": "舒适",
+                    "table_density_compact": "紧凑"
                 },
                 "timedate": {
                     "header": "时间 / 日期",
@@ -916,6 +942,9 @@
             "cancel": "取消",
             "confirm": "确认"
         },
+        "prompt": {
+            "input_invalid": "输入无效"
+        },
         "user": {
             "status": {
                 "active": "活跃中",
@@ -976,7 +1005,7 @@
                 "edit_pronouns": "人称代词",
                 "report_hacking": "报告这个玩家的作弊行为（例如盗模）",
                 "unfriend": "删除好友",
-                "unfriend_success_msg": "已删除好友",
+                "unfriend_success_msg": "已成功删除好友",
                 "logout": "退出登录"
             },
             "info": {
@@ -987,6 +1016,7 @@
                 "refresh_instance_info": "刷新房间信息",
                 "instance_queue": "在排队等待的玩家：",
                 "instance_users": "房间玩家：",
+                "instance_friends_tooltip": "房间内的好友",
                 "instance_game_version": "服务器版本：",
                 "last_join": "距离上次加入房间",
                 "instance_queuing_enabled": "允许排队加入",
@@ -1931,7 +1961,22 @@
         "title": "确认",
         "confirm_button": "确认",
         "cancel_button": "取消",
-        "message": "确认{command}?"
+        "message": "确定要{command}吗？",
+        "logout": "确定要登出吗？",
+        "unfriend": "要删除这个好友吗？你可能会失去这个好友很久（真的很久）",
+        "clear_avatar_history": "确定要清除模型使用历史吗？",
+        "select_avatar": "确定要使用这个模型吗？",
+        "invite": "确定要发送邀请吗？",
+        "invite_group": "确定要邀请这些用户加入群组吗？",
+        "delete_log": "确定要删除日志吗？",
+        "accept_friend_request": "要接受这个好友请求吗？",
+        "send_invite": "要发送邀请吗？",
+        "decline_type": "确定要拒绝{type}吗？",
+        "delete_type": "确定要删除{type}吗？",
+        "command_question": "继续？{command}",
+        "restart_required_title": "需要重启",
+        "restart_now": "立即重启",
+        "restart_later": "稍后重启"
     },
     "status": {
         "title": "VRChat 状态"
@@ -1951,19 +1996,35 @@
         "instance": {
             "closed": "房间已关闭",
             "removed_form_queue": "已从等待队列中移除 {worldName}",
-            "not_allowed": "你无权访问此房间"
+            "not_allowed": "你无权访问此房间",
+            "create_failed": "房间创建失败"
         },
         "avatar": {
             "change_moderation_failed": "无法更新模型状态",
             "image_changed": "已更改模型封面",
             "image_invalid": "上传的封面图片无效"
         },
+        "database": {
+            "upgrade_complete": "数据库升级完成"
+        },
         "emoji": {
             "uploaded": "表情(Emoji)上传成功"
         },
         "file": {
             "not_image": "文件不是有效的图片格式",
-            "too_large": "文件大小过大"
+            "too_large": "文件大小过大",
+            "folder_missing": "文件夹不存在"
+        },
+        "group": {
+            "load_failed": "加载群组失败"
+        },
+        "invite": {
+            "self_sent": "已发送自我邀请",
+            "sent": "已发送邀请",
+            "message_update_failed": "VRChat API 未能更新消息，请重试"
+        },
+        "launch": {
+            "invalid_path": "无效路径，你必须输入 VRChat 文件夹所在的路径或 “launch.exe” 所在的路径"
         },
         "print": {
             "uploaded": "拍立得照片上传成功"
@@ -1991,16 +2052,21 @@
         },
         "world": {
             "image_changed": "已更改世界封面",
-            "image_invalid": "当前使用的世界封面无效"
+            "image_invalid": "当前使用的世界封面图无效",
+            "load_failed": "加载世界信息失败"
         },
         "icon": {
             "uploaded": "图标上传成功"
         },
         "user": {
-            "moderated": "已更新玩家状态"
+            "moderated": "已更新玩家状态",
+            "load_failed": "加载用户信息失败"
         },
         "friend": {
             "load_failed": "加载好友列表失败，即将登出"
+        },
+        "vrcplus": {
+            "required": "需要 VRC+ 才能使用此功能"
         },
         "screenshot_metadata": {
             "deleted": "已删除图片元数据",
@@ -2249,7 +2315,12 @@
     },
     "table": {
         "pagination": {
-            "rows_per_page": "每页显示行数"
+            "rows_per_page": "每页显示行数",
+            "first": "第一页",
+            "previous": "上一页",
+            "next": "下一页",
+            "last": "最后一页",
+            "more_pages": "更多页面"
         },
         "feed": {
             "date": "时间",
