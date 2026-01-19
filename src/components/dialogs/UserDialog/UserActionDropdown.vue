@@ -125,7 +125,7 @@
                     </DropdownMenuItem>
                     <DropdownMenuItem @click="onCommand('Pencil Note Memo')">
                         <Pencil class="size-4" />
-                        Pencil Note and Memo
+                        {{ t('dialog.user.actions.edit_note_memo') }}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem @click="onCommand('Show Avatar Author')">

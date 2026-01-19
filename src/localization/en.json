@@ -421,7 +421,7 @@
             },
             "export": {
                 "header": "Export",
-                "export_notes": "Export User Notes",
+                "export_notes": "Export User Memos",
                 "export_notes_description": "Export VRCX user memos to VRChat notes",
                 "discord_names": "Discord Names",
                 "export_friend_list": "Export Friends List",
@@ -1006,7 +1006,8 @@
                 "report_hacking": "Report For Hacking",
                 "unfriend": "Unfriend",
                 "unfriend_success_msg": "Unfriended",
-                "logout": "Logout"
+                "logout": "Logout",
+                "edit_note_memo": "Edit Note and Memo"
             },
             "info": {
                 "header": "Info",

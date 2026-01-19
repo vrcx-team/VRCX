@@ -334,6 +334,22 @@ i.x-status-icon.red {
     padding-top: 15px;
 }
 
+/* Bio diff */
+.x-text-removed {
+    text-decoration: line-through;
+    color: #ff0000;
+    background-color: rgba(255, 0, 0, 0.2);
+    padding: 2px 2px;
+    border-radius: 4px;
+}
+
+.x-text-added {
+    color: rgb(35, 188, 35);
+    background-color: rgba(76, 255, 80, 0.2);
+    padding: 2px 2px;
+    border-radius: 4px;
+}
+
 /*FIXME: this is a nasty temporary hack*/
 .force-pointer-on-hover a,
 .force-pointer-on-hover button,

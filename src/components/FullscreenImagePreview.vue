@@ -1,15 +1,17 @@
 <template>
     <Dialog v-model:open="open">
         <DialogPortal :to="portalTo">
-            <RekaDialogOverlay class="fixed inset-0 bg-background/80 backdrop-blur-sm" @click="closeDialog" />
+            <RekaDialogOverlay class="fixed inset-0 bg-background/80 backdrop-blur-sm" />
 
             <RekaDialogContent
                 class="fixed inset-0 p-6 sm:p-10 border-0 bg-transparent shadow-none outline-none"
+                @click="closeDialog"
                 @open-auto-focus.prevent
                 @close-auto-focus.prevent>
                 <div ref="viewerEl" class="relative h-full w-full overflow-hidden select-none">
                     <!-- toolbar -->
                     <div
+                        @click.stop
                         class="absolute right-3 top-3 z-10 flex items-center gap-2 rounded-md bg-background/70 backdrop-blur px-2 py-1 border">
                         <Button
                             variant="ghost"
@@ -73,14 +75,13 @@
                         </Button>
                     </div>
 
-                    <div
-                        class="h-full w-full flex items-center justify-center"
-                        @wheel="onWheel"
-                        @pointerdown="onPointerDown"
-                        @pointermove="onPointerMove"
-                        @pointerup="onPointerUp"
-                        @pointercancel="onPointerUp">
+                    <div class="h-full w-full flex items-center justify-center" @wheel="onWheel">
                         <img
+                            @pointerdown="onPointerDown"
+                            @pointermove="onPointerMove"
+                            @pointerup="onPointerUp"
+                            @pointercancel="onPointerUp"
+                            @click.stop
                             v-if="imageUrl"
                             :src="imageUrl"
                             class="max-h-full max-w-full x-viewer-img"
