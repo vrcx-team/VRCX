@@ -42,7 +42,9 @@ internal static class OverlayProgram
     private static async Task QuitProcess()
     {
         await Task.Delay(5000);
-        while (OverlayClient.ConnectedAndActive)
+        while (Program.LaunchDebug ?
+                   OverlayClient.Connected :
+                   OverlayClient.ConnectedAndActive)
         {
             await Task.Delay(500);
         }

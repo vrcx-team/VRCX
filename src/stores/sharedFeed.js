@@ -418,6 +418,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         loadSharedFeed,
         sendSharedFeed,
         addEntry,
-        addTag
+        addTag,
+        sharedFeedData
     };
 });
