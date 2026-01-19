@@ -25,7 +25,7 @@
         "help_support": "帮助 & 支持",
         "expand_menu": "展开菜单",
         "collapse_menu": "折叠菜单",
-        "toggle_theme": "切换主题"
+        "toggle_theme": "切换日/夜间模式"
     },
     "nav_menu": {
         "resources": "帮助资源",
@@ -589,7 +589,7 @@
                     "show_instance_id": "显示房间 ID",
                     "age_gated_instances": "显示具有年龄限制的房间",
                     "nicknames": "显示本地好友备注",
-                    "sort_favorite_by": "收藏排序规则",
+                    "sort_favorite_by": "收藏夹排序规则",
                     "sort_favorite_by_name": "名称",
                     "sort_favorite_by_date": "时间",
                     "sort_instance_users_by": "房间玩家排序规则",
@@ -1003,7 +1003,7 @@
                 "edit_language": "语言",
                 "edit_bio": "自我介绍",
                 "edit_pronouns": "人称代词",
-                "report_hacking": "报告这个玩家的作弊行为（例如盗模）",
+                "report_hacking": "报告这个玩家的开挂/盗模行为",
                 "unfriend": "删除好友",
                 "unfriend_success_msg": "已成功删除好友",
                 "logout": "退出登录"
