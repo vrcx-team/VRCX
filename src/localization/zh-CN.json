@@ -1592,7 +1592,7 @@
             "invite": "邀请",
             "launch": "启动（VR模式）",
             "open_ingame": "在 VRChat 中打开",
-            "self_invite": "自我邀请",
+            "self_invite": "邀请自己",
             "game_running_warning": "你确定要启动另一个 VRChat 客户端吗？",
             "confirm_yes": "是，确认启动",
             "confirm_no": "否，我再想想"
