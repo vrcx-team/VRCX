@@ -67,7 +67,7 @@
         <TooltipWrapper
             side="top"
             :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-            <Info />
+            <Info class="inline-block" />
         </TooltipWrapper>
         <simple-switch
             :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')"
@@ -93,7 +93,7 @@
         <TooltipWrapper
             side="top"
             :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-            <Info />
+            <Info class="inline-block" />
         </TooltipWrapper>
         <simple-switch
             :label="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')"

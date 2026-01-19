@@ -1,6 +1,7 @@
 import { reactive, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
+import { useI18n } from 'vue-i18n';
 
 import {
     checkVRChatCache,
@@ -24,6 +25,7 @@ export const useWorldStore = defineStore('World', () => {
     const favoriteStore = useFavoriteStore();
     const instanceStore = useInstanceStore();
     const userStore = useUserStore();
+    const { t } = useI18n();
 
     const worldDialog = reactive({
         visible: false,
@@ -132,7 +134,7 @@ export const useWorldStore = defineStore('World', () => {
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
-                toast.error('Failed to load world');
+                toast.error(t('message.world.load_failed'));
                 throw err;
             })
             .then((args) => {

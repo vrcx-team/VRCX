@@ -11,7 +11,9 @@
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
                     <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
                         <TooltipWrapper side="bottom" :content="t('view.feed.favorites_only_tooltip')">
-                            <Switch v-model="gameLogTable.vip" @update:modelValue="gameLogTableLookup" />
+                            <span class="inline-flex">
+                                <Switch v-model="gameLogTable.vip" @update:modelValue="gameLogTableLookup" />
+                            </span>
                         </TooltipWrapper>
                     </div>
                     <Select
@@ -136,7 +138,7 @@
     function deleteGameLogEntryPrompt(row) {
         modalStore
             .confirm({
-                description: 'Continue? Delete Log',
+                description: t('confirm.delete_log'),
                 title: 'Confirm'
             })
             .then(({ ok }) => ok && deleteGameLogEntry(row))
@@ -168,7 +170,7 @@
         persistKey: 'gameLog',
         data: gameLogDisplayData,
         columns,
-        getRowId: (row) => `${row.type}:${row.rowId ?? row.displayName + row.location + row.time}`,
+        getRowId: (row, index) => `${row.type}:${row.rowId ?? index}`,
         initialSorting: [],
         initialPagination: {
             pageIndex: 0,

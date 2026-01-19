@@ -3,12 +3,15 @@
     import { PaginationEllipsis } from 'reka-ui';
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
+    import { useI18n } from 'vue-i18n';
 
     const props = defineProps({
         asChild: { type: Boolean, required: false },
         as: { type: null, required: false },
         class: { type: null, required: false }
     });
+
+    const { t } = useI18n();
 
     const delegatedProps = reactiveOmit(props, 'class');
 </script>
@@ -20,7 +23,9 @@
         :class="cn('flex size-9 items-center justify-center text-[13px]', props.class)">
         <slot>
             <MoreHorizontal class="size-4" />
-            <span class="sr-only">More pages</span>
+            <span class="sr-only">
+                {{ t('table.pagination.more_pages') }}
+            </span>
         </slot>
     </PaginationEllipsis>
 </template>

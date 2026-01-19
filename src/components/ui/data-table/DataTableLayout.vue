@@ -5,7 +5,7 @@
         </div>
 
         <div class="rounded-md border">
-            <ScrollArea class="max-w-full" :style="tableStyle">
+            <div class="max-w-full overflow-auto" :style="tableStyle">
                 <Table :class="tableClassValue" :style="tableElementStyle">
                     <colgroup>
                         <col v-for="col in table.getVisibleLeafColumns()" :key="col.id" :style="getColStyle(col)" />
@@ -34,7 +34,9 @@
                     <TableBody>
                         <template v-if="table.getRowModel().rows?.length">
                             <template v-for="row in table.getRowModel().rows" :key="row.id">
-                                <TableRow @click="handleRowClick(row)">
+                                <TableRow
+                                    @click="handleRowClick(row)"
+                                    :class="isDataTableStriped ? 'even:bg-muted/20' : ''">
                                     <TableCell
                                         v-for="cell in row.getVisibleCells()"
                                         :key="cell.id"
@@ -65,7 +67,7 @@
                         </TableRow>
                     </TableBody>
                 </Table>
-            </ScrollArea>
+            </div>
         </div>
 
         <div v-if="showPagination" class="mt-4 flex w-full items-center gap-3">
@@ -125,7 +127,11 @@
     } from '../pagination';
     import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../table';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../select';
-    import { ScrollArea } from '../scroll-area';
+    import { useAppearanceSettingsStore } from '@/stores/';
+    import { storeToRefs } from 'pinia';
+
+    const appearanceSettingsStore = useAppearanceSettingsStore();
+    const { isDataTableStriped } = storeToRefs(appearanceSettingsStore);
 
     const props = defineProps({
         table: {
@@ -256,7 +262,7 @@
         const meta = columnDef?.meta ?? {};
         const pinned = getPinnedState(header?.column);
         return joinClasses(
-            'sticky top-0 bg-background relative group',
+            'sticky top-0 bg-background dark:bg-sidebar border-b border-border group',
             pinned ? 'z-30' : 'z-10',
             isSpacer(header.column) && 'p-0',
             resolveClassValue(meta.class, header?.getContext?.()),

@@ -1,6 +1,7 @@
 import { computed, reactive, ref, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
+import { useI18n } from 'vue-i18n';
 
 import Noty from 'noty';
 
@@ -70,6 +71,7 @@ export const useUserStore = defineStore('User', () => {
     const moderationStore = useModerationStore();
     const photonStore = usePhotonStore();
     const sharedFeedStore = useSharedFeedStore();
+    const { t } = useI18n();
 
     const currentUser = ref({
         acceptedPrivacyVersion: 0,
@@ -630,17 +632,11 @@ export const useUserStore = defineStore('User', () => {
                     ...ref
                 });
                 currentTravelers.set(ref.id, travelRef);
-                sharedFeedStore.sharedFeed.pendingUpdate = true;
-                sharedFeedStore.updateSharedFeed(false);
                 onPlayerTraveling(travelRef);
             }
         } else {
             ref.$location = parseLocation(ref.location);
-            if (currentTravelers.has(ref.id)) {
-                currentTravelers.delete(ref.id);
-                sharedFeedStore.sharedFeed.pendingUpdate = true;
-                sharedFeedStore.updateSharedFeed(false);
-            }
+            currentTravelers.delete(ref.id);
         }
         if (
             !instanceStore.cachedInstances.has(ref.$location.tag) &&
@@ -843,7 +839,7 @@ export const useUserStore = defineStore('User', () => {
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
-                toast.error('Failed to load user');
+                toast.error(t('message.user.load_failed'));
                 throw err;
             })
             .then((args) => {
@@ -1651,7 +1647,7 @@ export const useUserStore = defineStore('User', () => {
             ref.$customTag = data.Tag;
             ref.$customTagColour = data.TagColour;
         }
-        sharedFeedStore.updateSharedFeed(true);
+        sharedFeedStore.addTag(data.UserId, data.TagColour);
     }
 
     async function initUserNotes() {

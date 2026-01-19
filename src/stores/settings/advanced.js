@@ -485,9 +485,9 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                     .confirm({
                         description:
                             'Error reporting setting has been enabled. Would you like to restart VRCX now for the change to take effect?',
-                        title: 'Restart Required',
-                        confirmText: 'Restart Now',
-                        cancelText: 'Later'
+                        title: t('confirm.restart_required_title'),
+                        confirmText: t('confirm.restart_now'),
+                        cancelText: t('confirm.restart_later')
                     })
                     .then(async ({ ok }) => {
                         if (!ok) return;
@@ -507,9 +507,9 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             .confirm({
                 description:
                     'Error reporting setting has been disabled. Would you like to restart VRCX now for the change to take effect?',
-                title: 'Restart Required',
-                confirmText: 'Restart Now',
-                cancelText: 'Later'
+                title: t('confirm.restart_required_title'),
+                confirmText: t('confirm.restart_now'),
+                cancelText: t('confirm.restart_later')
             })
             .then(async ({ ok }) => {
                 if (!ok) return;

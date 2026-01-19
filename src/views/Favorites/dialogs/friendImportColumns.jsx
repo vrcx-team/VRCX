@@ -42,7 +42,7 @@ export const createColumns = ({ userImage, userImageFull, onShowFullscreenImage,
             const original = row.original;
             return (
                 <span
-                    class="x-link"
+                    class="cursor-pointer"
                     title={original?.displayName}
                     onClick={(e) => {
                         e.stopPropagation();

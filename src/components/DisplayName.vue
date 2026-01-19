@@ -1,5 +1,5 @@
 <template>
-    <span @click="showUserDialog" class="x-link">{{ username }}</span>
+    <span @click="showUserDialog" class="cursor-pointer">{{ username }}</span>
 </template>
 
 <script setup>

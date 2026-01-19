@@ -23,7 +23,7 @@
                     </div>
                     <template v-else-if="isGroupByInstance">
                         <div class="flex items-center">
-                            <Loader2 v-if="isFriendTraveling" class="is-loading" style="margin-right: 3px" />
+                            <Spinner v-if="isFriendTraveling" class="mr-1" />
                             <Timer
                                 class="text-xs"
                                 :epoch="epoch"
@@ -65,8 +65,9 @@
 </template>
 
 <script setup>
-    import { Loader2, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
+    import { Spinner } from '@/components/ui/spinner';
+    import { Trash2 } from 'lucide-vue-next';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

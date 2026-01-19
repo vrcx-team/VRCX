@@ -28,13 +28,10 @@ export const useFeedStore = defineStore('Feed', () => {
         pageSizeLinked: true
     });
 
-    const feedSessionTable = ref([]);
-
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
             feedTable.value.data.length = 0;
-            feedSessionTable.value = [];
             if (isLoggedIn) {
                 initFeedTable();
             }
@@ -160,9 +157,7 @@ export const useFeedStore = defineStore('Feed', () => {
 
     function addFeed(feed) {
         notificationStore.queueFeedNoty(feed);
-        feedSessionTable.value.push(feed);
-        sweepFeedSessionTable();
-        sharedFeedStore.updateSharedFeed(false);
+        sharedFeedStore.addEntry(feed);
         if (
             feedTable.value.filter.length > 0 &&
             !feedTable.value.filter.includes(feed.type)
@@ -183,65 +178,21 @@ export const useFeedStore = defineStore('Feed', () => {
         UiStore.notifyMenu('feed');
     }
 
-    function sweepFeedSessionTable() {
-        const data = feedSessionTable.value;
-        const k = data.length;
-        if (!k) {
-            return;
-        }
-
-        // 24 hour limit
-        const date = new Date();
-        date.setDate(date.getDate() - 1);
-        const limit = date.toJSON();
-
-        if (data[0].created_at < limit) {
-            let i = 0;
-            while (i < k && data[i].created_at < limit) {
-                ++i;
-            }
-            if (i === k) {
-                feedSessionTable.value = [];
-                return;
-            }
-            if (i) {
-                data.splice(0, i);
-            }
-        }
-
-        const maxLen = Math.floor(vrcxStore.maxTableSize * 1.5);
-        if (maxLen > 0 && data.length > maxLen + 100) {
-            data.splice(0, 100);
-        }
-    }
-
     function sweepFeed() {
         const { data } = feedTable.value;
         const j = data.length;
         if (j > vrcxStore.maxTableSize + 50) {
             data.splice(0, 50);
         }
-
-        sweepFeedSessionTable();
     }
 
     async function initFeedTable() {
         feedTable.value.loading = true;
-
         feedTableLookup();
-
-        const getFeedDatabaseResult = await database.getFeedDatabase();
-        if (getFeedDatabaseResult && getFeedDatabaseResult.length > 0) {
-            // rough, maybe 100 is enough
-            feedSessionTable.value = getFeedDatabaseResult.slice(-100);
-        } else {
-            feedSessionTable.value = [];
-        }
     }
 
     return {
         feedTable,
-        feedSessionTable,
         initFeedTable,
         feedTableLookup,
         addFeed

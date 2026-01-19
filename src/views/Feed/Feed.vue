@@ -11,7 +11,9 @@
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
                     <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
                         <TooltipWrapper side="bottom" :content="t('view.feed.favorites_only_tooltip')">
-                            <Switch v-model="feedTable.vip" @update:modelValue="feedTableLookup" />
+                            <span class="inline-flex">
+                                <Switch v-model="feedTable.vip" @update:modelValue="feedTableLookup" />
+                            </span>
                         </TooltipWrapper>
                     </div>
                     <Select

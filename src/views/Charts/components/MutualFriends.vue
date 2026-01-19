@@ -215,7 +215,11 @@
     const isOptOut = computed(() => Boolean(currentUser.value?.hasSharedConnectionsOptOut));
     // @ts-ignore
     const graphReady = computed(() => Array.isArray(graphPayload.value?.nodes) && graphPayload.value.nodes.length > 0);
-    const fetchButtonDisabled = computed(() => isFetching.value || isOptOut.value || totalFriends.value === 0);
+    const isLoadingSnapshot = ref(false);
+    const loadingToastId = ref(null);
+    const fetchButtonDisabled = computed(
+        () => isFetching.value || isOptOut.value || totalFriends.value === 0 || isLoadingSnapshot.value
+    );
     const fetchButtonLabel = computed(() =>
         hasFetched.value
             ? t('view.charts.mutual_friend.actions.fetch_again')
@@ -361,9 +365,11 @@
     }
 
     async function loadGraphFromDatabase() {
-        if (hasFetched.value || isFetching.value) {
+        if (hasFetched.value || isFetching.value || isLoadingSnapshot.value) {
             return;
         }
+        isLoadingSnapshot.value = true;
+        loadingToastId.value = toast.loading(t('view.charts.mutual_friend.status.loading_cache'));
         try {
             const snapshot = await database.getMutualGraphSnapshot();
             if (!snapshot || snapshot.size === 0) {
@@ -399,6 +405,12 @@
             status.needsRefetch = false;
         } catch (err) {
             console.error('[MutualNetworkGraph] Failed to load cached mutual graph', err);
+        } finally {
+            isLoadingSnapshot.value = false;
+            if (loadingToastId.value !== null && loadingToastId.value !== undefined) {
+                toast.dismiss(loadingToastId.value);
+                loadingToastId.value = null;
+            }
         }
     }
 

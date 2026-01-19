@@ -4,7 +4,10 @@
             <div style="flex: 1; padding: 10px; padding-left: 0">
                 <Popover v-model:open="isQuickSearchOpen">
                     <PopoverTrigger as-child>
-                        <Input v-model="quickSearchQuery" :placeholder="t('side_panel.search_placeholder')" />
+                        <Input
+                            v-model="quickSearchQuery"
+                            :placeholder="t('side_panel.search_placeholder')"
+                            autocomplete="off" />
                     </PopoverTrigger>
                     <PopoverContent
                         side="bottom"
@@ -190,6 +193,7 @@
         order: 99;
         height: 100%;
         box-sizing: border-box;
+        padding-left: 10px;
     }
 
     .sidebar-tab-count {

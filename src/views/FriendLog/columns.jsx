@@ -89,7 +89,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
                 const displayName =
                     original.displayName || original.userId || '';
                 return (
-                    <span class="block w-full whitespace-normal break-words">
+                    <span class="block w-full whitespace-normal wrap-break-word cursor-pointer">
                         {original.type === 'DisplayName' ? (
                             <span class="mr-1">
                                 {original.previousDisplayName}
@@ -97,7 +97,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
                             </span>
                         ) : null}
                         <span
-                            class="x-link pr-2.5"
+                            class="cursor-pointer pr-2.5"
                             onClick={() => showUserDialog(original.userId)}
                         >
                             {displayName}
@@ -118,7 +118,6 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             meta: {
                 class: 'w-[80px] max-w-[80px] text-right'
             },
-            enableResizing: false,
             size: 80,
             maxSize: 80,
             header: () => t('table.friendLog.action'),

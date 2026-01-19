@@ -17,6 +17,7 @@ import configRepository from '../../../service/config.js';
 
 const THEME_COLOR_STORAGE_KEY = 'VRCX_themeColor';
 const THEME_COLOR_STYLE_ID = 'app-theme-color-style';
+const THEME_MODE_STYLE_ID = 'app-theme-mode-style';
 const DEFAULT_THEME_COLOR_KEY = 'default';
 
 const APP_FONT_LINK_ATTR = 'data-app-font';
@@ -139,6 +140,33 @@ function applyThemeFonts(themeKey, fontLinks = []) {
     });
 }
 
+function applyThemeModeStyle(themeMode) {
+    const themeConfig = THEME_CONFIG[themeMode];
+    const themeFile = themeConfig?.file;
+    let styleEl = document.getElementById(THEME_MODE_STYLE_ID);
+
+    if (!themeFile) {
+        styleEl?.remove();
+        return;
+    }
+
+    const themeHref = new URL(
+        `../../../styles/themes/${themeFile}`,
+        import.meta.url
+    ).href;
+
+    if (!styleEl) {
+        styleEl = document.createElement('link');
+        styleEl.id = THEME_MODE_STYLE_ID;
+        styleEl.rel = 'stylesheet';
+        document.head.appendChild(styleEl);
+    }
+
+    if (styleEl.getAttribute('href') !== themeHref) {
+        styleEl.setAttribute('href', themeHref);
+    }
+}
+
 function resolveAppFontFamily(fontKey) {
     const normalized = String(fontKey || '')
         .trim()
@@ -209,6 +237,7 @@ function changeAppThemeStyle(themeMode) {
     }
 
     applyThemeFonts(themeMode, themeConfig.fontLinks);
+    applyThemeModeStyle(themeMode);
 
     document.documentElement.setAttribute('data-theme', themeMode);
 

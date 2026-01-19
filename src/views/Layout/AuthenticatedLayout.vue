@@ -18,7 +18,10 @@
                 <ResizablePanelGroup
                     ref="panelGroupRef"
                     direction="horizontal"
-                    class="group/main-layout flex-1 h-full min-w-0"
+                    :class="[
+                        'group/main-layout flex-1 h-full min-w-0',
+                        { 'aside-collapsed': isAsideCollapsedStatic }
+                    ]"
                     @layout="handleLayout">
                     <template #default="{ layout }">
                         <ResizablePanel :default-size="mainDefaultSize" :order="1">
@@ -126,7 +129,7 @@
     const router = useRouter();
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const { navWidth, isNavCollapsed } = storeToRefs(appearanceSettingsStore);
+    const { navWidth, isNavCollapsed, asideWidth } = storeToRefs(appearanceSettingsStore);
 
     const sidebarOpen = computed(() => !isNavCollapsed.value);
 
@@ -183,6 +186,10 @@
         isAsideCollapsed,
         isSideBarTabShow
     } = useAuthenticatedLayoutResizable();
+
+    const isAsideCollapsedStatic = computed(
+        () => !isSideBarTabShow.value || asideWidth.value === 0
+    );
 
     watch(
         () => watchState.isLoggedIn,

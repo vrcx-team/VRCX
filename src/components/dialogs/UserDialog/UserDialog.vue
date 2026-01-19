@@ -36,33 +36,18 @@
                                 ">
                                 <div style="flex: none">
                                     <template v-if="isRealInstance(userDialog.$location.tag)">
-                                        <div class="flex items-center mb-1">
-                                            <Launch :location="userDialog.$location.tag" />
-                                            <InviteYourself
-                                                :location="userDialog.$location.tag"
-                                                :shortname="userDialog.$location.shortName"
-                                                style="margin-left: 5px" />
-                                            <TooltipWrapper
-                                                side="top"
-                                                :content="t('dialog.user.info.refresh_instance_info')"
-                                                ><Button
-                                                    class="rounded-full ml-1 w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
-                                                    size="icon"
-                                                    variant="outline"
-                                                    @click="refreshInstancePlayerCount(userDialog.$location.tag)"
-                                                    ><RefreshCw class="h-4 w-4" />
-                                                </Button>
-                                            </TooltipWrapper>
-                                            <LastJoin
-                                                :location="userDialog.$location.tag"
-                                                :currentlocation="lastLocation.location" />
-                                            <InstanceInfo
-                                                :location="userDialog.$location.tag"
-                                                :instance="userDialog.instance.ref"
-                                                :friendcount="userDialog.instance.friendCount" />
-                                        </div>
+                                        <InstanceActionBar
+                                            class="mb-1"
+                                            :location="userDialog.$location.tag"
+                                            :shortname="userDialog.$location.shortName"
+                                            :currentlocation="lastLocation.location"
+                                            :instance="userDialog.instance.ref"
+                                            :friendcount="userDialog.instance.friendCount"
+                                            :refresh-tooltip="t('dialog.user.info.refresh_instance_info')"
+                                            :on-refresh="() => refreshInstancePlayerCount(userDialog.$location.tag)" />
                                     </template>
                                     <Location
+                                        class="text-sm"
                                         :location="userDialog.ref.location"
                                         :traveling="userDialog.ref.travelingToLocation" />
                                 </div>
@@ -99,7 +84,7 @@
                                                 :style="{ color: user.$userColour }"
                                                 v-text="user.displayName"></span>
                                             <span v-if="user.location === 'traveling'" class="extra">
-                                                <Loader2 class="is-loading" style="margin-right: 3px" />
+                                                <Spinner class="inline-block mr-1" />
                                                 <Timer :epoch="user.$travelingToTime" />
                                             </span>
                                             <span v-else class="extra">
@@ -154,22 +139,14 @@
                             </div>
                             <div class="x-friend-item" style="width: 100%; cursor: default">
                                 <div class="detail">
-                                    <span
-                                        v-if="
+                                    <span class="name">
+                                        {{
                                             userDialog.id !== currentUser.id &&
                                             userDialog.ref.profilePicOverride &&
                                             userDialog.ref.currentAvatarImageUrl
-                                        "
-                                        class="name">
-                                        {{ t('dialog.user.info.avatar_info_last_seen') }}
-                                    </span>
-                                    <span v-else class="name">{{ t('dialog.user.info.avatar_info') }}</span>
-                                    <div class="extra">
-                                        <AvatarInfo
-                                            :imageurl="userDialog.ref.currentAvatarImageUrl"
-                                            :userid="userDialog.id"
-                                            :avatartags="userDialog.ref.currentAvatarTags"
-                                            style="display: inline-block" />
+                                                ? t('dialog.user.info.avatar_info_last_seen')
+                                                : t('dialog.user.info.avatar_info')
+                                        }}
                                         <TooltipWrapper
                                             v-if="
                                                 userDialog.ref.profilePicOverride &&
@@ -179,6 +156,13 @@
                                             :content="t('dialog.user.info.vrcplus_hides_avatar')">
                                             <Info />
                                         </TooltipWrapper>
+                                    </span>
+                                    <div class="extra">
+                                        <AvatarInfo
+                                            :imageurl="userDialog.ref.currentAvatarImageUrl"
+                                            :userid="userDialog.id"
+                                            :avatartags="userDialog.ref.currentAvatarTags"
+                                            style="display: inline-block" />
                                     </div>
                                 </div>
                             </div>
@@ -195,7 +179,7 @@
                                         class="extra">
                                         <div style="display: inline-block; flex: none; margin-right: 5px">
                                             <Avatar
-                                                class="x-link size-15! rounded-lg!"
+                                                class="cursor-pointer size-15! rounded-lg!"
                                                 :style="{
                                                     background: userDialog.isRepresentedGroupLoading ? '#f5f7fa' : ''
                                                 }"
@@ -229,7 +213,7 @@
                                 <div class="detail">
                                     <span class="name">{{ t('dialog.user.info.bio') }}</span>
                                     <pre
-                                        class="extra"
+                                        class="extra truncate"
                                         style="
                                             font-family: inherit;
                                             font-size: 12px;
@@ -1304,7 +1288,6 @@
         Eye,
         Info,
         Languages,
-        Loader2,
         LogOut,
         MoreHorizontal,
         Pencil,
@@ -1385,6 +1368,7 @@
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import { database } from '../../../service/database';
 
+    import InstanceActionBar from '../../InstanceActionBar.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
     import UserSummaryHeader from './UserSummaryHeader.vue';
 
@@ -1458,7 +1442,6 @@
     const { getFriendRequest, handleFriendDelete } = useFriendStore();
     const { clearInviteImageUpload, showFullscreenImageDialog, showGalleryPage } = useGalleryStore();
 
-    const { logout } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
     const { applyPlayerModeration, handlePlayerModerationDelete } = useModerationStore();
     const { shiftHeld } = storeToRefs(useUiStore());
@@ -1522,10 +1505,7 @@
     });
     const socialStatusHistoryTable = ref({
         data: [],
-        tableProps: {
-            stripe: true,
-            size: 'small'
-        },
+
         layout: 'table'
     });
 
@@ -1818,8 +1798,6 @@
             showBioDialog();
         } else if (command === 'Pencil Pronouns') {
             showPronounsDialog();
-        } else if (command === 'Logout') {
-            logout();
         } else if (command === 'Request Invite') {
             notificationRequest
                 .sendRequestInvite(
@@ -1876,7 +1854,7 @@
                             D.id
                         )
                         .then((_args) => {
-                            toast('Invite sent');
+                            toast(t('message.invite.sent'));
                             return _args;
                         });
                 });

@@ -195,7 +195,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 toast.dismiss(msgBox);
                 if (state.databaseVersion) {
                     // only display when database exists
-                    toast.success('Database upgrade complete');
+                    toast.success(t('message.database.upgrade_complete'));
                 }
                 state.databaseVersion = databaseVersion;
             } catch (err) {

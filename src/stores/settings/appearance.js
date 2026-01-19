@@ -13,7 +13,8 @@ import {
 } from '../../shared/utils/base/ui';
 import {
     APP_FONT_DEFAULT_KEY,
-    APP_FONT_FAMILIES
+    APP_FONT_FAMILIES,
+    THEME_CONFIG
 } from '../../shared/constants';
 import { database } from '../../service/database';
 import { getNameColour } from '../../shared/utils';
@@ -51,6 +52,7 @@ export const useAppearanceSettingsStore = defineStore(
         const appLanguage = ref('en');
         const themeMode = ref('');
         const isDarkMode = ref(false);
+        const lastDarkTheme = ref('dark');
         const appFontFamily = ref('inter');
         const displayVRCPlusIconsAsAvatar = ref(false);
         const hideNicknames = ref(false);
@@ -102,14 +104,28 @@ export const useAppearanceSettingsStore = defineStore(
             );
         });
 
+        const isDataTableStriped = ref(false);
+        const showPointerOnHover = ref(false);
+
         const clampInt = (value, min, max) => {
             const n = parseInt(value, 10);
             return Math.min(max, Math.max(min, n));
         };
 
+        const resolveLastDarkTheme = (value, fallback = 'dark') => {
+            const normalized = String(value || '').trim();
+            return THEME_CONFIG[normalized]?.isDark === true
+                ? normalized
+                : fallback;
+        };
+
         async function initAppearanceSettings() {
             const { initThemeMode, isDarkMode: initDarkMode } =
                 await getThemeMode(configRepository);
+            const fallbackDarkTheme =
+                THEME_CONFIG[initThemeMode]?.isDark === true
+                    ? initThemeMode
+                    : 'dark';
             const [
                 appLanguageConfig,
                 displayVRCPlusIconsAsAvatarConfig,
@@ -137,7 +153,10 @@ export const useAppearanceSettingsStore = defineStore(
                 trustColorConfig,
                 notificationIconDotConfig,
                 navIsCollapsedConfig,
-                appFontFamilyConfig
+                dataTableStripedConfig,
+                showPointerOnHoverConfig,
+                appFontFamilyConfig,
+                lastDarkThemeConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_appLanguage'),
                 configRepository.getBool('displayVRCPlusIconsAsAvatar', true),
@@ -193,9 +212,15 @@ export const useAppearanceSettingsStore = defineStore(
                 ),
                 configRepository.getBool('VRCX_notificationIconDot', true),
                 configRepository.getBool('VRCX_navIsCollapsed', true),
+                configRepository.getBool('VRCX_dataTableStriped', false),
+                configRepository.getBool('VRCX_showPointerOnHover', false),
                 configRepository.getString(
                     'VRCX_fontFamily',
                     APP_FONT_DEFAULT_KEY
+                ),
+                configRepository.getString(
+                    'VRCX_lastDarkTheme',
+                    fallbackDarkTheme
                 )
             ]);
 
@@ -216,6 +241,10 @@ export const useAppearanceSettingsStore = defineStore(
 
             themeMode.value = initThemeMode;
             isDarkMode.value = initDarkMode;
+            lastDarkTheme.value = resolveLastDarkTheme(
+                lastDarkThemeConfig,
+                fallbackDarkTheme
+            );
             appFontFamily.value = normalizeAppFontFamily(appFontFamilyConfig);
             applyAppFontFamily(appFontFamily.value);
 
@@ -278,6 +307,10 @@ export const useAppearanceSettingsStore = defineStore(
                 );
             }
             isNavCollapsed.value = navIsCollapsedConfig;
+            isDataTableStriped.value = dataTableStripedConfig;
+            showPointerOnHover.value = showPointerOnHoverConfig;
+
+            applyPointerHoverClass();
 
             await configRepository.remove('VRCX_navWidth');
 
@@ -463,10 +496,22 @@ export const useAppearanceSettingsStore = defineStore(
         function setThemeMode(mode) {
             themeMode.value = mode;
             configRepository.setString('VRCX_ThemeMode', mode);
+            if (THEME_CONFIG[mode]?.isDark === true) {
+                const normalized = resolveLastDarkTheme(mode);
+                lastDarkTheme.value = normalized;
+                configRepository.setString('VRCX_lastDarkTheme', normalized);
+            }
             const { isDark } = changeAppThemeStyle(mode);
             isDarkMode.value = isDark;
             vrStore.updateVRConfigVars();
             updateTrustColor(undefined, undefined);
+        }
+
+        function toggleThemeMode() {
+            const nextMode = isDarkMode.value
+                ? 'light'
+                : resolveLastDarkTheme(lastDarkTheme.value);
+            setThemeMode(nextMode);
         }
 
         function normalizeAppFontFamily(value) {
@@ -704,6 +749,34 @@ export const useAppearanceSettingsStore = defineStore(
             applyTableDensity(tableDensity.value);
             configRepository.setString('VRCX_tableDensity', tableDensity.value);
         }
+
+        function toggleStripedDataTable() {
+            isDataTableStriped.value = !isDataTableStriped.value;
+            configRepository.setBool(
+                'VRCX_dataTableStriped',
+                isDataTableStriped.value
+            );
+        }
+
+        // FIXME: this is nasty, there should be a better way of doing this
+        function applyPointerHoverClass() {
+            const classList = document.documentElement.classList;
+            classList.remove('force-pointer-on-hover');
+
+            if (showPointerOnHover.value) {
+                classList.add('force-pointer-on-hover');
+            }
+        }
+
+        function togglePointerOnHover() {
+            showPointerOnHover.value = !showPointerOnHover.value;
+            configRepository.setBool(
+                'VRCX_showPointerOnHover',
+                showPointerOnHover.value
+            );
+            applyPointerHoverClass();
+        }
+
         /**
          * @param {object} color
          */
@@ -876,6 +949,8 @@ export const useAppearanceSettingsStore = defineStore(
             isSideBarTabShow,
             notificationIconDot,
             isNavCollapsed,
+            isDataTableStriped,
+            showPointerOnHover,
 
             setAppLanguage,
             setDisplayVRCPlusIconsAsAvatar,
@@ -901,6 +976,8 @@ export const useAppearanceSettingsStore = defineStore(
             setHideUserMemos,
             setHideUnfriends,
             setRandomUserColours,
+            toggleStripedDataTable,
+            togglePointerOnHover,
             setTableDensity,
             setTrustColor,
             tryInitUserColours,
@@ -914,7 +991,8 @@ export const useAppearanceSettingsStore = defineStore(
             setNavCollapsed,
             toggleNavCollapsed,
             setAppFontFamily,
-            setThemeMode
+            setThemeMode,
+            toggleThemeMode
         };
     }
 );

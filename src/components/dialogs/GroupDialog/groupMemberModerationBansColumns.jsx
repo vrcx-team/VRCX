@@ -18,7 +18,6 @@ export const createColumns = ({
         header: () => null,
         size: 55,
         enableSorting: false,
-        enableResizing: false,
         cell: ({ row }) => {
             const original = row.original;
             return (
@@ -70,7 +69,9 @@ export const createColumns = ({
         cell: ({ row }) => {
             const original = row.original;
             const useColors = !!(randomUserColours?.value ?? randomUserColours);
-            const colorStyle = useColors ? { color: original?.user?.$userColour } : null;
+            const colorStyle = useColors
+                ? { color: original?.user?.$userColour }
+                : null;
 
             return (
                 <span
@@ -80,7 +81,9 @@ export const createColumns = ({
                         onShowUser?.(original?.userId);
                     }}
                 >
-                    <span style={colorStyle}>{original?.user?.displayName}</span>
+                    <span style={colorStyle}>
+                        {original?.user?.displayName}
+                    </span>
                 </span>
             );
         }
@@ -98,19 +101,25 @@ export const createColumns = ({
         accessorKey: 'managerNotes',
         header: () => t('dialog.group_member_moderation.notes'),
         cell: ({ row }) => (
-            <span onClick={(e) => e.stopPropagation()}>{row.original?.managerNotes}</span>
+            <span onClick={(e) => e.stopPropagation()}>
+                {row.original?.managerNotes}
+            </span>
         )
     },
     {
         accessorKey: 'joinedAt',
         header: () => t('dialog.group_member_moderation.joined_at'),
         size: 170,
-        cell: ({ row }) => <span>{formatDateFilter(row.original?.joinedAt, 'long')}</span>
+        cell: ({ row }) => (
+            <span>{formatDateFilter(row.original?.joinedAt, 'long')}</span>
+        )
     },
     {
         accessorKey: 'bannedAt',
         header: () => t('dialog.group_member_moderation.banned_at'),
         size: 170,
-        cell: ({ row }) => <span>{formatDateFilter(row.original?.bannedAt, 'long')}</span>
+        cell: ({ row }) => (
+            <span>{formatDateFilter(row.original?.bannedAt, 'long')}</span>
+        )
     }
 ];

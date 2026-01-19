@@ -1,11 +1,11 @@
 <template>
     <div class="x-friend-list" style="padding: 10px 5px">
         <template v-for="(group, index) in groupedGroupInstances" :key="getGroupId(group)">
-            <div class="x-friend-group x-link" :style="{ paddingTop: index === 0 ? '0px' : '10px' }">
+            <div class="x-friend-group cursor-pointer" :style="{ paddingTop: index === 0 ? '0px' : '10px' }">
                 <div @click="toggleGroupSidebarCollapse(getGroupId(group))" style="display: flex; align-items: center">
                     <ChevronDown
                         class="rotation-transition"
-                        :class="{ 'is-rotated': !groupInstancesCfg[getGroupId(group)]?.isCollapsed }" />
+                        :class="{ 'is-rotated': groupInstancesCfg[getGroupId(group)]?.isCollapsed }" />
                     <span style="margin-left: 5px">{{ group[0].group.name }} – {{ group.length }}</span>
                 </div>
             </div>
@@ -93,12 +93,6 @@
 </script>
 
 <style scoped>
-    .x-link:hover {
-        text-decoration: none;
-    }
-    .x-link:hover span {
-        text-decoration: underline;
-    }
     .is-rotated {
         transform: rotate(-90deg);
     }

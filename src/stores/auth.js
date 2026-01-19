@@ -418,7 +418,7 @@ export const useAuthStore = defineStore('Auth', () => {
     function logout() {
         modalStore
             .confirm({
-                description: 'Continue? Logout',
+                description: t('confirm.logout'),
                 title: 'Confirm'
             })
             .then(({ ok }) => {

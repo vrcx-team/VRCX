@@ -76,7 +76,7 @@ export const createColumns = ({ onLookupUser }) => [
             const original = row.original;
             return (
                 <span
-                    class="x-link"
+                    class=" cursor-pointer"
                     onClick={(event) => {
                         event.stopPropagation();
                         onLookupUser?.(original);

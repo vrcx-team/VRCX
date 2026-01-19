@@ -27,6 +27,7 @@
                                         <InputGroupField
                                             id="login-form-username"
                                             :model-value="field.value"
+                                            autocomplete="off"
                                             name="username"
                                             :placeholder="t('view.login.field.username')"
                                             :aria-invalid="!!errors.length"
@@ -47,11 +48,11 @@
                                             id="login-form-password"
                                             :model-value="field.value"
                                             type="password"
+                                            autocomplete="off"
                                             name="password"
                                             :placeholder="t('view.login.field.password')"
                                             :aria-invalid="!!errors.length"
                                             clearable
-                                            show-password
                                             @update:modelValue="field.onChange"
                                             @blur="field.onBlur" />
                                         <FieldError v-if="errors.length" :errors="errors" />
@@ -77,6 +78,7 @@
                                         <InputGroupField
                                             id="login-form-endpoint"
                                             :model-value="field.value"
+                                            autocomplete="off"
                                             name="endpoint"
                                             :placeholder="AppDebug.endpointDomainVrchat"
                                             :aria-invalid="!!errors.length"
@@ -96,6 +98,7 @@
                                         <InputGroupField
                                             id="login-form-websocket"
                                             :model-value="field.value"
+                                            autocomplete="off"
                                             name="websocket"
                                             :placeholder="AppDebug.websocketDomainVrchat"
                                             :aria-invalid="!!errors.length"
@@ -131,7 +134,7 @@
                             <div
                                 v-for="user in savedCredentials"
                                 :key="user.user.id"
-                                class="x-friend-item"
+                                class="x-friend-item hover:bg-muted rounded-xs"
                                 @click="clickSavedLogin(user)">
                                 <div class="avatar">
                                     <img :src="userImage(user.user)" loading="lazy" />
@@ -158,14 +161,17 @@
             <div class="x-legal-notice-container">
                 <div style="text-align: center; font-size: 12px">
                     <p>
-                        <a class="x-link" @click="openExternalLink('https://vrchat.com/home/password')">{{
+                        <a class="cursor-pointer" @click="openExternalLink('https://vrchat.com/home/password')">{{
                             t('view.login.forgotPassword')
                         }}</a>
                     </p>
                     <p>
                         &copy; 2019-2026
-                        <a class="x-link" @click="openExternalLink('https://github.com/pypy-vrc')">pypy</a> &amp;
-                        <a class="x-link" @click="openExternalLink('https://github.com/Natsumi-sama')">Natsumi</a>
+                        <a class="cursor-pointer" @click="openExternalLink('https://github.com/pypy-vrc')">pypy</a>
+                        &amp;
+                        <a class="cursor-pointer" @click="openExternalLink('https://github.com/Natsumi-sama')"
+                            >Natsumi</a
+                        >
                     </p>
                     <p>{{ t('view.settings.general.legal_notice.info') }}</p>
                     <p>{{ t('view.settings.general.legal_notice.disclaimer1') }}</p>

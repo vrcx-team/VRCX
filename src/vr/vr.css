@@ -368,7 +368,6 @@ button {
 
 .x-friend-item > .detail > .name,
 .x-friend-item > .detail > .extra {
-    display: block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

@@ -17,21 +17,7 @@
                     </SelectContent>
                 </Select>
             </div>
-            <div class="options-container-item">
-                <span class="name">{{ t('view.settings.appearance.appearance.theme_mode') }}</span>
-                <Select :model-value="themeMode" @update:modelValue="setThemeMode">
-                    <SelectTrigger size="sm">
-                        <SelectValue :placeholder="t(`view.settings.appearance.appearance.theme_mode_${themeMode}`)" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem v-for="(config, themeKey) in THEME_CONFIG" :key="themeKey" :value="themeKey">
-                                {{ t(`view.settings.appearance.appearance.theme_mode_${themeKey}`) }}
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </div>
+
             <div class="options-container-item">
                 <span class="name flex! items-center!">
                     {{ t('view.settings.appearance.appearance.font_family') }}
@@ -50,9 +36,12 @@
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem v-for="fontKey in appFontFamilyOptions" :key="fontKey" :value="fontKey">
-                                {{ t(`view.settings.appearance.appearance.font_family_${fontKey}`) }}
-                            </SelectItem>
+                            <template v-for="option in appFontFamilyOptions" :key="option.key">
+                                <SelectSeparator v-if="option.type === 'separator'" />
+                                <SelectItem v-else :value="option.key">
+                                    {{ t(`view.settings.appearance.appearance.font_family_${option.key}`) }}
+                                </SelectItem>
+                            </template>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
@@ -97,6 +86,14 @@
                     setHideNicknames();
                     saveOpenVROption();
                 " />
+            <simple-switch
+                :label="t('view.settings.appearance.appearance.striped_data_table_mode')"
+                :value="isDataTableStriped"
+                @change="toggleStripedDataTable" />
+            <simple-switch
+                :label="t('view.settings.appearance.appearance.toggle_pointer_on_hover')"
+                :value="showPointerOnHover"
+                @change="togglePointerOnHover" />
             <simple-switch
                 :label="t('view.settings.appearance.appearance.age_gated_instances')"
                 :value="isAgeGatedInstancesVisible"
@@ -191,6 +188,7 @@
                     </ListboxRoot>
                 </Popover>
             </div>
+
             <div class="options-container-item">
                 <Button size="sm" variant="outline" @click="promptMaxTableSizeDialog">{{
                     t('view.settings.appearance.appearance.table_max_size')
@@ -373,53 +371,53 @@
                 @change="updateTrustColor('', '', true)"></simple-switch>
             <div>
                 <div>
+                    <span class="text-[18px] align-top x-tag-untrusted">Visitor</span>
                     <PresetColorPicker
                         :model-value="trustColor.untrusted"
                         :presets="['#CCCCCC']"
                         @change="updateTrustColor('untrusted', $event)" />
-                    <span class="text-[18px] align-top x-tag-untrusted">Visitor</span>
                 </div>
                 <div>
+                    <span class="text-[18px] align-top x-tag-basic">New User</span>
                     <PresetColorPicker
                         :model-value="trustColor.basic"
                         :presets="['#1778ff']"
                         @change="updateTrustColor('basic', $event)" />
-                    <span class="text-[18px] align-top x-tag-basic">New User</span>
                 </div>
                 <div>
+                    <span class="text-[18px] align-top x-tag-known">User</span>
                     <PresetColorPicker
                         :model-value="trustColor.known"
                         :presets="['#2bcf5c']"
                         @change="updateTrustColor('known', $event)" />
-                    <span class="text-[18px] align-top x-tag-known">User</span>
                 </div>
                 <div>
+                    <span class="text-[18px] align-top x-tag-trusted">Known User</span>
                     <PresetColorPicker
                         :model-value="trustColor.trusted"
                         :presets="['#ff7b42']"
                         @change="updateTrustColor('trusted', $event)" />
-                    <span class="text-[18px] align-top x-tag-trusted">Known User</span>
                 </div>
                 <div>
+                    <span class="text-[18px] align-top x-tag-veteran">Trusted User</span>
                     <PresetColorPicker
                         :model-value="trustColor.veteran"
                         :presets="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']"
                         @change="updateTrustColor('veteran', $event)" />
-                    <span class="text-[18px] align-top x-tag-veteran">Trusted User</span>
                 </div>
                 <div>
+                    <span class="text-[18px] align-top x-tag-vip">VRChat Team</span>
                     <PresetColorPicker
                         :model-value="trustColor.vip"
                         :presets="['#ff2626']"
                         @change="updateTrustColor('vip', $event)" />
-                    <span class="text-[18px] align-top x-tag-vip">VRChat Team</span>
                 </div>
                 <div>
+                    <span class="text-[18px] align-top x-tag-troll">Nuisance</span>
                     <PresetColorPicker
                         :model-value="trustColor.troll"
                         :presets="['#782f2f']"
                         @change="updateTrustColor('troll', $event)" />
-                    <span class="text-[18px] align-top x-tag-troll">Nuisance</span>
                 </div>
             </div>
         </div>
@@ -427,8 +425,16 @@
 </template>
 
 <script setup>
+    import {
+        Select,
+        SelectContent,
+        SelectGroup,
+        SelectItem,
+        SelectSeparator,
+        SelectTrigger,
+        SelectValue
+    } from '@/components/ui/select';
     import { ListboxContent, ListboxFilter, ListboxItem, ListboxItemIndicator, ListboxRoot, useFilter } from 'reka-ui';
-    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import {
         NumberField,
         NumberFieldContent,
@@ -446,17 +452,16 @@
     import { ArrowRight, CheckIcon, ChevronDown, Info } from 'lucide-vue-next';
     import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { computed, onBeforeUnmount, ref, watch } from 'vue';
+    import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '@/stores';
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+    import { getLanguageName, languageCodes } from '@/localization';
+    import { APP_FONT_FAMILIES } from '@/shared/constants';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import PresetColorPicker from '@/components/PresetColorPicker.vue';
-
-    import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '../../../../stores';
-    import { APP_FONT_FAMILIES, THEME_CONFIG } from '../../../../shared/constants';
-    import { getLanguageName, languageCodes } from '../../../../localization';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 
@@ -467,7 +472,6 @@
 
     const {
         appLanguage,
-        themeMode,
         displayVRCPlusIconsAsAvatar,
         appFontFamily,
         hideNicknames,
@@ -489,7 +493,9 @@
         randomUserColours,
         trustColor,
         notificationIconDot,
-        tablePageSizes
+        tablePageSizes,
+        isDataTableStriped,
+        showPointerOnHover
     } = storeToRefs(appearanceSettingsStore);
 
     const appLanguageDisplayName = computed(() => getLanguageName(String(appLanguage.value)));
@@ -514,15 +520,23 @@
         setHideUserMemos,
         setHideUnfriends,
         updateTrustColor,
-        setThemeMode,
         changeAppLanguage,
         promptMaxTableSizeDialog,
         setNotificationIconDot,
         setTablePageSizes,
+        toggleStripedDataTable,
+        togglePointerOnHover,
         setAppFontFamily
     } = appearanceSettingsStore;
 
-    const appFontFamilyOptions = APP_FONT_FAMILIES;
+    const appFontFamilyOptions = computed(() => {
+        const fontKeys = APP_FONT_FAMILIES.filter((key) => key !== 'system_ui');
+        return [
+            ...fontKeys.map((key) => ({ type: 'item', key })),
+            { type: 'separator', key: 'separator-system-ui' },
+            { type: 'item', key: 'system_ui' }
+        ];
+    });
 
     const zoomLevel = ref(100);
     const isLinux = computed(() => LINUX);

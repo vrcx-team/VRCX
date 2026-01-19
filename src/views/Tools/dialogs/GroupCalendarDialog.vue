@@ -1,9 +1,13 @@
 <template>
     <Dialog :open="visible" @update:open="(open) => (open ? null : closeDialog())">
-        <DialogContent class="x-dialog sm:max-w-[50vw] h-[60vh] overflow-hidden">
+        <DialogContent class="x-dialog sm:max-w-[50vw] h-[70vh] overflow-hidden">
             <DialogHeader>
                 <div class="dialog-title-container">
                     <DialogTitle>{{ t('dialog.group_calendar.header') }}</DialogTitle>
+                </div>
+                <div class="featured-switch">
+                    <span class="featured-switch-text">{{ t('dialog.group_calendar.featured_events') }}</span>
+                    <Switch v-model="showFeaturedEvents" @update:modelValue="toggleFeaturedEvents" class="mr-2" />
                     <Button size="sm" variant="outline" @click="toggleViewMode" class="view-toggle-btn">
                         {{
                             viewMode === 'timeline'
@@ -11,10 +15,6 @@
                                 : t('dialog.group_calendar.calendar_view')
                         }}
                     </Button>
-                </div>
-                <div class="featured-switch">
-                    <span class="featured-switch-text">{{ t('dialog.group_calendar.featured_events') }}</span>
-                    <Switch v-model="showFeaturedEvents" @update:modelValue="toggleFeaturedEvents" />
                 </div>
             </DialogHeader>
             <div class="top-content">
@@ -62,9 +62,9 @@
                         <div v-if="filteredGroupEvents.length" class="groups-container">
                             <div v-for="group in filteredGroupEvents" :key="group.groupId" class="group-row">
                                 <div class="group-header" @click="toggleGroup(group.groupId)">
-                                    <ArrowRight
+                                    <ChevronDown
                                         class="rotation-transition"
-                                        :class="{ rotate: !groupCollapsed[group.groupId] }" />
+                                        :class="{ 'is-rotated': groupCollapsed[group.groupId] }" />
                                     {{ group.groupName }}
                                 </div>
                                 <div class="events-row" v-show="!groupCollapsed[group.groupId]">
@@ -97,8 +97,8 @@
 <script setup>
     import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, onMounted, ref, watch } from 'vue';
-    import { ArrowRight } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
+    import { ChevronDown } from 'lucide-vue-next';
     import { InputGroupSearch } from '@/components/ui/input-group';
     import { useI18n } from 'vue-i18n';
 
@@ -332,11 +332,9 @@
     // Use a stable key for calendar maps (independent of locale/appearance date formatting).
     const formatDateKey = (date) => dayjs(date).format('YYYY-MM-DD');
 
-    function getGroupNameFromCache(groupId) {
+    async function getGroupNameFromCache(groupId) {
         if (!groupNamesCache.has(groupId)) {
-            getGroupName(groupId).then((name) => {
-                groupNamesCache.set(groupId, name);
-            });
+            groupNamesCache.set(groupId, await getGroupName(groupId));
         }
     }
 
@@ -351,13 +349,13 @@
                     offset: 0,
                     date: dayjs(selectedDay.value).format('YYYY-MM-DDTHH:mm:ss[Z]') // this need to be local time because UTC time may cause month shift
                 },
-                handle(args) {
-                    args.results.forEach((event) => {
+                async handle(args) {
+                    for (const event of args.results) {
                         event.title = replaceBioSymbols(event.title);
                         event.description = replaceBioSymbols(event.description);
                         applyGroupEvent(event);
-                        getGroupNameFromCache(event.ownerId);
-                    });
+                        await getGroupNameFromCache(event.ownerId);
+                    }
                     calendar.value.push(...args.results);
                 }
             });
@@ -377,11 +375,11 @@
                     offset: 0,
                     date: dayjs(selectedDay.value).format('YYYY-MM-DDTHH:mm:ss[Z]')
                 },
-                handle(args) {
-                    args.results.forEach((event) => {
+                async handle(args) {
+                    for (const event of args.results) {
                         applyGroupEvent(event);
-                        getGroupNameFromCache(event.ownerId);
-                    });
+                        await getGroupNameFromCache(event.ownerId);
+                    }
                     followingCalendar.value.push(...args.results);
                 }
             });
@@ -401,11 +399,11 @@
                     offset: 0,
                     date: dayjs(selectedDay.value).format('YYYY-MM-DDTHH:mm:ss[Z]')
                 },
-                handle(args) {
-                    args.results.forEach((event) => {
+                async handle(args) {
+                    for (const event of args.results) {
                         applyGroupEvent(event);
-                        getGroupNameFromCache(event.ownerId);
-                    });
+                        await getGroupNameFromCache(event.ownerId);
+                    }
                     featuredCalendar.value.push(...args.results);
                 }
             });
@@ -458,6 +456,7 @@
                     margin-left: 10px;
                     margin-right: 6px;
                     overflow: auto;
+                    height: 50vh;
 
                     .timeline-list {
                         display: flex;
@@ -506,9 +505,7 @@
                             position: relative;
 
                             &.has-events {
-                                background-color: var(
-                                    --group-calendar-event-bg,
-                                );
+                                background-color: var(--group-calendar-event-bg,);
                             }
                             .calendar-event-badge {
                                 position: absolute;
@@ -525,10 +522,6 @@
                                 z-index: 10;
                                 padding: 0 4px;
                                 line-height: 16px;
-                                &.has-following {
-                                }
-                                &.no-following {
-                                }
                             }
                         }
                     }
@@ -551,6 +544,7 @@
     .featured-switch {
         display: flex;
         justify-content: flex-end;
+        align-items: center;
         margin-top: 10px;
         .featured-switch-text {
             font-size: 13px;
@@ -559,24 +553,10 @@
     }
 
     .timeline-view {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
         display: flex;
         align-items: center;
         .timeline-container {
             flex: 1;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-        }
-        .calendar-container {
-            width: 609px;
-            height: 100%;
-            flex-shrink: 0;
         }
     }
 
@@ -640,8 +620,8 @@
         }
     }
 
-    .rotate {
-        transform: rotate(90deg);
+    .is-rotated {
+        transform: rotate(-90deg);
     }
 
     .rotation-transition {

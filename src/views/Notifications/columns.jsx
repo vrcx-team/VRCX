@@ -167,7 +167,7 @@ export const createColumns = ({
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <span
-                                            class="x-link"
+                                            class="cursor-pointer"
                                             onClick={() =>
                                                 showWorldDialog(
                                                     original.location
@@ -183,7 +183,7 @@ export const createColumns = ({
                                                 location={original.location}
                                                 hint={original.worldName}
                                                 grouphint={original.groupName}
-                                                link={false}
+                                                link={true}
                                             />
                                         ) : null}
                                     </TooltipContent>
@@ -200,7 +200,7 @@ export const createColumns = ({
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <span
-                                            class="x-link"
+                                            class="cursor-pointer"
                                             onClick={() =>
                                                 openNotificationLink(
                                                     original.link
@@ -242,7 +242,7 @@ export const createColumns = ({
                     return (
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
-                                class="x-link block w-full min-w-0 truncate"
+                                class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() =>
                                     showUserDialog(original.senderUserId)
                                 }
@@ -257,7 +257,7 @@ export const createColumns = ({
                     return (
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
-                                class="x-link block w-full min-w-0 truncate"
+                                class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() =>
                                     openNotificationLink(original.link)
                                 }
@@ -306,7 +306,7 @@ export const createColumns = ({
                     return (
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
-                                class="x-link block w-full min-w-0 truncate"
+                                class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() =>
                                     showGroupDialog(original.senderUserId)
                                 }
@@ -332,7 +332,7 @@ export const createColumns = ({
                     return (
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
-                                class="x-link block w-full min-w-0 truncate"
+                                class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() =>
                                     openNotificationLink(original.link)
                                 }
@@ -347,7 +347,7 @@ export const createColumns = ({
                     return (
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
-                                class="x-link block w-full min-w-0 truncate"
+                                class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() =>
                                     openNotificationLink(original.link)
                                 }
@@ -389,7 +389,6 @@ export const createColumns = ({
         },
         {
             accessorKey: 'photo',
-            enableResizing: false,
             size: 80,
             header: () => t('table.notification.photo'),
             cell: ({ row }) => {
@@ -401,7 +400,7 @@ export const createColumns = ({
                     }
                     return (
                         <Emoji
-                            class="x-link h-7.5 w-7.5 rounded object-cover"
+                            class="cursor-pointer h-7.5 w-7.5 rounded object-cover"
                             onClick={() => showFullscreenImageDialog(imageUrl)}
                             imageUrl={imageUrl}
                             size={30}
@@ -412,7 +411,7 @@ export const createColumns = ({
                 if (original.details?.imageUrl) {
                     return (
                         <img
-                            class="x-link h-7.5 w-7.5 rounded object-cover"
+                            class="cursor-pointer h-7.5 w-7.5 rounded object-cover"
                             src={getSmallThumbnailUrl(
                                 original.details.imageUrl
                             )}
@@ -429,7 +428,7 @@ export const createColumns = ({
                 if (original.imageUrl) {
                     return (
                         <img
-                            class="x-link h-7.5 w-7.5 rounded object-cover"
+                            class="cursor-pointer h-7.5 w-7.5 rounded object-cover"
                             src={getSmallThumbnailUrl(original.imageUrl)}
                             onClick={() =>
                                 showFullscreenImageDialog(original.imageUrl)
@@ -502,7 +501,6 @@ export const createColumns = ({
             size: 120,
             minSize: 120,
             maxSize: 120,
-            enableResizing: false,
             header: () => t('table.notification.action'),
             enableSorting: false,
             cell: ({ row }) => {
@@ -545,7 +543,11 @@ export const createColumns = ({
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
-                                                <span>Accept</span>
+                                                <span>
+                                                    {t(
+                                                        'view.notification.actions.accept'
+                                                    )}
+                                                </span>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
@@ -569,7 +571,9 @@ export const createColumns = ({
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
                                                 <span>
-                                                    Decline with message
+                                                    {t(
+                                                        'view.notification.actions.decline_with_message'
+                                                    )}
                                                 </span>
                                             </TooltipContent>
                                         </Tooltip>
@@ -595,7 +599,11 @@ export const createColumns = ({
                                                         </button>
                                                     </TooltipTrigger>
                                                     <TooltipContent side="top">
-                                                        <span>Invite</span>
+                                                        <span>
+                                                            {t(
+                                                                'view.notification.actions.invite'
+                                                            )}
+                                                        </span>
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </TooltipProvider>
@@ -617,7 +625,9 @@ export const createColumns = ({
                                                 </TooltipTrigger>
                                                 <TooltipContent side="top">
                                                     <span>
-                                                        Decline with message
+                                                        {t(
+                                                            'view.notification.actions.decline_with_message'
+                                                        )}
                                                     </span>
                                                 </TooltipContent>
                                             </Tooltip>
@@ -707,7 +717,11 @@ export const createColumns = ({
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
-                                                <span>Decline</span>
+                                                <span>
+                                                    {t(
+                                                        'view.notification.actions.decline'
+                                                    )}
+                                                </span>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
@@ -738,7 +752,11 @@ export const createColumns = ({
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
-                                                <span>Delete log</span>
+                                                <span>
+                                                    {t(
+                                                        'view.notification.actions.delete_log'
+                                                    )}
+                                                </span>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
@@ -769,7 +787,11 @@ export const createColumns = ({
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
-                                                <span>Delete log</span>
+                                                <span>
+                                                    {t(
+                                                        'view.notification.actions.delete_log'
+                                                    )}
+                                                </span>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>

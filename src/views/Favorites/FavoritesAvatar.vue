@@ -129,57 +129,32 @@
                                                     <MoreHorizontal />
                                                 </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent side="right" class="w-55 p-1 rounded-lg">
-                                                <div class="favorites-group-menu">
-                                                    <button
-                                                        type="button"
-                                                        class="favorites-group-menu__item"
-                                                        @click="handleRemoteRename(group)">
-                                                        <span>{{ t('view.favorite.rename_tooltip') }}</span>
-                                                    </button>
-                                                    <DropdownMenuSub>
-                                                        <DropdownMenuSubTrigger
-                                                            class="favorites-group-menu__item favorites-group-menu__item--submenu">
-                                                            <span>{{ t('view.favorite.visibility_tooltip') }}</span>
-                                                        </DropdownMenuSubTrigger>
-                                                        <DropdownMenuPortal>
-                                                            <DropdownMenuSubContent
-                                                                side="right"
-                                                                align="start"
-                                                                class="w-45 p-1 rounded-lg">
-                                                                <div class="group-visibility-menu">
-                                                                    <button
-                                                                        v-for="visibility in avatarGroupVisibilityOptions"
-                                                                        :key="visibility"
-                                                                        type="button"
-                                                                        :class="[
-                                                                            'group-visibility-menu__item',
-                                                                            {
-                                                                                'is-active':
-                                                                                    group.visibility === visibility
-                                                                            }
-                                                                        ]"
-                                                                        @click="
-                                                                            handleVisibilitySelection(group, visibility)
-                                                                        ">
-                                                                        <span>{{ formatVisibility(visibility) }}</span>
-                                                                        <span
-                                                                            v-if="group.visibility === visibility"
-                                                                            class="group-visibility-menu__check">
-                                                                            <Check class="h-3 w-3" />
-                                                                        </span>
-                                                                    </button>
-                                                                </div>
-                                                            </DropdownMenuSubContent>
-                                                        </DropdownMenuPortal>
-                                                    </DropdownMenuSub>
-                                                    <button
-                                                        type="button"
-                                                        class="favorites-group-menu__item favorites-group-menu__item--danger"
-                                                        @click="handleRemoteClear(group)">
-                                                        <span>{{ t('view.favorite.clear') }}</span>
-                                                    </button>
-                                                </div>
+                                            <DropdownMenuContent side="right" class="w-55">
+                                                <DropdownMenuItem @click="handleRemoteRename(group)">
+                                                    <span>{{ t('view.favorite.rename_tooltip') }}</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuSub>
+                                                    <DropdownMenuSubTrigger>
+                                                        <span>{{ t('view.favorite.visibility_tooltip') }}</span>
+                                                    </DropdownMenuSubTrigger>
+                                                    <DropdownMenuPortal>
+                                                        <DropdownMenuSubContent side="right" align="start" class="w-45">
+                                                            <DropdownMenuCheckboxItem
+                                                                v-for="visibility in avatarGroupVisibilityOptions"
+                                                                :key="visibility"
+                                                                :model-value="group.visibility === visibility"
+                                                                indicator-position="right"
+                                                                @select="handleVisibilitySelection(group, visibility)">
+                                                                <span>{{ formatVisibility(visibility) }}</span>
+                                                            </DropdownMenuCheckboxItem>
+                                                        </DropdownMenuSubContent>
+                                                    </DropdownMenuPortal>
+                                                </DropdownMenuSub>
+                                                <DropdownMenuItem
+                                                    variant="destructive"
+                                                    @click="handleRemoteClear(group)">
+                                                    <span>{{ t('view.favorite.clear') }}</span>
+                                                </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </div>
@@ -251,27 +226,18 @@
                                                         ><Ellipsis
                                                     /></Button>
                                                 </DropdownMenuTrigger>
-                                                <DropdownMenuContent side="right" class="w-50 p-1 rounded-lg">
-                                                    <div class="favorites-group-menu">
-                                                        <button
-                                                            type="button"
-                                                            class="favorites-group-menu__item"
-                                                            @click="handleLocalRename(group)">
-                                                            <span>{{ t('view.favorite.rename_tooltip') }}</span>
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            class="favorites-group-menu__item"
-                                                            @click="handleCheckInvalidAvatars(group)">
-                                                            <span>{{ t('view.favorite.avatars.check_invalid') }}</span>
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            class="favorites-group-menu__item favorites-group-menu__item--danger"
-                                                            @click="handleLocalDelete(group)">
-                                                            <span>{{ t('view.favorite.delete_tooltip') }}</span>
-                                                        </button>
-                                                    </div>
+                                                <DropdownMenuContent side="right" class="w-50">
+                                                    <DropdownMenuItem @click="handleLocalRename(group)">
+                                                        <span>{{ t('view.favorite.rename_tooltip') }}</span>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem @click="handleCheckInvalidAvatars(group)">
+                                                        <span>{{ t('view.favorite.avatars.check_invalid') }}</span>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        variant="destructive"
+                                                        @click="handleLocalDelete(group)">
+                                                        <span>{{ t('view.favorite.delete_tooltip') }}</span>
+                                                    </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </div>
@@ -317,15 +283,10 @@
                                         ><Ellipsis
                                     /></Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent side="right" class="w-45 p-1 rounded-lg">
-                                    <div class="favorites-group-menu">
-                                        <button
-                                            type="button"
-                                            class="favorites-group-menu__item favorites-group-menu__item--danger"
-                                            @click="handleHistoryClear">
-                                            <span>{{ t('view.favorite.clear_tooltip') }}</span>
-                                        </button>
-                                    </div>
+                                <DropdownMenuContent side="right" class="w-45">
+                                    <DropdownMenuItem variant="destructive" @click="handleHistoryClear">
+                                        <span>{{ t('view.favorite.clear_tooltip') }}</span>
+                                    </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
@@ -476,10 +437,7 @@
                             </div>
                         </template>
                         <template v-else-if="activeLocalGroupName">
-                            <ScrollArea
-                                ref="localAvatarScrollbarRef"
-                                class="favorites-content__scroll"
-                                @scroll="handleLocalAvatarScroll">
+                            <ScrollArea class="favorites-content__scroll">
                                 <template v-if="currentLocalFavorites.length">
                                     <div
                                         class="favorites-card-list"
@@ -537,6 +495,7 @@
 
     import {
         DropdownMenu,
+        DropdownMenuCheckboxItem,
         DropdownMenuContent,
         DropdownMenuItem,
         DropdownMenuPortal,
@@ -580,10 +539,6 @@
         key: `avatar:avatars${index + 1}`,
         displayName: `Group ${index + 1}`
     }));
-
-    const LOCAL_AVATAR_PAGE_SIZE = 20;
-    const LOCAL_AVATAR_SCROLL_THRESHOLD = 120;
-    const LOCAL_AVATAR_VIEWPORT_BUFFER = 32;
 
     const avatarGroupVisibilityOptions = ref(['public', 'friends', 'private']);
     const historyGroupKey = 'local-history';
@@ -682,12 +637,9 @@
     const isCreatingLocalGroup = ref(false);
     const newLocalGroupName = ref('');
     const newLocalGroupInput = ref(null);
-    const sliceLocalAvatarFavoritesLoadMoreNumber = ref(60);
     const refreshingLocalFavorites = ref(false);
     const worker = ref(null);
     const refreshCancelToken = ref(null);
-    const localAvatarScrollbarRef = ref(null);
-    const localAvatarLoadingMore = ref(false);
     const avatarGroupPlaceholders = AVATAR_GROUP_PLACEHOLDERS;
     const hasUserSelectedAvatarGroup = ref(false);
     const remoteAvatarGroupsResolved = ref(false);
@@ -847,16 +799,6 @@
         return grouped;
     });
 
-    const sliceLocalAvatarFavorites = computed(() => {
-        return (group) => {
-            const favorites = localAvatarFavorites.value[group];
-            if (!favorites) {
-                return [];
-            }
-            return favorites.slice(0, sliceLocalAvatarFavoritesLoadMoreNumber.value);
-        };
-    });
-
     const activeRemoteGroup = computed(() => {
         if (!isRemoteGroupSelected.value) {
             return null;
@@ -890,7 +832,7 @@
         if (!activeLocalGroupName.value) {
             return [];
         }
-        return sliceLocalAvatarFavorites.value(activeLocalGroupName.value);
+        return localAvatarFavorites.value[activeLocalGroupName.value] || [];
     });
 
     const isAllAvatarsSelected = computed(() => {
@@ -928,11 +870,6 @@
         if (active && avatarEditMode.value) {
             avatarEditMode.value = false;
         }
-        if (!active) {
-            nextTick(() => {
-                maybeFillLocalAvatarViewport();
-            });
-        }
     });
 
     watch(
@@ -943,30 +880,6 @@
             }
         }
     );
-
-    watch(
-        () => ({
-            group: activeLocalGroupName.value,
-            visible: currentLocalFavorites.value.length,
-            total: activeLocalGroupCount.value,
-            slice: sliceLocalAvatarFavoritesLoadMoreNumber.value,
-            isLocal: isLocalGroupSelected.value
-        }),
-        () => {
-            nextTick(() => {
-                maybeFillLocalAvatarViewport();
-            });
-        }
-    );
-
-    onMounted(() => {
-        if (typeof window !== 'undefined') {
-            window.addEventListener('resize', maybeFillLocalAvatarViewport);
-        }
-        nextTick(() => {
-            maybeFillLocalAvatarViewport();
-        });
-    });
 
     function handleGroupMenuVisible(key, visible) {
         if (visible) {
@@ -1041,18 +954,11 @@
         if (options.userInitiated) {
             hasUserSelectedAvatarGroup.value = true;
         }
-        resetLoadMoreCounters();
         clearSelectedAvatars();
-        if (type === 'local') {
-            nextTick(() => {
-                maybeFillLocalAvatarViewport();
-            });
-        }
     }
 
-    function resetLoadMoreCounters() {
-        sliceLocalAvatarFavoritesLoadMoreNumber.value = 60;
-        localAvatarLoadingMore.value = false;
+    function clearSelectedAvatars() {
+        selectedFavoriteAvatars.value = [];
     }
 
     function isGroupActive(type, key) {
@@ -1098,59 +1004,6 @@
         });
     }
 
-    function handleLocalAvatarScroll() {
-        if (!isLocalGroupSelected.value || isSearchActive.value) {
-            return;
-        }
-        const wrap = localAvatarScrollbarRef.value?.viewportEl?.value;
-        if (!wrap) {
-            return;
-        }
-        const { scrollTop, clientHeight, scrollHeight } = wrap;
-        if (scrollTop + clientHeight >= scrollHeight - LOCAL_AVATAR_SCROLL_THRESHOLD) {
-            if (loadMoreLocalAvatarFavorites()) {
-                nextTick(() => {
-                    maybeFillLocalAvatarViewport();
-                });
-            }
-        }
-    }
-
-    function loadMoreLocalAvatarFavorites() {
-        if (localAvatarLoadingMore.value) {
-            return false;
-        }
-        if (sliceLocalAvatarFavoritesLoadMoreNumber.value >= activeLocalGroupCount.value) {
-            return false;
-        }
-        localAvatarLoadingMore.value = true;
-        sliceLocalAvatarFavoritesLoadMoreNumber.value += LOCAL_AVATAR_PAGE_SIZE;
-        nextTick(() => {
-            localAvatarLoadingMore.value = false;
-        });
-        return true;
-    }
-
-    function maybeFillLocalAvatarViewport() {
-        nextTick(() => {
-            if (!isLocalGroupSelected.value || isSearchActive.value) {
-                return;
-            }
-            const wrap = localAvatarScrollbarRef.value?.viewportEl?.value;
-            if (!wrap) {
-                return;
-            }
-            if (wrap.scrollHeight > wrap.clientHeight + LOCAL_AVATAR_VIEWPORT_BUFFER) {
-                return;
-            }
-            if (loadMoreLocalAvatarFavorites()) {
-                nextTick(() => {
-                    maybeFillLocalAvatarViewport();
-                });
-            }
-        });
-    }
-
     function toggleAvatarSelection(id, value) {
         if (value) {
             if (!selectedFavoriteAvatars.value.includes(id)) {
@@ -1159,58 +1012,6 @@
         } else {
             selectedFavoriteAvatars.value = selectedFavoriteAvatars.value.filter((selectedId) => selectedId !== id);
         }
-    }
-
-    function clearSelectedAvatars() {
-        selectedFavoriteAvatars.value = [];
-    }
-
-    function toggleSelectAllAvatars() {
-        if (!activeRemoteGroup.value) {
-            return;
-        }
-        if (isAllAvatarsSelected.value) {
-            selectedFavoriteAvatars.value = [];
-        } else {
-            selectedFavoriteAvatars.value = currentRemoteFavorites.value.map((fav) => fav.id);
-        }
-    }
-
-    function copySelectedAvatars() {
-        if (!selectedFavoriteAvatars.value.length) {
-            return;
-        }
-        const idList = selectedFavoriteAvatars.value.map((id) => `${id}\n`).join('');
-        avatarImportDialogInput.value = idList;
-        showAvatarImportDialog();
-    }
-
-    async function showAvatarBulkUnfavoriteSelectionConfirm() {
-        if (!selectedFavoriteAvatars.value.length) {
-            return;
-        }
-        const total = selectedFavoriteAvatars.value.length;
-
-        const result = await modalStore.confirm({
-            description: `Are you sure you want to unfavorite ${total} favorites?\nThis action cannot be undone.`,
-            title: `Trash2 ${total} favorites?`
-        });
-
-        if (!result.ok) {
-            return;
-        }
-
-        bulkUnfavoriteSelectedAvatars([...selectedFavoriteAvatars.value]);
-    }
-
-    function bulkUnfavoriteSelectedAvatars(ids) {
-        ids.forEach((id) => {
-            favoriteRequest.deleteFavorite({
-                objectId: id
-            });
-        });
-        selectedFavoriteAvatars.value = [];
-        avatarEditMode.value = false;
     }
 
     function showAvatarExportDialog() {
@@ -1567,9 +1368,6 @@
 
     onBeforeUnmount(() => {
         cancelLocalAvatarRefresh();
-        if (typeof window !== 'undefined') {
-            window.removeEventListener('resize', maybeFillLocalAvatarViewport);
-        }
         if (avatarSplitterObserver) {
             avatarSplitterObserver.disconnect();
             avatarSplitterObserver = null;
@@ -1622,6 +1420,16 @@
         min-height: 0;
     }
 
+    .favorites-splitter :deep([data-slot='resizable-handle']) {
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .favorites-splitter :deep([data-slot='resizable-handle']:hover),
+    .favorites-splitter :deep([data-slot='resizable-handle']:focus-visible) {
+        opacity: 1;
+    }
+
     .favorites-groups-panel {
         height: 100%;
         padding-right: 8px;
@@ -1658,6 +1466,7 @@
 
     .group-item {
         border-radius: 8px;
+        border: 1px solid var(--border);
         padding: 8px;
         cursor: pointer;
         box-shadow: 0 0 6px rgba(15, 23, 42, 0.04);
@@ -1734,63 +1543,6 @@
         text-align: center;
         font-size: 12px;
         padding: 12px 0;
-    }
-
-    .favorites-group-menu {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .favorites-group-menu__item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border: none;
-        background: transparent;
-        border-radius: 8px;
-        padding: 6px 12px;
-        font-size: 13px;
-        cursor: pointer;
-        color: inherit;
-        transition: background-color 0.15s ease;
-        min-height: 32px;
-        align-self: stretch;
-    }
-
-    .favorites-group-menu__item--submenu {
-        padding-right: 8px;
-    }
-
-    .favorites-group-menu__arrow {
-        margin-left: auto;
-        font-size: 12px;
-    }
-
-    .group-visibility-menu {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .group-visibility-menu__item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border: none;
-        background: transparent;
-        padding: 6px 10px;
-        border-radius: 8px;
-        cursor: pointer;
-        color: inherit;
-        font-size: 13px;
-        transition: background-color 0.15s ease;
-        min-height: 32px;
-        align-self: stretch;
-    }
-
-    .group-visibility-menu__check {
-        font-size: 12px;
     }
 
     .favorites-content {

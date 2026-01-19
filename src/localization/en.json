@@ -35,6 +35,7 @@
         "discord": "Join our Discord",
         "whats_new": "What's New?",
         "update_available": "Update available",
+        "update": "Update",
         "custom_nav": {
             "header": "Custom Navigation",
             "dialog_title": "Customize Navigation Menu",
@@ -249,6 +250,13 @@
             "filter_placeholder": "Filter",
             "search_placeholder": "Search",
             "refresh_tooltip": "Refresh",
+            "actions": {
+                "accept": "Accept",
+                "invite": "Invite",
+                "decline": "Decline",
+                "delete_log": "Delete log",
+                "decline_with_message": "Decline with message"
+            },
             "filters": {
                 "requestInvite": "Request Invite",
                 "invite": "Invite",
@@ -348,7 +356,8 @@
                     "stop_fetching": "Stop fetching"
                 },
                 "status": {
-                    "no_friends_to_process": "You have no friends to process"
+                    "no_friends_to_process": "You have no friends to process",
+                    "loading_cache": "Loading cached mutual friends from database"
                 },
                 "progress": {
                     "friends_processed": "Friends processed",
@@ -553,12 +562,16 @@
                     "bio_language": "Target Language",
                     "theme_mode": "Theme",
                     "font_family": "Font",
-                    "font_family_tooltip": "Does not change CJK fonts",
+                    "font_family_tooltip": "Only the system font affects CJK characters",
                     "font_family_inter": "Inter",
                     "font_family_noto_sans": "Noto Sans",
                     "font_family_source_sans_3": "Source Sans 3",
                     "font_family_ibm_plex_sans": "IBM Plex Sans",
                     "font_family_harmonyos_sans": "HarmonyOS Sans",
+                    "font_family_jetbrains_mono": "JetBrains Mono",
+                    "font_family_roboto": "Roboto",
+                    "font_family_fantasque_sans_mono": "Fantasque Sans Mono",
+                    "font_family_system_ui": "System Font",
                     "theme_mode_system": "System",
                     "theme_mode_light": "Light",
                     "theme_mode_dark": "Dark",
@@ -586,6 +599,8 @@
                     "table_page_sizes": "Table Page Sizes",
                     "table_page_sizes_error": "Page size must be a number between 1 and 1000",
                     "show_notification_icon_dot": "Show Tray Notification Dot",
+                    "striped_data_table_mode": "Striped Table Mode",
+                    "toggle_pointer_on_hover": "Force pointer on hover",
                     "table_density": "Table Density",
                     "table_density_standard": "Standard",
                     "table_density_comfortable": "Comfortable",
@@ -937,7 +952,7 @@
                 "online": "Online",
                 "join_me": "Join Me",
                 "ask_me": "Ask Me",
-                "busy": "Busy"
+                "busy": "Do Not Disturb"
             },
             "previous_display_names": "Previous Display Names:",
             "pronouns": "Pronouns",
@@ -1001,8 +1016,9 @@
                 "refresh_instance_info": "Refresh Instance Info",
                 "instance_queue": "Queue:",
                 "instance_users": "Users:",
+                "instance_friends_tooltip": "Friends in this instance",
                 "instance_game_version": "Game Version:",
-                "last_join": "Last Join:",
+                "last_join": "Last Join",
                 "instance_queuing_enabled": "Queuing Enabled",
                 "instance_disabled_content": "Disabled Content:",
                 "instance_creator": "Instance Creator",
@@ -1945,7 +1961,22 @@
         "title": "Confirm",
         "confirm_button": "Confirm",
         "cancel_button": "Cancel",
-        "message": "Continue {command}?"
+        "message": "Continue {command}?",
+        "logout": "Continue? Logout",
+        "unfriend": "Continue? Unfriend",
+        "clear_avatar_history": "Continue? Clear Avatar History",
+        "select_avatar": "Continue? Select Avatar",
+        "invite": "Continue? Invite",
+        "invite_group": "Continue? Invite User(s) To Group",
+        "delete_log": "Continue? Delete Log",
+        "accept_friend_request": "Continue? Accept Friend Request",
+        "send_invite": "Continue? Send Invite",
+        "decline_type": "Continue? Decline {type}",
+        "delete_type": "Continue? Trash2 {type}",
+        "command_question": "Continue? {command}",
+        "restart_required_title": "Restart Required",
+        "restart_now": "Restart Now",
+        "restart_later": "Later"
     },
     "status": {
         "title": "VRChat Status"
@@ -1965,19 +1996,35 @@
         "instance": {
             "closed": "Instance closed",
             "removed_form_queue": "Removed instance {worldName} from queue",
-            "not_allowed": "You're not allowed to access this instance"
+            "not_allowed": "You're not allowed to access this instance",
+            "create_failed": "Failed to create instance"
         },
         "avatar": {
             "change_moderation_failed": "Failed to change avatar moderation",
             "image_changed": "Avatar image changed",
             "image_invalid": "Current avatar image invalid"
         },
+        "database": {
+            "upgrade_complete": "Database upgrade complete"
+        },
         "emoji": {
             "uploaded": "Emoji uploaded"
         },
         "file": {
             "not_image": "File isn't an image",
-            "too_large": "File size too large"
+            "too_large": "File size too large",
+            "folder_missing": "Folder dosn't exist"
+        },
+        "group": {
+            "load_failed": "Failed to load group"
+        },
+        "invite": {
+            "self_sent": "Self invite sent",
+            "sent": "Invite sent",
+            "message_update_failed": "VRChat API didn't update message, try again"
+        },
+        "launch": {
+            "invalid_path": "Invalid path, you must enter VRChat folder or launch.exe"
         },
         "print": {
             "uploaded": "Print uploaded"
@@ -2005,16 +2052,21 @@
         },
         "world": {
             "image_changed": "World image changed",
-            "image_invalid": "Current world image invalid"
+            "image_invalid": "Current world image invalid",
+            "load_failed": "Failed to load world"
         },
         "icon": {
             "uploaded": "Icon uploaded"
         },
         "user": {
-            "moderated": "User moderated"
+            "moderated": "User moderated",
+            "load_failed": "Failed to load user"
         },
         "friend": {
             "load_failed": "Failed to load friends list, logging out"
+        },
+        "vrcplus": {
+            "required": "VRCPlus required"
         },
         "screenshot_metadata": {
             "deleted": "Screenshot metadata deleted",
@@ -2263,7 +2315,12 @@
     },
     "table": {
         "pagination": {
-            "rows_per_page": "Rows per page"
+            "rows_per_page": "Rows per page",
+            "first": "First",
+            "previous": "Previous",
+            "next": "Next",
+            "last": "Last",
+            "more_pages": "More pages"
         },
         "feed": {
             "date": "Date",

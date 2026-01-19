@@ -507,7 +507,7 @@
             if (result) {
                 toast.success('Folder opened');
             } else {
-                toast.error("Folder dosn't exist");
+                toast.error(t('message.file.folder_missing'));
             }
         });
     }
@@ -517,7 +517,7 @@
             if (result) {
                 toast.success('Folder opened');
             } else {
-                toast.error("Folder dosn't exist");
+                toast.error(t('message.file.folder_missing'));
             }
         });
     }
@@ -527,7 +527,7 @@
             if (result) {
                 toast.success('Folder opened');
             } else {
-                toast.error("Folder dosn't exist");
+                toast.error(t('message.file.folder_missing'));
             }
         });
     }

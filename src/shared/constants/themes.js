@@ -10,11 +10,12 @@ export const THEME_CONFIG = {
     dark: {
         isDark: true,
         name: 'Dark'
+    },
+    midnight: {
+        isDark: true,
+        name: 'Midnight',
+        file: 'midnight.css'
     }
-    // midnight: {
-    //     isDark: true,
-    //     name: 'Midnight'
-    // }
 };
 
 export const THEME_COLORS = [

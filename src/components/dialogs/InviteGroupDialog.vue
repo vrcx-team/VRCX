@@ -273,7 +273,7 @@
     function sendGroupInvite() {
         modalStore
             .confirm({
-                description: 'Continue? Invite User(s) To Group',
+                description: t('confirm.invite_group'),
                 title: 'Confirm'
             })
             .then(({ ok }) => {

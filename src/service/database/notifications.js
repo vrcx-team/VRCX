@@ -21,14 +21,60 @@ const notifications = {
                     inviteMessage: dbRow[10],
                     requestMessage: dbRow[11],
                     responseMessage: dbRow[12]
-                }
+                },
+                $isExpired: dbRow[13] === 1
             };
-            row.$isExpired = false;
-            if (dbRow[13] === 1) {
-                row.$isExpired = true;
-            }
             notifications.unshift(row);
         }, `SELECT * FROM ${dbVars.userPrefix}_notifications ORDER BY created_at DESC LIMIT ${dbVars.maxTableSize}`);
+        return notifications;
+    },
+
+    async lookupNotificationDatabase(
+        search,
+        filters,
+        vipList,
+        maxEntries = dbVars.maxTableSize
+    ) {
+        search = search.replaceAll("'", "''");
+        let notifications = [];
+
+        let vipQuery = '';
+        if (vipList.length > 0) {
+            const vipIds = vipList.map(
+                (userId) => `'${userId.replaceAll("'", "''")}'`
+            );
+            vipQuery = `AND sender_user_id IN (${vipIds.join(',')})`;
+        }
+
+        let filterQuery = '';
+        if (filters.length > 0) {
+            const filterTypes = filters.map(
+                (type) => `'${type.replaceAll("'", "''")}'`
+            );
+            filterQuery = `AND type IN (${filterTypes.join(',')})`;
+        }
+
+        await sqliteService.execute((dbRow) => {
+            let row = {
+                id: dbRow[0],
+                created_at: dbRow[1],
+                type: dbRow[2],
+                senderUserId: dbRow[3],
+                senderUsername: dbRow[4],
+                receiverUserId: dbRow[5],
+                message: dbRow[6],
+                details: {
+                    worldId: dbRow[7],
+                    worldName: dbRow[8],
+                    imageUrl: dbRow[9],
+                    inviteMessage: dbRow[10],
+                    requestMessage: dbRow[11],
+                    responseMessage: dbRow[12]
+                },
+                $isExpired: dbRow[13] === 1
+            };
+            notifications.unshift(row);
+        }, `SELECT * FROM ${dbVars.userPrefix}_notifications WHERE (sender_username LIKE '%${search}%' OR message LIKE '%${search}%' OR world_name LIKE '%${search}%') ${vipQuery} ${filterQuery} ORDER BY created_at DESC LIMIT ${maxEntries}`);
         return notifications;
     },
 

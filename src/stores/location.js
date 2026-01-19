@@ -95,14 +95,14 @@ export const useLocationStore = defineStore('Location', () => {
             // with the current state of things, lets not run this if we don't need to
             return;
         }
-        let lastLocationTemp = '';
-        for (let i = gameLogStore.gameLogSessionTable.length - 1; i > -1; i--) {
-            const item = gameLogStore.gameLogSessionTable[i];
-            if (item.type === 'Location') {
-                lastLocationTemp = item.location;
-                break;
-            }
-        }
+        const lastLocationArray = await database.lookupGameLogDatabase(
+            '',
+            ['Location'],
+            [],
+            1
+        );
+        const lastLocationTemp =
+            lastLocationArray.length > 0 ? lastLocationArray[0].location : '';
         if (lastLocationTemp === location) {
             return;
         }

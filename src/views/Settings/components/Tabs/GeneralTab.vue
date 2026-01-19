@@ -42,9 +42,8 @@
                     t('view.settings.general.vrcx_updater.change_build')
                 }}</Button>
             </div>
-            <div v-if="!noUpdater" class="options-container-item">
+            <div v-if="!noUpdater" class="text-sm mt-2 flex flex-col align-baseline">
                 <span class="name">{{ t('view.settings.general.vrcx_updater.update_action') }}</span>
-                <br />
                 <ToggleGroup
                     type="single"
                     required
@@ -244,7 +243,7 @@
                         side="top"
                         style="margin-left: 5px"
                         :content="t('view.settings.general.automation.auto_invite_request_accept_tooltip')">
-                        <Info />
+                        <Info class="inline-block" />
                     </TooltipWrapper>
                 </span>
                 <br />
@@ -283,8 +282,8 @@
             <div class="options-container-item" style="display: block">
                 <p>
                     &copy; 2019-2026
-                    <a class="x-link" @click="openExternalLink('https://github.com/pypy-vrc')">pypy</a> &amp;
-                    <a class="x-link" @click="openExternalLink('https://github.com/Natsumi-sama')">Natsumi</a>
+                    <a class="cursor-pointer" @click="openExternalLink('https://github.com/pypy-vrc')">pypy</a> &amp;
+                    <a class="cursor-pointer" @click="openExternalLink('https://github.com/Natsumi-sama')">Natsumi</a>
                 </p>
                 <p>{{ t('view.settings.general.legal_notice.info') }}</p>
                 <p>{{ t('view.settings.general.legal_notice.disclaimer1') }}</p>

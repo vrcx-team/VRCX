@@ -17,9 +17,9 @@
                     <TooltipWrapper side="top" :content="t('view.favorite.select_avatar_tooltip')">
                         <Button
                             size="icon-sm"
-                            variant="outline"
+                            variant="ghost"
                             :disabled="currentUser.currentAvatar === favorite.id"
-                            class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
+                            class="rounded-full text-xs h-6 w-6"
                             @click.stop="selectAvatarWithConfirmation(favorite.id)">
                             <Check class="h-4 w-4" />
                             ></Button
@@ -31,15 +31,16 @@
                         <Button
                             v-if="favoriteExists"
                             size="icon-sm"
-                            variant="outline"
-                            class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
+                            variant="ghost"
+                            class="rounded-full text-xs h-6 w-6"
                             @click.stop="showFavoriteDialog('avatar', favorite.id)">
                             <Star class="h-4 w-4" />
                         </Button>
                         <Button
                             v-else
                             size="icon-sm"
-                            class="favorites-search-card__action-btn rounded-full text-xs h-6 w-6"
+                            variant="ghost"
+                            class="rounded-full text-xs h-6 w-6"
                             @click.stop="showFavoriteDialog('avatar', favorite.id)">
                             <Star class="h-4 w-4" />
                         </Button>

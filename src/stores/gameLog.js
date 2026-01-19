@@ -15,7 +15,6 @@ import {
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
 import { useAdvancedSettingsStore } from './settings/advanced';
-import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFriendStore } from './friend';
 import { useGalleryStore } from './gallery';
 import { useGameStore } from './game';
@@ -49,7 +48,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
     const vrcxStore = useVrcxStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
     const gameStore = useGameStore();
-    const appearanceSettingsStore = useAppearanceSettingsStore();
     const generalSettingsStore = useGeneralSettingsStore();
     const galleryStore = useGalleryStore();
     const photonStore = usePhotonStore();
@@ -69,8 +67,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
         pageSizeLinked: true,
         vip: false
     });
-
-    const gameLogSessionTable = ref([]);
 
     const nowPlaying = ref({
         url: '',
@@ -93,7 +89,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
             gameLogTable.value.data.length = 0;
-            gameLogSessionTable.value = [];
             if (isLoggedIn) {
                 // wait for friends to load, silly but works
                 setTimeout(() => {
@@ -225,14 +220,15 @@ export const useGameLogStore = defineStore('GameLog', () => {
         workerTimers.setTimeout(() => updateNowPlaying(), 1000);
     }
 
-    function tryLoadPlayerList() {
+    async function tryLoadPlayerList() {
+        // TODO: make this work again
         if (!gameStore.isGameRunning) {
             return;
         }
         console.log('Loading player list from game log...');
         let ctx;
         let i;
-        const data = gameLogSessionTable.value;
+        const data = await database.getGamelogDatabase();
         if (data.length === 0) {
             return;
         }
@@ -358,13 +354,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
     function addGameLog(entry) {
         entry.isFriend = gameLogIsFriend(entry);
         entry.isFavorite = gameLogIsFavorite(entry);
-        gameLogSessionTable.value.push(entry);
-        sweepGameLogSessionTable();
-        sharedFeedStore.updateSharedFeed(false);
-        if (entry.type === 'VideoPlay') {
-            // event time can be before last gameLog entry
-            sharedFeedStore.updateSharedFeed(true);
-        }
 
         // If the VIP friend filter is enabled, logs from other friends will be ignored.
         if (
@@ -400,38 +389,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
         gameLogTable.value.data.push(entry);
         sweepGameLog();
         uiStore.notifyMenu('game-log');
-    }
-
-    function sweepGameLogSessionTable() {
-        const data = gameLogSessionTable.value;
-        const k = data.length;
-        if (!k) {
-            return;
-        }
-
-        // 24 hour limit
-        const date = new Date();
-        date.setDate(date.getDate() - 1);
-        const limit = date.toJSON();
-
-        if (data[0].created_at < limit) {
-            let i = 0;
-            while (i < k && data[i].created_at < limit) {
-                ++i;
-            }
-            if (i === k) {
-                gameLogSessionTable.value = [];
-                return;
-            }
-            if (i) {
-                data.splice(0, i);
-            }
-        }
-
-        const maxLen = Math.floor(vrcxStore.maxTableSize * 1.5);
-        if (maxLen > 0 && data.length > maxLen + 100) {
-            data.splice(0, 100);
-        }
     }
 
     async function addGamelogLocationToDatabase(input) {
@@ -518,8 +475,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (j > vrcxStore.maxTableSize + 50) {
             data.splice(0, 50);
         }
-
-        sweepGameLogSessionTable();
     }
 
     function addGameLogEntry(gameLog, location) {
@@ -656,22 +611,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 const ref1 = locationStore.lastLocation.playerList.get(userId);
                 if (typeof ref1 === 'undefined') {
                     break;
-                }
-                const friendRef = friendStore.friends.get(userId);
-                if (typeof friendRef?.ref !== 'undefined') {
-                    friendRef.ref.$joinCount++;
-                    friendRef.ref.$lastSeen = new Date().toJSON();
-                    friendRef.ref.$timeSpent +=
-                        dayjs(gameLog.dt) - ref1.joinTime;
-                    if (
-                        appearanceSettingsStore.sidebarSortMethods.includes(
-                            'Sort by Last Seen'
-                        )
-                    ) {
-                        // TODO: remove
-                        friendStore.sortVIPFriends = true;
-                        friendStore.sortOnlineFriends = true;
-                    }
                 }
                 const time = dayjs(gameLog.dt) - ref1.joinTime;
                 locationStore.lastLocation.playerList.delete(userId);
@@ -958,13 +897,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 break;
         }
         if (typeof entry !== 'undefined') {
-            // add tag colour
-            if (entry.userId) {
-                const tagRef = userStore.customUserTags.get(entry.userId);
-                if (typeof tagRef !== 'undefined') {
-                    entry.tagColour = tagRef.colour;
-                }
-            }
+            sharedFeedStore.addEntry(entry);
             notificationStore.queueGameLogNoty(entry);
             addGameLog(entry);
         }
@@ -1368,8 +1301,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     async function getGameLogTable() {
         await database.initTables();
-        gameLogSessionTable.value = await database.getGamelogDatabase();
-        sweepGameLogSessionTable();
         const dateTill = await database.getLastDateGameLogDatabase();
         updateGameLog(dateTill);
     }
@@ -1433,7 +1364,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
     async function initGameLogTable() {
         const rows = await database.lookupGameLogDatabase(
             gameLogTable.value.search,
-            gameLogTable.value.filter
+            gameLogTable.value.filter,
+            []
         );
         for (const row of rows) {
             row.isFriend = gameLogIsFriend(row);
@@ -1447,7 +1379,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
         nowPlaying,
         gameLogTable,
-        gameLogSessionTable,
         lastVideoUrl,
         lastResourceloadUrl,
 

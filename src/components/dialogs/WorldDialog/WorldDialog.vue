@@ -14,7 +14,7 @@
                 <div style="display: flex">
                     <img
                         :src="worldDialog.ref.thumbnailImageUrl"
-                        class="x-link"
+                        class="cursor-pointer"
                         style="flex: none; width: 160px; height: 120px; border-radius: 12px"
                         @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
                         loading="lazy" />
@@ -36,7 +36,7 @@
                             </div>
                             <div style="margin-top: 5px">
                                 <span
-                                    class="x-link x-grey"
+                                    class="cursor-pointer x-grey"
                                     style="font-family: monospace"
                                     @click="showUserDialog(worldDialog.ref.authorId)"
                                     v-text="worldDialog.ref.authorName" />
@@ -63,7 +63,7 @@
                                         variant="outline"
                                         style="margin-right: 5px; margin-top: 5px">
                                         <Monitor class="h-4 w-4 x-tag-platform-pc" />
-                                        ><span
+                                        <span
                                             v-if="worldDialog.bundleSizes['standalonewindows']"
                                             :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']">
                                             {{ worldDialog.bundleSizes['standalonewindows'].fileSize }}
@@ -77,7 +77,7 @@
                                         variant="outline"
                                         style="margin-right: 5px; margin-top: 5px">
                                         <Smartphone class="h-4 w-4 x-tag-platform-quest" />
-                                        ><span
+                                        <span
                                             v-if="worldDialog.bundleSizes['android']"
                                             :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']">
                                             {{ worldDialog.bundleSizes['android'].fileSize }}
@@ -91,7 +91,7 @@
                                         variant="outline"
                                         style="margin-right: 5px; margin-top: 5px">
                                         <Apple class="h-4 w-4 text-[#8e8e93]" />
-                                        ><span
+                                        <span
                                             v-if="worldDialog.bundleSizes['ios']"
                                             :class="[
                                                 'x-grey',
@@ -125,7 +125,7 @@
                                 <Badge
                                     v-if="worldDialog.inCache"
                                     variant="outline"
-                                    class="x-link"
+                                    class="cursor-pointer"
                                     style="margin-right: 5px; margin-top: 5px"
                                     @click="openFolderGeneric(worldDialog.cachePath)">
                                     <span v-text="worldDialog.cacheSize" />
@@ -184,12 +184,17 @@
                             <TooltipWrapper
                                 v-if="worldDialog.isFavorite"
                                 side="top"
+                                :ignore-non-keyboard-focus="true"
                                 :content="t('dialog.world.actions.favorites_tooltip')">
                                 <Button class="rounded-full" size="icon-lg" @click="worldDialogCommand('Add Favorite')"
                                     ><Star
                                 /></Button>
                             </TooltipWrapper>
-                            <TooltipWrapper v-else side="top" :content="t('dialog.world.actions.favorites_tooltip')">
+                            <TooltipWrapper
+                                v-else
+                                side="top"
+                                :ignore-non-keyboard-focus="true"
+                                :content="t('dialog.world.actions.favorites_tooltip')">
                                 <Button
                                     class="rounded-full"
                                     size="icon-lg"
@@ -355,42 +360,20 @@
                                             :locationobject="room.$location"
                                             :currentuserid="currentUser.id"
                                             :worlddialogshortname="worldDialog.$location.shortName" />
-                                        <Launch :location="room.tag" style="margin-left: 5px" />
-                                        <InviteYourself
+                                        <InstanceActionBar
+                                            class="ml-1"
                                             :location="room.$location.tag"
+                                            :launch-location="room.tag"
+                                            :instance-location="room.tag"
                                             :shortname="room.$location.shortName"
-                                            style="margin-left: 5px" />
-                                        <TooltipWrapper
-                                            side="top"
-                                            :content="t('dialog.world.instances.refresh_instance_info')">
-                                            <Button
-                                                class="rounded-full ml-1 w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
-                                                size="icon"
-                                                variant="outline"
-                                                @click="refreshInstancePlayerCount(room.tag)"
-                                                ><RefreshCw class="h-4 w-4" />
-                                            </Button>
-                                        </TooltipWrapper>
-                                        <TooltipWrapper
-                                            v-if="instanceJoinHistory.get(room.$location.tag)"
-                                            side="top"
-                                            :content="t('dialog.previous_instances.info')">
-                                            <Button
-                                                class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
-                                                size="icon-sm"
-                                                variant="outline"
-                                                style="margin-left: 5px"
-                                                @click="showPreviousInstancesInfoDialog(room.location)"
-                                                ><History class="h-4 w-4" />
-                                            </Button>
-                                        </TooltipWrapper>
-                                        <LastJoin
-                                            :location="room.$location.tag"
-                                            :currentlocation="lastLocation.location" />
-                                        <InstanceInfo
-                                            :location="room.tag"
+                                            :currentlocation="lastLocation.location"
                                             :instance="room.ref"
-                                            :friendcount="room.friendCount" />
+                                            :friendcount="room.friendCount"
+                                            :refresh-tooltip="t('dialog.world.instances.refresh_instance_info')"
+                                            :show-history="!!instanceJoinHistory.get(room.$location.tag)"
+                                            :history-tooltip="t('dialog.previous_instances.info')"
+                                            :on-refresh="() => refreshInstancePlayerCount(room.tag)"
+                                            :on-history="() => showPreviousInstancesInfoDialog(room.location)" />
                                     </div>
                                     <div
                                         v-if="room.$location.userId || room.users.length"
@@ -430,7 +413,7 @@
                                                     :style="{ color: user.$userColour }"
                                                     v-text="user.displayName" />
                                                 <span v-if="user.location === 'traveling'" class="extra">
-                                                    <Loader2 class="is-loading" style="margin-right: 3px" />
+                                                    <Spinner class="inline-block mr-1" />
                                                     <Timer :epoch="user.$travelingToTime" />
                                                 </span>
                                                 <span v-else class="extra">
@@ -739,11 +722,9 @@
         Ellipsis,
         Eye,
         Flag,
-        History,
         Home,
         Image,
         LineChart,
-        Loader2,
         MessageSquare,
         Monitor,
         Pencil,
@@ -760,6 +741,7 @@
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
+    import { Spinner } from '@/components/ui/spinner';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -803,6 +785,8 @@
     import { Badge } from '../../ui/badge';
     import { database } from '../../../service/database.js';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
+
+    import InstanceActionBar from '../../InstanceActionBar.vue';
 
     const modalStore = useModalStore();
 
@@ -991,7 +975,9 @@
             case 'Trash2':
                 modalStore
                     .confirm({
-                        description: `Continue? ${command}`,
+                        description: t('confirm.command_question', {
+                            command
+                        }),
                         title: 'Confirm'
                     })
                     .then(({ ok }) => {

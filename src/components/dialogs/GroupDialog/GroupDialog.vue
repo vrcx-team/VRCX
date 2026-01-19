@@ -15,7 +15,7 @@
                     <img
                         :src="groupDialog.ref.iconUrl"
                         style="flex: none; width: 120px; height: 120px; border-radius: 12px"
-                        class="x-link"
+                        class="cursor-pointer"
                         @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)"
                         loading="lazy" />
                     <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
@@ -42,7 +42,7 @@
                             </TooltipWrapper>
                             <div style="margin-top: 5px">
                                 <span
-                                    class="x-link x-grey"
+                                    class="cursor-pointer x-grey"
                                     style="font-family: monospace"
                                     @click="showUserDialog(groupDialog.ref.ownerId)"
                                     v-text="groupDialog.ownerDisplayName"></span>
@@ -357,7 +357,7 @@
                         <div class="group-banner-image-info">
                             <img
                                 :src="groupDialog.ref.bannerUrl"
-                                class="x-link"
+                                class="cursor-pointer"
                                 style="
                                     flex: none;
                                     width: 100%;
@@ -377,21 +377,15 @@
                             <div v-for="room in groupDialog.instances" :key="room.tag" style="width: 100%">
                                 <div style="margin: 5px 0">
                                     <Location :location="room.tag" style="display: inline-block" />
-                                    <InviteYourself :location="room.tag" style="margin-left: 5px" />
-                                    <TooltipWrapper side="top" content="RefreshCw player count">
-                                        <Button
-                                            class="rounded-full ml-1 w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
-                                            size="icon"
-                                            variant="outline"
-                                            @click="refreshInstancePlayerCount(room.tag)"
-                                            ><RefreshCw class="h-4 w-4" />
-                                        </Button>
-                                    </TooltipWrapper>
-                                    <LastJoin :location="room.tag" :currentlocation="lastLocation.location" />
-                                    <InstanceInfo
+                                    <InstanceActionBar
+                                        class="ml-1"
                                         :location="room.tag"
+                                        :currentlocation="lastLocation.location"
                                         :instance="room.ref"
-                                        :friendcount="room.friendCount" />
+                                        :friendcount="room.friendCount"
+                                        :show-launch="false"
+                                        refresh-tooltip="RefreshCw player count"
+                                        :on-refresh="() => refreshInstancePlayerCount(room.tag)" />
                                 </div>
                                 <div
                                     v-if="room.users.length"
@@ -411,7 +405,7 @@
                                                 :style="{ color: user.$userColour }"
                                                 v-text="user.displayName" />
                                             <span v-if="user.location === 'traveling'" class="extra">
-                                                <Loader2 class="is-loading" style="margin-right: 3px" />
+                                                <Spinner class="inline-block mr-1" />
                                                 <Timer :epoch="user.$travelingToTime" />
                                             </span>
                                             <span v-else class="extra">
@@ -430,7 +424,7 @@
                                         style="display: inline-block; margin-right: 5px">
                                         <img
                                             :src="groupDialog.announcement.imageUrl"
-                                            class="x-link"
+                                            class="cursor-pointer"
                                             style="
                                                 flex: none;
                                                 width: 60px;
@@ -766,7 +760,7 @@
                                         <div v-if="post.imageUrl" style="display: inline-block; margin-right: 5px">
                                             <img
                                                 :src="post.imageUrl"
-                                                class="x-link"
+                                                class="cursor-pointer"
                                                 style="
                                                     flex: none;
                                                     width: 60px;
@@ -1129,7 +1123,7 @@
                                         class="p-0 overflow-hidden transition-shadow hover:shadow-md">
                                         <img
                                             :src="image.imageUrl"
-                                            :class="['x-link', 'max-w-full', 'max-h-full']"
+                                            :class="[' cursor-pointer', 'max-w-full', 'max-h-full']"
                                             @click="showFullscreenImageDialog(image.imageUrl)"
                                             loading="lazy" />
                                     </Card>
@@ -1177,7 +1171,6 @@
         Copy,
         Download,
         Eye,
-        Loader2,
         MessageSquare,
         MoreHorizontal,
         Pencil,
@@ -1244,6 +1237,7 @@
 
     import GroupCalendarEventCard from '../../../views/Tools/components/GroupCalendarEventCard.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
+    import InstanceActionBar from '../../InstanceActionBar.vue';
     import PreviousInstancesGroupDialog from '../PreviousInstancesDialog/PreviousInstancesGroupDialog.vue';
 
     import * as workerTimers from 'worker-timers';

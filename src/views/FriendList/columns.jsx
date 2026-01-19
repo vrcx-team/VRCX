@@ -115,7 +115,6 @@ export const createColumns = ({
             header: () => null,
             size: 55,
             enableSorting: false,
-            enableResizing: false,
             meta: {
                 thClass: 'p-0',
                 tdClass: 'p-0'

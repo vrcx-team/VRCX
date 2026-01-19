@@ -6,8 +6,9 @@ const APP_FONT_CONFIG = Object.freeze({
         link: null
     },
     noto_sans: {
-        cssName: "'Noto Sans Variable'",
-        link: null
+        cssName: "'Noto Sans'",
+        cssImport:
+            "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');"
     },
     source_sans_3: {
         cssName: "'Source Sans 3'",
@@ -23,6 +24,25 @@ const APP_FONT_CONFIG = Object.freeze({
         cssName: "'HarmonyOS Sans'",
         cssImport:
             "@import url('https://fonts.cdnfonts.com/css/harmonyos-sans');"
+    },
+    jetbrains_mono: {
+        cssName: "'JetBrains Mono'",
+        cssImport:
+            "@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');"
+    },
+    roboto: {
+        cssName: "'Roboto'",
+        cssImport:
+            "@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');"
+    },
+    fantasque_sans_mono: {
+        cssName: "'Fantasque Sans Mono'",
+        cssImport:
+            "@import url('https://fonts.cdnfonts.com/css/fantasque-sans-mono');"
+    },
+    system_ui: {
+        cssName: 'system-ui',
+        link: null
     }
 });
 

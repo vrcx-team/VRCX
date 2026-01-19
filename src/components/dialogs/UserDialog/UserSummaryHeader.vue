@@ -4,14 +4,14 @@
             v-if="
                 !userDialog.loading && (userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride)
             "
-            class="x-link"
+            class="cursor-pointer"
             :src="userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride"
             style="flex: none; height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover"
             @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)"
             loading="lazy" />
         <img
             v-else-if="!userDialog.loading"
-            class="x-link"
+            class="cursor-pointer"
             :src="userDialog.ref.currentAvatarThumbnailImageUrl"
             style="flex: none; height: 120px; width: 160px; border-radius: 12px; object-fit: cover"
             @click="showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)"
@@ -111,7 +111,10 @@
                         v-if="userDialog.mutualFriendCount"
                         side="top"
                         :content="t('dialog.user.tags.mutual_friends')">
-                        <Badge variant="outline" class="x-tag-mutual-friend" style="margin-right: 5px; margin-top: 5px">
+                        <Badge
+                            variant="outline"
+                            class="x-tag-mutual-friend border-zinc-500/50! dark:border-zinc-400!"
+                            style="margin-right: 5px; margin-top: 5px">
                             <Users class="mr-1 h-4 w-4 inline-block" />
                             {{ userDialog.mutualFriendCount }}
                         </Badge>
@@ -188,7 +191,7 @@
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <img
-                                        class="x-link hover:grayscale-0"
+                                        class="cursor-pointer hover:grayscale-0"
                                         :src="badge.badgeImageUrl"
                                         style="
                                             flex: none;
@@ -205,7 +208,7 @@
                                 <PopoverContent side="bottom" class="w-75">
                                     <img
                                         :src="badge.badgeImageUrl"
-                                        :class="['x-link', 'max-w-full', 'max-h-full']"
+                                        :class="['cursor-pointer', 'max-w-full', 'max-h-full']"
                                         @click="showFullscreenImageDialog(badge.badgeImageUrl)"
                                         loading="lazy" />
                                     <br />
@@ -250,7 +253,7 @@
 
             <div v-if="userDialog.ref.userIcon" style="flex: none; margin-right: 10px">
                 <img
-                    class="x-link"
+                    class="cursor-pointer"
                     :src="userImage(userDialog.ref, true, '256', true)"
                     style="flex: none; width: 120px; height: 120px; border-radius: 12px; object-fit: cover"
                     @click="showFullscreenImageDialog(userDialog.ref.userIcon)"

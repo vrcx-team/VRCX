@@ -165,10 +165,6 @@
 
     const worldImportTable = ref({
         data: [],
-        tableProps: {
-            stripe: true,
-            size: 'small'
-        },
         layout: 'table'
     });
 

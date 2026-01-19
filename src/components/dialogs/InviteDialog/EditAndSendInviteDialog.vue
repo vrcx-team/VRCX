@@ -91,8 +91,9 @@
                 })
                 .then((args) => {
                     if (args.json[slot].message === I.messageSlot.message) {
-                        toast.error("VRChat API didn't update message, try again");
-                        throw new Error("VRChat API didn't update message, try again");
+                        const errorMessage = t('message.invite.message_update_failed');
+                        toast.error(errorMessage);
+                        throw new Error(errorMessage);
                     } else {
                         toast('Invite message updated');
                     }
@@ -141,7 +142,7 @@
                 } else {
                     J.loading = false;
                     J.visible = false;
-                    toast.success('Invite sent');
+                    toast.success(t('message.invite.sent'));
                 }
             };
             inviteLoop();

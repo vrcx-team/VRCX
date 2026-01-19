@@ -159,10 +159,6 @@
 
     const avatarImportTable = ref({
         data: [],
-        tableProps: {
-            stripe: true,
-            size: 'small'
-        },
         layout: 'table'
     });
 
