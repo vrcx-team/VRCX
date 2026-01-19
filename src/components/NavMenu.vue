@@ -9,7 +9,6 @@
                                 <SidebarMenuButton
                                     :is-active="activeMenuIndex === item.index"
                                     :tooltip="item.titleIsCustom ? item.title : t(item.title || '')"
-                                    :class="isNavItemNotified(item) ? 'notify' : undefined"
                                     @click="handleMenuItemClick(item)">
                                     <i
                                         :class="item.icon"
@@ -17,6 +16,7 @@
                                     <span v-show="!isCollapsed">{{
                                         item.titleIsCustom ? item.title : t(item.title || '')
                                     }}</span>
+                                    <span v-if="isNavItemNotified(item)" class="notify-dot" aria-hidden="true"></span>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
 
@@ -28,14 +28,17 @@
                                     <DropdownMenuTrigger as-child>
                                         <SidebarMenuButton
                                             :is-active="item.children?.some((e) => e.index === activeMenuIndex)"
-                                            :tooltip="item.titleIsCustom ? item.title : t(item.title || '')"
-                                            :class="isNavItemNotified(item) ? 'notify' : undefined">
+                                            :tooltip="item.titleIsCustom ? item.title : t(item.title || '')">
                                             <i
                                                 :class="item.icon"
                                                 class="inline-flex size-6 items-center justify-center text-lg" />
                                             <span v-show="!isCollapsed">{{
                                                 item.titleIsCustom ? item.title : t(item.title || '')
                                             }}</span>
+                                            <span
+                                                v-if="isNavItemNotified(item)"
+                                                class="notify-dot"
+                                                aria-hidden="true"></span>
                                         </SidebarMenuButton>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent side="right" align="start" class="w-56">
@@ -62,14 +65,17 @@
                                         <CollapsibleTrigger as-child>
                                             <SidebarMenuButton
                                                 :is-active="item.children?.some((e) => e.index === activeMenuIndex)"
-                                                :tooltip="item.titleIsCustom ? item.title : t(item.title || '')"
-                                                :class="isNavItemNotified(item) ? 'notify' : undefined">
+                                                :tooltip="item.titleIsCustom ? item.title : t(item.title || '')">
                                                 <i
                                                     :class="item.icon"
                                                     class="inline-flex size-6 items-center justify-center text-lg" />
                                                 <span v-show="!isCollapsed">{{
                                                     item.titleIsCustom ? item.title : t(item.title || '')
                                                 }}</span>
+                                                <span
+                                                    v-if="isNavItemNotified(item)"
+                                                    class="notify-dot left-1!"
+                                                    aria-hidden="true"></span>
                                                 <ChevronRight
                                                     v-show="!isCollapsed"
                                                     class="ml-auto transition-transform"
@@ -87,6 +93,10 @@
                                                             :class="entry.icon"
                                                             class="inline-flex size-5 items-center justify-center text-base" />
                                                         <span>{{ t(entry.label) }}</span>
+                                                        <span
+                                                            v-if="isNavItemNotified(item)"
+                                                            class="notify-dot left-0.5!"
+                                                            aria-hidden="true"></span>
                                                     </SidebarMenuSubButton>
                                                 </SidebarMenuSubItem>
                                             </SidebarMenuSub>
@@ -778,13 +788,18 @@
 </script>
 
 <style scoped>
-    .notify::after {
+    .notify {
+        position: relative;
+    }
+
+    .notify-dot {
         position: absolute;
-        top: 45%;
-        left: 8px;
+        top: 6px;
+        right: 0;
         width: 4px;
         height: 4px;
-        content: '';
+        background-color: #ef4444;
         border-radius: 50%;
+        transform: translateY(-50%);
     }
 </style>

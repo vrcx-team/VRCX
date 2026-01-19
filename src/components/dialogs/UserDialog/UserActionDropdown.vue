@@ -24,8 +24,7 @@
                     <Button variant="outline" size="icon-lg" class="rounded-full">
                         <MoreHorizontal />
                         <span
-                            v-if="dotClass"
-                            class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-background"
+                            class="absolute right-6 top-15.5 h-2.5 w-2.5 rounded-full ring-2 ring-background"
                             :class="dotClass" />
                     </Button>
                 </div>
@@ -233,7 +232,6 @@
         MousePointer,
         Pencil,
         Plus,
-        Power,
         RefreshCw,
         Settings,
         Share2,
