@@ -87,6 +87,14 @@
                     saveOpenVROption();
                 " />
             <simple-switch
+                :label="t('view.settings.appearance.appearance.striped_data_table_mode')"
+                :value="isDataTableStriped"
+                @change="toggleStripedDataTable" />
+            <simple-switch
+                :label="t('view.settings.appearance.appearance.toggle_pointer_on_hover')"
+                :value="showPointerOnHover"
+                @change="togglePointerOnHover" />
+            <simple-switch
                 :label="t('view.settings.appearance.appearance.age_gated_instances')"
                 :value="isAgeGatedInstancesVisible"
                 @change="setIsAgeGatedInstancesVisible" />
@@ -180,19 +188,12 @@
                     </ListboxRoot>
                 </Popover>
             </div>
-            <simple-switch
-                :label="t('view.settings.appearance.appearance.striped_data_table_mode')"
-                :value="isDataTableStriped"
-                @change="toggleStripedDataTable" />
+
             <div class="options-container-item">
                 <Button size="sm" variant="outline" @click="promptMaxTableSizeDialog">{{
                     t('view.settings.appearance.appearance.table_max_size')
                 }}</Button>
             </div>
-            <simple-switch
-                :label="t('view.settings.appearance.appearance.toggle_pointer_on_hover')"
-                :value="showPointerOnHover"
-                @change="togglePointerOnHover" />
         </div>
         <div class="options-container">
             <span class="header">{{ t('view.settings.appearance.timedate.header') }}</span>
@@ -451,15 +452,15 @@
     import { ArrowRight, CheckIcon, ChevronDown, Info } from 'lucide-vue-next';
     import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { computed, onBeforeUnmount, ref, watch } from 'vue';
+    import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '@/stores';
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+    import { getLanguageName, languageCodes } from '@/localization';
+    import { APP_FONT_FAMILIES } from '@/shared/constants';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '@/stores';
-    import { getLanguageName, languageCodes } from '@/localization';
-    import { APP_FONT_FAMILIES } from '@/shared/constants';
     import PresetColorPicker from '@/components/PresetColorPicker.vue';
 
     import SimpleSwitch from '../SimpleSwitch.vue';

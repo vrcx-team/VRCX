@@ -103,10 +103,6 @@ export const usePhotonStore = defineStore('Photon', () => {
                 value: []
             }
         ],
-        tableProps: {
-            stripe: true,
-            size: 'small'
-        },
         pageSize: 10,
         paginationProps: {
             layout: 'sizes,prev,pager,next,total'
@@ -124,10 +120,6 @@ export const usePhotonStore = defineStore('Photon', () => {
                 value: []
             }
         ],
-        tableProps: {
-            stripe: true,
-            size: 'small'
-        },
         pageSize: 10,
         paginationProps: {
             layout: 'sizes,prev,pager,next,total'

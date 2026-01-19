@@ -170,7 +170,7 @@
         persistKey: 'gameLog',
         data: gameLogDisplayData,
         columns,
-        getRowId: (row) => `${row.type}:${row.rowId ?? row.displayName + row.location + row.time}`,
+        getRowId: (row, index) => `${row.type}:${row.rowId ?? index}`,
         initialSorting: [],
         initialPagination: {
             pageIndex: 0,

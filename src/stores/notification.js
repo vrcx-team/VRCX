@@ -66,11 +66,6 @@ export const useNotificationStore = defineStore('Notification', () => {
                 value: ''
             }
         ],
-        tableProps: {
-            stripe: true,
-            size: 'small',
-            defaultSort: null
-        },
         pageSize: 20,
         pageSizeLinked: true,
         paginationProps: {

@@ -42,9 +42,8 @@
                     t('view.settings.general.vrcx_updater.change_build')
                 }}</Button>
             </div>
-            <div v-if="!noUpdater" class="options-container-item">
+            <div v-if="!noUpdater" class="text-sm mt-2 flex flex-col align-baseline">
                 <span class="name">{{ t('view.settings.general.vrcx_updater.update_action') }}</span>
-                <br />
                 <ToggleGroup
                     type="single"
                     required

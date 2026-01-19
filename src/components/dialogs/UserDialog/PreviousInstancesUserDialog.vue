@@ -67,8 +67,7 @@
                 previousInstances: [],
                 previousInstancesTable: {
                     data: [],
-                    filters: [{ prop: 'displayName', value: '' }],
-                    tableProps: { stripe: true, size: 'small', height: '400px' }
+                    filters: [{ prop: 'displayName', value: '' }]
                 }
             })
         }

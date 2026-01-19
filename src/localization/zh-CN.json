@@ -977,7 +977,7 @@
                 "instance_queue": "在排队等待的玩家：",
                 "instance_users": "房间玩家：",
                 "instance_game_version": "服务器版本：",
-                "last_join": "距离上次加入房间：",
+                "last_join": "距离上次加入房间",
                 "instance_queuing_enabled": "允许排队加入",
                 "instance_disabled_content": "禁用的内容：",
                 "instance_creator": "房间建立者",

@@ -65,7 +65,6 @@
                         <Pencil class="size-4" />
                         {{ t('dialog.user.actions.edit_pronouns') }}
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
                 </template>
                 <template v-else>
                     <template v-if="userDialog.isFriend">

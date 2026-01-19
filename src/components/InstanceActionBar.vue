@@ -61,14 +61,7 @@
                 <History class="h-4 w-4" />
             </Button>
         </TooltipWrapper>
-        <span v-if="showLastJoinIndicator" class="inline-block ml-2">
-            <TooltipWrapper side="top" class="ml-5">
-                <template #content>
-                    <span>{{ t('dialog.user.info.last_join') }} <Timer :epoch="lastJoin" /></span>
-                </template>
-                <MapPin class="h-4 w-4 text-muted-foreground" />
-            </TooltipWrapper>
-        </span>
+
         <div v-if="showInstanceInfo" class="flex items-center ml-2">
             <TooltipWrapper v-if="instanceInfoState.isValidInstance" side="top">
                 <template #content>
@@ -79,7 +72,8 @@
                         <template v-if="instanceInfoState.canCloseInstance">
                             <Button
                                 class="mt-1"
-                                size="sm"
+                                size="xs"
+                                variant="outline"
                                 :disabled="!!instance?.closedAt"
                                 @click="closeInstance(resolvedInstanceLocation)">
                                 {{ t('dialog.user.info.close_instance') }}
@@ -113,17 +107,29 @@
                         </template>
                     </div>
                 </template>
-                <div class="mr-2 text-muted-foreground">
+                <div class="mr-1 text-muted-foreground">
                     <span v-if="resolvedInstanceLocation === locationStore.lastLocation.location">
                         {{ locationStore.lastLocation.playerList.size }}/{{ instance?.capacity }}
                     </span>
+
                     <span v-else-if="instance?.userCount"> {{ instance.userCount }}/{{ instance?.capacity }} </span>
                 </div>
             </TooltipWrapper>
 
-            <span v-if="friendcount" class="ml-1 flex items-center text-muted-foreground"
-                ><UsersRound />{{ friendcount }}</span
-            >
+            <TooltipWrapper v-if="friendcount" side="top" :content="t('dialog.user.info.instance_friends_tooltip')">
+                <span class="ml-1 flex items-center text-muted-foreground"><UsersRound />{{ friendcount }}</span>
+            </TooltipWrapper>
+            <span v-if="showLastJoinIndicator" class="inline-block ml-1">
+                <TooltipWrapper side="top">
+                    <template #content>
+                        <span>{{ t('dialog.user.info.last_join') }} </span>
+                    </template>
+                    <span class="flex items-center ml-1">
+                        <MapPin class="h-4 w-4 text-muted-foreground" />
+                        <Timer class="text-muted-foreground" :epoch="lastJoin" />
+                    </span>
+                </TooltipWrapper>
+            </span>
             <span v-if="instanceInfoState.isValidInstance && !instance?.hasCapacityForYou" class="ml-1">
                 {{ t('dialog.user.info.instance_full') }}
             </span>

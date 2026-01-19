@@ -18,40 +18,24 @@ export const useInviteStore = defineStore('Invite', () => {
 
     const inviteMessageTable = ref({
         data: [],
-        tableProps: {
-            stripe: true,
-            size: 'small'
-        },
         layout: 'table',
         visible: false
     });
 
     const inviteResponseMessageTable = ref({
         data: [],
-        tableProps: {
-            stripe: true,
-            size: 'small'
-        },
         layout: 'table',
         visible: false
     });
 
     const inviteRequestMessageTable = ref({
         data: [],
-        tableProps: {
-            stripe: true,
-            size: 'small'
-        },
         layout: 'table',
         visible: false
     });
 
     const inviteRequestResponseMessageTable = ref({
         data: [],
-        tableProps: {
-            stripe: true,
-            size: 'small'
-        },
         layout: 'table',
         visible: false
     });

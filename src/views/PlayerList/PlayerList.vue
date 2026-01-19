@@ -13,7 +13,7 @@
                     @click="showFullscreenImageDialog(currentInstanceWorld.ref.imageUrl)"
                     loading="lazy" />
                 <div style="margin-left: 10px; display: flex; flex-direction: column; min-width: 320px; width: 100%">
-                    <div>
+                    <div class="flex items-center">
                         <span
                             class="cursor-pointer"
                             style="
@@ -25,14 +25,15 @@
                                 line-clamp: 1;
                             "
                             @click="showWorldDialog(currentInstanceWorld.ref.id)">
-                            <Home
-                                v-if="
-                                    currentUser.$homeLocation &&
-                                    currentUser.$homeLocation.worldId === currentInstanceWorld.ref.id
-                                "
-                                style="margin-right: 5px" />
-                            {{ currentInstanceWorld.ref.name }}
                         </span>
+
+                        {{ currentInstanceWorld.ref.name }}
+                        <Home
+                            v-if="
+                                currentUser.$homeLocation &&
+                                currentUser.$homeLocation.worldId === currentInstanceWorld.ref.id
+                            "
+                            class="ml-1" />
                     </div>
                     <div>
                         <span

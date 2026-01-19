@@ -74,14 +74,6 @@
 
     const registryBackupTable = ref({
         data: [],
-        tableProps: {
-            stripe: true,
-            size: 'small',
-            defaultSort: {
-                prop: 'date',
-                order: 'descending'
-            }
-        },
         layout: 'table'
     });
 

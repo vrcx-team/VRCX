@@ -47,6 +47,7 @@
                                             :on-refresh="() => refreshInstancePlayerCount(userDialog.$location.tag)" />
                                     </template>
                                     <Location
+                                        class="text-sm"
                                         :location="userDialog.ref.location"
                                         :traveling="userDialog.ref.travelingToLocation" />
                                 </div>
@@ -212,7 +213,7 @@
                                 <div class="detail">
                                     <span class="name">{{ t('dialog.user.info.bio') }}</span>
                                     <pre
-                                        class="extra"
+                                        class="extra truncate"
                                         style="
                                             font-family: inherit;
                                             font-size: 12px;
@@ -1504,10 +1505,7 @@
     });
     const socialStatusHistoryTable = ref({
         data: [],
-        tableProps: {
-            stripe: true,
-            size: 'small'
-        },
+
         layout: 'table'
     });
 
