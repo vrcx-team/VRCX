@@ -137,8 +137,8 @@ img.friends-list-avatar {
 .x-friend-item > .avatar.busy::after,
 .x-friend-item > .avatar.offline::after {
     position: absolute;
-    right: 1px;
-    bottom: 1px;
+    right: 0.75px;
+    bottom: 0.75px;
     width: 9px;
     height: 9px;
     content: '';
