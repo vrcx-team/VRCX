@@ -150,7 +150,7 @@
                                     size="icon-lg"
                                     style="margin-left: 5px"
                                     @click="clearGroupRepresentation(groupDialog.id)">
-                                    <Star />
+                                    <BookmarkCheck />
                                 </Button>
                             </TooltipWrapper>
                             <TooltipWrapper v-else side="top" :content="t('dialog.group.actions.represent_tooltip')">
@@ -161,7 +161,7 @@
                                         size="icon-lg"
                                         :disabled="groupDialog.ref.privacy === 'private'"
                                         @click="setGroupRepresentation(groupDialog.id)">
-                                        <Star />
+                                        <Bookmark />
                                     </Button>
                                 </span>
                             </TooltipWrapper>
@@ -1117,6 +1117,8 @@
     import {
         Bell,
         BellOff,
+        Bookmark,
+        BookmarkCheck,
         Check,
         CheckCircle,
         Copy,
@@ -1128,7 +1130,6 @@
         RefreshCw,
         Settings,
         Share2,
-        Star,
         Tag,
         Ticket,
         Trash2,

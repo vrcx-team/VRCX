@@ -99,6 +99,7 @@
     } from '../../../stores';
     import { isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
     import { getFriendsLocations } from '../../../shared/utils/location.js';
+    import { useVirtualizerAnchor } from '../../../composables/useVirtualizerAnchor';
 
     import FriendItem from './FriendItem.vue';
     import Location from '../../../components/Location.vue';
@@ -422,6 +423,12 @@
         };
     };
 
+    const { measureWithAnchor } = useVirtualizerAnchor({
+        virtualizer,
+        virtualRows,
+        scrollViewportRef
+    });
+
     function saveFriendsGroupStates() {
         configRepository.setBool('VRCX_isFriendsGroupMe', isFriendsGroupMe.value);
         configRepository.setBool('VRCX_isFriendsGroupFavorites', isVIPFriends.value);
@@ -482,7 +489,7 @@
     });
 
     watch(virtualRows, () => {
-        nextTick(() => {
+        measureWithAnchor(() => {
             virtualizer.value?.measure?.();
         });
     });
