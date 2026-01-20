@@ -411,7 +411,7 @@ export const useUserStore = defineStore('User', () => {
      * @param {Map<string, any>} friendMap
      */
     function cleanupUserCache(userCache, friendMap) {
-        const bufferSize = 200;
+        const bufferSize = 300;
 
         const currentFriendCount = friendMap.size;
         const currentTotalSize = userCache.size;

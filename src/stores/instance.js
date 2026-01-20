@@ -55,6 +55,32 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     let cachedInstances = new Map();
 
+    function cleanInstanceCache() {
+        const maxSize = 200;
+        if (cachedInstances.size <= maxSize) {
+            return;
+        }
+        const removable = [];
+        cachedInstances.forEach((ref, id) => {
+            if (
+                [...friendStore.friends.values()].some(
+                    (f) => f.$location?.tag === id
+                )
+            ) {
+                return;
+            }
+            removable.push({
+                id,
+                fetchedAt: Date.parse(ref.$fetchedAt) || 0
+            });
+        });
+        removable.sort((a, b) => a.fetchedAt - b.fetchedAt);
+        const overBy = cachedInstances.size - maxSize;
+        for (let i = 0; i < overBy && i < removable.length; i++) {
+            cachedInstances.delete(removable[i].id);
+        }
+    }
+
     const lastInstanceApplied = ref('');
 
     const currentInstanceWorld = ref({
@@ -326,6 +352,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 ...json
             };
             cachedInstances.set(ref.id, ref);
+            cleanInstanceCache();
         } else {
             Object.assign(ref, json);
         }
