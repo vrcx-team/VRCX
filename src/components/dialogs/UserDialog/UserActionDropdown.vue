@@ -21,7 +21,7 @@
         <DropdownMenu>
             <DropdownMenuTrigger as-child>
                 <div class="ml-2">
-                    <Button variant="outline" size="icon-lg" class="rounded-full">
+                    <Button :variant="hasRisk ? 'destructive' : 'outline'" size="icon-lg" class="rounded-full">
                         <MoreHorizontal />
                         <span
                             class="absolute right-6 top-15.5 h-2.5 w-2.5 rounded-full ring-2 ring-background"
@@ -271,12 +271,18 @@
     const { lastLocation } = storeToRefs(useLocationStore());
 
     const hasRequest = computed(() => userDialog.value.incomingRequest || userDialog.value.outgoingRequest);
-    const hasRisk = computed(() => userDialog.value.isBlock || userDialog.value.isMute);
+    const hasRisk = computed(
+        () =>
+            userDialog.value.isBlock ||
+            userDialog.value.isMute ||
+            userDialog.value.isMuteChat ||
+            userDialog.value.isInteractOff ||
+            userDialog.value.isHideAvatar
+    );
 
     const dotClass = computed(() => {
         if (hasRequest.value) return 'bg-emerald-500';
-        if (hasRisk.value) return 'bg-destructive';
-        return null;
+        return 'opacity-0';
     });
 
     function onCommand(command) {
