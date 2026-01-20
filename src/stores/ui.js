@@ -27,6 +27,7 @@ export const useUiStore = defineStore('Ui', () => {
     const notifiedMenus = ref([]);
     const shiftHeld = ref(false);
     const trayIconNotify = ref(false);
+    const dialogCrumbs = ref([]);
 
     watch(ctrlR, (isPressed) => {
         if (isPressed) {
@@ -57,6 +58,54 @@ export const useUiStore = defineStore('Ui', () => {
             toast.success('Custom CSS and localization strings refreshed');
         }
     });
+
+    function pushDialogCrumb(type, id, label = '') {
+        if (!type || !id) {
+            return;
+        }
+        const items = dialogCrumbs.value;
+        const last = items[items.length - 1];
+        if (last && last.type === type && last.id === id) {
+            if (label && last.label !== label) {
+                last.label = label;
+            }
+            return;
+        }
+        const existingIndex = items.findIndex(
+            (item) => item.type === type && item.id === id
+        );
+        if (existingIndex !== -1) {
+            items.splice(existingIndex + 1);
+            if (label) {
+                items[existingIndex].label = label;
+            }
+            return;
+        }
+        items.push({ type, id, label: label || id });
+    }
+
+    function setDialogCrumbLabel(type, id, label) {
+        if (!type || !id || !label) {
+            return;
+        }
+        const item = dialogCrumbs.value.find(
+            (entry) => entry.type === type && entry.id === id
+        );
+        if (item) {
+            item.label = label;
+        }
+    }
+
+    function jumpDialogCrumb(index) {
+        if (index < 0 || index >= dialogCrumbs.value.length) {
+            return;
+        }
+        dialogCrumbs.value.splice(index + 1);
+    }
+
+    function clearDialogCrumbs() {
+        dialogCrumbs.value = [];
+    }
 
     // Make sure file drops outside of the screenshot manager don't navigate to the file path dropped.
     // This issue persists on prompts created with prompt(), unfortunately. Not sure how to fix that.
@@ -133,10 +182,15 @@ export const useUiStore = defineStore('Ui', () => {
     return {
         notifiedMenus,
         shiftHeld,
+        dialogCrumbs,
 
         notifyMenu,
         removeNotify,
         showConsole,
-        updateTrayIconNotify
+        updateTrayIconNotify,
+        pushDialogCrumb,
+        setDialogCrumbLabel,
+        jumpDialogCrumb,
+        clearDialogCrumbs
     };
 });

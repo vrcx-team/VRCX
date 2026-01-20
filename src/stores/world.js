@@ -14,9 +14,12 @@ import {
 } from '../shared/utils';
 import { instanceRequest, miscRequest, worldRequest } from '../api';
 import { database } from '../service/database';
+import { useAvatarStore } from './avatar';
 import { useFavoriteStore } from './favorite';
+import { useGroupStore } from './group';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
+import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { watchState } from '../service/watchState';
 
@@ -25,6 +28,9 @@ export const useWorldStore = defineStore('World', () => {
     const favoriteStore = useFavoriteStore();
     const instanceStore = useInstanceStore();
     const userStore = useUserStore();
+    const avatarStore = useAvatarStore();
+    const groupStore = useGroupStore();
+    const uiStore = useUiStore();
     const { t } = useI18n();
 
     const worldDialog = reactive({
@@ -71,12 +77,26 @@ export const useWorldStore = defineStore('World', () => {
      * @param {string} tag
      * @param {string} shortName
      */
-    function showWorldDialog(tag, shortName = null) {
+    function showWorldDialog(tag, shortName = null, options = {}) {
         const D = worldDialog;
         const L = parseLocation(tag);
         if (L.worldId === '') {
             return;
         }
+        if (
+            !worldDialog.visible &&
+            !userStore.userDialog.visible &&
+            !avatarStore.avatarDialog.visible &&
+            !groupStore.groupDialog.visible
+        ) {
+            uiStore.clearDialogCrumbs();
+        }
+        if (!options.skipBreadcrumb) {
+            uiStore.pushDialogCrumb('world', L.worldId);
+        }
+        userStore.userDialog.visible = false;
+        avatarStore.avatarDialog.visible = false;
+        groupStore.groupDialog.visible = false;
         L.shortName = shortName;
         D.id = L.worldId;
         D.$location = L;
@@ -141,6 +161,11 @@ export const useWorldStore = defineStore('World', () => {
                 if (D.id === args.ref.id) {
                     D.loading = false;
                     D.ref = args.ref;
+                    uiStore.setDialogCrumbLabel(
+                        'world',
+                        D.id,
+                        D.ref?.name || D.id
+                    );
                     D.isFavorite = favoriteStore.getCachedFavoritesByObjectId(
                         D.id
                     );

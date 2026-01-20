@@ -16,11 +16,14 @@ import {
 } from '../shared/utils';
 import { database } from '../service/database.js';
 import { groupDialogFilterOptions } from '../shared/constants/';
+import { useAvatarStore } from './avatar';
 import { useGameStore } from './game';
 import { useInstanceStore } from './instance';
 import { useModalStore } from './modal';
 import { useNotificationStore } from './notification';
+import { useUiStore } from './ui';
 import { useUserStore } from './user';
+import { useWorldStore } from './world';
 import { watchState } from '../service/watchState';
 
 import configRepository from '../service/config';
@@ -31,8 +34,11 @@ export const useGroupStore = defineStore('Group', () => {
     const instanceStore = useInstanceStore();
     const gameStore = useGameStore();
     const userStore = useUserStore();
+    const worldStore = useWorldStore();
+    const avatarStore = useAvatarStore();
     const notificationStore = useNotificationStore();
     const modalStore = useModalStore();
+    const uiStore = useUiStore();
     const { t } = useI18n();
 
     let cachedGroups = new Map();
@@ -124,10 +130,24 @@ export const useGroupStore = defineStore('Group', () => {
         { flush: 'sync' }
     );
 
-    function showGroupDialog(groupId) {
+    function showGroupDialog(groupId, options = {}) {
         if (!groupId) {
             return;
         }
+        if (
+            !groupDialog.value.visible &&
+            !userStore.userDialog.visible &&
+            !worldStore.worldDialog.visible &&
+            !avatarStore.avatarDialog.visible
+        ) {
+            uiStore.clearDialogCrumbs();
+        }
+        if (!options.skipBreadcrumb) {
+            uiStore.pushDialogCrumb('group', groupId);
+        }
+        userStore.userDialog.visible = false;
+        worldStore.worldDialog.visible = false;
+        avatarStore.avatarDialog.visible = false;
         const D = groupDialog.value;
         D.visible = true;
         D.loading = true;
@@ -161,6 +181,11 @@ export const useGroupStore = defineStore('Group', () => {
                 if (groupId === args.ref.id) {
                     D.loading = false;
                     D.ref = args.ref;
+                    uiStore.setDialogCrumbLabel(
+                        'group',
+                        D.id,
+                        D.ref?.name || D.id
+                    );
                     D.inGroup = args.ref.membershipStatus === 'member';
                     D.ownerDisplayName = args.ref.ownerId;
                     userRequest

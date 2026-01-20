@@ -18,10 +18,7 @@
                 <ResizablePanelGroup
                     ref="panelGroupRef"
                     direction="horizontal"
-                    :class="[
-                        'group/main-layout flex-1 h-full min-w-0',
-                        { 'aside-collapsed': isAsideCollapsedStatic }
-                    ]"
+                    :class="['group/main-layout flex-1 h-full min-w-0', { 'aside-collapsed': isAsideCollapsedStatic }]"
                     @layout="handleLayout">
                     <template #default="{ layout }">
                         <ResizablePanel :default-size="mainDefaultSize" :order="1">
@@ -46,7 +43,8 @@
                                 :max-size="asideMaxSize"
                                 :collapsed-size="0"
                                 collapsible
-                                :order="2">
+                                :order="2"
+                                :style="{ maxWidth: `${asideMaxPx}px` }">
                                 <Sidebar></Sidebar>
                             </ResizablePanel>
                         </template>
@@ -56,13 +54,7 @@
         </SidebarProvider>
 
         <!-- ## Dialogs ## -->
-        <UserDialog></UserDialog>
-
-        <WorldDialog></WorldDialog>
-
-        <AvatarDialog></AvatarDialog>
-
-        <GroupDialog></GroupDialog>
+        <MainDialogContainer></MainDialogContainer>
 
         <GroupMemberModerationDialog></GroupMemberModerationDialog>
 
@@ -102,16 +94,15 @@
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { SidebarInset, SidebarProvider } from '../../components/ui/sidebar';
     import { useAppearanceSettingsStore } from '../../stores';
-    import { useAuthenticatedLayoutResizable } from '../../composables/useAuthenticatedLayoutResizable';
+    import { useMainLayoutResizable } from '../../composables/useMainLayoutResizable';
     import { watchState } from '../../service/watchState';
 
-    import AvatarDialog from '../../components/dialogs/AvatarDialog/AvatarDialog.vue';
     import AvatarImportDialog from '../Favorites/dialogs/AvatarImportDialog.vue';
     import ChangelogDialog from '../Settings/dialogs/ChangelogDialog.vue';
     import ChooseFavoriteGroupDialog from '../../components/dialogs/ChooseFavoriteGroupDialog.vue';
+    import MainDialogContainer from '../../components/dialogs/MainDialogContainer.vue';
     import FriendImportDialog from '../Favorites/dialogs/FriendImportDialog.vue';
     import FullscreenImagePreview from '../../components/FullscreenImagePreview.vue';
-    import GroupDialog from '../../components/dialogs/GroupDialog/GroupDialog.vue';
     import GroupMemberModerationDialog from '../../components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
     import InviteGroupDialog from '../../components/dialogs/InviteGroupDialog.vue';
     import LaunchDialog from '../../components/dialogs/LaunchDialog.vue';
@@ -121,9 +112,7 @@
     import PrimaryPasswordDialog from '../Settings/dialogs/PrimaryPasswordDialog.vue';
     import SendBoopDialog from '../../components/dialogs/SendBoopDialog.vue';
     import Sidebar from '../Sidebar/Sidebar.vue';
-    import UserDialog from '../../components/dialogs/UserDialog/UserDialog.vue';
     import VRChatConfigDialog from '../Settings/dialogs/VRChatConfigDialog.vue';
-    import WorldDialog from '../../components/dialogs/WorldDialog/WorldDialog.vue';
     import WorldImportDialog from '../Favorites/dialogs/WorldImportDialog.vue';
 
     const router = useRouter();
@@ -180,16 +169,15 @@
     const {
         asideDefaultSize,
         asideMaxSize,
+        asideMaxPx,
         mainDefaultSize,
         handleLayout,
         setIsDragging,
         isAsideCollapsed,
         isSideBarTabShow
-    } = useAuthenticatedLayoutResizable();
+    } = useMainLayoutResizable();
 
-    const isAsideCollapsedStatic = computed(
-        () => !isSideBarTabShow.value || asideWidth.value === 0
-    );
+    const isAsideCollapsedStatic = computed(() => !isSideBarTabShow.value || asideWidth.value === 0);
 
     watch(
         () => watchState.isLoggedIn,

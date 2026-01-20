@@ -1,544 +1,515 @@
 <template>
-    <Dialog v-model:open="avatarDialog.visible">
-        <DialogContent
-            class="x-dialog x-avatar-dialog sm:max-w-235 translate-y-0"
-            style="top: 10vh"
-            :show-close-button="false">
-            <div>
-                <div style="display: flex">
-                    <img
-                        :src="avatarDialog.ref.thumbnailImageUrl"
-                        class="cursor-pointer"
-                        @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)"
-                        style="flex: none; width: 160px; height: 120px; border-radius: 12px"
-                        loading="lazy" />
-                    <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
-                        <div style="flex: 1">
-                            <div>
+    <div>
+        <div style="display: flex">
+            <img
+                :src="avatarDialog.ref.thumbnailImageUrl"
+                class="cursor-pointer"
+                @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)"
+                style="flex: none; width: 160px; height: 120px; border-radius: 12px"
+                loading="lazy" />
+            <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
+                <div style="flex: 1">
+                    <div>
+                        <span
+                            class="font-bold"
+                            style="margin-right: 5px; cursor: pointer"
+                            v-text="avatarDialog.ref.name"
+                            @click="copyToClipboard(avatarDialog.ref.name)"></span>
+                    </div>
+                    <div style="margin-top: 5px">
+                        <span
+                            class="cursor-pointer x-grey"
+                            style="font-family: monospace"
+                            @click="showUserDialog(avatarDialog.ref.authorId)"
+                            v-text="avatarDialog.ref.authorName"></span>
+                    </div>
+                    <div>
+                        <Badge
+                            v-if="avatarDialog.ref.releaseStatus === 'public'"
+                            variant="outline"
+                            style="margin-right: 5px; margin-top: 5px">
+                            {{ t('dialog.avatar.tags.public') }}
+                        </Badge>
+                        <Badge v-else variant="outline" style="margin-right: 5px; margin-top: 5px">
+                            {{ t('dialog.avatar.tags.private') }}
+                        </Badge>
+                        <TooltipWrapper v-if="avatarDialog.isPC" side="top" content="PC">
+                            <Badge
+                                class="x-tag-platform-pc"
+                                variant="outline"
+                                style="margin-right: 5px; margin-top: 5px"
+                                ><Monitor class="h-4 w-4 x-tag-platform-pc" />
                                 <span
-                                    class="font-bold"
-                                    style="margin-right: 5px; cursor: pointer"
-                                    v-text="avatarDialog.ref.name"
-                                    @click="copyToClipboard(avatarDialog.ref.name)"></span>
-                            </div>
-                            <div style="margin-top: 5px">
+                                    v-if="avatarDialog.platformInfo.pc"
+                                    :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
+                                    >{{ avatarDialog.platformInfo.pc.performanceRating }}</span
+                                >
                                 <span
-                                    class="cursor-pointer x-grey"
-                                    style="font-family: monospace"
-                                    @click="showUserDialog(avatarDialog.ref.authorId)"
-                                    v-text="avatarDialog.ref.authorName"></span>
-                            </div>
-                            <div>
+                                    v-if="avatarDialog.bundleSizes['standalonewindows']"
+                                    :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
+                                    >{{ avatarDialog.bundleSizes['standalonewindows'].fileSize }}</span
+                                >
+                            </Badge>
+                        </TooltipWrapper>
+                        <TooltipWrapper v-if="avatarDialog.isQuest" side="top" content="Android">
+                            <Badge
+                                class="x-tag-platform-quest"
+                                variant="outline"
+                                style="margin-right: 5px; margin-top: 5px"
+                                ><Smartphone class="h-4 w-4 x-tag-platform-quest" />
+                                <span
+                                    v-if="avatarDialog.platformInfo.android"
+                                    :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
+                                    >{{ avatarDialog.platformInfo.android.performanceRating }}</span
+                                >
+                                <span
+                                    v-if="avatarDialog.bundleSizes['android']"
+                                    :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
+                                    >{{ avatarDialog.bundleSizes['android'].fileSize }}</span
+                                >
+                            </Badge>
+                        </TooltipWrapper>
+                        <TooltipWrapper v-if="avatarDialog.isIos" side="top" content="iOS">
+                            <Badge
+                                class="text-[#8e8e93] border-[#8e8e93]"
+                                variant="outline"
+                                style="margin-right: 5px; margin-top: 5px"
+                                ><Apple class="h-4 w-4 text-[#8e8e93]" />
+                                <span
+                                    v-if="avatarDialog.platformInfo.ios"
+                                    :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']"
+                                    >{{ avatarDialog.platformInfo.ios.performanceRating }}</span
+                                >
+                                <span
+                                    v-if="avatarDialog.bundleSizes['ios']"
+                                    :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']"
+                                    >{{ avatarDialog.bundleSizes['ios'].fileSize }}</span
+                                >
+                            </Badge>
+                        </TooltipWrapper>
+                        <Badge
+                            v-if="avatarDialog.inCache"
+                            variant="outline"
+                            class="cursor-pointer"
+                            style="margin-right: 5px; margin-top: 5px"
+                            @click="openFolderGeneric(avatarDialog.cachePath)">
+                            <span v-text="avatarDialog.cacheSize"></span>
+                            &nbsp;{{ t('dialog.avatar.tags.cache') }}
+                        </Badge>
+                        <Badge
+                            v-if="avatarDialog.ref.styles?.primary || avatarDialog.ref.styles?.secondary"
+                            variant="outline"
+                            style="margin-right: 5px; margin-top: 5px"
+                            >Styles
+                            <span v-if="avatarDialog.ref.styles.primary" :class="['x-grey', 'x-tag-border-left']">{{
+                                avatarDialog.ref.styles.primary
+                            }}</span>
+                            <span v-if="avatarDialog.ref.styles.secondary" :class="['x-grey', 'x-tag-border-left']">{{
+                                avatarDialog.ref.styles.secondary
+                            }}</span>
+                        </Badge>
+                        <Badge
+                            v-if="avatarDialog.isQuestFallback"
+                            variant="outline"
+                            style="margin-right: 5px; margin-top: 5px">
+                            {{ t('dialog.avatar.tags.fallback') }}
+                        </Badge>
+                        <Badge
+                            v-if="avatarDialog.hasImposter"
+                            variant="outline"
+                            style="margin-right: 5px; margin-top: 5px"
+                            >{{ t('dialog.avatar.tags.impostor') }}
+                            <span v-if="avatarDialog.imposterVersion" :class="['x-grey', 'x-tag-border-left']"
+                                >v{{ avatarDialog.imposterVersion }}</span
+                            >
+                        </Badge>
+                        <Badge
+                            v-if="avatarDialog.ref.unityPackageUrl"
+                            variant="outline"
+                            style="margin-right: 5px; margin-top: 5px">
+                            {{ t('dialog.avatar.tags.future_proofing') }}
+                        </Badge>
+                        <div>
+                            <template v-for="tag in avatarDialog.ref.tags" :key="tag">
                                 <Badge
-                                    v-if="avatarDialog.ref.releaseStatus === 'public'"
+                                    v-if="tag.startsWith('content_')"
                                     variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
-                                    {{ t('dialog.avatar.tags.public') }}
-                                </Badge>
-                                <Badge v-else variant="outline" style="margin-right: 5px; margin-top: 5px">
-                                    {{ t('dialog.avatar.tags.private') }}
-                                </Badge>
-                                <TooltipWrapper v-if="avatarDialog.isPC" side="top" content="PC">
-                                    <Badge
-                                        class="x-tag-platform-pc"
-                                        variant="outline"
-                                        style="margin-right: 5px; margin-top: 5px"
-                                        ><Monitor class="h-4 w-4 x-tag-platform-pc" />
-                                        <span
-                                            v-if="avatarDialog.platformInfo.pc"
-                                            :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
-                                            >{{ avatarDialog.platformInfo.pc.performanceRating }}</span
-                                        >
-                                        <span
-                                            v-if="avatarDialog.bundleSizes['standalonewindows']"
-                                            :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
-                                            >{{ avatarDialog.bundleSizes['standalonewindows'].fileSize }}</span
-                                        >
-                                    </Badge>
-                                </TooltipWrapper>
-                                <TooltipWrapper v-if="avatarDialog.isQuest" side="top" content="Android">
-                                    <Badge
-                                        class="x-tag-platform-quest"
-                                        variant="outline"
-                                        style="margin-right: 5px; margin-top: 5px"
-                                        ><Smartphone class="h-4 w-4 x-tag-platform-quest" />
-                                        <span
-                                            v-if="avatarDialog.platformInfo.android"
-                                            :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
-                                            >{{ avatarDialog.platformInfo.android.performanceRating }}</span
-                                        >
-                                        <span
-                                            v-if="avatarDialog.bundleSizes['android']"
-                                            :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
-                                            >{{ avatarDialog.bundleSizes['android'].fileSize }}</span
-                                        >
-                                    </Badge>
-                                </TooltipWrapper>
-                                <TooltipWrapper v-if="avatarDialog.isIos" side="top" content="iOS">
-                                    <Badge
-                                        class="text-[#8e8e93] border-[#8e8e93]"
-                                        variant="outline"
-                                        style="margin-right: 5px; margin-top: 5px"
-                                        ><Apple class="h-4 w-4 text-[#8e8e93]" />
-                                        <span
-                                            v-if="avatarDialog.platformInfo.ios"
-                                            :class="[
-                                                'x-grey',
-                                                'x-tag-border-left',
-                                                'text-[#8e8e93]',
-                                                'border-[#8e8e93]'
-                                            ]"
-                                            >{{ avatarDialog.platformInfo.ios.performanceRating }}</span
-                                        >
-                                        <span
-                                            v-if="avatarDialog.bundleSizes['ios']"
-                                            :class="[
-                                                'x-grey',
-                                                'x-tag-border-left',
-                                                'text-[#8e8e93]',
-                                                'border-[#8e8e93]'
-                                            ]"
-                                            >{{ avatarDialog.bundleSizes['ios'].fileSize }}</span
-                                        >
-                                    </Badge>
-                                </TooltipWrapper>
-                                <Badge
-                                    v-if="avatarDialog.inCache"
-                                    variant="outline"
-                                    class="cursor-pointer"
-                                    style="margin-right: 5px; margin-top: 5px"
-                                    @click="openFolderGeneric(avatarDialog.cachePath)">
-                                    <span v-text="avatarDialog.cacheSize"></span>
-                                    &nbsp;{{ t('dialog.avatar.tags.cache') }}
+                                    <span v-if="tag === 'content_horror'">{{
+                                        t('dialog.avatar.tags.content_horror')
+                                    }}</span>
+                                    <span v-else-if="tag === 'content_gore'">{{
+                                        t('dialog.avatar.tags.content_gore')
+                                    }}</span>
+                                    <span v-else-if="tag === 'content_violence'">{{
+                                        t('dialog.avatar.tags.content_violence')
+                                    }}</span>
+                                    <span v-else-if="tag === 'content_adult'">{{
+                                        t('dialog.avatar.tags.content_adult')
+                                    }}</span>
+                                    <span v-else-if="tag === 'content_sex'">{{
+                                        t('dialog.avatar.tags.content_sex')
+                                    }}</span>
+                                    <span v-else>{{ tag.replace('content_', '') }}</span>
                                 </Badge>
                                 <Badge
-                                    v-if="avatarDialog.ref.styles?.primary || avatarDialog.ref.styles?.secondary"
-                                    variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px"
-                                    >Styles
-                                    <span
-                                        v-if="avatarDialog.ref.styles.primary"
-                                        :class="['x-grey', 'x-tag-border-left']"
-                                        >{{ avatarDialog.ref.styles.primary }}</span
-                                    >
-                                    <span
-                                        v-if="avatarDialog.ref.styles.secondary"
-                                        :class="['x-grey', 'x-tag-border-left']"
-                                        >{{ avatarDialog.ref.styles.secondary }}</span
-                                    >
-                                </Badge>
-                                <Badge
-                                    v-if="avatarDialog.isQuestFallback"
+                                    v-if="tag.startsWith('author_tag_')"
                                     variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
-                                    {{ t('dialog.avatar.tags.fallback') }}
+                                    <span>
+                                        {{ tag.replace('author_tag_', '') }}
+                                    </span>
                                 </Badge>
-                                <Badge
-                                    v-if="avatarDialog.hasImposter"
-                                    variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px"
-                                    >{{ t('dialog.avatar.tags.impostor') }}
-                                    <span v-if="avatarDialog.imposterVersion" :class="['x-grey', 'x-tag-border-left']"
-                                        >v{{ avatarDialog.imposterVersion }}</span
-                                    >
-                                </Badge>
-                                <Badge
-                                    v-if="avatarDialog.ref.unityPackageUrl"
-                                    variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px">
-                                    {{ t('dialog.avatar.tags.future_proofing') }}
-                                </Badge>
-                                <div>
-                                    <template v-for="tag in avatarDialog.ref.tags" :key="tag">
-                                        <Badge
-                                            v-if="tag.startsWith('content_')"
-                                            variant="outline"
-                                            style="margin-right: 5px; margin-top: 5px">
-                                            <span v-if="tag === 'content_horror'">{{
-                                                t('dialog.avatar.tags.content_horror')
-                                            }}</span>
-                                            <span v-else-if="tag === 'content_gore'">{{
-                                                t('dialog.avatar.tags.content_gore')
-                                            }}</span>
-                                            <span v-else-if="tag === 'content_violence'">{{
-                                                t('dialog.avatar.tags.content_violence')
-                                            }}</span>
-                                            <span v-else-if="tag === 'content_adult'">{{
-                                                t('dialog.avatar.tags.content_adult')
-                                            }}</span>
-                                            <span v-else-if="tag === 'content_sex'">{{
-                                                t('dialog.avatar.tags.content_sex')
-                                            }}</span>
-                                            <span v-else>{{ tag.replace('content_', '') }}</span>
-                                        </Badge>
-                                        <Badge
-                                            v-if="tag.startsWith('author_tag_')"
-                                            variant="outline"
-                                            style="margin-right: 5px; margin-top: 5px">
-                                            <span>
-                                                {{ tag.replace('author_tag_', '') }}
-                                            </span>
-                                        </Badge>
-                                    </template>
-                                </div>
-                            </div>
-                            <div style="margin-top: 5px">
-                                <span
-                                    v-show="avatarDialog.ref.name !== avatarDialog.ref.description"
-                                    style="font-size: 12px"
-                                    v-text="avatarDialog.ref.description"></span>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
-                            <TooltipWrapper
-                                v-if="avatarDialog.inCache"
-                                side="top"
-                                :content="t('dialog.avatar.actions.delete_cache_tooltip')">
-                                <Button
-                                    class="rounded-full mr-2"
-                                    size="icon-lg"
-                                    variant="outline"
-                                    :disabled="isGameRunning && avatarDialog.cacheLocked"
-                                    @click="deleteVRChatCache(avatarDialog.ref)"
-                                    ><Trash2
-                                /></Button>
-                            </TooltipWrapper>
-
-                            <TooltipWrapper
-                                v-if="avatarDialog.isFavorite"
-                                side="top"
-                                :ignore-non-keyboard-focus="true"
-                                :content="t('dialog.avatar.actions.favorite_tooltip')">
-                                <Button class="rounded-full" size="icon-lg" @click="avatarDialogCommand('Add Favorite')"
-                                    ><Star
-                                /></Button>
-                            </TooltipWrapper>
-                            <TooltipWrapper
-                                v-else
-                                side="top"
-                                :ignore-non-keyboard-focus="true"
-                                :content="t('dialog.avatar.actions.favorite_tooltip')">
-                                <Button
-                                    class="rounded-full"
-                                    size="icon-lg"
-                                    variant="outline"
-                                    @click="avatarDialogCommand('Add Favorite')"
-                                    ><Star
-                                /></Button>
-                            </TooltipWrapper>
-
-                            <TooltipWrapper side="top" :content="t('dialog.avatar.actions.select')">
-                                <Button
-                                    class="rounded-full ml-2"
-                                    size="icon-lg"
-                                    variant="outline"
-                                    :disabled="currentUser.currentAvatar === avatarDialog.id"
-                                    @click="selectAvatarWithoutConfirmation(avatarDialog.id)">
-                                    <CheckCircle
-                                /></Button>
-                            </TooltipWrapper>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger as-child>
-                                    <Button
-                                        class="rounded-full ml-2"
-                                        :variant="avatarDialog.isBlocked ? 'destructive' : 'outline'"
-                                        size="icon-lg">
-                                        <Ellipsis />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    <DropdownMenuItem @click="avatarDialogCommand('RefreshCw')">
-                                        <RefreshCw class="size-4" />
-                                        {{ t('dialog.avatar.actions.refresh') }}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem @click="avatarDialogCommand('Share2')">
-                                        <Share2 class="size-4" />
-                                        {{ t('dialog.avatar.actions.share') }}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem
-                                        v-if="avatarDialog.isBlocked"
-                                        variant="destructive"
-                                        @click="avatarDialogCommand('Unblock Avatar')">
-                                        <CheckCircle class="size-4" />
-                                        {{ t('dialog.avatar.actions.unblock') }}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem v-else @click="avatarDialogCommand('Block Avatar')">
-                                        <XCircle class="size-4" />
-                                        {{ t('dialog.avatar.actions.block') }}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        v-if="/quest/.test(avatarDialog.ref.tags)"
-                                        @click="avatarDialogCommand('Select Fallback Avatar')">
-                                        <Check class="size-4" />
-                                        {{ t('dialog.avatar.actions.select_fallback') }}
-                                    </DropdownMenuItem>
-                                    <template v-if="avatarDialog.ref.authorId === currentUser.id">
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem
-                                            v-if="avatarDialog.ref.releaseStatus === 'public'"
-                                            @click="avatarDialogCommand('Make Private')">
-                                            <User class="size-4" />
-                                            {{ t('dialog.avatar.actions.make_private') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem v-else @click="avatarDialogCommand('Make Public')">
-                                            <User class="size-4" />
-                                            {{ t('dialog.avatar.actions.make_public') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem @click="avatarDialogCommand('Rename')">
-                                            <Pencil class="size-4" />
-                                            {{ t('dialog.avatar.actions.rename') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem @click="avatarDialogCommand('Change Description')">
-                                            <Pencil class="size-4" />
-                                            {{ t('dialog.avatar.actions.change_description') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem @click="avatarDialogCommand('Change Content Tags')">
-                                            <Pencil class="size-4" />
-                                            {{ t('dialog.avatar.actions.change_content_tags') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem @click="avatarDialogCommand('Change Styles and Author Tags')">
-                                            <Pencil class="size-4" />
-                                            {{ t('dialog.avatar.actions.change_styles_author_tags') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem @click="avatarDialogCommand('Change Image')">
-                                            <Image class="size-4" />
-                                            {{ t('dialog.avatar.actions.change_image') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            v-if="avatarDialog.ref.unityPackageUrl"
-                                            @click="avatarDialogCommand('Download Unity Package')">
-                                            <Download class="size-4" />
-                                            {{ t('dialog.avatar.actions.download_package') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem
-                                            v-if="avatarDialog.hasImposter"
-                                            variant="destructive"
-                                            @click="avatarDialogCommand('Regenerate Imposter')">
-                                            <RefreshCw class="size-4" />
-                                            {{ t('dialog.avatar.actions.regenerate_impostor') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            v-if="avatarDialog.hasImposter"
-                                            variant="destructive"
-                                            @click="avatarDialogCommand('Trash2 Imposter')">
-                                            <Trash2 class="size-4" />
-                                            {{ t('dialog.avatar.actions.delete_impostor') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem v-else @click="avatarDialogCommand('Create Imposter')">
-                                            <User class="size-4" />
-                                            {{ t('dialog.avatar.actions.create_impostor') }}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem variant="destructive" @click="avatarDialogCommand('Trash2')">
-                                            <Trash2 class="size-4" />
-                                            {{ t('dialog.avatar.actions.delete') }}
-                                        </DropdownMenuItem>
-                                    </template>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            </template>
                         </div>
                     </div>
+                    <div style="margin-top: 5px">
+                        <span
+                            v-show="avatarDialog.ref.name !== avatarDialog.ref.description"
+                            style="font-size: 12px"
+                            v-text="avatarDialog.ref.description"></span>
+                    </div>
                 </div>
-                <TabsUnderline
-                    v-model="avatarDialogActiveTab"
-                    :items="avatarDialogTabs"
-                    :unmount-on-hide="false"
-                    @update:modelValue="avatarDialogTabClick">
-                    <template #Info>
-                        <div class="x-friend-list" style="max-height: unset">
-                            <div
-                                v-if="avatarDialog.galleryImages.length || avatarDialog.ref.authorId === currentUser.id"
-                                style="width: 100%">
-                                <span class="name">{{ t('dialog.avatar.info.gallery') }}</span>
-                                <input
-                                    id="AvatarGalleryUploadButton"
-                                    type="file"
-                                    accept="image/*"
-                                    style="display: none"
-                                    @change="onFileChangeAvatarGallery" />
-                                <Button
-                                    v-if="avatarDialog.ref.authorId === currentUser.id"
-                                    variant="outline"
-                                    size="sm"
-                                    :disabled="avatarDialog.galleryLoading"
-                                    class="ml-1"
-                                    @click="displayAvatarGalleryUpload">
-                                    <Upload />
-                                    {{ t('dialog.screenshot_metadata.upload') }}
-                                </Button>
-                                <div class="mt-2 w-[80%] ml-20">
-                                    <Carousel v-if="avatarDialog.galleryImages.length" class="w-full">
-                                        <CarouselContent class="h-50">
-                                            <CarouselItem
-                                                v-for="imageUrl in avatarDialog.galleryImages"
-                                                :key="imageUrl">
-                                                <div class="relative h-50 w-full">
-                                                    <img
-                                                        :src="imageUrl"
-                                                        style="width: 100%; height: 100%; object-fit: contain"
-                                                        @click="showFullscreenImageDialog(imageUrl)"
-                                                        loading="lazy" />
-                                                </div>
-                                            </CarouselItem>
-                                        </CarouselContent>
-                                        <CarouselPrevious />
-                                        <CarouselNext />
-                                    </Carousel>
-                                </div>
-                            </div>
-                            <div v-if="avatarDialog.ref.publishedListings?.length">
-                                <span class="name">{{ t('dialog.avatar.info.listings') }}</span>
-                                <div
-                                    v-for="listing in avatarDialog.ref.publishedListings"
-                                    :key="listing.id"
-                                    class="x-friend-item"
-                                    style="width: 100%; cursor: default">
-                                    <div class="avatar">
-                                        <img
-                                            :src="getImageUrlFromImageId(listing.imageId)"
-                                            @click="showFullscreenImageDialog(getImageUrlFromImageId(listing.imageId))"
-                                            loading="lazy" />
-                                    </div>
-                                    <div class="detail">
-                                        <span class="name">{{ listing.displayName }}</span>
-                                        <span class="extra" style="text-decoration: underline; font-style: italic"
-                                            >${{ commaNumber(listing.priceTokens) }}V</span
-                                        >
-                                        <span
-                                            class="extra"
-                                            style="text-overflow: ellipsis; text-wrap: auto"
-                                            v-text="listing.description"></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="x-friend-item" style="width: 100%; cursor: default">
-                                <div class="detail">
-                                    <span class="name" style="margin-bottom: 5px">{{
-                                        t('dialog.avatar.info.memo')
-                                    }}</span>
-                                    <InputGroupTextareaField
-                                        v-model="memo"
-                                        class="extra"
-                                        :rows="2"
-                                        :placeholder="t('dialog.avatar.info.memo_placeholder')"
-                                        input-class="resize-none min-h-0"
-                                        @change="onAvatarMemoChange" />
-                                </div>
-                            </div>
-                            <div class="x-friend-item" style="width: 100%; cursor: default">
-                                <div class="detail">
-                                    <span class="name">{{ t('dialog.avatar.info.id') }}</span>
-                                    <span class="extra"
-                                        >{{ avatarDialog.id
-                                        }}<TooltipWrapper side="top" :content="t('dialog.avatar.info.id_tooltip')">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger as-child>
-                                                    <Button
-                                                        class="rounded-full text-xs"
-                                                        size="icon-sm"
-                                                        variant="outline"
-                                                        @click.stop
-                                                        ><Copy class="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent>
-                                                    <DropdownMenuItem @click="copyAvatarId(avatarDialog.id)">
-                                                        {{ t('dialog.avatar.info.copy_id') }}
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem @click="copyAvatarUrl(avatarDialog.id)">
-                                                        {{ t('dialog.avatar.info.copy_url') }}
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </TooltipWrapper></span
-                                    >
-                                </div>
-                            </div>
-                            <div class="x-friend-item" style="cursor: default">
-                                <div class="detail">
-                                    <span class="name">{{ t('dialog.avatar.info.created_at') }}</span>
-                                    <span class="extra">{{
-                                        formatDateFilter(avatarDialog.ref.created_at, 'long')
-                                    }}</span>
-                                </div>
-                            </div>
-                            <div class="x-friend-item" style="cursor: default">
-                                <div class="detail">
-                                    <span class="name">{{ t('dialog.avatar.info.last_updated') }}</span>
-                                    <span v-if="avatarDialog.lastUpdated" class="extra">{{
-                                        formatDateFilter(avatarDialog.lastUpdated, 'long')
-                                    }}</span>
-                                    <span v-else class="extra">{{
-                                        formatDateFilter(avatarDialog.ref.updated_at, 'long')
-                                    }}</span>
-                                </div>
-                            </div>
-                            <div class="x-friend-item" style="cursor: default">
-                                <div class="detail">
-                                    <span class="name">{{ t('dialog.avatar.info.version') }}</span>
-                                    <span
-                                        v-if="avatarDialog.ref.version !== 0"
-                                        class="extra"
-                                        v-text="avatarDialog.ref.version"></span>
-                                    <span v-else class="extra">-</span>
-                                </div>
-                            </div>
-                            <div class="x-friend-item" style="cursor: default">
-                                <div class="detail">
-                                    <span class="name">{{ t('dialog.avatar.info.time_spent') }}</span>
+                <div class="flex items-center">
+                    <TooltipWrapper
+                        v-if="avatarDialog.inCache"
+                        side="top"
+                        :content="t('dialog.avatar.actions.delete_cache_tooltip')">
+                        <Button
+                            class="rounded-full mr-2"
+                            size="icon-lg"
+                            variant="outline"
+                            :disabled="isGameRunning && avatarDialog.cacheLocked"
+                            @click="deleteVRChatCache(avatarDialog.ref)"
+                            ><Trash2
+                        /></Button>
+                    </TooltipWrapper>
 
-                                    <span v-if="timeSpent === 0" class="extra">-</span>
-                                    <span v-else class="extra">{{ timeToText(timeSpent) }}</span>
-                                </div>
+                    <TooltipWrapper
+                        v-if="avatarDialog.isFavorite"
+                        side="top"
+                        :ignore-non-keyboard-focus="true"
+                        :content="t('dialog.avatar.actions.favorite_tooltip')">
+                        <Button class="rounded-full" size="icon-lg" @click="avatarDialogCommand('Add Favorite')"
+                            ><Star
+                        /></Button>
+                    </TooltipWrapper>
+                    <TooltipWrapper
+                        v-else
+                        side="top"
+                        :ignore-non-keyboard-focus="true"
+                        :content="t('dialog.avatar.actions.favorite_tooltip')">
+                        <Button
+                            class="rounded-full"
+                            size="icon-lg"
+                            variant="outline"
+                            @click="avatarDialogCommand('Add Favorite')"
+                            ><Star
+                        /></Button>
+                    </TooltipWrapper>
+
+                    <TooltipWrapper side="top" :content="t('dialog.avatar.actions.select')">
+                        <Button
+                            class="rounded-full ml-2"
+                            size="icon-lg"
+                            variant="outline"
+                            :disabled="currentUser.currentAvatar === avatarDialog.id"
+                            @click="selectAvatarWithoutConfirmation(avatarDialog.id)">
+                            <CheckCircle
+                        /></Button>
+                    </TooltipWrapper>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger as-child>
+                            <Button
+                                class="rounded-full ml-2"
+                                :variant="avatarDialog.isBlocked ? 'destructive' : 'outline'"
+                                size="icon-lg">
+                                <Ellipsis />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem @click="avatarDialogCommand('RefreshCw')">
+                                <RefreshCw class="size-4" />
+                                {{ t('dialog.avatar.actions.refresh') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem @click="avatarDialogCommand('Share2')">
+                                <Share2 class="size-4" />
+                                {{ t('dialog.avatar.actions.share') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                v-if="avatarDialog.isBlocked"
+                                variant="destructive"
+                                @click="avatarDialogCommand('Unblock Avatar')">
+                                <CheckCircle class="size-4" />
+                                {{ t('dialog.avatar.actions.unblock') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem v-else @click="avatarDialogCommand('Block Avatar')">
+                                <XCircle class="size-4" />
+                                {{ t('dialog.avatar.actions.block') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                v-if="/quest/.test(avatarDialog.ref.tags)"
+                                @click="avatarDialogCommand('Select Fallback Avatar')">
+                                <Check class="size-4" />
+                                {{ t('dialog.avatar.actions.select_fallback') }}
+                            </DropdownMenuItem>
+                            <template v-if="avatarDialog.ref.authorId === currentUser.id">
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    v-if="avatarDialog.ref.releaseStatus === 'public'"
+                                    @click="avatarDialogCommand('Make Private')">
+                                    <User class="size-4" />
+                                    {{ t('dialog.avatar.actions.make_private') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem v-else @click="avatarDialogCommand('Make Public')">
+                                    <User class="size-4" />
+                                    {{ t('dialog.avatar.actions.make_public') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem @click="avatarDialogCommand('Rename')">
+                                    <Pencil class="size-4" />
+                                    {{ t('dialog.avatar.actions.rename') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem @click="avatarDialogCommand('Change Description')">
+                                    <Pencil class="size-4" />
+                                    {{ t('dialog.avatar.actions.change_description') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem @click="avatarDialogCommand('Change Content Tags')">
+                                    <Pencil class="size-4" />
+                                    {{ t('dialog.avatar.actions.change_content_tags') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem @click="avatarDialogCommand('Change Styles and Author Tags')">
+                                    <Pencil class="size-4" />
+                                    {{ t('dialog.avatar.actions.change_styles_author_tags') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem @click="avatarDialogCommand('Change Image')">
+                                    <Image class="size-4" />
+                                    {{ t('dialog.avatar.actions.change_image') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    v-if="avatarDialog.ref.unityPackageUrl"
+                                    @click="avatarDialogCommand('Download Unity Package')">
+                                    <Download class="size-4" />
+                                    {{ t('dialog.avatar.actions.download_package') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    v-if="avatarDialog.hasImposter"
+                                    variant="destructive"
+                                    @click="avatarDialogCommand('Regenerate Imposter')">
+                                    <RefreshCw class="size-4" />
+                                    {{ t('dialog.avatar.actions.regenerate_impostor') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    v-if="avatarDialog.hasImposter"
+                                    variant="destructive"
+                                    @click="avatarDialogCommand('Trash2 Imposter')">
+                                    <Trash2 class="size-4" />
+                                    {{ t('dialog.avatar.actions.delete_impostor') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem v-else @click="avatarDialogCommand('Create Imposter')">
+                                    <User class="size-4" />
+                                    {{ t('dialog.avatar.actions.create_impostor') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem variant="destructive" @click="avatarDialogCommand('Trash2')">
+                                    <Trash2 class="size-4" />
+                                    {{ t('dialog.avatar.actions.delete') }}
+                                </DropdownMenuItem>
+                            </template>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+
+            <TabsUnderline
+                v-model="avatarDialogActiveTab"
+                :items="avatarDialogTabs"
+                :unmount-on-hide="false"
+                @update:modelValue="avatarDialogTabClick">
+                <template #Info>
+                    <div class="x-friend-list" style="max-height: unset">
+                        <div
+                            v-if="avatarDialog.galleryImages.length || avatarDialog.ref.authorId === currentUser.id"
+                            style="width: 100%">
+                            <span class="name">{{ t('dialog.avatar.info.gallery') }}</span>
+                            <input
+                                id="AvatarGalleryUploadButton"
+                                type="file"
+                                accept="image/*"
+                                style="display: none"
+                                @change="onFileChangeAvatarGallery" />
+                            <Button
+                                v-if="avatarDialog.ref.authorId === currentUser.id"
+                                variant="outline"
+                                size="sm"
+                                :disabled="avatarDialog.galleryLoading"
+                                class="ml-1"
+                                @click="displayAvatarGalleryUpload">
+                                <Upload />
+                                {{ t('dialog.screenshot_metadata.upload') }}
+                            </Button>
+                            <div class="mt-2 w-[80%] ml-20">
+                                <Carousel v-if="avatarDialog.galleryImages.length" class="w-full">
+                                    <CarouselContent class="h-50">
+                                        <CarouselItem v-for="imageUrl in avatarDialog.galleryImages" :key="imageUrl">
+                                            <div class="relative h-50 w-full">
+                                                <img
+                                                    :src="imageUrl"
+                                                    style="width: 100%; height: 100%; object-fit: contain"
+                                                    @click="showFullscreenImageDialog(imageUrl)"
+                                                    loading="lazy" />
+                                            </div>
+                                        </CarouselItem>
+                                    </CarouselContent>
+                                    <CarouselPrevious />
+                                    <CarouselNext />
+                                </Carousel>
                             </div>
-                            <div class="x-friend-item" style="width: 100%; cursor: default">
+                        </div>
+                        <div v-if="avatarDialog.ref.publishedListings?.length">
+                            <span class="name">{{ t('dialog.avatar.info.listings') }}</span>
+                            <div
+                                v-for="listing in avatarDialog.ref.publishedListings"
+                                :key="listing.id"
+                                class="x-friend-item"
+                                style="width: 100%; cursor: default">
+                                <div class="avatar">
+                                    <img
+                                        :src="getImageUrlFromImageId(listing.imageId)"
+                                        @click="showFullscreenImageDialog(getImageUrlFromImageId(listing.imageId))"
+                                        loading="lazy" />
+                                </div>
                                 <div class="detail">
-                                    <span class="name">{{ t('dialog.avatar.info.platform') }}</span>
+                                    <span class="name">{{ listing.displayName }}</span>
+                                    <span class="extra" style="text-decoration: underline; font-style: italic"
+                                        >${{ commaNumber(listing.priceTokens) }}V</span
+                                    >
                                     <span
-                                        v-if="avatarDialogPlatform"
                                         class="extra"
-                                        v-text="avatarDialogPlatform"></span>
-                                    <span v-else class="extra">-</span>
+                                        style="text-overflow: ellipsis; text-wrap: auto"
+                                        v-text="listing.description"></span>
                                 </div>
                             </div>
                         </div>
-                    </template>
-                    <template #JSON>
-                        <Button
-                            class="rounded-full mr-2"
-                            size="icon-sm"
-                            variant="outline"
-                            @click="refreshAvatarDialogTreeData()">
-                            <RefreshCw />
-                        </Button>
-                        <Button
-                            class="rounded-full"
-                            size="icon-sm"
-                            variant="outline"
-                            @click="downloadAndSaveJson(avatarDialog.id, avatarDialog.ref)">
-                            <Download />
-                        </Button>
-                        <vue-json-pretty :data="treeData" :deep="2" :theme="isDarkMode ? 'dark' : 'light'" show-icon />
-                        <br />
-                        <vue-json-pretty
-                            v-if="avatarDialog.fileAnalysis.length > 0"
-                            :data="avatarDialog.fileAnalysis"
-                            :deep="2"
-                            :theme="isDarkMode ? 'dark' : 'light'"
-                            show-icon />
-                    </template>
-                </TabsUnderline>
-                <template v-if="avatarDialog.visible">
-                    <SetAvatarTagsDialog v-model:setAvatarTagsDialog="setAvatarTagsDialog" />
-                    <SetAvatarStylesDialog v-model:setAvatarStylesDialog="setAvatarStylesDialog" />
-                    <ChangeAvatarImageDialog
-                        v-model:changeAvatarImageDialogVisible="changeAvatarImageDialogVisible"
-                        v-model:previousImageUrl="previousImageUrl" />
+                        <div class="x-friend-item" style="width: 100%; cursor: default">
+                            <div class="detail">
+                                <span class="name" style="margin-bottom: 5px">{{ t('dialog.avatar.info.memo') }}</span>
+                                <InputGroupTextareaField
+                                    v-model="memo"
+                                    class="extra"
+                                    :rows="2"
+                                    :placeholder="t('dialog.avatar.info.memo_placeholder')"
+                                    input-class="resize-none min-h-0"
+                                    @change="onAvatarMemoChange" />
+                            </div>
+                        </div>
+                        <div class="x-friend-item" style="width: 100%; cursor: default">
+                            <div class="detail">
+                                <span class="name">{{ t('dialog.avatar.info.id') }}</span>
+                                <span class="extra"
+                                    >{{ avatarDialog.id
+                                    }}<TooltipWrapper side="top" :content="t('dialog.avatar.info.id_tooltip')">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger as-child>
+                                                <Button
+                                                    class="rounded-full text-xs"
+                                                    size="icon-sm"
+                                                    variant="outline"
+                                                    @click.stop
+                                                    ><Copy class="h-4 w-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuItem @click="copyAvatarId(avatarDialog.id)">
+                                                    {{ t('dialog.avatar.info.copy_id') }}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem @click="copyAvatarUrl(avatarDialog.id)">
+                                                    {{ t('dialog.avatar.info.copy_url') }}
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </TooltipWrapper></span
+                                >
+                            </div>
+                        </div>
+                        <div class="x-friend-item" style="cursor: default">
+                            <div class="detail">
+                                <span class="name">{{ t('dialog.avatar.info.created_at') }}</span>
+                                <span class="extra">{{ formatDateFilter(avatarDialog.ref.created_at, 'long') }}</span>
+                            </div>
+                        </div>
+                        <div class="x-friend-item" style="cursor: default">
+                            <div class="detail">
+                                <span class="name">{{ t('dialog.avatar.info.last_updated') }}</span>
+                                <span v-if="avatarDialog.lastUpdated" class="extra">{{
+                                    formatDateFilter(avatarDialog.lastUpdated, 'long')
+                                }}</span>
+                                <span v-else class="extra">{{
+                                    formatDateFilter(avatarDialog.ref.updated_at, 'long')
+                                }}</span>
+                            </div>
+                        </div>
+                        <div class="x-friend-item" style="cursor: default">
+                            <div class="detail">
+                                <span class="name">{{ t('dialog.avatar.info.version') }}</span>
+                                <span
+                                    v-if="avatarDialog.ref.version !== 0"
+                                    class="extra"
+                                    v-text="avatarDialog.ref.version"></span>
+                                <span v-else class="extra">-</span>
+                            </div>
+                        </div>
+                        <div class="x-friend-item" style="cursor: default">
+                            <div class="detail">
+                                <span class="name">{{ t('dialog.avatar.info.time_spent') }}</span>
+
+                                <span v-if="timeSpent === 0" class="extra">-</span>
+                                <span v-else class="extra">{{ timeToText(timeSpent) }}</span>
+                            </div>
+                        </div>
+                        <div class="x-friend-item" style="width: 100%; cursor: default">
+                            <div class="detail">
+                                <span class="name">{{ t('dialog.avatar.info.platform') }}</span>
+                                <span v-if="avatarDialogPlatform" class="extra" v-text="avatarDialogPlatform"></span>
+                                <span v-else class="extra">-</span>
+                            </div>
+                        </div>
+                    </div>
                 </template>
-            </div>
-        </DialogContent>
-    </Dialog>
+                <template #JSON>
+                    <Button
+                        class="rounded-full mr-2"
+                        size="icon-sm"
+                        variant="outline"
+                        @click="refreshAvatarDialogTreeData()">
+                        <RefreshCw />
+                    </Button>
+                    <Button
+                        class="rounded-full"
+                        size="icon-sm"
+                        variant="outline"
+                        @click="downloadAndSaveJson(avatarDialog.id, avatarDialog.ref)">
+                        <Download />
+                    </Button>
+                    <vue-json-pretty :data="treeData" :deep="2" :theme="isDarkMode ? 'dark' : 'light'" show-icon />
+                    <br />
+                    <vue-json-pretty
+                        v-if="avatarDialog.fileAnalysis.length > 0"
+                        :data="avatarDialog.fileAnalysis"
+                        :deep="2"
+                        :theme="isDarkMode ? 'dark' : 'light'"
+                        show-icon />
+                </template>
+            </TabsUnderline>
+            <template v-if="avatarDialog.visible">
+                <SetAvatarTagsDialog v-model:setAvatarTagsDialog="setAvatarTagsDialog" />
+                <SetAvatarStylesDialog v-model:setAvatarStylesDialog="setAvatarStylesDialog" />
+                <ChangeAvatarImageDialog
+                    v-model:changeAvatarImageDialogVisible="changeAvatarImageDialogVisible"
+                    v-model:previousImageUrl="previousImageUrl" />
+            </template>
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -563,7 +534,6 @@
     } from 'lucide-vue-next';
     import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
-    import { Dialog, DialogContent } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { TabsUnderline } from '@/components/ui/tabs';

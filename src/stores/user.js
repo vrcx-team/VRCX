@@ -48,6 +48,7 @@ import { useNotificationStore } from './notification';
 import { usePhotonStore } from './photon';
 import { useSearchStore } from './search';
 import { useSharedFeedStore } from './sharedFeed';
+import { useUiStore } from './ui';
 import { useWorldStore } from './world';
 import { watchState } from '../service/watchState';
 
@@ -68,6 +69,7 @@ export const useUserStore = defineStore('User', () => {
     const groupStore = useGroupStore();
     const feedStore = useFeedStore();
     const worldStore = useWorldStore();
+    const uiStore = useUiStore();
     const moderationStore = useModerationStore();
     const photonStore = usePhotonStore();
     const sharedFeedStore = useSharedFeedStore();
@@ -310,6 +312,7 @@ export const useUserStore = defineStore('User', () => {
                 customUserTags.clear();
                 state.notes.clear();
                 subsetOfLanguages.value = [];
+                uiStore.clearDialogCrumbs();
             }
         },
         { flush: 'sync' }
@@ -755,7 +758,7 @@ export const useUserStore = defineStore('User', () => {
      *
      * @param {string} userId
      */
-    function showUserDialog(userId) {
+    function showUserDialog(userId, options = {}) {
         if (
             !userId ||
             typeof userId !== 'string' ||
@@ -763,6 +766,20 @@ export const useUserStore = defineStore('User', () => {
         ) {
             return;
         }
+        if (
+            !userDialog.value.visible &&
+            !worldStore.worldDialog.visible &&
+            !avatarStore.avatarDialog.visible &&
+            !groupStore.groupDialog.visible
+        ) {
+            uiStore.clearDialogCrumbs();
+        }
+        if (!options.skipBreadcrumb) {
+            uiStore.pushDialogCrumb('user', userId);
+        }
+        worldStore.worldDialog.visible = false;
+        avatarStore.avatarDialog.visible = false;
+        groupStore.groupDialog.visible = false;
         const D = userDialog.value;
         D.id = userId;
         D.treeData = {};
@@ -846,6 +863,11 @@ export const useUserStore = defineStore('User', () => {
                 if (args.ref.id === D.id) {
                     requestAnimationFrame(() => {
                         D.ref = args.ref;
+                        uiStore.setDialogCrumbLabel(
+                            'user',
+                            D.id,
+                            D.ref?.displayName || D.id
+                        );
                         D.friend = friendStore.friends.get(D.id);
                         D.isFriend = Boolean(D.friend);
                         D.note = String(D.ref.note || '');
