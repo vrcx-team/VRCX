@@ -37,6 +37,7 @@
                 return;
             }
         }
+        if (!fileId) return;
         image.value = await getCachedEmoji(fileId);
     }
 
