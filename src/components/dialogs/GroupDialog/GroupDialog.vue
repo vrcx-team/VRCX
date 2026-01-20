@@ -375,8 +375,8 @@
                                 {{ t('dialog.group.info.instances') }}
                             </span>
                             <div v-for="room in groupDialog.instances" :key="room.tag" style="width: 100%">
-                                <div style="margin: 5px 0">
-                                    <Location :location="room.tag" style="display: inline-block" />
+                                <div style="margin: 5px 0" class="flex items-center">
+                                    <Location :location="room.tag" />
                                     <InstanceActionBar
                                         class="ml-1"
                                         :location="room.tag"
@@ -1156,9 +1156,7 @@
             </div>
         </DialogContent>
         <GroupPostEditDialog :dialog-data="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
-        <PreviousInstancesGroupDialog
-            :previous-instances-group-dialog="previousInstancesGroupDialog"
-            :current-user="currentUser" />
+        <PreviousInstancesGroupDialog v-model:previous-instances-group-dialog="previousInstancesGroupDialog" />
     </Dialog>
 </template>
 
