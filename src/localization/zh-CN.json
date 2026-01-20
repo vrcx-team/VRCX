@@ -586,7 +586,7 @@
                     "zoom": "界面缩放",
                     "vrcplus_profile_icons": "VRC+ 个人资料图标",
                     "tooltips": "显示提示",
-                    "show_instance_id": "显示房间 ID",
+                    "show_instance_id": "显示房间名称",
                     "age_gated_instances": "显示具有年龄限制的房间",
                     "nicknames": "显示本地好友备注",
                     "sort_favorite_by": "收藏夹排序规则",
