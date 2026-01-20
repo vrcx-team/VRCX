@@ -103,7 +103,7 @@ export const useWorldStore = defineStore('World', () => {
         D.treeData = {};
         D.bundleSizes = [];
         D.lastUpdated = '';
-        D.visible = true;
+        D.visible = false;
         D.loading = true;
         D.inCache = false;
         D.cacheSize = '';
@@ -217,7 +217,7 @@ export const useWorldStore = defineStore('World', () => {
                             });
                     }
                 }
-                return args;
+                D.visible = true;
             });
     }
 

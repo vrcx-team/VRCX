@@ -198,11 +198,11 @@
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                                <DropdownMenuItem @click="worldDialogCommand('RefreshCw')">
+                                <DropdownMenuItem @click="worldDialogCommand('Refresh')">
                                     <RefreshCw class="size-4" />
                                     {{ t('dialog.world.actions.refresh') }}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem @click="worldDialogCommand('Share2')">
+                                <DropdownMenuItem @click="worldDialogCommand('Share')">
                                     <Share2 class="size-4" />
                                     {{ t('dialog.world.actions.share') }}
                                 </DropdownMenuItem>
@@ -240,7 +240,7 @@
                                 <template v-if="currentUser.id !== worldDialog.ref.authorId">
                                     <DropdownMenuItem
                                         :disabled="!worldDialog.hasPersistData"
-                                        @click="worldDialogCommand('Trash2 Persistent Data')">
+                                        @click="worldDialogCommand('Delete Persistent Data')">
                                         <Upload class="size-4" />
                                         {{ t('dialog.world.actions.delete_persistent_data') }}
                                     </DropdownMenuItem>
@@ -300,11 +300,11 @@
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                         :disabled="!worldDialog.hasPersistData"
-                                        @click="worldDialogCommand('Trash2 Persistent Data')">
+                                        @click="worldDialogCommand('Delete Persistent Data')">
                                         <Upload class="size-4" />
                                         {{ t('dialog.world.actions.delete_persistent_data') }}
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem variant="destructive" @click="worldDialogCommand('Trash2')">
+                                    <DropdownMenuItem variant="destructive" @click="worldDialogCommand('Delete')">
                                         <Trash2 class="size-4" />
                                         {{ t('dialog.world.actions.delete') }}
                                     </DropdownMenuItem>
@@ -948,13 +948,13 @@
             return;
         }
         switch (command) {
-            case 'Trash2 Favorite':
+            case 'Delete Favorite':
             case 'Make Home':
             case 'Reset Home':
             case 'Publish':
             case 'Unpublish':
-            case 'Trash2 Persistent Data':
-            case 'Trash2':
+            case 'Delete Persistent Data':
+            case 'Delete':
                 modalStore
                     .confirm({
                         description: t('confirm.command_question', {
@@ -965,7 +965,7 @@
                     .then(({ ok }) => {
                         if (!ok) return;
                         switch (command) {
-                            case 'Trash2 Favorite':
+                            case 'Delete Favorite':
                                 favoriteRequest.deleteFavorite({
                                     objectId: D.id
                                 });
@@ -1010,7 +1010,7 @@
                                         return args;
                                     });
                                 break;
-                            case 'Trash2 Persistent Data':
+                            case 'Delete Persistent Data':
                                 miscRequest
                                     .deleteWorldPersistData({
                                         worldId: D.id
@@ -1023,7 +1023,7 @@
                                         return args;
                                     });
                                 break;
-                            case 'Trash2':
+                            case 'Delete':
                                 worldRequest
                                     .deleteWorld({
                                         worldId: D.id
@@ -1053,7 +1053,7 @@
             case 'Previous Instances':
                 showPreviousInstancesWorldDialog(D.ref);
                 break;
-            case 'Share2':
+            case 'Share':
                 copyWorldUrl();
                 break;
             case 'Change Allowed Domains':
@@ -1068,7 +1068,7 @@
             case 'Change Image':
                 showChangeWorldImageDialog();
                 break;
-            case 'RefreshCw':
+            case 'Refresh':
                 showWorldDialog(D.id);
                 break;
             case 'New Instance':

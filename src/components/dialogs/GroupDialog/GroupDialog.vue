@@ -240,11 +240,11 @@
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                                <DropdownMenuItem @click="groupDialogCommand('RefreshCw')">
+                                <DropdownMenuItem @click="groupDialogCommand('Refresh')">
                                     <RefreshCw class="size-4" />
                                     {{ t('dialog.group.actions.refresh') }}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem @click="groupDialogCommand('Share2')">
+                                <DropdownMenuItem @click="groupDialogCommand('Share')">
                                     <Share2 class="size-4" />
                                     {{ t('dialog.group.actions.share') }}
                                 </DropdownMenuItem>
@@ -1523,7 +1523,7 @@
             return;
         }
         switch (command) {
-            case 'Share2':
+            case 'Share':
                 copyToClipboard(groupDialog.value.ref.$url);
                 break;
             case 'Create Post':
@@ -1535,7 +1535,7 @@
             case 'Invite To Group':
                 showInviteGroupDialog(D.id, '');
                 break;
-            case 'RefreshCw':
+            case 'Refresh':
                 showGroupDialog(D.id);
                 break;
             case 'Leave Group':

@@ -30,11 +30,11 @@
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-                <DropdownMenuItem @click="onCommand('RefreshCw')">
+                <DropdownMenuItem @click="onCommand('Refresh')">
                     <RefreshCw class="size-4" />
                     {{ t('dialog.user.actions.refresh') }}
                 </DropdownMenuItem>
-                <DropdownMenuItem @click="onCommand('Share2')">
+                <DropdownMenuItem @click="onCommand('Share')">
                     <Share2 class="size-4" />
                     {{ t('dialog.user.actions.share') }}
                 </DropdownMenuItem>
@@ -48,19 +48,19 @@
                         {{ t('dialog.user.actions.show_fallback_avatar') }}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem @click="onCommand('Pencil Social Status')">
+                    <DropdownMenuItem @click="onCommand('Edit Social Status')">
                         <Pencil class="size-4" />
                         {{ t('dialog.user.actions.edit_status') }}
                     </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Pencil Language')">
+                    <DropdownMenuItem @click="onCommand('Edit Language')">
                         <Pencil class="size-4" />
                         {{ t('dialog.user.actions.edit_language') }}
                     </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Pencil Bio')">
+                    <DropdownMenuItem @click="onCommand('Edit Bio')">
                         <Pencil class="size-4" />
                         {{ t('dialog.user.actions.edit_bio') }}
                     </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Pencil Pronouns')">
+                    <DropdownMenuItem @click="onCommand('Edit Pronouns')">
                         <Pencil class="size-4" />
                         {{ t('dialog.user.actions.edit_pronouns') }}
                     </DropdownMenuItem>
@@ -72,7 +72,7 @@
                             <Mail class="size-4" />
                             {{ t('dialog.user.actions.request_invite') }}
                         </DropdownMenuItem>
-                        <DropdownMenuItem @click="onCommand('Request Invite MessageSquare')">
+                        <DropdownMenuItem @click="onCommand('Request Invite Message')">
                             <Mail class="size-4" />
                             {{ t('dialog.user.actions.request_invite_with_message') }}
                         </DropdownMenuItem>
@@ -85,7 +85,7 @@
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 :disabled="!checkCanInvite(lastLocation.location)"
-                                @click="onCommand('Invite MessageSquare')">
+                                @click="onCommand('Invite Message')">
                                 <MessageSquare class="size-4" />
                                 {{ t('dialog.user.actions.invite_with_message') }}
                             </DropdownMenuItem>
@@ -123,7 +123,7 @@
                         <Settings class="size-4" />
                         {{ t('dialog.user.actions.group_moderation') }}
                     </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Pencil Note Memo')">
+                    <DropdownMenuItem @click="onCommand('Edit Note Memo')">
                         <Pencil class="size-4" />
                         {{ t('dialog.user.actions.edit_note_memo') }}
                     </DropdownMenuItem>
@@ -165,7 +165,7 @@
                     <DropdownMenuItem
                         v-else
                         :disabled="userDialog.ref.$isModerator"
-                        @click="onCommand('Moderation VolumeX')">
+                        @click="onCommand('Moderation Mute')">
                         <VolumeX class="size-4" />
                         {{ t('dialog.user.actions.moderation_mute') }}
                     </DropdownMenuItem>

@@ -1695,19 +1695,19 @@
         if (D.visible === false) {
             return;
         }
-        if (command === 'RefreshCw') {
+        if (command === 'Refresh') {
             showUserDialog(D.id);
-        } else if (command === 'Share2') {
+        } else if (command === 'Share') {
             copyUserURL(D.id);
         } else if (command === 'Add Favorite') {
             showFavoriteDialog('friend', D.id);
-        } else if (command === 'Pencil Social Status') {
+        } else if (command === 'Edit Social Status') {
             showSocialStatusDialog();
-        } else if (command === 'Pencil Language') {
+        } else if (command === 'Edit Language') {
             showLanguageDialog();
-        } else if (command === 'Pencil Bio') {
+        } else if (command === 'Edit Bio') {
             showBioDialog();
-        } else if (command === 'Pencil Pronouns') {
+        } else if (command === 'Edit Pronouns') {
             showPronounsDialog();
         } else if (command === 'Request Invite') {
             notificationRequest
@@ -1721,7 +1721,7 @@
                     toast('Request invite sent');
                     return args;
                 });
-        } else if (command === 'Invite MessageSquare') {
+        } else if (command === 'Invite Message') {
             L = parseLocation(lastLocation.value.location);
             worldRequest
                 .getCachedWorld({
@@ -1737,7 +1737,7 @@
                         D.id
                     );
                 });
-        } else if (command === 'Request Invite MessageSquare') {
+        } else if (command === 'Request Invite Message') {
             showSendInviteRequestDialog(
                 {
                     platform: 'standalonewindows'
@@ -1802,7 +1802,7 @@
             } else {
                 setPlayerModeration(D.id, 5);
             }
-        } else if (command === 'Pencil Note Memo') {
+        } else if (command === 'Edit Note Memo') {
             isEditNoteAndMemoDialogVisible.value = true;
         } else {
             const i18nPreFix = 'dialog.user.actions.';
@@ -1896,7 +1896,7 @@
         let args;
         let key;
         switch (command) {
-            case 'Trash2 Favorite':
+            case 'Delete Favorite':
                 favoriteRequest.deleteFavorite({
                     objectId: userId
                 });
@@ -1963,7 +1963,7 @@
                 });
                 handlePlayerModerationDelete(args);
                 break;
-            case 'Moderation VolumeX': {
+            case 'Moderation Mute': {
                 args = await playerModerationRequest.sendPlayerModeration({
                     moderated: userId,
                     type: 'mute'

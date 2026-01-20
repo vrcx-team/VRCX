@@ -1973,7 +1973,7 @@
         "accept_friend_request": "Continue? Accept Friend Request",
         "send_invite": "Continue? Send Invite",
         "decline_type": "Continue? Decline {type}",
-        "delete_type": "Continue? Trash2 {type}",
+        "delete_type": "Continue? {type}",
         "command_question": "Continue? {command}",
         "restart_required_title": "Restart Required",
         "restart_now": "Restart Now",

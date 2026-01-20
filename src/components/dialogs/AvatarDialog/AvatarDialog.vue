@@ -231,11 +231,11 @@
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                                <DropdownMenuItem @click="avatarDialogCommand('RefreshCw')">
+                                <DropdownMenuItem @click="avatarDialogCommand('Refresh')">
                                     <RefreshCw class="size-4" />
                                     {{ t('dialog.avatar.actions.refresh') }}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem @click="avatarDialogCommand('Share2')">
+                                <DropdownMenuItem @click="avatarDialogCommand('Share')">
                                     <Share2 class="size-4" />
                                     {{ t('dialog.avatar.actions.share') }}
                                 </DropdownMenuItem>
@@ -306,7 +306,7 @@
                                     <DropdownMenuItem
                                         v-if="avatarDialog.hasImposter"
                                         variant="destructive"
-                                        @click="avatarDialogCommand('Trash2 Imposter')">
+                                        @click="avatarDialogCommand('Delete Imposter')">
                                         <Trash2 class="size-4" />
                                         {{ t('dialog.avatar.actions.delete_impostor') }}
                                     </DropdownMenuItem>
@@ -734,10 +734,10 @@
     function avatarDialogCommand(command) {
         const D = avatarDialog.value;
         switch (command) {
-            case 'RefreshCw':
+            case 'Refresh':
                 showAvatarDialog(D.id);
                 break;
-            case 'Share2':
+            case 'Share':
                 copyAvatarUrl(D.id);
                 break;
             case 'Rename':
@@ -770,7 +770,7 @@
                     .then(({ ok }) => {
                         if (!ok) return;
                         switch (command) {
-                            case 'Trash2 Favorite':
+                            case 'Delete Favorite':
                                 favoriteRequest.deleteFavorite({
                                     objectId: D.id
                                 });
@@ -839,7 +839,7 @@
                                         return args;
                                     });
                                 break;
-                            case 'Trash2':
+                            case 'Delete':
                                 avatarRequest
                                     .deleteAvatar({
                                         avatarId: D.id
@@ -863,7 +863,7 @@
                                         return args;
                                     });
                                 break;
-                            case 'Trash2 Imposter':
+                            case 'Delete Imposter':
                                 avatarRequest
                                     .deleteImposter({
                                         avatarId: D.id

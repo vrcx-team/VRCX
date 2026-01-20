@@ -7,21 +7,21 @@
             <div style="font-size: 12px">
                 {{ t('dialog.launch_options.description') }} <br />
                 {{ t('dialog.launch_options.example') }}
-                <Badge variant="outline"
-                    >--fps=144 --enable-debug-gui --enable-sdk-log-levels --enable-udon-debug-logging
-                </Badge>
+                <div>--fps=144</div>
+                <div>--enable-debug-gui</div>
+                <div>--enable-sdk-log-levels</div>
+                <div>--enable-udon-debug-logging</div>
             </div>
 
             <InputGroupTextareaField
                 v-model="launchOptionsDialog.launchArguments"
                 :autosize="{ minRows: 2, maxRows: 5 }"
                 :rows="2"
-                placeholder=""
-                style="margin-top: 10px"
+                placeholder="e.g. --fps=144 --enable-sdk-log-levels"
                 input-class="resize-none" />
 
             <template v-if="!isLinux">
-                <div style="font-size: 12px; margin-top: 10px">
+                <div class="text-sm">
                     {{ t('dialog.launch_options.path_override') }}
                 </div>
 
@@ -29,12 +29,14 @@
                     v-model="launchOptionsDialog.vrcLaunchPathOverride"
                     placeholder="C:\Program Files (x86)\Steam\steamapps\common\VRChat"
                     :rows="1"
-                    style="display: block; margin-top: 10px"
+                    class="mb-4"
+                    spellcheck="false"
+                    data-gramm="false"
                     input-class="resize-none min-h-0" />
             </template>
 
             <DialogFooter>
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between w-full">
                     <div>
                         <Button
                             variant="outline"
