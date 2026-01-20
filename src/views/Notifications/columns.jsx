@@ -5,7 +5,8 @@ import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
-    TooltipTrigger
+    TooltipTrigger,
+    TooltipWrapper
 } from '../../components/ui/tooltip';
 import {
     ArrowUpDown,
@@ -467,27 +468,47 @@ export const createColumns = ({
                         {original.message &&
                         original.message !==
                             `This is a generated invite to ${original.details?.worldName}` ? (
-                            <span class="block w-full min-w-0 truncate">
-                                {original.message}
-                            </span>
+                            <TooltipWrapper
+                                content={original.message}
+                                delayDuration={500}
+                            >
+                                <span class="block w-full min-w-0 truncate">
+                                    {original.message}
+                                </span>
+                            </TooltipWrapper>
                         ) : null}
                         {!original.message &&
                         original.details?.inviteMessage ? (
-                            <span class="block w-full min-w-0 truncate">
-                                {original.details.inviteMessage}
-                            </span>
+                            <TooltipWrapper
+                                content={original.details.inviteMessage}
+                                delayDuration={500}
+                            >
+                                <span class="block w-full min-w-0 truncate">
+                                    {original.details.inviteMessage}
+                                </span>
+                            </TooltipWrapper>
                         ) : null}
                         {!original.message &&
                         original.details?.requestMessage ? (
-                            <span class="block w-full min-w-0 truncate">
-                                {original.details.requestMessage}
-                            </span>
+                            <TooltipWrapper
+                                content={original.details.requestMessage}
+                                delayDuration={500}
+                            >
+                                <span class="block w-full min-w-0 truncate">
+                                    {original.details.requestMessage}
+                                </span>
+                            </TooltipWrapper>
                         ) : null}
                         {!original.message &&
                         original.details?.responseMessage ? (
-                            <span class="block w-full min-w-0 truncate">
-                                {original.details.responseMessage}
-                            </span>
+                            <TooltipWrapper
+                                content={original.details.responseMessage}
+                                delayDuration={500}
+                            >
+                                <span class="block w-full min-w-0 truncate">
+                                    {original.details.responseMessage}
+                                </span>
+                            </TooltipWrapper>
                         ) : null}
                     </div>
                 );

@@ -103,7 +103,6 @@ export const useWorldStore = defineStore('World', () => {
         D.treeData = {};
         D.bundleSizes = [];
         D.lastUpdated = '';
-        D.visible = false;
         D.loading = true;
         D.inCache = false;
         D.cacheSize = '';
@@ -166,6 +165,7 @@ export const useWorldStore = defineStore('World', () => {
                         D.id,
                         D.ref?.name || D.id
                     );
+                    D.visible = true;
                     D.isFavorite = favoriteStore.getCachedFavoritesByObjectId(
                         D.id
                     );

@@ -1,4 +1,4 @@
-import { computed, reactive, ref, shallowReactive, watch } from 'vue';
+import { computed, nextTick, reactive, ref, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -799,7 +799,7 @@ export const useUserStore = defineStore('User', () => {
                 }
             }
         });
-        D.visible = true;
+
         D.loading = true;
         D.avatars = [];
         D.worlds = [];
@@ -900,8 +900,6 @@ export const useUserStore = defineStore('User', () => {
                         } else if (D.ref.friendRequestStatus === 'outgoing') {
                             D.outgoingRequest = true;
                         }
-                        applyUserDialogLocation(true);
-
                         userRequest.getUser(args.params);
                         let inCurrentWorld = false;
                         if (
@@ -1018,6 +1016,8 @@ export const useUserStore = defineStore('User', () => {
                                 groupStore.handleGroupRepresented(args1);
                             });
                         D.loading = false;
+                        D.visible = true;
+                        applyUserDialogLocation(true);
                     });
                 }
             });

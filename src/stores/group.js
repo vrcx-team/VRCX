@@ -149,7 +149,6 @@ export const useGroupStore = defineStore('Group', () => {
         worldStore.worldDialog.visible = false;
         avatarStore.avatarDialog.visible = false;
         const D = groupDialog.value;
-        D.visible = true;
         D.loading = true;
         D.id = groupId;
         D.inGroup = false;
@@ -188,6 +187,7 @@ export const useGroupStore = defineStore('Group', () => {
                     );
                     D.inGroup = args.ref.membershipStatus === 'member';
                     D.ownerDisplayName = args.ref.ownerId;
+                    D.visible = true;
                     userRequest
                         .getCachedUser({
                             userId: args.ref.ownerId

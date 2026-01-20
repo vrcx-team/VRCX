@@ -194,7 +194,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         userStore.userDialog.visible = false;
         worldStore.worldDialog.visible = false;
         groupStore.groupDialog.visible = false;
-        D.visible = true;
+
         D.loading = true;
         D.id = avatarId;
         D.inCache = false;
@@ -222,7 +222,6 @@ export const useAvatarStore = defineStore('Avatar', () => {
         if (typeof ref2 !== 'undefined') {
             D.ref = ref2;
             uiStore.setDialogCrumbLabel('avatar', D.id, D.ref?.name || D.id);
-            updateVRChatAvatarCache();
             if (
                 ref2.releaseStatus !== 'public' &&
                 ref2.authorId !== userStore.currentUser.id
@@ -242,6 +241,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                     D.ref?.name || D.id
                 );
                 getAvatarGallery(avatarId);
+                D.visible = true;
                 updateVRChatAvatarCache();
                 if (/quest/.test(ref.tags)) {
                     D.isQuestFallback = true;
