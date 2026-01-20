@@ -51,7 +51,7 @@
         <slot />
     </SidebarMenuButtonChild>
 
-    <Tooltip v-else>
+    <Tooltip v-else ignore-non-keyboard-focus>
         <TooltipTrigger as-child>
             <SidebarMenuButtonChild v-bind="{ ...delegatedProps, ...$attrs }">
                 <slot />

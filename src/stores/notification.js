@@ -411,7 +411,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         if (ref.type === 'boop') {
             ref.message = ref.title;
-            if (ref.details?.emojiId.startsWith('default_')) {
+            if (ref.details?.emojiId?.startsWith('default_')) {
                 ref.details.imageUrl = ref.details.emojiId;
                 ref.message += ` ${ref.details.emojiId.replace('default_', '')}`;
             } else {
