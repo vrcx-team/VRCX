@@ -1176,7 +1176,6 @@
             v-model:sendInviteRequestDialogVisible="sendInviteRequestDialogVisible"
             v-model:sendInviteDialog="sendInviteDialog"
             @closeInviteDialog="closeInviteDialog" />
-        <PreviousInstancesUserDialog v-model:previous-instances-user-dialog="previousInstancesUserDialog" />
         <SocialStatusDialog
             :social-status-dialog="socialStatusDialog"
             :social-status-history-table="socialStatusHistoryTable" />
@@ -1256,6 +1255,7 @@
         useFriendStore,
         useGalleryStore,
         useGroupStore,
+        useInstanceStore,
         useInviteStore,
         useLocationStore,
         useModalStore,
@@ -1285,7 +1285,6 @@
 
     const BioDialog = defineAsyncComponent(() => import('./BioDialog.vue'));
     const LanguageDialog = defineAsyncComponent(() => import('./LanguageDialog.vue'));
-    const PreviousInstancesUserDialog = defineAsyncComponent(() => import('./PreviousInstancesUserDialog.vue'));
     const PronounsDialog = defineAsyncComponent(() => import('./PronounsDialog.vue'));
     const SendInviteRequestDialog = defineAsyncComponent(() => import('./SendInviteRequestDialog.vue'));
     const SocialStatusDialog = defineAsyncComponent(() => import('./SocialStatusDialog.vue'));
@@ -1315,6 +1314,7 @@
     );
 
     const modalStore = useModalStore();
+    const instanceStore = useInstanceStore();
 
     const { hideUserNotes, hideUserMemos, isDarkMode } = storeToRefs(useAppearanceSettingsStore());
     const { bioLanguage, avatarRemoteDatabase, translationApi, translationApiType } =
@@ -1401,12 +1401,6 @@
         params: {}
     });
     const sendInviteRequestDialogVisible = ref(false);
-
-    const previousInstancesUserDialog = ref({
-        visible: false,
-        openFlg: false,
-        userRef: {}
-    });
 
     const socialStatusDialog = ref({
         visible: false,
@@ -2314,12 +2308,7 @@
     }
 
     function showPreviousInstancesUserDialog(userRef) {
-        const D = previousInstancesUserDialog.value;
-        D.userRef = userRef;
-        D.visible = true;
-        // trigger watcher
-        D.openFlg = true;
-        nextTick(() => (D.openFlg = false));
+        instanceStore.showPreviousInstancesUserDialog(userRef);
     }
 
     function toggleAvatarCopying() {

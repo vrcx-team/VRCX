@@ -1109,7 +1109,6 @@
             </TabsUnderline>
         </div>
         <GroupPostEditDialog :dialog-data="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
-        <PreviousInstancesGroupDialog v-model:previous-instances-group-dialog="previousInstancesGroupDialog" />
     </div>
 </template>
 
@@ -1137,7 +1136,7 @@
         XCircle
     } from 'lucide-vue-next';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { computed, nextTick, reactive, ref, watch } from 'vue';
+    import { computed, reactive, ref, watch } from 'vue';
     import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { Card } from '@/components/ui/card';
@@ -1171,6 +1170,7 @@
         useAppearanceSettingsStore,
         useGalleryStore,
         useGroupStore,
+        useInstanceStore,
         useLocationStore,
         useModalStore,
         useUserStore
@@ -1190,8 +1190,6 @@
     import GroupCalendarEventCard from '../../../views/Tools/components/GroupCalendarEventCard.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
     import InstanceActionBar from '../../InstanceActionBar.vue';
-    import PreviousInstancesGroupDialog from '../PreviousInstancesDialog/PreviousInstancesGroupDialog.vue';
-
     import * as workerTimers from 'worker-timers';
 
     const { t } = useI18n();
@@ -1210,6 +1208,7 @@
     );
 
     const modalStore = useModalStore();
+    const instanceStore = useInstanceStore();
 
     const { showUserDialog } = useUserStore();
     const { currentUser } = storeToRefs(useUserStore());
@@ -1326,12 +1325,6 @@
         groupId: ''
     });
 
-    const previousInstancesGroupDialog = ref({
-        visible: false,
-        openFlg: false,
-        groupRef: {}
-    });
-
     let loadMoreGroupMembersParams = ref({
         n: 100,
         offset: 0,
@@ -1382,11 +1375,7 @@
     }
 
     function showPreviousInstancesGroupDialog(groupRef) {
-        const D = previousInstancesGroupDialog.value;
-        D.groupRef = groupRef;
-        D.visible = true;
-        D.openFlg = true;
-        nextTick(() => (D.openFlg = false));
+        instanceStore.showPreviousInstancesGroupDialog(groupRef);
     }
 
     function setGroupRepresentation(groupId) {

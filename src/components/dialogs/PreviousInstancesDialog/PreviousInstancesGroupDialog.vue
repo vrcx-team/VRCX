@@ -1,35 +1,33 @@
 <template>
-    <Dialog v-model:open="isVisible">
-        <DialogContent class="sm:max-w-250">
-            <DialogHeader>
-                <DialogTitle>{{ t('dialog.previous_instances.header') }}</DialogTitle>
-            </DialogHeader>
+    <div>
+        <DialogHeader>
+            <DialogTitle>{{ t('dialog.previous_instances.header') }}</DialogTitle>
+        </DialogHeader>
 
-            <DataTableLayout
-                class="min-w-0 w-full"
-                :table="table"
-                :loading="loading"
-                :table-style="tableStyle"
-                :page-sizes="pageSizes"
-                :total-items="totalItems"
-                :on-page-size-change="handlePageSizeChange">
-                <template #toolbar>
-                    <div style="display: flex; align-items: center; justify-content: space-between">
-                        <span style="font-size: 14px" v-text="previousInstancesGroupDialog.groupRef.name"></span>
-                        <InputGroupField
-                            class="w-1/3"
-                            v-model="search"
-                            :placeholder="t('dialog.previous_instances.search_placeholder')"
-                            clearable />
-                    </div>
-                </template>
-            </DataTableLayout>
-        </DialogContent>
-    </Dialog>
+        <DataTableLayout
+            class="min-w-0 w-full"
+            :table="table"
+            :loading="loading"
+            :table-style="tableStyle"
+            :page-sizes="pageSizes"
+            :total-items="totalItems"
+            :on-page-size-change="handlePageSizeChange">
+            <template #toolbar>
+                <div style="display: flex; align-items: center; justify-content: space-between">
+                    <span style="font-size: 14px" v-text="previousInstancesGroupDialog.groupRef.name"></span>
+                    <InputGroupField
+                        class="w-1/3"
+                        v-model="search"
+                        :placeholder="t('dialog.previous_instances.search_placeholder')"
+                        clearable />
+                </div>
+            </template>
+        </DataTableLayout>
+    </div>
 </template>
 
 <script setup>
-    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
     import { InputGroupField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
@@ -48,7 +46,9 @@
     import { database } from '../../../service/database';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
-    const { showPreviousInstancesInfoDialog } = useInstanceStore();
+    const instanceStore = useInstanceStore();
+    const { showPreviousInstancesInfoDialog } = instanceStore;
+    const { previousInstancesGroupDialog } = storeToRefs(instanceStore);
     const { shiftHeld } = useUiStore();
     const { stringComparer } = storeToRefs(useSearchStore());
     const { t } = useI18n();
@@ -63,21 +63,6 @@
     const pageSizes = [10, 25, 50, 100];
     const pageSize = ref(10);
     const tableStyle = { maxHeight: '400px' };
-
-    const props = defineProps({
-        previousInstancesGroupDialog: { type: Object, required: true }
-    });
-    const emit = defineEmits(['update:previousInstancesGroupDialog']);
-
-    const isVisible = computed({
-        get: () => props.previousInstancesGroupDialog.visible,
-        set: (value) => {
-            emit('update:previousInstancesGroupDialog', {
-                ...props.previousInstancesGroupDialog,
-                visible: value
-            });
-        }
-    });
 
     const displayRows = computed(() => {
         const q = String(search.value ?? '')
@@ -137,9 +122,19 @@
     };
 
     watch(
-        () => props.previousInstancesGroupDialog.openFlg,
+        () => previousInstancesGroupDialog.value.visible,
+        (visible) => {
+            if (visible) {
+                refreshPreviousInstancesGroupTable();
+            }
+        },
+        { immediate: true }
+    );
+
+    watch(
+        () => previousInstancesGroupDialog.value.openFlg,
         () => {
-            if (props.previousInstancesGroupDialog.visible) {
+            if (previousInstancesGroupDialog.value.visible) {
                 refreshPreviousInstancesGroupTable();
             }
         }
@@ -147,7 +142,7 @@
 
     function refreshPreviousInstancesGroupTable() {
         loading.value = true;
-        const D = props.previousInstancesGroupDialog;
+        const D = previousInstancesGroupDialog.value;
         database.getPreviousInstancesByGroupId(D.groupRef.id).then((data) => {
             const array = [];
             for (const ref of data.values()) {

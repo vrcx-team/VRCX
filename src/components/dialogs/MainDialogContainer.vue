@@ -8,7 +8,7 @@
         BreadcrumbPage,
         BreadcrumbSeparator
     } from '@/components/ui/breadcrumb';
-    import { useAvatarStore, useGroupStore, useUiStore, useUserStore, useWorldStore } from '@/stores';
+    import { useAvatarStore, useGroupStore, useInstanceStore, useUiStore, useUserStore, useWorldStore } from '@/stores';
     import {
         DropdownMenu,
         DropdownMenuContent,
@@ -17,30 +17,48 @@
     } from '@/components/ui/dropdown-menu';
     import { Dialog, DialogContent } from '@/components/ui/dialog';
     import { computed } from 'vue';
+    import { storeToRefs } from 'pinia';
 
     import AvatarDialog from './AvatarDialog/AvatarDialog.vue';
     import GroupDialog from './GroupDialog/GroupDialog.vue';
     import UserDialog from './UserDialog/UserDialog.vue';
     import WorldDialog from './WorldDialog/WorldDialog.vue';
+    import PreviousInstancesGroupDialog from './PreviousInstancesDialog/PreviousInstancesGroupDialog.vue';
+    import PreviousInstancesInfoDialog from './PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
+    import PreviousInstancesUserDialog from './UserDialog/PreviousInstancesUserDialog.vue';
+    import PreviousInstancesWorldDialog from './PreviousInstancesDialog/PreviousInstancesWorldDialog.vue';
 
     const avatarStore = useAvatarStore();
     const groupStore = useGroupStore();
+    const instanceStore = useInstanceStore();
     const uiStore = useUiStore();
     const userStore = useUserStore();
     const worldStore = useWorldStore();
+
+    const {
+        previousInstancesInfoDialogVisible,
+        previousInstancesUserDialog,
+        previousInstancesWorldDialog,
+        previousInstancesGroupDialog
+    } = storeToRefs(instanceStore);
 
     const isOpen = computed({
         get: () =>
             userStore.userDialog.visible ||
             worldStore.worldDialog.visible ||
             avatarStore.avatarDialog.visible ||
-            groupStore.groupDialog.visible,
+            groupStore.groupDialog.visible ||
+            previousInstancesInfoDialogVisible.value ||
+            previousInstancesUserDialog.value.visible ||
+            previousInstancesWorldDialog.value.visible ||
+            previousInstancesGroupDialog.value.visible,
         set: (value) => {
             if (!value) {
                 userStore.userDialog.visible = false;
                 worldStore.worldDialog.visible = false;
                 avatarStore.avatarDialog.visible = false;
                 groupStore.groupDialog.visible = false;
+                instanceStore.hidePreviousInstancesDialogs();
                 uiStore.clearDialogCrumbs();
             }
         }
@@ -64,6 +82,18 @@
         if (groupStore.groupDialog.visible) {
             return 'group';
         }
+        if (previousInstancesInfoDialogVisible.value) {
+            return 'previous-instances-info';
+        }
+        if (previousInstancesUserDialog.value.visible) {
+            return 'previous-instances-user';
+        }
+        if (previousInstancesWorldDialog.value.visible) {
+            return 'previous-instances-world';
+        }
+        if (previousInstancesGroupDialog.value.visible) {
+            return 'previous-instances-group';
+        }
         return null;
     });
     const activeComponent = computed(() => {
@@ -76,6 +106,14 @@
                 return AvatarDialog;
             case 'group':
                 return GroupDialog;
+            case 'previous-instances-info':
+                return PreviousInstancesInfoDialog;
+            case 'previous-instances-user':
+                return PreviousInstancesUserDialog;
+            case 'previous-instances-world':
+                return PreviousInstancesWorldDialog;
+            case 'previous-instances-group':
+                return PreviousInstancesGroupDialog;
             default:
                 return null;
         }
@@ -88,6 +126,11 @@
                 return 'x-dialog x-avatar-dialog sm:max-w-235 translate-y-0';
             case 'group':
                 return 'x-dialog x-group-dialog group-body translate-y-0 sm:max-w-235';
+            case 'previous-instances-info':
+            case 'previous-instances-user':
+            case 'previous-instances-world':
+            case 'previous-instances-group':
+                return 'x-dialog translate-y-0 sm:max-w-250';
             case 'user':
             default:
                 return 'x-dialog x-user-dialog sm:max-w-235 translate-y-0';
@@ -95,7 +138,7 @@
     });
 
     const shouldShowBreadcrumbs = computed(() => dialogCrumbs.value.length > 1);
-    const shouldCollapseBreadcrumbs = computed(() => dialogCrumbs.value.length > 4);
+    const shouldCollapseBreadcrumbs = computed(() => dialogCrumbs.value.length > 5);
     const middleBreadcrumbs = computed(() => {
         if (!shouldCollapseBreadcrumbs.value) {
             return [];
@@ -110,19 +153,39 @@
         }
         uiStore.jumpDialogCrumb(index);
         if (item.type === 'user') {
+            instanceStore.hidePreviousInstancesDialogs();
             userStore.showUserDialog(item.id, { skipBreadcrumb: true });
             return;
         }
         if (item.type === 'world') {
+            instanceStore.hidePreviousInstancesDialogs();
             worldStore.showWorldDialog(item.id, null, { skipBreadcrumb: true });
             return;
         }
         if (item.type === 'avatar') {
+            instanceStore.hidePreviousInstancesDialogs();
             avatarStore.showAvatarDialog(item.id, { skipBreadcrumb: true });
             return;
         }
         if (item.type === 'group') {
+            instanceStore.hidePreviousInstancesDialogs();
             groupStore.showGroupDialog(item.id, { skipBreadcrumb: true });
+            return;
+        }
+        if (item.type === 'previous-instances-user') {
+            instanceStore.showPreviousInstancesUserDialog(item.id, { skipBreadcrumb: true });
+            return;
+        }
+        if (item.type === 'previous-instances-world') {
+            instanceStore.showPreviousInstancesWorldDialog(item.id, { skipBreadcrumb: true });
+            return;
+        }
+        if (item.type === 'previous-instances-group') {
+            instanceStore.showPreviousInstancesGroupDialog(item.id, { skipBreadcrumb: true });
+            return;
+        }
+        if (item.type === 'previous-instances-info') {
+            instanceStore.showPreviousInstancesInfoDialog(item.id, { skipBreadcrumb: true });
         }
     };
 </script>

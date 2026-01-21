@@ -683,7 +683,6 @@
                 :old-tags="worldDialog.ref?.tags"
                 :world-id="worldDialog.id"
                 :is-world-dialog-visible="worldDialog.visible" />
-            <PreviousInstancesWorldDialog v-model:previous-instances-world-dialog="previousInstancesWorldDialog" />
             <NewInstanceDialog
                 :new-instance-dialog-location-tag="newInstanceDialogLocationTag"
                 :last-location="lastLocation" />
@@ -773,9 +772,6 @@
     const modalStore = useModalStore();
 
     const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog.vue'));
-    const PreviousInstancesWorldDialog = defineAsyncComponent(
-        () => import('../PreviousInstancesDialog/PreviousInstancesWorldDialog.vue')
-    );
     const ChangeWorldImageDialog = defineAsyncComponent(() => import('./ChangeWorldImageDialog.vue'));
     const SetWorldTagsDialog = defineAsyncComponent(() => import('./SetWorldTagsDialog.vue'));
     const WorldAllowedDomainsDialog = defineAsyncComponent(() => import('./WorldAllowedDomainsDialog.vue'));
@@ -788,7 +784,10 @@
     const { lastLocation } = storeToRefs(useLocationStore());
     const { newInstanceSelfInvite, canOpenInstanceInGame } = useInviteStore();
     const { showFavoriteDialog } = useFavoriteStore();
-    const { showPreviousInstancesInfoDialog } = useInstanceStore();
+    const {
+        showPreviousInstancesInfoDialog,
+        showPreviousInstancesWorldDialog: openPreviousInstancesWorldDialog
+    } = useInstanceStore();
     const { instanceJoinHistory } = storeToRefs(useInstanceStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { showFullscreenImageDialog } = useGalleryStore();
@@ -806,11 +805,6 @@
         urlList: []
     });
     const isSetWorldTagsDialogVisible = ref(false);
-    const previousInstancesWorldDialog = ref({
-        visible: false,
-        openFlg: false,
-        worldRef: {}
-    });
     const newInstanceDialogLocationTag = ref('');
     const changeWorldImageDialogVisible = ref(false);
     const previousImageUrl = ref('');
@@ -1268,12 +1262,7 @@
         }
     }
     function showPreviousInstancesWorldDialog(worldRef) {
-        const D = previousInstancesWorldDialog.value;
-        D.worldRef = worldRef;
-        D.visible = true;
-        // trigger watcher
-        D.openFlg = true;
-        nextTick(() => (D.openFlg = false));
+        openPreviousInstancesWorldDialog(worldRef);
     }
     function refreshWorldDialogTreeData() {
         treeData.value = formatJsonVars(worldDialog.value.ref);

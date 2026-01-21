@@ -1,4 +1,4 @@
-import { reactive, ref, watch } from 'vue';
+import { nextTick, reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -18,9 +18,14 @@ import {
     parseLocation,
     replaceBioSymbols
 } from '../shared/utils';
-import { instanceRequest, userRequest, worldRequest } from '../api';
+import {
+    groupRequest,
+    instanceRequest,
+    userRequest,
+    worldRequest
+} from '../api';
 import { database } from '../service/database';
-import { instanceContentSettings } from '../shared/constants';
+import { accessTypeLocaleKeyMap, instanceContentSettings } from '../shared/constants';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFriendStore } from './friend';
 import { useGroupStore } from './group';
@@ -106,6 +111,33 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     const previousInstancesInfoDialogInstanceId = ref('');
 
+    const previousInstancesUserDialog = ref({
+        visible: false,
+        openFlg: false,
+        userRef: {
+            id: '',
+            displayName: ''
+        }
+    });
+
+    const previousInstancesWorldDialog = ref({
+        visible: false,
+        openFlg: false,
+        worldRef: {
+            id: '',
+            name: ''
+        }
+    });
+
+    const previousInstancesGroupDialog = ref({
+        visible: false,
+        openFlg: false,
+        groupRef: {
+            id: '',
+            name: ''
+        }
+    });
+
     const instanceJoinHistory = reactive(new Map());
 
     const currentInstanceUsersData = ref([]);
@@ -116,6 +148,9 @@ export const useInstanceStore = defineStore('Instance', () => {
             currentInstanceUsersData.value = [];
             instanceJoinHistory.clear();
             previousInstancesInfoDialogVisible.value = false;
+            previousInstancesUserDialog.value.visible = false;
+            previousInstancesWorldDialog.value.visible = false;
+            previousInstancesGroupDialog.value.visible = false;
             cachedInstances.clear();
             queuedInstances.clear();
             if (isLoggedIn) {
@@ -150,9 +185,192 @@ export const useInstanceStore = defineStore('Instance', () => {
         instanceJoinHistory.set(location, epoch);
     }
 
-    function showPreviousInstancesInfoDialog(instanceId) {
+    function hidePreviousInstancesDialogs() {
+        previousInstancesInfoDialogVisible.value = false;
+        previousInstancesUserDialog.value.visible = false;
+        previousInstancesUserDialog.value.openFlg = false;
+        previousInstancesWorldDialog.value.visible = false;
+        previousInstancesWorldDialog.value.openFlg = false;
+        previousInstancesGroupDialog.value.visible = false;
+        previousInstancesGroupDialog.value.openFlg = false;
+    }
+
+    async function resolveUserRef(input) {
+        if (!input) {
+            return { id: '', displayName: '' };
+        }
+        if (typeof input === 'string') {
+            input = { id: input, displayName: '' };
+        }
+        const id = input.id || input.userId || '';
+        let displayName = input.displayName || '';
+        if (id && !displayName) {
+            try {
+                const args = await userRequest.getCachedUser({ userId: id });
+                displayName = args?.ref?.displayName || displayName;
+                return { ...args.ref, id, displayName };
+            } catch {
+                return { ...input, id, displayName };
+            }
+        }
+        return { ...input, id, displayName };
+    }
+
+    async function resolveWorldRef(input) {
+        if (!input) {
+            return { id: '', name: '' };
+        }
+        if (typeof input === 'string') {
+            input = { id: input, name: '' };
+        }
+        const id = input.id || input.worldId || '';
+        let name = input.name || '';
+        if (id && !name) {
+            try {
+                const args = await worldRequest.getCachedWorld({ worldId: id });
+                name = args?.ref?.name || name;
+                return { ...args.ref, id, name };
+            } catch {
+                return { ...input, id, name };
+            }
+        }
+        return { ...input, id, name };
+    }
+
+    async function resolveGroupRef(input) {
+        if (!input) {
+            return { id: '', name: '' };
+        }
+        if (typeof input === 'string') {
+            input = { id: input, name: '' };
+        }
+        const id = input.id || input.groupId || '';
+        let name = input.name || '';
+        if (id && !name) {
+            try {
+                const args = await groupRequest.getCachedGroup({ groupId: id });
+                name = args?.ref?.name || name;
+                return { ...args.ref, id, name };
+            } catch {
+                return { ...input, id, name };
+            }
+        }
+        return { ...input, id, name };
+    }
+
+    function translateAccessType(accessTypeNameRaw) {
+        const key = accessTypeLocaleKeyMap[accessTypeNameRaw];
+        if (!key) {
+            return accessTypeNameRaw;
+        }
+        if (
+            accessTypeNameRaw === 'groupPublic' ||
+            accessTypeNameRaw === 'groupPlus'
+        ) {
+            const groupKey = accessTypeLocaleKeyMap.group;
+            return `${t(groupKey)} ${t(key)}`;
+        }
+        return t(key);
+    }
+
+    function formatPreviousInstancesInfoLabel(
+        instanceId,
+        worldNameOverride = ''
+    ) {
+        const location = parseLocation(instanceId);
+        const worldId = location.worldId;
+        const worldName =
+            worldNameOverride ||
+            (worldId ? worldStore.cachedWorlds.get(worldId)?.name : '') ||
+            '';
+        const baseLabel = worldName || worldId || instanceId || '';
+        const accessTypeLabel = translateAccessType(
+            location.accessTypeName || ''
+        );
+        if (!accessTypeLabel || !location.instanceId) {
+            return baseLabel;
+        }
+        return `${baseLabel} · ${accessTypeLabel}`;
+    }
+
+    function showPreviousInstancesInfoDialog(instanceId, options = {}) {
+        hidePreviousInstancesDialogs();
         previousInstancesInfoDialogVisible.value = true;
         previousInstancesInfoDialogInstanceId.value = instanceId;
+        if (!options.skipBreadcrumb && instanceId) {
+            uiStore.pushDialogCrumb(
+                'previous-instances-info',
+                instanceId,
+                formatPreviousInstancesInfoLabel(instanceId)
+            );
+            const location = parseLocation(instanceId);
+            if (
+                location.worldId &&
+                !worldStore.cachedWorlds.get(location.worldId)?.name
+            ) {
+                worldRequest
+                    .getCachedWorld({ worldId: location.worldId })
+                    .then((args) => {
+                        uiStore.setDialogCrumbLabel(
+                            'previous-instances-info',
+                            instanceId,
+                            formatPreviousInstancesInfoLabel(
+                                instanceId,
+                                args?.ref?.name || ''
+                            )
+                        );
+                    })
+                    .catch(() => {});
+            }
+        }
+    }
+
+    async function showPreviousInstancesUserDialog(userRef, options = {}) {
+        hidePreviousInstancesDialogs();
+        const resolved = await resolveUserRef(userRef);
+        previousInstancesUserDialog.value.userRef = resolved;
+        previousInstancesUserDialog.value.visible = true;
+        previousInstancesUserDialog.value.openFlg = true;
+        nextTick(() => (previousInstancesUserDialog.value.openFlg = false));
+        if (!options.skipBreadcrumb && resolved.id) {
+            uiStore.pushDialogCrumb(
+                'previous-instances-user',
+                resolved.id,
+                resolved.displayName || resolved.id
+            );
+        }
+    }
+
+    async function showPreviousInstancesWorldDialog(worldRef, options = {}) {
+        hidePreviousInstancesDialogs();
+        const resolved = await resolveWorldRef(worldRef);
+        previousInstancesWorldDialog.value.worldRef = resolved;
+        previousInstancesWorldDialog.value.visible = true;
+        previousInstancesWorldDialog.value.openFlg = true;
+        nextTick(() => (previousInstancesWorldDialog.value.openFlg = false));
+        if (!options.skipBreadcrumb && resolved.id) {
+            uiStore.pushDialogCrumb(
+                'previous-instances-world',
+                resolved.id,
+                resolved.name || resolved.id
+            );
+        }
+    }
+
+    async function showPreviousInstancesGroupDialog(groupRef, options = {}) {
+        hidePreviousInstancesDialogs();
+        const resolved = await resolveGroupRef(groupRef);
+        previousInstancesGroupDialog.value.groupRef = resolved;
+        previousInstancesGroupDialog.value.visible = true;
+        previousInstancesGroupDialog.value.openFlg = true;
+        nextTick(() => (previousInstancesGroupDialog.value.openFlg = false));
+        if (!options.skipBreadcrumb && resolved.id) {
+            uiStore.pushDialogCrumb(
+                'previous-instances-group',
+                resolved.id,
+                resolved.name || resolved.id
+            );
+        }
     }
 
     function updateCurrentInstanceWorld() {
@@ -1238,6 +1456,9 @@ export const useInstanceStore = defineStore('Instance', () => {
         queuedInstances,
         previousInstancesInfoDialogVisible,
         previousInstancesInfoDialogInstanceId,
+        previousInstancesUserDialog,
+        previousInstancesWorldDialog,
+        previousInstancesGroupDialog,
         instanceJoinHistory,
         currentInstanceUsersData,
 
@@ -1251,7 +1472,11 @@ export const useInstanceStore = defineStore('Instance', () => {
         applyQueuedInstance,
         instanceQueueReady,
         instanceQueueUpdate,
+        hidePreviousInstancesDialogs,
         showPreviousInstancesInfoDialog,
+        showPreviousInstancesUserDialog,
+        showPreviousInstancesWorldDialog,
+        showPreviousInstancesGroupDialog,
         addInstanceJoinHistory,
         getCurrentInstanceUserList,
         getInstanceJoinHistory,

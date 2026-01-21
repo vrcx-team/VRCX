@@ -62,8 +62,6 @@
 
         <FullscreenImagePreview></FullscreenImagePreview>
 
-        <PreviousInstancesInfoDialog></PreviousInstancesInfoDialog>
-
         <LaunchDialog></LaunchDialog>
 
         <LaunchOptionsDialog></LaunchOptionsDialog>
@@ -108,7 +106,6 @@
     import LaunchDialog from '../../components/dialogs/LaunchDialog.vue';
     import LaunchOptionsDialog from '../Settings/dialogs/LaunchOptionsDialog.vue';
     import NavMenu from '../../components/NavMenu.vue';
-    import PreviousInstancesInfoDialog from '../../components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
     import PrimaryPasswordDialog from '../Settings/dialogs/PrimaryPasswordDialog.vue';
     import SendBoopDialog from '../../components/dialogs/SendBoopDialog.vue';
     import Sidebar from '../Sidebar/Sidebar.vue';

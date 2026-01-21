@@ -1,36 +1,34 @@
 <template>
-    <Dialog v-model:open="isVisible">
-        <DialogContent class="sm:max-w-250">
-            <DialogHeader>
-                <DialogTitle>{{ t('dialog.previous_instances.header') }}</DialogTitle>
-            </DialogHeader>
+    <div>
+        <DialogHeader>
+            <DialogTitle>{{ t('dialog.previous_instances.header') }}</DialogTitle>
+        </DialogHeader>
 
-            <DataTableLayout
-                class="min-w-0 w-full"
-                :table="table"
-                :loading="loading"
-                :table-style="tableStyle"
-                :page-sizes="pageSizes"
-                :total-items="totalItems"
-                :on-page-size-change="handlePageSizeChange">
-                <template #toolbar>
-                    <div style="display: flex; align-items: center; justify-content: space-between">
-                        <span style="font-size: 14px" v-text="previousInstancesWorldDialog.worldRef.name"></span>
-                        <InputGroupField
-                            v-model="search"
-                            :placeholder="t('dialog.previous_instances.search_placeholder')"
-                            clearable
-                            class="w-1/3"
-                            style="display: block" />
-                    </div>
-                </template>
-            </DataTableLayout>
-        </DialogContent>
-    </Dialog>
+        <DataTableLayout
+            class="min-w-0 w-full"
+            :table="table"
+            :loading="loading"
+            :table-style="tableStyle"
+            :page-sizes="pageSizes"
+            :total-items="totalItems"
+            :on-page-size-change="handlePageSizeChange">
+            <template #toolbar>
+                <div style="display: flex; align-items: center; justify-content: space-between">
+                    <span style="font-size: 14px" v-text="previousInstancesWorldDialog.worldRef.name"></span>
+                    <InputGroupField
+                        v-model="search"
+                        :placeholder="t('dialog.previous_instances.search_placeholder')"
+                        clearable
+                        class="w-1/3"
+                        style="display: block" />
+                </div>
+            </template>
+        </DataTableLayout>
+    </div>
 </template>
 
 <script setup>
-    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
     import { InputGroupField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
@@ -60,15 +58,9 @@
 
     const modalStore = useModalStore();
 
-    const props = defineProps({
-        previousInstancesWorldDialog: {
-            type: Object,
-            required: true
-        }
-    });
-    const emit = defineEmits(['update:previous-instances-world-dialog']);
-
-    const { showPreviousInstancesInfoDialog } = useInstanceStore();
+    const instanceStore = useInstanceStore();
+    const { showPreviousInstancesInfoDialog } = instanceStore;
+    const { previousInstancesWorldDialog } = storeToRefs(instanceStore);
     const { shiftHeld } = storeToRefs(useUiStore());
     const { currentUser } = storeToRefs(useUserStore());
     const { stringComparer } = storeToRefs(useSearchStore());
@@ -80,16 +72,6 @@
     const pageSize = ref(10);
     const tableStyle = { maxHeight: '400px' };
     const loading = ref(false);
-
-    const isVisible = computed({
-        get: () => props.previousInstancesWorldDialog.visible,
-        set: (value) => {
-            emit('update:previous-instances-world-dialog', {
-                ...props.previousInstancesWorldDialog,
-                visible: value
-            });
-        }
-    });
 
     const displayRows = computed(() => {
         const q = String(search.value ?? '')
@@ -110,7 +92,7 @@
         createColumns({
             shiftHeld,
             currentUserId: currentUser.value?.id,
-            forceUpdateKey: props.previousInstancesWorldDialog?.forceUpdate,
+            forceUpdateKey: previousInstancesWorldDialog.value?.forceUpdate,
             onShowInfo: showPreviousInstancesInfoDialog,
             onDelete: deleteGameLogWorldInstance,
             onDeletePrompt: deleteGameLogWorldInstancePrompt
@@ -152,7 +134,7 @@
 
     function refreshPreviousInstancesWorldTable() {
         loading.value = true;
-        const D = props.previousInstancesWorldDialog;
+        const D = previousInstancesWorldDialog.value;
         database.getPreviousInstancesByWorldId(D.worldRef).then((data) => {
             const array = [];
             for (const ref of data.values()) {
@@ -185,9 +167,19 @@
     }
 
     watch(
-        () => props.previousInstancesWorldDialog.openFlg,
+        () => previousInstancesWorldDialog.value.visible,
+        (visible) => {
+            if (visible) {
+                refreshPreviousInstancesWorldTable();
+            }
+        },
+        { immediate: true }
+    );
+
+    watch(
+        () => previousInstancesWorldDialog.value.openFlg,
         () => {
-            if (props.previousInstancesWorldDialog.visible) {
+            if (previousInstancesWorldDialog.value.visible) {
                 refreshPreviousInstancesWorldTable();
             }
         }
