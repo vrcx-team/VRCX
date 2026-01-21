@@ -782,42 +782,41 @@ export const createColumns = ({
                                         </Tooltip>
                                     </TooltipProvider>
                                 ) : null}
-
-                                {showDeleteLog ? (
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <button
-                                                    type="button"
-                                                    class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
-                                                    onClick={() =>
-                                                        shiftHeld.value
-                                                            ? deleteNotificationLog(
-                                                                  original
-                                                              )
-                                                            : deleteNotificationLogPrompt(
-                                                                  original
-                                                              )
-                                                    }
-                                                >
-                                                    {shiftHeld.value ? (
-                                                        <X class="h-4 w-4 text-red-600" />
-                                                    ) : (
-                                                        <Trash2 class="h-4 w-4" />
-                                                    )}
-                                                </button>
-                                            </TooltipTrigger>
-                                            <TooltipContent side="top">
-                                                <span>
-                                                    {t(
-                                                        'view.notification.actions.delete_log'
-                                                    )}
-                                                </span>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                ) : null}
                             </span>
+                        ) : null}
+                        {showDeleteLog ? (
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button
+                                            type="button"
+                                            class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                            onClick={() =>
+                                                shiftHeld.value
+                                                    ? deleteNotificationLog(
+                                                          original
+                                                      )
+                                                    : deleteNotificationLogPrompt(
+                                                          original
+                                                      )
+                                            }
+                                        >
+                                            {shiftHeld.value ? (
+                                                <X class="h-4 w-4 text-red-600" />
+                                            ) : (
+                                                <Trash2 class="h-4 w-4" />
+                                            )}
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top">
+                                        <span>
+                                            {t(
+                                                'view.notification.actions.delete_log'
+                                            )}
+                                        </span>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         ) : null}
                     </div>
                 );
