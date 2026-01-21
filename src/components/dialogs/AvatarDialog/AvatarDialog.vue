@@ -498,7 +498,7 @@
                     <vue-json-pretty :data="treeData" :deep="2" :theme="isDarkMode ? 'dark' : 'light'" show-icon />
                     <br />
                     <vue-json-pretty
-                        v-if="avatarDialog.fileAnalysis.length > 0"
+                        v-if="Object.keys(avatarDialog.fileAnalysis).length > 0"
                         :data="avatarDialog.fileAnalysis"
                         :deep="2"
                         :theme="isDarkMode ? 'dark' : 'light'"

@@ -93,7 +93,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         focusViewDisabled: false,
         inCache: false,
         cacheSize: '',
-        bundleSizes: [],
+        bundleSizes: {},
         lastUpdated: ''
     });
 
@@ -172,7 +172,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 focusViewDisabled: false,
                 inCache: false,
                 cacheSize: '',
-                bundleSizes: [],
+                bundleSizes: {},
                 lastUpdated: ''
             };
             currentInstanceLocation.value = {};
@@ -187,7 +187,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 focusViewDisabled: false,
                 inCache: false,
                 cacheSize: '',
-                bundleSizes: [],
+                bundleSizes: {},
                 lastUpdated: ''
             };
             L = parseLocation(instanceId);

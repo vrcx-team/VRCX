@@ -45,13 +45,13 @@ export const useWorldStore = defineStore('World', () => {
         focusViewDisabled: false,
         rooms: [],
         treeData: {},
-        bundleSizes: [],
+        bundleSizes: {},
         lastUpdated: '',
         inCache: false,
         cacheSize: '',
         cacheLocked: false,
         cachePath: '',
-        fileAnalysis: [],
+        fileAnalysis: {},
         lastVisit: '',
         visitCount: 0,
         timeSpent: 0,
@@ -101,14 +101,14 @@ export const useWorldStore = defineStore('World', () => {
         D.id = L.worldId;
         D.$location = L;
         D.treeData = {};
-        D.bundleSizes = [];
+        D.bundleSizes = {};
         D.lastUpdated = '';
         D.loading = true;
         D.inCache = false;
         D.cacheSize = '';
         D.cacheLocked = false;
         D.cachePath = '';
-        D.fileAnalysis = [];
+        D.fileAnalysis = {};
         D.rooms = [];
         D.lastVisit = '';
         D.visitCount = 0;
@@ -339,7 +339,7 @@ export const useWorldStore = defineStore('World', () => {
                     });
                 }
             }
-            if (worldDialog.bundleSizes.length === 0) {
+            if (Object.keys(worldDialog.bundleSizes).length === 0) {
                 getBundleDateSize(ref).then((bundleSizes) => {
                     worldDialog.bundleSizes = bundleSizes;
                 });

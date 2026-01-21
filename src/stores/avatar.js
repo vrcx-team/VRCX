@@ -58,7 +58,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         isPC: false,
         isQuest: false,
         isIos: false,
-        bundleSizes: [],
+        bundleSizes: {},
         platformInfo: {},
         galleryImages: [],
         galleryLoading: false,
@@ -67,7 +67,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         cacheSize: '',
         cacheLocked: false,
         cachePath: '',
-        fileAnalysis: []
+        fileAnalysis: {}
     });
     const avatarHistory = ref([]);
 
@@ -201,7 +201,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         D.cacheSize = '';
         D.cacheLocked = false;
         D.cachePath = '';
-        D.fileAnalysis = [];
+        D.fileAnalysis = {};
         D.isQuestFallback = false;
         D.isPC = false;
         D.isQuest = false;
@@ -209,7 +209,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         D.hasImposter = false;
         D.imposterVersion = '';
         D.lastUpdated = '';
-        D.bundleSizes = [];
+        D.bundleSizes = {};
         D.platformInfo = {};
         D.galleryImages = [];
         D.galleryLoading = true;
@@ -261,7 +261,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                         break;
                     }
                 }
-                if (D.bundleSizes.length === 0) {
+                if (Object.keys(D.bundleSizes).length === 0) {
                     getBundleDateSize(ref).then((bundleSizes) => {
                         D.bundleSizes = bundleSizes;
                     });
