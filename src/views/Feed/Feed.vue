@@ -68,12 +68,10 @@
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
-    const { feedTable } = storeToRefs(useFeedStore());
+    const { feedTable, feedTableData } = storeToRefs(useFeedStore());
     const { feedTableLookup } = useFeedStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();
-
-    const feedDisplayData = computed(() => feedTable.value.data.slice().reverse());
 
     const { t } = useI18n();
 
@@ -93,7 +91,7 @@
 
     const { table, pagination } = useVrcxVueTable({
         persistKey: 'feed',
-        data: feedDisplayData,
+        data: feedTableData,
         columns: baseColumns,
         getRowId: (row) => `${row.type}:${row.rowId}:${row.created_at ?? ''}`,
         enableExpanded: true,

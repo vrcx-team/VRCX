@@ -5,7 +5,6 @@ import { database } from '../service/database';
 import { useFriendStore } from './friend';
 import { useNotificationStore } from './notification';
 import { useSharedFeedStore } from './sharedFeed';
-import { useUiStore } from './ui';
 import { useVrcxStore } from './vrcx';
 import { watchState } from '../service/watchState';
 
@@ -14,12 +13,11 @@ import configRepository from '../service/config';
 export const useFeedStore = defineStore('Feed', () => {
     const friendStore = useFriendStore();
     const notificationStore = useNotificationStore();
-    const UiStore = useUiStore();
     const vrcxStore = useVrcxStore();
     const sharedFeedStore = useSharedFeedStore();
 
+    const feedTableData = shallowReactive([]);
     const feedTable = ref({
-        data: shallowReactive([]),
         search: '',
         vip: false,
         loading: false,
@@ -31,7 +29,7 @@ export const useFeedStore = defineStore('Feed', () => {
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            feedTable.value.data.length = 0;
+            feedTableData.length = 0;
             if (isLoggedIn) {
                 initFeedTable();
             }
@@ -151,7 +149,8 @@ export const useFeedStore = defineStore('Feed', () => {
             feedTable.value.filter,
             vipList
         );
-        feedTable.value.data = shallowReactive(rows);
+        feedTableData.length = 0;
+        feedTableData.push(...rows.reverse());
         feedTable.value.loading = false;
     }
 
@@ -173,16 +172,14 @@ export const useFeedStore = defineStore('Feed', () => {
         if (!feedSearch(feed)) {
             return;
         }
-        feedTable.value.data.push(feed);
+        feedTableData.unshift(feed);
         sweepFeed();
-        // UiStore.notifyMenu('feed');
     }
 
     function sweepFeed() {
-        const { data } = feedTable.value;
-        const j = data.length;
+        const j = feedTableData.length;
         if (j > vrcxStore.maxTableSize + 50) {
-            data.splice(0, 50);
+            feedTableData.splice(-50, 50);
         }
     }
 
@@ -193,6 +190,7 @@ export const useFeedStore = defineStore('Feed', () => {
 
     return {
         feedTable,
+        feedTableData,
         initFeedTable,
         feedTableLookup,
         addFeed
