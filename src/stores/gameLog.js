@@ -91,7 +91,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             gameLogTableData.length = 0;
             if (isLoggedIn) {
                 // wait for friends to load, silly but works
-                setTimeout(() => {
+                workerTimers.setTimeout(() => {
                     initGameLogTable();
                 }, 800);
             }

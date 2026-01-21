@@ -7,6 +7,8 @@ import { formatDateFilter, openExternalLink } from '../shared/utils';
 
 import webApiService from '../service/webapi';
 
+import * as workerTimers from 'worker-timers';
+
 export const useVrcStatusStore = defineStore('VrcStatus', () => {
     const vrcStatusApiUrl = 'https://status.vrchat.com/api/v2';
 
@@ -137,7 +139,7 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
 
     function init() {
         getVrcStatus();
-        setInterval(() => {
+        workerTimers.setInterval(() => {
             if (Date.now() - lastTimeFetched.value > pollingInterval.value) {
                 getVrcStatus();
             }
