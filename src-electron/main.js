@@ -70,12 +70,19 @@ if (process.defaultApp && process.platform !== 'win32') {
     }
 }
 
+const version = getVersion();
 const homePath = getHomePath();
 tryRelaunchWithArgs(args);
 tryCopyFromWinePrefix();
+const userDataPath = getElectronUserDataPath();
+console.log('Electron userData path:', userDataPath);
+if (!fs.existsSync(userDataPath)) {
+    fs.mkdirSync(userDataPath, { recursive: true });
+}
+app.setPath('userData', userDataPath);
 
 const armPath = path.join(rootDir, 'build/Electron/VRCX-Electron-arm64.cjs');
-if (fs.existsSync(armPath)) {
+if (process.arch === 'arm64' && fs.existsSync(armPath)) {
     require(armPath);
 } else {
     require(path.join(rootDir, 'build/Electron/VRCX-Electron.cjs'));
@@ -94,15 +101,13 @@ const OVERLAY_SHARED_WIDTH = Math.max(
     OVERLAY_WRIST_FRAME_WIDTH,
     OVERLAY_HMD_FRAME_WIDTH
 );
-const OVERLAY_FRAME_SIZE =
-    OVERLAY_SHARED_WIDTH * OVERLAY_SHARED_HEIGHT * 4;
+const OVERLAY_FRAME_SIZE = OVERLAY_SHARED_WIDTH * OVERLAY_SHARED_HEIGHT * 4;
 const OVERLAY_SHM_PATH = '/dev/shm/vrcx_overlay';
 
 function createOverlayWindowShm() {
     fs.writeFileSync(OVERLAY_SHM_PATH, Buffer.alloc(OVERLAY_FRAME_SIZE + 1));
 }
 
-const version = getVersion();
 interopApi.getDotNetObject('ProgramElectron').PreInit(version, args);
 interopApi.getDotNetObject('VRCXStorage').Load();
 interopApi.getDotNetObject('ProgramElectron').Init();
@@ -713,15 +718,38 @@ function downloadIcon(url, targetPath) {
     });
 }
 
+function getElectronUserDataPath() {
+    const electronUserData = 'ElectronUserData';
+    if (process.platform === 'win32') {
+        return path.join(getVRCXPath(), electronUserData);
+    }
+    if (process.platform === 'darwin') {
+        return path.join(
+            process.env.HOME,
+            'Library/Caches/VRCX',
+            electronUserData
+        );
+    }
+    // Linux or other
+    let cacheHome = process.env.XDG_CACHE_HOME;
+    if (!cacheHome) {
+        cacheHome = path.join(process.env.HOME, '.cache');
+    }
+    return path.join(cacheHome, 'VRCX', electronUserData);
+}
+
 function getVRCXPath() {
     if (process.platform === 'win32') {
         return path.join(process.env.APPDATA, 'VRCX');
-    } else if (process.platform === 'linux') {
-        return path.join(process.env.HOME, '.config/VRCX');
     } else if (process.platform === 'darwin') {
         return path.join(process.env.HOME, 'Library/Application Support/VRCX');
     }
-    return '';
+    // Linux or other
+    let configHome = process.env.XDG_CONFIG_HOME;
+    if (!configHome) {
+        configHome = path.join(process.env.HOME, '.config');
+    }
+    return path.join(configHome, 'VRCX');
 }
 
 function getHomePath() {
