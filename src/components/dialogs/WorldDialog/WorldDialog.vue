@@ -593,7 +593,7 @@
                                             {{ timeInLab }}
                                         </span>
                                     </template>
-                                    <ArrowDown />
+                                    <ChevronDown class="inline-block" />
                                 </TooltipWrapper>
                                 <span class="extra">
                                     {{ formatDateFilter(worldDialog.ref.publicationDate, 'long') }}
@@ -697,8 +697,8 @@
 <script setup>
     import {
         Apple,
-        ArrowDown,
         Check,
+        ChevronDown,
         Copy,
         Download,
         Ellipsis,
