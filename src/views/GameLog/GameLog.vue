@@ -63,8 +63,6 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import dayjs from 'dayjs';
-
     import { useAppearanceSettingsStore, useGameLogStore, useModalStore, useVrcxStore } from '../../stores';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { InputGroupField } from '../../components/ui/input-group';
@@ -75,7 +73,7 @@
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     const { gameLogTableLookup } = useGameLogStore();
-    const { gameLogTable } = storeToRefs(useGameLogStore());
+    const { gameLogTable, gameLogTableData } = storeToRefs(useGameLogStore());
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();
     const modalStore = useModalStore();
@@ -92,39 +90,6 @@
         }
         return '';
     }
-
-    function getGameLogCreatedAtTs(row) {
-        const createdAtRaw = row?.created_at ?? row?.createdAt ?? row?.dt;
-        if (typeof createdAtRaw === 'number') {
-            const ts = createdAtRaw > 1_000_000_000_000 ? createdAtRaw : createdAtRaw * 1000;
-            return Number.isFinite(ts) ? ts : 0;
-        }
-
-        const createdAt = getGameLogCreatedAt(row);
-        const ts = dayjs(createdAt).valueOf();
-        return Number.isFinite(ts) ? ts : 0;
-    }
-
-    const gameLogDisplayData = computed(() => {
-        const data = gameLogTable.value.data;
-        return data.slice().sort((a, b) => {
-            const aTs = getGameLogCreatedAtTs(a);
-            const bTs = getGameLogCreatedAtTs(b);
-            if (aTs !== bTs) {
-                return bTs - aTs;
-            }
-
-            const aRowId = typeof a?.rowId === 'number' ? a.rowId : 0;
-            const bRowId = typeof b?.rowId === 'number' ? b.rowId : 0;
-            if (aRowId !== bRowId) {
-                return bRowId - aRowId;
-            }
-
-            const aUid = typeof a?.uid === 'string' ? a.uid : '';
-            const bUid = typeof b?.uid === 'string' ? b.uid : '';
-            return aUid < bUid ? 1 : aUid > bUid ? -1 : 0;
-        });
-    });
 
     const { t } = useI18n();
 
@@ -146,7 +111,7 @@
     }
 
     function deleteGameLogEntry(row) {
-        removeFromArray(gameLogTable.value.data, row);
+        removeFromArray(gameLogTableData.value, row);
         database.deleteGameLogEntry(row);
     }
 
@@ -168,7 +133,7 @@
 
     const { table, pagination } = useVrcxVueTable({
         persistKey: 'gameLog',
-        data: gameLogDisplayData,
+        data: gameLogTableData,
         columns,
         getRowId: (row, index) => `${row.type}:${row.rowId ?? index}`,
         initialSorting: [],

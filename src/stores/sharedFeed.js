@@ -241,8 +241,8 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         rebuildOnPlayerJoining(); // also sends updated feed
     }
 
-    async function addEntry(feed) {
-        const ctx = structuredClone(feed);
+    async function addEntry(data) {
+        const ctx = structuredClone(data);
         const userId = ctx.userId || ctx.senderUserId;
         const wristFilter = notificationsSettingsStore.sharedFeedFilters.wrist;
         if (userId === userStore.currentUser.id) {

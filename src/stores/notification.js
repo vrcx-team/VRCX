@@ -2197,7 +2197,8 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
     }
 
-    function queueGameLogNoty(noty) {
+    function queueGameLogNoty(gamelog) {
+        const noty = structuredClone(gamelog);
         let bias;
         // remove join/leave notifications when switching worlds
         if (

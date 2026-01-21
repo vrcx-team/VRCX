@@ -58,8 +58,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
         lastLocationAvatarList: new Map()
     });
 
+    const gameLogTableData = shallowReactive([]);
     const gameLogTable = ref({
-        data: shallowReactive([]),
         loading: false,
         search: '',
         filter: [],
@@ -88,7 +88,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            gameLogTable.value.data.length = 0;
+            gameLogTableData.length = 0;
             if (isLoggedIn) {
                 // wait for friends to load, silly but works
                 setTimeout(() => {
@@ -130,6 +130,62 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     init();
 
+    function getGameLogCreatedAtTs(row) {
+        const createdAtRaw = row?.created_at ?? row?.createdAt ?? row?.dt;
+        if (typeof createdAtRaw === 'number') {
+            const ts =
+                createdAtRaw > 1_000_000_000_000
+                    ? createdAtRaw
+                    : createdAtRaw * 1000;
+            return Number.isFinite(ts) ? ts : 0;
+        }
+
+        const createdAt = typeof createdAtRaw === 'string' ? createdAtRaw : '';
+        const ts = dayjs(createdAt).valueOf();
+        return Number.isFinite(ts) ? ts : 0;
+    }
+
+    function compareGameLogRows(a, b) {
+        const aTs = getGameLogCreatedAtTs(a);
+        const bTs = getGameLogCreatedAtTs(b);
+        if (aTs !== bTs) {
+            return bTs - aTs;
+        }
+
+        const aRowId = typeof a?.rowId === 'number' ? a.rowId : 0;
+        const bRowId = typeof b?.rowId === 'number' ? b.rowId : 0;
+        if (aRowId !== bRowId) {
+            return bRowId - aRowId;
+        }
+
+        const aUid = typeof a?.uid === 'string' ? a.uid : '';
+        const bUid = typeof b?.uid === 'string' ? b.uid : '';
+        return aUid < bUid ? 1 : aUid > bUid ? -1 : 0;
+    }
+
+    function insertGameLogSorted(entry) {
+        const data = gameLogTableData;
+        if (data.length === 0) {
+            data.push(entry);
+            return;
+        }
+        if (compareGameLogRows(entry, data[0]) < 0) {
+            data.unshift(entry);
+            return;
+        }
+        if (compareGameLogRows(entry, data[data.length - 1]) > 0) {
+            data.push(entry);
+            return;
+        }
+        for (let i = 1; i < data.length; i++) {
+            if (compareGameLogRows(entry, data[i]) < 0) {
+                data.splice(i, 0, entry);
+                return;
+            }
+        }
+        data.push(entry);
+    }
+
     function clearNowPlaying() {
         nowPlaying.value = {
             url: '',
@@ -146,7 +202,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
         vrStore.updateVrNowPlaying();
     }
 
-    function setNowPlaying(ctx) {
+    function setNowPlaying(data) {
+        const ctx = structuredClone(data);
         if (nowPlaying.value.url !== ctx.videoUrl) {
             if (!ctx.userId && ctx.displayName) {
                 for (const ref of userStore.cachedUsers.values()) {
@@ -308,8 +365,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (!row.userId) {
             return false;
         }
-        row.isFriend = friendStore.friends.has(row.userId);
-        return row.isFriend;
+        return friendStore.friends.has(row.userId);
     }
 
     function gameLogIsFavorite(row) {
@@ -319,8 +375,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (!row.userId) {
             return false;
         }
-        row.isFavorite = friendStore.localFavoriteFriends.has(row.userId);
-        return row.isFavorite;
+        return friendStore.localFavoriteFriends.has(row.userId);
     }
 
     async function gameLogTableLookup() {
@@ -347,7 +402,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
             row.isFriend = gameLogIsFriend(row);
             row.isFavorite = gameLogIsFavorite(row);
         }
-        gameLogTable.value.data = shallowReactive(rows);
+        rows.sort(compareGameLogRows);
+        gameLogTableData.length = 0;
+        gameLogTableData.push(...rows);
         gameLogTable.value.loading = false;
     }
 
@@ -386,7 +443,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (!gameLogSearch(entry)) {
             return;
         }
-        gameLogTable.value.data.push(entry);
+        insertGameLogSorted(entry);
         sweepGameLog();
         uiStore.notifyMenu('game-log');
     }
@@ -470,10 +527,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     function sweepGameLog() {
-        const { data } = gameLogTable.value;
-        const j = data.length;
+        const j = gameLogTableData.length;
         if (j > vrcxStore.maxTableSize + 50) {
-            data.splice(0, 50);
+            gameLogTableData.splice(-50, 50);
         }
     }
 
@@ -1371,7 +1427,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
             row.isFriend = gameLogIsFriend(row);
             row.isFavorite = gameLogIsFavorite(row);
         }
-        gameLogTable.value.data = shallowReactive(rows);
+        rows.sort(compareGameLogRows);
+        gameLogTableData.length = 0;
+        gameLogTableData.push(...rows);
     }
 
     return {
@@ -1379,6 +1437,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
         nowPlaying,
         gameLogTable,
+        gameLogTableData,
         lastVideoUrl,
         lastResourceloadUrl,
 
