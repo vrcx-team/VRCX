@@ -135,17 +135,22 @@ export const useGroupStore = defineStore('Group', () => {
         if (!groupId) {
             return;
         }
-        if (
-            !groupDialog.value.visible &&
-            !userStore.userDialog.visible &&
-            !worldStore.worldDialog.visible &&
-            !avatarStore.avatarDialog.visible
-        ) {
+        const hadActiveDialog =
+            groupDialog.value.visible ||
+            userStore.userDialog.visible ||
+            worldStore.worldDialog.visible ||
+            avatarStore.avatarDialog.visible ||
+            instanceStore.previousInstancesInfoDialog.visible ||
+            instanceStore.previousInstancesUserDialog.visible ||
+            instanceStore.previousInstancesWorldDialog.visible ||
+            instanceStore.previousInstancesGroupDialog.visible;
+        if (!hadActiveDialog) {
             uiStore.clearDialogCrumbs();
         }
         if (!options.skipBreadcrumb) {
             uiStore.pushDialogCrumb('group', groupId);
         }
+        instanceStore.hidePreviousInstancesDialogs();
         userStore.userDialog.visible = false;
         worldStore.worldDialog.visible = false;
         avatarStore.avatarDialog.visible = false;

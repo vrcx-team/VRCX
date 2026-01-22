@@ -84,17 +84,22 @@ export const useWorldStore = defineStore('World', () => {
         if (L.worldId === '') {
             return;
         }
-        if (
-            !worldDialog.visible &&
-            !userStore.userDialog.visible &&
-            !avatarStore.avatarDialog.visible &&
-            !groupStore.groupDialog.visible
-        ) {
+        const hadActiveDialog =
+            worldDialog.visible ||
+            userStore.userDialog.visible ||
+            avatarStore.avatarDialog.visible ||
+            groupStore.groupDialog.visible ||
+            instanceStore.previousInstancesInfoDialog.visible ||
+            instanceStore.previousInstancesUserDialog.visible ||
+            instanceStore.previousInstancesWorldDialog.visible ||
+            instanceStore.previousInstancesGroupDialog.visible;
+        if (!hadActiveDialog) {
             uiStore.clearDialogCrumbs();
         }
         if (!options.skipBreadcrumb) {
             uiStore.pushDialogCrumb('world', L.worldId);
         }
+        instanceStore.hidePreviousInstancesDialogs();
         userStore.userDialog.visible = false;
         avatarStore.avatarDialog.visible = false;
         groupStore.groupDialog.visible = false;
