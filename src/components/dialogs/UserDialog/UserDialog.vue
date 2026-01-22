@@ -813,7 +813,7 @@
                                     </div>
                                     <div class="detail">
                                         <span class="name" v-text="group.name"></span>
-                                        <span class="extra">
+                                        <span class="extra inline-flex! items-center">
                                             <TooltipWrapper
                                                 v-if="group.isRepresenting"
                                                 side="top"
@@ -851,7 +851,7 @@
                                     </div>
                                     <div class="detail">
                                         <span class="name" v-text="group.name"></span>
-                                        <span class="extra">
+                                        <span class="extra inline-flex! items-center">
                                             <TooltipWrapper
                                                 v-if="group.isRepresenting"
                                                 side="top"
@@ -898,7 +898,7 @@
                                     </div>
                                     <div class="detail">
                                         <span class="name" v-text="group.name"></span>
-                                        <span class="extra">
+                                        <div class="extra inline-flex! items-center">
                                             <TooltipWrapper
                                                 v-if="group.isRepresenting"
                                                 side="top"
@@ -915,7 +915,7 @@
                                                 <Eye style="margin-right: 5px" />
                                             </TooltipWrapper>
                                             <span>({{ group.memberCount }})</span>
-                                        </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

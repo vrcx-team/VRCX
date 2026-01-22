@@ -315,7 +315,7 @@
                 :unmount-on-hide="false"
                 @update:modelValue="worldDialogTabClick">
                 <template #Instances>
-                    <div class="flex items-center">
+                    <div class="flex items-center text-sm">
                         <User />
                         {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
                         <User style="margin-left: 10px" />
@@ -338,11 +338,12 @@
                             <div style="margin: 5px 0">
                                 <div class="flex-align-center">
                                     <LocationWorld
+                                        class="text-sm"
                                         :locationobject="room.$location"
                                         :currentuserid="currentUser.id"
                                         :worlddialogshortname="worldDialog.$location.shortName" />
                                     <InstanceActionBar
-                                        class="ml-1"
+                                        class="ml-1 text-sm"
                                         :location="room.$location.tag"
                                         :launch-location="room.tag"
                                         :instance-location="room.tag"

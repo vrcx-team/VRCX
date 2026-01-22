@@ -99,6 +99,7 @@ export const useWorldStore = defineStore('World', () => {
         if (!options.skipBreadcrumb) {
             uiStore.pushDialogCrumb('world', L.worldId);
         }
+        D.visible = true;
         instanceStore.hidePreviousInstancesDialogs();
         userStore.userDialog.visible = false;
         avatarStore.avatarDialog.visible = false;
