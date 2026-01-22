@@ -5,28 +5,6 @@
 
             <div class="tool-categories">
                 <div class="tool-category">
-                    <div class="category-header" @click="toggleCategory('group')">
-                        <ChevronDown
-                            class="rotation-transition"
-                            :class="{ 'is-rotated': categoryCollapsed['group'] }" />
-                        <span class="category-title">{{ t('view.tools.group.header') }}</span>
-                    </div>
-                    <div class="tools-grid" v-show="!categoryCollapsed['group']">
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="showGroupCalendarDialog">
-                                <div class="tool-icon text-2xl">
-                                    <CalendarDays />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.group.calendar') }}</div>
-                                    <div class="tool-description">{{ t('view.tools.group.calendar_description') }}</div>
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
-                </div>
-
-                <div class="tool-category">
                     <div class="category-header text-2xl" @click="toggleCategory('image')">
                         <ChevronDown
                             class="rotation-transition"
@@ -60,6 +38,17 @@
                                 </div>
                             </div>
                         </Card>
+                    </div>
+                </div>
+
+                <div class="tool-category">
+                    <div class="category-header" @click="toggleCategory('shortcuts')">
+                        <ChevronDown
+                            class="rotation-transition"
+                            :class="{ 'is-rotated': categoryCollapsed['shortcuts'] }" />
+                        <span class="category-title">{{ t('view.tools.shortcuts.header') }}</span>
+                    </div>
+                    <div class="tools-grid" v-show="!categoryCollapsed['shortcuts']">
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="openVrcPhotosFolder">
                                 <div class="tool-icon text-2xl">
@@ -85,6 +74,117 @@
                                     <div class="tool-description">
                                         {{ t('view.tools.pictures.pictures.steam_screenshots_description') }}
                                     </div>
+                                </div>
+                            </div>
+                        </Card>
+                        <Card class="tool-card p-0 gap-0">
+                            <div class="tool-content" @click="openVrcxAppDataFolder">
+                                <div class="tool-icon text-2xl">
+                                    <Folder />
+                                </div>
+                                <div class="tool-info">
+                                    <div class="tool-name">{{ t('view.tools.shortcuts.vrcx_data') }}</div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.shortcuts.vrcx_data_description') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+                        <Card class="tool-card p-0 gap-0">
+                            <div class="tool-content" @click="openVrcAppDataFolder">
+                                <div class="tool-icon text-2xl">
+                                    <Folder />
+                                </div>
+                                <div class="tool-info">
+                                    <div class="tool-name">{{ t('view.tools.shortcuts.vrchat_data') }}</div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.shortcuts.vrchat_data_description') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+                        <Card class="tool-card p-0 gap-0">
+                            <div class="tool-content" @click="openCrashVrcCrashDumps">
+                                <div class="tool-icon text-2xl">
+                                    <Folder />
+                                </div>
+                                <div class="tool-info">
+                                    <div class="tool-name">{{ t('view.tools.shortcuts.crash_dumps') }}</div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.shortcuts.crash_dumps_description') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+                    </div>
+                </div>
+
+                <div class="tool-category">
+                    <div class="category-header" @click="toggleCategory('system')">
+                        <ChevronDown
+                            class="rotation-transition"
+                            :class="{ 'is-rotated': categoryCollapsed['system'] }" />
+                        <span class="category-title">{{ t('view.tools.system_tools.header') }}</span>
+                    </div>
+                    <div class="tools-grid" v-show="!categoryCollapsed['system']">
+                        <Card class="tool-card p-0 gap-0">
+                            <div class="tool-content" @click="showVRChatConfig">
+                                <div class="tool-icon text-2xl">
+                                    <Settings />
+                                </div>
+                                <div class="tool-info">
+                                    <div class="tool-name">{{ t('view.tools.system_tools.vrchat_config') }}</div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.system_tools.vrchat_config_description') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+                        <Card class="tool-card p-0 gap-0">
+                            <div class="tool-content" @click="showLaunchOptions">
+                                <div class="tool-icon text-2xl">
+                                    <Settings />
+                                </div>
+                                <div class="tool-info">
+                                    <div class="tool-name">{{ t('view.tools.system_tools.launch_options') }}</div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.system_tools.launch_options_description') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+                        <Card class="tool-card p-0 gap-0">
+                            <div class="tool-content" @click="showRegistryBackupDialog">
+                                <div class="tool-icon text-2xl">
+                                    <Package />
+                                </div>
+                                <div class="tool-info">
+                                    <div class="tool-name">{{ t('view.tools.system_tools.registry_backup') }}</div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.system_tools.registry_backup_description') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+                    </div>
+                </div>
+
+                <div class="tool-category">
+                    <div class="category-header" @click="toggleCategory('group')">
+                        <ChevronDown
+                            class="rotation-transition"
+                            :class="{ 'is-rotated': categoryCollapsed['group'] }" />
+                        <span class="category-title">{{ t('view.tools.group.header') }}</span>
+                    </div>
+                    <div class="tools-grid" v-show="!categoryCollapsed['group']">
+                        <Card class="tool-card p-0 gap-0">
+                            <div class="tool-content" @click="showGroupCalendarDialog">
+                                <div class="tool-icon text-2xl">
+                                    <CalendarDays />
+                                </div>
+                                <div class="tool-info">
+                                    <div class="tool-name">{{ t('view.tools.group.calendar') }}</div>
+                                    <div class="tool-description">{{ t('view.tools.group.calendar_description') }}</div>
                                 </div>
                             </div>
                         </Card>
@@ -205,9 +305,12 @@
         CalendarDays,
         Camera,
         ChevronDown,
+        Folder,
         FolderOpen,
         Images,
         MessageSquare,
+        Package,
+        Settings,
         SquarePen,
         UserCheck
     } from 'lucide-vue-next';
@@ -219,6 +322,9 @@
     import { useI18n } from 'vue-i18n';
 
     import { useFriendStore, useGalleryStore } from '../../stores';
+    import { useAdvancedSettingsStore } from '../../stores/settings/advanced';
+    import { useLaunchStore } from '../../stores/launch';
+    import { useVrcxStore } from '../../stores/vrcx';
 
     const GroupCalendarDialog = defineAsyncComponent(() => import('./dialogs/GroupCalendarDialog.vue'));
     const NoteExportDialog = defineAsyncComponent(() => import('./dialogs/NoteExportDialog.vue'));
@@ -233,10 +339,15 @@
 
     const { showGalleryPage } = useGalleryStore();
     const { friends } = storeToRefs(useFriendStore());
+    const { showVRChatConfig } = useAdvancedSettingsStore();
+    const { showLaunchOptions } = useLaunchStore();
+    const { showRegistryBackupDialog } = useVrcxStore();
 
     const categoryCollapsed = ref({
         group: false,
         image: false,
+        shortcuts: false,
+        system: false,
         user: false,
         other: false
     });
@@ -293,6 +404,36 @@
 
     function openVrcScreenshotsFolder() {
         AppApi.OpenVrcScreenshotsFolder().then((result) => {
+            if (result) {
+                toast.success('Folder opened');
+            } else {
+                toast.error(t('message.file.folder_missing'));
+            }
+        });
+    }
+
+    function openVrcxAppDataFolder() {
+        AppApi.OpenVrcxAppDataFolder().then((result) => {
+            if (result) {
+                toast.success('Folder opened');
+            } else {
+                toast.error(t('message.file.folder_missing'));
+            }
+        });
+    }
+
+    function openVrcAppDataFolder() {
+        AppApi.OpenVrcAppDataFolder().then((result) => {
+            if (result) {
+                toast.success('Folder opened');
+            } else {
+                toast.error(t('message.file.folder_missing'));
+            }
+        });
+    }
+
+    function openCrashVrcCrashDumps() {
+        AppApi.OpenCrashVrcCrashDumps().then((result) => {
             if (result) {
                 toast.success('Folder opened');
             } else {

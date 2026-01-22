@@ -442,6 +442,24 @@
                 "inventory": "VRC+ Images & Inventory Management",
                 "inventory_description": "Manage VRC+ Images & Inventory"
             },
+            "shortcuts": {
+                "header": "Shortcuts",
+                "vrcx_data": "VRCX Data",
+                "vrcx_data_description": "Open the VRCX data folder",
+                "vrchat_data": "VRChat Data",
+                "vrchat_data_description": "Open the VRChat data folder",
+                "crash_dumps": "Crash Dumps",
+                "crash_dumps_description": "Open the VRChat crash dumps folder"
+            },
+            "system_tools": {
+                "header": "System Tools",
+                "vrchat_config": "VRChat Config",
+                "vrchat_config_description": "Open VRChat config.json settings",
+                "launch_options": "Launch Options",
+                "launch_options_description": "Edit VRChat launch options",
+                "registry_backup": "VRChat Registry Backup",
+                "registry_backup_description": "Create or restore a VRChat registry backup"
+            },
             "other": {
                 "header": "Other",
                 "edit_invite_message": "Edit Invite Messages",

@@ -20,25 +20,6 @@
             </div>
         </div>
         <div class="options-container">
-            <span class="header">{{ t('view.settings.advanced.advanced.common_folders') }}</span>
-            <div class="options-container-item" style="margin-top: 15px">
-                <ButtonGroup>
-                    <Button variant="outline" size="sm" @click="openVrcxAppDataFolder()">
-                        <Folder />
-                        VRCX Data
-                    </Button>
-                    <Button variant="outline" size="sm" @click="openVrcAppDataFolder()">
-                        <Folder />
-                        VRChat Data
-                    </Button>
-                    <Button variant="outline" size="sm" @click="openCrashVrcCrashDumps()">
-                        <Folder />
-                        Crash Dumps
-                    </Button>
-                </ButtonGroup>
-            </div>
-        </div>
-        <div class="options-container">
             <span class="sub-header">{{ t('view.settings.advanced.advanced.primary_password.header') }}</span>
             <simple-switch
                 :label="t('view.settings.advanced.advanced.primary_password.description')"
@@ -384,12 +365,11 @@
 </template>
 
 <script setup>
-    import { Folder, Languages, Package, RefreshCcw, Settings, Trash2 } from 'lucide-vue-next';
+    import { Languages, Package, RefreshCcw, Settings, Trash2 } from 'lucide-vue-next';
     import { computed, reactive, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { storeToRefs } from 'pinia';
-    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import VueJsonPretty from 'vue-json-pretty';
@@ -501,36 +481,6 @@
     });
 
     const isLinux = computed(() => LINUX);
-
-    function openVrcxAppDataFolder() {
-        AppApi.OpenVrcxAppDataFolder().then((result) => {
-            if (result) {
-                toast.success('Folder opened');
-            } else {
-                toast.error(t('message.file.folder_missing'));
-            }
-        });
-    }
-
-    function openVrcAppDataFolder() {
-        AppApi.OpenVrcAppDataFolder().then((result) => {
-            if (result) {
-                toast.success('Folder opened');
-            } else {
-                toast.error(t('message.file.folder_missing'));
-            }
-        });
-    }
-
-    function openCrashVrcCrashDumps() {
-        AppApi.OpenCrashVrcCrashDumps().then((result) => {
-            if (result) {
-                toast.success('Folder opened');
-            } else {
-                toast.error(t('message.file.folder_missing'));
-            }
-        });
-    }
 
     function openShortcutFolder() {
         AppApi.OpenShortcutFolder();
