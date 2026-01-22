@@ -1,41 +1,33 @@
 <template>
-    <Dialog
-        :open="previousInstancesInfoDialogVisible"
-        @update:open="
-            (open) => {
-                if (!open) closeDialog();
-            }
-        ">
-        <DialogContent class="sm:max-w-200">
-            <DialogHeader>
-                <DialogTitle>{{ t('dialog.previous_instances.info') }}</DialogTitle>
-            </DialogHeader>
+    <div>
+        <DialogHeader>
+            <DialogTitle>{{ t('dialog.previous_instances.info') }}</DialogTitle>
+        </DialogHeader>
 
-            <DataTableLayout
-                class="min-w-0 w-full"
-                :table="table"
-                :loading="loading"
-                :table-style="tableStyle"
-                :page-sizes="pageSizes"
-                :total-items="totalItems"
-                :on-page-size-change="handlePageSizeChange">
-                <template #toolbar>
-                    <div style="display: flex; align-items: center; justify-content: space-between">
-                        <Location :location="location.tag" style="font-size: 14px" />
-                        <InputGroupField
-                            v-model="search"
-                            :placeholder="t('dialog.previous_instances.search_placeholder')"
-                            style="width: 150px"
-                            clearable />
-                    </div>
-                </template>
-            </DataTableLayout>
-        </DialogContent>
-    </Dialog>
+        <DataTableLayout
+            class="min-w-0 w-full"
+            :table="table"
+            :loading="loading"
+            :table-style="tableStyle"
+            :page-sizes="pageSizes"
+            :total-items="totalItems"
+            :on-page-size-change="handlePageSizeChange">
+            <template #toolbar>
+                <div style="display: flex; align-items: center; justify-content: space-between">
+                    <Location :location="location.tag" style="font-size: 14px" />
+                    <InputGroupField
+                        v-model="search"
+                        :placeholder="t('dialog.previous_instances.search_placeholder')"
+                        style="width: 150px"
+                        clearable />
+                </div>
+            </template>
+        </DataTableLayout>
+    </div>
 </template>
 
 <script setup>
-    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, nextTick, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -146,7 +138,8 @@
                     refreshPreviousInstancesInfoTable();
                 });
             }
-        }
+        },
+        { immediate: true }
     );
 
     function init() {
@@ -169,7 +162,4 @@
         });
     }
 
-    function closeDialog() {
-        previousInstancesInfoDialogVisible.value = false;
-    }
 </script>

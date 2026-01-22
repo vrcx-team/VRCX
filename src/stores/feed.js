@@ -175,7 +175,7 @@ export const useFeedStore = defineStore('Feed', () => {
         }
         feedTable.value.data.push(feed);
         sweepFeed();
-        UiStore.notifyMenu('feed');
+        // UiStore.notifyMenu('feed');
     }
 
     function sweepFeed() {

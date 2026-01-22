@@ -1,107 +1,107 @@
 <template>
-    <Card class="event-card p-0 gap-0" :class="cardClass">
-        <img :src="bannerUrl" @click="showFullscreenImageDialog(bannerUrl)" class="banner" />
-        <div class="event-content">
-            <div class="event-title">
-                <div v-if="showGroupName" class="event-group-name" @click="onGroupClick">
-                    {{ groupName }}
-                </div>
-                <Popover :open="eventPopoverOpen">
-                    <PopoverTrigger as-child>
-                        <div
-                            class="event-title-content"
-                            @click="onGroupClick"
-                            @mouseenter="openEventPopover"
-                            @mouseleave="scheduleCloseEventPopover">
+    <Popover :open="eventPopoverOpen">
+        <PopoverTrigger as-child>
+            <Card
+                class="event-card p-0 gap-0"
+                :class="cardClass"
+                @mouseenter="openEventPopover"
+                @mouseleave="scheduleCloseEventPopover">
+                <img :src="bannerUrl" @click="showFullscreenImageDialog(bannerUrl)" class="banner" />
+                <div class="event-content">
+                    <div class="event-title">
+                        <div v-if="showGroupName" class="event-group-name" @click="onGroupClick">
+                            {{ groupName }}
+                        </div>
+                        <div class="event-title-content" @click="onGroupClick">
                             {{ event.title }}
                         </div>
-                    </PopoverTrigger>
-                    <PopoverContent
-                        side="right"
-                        align="start"
-                        class="w-125 p-3"
-                        @mouseenter="openEventPopover"
-                        @mouseleave="scheduleCloseEventPopover">
-                        <div class="flex items-baseline justify-between gap-3 text-xs">
-                            <div class="text-[13px] font-semibold">{{ event.title }}</div>
-                            <div class="whitespace-nowrap">
-                                {{ formatTimeRange(event.startsAt, event.endsAt) }}
-                            </div>
+                    </div>
+                    <div class="event-info">
+                        <div :class="timeClass">
+                            {{ formattedTime }}
                         </div>
-                        <div class="mt-2 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
-                            <div class="flex min-w-0 flex-col gap-1">
-                                <Button variant="outline" size="sm" @click="openCalendarEvent(event)">
-                                    <Calendar />
-                                    {{ t('dialog.group_calendar.event_card.export_to_calendar') }}
-                                </Button>
-                            </div>
-                            <div class="flex min-w-0 flex-col gap-1">
-                                <Button variant="outline" size="sm" @click="downloadEventIcs(event)">
-                                    <Download />
-                                    {{ t('dialog.group_calendar.event_card.download_ics') }}
-                                </Button>
-                            </div>
-                            <div class="flex min-w-0 flex-col gap-1">
-                                <div>
-                                    {{ t('dialog.group_calendar.event_card.category') }}
-                                </div>
-                                <div class="font-medium">{{ capitalizeFirst(event.category) }}</div>
-                            </div>
-                            <div class="flex min-w-0 flex-col gap-1">
-                                <div>
-                                    {{ t('dialog.group_calendar.event_card.interested_user') }}
-                                </div>
-                                <div class="font-medium">{{ event.interestedUserCount }}</div>
-                            </div>
-                            <div class="flex min-w-0 flex-col gap-1">
-                                <div>
-                                    {{ t('dialog.group_calendar.event_card.close_time') }}
-                                </div>
-                                <div class="font-medium">
-                                    {{ event.closeInstanceAfterEndMinutes + ' min' }}
-                                </div>
-                            </div>
-                            <div class="flex min-w-0 flex-col gap-1">
-                                <div>
-                                    {{ t('dialog.group_calendar.event_card.created') }}
-                                </div>
-                                <div class="font-medium">
-                                    {{ formatDateFilter(event.createdAt, 'long') }}
-                                </div>
-                            </div>
-                            <div class="col-span-2 flex min-w-0 flex-col gap-1">
-                                <div>
-                                    {{ t('dialog.group_calendar.event_card.description') }}
-                                </div>
-                                <div class="whitespace-pre-wrap break-words font-normal leading-snug">
-                                    {{ event.description }}
-                                </div>
-                            </div>
+                        <div>
+                            {{ capitalizeFirst(event.accessType) }}
                         </div>
-                    </PopoverContent>
-                </Popover>
-            </div>
-            <div class="event-info">
-                <div :class="timeClass">
-                    {{ formattedTime }}
+                    </div>
                 </div>
-                <div>
-                    {{ capitalizeFirst(event.accessType) }}
+                <div class="badges">
+                    <div @click="copyEventLink(event)" class="share-badge">
+                        <Share2 />
+                    </div>
+                    <div v-if="isFollowing" @click="toggleEventFollow(event)" class="following-badge is-following">
+                        <Star />
+                    </div>
+                    <div v-else @click="toggleEventFollow(event)" class="following-badge">
+                        <Star />
+                    </div>
+                </div>
+            </Card>
+        </PopoverTrigger>
+        <PopoverContent
+            side="right"
+            align="start"
+            class="w-125 p-3"
+            @mouseenter="openEventPopover"
+            @mouseleave="scheduleCloseEventPopover">
+            <div class="flex items-baseline justify-between gap-3 text-xs">
+                <div class="text-[13px] font-semibold">{{ event.title }}</div>
+                <div class="whitespace-nowrap">
+                    {{ formatTimeRange(event.startsAt, event.endsAt) }}
                 </div>
             </div>
-        </div>
-        <div class="badges">
-            <div @click="copyEventLink(event)" class="share-badge">
-                <Share2 />
+            <div class="mt-2 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
+                <div class="flex min-w-0 flex-col gap-1">
+                    <Button variant="outline" size="sm" @click="openCalendarEvent(event)">
+                        <Calendar />
+                        {{ t('dialog.group_calendar.event_card.export_to_calendar') }}
+                    </Button>
+                </div>
+                <div class="flex min-w-0 flex-col gap-1">
+                    <Button variant="outline" size="sm" @click="downloadEventIcs(event)">
+                        <Download />
+                        {{ t('dialog.group_calendar.event_card.download_ics') }}
+                    </Button>
+                </div>
+                <div class="flex min-w-0 flex-col gap-1">
+                    <div>
+                        {{ t('dialog.group_calendar.event_card.category') }}
+                    </div>
+                    <div class="font-medium">{{ capitalizeFirst(event.category) }}</div>
+                </div>
+                <div class="flex min-w-0 flex-col gap-1">
+                    <div>
+                        {{ t('dialog.group_calendar.event_card.interested_user') }}
+                    </div>
+                    <div class="font-medium">{{ event.interestedUserCount }}</div>
+                </div>
+                <div class="flex min-w-0 flex-col gap-1">
+                    <div>
+                        {{ t('dialog.group_calendar.event_card.close_time') }}
+                    </div>
+                    <div class="font-medium">
+                        {{ event.closeInstanceAfterEndMinutes + ' min' }}
+                    </div>
+                </div>
+                <div class="flex min-w-0 flex-col gap-1">
+                    <div>
+                        {{ t('dialog.group_calendar.event_card.created') }}
+                    </div>
+                    <div class="font-medium">
+                        {{ formatDateFilter(event.createdAt, 'long') }}
+                    </div>
+                </div>
+                <div class="col-span-2 flex min-w-0 flex-col gap-1">
+                    <div>
+                        {{ t('dialog.group_calendar.event_card.description') }}
+                    </div>
+                    <div class="whitespace-pre-wrap break-words font-normal leading-snug">
+                        {{ event.description }}
+                    </div>
+                </div>
             </div>
-            <div v-if="isFollowing" @click="toggleEventFollow(event)" class="following-badge is-following">
-                <Star />
-            </div>
-            <div v-else @click="toggleEventFollow(event)" class="following-badge">
-                <Star />
-            </div>
-        </div>
-    </Card>
+        </PopoverContent>
+    </Popover>
 </template>
 
 <script setup>

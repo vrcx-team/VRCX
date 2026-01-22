@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 
 import { watchState } from './../service/watchState';
 
-import AuthenticatedLayout from '../views/Layout/AuthenticatedLayout.vue';
+import MainLayout from '../views/Layout/MainLayout.vue';
 import Charts from './../views/Charts/Charts.vue';
 import FavoritesAvatar from './../views/Favorites/FavoritesAvatar.vue';
 import FavoritesFriend from './../views/Favorites/FavoritesFriend.vue';
@@ -31,7 +31,7 @@ const routes = [
     },
     {
         path: '/',
-        component: AuthenticatedLayout,
+        component: MainLayout,
         meta: { requiresAuth: true },
         children: [
             { path: '', redirect: { name: 'feed' } },

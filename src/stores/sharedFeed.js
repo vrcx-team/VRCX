@@ -73,7 +73,11 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         onPlayerJoining.value = newOnPlayerJoining;
 
         sharedFeedData.value = sharedFeedData.value.filter(
-            (ctx) => ctx.type !== 'OnPlayerJoining'
+            (ctx) =>
+                !(
+                    ctx.type === 'OnPlayerJoining' ||
+                    (ctx.type === 'GPS' && ctx.isTraveling)
+                )
         );
         sharedFeedData.value.unshift(...onPlayerJoining.value);
         if (sharedFeedData.value.length > maxEntries) {
@@ -414,6 +418,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         loadSharedFeed,
         sendSharedFeed,
         addEntry,
-        addTag
+        addTag,
+        sharedFeedData
     };
 });

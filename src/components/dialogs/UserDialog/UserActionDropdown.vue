@@ -21,21 +21,20 @@
         <DropdownMenu>
             <DropdownMenuTrigger as-child>
                 <div class="ml-2">
-                    <Button variant="outline" size="icon-lg" class="rounded-full">
+                    <Button :variant="hasRisk ? 'destructive' : 'outline'" size="icon-lg" class="rounded-full">
                         <MoreHorizontal />
                         <span
-                            v-if="dotClass"
-                            class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-background"
+                            class="absolute right-6 top-15.5 h-2.5 w-2.5 rounded-full ring-2 ring-background"
                             :class="dotClass" />
                     </Button>
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-                <DropdownMenuItem @click="onCommand('RefreshCw')">
+                <DropdownMenuItem @click="onCommand('Refresh')">
                     <RefreshCw class="size-4" />
                     {{ t('dialog.user.actions.refresh') }}
                 </DropdownMenuItem>
-                <DropdownMenuItem @click="onCommand('Share2')">
+                <DropdownMenuItem @click="onCommand('Share')">
                     <Share2 class="size-4" />
                     {{ t('dialog.user.actions.share') }}
                 </DropdownMenuItem>
@@ -49,19 +48,19 @@
                         {{ t('dialog.user.actions.show_fallback_avatar') }}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem @click="onCommand('Pencil Social Status')">
+                    <DropdownMenuItem @click="onCommand('Edit Social Status')">
                         <Pencil class="size-4" />
                         {{ t('dialog.user.actions.edit_status') }}
                     </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Pencil Language')">
+                    <DropdownMenuItem @click="onCommand('Edit Language')">
                         <Pencil class="size-4" />
                         {{ t('dialog.user.actions.edit_language') }}
                     </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Pencil Bio')">
+                    <DropdownMenuItem @click="onCommand('Edit Bio')">
                         <Pencil class="size-4" />
                         {{ t('dialog.user.actions.edit_bio') }}
                     </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Pencil Pronouns')">
+                    <DropdownMenuItem @click="onCommand('Edit Pronouns')">
                         <Pencil class="size-4" />
                         {{ t('dialog.user.actions.edit_pronouns') }}
                     </DropdownMenuItem>
@@ -73,7 +72,7 @@
                             <Mail class="size-4" />
                             {{ t('dialog.user.actions.request_invite') }}
                         </DropdownMenuItem>
-                        <DropdownMenuItem @click="onCommand('Request Invite MessageSquare')">
+                        <DropdownMenuItem @click="onCommand('Request Invite Message')">
                             <Mail class="size-4" />
                             {{ t('dialog.user.actions.request_invite_with_message') }}
                         </DropdownMenuItem>
@@ -86,7 +85,7 @@
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 :disabled="!checkCanInvite(lastLocation.location)"
-                                @click="onCommand('Invite MessageSquare')">
+                                @click="onCommand('Invite Message')">
                                 <MessageSquare class="size-4" />
                                 {{ t('dialog.user.actions.invite_with_message') }}
                             </DropdownMenuItem>
@@ -124,9 +123,9 @@
                         <Settings class="size-4" />
                         {{ t('dialog.user.actions.group_moderation') }}
                     </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Pencil Note Memo')">
+                    <DropdownMenuItem @click="onCommand('Edit Note Memo')">
                         <Pencil class="size-4" />
-                        Pencil Note and Memo
+                        {{ t('dialog.user.actions.edit_note_memo') }}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem @click="onCommand('Show Avatar Author')">
@@ -166,7 +165,7 @@
                     <DropdownMenuItem
                         v-else
                         :disabled="userDialog.ref.$isModerator"
-                        @click="onCommand('Moderation VolumeX')">
+                        @click="onCommand('Moderation Mute')">
                         <VolumeX class="size-4" />
                         {{ t('dialog.user.actions.moderation_mute') }}
                     </DropdownMenuItem>
@@ -233,7 +232,6 @@
         MousePointer,
         Pencil,
         Plus,
-        Power,
         RefreshCw,
         Settings,
         Share2,
@@ -273,12 +271,18 @@
     const { lastLocation } = storeToRefs(useLocationStore());
 
     const hasRequest = computed(() => userDialog.value.incomingRequest || userDialog.value.outgoingRequest);
-    const hasRisk = computed(() => userDialog.value.isBlock || userDialog.value.isMute);
+    const hasRisk = computed(
+        () =>
+            userDialog.value.isBlock ||
+            userDialog.value.isMute ||
+            userDialog.value.isMuteChat ||
+            userDialog.value.isInteractOff ||
+            userDialog.value.isHideAvatar
+    );
 
     const dotClass = computed(() => {
         if (hasRequest.value) return 'bg-emerald-500';
-        if (hasRisk.value) return 'bg-destructive';
-        return null;
+        return 'opacity-0';
     });
 
     function onCommand(command) {

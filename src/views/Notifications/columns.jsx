@@ -5,7 +5,8 @@ import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
-    TooltipTrigger
+    TooltipTrigger,
+    TooltipWrapper
 } from '../../components/ui/tooltip';
 import {
     ArrowUpDown,
@@ -467,27 +468,47 @@ export const createColumns = ({
                         {original.message &&
                         original.message !==
                             `This is a generated invite to ${original.details?.worldName}` ? (
-                            <span class="block w-full min-w-0 truncate">
-                                {original.message}
-                            </span>
+                            <TooltipWrapper
+                                content={original.message}
+                                delayDuration={500}
+                            >
+                                <span class="block w-full min-w-0 truncate">
+                                    {original.message}
+                                </span>
+                            </TooltipWrapper>
                         ) : null}
                         {!original.message &&
                         original.details?.inviteMessage ? (
-                            <span class="block w-full min-w-0 truncate">
-                                {original.details.inviteMessage}
-                            </span>
+                            <TooltipWrapper
+                                content={original.details.inviteMessage}
+                                delayDuration={500}
+                            >
+                                <span class="block w-full min-w-0 truncate">
+                                    {original.details.inviteMessage}
+                                </span>
+                            </TooltipWrapper>
                         ) : null}
                         {!original.message &&
                         original.details?.requestMessage ? (
-                            <span class="block w-full min-w-0 truncate">
-                                {original.details.requestMessage}
-                            </span>
+                            <TooltipWrapper
+                                content={original.details.requestMessage}
+                                delayDuration={500}
+                            >
+                                <span class="block w-full min-w-0 truncate">
+                                    {original.details.requestMessage}
+                                </span>
+                            </TooltipWrapper>
                         ) : null}
                         {!original.message &&
                         original.details?.responseMessage ? (
-                            <span class="block w-full min-w-0 truncate">
-                                {original.details.responseMessage}
-                            </span>
+                            <TooltipWrapper
+                                content={original.details.responseMessage}
+                                delayDuration={500}
+                            >
+                                <span class="block w-full min-w-0 truncate">
+                                    {original.details.responseMessage}
+                                </span>
+                            </TooltipWrapper>
                         ) : null}
                     </div>
                 );
@@ -761,42 +782,41 @@ export const createColumns = ({
                                         </Tooltip>
                                     </TooltipProvider>
                                 ) : null}
-
-                                {showDeleteLog ? (
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <button
-                                                    type="button"
-                                                    class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
-                                                    onClick={() =>
-                                                        shiftHeld.value
-                                                            ? deleteNotificationLog(
-                                                                  original
-                                                              )
-                                                            : deleteNotificationLogPrompt(
-                                                                  original
-                                                              )
-                                                    }
-                                                >
-                                                    {shiftHeld.value ? (
-                                                        <X class="h-4 w-4 text-red-600" />
-                                                    ) : (
-                                                        <Trash2 class="h-4 w-4" />
-                                                    )}
-                                                </button>
-                                            </TooltipTrigger>
-                                            <TooltipContent side="top">
-                                                <span>
-                                                    {t(
-                                                        'view.notification.actions.delete_log'
-                                                    )}
-                                                </span>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                ) : null}
                             </span>
+                        ) : null}
+                        {showDeleteLog ? (
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button
+                                            type="button"
+                                            class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                            onClick={() =>
+                                                shiftHeld.value
+                                                    ? deleteNotificationLog(
+                                                          original
+                                                      )
+                                                    : deleteNotificationLogPrompt(
+                                                          original
+                                                      )
+                                            }
+                                        >
+                                            {shiftHeld.value ? (
+                                                <X class="h-4 w-4 text-red-600" />
+                                            ) : (
+                                                <Trash2 class="h-4 w-4" />
+                                            )}
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top">
+                                        <span>
+                                            {t(
+                                                'view.notification.actions.delete_log'
+                                            )}
+                                        </span>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         ) : null}
                     </div>
                 );

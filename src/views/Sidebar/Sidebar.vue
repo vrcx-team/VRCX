@@ -104,7 +104,7 @@
             <template #groups>
                 <div class="h-full overflow-hidden">
                     <ScrollArea ref="groupsScrollAreaRef" class="h-full">
-                        <GroupsSidebar :group-instances="groupInstances" :group-order="inGameGroupOrder" />
+                        <GroupsSidebar :group-order="inGameGroupOrder" />
                     </ScrollArea>
                     <BackToTop :target="groupsScrollTarget" :bottom="20" :right="20" :teleport="false" />
                 </div>

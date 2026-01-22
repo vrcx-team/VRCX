@@ -243,7 +243,6 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                     return;
                 }
                 pendingVRCXUpdate.value = true;
-                uiStore.notifyMenu('settings');
                 if (updateToastRelease.value !== releaseName) {
                     updateToastRelease.value = releaseName;
                     toast(t('nav_menu.update_available'), {

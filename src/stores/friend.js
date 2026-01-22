@@ -89,7 +89,6 @@ export const useFriendStore = defineStore('Friend', () => {
                     !(filter.value && row.type === 'Unfriend')
             }
         ],
-        pageSize: 20,
         pageSizeLinked: true
     });
 

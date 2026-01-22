@@ -16,20 +16,20 @@ namespace VRCX;
 public class OverlayServer
 {
     public static OverlayServer Instance { get; private set; }
-    
+
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-    
+
     private static readonly Lock SendLock = new();
     private static readonly ConcurrentDictionary<WebSocket, byte> ConnectedWebSockets = new();
     private static CancellationTokenSource _cancellationToken;
-    
+
     private static OverlayVars _overlayVars;
 
     static OverlayServer()
     {
         Instance = new OverlayServer();
     }
-    
+
     public async Task Init()
     {
         if (_cancellationToken != null && _cancellationToken.IsCancellationRequested)
@@ -66,7 +66,7 @@ public class OverlayServer
     {
         if (_cancellationToken == null || _cancellationToken.IsCancellationRequested)
             return;
-        
+
         foreach (var webSocket in ConnectedWebSockets.Keys)
         {
             if (webSocket == null || webSocket.State != WebSocketState.Open)
@@ -90,7 +90,7 @@ public class OverlayServer
     {
         WebSocketContext webSocketContext;
         try
-        {                
+        {
             webSocketContext = await listenerContext.AcceptWebSocketAsync(null);
         }
         catch (Exception e)
@@ -100,7 +100,7 @@ public class OverlayServer
             logger.Error(e);
             return;
         }
-                            
+
         var webSocket = webSocketContext.WebSocket;
         try
         {
@@ -117,7 +117,7 @@ public class OverlayServer
                         var message = JsonSerializer.Deserialize<OverlayMessage>(text);
                         HandleMessage(message);
                         continue;
-                    
+
                     case WebSocketMessageType.Close:
                         await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
                         break;
@@ -157,7 +157,7 @@ public class OverlayServer
                     MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
                     MainForm.Instance.Browser.ExecuteScriptAsync("window?.$pinia?.vr.vrInit();");
                 break;
-            
+
             case OverlayMessageType.IsHmdAfk:
                 var isHmdAfk = string.Equals(message.Data, "true", StringComparison.OrdinalIgnoreCase);
                 if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
@@ -170,7 +170,7 @@ public class OverlayServer
                 throw new ArgumentOutOfRangeException();
         }
     }
-    
+
     public void SendMessage(OverlayMessage message)
     {
         lock (SendLock)
@@ -191,12 +191,12 @@ public class OverlayServer
     public void UpdateVars(OverlayVars overlayVars)
     {
         _overlayVars = overlayVars;
-        if (!IsConnected() && overlayVars.Active)
+        if (!IsConnected() && (overlayVars.Active || Program.LaunchDebug))
         {
             OverlayManager.StartOverlay();
             return;
         }
-        
+
         var helloMessage = new OverlayMessage
         {
             Type = OverlayMessageType.UpdateVars,

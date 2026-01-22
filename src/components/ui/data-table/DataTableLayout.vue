@@ -5,7 +5,7 @@
         </div>
 
         <div class="rounded-md border">
-            <div class="max-w-full overflow-auto" :style="tableStyle">
+            <div ref="tableScrollRef" class="max-w-full overflow-auto relative" :style="tableStyle">
                 <Table :class="tableClassValue" :style="tableElementStyle">
                     <colgroup>
                         <col v-for="col in table.getVisibleLeafColumns()" :key="col.id" :style="getColStyle(col)" />
@@ -67,6 +67,9 @@
                         </TableRow>
                     </TableBody>
                 </Table>
+                <div v-if="loading" class="absolute inset-0 z-20 flex items-center justify-center bg-background/60">
+                    <Spinner class="text-2xl" />
+                </div>
             </div>
         </div>
 
@@ -113,8 +116,11 @@
 </template>
 
 <script setup>
+    import { computed, nextTick, ref, watch } from 'vue';
     import { FlexRender } from '@tanstack/vue-table';
-    import { computed } from 'vue';
+    import { Spinner } from '@/components/ui/spinner';
+    import { storeToRefs } from 'pinia';
+    import { useAppearanceSettingsStore } from '@/stores/';
     import { useI18n } from 'vue-i18n';
 
     import {
@@ -127,8 +133,6 @@
     } from '../pagination';
     import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../table';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../select';
-    import { useAppearanceSettingsStore } from '@/stores/';
-    import { storeToRefs } from 'pinia';
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { isDataTableStriped } = storeToRefs(appearanceSettingsStore);
@@ -181,6 +185,7 @@
     });
 
     const { t } = useI18n();
+    const tableScrollRef = ref(null);
 
     const expandedRenderer = computed(() => {
         const columns = props.table.getAllColumns?.() ?? [];
@@ -312,6 +317,13 @@
             if (props.onPageChange) {
                 props.onPageChange(page);
             }
+        }
+    });
+
+    watch([currentPage, pageSizeProxy], async () => {
+        await nextTick();
+        if (tableScrollRef.value) {
+            tableScrollRef.value.scrollTop = 0;
         }
     });
 

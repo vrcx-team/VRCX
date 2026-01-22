@@ -36,9 +36,15 @@
         <TooltipTrigger :as-child="triggerAsChild" v-bind="attrs">
             <slot />
         </TooltipTrigger>
-        <TooltipContent v-if="hasContent" :side="side" :align="align" :side-offset="sideOffset" :class="contentClass">
+        <TooltipContent
+            v-if="hasContent"
+            :side="side"
+            :align="align"
+            :side-offset="sideOffset"
+            :class="contentClass"
+            class="max-w-screen">
             <slot name="content">
-                <span v-if="content !== undefined">{{ content }}</span>
+                <span v-if="content !== undefined" class="whitespace-pre-wrap">{{ content }}</span>
             </slot>
         </TooltipContent>
     </Tooltip>

@@ -17,8 +17,10 @@ public static class OverlayClient
     private static readonly Uri WebsocketUri = new("ws://127.0.0.1:34582");
     private static WebsocketClient? _websocketClient;
 
+    public static bool Connected =>
+        _websocketClient != null && _websocketClient.IsRunning;
     public static bool ConnectedAndActive =>
-        _websocketClient != null && _websocketClient.IsRunning &&
+        Connected &&
         OverlayProgram.VRCXVRInstance.IsActive();
 
     public static async Task Init()

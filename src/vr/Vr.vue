@@ -47,7 +47,6 @@
                                         <span class="name" v-text="feed.displayName"></span>
                                         <Check class="h-5 w-5" />
                                         <template v-if="feed.worldName">
-                                            <Loader2 v-if="feed.isTraveling" class="is-loading ml-5 h-4 w-4" />
                                             <VrLocation
                                                 :location="feed.location"
                                                 :hint="feed.worldName"
@@ -641,9 +640,6 @@
                                         <span style="margin-left: 5px; margin-right: 5px">has logged in</span>
                                         <template v-if="feed.worldName">
                                             to
-                                            <Loader2
-                                                v-if="feed.isTraveling"
-                                                class="is-loading ml-5 inline-block h-4 w-4" />
                                             <VrLocation
                                                 :location="feed.location"
                                                 :hint="feed.worldName"

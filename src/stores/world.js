@@ -14,9 +14,12 @@ import {
 } from '../shared/utils';
 import { instanceRequest, miscRequest, worldRequest } from '../api';
 import { database } from '../service/database';
+import { useAvatarStore } from './avatar';
 import { useFavoriteStore } from './favorite';
+import { useGroupStore } from './group';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
+import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { watchState } from '../service/watchState';
 
@@ -25,11 +28,15 @@ export const useWorldStore = defineStore('World', () => {
     const favoriteStore = useFavoriteStore();
     const instanceStore = useInstanceStore();
     const userStore = useUserStore();
+    const avatarStore = useAvatarStore();
+    const groupStore = useGroupStore();
+    const uiStore = useUiStore();
     const { t } = useI18n();
 
     const worldDialog = reactive({
         visible: false,
         loading: false,
+        lastActiveTab: 'Instances',
         id: '',
         memo: '',
         $location: {},
@@ -39,13 +46,13 @@ export const useWorldStore = defineStore('World', () => {
         focusViewDisabled: false,
         rooms: [],
         treeData: {},
-        bundleSizes: [],
+        bundleSizes: {},
         lastUpdated: '',
         inCache: false,
         cacheSize: '',
         cacheLocked: false,
         cachePath: '',
-        fileAnalysis: [],
+        fileAnalysis: {},
         lastVisit: '',
         visitCount: 0,
         timeSpent: 0,
@@ -71,25 +78,38 @@ export const useWorldStore = defineStore('World', () => {
      * @param {string} tag
      * @param {string} shortName
      */
-    function showWorldDialog(tag, shortName = null) {
+    function showWorldDialog(tag, shortName = null, options = {}) {
         const D = worldDialog;
         const L = parseLocation(tag);
         if (L.worldId === '') {
             return;
         }
+        if (
+            !worldDialog.visible &&
+            !userStore.userDialog.visible &&
+            !avatarStore.avatarDialog.visible &&
+            !groupStore.groupDialog.visible
+        ) {
+            uiStore.clearDialogCrumbs();
+        }
+        if (!options.skipBreadcrumb) {
+            uiStore.pushDialogCrumb('world', L.worldId);
+        }
+        userStore.userDialog.visible = false;
+        avatarStore.avatarDialog.visible = false;
+        groupStore.groupDialog.visible = false;
         L.shortName = shortName;
         D.id = L.worldId;
         D.$location = L;
         D.treeData = {};
-        D.bundleSizes = [];
+        D.bundleSizes = {};
         D.lastUpdated = '';
-        D.visible = true;
         D.loading = true;
         D.inCache = false;
         D.cacheSize = '';
         D.cacheLocked = false;
         D.cachePath = '';
-        D.fileAnalysis = [];
+        D.fileAnalysis = {};
         D.rooms = [];
         D.lastVisit = '';
         D.visitCount = 0;
@@ -139,8 +159,13 @@ export const useWorldStore = defineStore('World', () => {
             })
             .then((args) => {
                 if (D.id === args.ref.id) {
-                    D.loading = false;
                     D.ref = args.ref;
+                    uiStore.setDialogCrumbLabel(
+                        'world',
+                        D.id,
+                        D.ref?.name || D.id
+                    );
+                    D.visible = true;
                     D.isFavorite = favoriteStore.getCachedFavoritesByObjectId(
                         D.id
                     );
@@ -178,21 +203,17 @@ export const useWorldStore = defineStore('World', () => {
                         });
 
                     if (args.cache) {
-                        worldRequest
-                            .getWorld(args.params)
-                            .catch((err) => {
-                                throw err;
-                            })
-                            .then((args1) => {
-                                if (D.id === args1.ref.id) {
-                                    D.ref = args1.ref;
-                                    updateVRChatWorldCache();
-                                }
-                                return args1;
-                            });
+                        worldRequest.getWorld(args.params).then((args1) => {
+                            if (D.id === args1.ref.id) {
+                                D.loading = false;
+                                D.ref = args1.ref;
+                                updateVRChatWorldCache();
+                            }
+                            return args1;
+                        });
                     }
                 }
-                return args;
+                D.visible = true;
             });
     }
 
@@ -314,7 +335,7 @@ export const useWorldStore = defineStore('World', () => {
                     });
                 }
             }
-            if (worldDialog.bundleSizes.length === 0) {
+            if (Object.keys(worldDialog.bundleSizes).length === 0) {
                 getBundleDateSize(ref).then((bundleSizes) => {
                     worldDialog.bundleSizes = bundleSizes;
                 });

@@ -1,36 +1,34 @@
 <template>
-    <Dialog v-model:open="isVisible">
-        <DialogContent class="sm:max-w-250">
-            <DialogHeader>
-                <DialogTitle>{{ t('dialog.previous_instances.header') }}</DialogTitle>
-            </DialogHeader>
+    <div>
+        <DialogHeader>
+            <DialogTitle>{{ t('dialog.previous_instances.header') }}</DialogTitle>
+        </DialogHeader>
 
-            <DataTableLayout
-                class="min-w-0 w-full"
-                :table="table"
-                :loading="loading"
-                :table-style="tableStyle"
-                :page-sizes="pageSizes"
-                :total-items="totalItems"
-                :on-page-size-change="handlePageSizeChange">
-                <template #toolbar>
-                    <div style="display: flex; align-items: center; justify-content: space-between">
-                        <span style="font-size: 14px" v-text="previousInstancesUserDialog.userRef.displayName"></span>
-                        <InputGroupField
-                            v-model="search"
-                            :placeholder="t('dialog.previous_instances.search_placeholder')"
-                            clearable
-                            class="w-1/3"
-                            style="display: block" />
-                    </div>
-                </template>
-            </DataTableLayout>
-        </DialogContent>
-    </Dialog>
+        <DataTableLayout
+            class="min-w-0 w-full"
+            :table="table"
+            :loading="loading"
+            :table-style="tableStyle"
+            :page-sizes="pageSizes"
+            :total-items="totalItems"
+            :on-page-size-change="handlePageSizeChange">
+            <template #toolbar>
+                <div style="display: flex; align-items: center; justify-content: space-between">
+                    <span style="font-size: 14px" v-text="previousInstancesUserDialog.userRef.displayName"></span>
+                    <InputGroupField
+                        v-model="search"
+                        :placeholder="t('dialog.previous_instances.search_placeholder')"
+                        clearable
+                        class="w-1/3"
+                        style="display: block" />
+                </div>
+            </template>
+        </DataTableLayout>
+    </div>
 </template>
 
 <script setup>
-    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
     import { InputGroupField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
@@ -56,25 +54,6 @@
     import { database } from '../../../service/database';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
-    const props = defineProps({
-        previousInstancesUserDialog: {
-            type: Object,
-            default: () => ({
-                visible: false,
-                userRef: {},
-                loading: false,
-                forceUpdate: 0,
-                previousInstances: [],
-                previousInstancesTable: {
-                    data: [],
-                    filters: [{ prop: 'displayName', value: '' }]
-                }
-            })
-        }
-    });
-
-    const emit = defineEmits(['update:previous-instances-user-dialog']);
-
     const modalStore = useModalStore();
     const loading = ref(false);
     const rawRows = ref([]);
@@ -84,21 +63,13 @@
     const tableStyle = { maxHeight: '400px' };
 
     const { showLaunchDialog } = useLaunchStore();
-    const { showPreviousInstancesInfoDialog } = useInstanceStore();
+    const instanceStore = useInstanceStore();
+    const { showPreviousInstancesInfoDialog } = instanceStore;
+    const { previousInstancesUserDialog } = storeToRefs(instanceStore);
     const { shiftHeld } = storeToRefs(useUiStore());
     const { stringComparer } = storeToRefs(useSearchStore());
     const vrcxStore = useVrcxStore();
     const { t } = useI18n();
-
-    const isVisible = computed({
-        get: () => props.previousInstancesUserDialog.visible,
-        set: (value) => {
-            emit('update:previous-instances-user-dialog', {
-                ...props.previousInstancesUserDialog,
-                visible: value
-            });
-        }
-    });
 
     const displayRows = computed(() => {
         const q = String(search.value ?? '')
@@ -160,7 +131,7 @@
 
     const refreshPreviousInstancesUserTable = async () => {
         loading.value = true;
-        const data = await database.getPreviousInstancesByUserId(props.previousInstancesUserDialog.userRef);
+        const data = await database.getPreviousInstancesByUserId(previousInstancesUserDialog.value.userRef);
         const array = [];
         for (const item of data.values()) {
             item.$location = parseLocation(item.location);
@@ -173,9 +144,19 @@
     };
 
     watch(
-        () => props.previousInstancesUserDialog.openFlg,
+        () => previousInstancesUserDialog.value.visible,
+        (visible) => {
+            if (visible) {
+                refreshPreviousInstancesUserTable();
+            }
+        },
+        { immediate: true }
+    );
+
+    watch(
+        () => previousInstancesUserDialog.value.openFlg,
         () => {
-            if (props.previousInstancesUserDialog.visible) {
+            if (previousInstancesUserDialog.value.visible) {
                 refreshPreviousInstancesUserTable();
             }
         }
@@ -183,8 +164,8 @@
 
     function deleteGameLogUserInstance(row) {
         database.deleteGameLogInstance({
-            id: props.previousInstancesUserDialog.userRef.id,
-            displayName: props.previousInstancesUserDialog.userRef.displayName,
+            id: previousInstancesUserDialog.value.userRef.id,
+            displayName: previousInstancesUserDialog.value.userRef.displayName,
             location: row.location,
             events: row.events
         });

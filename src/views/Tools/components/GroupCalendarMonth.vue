@@ -139,14 +139,10 @@
                                             {{ dayLabel(weekDate) }}
                                             <div
                                                 v-if="eventCountFor(weekDate) > 0"
-                                                class="calendar-event-badge text-zinc-900"
+                                                class="calendar-event-badge bg-foreground text-accent"
                                                 :class="hasFollowingFor(weekDate) ? 'has-following' : 'no-following'">
                                                 {{ eventCountFor(weekDate) }}
                                             </div>
-                                            <!-- <div
-                                                v-if="eventCountFor(weekDate) > 0"
-                                                class="calendar-event-dot"
-                                                aria-hidden="true" /> -->
                                         </div>
                                     </div>
                                 </CalendarCellTrigger>
@@ -192,16 +188,15 @@
         top: -4px;
         right: -4px;
         min-width: 14px;
-        height: 14px;
+        height: 16px;
         border-radius: 9px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 10px;
+        font-size: 12px;
         z-index: 10;
         padding: 0 5px;
         line-height: 14px;
-        background-color: var(--color-accent);
     }
 
     .calendar-event-dot {

@@ -5,12 +5,13 @@ import { useAppearanceSettingsStore } from '../stores';
 
 import configRepository from '../service/config';
 
-export function useAuthenticatedLayoutResizable() {
+export function useMainLayoutResizable() {
     const asideMaxPx = 500;
 
     const appearanceStore = useAppearanceSettingsStore();
     const { setAsideWidth } = appearanceStore;
-    const { asideWidth, isSideBarTabShow, isNavCollapsed } = storeToRefs(appearanceStore);
+    const { asideWidth, isSideBarTabShow, isNavCollapsed } =
+        storeToRefs(appearanceStore);
 
     const fallbackWidth =
         typeof window !== 'undefined' && window.innerWidth
@@ -63,7 +64,9 @@ export function useAuthenticatedLayoutResizable() {
     const percentToPx = (percent, groupWidth) => (percent / 100) * groupWidth;
 
     const isAsideCollapsed = (layout) =>
-        Array.isArray(layout) && layout.length >= 2 && layout[layout.length - 1] <= 1;
+        Array.isArray(layout) &&
+        layout.length >= 2 &&
+        layout[layout.length - 1] <= 1;
 
     const asideDefaultSize = computed(() =>
         pxToPercent(asideWidth.value, undefined, 0)
@@ -170,6 +173,7 @@ export function useAuthenticatedLayoutResizable() {
         asidePanelRef,
         asideDefaultSize,
         asideMaxSize,
+        asideMaxPx,
         mainDefaultSize,
         handleLayout,
         setIsDragging,

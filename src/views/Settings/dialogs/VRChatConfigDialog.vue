@@ -60,10 +60,11 @@
                             style="flex: 1; margin-top: 5px">
                             <template #actions>
                                 <Button
-                                    size="sm"
+                                    size="icon-sm"
                                     variant="outline"
                                     v-if="item.folderBrowser"
                                     @click="openConfigFolderBrowser(value)">
+                                    <FolderOpen />
                                 </Button>
                             </template>
                         </InputGroupAction>
@@ -151,10 +152,10 @@
                 </label>
             </div>
             <DialogFooter>
-                <div style="display: flex; align-items: center; justify-content: space-between">
+                <div style="display: flex; align-items: center; justify-content: space-between" class="w-full">
                     <div>
                         <Button
-                            variant="ghost"
+                            variant="outline"
                             @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')"
                             >{{ t('dialog.config_json.vrchat_docs') }}</Button
                         >
@@ -177,10 +178,10 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
+    import { FolderOpen, RefreshCw } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupAction } from '@/components/ui/input-group';
-    import { RefreshCw } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -329,7 +330,7 @@
     function showDeleteAllVRChatCacheConfirm() {
         modalStore
             .confirm({
-                description: 'Continue? Trash2 all VRChat cache',
+                description: 'Continue? all VRChat cache',
                 title: 'Confirm'
             })
             .then(({ ok }) => {

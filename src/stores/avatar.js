@@ -18,9 +18,12 @@ import { database } from '../service/database';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useFavoriteStore } from './favorite';
+import { useGroupStore } from './group';
 import { useModalStore } from './modal';
+import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
+import { useWorldStore } from './world';
 import { watchState } from '../service/watchState';
 
 import webApiService from '../service/webapi';
@@ -31,7 +34,10 @@ export const useAvatarStore = defineStore('Avatar', () => {
     const vrcxUpdaterStore = useVRCXUpdaterStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
     const userStore = useUserStore();
+    const worldStore = useWorldStore();
+    const groupStore = useGroupStore();
     const modalStore = useModalStore();
+    const uiStore = useUiStore();
     const { t } = useI18n();
 
     let cachedAvatarModerations = new Map();
@@ -41,6 +47,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     const avatarDialog = ref({
         visible: false,
         loading: false,
+        lastActiveTab: 'Info',
         id: '',
         memo: '',
         ref: {},
@@ -52,7 +59,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         isPC: false,
         isQuest: false,
         isIos: false,
-        bundleSizes: [],
+        bundleSizes: {},
         platformInfo: {},
         galleryImages: [],
         galleryLoading: false,
@@ -61,7 +68,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         cacheSize: '',
         cacheLocked: false,
         cachePath: '',
-        fileAnalysis: []
+        fileAnalysis: {}
     });
     const avatarHistory = ref([]);
 
@@ -172,16 +179,30 @@ export const useAvatarStore = defineStore('Avatar', () => {
      * @param {string} avatarId
      * @returns
      */
-    function showAvatarDialog(avatarId) {
+    function showAvatarDialog(avatarId, options = {}) {
         const D = avatarDialog.value;
-        D.visible = true;
+        if (
+            !avatarDialog.value.visible &&
+            !userStore.userDialog.visible &&
+            !worldStore.worldDialog.visible &&
+            !groupStore.groupDialog.visible
+        ) {
+            uiStore.clearDialogCrumbs();
+        }
+        if (!options.skipBreadcrumb) {
+            uiStore.pushDialogCrumb('avatar', avatarId);
+        }
+        userStore.userDialog.visible = false;
+        worldStore.worldDialog.visible = false;
+        groupStore.groupDialog.visible = false;
+
         D.loading = true;
         D.id = avatarId;
         D.inCache = false;
         D.cacheSize = '';
         D.cacheLocked = false;
         D.cachePath = '';
-        D.fileAnalysis = [];
+        D.fileAnalysis = {};
         D.isQuestFallback = false;
         D.isPC = false;
         D.isQuest = false;
@@ -189,7 +210,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         D.hasImposter = false;
         D.imposterVersion = '';
         D.lastUpdated = '';
-        D.bundleSizes = [];
+        D.bundleSizes = {};
         D.platformInfo = {};
         D.galleryImages = [];
         D.galleryLoading = true;
@@ -201,7 +222,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         const ref2 = cachedAvatars.get(avatarId);
         if (typeof ref2 !== 'undefined') {
             D.ref = ref2;
-            updateVRChatAvatarCache();
+            uiStore.setDialogCrumbLabel('avatar', D.id, D.ref?.name || D.id);
             if (
                 ref2.releaseStatus !== 'public' &&
                 ref2.authorId !== userStore.currentUser.id
@@ -215,7 +236,13 @@ export const useAvatarStore = defineStore('Avatar', () => {
             .then((args) => {
                 const ref = applyAvatar(args.json);
                 D.ref = ref;
+                uiStore.setDialogCrumbLabel(
+                    'avatar',
+                    D.id,
+                    D.ref?.name || D.id
+                );
                 getAvatarGallery(avatarId);
+                D.visible = true;
                 updateVRChatAvatarCache();
                 if (/quest/.test(ref.tags)) {
                     D.isQuestFallback = true;
@@ -235,7 +262,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                         break;
                     }
                 }
-                if (D.bundleSizes.length === 0) {
+                if (Object.keys(D.bundleSizes).length === 0) {
                     getBundleDateSize(ref).then((bundleSizes) => {
                         D.bundleSizes = bundleSizes;
                     });

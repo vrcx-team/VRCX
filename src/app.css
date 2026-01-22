@@ -137,8 +137,8 @@ img.friends-list-avatar {
 .x-friend-item > .avatar.busy::after,
 .x-friend-item > .avatar.offline::after {
     position: absolute;
-    right: 1px;
-    bottom: 1px;
+    right: 0.75px;
+    bottom: 0.75px;
     width: 9px;
     height: 9px;
     content: '';
@@ -332,6 +332,22 @@ i.x-status-icon.red {
 
 .x-app > .x-container {
     padding-top: 15px;
+}
+
+/* Bio diff */
+.x-text-removed {
+    text-decoration: line-through;
+    color: #ff0000;
+    background-color: rgba(255, 0, 0, 0.2);
+    padding: 2px 2px;
+    border-radius: 4px;
+}
+
+.x-text-added {
+    color: rgb(35, 188, 35);
+    background-color: rgba(76, 255, 80, 0.2);
+    padding: 2px 2px;
+    border-radius: 4px;
 }
 
 /*FIXME: this is a nasty temporary hack*/

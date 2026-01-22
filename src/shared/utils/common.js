@@ -428,8 +428,8 @@ async function getBundleDateSize(ref) {
     const instanceStore = useInstanceStore();
     const { currentInstanceWorld, currentInstanceLocation } =
         storeToRefs(instanceStore);
-    const bundleSizes = [];
-    const bundleJson = [];
+    const bundleSizes = {};
+    const bundleJson = {};
     for (let i = ref.unityPackages.length - 1; i > -1; i--) {
         const unityPackage = ref.unityPackages[i];
         if (!unityPackage) {

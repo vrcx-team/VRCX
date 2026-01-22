@@ -1,4 +1,4 @@
-import { computed, reactive, ref, shallowReactive, watch } from 'vue';
+import { computed, nextTick, reactive, ref, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -48,6 +48,7 @@ import { useNotificationStore } from './notification';
 import { usePhotonStore } from './photon';
 import { useSearchStore } from './search';
 import { useSharedFeedStore } from './sharedFeed';
+import { useUiStore } from './ui';
 import { useWorldStore } from './world';
 import { watchState } from '../service/watchState';
 
@@ -68,6 +69,7 @@ export const useUserStore = defineStore('User', () => {
     const groupStore = useGroupStore();
     const feedStore = useFeedStore();
     const worldStore = useWorldStore();
+    const uiStore = useUiStore();
     const moderationStore = useModerationStore();
     const photonStore = usePhotonStore();
     const sharedFeedStore = useSharedFeedStore();
@@ -181,6 +183,7 @@ export const useUserStore = defineStore('User', () => {
     const userDialog = ref({
         visible: false,
         loading: false,
+        lastActiveTab: 'Info',
         id: '',
         ref: {},
         friend: {},
@@ -310,6 +313,7 @@ export const useUserStore = defineStore('User', () => {
                 customUserTags.clear();
                 state.notes.clear();
                 subsetOfLanguages.value = [];
+                uiStore.clearDialogCrumbs();
             }
         },
         { flush: 'sync' }
@@ -408,7 +412,7 @@ export const useUserStore = defineStore('User', () => {
      * @param {Map<string, any>} friendMap
      */
     function cleanupUserCache(userCache, friendMap) {
-        const bufferSize = 200;
+        const bufferSize = 300;
 
         const currentFriendCount = friendMap.size;
         const currentTotalSize = userCache.size;
@@ -755,7 +759,7 @@ export const useUserStore = defineStore('User', () => {
      *
      * @param {string} userId
      */
-    function showUserDialog(userId) {
+    function showUserDialog(userId, options = {}) {
         if (
             !userId ||
             typeof userId !== 'string' ||
@@ -763,6 +767,20 @@ export const useUserStore = defineStore('User', () => {
         ) {
             return;
         }
+        if (
+            !userDialog.value.visible &&
+            !worldStore.worldDialog.visible &&
+            !avatarStore.avatarDialog.visible &&
+            !groupStore.groupDialog.visible
+        ) {
+            uiStore.clearDialogCrumbs();
+        }
+        if (!options.skipBreadcrumb) {
+            uiStore.pushDialogCrumb('user', userId);
+        }
+        worldStore.worldDialog.visible = false;
+        avatarStore.avatarDialog.visible = false;
+        groupStore.groupDialog.visible = false;
         const D = userDialog.value;
         D.id = userId;
         D.treeData = {};
@@ -782,7 +800,7 @@ export const useUserStore = defineStore('User', () => {
                 }
             }
         });
-        D.visible = true;
+
         D.loading = true;
         D.avatars = [];
         D.worlds = [];
@@ -846,6 +864,11 @@ export const useUserStore = defineStore('User', () => {
                 if (args.ref.id === D.id) {
                     requestAnimationFrame(() => {
                         D.ref = args.ref;
+                        uiStore.setDialogCrumbLabel(
+                            'user',
+                            D.id,
+                            D.ref?.displayName || D.id
+                        );
                         D.friend = friendStore.friends.get(D.id);
                         D.isFriend = Boolean(D.friend);
                         D.note = String(D.ref.note || '');
@@ -878,9 +901,11 @@ export const useUserStore = defineStore('User', () => {
                         } else if (D.ref.friendRequestStatus === 'outgoing') {
                             D.outgoingRequest = true;
                         }
-                        applyUserDialogLocation(true);
-
-                        userRequest.getUser(args.params);
+                        userRequest.getUser(args.params).then((args1) => {
+                            if (args1.ref.id === D.id) {
+                                D.loading = false;
+                            }
+                        });
                         let inCurrentWorld = false;
                         if (
                             locationStore.lastLocation.playerList.has(D.ref.id)
@@ -995,7 +1020,8 @@ export const useUserStore = defineStore('User', () => {
                             .then((args1) => {
                                 groupStore.handleGroupRepresented(args1);
                             });
-                        D.loading = false;
+                        D.visible = true;
+                        applyUserDialogLocation(true);
                     });
                 }
             });
