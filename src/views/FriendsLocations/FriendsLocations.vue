@@ -14,7 +14,7 @@
                     <div>
                         <Popover>
                             <PopoverTrigger asChild>
-                                <Button class="rounded-full mr-2" size="icon" variant="outline">
+                                <Button class="rounded-full mr-2" size="icon" variant="ghost">
                                     <Settings />
                                 </Button>
                             </PopoverTrigger>
@@ -112,7 +112,9 @@
                     </div>
                 </template>
             </div>
-            <div v-else class="friend-view__empty">{{ t('view.friends_locations.no_matching_friends') }}</div>
+            <div v-else class="friend-view__empty">
+                <DataTableEmpty type="nomatch" />
+            </div>
         </div>
         <div v-else class="friend-view__initial-loading">
             <Loader2 class="friend-view__loading-icon" :size="22" />
@@ -126,6 +128,7 @@
     import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
     import { Loader2, Settings } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
+    import { DataTableEmpty } from '@/components/ui/data-table';
     import { InputGroupSearch } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

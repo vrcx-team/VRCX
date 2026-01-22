@@ -21,7 +21,7 @@ export const THEME_CONFIG = {
 export const THEME_COLORS = [
     {
         key: 'default',
-        label: 'Default',
+        label: 'Zinc',
         swatch: 'oklch(0.205 0 0)',
         file: null
     },

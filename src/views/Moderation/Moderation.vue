@@ -27,7 +27,7 @@
             <TooltipWrapper side="bottom" :content="t('view.moderation.refresh_tooltip')">
                 <Button
                     class="rounded-full"
-                    variant="outline"
+                    variant="ghost"
                     size="icon-sm"
                     :disabled="playerModerationTable.loading"
                     @click="refreshPlayerModerations()">

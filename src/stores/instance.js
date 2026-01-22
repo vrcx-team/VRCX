@@ -138,6 +138,12 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
     });
 
+    const previousInstancesListState = ref({
+        user: { search: '', pageSize: 10, pageIndex: 0 },
+        world: { search: '', pageSize: 10, pageIndex: 0 },
+        group: { search: '', pageSize: 10, pageIndex: 0 }
+    });
+
     const instanceJoinHistory = reactive(new Map());
 
     const currentInstanceUsersData = ref([]);
@@ -1459,6 +1465,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         previousInstancesUserDialog,
         previousInstancesWorldDialog,
         previousInstancesGroupDialog,
+        previousInstancesListState,
         instanceJoinHistory,
         currentInstanceUsersData,
 

@@ -163,7 +163,9 @@
                                     </div>
                                 </div>
                             </template>
-                            <div v-else class="group-empty">No Data</div>
+                            <div v-else class="group-empty">
+                                <DataTableEmpty type="nodata" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -237,7 +239,9 @@
                                             @click="showUserDialog(favorite.id)" />
                                     </div>
                                 </template>
-                                <div v-else class="favorites-empty">No Data</div>
+                                <div v-else class="favorites-empty">
+                                    <DataTableEmpty type="nodata" />
+                                </div>
                             </div>
                         </template>
                         <template v-else-if="!isSearchActive">
@@ -275,7 +279,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div v-else class="favorites-empty">No Data</div>
+                                <div v-else class="favorites-empty">
+                                    <DataTableEmpty type="nomatch" />
+                                </div>
                             </div>
                         </template>
                     </div>
@@ -290,6 +296,7 @@
     import { computed, nextTick, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue';
     import { ArrowUpDown, Check, Ellipsis, MoreHorizontal, RefreshCw } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
+    import { DataTableEmpty } from '@/components/ui/data-table';
     import { InputGroupSearch } from '@/components/ui/input-group';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';

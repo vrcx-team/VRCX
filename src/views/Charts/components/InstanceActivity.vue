@@ -6,7 +6,7 @@
                 <span>{{ t('view.charts.instance_activity.header') }}</span>
                 <HoverCard>
                     <HoverCardTrigger as-child>
-                        <Info style="margin-left: 5px; font-size: 12px; opacity: 0.7" />
+                        <Info style="margin-left: 4px; font-size: 12px; opacity: 0.7" />
                     </HoverCardTrigger>
                     <HoverCardContent side="bottom" align="start" class="w-75">
                         <div class="tips-popover">
@@ -23,7 +23,7 @@
                     <Button
                         class="rounded-full"
                         size="icon"
-                        variant="outline"
+                        variant="ghost"
                         style="margin-right: 5px"
                         @click="reloadData">
                         <RefreshCcw />
@@ -34,7 +34,7 @@
                     <PopoverTrigger asChild>
                         <div>
                             <TooltipWrapper :content="t('view.charts.instance_activity.settings.header')" side="top">
-                                <Button class="rounded-full" size="icon" variant="outline" style="margin-right: 5px">
+                                <Button class="rounded-full" size="icon" variant="ghost" style="margin-right: 5px">
                                     <Settings />
                                 </Button>
                             </TooltipWrapper>
@@ -79,7 +79,7 @@
                         </div>
                     </PopoverContent>
                 </Popover>
-                <ButtonGroup style="margin-right: 5px">
+                <ButtonGroup class="mr-2">
                     <TooltipWrapper :content="t('view.charts.instance_activity.previous_day')" side="top">
                         <Button
                             variant="outline"
@@ -136,7 +136,7 @@
 
         <div ref="activityChartRef" style="width: 100%"></div>
         <div v-if="!isLoading && activityData.length === 0" class="nodata">
-            <span>No data here, try another day</span>
+            <DataTableEmpty type="nodata" />
         </div>
 
         <transition name="el-fade-in-linear">
@@ -165,6 +165,7 @@
     import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
     import { fromDate, getLocalTimeZone, today } from '@internationalized/date';
     import { Button } from '@/components/ui/button';
+    import { DataTableEmpty } from '@/components/ui/data-table';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Calendar } from '@/components/ui/calendar';
     import { Separator } from '@/components/ui/separator';

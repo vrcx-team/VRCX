@@ -10,12 +10,16 @@
             </transition>
         </div>
 
-        <div ref="activityDetailChartRef"></div>
+        <div v-if="hasChartData" ref="activityDetailChartRef"></div>
+        <div v-else style="display: flex; justify-content: center; align-items: center; min-height: 160px; width: 100%">
+            <DataTableEmpty type="nodata" />
+        </div>
     </div>
 </template>
 
 <script setup>
     import { computed, nextTick, onBeforeUnmount, onDeactivated, onMounted, ref, watch } from 'vue';
+    import { DataTableEmpty } from '@/components/ui/data-table';
     import { storeToRefs } from 'pinia';
 
     import dayjs from 'dayjs';
@@ -47,6 +51,7 @@
     let echartsInstance = null;
     const usersFirstActivity = ref(null);
     const resizeObserver = ref(null);
+    const hasChartData = computed(() => (props.activityDetailData || []).length > 0);
 
     const startTimeStamp = computed(() => {
         return props.activityDetailData.find((item) => item.user_id === currentUser.value.id)?.joinTime.valueOf();
@@ -189,7 +194,7 @@
         if (!props.activityDetailData || props.activityDetailData.length === 0) {
             return {
                 title: {
-                    text: 'No data available',
+                    text: 'No data',
                     left: 'center',
                     top: 'middle'
                 }

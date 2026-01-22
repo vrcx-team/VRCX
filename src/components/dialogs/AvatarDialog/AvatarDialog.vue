@@ -1,5 +1,11 @@
 <template>
-    <div>
+    <div class="w-223">
+        <DialogHeader class="sr-only">
+            <DialogTitle>{{ avatarDialog.ref?.name || t('dialog.avatar.info.header') }}</DialogTitle>
+            <DialogDescription>
+                {{ avatarDialog.ref?.description || avatarDialog.ref?.name || t('dialog.avatar.info.header') }}
+            </DialogDescription>
+        </DialogHeader>
         <div>
             <div class="flex">
                 <img
@@ -191,17 +197,12 @@
                         <TooltipWrapper
                             v-if="avatarDialog.isFavorite"
                             side="top"
-                            :ignore-non-keyboard-focus="true"
                             :content="t('dialog.avatar.actions.favorite_tooltip')">
                             <Button class="rounded-full" size="icon-lg" @click="avatarDialogCommand('Add Favorite')"
                                 ><Star
                             /></Button>
                         </TooltipWrapper>
-                        <TooltipWrapper
-                            v-else
-                            side="top"
-                            :ignore-non-keyboard-focus="true"
-                            :content="t('dialog.avatar.actions.favorite_tooltip')">
+                        <TooltipWrapper v-else side="top" :content="t('dialog.avatar.actions.favorite_tooltip')">
                             <Button
                                 class="rounded-full"
                                 size="icon-lg"
@@ -538,6 +539,7 @@
     } from 'lucide-vue-next';
     import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
     import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
+    import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { TabsUnderline } from '@/components/ui/tabs';

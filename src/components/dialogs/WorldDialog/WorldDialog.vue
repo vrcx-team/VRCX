@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="w-223">
         <DialogHeader class="sr-only">
             <DialogTitle>{{ worldDialog.ref?.name || t('dialog.world.info.header') }}</DialogTitle>
             <DialogDescription>
@@ -172,17 +172,12 @@
                         <TooltipWrapper
                             v-if="worldDialog.isFavorite"
                             side="top"
-                            :ignore-non-keyboard-focus="true"
                             :content="t('dialog.world.actions.favorites_tooltip')">
                             <Button class="rounded-full" size="icon-lg" @click="worldDialogCommand('Add Favorite')"
                                 ><Star
                             /></Button>
                         </TooltipWrapper>
-                        <TooltipWrapper
-                            v-else
-                            side="top"
-                            :ignore-non-keyboard-focus="true"
-                            :content="t('dialog.world.actions.favorites_tooltip')">
+                        <TooltipWrapper v-else side="top" :content="t('dialog.world.actions.favorites_tooltip')">
                             <Button
                                 class="rounded-full"
                                 size="icon-lg"

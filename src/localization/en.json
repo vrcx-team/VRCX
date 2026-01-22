@@ -614,7 +614,15 @@
                     "force_iso_date_format": "Force ISO Date Format"
                 },
                 "theme_color": {
-                    "header": "Theme Color"
+                    "header": "Theme Color",
+                    "default": "Zinc",
+                    "blue": "Blue",
+                    "green": "Green",
+                    "orange": "Orange",
+                    "red": "Red",
+                    "rose": "Rose",
+                    "violet": "Violet",
+                    "yellow": "Yellow"
                 },
                 "side_panel": {
                     "header": "Side Panel",
@@ -2436,6 +2444,10 @@
             "count": "Count",
             "action": "Action"
         }
+    },
+    "common": {
+        "no_data": "No data",
+        "no_matching_records": "No matching records"
     },
     "vr": {
         "status": {

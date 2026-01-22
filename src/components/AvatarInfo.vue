@@ -5,9 +5,9 @@
         /></span>
         <TooltipWrapper v-if="avatarTags">
             <template #content>
-                <span>{{ avatarTags }}</span>
+                <span class="truncate">{{ avatarTags }}</span>
             </template>
-            <span v-if="avatarTags" style="font-size: 12px" class="truncate">{{ avatarTags }}</span>
+            <span style="font-size: 12px" class="truncate">{{ avatarTags }}</span>
         </TooltipWrapper>
     </div>
 </template>

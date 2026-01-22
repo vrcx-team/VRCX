@@ -56,7 +56,7 @@
                                 </div>
                             </button>
                             <div v-if="quickSearchItems.length === 0" class="px-2 py-2 text-xs opacity-70">
-                                No results
+                                <DataTableEmpty type="nomatch" />
                             </div>
                         </div>
                     </PopoverContent>
@@ -66,7 +66,7 @@
                 <TooltipWrapper side="bottom" :content="t('side_panel.refresh_tooltip')">
                     <Button
                         class="rounded-full"
-                        variant="outline"
+                        variant="ghost"
                         size="icon-sm"
                         :disabled="isRefreshFriendsLoading"
                         style="margin-right: 10px"
@@ -117,6 +117,7 @@
     import { computed, nextTick, onMounted, ref, watch } from 'vue';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { Button } from '@/components/ui/button';
+    import { DataTableEmpty } from '@/components/ui/data-table';
     import { Input } from '@/components/ui/input';
     import { RefreshCw } from 'lucide-vue-next';
     import { ScrollArea } from '@/components/ui/scroll-area';

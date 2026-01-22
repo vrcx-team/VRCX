@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="w-223">
         <DialogHeader class="sr-only">
             <DialogTitle>{{ groupDialog.ref?.name || t('dialog.group.info.header') }}</DialogTitle>
             <DialogDescription>
@@ -356,8 +356,8 @@
                             {{ t('dialog.group.info.instances') }}
                         </span>
                         <div v-for="room in groupDialog.instances" :key="room.tag" style="width: 100%">
-                            <div style="margin: 5px 0" class="flex items-center">
-                                <Location :location="room.tag" />
+                            <div style="margin: 5px 0" class="flex flex-col">
+                                <Location :location="room.tag" class="text-sm" />
                                 <InstanceActionBar
                                     class="ml-1"
                                     :location="room.tag"
