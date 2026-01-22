@@ -59,8 +59,8 @@
     <Popover>
         <PopoverTrigger as-child>
             <Button variant="outline" size="sm" class="flex items-center gap-2 px-2" :disabled="disabled">
-                <span class="h-4 w-4 rounded border" :style="{ backgroundColor: safeValue }" />
-                <span class="font-mono text-xs opacity-80">
+                <span class="h-4 w-4 rounded" :style="{ backgroundColor: safeValue }" />
+                <span class="text-xs opacity-80">
                     {{ displayText }}
                 </span>
 

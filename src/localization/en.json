@@ -656,7 +656,16 @@
                 },
                 "user_colors": {
                     "header": "User Colors",
-                    "random_colors_from_user_id": "Random Colors from User ID"
+                    "random_colors_from_user_id": "Random Colors from User ID",
+                    "trust_levels": {
+                        "visitor": "Visitor",
+                        "new_user": "New User",
+                        "user": "User",
+                        "known_user": "Known User",
+                        "trusted_user": "Trusted User",
+                        "vrchat_team": "VRChat Team",
+                        "nuisance": "Nuisance"
+                    }
                 },
                 "friend_log": {
                     "header": "Friend Log",
