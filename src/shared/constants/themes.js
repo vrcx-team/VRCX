@@ -22,7 +22,7 @@ export const THEME_COLORS = [
     {
         key: 'default',
         label: 'Zinc',
-        swatch: 'oklch(0.205 0 0)',
+        swatch: 'oklch(0.27 0 0)',
         file: null
     },
     {

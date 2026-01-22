@@ -94,14 +94,6 @@
             const crumb = activeCrumb.value;
             return crumb?.type ?? null;
         })();
-        console.log('[prev-instances] activeType', {
-            type,
-            infoVisible: previousInstancesInfoDialogVisible.value,
-            infoId: previousInstancesInfoDialogInstanceId.value,
-            userVisible: previousInstancesUserDialog.value.visible,
-            worldVisible: previousInstancesWorldDialog.value.visible,
-            groupVisible: previousInstancesGroupDialog.value.visible
-        });
         return type;
     });
     const activeComponent = computed(() => {
@@ -213,10 +205,7 @@
 
 <template>
     <Dialog v-model:open="isOpen">
-        <DialogContent
-            :class="dialogClass"
-            style="top: 10vh"
-            :show-close-button="false">
+        <DialogContent :class="dialogClass" style="top: 10vh" :show-close-button="false">
             <Breadcrumb v-if="shouldShowBreadcrumbs" class="mb-2">
                 <BreadcrumbList>
                     <template v-if="shouldCollapseBreadcrumbs">
