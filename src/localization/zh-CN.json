@@ -1006,7 +1006,8 @@
                 "report_hacking": "报告这个玩家的开挂/盗模行为",
                 "unfriend": "删除好友",
                 "unfriend_success_msg": "已成功删除好友",
-                "logout": "退出登录"
+                "logout": "退出登录",
+                "edit_note_memo": "编辑备注"
             },
             "info": {
                 "header": "信息",
@@ -1020,9 +1021,9 @@
                 "instance_game_version": "服务器版本：",
                 "last_join": "距离上次加入房间",
                 "instance_queuing_enabled": "允许排队加入",
-                "instance_disabled_content": "禁用的内容：",
+                "instance_disabled_content": "禁用的功能：",
                 "instance_creator": "房间建立者",
-                "note": "VRChat 备注",
+                "note": "在线备注",
                 "note_placeholder": "点此添加备注",
                 "memo": "本地备注",
                 "memo_placeholder": "点此添加备注",
