@@ -767,17 +767,22 @@ export const useUserStore = defineStore('User', () => {
         ) {
             return;
         }
-        if (
-            !userDialog.value.visible &&
-            !worldStore.worldDialog.visible &&
-            !avatarStore.avatarDialog.visible &&
-            !groupStore.groupDialog.visible
-        ) {
+        const hadActiveDialog =
+            userDialog.value.visible ||
+            worldStore.worldDialog.visible ||
+            avatarStore.avatarDialog.visible ||
+            groupStore.groupDialog.visible ||
+            instanceStore.previousInstancesInfoDialog.visible ||
+            instanceStore.previousInstancesUserDialog.visible ||
+            instanceStore.previousInstancesWorldDialog.visible ||
+            instanceStore.previousInstancesGroupDialog.visible;
+        if (!hadActiveDialog) {
             uiStore.clearDialogCrumbs();
         }
         if (!options.skipBreadcrumb) {
             uiStore.pushDialogCrumb('user', userId);
         }
+        instanceStore.hidePreviousInstancesDialogs();
         worldStore.worldDialog.visible = false;
         avatarStore.avatarDialog.visible = false;
         groupStore.groupDialog.visible = false;

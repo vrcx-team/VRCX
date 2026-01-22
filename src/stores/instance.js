@@ -24,8 +24,11 @@ import {
     userRequest,
     worldRequest
 } from '../api';
+import {
+    accessTypeLocaleKeyMap,
+    instanceContentSettings
+} from '../shared/constants';
 import { database } from '../service/database';
-import { accessTypeLocaleKeyMap, instanceContentSettings } from '../shared/constants';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFriendStore } from './friend';
 import { useGroupStore } from './group';
@@ -107,9 +110,10 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     const queuedInstances = reactive(new Map());
 
-    const previousInstancesInfoDialogVisible = ref(false);
-
-    const previousInstancesInfoDialogInstanceId = ref('');
+    const previousInstancesInfoDialog = ref({
+        instanceId: '',
+        visible: false
+    });
 
     const previousInstancesUserDialog = ref({
         visible: false,
@@ -153,7 +157,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         (isLoggedIn) => {
             currentInstanceUsersData.value = [];
             instanceJoinHistory.clear();
-            previousInstancesInfoDialogVisible.value = false;
+            previousInstancesInfoDialog.value.visible = false;
             previousInstancesUserDialog.value.visible = false;
             previousInstancesWorldDialog.value.visible = false;
             previousInstancesGroupDialog.value.visible = false;
@@ -192,7 +196,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     }
 
     function hidePreviousInstancesDialogs() {
-        previousInstancesInfoDialogVisible.value = false;
+        previousInstancesInfoDialog.value.visible = false;
         previousInstancesUserDialog.value.visible = false;
         previousInstancesUserDialog.value.openFlg = false;
         previousInstancesWorldDialog.value.visible = false;
@@ -301,8 +305,8 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     function showPreviousInstancesInfoDialog(instanceId, options = {}) {
         hidePreviousInstancesDialogs();
-        previousInstancesInfoDialogVisible.value = true;
-        previousInstancesInfoDialogInstanceId.value = instanceId;
+        previousInstancesInfoDialog.value.visible = true;
+        previousInstancesInfoDialog.value.instanceId = instanceId;
         if (!options.skipBreadcrumb && instanceId) {
             uiStore.pushDialogCrumb(
                 'previous-instances-info',
@@ -1460,8 +1464,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         currentInstanceWorld,
         currentInstanceLocation,
         queuedInstances,
-        previousInstancesInfoDialogVisible,
-        previousInstancesInfoDialogInstanceId,
+        previousInstancesInfoDialog,
         previousInstancesUserDialog,
         previousInstancesWorldDialog,
         previousInstancesGroupDialog,

@@ -19,6 +19,7 @@ import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useFavoriteStore } from './favorite';
 import { useGroupStore } from './group';
+import { useInstanceStore } from './instance';
 import { useModalStore } from './modal';
 import { useUiStore } from './ui';
 import { useUserStore } from './user';
@@ -33,6 +34,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     const avatarProviderStore = useAvatarProviderStore();
     const vrcxUpdaterStore = useVRCXUpdaterStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
+    const instanceStore = useInstanceStore();
     const userStore = useUserStore();
     const worldStore = useWorldStore();
     const groupStore = useGroupStore();
@@ -181,17 +183,22 @@ export const useAvatarStore = defineStore('Avatar', () => {
      */
     function showAvatarDialog(avatarId, options = {}) {
         const D = avatarDialog.value;
-        if (
-            !avatarDialog.value.visible &&
-            !userStore.userDialog.visible &&
-            !worldStore.worldDialog.visible &&
-            !groupStore.groupDialog.visible
-        ) {
+        const hadActiveDialog =
+            avatarDialog.value.visible ||
+            userStore.userDialog.visible ||
+            worldStore.worldDialog.visible ||
+            groupStore.groupDialog.visible ||
+            instanceStore.previousInstancesInfoDialog.visible ||
+            instanceStore.previousInstancesUserDialog.visible ||
+            instanceStore.previousInstancesWorldDialog.visible ||
+            instanceStore.previousInstancesGroupDialog.visible;
+        if (!hadActiveDialog) {
             uiStore.clearDialogCrumbs();
         }
         if (!options.skipBreadcrumb) {
             uiStore.pushDialogCrumb('avatar', avatarId);
         }
+        instanceStore.hidePreviousInstancesDialogs();
         userStore.userDialog.visible = false;
         worldStore.worldDialog.visible = false;
         groupStore.groupDialog.visible = false;

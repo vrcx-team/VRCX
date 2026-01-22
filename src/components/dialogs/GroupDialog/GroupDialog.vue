@@ -356,7 +356,7 @@
                             {{ t('dialog.group.info.instances') }}
                         </span>
                         <div v-for="room in groupDialog.instances" :key="room.tag" style="width: 100%">
-                            <div style="margin: 5px 0" class="flex flex-col">
+                            <div style="margin: 5px 0" class="flex items-center">
                                 <Location :location="room.tag" class="text-sm" />
                                 <InstanceActionBar
                                     class="ml-1"

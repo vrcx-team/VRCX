@@ -1,17 +1,17 @@
 <template>
-    <div style="float: left; margin: 5px">
-        <TooltipWrapper v-if="!noUpdater" side="top" :content="t('view.login.updater')">
-            <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="showVRCXUpdateDialog"
-                ><CircleArrowDown
-            /></Button>
-        </TooltipWrapper>
-        <TooltipWrapper side="top" :content="t('view.login.proxy_settings')">
-            <Button class="rounded-full text-xs" size="icon-sm" variant="ghost" @click="promptProxySettings"
-                ><Route
-            /></Button>
-        </TooltipWrapper>
-    </div>
     <div class="x-login-container">
+        <div style="position: absolute; top: 0; left: 0; margin: 5px">
+            <TooltipWrapper v-if="!noUpdater" side="top" :content="t('view.login.updater')">
+                <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="showVRCXUpdateDialog"
+                    ><CircleArrowDown
+                /></Button>
+            </TooltipWrapper>
+            <TooltipWrapper side="top" :content="t('view.login.proxy_settings')">
+                <Button class="rounded-full text-xs" size="icon-sm" variant="ghost" @click="promptProxySettings"
+                    ><Route
+                /></Button>
+            </TooltipWrapper>
+        </div>
         <div class="x-login">
             <div class="x-login-form-container">
                 <div>
@@ -281,6 +281,15 @@
         (isLoggedIn) => {
             if (isLoggedIn) {
                 router.replace(postLoginRedirect());
+            }
+        }
+    );
+
+    watch(
+        () => loginForm.value.loading,
+        (loading) => {
+            if (!loading) {
+                updateSavedCredentials();
             }
         }
     );
