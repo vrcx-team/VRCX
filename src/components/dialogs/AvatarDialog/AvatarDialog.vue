@@ -605,7 +605,6 @@
     ]);
 
     const avatarDialogActiveTab = ref('Info');
-    const avatarDialogLastActiveTab = ref('Info');
     const changeAvatarImageDialogVisible = ref(false);
     const previousImageUrl = ref('');
 
@@ -676,18 +675,19 @@
     );
 
     function handleAvatarDialogTab(tabName) {
-        avatarDialogLastActiveTab.value = tabName;
+        avatarDialogActiveTab.value = tabName;
+        avatarDialog.value.lastActiveTab = tabName;
         if (tabName === 'JSON') {
             refreshAvatarDialogTreeData();
         }
     }
 
     function loadLastActiveTab() {
-        handleAvatarDialogTab(avatarDialogLastActiveTab.value);
+        handleAvatarDialogTab(avatarDialog.value.lastActiveTab);
     }
 
     function avatarDialogTabClick(tabName) {
-        if (tabName === avatarDialogLastActiveTab.value) {
+        if (tabName === avatarDialog.value.lastActiveTab) {
             if (tabName === 'JSON') {
                 refreshAvatarDialogTreeData();
             }

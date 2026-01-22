@@ -183,6 +183,7 @@ export const useUserStore = defineStore('User', () => {
     const userDialog = ref({
         visible: false,
         loading: false,
+        lastActiveTab: 'Info',
         id: '',
         ref: {},
         friend: {},
@@ -900,7 +901,11 @@ export const useUserStore = defineStore('User', () => {
                         } else if (D.ref.friendRequestStatus === 'outgoing') {
                             D.outgoingRequest = true;
                         }
-                        userRequest.getUser(args.params);
+                        userRequest.getUser(args.params).then((args1) => {
+                            if (args1.ref.id === D.id) {
+                                D.loading = false;
+                            }
+                        });
                         let inCurrentWorld = false;
                         if (
                             locationStore.lastLocation.playerList.has(D.ref.id)
@@ -1015,7 +1020,6 @@ export const useUserStore = defineStore('User', () => {
                             .then((args1) => {
                                 groupStore.handleGroupRepresented(args1);
                             });
-                        D.loading = false;
                         D.visible = true;
                         applyUserDialogLocation(true);
                     });

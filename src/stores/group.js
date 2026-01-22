@@ -46,6 +46,7 @@ export const useGroupStore = defineStore('Group', () => {
     const groupDialog = ref({
         visible: false,
         loading: false,
+        lastActiveTab: 'Info',
         isGetGroupDialogGroupLoading: false,
         treeData: {},
         id: '',
@@ -178,7 +179,6 @@ export const useGroupStore = defineStore('Group', () => {
             })
             .then((args) => {
                 if (groupId === args.ref.id) {
-                    D.loading = false;
                     D.ref = args.ref;
                     uiStore.setDialogCrumbLabel(
                         'group',
@@ -447,6 +447,7 @@ export const useGroupStore = defineStore('Group', () => {
             .then((args) => {
                 const ref = applyGroup(args.json);
                 if (D.id === ref.id) {
+                    D.loading = false;
                     D.ref = ref;
                     D.inGroup = ref.membershipStatus === 'member';
                     for (const role of ref.roles) {

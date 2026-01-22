@@ -1378,7 +1378,6 @@
     const userDialogGroupEditSelectedGroupIds = ref([]); // selected groups in edit mode
 
     const userDialogActiveTab = ref('Info');
-    const userDialogLastActiveTab = ref('Info');
     const userDialogLastMutualFriends = ref('');
     const userDialogLastGroup = ref('');
     const userDialogLastAvatar = ref('');
@@ -1490,7 +1489,8 @@
     }
 
     function handleUserDialogTab(tabName) {
-        userDialogLastActiveTab.value = tabName;
+        userDialogActiveTab.value = tabName;
+        userDialog.value.lastActiveTab = tabName;
         const userId = userDialog.value.id;
         if (tabName === 'Info') {
             if (vrchatCredit.value === null) {
@@ -1499,7 +1499,7 @@
         } else if (tabName === 'mutual') {
             if (userId === currentUser.value.id) {
                 userDialogActiveTab.value = 'Info';
-                userDialogLastActiveTab.value = 'Info';
+                userDialog.value.lastActiveTab = 'Info';
                 return;
             }
             if (userDialogLastMutualFriends.value !== userId) {
@@ -1538,11 +1538,11 @@
     }
 
     function loadLastActiveTab() {
-        handleUserDialogTab(userDialogLastActiveTab.value);
+        handleUserDialogTab(userDialog.value.lastActiveTab);
     }
 
     function userDialogTabClick(tabName) {
-        if (tabName === userDialogLastActiveTab.value) {
+        if (tabName === userDialog.value.lastActiveTab) {
             if (tabName === 'JSON') {
                 refreshUserDialogTreeData();
             }

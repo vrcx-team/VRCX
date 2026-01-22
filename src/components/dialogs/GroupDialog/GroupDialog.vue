@@ -1237,7 +1237,6 @@
     const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
 
     const groupDialogActiveTab = ref('Info');
-    const groupDialogLastActiveTab = ref('Info');
     const isGroupMembersDone = ref(false);
     const isGroupMembersLoading = ref(false);
     const groupDialogGalleryCurrentName = ref('0');
@@ -1631,7 +1630,8 @@
     }
 
     function handleGroupDialogTab(tabName) {
-        groupDialogLastActiveTab.value = tabName;
+        groupDialogActiveTab.value = tabName;
+        groupDialog.value.lastActiveTab = tabName;
         if (tabName === 'Members') {
             getGroupDialogGroupMembers();
         } else if (tabName === 'Photos') {
@@ -1642,7 +1642,7 @@
     }
 
     function loadLastActiveTab() {
-        handleGroupDialogTab(groupDialogLastActiveTab.value);
+        handleGroupDialogTab(groupDialog.value.lastActiveTab);
     }
 
     function groupDialogTabClick(tabName) {

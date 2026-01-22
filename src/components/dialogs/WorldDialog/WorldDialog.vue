@@ -914,7 +914,6 @@
     });
 
     const worldDialogActiveTab = ref('Instances');
-    const worldDialogLastActiveTab = ref('Instances');
 
     watch(
         () => worldDialog.value.loading,
@@ -927,18 +926,19 @@
     );
 
     function handleWorldDialogTab(tabName) {
-        worldDialogLastActiveTab.value = tabName;
+        worldDialogActiveTab.value = tabName;
+        worldDialog.value.lastActiveTab = tabName;
         if (tabName === 'JSON') {
             refreshWorldDialogTreeData();
         }
     }
 
     function loadLastActiveTab() {
-        handleWorldDialogTab(worldDialogLastActiveTab.value);
+        handleWorldDialogTab(worldDialog.value.lastActiveTab);
     }
 
     function worldDialogTabClick(tabName) {
-        if (tabName === worldDialogLastActiveTab.value) {
+        if (tabName === worldDialog.value.lastActiveTab) {
             if (tabName === 'JSON') {
                 refreshWorldDialogTreeData();
             }

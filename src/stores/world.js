@@ -36,6 +36,7 @@ export const useWorldStore = defineStore('World', () => {
     const worldDialog = reactive({
         visible: false,
         loading: false,
+        lastActiveTab: 'Instances',
         id: '',
         memo: '',
         $location: {},
@@ -158,7 +159,6 @@ export const useWorldStore = defineStore('World', () => {
             })
             .then((args) => {
                 if (D.id === args.ref.id) {
-                    D.loading = false;
                     D.ref = args.ref;
                     uiStore.setDialogCrumbLabel(
                         'world',
@@ -203,18 +203,14 @@ export const useWorldStore = defineStore('World', () => {
                         });
 
                     if (args.cache) {
-                        worldRequest
-                            .getWorld(args.params)
-                            .catch((err) => {
-                                throw err;
-                            })
-                            .then((args1) => {
-                                if (D.id === args1.ref.id) {
-                                    D.ref = args1.ref;
-                                    updateVRChatWorldCache();
-                                }
-                                return args1;
-                            });
+                        worldRequest.getWorld(args.params).then((args1) => {
+                            if (D.id === args1.ref.id) {
+                                D.loading = false;
+                                D.ref = args1.ref;
+                                updateVRChatWorldCache();
+                            }
+                            return args1;
+                        });
                     }
                 }
                 D.visible = true;
