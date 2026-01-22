@@ -77,7 +77,6 @@
         strict: false,
         ageGate: false
     });
-    const fullscreen = ref(false);
 
     const { stringComparer } = storeToRefs(useSearchStore());
     const vrcxStore = useVrcxStore();

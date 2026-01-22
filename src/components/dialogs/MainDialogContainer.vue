@@ -21,10 +21,8 @@
 
     import AvatarDialog from './AvatarDialog/AvatarDialog.vue';
     import GroupDialog from './GroupDialog/GroupDialog.vue';
-    import PreviousInstancesGroupDialog from './PreviousInstancesDialog/PreviousInstancesGroupDialog.vue';
     import PreviousInstancesInfoDialog from './PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
-    import PreviousInstancesUserDialog from './UserDialog/PreviousInstancesUserDialog.vue';
-    import PreviousInstancesWorldDialog from './PreviousInstancesDialog/PreviousInstancesWorldDialog.vue';
+    import PreviousInstancesListDialog from './PreviousInstancesDialog/PreviousInstancesListDialog.vue';
     import UserDialog from './UserDialog/UserDialog.vue';
     import WorldDialog from './WorldDialog/WorldDialog.vue';
 
@@ -37,6 +35,7 @@
 
     const {
         previousInstancesInfoDialogVisible,
+        previousInstancesInfoDialogInstanceId,
         previousInstancesUserDialog,
         previousInstancesWorldDialog,
         previousInstancesGroupDialog
@@ -67,34 +66,43 @@
     const dialogCrumbs = computed(() => uiStore.dialogCrumbs);
     const activeCrumb = computed(() => dialogCrumbs.value[dialogCrumbs.value.length - 1] || null);
     const activeType = computed(() => {
-        if (activeCrumb.value?.type) {
-            return activeCrumb.value.type;
-        }
-        if (userStore.userDialog.visible) {
-            return 'user';
-        }
-        if (worldStore.worldDialog.visible) {
-            return 'world';
-        }
-        if (avatarStore.avatarDialog.visible) {
-            return 'avatar';
-        }
-        if (groupStore.groupDialog.visible) {
-            return 'group';
-        }
-        if (previousInstancesInfoDialogVisible.value) {
-            return 'previous-instances-info';
-        }
-        if (previousInstancesUserDialog.value.visible) {
-            return 'previous-instances-user';
-        }
-        if (previousInstancesWorldDialog.value.visible) {
-            return 'previous-instances-world';
-        }
-        if (previousInstancesGroupDialog.value.visible) {
-            return 'previous-instances-group';
-        }
-        return null;
+        const type = (() => {
+            if (previousInstancesInfoDialogVisible.value) {
+                return 'previous-instances-info';
+            }
+            if (previousInstancesUserDialog.value.visible) {
+                return 'previous-instances-user';
+            }
+            if (previousInstancesWorldDialog.value.visible) {
+                return 'previous-instances-world';
+            }
+            if (previousInstancesGroupDialog.value.visible) {
+                return 'previous-instances-group';
+            }
+            if (userStore.userDialog.visible) {
+                return 'user';
+            }
+            if (worldStore.worldDialog.visible) {
+                return 'world';
+            }
+            if (avatarStore.avatarDialog.visible) {
+                return 'avatar';
+            }
+            if (groupStore.groupDialog.visible) {
+                return 'group';
+            }
+            const crumb = activeCrumb.value;
+            return crumb?.type ?? null;
+        })();
+        console.log('[prev-instances] activeType', {
+            type,
+            infoVisible: previousInstancesInfoDialogVisible.value,
+            infoId: previousInstancesInfoDialogInstanceId.value,
+            userVisible: previousInstancesUserDialog.value.visible,
+            worldVisible: previousInstancesWorldDialog.value.visible,
+            groupVisible: previousInstancesGroupDialog.value.visible
+        });
+        return type;
     });
     const activeComponent = computed(() => {
         switch (activeType.value) {
@@ -109,15 +117,28 @@
             case 'previous-instances-info':
                 return PreviousInstancesInfoDialog;
             case 'previous-instances-user':
-                return PreviousInstancesUserDialog;
+                return PreviousInstancesListDialog;
             case 'previous-instances-world':
-                return PreviousInstancesWorldDialog;
+                return PreviousInstancesListDialog;
             case 'previous-instances-group':
-                return PreviousInstancesGroupDialog;
+                return PreviousInstancesListDialog;
             default:
                 return null;
         }
     });
+    const activeComponentProps = computed(() => {
+        switch (activeType.value) {
+            case 'previous-instances-user':
+                return { variant: 'user' };
+            case 'previous-instances-world':
+                return { variant: 'world' };
+            case 'previous-instances-group':
+                return { variant: 'group' };
+            default:
+                return {};
+        }
+    });
+
     const dialogClass = computed(() => {
         switch (activeType.value) {
             case 'world':
@@ -136,13 +157,6 @@
                 return 'x-dialog x-user-dialog sm:max-w-235 translate-y-0';
         }
     });
-
-    const keepAliveInclude = [
-        'PreviousInstancesInfoDialog',
-        'PreviousInstancesUserDialog',
-        'PreviousInstancesWorldDialog',
-        'PreviousInstancesGroupDialog'
-    ];
 
     const shouldShowBreadcrumbs = computed(() => dialogCrumbs.value.length > 1);
     const shouldCollapseBreadcrumbs = computed(() => dialogCrumbs.value.length > 5);
@@ -199,7 +213,10 @@
 
 <template>
     <Dialog v-model:open="isOpen">
-        <DialogContent :class="dialogClass" style="top: 10vh" :show-close-button="false">
+        <DialogContent
+            :class="dialogClass"
+            style="top: 10vh"
+            :show-close-button="false">
             <Breadcrumb v-if="shouldShowBreadcrumbs" class="mb-2">
                 <BreadcrumbList>
                     <template v-if="shouldCollapseBreadcrumbs">
@@ -274,9 +291,7 @@
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <KeepAlive :include="keepAliveInclude">
-                <component :is="activeComponent" v-if="activeComponent" />
-            </KeepAlive>
+            <component :is="activeComponent" v-if="activeComponent" v-bind="activeComponentProps" :key="activeType" />
         </DialogContent>
     </Dialog>
 </template>
