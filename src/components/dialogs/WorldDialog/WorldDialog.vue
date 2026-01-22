@@ -23,7 +23,7 @@
                                         currentUser.$homeLocation &&
                                         currentUser.$homeLocation.worldId === worldDialog.id
                                     "
-                                    style="margin-right: 5px" />
+                                    class="inline-block" />
                                 {{ worldDialog.ref.name }}
                             </span>
                         </div>

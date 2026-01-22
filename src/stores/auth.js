@@ -447,59 +447,40 @@ export const useAuthStore = defineStore('Auth', () => {
             AppDebug.endpointDomain = AppDebug.endpointDomainVrchat;
             AppDebug.websocketDomain = AppDebug.websocketDomainVrchat;
         }
-        return new Promise((resolve, reject) => {
-            loginForm.value.loading = true;
+
+        loginForm.value.loading = true;
+        try {
+            let password = loginParams.password;
             if (advancedSettingsStore.enablePrimaryPassword) {
-                checkPrimaryPassword(loginParams)
-                    .then((pwd) => {
-                        return authRequest
-                            .getConfig()
-                            .catch((err) => {
-                                reject(err);
-                            })
-                            .then(() => {
-                                authLogin({
-                                    username: loginParams.username,
-                                    password: pwd,
-                                    cipher: loginParams.password,
-                                    endpoint: loginParams.endpoint,
-                                    websocket: loginParams.websocket
-                                })
-                                    .catch((err2) => {
-                                        reject(err2);
-                                    })
-                                    .then(() => {
-                                        resolve();
-                                    });
-                            });
-                    })
-                    .catch((_) => {
-                        toast.error('Incorrect primary password');
-                        reject(_);
-                    });
-            } else {
-                authRequest
-                    .getConfig()
-                    .catch((err) => {
-                        reject(err);
-                    })
-                    .then(() => {
-                        authLogin({
-                            username: loginParams.username,
-                            password: loginParams.password,
-                            endpoint: loginParams.endpoint,
-                            websocket: loginParams.websocket
-                        })
-                            .catch((err2) => {
-                                handleLogoutEvent();
-                                reject(err2);
-                            })
-                            .then(() => {
-                                resolve();
-                            });
-                    });
+                try {
+                    password = await checkPrimaryPassword(loginParams);
+                } catch (err) {
+                    toast.error('Incorrect primary password');
+                    throw err;
+                }
             }
-        }).finally(() => (loginForm.value.loading = false));
+
+            await authRequest.getConfig();
+            try {
+                await authLogin({
+                    username: loginParams.username,
+                    password,
+                    endpoint: loginParams.endpoint,
+                    websocket: loginParams.websocket
+                });
+            } catch (err) {
+                await handleLogoutEvent();
+                throw err;
+            }
+        } catch (err) {
+            if (err.message.includes('Invalid Username/Email or Password')) {
+                toast.error('Saved credentials are no longer valid.');
+                await deleteSavedLogin(user.user.id);
+            }
+            throw err;
+        } finally {
+            loginForm.value.loading = false;
+        }
     }
 
     async function deleteSavedLogin(userId) {
