@@ -569,16 +569,21 @@
                                 <span class="extra">{{ formatDateFilter(groupDialog.ref.createdAt, 'long') }}</span>
                             </div>
                         </div>
-                        <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
-                            <div class="x-friend-item" @click="showPreviousInstancesGroupDialog(groupDialog.ref)">
-                                <div class="detail">
-                                    <span class="name">
+                        <div class="x-friend-item" @click="showPreviousInstancesGroupDialog(groupDialog.ref)">
+                            <div class="detail">
+                                <div
+                                    class="name"
+                                    style="display: flex; justify-content: space-between; align-items: center">
+                                    <span>
                                         {{ t('dialog.group.info.last_visited') }}
                                     </span>
-                                    <span class="extra">{{ formatDateFilter(groupDialog.lastVisit, 'long') }}</span>
+                                    <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
+                                        <MoreHorizontal style="margin-right: 16px" />
+                                    </TooltipWrapper>
                                 </div>
+                                <span class="extra">{{ formatDateFilter(groupDialog.lastVisit, 'long') }}</span>
                             </div>
-                        </TooltipWrapper>
+                        </div>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">{{ t('dialog.group.info.links') }}</span>
@@ -1190,6 +1195,7 @@
     import GroupCalendarEventCard from '../../../views/Tools/components/GroupCalendarEventCard.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
     import InstanceActionBar from '../../InstanceActionBar.vue';
+
     import * as workerTimers from 'worker-timers';
 
     const { t } = useI18n();

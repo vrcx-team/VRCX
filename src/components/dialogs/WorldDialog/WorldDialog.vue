@@ -637,10 +637,38 @@
                                 <span class="extra" style="white-space: normal">{{ worldDialogPlatform }}</span>
                             </div>
                         </div>
+
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
                                     {{ t('dialog.world.info.last_visited') }}
+                                </span>
+                                <span class="extra">{{ formatDateFilter(worldDialog.lastVisit, 'long') }}</span>
+                            </div>
+                        </div>
+
+                        <div class="x-friend-item" @click="showPreviousInstancesWorldDialog(worldDialog.ref)">
+                            <div class="detail">
+                                <div
+                                    class="name"
+                                    style="display: flex; justify-content: space-between; align-items: center">
+                                    <div>
+                                        {{ t('dialog.world.info.visit_count') }}
+                                    </div>
+
+                                    <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
+                                        <MoreHorizontal style="margin-right: 16px" />
+                                    </TooltipWrapper>
+                                </div>
+                                <span v-if="worldDialog.visitCount === 0" class="extra">-</span>
+                                <span v-else class="extra" v-text="worldDialog.visitCount"></span>
+                            </div>
+                        </div>
+
+                        <div class="x-friend-item" style="cursor: default">
+                            <div class="detail">
+                                <span class="name">
+                                    {{ t('dialog.world.info.time_spent') }}
                                 </span>
                                 <span class="extra">
                                     {{ worldDialog.timeSpent === 0 ? ' - ' : timeSpent }}
@@ -708,6 +736,7 @@
         LineChart,
         MessageSquare,
         Monitor,
+        MoreHorizontal,
         Pencil,
         RefreshCw,
         Share2,
@@ -784,10 +813,8 @@
     const { lastLocation } = storeToRefs(useLocationStore());
     const { newInstanceSelfInvite, canOpenInstanceInGame } = useInviteStore();
     const { showFavoriteDialog } = useFavoriteStore();
-    const {
-        showPreviousInstancesInfoDialog,
-        showPreviousInstancesWorldDialog: openPreviousInstancesWorldDialog
-    } = useInstanceStore();
+    const { showPreviousInstancesInfoDialog, showPreviousInstancesWorldDialog: openPreviousInstancesWorldDialog } =
+        useInstanceStore();
     const { instanceJoinHistory } = storeToRefs(useInstanceStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { showFullscreenImageDialog } = useGalleryStore();
