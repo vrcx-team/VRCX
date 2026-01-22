@@ -34,7 +34,7 @@
                     @input="searchWorldFavorites" />
                 <DropdownMenu v-model:open="worldToolbarMenuOpen">
                     <DropdownMenuTrigger as-child>
-                        <Button class="rounded-full" size="icon" variant="outline"><Ellipsis /></Button>
+                        <Button class="rounded-full" size="icon" variant="ghost"><Ellipsis /></Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent class="favorites-dropdown">
                         <li class="favorites-dropdown__control" @click.stop>
@@ -244,7 +244,9 @@
                                     </div>
                                 </div>
                             </template>
-                            <div v-else class="group-empty">No Data</div>
+                            <div v-else class="group-empty">
+                                <DataTableEmpty type="nodata" />
+                            </div>
                             <div
                                 v-if="!isCreatingLocalGroup"
                                 class="group-item group-item--new"
@@ -355,7 +357,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div v-else class="favorites-empty">No Data</div>
+                                <div v-else class="favorites-empty">
+                                    <DataTableEmpty type="nomatch" />
+                                </div>
                             </div>
                         </template>
                         <template v-else>
@@ -377,7 +381,9 @@
                                             @click="showWorldDialog(favorite.id)" />
                                     </div>
                                 </template>
-                                <div v-else class="favorites-empty">No Data</div>
+                                <div v-else class="favorites-empty">
+                                    <DataTableEmpty type="nodata" />
+                                </div>
                             </div>
                             <div
                                 v-else-if="activeLocalGroupName && isLocalGroupSelected"
@@ -410,9 +416,13 @@
                                         </template>
                                     </div>
                                 </template>
-                                <div v-else class="favorites-empty">No Data</div>
+                                <div v-else class="favorites-empty">
+                                    <DataTableEmpty type="nodata" />
+                                </div>
                             </div>
-                            <div v-else class="favorites-empty">No Data</div>
+                            <div v-else class="favorites-empty">
+                                <DataTableEmpty type="nodata" />
+                            </div>
                         </template>
                     </div>
                 </div>
@@ -427,6 +437,7 @@
     import { ArrowUpDown, Ellipsis, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
     import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
+    import { DataTableEmpty } from '@/components/ui/data-table';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

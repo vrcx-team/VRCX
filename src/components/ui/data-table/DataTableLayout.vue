@@ -59,9 +59,9 @@
                         </template>
 
                         <TableRow v-else>
-                            <TableCell class="h-24 text-center">
+                            <TableCell class="h-24 text-center" :colspan="table.getVisibleLeafColumns().length">
                                 <slot name="empty">
-                                    {{ emptyText }}
+                                    <DataTableEmpty :type="emptyType" />
                                 </slot>
                             </TableCell>
                         </TableRow>
@@ -134,6 +134,8 @@
     import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../table';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../select';
 
+    import DataTableEmpty from './DataTableEmpty.vue';
+
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { isDataTableStriped } = storeToRefs(appearanceSettingsStore);
 
@@ -162,10 +164,6 @@
             type: Array,
             default: () => []
         },
-        emptyText: {
-            type: String,
-            default: 'No results.'
-        },
         showPagination: {
             type: Boolean,
             default: true
@@ -186,6 +184,11 @@
 
     const { t } = useI18n();
     const tableScrollRef = ref(null);
+
+    const emptyType = computed(() => {
+        const totalRows = props.table?.getCoreRowModel?.().rows?.length ?? 0;
+        return totalRows === 0 ? 'nodata' : 'nomatch';
+    });
 
     const expandedRenderer = computed(() => {
         const columns = props.table.getAllColumns?.() ?? [];

@@ -244,7 +244,9 @@
                                     </div>
                                 </div>
                             </template>
-                            <div v-else class="group-empty">No Data</div>
+                            <div v-else class="group-empty">
+                                <DataTableEmpty type="nodata" />
+                            </div>
                             <TooltipWrapper
                                 v-if="!isCreatingLocalGroup"
                                 :disabled="isLocalUserVrcPlusSupporter"
@@ -401,7 +403,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div v-else class="favorites-empty">No Data</div>
+                                <div v-else class="favorites-empty">
+                                    <DataTableEmpty type="nomatch" />
+                                </div>
                             </div>
                         </template>
                         <template v-else-if="activeRemoteGroup">
@@ -421,7 +425,9 @@
                                             @click="showAvatarDialog(favorite.id)" />
                                     </div>
                                 </template>
-                                <div v-else class="favorites-empty">No Data</div>
+                                <div v-else class="favorites-empty">
+                                    <DataTableEmpty type="nodata" />
+                                </div>
                             </div>
                         </template>
                         <template v-else-if="!remoteAvatarGroupsResolved">
@@ -452,7 +458,9 @@
                                             @click="showAvatarDialog(favorite.id)" />
                                     </div>
                                 </template>
-                                <div v-else class="favorites-empty">No Data</div>
+                                <div v-else class="favorites-empty">
+                                    <DataTableEmpty type="nodata" />
+                                </div>
                             </ScrollArea>
                         </template>
                         <template v-else-if="isHistorySelected">
@@ -468,7 +476,9 @@
                                             @click="showAvatarDialog(favorite.id)" />
                                     </div>
                                 </template>
-                                <div v-else class="favorites-empty">No Data</div>
+                                <div v-else class="favorites-empty">
+                                    <DataTableEmpty type="nodata" />
+                                </div>
                             </div>
                         </template>
                         <template v-else>
@@ -484,9 +494,10 @@
 
 <script setup>
     import { computed, markRaw, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-    import { ArrowUpDown, Check, Ellipsis, Loader, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
+    import { ArrowUpDown, Ellipsis, Loader, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
     import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
+    import { DataTableEmpty } from '@/components/ui/data-table';
     import { ScrollArea } from '@/components/ui/scroll-area';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';

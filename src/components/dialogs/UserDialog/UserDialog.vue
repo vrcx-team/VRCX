@@ -978,18 +978,31 @@
                     </div>
                 </div>
                 <div class="x-friend-list" style="margin-top: 10px; min-height: 60px">
+                    <template v-if="userDialog.worlds.length">
+                        <div
+                            v-for="world in userDialog.worlds"
+                            :key="world.id"
+                            class="x-friend-item x-friend-item-border"
+                            @click="showWorldDialog(world.id)">
+                            <div class="avatar">
+                                <img :src="world.thumbnailImageUrl" loading="lazy" />
+                            </div>
+                            <div class="detail">
+                                <span class="name" v-text="world.name"></span>
+                                <span v-if="world.occupants" class="extra">({{ world.occupants }})</span>
+                            </div>
+                        </div>
+                    </template>
                     <div
-                        v-for="world in userDialog.worlds"
-                        :key="world.id"
-                        class="x-friend-item x-friend-item-border"
-                        @click="showWorldDialog(world.id)">
-                        <div class="avatar">
-                            <img :src="world.thumbnailImageUrl" loading="lazy" />
-                        </div>
-                        <div class="detail">
-                            <span class="name" v-text="world.name"></span>
-                            <span v-if="world.occupants" class="extra">({{ world.occupants }})</span>
-                        </div>
+                        v-else-if="!userDialog.isWorldsLoading"
+                        style="
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            min-height: 120px;
+                            width: 100%;
+                        ">
+                        <DataTableEmpty type="nodata" />
                     </div>
                 </div>
             </template>
@@ -1055,7 +1068,7 @@
                 </template>
                 <template v-else-if="!userDialog.isFavoriteWorldsLoading">
                     <div style="display: flex; justify-content: center; align-items: center; height: 100%">
-                        <span style="font-size: 16px">No favorite worlds found.</span>
+                        <DataTableEmpty type="nodata" />
                     </div>
                 </template>
             </template>
@@ -1127,25 +1140,41 @@
                     </div>
                 </div>
                 <div class="x-friend-list" style="margin-top: 10px; min-height: 60px; max-height: 50vh">
+                    <template v-if="userDialogAvatars.length">
+                        <div
+                            v-for="avatar in userDialogAvatars"
+                            :key="avatar.id"
+                            class="x-friend-item x-friend-item-border"
+                            @click="showAvatarDialog(avatar.id)">
+                            <div class="avatar">
+                                <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
+                            </div>
+                            <div class="detail">
+                                <span class="name" v-text="avatar.name"></span>
+                                <span
+                                    v-if="avatar.releaseStatus === 'public'"
+                                    class="extra"
+                                    v-text="avatar.releaseStatus">
+                                </span>
+                                <span
+                                    v-else-if="avatar.releaseStatus === 'private'"
+                                    class="extra"
+                                    v-text="avatar.releaseStatus">
+                                </span>
+                                <span v-else class="extra" v-text="avatar.releaseStatus"></span>
+                            </div>
+                        </div>
+                    </template>
                     <div
-                        v-for="avatar in userDialogAvatars"
-                        :key="avatar.id"
-                        class="x-friend-item x-friend-item-border"
-                        @click="showAvatarDialog(avatar.id)">
-                        <div class="avatar">
-                            <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
-                        </div>
-                        <div class="detail">
-                            <span class="name" v-text="avatar.name"></span>
-                            <span v-if="avatar.releaseStatus === 'public'" class="extra" v-text="avatar.releaseStatus">
-                            </span>
-                            <span
-                                v-else-if="avatar.releaseStatus === 'private'"
-                                class="extra"
-                                v-text="avatar.releaseStatus">
-                            </span>
-                            <span v-else class="extra" v-text="avatar.releaseStatus"></span>
-                        </div>
+                        v-else-if="!userDialog.isAvatarsLoading"
+                        style="
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            min-height: 120px;
+                            width: 100%;
+                        ">
+                        <DataTableEmpty type="nodata" />
                     </div>
                 </div>
             </template>
@@ -1217,6 +1246,7 @@
     import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
+    import { DataTableEmpty } from '@/components/ui/data-table';
     import { Spinner } from '@/components/ui/spinner';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';

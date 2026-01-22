@@ -6,7 +6,7 @@
                     <Button
                         class="rounded-full"
                         size="icon"
-                        variant="outline"
+                        variant="ghost"
                         :disabled="!graphReady"
                         @click="openForceDialog">
                         <Settings />

@@ -2437,6 +2437,10 @@
             "action": "Action"
         }
     },
+    "common": {
+        "no_data": "No data",
+        "no_matching_records": "No matching records"
+    },
     "vr": {
         "status": {
             "timer": "Timer:",

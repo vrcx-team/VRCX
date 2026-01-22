@@ -60,7 +60,7 @@
                     <TooltipWrapper side="bottom" :content="t('view.notification.refresh_tooltip')">
                         <Button
                             class="rounded-full"
-                            variant="outline"
+                            variant="ghost"
                             size="icon-sm"
                             :disabled="isNotificationsLoading"
                             style="flex: none"
