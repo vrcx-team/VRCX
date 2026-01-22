@@ -50,7 +50,11 @@
                                                 v-if="entry.icon"
                                                 :class="entry.icon"
                                                 class="inline-flex size-4 items-center justify-center text-base" />
-                                            <span>{{ t(entry.label) }}</span>
+                                            <span>{{ t(entry.label) }}</span
+                                            ><span
+                                                v-if="isEntryNotified(entry)"
+                                                class="notify-dot left-6.25!"
+                                                aria-hidden="true"></span>
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
@@ -94,7 +98,7 @@
                                                             class="inline-flex size-5 items-center justify-center text-base" />
                                                         <span>{{ t(entry.label) }}</span>
                                                         <span
-                                                            v-if="isNavItemNotified(item)"
+                                                            v-if="isEntryNotified(entry)"
                                                             class="notify-dot left-0.5!"
                                                             aria-hidden="true"></span>
                                                     </SidebarMenuSubButton>
@@ -672,6 +676,9 @@
             return false;
         }
         const targets = [];
+        if (entry.index) {
+            targets.push(entry.index);
+        }
         if (entry.routeName) {
             targets.push(entry.routeName);
         }
