@@ -217,7 +217,7 @@
                                                     <span
                                                         class="h-3 w-3 shrink-0 rounded-sm"
                                                         :style="{ backgroundColor: theme.swatch }" />
-                                                    <span class="truncate">{{ theme.label }}</span>
+                                                    <span class="truncate">{{ themeColorDisplayName(theme) }}</span>
                                                 </span>
                                             </DropdownMenuCheckboxItem>
                                         </DropdownMenuSubContent>
@@ -235,7 +235,7 @@
                                         indicator-position="right"
                                         @select="handleTableDensitySelect('standard')">
                                         <span>{{
-                                            t('view.settings.appearance.appearance.table_density_standard')
+                                            t('view.settings.appearance.appearance.table_density_comfortable')
                                         }}</span>
                                     </DropdownMenuCheckboxItem>
                                     <DropdownMenuCheckboxItem
@@ -243,7 +243,7 @@
                                         indicator-position="right"
                                         @select="handleTableDensitySelect('comfortable')">
                                         <span>{{
-                                            t('view.settings.appearance.appearance.table_density_comfortable')
+                                            t('view.settings.appearance.appearance.table_density_standard')
                                         }}</span>
                                     </DropdownMenuCheckboxItem>
                                     <DropdownMenuCheckboxItem
@@ -565,6 +565,18 @@
             return translated;
         }
         return THEME_CONFIG[themeKey]?.name ?? themeKey;
+    };
+
+    const themeColorDisplayName = (theme) => {
+        if (!theme) {
+            return '';
+        }
+        const i18nKey = `view.settings.appearance.theme_color.${theme.key}`;
+        const translated = t(i18nKey);
+        if (translated !== i18nKey) {
+            return translated;
+        }
+        return theme.label || theme.key;
     };
 
     const handleSettingsClick = () => {

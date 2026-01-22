@@ -16,7 +16,7 @@
         sideOffset: { type: Number, required: false },
         delayDuration: { type: Number, required: false },
         disableHoverableContent: { type: Boolean, required: false },
-        ignoreNonKeyboardFocus: { type: Boolean, required: false },
+        ignoreNonKeyboardFocus: { type: Boolean, required: false, default: true },
         disabled: { type: Boolean, required: false },
         triggerAsChild: { type: Boolean, required: false, default: true },
         contentClass: { type: null, required: false }

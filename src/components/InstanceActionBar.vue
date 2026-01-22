@@ -73,7 +73,6 @@
                             <Button
                                 class="mt-1"
                                 size="xs"
-                                variant="outline"
                                 :disabled="!!instance?.closedAt"
                                 @click="closeInstance(resolvedInstanceLocation)">
                                 {{ t('dialog.user.info.close_instance') }}

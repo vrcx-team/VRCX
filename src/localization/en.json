@@ -614,7 +614,15 @@
                     "force_iso_date_format": "Force ISO Date Format"
                 },
                 "theme_color": {
-                    "header": "Theme Color"
+                    "header": "Theme Color",
+                    "default": "Zinc",
+                    "blue": "Blue",
+                    "green": "Green",
+                    "orange": "Orange",
+                    "red": "Red",
+                    "rose": "Rose",
+                    "violet": "Violet",
+                    "yellow": "Yellow"
                 },
                 "side_panel": {
                     "header": "Side Panel",
