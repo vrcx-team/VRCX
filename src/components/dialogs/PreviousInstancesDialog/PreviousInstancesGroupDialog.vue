@@ -27,8 +27,10 @@
 </template>
 
 <script setup>
-    import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    defineOptions({ name: 'PreviousInstancesGroupDialog' });
+
     import { computed, ref, watch } from 'vue';
+    import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { InputGroupField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -59,10 +61,10 @@
 
     const vrcxStore = useVrcxStore();
     const rawRows = ref([]);
-    const search = ref('');
     const pageSizes = [10, 25, 50, 100];
     const pageSize = ref(10);
     const tableStyle = { maxHeight: '400px' };
+    const search = ref('');
 
     const displayRows = computed(() => {
         const q = String(search.value ?? '')
@@ -97,6 +99,9 @@
         initialPagination: {
             pageIndex: 0,
             pageSize: pageSize.value
+        },
+        tableOptions: {
+            autoResetPageIndex: false
         }
     });
 

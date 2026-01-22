@@ -27,8 +27,10 @@
 </template>
 
 <script setup>
-    import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    defineOptions({ name: 'PreviousInstancesInfoDialog' });
+
     import { computed, nextTick, ref, watch } from 'vue';
+    import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -48,7 +50,6 @@
 
     const loading = ref(false);
     const rawRows = ref([]);
-    const search = ref('');
     const pageSizes = [10, 25, 50, 100];
     const pageSize = ref(10);
     const tableStyle = { maxHeight: '400px' };
@@ -80,6 +81,7 @@
 
     const { stringComparer } = storeToRefs(useSearchStore());
     const vrcxStore = useVrcxStore();
+    const search = ref('');
 
     const displayRows = computed(() => {
         const q = String(search.value ?? '')
@@ -105,6 +107,9 @@
         initialPagination: {
             pageIndex: 0,
             pageSize: pageSize.value
+        },
+        tableOptions: {
+            autoResetPageIndex: false
         }
     });
 
@@ -161,5 +166,4 @@
             loading.value = false;
         });
     }
-
 </script>

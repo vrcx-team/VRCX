@@ -21,12 +21,12 @@
 
     import AvatarDialog from './AvatarDialog/AvatarDialog.vue';
     import GroupDialog from './GroupDialog/GroupDialog.vue';
-    import UserDialog from './UserDialog/UserDialog.vue';
-    import WorldDialog from './WorldDialog/WorldDialog.vue';
     import PreviousInstancesGroupDialog from './PreviousInstancesDialog/PreviousInstancesGroupDialog.vue';
     import PreviousInstancesInfoDialog from './PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
     import PreviousInstancesUserDialog from './UserDialog/PreviousInstancesUserDialog.vue';
     import PreviousInstancesWorldDialog from './PreviousInstancesDialog/PreviousInstancesWorldDialog.vue';
+    import UserDialog from './UserDialog/UserDialog.vue';
+    import WorldDialog from './WorldDialog/WorldDialog.vue';
 
     const avatarStore = useAvatarStore();
     const groupStore = useGroupStore();
@@ -136,6 +136,13 @@
                 return 'x-dialog x-user-dialog sm:max-w-235 translate-y-0';
         }
     });
+
+    const keepAliveInclude = [
+        'PreviousInstancesInfoDialog',
+        'PreviousInstancesUserDialog',
+        'PreviousInstancesWorldDialog',
+        'PreviousInstancesGroupDialog'
+    ];
 
     const shouldShowBreadcrumbs = computed(() => dialogCrumbs.value.length > 1);
     const shouldCollapseBreadcrumbs = computed(() => dialogCrumbs.value.length > 5);
@@ -267,7 +274,9 @@
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <component :is="activeComponent" v-if="activeComponent" />
+            <KeepAlive :include="keepAliveInclude">
+                <component :is="activeComponent" v-if="activeComponent" />
+            </KeepAlive>
         </DialogContent>
     </Dialog>
 </template>
