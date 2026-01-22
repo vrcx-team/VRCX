@@ -34,8 +34,7 @@
     const worldStore = useWorldStore();
 
     const {
-        previousInstancesInfoDialogVisible,
-        previousInstancesInfoDialogInstanceId,
+        previousInstancesInfoDialog,
         previousInstancesUserDialog,
         previousInstancesWorldDialog,
         previousInstancesGroupDialog
@@ -47,7 +46,7 @@
             worldStore.worldDialog.visible ||
             avatarStore.avatarDialog.visible ||
             groupStore.groupDialog.visible ||
-            previousInstancesInfoDialogVisible.value ||
+            previousInstancesInfoDialog.value.visible ||
             previousInstancesUserDialog.value.visible ||
             previousInstancesWorldDialog.value.visible ||
             previousInstancesGroupDialog.value.visible,
@@ -67,7 +66,7 @@
     const activeCrumb = computed(() => dialogCrumbs.value[dialogCrumbs.value.length - 1] || null);
     const activeType = computed(() => {
         const type = (() => {
-            if (previousInstancesInfoDialogVisible.value) {
+            if (previousInstancesInfoDialog.value.visible) {
                 return 'previous-instances-info';
             }
             if (previousInstancesUserDialog.value.visible) {

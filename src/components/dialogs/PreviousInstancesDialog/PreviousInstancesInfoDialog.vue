@@ -43,8 +43,7 @@
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     const { lookupUser } = useUserStore();
-    const { previousInstancesInfoDialogVisible, previousInstancesInfoDialogInstanceId } =
-        storeToRefs(useInstanceStore());
+    const { previousInstancesInfoDialog } = storeToRefs(useInstanceStore());
     const { gameLogIsFriend, gameLogIsFavorite } = useGameLogStore();
     const { t } = useI18n();
 
@@ -134,7 +133,7 @@
     };
 
     watch(
-        () => previousInstancesInfoDialogVisible.value,
+        () => previousInstancesInfoDialog.value.visible,
         (value) => {
             if (value) {
                 nextTick(() => {
@@ -148,7 +147,7 @@
 
     function init() {
         loading.value = true;
-        location.value = parseLocation(previousInstancesInfoDialogInstanceId.value);
+        location.value = parseLocation(previousInstancesInfoDialog.value.instanceId);
     }
 
     function refreshPreviousInstancesInfoTable() {
