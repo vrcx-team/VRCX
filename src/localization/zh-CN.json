@@ -571,7 +571,7 @@
                     "font_family_jetbrains_mono": "JetBrains Mono",
                     "font_family_roboto": "Roboto",
                     "font_family_fantasque_sans_mono": "Fantasque Sans Mono",
-                    "font_family_system_ui": "系统字体",
+                    "font_family_system_ui": "跟随系统字体",
                     "theme_mode_system": "跟随系统",
                     "theme_mode_light": "浅色",
                     "theme_mode_dark": "深色",
@@ -614,7 +614,15 @@
                     "force_iso_date_format": "强制使用 ISO 时间格式"
                 },
                 "theme_color": {
-                    "header": "主题颜色"
+                    "header": "主题颜色",
+                    "default": "默认",
+                    "blue": "胖次蓝",
+                    "green": "帽子绿",
+                    "orange": "地狱火橙",
+                    "red": "飞鹰红",
+                    "rose": "玫瑰红",
+                    "violet": "基佬紫",
+                    "yellow": "太阳黄"
                 },
                 "side_panel": {
                     "header": "侧边栏",
@@ -648,7 +656,16 @@
                 },
                 "user_colors": {
                     "header": "好友名称显示颜色",
-                    "random_colors_from_user_id": "从玩家 ID 随机挑选颜色"
+                    "random_colors_from_user_id": "从玩家 ID 随机挑选颜色",
+                    "trust_levels": {
+                        "visitor": "游客",
+                        "new_user": "萌新",
+                        "user": "玩家",
+                        "known_user": "长期玩家",
+                        "trusted_user": "资深玩家",
+                        "vrchat_team": "VRChat 团队成员",
+                        "nuisance": "劣迹玩家"
+                    }
                 },
                 "friend_log": {
                     "header": "好友日志",
@@ -958,7 +975,7 @@
             "pronouns": "人称代词",
             "tags": {
                 "friend_number": "好友序号",
-                "vrchat_team": "VRChat Team",
+                "vrchat_team": "VRChat 团队成员",
                 "18_plus_verified": "已满18岁",
                 "age_verified": "已完成年龄验证",
                 "trust_level": "信誉等级",
@@ -2436,6 +2453,10 @@
             "count": "加入次数",
             "action": "操作"
         }
+    },
+    "common": {
+        "no_data": "无数据",
+        "no_matching_records": "无匹配记录"
     },
     "vr": {
         "status": {
