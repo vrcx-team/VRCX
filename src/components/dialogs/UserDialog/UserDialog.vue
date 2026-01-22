@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="w-223">
         <DialogHeader class="sr-only">
             <DialogTitle>{{
                 userDialog.ref?.displayName || userDialog.id || t('dialog.user.info.header')

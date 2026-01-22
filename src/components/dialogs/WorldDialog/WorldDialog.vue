@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="w-223">
         <DialogHeader class="sr-only">
             <DialogTitle>{{ worldDialog.ref?.name || t('dialog.world.info.header') }}</DialogTitle>
             <DialogDescription>
