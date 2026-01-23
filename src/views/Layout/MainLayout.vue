@@ -10,7 +10,7 @@
 
             <div
                 v-show="sidebarOpen"
-                class="absolute top-0 bottom-0 z-30 w-1 cursor-col-resize select-none hover:bg-border/60"
+                class="absolute top-0 bottom-0 z-30 w-1 cursor-ew-resize select-none"
                 :style="{ left: 'var(--sidebar-width)' }"
                 @pointerdown.prevent="startNavResize" />
 
@@ -98,13 +98,13 @@
     import AvatarImportDialog from '../Favorites/dialogs/AvatarImportDialog.vue';
     import ChangelogDialog from '../Settings/dialogs/ChangelogDialog.vue';
     import ChooseFavoriteGroupDialog from '../../components/dialogs/ChooseFavoriteGroupDialog.vue';
-    import MainDialogContainer from '../../components/dialogs/MainDialogContainer.vue';
     import FriendImportDialog from '../Favorites/dialogs/FriendImportDialog.vue';
     import FullscreenImagePreview from '../../components/FullscreenImagePreview.vue';
     import GroupMemberModerationDialog from '../../components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
     import InviteGroupDialog from '../../components/dialogs/InviteGroupDialog.vue';
     import LaunchDialog from '../../components/dialogs/LaunchDialog.vue';
     import LaunchOptionsDialog from '../Settings/dialogs/LaunchOptionsDialog.vue';
+    import MainDialogContainer from '../../components/dialogs/MainDialogContainer.vue';
     import NavMenu from '../../components/NavMenu.vue';
     import PrimaryPasswordDialog from '../Settings/dialogs/PrimaryPasswordDialog.vue';
     import SendBoopDialog from '../../components/dialogs/SendBoopDialog.vue';

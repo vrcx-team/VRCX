@@ -268,7 +268,7 @@
                     </div>
                 </div>
             </ResizablePanel>
-            <ResizableHandle with-handle @dragging="setWorldSplitterDragging" />
+            <ResizableHandle @dragging="setWorldSplitterDragging" />
             <ResizablePanel :order="2">
                 <div class="favorites-content">
                     <div class="favorites-content__header">
