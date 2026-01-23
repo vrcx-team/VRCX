@@ -46,6 +46,7 @@ export const useGroupStore = defineStore('Group', () => {
     const groupDialog = ref({
         visible: false,
         loading: false,
+        activeTab: 'Info',
         lastActiveTab: 'Info',
         isGetGroupDialogGroupLoading: false,
         treeData: {},

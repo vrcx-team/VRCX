@@ -36,6 +36,7 @@ export const useWorldStore = defineStore('World', () => {
     const worldDialog = reactive({
         visible: false,
         loading: false,
+        activeTab: 'Instances',
         lastActiveTab: 'Instances',
         id: '',
         memo: '',

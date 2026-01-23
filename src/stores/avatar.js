@@ -43,6 +43,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     const avatarDialog = ref({
         visible: false,
         loading: false,
+        activeTab: 'Info',
         lastActiveTab: 'Info',
         id: '',
         memo: '',
