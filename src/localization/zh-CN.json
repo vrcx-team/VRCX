@@ -34,7 +34,7 @@
         "github": "GitHub 仓库",
         "discord": "加入 Discord",
         "whats_new": "更新日志",
-        "update_available": "有可用更新",
+        "update_available": "有新版本可用",
         "update": "更新",
         "custom_nav": {
             "header": "自定义导航栏",
@@ -255,7 +255,7 @@
                 "invite": "邀请",
                 "decline": "拒绝",
                 "delete_log": "删除日志",
-                "decline_with_message": "拒绝并附带消息"
+                "decline_with_message": "拒绝并回复"
             },
             "filters": {
                 "requestInvite": "申请加入",
@@ -592,7 +592,7 @@
                     "theme_mode_system": "跟随系统",
                     "theme_mode_light": "浅色",
                     "theme_mode_dark": "深色",
-                    "theme_mode_midnight": "Midnight",
+                    "theme_mode_midnight": "午夜",
                     "theme_mode_blue": "蓝色",
                     "theme_mode_darkblue": "深蓝色",
                     "theme_mode_amoled": "纯黑（Amoled）",
@@ -603,7 +603,7 @@
                     "zoom": "界面缩放",
                     "vrcplus_profile_icons": "VRC+ 个人资料图标",
                     "tooltips": "显示提示",
-                    "show_instance_id": "显示房间名称",
+                    "show_instance_id": "显示房间 ID（及其自定义名称）",
                     "age_gated_instances": "显示具有年龄限制的房间",
                     "nicknames": "显示本地好友备注",
                     "sort_favorite_by": "收藏夹排序规则",
@@ -616,7 +616,7 @@
                     "table_page_sizes": "每页显示行数",
                     "table_page_sizes_error": "行数必须是 1 到 1000 之间的数字",
                     "show_notification_icon_dot": "显示托盘通知",
-                    "striped_data_table_mode": "条纹表格模式",
+                    "striped_data_table_mode": "斑马纹表格模式",
                     "toggle_pointer_on_hover": "悬停时强制显示指针",
                     "table_density": "表格宽度",
                     "table_density_standard": "标准",
@@ -819,8 +819,8 @@
                         "description": "通过发送匿名的崩溃和错误报告来帮助改进 VRCX。不会收集任何有关个人或 VRChat 的相关数据。",
                         "consent_title": "匿名错误报告",
                         "consent_description": "启用匿名错误报告以帮助改进 VRCX吗？\n\n• 我们仅收集有关 VRCX 的崩溃和错误报告数据\n• 不会收集任何有关个人或 VRChat 的相关数据\n• 匿名错误报告仅限测试版可用\n• 并且可在高级设置中禁用",
-                        "enabled_restart_description": "错误报告已启用。要重启 VRCX 以立即应用更改吗",
-                        "disabled_restart_description": "错误报告已禁用。要重启 VRCX 以立即应用更改吗"
+                        "enabled_restart_description": "错误报告目前已启用，要重启 VRCX 以便禁用它吗？",
+                        "disabled_restart_description": "错误报告目前已禁用，要重启 VRCX 以便启用它吗？"
                     },
                     "save_instance_prints_to_file": {
                         "header": "“拍立得”照片保存选项",
@@ -1620,7 +1620,7 @@
             "branch_nightly": "测试版",
             "nightly_title": "测试版构建",
             "nightly_notice": "测试版构建一般用于新功能测试。如果你需要稳定性，请使用稳定版构建。",
-            "release": "可供选择的版本",
+            "release": "版本",
             "download": "下载",
             "install": "安装",
             "cancel": "取消"
@@ -1821,7 +1821,7 @@
             "emoji_animation_type": "动画表情",
             "emoji_animation_fps": "FPS：",
             "emoji_animation_frame_count": "帧数：",
-            "emoji_loop_pingpong": "Loop PingPong",
+            "emoji_loop_pingpong": "往返循环播放",
             "flipbook_info": "选择一个 1024x1024 的 PNG 精灵表作为动画表情（最大 FPS 为64）",
             "note": "备注",
             "crop_print_border": "裁剪白边",
