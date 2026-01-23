@@ -35,28 +35,7 @@
 
     const { previousInstancesInfoDialog, previousInstancesListDialog } = storeToRefs(instanceStore);
 
-    const isOpen = computed({
-        get: () =>
-            userStore.userDialog.visible ||
-            worldStore.worldDialog.visible ||
-            avatarStore.avatarDialog.visible ||
-            groupStore.groupDialog.visible ||
-            previousInstancesInfoDialog.value.visible ||
-            previousInstancesListDialog.value.visible,
-        set: (value) => {
-            if (!value) {
-                userStore.userDialog.visible = false;
-                worldStore.worldDialog.visible = false;
-                avatarStore.avatarDialog.visible = false;
-                groupStore.groupDialog.visible = false;
-                instanceStore.hidePreviousInstancesDialogs();
-                uiStore.clearDialogCrumbs();
-            }
-        }
-    });
-
     const dialogCrumbs = computed(() => uiStore.dialogCrumbs);
-    const activeCrumb = computed(() => dialogCrumbs.value[dialogCrumbs.value.length - 1] || null);
     const activeType = computed(() => {
         const type = (() => {
             if (previousInstancesInfoDialog.value.visible) {
@@ -77,8 +56,7 @@
             if (groupStore.groupDialog.visible) {
                 return 'group';
             }
-            const crumb = activeCrumb.value;
-            return crumb?.type ?? null;
+            return null;
         })();
         return type;
     });
@@ -114,6 +92,19 @@
                 return { variant: 'group' };
             default:
                 return {};
+        }
+    });
+    const isOpen = computed({
+        get: () => activeComponent.value !== null,
+        set: (value) => {
+            if (!value) {
+                userStore.userDialog.visible = false;
+                worldStore.worldDialog.visible = false;
+                avatarStore.avatarDialog.visible = false;
+                groupStore.groupDialog.visible = false;
+                instanceStore.hidePreviousInstancesDialogs();
+                uiStore.clearDialogCrumbs();
+            }
         }
     });
 

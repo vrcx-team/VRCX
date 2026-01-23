@@ -107,6 +107,21 @@ export const useUiStore = defineStore('Ui', () => {
         dialogCrumbs.value = [];
     }
 
+    function openDialog({
+        type,
+        id,
+        label = '',
+        skipBreadcrumb = false,
+        hadActiveDialog = false
+    }) {
+        if (!hadActiveDialog) {
+            clearDialogCrumbs();
+        }
+        if (!skipBreadcrumb) {
+            pushDialogCrumb(type, id, label);
+        }
+    }
+
     // Make sure file drops outside of the screenshot manager don't navigate to the file path dropped.
     // This issue persists on prompts created with prompt(), unfortunately. Not sure how to fix that.
     document.body.addEventListener('drop', function (e) {
@@ -191,6 +206,7 @@ export const useUiStore = defineStore('Ui', () => {
         pushDialogCrumb,
         setDialogCrumbLabel,
         jumpDialogCrumb,
-        clearDialogCrumbs
+        clearDialogCrumbs,
+        openDialog
     };
 });

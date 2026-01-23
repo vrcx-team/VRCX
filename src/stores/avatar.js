@@ -190,12 +190,12 @@ export const useAvatarStore = defineStore('Avatar', () => {
             groupStore.groupDialog.visible ||
             instanceStore.previousInstancesInfoDialog.visible ||
             instanceStore.previousInstancesListDialog.visible;
-        if (!hadActiveDialog) {
-            uiStore.clearDialogCrumbs();
-        }
-        if (!options.skipBreadcrumb) {
-            uiStore.pushDialogCrumb('avatar', avatarId);
-        }
+        uiStore.openDialog({
+            type: 'avatar',
+            id: avatarId,
+            skipBreadcrumb: options.skipBreadcrumb,
+            hadActiveDialog
+        });
         instanceStore.hidePreviousInstancesDialogs();
         userStore.userDialog.visible = false;
         worldStore.worldDialog.visible = false;

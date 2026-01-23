@@ -774,12 +774,12 @@ export const useUserStore = defineStore('User', () => {
             groupStore.groupDialog.visible ||
             instanceStore.previousInstancesInfoDialog.visible ||
             instanceStore.previousInstancesListDialog.visible;
-        if (!hadActiveDialog) {
-            uiStore.clearDialogCrumbs();
-        }
-        if (!options.skipBreadcrumb) {
-            uiStore.pushDialogCrumb('user', userId);
-        }
+        uiStore.openDialog({
+            type: 'user',
+            id: userId,
+            skipBreadcrumb: options.skipBreadcrumb,
+            hadActiveDialog
+        });
         instanceStore.hidePreviousInstancesDialogs();
         worldStore.worldDialog.visible = false;
         avatarStore.avatarDialog.visible = false;

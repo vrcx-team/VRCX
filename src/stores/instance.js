@@ -290,15 +290,24 @@ export const useInstanceStore = defineStore('Instance', () => {
     }
 
     function showPreviousInstancesInfoDialog(instanceId, options = {}) {
+        const hadActiveDialog =
+            userStore.userDialog.visible ||
+            worldStore.worldDialog.visible ||
+            groupStore.groupDialog.visible ||
+            previousInstancesInfoDialog.value.visible ||
+            previousInstancesListDialog.value.visible ||
+            uiStore.dialogCrumbs.length > 0;
         hidePreviousInstancesDialogs();
         previousInstancesInfoDialog.value.visible = true;
         previousInstancesInfoDialog.value.instanceId = instanceId;
-        if (!options.skipBreadcrumb && instanceId) {
-            uiStore.pushDialogCrumb(
-                'previous-instances-info',
-                instanceId,
-                formatPreviousInstancesInfoLabel(instanceId)
-            );
+        if (instanceId) {
+            uiStore.openDialog({
+                type: 'previous-instances-info',
+                id: instanceId,
+                label: formatPreviousInstancesInfoLabel(instanceId),
+                skipBreadcrumb: options.skipBreadcrumb,
+                hadActiveDialog
+            });
             const location = parseLocation(instanceId);
             if (
                 location.worldId &&
@@ -326,6 +335,13 @@ export const useInstanceStore = defineStore('Instance', () => {
         targetRef,
         options = {}
     ) {
+        const hadActiveDialog =
+            userStore.userDialog.visible ||
+            worldStore.worldDialog.visible ||
+            groupStore.groupDialog.visible ||
+            previousInstancesInfoDialog.value.visible ||
+            previousInstancesListDialog.value.visible ||
+            uiStore.dialogCrumbs.length > 0;
         hidePreviousInstancesDialogs();
         previousInstancesListDialog.value.variant = variant;
         let resolved = null;
@@ -342,16 +358,18 @@ export const useInstanceStore = defineStore('Instance', () => {
         previousInstancesListDialog.value.visible = true;
         previousInstancesListDialog.value.openFlg = true;
         nextTick(() => (previousInstancesListDialog.value.openFlg = false));
-        if (!options.skipBreadcrumb && resolved?.id) {
+        if (resolved?.id) {
             const label =
                 variant === 'user'
                     ? resolved.displayName || resolved.id
                     : resolved.name || resolved.id;
-            uiStore.pushDialogCrumb(
-                `previous-instances-${variant}`,
-                resolved.id,
-                label
-            );
+            uiStore.openDialog({
+                type: `previous-instances-${variant}`,
+                id: resolved.id,
+                label,
+                skipBreadcrumb: options.skipBreadcrumb,
+                hadActiveDialog
+            });
         }
     }
 

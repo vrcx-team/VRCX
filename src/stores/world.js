@@ -91,12 +91,12 @@ export const useWorldStore = defineStore('World', () => {
             groupStore.groupDialog.visible ||
             instanceStore.previousInstancesInfoDialog.visible ||
             instanceStore.previousInstancesListDialog.visible;
-        if (!hadActiveDialog) {
-            uiStore.clearDialogCrumbs();
-        }
-        if (!options.skipBreadcrumb) {
-            uiStore.pushDialogCrumb('world', L.worldId);
-        }
+        uiStore.openDialog({
+            type: 'world',
+            id: L.worldId,
+            skipBreadcrumb: options.skipBreadcrumb,
+            hadActiveDialog
+        });
         D.visible = true;
         instanceStore.hidePreviousInstancesDialogs();
         userStore.userDialog.visible = false;
