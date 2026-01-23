@@ -694,6 +694,7 @@
                 "notifications": {
                     "header": "Notifications",
                     "notification_filter": "Notification Filter",
+                    "test_notification": "Test Notification",
                     "steamvr_notifications": {
                         "header": "SteamVR Notifications",
                         "steamvr_overlay": "SteamVR Overlay",

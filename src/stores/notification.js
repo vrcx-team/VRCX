@@ -2332,6 +2332,14 @@ export const useNotificationStore = defineStore('Notification', () => {
         refreshNotifications();
     }
 
+    function testNotification() {
+        playNoty({
+            type: 'Event',
+            created_at: new Date().toJSON(),
+            data: 'Notification Test'
+        });
+    }
+
     return {
         notificationInitStatus,
         notificationTable,
@@ -2353,6 +2361,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         handleNotificationV2Update,
         handleNotificationHide,
         handleNotification,
-        handleNotificationV2
+        handleNotificationV2,
+        testNotification
     };
 });

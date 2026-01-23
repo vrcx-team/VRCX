@@ -7,6 +7,11 @@
                     t('view.settings.notifications.notifications.notification_filter')
                 }}</Button>
             </div>
+            <div class="options-container-item">
+                <Button size="sm" variant="outline" @click="testNotification"
+                    ><Play />{{ t('view.settings.notifications.notifications.test_notification') }}</Button
+                >
+            </div>
         </div>
         <div class="options-container">
             <span class="sub-header">{{
@@ -262,7 +267,7 @@
                     :rows="1"
                     style="width: 175px; display: inline-block"
                     input-class="resize-none min-h-0" />
-                <Button size="sm" variant="outline" style="margin-left: 10px" @click="testNotificationTTS">{{
+                <Button size="sm" variant="outline" @click="testNotificationTTS">{{
                     t('view.settings.notifications.notifications.text_to_speech.play')
                 }}</Button>
             </div>
@@ -277,10 +282,16 @@
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
+    import { Play } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useAdvancedSettingsStore, useNotificationsSettingsStore, useVrStore } from '../../../../stores';
+    import {
+        useAdvancedSettingsStore,
+        useNotificationStore,
+        useNotificationsSettingsStore,
+        useVrStore
+    } from '../../../../stores';
     import { ToggleGroup, ToggleGroupItem } from '../../../../components/ui/toggle-group';
     import { Slider } from '../../../../components/ui/slider';
 
@@ -330,6 +341,8 @@
         testNotificationTTS,
         promptNotificationTimeout
     } = notificationsSettingsStore;
+
+    const { testNotification } = useNotificationStore();
 
     const { setNotificationOpacity } = advancedSettingsStore;
 
