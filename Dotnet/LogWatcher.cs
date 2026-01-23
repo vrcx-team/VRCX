@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using NLog;
 
@@ -32,6 +33,7 @@ namespace VRCX
         private DateTime tillDate;
         public bool VrcClosedGracefully;
         private readonly ConcurrentQueue<string> m_LogQueue = new ConcurrentQueue<string>(); // for electron
+        private static readonly Regex CleanId = new("[^a-zA-Z0-9_\\-~:()]", RegexOptions.Compiled);
 
         // NOTE
         // FileSystemWatcher() is unreliable
@@ -371,6 +373,7 @@ namespace VRCX
                     return true;
 
                 var location = line.Substring(lineOffset);
+                location = CleanId.Replace(location, string.Empty);
 
                 AppendLog(new[]
                 {
@@ -447,7 +450,8 @@ namespace VRCX
                 if (lineOffset >= line.Length)
                     return true;
 
-                logContext.LocationDestination = line.Substring(lineOffset);
+                var locationDestination = line.Substring(lineOffset);
+                logContext.LocationDestination = CleanId.Replace(locationDestination, string.Empty);
 
                 return true;
             }
@@ -495,8 +499,8 @@ namespace VRCX
                     fileInfo.Name,
                     ConvertLogTimeToISO8601(line),
                     "player-joined",
-                    userInfo.DisplayName ?? string.Empty,
-                    userInfo.UserId ?? string.Empty
+                    userInfo.DisplayName,
+                    userInfo.UserId
                 });
 
                 return true;
@@ -1351,14 +1355,15 @@ namespace VRCX
 
             var inventoryIdIndex = info.IndexOf("inv_", StringComparison.Ordinal);
             var inventoryId = info.Substring(inventoryIdIndex);
+            inventoryId = CleanId.Replace(inventoryId, string.Empty);
 
             AppendLog(new[]
             {
                 fileInfo.Name,
                 ConvertLogTimeToISO8601(line),
                 "sticker-spawn",
-                userId ?? string.Empty,
-                displayName ?? string.Empty,
+                userId,
+                displayName,
                 inventoryId
             });
 
@@ -1400,21 +1405,22 @@ namespace VRCX
             return new string[][] { };
         }
 
-        private static (string? DisplayName, string? UserId) ParseUserInfo(string userInfo)
+        private static (string DisplayName, string UserId) ParseUserInfo(string userInfo)
         {
-            string? userDisplayName;
-            string? userId;
+            string userDisplayName;
+            string userId;
 
-            int pos = userInfo.LastIndexOf(" (", StringComparison.Ordinal);
+            var pos = userInfo.LastIndexOf(" (", StringComparison.Ordinal);
             if (pos >= 0)
             {
                 userDisplayName = userInfo.Substring(0, pos);
                 userId = userInfo.Substring(pos + 2, userInfo.LastIndexOf(')') - (pos + 2));
+                userId = CleanId.Replace(userId, string.Empty);
             }
             else
             {
                 userDisplayName = userInfo;
-                userId = null;
+                userId = string.Empty;
             }
 
             return (userDisplayName, userId);

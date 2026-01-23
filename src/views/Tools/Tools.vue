@@ -296,6 +296,7 @@
             <EditInviteMessageDialog
                 v-model:isEditInviteMessagesDialogVisible="isEditInviteMessagesDialogVisible"
                 @close="isEditInviteMessagesDialogVisible = false" />
+            <RegistryBackupDialog />
         </template>
     </div>
 </template>
@@ -332,6 +333,7 @@
     const ExportDiscordNamesDialog = defineAsyncComponent(() => import('./dialogs/ExportDiscordNamesDialog.vue'));
     const ExportFriendsListDialog = defineAsyncComponent(() => import('./dialogs/ExportFriendsListDialog.vue'));
     const ExportAvatarsListDialog = defineAsyncComponent(() => import('./dialogs/ExportAvatarsListDialog.vue'));
+    const RegistryBackupDialog = defineAsyncComponent(() => import('../Settings/dialogs/RegistryBackupDialog.vue'));
 
     const { t } = useI18n();
     const router = useRouter();

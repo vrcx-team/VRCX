@@ -247,9 +247,15 @@ namespace VRCX
 
         public void SetCookies(string cookies)
         {
-            using (var stream = new MemoryStream(Convert.FromBase64String(cookies)))
+            try
             {
-                CookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));
+                using var stream = new MemoryStream(Convert.FromBase64String(cookies));
+                var data = System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream);
+                CookieContainer.Add(data);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Failed to set cookies: {e.Message}");
             }
 
             _cookieDirty = true; // force cookies to be saved for lastUserLoggedIn
