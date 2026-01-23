@@ -117,7 +117,6 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     const previousInstancesListDialog = ref({
         visible: false,
-        openFlg: false,
         variant: 'user',
         userRef: {
             id: '',
@@ -148,9 +147,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         (isLoggedIn) => {
             currentInstanceUsersData.value = [];
             instanceJoinHistory.clear();
-            previousInstancesInfoDialog.value.visible = false;
-            previousInstancesListDialog.value.visible = false;
-            previousInstancesListDialog.value.openFlg = false;
+            hidePreviousInstancesDialogs();
             cachedInstances.clear();
             queuedInstances.clear();
             if (isLoggedIn) {
@@ -188,7 +185,6 @@ export const useInstanceStore = defineStore('Instance', () => {
     function hidePreviousInstancesDialogs() {
         previousInstancesInfoDialog.value.visible = false;
         previousInstancesListDialog.value.visible = false;
-        previousInstancesListDialog.value.openFlg = false;
     }
 
     async function resolveUserRef(input) {
@@ -290,24 +286,17 @@ export const useInstanceStore = defineStore('Instance', () => {
     }
 
     function showPreviousInstancesInfoDialog(instanceId, options = {}) {
-        const hadActiveDialog =
-            userStore.userDialog.visible ||
-            worldStore.worldDialog.visible ||
-            groupStore.groupDialog.visible ||
-            previousInstancesInfoDialog.value.visible ||
-            previousInstancesListDialog.value.visible ||
-            uiStore.dialogCrumbs.length > 0;
-        hidePreviousInstancesDialogs();
         previousInstancesInfoDialog.value.visible = true;
         previousInstancesInfoDialog.value.instanceId = instanceId;
+        uiStore.openDialog({
+            type: 'previous-instances-info',
+            id: instanceId || '',
+            label: instanceId
+                ? formatPreviousInstancesInfoLabel(instanceId)
+                : '',
+            skipBreadcrumb: options.skipBreadcrumb
+        });
         if (instanceId) {
-            uiStore.openDialog({
-                type: 'previous-instances-info',
-                id: instanceId,
-                label: formatPreviousInstancesInfoLabel(instanceId),
-                skipBreadcrumb: options.skipBreadcrumb,
-                hadActiveDialog
-            });
             const location = parseLocation(instanceId);
             if (
                 location.worldId &&
@@ -335,14 +324,6 @@ export const useInstanceStore = defineStore('Instance', () => {
         targetRef,
         options = {}
     ) {
-        const hadActiveDialog =
-            userStore.userDialog.visible ||
-            worldStore.worldDialog.visible ||
-            groupStore.groupDialog.visible ||
-            previousInstancesInfoDialog.value.visible ||
-            previousInstancesListDialog.value.visible ||
-            uiStore.dialogCrumbs.length > 0;
-        hidePreviousInstancesDialogs();
         previousInstancesListDialog.value.variant = variant;
         let resolved = null;
         if (variant === 'user') {
@@ -356,21 +337,18 @@ export const useInstanceStore = defineStore('Instance', () => {
             previousInstancesListDialog.value.groupRef = resolved;
         }
         previousInstancesListDialog.value.visible = true;
-        previousInstancesListDialog.value.openFlg = true;
-        nextTick(() => (previousInstancesListDialog.value.openFlg = false));
-        if (resolved?.id) {
-            const label =
-                variant === 'user'
-                    ? resolved.displayName || resolved.id
-                    : resolved.name || resolved.id;
-            uiStore.openDialog({
-                type: `previous-instances-${variant}`,
-                id: resolved.id,
-                label,
-                skipBreadcrumb: options.skipBreadcrumb,
-                hadActiveDialog
-            });
-        }
+        const dialogId = resolved?.id || '';
+        const label = resolved?.id
+            ? variant === 'user'
+                ? resolved.displayName || resolved.id
+                : resolved.name || resolved.id
+            : '';
+        uiStore.openDialog({
+            type: `previous-instances-${variant}`,
+            id: dialogId,
+            label,
+            skipBreadcrumb: options.skipBreadcrumb
+        });
     }
 
     function updateCurrentInstanceWorld() {

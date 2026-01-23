@@ -8,8 +8,13 @@ import { AppDebug } from '../service/appConfig';
 import { refreshCustomCss } from '../shared/utils/base/ui';
 import { updateLocalizedStrings } from '../plugin/i18n';
 import { useAppearanceSettingsStore } from './settings/appearance';
+import { useAvatarStore } from './avatar';
+import { useGroupStore } from './group';
+import { useInstanceStore } from './instance';
 import { useNotificationStore } from './notification';
 import { useSearchStore } from './search';
+import { useUserStore } from './user';
+import { useWorldStore } from './world';
 
 export const useUiStore = defineStore('Ui', () => {
     const notificationStore = useNotificationStore();
@@ -107,13 +112,45 @@ export const useUiStore = defineStore('Ui', () => {
         dialogCrumbs.value = [];
     }
 
-    function openDialog({
-        type,
-        id,
-        label = '',
-        skipBreadcrumb = false,
-        hadActiveDialog = false
-    }) {
+    function openDialog({ type, id, label = '', skipBreadcrumb = false }) {
+        const userStore = useUserStore();
+        const worldStore = useWorldStore();
+        const avatarStore = useAvatarStore();
+        const groupStore = useGroupStore();
+        const instanceStore = useInstanceStore();
+        const isPrevInfo = type === 'previous-instances-info';
+        const isPrevList =
+            type &&
+            type.startsWith('previous-instances-') &&
+            type !== 'previous-instances-info';
+        const hadActiveDialog =
+            dialogCrumbs.value.length > 0 ||
+            userStore.userDialog.visible ||
+            worldStore.worldDialog.visible ||
+            avatarStore.avatarDialog.visible ||
+            groupStore.groupDialog.visible ||
+            (instanceStore.previousInstancesInfoDialog.visible &&
+                !isPrevInfo) ||
+            (instanceStore.previousInstancesListDialog.visible && !isPrevList);
+
+        if (type !== 'user') {
+            userStore.userDialog.visible = false;
+        }
+        if (type !== 'world') {
+            worldStore.worldDialog.visible = false;
+        }
+        if (type !== 'avatar') {
+            avatarStore.avatarDialog.visible = false;
+        }
+        if (type !== 'group') {
+            groupStore.groupDialog.visible = false;
+        }
+        if (!isPrevInfo) {
+            instanceStore.previousInstancesInfoDialog.visible = false;
+        }
+        if (!isPrevList) {
+            instanceStore.previousInstancesListDialog.visible = false;
+        }
         if (!hadActiveDialog) {
             clearDialogCrumbs();
         }

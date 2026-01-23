@@ -143,22 +143,18 @@
         }
         uiStore.jumpDialogCrumb(index);
         if (item.type === 'user') {
-            instanceStore.hidePreviousInstancesDialogs();
             userStore.showUserDialog(item.id, { skipBreadcrumb: true });
             return;
         }
         if (item.type === 'world') {
-            instanceStore.hidePreviousInstancesDialogs();
             worldStore.showWorldDialog(item.id, null, { skipBreadcrumb: true });
             return;
         }
         if (item.type === 'avatar') {
-            instanceStore.hidePreviousInstancesDialogs();
             avatarStore.showAvatarDialog(item.id, { skipBreadcrumb: true });
             return;
         }
         if (item.type === 'group') {
-            instanceStore.hidePreviousInstancesDialogs();
             groupStore.showGroupDialog(item.id, { skipBreadcrumb: true });
             return;
         }

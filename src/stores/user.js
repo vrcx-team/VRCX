@@ -767,24 +767,13 @@ export const useUserStore = defineStore('User', () => {
         ) {
             return;
         }
-        const hadActiveDialog =
-            userDialog.value.visible ||
-            worldStore.worldDialog.visible ||
-            avatarStore.avatarDialog.visible ||
-            groupStore.groupDialog.visible ||
-            instanceStore.previousInstancesInfoDialog.visible ||
-            instanceStore.previousInstancesListDialog.visible;
         uiStore.openDialog({
             type: 'user',
             id: userId,
-            skipBreadcrumb: options.skipBreadcrumb,
-            hadActiveDialog
+            skipBreadcrumb: options.skipBreadcrumb
         });
-        instanceStore.hidePreviousInstancesDialogs();
-        worldStore.worldDialog.visible = false;
-        avatarStore.avatarDialog.visible = false;
-        groupStore.groupDialog.visible = false;
         const D = userDialog.value;
+        D.visible = true;
         D.id = userId;
         D.treeData = {};
         D.memo = '';

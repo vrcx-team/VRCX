@@ -18,13 +18,10 @@ import { database } from '../service/database';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useFavoriteStore } from './favorite';
-import { useGroupStore } from './group';
-import { useInstanceStore } from './instance';
 import { useModalStore } from './modal';
 import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
-import { useWorldStore } from './world';
 import { watchState } from '../service/watchState';
 
 import webApiService from '../service/webapi';
@@ -34,10 +31,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     const avatarProviderStore = useAvatarProviderStore();
     const vrcxUpdaterStore = useVRCXUpdaterStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
-    const instanceStore = useInstanceStore();
     const userStore = useUserStore();
-    const worldStore = useWorldStore();
-    const groupStore = useGroupStore();
     const modalStore = useModalStore();
     const uiStore = useUiStore();
     const { t } = useI18n();
@@ -183,23 +177,11 @@ export const useAvatarStore = defineStore('Avatar', () => {
      */
     function showAvatarDialog(avatarId, options = {}) {
         const D = avatarDialog.value;
-        const hadActiveDialog =
-            avatarDialog.value.visible ||
-            userStore.userDialog.visible ||
-            worldStore.worldDialog.visible ||
-            groupStore.groupDialog.visible ||
-            instanceStore.previousInstancesInfoDialog.visible ||
-            instanceStore.previousInstancesListDialog.visible;
         uiStore.openDialog({
             type: 'avatar',
             id: avatarId,
-            skipBreadcrumb: options.skipBreadcrumb,
-            hadActiveDialog
+            skipBreadcrumb: options.skipBreadcrumb
         });
-        instanceStore.hidePreviousInstancesDialogs();
-        userStore.userDialog.visible = false;
-        worldStore.worldDialog.visible = false;
-        groupStore.groupDialog.visible = false;
 
         D.loading = true;
         D.id = avatarId;
@@ -233,9 +215,11 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 ref2.authorId !== userStore.currentUser.id
             ) {
                 D.loading = false;
+                D.visible = false;
                 return;
             }
         }
+        D.visible = true;
         avatarRequest
             .getAvatar({ avatarId })
             .then((args) => {
@@ -247,7 +231,6 @@ export const useAvatarStore = defineStore('Avatar', () => {
                     D.ref?.name || D.id
                 );
                 getAvatarGallery(avatarId);
-                D.visible = true;
                 updateVRChatAvatarCache();
                 if (/quest/.test(ref.tags)) {
                     D.isQuestFallback = true;

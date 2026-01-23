@@ -278,13 +278,4 @@
         },
         { immediate: true }
     );
-
-    watch(
-        () => dialogState.value?.openFlg,
-        () => {
-            if (dialogState.value?.visible) {
-                refreshTable();
-            }
-        }
-    );
 </script>
