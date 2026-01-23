@@ -14,7 +14,7 @@
             :user-dialog-command="userDialogCommand" />
 
         <TabsUnderline
-            v-model="userDialogActiveTab"
+            v-model="userDialog.activeTab"
             :items="userDialogTabs"
             :unmount-on-hide="false"
             @update:modelValue="userDialogTabClick">
@@ -265,7 +265,7 @@
                             </div>
                         </div>
 
-                        <div class="x-friend-item" @click="showPreviousInstancesUserDialog(userDialog.ref)">
+                        <div class="x-friend-item" @click="showPreviousInstancesListDialog(userDialog.ref)">
                             <div class="detail">
                                 <div
                                     class="name"
@@ -298,7 +298,7 @@
                             :disabled="currentUser.id !== userDialog.id"
                             side="top"
                             :content="t('dialog.user.info.open_previous_instance')">
-                            <div class="x-friend-item" @click="showPreviousInstancesUserDialog(userDialog.ref)">
+                            <div class="x-friend-item" @click="showPreviousInstancesListDialog(userDialog.ref)">
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.user.info.play_time') }}
@@ -1407,7 +1407,6 @@
     const userDialogGroupAllSelected = ref(false);
     const userDialogGroupEditSelectedGroupIds = ref([]); // selected groups in edit mode
 
-    const userDialogActiveTab = ref('Info');
     const userDialogLastMutualFriends = ref('');
     const userDialogLastGroup = ref('');
     const userDialogLastAvatar = ref('');
@@ -1519,7 +1518,6 @@
     }
 
     function handleUserDialogTab(tabName) {
-        userDialogActiveTab.value = tabName;
         userDialog.value.lastActiveTab = tabName;
         const userId = userDialog.value.id;
         if (tabName === 'Info') {
@@ -1528,7 +1526,7 @@
             }
         } else if (tabName === 'mutual') {
             if (userId === currentUser.value.id) {
-                userDialogActiveTab.value = 'Info';
+                userDialog.value.activeTab = 'Info';
                 userDialog.value.lastActiveTab = 'Info';
                 return;
             }
@@ -1804,7 +1802,7 @@
                 toast.error('No fallback avatar set');
             }
         } else if (command === 'Previous Instances') {
-            showPreviousInstancesUserDialog(D.ref);
+            showPreviousInstancesListDialog(D.ref);
         } else if (command === 'Manage Gallery') {
             userDialog.value.visible = false;
             showGalleryPage();
@@ -2337,8 +2335,8 @@
         }
     }
 
-    function showPreviousInstancesUserDialog(userRef) {
-        instanceStore.showPreviousInstancesUserDialog(userRef);
+    function showPreviousInstancesListDialog(userRef) {
+        instanceStore.showPreviousInstancesListDialog('user', userRef);
     }
 
     function toggleAvatarCopying() {

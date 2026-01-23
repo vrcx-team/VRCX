@@ -146,7 +146,9 @@
                                     <Settings />
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.system_tools.launch_options') }}</div>
+                                    <div class="tool-name">
+                                        {{ t('view.settings.advanced.advanced.launch_options') }}
+                                    </div>
                                     <div class="tool-description">
                                         {{ t('view.tools.system_tools.launch_options_description') }}
                                     </div>
@@ -159,7 +161,9 @@
                                     <Package />
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.system_tools.registry_backup') }}</div>
+                                    <div class="tool-name">
+                                        {{ t('view.settings.advanced.advanced.vrc_registry_backup') }}
+                                    </div>
                                     <div class="tool-description">
                                         {{ t('view.tools.system_tools.registry_backup_description') }}
                                     </div>
@@ -296,6 +300,7 @@
             <EditInviteMessageDialog
                 v-model:isEditInviteMessagesDialogVisible="isEditInviteMessagesDialogVisible"
                 @close="isEditInviteMessagesDialogVisible = false" />
+            <RegistryBackupDialog />
         </template>
     </div>
 </template>
@@ -332,6 +337,7 @@
     const ExportDiscordNamesDialog = defineAsyncComponent(() => import('./dialogs/ExportDiscordNamesDialog.vue'));
     const ExportFriendsListDialog = defineAsyncComponent(() => import('./dialogs/ExportFriendsListDialog.vue'));
     const ExportAvatarsListDialog = defineAsyncComponent(() => import('./dialogs/ExportAvatarsListDialog.vue'));
+    const RegistryBackupDialog = defineAsyncComponent(() => import('../Settings/dialogs/RegistryBackupDialog.vue'));
 
     const { t } = useI18n();
     const router = useRouter();

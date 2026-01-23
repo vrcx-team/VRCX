@@ -46,6 +46,7 @@ export const useGroupStore = defineStore('Group', () => {
     const groupDialog = ref({
         visible: false,
         loading: false,
+        activeTab: 'Info',
         lastActiveTab: 'Info',
         isGetGroupDialogGroupLoading: false,
         treeData: {},
@@ -135,26 +136,13 @@ export const useGroupStore = defineStore('Group', () => {
         if (!groupId) {
             return;
         }
-        const hadActiveDialog =
-            groupDialog.value.visible ||
-            userStore.userDialog.visible ||
-            worldStore.worldDialog.visible ||
-            avatarStore.avatarDialog.visible ||
-            instanceStore.previousInstancesInfoDialog.visible ||
-            instanceStore.previousInstancesUserDialog.visible ||
-            instanceStore.previousInstancesWorldDialog.visible ||
-            instanceStore.previousInstancesGroupDialog.visible;
-        if (!hadActiveDialog) {
-            uiStore.clearDialogCrumbs();
-        }
-        if (!options.skipBreadcrumb) {
-            uiStore.pushDialogCrumb('group', groupId);
-        }
-        instanceStore.hidePreviousInstancesDialogs();
-        userStore.userDialog.visible = false;
-        worldStore.worldDialog.visible = false;
-        avatarStore.avatarDialog.visible = false;
+        uiStore.openDialog({
+            type: 'group',
+            id: groupId,
+            skipBreadcrumb: options.skipBreadcrumb
+        });
         const D = groupDialog.value;
+        D.visible = true;
         D.loading = true;
         D.id = groupId;
         D.inGroup = false;

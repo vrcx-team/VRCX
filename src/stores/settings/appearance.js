@@ -211,7 +211,7 @@ export const useAppearanceSettingsStore = defineStore(
                     JSON.stringify(TRUST_COLOR_DEFAULTS)
                 ),
                 configRepository.getBool('VRCX_notificationIconDot', true),
-                configRepository.getBool('VRCX_navIsCollapsed', true),
+                configRepository.getBool('VRCX_navIsCollapsed', false),
                 configRepository.getBool('VRCX_dataTableStriped', false),
                 configRepository.getBool('VRCX_showPointerOnHover', false),
                 configRepository.getString(

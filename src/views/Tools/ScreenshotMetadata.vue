@@ -52,17 +52,17 @@
             <div class="flex items-center">
                 <InputGroupSearch
                     v-model="screenshotMetadataDialog.search"
-                    placeholder="Search"
+                    :placeholder="t('dialog.screenshot_metadata.search_placeholder')"
                     style="width: 200px"
                     @input="screenshotMetadataSearch" />
                 <Select :model-value="screenshotMetadataDialog.searchType" @update:modelValue="handleSearchTypeChange">
                     <SelectTrigger size="sm" style="width: 150px; margin-left: 10px">
-                        <SelectValue placeholder="Search Type" />
+                        <SelectValue :placeholder="t('dialog.screenshot_metadata.search_type_placeholder')" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
                             <SelectItem v-for="type in screenshotMetadataDialog.searchTypes" :key="type" :value="type">
-                                {{ type }}
+                                {{ t(screenshotMetadataSearchTypeLabels[type] ?? type) }}
                             </SelectItem>
                         </SelectGroup>
                     </SelectContent>
@@ -178,12 +178,19 @@
         loading: false,
         search: '',
         searchType: 'Player Name',
-        searchTypes: ['Player Name', 'Player ID', 'World  Name', 'World  ID'],
+        searchTypes: ['Player Name', 'Player ID', 'World Name', 'World ID'],
         searchIndex: null,
         searchResults: null,
         metadata: {},
         isUploading: false
     });
+
+    const screenshotMetadataSearchTypeLabels = {
+        'Player Name': 'dialog.screenshot_metadata.search_types.player_name',
+        'Player ID': 'dialog.screenshot_metadata.search_types.player_id',
+        'World Name': 'dialog.screenshot_metadata.search_types.world_name',
+        'World ID': 'dialog.screenshot_metadata.search_types.world_id'
+    };
 
     const screenshotMetadataSearchInputs = ref(0);
     const screenshotMetadataCarouselApi = ref(null);

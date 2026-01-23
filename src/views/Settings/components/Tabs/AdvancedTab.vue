@@ -57,9 +57,11 @@
                 @change="setSelfInviteOverride" />
 
             <div v-if="branch === 'Nightly'">
-                <span class="sub-header">Anonymous Error Reporting (Nightly Only)</span>
+                <span class="sub-header">{{
+                    t('view.settings.advanced.advanced.anonymous_error_reporting.header')
+                }}</span>
                 <simple-switch
-                    label="Help improve VRCX by sending anonymous error reports. Only collects crash and error information, no personal data or VRChat information is collected."
+                    :label="t('view.settings.advanced.advanced.anonymous_error_reporting.description')"
                     :value="sentryErrorReporting"
                     :long-label="true"
                     @change="setSentryErrorReporting()" />

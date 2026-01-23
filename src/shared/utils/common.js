@@ -143,12 +143,18 @@ async function checkVRChatCache(ref) {
         return { Item1: -1, Item2: false, Item3: '' };
     }
 
-    return AssetBundleManager.CheckVRChatCache(
-        id,
-        version,
-        variant,
-        variantVersion
-    );
+    try {
+        return AssetBundleManager.CheckVRChatCache(
+            id,
+            version,
+            variant,
+            variantVersion
+        );
+    } catch (err) {
+        console.error('Failed reading VRChat cache size:', err);
+        toast.error(`Failed reading VRChat cache size: ${err}`);
+        return { Item1: -1, Item2: false, Item3: '' };
+    }
 }
 
 /**

@@ -115,27 +115,17 @@ export const useInstanceStore = defineStore('Instance', () => {
         visible: false
     });
 
-    const previousInstancesUserDialog = ref({
+    const previousInstancesListDialog = ref({
         visible: false,
-        openFlg: false,
+        variant: 'user',
         userRef: {
             id: '',
             displayName: ''
-        }
-    });
-
-    const previousInstancesWorldDialog = ref({
-        visible: false,
-        openFlg: false,
+        },
         worldRef: {
             id: '',
             name: ''
-        }
-    });
-
-    const previousInstancesGroupDialog = ref({
-        visible: false,
-        openFlg: false,
+        },
         groupRef: {
             id: '',
             name: ''
@@ -157,10 +147,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         (isLoggedIn) => {
             currentInstanceUsersData.value = [];
             instanceJoinHistory.clear();
-            previousInstancesInfoDialog.value.visible = false;
-            previousInstancesUserDialog.value.visible = false;
-            previousInstancesWorldDialog.value.visible = false;
-            previousInstancesGroupDialog.value.visible = false;
+            hidePreviousInstancesDialogs();
             cachedInstances.clear();
             queuedInstances.clear();
             if (isLoggedIn) {
@@ -197,12 +184,7 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     function hidePreviousInstancesDialogs() {
         previousInstancesInfoDialog.value.visible = false;
-        previousInstancesUserDialog.value.visible = false;
-        previousInstancesUserDialog.value.openFlg = false;
-        previousInstancesWorldDialog.value.visible = false;
-        previousInstancesWorldDialog.value.openFlg = false;
-        previousInstancesGroupDialog.value.visible = false;
-        previousInstancesGroupDialog.value.openFlg = false;
+        previousInstancesListDialog.value.visible = false;
     }
 
     async function resolveUserRef(input) {
@@ -304,15 +286,17 @@ export const useInstanceStore = defineStore('Instance', () => {
     }
 
     function showPreviousInstancesInfoDialog(instanceId, options = {}) {
-        hidePreviousInstancesDialogs();
         previousInstancesInfoDialog.value.visible = true;
         previousInstancesInfoDialog.value.instanceId = instanceId;
-        if (!options.skipBreadcrumb && instanceId) {
-            uiStore.pushDialogCrumb(
-                'previous-instances-info',
-                instanceId,
-                formatPreviousInstancesInfoLabel(instanceId)
-            );
+        uiStore.openDialog({
+            type: 'previous-instances-info',
+            id: instanceId || '',
+            label: instanceId
+                ? formatPreviousInstancesInfoLabel(instanceId)
+                : '',
+            skipBreadcrumb: options.skipBreadcrumb
+        });
+        if (instanceId) {
             const location = parseLocation(instanceId);
             if (
                 location.worldId &&
@@ -335,52 +319,36 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
     }
 
-    async function showPreviousInstancesUserDialog(userRef, options = {}) {
-        hidePreviousInstancesDialogs();
-        const resolved = await resolveUserRef(userRef);
-        previousInstancesUserDialog.value.userRef = resolved;
-        previousInstancesUserDialog.value.visible = true;
-        previousInstancesUserDialog.value.openFlg = true;
-        nextTick(() => (previousInstancesUserDialog.value.openFlg = false));
-        if (!options.skipBreadcrumb && resolved.id) {
-            uiStore.pushDialogCrumb(
-                'previous-instances-user',
-                resolved.id,
-                resolved.displayName || resolved.id
-            );
+    async function showPreviousInstancesListDialog(
+        variant,
+        targetRef,
+        options = {}
+    ) {
+        previousInstancesListDialog.value.variant = variant;
+        let resolved = null;
+        if (variant === 'user') {
+            resolved = await resolveUserRef(targetRef);
+            previousInstancesListDialog.value.userRef = resolved;
+        } else if (variant === 'world') {
+            resolved = await resolveWorldRef(targetRef);
+            previousInstancesListDialog.value.worldRef = resolved;
+        } else {
+            resolved = await resolveGroupRef(targetRef);
+            previousInstancesListDialog.value.groupRef = resolved;
         }
-    }
-
-    async function showPreviousInstancesWorldDialog(worldRef, options = {}) {
-        hidePreviousInstancesDialogs();
-        const resolved = await resolveWorldRef(worldRef);
-        previousInstancesWorldDialog.value.worldRef = resolved;
-        previousInstancesWorldDialog.value.visible = true;
-        previousInstancesWorldDialog.value.openFlg = true;
-        nextTick(() => (previousInstancesWorldDialog.value.openFlg = false));
-        if (!options.skipBreadcrumb && resolved.id) {
-            uiStore.pushDialogCrumb(
-                'previous-instances-world',
-                resolved.id,
-                resolved.name || resolved.id
-            );
-        }
-    }
-
-    async function showPreviousInstancesGroupDialog(groupRef, options = {}) {
-        hidePreviousInstancesDialogs();
-        const resolved = await resolveGroupRef(groupRef);
-        previousInstancesGroupDialog.value.groupRef = resolved;
-        previousInstancesGroupDialog.value.visible = true;
-        previousInstancesGroupDialog.value.openFlg = true;
-        nextTick(() => (previousInstancesGroupDialog.value.openFlg = false));
-        if (!options.skipBreadcrumb && resolved.id) {
-            uiStore.pushDialogCrumb(
-                'previous-instances-group',
-                resolved.id,
-                resolved.name || resolved.id
-            );
-        }
+        previousInstancesListDialog.value.visible = true;
+        const dialogId = resolved?.id || '';
+        const label = resolved?.id
+            ? variant === 'user'
+                ? resolved.displayName || resolved.id
+                : resolved.name || resolved.id
+            : '';
+        uiStore.openDialog({
+            type: `previous-instances-${variant}`,
+            id: dialogId,
+            label,
+            skipBreadcrumb: options.skipBreadcrumb
+        });
     }
 
     function updateCurrentInstanceWorld() {
@@ -1465,9 +1433,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         currentInstanceLocation,
         queuedInstances,
         previousInstancesInfoDialog,
-        previousInstancesUserDialog,
-        previousInstancesWorldDialog,
-        previousInstancesGroupDialog,
+        previousInstancesListDialog,
         previousInstancesListState,
         instanceJoinHistory,
         currentInstanceUsersData,
@@ -1484,9 +1450,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         instanceQueueUpdate,
         hidePreviousInstancesDialogs,
         showPreviousInstancesInfoDialog,
-        showPreviousInstancesUserDialog,
-        showPreviousInstancesWorldDialog,
-        showPreviousInstancesGroupDialog,
+        showPreviousInstancesListDialog,
         addInstanceJoinHistory,
         getCurrentInstanceUserList,
         getInstanceJoinHistory,
