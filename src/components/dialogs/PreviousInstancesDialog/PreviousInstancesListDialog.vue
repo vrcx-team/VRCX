@@ -68,14 +68,7 @@
 
     const instanceStore = useInstanceStore();
     const { showPreviousInstancesInfoDialog } = instanceStore;
-    const {
-        previousInstancesInfoDialogVisible,
-        previousInstancesInfoDialogInstanceId,
-        previousInstancesListState,
-        previousInstancesUserDialog,
-        previousInstancesWorldDialog,
-        previousInstancesGroupDialog
-    } = storeToRefs(instanceStore);
+    const { previousInstancesListState, previousInstancesListDialog } = storeToRefs(instanceStore);
     const { shiftHeld } = storeToRefs(useUiStore());
     const { stringComparer } = storeToRefs(useSearchStore());
     const { currentUser } = storeToRefs(useUserStore());
@@ -85,9 +78,7 @@
     const { t } = useI18n();
 
     const dialogState = computed(() => {
-        if (props.variant === 'user') return previousInstancesUserDialog.value;
-        if (props.variant === 'world') return previousInstancesWorldDialog.value;
-        return previousInstancesGroupDialog.value;
+        return previousInstancesListDialog.value;
     });
 
     const getListState = () => {
@@ -158,8 +149,8 @@
     function deleteGameLogInstance(row) {
         if (props.variant === 'user') {
             database.deleteGameLogInstance({
-                id: previousInstancesUserDialog.value.userRef.id,
-                displayName: previousInstancesUserDialog.value.userRef.displayName,
+                id: previousInstancesListDialog.value.userRef.id,
+                displayName: previousInstancesListDialog.value.userRef.displayName,
                 location: row.location,
                 events: row.events
             });
@@ -195,7 +186,7 @@
         createPreviousInstancesColumns(props.variant, {
             shiftHeld,
             currentUserId: currentUser.value?.id,
-            forceUpdateKey: previousInstancesWorldDialog.value?.forceUpdate,
+            forceUpdateKey: previousInstancesListDialog.value?.forceUpdate,
             onLaunch: showLaunchDialog,
             onShowInfo: handleShowInfo,
             onDelete: deleteGameLogInstance,
@@ -248,14 +239,14 @@
         const array = [];
         try {
             if (props.variant === 'user') {
-                const data = await database.getPreviousInstancesByUserId(previousInstancesUserDialog.value.userRef);
+                const data = await database.getPreviousInstancesByUserId(previousInstancesListDialog.value.userRef);
                 for (const item of data.values()) {
                     item.$location = parseLocation(item.location);
                     item.timer = item.time > 0 ? timeToText(item.time) : '';
                     array.push(item);
                 }
             } else if (props.variant === 'world') {
-                const D = previousInstancesWorldDialog.value;
+                const D = previousInstancesListDialog.value;
                 const data = await database.getPreviousInstancesByWorldId(D.worldRef);
                 for (const ref of data.values()) {
                     ref.$location = parseLocation(ref.location);
@@ -263,7 +254,7 @@
                     array.push(ref);
                 }
             } else {
-                const D = previousInstancesGroupDialog.value;
+                const D = previousInstancesListDialog.value;
                 const data = await database.getPreviousInstancesByGroupId(D.groupRef.id);
                 for (const ref of data.values()) {
                     ref.$location = parseLocation(ref.location);

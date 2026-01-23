@@ -141,9 +141,7 @@ export const useGroupStore = defineStore('Group', () => {
             worldStore.worldDialog.visible ||
             avatarStore.avatarDialog.visible ||
             instanceStore.previousInstancesInfoDialog.visible ||
-            instanceStore.previousInstancesUserDialog.visible ||
-            instanceStore.previousInstancesWorldDialog.visible ||
-            instanceStore.previousInstancesGroupDialog.visible;
+            instanceStore.previousInstancesListDialog.visible;
         if (!hadActiveDialog) {
             uiStore.clearDialogCrumbs();
         }

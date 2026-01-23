@@ -265,7 +265,7 @@
                             </div>
                         </div>
 
-                        <div class="x-friend-item" @click="showPreviousInstancesUserDialog(userDialog.ref)">
+                        <div class="x-friend-item" @click="showPreviousInstancesListDialog(userDialog.ref)">
                             <div class="detail">
                                 <div
                                     class="name"
@@ -298,7 +298,7 @@
                             :disabled="currentUser.id !== userDialog.id"
                             side="top"
                             :content="t('dialog.user.info.open_previous_instance')">
-                            <div class="x-friend-item" @click="showPreviousInstancesUserDialog(userDialog.ref)">
+                            <div class="x-friend-item" @click="showPreviousInstancesListDialog(userDialog.ref)">
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.user.info.play_time') }}
@@ -1804,7 +1804,7 @@
                 toast.error('No fallback avatar set');
             }
         } else if (command === 'Previous Instances') {
-            showPreviousInstancesUserDialog(D.ref);
+            showPreviousInstancesListDialog(D.ref);
         } else if (command === 'Manage Gallery') {
             userDialog.value.visible = false;
             showGalleryPage();
@@ -2337,8 +2337,8 @@
         }
     }
 
-    function showPreviousInstancesUserDialog(userRef) {
-        instanceStore.showPreviousInstancesUserDialog(userRef);
+    function showPreviousInstancesListDialog(userRef) {
+        instanceStore.showPreviousInstancesListDialog('user', userRef);
     }
 
     function toggleAvatarCopying() {

@@ -33,12 +33,7 @@
     const userStore = useUserStore();
     const worldStore = useWorldStore();
 
-    const {
-        previousInstancesInfoDialog,
-        previousInstancesUserDialog,
-        previousInstancesWorldDialog,
-        previousInstancesGroupDialog
-    } = storeToRefs(instanceStore);
+    const { previousInstancesInfoDialog, previousInstancesListDialog } = storeToRefs(instanceStore);
 
     const isOpen = computed({
         get: () =>
@@ -47,9 +42,7 @@
             avatarStore.avatarDialog.visible ||
             groupStore.groupDialog.visible ||
             previousInstancesInfoDialog.value.visible ||
-            previousInstancesUserDialog.value.visible ||
-            previousInstancesWorldDialog.value.visible ||
-            previousInstancesGroupDialog.value.visible,
+            previousInstancesListDialog.value.visible,
         set: (value) => {
             if (!value) {
                 userStore.userDialog.visible = false;
@@ -69,14 +62,8 @@
             if (previousInstancesInfoDialog.value.visible) {
                 return 'previous-instances-info';
             }
-            if (previousInstancesUserDialog.value.visible) {
-                return 'previous-instances-user';
-            }
-            if (previousInstancesWorldDialog.value.visible) {
-                return 'previous-instances-world';
-            }
-            if (previousInstancesGroupDialog.value.visible) {
-                return 'previous-instances-group';
+            if (previousInstancesListDialog.value.visible) {
+                return `previous-instances-${previousInstancesListDialog.value.variant}`;
             }
             if (userStore.userDialog.visible) {
                 return 'user';
@@ -185,15 +172,15 @@
             return;
         }
         if (item.type === 'previous-instances-user') {
-            instanceStore.showPreviousInstancesUserDialog(item.id, { skipBreadcrumb: true });
+            instanceStore.showPreviousInstancesListDialog('user', item.id, { skipBreadcrumb: true });
             return;
         }
         if (item.type === 'previous-instances-world') {
-            instanceStore.showPreviousInstancesWorldDialog(item.id, { skipBreadcrumb: true });
+            instanceStore.showPreviousInstancesListDialog('world', item.id, { skipBreadcrumb: true });
             return;
         }
         if (item.type === 'previous-instances-group') {
-            instanceStore.showPreviousInstancesGroupDialog(item.id, { skipBreadcrumb: true });
+            instanceStore.showPreviousInstancesListDialog('group', item.id, { skipBreadcrumb: true });
             return;
         }
         if (item.type === 'previous-instances-info') {

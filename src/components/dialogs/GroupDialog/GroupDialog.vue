@@ -569,7 +569,7 @@
                                 <span class="extra">{{ formatDateFilter(groupDialog.ref.createdAt, 'long') }}</span>
                             </div>
                         </div>
-                        <div class="x-friend-item" @click="showPreviousInstancesGroupDialog(groupDialog.ref)">
+                        <div class="x-friend-item" @click="showPreviousInstancesListDialog(groupDialog.ref)">
                             <div class="detail">
                                 <div
                                     class="name"
@@ -1379,8 +1379,8 @@
         inviteGroupDialog.value.visible = true;
     }
 
-    function showPreviousInstancesGroupDialog(groupRef) {
-        instanceStore.showPreviousInstancesGroupDialog(groupRef);
+    function showPreviousInstancesListDialog(groupRef) {
+        instanceStore.showPreviousInstancesListDialog('group', groupRef);
     }
 
     function setGroupRepresentation(groupId) {

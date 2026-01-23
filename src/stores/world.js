@@ -90,9 +90,7 @@ export const useWorldStore = defineStore('World', () => {
             avatarStore.avatarDialog.visible ||
             groupStore.groupDialog.visible ||
             instanceStore.previousInstancesInfoDialog.visible ||
-            instanceStore.previousInstancesUserDialog.visible ||
-            instanceStore.previousInstancesWorldDialog.visible ||
-            instanceStore.previousInstancesGroupDialog.visible;
+            instanceStore.previousInstancesListDialog.visible;
         if (!hadActiveDialog) {
             uiStore.clearDialogCrumbs();
         }

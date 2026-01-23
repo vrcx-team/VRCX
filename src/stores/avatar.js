@@ -189,9 +189,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             worldStore.worldDialog.visible ||
             groupStore.groupDialog.visible ||
             instanceStore.previousInstancesInfoDialog.visible ||
-            instanceStore.previousInstancesUserDialog.visible ||
-            instanceStore.previousInstancesWorldDialog.visible ||
-            instanceStore.previousInstancesGroupDialog.visible;
+            instanceStore.previousInstancesListDialog.visible;
         if (!hadActiveDialog) {
             uiStore.clearDialogCrumbs();
         }
