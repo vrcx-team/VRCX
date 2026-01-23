@@ -34,7 +34,7 @@
         "github": "GitHub 仓库",
         "discord": "加入 Discord",
         "whats_new": "更新日志",
-        "update_available": "有可用更新",
+        "update_available": "有新版本可用",
         "update": "更新",
         "custom_nav": {
             "header": "自定义导航栏",
@@ -255,7 +255,7 @@
                 "invite": "邀请",
                 "decline": "拒绝",
                 "delete_log": "删除日志",
-                "decline_with_message": "拒绝并附带消息"
+                "decline_with_message": "拒绝并回复"
             },
             "filters": {
                 "requestInvite": "申请加入",
@@ -442,6 +442,23 @@
                 "inventory": "相册 & 库存管理",
                 "inventory_description": "管理相册与库存物品"
             },
+            "shortcuts": {
+                "header": "快捷方式",
+                "vrcx_data": "VRCX 数据",
+                "vrcx_data_description": "打开 VRCX 数据文件夹",
+                "vrchat_data": "VRChat 数据",
+                "vrchat_data_description": "打开 VRChat 数据文件夹",
+                "crash_dumps": "崩溃转储",
+                "crash_dumps_description": "打开 VRChat 崩溃转储文件夹"
+            },
+            "system_tools": {
+                "header": "系统工具",
+                "vrchat_config": "VRChat 配置",
+                "vrchat_config_description": "打开 VRChat config.json 设置",
+                "launch_options_description": "编辑 VRChat 启动选项",
+                "registry_backup": "VRChat 注册表备份",
+                "registry_backup_description": "创建或恢复 VRChat 注册表备份"
+            },
             "other": {
                 "header": "其它",
                 "edit_invite_message": "编辑邀请消息",
@@ -575,7 +592,7 @@
                     "theme_mode_system": "跟随系统",
                     "theme_mode_light": "浅色",
                     "theme_mode_dark": "深色",
-                    "theme_mode_midnight": "Midnight",
+                    "theme_mode_midnight": "午夜",
                     "theme_mode_blue": "蓝色",
                     "theme_mode_darkblue": "深蓝色",
                     "theme_mode_amoled": "纯黑（Amoled）",
@@ -586,7 +603,7 @@
                     "zoom": "界面缩放",
                     "vrcplus_profile_icons": "VRC+ 个人资料图标",
                     "tooltips": "显示提示",
-                    "show_instance_id": "显示房间名称",
+                    "show_instance_id": "显示房间 ID",
                     "age_gated_instances": "显示具有年龄限制的房间",
                     "nicknames": "显示本地好友备注",
                     "sort_favorite_by": "收藏夹排序规则",
@@ -599,7 +616,7 @@
                     "table_page_sizes": "每页显示行数",
                     "table_page_sizes_error": "行数必须是 1 到 1000 之间的数字",
                     "show_notification_icon_dot": "显示托盘通知",
-                    "striped_data_table_mode": "条纹表格模式",
+                    "striped_data_table_mode": "斑马纹表格模式",
                     "toggle_pointer_on_hover": "悬停时强制显示指针",
                     "table_density": "表格宽度",
                     "table_density_standard": "标准",
@@ -615,14 +632,14 @@
                 },
                 "theme_color": {
                     "header": "主题颜色",
-                    "default": "默认",
-                    "blue": "胖次蓝",
-                    "green": "帽子绿",
-                    "orange": "地狱火橙",
-                    "red": "飞鹰红",
-                    "rose": "玫瑰红",
-                    "violet": "基佬紫",
-                    "yellow": "太阳黄"
+                    "default": "锌灰色",
+                    "blue": "蓝色",
+                    "green": "绿色",
+                    "orange": "橙色",
+                    "red": "红色",
+                    "rose": "玫瑰红色",
+                    "violet": "堇紫色",
+                    "yellow": "黄色"
                 },
                 "side_panel": {
                     "header": "侧边栏",
@@ -676,6 +693,7 @@
                 "notifications": {
                     "header": "通知",
                     "notification_filter": "通知筛选器",
+                    "test_notification": "测试通知",
                     "steamvr_notifications": {
                         "header": "SteamVR 通知",
                         "steamvr_overlay": "SteamVR 叠加界面",
@@ -795,6 +813,14 @@
                     "self_invite": {
                         "header": "自我邀请",
                         "description": "直接给自己发送邀请，而不是在游戏中打开房间页面"
+                    },
+                    "anonymous_error_reporting": {
+                        "header": "匿名错误报告（仅限夜间构建）",
+                        "description": "通过发送匿名的崩溃和错误报告来帮助改进 VRCX。不会收集任何个人或 VRChat 数据。",
+                        "consent_title": "匿名错误报告",
+                        "consent_description": "允许匿名错误报告以帮助改进 VRCX？\n\n• 仅崩溃和错误数据\n• 不包含任何个人或 VRChat 数据\n• 仅限夜间构建版本\n• 可在高级设置中禁用",
+                        "enabled_restart_description": "已启用错误报告。是否重启 VRCX 以应用更改？",
+                        "disabled_restart_description": "已禁用错误报告。是否重启 VRCX 以应用更改？"
                     },
                     "save_instance_prints_to_file": {
                         "header": "“拍立得”照片保存选项",
@@ -960,7 +986,7 @@
             "confirm": "确认"
         },
         "prompt": {
-            "input_invalid": "输入无效"
+            "input_invalid": "无效的输入"
         },
         "user": {
             "status": {
@@ -1592,9 +1618,9 @@
             "ready_for_update": "现已准备好安装更新，重启 VRCX 以开始安装",
             "branch_stable": "稳定版",
             "branch_nightly": "测试版",
-            "nightly_title": "测试版构建",
+            "nightly_title": "测试构建版本",
             "nightly_notice": "测试版构建一般用于新功能测试。如果你需要稳定性，请使用稳定版构建。",
-            "release": "发布版",
+            "release": "版本",
             "download": "下载",
             "install": "安装",
             "cancel": "取消"
@@ -1795,7 +1821,7 @@
             "emoji_animation_type": "动画表情",
             "emoji_animation_fps": "FPS：",
             "emoji_animation_frame_count": "帧数：",
-            "emoji_loop_pingpong": "Loop PingPong",
+            "emoji_loop_pingpong": "往返循环播放",
             "flipbook_info": "选择一个 1024x1024 的 PNG 精灵表作为动画表情（最大 FPS 为64）",
             "note": "备注",
             "crop_print_border": "裁剪白边",
@@ -1850,7 +1876,15 @@
             "copy_image": "复制图片",
             "open_folder": "打开文件夹",
             "delete_metadata": "删除当前图片的元数据",
-            "upload": "上传"
+            "upload": "上传",
+            "search_placeholder": "搜索",
+            "search_type_placeholder": "搜索类型",
+            "search_types": {
+                "player_name": "玩家名称",
+                "player_id": "玩家ID",
+                "world_name": "世界名称",
+                "world_id": "世界ID"
+            }
         },
         "registry_backup": {
             "header": "VRC 设置数据备份工具",
@@ -1998,6 +2032,11 @@
     },
     "status": {
         "title": "VRChat 状态"
+    },
+    "location": {
+        "offline": "离线",
+        "private": "位于私人房间中",
+        "traveling": "正在载入房间"
     },
     "message": {
         "vrcx_updater": {
@@ -2455,8 +2494,15 @@
         }
     },
     "common": {
-        "no_data": "无数据",
-        "no_matching_records": "无匹配记录"
+        "no_data": "没有数据",
+        "no_matching_records": "没有匹配的记录",
+        "time_units": {
+            "y": "年",
+            "d": "天",
+            "h": "小时",
+            "m": "分钟",
+            "s": "秒"
+        }
     },
     "vr": {
         "status": {
