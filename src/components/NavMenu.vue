@@ -197,31 +197,27 @@
                                         <span>{{ themeDisplayName(theme) }}</span>
                                     </DropdownMenuCheckboxItem>
                                     <DropdownMenuSeparator />
-
-                                    <DropdownMenuSub>
-                                        <DropdownMenuSubTrigger>
-                                            <span>{{ t('view.settings.appearance.theme_color.header') }}</span>
-                                        </DropdownMenuSubTrigger>
-                                        <DropdownMenuSubContent
-                                            side="right"
-                                            align="start"
-                                            class="w-54 max-h-80 overflow-auto">
-                                            <DropdownMenuCheckboxItem
+                                    <DropdownMenuLabel class="px-2 py-2 font-normal">
+                                        <div class="flex items-center justify-around">
+                                            <TooltipWrapper
                                                 v-for="theme in themeColors"
                                                 :key="theme.key"
-                                                :model-value="currentThemeColor === theme.key"
-                                                :disabled="isApplyingThemeColor"
-                                                indicator-position="right"
-                                                @select="handleThemeColorSelect(theme)">
-                                                <span class="flex items-center gap-2 min-w-0 flex-1">
-                                                    <span
-                                                        class="h-3 w-3 shrink-0 rounded-sm"
-                                                        :style="{ backgroundColor: theme.swatch }" />
-                                                    <span class="truncate">{{ themeColorDisplayName(theme) }}</span>
-                                                </span>
-                                            </DropdownMenuCheckboxItem>
-                                        </DropdownMenuSubContent>
-                                    </DropdownMenuSub>
+                                                side="top"
+                                                :content="themeColorDisplayName(theme)"
+                                                :delay-duration="600">
+                                                <button
+                                                    type="button"
+                                                    :disabled="isApplyingThemeColor"
+                                                    :aria-pressed="currentThemeColor === theme.key"
+                                                    :aria-label="themeColorDisplayName(theme)"
+                                                    :title="themeColorDisplayName(theme)"
+                                                    @click="handleThemeColorSelect(theme)"
+                                                    class="h-3.5 w-3.5 shrink-0 rounded-sm"
+                                                    :class="currentThemeColor === theme.key ? 'ring-1 --ring' : ''"
+                                                    :style="{ backgroundColor: theme.swatch }"></button>
+                                            </TooltipWrapper>
+                                        </div>
+                                    </DropdownMenuLabel>
                                 </DropdownMenuSubContent>
                             </DropdownMenuSub>
 
@@ -325,6 +321,7 @@
     import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
     import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
     import { ChevronRight, Heart } from 'lucide-vue-next';
+    import { TooltipWrapper } from '@/components/ui/tooltip';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { useRouter } from 'vue-router';
