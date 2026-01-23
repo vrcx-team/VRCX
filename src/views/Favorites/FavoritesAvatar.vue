@@ -308,7 +308,7 @@
                     </div>
                 </div>
             </ResizablePanel>
-            <ResizableHandle with-handle @dragging="setAvatarSplitterDragging" />
+            <ResizableHandle @dragging="setAvatarSplitterDragging" />
             <ResizablePanel :order="2">
                 <div class="favorites-content">
                     <div class="favorites-content__header">

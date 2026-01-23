@@ -183,6 +183,7 @@ export const useUserStore = defineStore('User', () => {
     const userDialog = ref({
         visible: false,
         loading: false,
+        activeTab: 'Info',
         lastActiveTab: 'Info',
         id: '',
         ref: {},
@@ -767,26 +768,13 @@ export const useUserStore = defineStore('User', () => {
         ) {
             return;
         }
-        const hadActiveDialog =
-            userDialog.value.visible ||
-            worldStore.worldDialog.visible ||
-            avatarStore.avatarDialog.visible ||
-            groupStore.groupDialog.visible ||
-            instanceStore.previousInstancesInfoDialog.visible ||
-            instanceStore.previousInstancesUserDialog.visible ||
-            instanceStore.previousInstancesWorldDialog.visible ||
-            instanceStore.previousInstancesGroupDialog.visible;
-        if (!hadActiveDialog) {
-            uiStore.clearDialogCrumbs();
-        }
-        if (!options.skipBreadcrumb) {
-            uiStore.pushDialogCrumb('user', userId);
-        }
-        instanceStore.hidePreviousInstancesDialogs();
-        worldStore.worldDialog.visible = false;
-        avatarStore.avatarDialog.visible = false;
-        groupStore.groupDialog.visible = false;
+        uiStore.openDialog({
+            type: 'user',
+            id: userId,
+            skipBreadcrumb: options.skipBreadcrumb
+        });
         const D = userDialog.value;
+        D.visible = true;
         D.id = userId;
         D.treeData = {};
         D.memo = '';

@@ -36,6 +36,7 @@ export const useWorldStore = defineStore('World', () => {
     const worldDialog = reactive({
         visible: false,
         loading: false,
+        activeTab: 'Instances',
         lastActiveTab: 'Instances',
         id: '',
         memo: '',
@@ -84,26 +85,12 @@ export const useWorldStore = defineStore('World', () => {
         if (L.worldId === '') {
             return;
         }
-        const hadActiveDialog =
-            worldDialog.visible ||
-            userStore.userDialog.visible ||
-            avatarStore.avatarDialog.visible ||
-            groupStore.groupDialog.visible ||
-            instanceStore.previousInstancesInfoDialog.visible ||
-            instanceStore.previousInstancesUserDialog.visible ||
-            instanceStore.previousInstancesWorldDialog.visible ||
-            instanceStore.previousInstancesGroupDialog.visible;
-        if (!hadActiveDialog) {
-            uiStore.clearDialogCrumbs();
-        }
-        if (!options.skipBreadcrumb) {
-            uiStore.pushDialogCrumb('world', L.worldId);
-        }
+        uiStore.openDialog({
+            type: 'world',
+            id: L.worldId,
+            skipBreadcrumb: options.skipBreadcrumb
+        });
         D.visible = true;
-        instanceStore.hidePreviousInstancesDialogs();
-        userStore.userDialog.visible = false;
-        avatarStore.avatarDialog.visible = false;
-        groupStore.groupDialog.visible = false;
         L.shortName = shortName;
         D.id = L.worldId;
         D.$location = L;

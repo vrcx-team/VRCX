@@ -336,7 +336,7 @@
                 </div>
             </div>
             <TabsUnderline
-                v-model="groupDialogActiveTab"
+                v-model="groupDialog.activeTab"
                 :items="groupDialogTabs"
                 :unmount-on-hide="false"
                 @update:modelValue="groupDialogTabClick">
@@ -569,7 +569,7 @@
                                 <span class="extra">{{ formatDateFilter(groupDialog.ref.createdAt, 'long') }}</span>
                             </div>
                         </div>
-                        <div class="x-friend-item" @click="showPreviousInstancesGroupDialog(groupDialog.ref)">
+                        <div class="x-friend-item" @click="showPreviousInstancesListDialog(groupDialog.ref)">
                             <div class="detail">
                                 <div
                                     class="name"
@@ -1236,7 +1236,6 @@
 
     const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
 
-    const groupDialogActiveTab = ref('Info');
     const isGroupMembersDone = ref(false);
     const isGroupMembersLoading = ref(false);
     const groupDialogGalleryCurrentName = ref('0');
@@ -1379,8 +1378,8 @@
         inviteGroupDialog.value.visible = true;
     }
 
-    function showPreviousInstancesGroupDialog(groupRef) {
-        instanceStore.showPreviousInstancesGroupDialog(groupRef);
+    function showPreviousInstancesListDialog(groupRef) {
+        instanceStore.showPreviousInstancesListDialog('group', groupRef);
     }
 
     function setGroupRepresentation(groupId) {
@@ -1630,7 +1629,6 @@
     }
 
     function handleGroupDialogTab(tabName) {
-        groupDialogActiveTab.value = tabName;
         groupDialog.value.lastActiveTab = tabName;
         if (tabName === 'Members') {
             getGroupDialogGroupMembers();

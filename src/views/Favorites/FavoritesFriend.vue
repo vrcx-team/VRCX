@@ -170,7 +170,7 @@
                     </div>
                 </div>
             </ResizablePanel>
-            <ResizableHandle with-handle @dragging="setFriendSplitterDragging" />
+            <ResizableHandle @dragging="setFriendSplitterDragging" />
             <ResizablePanel :order="2">
                 <div class="favorites-content">
                     <div class="favorites-content__header">

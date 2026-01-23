@@ -961,7 +961,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                     fileId,
                     fileVersion
                 );
-            } else if (imageUrl) {
+            } else if (imageUrl && imageUrl.startsWith('http')) {
                 fileVersion = imageUrl.split('/').pop(); // 1416226261.thumbnail-500.png
                 fileId = fileVersion.split('.').shift(); // 1416226261
                 imageLocation = await AppApi.GetImage(
@@ -2332,6 +2332,14 @@ export const useNotificationStore = defineStore('Notification', () => {
         refreshNotifications();
     }
 
+    function testNotification() {
+        playNoty({
+            type: 'Event',
+            created_at: new Date().toJSON(),
+            data: 'Notification Test'
+        });
+    }
+
     return {
         notificationInitStatus,
         notificationTable,
@@ -2353,6 +2361,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         handleNotificationV2Update,
         handleNotificationHide,
         handleNotification,
-        handleNotificationV2
+        handleNotificationV2,
+        testNotification
     };
 });
