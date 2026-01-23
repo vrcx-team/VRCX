@@ -471,20 +471,20 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     async function checkSentryConsent() {
         modalStore
             .confirm({
-                description:
-                    'Help improve VRCX by allowing anonymous error reporting?</br></br>' +
-                    '• Only collects crash and error information.</br>' +
-                    '• No personal data or VRChat information is collected.</br>' +
-                    '• Only enabled in nightly builds.</br>' +
-                    '• Can be disabled at anytime in Advanced Settings.',
-                title: 'Anonymous Error Reporting'
+                description: t(
+                    'view.settings.advanced.advanced.anonymous_error_reporting.consent_description'
+                ),
+                title: t(
+                    'view.settings.advanced.advanced.anonymous_error_reporting.consent_title'
+                )
             })
             .then(async ({ ok }) => {
                 if (!ok) return;
                 modalStore
                     .confirm({
-                        description:
-                            'Error reporting setting has been enabled. Would you like to restart VRCX now for the change to take effect?',
+                        description: t(
+                            'view.settings.advanced.advanced.anonymous_error_reporting.enabled_restart_description'
+                        ),
                         title: t('confirm.restart_required_title'),
                         confirmText: t('confirm.restart_now'),
                         cancelText: t('confirm.restart_later')
@@ -505,8 +505,9 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
         modalStore
             .confirm({
-                description:
-                    'Error reporting setting has been disabled. Would you like to restart VRCX now for the change to take effect?',
+                description: t(
+                    'view.settings.advanced.advanced.anonymous_error_reporting.disabled_restart_description'
+                ),
                 title: t('confirm.restart_required_title'),
                 confirmText: t('confirm.restart_now'),
                 cancelText: t('confirm.restart_later')

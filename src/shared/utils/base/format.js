@@ -1,4 +1,22 @@
+import { i18n } from '../../../plugin/i18n';
 import { escapeTag } from './string';
+
+const TIME_UNIT_KEYS = {
+    y: 'common.time_units.y',
+    d: 'common.time_units.d',
+    h: 'common.time_units.h',
+    m: 'common.time_units.m',
+    s: 'common.time_units.s'
+};
+
+function getTimeUnitLabel(unit) {
+    const key = TIME_UNIT_KEYS[unit];
+    if (!key) {
+        return unit;
+    }
+    const t = i18n?.global?.t;
+    return typeof t === 'function' ? t(key) : unit;
+}
 
 /**
  *
@@ -17,25 +35,25 @@ function timeToText(sec, isNeedSeconds = false) {
         n = -n;
     }
     if (n >= 31536000) {
-        arr.push(`${Math.floor(n / 31536000)}y`);
+        arr.push(`${Math.floor(n / 31536000)}${getTimeUnitLabel('y')}`);
         n %= 31536000;
     }
     if (n >= 86400) {
-        arr.push(`${Math.floor(n / 86400)}d`);
+        arr.push(`${Math.floor(n / 86400)}${getTimeUnitLabel('d')}`);
         n %= 86400;
     }
     if (n >= 3600) {
-        arr.push(`${Math.floor(n / 3600)}h`);
+        arr.push(`${Math.floor(n / 3600)}${getTimeUnitLabel('h')}`);
         n %= 3600;
     }
     if (n >= 60) {
-        arr.push(`${Math.floor(n / 60)}m`);
+        arr.push(`${Math.floor(n / 60)}${getTimeUnitLabel('m')}`);
         n %= 60;
     }
     if (isNeedSeconds || (arr.length === 0 && n < 60)) {
         // round to 5 seconds
         n = Math.floor((n + 2.5) / 5) * 5;
-        arr.push(`${n}s`);
+        arr.push(`${n}${getTimeUnitLabel('s')}`);
     }
     return arr.join(' ');
 }

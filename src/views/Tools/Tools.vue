@@ -146,7 +146,9 @@
                                     <Settings />
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.system_tools.launch_options') }}</div>
+                                    <div class="tool-name">
+                                        {{ t('view.settings.advanced.advanced.launch_options') }}
+                                    </div>
                                     <div class="tool-description">
                                         {{ t('view.tools.system_tools.launch_options_description') }}
                                     </div>
@@ -159,7 +161,9 @@
                                     <Package />
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.system_tools.registry_backup') }}</div>
+                                    <div class="tool-name">
+                                        {{ t('view.settings.advanced.advanced.vrc_registry_backup') }}
+                                    </div>
                                     <div class="tool-description">
                                         {{ t('view.tools.system_tools.registry_backup_description') }}
                                     </div>

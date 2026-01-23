@@ -1778,7 +1778,7 @@
             "ok": "确定"
         },
         "screenshot_metadata": {
-            "header": "元数据查看器",
+            "header": "截图管理",
             "drag": "拖放图片到这里",
             "browse": "选择文件",
             "last_screenshot": "上一张图片",

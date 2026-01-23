@@ -455,7 +455,6 @@
                 "header": "System Tools",
                 "vrchat_config": "VRChat Config",
                 "vrchat_config_description": "Open VRChat config.json settings",
-                "launch_options": "Launch Options",
                 "launch_options_description": "Edit VRChat launch options",
                 "registry_backup": "VRChat Registry Backup",
                 "registry_backup_description": "Create or restore a VRChat registry backup"
@@ -814,6 +813,14 @@
                     "self_invite": {
                         "header": "Self Invite",
                         "description": "Self invite instead of opening instance in VRChat"
+                    },
+                    "anonymous_error_reporting": {
+                        "header": "Anonymous Error Reporting (Nightly Only)",
+                        "description": "Help improve VRCX by sending anonymous crash and error reports. No personal or VRChat data is collected.",
+                        "consent_title": "Anonymous Error Reporting",
+                        "consent_description": "Allow anonymous error reporting to help improve VRCX?\n\n• Crash and error data only\n• No personal or VRChat data\n• Nightly builds only\n• Can be disabled in Advanced Settings",
+                        "enabled_restart_description": "Error reporting enabled. Restart VRCX to apply changes?",
+                        "disabled_restart_description": "Error reporting disabled. Restart VRCX to apply changes?"
                     },
                     "save_instance_prints_to_file": {
                         "header": "Save Instance Prints To File",
@@ -1869,7 +1876,15 @@
             "copy_image": "Copy Image",
             "open_folder": "Open Folder",
             "delete_metadata": "Delete Metadata",
-            "upload": "Upload"
+            "upload": "Upload",
+            "search_placeholder": "Search",
+            "search_type_placeholder": "Search Type",
+            "search_types": {
+                "player_name": "Player Name",
+                "player_id": "Player ID",
+                "world_name": "World Name",
+                "world_id": "World ID"
+            }
         },
         "registry_backup": {
             "header": "VRC Registry Settings Backup",
@@ -2017,6 +2032,11 @@
     },
     "status": {
         "title": "VRChat Status"
+    },
+    "location": {
+        "offline": "Offline",
+        "private": "Private",
+        "traveling": "Traveling"
     },
     "message": {
         "vrcx_updater": {
@@ -2475,7 +2495,14 @@
     },
     "common": {
         "no_data": "No data",
-        "no_matching_records": "No matching records"
+        "no_matching_records": "No matching records",
+        "time_units": {
+            "y": "y",
+            "d": "d",
+            "h": "h",
+            "m": "m",
+            "s": "s"
+        }
     },
     "vr": {
         "status": {

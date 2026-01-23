@@ -204,11 +204,11 @@
         const accessTypeLabel = translateAccessType(L.accessTypeName);
 
         if (L.isOffline) {
-            text.value = 'Offline';
+            text.value = t('location.offline');
         } else if (L.isPrivate) {
-            text.value = 'Private';
+            text.value = t('location.private');
         } else if (L.isTraveling) {
-            text.value = 'Traveling';
+            text.value = t('location.traveling');
         } else if (typeof props.hint === 'string' && props.hint !== '') {
             if (L.instanceId) {
                 text.value = `${props.hint} · ${accessTypeLabel}`;
