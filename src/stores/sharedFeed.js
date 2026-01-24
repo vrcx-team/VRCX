@@ -134,7 +134,6 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         // Feed
         if (vipFilters.length) {
             const vipFeedRows = await database.lookupFeedDatabase(
-                '',
                 vipFilters,
                 vipList,
                 maxEntries
@@ -143,7 +142,6 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         }
         if (everyoneAndFriendsFilters.length) {
             const friendsFeedRows = await database.lookupFeedDatabase(
-                '',
                 everyoneAndFriendsFilters,
                 [],
                 maxEntries

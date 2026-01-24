@@ -144,13 +144,21 @@ export const useFeedStore = defineStore('Feed', () => {
         if (feedTable.value.vip) {
             vipList = Array.from(friendStore.localFavoriteFriends.values());
         }
-        const rows = await database.lookupFeedDatabase(
-            feedTable.value.search,
-            feedTable.value.filter,
-            vipList
-        );
+        const search = feedTable.value.search.trim();
+        const rows = search
+            ? await database.searchFeedDatabase(
+                  search,
+                  feedTable.value.filter,
+                  vipList
+              )
+            : await database.lookupFeedDatabase(
+                  feedTable.value.filter,
+                  vipList
+              );
         feedTableData.value = [];
-        feedTableData.value = [...feedTableData.value, ...rows.reverse()];
+        feedTableData.value = search
+            ? [...feedTableData.value, ...rows.reverse()]
+            : [...feedTableData.value, ...rows];
         feedTable.value.loading = false;
     }
 
