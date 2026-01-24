@@ -688,7 +688,12 @@
                         @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)">
                         <Download />
                     </Button>
-                    <vue-json-pretty :data="treeData" :deep="2" :theme="isDarkMode ? 'dark' : 'light'" show-icon />
+                    <vue-json-pretty
+                        :key="treeData?.id"
+                        :data="treeData"
+                        :deep="2"
+                        :theme="isDarkMode ? 'dark' : 'light'"
+                        show-icon />
                     <br />
                     <vue-json-pretty
                         v-if="Object.keys(worldDialog.fileAnalysis).length > 0"

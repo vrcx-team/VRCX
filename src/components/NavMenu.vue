@@ -811,7 +811,7 @@
     .notify-dot {
         position: absolute;
         top: 6px;
-        right: 0;
+        right: 2px;
         width: 4px;
         height: 4px;
         background-color: #ef4444;

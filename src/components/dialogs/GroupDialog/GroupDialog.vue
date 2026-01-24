@@ -1106,6 +1106,7 @@
                         <Download />
                     </Button>
                     <vue-json-pretty
+                        :key="groupDialog.treeData?.group?.id"
                         :data="groupDialog.treeData"
                         :deep="2"
                         :theme="isDarkMode ? 'dark' : 'light'"

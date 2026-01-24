@@ -63,8 +63,9 @@ body {
 }
 
 .noty_layout {
-    width: 80% !important;
+    width: 75% !important;
     max-width: none;
+    padding-top: 512px !important;
 }
 
 .noty_theme__relax.noty_bar,
