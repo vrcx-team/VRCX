@@ -1191,8 +1191,8 @@
                     <Download />
                 </Button>
                 <vue-json-pretty
-                    :key="userDialog.treeData?.id"
-                    :data="userDialog.treeData"
+                    :key="treeData?.id"
+                    :data="treeData"
                     :deep="2"
                     :theme="isDarkMode ? 'dark' : 'light'"
                     show-icon />
@@ -1313,6 +1313,7 @@
     import InstanceActionBar from '../../InstanceActionBar.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
     import UserSummaryHeader from './UserSummaryHeader.vue';
+    import { formatJsonVars } from '../../../shared/utils/base/ui';
 
     const BioDialog = defineAsyncComponent(() => import('./BioDialog.vue'));
     const LanguageDialog = defineAsyncComponent(() => import('./LanguageDialog.vue'));
@@ -1357,7 +1358,6 @@
         showUserDialog,
         sortUserDialogAvatars,
         refreshUserDialogAvatars,
-        refreshUserDialogTreeData,
         showSendBoopDialog,
         toggleSharedConnectionsOptOut
     } = useUserStore();
@@ -1466,6 +1466,7 @@
     const isEditNoteAndMemoDialogVisible = ref(false);
     const vrchatCredit = ref(null);
     const mutualFriendsError = ref(false);
+    const treeData = ref({});
 
     const userDialogAvatars = computed(() => {
         const { avatars, avatarReleaseStatus } = userDialog.value;
@@ -1516,6 +1517,18 @@
             return t('dialog.user.status.busy');
         }
         return t('dialog.user.status.offline');
+    }
+
+    function refreshUserDialogTreeData() {
+        const D = userDialog.value;
+        if (D.id === currentUser.value.id) {
+            treeData.value = formatJsonVars({
+                ...currentUser.value,
+                ...D.ref
+            });
+            return;
+        }
+        treeData.value = formatJsonVars(D.ref);
     }
 
     function handleUserDialogTab(tabName) {

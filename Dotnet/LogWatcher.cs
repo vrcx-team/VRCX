@@ -34,6 +34,7 @@ namespace VRCX
         public bool VrcClosedGracefully;
         private readonly ConcurrentQueue<string> m_LogQueue = new ConcurrentQueue<string>(); // for electron
         private static readonly Regex CleanId = new("[^a-zA-Z0-9_\\-~:()]", RegexOptions.Compiled);
+        private static readonly Regex CleanLocation = new("[/]", RegexOptions.Compiled);
 
         // NOTE
         // FileSystemWatcher() is unreliable
@@ -373,7 +374,7 @@ namespace VRCX
                     return true;
 
                 var location = line.Substring(lineOffset);
-                location = CleanId.Replace(location, string.Empty);
+                location = CleanLocation.Replace(location, string.Empty);
 
                 AppendLog(new[]
                 {
@@ -451,7 +452,7 @@ namespace VRCX
                     return true;
 
                 var locationDestination = line.Substring(lineOffset);
-                logContext.LocationDestination = CleanId.Replace(locationDestination, string.Empty);
+                logContext.LocationDestination = CleanLocation.Replace(locationDestination, string.Empty);
 
                 return true;
             }
