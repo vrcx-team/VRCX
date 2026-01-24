@@ -1191,6 +1191,7 @@
                     <Download />
                 </Button>
                 <vue-json-pretty
+                    :key="userDialog.treeData?.id"
                     :data="userDialog.treeData"
                     :deep="2"
                     :theme="isDarkMode ? 'dark' : 'light'"
