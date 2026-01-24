@@ -240,7 +240,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
     }
 
     async function addEntry(data) {
-        const ctx = structuredClone(data);
+        const ctx = { ...data };
         const userId = ctx.userId || ctx.senderUserId;
         const wristFilter = notificationsSettingsStore.sharedFeedFilters.wrist;
         if (userId === userStore.currentUser.id) {

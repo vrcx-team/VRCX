@@ -2275,7 +2275,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     function queueFeedNoty(feed) {
-        const noty = structuredClone(feed);
+        const noty = { ...feed };
         if (noty.type === 'Avatar') {
             return;
         }
