@@ -1106,8 +1106,8 @@
                         <Download />
                     </Button>
                     <vue-json-pretty
-                        :key="groupDialog.treeData?.group?.id"
-                        :data="groupDialog.treeData"
+                        :key="treeData?.group?.id"
+                        :data="treeData"
                         :deep="2"
                         :theme="isDarkMode ? 'dark' : 'light'"
                         show-icon />
@@ -1242,6 +1242,7 @@
     const groupDialogGalleryCurrentName = ref('0');
     const groupDialogTabCurrentName = ref('0');
     const isGroupGalleryLoading = ref(false);
+    const treeData = ref({});
 
     const groupDialogMemberSortValue = computed({
         get() {
@@ -1817,17 +1818,13 @@
 
     function refreshGroupDialogTreeData() {
         const D = groupDialog.value;
-        const treeData = {
+        treeData.value = {
             group: formatJsonVars(D.ref),
             posts: D.posts,
             instances: D.instances,
             members: D.members,
             galleries: D.galleries
         };
-        updateGroupDialogData({
-            ...groupDialog.value,
-            treeData
-        });
     }
 
     async function loadAllGroupMembers() {
