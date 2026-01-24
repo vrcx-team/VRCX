@@ -75,7 +75,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     const unseenNotifications = ref([]);
     const isNotificationsLoading = ref(false);
 
-    const notyMap = ref([]);
+    let notyMap = {};
 
     watch(
         () => watchState.isLoggedIn,
@@ -607,14 +607,19 @@ export const useNotificationStore = defineStore('Notification', () => {
             // don't play noty twice
             const notyId = `${noty.type},${displayName}`;
             if (
-                notyMap.value[notyId] &&
-                notyMap.value[notyId] >= noty.created_at
+                notyMap[notyId] &&
+                notyMap[notyId] >= noty.created_at
             ) {
                 return;
             }
-            notyMap.value[notyId] = noty.created_at;
+            notyMap[notyId] = noty.created_at;
         }
         const bias = new Date(Date.now() - 60000).toJSON();
+        for (const [notyId, createdAt] of Object.entries(notyMap)) {
+            if (createdAt < bias) {
+                delete notyMap[notyId];
+            }
+        }
         if (noty.created_at < bias) {
             // don't play noty if it's over 1min old
             return;
