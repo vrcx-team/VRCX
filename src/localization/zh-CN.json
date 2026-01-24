@@ -858,7 +858,7 @@
                         "enable_tooltip": "获取视频标题以供日志记录使用，会一并获取进度条的时间"
                     },
                     "translation_api": {
-                        "header": "自我介绍翻译 API",
+                        "header": "个人简介翻译 API",
                         "enable": "启用",
                         "translation_api_key": "输入 API 密钥",
                         "enable_tooltip": "用于翻译玩家的个人简介"
@@ -1044,7 +1044,7 @@
                 "moderation_disable_chatbox": "屏蔽聊天气泡",
                 "edit_status": "社交状态",
                 "edit_language": "语言",
-                "edit_bio": "自我介绍",
+                "edit_bio": "个人简介",
                 "edit_pronouns": "人称代词",
                 "report_hacking": "举报这个玩家的开挂/盗模行为",
                 "unfriend": "删除好友",
@@ -1073,7 +1073,7 @@
                 "avatar_info": "正在使用的模型",
                 "avatar_info_last_seen": "正在使用的模型",
                 "represented_group": "展示群组",
-                "bio": "自我介绍",
+                "bio": "个人简介",
                 "last_seen": "最后见面时间",
                 "join_count": "见面的次数",
                 "time_together": "一起游玩的时长",
@@ -1447,7 +1447,7 @@
             "cancel": "取消"
         },
         "bio": {
-            "header": "自我介绍",
+            "header": "个人简介",
             "bio_placeholder": "在这里介绍一下自己吧！",
             "add_link": "添加社交链接",
             "update": "更新"
@@ -1549,7 +1549,7 @@
             "save": "保存"
         },
         "translation_api": {
-            "header": "自我介绍翻译 API",
+            "header": "个人简介翻译 API",
             "description": "输入你的 Google 翻译 API 密钥",
             "placeholder": "输入形如“AIzaSy......”的密钥",
             "guide": "查看教程（英语）",
@@ -2015,7 +2015,7 @@
         "cancel_button": "取消",
         "message": "确定要{command}吗？",
         "logout": "确定要登出吗？",
-        "unfriend": "要删除这个好友吗？你可能会失去这个好友很久（真的很久）",
+        "unfriend": "要删除这个好友吗？你可能会失去这个好友很久（真的很久！）",
         "clear_avatar_history": "确定要清除模型使用历史吗？",
         "select_avatar": "确定要使用这个模型吗？",
         "invite": "确定要发送邀请吗？",
