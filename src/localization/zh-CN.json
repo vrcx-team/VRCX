@@ -2034,7 +2034,7 @@
         "title": "VRChat 状态"
     },
     "location": {
-        "offline": "下线",
+        "offline": "离线",
         "private": "位于私人房间",
         "traveling": "正在传送"
     },
