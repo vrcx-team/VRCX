@@ -61,7 +61,7 @@
                         <TableRow v-else>
                             <TableCell class="h-24 text-center" :colspan="table.getVisibleLeafColumns().length">
                                 <slot name="empty">
-                                    <DataTableEmpty :type="emptyType" />
+                                    <DataTableEmpty v-if="!loading" :type="emptyType" />
                                 </slot>
                             </TableCell>
                         </TableRow>

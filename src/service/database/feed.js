@@ -92,25 +92,25 @@ const feed = {
         if (search.startsWith('wrld_') || search.startsWith('grp_')) {
             return this.getFeedByInstanceId(search, filters, vipList);
         }
-        var vipQuery = '';
-        var vipArgs = {};
+        let vipQuery = '';
+        const vipArgs = {};
         if (vipList.length > 0) {
-            var vipPlaceholders = [];
+            const vipPlaceholders = [];
             vipList.forEach((vip, i) => {
-                var key = `@vip_${i}`;
+                const key = `@vip_${i}`;
                 vipArgs[key] = vip;
                 vipPlaceholders.push(key);
             });
             vipQuery = `AND user_id IN (${vipPlaceholders.join(', ')})`;
         }
-        var gps = true;
-        var status = true;
-        var bio = true;
-        var avatar = true;
-        var online = true;
-        var offline = true;
-        var aviPublic = search.includes('public');
-        var aviPrivate = search.includes('private');
+        let gps = true;
+        let status = true;
+        let bio = true;
+        let avatar = true;
+        let online = true;
+        let offline = true;
+        const aviPublic = search.includes('public');
+        const aviPrivate = search.includes('private');
         if (filters.length > 0) {
             gps = false;
             status = false;
@@ -141,9 +141,9 @@ const feed = {
                 }
             });
         }
-        var searchLike = `%${search}%`;
-        var selects = [];
-        var baseColumns = [
+        const searchLike = `%${search}%`;
+        const selects = [];
+        const baseColumns = [
             'id',
             'created_at',
             'user_id',
@@ -183,7 +183,7 @@ const feed = {
             );
         }
         if (avatar) {
-            var avatarQuery = '';
+            let avatarQuery = '';
             if (aviPrivate) {
                 avatarQuery = 'AND user_id = owner_id';
             } else if (aviPublic) {
@@ -194,7 +194,7 @@ const feed = {
             );
         }
         if (online || offline) {
-            var query = '';
+            let query = '';
             if (!online || !offline) {
                 if (online) {
                     query = "AND type = 'Online'";
@@ -209,8 +209,8 @@ const feed = {
         if (selects.length === 0) {
             return [];
         }
-        var feedDatabase = [];
-        var args = {
+        const feedDatabase = [];
+        const args = {
             '@searchLike': searchLike,
             '@limit': maxEntries,
             '@perTable': maxEntries,
@@ -218,8 +218,8 @@ const feed = {
         };
         await sqliteService.execute(
             (dbRow) => {
-                var type = dbRow[4];
-                var row = {
+                const type = dbRow[4];
+                const row = {
                     rowId: dbRow[0],
                     created_at: dbRow[1],
                     userId: dbRow[2],
@@ -273,23 +273,23 @@ const feed = {
         vipList,
         maxEntries = dbVars.maxTableSize
     ) {
-        var vipQuery = '';
-        var vipArgs = {};
+        let vipQuery = '';
+        const vipArgs = {};
         if (vipList.length > 0) {
-            var vipPlaceholders = [];
+            const vipPlaceholders = [];
             vipList.forEach((vip, i) => {
-                var key = `@vip_${i}`;
+                const key = `@vip_${i}`;
                 vipArgs[key] = vip;
                 vipPlaceholders.push(key);
             });
             vipQuery = `AND user_id IN (${vipPlaceholders.join(', ')})`;
         }
-        var gps = true;
-        var status = true;
-        var bio = true;
-        var avatar = true;
-        var online = true;
-        var offline = true;
+        let gps = true;
+        let status = true;
+        let bio = true;
+        let avatar = true;
+        let online = true;
+        let offline = true;
         if (filters.length > 0) {
             gps = false;
             status = false;
@@ -320,8 +320,8 @@ const feed = {
                 }
             });
         }
-        var selects = [];
-        var baseColumns = [
+        const selects = [];
+        const baseColumns = [
             'id',
             'created_at',
             'user_id',
@@ -366,7 +366,7 @@ const feed = {
             );
         }
         if (online || offline) {
-            var query = '';
+            let query = '';
             if (!online || !offline) {
                 if (online) {
                     query = "AND type = 'Online'";
@@ -381,16 +381,16 @@ const feed = {
         if (selects.length === 0) {
             return [];
         }
-        var feedDatabase = [];
-        var args = {
+        const feedDatabase = [];
+        const args = {
             '@limit': maxEntries,
             '@perTable': maxEntries,
             ...vipArgs
         };
         await sqliteService.execute(
             (dbRow) => {
-                var type = dbRow[4];
-                var row = {
+                const type = dbRow[4];
+                const row = {
                     rowId: dbRow[0],
                     created_at: dbRow[1],
                     userId: dbRow[2],
@@ -440,8 +440,8 @@ const feed = {
     },
 
     async getFeedByInstanceId(instanceId, filters, vipList) {
-        var feedDatabase = [];
-        var vipQuery = '';
+        const feedDatabase = [];
+        let vipQuery = '';
         if (vipList.length > 0) {
             vipQuery = 'AND user_id IN (';
             vipList.forEach((vip, i) => {
@@ -452,9 +452,9 @@ const feed = {
             });
             vipQuery += ')';
         }
-        var gps = true;
-        var online = true;
-        var offline = true;
+        let gps = true;
+        let online = true;
+        let offline = true;
         if (filters.length > 0) {
             gps = false;
             online = false;
@@ -475,7 +475,7 @@ const feed = {
         }
         if (gps) {
             await sqliteService.execute((dbRow) => {
-                var row = {
+                const row = {
                     rowId: dbRow[0],
                     created_at: dbRow[1],
                     userId: dbRow[2],
@@ -491,7 +491,7 @@ const feed = {
             }, `SELECT * FROM ${dbVars.userPrefix}_feed_gps WHERE location LIKE '%${instanceId}%' ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         if (online || offline) {
-            var query = '';
+            let query = '';
             if (!online || !offline) {
                 if (online) {
                     query = "AND type = 'Online'";
@@ -500,7 +500,7 @@ const feed = {
                 }
             }
             await sqliteService.execute((dbRow) => {
-                var row = {
+                const row = {
                     rowId: dbRow[0],
                     created_at: dbRow[1],
                     userId: dbRow[2],
@@ -514,9 +514,9 @@ const feed = {
                 feedDatabase.push(row);
             }, `SELECT * FROM ${dbVars.userPrefix}_feed_online_offline WHERE (location LIKE '%${instanceId}%' ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
-        var compareByCreatedAt = function (a, b) {
-            var A = a.created_at;
-            var B = b.created_at;
+        const compareByCreatedAt = function (a, b) {
+            const A = a.created_at;
+            const B = b.created_at;
             if (A < B) {
                 return -1;
             }
