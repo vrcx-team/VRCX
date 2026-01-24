@@ -1209,8 +1209,8 @@
             },
             "instances": {
                 "header": "房间",
-                "public_count": "公开房间 {count}个",
-                "private_count": "私人房间 {count}个",
+                "public_count": "公开房间有{count}人在线",
+                "private_count": "私人房间有{count}人在线",
                 "capacity_count": "推荐人数: {count}人（上限:{max}人）",
                 "self_invite_tooltip": "邀请自己",
                 "refresh_instance_info": "刷新房间信息",
