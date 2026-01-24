@@ -174,7 +174,9 @@
 
     const { table, pagination } = useVrcxVueTable({
         persistKey: 'friendLog',
-        data: friendLogDisplayData,
+        get data() {
+            return friendLogDisplayData.value;
+        },
         columns,
         getRowId: (row) => `${row.type}:${row.rowId ?? row.userId ?? row.created_at ?? ''}`,
         initialSorting: [],

@@ -160,7 +160,9 @@
 
     const { table, pagination } = useVrcxVueTable({
         persistKey: 'moderation',
-        data: moderationDisplayData,
+        get data() {
+            return moderationDisplayData.value;
+        },
         columns,
         getRowId: (row) => row.id ?? `${row.type}:${row.sourceUserId}:${row.targetUserId}:${row.created ?? ''}`,
         initialSorting: [{ id: 'created', desc: true }],

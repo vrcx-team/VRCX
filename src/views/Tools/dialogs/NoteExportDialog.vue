@@ -112,7 +112,9 @@
 
     const { table } = useVrcxVueTable({
         persistKey: 'noteExportDialog',
-        data: rows,
+        get data() {
+            return rows.value;
+        },
         columns: columns.value,
         getRowId: (row) => String(row?.id ?? ''),
         enablePagination: false,

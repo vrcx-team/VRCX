@@ -181,7 +181,9 @@
 
     const { table: currentTable } = useVrcxVueTable({
         persistKey: 'photonEventTable:current',
-        data: currentRows,
+        get data() {
+            return currentRows.value;
+        },
         columns: currentColumns.value,
         getRowId: (row) => `${row?.photonId ?? ''}:${row?.created_at ?? ''}:${row?.type ?? ''}`,
         initialSorting: [{ id: 'created_at', desc: true }],
@@ -190,7 +192,9 @@
 
     const { table: previousTable } = useVrcxVueTable({
         persistKey: 'photonEventTable:previous',
-        data: previousRows,
+        get data() {
+            return previousRows.value;
+        },
         columns: previousColumns.value,
         getRowId: (row) => `${row?.photonId ?? ''}:${row?.created_at ?? ''}:${row?.type ?? ''}`,
         initialSorting: [{ id: 'created_at', desc: true }],

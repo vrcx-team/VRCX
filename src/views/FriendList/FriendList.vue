@@ -191,7 +191,9 @@
 
     const { table, sorting, pagination } = useVrcxVueTable({
         persistKey: 'friendList',
-        data: friendsListDisplayData,
+        get data() {
+            return friendsListDisplayData.value;
+        },
         columns: friendsListColumns.value,
         getRowId: (row) => row?.id ?? row?.displayName ?? '',
         enablePinning: true,

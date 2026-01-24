@@ -160,7 +160,9 @@
 
     const { table } = useVrcxVueTable({
         persistKey: 'friendImportDialog',
-        data: rows,
+        get data() {
+            return rows.value;
+        },
         columns: columns.value,
         getRowId: (row) => String(row?.id ?? ''),
         enablePagination: false,

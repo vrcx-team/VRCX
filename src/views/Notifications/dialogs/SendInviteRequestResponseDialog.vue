@@ -93,7 +93,9 @@
 
     const { table: inviteRequestResponseTable } = useVrcxVueTable({
         persistKey: 'invite-request-response-message',
-        data: inviteRequestResponseRows,
+        get data() {
+            return inviteRequestResponseRows.value;
+        },
         columns: inviteRequestResponseColumns,
         getRowId: (row) => String(row?.slot ?? ''),
         enablePagination: false,

@@ -179,7 +179,9 @@
 
     const { table } = useVrcxVueTable({
         persistKey: 'avatarImportDialog',
-        data: rows,
+        get data() {
+            return rows.value;
+        },
         columns: columns.value,
         getRowId: (row) => String(row?.id ?? ''),
         enablePagination: false,

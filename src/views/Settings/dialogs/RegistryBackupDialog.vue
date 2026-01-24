@@ -93,7 +93,9 @@
 
     const { table } = useVrcxVueTable({
         persistKey: 'registryBackupDialog',
-        data: rows,
+        get data() {
+            return rows.value;
+        },
         columns: columns.value,
         getRowId: (row) => String(row?.name ?? ''),
         enablePagination: false,

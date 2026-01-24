@@ -232,7 +232,7 @@ export function useVrcxVueTable(options) {
         });
     }
 
-    const dataSource = computed(() => resolveMaybeGetter(options.data));
+    const dataSource = computed(() => options.data);
     const columnsSource = computed(() => resolveMaybeGetter(options.columns));
 
     const table = useVueTable({

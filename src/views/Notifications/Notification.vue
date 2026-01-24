@@ -231,7 +231,9 @@
 
     const { table, pagination } = useVrcxVueTable({
         persistKey: 'notifications',
-        data: notificationDisplayData,
+        get data() {
+            return notificationDisplayData.value;
+        },
         columns,
         getRowId: (row) => row.id ?? `${row.type}:${row.senderUserId ?? ''}:${row.created_at ?? ''}`,
         initialSorting: [{ id: 'created_at', desc: true }],

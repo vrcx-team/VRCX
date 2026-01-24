@@ -726,7 +726,9 @@
 
     const { table: groupMemberModerationTanstackTable } = useVrcxVueTable({
         persistKey: 'group-moderation:members',
-        data: computed(() => groupMemberModerationTable.data ?? []),
+        get data() {
+            return computed(() => groupMemberModerationTable.data).value;
+        },
         columns: groupMemberModerationColumns,
         getRowId: (row) => String(row?.userId ?? ''),
         initialPagination: { pageIndex: 0, pageSize: groupMemberModerationTable.pageSize ?? 15 }
@@ -767,7 +769,9 @@
 
     const { table: groupBansModerationTanstackTable } = useVrcxVueTable({
         persistKey: 'group-moderation:bans',
-        data: groupBansFilteredRows,
+        get data() {
+            return groupBansFilteredRows.value;
+        },
         columns: groupBansModerationColumns,
         getRowId: (row) => String(row?.userId ?? row?.id ?? ''),
         initialPagination: { pageIndex: 0, pageSize: groupBansModerationTable.pageSize ?? 15 }
@@ -790,7 +794,9 @@
 
     const { table: groupInvitesModerationTanstackTable } = useVrcxVueTable({
         persistKey: 'group-moderation:invites',
-        data: computed(() => groupInvitesModerationTable.data ?? []),
+        get data() {
+            return computed(() => groupInvitesModerationTable.data).value;
+        },
         columns: groupInvitesModerationColumns,
         getRowId: (row) => String(row?.userId ?? row?.id ?? ''),
         initialPagination: { pageIndex: 0, pageSize: groupInvitesModerationTable.pageSize ?? 15 }
@@ -813,7 +819,9 @@
 
     const { table: groupJoinRequestsModerationTanstackTable } = useVrcxVueTable({
         persistKey: 'group-moderation:join-requests',
-        data: computed(() => groupJoinRequestsModerationTable.data ?? []),
+        get data() {
+            return computed(() => groupJoinRequestsModerationTable.data).value;
+        },
         columns: groupJoinRequestsModerationColumns,
         getRowId: (row) => String(row?.userId ?? row?.id ?? ''),
         initialPagination: { pageIndex: 0, pageSize: groupJoinRequestsModerationTable.pageSize ?? 15 }
@@ -836,7 +844,9 @@
 
     const { table: groupBlockedModerationTanstackTable } = useVrcxVueTable({
         persistKey: 'group-moderation:blocked',
-        data: computed(() => groupBlockedModerationTable.data ?? []),
+        get data() {
+            return computed(() => groupBlockedModerationTable.data).value;
+        },
         columns: groupBlockedModerationColumns,
         getRowId: (row) => String(row?.userId ?? row?.id ?? ''),
         initialPagination: { pageIndex: 0, pageSize: groupBlockedModerationTable.pageSize ?? 15 }
@@ -871,7 +881,9 @@
 
     const { table: groupLogsModerationTanstackTable } = useVrcxVueTable({
         persistKey: 'group-moderation:logs',
-        data: groupLogsFilteredRows,
+        get data() {
+            return groupLogsFilteredRows.value;
+        },
         columns: groupLogsModerationColumns,
         getRowId: (row) => String(row?.id ?? `${row?.created_at ?? ''}:${row?.eventType ?? ''}`),
         initialPagination: { pageIndex: 0, pageSize: groupLogsModerationTable.pageSize ?? 15 }

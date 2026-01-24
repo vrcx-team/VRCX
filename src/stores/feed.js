@@ -1,4 +1,4 @@
-import { ref, shallowReactive, watch } from 'vue';
+import { ref, shallowReactive, shallowRef, watch } from 'vue';
 import { defineStore } from 'pinia';
 
 import { database } from '../service/database';
@@ -16,7 +16,7 @@ export const useFeedStore = defineStore('Feed', () => {
     const vrcxStore = useVrcxStore();
     const sharedFeedStore = useSharedFeedStore();
 
-    const feedTableData = shallowReactive([]);
+    const feedTableData = shallowRef([]);
     const feedTable = ref({
         search: '',
         vip: false,
@@ -29,7 +29,7 @@ export const useFeedStore = defineStore('Feed', () => {
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            feedTableData.length = 0;
+            feedTableData.value = [];
             if (isLoggedIn) {
                 initFeedTable();
             }
@@ -149,8 +149,8 @@ export const useFeedStore = defineStore('Feed', () => {
             feedTable.value.filter,
             vipList
         );
-        feedTableData.length = 0;
-        feedTableData.push(...rows.reverse());
+        feedTableData.value = [];
+        feedTableData.value = [...feedTableData.value, ...rows.reverse()];
         feedTable.value.loading = false;
     }
 
@@ -172,20 +172,21 @@ export const useFeedStore = defineStore('Feed', () => {
         if (!feedSearch(feed)) {
             return;
         }
-        feedTableData.unshift(feed);
+        feedTableData.value = [feed, ...feedTableData.value];
         sweepFeed();
     }
 
     function sweepFeed() {
-        const j = feedTableData.length;
+        const j = feedTableData.value.length;
         if (j > vrcxStore.maxTableSize + 50) {
-            feedTableData.splice(-50, 50);
+            feedTableData.value = feedTableData.value.slice(0, -50);
         }
     }
 
     async function initFeedTable() {
         feedTable.value.loading = true;
-        feedTableLookup();
+        await feedTableLookup();
+        feedTable.value.loading = false;
     }
 
     return {

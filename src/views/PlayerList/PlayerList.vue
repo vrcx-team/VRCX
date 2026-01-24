@@ -267,7 +267,9 @@
 
     const { table: playerListTable } = useVrcxVueTable({
         persistKey: 'playerList',
-        data: currentInstanceUsersData,
+        get data() {
+            return currentInstanceUsersData.value;
+        },
         columns: playerListColumns,
         enablePagination: false,
         getRowId: (row) => `${row?.ref?.id ?? ''}:${row?.displayName ?? ''}`

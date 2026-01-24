@@ -128,7 +128,9 @@
 
     const { table: inviteMessageTanstackTable } = useVrcxVueTable({
         persistKey: 'invite-message',
-        data: inviteMessageRows,
+        get data() {
+            return inviteMessageRows.value;
+        },
         columns: inviteMessageColumns,
         getRowId: (row) => String(row?.slot ?? ''),
         enablePagination: false,

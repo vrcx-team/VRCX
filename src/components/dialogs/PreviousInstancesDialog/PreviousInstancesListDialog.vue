@@ -196,7 +196,9 @@
 
     const { table } = useVrcxVueTable({
         persistKey: persistKey.value,
-        data: displayRows,
+        get data() {
+            return displayRows.value;
+        },
         columns: columns.value,
         getRowId: (row) => `${row?.location ?? ''}:${row?.created_at ?? ''}`,
         initialSorting: [{ id: 'created_at', desc: true }],

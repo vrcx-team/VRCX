@@ -119,7 +119,9 @@
 
     const { table: inviteMessageTanstackTable } = useVrcxVueTable({
         persistKey: 'edit-invite-messages:message',
-        data: inviteMessageRows,
+        get data() {
+            return inviteMessageRows.value;
+        },
         columns: inviteMessageColumns,
         getRowId: (row) => String(row?.slot ?? ''),
         enablePagination: false,
@@ -128,7 +130,9 @@
 
     const { table: inviteRequestTanstackTable } = useVrcxVueTable({
         persistKey: 'edit-invite-messages:request',
-        data: inviteRequestRows,
+        get data() {
+            return inviteRequestRows.value;
+        },
         columns: inviteRequestColumns,
         getRowId: (row) => String(row?.slot ?? ''),
         enablePagination: false,
@@ -137,7 +141,9 @@
 
     const { table: inviteRequestResponseTanstackTable } = useVrcxVueTable({
         persistKey: 'edit-invite-messages:request-response',
-        data: inviteRequestResponseRows,
+        get data() {
+            return inviteRequestResponseRows.value;
+        },
         columns: inviteRequestResponseColumns,
         getRowId: (row) => String(row?.slot ?? ''),
         enablePagination: false,
@@ -146,7 +152,9 @@
 
     const { table: inviteResponseTanstackTable } = useVrcxVueTable({
         persistKey: 'edit-invite-messages:response',
-        data: inviteResponseRows,
+        get data() {
+            return inviteResponseRows.value;
+        },
         columns: inviteResponseColumns,
         getRowId: (row) => String(row?.slot ?? ''),
         enablePagination: false,

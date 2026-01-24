@@ -98,7 +98,9 @@
 
     const { table } = useVrcxVueTable({
         persistKey: 'previousInstancesInfoDialog',
-        data: displayRows,
+        get data() {
+            return displayRows.value;
+        },
         columns: columns.value,
         getRowId: (row) => row?.id ?? row?.userId ?? row?.displayName ?? JSON.stringify(row ?? {}),
         initialSorting: [{ id: 'created_at', desc: true }],

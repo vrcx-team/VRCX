@@ -90,8 +90,10 @@
     );
 
     const { table, pagination } = useVrcxVueTable({
+        get data() {
+            return feedTableData.value;
+        },
         persistKey: 'feed',
-        data: feedTableData,
         columns: baseColumns,
         getRowId: (row) => `${row.type}:${row.rowId}:${row.created_at ?? ''}`,
         enableExpanded: true,

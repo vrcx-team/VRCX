@@ -133,7 +133,9 @@
 
     const { table, pagination } = useVrcxVueTable({
         persistKey: 'gameLog',
-        data: gameLogTableData,
+        get data() {
+            return gameLogTableData.value;
+        },
         columns,
         getRowId: (row, index) => `${row.type}:${row.rowId ?? index}`,
         initialSorting: [],
