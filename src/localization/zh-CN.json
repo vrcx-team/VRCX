@@ -579,7 +579,7 @@
                     "bio_language": "目标语言",
                     "theme_mode": "主题",
                     "font_family": "字体",
-                    "font_family_tooltip": "只有系统字体会影响 CJK （也就是中/日/韩文）字符",
+                    "font_family_tooltip": "只有系统字体会影响 CJK （也就是中/日/韩文）字符。此外，由于部分字体使用了 fonts.gstatic.com 源，所以在网络受限地区可能需要魔法",
                     "font_family_inter": "Inter",
                     "font_family_noto_sans": "Noto Sans",
                     "font_family_source_sans_3": "Source Sans 3",
