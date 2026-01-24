@@ -156,9 +156,7 @@ export const useFeedStore = defineStore('Feed', () => {
                   vipList
               );
         feedTableData.value = [];
-        feedTableData.value = search
-            ? [...feedTableData.value, ...rows.reverse()]
-            : [...feedTableData.value, ...rows];
+        feedTableData.value = [...feedTableData.value, ...rows];
         feedTable.value.loading = false;
     }
 
