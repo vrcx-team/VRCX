@@ -612,7 +612,14 @@ export const useNotificationStore = defineStore('Notification', () => {
             ) {
                 return;
             }
-            notyMap.value[notyId] = noty.created_at;
+            const createdAt = noty.created_at;
+            notyMap.value[notyId] = createdAt;
+            // self-destruct after 60 seconds
+            setTimeout(() => {
+                if (notyMap.value[notyId] === createdAt) {
+                    delete notyMap.value[notyId];
+                }
+            }, 60000);
         }
         const bias = new Date(Date.now() - 60000).toJSON();
         if (noty.created_at < bias) {
