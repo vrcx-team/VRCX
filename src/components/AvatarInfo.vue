@@ -1,7 +1,7 @@
 <template>
     <div @click="confirm" class="cursor-pointer w-fit align-top flex items-center">
         <span class="flex items-center"
-            >{{ avatarName }} <Lock v-if="avatarType && avatarType === '(own)'" class="h-4 w-4 mx-1"
+            >{{ avatarName }} <Lock v-if="avatarType && avatarType === '(own)'" class="h-4 w-4 mx-1" color="orange"
         /></span>
         <TooltipWrapper v-if="avatarTags">
             <template #content>
