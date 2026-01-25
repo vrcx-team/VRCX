@@ -1,49 +1,56 @@
 <template>
-    <div ref="listRootRef" class="x-friend-list" style="padding: 10px 5px">
-        <div v-if="virtualRows.length" class="group-sidebar__virtual" :style="virtualContainerStyle">
-            <template v-for="item in virtualItems" :key="String(item.virtualItem.key)">
-                <div
-                    v-if="item.row"
-                    class="group-sidebar__virtual-row"
-                    :class="`group-sidebar__virtual-row--${item.row.type}`"
-                    :data-index="item.virtualItem.index"
-                    :ref="virtualizer.measureElement"
-                    :style="rowStyle(item)">
-                    <template v-if="item.row.type === 'group-header'">
+    <div ref="scrollRootRef" class="relative h-full">
+        <div ref="scrollViewportRef" class="h-full w-full overflow-auto">
+            <div class="x-friend-list px-1.5 py-2.5">
+                <div v-if="virtualRows.length" class="relative w-full box-border" :style="virtualContainerStyle">
+                    <template v-for="item in virtualItems" :key="String(item.virtualItem.key)">
                         <div
-                            class="x-friend-group cursor-pointer"
-                            :style="item.row.headerPaddingTop ? { paddingTop: item.row.headerPaddingTop } : undefined">
-                            <div
-                                @click="toggleGroupSidebarCollapse(item.row.groupId)"
-                                style="display: flex; align-items: center">
-                                <ChevronDown
-                                    class="rotation-transition"
-                                    :class="{ 'is-rotated': item.row.isCollapsed }" />
-                                <span style="margin-left: 5px"> {{ item.row.label }} – {{ item.row.count }} </span>
-                            </div>
-                        </div>
-                    </template>
-
-                    <template v-else-if="item.row.type === 'group-item'">
-                        <div class="x-friend-item" @click="showGroupDialog(item.row.ownerId)">
-                            <template v-if="item.row.isVisible">
-                                <div class="avatar">
-                                    <img :src="getSmallGroupIconUrl(item.row.iconUrl)" loading="lazy" />
+                            v-if="item.row"
+                            class="absolute left-0 top-0 w-full box-border"
+                            :data-index="item.virtualItem.index"
+                            :ref="virtualizer.measureElement"
+                            :style="rowStyle(item)">
+                            <template v-if="item.row.type === 'group-header'">
+                                <div
+                                    class="x-friend-group cursor-pointer pt-4 pb-1.5 text-xs"
+                                    :style="
+                                        item.row.headerPaddingTop
+                                            ? { paddingTop: item.row.headerPaddingTop }
+                                            : undefined
+                                    ">
+                                    <div
+                                        @click="toggleGroupSidebarCollapse(item.row.groupId)"
+                                        class="flex items-center">
+                                        <ChevronDown
+                                            class="transition-transform duration-200 ease-in-out"
+                                            :class="{ '-rotate-90': item.row.isCollapsed }" />
+                                        <span class="ml-1.5"> {{ item.row.label }} – {{ item.row.count }} </span>
+                                    </div>
                                 </div>
-                                <div class="detail">
-                                    <span class="name">
-                                        <span v-text="item.row.name"></span>
-                                        <span style="font-weight: normal; margin-left: 5px"
-                                            >({{ item.row.userCount }}/{{ item.row.capacity }})</span
-                                        >
-                                    </span>
-                                    <Location class="text-xs" :location="item.row.location" :link="false" />
+                            </template>
+
+                            <template v-else-if="item.row.type === 'group-item'">
+                                <div class="x-friend-item" @click="showGroupDialog(item.row.ownerId)">
+                                    <template v-if="item.row.isVisible">
+                                        <div class="avatar">
+                                            <img :src="getSmallGroupIconUrl(item.row.iconUrl)" loading="lazy" />
+                                        </div>
+                                        <div class="detail">
+                                            <span class="name">
+                                                <span v-text="item.row.name"></span>
+                                                <span class="ml-1.5 font-normal">
+                                                    ({{ item.row.userCount }}/{{ item.row.capacity }})
+                                                </span>
+                                            </span>
+                                            <Location class="text-xs" :location="item.row.location" :link="false" />
+                                        </div>
+                                    </template>
                                 </div>
                             </template>
                         </div>
                     </template>
                 </div>
-            </template>
+            </div>
         </div>
         <BackToTopVirtual :virtualizer="virtualizer" :target="scrollViewportRef" :teleport-to="scrollRootRef" />
     </div>
@@ -66,7 +73,6 @@
     const { groupInstances } = storeToRefs(useGroupStore());
 
     const groupInstancesCfg = ref({});
-    const listRootRef = ref(null);
     const scrollViewportRef = ref(null);
     const scrollRootRef = ref(null);
 
@@ -177,8 +183,6 @@
     }
 
     onMounted(() => {
-        scrollViewportRef.value = listRootRef.value?.closest('[data-slot="scroll-area-viewport"]') ?? null;
-        scrollRootRef.value = listRootRef.value?.closest('[data-slot="scroll-area"]') ?? null;
         nextTick(() => {
             virtualizer.value?.measure?.();
         });
@@ -190,31 +194,3 @@
         });
     });
 </script>
-
-<style scoped>
-    .is-rotated {
-        transform: rotate(-90deg);
-    }
-    .rotation-transition {
-        transition: transform 0.2s ease-in-out;
-    }
-
-    .group-sidebar__virtual {
-        width: 100%;
-        position: relative;
-        box-sizing: border-box;
-    }
-
-    .group-sidebar__virtual-row {
-        width: 100%;
-        box-sizing: border-box;
-        position: absolute;
-        left: 0;
-        top: 0;
-    }
-
-    .group-sidebar__virtual-row--group-header .x-friend-group {
-        padding: 16px 0 5px;
-        font-size: 12px;
-    }
-</style>

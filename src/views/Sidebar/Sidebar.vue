@@ -95,16 +95,12 @@
             </template>
             <template #friends>
                 <div class="h-full overflow-hidden">
-                    <ScrollArea class="h-full">
-                        <FriendsSidebar />
-                    </ScrollArea>
+                    <FriendsSidebar />
                 </div>
             </template>
             <template #groups>
                 <div class="h-full overflow-hidden">
-                    <ScrollArea class="h-full">
-                        <GroupsSidebar />
-                    </ScrollArea>
+                    <GroupsSidebar />
                 </div>
             </template>
         </TabsUnderline>
@@ -118,7 +114,6 @@
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { Input } from '@/components/ui/input';
     import { RefreshCw } from 'lucide-vue-next';
-    import { ScrollArea } from '@/components/ui/scroll-area';
     import { Spinner } from '@/components/ui/spinner';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
