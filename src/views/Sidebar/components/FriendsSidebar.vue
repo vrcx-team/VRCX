@@ -84,7 +84,7 @@
                 </div>
             </div>
         </div>
-        <BackToTopVirtual :virtualizer="virtualizer" :target="scrollViewportRef" :teleport-to="scrollRootRef" />
+        <BackToTop :virtualizer="virtualizer" :target="scrollViewportRef" :tooltip="false" />
     </div>
 </template>
 
@@ -107,7 +107,7 @@
     import { isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
     import { getFriendsLocations } from '../../../shared/utils/location.js';
 
-    import BackToTopVirtual from '../../../components/BackToTopVirtual.vue';
+    import BackToTop from '../../../components/BackToTop.vue';
     import FriendItem from './FriendItem.vue';
     import Location from '../../../components/Location.vue';
     import configRepository from '../../../service/config';

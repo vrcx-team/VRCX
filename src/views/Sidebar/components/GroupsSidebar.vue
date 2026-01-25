@@ -52,7 +52,7 @@
                 </div>
             </div>
         </div>
-        <BackToTopVirtual :virtualizer="virtualizer" :target="scrollViewportRef" :teleport-to="scrollRootRef" />
+        <BackToTop :virtualizer="virtualizer" :target="scrollViewportRef" :tooltip="false" />
     </div>
 </template>
 
@@ -65,7 +65,7 @@
     import { useAppearanceSettingsStore, useGroupStore } from '../../../stores';
     import { convertFileUrlToImageUrl } from '../../../shared/utils';
 
-    import BackToTopVirtual from '../../../components/BackToTopVirtual.vue';
+    import BackToTop from '../../../components/BackToTop.vue';
     import Location from '../../../components/Location.vue';
 
     const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());

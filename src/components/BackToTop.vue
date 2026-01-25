@@ -5,12 +5,15 @@
     import { Button } from '@/components/ui/button';
 
     const props = defineProps({
+        // scroll DOM ref
         target: { type: [String, Object], default: null },
+        // @tanstack/virtual instance
+        virtualizer: { type: [Object], default: null },
 
         bottom: { type: Number, default: 20 },
         right: { type: Number, default: 20 },
 
-        visibilityHeight: { type: Number, default: 200 },
+        visibilityHeight: { type: Number, default: 400 },
 
         behavior: {
             type: String,
@@ -21,28 +24,26 @@
         tooltip: { type: Boolean, default: true },
         tooltipText: { type: String, default: 'Back to top' },
 
-        teleport: { type: Boolean, default: true }
+        teleport: { type: Boolean, default: true },
+        teleportTo: { type: [Boolean, String, Object], default: null }
     });
 
     const visible = ref(false);
     let containerEl = null;
 
-    function resolveTarget() {
-        if (!props.target) return null;
-        if (typeof props.target === 'string') {
-            return document.querySelector(props.target);
+    function resolveElement(target) {
+        if (!target) return null;
+        if (typeof target === 'string') return document.querySelector(target);
+        if (typeof target === 'object') {
+            if ('value' in target) return target.value;
+            if ('$el' in target) return target.$el;
         }
+        return target;
+    }
 
-        if (typeof props.target === 'object') {
-            if ('value' in props.target) {
-                return props.target.value;
-            }
-            if ('$el' in props.target) {
-                return props.target.$el;
-            }
-        }
-
-        return props.target;
+    function getVirtualizer() {
+        if (!props.virtualizer) return null;
+        return 'value' in props.virtualizer ? props.virtualizer.value : props.virtualizer;
     }
 
     function getScrollTop() {
@@ -58,15 +59,21 @@
 
     function scrollToTop() {
         const behavior = props.behavior === 'auto' ? 'auto' : 'smooth';
-        if (!containerEl || typeof containerEl.scrollTo !== 'function') {
-            window.scrollTo({ top: 0, behavior });
+        const v = getVirtualizer();
+        if (v?.scrollToIndex) {
+            v.scrollToIndex(0, { align: 'start', behavior: 'auto' });
             return;
         }
-        containerEl.scrollTo({ top: 0, behavior });
+        const target = containerEl || resolveElement(props.target);
+        if (target && typeof target.scrollTo === 'function') {
+            target.scrollTo({ top: 0, behavior });
+            return;
+        }
+        window.scrollTo({ top: 0, behavior });
     }
 
     function bind() {
-        containerEl = resolveTarget();
+        containerEl = resolveElement(props.target);
 
         const target = containerEl && typeof containerEl.addEventListener === 'function' ? containerEl : window;
         target.addEventListener('scroll', handleScroll, { passive: true });
@@ -94,13 +101,25 @@
         unbind();
     });
 
+    const teleportTarget = computed(() => {
+        if (props.teleportTo !== null && props.teleportTo !== undefined) {
+            if (props.teleportTo === true) return 'body';
+            if (props.teleportTo === false) return null;
+            return resolveElement(props.teleportTo);
+        }
+        return props.teleport ? 'body' : null;
+    });
+
+    const isBodyTeleport = computed(() => teleportTarget.value === 'body' || teleportTarget.value === document.body);
+
     const wrapperStyle = computed(
-        () => `position:fixed; right:${props.right}px; bottom:${props.bottom}px; z-index:50;`
+        () =>
+            `position:${isBodyTeleport.value ? 'fixed' : 'absolute'}; right:${props.right}px; bottom:${props.bottom}px; z-index:50;`
     );
 </script>
 
 <template>
-    <Teleport v-if="teleport" to="body">
+    <Teleport v-if="teleportTarget" :to="teleportTarget">
         <Transition name="back-to-top">
             <div v-if="visible" :style="wrapperStyle">
                 <TooltipProvider v-if="tooltip">
@@ -115,7 +134,7 @@
                                 <ArrowUp class="h-4 w-4" />
                             </Button>
                         </TooltipTrigger>
-                        <TooltipContent side="left">
+                        <TooltipContent side="top">
                             {{ tooltipText }}
                         </TooltipContent>
                     </Tooltip>
@@ -136,7 +155,26 @@
 
     <Transition v-else name="back-to-top">
         <div v-if="visible" :style="wrapperStyle">
+            <TooltipProvider v-if="tooltip">
+                <Tooltip>
+                    <TooltipTrigger as-child>
+                        <Button
+                            size="icon"
+                            variant="secondary"
+                            class="rounded-full shadow"
+                            aria-label="Back to top"
+                            @click="scrollToTop">
+                            <ArrowUp class="h-4 w-4" />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">
+                        {{ tooltipText }}
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+
             <Button
+                v-else
                 size="icon"
                 variant="secondary"
                 class="rounded-full shadow"
