@@ -45,6 +45,7 @@
                 </div>
             </template>
         </div>
+        <BackToTopVirtual :virtualizer="virtualizer" :target="scrollViewportRef" :teleport-to="scrollRootRef" />
     </div>
 </template>
 
@@ -57,6 +58,7 @@
     import { useAppearanceSettingsStore, useGroupStore } from '../../../stores';
     import { convertFileUrlToImageUrl } from '../../../shared/utils';
 
+    import BackToTopVirtual from '../../../components/BackToTopVirtual.vue';
     import Location from '../../../components/Location.vue';
 
     const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
@@ -66,6 +68,7 @@
     const groupInstancesCfg = ref({});
     const listRootRef = ref(null);
     const scrollViewportRef = ref(null);
+    const scrollRootRef = ref(null);
 
     const groupedGroupInstances = computed(() => {
         const groupMap = new Map();
@@ -161,7 +164,6 @@
         transform: `translateY(${item.virtualItem.start}px)`
     });
 
-
     function getSmallGroupIconUrl(url) {
         return convertFileUrlToImageUrl(url);
     }
@@ -176,6 +178,7 @@
 
     onMounted(() => {
         scrollViewportRef.value = listRootRef.value?.closest('[data-slot="scroll-area-viewport"]') ?? null;
+        scrollRootRef.value = listRootRef.value?.closest('[data-slot="scroll-area"]') ?? null;
         nextTick(() => {
             virtualizer.value?.measure?.();
         });

@@ -79,6 +79,7 @@
                 </div>
             </template>
         </div>
+        <BackToTopVirtual :virtualizer="virtualizer" :target="scrollViewportRef" :teleport-to="scrollRootRef" />
     </div>
 </template>
 
@@ -101,6 +102,7 @@
     import { isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
     import { getFriendsLocations } from '../../../shared/utils/location.js';
 
+    import BackToTopVirtual from '../../../components/BackToTopVirtual.vue';
     import FriendItem from './FriendItem.vue';
     import Location from '../../../components/Location.vue';
     import configRepository from '../../../service/config';
@@ -127,6 +129,7 @@
     const isSidebarGroupByInstanceCollapsed = ref(false);
     const listRootRef = ref(null);
     const scrollViewportRef = ref(null);
+    const scrollRootRef = ref(null);
 
     loadFriendsGroupStates();
 
@@ -474,6 +477,7 @@
 
     onMounted(() => {
         scrollViewportRef.value = listRootRef.value?.closest('[data-slot="scroll-area-viewport"]') ?? null;
+        scrollRootRef.value = listRootRef.value?.closest('[data-slot="scroll-area"]') ?? null;
         nextTick(() => {
             virtualizer.value?.measure?.();
         });
