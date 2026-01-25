@@ -96,7 +96,7 @@
             <template #friends>
                 <div class="h-full overflow-hidden">
                     <ScrollArea ref="friendsScrollAreaRef" class="h-full">
-                        <FriendsSidebar @confirm-delete-friend="confirmDeleteFriend" />
+                        <FriendsSidebar />
                     </ScrollArea>
                     <BackToTop :target="friendsScrollTarget" :bottom="20" :right="20" :teleport="false" />
                 </div>
@@ -104,7 +104,7 @@
             <template #groups>
                 <div class="h-full overflow-hidden">
                     <ScrollArea ref="groupsScrollAreaRef" class="h-full">
-                        <GroupsSidebar :group-order="inGameGroupOrder" />
+                        <GroupsSidebar />
                     </ScrollArea>
                     <BackToTop :target="groupsScrollTarget" :bottom="20" :right="20" :teleport="false" />
                 </div>
@@ -135,10 +135,10 @@
     import GroupsSidebar from './components/GroupsSidebar.vue';
 
     const { friends, isRefreshFriendsLoading, onlineFriendCount } = storeToRefs(useFriendStore());
-    const { refreshFriendsList, confirmDeleteFriend } = useFriendStore();
+    const { refreshFriendsList } = useFriendStore();
     const { quickSearchRemoteMethod, quickSearchChange } = useSearchStore();
     const { quickSearchItems } = storeToRefs(useSearchStore());
-    const { inGameGroupOrder, groupInstances } = storeToRefs(useGroupStore());
+    const { groupInstances } = storeToRefs(useGroupStore());
     const { t } = useI18n();
     const sidebarTabs = computed(() => [
         { value: 'friends', label: t('side_panel.friends') },

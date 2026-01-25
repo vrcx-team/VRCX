@@ -64,13 +64,6 @@
     const { showGroupDialog, sortGroupInstancesByInGame } = useGroupStore();
     const { groupInstances } = storeToRefs(useGroupStore());
 
-    defineProps({
-        groupOrder: {
-            type: Array,
-            default: () => []
-        }
-    });
-
     const groupInstancesCfg = ref({});
     const listRootRef = ref(null);
     const scrollViewportRef = ref(null);

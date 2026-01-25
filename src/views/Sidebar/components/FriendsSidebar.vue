@@ -72,8 +72,7 @@
                         <friend-item
                             :friend="item.row.friend"
                             :style="item.row.itemStyle"
-                            :is-group-by-instance="item.row.isGroupByInstance"
-                            @confirm-delete-friend="confirmDeleteFriend" />
+                            :is-group-by-instance="item.row.isGroupByInstance" />
                     </template>
                 </div>
             </template>
@@ -105,7 +104,6 @@
     import Location from '../../../components/Location.vue';
     import configRepository from '../../../service/config';
 
-    const emit = defineEmits(['confirm-delete-friend']);
     const { t } = useI18n();
 
     const friendStore = useFriendStore();
@@ -477,10 +475,6 @@
     function toggleOfflineFriends() {
         isOfflineFriends.value = !isOfflineFriends.value;
         saveFriendsGroupStates();
-    }
-
-    function confirmDeleteFriend(friend) {
-        emit('confirm-delete-friend', friend);
     }
 
     onMounted(() => {
