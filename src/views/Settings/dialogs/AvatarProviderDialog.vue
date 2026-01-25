@@ -13,7 +13,7 @@
                     style="margin-top: 5px"
                     @change="saveAvatarProviderList">
                     <template #actions>
-                        <Trash2 class="cursor-pointer opacity-60 hover:opacity-100" @click="removeAvatarProvider(provider)" />
+                        <Trash2 class="cursor-pointer opacity-80 hover:opacity-100" @click="removeAvatarProvider(provider)" />
                     </template>
                 </InputGroupAction>
 
