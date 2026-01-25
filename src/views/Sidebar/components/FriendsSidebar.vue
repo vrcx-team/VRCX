@@ -1,83 +1,90 @@
 <template>
-    <div ref="listRootRef" class="x-friend-list" style="padding: 10px 5px">
-        <div v-if="virtualRows.length" class="friend-sidebar__virtual" :style="virtualContainerStyle">
-            <template v-for="item in virtualItems" :key="String(item.virtualItem.key)">
-                <div
-                    v-if="item.row"
-                    class="friend-sidebar__virtual-row"
-                    :class="`friend-sidebar__virtual-row--${item.row.type}`"
-                    :data-index="item.virtualItem.index"
-                    :ref="virtualizer.measureElement"
-                    :style="rowStyle(item)">
-                    <template v-if="item.row.type === 'toggle-header'">
+    <div ref="scrollRootRef" class="relative h-full">
+        <div ref="scrollViewportRef" class="h-full w-full overflow-auto">
+            <div class="x-friend-list px-1.5 py-2.5">
+                <div v-if="virtualRows.length" class="relative w-full box-border" :style="virtualContainerStyle">
+                    <template v-for="item in virtualItems" :key="String(item.virtualItem.key)">
                         <div
-                            class="x-friend-group cursor-pointer flex items-center"
-                            :style="item.row.headerPadding ? { padding: item.row.headerPadding } : undefined"
-                            @click="item.row.onClick && item.row.onClick()">
-                            <ChevronDown class="rotation-transition" :class="{ 'is-rotated': !item.row.expanded }" />
-                            <span style="margin-left: 5px">
-                                {{ item.row.label }}
-                                <template v-if="item.row.count !== null && item.row.count !== undefined">
-                                    &horbar; {{ item.row.count }}
-                                </template>
-                            </span>
+                            v-if="item.row"
+                            class="absolute left-0 top-0 w-full box-border"
+                            :data-index="item.virtualItem.index"
+                            :ref="virtualizer.measureElement"
+                            :style="rowStyle(item)">
+                            <template v-if="item.row.type === 'toggle-header'">
+                                <div
+                                    class="x-friend-group flex cursor-pointer items-center pt-4 pb-1.5 text-xs"
+                                    :style="item.row.headerPadding ? { padding: item.row.headerPadding } : undefined"
+                                    @click="item.row.onClick && item.row.onClick()">
+                                    <ChevronDown
+                                        class="transition-transform duration-200 ease-in-out"
+                                        :class="{ '-rotate-90': !item.row.expanded }" />
+                                    <span class="ml-1.5">
+                                        {{ item.row.label }}
+                                        <template v-if="item.row.count !== null && item.row.count !== undefined">
+                                            &horbar; {{ item.row.count }}
+                                        </template>
+                                    </span>
+                                </div>
+                            </template>
+
+                            <template v-else-if="item.row.type === 'me-item'">
+                                <div class="x-friend-item" @click="showUserDialog(currentUser.id)">
+                                    <div class="avatar" :class="userStatusClass(currentUser)">
+                                        <img :src="userImage(currentUser)" loading="lazy" />
+                                    </div>
+                                    <div class="detail h-9 flex flex-col justify-between">
+                                        <span class="name" :style="{ color: currentUser.$userColour }">{{
+                                            currentUser.displayName
+                                        }}</span>
+                                        <Location
+                                            v-if="isGameRunning && !gameLogDisabled"
+                                            class="extra block truncate text-xs"
+                                            :location="lastLocation.location"
+                                            :traveling="lastLocationDestination"
+                                            :link="false" />
+                                        <Location
+                                            v-else-if="
+                                                isRealInstance(currentUser.$locationTag) ||
+                                                isRealInstance(currentUser.$travelingToLocation)
+                                            "
+                                            class="extra block truncate text-xs"
+                                            :location="currentUser.$locationTag"
+                                            :traveling="currentUser.$travelingToLocation"
+                                            :link="false" />
+
+                                        <span v-else class="extra block truncate text-xs">{{
+                                            currentUser.statusDescription
+                                        }}</span>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template v-else-if="item.row.type === 'vip-subheader'">
+                                <div>
+                                    <span class="text-xs">{{ item.row.label }}</span>
+                                    <span class="text-xs ml-1.5">{{ `(${item.row.count})` }}</span>
+                                </div>
+                            </template>
+
+                            <template v-else-if="item.row.type === 'instance-header'">
+                                <div class="mb-1 flex items-center">
+                                    <Location class="inline text-xs" :location="item.row.location" />
+                                    <span class="text-xs ml-1.5">{{ `(${item.row.count})` }}</span>
+                                </div>
+                            </template>
+
+                            <template v-else-if="item.row.type === 'friend-item'">
+                                <friend-item
+                                    :friend="item.row.friend"
+                                    :style="item.row.itemStyle"
+                                    :is-group-by-instance="item.row.isGroupByInstance" />
+                            </template>
                         </div>
-                    </template>
-
-                    <template v-else-if="item.row.type === 'me-item'">
-                        <div class="x-friend-item" @click="showUserDialog(currentUser.id)">
-                            <div class="avatar" :class="userStatusClass(currentUser)">
-                                <img :src="userImage(currentUser)" loading="lazy" />
-                            </div>
-                            <div class="detail">
-                                <span class="name" :style="{ color: currentUser.$userColour }">{{
-                                    currentUser.displayName
-                                }}</span>
-                                <Location
-                                    v-if="isGameRunning && !gameLogDisabled"
-                                    class="text-xs"
-                                    :location="lastLocation.location"
-                                    :traveling="lastLocationDestination"
-                                    :link="false" />
-                                <Location
-                                    v-else-if="
-                                        isRealInstance(currentUser.$locationTag) ||
-                                        isRealInstance(currentUser.$travelingToLocation)
-                                    "
-                                    class="text-xs"
-                                    :location="currentUser.$locationTag"
-                                    :traveling="currentUser.$travelingToLocation"
-                                    :link="false" />
-
-                                <span v-else class="text-xs">{{ currentUser.statusDescription }}</span>
-                            </div>
-                        </div>
-                    </template>
-
-                    <template v-else-if="item.row.type === 'vip-subheader'">
-                        <div>
-                            <span class="text-xs">{{ item.row.label }}</span>
-                            <span class="text-xs" style="margin-left: 5px">{{ `(${item.row.count})` }}</span>
-                        </div>
-                    </template>
-
-                    <template v-else-if="item.row.type === 'instance-header'">
-                        <div class="mb-1 flex items-center">
-                            <Location class="text-xs" :location="item.row.location" style="display: inline" />
-                            <span class="text-xs" style="margin-left: 5px">{{ `(${item.row.count})` }}</span>
-                        </div>
-                    </template>
-
-                    <template v-else-if="item.row.type === 'friend-item'">
-                        <friend-item
-                            :friend="item.row.friend"
-                            :style="item.row.itemStyle"
-                            :is-group-by-instance="item.row.isGroupByInstance"
-                            @confirm-delete-friend="confirmDeleteFriend" />
                     </template>
                 </div>
-            </template>
+            </div>
         </div>
+        <BackToTop :virtualizer="virtualizer" :target="scrollViewportRef" :tooltip="false" />
     </div>
 </template>
 
@@ -99,13 +106,12 @@
     } from '../../../stores';
     import { isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
     import { getFriendsLocations } from '../../../shared/utils/location.js';
-    import { useVirtualizerAnchor } from '../../../composables/useVirtualizerAnchor';
 
+    import BackToTop from '../../../components/BackToTop.vue';
     import FriendItem from './FriendItem.vue';
     import Location from '../../../components/Location.vue';
     import configRepository from '../../../service/config';
 
-    const emit = defineEmits(['confirm-delete-friend']);
     const { t } = useI18n();
 
     const friendStore = useFriendStore();
@@ -126,8 +132,8 @@
     const isActiveFriends = ref(true);
     const isOfflineFriends = ref(true);
     const isSidebarGroupByInstanceCollapsed = ref(false);
-    const listRootRef = ref(null);
     const scrollViewportRef = ref(null);
+    const scrollRootRef = ref(null);
 
     loadFriendsGroupStates();
 
@@ -423,12 +429,6 @@
         };
     };
 
-    const { measureWithAnchor } = useVirtualizerAnchor({
-        virtualizer,
-        virtualRows,
-        scrollViewportRef
-    });
-
     function saveFriendsGroupStates() {
         configRepository.setBool('VRCX_isFriendsGroupMe', isFriendsGroupMe.value);
         configRepository.setBool('VRCX_isFriendsGroupFavorites', isVIPFriends.value);
@@ -479,48 +479,16 @@
         saveFriendsGroupStates();
     }
 
-    function confirmDeleteFriend(friend) {
-        emit('confirm-delete-friend', friend);
-    }
-
     onMounted(() => {
-        scrollViewportRef.value = listRootRef.value?.closest('[data-slot="scroll-area-viewport"]') ?? null;
         nextTick(() => {
             virtualizer.value?.measure?.();
         });
     });
 
-    watch(virtualRows, () => {
-        measureWithAnchor(() => {
+    const virtualRowCount = computed(() => virtualRows.value.length);
+    watch(virtualRowCount, () => {
+        nextTick(() => {
             virtualizer.value?.measure?.();
         });
     });
 </script>
-
-<style scoped>
-    .is-rotated {
-        transform: rotate(-90deg);
-    }
-    .rotation-transition {
-        transition: transform 0.2s ease-in-out;
-    }
-
-    .friend-sidebar__virtual {
-        width: 100%;
-        position: relative;
-        box-sizing: border-box;
-    }
-
-    .friend-sidebar__virtual-row {
-        width: 100%;
-        box-sizing: border-box;
-        position: absolute;
-        left: 0;
-        top: 0;
-    }
-
-    .friend-sidebar__virtual-row--toggle-header .x-friend-group {
-        padding: 16px 0 6px;
-        font-size: 12px;
-    }
-</style>
