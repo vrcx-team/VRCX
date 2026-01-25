@@ -4,7 +4,7 @@ import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
-import { compareByName, localeIncludes } from '../shared/utils';
+import { compareByName, compareByDisplayName, localeIncludes } from '../shared/utils';
 import { instanceRequest, userRequest } from '../api';
 import { groupRequest } from '../api/';
 import removeConfusables, { removeWhitespace } from '../service/confusables';
@@ -92,6 +92,25 @@ export const useSearchStore = defineStore('Search', () => {
             searchUserResults.value = Array.from(map.values());
             return args;
         });
+    }
+
+    async function searchUserByIdPrefix(prefix) {
+        const users = Array.from(userStore.cachedUsers.values()).filter((u) =>
+            u.id.startsWith(prefix)
+        );
+        if (users.length) {
+            users.sort(compareByDisplayName);
+            searchUserResults.value = users.slice(0, 10);
+            return;
+        }
+        if (prefix.length >= 40) {
+            try {
+                const args = await userRequest.getCachedUser({ userId: prefix });
+                searchUserResults.value = args.ref ? [args.ref] : [];
+            } catch {
+                searchUserResults.value = [];
+            }
+        }
     }
 
     function quickSearchRemoteMethod(query) {
@@ -422,6 +441,7 @@ export const useSearchStore = defineStore('Search', () => {
         directAccessParse,
         directAccessPaste,
         directAccessWorld,
-        verifyShortName
+        verifyShortName,
+        searchUserByIdPrefix
     };
 });

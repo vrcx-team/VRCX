@@ -493,6 +493,12 @@
     }
 
     async function searchUser() {
+        const q = (searchText.value || '').trim();
+        if (q && q.startsWith('usr_')) {
+            searchUserResults.value = [];
+            await useSearchStore().searchUserByIdPrefix(q);
+            return;
+        }
         searchUserParams.value = {
             n: 10,
             offset: 0,
@@ -512,6 +518,31 @@
     function searchWorld(ref) {
         searchWorldOption.value = '';
         searchWorldCategoryIndex.value = ref?.index ?? null;
+        const q = (searchText.value || '').trim();
+        if (q && q.startsWith('wrld_')) {
+            const list = Array.from(cachedWorlds.values()).filter((w) => w.id.startsWith(q));
+            if (list.length) {
+                list.sort(compareByName);
+                searchWorldResults.value = list.slice(0, 10);
+                return;
+            }
+            if (q.length >= 41) {
+                isSearchWorldLoading.value = true;
+                worldRequest
+                    .getCachedWorld({ worldId: q })
+                    .finally(() => {
+                        isSearchWorldLoading.value = false;
+                    })
+                    .then((args) => {
+                        searchWorldResults.value = args.ref ? [args.ref] : [];
+                        return args;
+                    })
+                    .catch(() => {
+                        searchWorldResults.value = [];
+                    });
+                return;
+            }
+        }
         const params = {
             n: 10,
             offset: 0
