@@ -18,7 +18,7 @@
                     friend.ref.statusDescription
                 }}</span>
                 <template v-else>
-                    <div v-if="friend.pendingOffline" class="text-xs">
+                    <div v-if="friend.pendingOffline" class="extra block truncate text-xs">
                         {{ t('side_panel.pending_offline') }}
                     </div>
                     <template v-else-if="isGroupByInstance">
@@ -34,7 +34,7 @@
                     </template>
                     <Location
                         v-else
-                        class="text-xs"
+                        class="extra block truncate text-xs"
                         :location="locationProp"
                         :traveling="travelingProp"
                         :link="false" />
@@ -43,11 +43,7 @@
         </template>
         <template v-else-if="!friend.ref && !isRefreshFriendsLoading">
             <span>{{ friend.name || friend.id }}</span>
-            <Button
-                size="sm"
-                variant="ghost"
-                class="mr-1 w-6 h-6 text-xs"
-                @click.stop="$emit('confirm-delete-friend', friend.id)"
+            <Button size="sm" variant="ghost" class="mr-1 w-6 h-6 text-xs" @click.stop="confirmDeleteFriend(friend.id)"
                 ><Trash2 class="h-4 w-4" />
             </Button>
         </template>
@@ -80,10 +76,9 @@
         isGroupByInstance: Boolean
     });
 
-    defineEmits(['confirm-delete-friend']);
-
     const { hideNicknames } = storeToRefs(useAppearanceSettingsStore());
     const { isRefreshFriendsLoading } = storeToRefs(useFriendStore());
+    const { confirmDeleteFriend } = useFriendStore();
     const { showUserDialog } = useUserStore();
     const { t } = useI18n();
 

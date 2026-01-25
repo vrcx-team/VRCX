@@ -2,13 +2,13 @@
     <div class="cursor-pointer">
         <div v-if="!text" class="transparent">-</div>
         <div v-show="text" class="flex items-center">
-            <div v-if="region" :class="['flags', 'mr-1.5', region]"></div>
+            <div v-if="region" :class="['flags', 'mr-1.5', 'shrink-0', region]"></div>
             <TooltipWrapper :content="tooltipContent" :disabled="tooltipDisabled" :delay-duration="300" side="top">
                 <div
                     :class="locationClasses"
                     class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden"
                     @click="handleShowWorldDialog">
-                    <Spinner v-if="isTraveling" class="mr-1" />
+                    <Spinner v-if="isTraveling" class="mr-1 shrink-0" />
                     <span class="min-w-0 truncate">{{ text }}</span>
                     <span v-if="showInstanceIdInLocation && instanceName" class="ml-1 whitespace-nowrap">{{
                         ` · #${instanceName}`
@@ -23,9 +23,9 @@
             </TooltipWrapper>
 
             <TooltipWrapper v-if="isClosed" :content="closedTooltip" :disabled="disableTooltip">
-                <AlertTriangle class="inline-block ml-2 text-muted-foreground" />
+                <AlertTriangle class="inline-block ml-2 text-muted-foreground shrink-0" />
             </TooltipWrapper>
-            <Lock v-if="strict" class="inline-block ml-2 text-muted-foreground" />
+            <Lock v-if="strict" class="inline-block ml-2 text-muted-foreground shrink-0" />
         </div>
     </div>
 </template>

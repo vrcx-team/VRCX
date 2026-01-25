@@ -48,9 +48,11 @@
             @escapeKeyDown="onEscapeKeyDown"
             @pointerDownOutside="onPointerDownOutside"
             @interactOutside="onInteractOutside">
-            <AlertDialogHeader>
+            <AlertDialogHeader class="min-w-0">
                 <AlertDialogTitle>{{ alertTitle }}</AlertDialogTitle>
-                <AlertDialogDescription>{{ alertDescription }}</AlertDialogDescription>
+                <AlertDialogDescription class="w-full min-w-0 whitespace-normal wrap-anywhere">
+                    {{ alertDescription }}
+                </AlertDialogDescription>
             </AlertDialogHeader>
 
             <AlertDialogFooter>

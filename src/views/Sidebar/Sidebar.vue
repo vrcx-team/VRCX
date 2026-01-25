@@ -95,18 +95,12 @@
             </template>
             <template #friends>
                 <div class="h-full overflow-hidden">
-                    <ScrollArea ref="friendsScrollAreaRef" class="h-full">
-                        <FriendsSidebar @confirm-delete-friend="confirmDeleteFriend" />
-                    </ScrollArea>
-                    <BackToTop :target="friendsScrollTarget" :bottom="20" :right="20" :teleport="false" />
+                    <FriendsSidebar />
                 </div>
             </template>
             <template #groups>
                 <div class="h-full overflow-hidden">
-                    <ScrollArea ref="groupsScrollAreaRef" class="h-full">
-                        <GroupsSidebar :group-order="inGameGroupOrder" />
-                    </ScrollArea>
-                    <BackToTop :target="groupsScrollTarget" :bottom="20" :right="20" :teleport="false" />
+                    <GroupsSidebar />
                 </div>
             </template>
         </TabsUnderline>
@@ -114,19 +108,16 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, onMounted, ref, watch } from 'vue';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+    import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { Input } from '@/components/ui/input';
     import { RefreshCw } from 'lucide-vue-next';
-    import { ScrollArea } from '@/components/ui/scroll-area';
     import { Spinner } from '@/components/ui/spinner';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-
-    import BackToTop from '@/components/BackToTop.vue';
 
     import { useFriendStore, useGroupStore, useSearchStore } from '../../stores';
     import { userImage } from '../../shared/utils';
@@ -135,10 +126,10 @@
     import GroupsSidebar from './components/GroupsSidebar.vue';
 
     const { friends, isRefreshFriendsLoading, onlineFriendCount } = storeToRefs(useFriendStore());
-    const { refreshFriendsList, confirmDeleteFriend } = useFriendStore();
+    const { refreshFriendsList } = useFriendStore();
     const { quickSearchRemoteMethod, quickSearchChange } = useSearchStore();
     const { quickSearchItems } = storeToRefs(useSearchStore());
-    const { inGameGroupOrder, groupInstances } = storeToRefs(useGroupStore());
+    const { groupInstances } = storeToRefs(useGroupStore());
     const { t } = useI18n();
     const sidebarTabs = computed(() => [
         { value: 'friends', label: t('side_panel.friends') },
@@ -147,25 +138,6 @@
 
     const quickSearchQuery = ref('');
     const isQuickSearchOpen = ref(false);
-
-    const friendsScrollAreaRef = ref(null);
-    const groupsScrollAreaRef = ref(null);
-    const friendsScrollTarget = ref(null);
-    const groupsScrollTarget = ref(null);
-
-    function resolveScrollViewport(scrollAreaComponentRef) {
-        // Our ScrollArea renders a DOM element root; the viewport is marked by data-slot.
-        const rootEl = scrollAreaComponentRef?.$el ?? null;
-        if (!rootEl || typeof rootEl.querySelector !== 'function') return null;
-        return rootEl.querySelector('[data-slot="scroll-area-viewport"]');
-    }
-
-    onMounted(async () => {
-        // Ensure child components are mounted before querying their DOM.
-        await nextTick();
-        friendsScrollTarget.value = resolveScrollViewport(friendsScrollAreaRef.value);
-        groupsScrollTarget.value = resolveScrollViewport(groupsScrollAreaRef.value);
-    });
 
     watch(
         quickSearchQuery,

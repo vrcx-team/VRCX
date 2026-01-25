@@ -53,7 +53,7 @@
                                             <span>{{ t(entry.label) }}</span
                                             ><span
                                                 v-if="isEntryNotified(entry)"
-                                                class="notify-dot left-6.25!"
+                                                class="notify-dot left-6!"
                                                 aria-hidden="true"></span>
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
@@ -99,7 +99,7 @@
                                                         <span>{{ t(entry.label) }}</span>
                                                         <span
                                                             v-if="isEntryNotified(entry)"
-                                                            class="notify-dot left-0.5!"
+                                                            class="notify-dot left-0.75!"
                                                             aria-hidden="true"></span>
                                                     </SidebarMenuSubButton>
                                                 </SidebarMenuSubItem>
@@ -811,9 +811,9 @@
     .notify-dot {
         position: absolute;
         top: 6px;
-        right: 2px;
-        width: 4px;
-        height: 4px;
+        right: 3px;
+        width: 5px;
+        height: 5px;
         background-color: #ef4444;
         border-radius: 50%;
         transform: translateY(-50%);

@@ -6,7 +6,7 @@ import { useAppearanceSettingsStore } from '../stores';
 import configRepository from '../service/config';
 
 export function useMainLayoutResizable() {
-    const asideMaxPx = 500;
+    const asideMaxPx = 700;
 
     const appearanceStore = useAppearanceSettingsStore();
     const { setAsideWidth } = appearanceStore;
