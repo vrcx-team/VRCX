@@ -56,7 +56,6 @@
 
     import { useAppearanceSettingsStore, useGroupStore } from '../../../stores';
     import { convertFileUrlToImageUrl } from '../../../shared/utils';
-    import { useVirtualizerAnchor } from '../../../composables/useVirtualizerAnchor';
 
     import Location from '../../../components/Location.vue';
 
@@ -162,11 +161,6 @@
         transform: `translateY(${item.virtualItem.start}px)`
     });
 
-    const { measureWithAnchor } = useVirtualizerAnchor({
-        virtualizer,
-        virtualRows,
-        scrollViewportRef
-    });
 
     function getSmallGroupIconUrl(url) {
         return convertFileUrlToImageUrl(url);
@@ -188,7 +182,7 @@
     });
 
     watch(virtualRows, () => {
-        measureWithAnchor(() => {
+        nextTick(() => {
             virtualizer.value?.measure?.();
         });
     });
