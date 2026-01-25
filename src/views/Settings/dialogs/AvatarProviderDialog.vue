@@ -13,7 +13,7 @@
                     style="margin-top: 5px"
                     @change="saveAvatarProviderList">
                     <template #actions>
-                        <Button variant="outline" size="icon" @click="removeAvatarProvider(provider)">
+                        <Button variant="ghost" size="icon-sm" @click="removeAvatarProvider(provider)">
                             <Trash2 />
                         </Button>
                     </template>
