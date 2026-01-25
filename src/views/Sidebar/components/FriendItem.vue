@@ -18,7 +18,7 @@
                     friend.ref.statusDescription
                 }}</span>
                 <template v-else>
-                    <div v-if="friend.pendingOffline" class="text-xs">
+                    <div v-if="friend.pendingOffline" class="extra block truncate text-xs">
                         {{ t('side_panel.pending_offline') }}
                     </div>
                     <template v-else-if="isGroupByInstance">
@@ -34,7 +34,7 @@
                     </template>
                     <Location
                         v-else
-                        class="text-xs"
+                        class="extra block truncate text-xs"
                         :location="locationProp"
                         :traveling="travelingProp"
                         :link="false" />
