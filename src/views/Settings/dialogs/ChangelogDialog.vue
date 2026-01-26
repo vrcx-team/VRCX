@@ -6,11 +6,17 @@
             </DialogHeader>
             <div class="changelog-dialog">
                 <h2 v-text="changeLogDialog.buildName"></h2>
-                <span v-show="changeLogDialog.buildName">
+                <span>
                     {{ t('dialog.change_log.description') }}
+                    <br />
+                    Map1en:
+                    <a class="cursor-pointer" @click="openExternalLink('https://ko-fi.com/map1en_')">Ko-fi</a>.
+                    <br />
+                    Natsumi:
+                    <a class="cursor-pointer" @click="openExternalLink('https://ko-fi.com/natsumi_sama')">Ko-fi</a>,
                     <a class="cursor-pointer" @click="openExternalLink('https://www.patreon.com/Natsumi_VRCX')"
                         >Patreon</a
-                    >, <a class="cursor-pointer" @click="openExternalLink('https://ko-fi.com/natsumi_sama')">Ko-fi</a>.
+                    >.
                 </span>
                 <VueShowdown
                     class="changelog-markdown"
@@ -27,9 +33,9 @@
                     @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')">
                     {{ t('dialog.change_log.github') }}
                 </Button>
-                <Button variant="outline" class="mr-2" @click="openExternalLink('https://patreon.com/Natsumi_VRCX')">
+                <!-- <Button variant="outline" class="mr-2" @click="openExternalLink('https://patreon.com/Natsumi_VRCX')">
                     {{ t('dialog.change_log.donate') }}
-                </Button>
+                </Button> -->
                 <Button @click="closeDialog">
                     {{ t('dialog.change_log.close') }}
                 </Button>

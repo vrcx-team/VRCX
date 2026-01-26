@@ -172,6 +172,8 @@
                         <a class="cursor-pointer" @click="openExternalLink('https://github.com/Natsumi-sama')"
                             >Natsumi</a
                         >
+                        &amp;
+                        <a class="cursor-pointer" @click="openExternalLink('https://github.com/Map1en')">Map1en</a>
                     </p>
                     <p>{{ t('view.settings.general.legal_notice.info') }}</p>
                     <p>{{ t('view.settings.general.legal_notice.disclaimer1') }}</p>
