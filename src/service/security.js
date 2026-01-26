@@ -14,7 +14,7 @@ const uint8ArrayToHex = (arr) =>
 function stdAESKey(key) {
     const tKey = new TextEncoder().encode(key);
     let sk = tKey;
-    if (key.length < 32) {
+    if (tKey.length < 32) {
         sk = new Uint8Array(32);
         sk.set(tKey);
         sk.set(defaultAESKey.slice(key.length, 32), key.length);
