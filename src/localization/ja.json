@@ -21,7 +21,11 @@
         "about": "情報",
         "profile": "プロフィール",
         "settings": "設定",
-        "help_support": "ヘルプ & サポート"
+        "manage": "管理",
+        "help_support": "ヘルプ & サポート",
+        "expand_menu": "メニューを展開",
+        "collapse_menu": "メニューを折りたたむ",
+        "toggle_theme": "テーマを切り替える"
     },
     "nav_menu": {
         "resources": "お役立ちリンク",
@@ -30,6 +34,8 @@
         "github": "バグ報告・提案 (GitHub)",
         "discord": "みんなと話そう (Discord)",
         "whats_new": "新機能 (更新履歴)",
+        "update_available": "更新があります！",
+        "update": "更新",
         "custom_nav": {
             "header": "ナビゲーションの編集",
             "dialog_title": "ナビゲーションメニューのカスタマイズ",
@@ -182,6 +188,8 @@
                 "removed_list_header": "削除されたアバターリスト：",
                 "copy_removed_ids": "削除されたアバターIDをコピー",
                 "copied_ids": "アバターIDをクリップボードにコピーしました",
+                "copy_failed": "クリップボードへのコピーに失敗しました",
+                "dismiss": "閉じる",
                 "checking_progress": "アバター確認中 ({current}/{total})...",
                 "confirm_delete_invalid": "無効なアバターを削除しますか?",
                 "confirm_delete_description": "{count}個の無効なアバターが見つかりました。削除しますか?",
@@ -242,6 +250,13 @@
             "filter_placeholder": "フィルター",
             "search_placeholder": "検索",
             "refresh_tooltip": "更新",
+            "actions": {
+                "accept": "受け入れる",
+                "invite": "招待する",
+                "decline": "断る",
+                "delete_log": "ログを削除",
+                "decline_with_message": "返信を添えて断る"
+            },
             "filters": {
                 "requestInvite": "招待リクエスト",
                 "invite": "招待",
@@ -297,6 +312,10 @@
             "bulk_unfriend_selection": "フレンド解除",
             "load": "不足するエントリを読み込む",
             "load_tooltip": "読み込む",
+            "load_dialog_title": "不足するエントリの読み込み",
+            "load_dialog_message": "不足するフレンドエントリを読み込みますか？ この操作は数分かかる場合があります。",
+            "load_cancel": "キャンセル",
+            "load_complete": "不足するエントリを読み込みました",
             "favorites_only_tooltip": "お気に入りのみ",
             "search_placeholder": "検索",
             "filter_placeholder": "フィルター",
@@ -337,7 +356,8 @@
                     "stop_fetching": "取得を停止"
                 },
                 "status": {
-                    "no_friends_to_process": "表示のために処理できるフレンドがいません"
+                    "no_friends_to_process": "表示のために処理できるフレンドがいません",
+                    "loading_cache": "キャッシュから共通のフレンドを読み込み中..."
                 },
                 "progress": {
                     "friends_processed": "処理が完了したフレンド",
@@ -541,9 +561,21 @@
                     "language": "言語",
                     "bio_language": "翻訳先の言語",
                     "theme_mode": "テーマ",
-                    "theme_mode_system": "システム",
+                    "font_family": "フォント",
+                    "font_family_tooltip": "システムフォントのみがCJK文字に影響します",
+                    "font_family_inter": "Inter",
+                    "font_family_noto_sans": "Noto Sans",
+                    "font_family_source_sans_3": "Source Sans 3",
+                    "font_family_ibm_plex_sans": "IBM Plex Sans",
+                    "font_family_harmonyos_sans": "HarmonyOS Sans",
+                    "font_family_jetbrains_mono": "JetBrains Mono",
+                    "font_family_roboto": "Roboto",
+                    "font_family_fantasque_sans_mono": "Fantasque Sans Mono",
+                    "font_family_system_ui": "System Font",
+                    "theme_mode_system": "システムに合わせる",
                     "theme_mode_light": "ライト",
                     "theme_mode_dark": "ダーク",
+                    "theme_mode_midnight": "ミッドナイト",
                     "theme_mode_blue": "ブルー",
                     "theme_mode_darkblue": "ダークブルー",
                     "theme_mode_amoled": "AMOLED",
@@ -554,6 +586,7 @@
                     "zoom": "ズーム",
                     "vrcplus_profile_icons": "VRC+ プロフィールアイコン",
                     "tooltips": "ツールチップ",
+                    "show_instance_id": "インスタンス名を表示",
                     "age_gated_instances": "年齢制限付きインスタンス",
                     "nicknames": "ニックネームにメモを表示",
                     "sort_favorite_by": "お気に入りを並び替え:",
@@ -565,7 +598,13 @@
                     "table_max_size": "読み込むエントリの最大数",
                     "table_page_sizes": "テーブルのページごとの表示件数:",
                     "table_page_sizes_error": "ページサイズは1から1000の間の数字にしてください。",
-                    "show_notification_icon_dot": "トレイ通知ドットを表示"
+                    "show_notification_icon_dot": "トレイ通知ドットを表示",
+                    "striped_data_table_mode": "テーブルの行に交互に色を付ける",
+                    "toggle_pointer_on_hover": "ホバー時にポインターを切り替え",
+                    "table_density": "テーブルの行の高さ",
+                    "table_density_standard": "標準",
+                    "table_density_comfortable": "やや低め",
+                    "table_density_compact": "低め"
                 },
                 "timedate": {
                     "header": "時刻と日付",
@@ -573,6 +612,9 @@
                     "time_format_24": "24時間",
                     "time_format_12": "12時間",
                     "force_iso_date_format": "ISO日付フォーマットを強制"
+                },
+                "theme_color": {
+                    "header": "アクセントカラー"
                 },
                 "side_panel": {
                     "header": "サイドパネル",
@@ -884,7 +926,7 @@
         "search_result_more": "もっと検索:",
         "direct_access_tooltip": "クリップボードのIDまたはURLから直接アクセス",
         "refresh_tooltip": "フレンドを更新",
-        "groups": "グループインスタンス",
+        "groups": "グループ",
         "friends": "フレンド",
         "me": "自分",
         "favorite": "お気に入り",
@@ -895,6 +937,14 @@
         "pending_offline": "オフライン (保留)"
     },
     "dialog": {
+        "alertdialog": {
+            "ok": "確定",
+            "cancel": "キャンセル",
+            "confirm": "確認"
+        },
+        "prompt": {
+            "input_invalid": "無効な入力です"
+        },
         "user": {
             "status": {
                 "active": "アクティブ",
@@ -966,6 +1016,7 @@
                 "refresh_instance_info": "インスタンス情報を更新",
                 "instance_queue": "待機列:",
                 "instance_users": "ユーザー数:",
+                "instance_friends_tooltip": "このインスタンスに居るフレンド",
                 "instance_game_version": "ゲームバージョン:",
                 "last_join": "最後のJoin:",
                 "instance_queuing_enabled": "待機列使用可能",
@@ -1053,6 +1104,7 @@
                 "sort_by": "並べ替え:",
                 "sort_by_name": "名前順",
                 "sort_by_update": "更新順",
+                "sort_by_uploaded": "アップロード順",
                 "all": "全て",
                 "public": "パブリック",
                 "private": "プライベート",
@@ -1372,7 +1424,7 @@
             "access_type_invite": "インバイト",
             "group_access_type": "グループアクセス",
             "group_access_type_members": "メンバー",
-            "group_access_type_plus": "プラス",
+            "group_access_type_plus": "+",
             "group_access_type_public": "パブリック",
             "region": "地域",
             "region_usw": "アメリカ(西)",
@@ -1520,6 +1572,11 @@
             "header": "VRCXアップデーター",
             "latest_version": "VRCXは最新版です。",
             "ready_for_update": "インストールの準備が完了しました。VRCXを再起動して適用してください。",
+            "branch_stable": "安定板",
+            "branch_nightly": "ナイトリー",
+            "nightly_title": "ナイトリービルド",
+            "nightly_notice": "ナイトリービルドはテスト用です。安定性を求める場合は安定板を使用してください。",
+            "release": "リリース",
             "download": "ダウンロード",
             "install": "インストール",
             "cancel": "中止する"
@@ -1884,7 +1941,8 @@
                 "created": "イベント作成日",
                 "description": "このイベントについて",
                 "export_to_calendar": "カレンダーにエクスポート",
-                "download_ics": ".icsファイルをダウンロード"
+                "download_ics": ".icsファイルをダウンロード",
+                "copied_event_link": "イベントURLをクリップボードにコピー"
             },
             "featured_events": "注目のイベント"
         },
@@ -1901,9 +1959,24 @@
     },
     "confirm": {
         "title": "確認",
-        "confirm_button": "確認",
+        "confirm_button": "はい",
         "cancel_button": "キャンセル",
-        "message": "{command}を続行しますか？"
+        "message": "{command}を続行しますか？",
+        "logout": "ログアウトしますか？",
+        "unfriend": "フレンドを解除しますか？",
+        "clear_avatar_history": "アバター履歴をクリアしますか？",
+        "select_avatar": "アバターを選択しますか？",
+        "invite": "招待しますか？",
+        "invite_group": "ユーザーをグループに招待しますか？",
+        "delete_log": "ログを削除しますか？",
+        "accept_friend_request": "フレンドリクエストを承認しますか？",
+        "send_invite": "招待を送信しますか？",
+        "decline_type": "{type} を拒否しますか？",
+        "delete_type": "{type} を削除しますか？",
+        "command_question": "{command}を続行しますか？",
+        "restart_required_title": "再起動が必要です",
+        "restart_now": "今すぐ再起動",
+        "restart_later": "後で"
     },
     "status": {
         "title": "VRChat の障害情報"
@@ -1923,19 +1996,35 @@
         "instance": {
             "closed": "インスタンスが閉じられました",
             "removed_form_queue": "キューからインスタンス {worldName} が削除されました",
-            "not_allowed": "このインスタンスにアクセスする権限がありません"
+            "not_allowed": "このインスタンスにアクセスする権限がありません",
+            "create_failed": "インスタンスの作成に失敗しました"
         },
         "avatar": {
             "change_moderation_failed": "アバターのモデレーションの変更に失敗しました",
             "image_changed": "アバター画像が変更されました",
             "image_invalid": "アバター画像が無効です"
         },
+        "database": {
+            "upgrade_complete": "データベースのアップグレードが完了しました"
+        },
         "emoji": {
             "uploaded": "絵文字がアップロードされました"
         },
         "file": {
             "not_image": "ファイルが画像ではありません",
-            "too_large": "ファイルサイズが大きすぎます"
+            "too_large": "ファイルサイズが大きすぎます",
+            "folder_missing": "フォルダが存在しません"
+        },
+        "group": {
+            "load_failed": "グループの読み込みに失敗しました"
+        },
+        "invite": {
+            "self_sent": "自分を招待しました",
+            "sent": "招待を送信しました",
+            "message_update_failed": "招待メッセージの更新に失敗しました"
+        },
+        "launch": {
+            "invalid_path": "無効なパスです。VRChatフォルダまたはlaunch.exeを指定してください。"
         },
         "print": {
             "uploaded": "プリントがアップロードされました"
@@ -1956,18 +2045,28 @@
             "already_last": "すでに最後の画像です",
             "reordered": "アバターギャラリー画像の並び替えに成功しました"
         },
+        "upload": {
+            "loading": "アップロード中",
+            "success": "アップロードが完了しました",
+            "error": "アップロードに失敗しました"
+        },
         "world": {
             "image_changed": "ワールド画像が変更されました",
-            "image_invalid": "現在のワールド画像が無効です"
+            "image_invalid": "現在のワールド画像が無効です",
+            "load_failed": "ワールドの読み込みに失敗しました"
         },
         "icon": {
             "uploaded": "アイコンがアップロードされました"
         },
         "user": {
-            "moderated": "ユーザーがモデレートされました"
+            "moderated": "ユーザーがモデレートされました",
+            "load_failed": "ユーザーの読み込みに失敗しました"
         },
         "friend": {
             "load_failed": "フレンドリストの読み込みに失敗しました、ログアウトしています"
+        },
+        "vrcplus": {
+            "required": "VRC+が必要です"
         },
         "screenshot_metadata": {
             "deleted": "スクリーンショットのメタデータを削除しました",
@@ -2215,6 +2314,14 @@
         }
     },
     "table": {
+        "pagination": {
+            "rows_per_page": "ページあたりの行数",
+            "first": "最初",
+            "previous": "前",
+            "next": "次",
+            "last": "最後",
+            "more_pages": "さらにページを読み込む"
+        },
         "feed": {
             "date": "日付",
             "type": "種類",

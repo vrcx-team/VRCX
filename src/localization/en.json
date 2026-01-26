@@ -603,7 +603,7 @@
                     "zoom": "Zoom",
                     "vrcplus_profile_icons": "VRCPlus Profile Icons",
                     "tooltips": "Tooltips",
-                    "show_instance_id": "Show Instance ID",
+                    "show_instance_id": "Show Instance Name",
                     "age_gated_instances": "Age Gated Instances",
                     "nicknames": "Memo Nicknames",
                     "sort_favorite_by": "Sort Favorites by",
