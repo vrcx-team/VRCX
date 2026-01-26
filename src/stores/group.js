@@ -164,7 +164,7 @@ export const useGroupStore = defineStore('Group', () => {
             })
             .catch((err) => {
                 D.loading = false;
-                D.visible = false;
+                uiStore.closeMainDialog();
                 toast.error(t('message.group.load_failed'));
                 throw err;
             })

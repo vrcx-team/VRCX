@@ -146,7 +146,7 @@ export const useWorldStore = defineStore('World', () => {
             })
             .catch((err) => {
                 D.loading = false;
-                D.visible = false;
+                uiStore.closeMainDialog();
                 toast.error(t('message.world.load_failed'));
                 throw err;
             })

@@ -845,7 +845,7 @@ export const useUserStore = defineStore('User', () => {
             })
             .catch((err) => {
                 D.loading = false;
-                D.visible = false;
+                uiStore.closeMainDialog();
                 toast.error(t('message.user.load_failed'));
                 throw err;
             })

@@ -112,6 +112,21 @@ export const useUiStore = defineStore('Ui', () => {
         dialogCrumbs.value = [];
     }
 
+    function closeMainDialog() {
+        const userStore = useUserStore();
+        const worldStore = useWorldStore();
+        const avatarStore = useAvatarStore();
+        const groupStore = useGroupStore();
+        const instanceStore = useInstanceStore();
+
+        userStore.userDialog.visible = false;
+        worldStore.worldDialog.visible = false;
+        avatarStore.avatarDialog.visible = false;
+        groupStore.groupDialog.visible = false;
+        instanceStore.hidePreviousInstancesDialogs();
+        clearDialogCrumbs();
+    }
+
     function openDialog({ type, id, label = '', skipBreadcrumb = false }) {
         const userStore = useUserStore();
         const worldStore = useWorldStore();
@@ -244,6 +259,7 @@ export const useUiStore = defineStore('Ui', () => {
         setDialogCrumbLabel,
         jumpDialogCrumb,
         clearDialogCrumbs,
+        closeMainDialog,
         openDialog
     };
 });

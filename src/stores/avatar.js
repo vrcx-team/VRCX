@@ -216,7 +216,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 ref2.authorId !== userStore.currentUser.id
             ) {
                 D.loading = false;
-                D.visible = false;
+                uiStore.closeMainDialog();
                 return;
             }
         }

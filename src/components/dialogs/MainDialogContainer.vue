@@ -98,12 +98,7 @@
         get: () => activeComponent.value !== null,
         set: (value) => {
             if (!value) {
-                userStore.userDialog.visible = false;
-                worldStore.worldDialog.visible = false;
-                avatarStore.avatarDialog.visible = false;
-                groupStore.groupDialog.visible = false;
-                instanceStore.hidePreviousInstancesDialogs();
-                uiStore.clearDialogCrumbs();
+                uiStore.closeMainDialog();
             }
         }
     });
@@ -177,7 +172,7 @@
 </script>
 
 <template>
-    <Dialog v-model:open="isOpen">
+    <Dialog v-if="isOpen" v-model:open="isOpen">
         <DialogContent :class="dialogClass" style="top: 10vh" :show-close-button="false">
             <Breadcrumb v-if="shouldShowBreadcrumbs" class="mb-2">
                 <BreadcrumbList>
