@@ -216,11 +216,12 @@ namespace VRCX
                     if (proc.HasExited)
                         continue;
 
-                    if (proc.CloseMainWindow())
-                        continue;
-
-                    if (proc.WaitForExit(1000))
-                        continue;
+                    // breaks some apps
+                    // if (proc.CloseMainWindow())
+                    //     continue;
+                    //
+                    // if (proc.WaitForExit(1000))
+                    //     continue;
 
                     proc.Kill();
                 }

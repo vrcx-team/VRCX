@@ -772,7 +772,6 @@ export const useUserStore = defineStore('User', () => {
         const D = userDialog.value;
         D.visible = true;
         D.id = userId;
-        D.treeData = {};
         D.memo = '';
         D.note = '';
         getUserMemo(userId).then((memo) => {
