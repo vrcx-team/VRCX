@@ -1,7 +1,7 @@
 <script setup>
+    import { computed, provide, unref } from 'vue';
     import { ToggleGroupRoot, useForwardPropsEmits } from 'reka-ui';
     import { cn } from '@/lib/utils';
-    import { provide } from 'vue';
     import { reactiveOmit } from '@vueuse/core';
 
     const props = defineProps({
@@ -33,6 +33,17 @@
 
     const delegatedProps = reactiveOmit(props, 'class', 'size', 'variant');
     const forwarded = useForwardPropsEmits(delegatedProps, emits);
+    const forwardedProps = computed(() => {
+        const { ['onUpdate:modelValue']: _ignored, ...rest } = unref(forwarded);
+        return rest;
+    });
+
+    function onUpdateModelValue(value) {
+        if (!value || (Array.isArray(value) && !value.length)) {
+            return;
+        }
+        emits('update:modelValue', value);
+    }
 </script>
 
 <template>
@@ -45,7 +56,8 @@
         :style="{
             '--gap': spacing
         }"
-        v-bind="forwarded"
+        v-bind="forwardedProps"
+        @update:modelValue="onUpdateModelValue"
         :class="
             cn(
                 'group/toggle-group flex w-fit items-center gap-[--spacing(var(--gap))] rounded-md data-[spacing=default]:data-[variant=outline]:shadow-xs',
