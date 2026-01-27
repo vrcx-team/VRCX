@@ -164,6 +164,7 @@
     });
 
     const {
+        panelGroupRef,
         asideDefaultSize,
         asideMaxSize,
         asideMaxPx,

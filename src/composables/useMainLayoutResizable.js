@@ -22,6 +22,7 @@ export function useMainLayoutResizable() {
     const asidePanelRef = ref(null);
     const groupWidth = ref(fallbackWidth);
     const draggingCount = ref(0);
+    const lastLayoutSizes = ref(null);
     let resizeObserver = null;
 
     const getGroupWidthRaw = () => {
@@ -46,14 +47,33 @@ export function useMainLayoutResizable() {
             if (typeof payload.dragging === 'boolean') {
                 return payload.dragging;
             }
+            if (payload.detail && typeof payload.detail === 'object') {
+                if (typeof payload.detail.dragging === 'boolean') {
+                    return payload.detail.dragging;
+                }
+                if (typeof payload.detail.isDragging === 'boolean') {
+                    return payload.detail.isDragging;
+                }
+                if (typeof payload.detail.value === 'boolean') {
+                    return payload.detail.value;
+                }
+            }
         }
-        return Boolean(payload);
+        return null;
     };
 
     const setIsDragging = (payload) => {
         const isDragging = resolveDraggingPayload(payload);
+        if (typeof isDragging !== 'boolean') {
+            return;
+        }
+        const wasDragging = draggingCount.value > 0;
         const next = draggingCount.value + (isDragging ? 1 : -1);
         draggingCount.value = Math.max(0, next);
+
+        if (wasDragging && draggingCount.value === 0 && lastLayoutSizes.value) {
+            handleLayout(lastLayoutSizes.value, { force: true });
+        }
     };
 
     const pxToPercent = (px, groupWidth, min = 1) => {
@@ -77,12 +97,13 @@ export function useMainLayoutResizable() {
         () => 100 - (isSideBarTabShow.value ? asideDefaultSize.value : 0)
     );
 
-    const handleLayout = (sizes) => {
+    const handleLayout = (sizes, { force = false } = {}) => {
+        lastLayoutSizes.value = Array.isArray(sizes) ? [...sizes] : sizes;
         if (!Array.isArray(sizes) || sizes.length < 1) {
             return;
         }
 
-        if (draggingCount.value === 0) {
+        if (!force && draggingCount.value === 0) {
             return;
         }
 
@@ -103,10 +124,13 @@ export function useMainLayoutResizable() {
 
         if (asideSize <= 1) {
             setAsideWidth(0);
+            configRepository.setInt('VRCX_sidePanelWidth', 0);
             return;
         }
 
-        setAsideWidth(Math.round(percentToPx(asideSize, width)));
+        const nextAsidePx = Math.round(percentToPx(asideSize, width));
+        setAsideWidth(nextAsidePx);
+        configRepository.setInt('VRCX_sidePanelWidth', nextAsidePx);
     };
 
     const resizeAsidePanel = (targetSize) =>
