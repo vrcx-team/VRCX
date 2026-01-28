@@ -352,7 +352,7 @@
 
                     if (results.length === 0) {
                         D.metadata = {};
-                        D.metadata.error = 'No results found';
+                        D.metadata.error = t('dialog.screenshot_metadata.no_results');
 
                         D.searchIndex = null;
                         D.searchResults = null;
@@ -504,7 +504,7 @@
         }
         if (!metadata?.sourceFile) {
             D.metadata = {};
-            D.metadata.error = 'Invalid file selected. Please select a valid VRChat screenshot.';
+            D.metadata.error = t('dialog.screenshot_metadata.invalid_file');
             return;
         }
 

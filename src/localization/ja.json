@@ -197,6 +197,11 @@
                 "no_invalid_found": "無効なアバターは見つかりませんでした",
                 "delete_cancelled": "削除操作がキャンセルされました"
             },
+            "visibility": {
+                "public": "公開",
+                "friends": "フレンドにのみ公開",
+                "private": "非公開"
+            },
             "edit_mode": "編集モード",
             "copy": "コピー",
             "clear": "消去",
@@ -213,7 +218,7 @@
             "visibility_tooltip": "表示設定を変更",
             "rename_tooltip": "名前を変更",
             "clear_tooltip": "クリア",
-            "delete_tooltip": "削除",
+            "delete_tooltip": "消去",
             "unavailable_tooltip": "利用不可",
             "private": "プライベート",
             "sort_by": "並べ替え:",
@@ -442,6 +447,23 @@
                 "inventory": "VRC+ インベントリの管理",
                 "inventory_description": "VRC+ ギャラリーとインベントリを管理"
             },
+            "shortcuts": {
+                "header": "ショートカット",
+                "vrcx_data": "VRCXのデータ",
+                "vrcx_data_description": "VRCXのデータフォルダを開く",
+                "vrchat_data": "VRChatのデータ",
+                "vrchat_data_description": "VRChatのデータフォルダを開く",
+                "crash_dumps": "クラッシュダンプ",
+                "crash_dumps_description": "VRChatのクラッシュダンプフォルダを開く"
+            },
+            "system_tools": {
+                "header": "システムツール",
+                "vrchat_config": "VRChat Config",
+                "vrchat_config_description": "VRChatのconfig.jsonを開く",
+                "launch_options_description": "VRChatの起動オプションを編集する",
+                "registry_backup": "VRChatレジストリバックアップ",
+                "registry_backup_description": "VRChatのレジストリバックアップを作成または復元"
+            },
             "other": {
                 "header": "その他",
                 "edit_invite_message": "招待メッセージの編集",
@@ -571,7 +593,7 @@
                     "font_family_jetbrains_mono": "JetBrains Mono",
                     "font_family_roboto": "Roboto",
                     "font_family_fantasque_sans_mono": "Fantasque Sans Mono",
-                    "font_family_system_ui": "System Font",
+                    "font_family_system_ui": "システムフォント",
                     "theme_mode_system": "システムに合わせる",
                     "theme_mode_light": "ライト",
                     "theme_mode_dark": "ダーク",
@@ -614,7 +636,15 @@
                     "force_iso_date_format": "ISO日付フォーマットを強制"
                 },
                 "theme_color": {
-                    "header": "アクセントカラー"
+                    "header": "アクセントカラー",
+                    "default": "黒",
+                    "blue": "青",
+                    "green": "緑",
+                    "orange": "橙",
+                    "red": "赤",
+                    "rose": "紅",
+                    "violet": "紫",
+                    "yellow": "黄"
                 },
                 "side_panel": {
                     "header": "サイドパネル",
@@ -648,7 +678,16 @@
                 },
                 "user_colors": {
                     "header": "ユーザーの色",
-                    "random_colors_from_user_id": "ユーザーIDからランダムに色を生成"
+                    "random_colors_from_user_id": "ユーザーIDからランダムに色を生成",
+                    "trust_levels": {
+                        "visitor": "Visitor",
+                        "new_user": "New User",
+                        "user": "User",
+                        "known_user": "Known User",
+                        "trusted_user": "Trusted User",
+                        "vrchat_team": "VRChat Team",
+                        "nuisance": "Nuisance"
+                    }
                 },
                 "friend_log": {
                     "header": "フレンドログ",
@@ -659,6 +698,7 @@
                 "notifications": {
                     "header": "通知",
                     "notification_filter": "通知フィルター",
+                    "test_notification": "通知のテスト",
                     "steamvr_notifications": {
                         "header": "SteamVRの通知",
                         "steamvr_overlay": "SteamVRオーバーレイ",
@@ -755,9 +795,9 @@
             "advanced": {
                 "advanced": {
                     "header": "詳細設定",
-                    "launch_options": "起動オプション",
+                    "launch_options": "VRChatの起動オプション",
                     "screenshot_metadata": "スクリーンショットの管理",
-                    "vrc_registry_backup": "VRChatのレジストリをバックアップ",
+                    "vrc_registry_backup": "VRChatのレジストリバックアップ",
                     "common_folders": "共通フォルダ",
                     "primary_password": {
                         "header": "プライマリーパスワード",
@@ -778,6 +818,14 @@
                     "self_invite": {
                         "header": "自分を招待",
                         "description": "VRChatを起動する代わりに、自分を招待する"
+                    },
+                    "anonymous_error_reporting": {
+                        "header": "匿名エラーレポート(ナイトリービルドのみ)",
+                        "description": "クラッシュやエラーの匿名レポートは、VRCXの改善に役立ちます。個人情報やVRChatのデータは含まれません",
+                        "consent_title": "匿名エラーレポート",
+                        "consent_description": "匿名エラーレポートを有効にしますか？匿名レポートは、VRCXの改善に役立ちます。\n\n・クラッシュやエラーのデータのみ。\n\n・個人情報やVRChatのデータは含まれません。\n\n・詳細設定でいつでも無効化できます。",
+                        "enabled_restart_description": "エラーレポートが有効化されました。VRCXを再起動して変更を適用しますか？",
+                        "disabled_restart_description": "エラーレポートが無効化されました。VRCXを再起動して変更を適用しますか？"
                     },
                     "save_instance_prints_to_file": {
                         "header": "インスタンス内にあるプリントを、ローカルファイルに保存",
@@ -1006,7 +1054,8 @@
                 "report_hacking": "ハッキングを通報",
                 "unfriend": "フレンドを解除",
                 "unfriend_success_msg": "フレンドを解除しました。",
-                "logout": "ログアウト"
+                "logout": "ログアウト",
+                "edit_note_memo": "ノートとメモを編集"
             },
             "info": {
                 "header": "情報",
@@ -1120,6 +1169,11 @@
                     "last_active": "最終活動時間順",
                     "friend_order": "フレンド追加順"
                 }
+            },
+            "note_memo": {
+                "header": "ノートとメモを編集",
+                "cancel":"キャンセル",
+                "confirm":"保存"
             }
         },
         "world": {
@@ -1832,7 +1886,17 @@
             "copy_image": "画像をコピー",
             "open_folder": "フォルダを開く",
             "delete_metadata": "メタデータを削除",
-            "upload": "アップロード"
+            "upload": "アップロード",
+            "search_placeholder": "検索",
+            "search_type_placeholder": "検索タイプ",
+            "search_types": {
+                "player_name": "ユーザー名",
+                "player_id": "ユーザーID",
+                "world_name": "ワールド名",
+                "world_id": "ワールドID"
+            },
+            "no_results": "結果が見つかりません",
+            "invalid_file": "無効なファイル形式です。有効なVRChatスクリーンショットを選択してください。"
         },
         "registry_backup": {
             "header": "VRChatのレジストリ設定をバックアップ",
@@ -1980,6 +2044,11 @@
     },
     "status": {
         "title": "VRChat の障害情報"
+    },
+    "location": {
+        "offline": "オフライン",
+        "private": "プライベート",
+        "traveling": "移動中"
     },
     "message": {
         "vrcx_updater": {
@@ -2434,6 +2503,17 @@
             "time": "時間",
             "count": "回数",
             "action": "アクション"
+        }
+    },
+    "common": {
+        "no_data": "Nデータがありません",
+        "no_matching_records": "一致するレコードがありません",
+        "time_units": {
+            "y": "年",
+            "d": "日",
+            "h": "時",
+            "m": "分",
+            "s": "秒"
         }
     },
     "vr": {

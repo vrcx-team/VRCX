@@ -8,7 +8,7 @@
         ">
         <DialogContent class="x-dialog sm:max-w-125 translate-y-0" style="top: 30vh" :show-close-button="false">
             <DialogHeader>
-                <DialogTitle>Edit Note And Memo</DialogTitle>
+                <DialogTitle>{{ t('dialog.user.note_memo.header') }}</DialogTitle>
             </DialogHeader>
 
             <template v-if="!hideUserNotes || (hideUserNotes && hideUserMemos)">
@@ -35,8 +35,8 @@
             </template>
 
             <DialogFooter>
-                <Button variant="secondary" @click="cancel" class="mr-2">Cancel</Button>
-                <Button @click="saveChanges">Confirm</Button>
+                <Button variant="secondary" @click="cancel" class="mr-2">{{ t('dialog.user.note_memo.cancel') }}</Button>
+                <Button @click="saveChanges">{{ t('dialog.user.note_memo.confirm') }}</Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>

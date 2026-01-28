@@ -117,7 +117,7 @@
                                     </div>
                                     <div class="group-item__bottom">
                                         <Badge variant="outline">
-                                            {{ formatVisibility(group.visibility) }}
+                                            {{ t(`view.favorite.visibility.${group.visibility}`) }}
                                         </Badge>
                                         <DropdownMenu
                                             :open="activeGroupMenu === remoteGroupMenuKey(group.key)"
@@ -148,7 +148,7 @@
                                                                 :model-value="group.visibility === visibility"
                                                                 indicator-position="right"
                                                                 @select="handleVisibilitySelection(group, visibility)">
-                                                                <span>{{ formatVisibility(visibility) }}</span>
+                                                                <span>{{ t(`view.favorite.visibility.${visibility}`) }}</span>
                                                             </DropdownMenuCheckboxItem>
                                                         </DropdownMenuSubContent>
                                                     </DropdownMenuPortal>
