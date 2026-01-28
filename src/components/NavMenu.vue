@@ -16,7 +16,10 @@
                                     <span v-show="!isCollapsed">{{
                                         item.titleIsCustom ? item.title : t(item.title || '')
                                     }}</span>
-                                    <span v-if="isNavItemNotified(item)" class="notify-dot" aria-hidden="true"></span>
+                                    <span
+                                        v-if="isNavItemNotified(item)"
+                                        class="notify-dot-not-collapsed"
+                                        aria-hidden="true"></span>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
 
@@ -812,6 +815,17 @@
         position: absolute;
         top: 6px;
         right: 3px;
+        width: 5px;
+        height: 5px;
+        background-color: #ef4444;
+        border-radius: 50%;
+        transform: translateY(-50%);
+    }
+
+    .notify-dot-not-collapsed {
+        position: absolute;
+        top: 6px;
+        left: 3px;
         width: 5px;
         height: 5px;
         background-color: #ef4444;
