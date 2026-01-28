@@ -6,18 +6,17 @@
             <TooltipWrapper :content="tooltipContent" :disabled="tooltipDisabled" :delay-duration="300" side="top">
                 <div
                     :class="locationClasses"
-                    class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden"
+                    class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden truncate"
                     @click="handleShowWorldDialog">
                     <Spinner v-if="isTraveling" class="mr-1 shrink-0" />
-                    <span class="min-w-0 truncate">{{ text }}</span>
-                    <span v-if="showInstanceIdInLocation && instanceName" class="ml-1 whitespace-nowrap">{{
-                        ` · #${instanceName}`
-                    }}</span>
-                    <span
-                        v-if="groupName"
-                        class="ml-0.5 whitespace-nowrap cursor-pointer"
-                        @click.stop="handleShowGroupDialog">
-                        ({{ groupName }})
+                    <span class="min-w-0 flex-1 truncate">
+                        <span>{{ text }}</span>
+                        <span v-if="showInstanceIdInLocation && instanceName" class="ml-1">{{
+                            ` · #${instanceName}`
+                        }}</span>
+                        <span v-if="groupName" class="ml-0.5 cursor-pointer" @click.stop="handleShowGroupDialog">
+                            ({{ groupName }})
+                        </span>
                     </span>
                 </div>
             </TooltipWrapper>
