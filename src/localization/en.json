@@ -197,6 +197,11 @@
                 "no_invalid_found": "No invalid avatars found",
                 "delete_cancelled": "Delete operation cancelled"
             },
+            "visibility": {
+                "public": "Public",
+                "friends": "Friends",
+                "private": "Private"
+            },
             "edit_mode": "Edit Mode",
             "copy": "Copy",
             "clear": "Clear",
@@ -1164,6 +1169,11 @@
                     "last_active": "Last Active",
                     "friend_order": "Friend Order"
                 }
+            },
+            "note_memo": {
+                "header": "Edit Note And Memo",
+                "cancel": "Cancel",
+                "confirm": "Confirm"
             }
         },
         "world": {
@@ -1884,7 +1894,9 @@
                 "player_id": "Player ID",
                 "world_name": "World Name",
                 "world_id": "World ID"
-            }
+            },
+            "no_results": "No results found",
+            "invalid_file": "Invalid file selected. Please select a valid VRChat screenshot."
         },
         "registry_backup": {
             "header": "VRC Registry Settings Backup",
