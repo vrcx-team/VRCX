@@ -903,7 +903,7 @@ export const useUserStore = defineStore('User', () => {
                         if (userId !== currentUser.value.id) {
                             database
                                 .getUserStats(D.ref, inCurrentWorld)
-                                .then((ref1) => {
+                                .then(async (ref1) => {
                                     if (ref1.userId === D.id) {
                                         D.lastSeen = ref1.lastSeen;
                                         D.joinCount = ref1.joinCount;
@@ -911,6 +911,9 @@ export const useUserStore = defineStore('User', () => {
                                     }
                                     const displayNameMap =
                                         ref1.previousDisplayNames;
+                                    if (!friendStore.isFriendLogLoaded) {
+                                        await friendStore.initFriendLogHistoryTable();
+                                    }
                                     friendStore.friendLogTable.data.forEach(
                                         (ref2) => {
                                             if (ref2.userId === D.id) {
