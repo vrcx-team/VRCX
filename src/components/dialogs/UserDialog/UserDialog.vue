@@ -356,8 +356,8 @@
                         </div>
                     </div>
                     <div v-if="currentUser.id !== userDialog.id" class="x-friend-item" style="cursor: default">
-                        <TooltipWrapper side="top" :disabled="!userDialog.dateFriendedInfo.length">
-                            <template v-if="userDialog.dateFriendedInfo.length" #content>
+                        <TooltipWrapper side="top">
+                            <template #content>
                                 <template v-for="ref in userDialog.dateFriendedInfo" :key="ref.type">
                                     <span>{{ ref.type }}: {{ formatDateFilter(ref.created_at, 'long') }}</span
                                     ><br />
@@ -1309,11 +1309,11 @@
     import { userDialogGroupSortingOptions, userDialogMutualFriendSortingOptions } from '../../../shared/constants';
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import { database } from '../../../service/database';
+    import { formatJsonVars } from '../../../shared/utils/base/ui';
 
     import InstanceActionBar from '../../InstanceActionBar.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
     import UserSummaryHeader from './UserSummaryHeader.vue';
-    import { formatJsonVars } from '../../../shared/utils/base/ui';
 
     const BioDialog = defineAsyncComponent(() => import('./BioDialog.vue'));
     const LanguageDialog = defineAsyncComponent(() => import('./LanguageDialog.vue'));

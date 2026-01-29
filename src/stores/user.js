@@ -911,52 +911,57 @@ export const useUserStore = defineStore('User', () => {
                                     }
                                     const displayNameMap =
                                         ref1.previousDisplayNames;
-                                    if (!friendStore.isFriendLogLoaded) {
-                                        await friendStore.initFriendLogHistoryTable();
-                                    }
-                                    friendStore.friendLogTable.data.forEach(
-                                        (ref2) => {
-                                            if (ref2.userId === D.id) {
+                                    const userNotifications =
+                                        await database.getFriendLogHistoryForUserId(
+                                            D.id,
+                                            [
+                                                'DisplayName',
+                                                'Friend',
+                                                'Unfriend'
+                                            ]
+                                        );
+                                    for (const notification of userNotifications) {
+                                        if (notification.userId !== D.id) {
+                                            continue;
+                                        }
+                                        if (
+                                            notification.type === 'DisplayName'
+                                        ) {
+                                            displayNameMap.set(
+                                                notification.previousDisplayName,
+                                                notification.created_at
+                                            );
+                                        }
+                                        if (!D.dateFriended) {
+                                            if (
+                                                notification.type === 'Unfriend'
+                                            ) {
+                                                D.unFriended = true;
                                                 if (
-                                                    ref2.type === 'DisplayName'
+                                                    !appearanceSettingsStore.hideUnfriends
                                                 ) {
-                                                    displayNameMap.set(
-                                                        ref2.previousDisplayName,
-                                                        ref2.created_at
-                                                    );
-                                                }
-                                                if (!D.dateFriended) {
-                                                    if (
-                                                        ref2.type === 'Unfriend'
-                                                    ) {
-                                                        D.unFriended = true;
-                                                        if (
-                                                            !appearanceSettingsStore.hideUnfriends
-                                                        ) {
-                                                            D.dateFriended =
-                                                                ref2.created_at;
-                                                        }
-                                                    }
-                                                    if (
-                                                        ref2.type === 'Friend'
-                                                    ) {
-                                                        D.unFriended = false;
-                                                        D.dateFriended =
-                                                            ref2.created_at;
-                                                    }
-                                                }
-                                                if (
-                                                    ref2.type === 'Friend' ||
-                                                    (ref2.type === 'Unfriend' &&
-                                                        !appearanceSettingsStore.hideUnfriends)
-                                                ) {
-                                                    D.dateFriendedInfo.push(
-                                                        ref2
-                                                    );
+                                                    D.dateFriended =
+                                                        notification.created_at;
                                                 }
                                             }
+                                            if (
+                                                notification.type === 'Friend'
+                                            ) {
+                                                D.unFriended = false;
+                                                D.dateFriended =
+                                                    notification.created_at;
+                                            }
                                         }
-                                    );
+                                        if (
+                                            notification.type === 'Friend' ||
+                                            (notification.type === 'Unfriend' &&
+                                                !appearanceSettingsStore.hideUnfriends)
+                                        ) {
+                                            D.dateFriendedInfo.push(
+                                                notification
+                                            );
+                                        }
+                                    }
                                     displayNameMap.forEach(
                                         (updated_at, displayName) => {
                                             D.previousDisplayNames.push({

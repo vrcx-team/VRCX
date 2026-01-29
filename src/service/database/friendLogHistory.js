@@ -83,6 +83,39 @@ const friendLogHistory = {
         );
     },
 
+    async getFriendLogHistoryForUserId(userId, types) {
+        let friendLogHistory = [];
+        let typeFilter = '';
+        if (types && types.length > 0) {
+            const escapedTypes = types.map((t) => `'${t.replace(/'/g, "''")}'`);
+            typeFilter = ` AND type IN (${escapedTypes.join(', ')})`;
+        }
+        await sqliteService.execute(
+            (dbRow) => {
+                const row = {
+                    rowId: dbRow[0],
+                    created_at: dbRow[1],
+                    type: dbRow[2],
+                    userId: dbRow[3],
+                    displayName: dbRow[4],
+                    friendNumber: dbRow[8]
+                };
+                if (row.type === 'DisplayName') {
+                    row.previousDisplayName = dbRow[5];
+                } else if (row.type === 'TrustLevel') {
+                    row.trustLevel = dbRow[6];
+                    row.previousTrustLevel = dbRow[7];
+                }
+                friendLogHistory.push(row);
+            },
+            `SELECT * FROM ${dbVars.userPrefix}_friend_log_history WHERE user_id = @user_id${typeFilter}`,
+            {
+                '@user_id': userId
+            }
+        );
+        return friendLogHistory;
+    },
+
     deleteFriendLogHistory(rowId) {
         sqliteService.executeNonQuery(
             `DELETE FROM ${dbVars.userPrefix}_friend_log_history WHERE id = @row_id`,

@@ -69,7 +69,6 @@ export const useFriendStore = defineStore('Friend', () => {
 
     const isRefreshFriendsLoading = ref(false);
     const onlineFriendCount = ref(0);
-    const isFriendLogLoaded = ref(false);
 
     const pendingOfflineDelay = 170000;
     let pendingOfflineWorker = null;
@@ -1286,7 +1285,6 @@ export const useFriendStore = defineStore('Friend', () => {
         friendLogTable.value.loading = true;
         friendLogTable.value.data = await database.getFriendLogHistory();
         friendLogTable.value.loading = false;
-        isFriendLogLoaded.value = true;
     }
 
     /**
@@ -1658,7 +1656,6 @@ export const useFriendStore = defineStore('Friend', () => {
         onlineFriendCount,
         friendLog,
         friendLogTable,
-        isFriendLogLoaded,
 
         initFriendsList,
         updateLocalFavoriteFriends,
