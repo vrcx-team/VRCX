@@ -2,6 +2,7 @@ import { computed, reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 
 import {
     compareByCreatedAtAscending,
@@ -54,6 +55,8 @@ export const useFriendStore = defineStore('Friend', () => {
     const modalStore = useModalStore();
     const { t } = useI18n();
 
+    const router = useRouter();
+
     const state = reactive({
         friendNumber: 0
     });
@@ -89,8 +92,19 @@ export const useFriendStore = defineStore('Friend', () => {
                     !(filter.value && row.type === 'Unfriend')
             }
         ],
-        pageSizeLinked: true
+        pageSizeLinked: true,
+        loading: false
     });
+
+    watch(
+        router.currentRoute,
+        (value) => {
+            if (value.name === 'friend-log') {
+                initFriendLogHistoryTable();
+            }
+        },
+        { immediate: true }
+    );
 
     const vipFriends = computed(() => {
         return Array.from(friends.values())
@@ -1268,7 +1282,9 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     async function initFriendLogHistoryTable() {
+        friendLogTable.value.loading = true;
         friendLogTable.value.data = await database.getFriendLogHistory();
+        friendLogTable.value.loading = false;
     }
 
     /**
@@ -1598,7 +1614,6 @@ export const useFriendStore = defineStore('Friend', () => {
         isRefreshFriendsLoading.value = true;
         watchState.isFriendsLoaded = false;
         friendLog = new Map();
-        await initFriendLogHistoryTable();
 
         try {
             if (await configRepository.getBool(`friendLogInit_${userId}`)) {

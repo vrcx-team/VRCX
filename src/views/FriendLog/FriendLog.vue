@@ -2,6 +2,7 @@
     <div class="x-container" ref="friendLogRef">
         <DataTableLayout
             :table="table"
+            :loading="friendLogTable.loading"
             :table-style="tableHeightStyle"
             :page-sizes="pageSizes"
             :total-items="totalItems"

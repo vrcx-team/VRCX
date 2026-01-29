@@ -1,6 +1,7 @@
 import { reactive, ref, shallowRef, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
+import { useRouter } from 'vue-router';
 
 import dayjs from 'dayjs';
 
@@ -54,6 +55,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
     const sharedFeedStore = useSharedFeedStore();
     const modalStore = useModalStore();
 
+    const router = useRouter();
+
     const state = reactive({
         lastLocationAvatarList: new Map()
     });
@@ -87,16 +90,20 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     watch(
         () => watchState.isLoggedIn,
-        (isLoggedIn) => {
+        () => {
             gameLogTableData.value = [];
-            if (isLoggedIn) {
-                // wait for friends to load, silly but works
-                workerTimers.setTimeout(() => {
-                    initGameLogTable();
-                }, 800);
-            }
         },
         { flush: 'sync' }
+    );
+
+    watch(
+        router.currentRoute,
+        (value) => {
+            if (value.name === 'game-log') {
+                initGameLogTable();
+            }
+        },
+        { immediate: true }
     );
 
     watch(
@@ -1425,6 +1432,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     async function initGameLogTable() {
+        gameLogTable.value.loading = true;
         const rows = await database.lookupGameLogDatabase(
             gameLogTable.value.filter,
             []
@@ -1434,6 +1442,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             row.isFavorite = gameLogIsFavorite(row);
         }
         gameLogTableData.value = rows;
+        gameLogTable.value.loading = false;
     }
 
     return {
@@ -1445,7 +1454,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
         lastVideoUrl,
         lastResourceloadUrl,
 
-        initGameLogTable,
         clearNowPlaying,
         tryLoadPlayerList,
         gameLogIsFriend,
