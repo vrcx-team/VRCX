@@ -878,6 +878,7 @@ export const useAppearanceSettingsStore = defineStore(
                 .then(async ({ ok, value }) => {
                     if (!ok) return;
                     if (value) {
+                        // TODO
                         let processedValue = Number(value);
                         if (processedValue > 10000) {
                             processedValue = 10000;

@@ -152,7 +152,6 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         // GameLog
         if (vipFilters.length) {
             const vipGameLogRows = await database.lookupGameLogDatabase(
-                '',
                 vipFilters,
                 vipList,
                 maxEntries
@@ -161,7 +160,6 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         }
         if (friendsFilters.length) {
             const friendsGameLogRows = await database.lookupGameLogDatabase(
-                '',
                 friendsFilters,
                 friendList,
                 maxEntries
@@ -170,7 +168,6 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         }
         if (everyoneFilters.length) {
             const everyoneGameLogRows = await database.lookupGameLogDatabase(
-                '',
                 everyoneFilters,
                 [],
                 maxEntries

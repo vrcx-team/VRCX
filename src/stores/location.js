@@ -96,7 +96,6 @@ export const useLocationStore = defineStore('Location', () => {
             return;
         }
         const lastLocationArray = await database.lookupGameLogDatabase(
-            '',
             ['Location'],
             [],
             1

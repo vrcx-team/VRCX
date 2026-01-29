@@ -1,4 +1,4 @@
-import { reactive, ref, shallowReactive, watch } from 'vue';
+import { reactive, ref, shallowRef, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 
@@ -58,7 +58,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         lastLocationAvatarList: new Map()
     });
 
-    const gameLogTableData = shallowReactive([]);
+    const gameLogTableData = shallowRef([]);
     const gameLogTable = ref({
         loading: false,
         search: '',
@@ -88,7 +88,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            gameLogTableData.length = 0;
+            gameLogTableData.value = [];
             if (isLoggedIn) {
                 // wait for friends to load, silly but works
                 workerTimers.setTimeout(() => {
@@ -165,25 +165,25 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     function insertGameLogSorted(entry) {
         const data = gameLogTableData;
-        if (data.length === 0) {
-            data.push(entry);
+        if (data.value.length === 0) {
+            data.value.push(entry);
             return;
         }
-        if (compareGameLogRows(entry, data[0]) < 0) {
-            data.unshift(entry);
+        if (compareGameLogRows(entry, data.value[0]) < 0) {
+            data.value.unshift(entry);
             return;
         }
-        if (compareGameLogRows(entry, data[data.length - 1]) > 0) {
-            data.push(entry);
+        if (compareGameLogRows(entry, data[data.value.length - 1]) > 0) {
+            data.value.push(entry);
             return;
         }
-        for (let i = 1; i < data.length; i++) {
+        for (let i = 1; i < data.value.length; i++) {
             if (compareGameLogRows(entry, data[i]) < 0) {
-                data.splice(i, 0, entry);
+                data.value.splice(i, 0, entry);
                 return;
             }
         }
-        data.push(entry);
+        data.value.push(entry);
     }
 
     function clearNowPlaying() {
@@ -392,19 +392,26 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (gameLogTable.value.vip) {
             vipList = Array.from(friendStore.localFavoriteFriends.values());
         }
-        const rows = await database.lookupGameLogDatabase(
-            gameLogTable.value.search,
-            gameLogTable.value.filter,
-            vipList
-        );
+        const search = gameLogTable.value.search.trim();
+        let rows = [];
+        if (search) {
+            rows = await database.searchGameLogDatabase(
+                search,
+                gameLogTable.value.filter,
+                vipList
+            );
+        } else {
+            rows = await database.lookupGameLogDatabase(
+                gameLogTable.value.filter,
+                vipList
+            );
+        }
 
         for (const row of rows) {
             row.isFriend = gameLogIsFriend(row);
             row.isFavorite = gameLogIsFavorite(row);
         }
-        rows.sort(compareGameLogRows);
-        gameLogTableData.length = 0;
-        gameLogTableData.push(...rows);
+        gameLogTableData.value = rows;
         gameLogTable.value.loading = false;
     }
 
@@ -527,9 +534,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     function sweepGameLog() {
-        const j = gameLogTableData.length;
+        const j = gameLogTableData.value.length;
         if (j > vrcxStore.maxTableSize + 50) {
-            gameLogTableData.splice(-50, 50);
+            gameLogTableData.value.splice(-50, 50);
         }
     }
 
@@ -1419,7 +1426,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     async function initGameLogTable() {
         const rows = await database.lookupGameLogDatabase(
-            gameLogTable.value.search,
             gameLogTable.value.filter,
             []
         );
@@ -1427,9 +1433,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             row.isFriend = gameLogIsFriend(row);
             row.isFavorite = gameLogIsFavorite(row);
         }
-        rows.sort(compareGameLogRows);
-        gameLogTableData.length = 0;
-        gameLogTableData.push(...rows);
+        gameLogTableData.value = rows;
     }
 
     return {
