@@ -25,15 +25,14 @@
                                 line-clamp: 1;
                             "
                             @click="showWorldDialog(currentInstanceWorld.ref.id)">
+                            <Home
+                                v-if="
+                                    currentUser.$homeLocation &&
+                                    currentUser.$homeLocation.worldId === currentInstanceWorld.ref.id
+                                "
+                                class="inline-block" />
+                            {{ currentInstanceWorld.ref.name }}
                         </span>
-
-                        {{ currentInstanceWorld.ref.name }}
-                        <Home
-                            v-if="
-                                currentUser.$homeLocation &&
-                                currentUser.$homeLocation.worldId === currentInstanceWorld.ref.id
-                            "
-                            class="ml-1" />
                     </div>
                     <div>
                         <span
