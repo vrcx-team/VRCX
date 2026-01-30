@@ -935,6 +935,7 @@ export const useUserStore = defineStore('User', () => {
                                                 'Unfriend'
                                             ]
                                         );
+                                    const dateFriendedInfo = [];
                                     for (const notification of userNotifications) {
                                         if (notification.userId !== D.id) {
                                             continue;
@@ -972,11 +973,12 @@ export const useUserStore = defineStore('User', () => {
                                             (notification.type === 'Unfriend' &&
                                                 !appearanceSettingsStore.hideUnfriends)
                                         ) {
-                                            D.dateFriendedInfo.push(
+                                            dateFriendedInfo.unshift(
                                                 notification
                                             );
                                         }
                                     }
+                                    D.dateFriendedInfo = dateFriendedInfo;
                                     displayNameMap.forEach(
                                         (updated_at, displayName) => {
                                             D.previousDisplayNames.push({

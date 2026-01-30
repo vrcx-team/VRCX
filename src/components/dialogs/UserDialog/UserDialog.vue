@@ -356,7 +356,7 @@
                         </div>
                     </div>
                     <div v-if="currentUser.id !== userDialog.id" class="x-friend-item" style="cursor: default">
-                        <TooltipWrapper side="top">
+                        <TooltipWrapper side="top" :disabled="userDialog.dateFriendedInfo.length < 2">
                             <template #content>
                                 <template v-for="ref in userDialog.dateFriendedInfo" :key="ref.type">
                                     <span>{{ ref.type }}: {{ formatDateFilter(ref.created_at, 'long') }}</span
