@@ -553,7 +553,7 @@
                             <RefreshCw v-else />
                         </Button>
                         <span style="margin-left: 5px">{{
-                            t('dialog.user.groups.total_count', { count: userGroups.groups.length })
+                            t('dialog.user.groups.total_count', { count: userDialog.userGroups.groups.length })
                         }}</span>
                         <template v-if="userDialogGroupEditMode">
                             <span
@@ -793,18 +793,19 @@
                         </div>
                     </template>
                     <template v-else>
-                        <template v-if="userGroups.ownGroups.length > 0">
+                        <template v-if="userDialog.userGroups.ownGroups.length > 0">
                             <span style="font-weight: bold; font-size: 16px">{{
                                 t('dialog.user.groups.own_groups')
                             }}</span>
                             <span style="font-size: 12px; margin-left: 5px"
-                                >{{ userGroups.ownGroups.length }}/{{
+                                >{{ userDialog.userGroups.ownGroups.length }}/{{
+                                    // @ts-ignore
                                     cachedConfig?.constants?.GROUPS?.MAX_OWNED
                                 }}</span
                             >
                             <div class="x-friend-list" style="margin-top: 10px; margin-bottom: 15px; min-height: 60px">
                                 <div
-                                    v-for="group in userGroups.ownGroups"
+                                    v-for="group in userDialog.userGroups.ownGroups"
                                     :key="group.id"
                                     class="x-friend-item x-friend-item-border"
                                     @click="showGroupDialog(group.id)">
@@ -835,14 +836,16 @@
                                 </div>
                             </div>
                         </template>
-                        <template v-if="userGroups.mutualGroups.length > 0">
+                        <template v-if="userDialog.userGroups.mutualGroups.length > 0">
                             <span style="font-weight: bold; font-size: 16px">{{
                                 t('dialog.user.groups.mutual_groups')
                             }}</span>
-                            <span style="font-size: 12px; margin-left: 5px">{{ userGroups.mutualGroups.length }}</span>
+                            <span style="font-size: 12px; margin-left: 5px">{{
+                                userDialog.userGroups.mutualGroups.length
+                            }}</span>
                             <div class="x-friend-list" style="margin-top: 10px; margin-bottom: 15px; min-height: 60px">
                                 <div
-                                    v-for="group in userGroups.mutualGroups"
+                                    v-for="group in userDialog.userGroups.mutualGroups"
                                     :key="group.id"
                                     class="x-friend-item x-friend-item-border"
                                     @click="showGroupDialog(group.id)">
@@ -873,10 +876,10 @@
                                 </div>
                             </div>
                         </template>
-                        <template v-if="userGroups.remainingGroups.length > 0">
+                        <template v-if="userDialog.userGroups.remainingGroups.length > 0">
                             <span style="font-weight: bold; font-size: 16px">{{ t('dialog.user.groups.groups') }}</span>
                             <span style="font-size: 12px; margin-left: 5px">
-                                {{ userGroups.remainingGroups.length }}
+                                {{ userDialog.userGroups.remainingGroups.length }}
                                 <template v-if="currentUser.id === userDialog.id">
                                     /
                                     <template v-if="isLocalUserVrcPlusSupporter">
@@ -889,7 +892,7 @@
                             </span>
                             <div class="x-friend-list" style="margin-top: 10px; margin-bottom: 15px; min-height: 60px">
                                 <div
-                                    v-for="group in userGroups.remainingGroups"
+                                    v-for="group in userDialog.userGroups.remainingGroups"
                                     :key="group.id"
                                     class="x-friend-item x-friend-item-border"
                                     @click="showGroupDialog(group.id)">
@@ -1019,7 +1022,7 @@
                         style="position: absolute; right: 15px; bottom: 15px; z-index: 99"
                         @click="getUserFavoriteWorlds(userDialog.id)">
                     </Button> -->
-                <template v-if="userFavoriteWorlds && userFavoriteWorlds.length > 0">
+                <template v-if="userDialog.userFavoriteWorlds && userDialog.userFavoriteWorlds.length > 0">
                     <TabsUnderline
                         v-model="favoriteWorldsTab"
                         :items="favoriteWorldTabs"
@@ -1027,7 +1030,7 @@
                         class="zero-margin-tabs"
                         style="margin-top: 10px; height: 50vh">
                         <template
-                            v-for="(list, index) in userFavoriteWorlds"
+                            v-for="(list, index) in userDialog.userFavoriteWorlds"
                             :key="`favorite-worlds-label-${index}`"
                             v-slot:[`label-${index}`]>
                             <span>
@@ -1043,7 +1046,7 @@
                             </span>
                         </template>
                         <template
-                            v-for="(list, index) in userFavoriteWorlds"
+                            v-for="(list, index) in userDialog.userFavoriteWorlds"
                             :key="`favorite-worlds-content-${index}`"
                             v-slot:[String(index)]>
                             <div
@@ -1339,7 +1342,7 @@
         return tabs;
     });
     const favoriteWorldTabs = computed(() =>
-        (userFavoriteWorlds.value || []).map((list, index) => ({
+        (userDialog.value.userFavoriteWorlds || []).map((list, index) => ({
             value: String(index),
             label: list?.[0] ?? ''
         }))
@@ -1413,13 +1416,6 @@
     const userDialogLastAvatar = ref('');
     const userDialogLastWorld = ref('');
     const userDialogLastFavoriteWorld = ref('');
-    const userFavoriteWorlds = ref([]);
-    const userGroups = ref({
-        groups: [],
-        ownGroups: [],
-        mutualGroups: [],
-        remainingGroups: []
-    });
 
     const favoriteWorldsTab = ref('0');
 
@@ -1732,7 +1728,9 @@
             return;
         }
         if (command === 'Refresh') {
-            showUserDialog(D.id);
+            const userId = D.id;
+            D.id = '';
+            showUserDialog(userId);
         } else if (command === 'Share') {
             copyUserURL(D.id);
         } else if (command === 'Add Favorite') {
@@ -2064,7 +2062,7 @@
     async function getUserGroups(userId) {
         exitEditModeCurrentUserGroups();
         userDialog.value.isGroupsLoading = true;
-        userGroups.value = {
+        userDialog.value.userGroups = {
             groups: [],
             ownGroups: [],
             mutualGroups: [],
@@ -2088,7 +2086,7 @@
 
             saveCurrentUserGroups();
         }
-        userGroups.value.groups = args.json;
+        userDialog.value.userGroups.groups = args.json;
         for (let i = 0; i < args.json.length; ++i) {
             const group = args.json[i];
             if (!group?.id) {
@@ -2096,20 +2094,20 @@
                 continue;
             }
             if (group.ownerId === userId) {
-                userGroups.value.ownGroups.unshift(group);
+                userDialog.value.userGroups.ownGroups.unshift(group);
             }
             if (userId === currentUser.value.id) {
                 // skip mutual groups for current user
                 if (group.ownerId !== userId) {
-                    userGroups.value.remainingGroups.unshift(group);
+                    userDialog.value.userGroups.remainingGroups.unshift(group);
                 }
                 continue;
             }
             if (group.mutualGroup) {
-                userGroups.value.mutualGroups.unshift(group);
+                userDialog.value.userGroups.mutualGroups.unshift(group);
             }
             if (!group.mutualGroup && group.ownerId !== userId) {
-                userGroups.value.remainingGroups.unshift(group);
+                userDialog.value.userGroups.remainingGroups.unshift(group);
             }
         }
         if (userId === currentUser.value.id) {
@@ -2193,9 +2191,9 @@
                 break;
         }
 
-        userGroups.value.ownGroups.sort(sortMethod);
-        userGroups.value.mutualGroups.sort(sortMethod);
-        userGroups.value.remainingGroups.sort(sortMethod);
+        userDialog.value.userGroups.ownGroups.sort(sortMethod);
+        userDialog.value.userGroups.mutualGroups.sort(sortMethod);
+        userDialog.value.userGroups.remainingGroups.sort(sortMethod);
     }
 
     function setUserDialogAvatars(userId) {
@@ -2270,7 +2268,7 @@
     async function getUserFavoriteWorlds(userId) {
         userDialog.value.isFavoriteWorldsLoading = true;
         favoriteWorldsTab.value = '0';
-        userFavoriteWorlds.value = [];
+        userDialog.value.userFavoriteWorlds = [];
         const worldLists = [];
         let params = {
             ownerId: userId,
@@ -2301,7 +2299,7 @@
                 console.error('getUserFavoriteWorlds', err);
             }
         }
-        userFavoriteWorlds.value = worldLists;
+        userDialog.value.userFavoriteWorlds = worldLists;
         userDialog.value.isFavoriteWorldsLoading = false;
     }
 

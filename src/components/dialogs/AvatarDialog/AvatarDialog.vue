@@ -468,8 +468,8 @@
                             <div class="detail">
                                 <span class="name">{{ t('dialog.avatar.info.time_spent') }}</span>
 
-                                <span v-if="timeSpent === 0" class="extra">-</span>
-                                <span v-else class="extra">{{ timeToText(timeSpent) }}</span>
+                                <span v-if="avatarDialog.timeSpent === 0" class="extra">-</span>
+                                <span v-else class="extra">{{ timeToText(avatarDialog.timeSpent) }}</span>
                             </div>
                         </div>
                         <div class="x-friend-item" style="width: 100%; cursor: default">
@@ -615,7 +615,6 @@
     const previousImageUrl = ref('');
 
     const treeData = ref({});
-    const timeSpent = ref(0);
     const memo = ref('');
     const setAvatarTagsDialog = ref({
         visible: false,
@@ -707,7 +706,7 @@
 
     function handleDialogOpen() {
         setAvatarTagsDialog.value.visible = false;
-        timeSpent.value = 0;
+        avatarDialog.value.timeSpent = 0;
         memo.value = '';
         treeData.value = {};
         getAvatarTimeSpent();
@@ -716,12 +715,12 @@
 
     function getAvatarTimeSpent() {
         const D = avatarDialog.value;
-        timeSpent.value = 0;
+        avatarDialog.value.timeSpent = 0;
         database.getAvatarTimeSpent(D.id).then((aviTime) => {
             if (D.id === aviTime.avatarId) {
-                timeSpent.value = aviTime.timeSpent;
+                avatarDialog.value.timeSpent = aviTime.timeSpent;
                 if (D.id === currentUser.value.currentAvatar && currentUser.value.$previousAvatarSwapTime) {
-                    timeSpent.value += Date.now() - currentUser.value.$previousAvatarSwapTime;
+                    avatarDialog.value.timeSpent += Date.now() - currentUser.value.$previousAvatarSwapTime;
                 }
             }
         });
@@ -740,7 +739,9 @@
         const D = avatarDialog.value;
         switch (command) {
             case 'Refresh':
-                showAvatarDialog(D.id);
+                const avatarId = D.id;
+                D.id = '';
+                showAvatarDialog(avatarId);
                 break;
             case 'Share':
                 copyAvatarUrl(D.id);

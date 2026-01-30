@@ -65,7 +65,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
         cacheSize: '',
         cacheLocked: false,
         cachePath: '',
-        fileAnalysis: {}
+        fileAnalysis: {},
+        timeSpent: 0
     });
     const avatarHistory = ref([]);
 
@@ -183,7 +184,11 @@ export const useAvatarStore = defineStore('Avatar', () => {
             id: avatarId,
             skipBreadcrumb: options.skipBreadcrumb
         });
-
+        D.visible = true;
+        if (D.id === avatarId) {
+            uiStore.setDialogCrumbLabel('avatar', D.id, D.ref?.name || D.id);
+            return;
+        }
         D.loading = true;
         D.id = avatarId;
         D.inCache = false;
@@ -220,7 +225,6 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 return;
             }
         }
-        D.visible = true;
         avatarRequest
             .getAvatar({ avatarId })
             .then((args) => {

@@ -90,6 +90,10 @@ export const useWorldStore = defineStore('World', () => {
             skipBreadcrumb: options.skipBreadcrumb
         });
         D.visible = true;
+        if (D.id === L.worldId) {
+            uiStore.setDialogCrumbLabel('world', D.id, D.ref?.name || D.id);
+            return;
+        }
         L.shortName = shortName;
         D.id = L.worldId;
         D.$location = L;

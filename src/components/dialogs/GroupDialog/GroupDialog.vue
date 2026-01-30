@@ -1532,7 +1532,9 @@
                 showInviteGroupDialog(D.id, '');
                 break;
             case 'Refresh':
-                showGroupDialog(D.id);
+                const groupId = D.id;
+                D.id = '';
+                showGroupDialog(groupId);
                 break;
             case 'Leave Group':
                 leaveGroupPrompt(D.id);

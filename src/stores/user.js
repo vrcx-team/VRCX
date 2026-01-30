@@ -216,6 +216,13 @@ export const useUserStore = defineStore('User', () => {
         isFavoriteWorldsLoading: false,
         isAvatarsLoading: false,
         isGroupsLoading: false,
+        userFavoriteWorlds: [],
+        userGroups: {
+            groups: [],
+            ownGroups: [],
+            mutualGroups: [],
+            remainingGroups: []
+        },
 
         worldSorting: {
             name: 'dialog.user.worlds.sorting.updated',
@@ -771,6 +778,14 @@ export const useUserStore = defineStore('User', () => {
         });
         const D = userDialog.value;
         D.visible = true;
+        if (D.id === userId) {
+            uiStore.setDialogCrumbLabel(
+                'user',
+                D.id,
+                D.ref?.displayName || D.id
+            );
+            return;
+        }
         D.id = userId;
         D.memo = '';
         D.note = '';
