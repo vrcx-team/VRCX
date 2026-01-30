@@ -106,18 +106,6 @@ function systemIsDarkMode() {
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 
-/**
- *
- * @param {boolean}isDark
- */
-function changeAppDarkStyle(isDark) {
-    if (isDark) {
-        AppApi.ChangeTheme(1);
-    } else {
-        AppApi.ChangeTheme(0);
-    }
-}
-
 function applyThemeFonts(themeKey, fontLinks = []) {
     document
         .querySelectorAll('link[data-theme-font]')
@@ -247,7 +235,13 @@ function changeAppThemeStyle(themeMode) {
     } else {
         document.documentElement.classList.remove('dark');
     }
-    changeAppDarkStyle(themeConfig.isDark);
+    if (themeConfig.name === 'Midnight') {
+        AppApi.ChangeTheme(2);
+    } else if (themeConfig.isDark) {
+        AppApi.ChangeTheme(1);
+    } else {
+        AppApi.ChangeTheme(0);
+    }
 
     return { isDark: themeConfig.isDark };
 
@@ -462,7 +456,6 @@ function redirectToToolsTab() {
 
 export {
     systemIsDarkMode,
-    changeAppDarkStyle,
     changeAppThemeStyle,
     useThemeColor,
     applyThemeColor,

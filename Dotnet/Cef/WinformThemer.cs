@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -24,15 +24,19 @@ namespace VRCX
         /// <summary>
         ///     Private holder of current theme
         /// </summary>
-        private static int currentTheme;
+        private static int currentTheme = -1;
 
         /// <summary>
         ///     Sets the global theme of the app
         ///     Light = 0
         ///     Dark = 1
+        ///     Midnight = 2
         /// </summary>
         public static void SetGlobalTheme(int theme)
         {
+            if (currentTheme == theme)
+                return;
+
             currentTheme = theme;
 
             //Make a seperate list for all current forms (causes issues otherwise)
@@ -91,18 +95,20 @@ namespace VRCX
         
         private static void SetThemeToGlobal(IntPtr handle)
         {
-            int whiteColor = 0xFFFFFF;
-            int blackColor = 0x000000;
-            if (GetTheme(handle) != currentTheme)
-            {
-                if (PInvoke.DwmSetWindowAttribute(handle, DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1, ref currentTheme, sizeof(int)) != 0)
-                    PInvoke.DwmSetWindowAttribute(handle, DWMWA_USE_IMMERSIVE_DARK_MODE, ref currentTheme, sizeof(int));
+            var whiteColor = 0xFFFFFF;
+            var blackColor = 0x000000;
+            var greyColor = 0x2B2B2B;
+            
+            var isDark = currentTheme > 0 ? 1 : 0;
+            if (PInvoke.DwmSetWindowAttribute(handle, DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1, ref isDark, sizeof(int)) != 0)
+                PInvoke.DwmSetWindowAttribute(handle, DWMWA_USE_IMMERSIVE_DARK_MODE, ref isDark, sizeof(int));
 
-                if (currentTheme == 1)
-                    PInvoke.DwmSetWindowAttribute(handle, DWMWA_CAPTION_COLOR, ref blackColor, sizeof(int));
-                else
-                    PInvoke.DwmSetWindowAttribute(handle, DWMWA_CAPTION_COLOR, ref whiteColor, sizeof(int));
-            }
+            if (currentTheme == 2)
+                PInvoke.DwmSetWindowAttribute(handle, DWMWA_CAPTION_COLOR, ref blackColor, sizeof(int));
+            else if (currentTheme == 1)
+                PInvoke.DwmSetWindowAttribute(handle, DWMWA_CAPTION_COLOR, ref greyColor, sizeof(int));
+            else
+                PInvoke.DwmSetWindowAttribute(handle, DWMWA_CAPTION_COLOR, ref whiteColor, sizeof(int));
         }
 
         private static int GetTheme(IntPtr handle)
