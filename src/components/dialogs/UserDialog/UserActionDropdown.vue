@@ -16,11 +16,12 @@
         <DropdownMenu>
             <DropdownMenuTrigger as-child>
                 <div class="ml-2">
-                    <Button :variant="hasRisk ? 'destructive' : 'outline'" size="icon-lg" class="rounded-full">
+                    <Button
+                        :variant="hasRisk ? 'destructive' : 'outline'"
+                        size="icon-lg"
+                        class="rounded-full"
+                        :class="{ 'dot-indicator': hasRequest }">
                         <MoreHorizontal />
-                        <span
-                            class="absolute right-6 top-15.5 h-2.5 w-2.5 rounded-full ring-2 ring-background"
-                            :class="dotClass" />
                     </Button>
                 </div>
             </DropdownMenuTrigger>
@@ -275,12 +276,19 @@
             userDialog.value.isHideAvatar
     );
 
-    const dotClass = computed(() => {
-        if (hasRequest.value) return 'bg-emerald-500';
-        return 'opacity-0';
-    });
-
     function onCommand(command) {
         props.userDialogCommand(command);
     }
 </script>
+<style scoped>
+    .dot-indicator::after {
+        margin-left: 30px;
+        margin-bottom: 30px;
+        content: '';
+        width: 10px;
+        height: 10px;
+        background-color: var(--color-emerald-500);
+        border-radius: 50%;
+        position: absolute;
+    }
+</style>
