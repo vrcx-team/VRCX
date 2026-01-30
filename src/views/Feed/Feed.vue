@@ -95,7 +95,7 @@
         },
         persistKey: 'feed',
         columns: baseColumns,
-        getRowId: (row) => `${row.type}:${row.rowId}:${row.created_at ?? ''}`,
+        getRowId: (row, index) => `${row.type}:${row.created_at ?? ''}:${row.rowId ?? index}`,
         enableExpanded: true,
         getRowCanExpand: () => true,
         initialSorting: [],
