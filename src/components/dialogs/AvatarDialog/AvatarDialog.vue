@@ -8,13 +8,15 @@
         </DialogHeader>
         <div>
             <div class="flex">
-                <img
-                    :src="avatarDialog.ref.thumbnailImageUrl"
-                    class="cursor-pointer"
-                    @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)"
-                    style="flex: none; width: 160px; height: 120px; border-radius: 12px"
-                    loading="lazy" />
-                <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
+                <div style="flex: none; width: 160px; height: 120px">
+                    <img
+                        :src="avatarDialog.ref.thumbnailImageUrl"
+                        class="cursor-pointer"
+                        @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)"
+                        style="width: 160px; height: 120px; border-radius: 12px"
+                        loading="lazy" />
+                </div>
+                <div style="flex: 1; display: flex; align-items: flex-start; margin-left: 15px">
                     <div style="flex: 1">
                         <div>
                             <span
@@ -179,7 +181,7 @@
                                 v-text="avatarDialog.ref.description"></span>
                         </div>
                     </div>
-                    <div class="flex items-center">
+                    <div class="ml-2 mt-12">
                         <TooltipWrapper
                             v-if="avatarDialog.inCache"
                             side="top"

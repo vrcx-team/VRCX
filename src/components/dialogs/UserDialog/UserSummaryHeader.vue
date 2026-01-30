@@ -1,23 +1,25 @@
 <template>
     <div style="display: flex">
-        <img
-            v-if="
-                !userDialog.loading && (userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride)
-            "
-            class="cursor-pointer"
-            :src="userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride"
-            style="flex: none; height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover"
-            @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)"
-            loading="lazy" />
-        <img
-            v-else-if="!userDialog.loading"
-            class="cursor-pointer"
-            :src="userDialog.ref.currentAvatarThumbnailImageUrl"
-            style="flex: none; height: 120px; width: 160px; border-radius: 12px; object-fit: cover"
-            @click="showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)"
-            loading="lazy" />
-
-        <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
+        <div style="flex: none; height: 120px; width: 160px">
+            <img
+                v-if="
+                    !userDialog.loading &&
+                    (userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride)
+                "
+                class="cursor-pointer"
+                :src="userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride"
+                style="height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover"
+                @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)"
+                loading="lazy" />
+            <img
+                v-else-if="!userDialog.loading"
+                class="cursor-pointer"
+                :src="userDialog.ref.currentAvatarThumbnailImageUrl"
+                style="height: 120px; width: 160px; border-radius: 12px; object-fit: cover"
+                @click="showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)"
+                loading="lazy" />
+        </div>
+        <div style="flex: 1; display: flex; align-items: flex-start; margin-left: 15px">
             <div style="flex: 1">
                 <div>
                     <TooltipWrapper v-if="userDialog.ref.status" side="top">
@@ -260,7 +262,7 @@
                     loading="lazy" />
             </div>
 
-            <UserActionDropdown :user-dialog-command="userDialogCommand" />
+            <UserActionDropdown class="ml-2 mt-12" :user-dialog-command="userDialogCommand" />
         </div>
     </div>
 </template>

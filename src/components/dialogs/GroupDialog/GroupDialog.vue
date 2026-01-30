@@ -8,13 +8,16 @@
         </DialogHeader>
         <div>
             <div style="display: flex">
-                <img
-                    :src="groupDialog.ref.iconUrl"
-                    style="flex: none; width: 120px; height: 120px; border-radius: 12px"
-                    class="cursor-pointer"
-                    @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)"
-                    loading="lazy" />
-                <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
+                <div style="flex: none; width: 120px; height: 120px">
+                    <img
+                        v-if="!groupDialog.loading"
+                        :src="groupDialog.ref.iconUrl"
+                        style="width: 120px; height: 120px; border-radius: 12px"
+                        class="cursor-pointer"
+                        @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)"
+                        loading="lazy" />
+                </div>
+                <div style="flex: 1; display: flex; align-items: flex-start; margin-left: 15px">
                     <div class="group-header" style="flex: 1">
                         <span v-if="groupDialog.ref.ownerId === currentUser.id" style="margin-right: 5px">👑</span>
                         <span
@@ -138,7 +141,7 @@
                                 v-text="groupDialog.ref.description"></pre>
                         </div>
                     </div>
-                    <div style="flex: none; margin-left: 10px">
+                    <div class="ml-2 mt-12">
                         <template v-if="groupDialog.inGroup && groupDialog.ref?.myMember">
                             <TooltipWrapper
                                 v-if="groupDialog.ref.myMember?.isRepresenting"
@@ -341,8 +344,9 @@
                 :unmount-on-hide="false"
                 @update:modelValue="groupDialogTabClick">
                 <template #Info>
-                    <div class="group-banner-image-info">
+                    <div>
                         <img
+                            v-if="!groupDialog.loading"
                             :src="groupDialog.ref.bannerUrl"
                             class="cursor-pointer"
                             style="flex: none; width: 100%; aspect-ratio: 6/1; object-fit: cover; border-radius: 4px"

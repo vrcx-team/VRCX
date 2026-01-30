@@ -8,13 +8,16 @@
         </DialogHeader>
         <div>
             <div style="display: flex">
-                <img
-                    :src="worldDialog.ref.thumbnailImageUrl"
-                    class="cursor-pointer"
-                    style="flex: none; width: 160px; height: 120px; border-radius: 12px"
-                    @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
-                    loading="lazy" />
-                <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
+                <div style="flex: none; width: 160px; height: 120px">
+                    <img
+                        v-if="!worldDialog.loading"
+                        :src="worldDialog.ref.thumbnailImageUrl"
+                        class="cursor-pointer"
+                        style="width: 160px; height: 120px; border-radius: 12px"
+                        @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
+                        loading="lazy" />
+                </div>
+                <div style="flex: 1; display: flex; align-items: flex-start; margin-left: 15px">
                     <div style="flex: 1">
                         <div>
                             <span class="font-bold" style="margin-right: 5px; cursor: pointer" @click="copyWorldName">
@@ -155,7 +158,7 @@
                             >
                         </div>
                     </div>
-                    <div style="flex: none; margin-left: 10px">
+                    <div class="ml-2 mt-12">
                         <TooltipWrapper
                             v-if="worldDialog.inCache"
                             side="top"
