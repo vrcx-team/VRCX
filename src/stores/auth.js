@@ -258,6 +258,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 .prompt({
                     title: t('prompt.primary_password.header'),
                     description: t('prompt.primary_password.description'),
+                    inputType: 'password',
                     pattern: /[\s\S]{1,32}/
                 })
                 .then(async ({ ok, value }) => {
@@ -390,6 +391,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 .prompt({
                     title: t('prompt.primary_password.header'),
                     description: t('prompt.primary_password.description'),
+                    inputType: 'password',
                     pattern: /[\s\S]{1,32}/
                 })
                 .then(({ ok, value }) => {
@@ -532,6 +534,7 @@ export const useAuthStore = defineStore('Auth', () => {
                                 description: t(
                                     'prompt.primary_password.description'
                                 ),
+                                inputType: 'password',
                                 pattern: /[\s\S]{1,32}/
                             })
                             .then(async ({ ok, value }) => {

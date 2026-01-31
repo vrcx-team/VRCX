@@ -25,6 +25,7 @@
         promptCancelText,
         promptDismissible,
         promptInputValue,
+        promptInputType,
         promptPattern,
         promptErrorMessage
     } = storeToRefs(modalStore);
@@ -130,7 +131,7 @@
                     <FormItem>
                         <FormLabel class="sr-only">Input</FormLabel>
                         <FormControl>
-                            <Input v-bind="componentField" />
+                            <Input v-bind="componentField" :type="promptInputType" />
                         </FormControl>
                         <FormMessage />
                     </FormItem>

@@ -47,6 +47,7 @@ function translate(key, fallback) {
  * @property {string=} confirmText
  * @property {string=} cancelText
  * @property {string=} inputValue
+ * @property {string=} inputType
  * @property {RegExp | string=} pattern
  * @property {string=} errorMessage
  * @property {boolean=} dismissible
@@ -70,6 +71,7 @@ export const useModalStore = defineStore('Modal', () => {
     const promptCancelText = ref('');
     const promptDismissible = ref(true);
     const promptInputValue = ref('');
+    const promptInputType = ref('text');
     const promptPattern = ref(null);
     const promptErrorMessage = ref('');
 
@@ -181,6 +183,7 @@ export const useModalStore = defineStore('Modal', () => {
         promptDescription.value = options.description;
         promptDismissible.value = options.dismissible !== false;
         promptInputValue.value = inputValueCopy;
+        promptInputType.value = options.inputType || 'text';
         promptPattern.value = options.pattern ?? null;
         promptErrorMessage.value =
             options.errorMessage ||
@@ -296,6 +299,7 @@ export const useModalStore = defineStore('Modal', () => {
         promptCancelText,
         promptDismissible,
         promptInputValue,
+        promptInputType,
         promptPattern,
         promptErrorMessage,
 
