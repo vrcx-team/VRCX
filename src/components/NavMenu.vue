@@ -149,6 +149,15 @@
                 </SidebarMenuItem>
 
                 <SidebarMenuItem>
+                    <SidebarMenuButton :tooltip="t('nav_tooltip.toggle_theme')" @click="handleThemeToggle">
+                        <i
+                            :class="isDarkMode ? 'ri-moon-line' : 'ri-sun-line'"
+                            class="inline-flex size-6 items-center justify-center text-[19px]" />
+                        <span v-show="!isCollapsed">{{ t('nav_tooltip.toggle_theme') }}</span>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+
+                <SidebarMenuItem>
                     <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                             <SidebarMenuButton :tooltip="t('nav_tooltip.manage')">
@@ -265,15 +274,6 @@
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                </SidebarMenuItem>
-
-                <SidebarMenuItem>
-                    <SidebarMenuButton :tooltip="t('nav_tooltip.toggle_theme')" @click="handleThemeToggle">
-                        <i
-                            :class="isDarkMode ? 'ri-moon-line' : 'ri-sun-line'"
-                            class="inline-flex size-6 items-center justify-center text-[19px]" />
-                        <span v-show="!isCollapsed">{{ t('nav_tooltip.toggle_theme') }}</span>
-                    </SidebarMenuButton>
                 </SidebarMenuItem>
 
                 <SidebarMenuItem>

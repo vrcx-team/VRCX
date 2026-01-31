@@ -101,6 +101,8 @@ export const useFriendStore = defineStore('Friend', () => {
         (value) => {
             if (value.name === 'friend-log') {
                 initFriendLogHistoryTable();
+            } else {
+                friendLogTable.value.data = [];
             }
         },
         { immediate: true }
