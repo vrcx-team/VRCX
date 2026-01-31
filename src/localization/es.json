@@ -382,7 +382,6 @@
                     "sort_instance_users_by": "Ordenar Usuarios de Instancia por",
                     "sort_instance_users_by_time": "tiempo",
                     "sort_instance_users_by_alphabet": "alfabético",
-                    "table_max_size": "Tamaño Máximo de Tabla",
                     "page_size": "Tamaño de Página:"
                 },
                 "timedate": {
@@ -1798,7 +1797,8 @@
         },
         "change_table_size": {
             "header": "Tamaño Máximo de Tabla",
-            "description": "Limitar la cantidad de entradas cargadas desde la base de datos a las páginas de la interfaz de usuario, tamaños de tabla más grandes impactarán el uso de RAM y el rendimiento (predeterminado: 1000, máximo: 10000)",
+            "description": "Limitar la cantidad de entradas cargadas desde la base de datos a las páginas de la interfaz de usuario, tamaños de tabla más grandes impactarán el uso de RAM y el rendimiento",
+                    "table_max_size": "Tamaño Máximo de Tabla",
             "cancel": "Cancelar",
             "save": "Guardar",
             "input_error": "Se requiere un número válido"

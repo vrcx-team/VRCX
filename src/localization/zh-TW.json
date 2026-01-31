@@ -570,9 +570,6 @@
                     "sort_instance_users_by": "房間用戶排序依據",
                     "sort_instance_users_by_time": "時間",
                     "sort_instance_users_by_alphabet": "字母順序",
-                    "table_max_size": "表格大小",
-                    "table_page_sizes": "表格每頁筆數",
-                    "table_page_sizes_error": "每頁筆數必須是 1 到 1000 之間的數字",
                     "show_notification_icon_dot": "顯示通知圖示提示點"
                 },
                 "timedate": {
@@ -2163,7 +2160,10 @@
         },
         "change_table_size": {
             "header": "最大表格大小",
-            "description": "限制從資料庫讀取紀錄到介面的數量，較大的資料表大小可能會影響記憶體用量和效能 （預設：1000）",
+            "description": "限制從資料庫讀取紀錄到介面的數量，較大的資料表大小可能會影響記憶體用量和效能",
+                    "table_max_size": "表格大小",
+                    "table_page_sizes": "表格每頁筆數",
+                    "table_page_sizes_error": "每頁筆數必須是 1 到 1000 之間的數字",
             "cancel": "取消",
             "save": "儲存",
             "input_error": "請輸入有效的行數"

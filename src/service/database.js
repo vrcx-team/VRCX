@@ -17,7 +17,8 @@ import sqliteService from './sqlite.js';
 const dbVars = {
     userId: '',
     userPrefix: '',
-    maxTableSize: 1000
+    maxTableSize: 500,
+    searchTableSize: 5000
 };
 
 const database = {
@@ -37,6 +38,10 @@ const database = {
 
     setMaxTableSize(limit) {
         dbVars.maxTableSize = limit;
+    },
+
+    setSearchTableSize(limit) {
+        dbVars.searchTableSize = limit;
     },
 
     async initUserTables(userId) {

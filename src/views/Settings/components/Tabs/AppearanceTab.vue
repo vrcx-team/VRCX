@@ -190,11 +190,12 @@
             </div>
 
             <div class="options-container-item">
-                <Button size="sm" variant="outline" @click="promptMaxTableSizeDialog">{{
+                <Button size="sm" variant="outline" @click="showTableLimitsDialog">{{
                     t('view.settings.appearance.appearance.table_max_size')
                 }}</Button>
             </div>
         </div>
+        <TableLimitsDialog />
         <div class="options-container">
             <span class="header">{{ t('view.settings.appearance.timedate.header') }}</span>
             <div class="options-container-item">
@@ -474,6 +475,7 @@
     import { useI18n } from 'vue-i18n';
 
     import PresetColorPicker from '@/components/PresetColorPicker.vue';
+    import TableLimitsDialog from '@/components/dialogs/TableLimitsDialog.vue';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 
@@ -533,7 +535,7 @@
         setHideUnfriends,
         updateTrustColor,
         changeAppLanguage,
-        promptMaxTableSizeDialog,
+        showTableLimitsDialog,
         setNotificationIconDot,
         setTablePageSizes,
         toggleStripedDataTable,

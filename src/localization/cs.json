@@ -288,7 +288,6 @@
                     "sort_instance_users_by": "Řadit uživatele v instanci podle",
                     "sort_instance_users_by_time": "času",
                     "sort_instance_users_by_alphabet": "abecedně",
-                    "table_max_size": "Magimální velikost tabulky",
                     "page_size": "Velikost stránky:"
                 },
                 "timedate": {
@@ -1681,7 +1680,8 @@
         },
         "change_table_size": {
             "header": "Max Table Size",
-            "description": "Limit amount of entries loaded from database to UI pages, larger table sizes will impact RAM usage and performance (default: 1000, max: 10000)",
+            "description": "Limit amount of entries loaded from database to UI pages, larger table sizes will impact RAM usage and performance",
+                    "table_max_size": "Magimální velikost tabulky",
             "cancel": "Cancel",
             "save": "Save",
             "input_error": "Valid number is required"

@@ -572,7 +572,7 @@ const gameLog = {
                     groupName: dbRow[6]
                 };
                 gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_location WHERE location LIKE '%${instanceId}%' ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM gamelog_location WHERE location LIKE '%${instanceId}%' ORDER BY id DESC LIMIT ${dbVars.searchTableSize}`);
         }
         if (onplayerjoined || onplayerleft) {
             var query = '';
@@ -594,7 +594,7 @@ const gameLog = {
                     time: dbRow[6]
                 };
                 gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_join_leave WHERE (location LIKE '%${instanceId}%' AND user_id != '${dbVars.userId}') ${query} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM gamelog_join_leave WHERE (location LIKE '%${instanceId}%' AND user_id != '${dbVars.userId}') ${query} ORDER BY id DESC LIMIT ${dbVars.searchTableSize}`);
         }
         if (portalspawn) {
             await sqliteService.execute((dbRow) => {
@@ -609,7 +609,7 @@ const gameLog = {
                     worldName: dbRow[6]
                 };
                 gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_portal_spawn WHERE location LIKE '%${instanceId}%' ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM gamelog_portal_spawn WHERE location LIKE '%${instanceId}%' ORDER BY id DESC LIMIT ${dbVars.searchTableSize}`);
         }
         if (videoplay) {
             await sqliteService.execute((dbRow) => {
@@ -625,7 +625,7 @@ const gameLog = {
                     userId: dbRow[7]
                 };
                 gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_video_play WHERE location LIKE '%${instanceId}%' ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM gamelog_video_play WHERE location LIKE '%${instanceId}%' ORDER BY id DESC LIMIT ${dbVars.searchTableSize}`);
         }
         if (resourceload_string || resourceload_image) {
             var checkString = '';
@@ -645,7 +645,7 @@ const gameLog = {
                     location: dbRow[4]
                 };
                 gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_resource_load WHERE location LIKE '%${instanceId}%' ${checkString} ${checkImage} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM gamelog_resource_load WHERE location LIKE '%${instanceId}%' ${checkString} ${checkImage} ORDER BY id DESC LIMIT ${dbVars.searchTableSize}`);
         }
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
@@ -659,7 +659,10 @@ const gameLog = {
             return 0;
         };
         gamelogDatabase.sort(compareByCreatedAt);
-        gamelogDatabase.splice(0, gamelogDatabase.length - dbVars.maxTableSize);
+        gamelogDatabase.splice(
+            0,
+            gamelogDatabase.length - dbVars.searchTableSize
+        );
         return gamelogDatabase;
     },
 
@@ -882,7 +885,7 @@ const gameLog = {
         search,
         filters,
         vipList,
-        maxEntries = dbVars.maxTableSize
+        maxEntries = dbVars.searchTableSize
     ) {
         if (search.startsWith('wrld_') || search.startsWith('grp_')) {
             return this.getGameLogByLocation(search, filters);

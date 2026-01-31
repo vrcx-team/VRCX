@@ -534,7 +534,6 @@
                     "sort_instance_users_by": "Sortuj użytkowników instancji wg",
                     "sort_instance_users_by_time": "czas",
                     "sort_instance_users_by_alphabet": "alfabetycznie",
-                    "table_max_size": "Maks. wyników w tabeli",
                     "show_notification_icon_dot": "Pokaż kropkę powiadomień w zasobniku"
                 },
                 "timedate": {
@@ -2114,7 +2113,8 @@
         },
         "change_table_size": {
             "header": "Maksymalny rozmiar tabeli",
-            "description": "Ogranicz liczbę wpisów wyświetlanych z bazy danych, większe tabele wpłyną na zużycie RAM (domyślnie: 1000, maks.: 10000)",
+            "description": "Ogranicz liczbę wpisów wyświetlanych z bazy danych, większe tabele wpłyną na zużycie RAM",
+                    "table_max_size": "Maks. wyników w tabeli",
             "cancel": "Anuluj",
             "save": "Zapisz",
             "input_error": "Wymagana jest prawidłowa liczba"

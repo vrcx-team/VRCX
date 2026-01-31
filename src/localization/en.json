@@ -2319,7 +2319,12 @@
         },
         "change_table_size": {
             "header": "Max Table Size",
-            "description": "Limit amount of entries loaded from database to UI pages, larger table sizes will impact RAM usage and performance (default: 1000, max: 10000)",
+            "description": "Limit amount of entries loaded from database to UI pages, larger table sizes will impact RAM usage and performance",
+            "table_max_size": "Table Max Size",
+            "table_max_size_error": "Enter a number between {min} and {max}.",
+            "search_limit": "Search limit",
+            "search_limit_error": "Enter a number between {min} and {max}.",
+            "search_limit_warning": "Too large values can freeze the app.",
             "cancel": "Cancel",
             "save": "Save",
             "input_error": "Valid number is required"

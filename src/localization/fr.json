@@ -354,7 +354,6 @@
                     "sort_instance_users_by": "Trier les utilisateurs dans les instances par",
                     "sort_instance_users_by_time": "temps",
                     "sort_instance_users_by_alphabet": "alphabétique",
-                    "table_max_size": "Taille maximale du tableau",
                     "page_size": "Longueur d'une page :"
                 },
                 "timedate": {
@@ -1687,7 +1686,8 @@
         },
         "change_table_size": {
             "header": "Taille maximale du tableau",
-            "description": "Limite le nombre d'entrées chargées depuis la base de données. Des tableaux plus grands auront un impact sur l'utilisation de la RAM et sur les performances (par défaut : 1000, max : 10000).",
+            "description": "Limite le nombre d'entrées chargées depuis la base de données. Des tableaux plus grands auront un impact sur l'utilisation de la RAM et sur les performances.",
+                    "table_max_size": "Taille maximale du tableau",
             "cancel": "Annuler",
             "save": "Sauvegarder",
             "input_error": "Un numéro valide est nécessaire"

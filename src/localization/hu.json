@@ -275,7 +275,6 @@
                     "sort_instance_users_by": "Sort Instance Users by",
                     "sort_instance_users_by_time": "idő",
                     "sort_instance_users_by_alphabet": "betűrend",
-                    "table_max_size": "Maximális táblázatméret",
                     "page_size": "Lapméret:"
                 },
                 "timedate": {
@@ -1559,7 +1558,8 @@
         },
         "change_table_size": {
             "header": "Max Table Size",
-            "description": "Limit amount of entries loaded from database to UI pages, larger table sizes will impact RAM usage and performance (default: 1000, max: 10000)",
+            "description": "Limit amount of entries loaded from database to UI pages, larger table sizes will impact RAM usage and performance",
+                    "table_max_size": "Maximális táblázatméret",
             "cancel": "Mégse",
             "save": "Save",
             "input_error": "Valid number is required"

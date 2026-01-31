@@ -1,4 +1,4 @@
-import { ref, shallowReactive, shallowRef, watch } from 'vue';
+import { ref, shallowRef, watch } from 'vue';
 import { defineStore } from 'pinia';
 
 import { database } from '../service/database';
@@ -149,7 +149,8 @@ export const useFeedStore = defineStore('Feed', () => {
             ? await database.searchFeedDatabase(
                   search,
                   feedTable.value.filter,
-                  vipList
+                  vipList,
+                  vrcxStore.searchLimit
               )
             : await database.lookupFeedDatabase(
                   feedTable.value.filter,

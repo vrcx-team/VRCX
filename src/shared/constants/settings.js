@@ -32,4 +32,23 @@ const branches = {
     // }
 };
 
-export { VRChatScreenshotResolutions, VRChatCameraResolutions, branches };
+const TABLE_MAX_SIZE_MIN = 100;
+const TABLE_MAX_SIZE_MAX = 10000;
+const SEARCH_LIMIT_MIN = 1000;
+const SEARCH_LIMIT_MAX = 100000;
+const DEFAULT_MAX_TABLE_SIZE = 500;
+const DEFAULT_SEARCH_LIMIT = 10000;
+const LEGACY_MAX_TABLE_SIZE_DEFAULT = 1000;
+
+export {
+    VRChatScreenshotResolutions,
+    VRChatCameraResolutions,
+    branches,
+    TABLE_MAX_SIZE_MIN,
+    TABLE_MAX_SIZE_MAX,
+    SEARCH_LIMIT_MIN,
+    SEARCH_LIMIT_MAX,
+    DEFAULT_MAX_TABLE_SIZE,
+    DEFAULT_SEARCH_LIMIT,
+    LEGACY_MAX_TABLE_SIZE_DEFAULT
+};

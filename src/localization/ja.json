@@ -617,9 +617,6 @@
                     "sort_instance_users_by": "インスタンス人数を並び替え:",
                     "sort_instance_users_by_time": "時間順",
                     "sort_instance_users_by_alphabet": "アルファベット順",
-                    "table_max_size": "読み込むエントリの最大数",
-                    "table_page_sizes": "テーブルのページごとの表示件数:",
-                    "table_page_sizes_error": "ページサイズは1から1000の間の数字にしてください。",
                     "show_notification_icon_dot": "トレイ通知ドットを表示",
                     "striped_data_table_mode": "テーブルの行に交互に色を付ける",
                     "toggle_pointer_on_hover": "ホバー時にポインターを切り替え",
@@ -2319,7 +2316,10 @@
         },
         "change_table_size": {
             "header": "テーブルの最大数",
-            "description": "データベースからUIページに読み込まれるエントリの量を制限します。テーブル数が多いとRAM使用量とパフォーマンスに影響を及ぼす可能性があります。 (デフォルト:1000, 最高値: 10000)",
+            "description": "データベースからUIページに読み込まれるエントリの量を制限します。テーブル数が多いとRAM使用量とパフォーマンスに影響を及ぼす可能性があります。",
+                    "table_max_size": "読み込むエントリの最大数",
+                    "table_page_sizes": "テーブルのページごとの表示件数:",
+                    "table_page_sizes_error": "ページサイズは1から1000の間の数字にしてください。",
             "cancel": "キャンセル",
             "save": "保存",
             "input_error": "有効な数字を入力してください。"

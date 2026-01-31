@@ -87,7 +87,7 @@ const feed = {
         search,
         filters,
         vipList,
-        maxEntries = dbVars.maxTableSize
+        maxEntries = dbVars.searchTableSize
     ) {
         if (search.startsWith('wrld_') || search.startsWith('grp_')) {
             return this.getFeedByInstanceId(search, filters, vipList);
@@ -488,7 +488,7 @@ const feed = {
                     groupName: dbRow[8]
                 };
                 feedDatabase.push(row);
-            }, `SELECT * FROM ${dbVars.userPrefix}_feed_gps WHERE location LIKE '%${instanceId}%' ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_gps WHERE location LIKE '%${instanceId}%' ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.searchTableSize}`);
         }
         if (online || offline) {
             let query = '';
@@ -512,7 +512,7 @@ const feed = {
                     groupName: dbRow[8]
                 };
                 feedDatabase.push(row);
-            }, `SELECT * FROM ${dbVars.userPrefix}_feed_online_offline WHERE (location LIKE '%${instanceId}%' ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_online_offline WHERE (location LIKE '%${instanceId}%' ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.searchTableSize}`);
         }
         const compareByCreatedAt = function (a, b) {
             const A = a.created_at;
@@ -526,8 +526,11 @@ const feed = {
             return 0;
         };
         feedDatabase.sort(compareByCreatedAt);
-        if (feedDatabase.length > dbVars.maxTableSize) {
-            feedDatabase.splice(0, feedDatabase.length - dbVars.maxTableSize);
+        if (feedDatabase.length > dbVars.searchTableSize) {
+            feedDatabase.splice(
+                0,
+                feedDatabase.length - dbVars.searchTableSize
+            );
         }
         return feedDatabase;
     }

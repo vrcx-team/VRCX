@@ -189,8 +189,7 @@
 
     const totalItems = computed(() => {
         const length = table.getFilteredRowModel().rows.length;
-        const max = vrcxStore.maxTableSize;
-        return length > max && length < max + 51 ? max : length;
+        return length;
     });
 
     const handlePageSizeChange = (size) => {

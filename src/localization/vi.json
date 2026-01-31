@@ -275,7 +275,6 @@
                     "sort_instance_users_by": "Sắp xếp người dùng trong world instance theo",
                     "sort_instance_users_by_time": "Thời gian",
                     "sort_instance_users_by_alphabet": "Bảng chữ cái",
-                    "table_max_size": "Kích thước bảng tối đa",
                     "page_size": "Kích thước trang"
                 },
                 "timedate": {
@@ -1559,7 +1558,8 @@
         },
         "change_table_size": {
             "header": "Kích thước bảng tối đa",
-            "description": "Giới hạn số lượng thông tin trên bảng UI, bảng lớn sẽ sử dụng RAM và hiệu năng nhiều hơn (mặc định: 1000, tối đa: 10000)",
+            "description": "Giới hạn số lượng thông tin trên bảng UI, bảng lớn sẽ sử dụng RAM và hiệu năng nhiều hơn",
+                    "table_max_size": "Kích thước bảng tối đa",
             "cancel": "Hủy",
             "save": "Lưu",
             "input_error": "Yêu cầu số hợp lệ"

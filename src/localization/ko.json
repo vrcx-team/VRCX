@@ -289,7 +289,6 @@
                     "sort_instance_users_by": "인스턴스 유저 순서",
                     "sort_instance_users_by_time": "시간순",
                     "sort_instance_users_by_alphabet": "이름순",
-                    "table_max_size": "최대 테이블 크기",
                     "page_size": "페이지 당 건수:"
                 },
                 "timedate": {
@@ -1573,7 +1572,8 @@
         },
         "change_table_size": {
             "header": "최대 테이블 크기",
-            "description": "테이블이 커질수록 메모리 사용량과 성능에 영향을 줍니다 (기본: 1000)",
+            "description": "테이블이 커질수록 메모리 사용량과 성능에 영향을 줍니다",
+                    "table_max_size": "최대 테이블 크기",
             "cancel": "취소",
             "save": "저장",
             "input_error": "숫자만 입력 가능"

@@ -407,7 +407,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
             rows = await database.searchGameLogDatabase(
                 search,
                 gameLogTable.value.filter,
-                vipList
+                vipList,
+                vrcxStore.searchLimit
             );
         } else {
             rows = await database.lookupGameLogDatabase(
