@@ -131,44 +131,9 @@
         return dialogCrumbs.value.slice(1, -2);
     });
 
-    const handleBreadcrumbClick = (index) => {
-        const item = dialogCrumbs.value[index];
-        if (!item) {
-            return;
-        }
-        uiStore.jumpDialogCrumb(index);
-        if (item.type === 'user') {
-            userStore.showUserDialog(item.id, { skipBreadcrumb: true });
-            return;
-        }
-        if (item.type === 'world') {
-            worldStore.showWorldDialog(item.id, null, { skipBreadcrumb: true });
-            return;
-        }
-        if (item.type === 'avatar') {
-            avatarStore.showAvatarDialog(item.id, { skipBreadcrumb: true });
-            return;
-        }
-        if (item.type === 'group') {
-            groupStore.showGroupDialog(item.id, { skipBreadcrumb: true });
-            return;
-        }
-        if (item.type === 'previous-instances-user') {
-            instanceStore.showPreviousInstancesListDialog('user', item.id, { skipBreadcrumb: true });
-            return;
-        }
-        if (item.type === 'previous-instances-world') {
-            instanceStore.showPreviousInstancesListDialog('world', item.id, { skipBreadcrumb: true });
-            return;
-        }
-        if (item.type === 'previous-instances-group') {
-            instanceStore.showPreviousInstancesListDialog('group', item.id, { skipBreadcrumb: true });
-            return;
-        }
-        if (item.type === 'previous-instances-info') {
-            instanceStore.showPreviousInstancesInfoDialog(item.id, { skipBreadcrumb: true });
-        }
-    };
+    function handleBreadcrumbClick(index) {
+        uiStore.handleBreadcrumbClick(index);
+    }
 </script>
 
 <template>

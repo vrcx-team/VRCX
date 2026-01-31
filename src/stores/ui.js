@@ -18,6 +18,11 @@ import { useWorldStore } from './world';
 
 export const useUiStore = defineStore('Ui', () => {
     const notificationStore = useNotificationStore();
+    const userStore = useUserStore();
+    const worldStore = useWorldStore();
+    const avatarStore = useAvatarStore();
+    const groupStore = useGroupStore();
+    const instanceStore = useInstanceStore();
     const router = useRouter();
     const keys = useMagicKeys();
     const { directAccessPaste } = useSearchStore();
@@ -106,6 +111,71 @@ export const useUiStore = defineStore('Ui', () => {
             return;
         }
         dialogCrumbs.value.splice(index + 1);
+    }
+
+    function jumpBackDialogCrumb() {
+        if (dialogCrumbs.value.length > 1) {
+            dialogCrumbs.value.splice(dialogCrumbs.value.length - 1);
+        }
+        if (dialogCrumbs.value.length === 0) {
+            closeMainDialog();
+            return;
+        }
+        handleBreadcrumbClick(dialogCrumbs.value.length - 1);
+    }
+
+    function handleBreadcrumbClick(index) {
+        const item = dialogCrumbs.value[index];
+        if (!item) {
+            return;
+        }
+        jumpDialogCrumb(index);
+        if (item.type === 'user') {
+            userStore.showUserDialog(item.id, { skipBreadcrumb: true });
+            return;
+        }
+        if (item.type === 'world') {
+            worldStore.showWorldDialog(item.id, null, {
+                skipBreadcrumb: true
+            });
+            return;
+        }
+        if (item.type === 'avatar') {
+            avatarStore.showAvatarDialog(item.id, { skipBreadcrumb: true });
+            return;
+        }
+        if (item.type === 'group') {
+            groupStore.showGroupDialog(item.id, { skipBreadcrumb: true });
+            return;
+        }
+        if (item.type === 'previous-instances-user') {
+            instanceStore.showPreviousInstancesListDialog('user', item.id, {
+                skipBreadcrumb: true
+            });
+            return;
+        }
+        if (item.type === 'previous-instances-world') {
+            instanceStore.showPreviousInstancesListDialog('world', item.id, {
+                skipBreadcrumb: true
+            });
+            return;
+        }
+        if (item.type === 'previous-instances-group') {
+            instanceStore.showPreviousInstancesListDialog('group', item.id, {
+                skipBreadcrumb: true
+            });
+            return;
+        }
+        if (item.type === 'previous-instances-info') {
+            instanceStore.showPreviousInstancesInfoDialog(item.id, {
+                skipBreadcrumb: true
+            });
+            return;
+        }
+        console.error(
+            `Unknown dialog crumb type: ${item.type}, closing dialog`
+        );
+        closeMainDialog();
     }
 
     function clearDialogCrumbs() {
@@ -260,6 +330,8 @@ export const useUiStore = defineStore('Ui', () => {
         jumpDialogCrumb,
         clearDialogCrumbs,
         closeMainDialog,
-        openDialog
+        openDialog,
+        jumpBackDialogCrumb,
+        handleBreadcrumbClick
     };
 });

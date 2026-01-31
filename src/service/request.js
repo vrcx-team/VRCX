@@ -7,6 +7,7 @@ import {
     useAvatarStore,
     useModalStore,
     useNotificationStore,
+    useUiStore,
     useUpdateLoopStore,
     useUserStore
 } from '../stores';
@@ -36,6 +37,7 @@ export function request(endpoint, options) {
     const modalStore = useModalStore();
     const notificationStore = useNotificationStore();
     const updateLoopStore = useUpdateLoopStore();
+    const uiStore = useUiStore();
     if (
         !watchState.isLoggedIn &&
         endpoint.startsWith('/auth') &&
@@ -202,6 +204,9 @@ export function request(endpoint, options) {
             ) {
                 toast.error(t('message.api_handler.avatar_private_or_deleted'));
                 avatarStore.avatarDialog.visible = false;
+                avatarStore.avatarDialog.loading = false;
+                avatarStore.avatarDialog.id = null;
+                uiStore.jumpBackDialogCrumb();
                 $throw(404, data.error?.message || '', endpoint);
             }
             if (status === 404 && endpoint.endsWith('/persist/exists')) {

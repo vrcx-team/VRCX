@@ -859,7 +859,9 @@ export const useUserStore = defineStore('User', () => {
             })
             .catch((err) => {
                 D.loading = false;
-                uiStore.closeMainDialog();
+                D.id = null;
+                D.visible = false;
+                uiStore.jumpBackDialogCrumb();
                 toast.error(t('message.user.load_failed'));
                 throw err;
             })

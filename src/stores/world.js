@@ -148,7 +148,9 @@ export const useWorldStore = defineStore('World', () => {
             })
             .catch((err) => {
                 D.loading = false;
-                uiStore.closeMainDialog();
+                D.id = null;
+                D.visible = false;
+                uiStore.jumpBackDialogCrumb();
                 toast.error(t('message.world.load_failed'));
                 throw err;
             })

@@ -221,8 +221,11 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 ref2.authorId !== userStore.currentUser.id
             ) {
                 D.loading = false;
-                uiStore.closeMainDialog();
-                return;
+                D.id = null;
+                D.visible = false;
+                uiStore.jumpBackDialogCrumb();
+                toast.error(t('message.api_handler.avatar_private_or_deleted'));
+                throw new Error('Avatar is private or deleted');
             }
         }
         avatarRequest
@@ -263,6 +266,10 @@ export const useAvatarStore = defineStore('Avatar', () => {
             })
             .catch((err) => {
                 D.visible = false;
+                D.id = null;
+                D.visible = false;
+                uiStore.jumpBackDialogCrumb();
+                toast.error(t('message.api_handler.avatar_private_or_deleted'));
                 throw err;
             })
             .finally(() => {
