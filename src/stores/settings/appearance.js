@@ -73,7 +73,6 @@ export const useAppearanceSettingsStore = defineStore(
             'Sort by Time in Instance',
             'Sort by Last Active'
         ]);
-        const asideWidth = ref(300);
         const navWidth = ref(240);
         const isSidebarGroupByInstance = ref(true);
         const isHideFriendsInSameInstance = ref(false);
@@ -145,7 +144,6 @@ export const useAppearanceSettingsStore = defineStore(
                 dtHour12Config,
                 dtIsoFormatConfig,
                 sidebarSortMethodsConfig,
-                asideWidthConfig,
                 navWidthConfig,
                 isSidebarGroupByInstanceConfig,
                 isHideFriendsInSameInstanceConfig,
@@ -195,7 +193,6 @@ export const useAppearanceSettingsStore = defineStore(
                         'Sort by Last Active'
                     ])
                 ),
-                configRepository.getInt('VRCX_sidePanelWidth', 300),
                 configRepository.getInt('VRCX_navPanelWidth', 240),
                 configRepository.getBool('VRCX_sidebarGroupByInstance', true),
                 configRepository.getBool(
@@ -288,7 +285,6 @@ export const useAppearanceSettingsStore = defineStore(
                 );
             }
             trustColor.value = { ...TRUST_COLOR_DEFAULTS };
-            asideWidth.value = asideWidthConfig;
             navWidth.value = clampInt(navWidthConfig, 64, 480);
             isSidebarGroupByInstance.value = isSidebarGroupByInstanceConfig;
             isHideFriendsInSameInstance.value =
@@ -680,22 +676,6 @@ export const useAppearanceSettingsStore = defineStore(
                 });
             }
         }
-        function setAsideWidth(widthOrArray) {
-            let width = null;
-            if (Array.isArray(widthOrArray) && widthOrArray.length) {
-                width = widthOrArray[widthOrArray.length - 1];
-            } else if (typeof widthOrArray === 'number') {
-                width = widthOrArray;
-            }
-            if (!Number.isFinite(width) || width === null) {
-                return;
-            }
-            const normalized = Math.max(0, Math.round(width));
-            requestAnimationFrame(() => {
-                asideWidth.value = normalized;
-                configRepository.setInt('VRCX_sidePanelWidth', normalized);
-            });
-        }
         function setIsSidebarGroupByInstance() {
             isSidebarGroupByInstance.value = !isSidebarGroupByInstance.value;
             configRepository.setBool(
@@ -972,7 +952,6 @@ export const useAppearanceSettingsStore = defineStore(
             sidebarSortMethod2,
             sidebarSortMethod3,
             sidebarSortMethods,
-            asideWidth,
             navWidth,
             isSidebarGroupByInstance,
             isHideFriendsInSameInstance,
@@ -1011,7 +990,6 @@ export const useAppearanceSettingsStore = defineStore(
             setSidebarSortMethod3,
             setSidebarSortMethods,
             setNavWidth,
-            setAsideWidth,
             setIsSidebarGroupByInstance,
             setIsHideFriendsInSameInstance,
             setIsSidebarDivideByFriendGroup,
