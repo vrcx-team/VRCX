@@ -101,6 +101,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
         (value) => {
             if (value.name === 'game-log') {
                 initGameLogTable();
+            } else {
+                gameLogTableData.value = [];
             }
         },
         { immediate: true }
