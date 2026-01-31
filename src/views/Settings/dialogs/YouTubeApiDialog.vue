@@ -15,16 +15,14 @@
                 show-count />
 
             <DialogFooter>
-                <div class="flex items-center justify-between">
-                    <Button
-                        variant="outline"
-                        @click="openExternalLink('https://smashballoon.com/doc/youtube-api-key/')">
-                        {{ t('dialog.youtube_api.guide') }}
-                    </Button>
-                    <Button style="margin-left: auto" @click="testYouTubeApiKey">
-                        {{ t('dialog.youtube_api.save') }}
-                    </Button>
-                </div>
+                <Button
+                    variant="outline"
+                    @click="openExternalLink('https://smashballoon.com/doc/youtube-api-key/')">
+                    {{ t('dialog.youtube_api.guide') }}
+                </Button>
+                <Button @click="testYouTubeApiKey">
+                    {{ t('dialog.youtube_api.save') }}
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>
