@@ -44,7 +44,7 @@ function getAssetFilename({ name }) {
     const language = getAssetLanguage(name);
     if (!language) return `assets/${defaultAssetName}`;
 
-    return `assets/languages/${language}-${defaultAssetName}`;
+    return 'assets/languages/[name][extname]';
 }
 
 export default defineConfig(({ mode }) => {
