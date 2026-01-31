@@ -102,30 +102,25 @@
             </template>
 
             <DialogFooter>
-                <div class="flex items-center justify-between">
-                    <Button
-                        variant="outline"
-                        v-if="form.translationApiType === 'google'"
-                        @click="
-                            openExternalLink(
-                                'https://translatepress.com/docs/automatic-translation/generate-google-api-key/'
-                            )
-                        ">
-                        {{ t('dialog.translation_api.guide') }}
-                    </Button>
-                    <Button
-                        variant="outline"
-                        class="mr-2"
-                        v-if="form.translationApiType === 'openai'"
-                        @click="testOpenAiTranslation">
-                        {{ t('dialog.translation_api.test') }}
-                    </Button>
-                    <div>
-                        <Button style="margin-left: auto" @click="saveTranslationApiConfig">
-                            {{ t('dialog.translation_api.save') }}
-                        </Button>
-                    </div>
-                </div>
+                <Button
+                    variant="outline"
+                    v-if="form.translationApiType === 'google'"
+                    @click="
+                        openExternalLink(
+                            'https://translatepress.com/docs/automatic-translation/generate-google-api-key/'
+                        )
+                    ">
+                    {{ t('dialog.translation_api.guide') }}
+                </Button>
+                <Button
+                    variant="outline"
+                    v-if="form.translationApiType === 'openai'"
+                    @click="testOpenAiTranslation">
+                    {{ t('dialog.translation_api.test') }}
+                </Button>
+                <Button @click="saveTranslationApiConfig">
+                    {{ t('dialog.translation_api.save') }}
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>

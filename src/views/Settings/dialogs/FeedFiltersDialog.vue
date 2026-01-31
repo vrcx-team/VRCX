@@ -73,7 +73,7 @@
                 <Button variant="secondary" @click="currentResetFunction">{{
                     t('dialog.shared_feed_filters.reset')
                 }}</Button>
-                <Button style="margin-left: 10px" @click="handleDialogClose">{{
+                <Button @click="handleDialogClose">{{
                     t('dialog.shared_feed_filters.close')
                 }}</Button>
             </DialogFooter>
