@@ -111,12 +111,18 @@ export function useMainLayoutResizable() {
         if (!isSideBarTabShow.value) {
             return;
         }
-        const clampedAsidePx = clampAsidePx(asideWidth.value, width);
-        if (clampedAsidePx !== asideWidth.value) {
+        const maxAsidePx = getMaxAsidePx(width);
+        const clampedAsidePx = Math.min(
+            maxAsidePx,
+            Math.max(0, asideWidth.value)
+        );
+        if (maxAsidePx > 0 && clampedAsidePx !== asideWidth.value) {
             setAsideWidth(clampedAsidePx);
         }
         const asideTargetSize =
-            clampedAsidePx > 0 ? pxToPercent(clampedAsidePx, width, 0) : 0;
+            maxAsidePx > 0 && clampedAsidePx > 0
+                ? pxToPercent(clampedAsidePx, width, 0)
+                : 0;
         resizeAsidePanel(asideTargetSize);
     };
 

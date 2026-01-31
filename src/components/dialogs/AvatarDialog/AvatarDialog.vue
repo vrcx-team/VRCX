@@ -317,7 +317,7 @@
                                         <User class="size-4" />
                                         {{ t('dialog.avatar.actions.create_impostor') }}
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem variant="destructive" @click="avatarDialogCommand('Trash2')">
+                                    <DropdownMenuItem variant="destructive" @click="avatarDialogCommand('Delete')">
                                         <Trash2 class="size-4" />
                                         {{ t('dialog.avatar.actions.delete') }}
                                     </DropdownMenuItem>
