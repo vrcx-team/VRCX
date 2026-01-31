@@ -35,8 +35,7 @@
                                 :class="[
                                     isAsideCollapsed(layout) ? 'opacity-100' : 'opacity-0',
                                     'z-20 [&>div]:-translate-x-1/2'
-                                ]"
-                                @dragging="setIsDragging"></ResizableHandle>
+                                ]"></ResizableHandle>
                             <ResizablePanel
                                 ref="asidePanelRef"
                                 :default-size="asideDefaultSize"
@@ -170,7 +169,6 @@
         asideMaxPx,
         mainDefaultSize,
         handleLayout,
-        setIsDragging,
         isAsideCollapsed,
         isSideBarTabShow
     } = useMainLayoutResizable();

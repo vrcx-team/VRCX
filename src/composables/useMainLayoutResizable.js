@@ -1,12 +1,11 @@
-import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useAppearanceSettingsStore } from '../stores';
 
-import configRepository from '../service/config';
-
 export function useMainLayoutResizable() {
     const asideMaxPx = 700;
+    const mainMinPx = 320;
 
     const appearanceStore = useAppearanceSettingsStore();
     const { setAsideWidth } = appearanceStore;
@@ -21,10 +20,9 @@ export function useMainLayoutResizable() {
     const panelGroupRef = ref(null);
     const asidePanelRef = ref(null);
     const groupWidth = ref(fallbackWidth);
-    const draggingCount = ref(0);
-    const lastLayoutSizes = ref(null);
     let resizeObserver = null;
 
+    // size helpers: panelGroupRef, groupWidth, fallbackWidth
     const getGroupWidthRaw = () => {
         const element = panelGroupRef.value?.$el ?? panelGroupRef.value;
         const width = element?.getBoundingClientRect?.().width;
@@ -36,74 +34,44 @@ export function useMainLayoutResizable() {
         return Number.isFinite(width) && width > 0 ? width : fallbackWidth;
     };
 
-    const resolveDraggingPayload = (payload) => {
-        if (typeof payload === 'boolean') {
-            return payload;
-        }
-        if (payload && typeof payload === 'object') {
-            if (typeof payload.detail === 'boolean') {
-                return payload.detail;
-            }
-            if (typeof payload.dragging === 'boolean') {
-                return payload.dragging;
-            }
-            if (payload.detail && typeof payload.detail === 'object') {
-                if (typeof payload.detail.dragging === 'boolean') {
-                    return payload.detail.dragging;
-                }
-                if (typeof payload.detail.isDragging === 'boolean') {
-                    return payload.detail.isDragging;
-                }
-                if (typeof payload.detail.value === 'boolean') {
-                    return payload.detail.value;
-                }
-            }
-        }
-        return null;
-    };
-
-    const setIsDragging = (payload) => {
-        const isDragging = resolveDraggingPayload(payload);
-        if (typeof isDragging !== 'boolean') {
-            return;
-        }
-        const wasDragging = draggingCount.value > 0;
-        const next = draggingCount.value + (isDragging ? 1 : -1);
-        draggingCount.value = Math.max(0, next);
-
-        if (wasDragging && draggingCount.value === 0 && lastLayoutSizes.value) {
-            handleLayout(lastLayoutSizes.value, { force: true });
-        }
-    };
-
-    const pxToPercent = (px, groupWidth, min = 1) => {
-        const w = groupWidth ?? getGroupWidth();
+    const pxToPercent = (px, width, min = 1) => {
+        const w = Number.isFinite(width) && width > 0 ? width : getGroupWidth();
         return Math.min(100, Math.max(min, (px / w) * 100));
     };
 
     const percentToPx = (percent, groupWidth) => (percent / 100) * groupWidth;
 
+    const getMaxAsidePx = (width) =>
+        Math.min(asideMaxPx, Math.max(0, width - mainMinPx));
+
+    const clampAsidePx = (px, width) =>
+        Math.min(getMaxAsidePx(width), Math.max(0, px));
+
+    // layout state: isAsideCollapsed, asideMaxSize, asideDefaultSize, mainDefaultSize
     const isAsideCollapsed = (layout) =>
         Array.isArray(layout) &&
         layout.length >= 2 &&
         layout[layout.length - 1] <= 1;
 
-    const asideDefaultSize = computed(() =>
-        pxToPercent(asideWidth.value, undefined, 0)
+    const asideMaxSize = computed(() =>
+        pxToPercent(getMaxAsidePx(groupWidth.value), groupWidth.value, 0)
     );
-    const asideMaxSize = computed(() => pxToPercent(asideMaxPx, undefined, 0));
+
+    const asideDefaultSize = computed(() => {
+        if (!isSideBarTabShow.value) {
+            return 0;
+        }
+        const percent = pxToPercent(asideWidth.value, groupWidth.value, 0);
+        return Math.min(asideMaxSize.value, percent);
+    });
 
     const mainDefaultSize = computed(
         () => 100 - (isSideBarTabShow.value ? asideDefaultSize.value : 0)
     );
 
-    const handleLayout = (sizes, { force = false } = {}) => {
-        lastLayoutSizes.value = Array.isArray(sizes) ? [...sizes] : sizes;
+    // drag -> store: handleLayout, asideWidth
+    const handleLayout = (sizes) => {
         if (!Array.isArray(sizes) || sizes.length < 1) {
-            return;
-        }
-
-        if (!force && draggingCount.value === 0) {
             return;
         }
 
@@ -122,56 +90,41 @@ export function useMainLayoutResizable() {
             return;
         }
 
-        if (asideSize <= 1) {
-            setAsideWidth(0);
-            configRepository.setInt('VRCX_sidePanelWidth', 0);
+        const nextAsidePx =
+            asideSize <= 1
+                ? 0
+                : clampAsidePx(
+                      Math.round(percentToPx(asideSize, width)),
+                      width
+                  );
+        if (nextAsidePx === asideWidth.value) {
             return;
         }
-
-        const nextAsidePx = Math.round(percentToPx(asideSize, width));
         setAsideWidth(nextAsidePx);
-        configRepository.setInt('VRCX_sidePanelWidth', nextAsidePx);
     };
 
+    // sync store -> panel: resizeAsidePanel, syncAsidePanelSize
     const resizeAsidePanel = (targetSize) =>
         asidePanelRef.value?.resize?.(targetSize);
 
-    const updateGroupWidth = () => {
-        const width = getGroupWidth();
-        groupWidth.value = width;
-
+    const syncAsidePanelSize = (width) => {
         if (!isSideBarTabShow.value) {
             return;
         }
-
-        void syncAsidePanelWidth(width);
+        const clampedAsidePx = clampAsidePx(asideWidth.value, width);
+        if (clampedAsidePx !== asideWidth.value) {
+            setAsideWidth(clampedAsidePx);
+        }
+        const asideTargetSize =
+            clampedAsidePx > 0 ? pxToPercent(clampedAsidePx, width, 0) : 0;
+        resizeAsidePanel(asideTargetSize);
     };
 
-    let asideSyncPromise = null;
-    const syncAsidePanelWidth = async (width) => {
-        if (asideSyncPromise) {
-            return asideSyncPromise;
-        }
-        asideSyncPromise = (async () => {
-            const storedAsidePx = await configRepository.getInt(
-                'VRCX_sidePanelWidth',
-                asideWidth.value
-            );
-            if (
-                Number.isFinite(storedAsidePx) &&
-                storedAsidePx !== asideWidth.value
-            ) {
-                setAsideWidth(storedAsidePx);
-            }
-            const asideTargetSize =
-                storedAsidePx > 0 ? pxToPercent(storedAsidePx, width, 0) : 0;
-            resizeAsidePanel(asideTargetSize);
-        })();
-        try {
-            return await asideSyncPromise;
-        } finally {
-            asideSyncPromise = null;
-        }
+    // window resize: updateGroupWidth, resizeObserver
+    const updateGroupWidth = () => {
+        const width = getGroupWidth();
+        groupWidth.value = width;
+        syncAsidePanelSize(width);
     };
 
     onMounted(async () => {
@@ -184,6 +137,13 @@ export function useMainLayoutResizable() {
             resizeObserver.observe(element);
         }
     });
+
+    watch(
+        () => [isSideBarTabShow.value, asideWidth.value],
+        () => {
+            syncAsidePanelSize(groupWidth.value);
+        }
+    );
 
     onUnmounted(() => {
         if (resizeObserver) {
@@ -200,7 +160,6 @@ export function useMainLayoutResizable() {
         asideMaxPx,
         mainDefaultSize,
         handleLayout,
-        setIsDragging,
         isAsideCollapsed,
         isNavCollapsed,
         isSideBarTabShow
