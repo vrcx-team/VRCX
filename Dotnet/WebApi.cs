@@ -143,6 +143,7 @@ namespace VRCX
 #endif
             CookieContainer = new CookieContainer();
             InitializeHttpClient();
+            _cookieDirty = true;
             SaveCookies();
         }
 
