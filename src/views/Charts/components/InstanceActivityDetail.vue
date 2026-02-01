@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, onBeforeUnmount, onDeactivated, onMounted, ref, watch } from 'vue';
+    import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { storeToRefs } from 'pinia';
 

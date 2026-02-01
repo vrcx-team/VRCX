@@ -2,16 +2,6 @@
     <div class="mutual-graph pt-12" ref="mutualGraphRef">
         <div class="options-container mutual-graph__toolbar">
             <div class="mutual-graph__actions">
-                <TooltipWrapper :content="t('view.charts.mutual_friend.force_dialog.open_label')" side="top">
-                    <Button
-                        class="rounded-full"
-                        size="icon"
-                        variant="ghost"
-                        :disabled="!graphReady"
-                        @click="openForceDialog">
-                        <Settings />
-                    </Button>
-                </TooltipWrapper>
                 <TooltipWrapper :content="fetchButtonLabel" side="top">
                     <Button :disabled="fetchButtonDisabled" @click="startFetch">
                         <Spinner v-if="isFetching" />
@@ -38,121 +28,27 @@
             <Progress :model-value="progressPercent" class="h-3" />
         </div>
 
-        <div ref="chartRef" class="mutual-graph__canvas"></div>
+        <div ref="graphContainerRef" class="mutual-graph__canvas" :style="{ backgroundColor: canvasBackground }"></div>
 
         <div v-if="hasFetched && !isFetching && !graphReady" class="mutual-graph__placeholder">
             <span>{{ t('view.charts.mutual_friend.progress.no_relationships_discovered') }}</span>
         </div>
-
-        <Dialog v-model:open="isForceDialogVisible">
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>{{ t('view.charts.mutual_friend.force_dialog.title') }}</DialogTitle>
-                </DialogHeader>
-
-                <p class="mutual-graph__force-description">
-                    {{ t('view.charts.mutual_friend.force_dialog.description') }}
-                </p>
-                <FieldGroup class="mutual-graph__force-form">
-                    <Field>
-                        <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.repulsion') }}</FieldLabel>
-                        <FieldContent>
-                            <NumberField
-                                v-model="forceForm.repulsion"
-                                :step="1"
-                                :format-options="{ maximumFractionDigits: 0 }"
-                                class="mutual-graph__number-input">
-                                <NumberFieldContent>
-                                    <NumberFieldInput />
-                                </NumberFieldContent>
-                            </NumberField>
-                            <FieldDescription class="mutual-graph__helper">
-                                {{ t('view.charts.mutual_friend.force_dialog.repulsion_help') }}
-                            </FieldDescription>
-                        </FieldContent>
-                    </Field>
-                    <Field>
-                        <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.edge_length_min') }}</FieldLabel>
-                        <FieldContent>
-                            <NumberField
-                                v-model="forceForm.edgeLengthMin"
-                                :step="1"
-                                :format-options="{ maximumFractionDigits: 0 }"
-                                class="mutual-graph__number-input">
-                                <NumberFieldContent>
-                                    <NumberFieldInput />
-                                </NumberFieldContent>
-                            </NumberField>
-                            <FieldDescription class="mutual-graph__helper">
-                                {{ t('view.charts.mutual_friend.force_dialog.edge_length_min_help') }}
-                            </FieldDescription>
-                        </FieldContent>
-                    </Field>
-                    <Field>
-                        <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.edge_length_max') }}</FieldLabel>
-                        <FieldContent>
-                            <NumberField
-                                v-model="forceForm.edgeLengthMax"
-                                :step="1"
-                                :format-options="{ maximumFractionDigits: 0 }"
-                                class="mutual-graph__number-input">
-                                <NumberFieldContent>
-                                    <NumberFieldInput />
-                                </NumberFieldContent>
-                            </NumberField>
-                            <FieldDescription class="mutual-graph__helper">
-                                {{ t('view.charts.mutual_friend.force_dialog.edge_length_max_help') }}
-                            </FieldDescription>
-                        </FieldContent>
-                    </Field>
-                    <Field>
-                        <FieldLabel>{{ t('view.charts.mutual_friend.force_dialog.gravity') }}</FieldLabel>
-                        <FieldContent>
-                            <NumberField
-                                v-model="forceForm.gravity"
-                                :max="1"
-                                :step="0.1"
-                                :format-options="{ maximumFractionDigits: 1 }"
-                                class="mutual-graph__number-input">
-                                <NumberFieldContent>
-                                    <NumberFieldInput />
-                                </NumberFieldContent>
-                            </NumberField>
-                            <FieldDescription class="mutual-graph__helper">
-                                {{ t('view.charts.mutual_friend.force_dialog.gravity_help') }}
-                            </FieldDescription>
-                        </FieldContent>
-                    </Field>
-                </FieldGroup>
-
-                <DialogFooter>
-                    <div class="mutual-graph__dialog-footer">
-                        <Button variant="secondary" class="mr-2" @click="resetForceSettings">{{
-                            t('view.charts.mutual_friend.force_dialog.reset')
-                        }}</Button>
-                        <Button :disabled="!graphReady" @click="applyForceSettings">
-                            {{ t('view.charts.mutual_friend.force_dialog.apply') }}
-                        </Button>
-                    </div>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
     </div>
 </template>
 
 <script setup>
-    import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-    import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
-    import { NumberField, NumberFieldContent, NumberFieldInput } from '@/components/ui/number-field';
+    import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Progress } from '@/components/ui/progress';
-    import { Settings } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
     import { onBeforeRouteLeave } from 'vue-router';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
+
+    import Graph from 'graphology';
+    import Sigma from 'sigma';
+    import forceAtlas2 from 'graphology-layout-forceatlas2';
 
     import {
         useAppearanceSettingsStore,
@@ -161,14 +57,8 @@
         useModalStore,
         useUserStore
     } from '../../../stores';
-    import { applyForceOverrides, computeForceOptions, useMutualGraphChart } from '../composables/useMutualGraphChart';
     import { createRateLimiter, executeWithBackoff } from '../../../shared/utils';
-    import { database } from '../../../service/database';
     import { userRequest } from '../../../api';
-
-    import configRepository from '../../../service/config';
-
-    import * as echarts from 'echarts';
 
     const { t } = useI18n();
     const friendStore = useFriendStore();
@@ -178,24 +68,32 @@
     const appearanceStore = useAppearanceSettingsStore();
     const { friends } = storeToRefs(friendStore);
     const { currentUser } = storeToRefs(userStore);
-    const { activeTab, mutualGraphPayload } = storeToRefs(chartsStore);
+    const { activeTab } = storeToRefs(chartsStore);
     const { isDarkMode } = storeToRefs(appearanceStore);
     const cachedUsers = userStore.cachedUsers;
     const showUserDialog = (userId) => userStore.showUserDialog(userId);
 
-    const graphPayload = mutualGraphPayload;
     const fetchState = chartsStore.mutualGraphFetchState;
     const status = chartsStore.mutualGraphStatus;
 
-    const chartTheme = computed(() => (isDarkMode.value ? 'dark' : undefined));
+    const LOCAL_STORAGE_KEY = 'VRCX_MutualGraphSnapshot';
+    const COLORS_PALETTE = [
+        '#5470c6',
+        '#91cc75',
+        '#fac858',
+        '#ee6666',
+        '#73c0de',
+        '#3ba272',
+        '#fc8452',
+        '#9a60b4',
+        '#ea7ccc'
+    ];
+    const MAX_LABEL_NAME_LENGTH = 22;
 
-    const { buildGraph, createChartOption } = useMutualGraphChart({
-        cachedUsers,
-        graphPayload
-    });
-
-    const chartRef = ref(null);
-    let chartInstance = null;
+    const graphContainerRef = ref(null);
+    const mutualGraphRef = ref(null);
+    let sigmaInstance = null;
+    let currentGraph = null;
     let resizeObserver = null;
 
     const isFetching = computed({
@@ -211,12 +109,12 @@
         }
     });
 
-    const totalFriends = computed(() => friends.value.size);
-    const isOptOut = computed(() => Boolean(currentUser.value?.hasSharedConnectionsOptOut));
-    // @ts-ignore
-    const graphReady = computed(() => Array.isArray(graphPayload.value?.nodes) && graphPayload.value.nodes.length > 0);
+    const graphNodeCount = ref(0);
     const isLoadingSnapshot = ref(false);
     const loadingToastId = ref(null);
+    const totalFriends = computed(() => friends.value.size);
+    const isOptOut = computed(() => Boolean(currentUser.value?.hasSharedConnectionsOptOut));
+    const graphReady = computed(() => graphNodeCount.value > 0);
     const fetchButtonDisabled = computed(
         () => isFetching.value || isOptOut.value || totalFriends.value === 0 || isLoadingSnapshot.value
     );
@@ -228,40 +126,8 @@
     const progressPercent = computed(() =>
         totalFriends.value ? Math.min(100, Math.round((fetchState.processedFriends / totalFriends.value) * 100)) : 0
     );
-    const forceDefaults = computed(() =>
-        computeForceOptions(graphPayload.value?.nodes ?? [], graphPayload.value?.links ?? [])
-    );
-    const hasGraphData = computed(() => graphReady.value && Boolean(graphPayload.value?.nodes?.length));
-
-    const isForceDialogVisible = ref(false);
-    const forceOverrides = ref(null);
-    const persistedForce = ref(null);
-    const forceForm = reactive({
-        repulsion: null,
-        edgeLengthMin: null,
-        edgeLengthMax: null,
-        gravity: null
-    });
-    const forceConfigKey = 'VRCX_MutualGraphForce';
-
-    const parseForceField = (value, { min = 0, max = Infinity, decimals = 0 } = {}) => {
-        if (value === '' || value === null || value === undefined) {
-            return { value: null, invalid: false };
-        }
-        const num = Number(value);
-        if (Number.isNaN(num) || num < min || num > max) {
-            return { value: null, invalid: true };
-        }
-        const factor = decimals ? 10 ** decimals : 1;
-        return { value: Math.round(num * factor) / factor, invalid: false };
-    };
-
-    const coerceForceField = (value, options) => {
-        const parsed = parseForceField(value, options);
-        return parsed.invalid ? null : parsed.value;
-    };
-
-    const mutualGraphRef = ref(null);
+    const canvasBackground = computed(() => (isDarkMode.value ? 'rgba(15, 23, 42, 0.35)' : 'rgba(15, 23, 42, 0.02)'));
+    const edgeColor = computed(() => (isDarkMode.value ? 'rgba(226,232,240,0.2)' : 'rgba(15,23,42,0.2)'));
 
     const mutualGraphResizeObserver = new ResizeObserver(() => {
         setMutualGraphHeight();
@@ -277,14 +143,21 @@
 
     onMounted(() => {
         nextTick(() => {
-            if (!chartRef.value) {
+            if (!graphContainerRef.value) {
                 return;
             }
-            createChartInstance();
-            resizeObserver = new ResizeObserver(() => chartInstance?.resize());
-            resizeObserver.observe(chartRef.value);
+            resizeObserver = new ResizeObserver(() => {
+                if (sigmaInstance?.refresh) {
+                    sigmaInstance.refresh();
+                }
+            });
+            resizeObserver.observe(graphContainerRef.value);
             mutualGraphResizeObserver.observe(mutualGraphRef.value);
             setMutualGraphHeight();
+
+            if (currentGraph) {
+                renderGraph(currentGraph);
+            }
         });
     });
 
@@ -293,55 +166,33 @@
             resizeObserver.disconnect();
             resizeObserver = null;
         }
-        if (chartInstance) {
-            chartInstance.dispose();
-            chartInstance = null;
+        if (sigmaInstance) {
+            sigmaInstance.kill();
+            sigmaInstance = null;
         }
+        currentGraph = null;
         if (mutualGraphResizeObserver) {
             mutualGraphResizeObserver.disconnect();
         }
     });
 
     watch(
-        chartTheme,
-        () => {
-            if (!chartRef.value) {
-                return;
-            }
-            if (chartInstance) {
-                chartInstance.dispose();
-                chartInstance = null;
-            }
-            nextTick(() => {
-                if (!chartRef.value) {
-                    return;
-                }
-                createChartInstance();
-            });
-        },
-        { immediate: false }
-    );
-
-    watch(
         activeTab,
         (tab) => {
             if (tab === 'mutual') {
-                loadGraphFromDatabase();
-                loadForceOverridesFromConfig();
+                loadGraphFromLocalStorage();
             }
         },
         { immediate: true }
     );
 
-    watch(
-        graphReady,
-        (ready) => {
-            if (ready && forceOverrides.value) {
-                updateChart(graphPayload.value);
-            }
-        },
-        { immediate: false }
-    );
+    watch(isDarkMode, () => {
+        if (!currentGraph) {
+            return;
+        }
+        applyThemeToGraph(currentGraph);
+        renderGraph(currentGraph);
+    });
 
     function showStatusMessage(message, type = 'info') {
         if (!message) {
@@ -351,28 +202,162 @@
         toastFn(message, { duration: 4000 });
     }
 
-    function createChartInstance() {
-        if (!chartRef.value) {
-            return;
+    function truncateLabelText(text) {
+        if (!text) {
+            return 'Unknown';
         }
-        chartInstance = echarts.init(chartRef.value, chartTheme.value, { renderer: 'svg' });
-        chartInstance.on('click', handleChartNodeClick);
-
-        if (graphReady.value) {
-            // @ts-ignore
-            updateChart(graphPayload.value);
-        }
+        return text.length > MAX_LABEL_NAME_LENGTH ? `${text.slice(0, MAX_LABEL_NAME_LENGTH)}…` : text;
     }
 
-    async function loadGraphFromDatabase() {
+    function hashToUnit(value) {
+        let hash = 0;
+        for (let i = 0; i < value.length; i += 1) {
+            hash = (hash * 31 + value.charCodeAt(i)) % 1000;
+        }
+        return hash / 1000 - 0.5;
+    }
+
+    function applyThemeToGraph(graph) {
+        const color = edgeColor.value;
+        graph.forEachEdge((edge) => {
+            graph.setEdgeAttribute(edge, 'color', color);
+        });
+    }
+
+    function buildGraphFromMutualMap(mutualMap) {
+        const graph = new Graph({
+            type: 'undirected',
+            multi: false,
+            allowSelfLoops: false
+        });
+        const nodeDegree = new Map();
+        const nodeNames = new Map();
+
+        function ensureNode(id, name) {
+            if (!id) {
+                return;
+            }
+            if (!graph.hasNode(id)) {
+                graph.addNode(id);
+                nodeDegree.set(id, 0);
+            }
+            if (name && !nodeNames.get(id)) {
+                nodeNames.set(id, name);
+            }
+        }
+
+        function addEdge(source, target) {
+            if (!source || !target || source === target) {
+                return;
+            }
+            const [a, b] = [source, target].sort();
+            const key = `${a}__${b}`;
+            if (graph.hasEdge(key)) {
+                return;
+            }
+            graph.addEdgeWithKey(key, a, b, { color: edgeColor.value });
+            nodeDegree.set(a, (nodeDegree.get(a) || 0) + 1);
+            nodeDegree.set(b, (nodeDegree.get(b) || 0) + 1);
+        }
+
+        for (const [friendId, { friend, mutuals }] of mutualMap.entries()) {
+            const friendRef = friend?.ref || cachedUsers.get(friendId);
+            const friendName = friendRef?.displayName;
+            ensureNode(friendId, friendName || friendId);
+
+            for (const mutual of mutuals) {
+                if (!mutual?.id) {
+                    continue;
+                }
+                const cached = cachedUsers.get(mutual.id);
+                const label = cached?.displayName || mutual.displayName || mutual.id;
+                ensureNode(mutual.id, label);
+                addEdge(friendId, mutual.id);
+            }
+        }
+
+        const nodeIds = graph.nodes();
+        const maxDegree = nodeIds.reduce((max, id) => Math.max(max, nodeDegree.get(id) || 0), 0);
+        const radius = Math.max(80, Math.sqrt(Math.max(nodeIds.length, 1)) * 60);
+
+        nodeIds.forEach((id, index) => {
+            const baseX = hashToUnit(id) * radius;
+            const baseY = hashToUnit(`${id}-y`) * radius;
+            const jitterX = hashToUnit(id + id) * radius * 0.15;
+            const jitterY = hashToUnit(id + 'z') * radius * 0.15;
+            const degree = nodeDegree.get(id) || 0;
+            const size = 6 + (maxDegree ? (degree / maxDegree) * 16 : 0);
+            const label = truncateLabelText(nodeNames.get(id) || id);
+            const color = COLORS_PALETTE[index % COLORS_PALETTE.length];
+
+            graph.mergeNodeAttributes(id, {
+                label,
+                size,
+                color,
+                x: baseX + jitterX,
+                y: baseY + jitterY
+            });
+        });
+
+        if (graph.order > 1) {
+            const iterations = Math.min(200, Math.max(90, Math.round(Math.sqrt(graph.order)) * 12));
+            const inferred = forceAtlas2.inferSettings ? forceAtlas2.inferSettings(graph) : {};
+            const settings = {
+                ...inferred,
+                gravity: 0.7,
+                scalingRatio: 14,
+                slowDown: 1,
+                barnesHutOptimize: true,
+                strongGravityMode: false
+            };
+            forceAtlas2.assign(graph, {
+                iterations,
+                settings
+            });
+        }
+
+        applyThemeToGraph(graph);
+
+        graphNodeCount.value = graph.order;
+        return graph;
+    }
+
+    function renderGraph(graph) {
+        if (!graphContainerRef.value) {
+            return;
+        }
+        if (sigmaInstance) {
+            sigmaInstance.kill();
+            sigmaInstance = null;
+        }
+        const labelColor = isDarkMode.value ? '#e2e8f0' : '#111827';
+        sigmaInstance = new Sigma(graph, graphContainerRef.value, {
+            renderLabels: true,
+            labelRenderedSizeThreshold: 8,
+            labelColor: { color: labelColor }
+        });
+        sigmaInstance.on('clickNode', ({ node }) => {
+            if (node) {
+                showUserDialog(node);
+            }
+        });
+    }
+
+    function applyGraph(mutualMap) {
+        const graph = buildGraphFromMutualMap(mutualMap);
+        currentGraph = graph;
+        renderGraph(graph);
+    }
+
+    async function loadGraphFromLocalStorage() {
         if (hasFetched.value || isFetching.value || isLoadingSnapshot.value) {
             return;
         }
         isLoadingSnapshot.value = true;
         loadingToastId.value = toast.loading(t('view.charts.mutual_friend.status.loading_cache'));
         try {
-            const snapshot = await database.getMutualGraphSnapshot();
-            if (!snapshot || snapshot.size === 0) {
+            const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (!raw) {
                 if (isOptOut.value) {
                     promptEnableMutualFriendsSharing();
                     return;
@@ -380,8 +365,16 @@
                 await promptInitialFetch();
                 return;
             }
+
+            const parsed = JSON.parse(raw);
+            const snapshot = parsed?.data;
+            if (!snapshot || typeof snapshot !== 'object' || Array.isArray(snapshot)) {
+                await promptInitialFetch();
+                return;
+            }
+
             const mutualMap = new Map();
-            snapshot.forEach((mutualIds, friendId) => {
+            Object.entries(snapshot).forEach(([friendId, mutualIds]) => {
                 if (!friendId) {
                     return;
                 }
@@ -394,11 +387,13 @@
                     mutuals: normalizedMutuals.map((id) => ({ id }))
                 });
             });
+
             if (!mutualMap.size) {
                 await promptInitialFetch();
                 return;
             }
-            buildGraph(mutualMap, updateChart);
+
+            applyGraph(mutualMap);
             hasFetched.value = true;
             fetchState.processedFriends = Math.min(mutualMap.size, totalFriends.value || mutualMap.size);
             status.friendSignature = totalFriends.value;
@@ -563,12 +558,12 @@
                 return;
             }
 
-            buildGraph(mutualMap, updateChart);
+            applyGraph(mutualMap);
             status.friendSignature = totalFriends.value;
             status.needsRefetch = false;
 
             try {
-                await persistMutualGraph(mutualMap);
+                persistMutualGraphToLocalStorage(mutualMap);
             } catch (persistErr) {
                 console.error('[MutualNetworkGraph] Failed to cache data', persistErr);
             }
@@ -581,8 +576,8 @@
         }
     }
 
-    async function persistMutualGraph(mutualMap) {
-        const snapshot = new Map();
+    function persistMutualGraphToLocalStorage(mutualMap) {
+        const snapshot = {};
         mutualMap.forEach((value, friendId) => {
             if (!friendId) {
                 return;
@@ -601,139 +596,20 @@
                     ids.push(identifier);
                 }
             }
-            snapshot.set(normalizedFriendId, ids);
+            snapshot[normalizedFriendId] = ids;
         });
-        await database.saveMutualGraphSnapshot(snapshot);
-    }
 
-    function updateChart(payload) {
-        const nodes = payload?.nodes ?? [];
-        if (!nodes.length) {
-            if (chartInstance) {
-                chartInstance.clear();
-            }
-            return;
-        }
-        if (!chartInstance) {
-            return;
-        }
-        const forceOption =
-            persistedForce.value ||
-            applyForceOverrides(computeForceOptions(nodes, payload?.links ?? []), forceOverrides.value);
-        chartInstance.setOption(createChartOption(payload, forceOption));
-        nextTick(() => chartInstance?.resize());
-    }
-
-    function handleChartNodeClick(params) {
-        if (params?.dataType !== 'node') {
-            return;
-        }
-        const nodeId = params.data?.id;
-        if (nodeId) {
-            showUserDialog(nodeId);
-        }
+        const payload = {
+            version: 1,
+            savedAt: Date.now(),
+            data: snapshot
+        };
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(payload));
     }
 
     onBeforeRouteLeave(() => {
         chartsStore.resetMutualGraphState();
     });
-
-    function syncForceForm(source) {
-        const base = source || forceDefaults.value || {};
-        const edgeLength = Array.isArray(base.edgeLength) ? base.edgeLength : [];
-        forceForm.repulsion = coerceForceField(base.repulsion, { min: 0 });
-        forceForm.edgeLengthMin = coerceForceField(edgeLength[0], { min: 0 });
-        forceForm.edgeLengthMax = coerceForceField(edgeLength[1], { min: 0 });
-        forceForm.gravity = coerceForceField(base.gravity, { min: 0, max: 1, decimals: 1 });
-    }
-
-    function openForceDialog() {
-        syncForceForm(forceOverrides.value);
-        isForceDialogVisible.value = true;
-    }
-
-    function applyForceSettings() {
-        if (!hasGraphData.value) {
-            isForceDialogVisible.value = false;
-            return;
-        }
-        const defaults = forceDefaults.value;
-        const defaultEdge = Array.isArray(defaults.edgeLength) ? defaults.edgeLength : [null, null];
-        const repulsion = parseForceField(forceForm.repulsion, { min: 0 });
-        const minEdge = parseForceField(forceForm.edgeLengthMin, { min: 0 });
-        const maxEdge = parseForceField(forceForm.edgeLengthMax, { min: 0 });
-        const gravity = parseForceField(forceForm.gravity, { min: 0, max: 1, decimals: 1 });
-
-        const hasInvalid = [repulsion, minEdge, maxEdge, gravity].some((entry) => entry.invalid);
-        if (hasInvalid) {
-            toast.error(t('view.charts.mutual_friend.force_dialog.invalid_input'));
-            return;
-        }
-
-        const edgeLength = [minEdge.value ?? defaultEdge[0] ?? 0, maxEdge.value ?? defaultEdge[1] ?? 0];
-        edgeLength[0] = Math.max(0, edgeLength[0]);
-        edgeLength[1] = Math.max(edgeLength[0], edgeLength[1]);
-
-        forceOverrides.value = {
-            repulsion: repulsion.value === null ? defaults.repulsion : repulsion.value,
-            edgeLength,
-            gravity: gravity.value === null ? defaults.gravity : gravity.value,
-            layoutAnimation: defaults.layoutAnimation
-        };
-        persistedForce.value = applyForceOverrides(defaults, forceOverrides.value);
-        persistForceOverrides();
-        updateChart(graphPayload.value);
-        isForceDialogVisible.value = false;
-    }
-
-    function resetForceSettings() {
-        forceOverrides.value = null;
-        persistedForce.value = null;
-        syncForceForm(forceDefaults.value);
-        if (hasGraphData.value) {
-            updateChart(graphPayload.value);
-        }
-        clearForceOverrides();
-    }
-
-    async function loadForceOverridesFromConfig() {
-        try {
-            const saved = await configRepository.getObject(forceConfigKey, null);
-            if (!saved || typeof saved !== 'object') {
-                return;
-            }
-            forceOverrides.value = saved.overrides || null;
-            persistedForce.value = saved.force || null;
-            if (forceOverrides.value) {
-                syncForceForm(forceOverrides.value);
-            }
-            if (graphReady.value) {
-                updateChart(graphPayload.value);
-            }
-        } catch (err) {
-            console.warn('[MutualNetworkGraph] Failed to load force settings', err);
-        }
-    }
-
-    function persistForceOverrides() {
-        if (!forceOverrides.value) {
-            clearForceOverrides();
-            return;
-        }
-        const payload = {
-            overrides: forceOverrides.value,
-            force: persistedForce.value
-        };
-        configRepository.setObject(forceConfigKey, payload).catch((err) => {
-            console.warn('[MutualNetworkGraph] Failed to save force settings', err);
-        });
-    }
-
-    function clearForceOverrides() {
-        configRepository.remove(forceConfigKey).catch((err) => {
-            console.warn('[MutualNetworkGraph] Failed to clear force settings', err);
-        });
-    }
 </script>
 
 <style scoped>
@@ -746,7 +622,7 @@
 
     .mutual-graph__toolbar {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
         align-items: center;
         margin-top: 8px;
         margin-bottom: 0;
@@ -754,12 +630,19 @@
         border: none;
         box-shadow: none;
         padding: 0 0 8px 0;
+        gap: 12px;
+        flex-wrap: wrap;
     }
 
     .mutual-graph__actions {
         display: flex;
         gap: 8px;
         align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .mutual-graph__docs-button {
+        text-decoration: none;
     }
 
     .mutual-graph__status {
@@ -789,6 +672,8 @@
         flex: 1 1 auto;
         height: calc(100vh - 260px);
         min-height: 520px;
+        border-radius: 8px;
+        background: rgba(15, 23, 42, 0.02);
     }
 
     .mutual-graph__placeholder {
@@ -800,32 +685,5 @@
         display: flex;
         align-items: center;
         justify-content: center;
-    }
-
-    .mutual-graph__force-description {
-        margin: 0 0 12px 0;
-        font-size: 13px;
-    }
-
-    .mutual-graph__force-form {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 8px 16px;
-    }
-
-    .mutual-graph__number-input {
-        width: 100%;
-    }
-
-    .mutual-graph__dialog-footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-    }
-
-    .mutual-graph__helper {
-        margin-top: 4px;
-        font-size: 12px;
-        line-height: 1.4;
     }
 </style>

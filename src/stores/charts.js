@@ -11,20 +11,12 @@ function createDefaultFetchState() {
     };
 }
 
-function createDefaultPayload() {
-    return {
-        nodes: [],
-        links: []
-    };
-}
-
 export const useChartsStore = defineStore('Charts', () => {
     const friendStore = useFriendStore();
 
     const { t } = useI18n();
 
     const activeTab = ref('instance');
-    const mutualGraphPayload = ref(createDefaultPayload());
     const mutualGraphFetchState = reactive(createDefaultFetchState());
     const mutualGraphStatus = reactive({
         isFetching: false,
@@ -92,7 +84,6 @@ export const useChartsStore = defineStore('Charts', () => {
     });
 
     function resetMutualGraphState() {
-        mutualGraphPayload.value = createDefaultPayload();
         Object.assign(mutualGraphFetchState, createDefaultFetchState());
         mutualGraphStatus.isFetching = false;
         mutualGraphStatus.hasFetched = false;
@@ -104,7 +95,6 @@ export const useChartsStore = defineStore('Charts', () => {
 
     return {
         activeTab,
-        mutualGraphPayload,
         mutualGraphFetchState,
         mutualGraphStatus,
         resetMutualGraphState
