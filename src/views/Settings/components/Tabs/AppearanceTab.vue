@@ -351,11 +351,6 @@
                 :label="t('view.settings.appearance.user_dialog.vrcx_memos')"
                 :value="!hideUserMemos"
                 @change="setHideUserMemos" />
-            <div class="options-container-item">
-                <span class="name">{{
-                    t('view.settings.appearance.user_dialog.export_vrcx_memos_into_vrchat_notes')
-                }}</span>
-            </div>
         </div>
         <div class="options-container">
             <span class="header">{{ t('view.settings.appearance.friend_log.header') }}</span>

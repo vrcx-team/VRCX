@@ -1,5 +1,3 @@
-import { dbVars } from '../database';
-
 import sqliteService from '../sqlite.js';
 
 const tableAlter = {

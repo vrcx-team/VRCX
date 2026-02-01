@@ -1105,6 +1105,11 @@
                     </div>
                     <div class="flex items-center">
                         <template v-if="userDialog.ref.id === currentUser.id">
+                            <Input
+                                v-model="avatarSearchQuery"
+                                class="h-8 w-40 mr-2"
+                                placeholder="Search avatars"
+                                @click.stop />
                             <span class="mr-1">{{ t('dialog.user.avatars.sort_by') }}</span>
                             <Select
                                 :model-value="userDialog.avatarSorting"
@@ -1143,9 +1148,9 @@
                     </div>
                 </div>
                 <div class="x-friend-list" style="margin-top: 10px; min-height: 60px; max-height: 50vh">
-                    <template v-if="userDialogAvatars.length">
+                    <template v-if="filteredUserDialogAvatars.length">
                         <div
-                            v-for="avatar in userDialogAvatars"
+                            v-for="avatar in filteredUserDialogAvatars"
                             :key="avatar.id"
                             class="x-friend-item x-friend-item-border"
                             @click="showAvatarDialog(avatar.id)">
@@ -1251,6 +1256,7 @@
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import { DataTableEmpty } from '@/components/ui/data-table';
+    import { Input } from '@/components/ui/input';
     import { Spinner } from '@/components/ui/spinner';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
@@ -1471,6 +1477,25 @@
         }
         return avatars;
     });
+    const avatarSearchQuery = ref('');
+    const filteredUserDialogAvatars = computed(() => {
+        const avatars = userDialogAvatars.value;
+        if (userDialog.value.ref?.id !== currentUser.value.id) {
+            return avatars;
+        }
+        const query = avatarSearchQuery.value.trim().toLowerCase();
+        if (!query) {
+            return avatars;
+        }
+        return avatars.filter((avatar) => (avatar.name || '').toLowerCase().includes(query));
+    });
+
+    watch(
+        () => userDialog.value.id,
+        () => {
+            avatarSearchQuery.value = '';
+        }
+    );
 
     function userFavoriteWorldsStatus(visibility) {
         const style = {};

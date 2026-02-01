@@ -1,24 +1,5 @@
 <template>
     <div>
-        <div class="options-container" style="margin-top: 0">
-            <span class="header">{{ t('view.settings.advanced.advanced.header') }}</span>
-            <div class="options-container-item" style="margin-top: 15px">
-                <ButtonGroup>
-                    <Button variant="outline" size="sm" @click="showVRChatConfig()">
-                        <Settings />
-                        VRChat config.json
-                    </Button>
-                    <Button variant="outline" size="sm" @click="showLaunchOptions()">
-                        <Settings />
-                        {{ t('view.settings.advanced.advanced.launch_options') }}
-                    </Button>
-                    <Button variant="outline" size="sm" @click="showRegistryBackupDialog()">
-                        <Package />
-                        {{ t('view.settings.advanced.advanced.vrc_registry_backup') }}
-                    </Button>
-                </ButtonGroup>
-            </div>
-        </div>
         <div class="options-container">
             <span class="sub-header">{{ t('view.settings.advanced.advanced.primary_password.header') }}</span>
             <simple-switch
