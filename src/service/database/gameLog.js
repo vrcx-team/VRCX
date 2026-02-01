@@ -516,15 +516,25 @@ const gameLog = {
         return data;
     },
 
-    async getGameLogByLocation(instanceId, filters) {
-        var gamelogDatabase = [];
-        var location = true;
-        var onplayerjoined = true;
-        var onplayerleft = true;
-        var portalspawn = true;
-        var videoplay = true;
-        var resourceload_string = true;
-        var resourceload_image = true;
+    async getGameLogByLocation(instanceId, filters, vipList = []) {
+        let vipQuery = '';
+        const vipArgs = {};
+        if (vipList.length > 0) {
+            const vipPlaceholders = [];
+            vipList.forEach((vip, i) => {
+                const key = `@vip_${i}`;
+                vipArgs[key] = vip;
+                vipPlaceholders.push(key);
+            });
+            vipQuery = `AND user_id IN (${vipPlaceholders.join(', ')})`;
+        }
+        let location = true;
+        let onplayerjoined = true;
+        let onplayerleft = true;
+        let portalspawn = true;
+        let videoplay = true;
+        let resourceload_string = true;
+        let resourceload_image = true;
         if (filters.length > 0) {
             location = false;
             onplayerjoined = false;
@@ -559,23 +569,34 @@ const gameLog = {
                 }
             });
         }
+
+        const baseColumns = [
+            'id',
+            'created_at',
+            'type',
+            'display_name',
+            'location',
+            'user_id',
+            'time',
+            'world_id',
+            'world_name',
+            'group_name',
+            'instance_id',
+            'video_url',
+            'video_name',
+            'video_id',
+            'resource_url',
+            'resource_type'
+        ].join(', ');
+
+        const selects = [];
         if (location) {
-            await sqliteService.execute((dbRow) => {
-                var row = {
-                    rowId: dbRow[0],
-                    created_at: dbRow[1],
-                    type: 'Location',
-                    location: dbRow[2],
-                    worldId: dbRow[3],
-                    worldName: dbRow[4],
-                    time: dbRow[5],
-                    groupName: dbRow[6]
-                };
-                gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_location WHERE location LIKE '%${instanceId}%' ORDER BY id DESC LIMIT ${dbVars.searchTableSize}`);
+            selects.push(
+                `SELECT * FROM (SELECT id, created_at, 'Location' AS type, NULL AS display_name, location, NULL AS user_id, time, world_id, world_name, group_name, NULL AS instance_id, NULL AS video_url, NULL AS video_name, NULL AS video_id, NULL AS resource_url, NULL AS resource_type FROM gamelog_location WHERE location LIKE @locationLike ORDER BY id DESC LIMIT @perTable)`
+            );
         }
         if (onplayerjoined || onplayerleft) {
-            var query = '';
+            let query = '';
             if (!onplayerjoined || !onplayerleft) {
                 if (onplayerjoined) {
                     query = "AND type = 'OnPlayerJoined'";
@@ -583,85 +604,93 @@ const gameLog = {
                     query = "AND type = 'OnPlayerLeft'";
                 }
             }
-            await sqliteService.execute((dbRow) => {
-                var row = {
-                    rowId: dbRow[0],
-                    created_at: dbRow[1],
-                    type: dbRow[2],
-                    displayName: dbRow[3],
-                    location: dbRow[4],
-                    userId: dbRow[5],
-                    time: dbRow[6]
-                };
-                gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_join_leave WHERE (location LIKE '%${instanceId}%' AND user_id != '${dbVars.userId}') ${query} ORDER BY id DESC LIMIT ${dbVars.searchTableSize}`);
+            selects.push(
+                `SELECT * FROM (SELECT id, created_at, type, display_name, location, user_id, time, NULL AS world_id, NULL AS world_name, NULL AS group_name, NULL AS instance_id, NULL AS video_url, NULL AS video_name, NULL AS video_id, NULL AS resource_url, NULL AS resource_type FROM gamelog_join_leave WHERE (location LIKE @locationLike AND user_id != '${dbVars.userId}') ${vipQuery} ${query} ORDER BY id DESC LIMIT @perTable)`
+            );
         }
         if (portalspawn) {
-            await sqliteService.execute((dbRow) => {
-                var row = {
-                    rowId: dbRow[0],
-                    created_at: dbRow[1],
-                    type: 'PortalSpawn',
-                    displayName: dbRow[2],
-                    location: dbRow[3],
-                    userId: dbRow[4],
-                    instanceId: dbRow[5],
-                    worldName: dbRow[6]
-                };
-                gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_portal_spawn WHERE location LIKE '%${instanceId}%' ORDER BY id DESC LIMIT ${dbVars.searchTableSize}`);
+            selects.push(
+                `SELECT * FROM (SELECT id, created_at, 'PortalSpawn' AS type, display_name, location, user_id, NULL AS time, NULL AS world_id, world_name, NULL AS group_name, instance_id, NULL AS video_url, NULL AS video_name, NULL AS video_id, NULL AS resource_url, NULL AS resource_type FROM gamelog_portal_spawn WHERE location LIKE @locationLike ${vipQuery} ORDER BY id DESC LIMIT @perTable)`
+            );
         }
         if (videoplay) {
-            await sqliteService.execute((dbRow) => {
-                var row = {
-                    rowId: dbRow[0],
-                    created_at: dbRow[1],
-                    type: 'VideoPlay',
-                    videoUrl: dbRow[2],
-                    videoName: dbRow[3],
-                    videoId: dbRow[4],
-                    location: dbRow[5],
-                    displayName: dbRow[6],
-                    userId: dbRow[7]
-                };
-                gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_video_play WHERE location LIKE '%${instanceId}%' ORDER BY id DESC LIMIT ${dbVars.searchTableSize}`);
+            selects.push(
+                `SELECT * FROM (SELECT id, created_at, 'VideoPlay' AS type, display_name, location, user_id, NULL AS time, NULL AS world_id, NULL AS world_name, NULL AS group_name, NULL AS instance_id, video_url, video_name, video_id, NULL AS resource_url, NULL AS resource_type FROM gamelog_video_play WHERE location LIKE @locationLike ${vipQuery} ORDER BY id DESC LIMIT @perTable)`
+            );
         }
         if (resourceload_string || resourceload_image) {
-            var checkString = '';
-            var checkImage = '';
+            let checkString = '';
+            let checkImage = '';
             if (!resourceload_string) {
                 checkString = `AND resource_type != 'StringLoad'`;
             }
             if (!resourceload_image) {
-                checkString = `AND resource_type != 'ImageLoad'`;
+                checkImage = `AND resource_type != 'ImageLoad'`;
             }
-            await sqliteService.execute((dbRow) => {
-                var row = {
+            selects.push(
+                `SELECT * FROM (SELECT id, created_at, resource_type AS type, NULL AS display_name, location, NULL AS user_id, NULL AS time, NULL AS world_id, NULL AS world_name, NULL AS group_name, NULL AS instance_id, NULL AS video_url, NULL AS video_name, NULL AS video_id, resource_url, resource_type FROM gamelog_resource_load WHERE location LIKE @locationLike ${checkString} ${checkImage} ORDER BY id DESC LIMIT @perTable)`
+            );
+        }
+
+        if (selects.length === 0) {
+            return [];
+        }
+
+        const gamelogDatabase = [];
+        const args = {
+            '@locationLike': `%${instanceId}%`,
+            '@limit': dbVars.searchTableSize,
+            '@perTable': dbVars.searchTableSize,
+            ...vipArgs
+        };
+        await sqliteService.execute(
+            (dbRow) => {
+                const type = dbRow[2];
+                const row = {
                     rowId: dbRow[0],
                     created_at: dbRow[1],
-                    type: dbRow[3],
-                    resourceUrl: dbRow[2],
-                    location: dbRow[4]
+                    type
                 };
+                switch (type) {
+                    case 'Location':
+                        row.location = dbRow[4];
+                        row.worldId = dbRow[7];
+                        row.worldName = dbRow[8];
+                        row.time = dbRow[6];
+                        row.groupName = dbRow[9];
+                        break;
+                    case 'OnPlayerJoined':
+                    case 'OnPlayerLeft':
+                        row.displayName = dbRow[3];
+                        row.location = dbRow[4];
+                        row.userId = dbRow[5];
+                        row.time = dbRow[6];
+                        break;
+                    case 'PortalSpawn':
+                        row.displayName = dbRow[3];
+                        row.location = dbRow[4];
+                        row.userId = dbRow[5];
+                        row.instanceId = dbRow[10];
+                        row.worldName = dbRow[8];
+                        break;
+                    case 'VideoPlay':
+                        row.videoUrl = dbRow[11];
+                        row.videoName = dbRow[12];
+                        row.videoId = dbRow[13];
+                        row.location = dbRow[4];
+                        row.displayName = dbRow[3];
+                        row.userId = dbRow[5];
+                        break;
+                    case 'StringLoad':
+                    case 'ImageLoad':
+                        row.resourceUrl = dbRow[14];
+                        row.location = dbRow[4];
+                        break;
+                }
                 gamelogDatabase.push(row);
-            }, `SELECT * FROM gamelog_resource_load WHERE location LIKE '%${instanceId}%' ${checkString} ${checkImage} ORDER BY id DESC LIMIT ${dbVars.searchTableSize}`);
-        }
-        var compareByCreatedAt = function (a, b) {
-            var A = a.created_at;
-            var B = b.created_at;
-            if (A < B) {
-                return -1;
-            }
-            if (A > B) {
-                return 1;
-            }
-            return 0;
-        };
-        gamelogDatabase.sort(compareByCreatedAt);
-        gamelogDatabase.splice(
-            0,
-            gamelogDatabase.length - dbVars.searchTableSize
+            },
+            `SELECT ${baseColumns} FROM (${selects.join(' UNION ALL ')}) ORDER BY created_at DESC, id DESC LIMIT @limit`,
+            args
         );
         return gamelogDatabase;
     },
@@ -888,7 +917,7 @@ const gameLog = {
         maxEntries = dbVars.searchTableSize
     ) {
         if (search.startsWith('wrld_') || search.startsWith('grp_')) {
-            return this.getGameLogByLocation(search, filters);
+            return this.getGameLogByLocation(search, filters, vipList);
         }
         let vipQuery = '';
         const vipArgs = {};
