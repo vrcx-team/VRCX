@@ -454,7 +454,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             console.error('Failed to get avatar images:', error);
             return {
                 ownerId: '',
-                vatarName: '-'
+                avatarName: '-'
             };
         }
     }
