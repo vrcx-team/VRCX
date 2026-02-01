@@ -139,6 +139,15 @@
                 :label="t('view.settings.general.logging.empty_avatar')"
                 :value="logEmptyAvatars"
                 @change="setLogEmptyAvatars" />
+            <simple-switch
+                :label="t('view.settings.general.logging.auto_login_delay')"
+                :value="autoLoginDelayEnabled"
+                @change="setAutoLoginDelayEnabled" />
+            <div v-if="autoLoginDelayEnabled" class="options-container-item">
+                <Button size="sm" variant="outline" @click="promptAutoLoginDelaySeconds">
+                    {{ t('view.settings.general.logging.auto_login_delay_button') }}
+                </Button>
+            </div>
         </div>
         <div class="options-container">
             <span class="header">{{ t('view.settings.general.automation.header') }}</span>
@@ -333,6 +342,7 @@
         udonExceptionLogging,
         logResourceLoad,
         logEmptyAvatars,
+        autoLoginDelayEnabled,
         autoStateChangeEnabled,
         autoStateChangeAloneStatus,
         autoStateChangeCompanyStatus,
@@ -350,6 +360,8 @@
         setUdonExceptionLogging,
         setLogResourceLoad,
         setLogEmptyAvatars,
+        setAutoLoginDelayEnabled,
+        promptAutoLoginDelaySeconds,
         setAutoStateChangeEnabled,
         setAutoStateChangeAloneStatus,
         setAutoStateChangeCompanyStatus,

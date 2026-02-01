@@ -547,7 +547,9 @@
                 "logging": {
                     "header": "Logging",
                     "resource_load": "Log Udon string/image load",
-                    "empty_avatar": "Log avatars in feed without names"
+                    "empty_avatar": "Log avatars in feed without names",
+                    "auto_login_delay": "Auto-login delay",
+                    "auto_login_delay_button": "Set delay seconds"
                 },
                 "automation": {
                     "header": "Automation",
@@ -2051,6 +2053,7 @@
         "traveling": "Traveling"
     },
     "message": {
+        "auto_login_delay_countdown": "Auto-login in {seconds}s...",
         "vrcx_updater": {
             "failed": "Failed to check for update, {message}",
             "failed_install": "Failed to install update",
@@ -2369,6 +2372,11 @@
             "cancel": "Cancel",
             "save": "Save",
             "input_error": "Valid number is required"
+        },
+        "auto_login_delay": {
+            "header": "Auto-login delay",
+            "description": "Enter delay in seconds (0 to disable, max 10).",
+            "input_error": "Please enter a whole number from 0 to 10."
         },
         "proxy_settings": {
             "header": "Proxy Settings",

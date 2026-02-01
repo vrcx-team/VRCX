@@ -12,6 +12,7 @@ import { database } from '../service/database';
 import { escapeTag } from '../shared/utils';
 import { request } from '../service/request';
 import { useAdvancedSettingsStore } from './settings/advanced';
+import { useGeneralSettingsStore } from './settings/general';
 import { useModalStore } from './modal';
 import { useNotificationStore } from './notification';
 import { useUpdateLoopStore } from './updateLoop';
@@ -22,8 +23,11 @@ import configRepository from '../service/config';
 import security from '../service/security';
 import webApiService from '../service/webapi';
 
+import * as workerTimers from 'worker-timers';
+
 export const useAuthStore = defineStore('Auth', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
+    const generalSettingsStore = useGeneralSettingsStore();
     const notificationStore = useNotificationStore();
     const userStore = useUserStore();
     const updateLoopStore = useUpdateLoopStore();
@@ -187,6 +191,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 AppDebug.endpointDomain = user.loginParams.endpoint;
                 AppDebug.websocketDomain = user.loginParams.websocket;
             }
+            await applyAutoLoginDelay();
             // login at startup
             loginForm.value.loading = true;
             authRequest
@@ -845,6 +850,34 @@ export const useAuthStore = defineStore('Auth', () => {
                     console.error(`You're offline.`);
                 }
             });
+    }
+
+    async function applyAutoLoginDelay() {
+        if (!generalSettingsStore.autoLoginDelayEnabled) {
+            return;
+        }
+        const seconds = generalSettingsStore.autoLoginDelaySeconds;
+        if (!seconds || seconds <= 0) {
+            return;
+        }
+        let toastId = null;
+        for (let remaining = seconds; remaining > 0; remaining--) {
+            if (toastId) {
+                toast.dismiss(toastId);
+            }
+            toastId = toast.info(
+                t('message.auto_login_delay_countdown', {
+                    seconds: remaining
+                }),
+                { duration: Infinity }
+            );
+            await new Promise((resolve) => {
+                workerTimers.setTimeout(resolve, 1000);
+            });
+        }
+        if (toastId) {
+            toast.dismiss(toastId);
+        }
     }
 
     async function loginComplete() {

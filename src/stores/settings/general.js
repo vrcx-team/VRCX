@@ -28,6 +28,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     const udonExceptionLogging = ref(false);
     const logResourceLoad = ref(false);
     const logEmptyAvatars = ref(false);
+    const autoLoginDelayEnabled = ref(false);
+    const autoLoginDelaySeconds = ref(0);
     const autoStateChangeEnabled = ref(false);
     const autoStateChangeAloneStatus = ref('join me');
     const autoStateChangeCompanyStatus = ref('busy');
@@ -47,6 +49,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             udonExceptionLoggingConfig,
             logResourceLoadConfig,
             logEmptyAvatarsConfig,
+            autoLoginDelayEnabledConfig,
+            autoLoginDelaySecondsConfig,
             autoStateChangeEnabledConfig,
             autoStateChangeAloneStatusConfig,
             autoStateChangeCompanyStatusConfig,
@@ -64,6 +68,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             configRepository.getBool('VRCX_udonExceptionLogging', false),
             configRepository.getBool('VRCX_logResourceLoad', false),
             configRepository.getBool('VRCX_logEmptyAvatars', false),
+            configRepository.getBool('VRCX_autoLoginDelayEnabled', false),
+            configRepository.getInt('VRCX_autoLoginDelaySeconds', 0),
             configRepository.getBool('VRCX_autoStateChangeEnabled', false),
             configRepository.getString(
                 'VRCX_autoStateChangeAloneStatus',
@@ -107,6 +113,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         udonExceptionLogging.value = udonExceptionLoggingConfig;
         logResourceLoad.value = logResourceLoadConfig;
         logEmptyAvatars.value = logEmptyAvatarsConfig;
+        autoLoginDelayEnabled.value = autoLoginDelayEnabledConfig;
+        autoLoginDelaySeconds.value = autoLoginDelaySecondsConfig;
         autoStateChangeEnabled.value = autoStateChangeEnabledConfig;
         autoStateChangeAloneStatus.value = autoStateChangeAloneStatusConfig;
         autoStateChangeCompanyStatus.value = autoStateChangeCompanyStatusConfig;
@@ -178,6 +186,40 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     function setLogEmptyAvatars() {
         logEmptyAvatars.value = !logEmptyAvatars.value;
         configRepository.setBool('VRCX_logEmptyAvatars', logEmptyAvatars.value);
+    }
+    function setAutoLoginDelayEnabled() {
+        autoLoginDelayEnabled.value = !autoLoginDelayEnabled.value;
+        configRepository.setBool(
+            'VRCX_autoLoginDelayEnabled',
+            autoLoginDelayEnabled.value
+        );
+    }
+    function setAutoLoginDelaySeconds(value) {
+        const parsed = parseInt(value, 10);
+        autoLoginDelaySeconds.value = Number.isNaN(parsed)
+            ? 0
+            : Math.min(10, Math.max(0, parsed));
+        configRepository.setInt(
+            'VRCX_autoLoginDelaySeconds',
+            autoLoginDelaySeconds.value
+        );
+    }
+    function promptAutoLoginDelaySeconds() {
+        modalStore
+            .prompt({
+                title: t('prompt.auto_login_delay.header'),
+                description: t('prompt.auto_login_delay.description'),
+                inputValue: String(autoLoginDelaySeconds.value),
+                pattern: /^(10|[0-9])$/,
+                errorMessage: t('prompt.auto_login_delay.input_error')
+            })
+            .then(({ ok, value }) => {
+                if (!ok) return;
+                setAutoLoginDelaySeconds(value);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     }
     function setAutoStateChangeEnabled() {
         autoStateChangeEnabled.value = !autoStateChangeEnabled.value;
@@ -285,6 +327,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         udonExceptionLogging,
         logResourceLoad,
         logEmptyAvatars,
+        autoLoginDelayEnabled,
+        autoLoginDelaySeconds,
         autoStateChangeEnabled,
         autoStateChangeAloneStatus,
         autoStateChangeCompanyStatus,
@@ -301,6 +345,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         setUdonExceptionLogging,
         setLogResourceLoad,
         setLogEmptyAvatars,
+        setAutoLoginDelayEnabled,
+        promptAutoLoginDelaySeconds,
         setAutoStateChangeEnabled,
         setAutoStateChangeAloneStatus,
         setAutoStateChangeCompanyStatus,
