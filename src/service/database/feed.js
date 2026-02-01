@@ -440,17 +440,16 @@ const feed = {
     },
 
     async getFeedByInstanceId(instanceId, filters, vipList) {
-        const feedDatabase = [];
         let vipQuery = '';
+        const vipArgs = {};
         if (vipList.length > 0) {
-            vipQuery = 'AND user_id IN (';
+            const vipPlaceholders = [];
             vipList.forEach((vip, i) => {
-                vipQuery += `'${vip.replaceAll("'", "''")}'`;
-                if (i < vipList.length - 1) {
-                    vipQuery += ', ';
-                }
+                const key = `@vip_${i}`;
+                vipArgs[key] = vip;
+                vipPlaceholders.push(key);
             });
-            vipQuery += ')';
+            vipQuery = `AND user_id IN (${vipPlaceholders.join(', ')})`;
         }
         let gps = true;
         let online = true;
@@ -473,22 +472,35 @@ const feed = {
                 }
             });
         }
+        const selects = [];
+        const baseColumns = [
+            'id',
+            'created_at',
+            'user_id',
+            'display_name',
+            'type',
+            'location',
+            'world_name',
+            'previous_location',
+            'time',
+            'group_name',
+            'status',
+            'status_description',
+            'previous_status',
+            'previous_status_description',
+            'bio',
+            'previous_bio',
+            'owner_id',
+            'avatar_name',
+            'current_avatar_image_url',
+            'current_avatar_thumbnail_image_url',
+            'previous_current_avatar_image_url',
+            'previous_current_avatar_thumbnail_image_url'
+        ].join(', ');
         if (gps) {
-            await sqliteService.execute((dbRow) => {
-                const row = {
-                    rowId: dbRow[0],
-                    created_at: dbRow[1],
-                    userId: dbRow[2],
-                    displayName: dbRow[3],
-                    type: 'GPS',
-                    location: dbRow[4],
-                    worldName: dbRow[5],
-                    previousLocation: dbRow[6],
-                    time: dbRow[7],
-                    groupName: dbRow[8]
-                };
-                feedDatabase.push(row);
-            }, `SELECT * FROM ${dbVars.userPrefix}_feed_gps WHERE location LIKE '%${instanceId}%' ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.searchTableSize}`);
+            selects.push(
+                `SELECT * FROM (SELECT id, created_at, user_id, display_name, 'GPS' AS type, location, world_name, previous_location, time, group_name, NULL AS status, NULL AS status_description, NULL AS previous_status, NULL AS previous_status_description, NULL AS bio, NULL AS previous_bio, NULL AS owner_id, NULL AS avatar_name, NULL AS current_avatar_image_url, NULL AS current_avatar_thumbnail_image_url, NULL AS previous_current_avatar_image_url, NULL AS previous_current_avatar_thumbnail_image_url FROM ${dbVars.userPrefix}_feed_gps WHERE location LIKE @instanceLike ${vipQuery} ORDER BY created_at DESC, id DESC LIMIT @perTable)`
+            );
         }
         if (online || offline) {
             let query = '';
@@ -499,39 +511,51 @@ const feed = {
                     query = "AND type = 'Offline'";
                 }
             }
-            await sqliteService.execute((dbRow) => {
+            selects.push(
+                `SELECT * FROM (SELECT id, created_at, user_id, display_name, type, location, world_name, NULL AS previous_location, time, group_name, NULL AS status, NULL AS status_description, NULL AS previous_status, NULL AS previous_status_description, NULL AS bio, NULL AS previous_bio, NULL AS owner_id, NULL AS avatar_name, NULL AS current_avatar_image_url, NULL AS current_avatar_thumbnail_image_url, NULL AS previous_current_avatar_image_url, NULL AS previous_current_avatar_thumbnail_image_url FROM ${dbVars.userPrefix}_feed_online_offline WHERE location LIKE @instanceLike ${query} ${vipQuery} ORDER BY created_at DESC, id DESC LIMIT @perTable)`
+            );
+        }
+        if (selects.length === 0) {
+            return [];
+        }
+        const feedDatabase = [];
+        const args = {
+            '@instanceLike': `%${instanceId}%`,
+            '@limit': dbVars.searchTableSize,
+            '@perTable': dbVars.searchTableSize,
+            ...vipArgs
+        };
+        await sqliteService.execute(
+            (dbRow) => {
+                const type = dbRow[4];
                 const row = {
                     rowId: dbRow[0],
                     created_at: dbRow[1],
                     userId: dbRow[2],
                     displayName: dbRow[3],
-                    type: dbRow[4],
-                    location: dbRow[5],
-                    worldName: dbRow[6],
-                    time: dbRow[7],
-                    groupName: dbRow[8]
+                    type
                 };
+                switch (type) {
+                    case 'GPS':
+                        row.location = dbRow[5];
+                        row.worldName = dbRow[6];
+                        row.previousLocation = dbRow[7];
+                        row.time = dbRow[8];
+                        row.groupName = dbRow[9];
+                        break;
+                    case 'Online':
+                    case 'Offline':
+                        row.location = dbRow[5];
+                        row.worldName = dbRow[6];
+                        row.time = dbRow[8];
+                        row.groupName = dbRow[9];
+                        break;
+                }
                 feedDatabase.push(row);
-            }, `SELECT * FROM ${dbVars.userPrefix}_feed_online_offline WHERE (location LIKE '%${instanceId}%' ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.searchTableSize}`);
-        }
-        const compareByCreatedAt = function (a, b) {
-            const A = a.created_at;
-            const B = b.created_at;
-            if (A < B) {
-                return -1;
-            }
-            if (A > B) {
-                return 1;
-            }
-            return 0;
-        };
-        feedDatabase.sort(compareByCreatedAt);
-        if (feedDatabase.length > dbVars.searchTableSize) {
-            feedDatabase.splice(
-                0,
-                feedDatabase.length - dbVars.searchTableSize
-            );
-        }
+            },
+            `SELECT ${baseColumns} FROM (${selects.join(' UNION ALL ')}) ORDER BY created_at DESC, id DESC LIMIT @limit`,
+            args
+        );
         return feedDatabase;
     }
 };
