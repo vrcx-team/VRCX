@@ -1,5 +1,5 @@
 <template>
-    <div class="x-friend-item" @click="showUserDialog(friend.id)">
+    <div class="x-friend-item hover:bg-muted/50" @click="showUserDialog(friend.id)">
         <template v-if="friend.ref">
             <div
                 class="avatar"
