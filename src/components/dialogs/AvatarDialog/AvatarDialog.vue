@@ -13,7 +13,7 @@
                         :src="avatarDialog.ref.thumbnailImageUrl"
                         class="cursor-pointer"
                         @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)"
-                        style="width: 160px; height: 120px; border-radius: 12px"
+                        style="width: 160px; height: 120px; border-radius: 12px; object-fit: cover"
                         loading="lazy" />
                 </div>
                 <div style="flex: 1; display: flex; align-items: flex-start; margin-left: 15px">
