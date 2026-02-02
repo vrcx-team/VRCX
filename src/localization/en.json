@@ -1256,7 +1256,8 @@
                 "last_visited": "Last Visited",
                 "visit_count": "Visit Count",
                 "time_spent": "Time Spent",
-                "accuracy_notice": "Info from local database may not be accurate"
+                "accuracy_notice": "Info from local database may not be accurate",
+                "translate_description": "Translate Description"
             },
             "json": {
                 "header": "JSON"
@@ -1581,7 +1582,13 @@
                 "api_key": "API Key (Optional)",
                 "model": "Model Name",
                 "prompt_optional": "Prompt (Optional)"
-            }
+            },
+            "fetch_models": "Fetch Models",
+            "fetching_models": "Fetching...",
+            "msg_endpoint_required": "Please fill in the endpoint first",
+            "msg_models_fetched": "Found {count} models",
+            "msg_no_models_found": "No models found",
+            "msg_fetch_models_failed": "Failed to fetch models"
         },
         "set_world_tags": {
             "header": "Set World Tags",
