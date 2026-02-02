@@ -1,6 +1,6 @@
 <template>
     <div id="x-app" class="x-app x-app-type">
-        <div class="wrist" :class="{ background: config && config.backgroundEnabled }">
+        <div class="wrist" :style="{ background: config && config.backgroundEnabled ? 'grey' : undefined }">
             <div class="x-container" style="flex: 1">
                 <div class="x-friend-list" ref="list" style="color: #aaa">
                     <template v-if="config && config.minimalFeed">
