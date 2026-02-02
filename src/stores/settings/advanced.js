@@ -395,17 +395,24 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
     async function fetchAvailableModels(overrides = {}) {
         const baseURL = overrides.endpoint || translationApiEndpoint.value;
-        
+
         if (!baseURL) {
             toast.warning('Translation endpoint not configured');
             return [];
         }
 
-        const normalizedBaseURL = baseURL.endsWith('/') ? baseURL.slice(0, -1) : baseURL;
-        
+        const normalizedBaseURL = baseURL.endsWith('/')
+            ? baseURL.slice(0, -1)
+            : baseURL;
+
         let modelsURL;
         if (normalizedBaseURL.includes('/chat/completions')) {
-            modelsURL = normalizedBaseURL.replace(/\/chat\/completions$/, '/models');
+            modelsURL = normalizedBaseURL.replace(
+                /\/chat\/completions$/,
+                '/models'
+            );
+        } else if (normalizedBaseURL.endsWith('/models')) {
+            modelsURL = normalizedBaseURL;
         } else {
             modelsURL = `${normalizedBaseURL}/models`;
         }

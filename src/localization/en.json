@@ -1256,8 +1256,7 @@
                 "last_visited": "Last Visited",
                 "visit_count": "Visit Count",
                 "time_spent": "Time Spent",
-                "accuracy_notice": "Info from local database may not be accurate",
-                "translate_description": "Translate Description"
+                "accuracy_notice": "Info from local database may not be accurate"
             },
             "json": {
                 "header": "JSON"

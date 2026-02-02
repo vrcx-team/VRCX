@@ -88,18 +88,21 @@
                     <Field>
                         <FieldLabel>{{ t('dialog.translation_api.openai.model') }}</FieldLabel>
                         <FieldContent>
-                            <div style="display: flex; gap: 8px; align-items: flex-start;">
-                                <div style="flex: 1;">
+                            <div class="flex gap-2 items-start">
+                                <div class="flex-1">
                                     <Select
                                         v-if="availableModels.length > 0"
                                         :model-value="form.translationApiModel"
-                                        @update:modelValue="(value) => form.translationApiModel = value">
+                                        @update:modelValue="(value) => (form.translationApiModel = value)">
                                         <SelectTrigger size="sm" style="width: 100%">
                                             <SelectValue :placeholder="t('dialog.translation_api.openai.model')" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
-                                                <SelectItem v-for="model in availableModels" :key="model" :value="model">
+                                                <SelectItem
+                                                    v-for="model in availableModels"
+                                                    :key="model"
+                                                    :value="model">
                                                     {{ model }}
                                                 </SelectItem>
                                             </SelectGroup>
@@ -109,14 +112,18 @@
                                         v-else
                                         v-model="form.translationApiModel"
                                         clearable
-                                        style="width: 100%;" />
+                                        class="w-full" />
                                 </div>
                                 <Button
                                     variant="outline"
                                     size="sm"
                                     @click="fetchModels"
                                     :disabled="isFetchingModels || !form.translationApiEndpoint">
-                                    {{ isFetchingModels ? t('dialog.translation_api.fetching_models') : t('dialog.translation_api.fetch_models') }}
+                                    {{
+                                        isFetchingModels
+                                            ? t('dialog.translation_api.fetching_models')
+                                            : t('dialog.translation_api.fetch_models')
+                                    }}
                                 </Button>
                             </div>
                         </FieldContent>
@@ -142,10 +149,7 @@
                     ">
                     {{ t('dialog.translation_api.guide') }}
                 </Button>
-                <Button
-                    variant="outline"
-                    v-if="form.translationApiType === 'openai'"
-                    @click="testOpenAiTranslation">
+                <Button variant="outline" v-if="form.translationApiType === 'openai'" @click="testOpenAiTranslation">
                     {{ t('dialog.translation_api.test') }}
                 </Button>
                 <Button @click="saveTranslationApiConfig">
@@ -280,7 +284,6 @@
             }
         } catch (err) {
             console.error('[TranslationAPI] Failed to fetch models', err);
-            toast.error(t('dialog.translation_api.msg_fetch_models_failed'));
         } finally {
             isFetchingModels.value = false;
         }

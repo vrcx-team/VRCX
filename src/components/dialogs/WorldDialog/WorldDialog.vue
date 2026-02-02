@@ -150,14 +150,18 @@
                                 </Badge>
                             </template>
                         </div>
-                        <div style="margin-top: 5px; display: flex; align-items: center;">
+                        <div style="margin-top: 5px; display: flex; align-items: center">
                             <span
                                 v-show="worldDialog.ref.name !== worldDialog.ref.description"
-                                style="font-size: 12px; flex: 1; margin-right: 0.5em;"
+                                style="font-size: 12px; flex: 1; margin-right: 0.5em"
                                 >{{ translatedDescription || worldDialog.ref.description }}</span
                             >
                             <Button
-                                v-if="translationApi && worldDialog.ref.description && worldDialog.ref.name !== worldDialog.ref.description"
+                                v-if="
+                                    translationApi &&
+                                    worldDialog.ref.description &&
+                                    worldDialog.ref.name !== worldDialog.ref.description
+                                "
                                 class="w-3 h-6 text-xs"
                                 size="icon-sm"
                                 variant="ghost"
@@ -1354,7 +1358,7 @@
 
     async function translateDescription() {
         if (isTranslating.value) return;
-        
+
         const description = worldDialog.value.ref.description;
         if (!description) return;
 
@@ -1366,12 +1370,11 @@
 
         isTranslating.value = true;
         try {
-            const providerLabel = translationApiType.value === 'openai' ? 'OpenAI' : 'Google';
-            const translated = await translateText(`${description}\n\nTranslated by ${providerLabel}`, bioLanguage.value);
+            const translated = await translateText(description, bioLanguage.value);
             if (!translated) {
                 throw new Error('No translation returned');
             }
-            
+
             translatedDescription.value = translated;
         } catch (error) {
             console.error('Translation failed:', error);
