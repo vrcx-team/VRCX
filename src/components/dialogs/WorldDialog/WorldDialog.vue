@@ -150,12 +150,25 @@
                                 </Badge>
                             </template>
                         </div>
-                        <div style="margin-top: 5px">
+                        <div style="margin-top: 5px; display: flex; align-items: center">
                             <span
                                 v-show="worldDialog.ref.name !== worldDialog.ref.description"
-                                style="font-size: 12px"
-                                >{{ worldDialog.ref.description }}</span
+                                style="font-size: 12px; flex: 1; margin-right: 0.5em"
+                                >{{ translatedDescription || worldDialog.ref.description }}</span
                             >
+                            <Button
+                                v-if="
+                                    translationApi &&
+                                    worldDialog.ref.description &&
+                                    worldDialog.ref.name !== worldDialog.ref.description
+                                "
+                                class="w-3 h-6 text-xs"
+                                size="icon-sm"
+                                variant="ghost"
+                                @click="translateDescription">
+                                <Spinner v-if="isTranslating" class="size-1" />
+                                <Languages v-else class="h-3 w-3" />
+                            </Button>
                         </div>
                     </div>
                     <div class="ml-2 mt-12">
@@ -737,6 +750,7 @@
         Flag,
         Home,
         Image,
+        Languages,
         LineChart,
         MessageSquare,
         Monitor,
@@ -777,6 +791,7 @@
         userStatusClass
     } from '../../../shared/utils';
     import {
+        useAdvancedSettingsStore,
         useAppearanceSettingsStore,
         useFavoriteStore,
         useGalleryStore,
@@ -803,6 +818,8 @@
     import InstanceActionBar from '../../InstanceActionBar.vue';
 
     const modalStore = useModalStore();
+    const { translateText } = useAdvancedSettingsStore();
+    const { bioLanguage, translationApi, translationApiType } = storeToRefs(useAdvancedSettingsStore());
 
     const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog.vue'));
     const ChangeWorldImageDialog = defineAsyncComponent(() => import('./ChangeWorldImageDialog.vue'));
@@ -839,6 +856,8 @@
     const newInstanceDialogLocationTag = ref('');
     const changeWorldImageDialogVisible = ref(false);
     const previousImageUrl = ref('');
+    const translatedDescription = ref('');
+    const isTranslating = ref(false);
 
     const isDialogVisible = computed({
         get() {
@@ -1336,6 +1355,40 @@
         D.urlList = worldDialog.value.ref?.urlList ?? [];
         D.visible = true;
     }
+
+    async function translateDescription() {
+        if (isTranslating.value) return;
+
+        const description = worldDialog.value.ref.description;
+        if (!description) return;
+
+        // Toggle: if already translated, clear to show original
+        if (translatedDescription.value) {
+            translatedDescription.value = '';
+            return;
+        }
+
+        isTranslating.value = true;
+        try {
+            const translated = await translateText(description, bioLanguage.value);
+            if (!translated) {
+                throw new Error('No translation returned');
+            }
+
+            translatedDescription.value = translated;
+        } catch (error) {
+            console.error('Translation failed:', error);
+        } finally {
+            isTranslating.value = false;
+        }
+    }
+
+    watch(
+        () => worldDialog.value.id,
+        () => {
+            translatedDescription.value = '';
+        }
+    );
 </script>
 
 <style scoped>

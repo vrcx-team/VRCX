@@ -88,7 +88,44 @@
                     <Field>
                         <FieldLabel>{{ t('dialog.translation_api.openai.model') }}</FieldLabel>
                         <FieldContent>
-                            <InputGroupField v-model="form.translationApiModel" clearable />
+                            <div class="flex gap-2 items-start">
+                                <div class="flex-1">
+                                    <Select
+                                        v-if="availableModels.length > 0"
+                                        :model-value="form.translationApiModel"
+                                        @update:modelValue="(value) => (form.translationApiModel = value)">
+                                        <SelectTrigger size="sm" style="width: 100%">
+                                            <SelectValue :placeholder="t('dialog.translation_api.openai.model')" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectItem
+                                                    v-for="model in availableModels"
+                                                    :key="model"
+                                                    :value="model">
+                                                    {{ model }}
+                                                </SelectItem>
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                    <InputGroupField
+                                        v-else
+                                        v-model="form.translationApiModel"
+                                        clearable
+                                        class="w-full" />
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    @click="fetchModels"
+                                    :disabled="isFetchingModels || !form.translationApiEndpoint">
+                                    {{
+                                        isFetchingModels
+                                            ? t('dialog.translation_api.fetching_models')
+                                            : t('dialog.translation_api.fetch_models')
+                                    }}
+                                </Button>
+                            </div>
                         </FieldContent>
                     </Field>
 
@@ -112,10 +149,7 @@
                     ">
                     {{ t('dialog.translation_api.guide') }}
                 </Button>
-                <Button
-                    variant="outline"
-                    v-if="form.translationApiType === 'openai'"
-                    @click="testOpenAiTranslation">
+                <Button variant="outline" v-if="form.translationApiType === 'openai'" @click="testOpenAiTranslation">
                     {{ t('dialog.translation_api.test') }}
                 </Button>
                 <Button @click="saveTranslationApiConfig">
@@ -131,7 +165,7 @@
     import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
-    import { reactive, watch } from 'vue';
+    import { reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -155,6 +189,7 @@
     const {
         setBioLanguage,
         translateText,
+        fetchAvailableModels,
         setTranslationApiKey,
         setTranslationApiType,
         setTranslationApiEndpoint,
@@ -163,6 +198,9 @@
     } = advancedSettingsStore;
 
     const { t } = useI18n();
+
+    const isFetchingModels = ref(false);
+    const availableModels = ref([]);
 
     const props = defineProps({
         isTranslationApiDialogVisible: {
@@ -191,6 +229,7 @@
         form.translationApiModel = translationApiModel.value || '';
         form.translationApiPrompt = translationApiPrompt.value || '';
         form.translationApiKey = translationApiKey.value || '';
+        availableModels.value = [];
     };
 
     watch(
@@ -221,6 +260,33 @@
 
         toast.success(t('dialog.translation_api.msg_settings_saved'));
         closeDialog();
+    }
+
+    async function fetchModels() {
+        if (!form.translationApiEndpoint) {
+            toast.warning(t('dialog.translation_api.msg_endpoint_required'));
+            return;
+        }
+
+        isFetchingModels.value = true;
+        try {
+            const models = await fetchAvailableModels({
+                endpoint: form.translationApiEndpoint,
+                key: form.translationApiKey
+            });
+
+            if (models && models.length > 0) {
+                availableModels.value = models;
+                toast.success(t('dialog.translation_api.msg_models_fetched', { count: models.length }));
+            } else {
+                availableModels.value = [];
+                toast.warning(t('dialog.translation_api.msg_no_models_found'));
+            }
+        } catch (err) {
+            console.error('[TranslationAPI] Failed to fetch models', err);
+        } finally {
+            isFetchingModels.value = false;
+        }
     }
 
     async function testOpenAiTranslation() {

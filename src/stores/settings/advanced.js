@@ -392,6 +392,76 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             translationApiPrompt.value
         );
     }
+
+    async function fetchAvailableModels(overrides = {}) {
+        const baseURL = overrides.endpoint || translationApiEndpoint.value;
+
+        if (!baseURL) {
+            toast.warning('Translation endpoint not configured');
+            return [];
+        }
+
+        const normalizedBaseURL = baseURL.endsWith('/')
+            ? baseURL.slice(0, -1)
+            : baseURL;
+
+        let modelsURL;
+        if (normalizedBaseURL.includes('/chat/completions')) {
+            modelsURL = normalizedBaseURL.replace(
+                /\/chat\/completions$/,
+                '/models'
+            );
+        } else if (normalizedBaseURL.endsWith('/models')) {
+            modelsURL = normalizedBaseURL;
+        } else {
+            modelsURL = `${normalizedBaseURL}/models`;
+        }
+
+        const headers = {};
+        const keyToUse = overrides.key ?? translationApiKey.value;
+        if (keyToUse) {
+            headers.Authorization = `Bearer ${keyToUse}`;
+        }
+
+        try {
+            const response = await webApiService.execute({
+                url: modelsURL,
+                method: 'GET',
+                headers
+            });
+
+            if (response.status !== 200) {
+                throw new Error(
+                    `Failed to fetch models: ${response.status} - ${response.data}`
+                );
+            }
+
+            const data = JSON.parse(response.data);
+            if (AppDebug.debugWebRequests) {
+                console.log('Models API response:', data);
+            }
+
+            if (data.data && Array.isArray(data.data)) {
+                return data.data
+                    .map((model) => model.id)
+                    .filter((id) => id && typeof id === 'string')
+                    .sort();
+            }
+
+            if (Array.isArray(data)) {
+                return data
+                    .map((model) => model.id || model.name)
+                    .filter((id) => id && typeof id === 'string')
+                    .sort();
+            }
+
+            throw new Error('Unexpected API response format');
+        } catch (error) {
+            console.error('Failed to fetch models:', error);
+            toast.error(`Failed to fetch models: ${error.message}`);
+            return [];
+        }
+    }
     function setBioLanguage(language) {
         bioLanguage.value = language;
         configRepository.setString('VRCX_bioLanguage', language);
@@ -969,6 +1039,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         handleSetAppLauncherSettings,
         lookupYouTubeVideo,
         translateText,
+        fetchAvailableModels,
         resetUGCFolder,
         openUGCFolder,
         openUGCFolderSelector,
