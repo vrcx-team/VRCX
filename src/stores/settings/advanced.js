@@ -401,20 +401,40 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             return [];
         }
 
-        const normalizedBaseURL = baseURL.endsWith('/')
-            ? baseURL.slice(0, -1)
-            : baseURL;
+        let modelsURL = '';
+        try {
+            const url = new URL(baseURL);
+            const basePath = url.pathname.replace(/\/+$/, '');
 
-        let modelsURL;
-        if (normalizedBaseURL.includes('/chat/completions')) {
-            modelsURL = normalizedBaseURL.replace(
-                /\/chat\/completions$/,
-                '/models'
-            );
-        } else if (normalizedBaseURL.endsWith('/models')) {
-            modelsURL = normalizedBaseURL;
-        } else {
-            modelsURL = `${normalizedBaseURL}/models`;
+            if (basePath.endsWith('/chat/completions')) {
+                url.pathname = basePath.replace(
+                    /\/chat\/completions$/,
+                    '/models'
+                );
+            } else if (basePath.endsWith('/models')) {
+                url.pathname = basePath;
+            } else {
+                url.pathname = `${basePath}/models`;
+            }
+
+            url.search = '';
+            url.hash = '';
+            modelsURL = url.toString();
+        } catch {
+            const normalizedBaseURL = baseURL.endsWith('/')
+                ? baseURL.slice(0, -1)
+                : baseURL;
+
+            if (normalizedBaseURL.includes('/chat/completions')) {
+                modelsURL = normalizedBaseURL.replace(
+                    /\/chat\/completions$/,
+                    '/models'
+                );
+            } else if (normalizedBaseURL.endsWith('/models')) {
+                modelsURL = normalizedBaseURL;
+            } else {
+                modelsURL = `${normalizedBaseURL}/models`;
+            }
         }
 
         const headers = {};
@@ -462,6 +482,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             return [];
         }
     }
+
     function setBioLanguage(language) {
         bioLanguage.value = language;
         configRepository.setString('VRCX_bioLanguage', language);
@@ -794,7 +815,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             const translated = data?.choices?.[0]?.message?.content;
             return typeof translated === 'string' ? translated.trim() : null;
         } catch (err) {
-            toast.error(`Translation failed: ${err.message}`);
+            toast.error(`Translation failed`);
             return null;
         }
     }

@@ -819,7 +819,7 @@
 
     const modalStore = useModalStore();
     const { translateText } = useAdvancedSettingsStore();
-    const { bioLanguage, translationApi, translationApiType } = storeToRefs(useAdvancedSettingsStore());
+    const { bioLanguage, translationApi } = storeToRefs(useAdvancedSettingsStore());
 
     const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog.vue'));
     const ChangeWorldImageDialog = defineAsyncComponent(() => import('./ChangeWorldImageDialog.vue'));
@@ -1384,7 +1384,7 @@
     }
 
     watch(
-        () => worldDialog.value.id,
+        () => [worldDialog.value.id, worldDialog.value.ref?.description],
         () => {
             translatedDescription.value = '';
         }
