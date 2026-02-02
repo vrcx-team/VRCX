@@ -374,7 +374,14 @@
             items: ['friend-log', 'friend-list', 'moderation']
         },
         { type: 'item', key: 'notification' },
-        { type: 'item', key: 'charts' },
+        {
+            type: 'folder',
+            id: 'default-folder-charts',
+            nameKey: 'nav_tooltip.charts',
+            name: t('nav_tooltip.charts'),
+            icon: 'ri-pie-chart-line',
+            items: ['charts-instance', 'charts-mutual']
+        },
         { type: 'item', key: 'tools' },
         { type: 'item', key: 'direct-access' }
     ];
@@ -504,6 +511,7 @@
     const sanitizeLayout = (layout) => {
         const usedKeys = new Set();
         const normalized = [];
+        const chartsKeys = ['charts-instance', 'charts-mutual'];
 
         const appendItemEntry = (key, target = normalized) => {
             if (!key || usedKeys.has(key) || !navDefinitionMap.has(key)) {
@@ -513,9 +521,31 @@
             usedKeys.add(key);
         };
 
+        const appendChartsFolder = (target = normalized) => {
+            if (chartsKeys.some((key) => usedKeys.has(key))) {
+                return;
+            }
+            if (!chartsKeys.every((key) => navDefinitionMap.has(key))) {
+                return;
+            }
+            chartsKeys.forEach((key) => usedKeys.add(key));
+            target.push({
+                type: 'folder',
+                id: 'default-folder-charts',
+                nameKey: 'nav_tooltip.charts',
+                name: t('nav_tooltip.charts'),
+                icon: 'ri-pie-chart-line',
+                items: [...chartsKeys]
+            });
+        };
+
         if (Array.isArray(layout)) {
             layout.forEach((entry) => {
                 if (entry?.type === 'item') {
+                    if (entry.key === 'charts') {
+                        appendChartsFolder();
+                        return;
+                    }
                     appendItemEntry(entry.key);
                     return;
                 }
@@ -550,10 +580,16 @@
 
         navDefinitions.forEach((item) => {
             if (!usedKeys.has(item.key)) {
-                normalized.push({ type: 'item', key: item.key });
-                usedKeys.add(item.key);
+                if (chartsKeys.includes(item.key)) {
+                    return;
+                }
+                appendItemEntry(item.key);
             }
         });
+
+        if (!chartsKeys.some((key) => usedKeys.has(key))) {
+            appendChartsFolder();
+        }
 
         return normalized;
     };
@@ -670,7 +706,11 @@
             console.error('Failed to load custom nav', error);
         } finally {
             const fallbackLayout = layoutData?.length ? layoutData : createDefaultNavLayout();
-            navLayout.value = sanitizeLayout(fallbackLayout);
+            const sanitized = sanitizeLayout(fallbackLayout);
+            navLayout.value = sanitized;
+            if (layoutData?.length && JSON.stringify(sanitized) !== JSON.stringify(fallbackLayout)) {
+                await saveNavLayout(sanitized);
+            }
             navLayoutReady.value = true;
             navigateToFirstNavEntry();
         }

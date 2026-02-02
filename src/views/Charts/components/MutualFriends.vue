@@ -1,54 +1,61 @@
 <template>
-    <div class="mt-0 flex min-h-[calc(100vh-140px)] flex-col items-center justify-betweenpt-12" ref="mutualGraphRef">
-        <div class="flex items-center w-full">
-            <div
-                class="options-container mt-2 mb-0 flex flex-wrap items-center gap-3 bg-transparent px-0 pb-2 shadow-none">
-                <div class="flex flex-wrap items-center gap-2">
-                    <TooltipWrapper :content="fetchButtonLabel" side="top">
-                        <Button :disabled="fetchButtonDisabled" @click="startFetch">
-                            <Spinner v-if="isFetching" />
-                            {{ fetchButtonLabel }}
-                        </Button>
-                    </TooltipWrapper>
-
-                    <TooltipWrapper
-                        v-if="isFetching"
-                        :content="t('view.charts.mutual_friend.actions.stop_fetching')"
-                        side="top">
-                        <Button variant="destructive" :disabled="status.cancelRequested" @click="cancelFetch">
-                            {{ t('view.charts.mutual_friend.actions.stop') }}
-                        </Button>
-                    </TooltipWrapper>
-                </div>
-            </div>
-            <div
-                v-if="isFetching"
-                class="mt-3 grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] items-center gap-x-3 gap-y-2 rounded-md bg-transparent p-3 ml-auto">
-                <div class="flex justify-between text-[13px]">
-                    <span>{{ t('view.charts.mutual_friend.progress.friends_processed') }}</span>
-                    <strong>{{ fetchState.processedFriends }} / {{ totalFriends }}</strong>
-                </div>
-                <Progress :model-value="progressPercent" class="h-3" />
-            </div>
-        </div>
-
+    <div id="chart" class="x-container">
         <div
-            v-show="!(hasFetched && !isFetching && !graphReady)"
-            ref="graphContainerRef"
-            class="mt-3 h-[calc(100vh-260px)] min-h-[520px] w-full flex-1 rounded-lg bg-transparent"
-            :style="{ backgroundColor: canvasBackground }"></div>
+            class="mt-0 flex min-h-[calc(100vh-140px)] flex-col items-center justify-betweenpt-12"
+            ref="mutualGraphRef">
+            <div class="flex items-center w-full">
+                <div
+                    class="options-container mt-2 mb-0 flex flex-wrap items-center gap-3 bg-transparent px-0 pb-2 shadow-none">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <TooltipWrapper :content="fetchButtonLabel" side="top">
+                            <Button :disabled="fetchButtonDisabled" @click="startFetch">
+                                <Spinner v-if="isFetching" />
+                                {{ fetchButtonLabel }}
+                            </Button>
+                        </TooltipWrapper>
 
-        <Empty v-if="hasFetched && !isFetching && !graphReady" class="mt-3 w-full flex-1">
-            <EmptyHeader>
-                <EmptyDescription>
-                    {{ t('view.charts.mutual_friend.progress.no_relationships_discovered') }}
-                </EmptyDescription>
-            </EmptyHeader>
-        </Empty>
+                        <TooltipWrapper
+                            v-if="isFetching"
+                            :content="t('view.charts.mutual_friend.actions.stop_fetching')"
+                            side="top">
+                            <Button variant="destructive" :disabled="status.cancelRequested" @click="cancelFetch">
+                                {{ t('view.charts.mutual_friend.actions.stop') }}
+                            </Button>
+                        </TooltipWrapper>
+                    </div>
+                </div>
+                <div
+                    v-if="isFetching"
+                    class="mt-3 grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] items-center gap-x-3 gap-y-2 rounded-md bg-transparent p-3 ml-auto">
+                    <div class="flex justify-between text-[13px]">
+                        <span>{{ t('view.charts.mutual_friend.progress.friends_processed') }}</span>
+                        <strong>{{ fetchState.processedFriends }} / {{ totalFriends }}</strong>
+                    </div>
+                    <Progress :model-value="progressPercent" class="h-3" />
+                </div>
+            </div>
+
+            <div
+                v-show="!(hasFetched && !isFetching && !graphReady)"
+                ref="graphContainerRef"
+                class="mt-3 h-[calc(100vh-260px)] min-h-[520px] w-full flex-1 rounded-lg bg-transparent"
+                :style="{ backgroundColor: canvasBackground }"></div>
+
+            <Empty v-if="hasFetched && !isFetching && !graphReady" class="mt-3 w-full flex-1">
+                <EmptyHeader>
+                    <EmptyDescription>
+                        {{ t('view.charts.mutual_friend.progress.no_relationships_discovered') }}
+                    </EmptyDescription>
+                </EmptyHeader>
+            </Empty>
+        </div>
+        <BackToTop target="#chart" :right="30" :bottom="30" />
     </div>
 </template>
 
 <script setup>
+    defineOptions({ name: 'ChartsMutual' });
+
     import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { Empty, EmptyDescription, EmptyHeader } from '@/components/ui/empty';
     import { Button } from '@/components/ui/button';
@@ -60,6 +67,7 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import BackToTop from '@/components/BackToTop.vue';
     import Graph from 'graphology';
     import Sigma from 'sigma';
     import forceAtlas2 from 'graphology-layout-forceatlas2';
@@ -86,7 +94,6 @@
     const appearanceStore = useAppearanceSettingsStore();
     const { friends } = storeToRefs(friendStore);
     const { currentUser } = storeToRefs(userStore);
-    const { activeTab } = storeToRefs(chartsStore);
     const { isDarkMode } = storeToRefs(appearanceStore);
     const cachedUsers = userStore.cachedUsers;
     const showUserDialog = (userId) => userStore.showUserDialog(userId);
@@ -202,20 +209,11 @@
     });
 
     watch(
-        activeTab,
-        (tab) => {
-            if (tab === 'mutual') loadGraphFromDatabase();
-        },
-        { immediate: true }
-    );
-
-    watch(
         () => watchState.isFriendsLoaded,
         (isFriendsLoaded) => {
-            if (isFriendsLoaded && activeTab.value === 'mutual') {
-                loadGraphFromDatabase();
-            }
-        }
+            if (isFriendsLoaded) loadGraphFromDatabase();
+        },
+        { immediate: true }
     );
 
     function showStatusMessage(message, type = 'info') {

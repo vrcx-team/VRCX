@@ -1,165 +1,175 @@
 <template>
-    <div ref="instanceActivityRef" class="pt-12">
-        <BackToTop :target="instanceActivityRef" :right="30" :bottom="30" :teleport="false" />
-        <div class="options-container instance-activity" style="margin-top: 0">
-            <div>
-                <span>{{ t('view.charts.instance_activity.header') }}</span>
-                <HoverCard>
-                    <HoverCardTrigger as-child>
-                        <Info style="margin-left: 4px; font-size: 12px; opacity: 0.7" />
-                    </HoverCardTrigger>
-                    <HoverCardContent side="bottom" align="start" class="w-75">
-                        <div class="tips-popover">
-                            <div>{{ t('view.charts.instance_activity.tips.online_time') }}</div>
-                            <div>{{ t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
-                            <div>{{ t('view.charts.instance_activity.tips.click_instance_name') }}</div>
-                        </div>
-                    </HoverCardContent>
-                </HoverCard>
-            </div>
+    <div id="chart" class="x-container">
+        <div ref="instanceActivityRef" class="pt-12">
+            <BackToTop :target="instanceActivityRef" :right="30" :bottom="30" :teleport="false" />
+            <div class="options-container instance-activity" style="margin-top: 0">
+                <div>
+                    <span>{{ t('view.charts.instance_activity.header') }}</span>
+                    <HoverCard>
+                        <HoverCardTrigger as-child>
+                            <Info style="margin-left: 4px; font-size: 12px; opacity: 0.7" />
+                        </HoverCardTrigger>
+                        <HoverCardContent side="bottom" align="start" class="w-75">
+                            <div class="tips-popover">
+                                <div>{{ t('view.charts.instance_activity.tips.online_time') }}</div>
+                                <div>{{ t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
+                                <div>{{ t('view.charts.instance_activity.tips.click_instance_name') }}</div>
+                            </div>
+                        </HoverCardContent>
+                    </HoverCard>
+                </div>
 
-            <div>
-                <TooltipWrapper :content="t('view.charts.instance_activity.refresh')" side="top">
-                    <Button
-                        class="rounded-full"
-                        size="icon"
-                        variant="ghost"
-                        style="margin-right: 5px"
-                        @click="reloadData">
-                        <RefreshCcw />
-                    </Button>
-                </TooltipWrapper>
+                <div>
+                    <TooltipWrapper :content="t('view.charts.instance_activity.refresh')" side="top">
+                        <Button
+                            class="rounded-full"
+                            size="icon"
+                            variant="ghost"
+                            style="margin-right: 5px"
+                            @click="reloadData">
+                            <RefreshCcw />
+                        </Button>
+                    </TooltipWrapper>
 
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <div>
-                            <TooltipWrapper :content="t('view.charts.instance_activity.settings.header')" side="top">
-                                <Button class="rounded-full" size="icon" variant="ghost" style="margin-right: 5px">
-                                    <Settings />
-                                </Button>
-                            </TooltipWrapper>
-                        </div>
-                    </PopoverTrigger>
-                    <PopoverContent side="bottom" class="w-62.5">
-                        <div class="settings">
+                    <Popover>
+                        <PopoverTrigger asChild>
                             <div>
-                                <span>{{ t('view.charts.instance_activity.settings.bar_width') }}</span>
+                                <TooltipWrapper
+                                    :content="t('view.charts.instance_activity.settings.header')"
+                                    side="top">
+                                    <Button class="rounded-full" size="icon" variant="ghost" style="margin-right: 5px">
+                                        <Settings />
+                                    </Button>
+                                </TooltipWrapper>
+                            </div>
+                        </PopoverTrigger>
+                        <PopoverContent side="bottom" class="w-62.5">
+                            <div class="settings">
                                 <div>
-                                    <Slider
-                                        v-model="barWidthDraftValue"
-                                        :max="50"
-                                        :min="1"
-                                        @valueCommit="handleBarWidthCommit"></Slider>
+                                    <span>{{ t('view.charts.instance_activity.settings.bar_width') }}</span>
+                                    <div>
+                                        <Slider
+                                            v-model="barWidthDraftValue"
+                                            :max="50"
+                                            :min="1"
+                                            @valueCommit="handleBarWidthCommit"></Slider>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span>{{ t('view.charts.instance_activity.settings.show_detail') }}</span>
+                                    <Switch
+                                        v-model="isDetailVisible"
+                                        @update:modelValue="
+                                            (value) =>
+                                                changeIsDetailInstanceVisible(value, () => handleSettingsChange())
+                                        " />
+                                </div>
+                                <div v-if="isDetailVisible">
+                                    <span>{{ t('view.charts.instance_activity.settings.show_solo_instance') }}</span>
+                                    <Switch
+                                        v-model="isSoloInstanceVisible"
+                                        @update:modelValue="
+                                            (value) => changeIsSoloInstanceVisible(value, () => handleSettingsChange())
+                                        " />
+                                </div>
+                                <div v-if="isDetailVisible">
+                                    <span>{{
+                                        t('view.charts.instance_activity.settings.show_no_friend_instance')
+                                    }}</span>
+                                    <Switch
+                                        v-model="isNoFriendInstanceVisible"
+                                        @update:modelValue="
+                                            (value) =>
+                                                changeIsNoFriendInstanceVisible(value, () => handleSettingsChange())
+                                        " />
                                 </div>
                             </div>
-                            <div>
-                                <span>{{ t('view.charts.instance_activity.settings.show_detail') }}</span>
-                                <Switch
-                                    v-model="isDetailVisible"
-                                    @update:modelValue="
-                                        (value) => changeIsDetailInstanceVisible(value, () => handleSettingsChange())
-                                    " />
-                            </div>
-                            <div v-if="isDetailVisible">
-                                <span>{{ t('view.charts.instance_activity.settings.show_solo_instance') }}</span>
-                                <Switch
-                                    v-model="isSoloInstanceVisible"
-                                    @update:modelValue="
-                                        (value) => changeIsSoloInstanceVisible(value, () => handleSettingsChange())
-                                    " />
-                            </div>
-                            <div v-if="isDetailVisible">
-                                <span>{{ t('view.charts.instance_activity.settings.show_no_friend_instance') }}</span>
-                                <Switch
-                                    v-model="isNoFriendInstanceVisible"
-                                    @update:modelValue="
-                                        (value) => changeIsNoFriendInstanceVisible(value, () => handleSettingsChange())
-                                    " />
-                            </div>
-                        </div>
-                    </PopoverContent>
-                </Popover>
-                <ButtonGroup class="mr-2">
-                    <TooltipWrapper :content="t('view.charts.instance_activity.previous_day')" side="top">
-                        <Button
-                            variant="outline"
-                            size="icon-sm"
-                            :disabled="isPrevDayBtnDisabled"
-                            @click="changeSelectedDateFromBtn(false)">
-                            <ArrowLeft />
-                        </Button>
-                    </TooltipWrapper>
-                    <TooltipWrapper :content="t('view.charts.instance_activity.next_day')" side="top">
-                        <Button
-                            variant="outline"
-                            size="icon-sm"
-                            :disabled="isNextDayBtnDisabled"
-                            @click="changeSelectedDateFromBtn(true)">
-                            <ArrowRight />
-                        </Button>
-                    </TooltipWrapper>
-                </ButtonGroup>
-                <Popover v-model:open="isDatePickerOpen">
-                    <PopoverTrigger asChild>
-                        <div>
+                        </PopoverContent>
+                    </Popover>
+                    <ButtonGroup class="mr-2">
+                        <TooltipWrapper :content="t('view.charts.instance_activity.previous_day')" side="top">
                             <Button
                                 variant="outline"
-                                class="w-50 justify-start text-left font-normal"
-                                :disabled="isLoading">
-                                <CalendarIcon class="mr-2 h-4 w-4" />
-                                {{ dayjs(selectedDate).format('YYYY-MM-DD') }}
+                                size="icon-sm"
+                                :disabled="isPrevDayBtnDisabled"
+                                @click="changeSelectedDateFromBtn(false)">
+                                <ArrowLeft />
                             </Button>
-                        </div>
-                    </PopoverTrigger>
-                    <PopoverContent class="w-auto p-0" align="end">
-                        <Calendar
-                            :model-value="calendarModelValue"
-                            :default-placeholder="defaultCalendarPlaceholder"
-                            :is-date-disabled="isCalendarDateDisabled"
-                            :prevent-deselect="true"
-                            initial-focus
-                            @update:modelValue="handleCalendarModelUpdate" />
-                    </PopoverContent>
-                </Popover>
-            </div>
-        </div>
-        <div class="status-online">
-            <div class="text-center">
-                <div class="text-sm text-muted-foreground">
-                    {{ t('view.charts.instance_activity.online_time') }}
+                        </TooltipWrapper>
+                        <TooltipWrapper :content="t('view.charts.instance_activity.next_day')" side="top">
+                            <Button
+                                variant="outline"
+                                size="icon-sm"
+                                :disabled="isNextDayBtnDisabled"
+                                @click="changeSelectedDateFromBtn(true)">
+                                <ArrowRight />
+                            </Button>
+                        </TooltipWrapper>
+                    </ButtonGroup>
+                    <Popover v-model:open="isDatePickerOpen">
+                        <PopoverTrigger asChild>
+                            <div>
+                                <Button
+                                    variant="outline"
+                                    class="w-50 justify-start text-left font-normal"
+                                    :disabled="isLoading">
+                                    <CalendarIcon class="mr-2 h-4 w-4" />
+                                    {{ dayjs(selectedDate).format('YYYY-MM-DD') }}
+                                </Button>
+                            </div>
+                        </PopoverTrigger>
+                        <PopoverContent class="w-auto p-0" align="end">
+                            <Calendar
+                                :model-value="calendarModelValue"
+                                :default-placeholder="defaultCalendarPlaceholder"
+                                :is-date-disabled="isCalendarDateDisabled"
+                                :prevent-deselect="true"
+                                initial-focus
+                                @update:modelValue="handleCalendarModelUpdate" />
+                        </PopoverContent>
+                    </Popover>
                 </div>
-                <div class="text-2xl font-semibold">
-                    {{ timeToText(totalOnlineTime, true) }}
+            </div>
+            <div class="status-online">
+                <div class="text-center">
+                    <div class="text-sm text-muted-foreground">
+                        {{ t('view.charts.instance_activity.online_time') }}
+                    </div>
+                    <div class="text-2xl font-semibold">
+                        {{ timeToText(totalOnlineTime, true) }}
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div ref="activityChartRef" style="width: 100%"></div>
-        <div v-if="!isLoading && activityData.length === 0" class="nodata">
-            <DataTableEmpty type="nodata" />
-        </div>
-
-        <transition name="el-fade-in-linear">
-            <div v-show="isDetailVisible && !isLoading && activityData.length !== 0" class="divider">
-                <div class="flex items-center">
-                    <Separator class="flex-1" />
-                    <span class="px-2 text-muted-foreground">·</span>
-                    <Separator class="flex-1" />
-                </div>
+            <div ref="activityChartRef" style="width: 100%"></div>
+            <div v-if="!isLoading && activityData.length === 0" class="nodata">
+                <DataTableEmpty type="nodata" />
             </div>
-        </transition>
-        <template v-if="isDetailVisible && activityData.length !== 0">
-            <InstanceActivityDetail
-                v-for="arr in filteredActivityDetailData"
-                :key="arr[0].location + arr[0].created_at"
-                ref="activityDetailChartRef"
-                :activity-detail-data="arr"
-                :bar-width="barWidth" />
-        </template>
+
+            <transition name="el-fade-in-linear">
+                <div v-show="isDetailVisible && !isLoading && activityData.length !== 0" class="divider">
+                    <div class="flex items-center">
+                        <Separator class="flex-1" />
+                        <span class="px-2 text-muted-foreground">·</span>
+                        <Separator class="flex-1" />
+                    </div>
+                </div>
+            </transition>
+            <template v-if="isDetailVisible && activityData.length !== 0">
+                <InstanceActivityDetail
+                    v-for="arr in filteredActivityDetailData"
+                    :key="arr[0].location + arr[0].created_at"
+                    ref="activityDetailChartRef"
+                    :activity-detail-data="arr"
+                    :bar-width="barWidth" />
+            </template>
+        </div>
     </div>
 </template>
 
 <script setup>
+    defineOptions({ name: 'ChartsInstance' });
+
     import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { ArrowLeft, ArrowRight, Calendar as CalendarIcon, Info, RefreshCcw, Settings } from 'lucide-vue-next';
     import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';

@@ -1,4 +1,4 @@
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -16,7 +16,6 @@ export const useChartsStore = defineStore('Charts', () => {
 
     const { t } = useI18n();
 
-    const activeTab = ref('instance');
     const mutualGraphFetchState = reactive(createDefaultFetchState());
     const mutualGraphStatus = reactive({
         isFetching: false,
@@ -94,7 +93,6 @@ export const useChartsStore = defineStore('Charts', () => {
     }
 
     return {
-        activeTab,
         mutualGraphFetchState,
         mutualGraphStatus,
         resetMutualGraphState

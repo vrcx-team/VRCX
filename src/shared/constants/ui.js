@@ -84,11 +84,18 @@ const navDefinitions = [
         routeName: 'notification'
     },
     {
-        key: 'charts',
-        icon: 'ri-bar-chart-line',
-        tooltip: 'nav_tooltip.charts',
-        labelKey: 'nav_tooltip.charts',
-        routeName: 'charts'
+        key: 'charts-instance',
+        icon: 'ri-bar-chart-horizontal-line',
+        tooltip: 'view.charts.instance_activity.header',
+        labelKey: 'view.charts.instance_activity.header',
+        routeName: 'charts-instance'
+    },
+    {
+        key: 'charts-mutual',
+        icon: 'ri-group-2-line',
+        tooltip: 'view.charts.mutual_friend.tab_label',
+        labelKey: 'view.charts.mutual_friend.tab_label',
+        routeName: 'charts-mutual'
     },
     {
         key: 'tools',
