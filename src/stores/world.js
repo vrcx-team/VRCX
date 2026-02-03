@@ -78,7 +78,7 @@ export const useWorldStore = defineStore('World', () => {
      * @param {string} tag
      * @param {string} shortName
      */
-    function showWorldDialog(tag, shortName = null, options = {}) {
+    function showWorldDialog(tag, shortName = null) {
         const D = worldDialog;
         const L = parseLocation(tag);
         if (L.worldId === '') {
@@ -86,8 +86,7 @@ export const useWorldStore = defineStore('World', () => {
         }
         uiStore.openDialog({
             type: 'world',
-            id: L.worldId,
-            skipBreadcrumb: options.skipBreadcrumb
+            id: L.worldId
         });
         D.visible = true;
         if (D.id === L.worldId) {

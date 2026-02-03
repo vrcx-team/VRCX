@@ -178,12 +178,11 @@ export const useAvatarStore = defineStore('Avatar', () => {
      * @param {string} avatarId
      * @returns
      */
-    function showAvatarDialog(avatarId, options = {}) {
+    function showAvatarDialog(avatarId) {
         const D = avatarDialog.value;
         uiStore.openDialog({
             type: 'avatar',
-            id: avatarId,
-            skipBreadcrumb: options.skipBreadcrumb
+            id: avatarId
         });
         D.visible = true;
         if (D.id === avatarId) {
@@ -217,17 +216,6 @@ export const useAvatarStore = defineStore('Avatar', () => {
         if (typeof ref2 !== 'undefined') {
             D.ref = ref2;
             uiStore.setDialogCrumbLabel('avatar', D.id, D.ref?.name || D.id);
-            if (
-                ref2.releaseStatus !== 'public' &&
-                ref2.authorId !== userStore.currentUser.id
-            ) {
-                D.loading = false;
-                D.id = null;
-                D.visible = false;
-                uiStore.jumpBackDialogCrumb();
-                toast.error(t('message.api_handler.avatar_private_or_deleted'));
-                throw new Error('Avatar is private or deleted');
-            }
         }
         avatarRequest
             .getAvatar({ avatarId })
@@ -266,7 +254,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 }
             })
             .catch((err) => {
-                D.visible = false;
+                D.loading = false;
                 D.id = null;
                 D.visible = false;
                 uiStore.jumpBackDialogCrumb();

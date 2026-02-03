@@ -202,11 +202,6 @@ export function request(endpoint, options) {
                 status === 404 &&
                 endpoint?.startsWith('avatars/')
             ) {
-                toast.error(t('message.api_handler.avatar_private_or_deleted'));
-                avatarStore.avatarDialog.visible = false;
-                avatarStore.avatarDialog.loading = false;
-                avatarStore.avatarDialog.id = null;
-                uiStore.jumpBackDialogCrumb();
                 $throw(404, data.error?.message || '', endpoint);
             }
             if (status === 404 && endpoint.endsWith('/persist/exists')) {

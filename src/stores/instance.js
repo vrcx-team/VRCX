@@ -285,7 +285,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         return `${baseLabel} · ${accessTypeLabel}`;
     }
 
-    function showPreviousInstancesInfoDialog(instanceId, options = {}) {
+    function showPreviousInstancesInfoDialog(instanceId) {
         previousInstancesInfoDialog.value.visible = true;
         previousInstancesInfoDialog.value.instanceId = instanceId;
         uiStore.openDialog({
@@ -293,8 +293,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             id: instanceId || '',
             label: instanceId
                 ? formatPreviousInstancesInfoLabel(instanceId)
-                : '',
-            skipBreadcrumb: options.skipBreadcrumb
+                : ''
         });
         if (instanceId) {
             const location = parseLocation(instanceId);
@@ -319,11 +318,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
     }
 
-    async function showPreviousInstancesListDialog(
-        variant,
-        targetRef,
-        options = {}
-    ) {
+    async function showPreviousInstancesListDialog(variant, targetRef) {
         previousInstancesListDialog.value.variant = variant;
         let resolved = null;
         if (variant === 'user') {
@@ -346,8 +341,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         uiStore.openDialog({
             type: `previous-instances-${variant}`,
             id: dialogId,
-            label,
-            skipBreadcrumb: options.skipBreadcrumb
+            label
         });
     }
 

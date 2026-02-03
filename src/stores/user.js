@@ -763,7 +763,7 @@ export const useUserStore = defineStore('User', () => {
      *
      * @param {string} userId
      */
-    function showUserDialog(userId, options = {}) {
+    function showUserDialog(userId) {
         if (
             !userId ||
             typeof userId !== 'string' ||
@@ -773,8 +773,7 @@ export const useUserStore = defineStore('User', () => {
         }
         uiStore.openDialog({
             type: 'user',
-            id: userId,
-            skipBreadcrumb: options.skipBreadcrumb
+            id: userId
         });
         const D = userDialog.value;
         D.visible = true;

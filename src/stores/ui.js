@@ -114,8 +114,8 @@ export const useUiStore = defineStore('Ui', () => {
     }
 
     function jumpBackDialogCrumb() {
-        if (dialogCrumbs.value.length > 1) {
-            dialogCrumbs.value.splice(dialogCrumbs.value.length - 1);
+        if (dialogCrumbs.value.length > 0) {
+            dialogCrumbs.value.pop();
         }
         if (dialogCrumbs.value.length === 0) {
             closeMainDialog();
@@ -131,45 +131,35 @@ export const useUiStore = defineStore('Ui', () => {
         }
         jumpDialogCrumb(index);
         if (item.type === 'user') {
-            userStore.showUserDialog(item.id, { skipBreadcrumb: true });
+            userStore.showUserDialog(item.id);
             return;
         }
         if (item.type === 'world') {
-            worldStore.showWorldDialog(item.id, null, {
-                skipBreadcrumb: true
-            });
+            worldStore.showWorldDialog(item.id, null);
             return;
         }
         if (item.type === 'avatar') {
-            avatarStore.showAvatarDialog(item.id, { skipBreadcrumb: true });
+            avatarStore.showAvatarDialog(item.id);
             return;
         }
         if (item.type === 'group') {
-            groupStore.showGroupDialog(item.id, { skipBreadcrumb: true });
+            groupStore.showGroupDialog(item.id);
             return;
         }
         if (item.type === 'previous-instances-user') {
-            instanceStore.showPreviousInstancesListDialog('user', item.id, {
-                skipBreadcrumb: true
-            });
+            instanceStore.showPreviousInstancesListDialog('user', item.id);
             return;
         }
         if (item.type === 'previous-instances-world') {
-            instanceStore.showPreviousInstancesListDialog('world', item.id, {
-                skipBreadcrumb: true
-            });
+            instanceStore.showPreviousInstancesListDialog('world', item.id);
             return;
         }
         if (item.type === 'previous-instances-group') {
-            instanceStore.showPreviousInstancesListDialog('group', item.id, {
-                skipBreadcrumb: true
-            });
+            instanceStore.showPreviousInstancesListDialog('group', item.id);
             return;
         }
         if (item.type === 'previous-instances-info') {
-            instanceStore.showPreviousInstancesInfoDialog(item.id, {
-                skipBreadcrumb: true
-            });
+            instanceStore.showPreviousInstancesInfoDialog(item.id);
             return;
         }
         console.error(
@@ -197,7 +187,7 @@ export const useUiStore = defineStore('Ui', () => {
         clearDialogCrumbs();
     }
 
-    function openDialog({ type, id, label = '', skipBreadcrumb = false }) {
+    function openDialog({ type, id, label = '' }) {
         const userStore = useUserStore();
         const worldStore = useWorldStore();
         const avatarStore = useAvatarStore();
@@ -239,9 +229,7 @@ export const useUiStore = defineStore('Ui', () => {
         if (!hadActiveDialog) {
             clearDialogCrumbs();
         }
-        if (!skipBreadcrumb) {
-            pushDialogCrumb(type, id, label);
-        }
+        pushDialogCrumb(type, id, label);
     }
 
     // Make sure file drops outside of the screenshot manager don't navigate to the file path dropped.

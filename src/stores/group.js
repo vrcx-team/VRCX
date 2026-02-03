@@ -131,14 +131,13 @@ export const useGroupStore = defineStore('Group', () => {
         { flush: 'sync' }
     );
 
-    function showGroupDialog(groupId, options = {}) {
+    function showGroupDialog(groupId) {
         if (!groupId) {
             return;
         }
         uiStore.openDialog({
             type: 'group',
-            id: groupId,
-            skipBreadcrumb: options.skipBreadcrumb
+            id: groupId
         });
         const D = groupDialog.value;
         D.visible = true;
