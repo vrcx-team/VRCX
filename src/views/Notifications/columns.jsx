@@ -4,7 +4,6 @@ import { Button } from '../../components/ui/button';
 import {
     Tooltip,
     TooltipContent,
-    TooltipProvider,
     TooltipTrigger,
     TooltipWrapper
 } from '../../components/ui/tooltip';
@@ -129,16 +128,14 @@ export const createColumns = ({
                 const longText = formatDateFilter(createdAt, 'long');
 
                 return (
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <span>{shortText}</span>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">
-                                <span>{longText}</span>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span>{shortText}</span>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                            <span>{longText}</span>
+                        </TooltipContent>
+                    </Tooltip>
                 );
             }
         },
@@ -164,32 +161,28 @@ export const createColumns = ({
                 ) {
                     return (
                         <Badge variant="outline" class="text-muted-foreground">
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <span
-                                            class="cursor-pointer"
-                                            onClick={() =>
-                                                showWorldDialog(
-                                                    original.location
-                                                )
-                                            }
-                                        >
-                                            {label}
-                                        </span>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="top">
-                                        {original.location ? (
-                                            <Location
-                                                location={original.location}
-                                                hint={original.worldName}
-                                                grouphint={original.groupName}
-                                                link={true}
-                                            />
-                                        ) : null}
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <span
+                                        class="cursor-pointer"
+                                        onClick={() =>
+                                            showWorldDialog(original.location)
+                                        }
+                                    >
+                                        {label}
+                                    </span>
+                                </TooltipTrigger>
+                                <TooltipContent side="top">
+                                    {original.location ? (
+                                        <Location
+                                            location={original.location}
+                                            hint={original.worldName}
+                                            grouphint={original.groupName}
+                                            link={true}
+                                        />
+                                    ) : null}
+                                </TooltipContent>
+                            </Tooltip>
                         </Badge>
                     );
                 }
@@ -197,25 +190,21 @@ export const createColumns = ({
                 if (original.link) {
                     return (
                         <Badge variant="outline" class="text-muted-foreground">
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <span
-                                            class="cursor-pointer"
-                                            onClick={() =>
-                                                openNotificationLink(
-                                                    original.link
-                                                )
-                                            }
-                                        >
-                                            {label}
-                                        </span>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="top">
-                                        <span>{original.linkText}</span>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <span
+                                        class="cursor-pointer"
+                                        onClick={() =>
+                                            openNotificationLink(original.link)
+                                        }
+                                    >
+                                        {label}
+                                    </span>
+                                </TooltipTrigger>
+                                <TooltipContent side="top">
+                                    <span>{original.linkText}</span>
+                                </TooltipContent>
+                            </Tooltip>
                         </Badge>
                     );
                 }
@@ -548,41 +537,88 @@ export const createColumns = ({
                         !original.$isExpired ? (
                             <span class="inline-flex items-center gap-2">
                                 {original.type === 'friendRequest' ? (
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <button
-                                                    type="button"
-                                                    class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
-                                                    onClick={() =>
-                                                        acceptFriendRequestNotification(
-                                                            original
-                                                        )
-                                                    }
-                                                >
-                                                    <Check class="h-4 w-4" />
-                                                </button>
-                                            </TooltipTrigger>
-                                            <TooltipContent side="top">
-                                                <span>
-                                                    {t(
-                                                        'view.notification.actions.accept'
-                                                    )}
-                                                </span>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <button
+                                                type="button"
+                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                onClick={() =>
+                                                    acceptFriendRequestNotification(
+                                                        original
+                                                    )
+                                                }
+                                            >
+                                                <Check class="h-4 w-4" />
+                                            </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top">
+                                            <span>
+                                                {t(
+                                                    'view.notification.actions.accept'
+                                                )}
+                                            </span>
+                                        </TooltipContent>
+                                    </Tooltip>
                                 ) : null}
 
                                 {original.type === 'invite' ? (
-                                    <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <button
+                                                type="button"
+                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                onClick={() =>
+                                                    showSendInviteResponseDialog(
+                                                        original
+                                                    )
+                                                }
+                                            >
+                                                <MessageCircle class="h-4 w-4" />
+                                            </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top">
+                                            <span>
+                                                {t(
+                                                    'view.notification.actions.decline_with_message'
+                                                )}
+                                            </span>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                ) : null}
+
+                                {original.type === 'requestInvite' ? (
+                                    <span class="inline-flex items-center">
+                                        {canInvite() ? (
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <button
+                                                        type="button"
+                                                        class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                        onClick={() =>
+                                                            acceptRequestInvite(
+                                                                original
+                                                            )
+                                                        }
+                                                    >
+                                                        <Check class="h-4 w-4" />
+                                                    </button>
+                                                </TooltipTrigger>
+                                                <TooltipContent side="top">
+                                                    <span>
+                                                        {t(
+                                                            'view.notification.actions.invite'
+                                                        )}
+                                                    </span>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        ) : null}
                                         <Tooltip>
                                             <TooltipTrigger asChild>
                                                 <button
                                                     type="button"
                                                     class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
                                                     onClick={() =>
-                                                        showSendInviteResponseDialog(
+                                                        showSendInviteRequestResponseDialog(
                                                             original
                                                         )
                                                     }
@@ -598,61 +634,6 @@ export const createColumns = ({
                                                 </span>
                                             </TooltipContent>
                                         </Tooltip>
-                                    </TooltipProvider>
-                                ) : null}
-
-                                {original.type === 'requestInvite' ? (
-                                    <span class="inline-flex items-center">
-                                        {canInvite() ? (
-                                            <TooltipProvider>
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <button
-                                                            type="button"
-                                                            class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
-                                                            onClick={() =>
-                                                                acceptRequestInvite(
-                                                                    original
-                                                                )
-                                                            }
-                                                        >
-                                                            <Check class="h-4 w-4" />
-                                                        </button>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent side="top">
-                                                        <span>
-                                                            {t(
-                                                                'view.notification.actions.invite'
-                                                            )}
-                                                        </span>
-                                                    </TooltipContent>
-                                                </Tooltip>
-                                            </TooltipProvider>
-                                        ) : null}
-                                        <TooltipProvider>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <button
-                                                        type="button"
-                                                        class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
-                                                        onClick={() =>
-                                                            showSendInviteRequestResponseDialog(
-                                                                original
-                                                            )
-                                                        }
-                                                    >
-                                                        <MessageCircle class="h-4 w-4" />
-                                                    </button>
-                                                </TooltipTrigger>
-                                                <TooltipContent side="top">
-                                                    <span>
-                                                        {t(
-                                                            'view.notification.actions.decline_with_message'
-                                                        )}
-                                                    </span>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </TooltipProvider>
                                     </span>
                                 ) : null}
 
@@ -687,136 +668,128 @@ export const createColumns = ({
                                           );
 
                                           return (
-                                              <TooltipProvider
+                                              <Tooltip
                                                   key={`${response.text}:${response.type}`}
                                               >
-                                                  <Tooltip>
-                                                      <TooltipTrigger asChild>
-                                                          <button
-                                                              type="button"
-                                                              class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
-                                                              onClick={onClick}
-                                                          >
-                                                              <ResponseIcon class="h-4 w-4" />
-                                                          </button>
-                                                      </TooltipTrigger>
-                                                      <TooltipContent side="top">
-                                                          <span>
-                                                              {response.text}
-                                                          </span>
-                                                      </TooltipContent>
-                                                  </Tooltip>
-                                              </TooltipProvider>
+                                                  <TooltipTrigger asChild>
+                                                      <button
+                                                          type="button"
+                                                          class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                          onClick={onClick}
+                                                      >
+                                                          <ResponseIcon class="h-4 w-4" />
+                                                      </button>
+                                                  </TooltipTrigger>
+                                                  <TooltipContent side="top">
+                                                      <span>
+                                                          {response.text}
+                                                      </span>
+                                                  </TooltipContent>
+                                              </Tooltip>
                                           );
                                       })
                                     : null}
 
                                 {showDecline ? (
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <button
-                                                    type="button"
-                                                    class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
-                                                    onClick={() =>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <button
+                                                type="button"
+                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                onClick={() =>
+                                                    shiftHeld.value
+                                                        ? hideNotification(
+                                                              original
+                                                          )
+                                                        : hideNotificationPrompt(
+                                                              original
+                                                          )
+                                                }
+                                            >
+                                                <X
+                                                    class={
                                                         shiftHeld.value
-                                                            ? hideNotification(
-                                                                  original
-                                                              )
-                                                            : hideNotificationPrompt(
-                                                                  original
-                                                              )
+                                                            ? 'h-4 w-4 text-red-600'
+                                                            : 'h-4 w-4'
                                                     }
-                                                >
-                                                    <X
-                                                        class={
-                                                            shiftHeld.value
-                                                                ? 'h-4 w-4 text-red-600'
-                                                                : 'h-4 w-4'
-                                                        }
-                                                    />
-                                                </button>
-                                            </TooltipTrigger>
-                                            <TooltipContent side="top">
-                                                <span>
-                                                    {t(
-                                                        'view.notification.actions.decline'
-                                                    )}
-                                                </span>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
+                                                />
+                                            </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top">
+                                            <span>
+                                                {t(
+                                                    'view.notification.actions.decline'
+                                                )}
+                                            </span>
+                                        </TooltipContent>
+                                    </Tooltip>
                                 ) : null}
 
                                 {original.type === 'group.queueReady' ? (
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <button
-                                                    type="button"
-                                                    class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
-                                                    onClick={() =>
-                                                        shiftHeld.value
-                                                            ? deleteNotificationLog(
-                                                                  original
-                                                              )
-                                                            : deleteNotificationLogPrompt(
-                                                                  original
-                                                              )
-                                                    }
-                                                >
-                                                    {shiftHeld.value ? (
-                                                        <X class="h-4 w-4 text-red-600" />
-                                                    ) : (
-                                                        <Trash2 class="h-4 w-4" />
-                                                    )}
-                                                </button>
-                                            </TooltipTrigger>
-                                            <TooltipContent side="top">
-                                                <span>
-                                                    {t(
-                                                        'view.notification.actions.delete_log'
-                                                    )}
-                                                </span>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <button
+                                                type="button"
+                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                onClick={() =>
+                                                    shiftHeld.value
+                                                        ? deleteNotificationLog(
+                                                              original
+                                                          )
+                                                        : deleteNotificationLogPrompt(
+                                                              original
+                                                          )
+                                                }
+                                            >
+                                                {shiftHeld.value ? (
+                                                    <X class="h-4 w-4 text-red-600" />
+                                                ) : (
+                                                    <Trash2 class="h-4 w-4" />
+                                                )}
+                                            </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top">
+                                            <span>
+                                                {t(
+                                                    'view.notification.actions.delete_log'
+                                                )}
+                                            </span>
+                                        </TooltipContent>
+                                    </Tooltip>
                                 ) : null}
                             </span>
                         ) : null}
                         {showDeleteLog ? (
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <button
-                                            type="button"
-                                            class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
-                                            onClick={() =>
-                                                shiftHeld.value
-                                                    ? deleteNotificationLog(
-                                                          original
-                                                      )
-                                                    : deleteNotificationLogPrompt(
-                                                          original
-                                                      )
-                                            }
-                                        >
-                                            {shiftHeld.value ? (
-                                                <X class="h-4 w-4 text-red-600" />
-                                            ) : (
-                                                <Trash2 class="h-4 w-4" />
-                                            )}
-                                        </button>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="top">
-                                        <span>
-                                            {t(
-                                                'view.notification.actions.delete_log'
-                                            )}
-                                        </span>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button
+                                        type="button"
+                                        class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                        onClick={() =>
+                                            shiftHeld.value
+                                                ? deleteNotificationLog(
+                                                      original
+                                                  )
+                                                : deleteNotificationLogPrompt(
+                                                      original
+                                                  )
+                                        }
+                                    >
+                                        {shiftHeld.value ? (
+                                            <X class="h-4 w-4 text-red-600" />
+                                        ) : (
+                                            <Trash2 class="h-4 w-4" />
+                                        )}
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent side="top">
+                                    <span>
+                                        {t(
+                                            'view.notification.actions.delete_log'
+                                        )}
+                                    </span>
+                                </TooltipContent>
+                            </Tooltip>
                         ) : null}
                     </div>
                 );

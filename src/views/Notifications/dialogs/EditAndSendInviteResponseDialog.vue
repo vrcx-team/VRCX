@@ -75,7 +75,8 @@
             await inviteMessagesRequest
                 .editInviteMessage(params, messageType, slot)
                 .catch((err) => {
-                    throw err;
+                    console.error('Invite response message update failed', err);
+                    toast.error('Error');
                 })
                 .then((args) => {
                     if (args.json[slot].message === I.messageSlot.message) {
@@ -96,7 +97,8 @@
             notificationRequest
                 .sendInviteResponsePhoto(params, I.invite.id)
                 .catch((err) => {
-                    throw err;
+                    console.error('Invite response photo failed', err);
+                    toast.error('Error');
                 })
                 .then((args) => {
                     notificationRequest.hideNotification({
@@ -112,7 +114,8 @@
             notificationRequest
                 .sendInviteResponse(params, I.invite.id)
                 .catch((err) => {
-                    throw err;
+                    console.error('Invite response failed', err);
+                    toast.error('Error');
                 })
                 .then((args) => {
                     notificationRequest.hideNotification({

@@ -74,7 +74,7 @@
                             </template>
 
                             <template v-else-if="item.row.type === 'friend-item'">
-                                <friend-item
+                                <FriendItem
                                     :friend="item.row.friend"
                                     :style="item.row.itemStyle"
                                     :is-group-by-instance="item.row.isGroupByInstance" />

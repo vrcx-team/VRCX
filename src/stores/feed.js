@@ -59,7 +59,7 @@ export const useFeedStore = defineStore('Feed', () => {
     init();
 
     function feedSearch(row) {
-        const value = feedTable.value.search.toUpperCase();
+        const value = feedTable.value.search.trim().toUpperCase();
         if (!value) {
             return true;
         }
@@ -140,25 +140,28 @@ export const useFeedStore = defineStore('Feed', () => {
             feedTable.value.vip
         );
         feedTable.value.loading = true;
-        let vipList = [];
-        if (feedTable.value.vip) {
-            vipList = Array.from(friendStore.localFavoriteFriends.values());
+        try {
+            let vipList = [];
+            if (feedTable.value.vip) {
+                vipList = Array.from(friendStore.localFavoriteFriends.values());
+            }
+            const search = feedTable.value.search.trim();
+            const rows = search
+                ? await database.searchFeedDatabase(
+                      search,
+                      feedTable.value.filter,
+                      vipList,
+                      vrcxStore.searchLimit
+                  )
+                : await database.lookupFeedDatabase(
+                      feedTable.value.filter,
+                      vipList
+                  );
+            feedTableData.value = [];
+            feedTableData.value = [...feedTableData.value, ...rows];
+        } finally {
+            feedTable.value.loading = false;
         }
-        const search = feedTable.value.search.trim();
-        const rows = search
-            ? await database.searchFeedDatabase(
-                  search,
-                  feedTable.value.filter,
-                  vipList,
-                  vrcxStore.searchLimit
-              )
-            : await database.lookupFeedDatabase(
-                  feedTable.value.filter,
-                  vipList
-              );
-        feedTableData.value = [];
-        feedTableData.value = [...feedTableData.value, ...rows];
-        feedTable.value.loading = false;
     }
 
     function addFeed(feed) {

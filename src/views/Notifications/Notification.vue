@@ -438,7 +438,8 @@
             .catch((err) => {
                 handleNotificationHide({ params });
                 notificationRequest.hideNotificationV2(params.notificationId);
-                throw err;
+                console.error('Notification response failed', err);
+                toast.error('Error');
             });
     }
 

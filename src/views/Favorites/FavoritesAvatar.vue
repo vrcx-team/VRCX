@@ -145,7 +145,9 @@
                                                                 :model-value="group.visibility === visibility"
                                                                 indicator-position="right"
                                                                 @select="handleVisibilitySelection(group, visibility)">
-                                                                <span>{{ t(`view.favorite.visibility.${visibility}`) }}</span>
+                                                                <span>{{
+                                                                    t(`view.favorite.visibility.${visibility}`)
+                                                                }}</span>
                                                             </DropdownMenuCheckboxItem>
                                                         </DropdownMenuSubContent>
                                                     </DropdownMenuPortal>
@@ -536,6 +538,7 @@
     import { Badge } from '../../components/ui/badge';
     import { Slider } from '../../components/ui/slider';
     import { Switch } from '../../components/ui/switch';
+    import { debounce } from '../../shared/utils';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
 
     import AvatarExportDialog from './dialogs/AvatarExportDialog.vue';
@@ -570,7 +573,6 @@
         favoriteAvatarGroups,
         localAvatarFavorites,
         selectedFavoriteAvatars,
-        avatarImportDialogInput,
         isFavoriteLoading,
         localAvatarFavoriteGroups
     } = storeToRefs(favoriteStore);
@@ -582,7 +584,7 @@
         newLocalAvatarFavoriteGroup,
         localAvatarFavoritesList,
         refreshFavorites,
-        getLocalWorldFavorites,
+        getLocalAvatarFavorites,
         handleFavoriteGroup,
         checkInvalidLocalAvatars,
         removeInvalidLocalAvatars
@@ -979,7 +981,7 @@
     function handleGroupClick(type, key) {
         if (hasSearchInput.value) {
             avatarFavoriteSearch.value = '';
-            searchAvatarFavorites('');
+            doSearchAvatarFavorites('');
         }
         selectGroup(type, key, { userInitiated: true });
     }
@@ -1031,7 +1033,7 @@
 
     function handleRefreshFavorites() {
         refreshFavorites();
-        getLocalWorldFavorites();
+        getLocalAvatarFavorites();
     }
 
     function handleVisibilitySelection(group, visibility) {
@@ -1264,7 +1266,7 @@
             .catch(() => {});
     }
 
-    function searchAvatarFavorites(value) {
+    function doSearchAvatarFavorites(value) {
         if (typeof value === 'string') {
             avatarFavoriteSearch.value = value;
         }
@@ -1274,6 +1276,7 @@
             return;
         }
         const results = [];
+        const seen = new Set();
         localAvatarFavoriteGroups.value.forEach((group) => {
             const favorites = localAvatarFavorites.value[group];
             if (!favorites) {
@@ -1289,7 +1292,8 @@
                     return;
                 }
                 if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
-                    if (!results.some((r) => r.id === ref.id)) {
+                    if (!seen.has(ref.id)) {
+                        seen.add(ref.id);
                         results.push(ref);
                     }
                 }
@@ -1306,13 +1310,15 @@
                 return;
             }
             if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
-                if (!results.some((r) => r.id === ref.id)) {
+                if (!seen.has(ref.id)) {
+                    seen.add(ref.id);
                     results.push(ref);
                 }
             }
         });
         avatarFavoriteSearchResults.value = results;
     }
+    const searchAvatarFavorites = debounce(doSearchAvatarFavorites, 200);
 
     async function refreshLocalAvatarFavorites() {
         if (refreshingLocalFavorites.value) {

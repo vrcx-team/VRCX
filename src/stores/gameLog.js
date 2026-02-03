@@ -397,32 +397,35 @@ export const useGameLogStore = defineStore('GameLog', () => {
             gameLogTable.value.vip
         );
         gameLogTable.value.loading = true;
-        let vipList = [];
-        if (gameLogTable.value.vip) {
-            vipList = Array.from(friendStore.localFavoriteFriends.values());
-        }
-        const search = gameLogTable.value.search.trim();
-        let rows = [];
-        if (search) {
-            rows = await database.searchGameLogDatabase(
-                search,
-                gameLogTable.value.filter,
-                vipList,
-                vrcxStore.searchLimit
-            );
-        } else {
-            rows = await database.lookupGameLogDatabase(
-                gameLogTable.value.filter,
-                vipList
-            );
-        }
+        try {
+            let vipList = [];
+            if (gameLogTable.value.vip) {
+                vipList = Array.from(friendStore.localFavoriteFriends.values());
+            }
+            const search = gameLogTable.value.search.trim();
+            let rows = [];
+            if (search) {
+                rows = await database.searchGameLogDatabase(
+                    search,
+                    gameLogTable.value.filter,
+                    vipList,
+                    vrcxStore.searchLimit
+                );
+            } else {
+                rows = await database.lookupGameLogDatabase(
+                    gameLogTable.value.filter,
+                    vipList
+                );
+            }
 
-        for (const row of rows) {
-            row.isFriend = gameLogIsFriend(row);
-            row.isFavorite = gameLogIsFavorite(row);
+            for (const row of rows) {
+                row.isFriend = gameLogIsFriend(row);
+                row.isFavorite = gameLogIsFavorite(row);
+            }
+            gameLogTableData.value = rows;
+        } finally {
+            gameLogTable.value.loading = false;
         }
-        gameLogTableData.value = rows;
-        gameLogTable.value.loading = false;
     }
 
     function addGameLog(entry) {
@@ -475,7 +478,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     function gameLogSearch(row) {
-        const value = gameLogTable.value.search.toUpperCase();
+        const value = gameLogTable.value.search.trim().toUpperCase();
         if (!value) {
             return true;
         }

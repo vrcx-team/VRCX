@@ -148,7 +148,9 @@
                                                                 :model-value="group.visibility === visibility"
                                                                 indicator-position="right"
                                                                 @select="handleVisibilitySelection(group, visibility)">
-                                                                <span>{{ t(`view.favorite.visibility.${visibility}`) }}</span>
+                                                                <span>{{
+                                                                    t(`view.favorite.visibility.${visibility}`)
+                                                                }}</span>
                                                             </DropdownMenuCheckboxItem>
                                                         </DropdownMenuSubContent>
                                                     </DropdownMenuPortal>
@@ -470,6 +472,7 @@
     import { Badge } from '../../components/ui/badge';
     import { Slider } from '../../components/ui/slider';
     import { Switch } from '../../components/ui/switch';
+    import { debounce } from '../../shared/utils';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
 
     import FavoritesWorldItem from './components/FavoritesWorldItem.vue';
@@ -813,7 +816,7 @@
                 type: 'cards',
                 key: `local:${activeLocalGroupName.value}:${index}`,
                 items: items.slice(index, index + safeColumns).map((favorite) => ({
-                    key: favorite.id ?? favorite.worldId ?? favorite.name ?? `${index}:${Math.random()}`,
+                    key: favorite.id ?? favorite.worldId ?? favorite.name ?? `${activeLocalGroupName.value}:${index}`,
                     favorite
                 }))
             });
@@ -939,7 +942,7 @@
     function handleGroupClick(type, key) {
         if (hasSearchInput.value) {
             worldFavoriteSearch.value = '';
-            searchWorldFavorites('');
+            doSearchWorldFavorites('');
         }
         selectGroup(type, key, { userInitiated: true });
     }
@@ -1171,7 +1174,7 @@
             .catch(() => {});
     }
 
-    function searchWorldFavorites(worldFavoriteSearch) {
+    function doSearchWorldFavorites(worldFavoriteSearch) {
         const search = worldFavoriteSearch.trim().toLowerCase();
         if (search.length < 3) {
             worldFavoriteSearchResults.value = [];
@@ -1186,6 +1189,7 @@
         });
         worldFavoriteSearchResults.value = filtered;
     }
+    const searchWorldFavorites = debounce(doSearchWorldFavorites, 200);
 
     function handleVisibilitySelection(group, visibility) {
         const menuKey = remoteGroupMenuKey(group.key);

@@ -148,7 +148,9 @@
                                                                 :model-value="group.visibility === visibility"
                                                                 indicator-position="right"
                                                                 @select="handleVisibilitySelection(group, visibility)">
-                                                                <span>{{ t(`view.favorite.visibility.${visibility}`) }}</span>
+                                                                <span>{{
+                                                                    t(`view.favorite.visibility.${visibility}`)
+                                                                }}</span>
                                                             </DropdownMenuCheckboxItem>
                                                         </DropdownMenuSubContent>
                                                     </DropdownMenuPortal>
@@ -325,12 +327,12 @@
     } from '../../components/ui/select';
     import { useAppearanceSettingsStore, useFavoriteStore, useModalStore, useUserStore } from '../../stores';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
+    import { debounce, userImage } from '../../shared/utils';
     import { Badge } from '../../components/ui/badge';
     import { Slider } from '../../components/ui/slider';
     import { Switch } from '../../components/ui/switch';
     import { favoriteRequest } from '../../api';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
-    import { userImage } from '../../shared/utils';
 
     import FavoritesFriendItem from './components/FavoritesFriendItem.vue';
     import FriendExportDialog from './dialogs/FriendExportDialog.vue';
@@ -683,12 +685,12 @@
     function handleGroupClick(type, key) {
         if (hasSearchInput.value) {
             friendFavoriteSearch.value = '';
-            searchFriendFavorites('');
+            doSearchFriendFavorites('');
         }
         selectGroup(type, key);
     }
 
-    function searchFriendFavorites(searchTerm) {
+    function doSearchFriendFavorites(searchTerm) {
         const search = searchTerm.trim().toLowerCase();
         if (search.length < 3) {
             friendFavoriteSearchResults.value = [];
@@ -703,6 +705,7 @@
         });
         friendFavoriteSearchResults.value = filtered;
     }
+    const searchFriendFavorites = debounce(doSearchFriendFavorites, 200);
 
     function toggleFriendSelection(id, value) {
         if (value) {

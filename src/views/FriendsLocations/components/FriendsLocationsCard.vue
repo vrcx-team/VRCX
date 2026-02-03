@@ -3,7 +3,7 @@
         <div class="friend-card__header">
             <div>
                 <Avatar class="friend-card__avatar" :style="{ width: `${avatarSize}px`, height: `${avatarSize}px` }">
-                    <AvatarImage :src="userImage(props.friend.ref, true)" />
+                    <AvatarImage :src="userImage(friend.ref, true)" />
                     <AvatarFallback>{{ avatarFallback }}</AvatarFallback>
                 </Avatar>
             </div>
