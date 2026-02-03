@@ -11,7 +11,7 @@
             <div class="friend-card__name ml-0.5" :title="friend.name">{{ friend.name }}</div>
         </div>
         <div class="friend-card__body">
-            <div class="friend-card__signature" :title="friend.ref?.statusDescription">
+            <div class="friend-card__signature ml-1" :title="friend.ref?.statusDescription">
                 <Pencil v-if="friend.ref?.statusDescription" class="h-3.5 w-3.5 mr-1" style="opacity: 0.7" />
                 {{ friend.ref?.statusDescription || '&nbsp;' }}
             </div>
