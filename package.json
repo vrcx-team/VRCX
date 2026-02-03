@@ -44,6 +44,7 @@
         "@sentry/vite-plugin": "^4.8.0",
         "@sentry/vue": "^10.38.0",
         "@sigma/node-border": "^3.0.0",
+        "@sigma/edge-curve": "^3.1.0",
         "@tailwindcss/vite": "^4.1.18",
         "@tanstack/vue-table": "^8.21.3",
         "@tanstack/vue-virtual": "^3.13.18",

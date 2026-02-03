@@ -393,6 +393,15 @@
                     "mutual_friends_count": "Mutual friends: {count}",
                     "edge": "{source} ↔ {target}"
                 },
+                "settings": {
+                    "title": "Graph Layout Settings",
+                    "layout_iterations": "Layout iterations",
+                    "layout_iterations_help": "How long the layout runs. Higher means more stable and organized.",
+                    "layout_spacing": "Layout spacing",
+                    "layout_spacing_help": "How spread out the graph is. Higher means less crowded.",
+                    "edge_curvature": "Edge curvature",
+                    "edge_curvature_help": "How curved the lines are. Higher means smoother lines in dense areas."
+                },
                 "force_dialog": {
                     "open_label": "Adjust graph layout settings",
                     "title": "Graph Layout Settings",

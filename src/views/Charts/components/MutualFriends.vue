@@ -23,14 +23,101 @@
                         </TooltipWrapper>
                     </div>
                 </div>
-                <div
-                    v-if="isFetching"
-                    class="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] items-center rounded-md bg-transparent p-3 ml-auto w-70">
-                    <div class="flex justify-between text-sm mb-1">
-                        <span>{{ t('view.charts.mutual_friend.progress.friends_processed') }}</span>
-                        <strong>{{ fetchState.processedFriends }} / {{ totalFriends }}</strong>
+                <div class="ml-auto flex items-center gap-2">
+                    <Sheet>
+                        <SheetTrigger as-child>
+                            <div>
+                                <TooltipWrapper :content="t('view.charts.mutual_friend.settings.title')" side="top">
+                                    <Button class="rounded-full" size="icon" variant="ghost">
+                                        <Settings />
+                                    </Button>
+                                </TooltipWrapper>
+                            </div>
+                        </SheetTrigger>
+                        <SheetContent side="right" class="w-90">
+                            <SheetHeader>
+                                <SheetTitle>{{ t('view.charts.mutual_friend.settings.title') }}</SheetTitle>
+                            </SheetHeader>
+
+                            <FieldGroup class="mt-4 gap-4 p-4">
+                                <Field>
+                                    <FieldLabel>{{
+                                        t('view.charts.mutual_friend.settings.layout_iterations')
+                                    }}</FieldLabel>
+                                    <FieldContent>
+                                        <div class="flex items-center gap-3">
+                                            <Slider
+                                                v-model="layoutIterationsModel"
+                                                :min="LAYOUT_ITERATIONS_MIN"
+                                                :max="LAYOUT_ITERATIONS_MAX"
+                                                :step="100" />
+                                            <span
+                                                class="min-w-12 text-right text-sm text-muted-foreground tabular-nums">
+                                                {{ layoutSettings.layoutIterations }}
+                                            </span>
+                                        </div>
+                                        <p class="mt-1 text-xs text-muted-foreground">
+                                            {{ t('view.charts.mutual_friend.settings.layout_iterations_help') }}
+                                        </p>
+                                    </FieldContent>
+                                </Field>
+
+                                <Field>
+                                    <FieldLabel>{{
+                                        t('view.charts.mutual_friend.settings.layout_spacing')
+                                    }}</FieldLabel>
+                                    <FieldContent>
+                                        <div class="flex items-center gap-3">
+                                            <Slider
+                                                v-model="layoutSpacingModel"
+                                                :min="LAYOUT_SPACING_MIN"
+                                                :max="LAYOUT_SPACING_MAX"
+                                                :step="1" />
+                                            <span
+                                                class="min-w-12 text-right text-sm text-muted-foreground tabular-nums">
+                                                {{ layoutSettings.layoutSpacing }}
+                                            </span>
+                                        </div>
+                                        <p class="mt-1 text-xs text-muted-foreground">
+                                            {{ t('view.charts.mutual_friend.settings.layout_spacing_help') }}
+                                        </p>
+                                    </FieldContent>
+                                </Field>
+
+                                <Field>
+                                    <FieldLabel>{{
+                                        t('view.charts.mutual_friend.settings.edge_curvature')
+                                    }}</FieldLabel>
+                                    <FieldContent>
+                                        <div class="flex items-center gap-3">
+                                            <Slider
+                                                v-model="edgeCurvatureModel"
+                                                :min="EDGE_CURVATURE_MIN"
+                                                :max="EDGE_CURVATURE_MAX"
+                                                :step="0.01" />
+                                            <span
+                                                class="min-w-12 text-right text-sm text-muted-foreground tabular-nums">
+                                                {{ edgeCurvatureLabel }}
+                                            </span>
+                                        </div>
+                                        <p class="mt-1 text-xs text-muted-foreground">
+                                            {{ t('view.charts.mutual_friend.settings.edge_curvature_help') }}
+                                        </p>
+                                    </FieldContent>
+                                </Field>
+                            </FieldGroup>
+                        </SheetContent>
+                    </Sheet>
+
+                    <div
+                        v-if="isFetching"
+                        class="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] items-center rounded-md bg-transparent p-3 w-70">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span>{{ t('view.charts.mutual_friend.progress.friends_processed') }}</span>
+                            <strong>{{ fetchState.processedFriends }} / {{ totalFriends }}</strong>
+                        </div>
+                        <Progress :model-value="progressPercent" class="h-3" />
                     </div>
-                    <Progress :model-value="progressPercent" class="h-3" />
                 </div>
             </div>
 
@@ -55,10 +142,14 @@
 <script setup>
     defineOptions({ name: 'ChartsMutual' });
 
-    import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+    import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+    import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+    import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { Empty, EmptyDescription, EmptyHeader } from '@/components/ui/empty';
     import { Button } from '@/components/ui/button';
     import { Progress } from '@/components/ui/progress';
+    import { Settings } from 'lucide-vue-next';
+    import { Slider } from '@/components/ui/slider';
     import { Spinner } from '@/components/ui/spinner';
     import { createNodeBorderProgram } from '@sigma/node-border';
     import { storeToRefs } from 'pinia';
@@ -66,6 +157,7 @@
     import { useI18n } from 'vue-i18n';
 
     import BackToTop from '@/components/BackToTop.vue';
+    import EdgeCurveProgram from '@sigma/edge-curve';
     import Graph from 'graphology';
     import Sigma from 'sigma';
     import forceAtlas2 from 'graphology-layout-forceatlas2';
@@ -125,11 +217,73 @@
     let currentGraph = null;
     let resizeObserver = null;
     let pendingRender = null;
+    let pendingLayoutUpdate = null;
+
+    const LAYOUT_ITERATIONS_MIN = 300;
+    const LAYOUT_ITERATIONS_MAX = 1500;
+    const LAYOUT_SPACING_MIN = 8;
+    const LAYOUT_SPACING_MAX = 240;
+    const EDGE_CURVATURE_MIN = 0;
+    const EDGE_CURVATURE_MAX = 0.2;
+
+    const layoutSettings = reactive({
+        layoutIterations: 800,
+        layoutSpacing: 60,
+        edgeCurvature: 0.1
+    });
+
+    const layoutIterationsModel = computed({
+        get: () => [layoutSettings.layoutIterations],
+        set: (value) => {
+            layoutSettings.layoutIterations = clampNumber(
+                Math.round(value?.[0] ?? layoutSettings.layoutIterations),
+                LAYOUT_ITERATIONS_MIN,
+                LAYOUT_ITERATIONS_MAX
+            );
+        }
+    });
+
+    const layoutSpacingModel = computed({
+        get: () => [layoutSettings.layoutSpacing],
+        set: (value) => {
+            layoutSettings.layoutSpacing = clampNumber(
+                Math.round(value?.[0] ?? layoutSettings.layoutSpacing),
+                LAYOUT_SPACING_MIN,
+                LAYOUT_SPACING_MAX
+            );
+        }
+    });
+
+    const edgeCurvatureModel = computed({
+        get: () => [layoutSettings.edgeCurvature],
+        set: (value) => {
+            const next = clampNumber(
+                value?.[0] ?? layoutSettings.edgeCurvature,
+                EDGE_CURVATURE_MIN,
+                EDGE_CURVATURE_MAX
+            );
+            layoutSettings.edgeCurvature = Number(next.toFixed(2));
+        }
+    });
+
+    const edgeCurvatureLabel = computed(() => layoutSettings.edgeCurvature.toFixed(2));
+
+    let lastLayoutSpacing = layoutSettings.layoutSpacing;
 
     watch(isDarkMode, () => {
         if (!currentGraph) return;
         renderGraph(currentGraph, true);
     });
+
+    watch(
+        () => [layoutSettings.layoutIterations, layoutSettings.layoutSpacing],
+        () => scheduleLayoutUpdate({ runLayout: true })
+    );
+
+    watch(
+        () => layoutSettings.edgeCurvature,
+        () => scheduleLayoutUpdate({ runLayout: false })
+    );
 
     const isFetching = computed({
         get: () => status.isFetching,
@@ -237,10 +391,36 @@
         });
     }
 
-    function runLayout(graph) {
-        initPositions(graph);
+    function clampNumber(value, min, max) {
+        const normalized = Number.isFinite(value) ? value : min;
+        return Math.min(max, Math.max(min, normalized));
+    }
 
-        const iterations = Math.min(1200, Math.max(400, Math.round(Math.sqrt(graph.order) * 18)));
+    function lerp(a, b, t) {
+        return a + (b - a) * t;
+    }
+
+    function jitterPositions(graph, magnitude) {
+        graph.forEachNode((node, attrs) => {
+            if (!Number.isFinite(attrs.x) || !Number.isFinite(attrs.y)) return;
+            graph.mergeNodeAttributes(node, {
+                x: attrs.x + (Math.random() - 0.5) * magnitude,
+                y: attrs.y + (Math.random() - 0.5) * magnitude
+            });
+        });
+    }
+
+    // @ts-ignore
+    function runLayout(graph, { reinitialize } = {}) {
+        if (reinitialize) initPositions(graph);
+
+        let iterations = clampNumber(layoutSettings.layoutIterations, LAYOUT_ITERATIONS_MIN, LAYOUT_ITERATIONS_MAX);
+        iterations = Math.min(iterations, Math.round(Math.sqrt(graph.order) * 20));
+        const spacing = clampNumber(layoutSettings.layoutSpacing, LAYOUT_SPACING_MIN, LAYOUT_SPACING_MAX);
+        const t = (spacing - LAYOUT_SPACING_MIN) / (LAYOUT_SPACING_MAX - LAYOUT_SPACING_MIN);
+        const clampedT = clampNumber(t, 0, 1);
+        const deltaSpacing = spacing - lastLayoutSpacing;
+        lastLayoutSpacing = spacing;
 
         const inferred = forceAtlas2.inferSettings ? forceAtlas2.inferSettings(graph) : {};
         const settings = {
@@ -248,13 +428,42 @@
             barnesHutOptimize: true,
             barnesHutTheta: 0.8,
             strongGravityMode: true,
-            gravity: 1.2,
-            scalingRatio: 20,
+            gravity: lerp(1.6, 0.6, clampedT),
+            scalingRatio: spacing,
             slowDown: 2
         };
 
+        if (Math.abs(deltaSpacing) >= 8) jitterPositions(graph, lerp(0.5, 2.0, clampedT));
+
         forceAtlas2.assign(graph, { iterations, settings });
-        noverlap.assign(graph, { maxIterations: 200, settings: { ratio: 1.1, margin: 2 } });
+        const noverlapIterations = clampNumber(Math.round(Math.sqrt(graph.order) * 6), 200, 600);
+        noverlap.assign(graph, {
+            maxIterations: noverlapIterations,
+            settings: {
+                ratio: lerp(1.05, 1.35, clampedT),
+                margin: lerp(1, 8, clampedT)
+            }
+        });
+    }
+
+    function applyEdgeCurvature(graph) {
+        const curvature = clampNumber(layoutSettings.edgeCurvature, EDGE_CURVATURE_MIN, EDGE_CURVATURE_MAX);
+        const type = curvature > 0 ? 'curve' : 'line';
+
+        graph.forEachEdge((edge) => {
+            graph.mergeEdgeAttributes(edge, { curvature, type });
+        });
+    }
+
+    function scheduleLayoutUpdate({ runLayout: shouldRunLayout }) {
+        if (!currentGraph) return;
+        if (pendingLayoutUpdate) clearTimeout(pendingLayoutUpdate);
+        pendingLayoutUpdate = setTimeout(() => {
+            pendingLayoutUpdate = null;
+            applyEdgeCurvature(currentGraph);
+            if (shouldRunLayout) runLayout(currentGraph, { reinitialize: false });
+            renderGraph(currentGraph);
+        }, 100);
     }
 
     function assignCommunitiesAndColors(graph) {
@@ -325,8 +534,9 @@
         });
 
         if (graph.order > 1) {
-            runLayout(graph);
+            runLayout(graph, { reinitialize: true });
             assignCommunitiesAndColors(graph);
+            applyEdgeCurvature(graph);
         }
 
         graphNodeCount.value = graph.order;
@@ -372,6 +582,7 @@
                 zIndex: true,
                 defaultNodeType: 'border',
                 nodeProgramClasses: { border: NodeBorderProgram },
+                edgeProgramClasses: { curve: EdgeCurveProgram },
                 defaultDrawNodeHover: (ctx, data, settings) => {
                     if (!data.label) return;
 
