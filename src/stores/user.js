@@ -1208,7 +1208,7 @@ export const useUserStore = defineStore('User', () => {
         D.avatars = array;
     }
 
-    function refreshUserDialogAvatars(fileId) {
+    async function refreshUserDialogAvatars(fileId) {
         const D = userDialog.value;
         if (D.isAvatarsLoading) {
             return;
@@ -1233,7 +1233,7 @@ export const useUserStore = defineStore('User', () => {
             }
         }
         const map = new Map();
-        processBulk({
+        await processBulk({
             fn: avatarRequest.getAvatars,
             N: -1,
             params,

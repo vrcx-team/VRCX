@@ -69,6 +69,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         timeSpent: 0
     });
     const avatarHistory = ref([]);
+    const loadingToastId = ref(null);
 
     watch(
         () => watchState.isLoggedIn,
@@ -463,10 +464,11 @@ export const useAvatarStore = defineStore('Avatar', () => {
         const avatars = new Map();
         if (type === 'search') {
             try {
+                const url = `${
+                    avatarProviderStore.avatarRemoteDatabaseProvider
+                }?${type}=${encodeURIComponent(search)}&n=5000`;
                 const response = await webApiService.execute({
-                    url: `${
-                        avatarProviderStore.avatarRemoteDatabaseProvider
-                    }?${type}=${encodeURIComponent(search)}&n=5000`,
+                    url,
                     method: 'GET',
                     headers: {
                         Referer: 'https://vrcx.app',
@@ -475,7 +477,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 });
                 const json = JSON.parse(response.data);
                 if (AppDebug.debugWebRequests) {
-                    console.log(json, response);
+                    console.log(url, json, response);
                 }
                 if (response.status === 200 && typeof json === 'object') {
                     json.forEach((avatar) => {
@@ -522,11 +524,18 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     async function lookupAvatarByImageFileId(authorId, fileId) {
-        const length =
-            avatarProviderStore.avatarRemoteDatabaseProviderList.length;
-        for (let i = 0; i < length; ++i) {
-            const url = avatarProviderStore.avatarRemoteDatabaseProviderList[i];
-            const avatarArray = await lookupAvatarsByAuthor(url, authorId);
+        for (const providerUrl of avatarProviderStore.avatarRemoteDatabaseProviderList) {
+            const avatar = await lookupAvatarByFileId(providerUrl, fileId);
+            if (avatar?.id) {
+                return avatar.id;
+            }
+        }
+
+        for (const providerUrl of avatarProviderStore.avatarRemoteDatabaseProviderList) {
+            const avatarArray = await lookupAvatarsByAuthor(
+                providerUrl,
+                authorId
+            );
             for (const avatar of avatarArray) {
                 if (extractFileId(avatar.imageUrl) === fileId) {
                     return avatar.id;
@@ -536,14 +545,11 @@ export const useAvatarStore = defineStore('Avatar', () => {
         return null;
     }
 
-    async function lookupAvatarsByAuthor(url, authorId) {
-        const avatars = [];
-        if (!url) {
-            return avatars;
-        }
+    async function lookupAvatarByFileId(providerUrl, fileId) {
         try {
+            const url = `${providerUrl}?fileId=${encodeURIComponent(fileId)}`;
             const response = await webApiService.execute({
-                url: `${url}?authorId=${encodeURIComponent(authorId)}`,
+                url,
                 method: 'GET',
                 headers: {
                     Referer: 'https://vrcx.app',
@@ -552,7 +558,50 @@ export const useAvatarStore = defineStore('Avatar', () => {
             });
             const json = JSON.parse(response.data);
             if (AppDebug.debugWebRequests) {
-                console.log(json, response);
+                console.log(url, json, response);
+            }
+            if (response.status === 200 && typeof json === 'object') {
+                const ref = {
+                    authorId: '',
+                    authorName: '',
+                    name: '',
+                    description: '',
+                    id: '',
+                    imageUrl: '',
+                    thumbnailImageUrl: '',
+                    created_at: '0001-01-01T00:00:00.0000000Z',
+                    updated_at: '0001-01-01T00:00:00.0000000Z',
+                    releaseStatus: 'public',
+                    ...json
+                };
+                return ref;
+            } else {
+                return null;
+            }
+        } catch (err) {
+            // ignore errors for now, not all providers support this lookup type
+            return null;
+        }
+    }
+
+    async function lookupAvatarsByAuthor(providerUrl, authorId) {
+        const avatars = [];
+        if (!providerUrl) {
+            return avatars;
+        }
+        try {
+            const url = `${providerUrl}?authorId=${encodeURIComponent(authorId)}`;
+            const response = await webApiService.execute({
+                url,
+                method: 'GET',
+                headers: {
+                    Referer: 'https://vrcx.app',
+                    'VRCX-ID': vrcxUpdaterStore.vrcxId
+                }
+            });
+            const json = JSON.parse(response.data);
+            if (AppDebug.debugWebRequests) {
+                console.log(url, json, response);
             }
             if (response.status === 200 && typeof json === 'object') {
                 json.forEach((avatar) => {
@@ -621,11 +670,21 @@ export const useAvatarStore = defineStore('Avatar', () => {
 
     async function checkAvatarCacheRemote(fileId, ownerUserId) {
         if (advancedSettingsStore.avatarRemoteDatabase) {
-            const avatarId = await lookupAvatarByImageFileId(
-                ownerUserId,
-                fileId
-            );
-            return avatarId;
+            try {
+                toast.dismiss(loadingToastId.value);
+                loadingToastId.value = toast.loading(
+                    t('message.avatar_lookup.loading')
+                );
+                const avatarId = await lookupAvatarByImageFileId(
+                    ownerUserId,
+                    fileId
+                );
+                return avatarId;
+            } catch (err) {
+                console.error('Failed to lookup avatar by image file id:', err);
+            } finally {
+                toast.dismiss(loadingToastId.value);
+            }
         }
         return null;
     }
@@ -637,7 +696,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     ) {
         const fileId = extractFileId(currentAvatarImageUrl);
         if (!fileId) {
-            toast.error('Sorry, the author is unknown');
+            toast.error(t('message.avatar_lookup.failed'));
         } else if (refUserId === userStore.currentUser.id) {
             showAvatarDialog(userStore.currentUser.currentAvatar);
         } else {
@@ -646,22 +705,20 @@ export const useAvatarStore = defineStore('Avatar', () => {
             if (!avatarId) {
                 avatarInfo = await getAvatarName(currentAvatarImageUrl);
                 if (avatarInfo.ownerId === userStore.currentUser.id) {
-                    userStore.refreshUserDialogAvatars(fileId);
+                    await userStore.refreshUserDialogAvatars(fileId);
+                    return;
                 }
             }
             if (!avatarId) {
-                avatarId = await checkAvatarCacheRemote(
-                    fileId,
-                    avatarInfo.ownerId
-                );
+                avatarId = await checkAvatarCacheRemote(fileId, ownerUserId);
             }
             if (!avatarId) {
-                if (avatarInfo.ownerId === refUserId) {
+                if (ownerUserId === refUserId) {
                     toast.warning(
-                        "It's personal (own) avatar or not found in avatar database"
+                        t('message.avatar_lookup.private_or_not_found')
                     );
                 } else {
-                    toast.warning('Avatar not found in avatar database');
+                    toast.warning(t('message.avatar_lookup.not_found'));
                     userStore.showUserDialog(avatarInfo.ownerId);
                 }
             }

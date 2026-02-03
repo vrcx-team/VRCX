@@ -384,7 +384,7 @@
                     "fetch_cancelled_graph_not_updated": "Fetch cancelled"
                 },
                 "notifications": {
-                    "start_fetching": "Start fetching",
+                    "start_fetching": "Started fetching",
                     "mutual_friend_graph_ready_title": "Mutual Friend Network Graph",
                     "mutual_friend_graph_ready_message": "Mutual friend network graph is ready",
                     "friend_list_changed_fetch_again": "Friend list changed. Please fetch the mutual friend network again."
@@ -2082,6 +2082,12 @@
             "image_changed": "Avatar image changed",
             "image_invalid": "Current avatar image invalid"
         },
+        "avatar_lookup": {
+            "not_found": "Avatar not found in search providers",
+            "failed": "Avatar lookup failed",
+            "private_or_not_found": "Users avatar is private or not found in search providers",
+            "loading": "Searching for avatar using search providers"
+        },
         "database": {
             "upgrade_complete": "Database upgrade complete"
         },
@@ -2091,7 +2097,7 @@
         "file": {
             "not_image": "File isn't an image",
             "too_large": "File size too large",
-            "folder_missing": "Folder dosn't exist"
+            "folder_missing": "Folder doesn't exist"
         },
         "group": {
             "load_failed": "Failed to load group"

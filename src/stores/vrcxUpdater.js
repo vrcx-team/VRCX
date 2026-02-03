@@ -221,7 +221,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
         pendingVRCXUpdate.value = false;
         if (AppDebug.debugWebRequests) {
-            console.log(json, response);
+            console.log(url, json, response);
         }
         if (json === Object(json) && json.name && json.published_at) {
             changeLogDialog.value.buildName = json.name;
@@ -308,7 +308,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             return;
         }
         if (AppDebug.debugWebRequests) {
-            console.log(json, response);
+            console.log(url, json, response);
         }
         const releases = [];
         if (typeof json !== 'object' || json.message) {

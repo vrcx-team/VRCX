@@ -458,7 +458,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
             const data = JSON.parse(response.data);
             if (AppDebug.debugWebRequests) {
-                console.log('Models API response:', data);
+                console.log(modelsURL, data, response);
             }
 
             if (data.data && Array.isArray(data.data)) {
@@ -685,10 +685,11 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             apiKey = youTubeApiKey.value;
         }
         try {
+            const url = `https://www.googleapis.com/youtube/v3/videos?id=${encodeURIComponent(
+                videoId
+            )}&part=snippet,contentDetails&key=${apiKey}`;
             const response = await webApiService.execute({
-                url: `https://www.googleapis.com/youtube/v3/videos?id=${encodeURIComponent(
-                    videoId
-                )}&part=snippet,contentDetails&key=${apiKey}`,
+                url,
                 method: 'GET',
                 headers: {
                     Referer: 'https://vrcx.app'
@@ -696,7 +697,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             });
             const json = JSON.parse(response.data);
             if (AppDebug.debugWebRequests) {
-                console.log(json, response);
+                console.log(url, json, response);
             }
             if (response.status === 200) {
                 data = json;
@@ -725,8 +726,9 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 return null;
             }
             try {
+                const url = `https://translation.googleapis.com/language/translate/v2?key=${keyToUse}`;
                 const response = await webApiService.execute({
-                    url: `https://translation.googleapis.com/language/translate/v2?key=${keyToUse}`,
+                    url,
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -745,7 +747,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 }
                 const data = JSON.parse(response.data);
                 if (AppDebug.debugWebRequests) {
-                    console.log(data, response);
+                    console.log(url, data, response);
                 }
                 return data.data.translations[0].translatedText;
             } catch (err) {
@@ -809,7 +811,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
             const data = JSON.parse(response.data);
             if (AppDebug.debugWebRequests) {
-                console.log(data, response);
+                console.log(endpoint, data, response);
             }
 
             const translated = data?.choices?.[0]?.message?.content;

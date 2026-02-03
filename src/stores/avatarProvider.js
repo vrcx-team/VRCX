@@ -15,7 +15,7 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     const avatarRemoteDatabaseProvider = ref('');
 
     const avatarRemoteDatabaseProviderList = ref([
-        'https://api.avtrdb.com/v2/avatar/search/vrcx'
+        'https://api.avtrdb.com/v3/avatar/search/vrcx'
     ]);
     watch(
         () => watchState.isLoggedIn,
@@ -29,21 +29,26 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
         avatarRemoteDatabaseProviderList.value = JSON.parse(
             await configRepository.getString(
                 'VRCX_avatarRemoteDatabaseProviderList',
-                '[ "https://api.avtrdb.com/v2/avatar/search/vrcx" ]'
+                '[ "https://api.avtrdb.com/v3/avatar/search/vrcx" ]'
             )
         );
+        const deprecated = 'https://avtr.just-h.party/vrcx_search.php';
+        const v1 = 'https://api.avtrdb.com/v1/avatar/search/vrcx';
+        const v2 = 'https://api.avtrdb.com/v2/avatar/search/vrcx';
+        const v3 = 'https://api.avtrdb.com/v3/avatar/search/vrcx';
+
+        const newList = avatarRemoteDatabaseProviderList.value
+            .filter((u) => u !== deprecated)
+            .map((u) => (u === v1 || u === v2 ? v3 : u));
+
         if (
-            avatarRemoteDatabaseProviderList.value.includes(
-                'https://avtr.just-h.party/vrcx_search.php'
-            )
+            JSON.stringify(newList) !==
+            JSON.stringify(avatarRemoteDatabaseProviderList.value)
         ) {
-            removeFromArray(
-                avatarRemoteDatabaseProviderList.value,
-                'https://avtr.just-h.party/vrcx_search.php'
-            );
+            avatarRemoteDatabaseProviderList.value = newList;
             await configRepository.setString(
                 'VRCX_avatarRemoteDatabaseProviderList',
-                JSON.stringify(avatarRemoteDatabaseProviderList.value)
+                JSON.stringify(newList)
             );
         }
 

@@ -515,6 +515,7 @@
         if (hasFetched.value && !status.needsRefetch) return;
 
         isLoadingSnapshot.value = true;
+        toast.dismiss(loadingToastId.value);
         loadingToastId.value = toast.loading(t('view.charts.mutual_friend.status.loading_cache'));
 
         try {
@@ -561,10 +562,7 @@
             console.error('[MutualNetworkGraph] Failed to load cached mutual graph', err);
         } finally {
             isLoadingSnapshot.value = false;
-            if (loadingToastId.value !== null && loadingToastId.value !== undefined) {
-                toast.dismiss(loadingToastId.value);
-                loadingToastId.value = null;
-            }
+            toast.dismiss(loadingToastId.value);
         }
     }
 
