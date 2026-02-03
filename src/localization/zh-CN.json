@@ -197,6 +197,11 @@
                 "no_invalid_found": "未发现失效模型",
                 "delete_cancelled": "已取消删除操作"
             },
+            "visibility": {
+                "public": "公开",
+                "friends": "仅好友",
+                "private": "私人"
+            },
             "edit_mode": "编辑模式",
             "copy": "复制",
             "clear": "清除",
@@ -542,7 +547,9 @@
                 "logging": {
                     "header": "日志",
                     "resource_load": "显示世界内 Udon 网络资源的加载详情",
-                    "empty_avatar": "不在动态里记录模型名称"
+                    "empty_avatar": "不在动态里记录模型名称",
+                    "auto_login_delay": "自动登录延迟",
+                    "auto_login_delay_button": "设置延迟（秒）"
                 },
                 "automation": {
                     "header": "自动化",
@@ -555,8 +562,8 @@
                     "company_status": "有其他符合条件的人时",
                     "allowed_instance_types": "允许生效的房间类型",
                     "instance_type_placeholder": "所有类型的房间",
-                    "auto_invite_request_accept": "自动同意邀请请求",
-                    "auto_invite_request_accept_tooltip": "自动同意来自星标好友的邀请请求",
+                    "auto_invite_request_accept": "自动同意加入申请",
+                    "auto_invite_request_accept_tooltip": "自动同意来自星标好友的加入申请",
                     "auto_invite_request_accept_off": "关闭",
                     "auto_invite_request_accept_favs": "星标好友",
                     "auto_invite_request_accept_selected_favs": "选定的星标好友"
@@ -612,10 +619,13 @@
                     "sort_instance_users_by": "房间玩家排序规则",
                     "sort_instance_users_by_time": "时间",
                     "sort_instance_users_by_alphabet": "字母顺序",
+                    "table_max_size": "表格最大尺寸",
+                    "table_page_sizes": "表格页面尺寸",
+                    "table_page_sizes_error": "页面尺寸必须是 1 到 1000 之间的数字",
                     "show_notification_icon_dot": "显示托盘通知",
                     "striped_data_table_mode": "斑马纹表格模式",
                     "toggle_pointer_on_hover": "悬停时强制显示指针",
-                    "table_density": "表格宽度",
+                    "table_density": "行高密度",
                     "table_density_standard": "标准",
                     "table_density_comfortable": "舒适",
                     "table_density_compact": "紧凑"
@@ -1161,6 +1171,11 @@
                     "last_active": "最后活跃",
                     "friend_order": "添加顺序"
                 }
+            },
+            "note_memo": {
+                "header": "编辑在线备注和本地备注",
+                "cancel": "取消",
+                "confirm": "确定"
             }
         },
         "world": {
@@ -1881,7 +1896,9 @@
                 "player_id": "玩家 ID",
                 "world_name": "世界名称",
                 "world_id": "世界 ID"
-            }
+            },
+            "no_results": "未找到结果",
+            "invalid_file": "选择的文件无效。请选择有效的 VRChat 截图。"
         },
         "registry_backup": {
             "header": "VRC 设置数据备份工具",
@@ -1968,7 +1985,8 @@
             "my_emojis": "我的表情",
             "default_emojis": "默认表情",
             "cancel": "取消",
-            "send": "发送"
+            "send": "发送",
+            "select_default_emoji": "选择戳一戳使用的表情"
         },
         "allowed_video_player_domains": {
             "header": "允许在视频播放器使用的域名",
@@ -2036,6 +2054,7 @@
         "traveling": "正在传送"
     },
     "message": {
+        "auto_login_delay_countdown": "将在 {seconds} 秒后自动登录...",
         "vrcx_updater": {
             "failed": "无法检查更新，{message}",
             "failed_install": "无法安装更新",
@@ -2305,9 +2324,11 @@
         "change_table_size": {
             "header": "最大读取记录数",
             "description": "限制从数据库读取记录到界面接口的数量，较大的数据表大小可能会影响内存用量和程序性能",
-                    "table_max_size": "最大显示行数",
-                    "table_page_sizes": "每页显示行数",
-                    "table_page_sizes_error": "行数必须是 1 到 1000 之间的数字",
+            "table_max_size": "最大读取记录数",
+            "table_max_size_error": "请输入 {min} 到 {max} 之间的数字。",
+            "search_limit": "搜索限制",
+            "search_limit_error": "请输入 {min} 到 {max} 之间的数字。",
+            "search_limit_warning": "过大的数值可能会导致程序冻结。",
             "cancel": "取消",
             "save": "保存",
             "input_error": "请输入有效的数量"
@@ -2352,6 +2373,11 @@
             "cancel": "取消",
             "save": "保存",
             "input_error": "请输入有效的秒数"
+        },
+        "auto_login_delay": {
+            "header": "自动登录延迟",
+            "description": "输入延迟时间（秒）（0 表示禁用，最大值为 10）。",
+            "input_error": "请输入 0 到 10 之间的整数。"
         },
         "proxy_settings": {
             "header": "代理服务器设置",
