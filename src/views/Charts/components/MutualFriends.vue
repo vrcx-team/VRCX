@@ -4,8 +4,7 @@
             class="mt-0 flex min-h-[calc(100vh-140px)] flex-col items-center justify-betweenpt-12"
             ref="mutualGraphRef">
             <div class="flex items-center w-full">
-                <div
-                    class="options-container mt-2 mb-0 flex flex-wrap items-center gap-3 bg-transparent px-0 pb-2 shadow-none">
+                <div class="options-container flex flex-wrap items-center gap-3 bg-transparent pb-3 shadow-none">
                     <div class="flex flex-wrap items-center gap-2">
                         <TooltipWrapper :content="fetchButtonLabel" side="top">
                             <Button :disabled="fetchButtonDisabled" @click="startFetch">
@@ -26,8 +25,8 @@
                 </div>
                 <div
                     v-if="isFetching"
-                    class="mt-3 grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] items-center gap-x-3 gap-y-2 rounded-md bg-transparent p-3 ml-auto">
-                    <div class="flex justify-between text-[13px]">
+                    class="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] items-center rounded-md bg-transparent p-3 ml-auto w-70">
+                    <div class="flex justify-between text-sm mb-1">
                         <span>{{ t('view.charts.mutual_friend.progress.friends_processed') }}</span>
                         <strong>{{ fetchState.processedFriends }} / {{ totalFriends }}</strong>
                     </div>
@@ -62,7 +61,6 @@
     import { Progress } from '@/components/ui/progress';
     import { Spinner } from '@/components/ui/spinner';
     import { createNodeBorderProgram } from '@sigma/node-border';
-    import { onBeforeRouteLeave } from 'vue-router';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -81,9 +79,7 @@
         useModalStore,
         useUserStore
     } from '../../../stores';
-    import { createRateLimiter, executeWithBackoff } from '../../../shared/utils';
     import { database } from '../../../service/database';
-    import { userRequest } from '../../../api';
     import { watchState } from '../../../service/watchState';
 
     const { t } = useI18n();
@@ -128,6 +124,7 @@
     let sigmaInstance = null;
     let currentGraph = null;
     let resizeObserver = null;
+    let pendingRender = null;
 
     watch(isDarkMode, () => {
         if (!currentGraph) return;
@@ -338,6 +335,16 @@
 
     function renderGraph(graph, forceRecreate = false) {
         if (!graphContainerRef.value) return;
+        const container = graphContainerRef.value;
+        const { width, height } = container.getBoundingClientRect();
+        if (!width || !height) {
+            if (pendingRender) return;
+            pendingRender = requestAnimationFrame(() => {
+                pendingRender = null;
+                renderGraph(graph, forceRecreate);
+            });
+            return;
+        }
 
         const DEFAULT_LABEL_THRESHOLD = 10;
 
@@ -357,7 +364,7 @@
         }
 
         if (!sigmaInstance) {
-            sigmaInstance = new Sigma(graph, graphContainerRef.value, {
+            sigmaInstance = new Sigma(graph, container, {
                 renderLabels: true,
                 labelRenderedSizeThreshold: DEFAULT_LABEL_THRESHOLD,
                 labelColor: { color: labelColor },
@@ -512,11 +519,10 @@
         if (!watchState.isLoggedIn || !currentUser.value?.id) return;
         if (!watchState.isFriendsLoaded) return;
         if (isFetching.value || isLoadingSnapshot.value) return;
-        if (hasFetched.value && !status.needsRefetch) return;
+        if (hasFetched.value && !status.needsRefetch && currentGraph) return;
 
         isLoadingSnapshot.value = true;
-        toast.dismiss(loadingToastId.value);
-        loadingToastId.value = toast.loading(t('view.charts.mutual_friend.status.loading_cache'));
+        // loadingToastId.value = toast.info(t('view.charts.mutual_friend.status.loading_cache'));
 
         try {
             const snapshot = await database.getMutualGraphSnapshot();
@@ -554,7 +560,7 @@
             }
 
             applyGraph(mutualMap);
-            hasFetched.value = true;
+            chartsStore.markMutualGraphLoaded({ notify: false });
             fetchState.processedFriends = Math.min(mutualMap.size, totalFriends.value || mutualMap.size);
             status.friendSignature = totalFriends.value;
             status.needsRefetch = false;
@@ -562,7 +568,6 @@
             console.error('[MutualNetworkGraph] Failed to load cached mutual graph', err);
         } finally {
             isLoadingSnapshot.value = false;
-            toast.dismiss(loadingToastId.value);
         }
     }
 
@@ -598,148 +603,14 @@
             .catch(() => {});
     }
 
-    function cancelFetch() {
-        if (isFetching.value) status.cancelRequested = true;
-    }
-
-    const isCancelled = () => status.cancelRequested === true;
-
     async function startFetch() {
-        const rateLimiter = createRateLimiter({ limitPerInterval: 5, intervalMs: 1000 });
-
-        const fetchMutualFriends = async (userId) => {
-            const collected = [];
-            let offset = 0;
-
-            while (true) {
-                if (isCancelled()) break;
-                await rateLimiter.wait();
-                if (isCancelled()) break;
-
-                const args = await executeWithBackoff(
-                    () => {
-                        if (isCancelled()) throw new Error('cancelled');
-                        return userRequest.getMutualFriends({ userId, offset, n: 100 });
-                    },
-                    {
-                        maxRetries: 4,
-                        baseDelay: 500,
-                        shouldRetry: (err) => err?.status === 429 || (err?.message || '').includes('429')
-                    }
-                ).catch((err) => {
-                    if ((err?.message || '') === 'cancelled') return null;
-                    throw err;
-                });
-
-                if (!args || isCancelled()) break;
-
-                collected.push(...args.json);
-
-                if (args.json.length < 100) break;
-                offset += args.json.length;
-            }
-
-            return collected;
-        };
-
         if (isFetching.value || isOptOut.value) return;
-
-        if (!totalFriends.value) {
-            showStatusMessage(t('view.charts.mutual_friend.status.no_friends_to_process'), 'info');
-            return;
-        }
-
-        isFetching.value = true;
-        status.completionNotified = false;
-        status.needsRefetch = false;
-        status.cancelRequested = false;
-        hasFetched.value = false;
-        Object.assign(fetchState, { processedFriends: 0 });
-
-        const friendSnapshot = Array.from(friends.value.values());
-        const mutualMap = new Map();
-
-        let cancelled = false;
-
-        try {
-            for (let index = 0; index < friendSnapshot.length; index += 1) {
-                const friend = friendSnapshot[index];
-                if (!friend?.id) continue;
-
-                if (isCancelled()) {
-                    cancelled = true;
-                    break;
-                }
-
-                try {
-                    const mutuals = await fetchMutualFriends(friend.id);
-                    if (isCancelled()) {
-                        cancelled = true;
-                        break;
-                    }
-                    mutualMap.set(friend.id, { friend, mutuals });
-                } catch (err) {
-                    if ((err?.message || '') === 'cancelled' || isCancelled()) {
-                        cancelled = true;
-                        break;
-                    }
-                    console.warn('[MutualNetworkGraph] Skipping friend due to fetch error', friend.id, err);
-                    continue;
-                }
-
-                fetchState.processedFriends = index + 1;
-                if (status.cancelRequested) {
-                    cancelled = true;
-                    break;
-                }
-            }
-
-            if (cancelled) {
-                hasFetched.value = false;
-                showStatusMessage(t('view.charts.mutual_friend.messages.fetch_cancelled_graph_not_updated'), 'warning');
-                return;
-            }
-
-            applyGraph(mutualMap);
-            status.friendSignature = totalFriends.value;
-            status.needsRefetch = false;
-
-            try {
-                const entries = new Map();
-                mutualMap.forEach((value, friendId) => {
-                    if (!friendId) return;
-                    const normalizedFriendId = String(friendId);
-                    const collection = Array.isArray(value?.mutuals) ? value.mutuals : [];
-                    const ids = [];
-
-                    for (const entry of collection) {
-                        const identifier =
-                            typeof entry?.id === 'string'
-                                ? entry.id
-                                : entry?.id !== undefined && entry?.id !== null
-                                  ? String(entry.id)
-                                  : '';
-                        if (identifier && identifier !== 'usr_00000000-0000-0000-0000-000000000000')
-                            ids.push(identifier);
-                    }
-
-                    entries.set(normalizedFriendId, ids);
-                });
-                await database.saveMutualGraphSnapshot(entries);
-            } catch (persistErr) {
-                console.error('[MutualNetworkGraph] Failed to cache data', persistErr);
-            }
-
-            hasFetched.value = true;
-        } catch (err) {
-            console.error('[MutualNetworkGraph] fetch aborted', err);
-        } finally {
-            isFetching.value = false;
-            status.cancelRequested = false;
-        }
+        const mutualMap = await chartsStore.fetchMutualGraph();
+        if (!mutualMap) return;
+        applyGraph(mutualMap);
     }
 
-    onBeforeRouteLeave(() => {
-        chartsStore.resetMutualGraphState();
-    });
+    function cancelFetch() {
+        chartsStore.requestMutualGraphCancel();
+    }
 </script>
