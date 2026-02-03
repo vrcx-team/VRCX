@@ -1,13 +1,13 @@
 <template>
     <div @click="confirm" class="cursor-pointer w-fit align-top flex items-center">
-        <span class="flex items-center"
-            >{{ avatarName }} <Lock v-if="avatarType && avatarType === '(own)'" class="h-4 w-4 mx-1"
+        <span class="flex items-center mr-1"
+            >{{ avatarName }} <Lock v-if="avatarType && avatarType === '(own)'" class="h-4 w-4 ml-1"
         /></span>
         <TooltipWrapper v-if="avatarTags">
             <template #content>
                 <span class="truncate">{{ avatarTags }}</span>
             </template>
-            <span style="font-size: 12px" class="truncate">{{ avatarTags }}</span>
+            <span style="font-size: 12px" class="truncate text-muted-foreground">{{ avatarTags }}</span>
         </TooltipWrapper>
     </div>
 </template>
