@@ -112,6 +112,7 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     const previousInstancesInfoDialog = ref({
         instanceId: '',
+        lastId: '',
         visible: false
     });
 
@@ -129,13 +130,36 @@ export const useInstanceStore = defineStore('Instance', () => {
         groupRef: {
             id: '',
             name: ''
-        }
+        },
+        lastId: ''
+    });
+
+    const previousInstancesInfoState = ref({
+        sortBy: [{ id: 'created_at', desc: true }],
+        search: '',
+        pageSize: 10,
+        pageIndex: 0
     });
 
     const previousInstancesListState = ref({
-        user: { search: '', pageSize: 10, pageIndex: 0 },
-        world: { search: '', pageSize: 10, pageIndex: 0 },
-        group: { search: '', pageSize: 10, pageIndex: 0 }
+        user: {
+            sortBy: [{ id: 'created_at', desc: true }],
+            search: '',
+            pageSize: 10,
+            pageIndex: 0
+        },
+        world: {
+            sortBy: [{ id: 'created_at', desc: true }],
+            search: '',
+            pageSize: 10,
+            pageIndex: 0
+        },
+        group: {
+            sortBy: [{ id: 'created_at', desc: true }],
+            search: '',
+            pageSize: 10,
+            pageIndex: 0
+        }
     });
 
     const instanceJoinHistory = reactive(new Map());
@@ -1427,6 +1451,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         currentInstanceLocation,
         queuedInstances,
         previousInstancesInfoDialog,
+        previousInstancesInfoState,
         previousInstancesListDialog,
         previousInstancesListState,
         instanceJoinHistory,

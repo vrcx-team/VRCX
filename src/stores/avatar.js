@@ -574,7 +574,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
 
     async function lookupAvatarsByAuthor(providerUrl, authorId) {
         const avatars = [];
-        if (!providerUrl) {
+        if (!providerUrl || !authorId) {
             return avatars;
         }
         try {

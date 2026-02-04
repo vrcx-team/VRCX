@@ -113,7 +113,7 @@
                         v-if="isFetching"
                         class="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] items-center rounded-md bg-transparent p-3 w-70">
                         <div class="flex justify-between text-sm mb-1">
-                            <span>{{ t('view.charts.mutual_friend.progress.friends_processed') }}</span>
+                            <span class="mr-1">{{ t('view.charts.mutual_friend.progress.friends_processed') }}</span>
                             <strong>{{ fetchState.processedFriends }} / {{ totalFriends }}</strong>
                         </div>
                         <Progress :model-value="progressPercent" class="h-3" />

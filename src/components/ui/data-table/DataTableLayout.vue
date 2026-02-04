@@ -176,6 +176,10 @@
             type: Function,
             default: null
         },
+        onSortChange: {
+            type: Function,
+            default: null
+        },
         onRowClick: {
             type: Function,
             default: null
@@ -320,6 +324,14 @@
             if (props.onPageChange) {
                 props.onPageChange(page);
             }
+        }
+    });
+
+    const sortBy = computed(() => props.table.getState?.().sorting ?? []);
+
+    watch(sortBy, (newSorting) => {
+        if (props.onSortChange) {
+            props.onSortChange(newSorting);
         }
     });
 
