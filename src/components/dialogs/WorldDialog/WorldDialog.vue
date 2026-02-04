@@ -352,7 +352,7 @@
                         <template
                             v-if="isAgeGatedInstancesVisible || !(room.ageGate || room.location?.includes('~ageGate'))">
                             <div style="margin: 5px 0">
-                                <div class="flex-align-center">
+                                <div class="flex items-center">
                                     <LocationWorld
                                         class="text-sm"
                                         :locationobject="room.$location"
@@ -1390,10 +1390,3 @@
         }
     );
 </script>
-
-<style scoped>
-    .flex-align-center {
-        display: flex;
-        align-items: center;
-    }
-</style>

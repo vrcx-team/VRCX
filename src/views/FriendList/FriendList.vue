@@ -12,7 +12,7 @@
                 :on-page-size-change="handlePageSizeChange"
                 :on-row-click="handleRowClick">
                 <template #toolbar>
-                    <div class="flex items-center justify-between">
+                    <div class="mb-2 flex items-center justify-between">
                         <div class="flex flex-none mr-2 items-center">
                             <TooltipWrapper side="bottom" :content="t('view.friend_list.favorites_only_tooltip')">
                                 <span class="inline-flex">
