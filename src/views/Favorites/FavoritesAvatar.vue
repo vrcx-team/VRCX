@@ -1,495 +1,512 @@
 <template>
-    <div class="favorites-page x-container">
-        <div class="favorites-toolbar">
-            <div>
-                <Select :model-value="sortFavorites" @update:modelValue="handleSortFavoritesChange">
-                    <SelectTrigger size="sm" class="favorites-toolbar__select">
-                        <span class="flex items-center gap-2">
-                            <ArrowUpDown class="h-4 w-4" />
-                            <SelectValue
-                                :placeholder="t('view.settings.appearance.appearance.sort_favorite_by_name')" />
-                        </span>
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem
-                                :value="false"
-                                :text-value="t('view.settings.appearance.appearance.sort_favorite_by_name')">
-                                {{ t('view.settings.appearance.appearance.sort_favorite_by_name') }}
-                            </SelectItem>
-                            <SelectItem
-                                :value="true"
-                                :text-value="t('view.settings.appearance.appearance.sort_favorite_by_date')">
-                                {{ t('view.settings.appearance.appearance.sort_favorite_by_date') }}
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </div>
-            <div class="favorites-toolbar__right">
-                <InputGroupSearch
-                    v-model="avatarFavoriteSearch"
-                    class="favorites-toolbar__search"
-                    :placeholder="t('view.favorite.avatars.search')"
-                    @input="searchAvatarFavorites" />
-                <DropdownMenu v-model:open="avatarToolbarMenuOpen">
-                    <DropdownMenuTrigger as-child>
-                        <Button class="rounded-full" size="icon-sm" variant="ghost"> <Ellipsis /> </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent class="favorites-dropdown">
-                        <li class="favorites-dropdown__control" @click.stop>
-                            <div class="favorites-dropdown__control-header">
-                                <span>Scale</span>
-                                <span class="favorites-dropdown__control-value">{{ avatarCardScalePercent }}%</span>
-                            </div>
-                            <Slider
-                                v-model="avatarCardScaleValue"
-                                class="favorites-dropdown__slider"
-                                :min="avatarCardScaleSlider.min"
-                                :max="avatarCardScaleSlider.max"
-                                :step="avatarCardScaleSlider.step" />
-                        </li>
-                        <li class="favorites-dropdown__control" @click.stop>
-                            <div class="favorites-dropdown__control-header">
-                                <span>Spacing</span>
-                                <span class="favorites-dropdown__control-value"> {{ avatarCardSpacingPercent }}% </span>
-                            </div>
-                            <Slider
-                                v-model="avatarCardSpacingValue"
-                                class="favorites-dropdown__slider"
-                                :min="avatarCardSpacingSlider.min"
-                                :max="avatarCardSpacingSlider.max"
-                                :step="avatarCardSpacingSlider.step" />
-                        </li>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem @click="handleAvatarImportClick">
-                            {{ t('view.favorite.import') }}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem @click="handleAvatarExportClick">
-                            {{ t('view.favorite.export') }}
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
-        </div>
-        <ResizablePanelGroup
-            ref="avatarSplitterGroupRef"
-            direction="horizontal"
-            class="favorites-splitter"
-            @layout="handleAvatarSplitterLayout">
-            <ResizablePanel
-                ref="avatarSplitterPanelRef"
-                :default-size="avatarSplitterDefaultSize"
-                :min-size="avatarSplitterMinSize"
-                :max-size="avatarSplitterMaxSize"
-                :collapsed-size="0"
-                collapsible
-                :order="1">
-                <div class="favorites-groups-panel">
-                    <div class="group-section">
-                        <div class="group-section__header">
-                            <span>{{ t('view.favorite.avatars.vrchat_favorites') }}</span>
-                            <TooltipWrapper side="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
-                                <Button
-                                    class="rounded-full"
-                                    variant="outline"
-                                    size="icon-sm"
-                                    :disabled="isFavoriteLoading"
-                                    @click.stop="handleRefreshFavorites">
-                                    <Spinner v-if="isFavoriteLoading" />
-                                    <RefreshCw v-else />
-                                </Button>
-                            </TooltipWrapper>
-                        </div>
-                        <div class="group-section__list">
-                            <template v-if="favoriteAvatarGroups.length">
-                                <div
-                                    v-for="group in favoriteAvatarGroups"
-                                    :key="group.key"
-                                    :class="[
-                                        'group-item',
-                                        { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
-                                    ]"
-                                    @click="handleGroupClick('remote', group.key)">
-                                    <div class="group-item__top">
-                                        <span class="group-item__name">{{ group.displayName }}</span>
-                                        <span class="group-item__count">{{ group.count }}/{{ group.capacity }}</span>
-                                    </div>
-                                    <div class="group-item__bottom">
-                                        <Badge variant="outline">
-                                            {{ t(`view.favorite.visibility.${group.visibility}`) }}
-                                        </Badge>
-                                        <DropdownMenu
-                                            :open="activeGroupMenu === remoteGroupMenuKey(group.key)"
-                                            @update:open="
-                                                handleGroupMenuVisible(remoteGroupMenuKey(group.key), $event)
-                                            ">
-                                            <DropdownMenuTrigger asChild>
-                                                <Button class="rounded-full" variant="ghost" size="icon-sm" @click.stop>
-                                                    <MoreHorizontal />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent side="right" class="w-55">
-                                                <DropdownMenuItem @click="handleRemoteRename(group)">
-                                                    <span>{{ t('view.favorite.rename_tooltip') }}</span>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuSub>
-                                                    <DropdownMenuSubTrigger>
-                                                        <span>{{ t('view.favorite.visibility_tooltip') }}</span>
-                                                    </DropdownMenuSubTrigger>
-                                                    <DropdownMenuPortal>
-                                                        <DropdownMenuSubContent side="right" align="start" class="w-45">
-                                                            <DropdownMenuCheckboxItem
-                                                                v-for="visibility in avatarGroupVisibilityOptions"
-                                                                :key="visibility"
-                                                                :model-value="group.visibility === visibility"
-                                                                indicator-position="right"
-                                                                @select="handleVisibilitySelection(group, visibility)">
-                                                                <span>{{
-                                                                    t(`view.favorite.visibility.${visibility}`)
-                                                                }}</span>
-                                                            </DropdownMenuCheckboxItem>
-                                                        </DropdownMenuSubContent>
-                                                    </DropdownMenuPortal>
-                                                </DropdownMenuSub>
-                                                <DropdownMenuItem
-                                                    variant="destructive"
-                                                    @click="handleRemoteClear(group)">
-                                                    <span>{{ t('view.favorite.clear') }}</span>
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </div>
+    <div class="x-container">
+        <div class="favorites-page">
+            <div class="favorites-toolbar">
+                <div>
+                    <Select :model-value="sortFavorites" @update:modelValue="handleSortFavoritesChange">
+                        <SelectTrigger size="sm" class="favorites-toolbar__select">
+                            <span class="flex items-center gap-2">
+                                <ArrowUpDown class="h-4 w-4" />
+                                <SelectValue
+                                    :placeholder="t('view.settings.appearance.appearance.sort_favorite_by_name')" />
+                            </span>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    :value="false"
+                                    :text-value="t('view.settings.appearance.appearance.sort_favorite_by_name')">
+                                    {{ t('view.settings.appearance.appearance.sort_favorite_by_name') }}
+                                </SelectItem>
+                                <SelectItem
+                                    :value="true"
+                                    :text-value="t('view.settings.appearance.appearance.sort_favorite_by_date')">
+                                    {{ t('view.settings.appearance.appearance.sort_favorite_by_date') }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div class="favorites-toolbar__right">
+                    <InputGroupSearch
+                        v-model="avatarFavoriteSearch"
+                        class="favorites-toolbar__search"
+                        :placeholder="t('view.favorite.avatars.search')"
+                        @input="searchAvatarFavorites" />
+                    <DropdownMenu v-model:open="avatarToolbarMenuOpen">
+                        <DropdownMenuTrigger as-child>
+                            <Button class="rounded-full" size="icon-sm" variant="ghost"> <Ellipsis /> </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent class="favorites-dropdown">
+                            <li class="favorites-dropdown__control" @click.stop>
+                                <div class="favorites-dropdown__control-header">
+                                    <span>Scale</span>
+                                    <span class="favorites-dropdown__control-value">{{ avatarCardScalePercent }}%</span>
                                 </div>
-                            </template>
-                            <template v-else>
-                                <div
-                                    v-for="group in avatarGroupPlaceholders"
-                                    :key="group.key"
-                                    :class="[
-                                        'group-item',
-                                        'group-item--placeholder',
-                                        { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
-                                    ]">
-                                    <div class="group-item__top">
-                                        <span class="group-item__name">{{ group.displayName }}</span>
-                                        <span class="group-item__count">--/--</span>
-                                    </div>
-                                    <div class="group-item__bottom">
-                                        <div class="group-item__placeholder-tag"></div>
-                                    </div>
+                                <Slider
+                                    v-model="avatarCardScaleValue"
+                                    class="favorites-dropdown__slider"
+                                    :min="avatarCardScaleSlider.min"
+                                    :max="avatarCardScaleSlider.max"
+                                    :step="avatarCardScaleSlider.step" />
+                            </li>
+                            <li class="favorites-dropdown__control" @click.stop>
+                                <div class="favorites-dropdown__control-header">
+                                    <span>Spacing</span>
+                                    <span class="favorites-dropdown__control-value">
+                                        {{ avatarCardSpacingPercent }}%
+                                    </span>
                                 </div>
-                            </template>
-                        </div>
-                    </div>
-                    <div class="group-section">
-                        <div class="group-section__header">
-                            <span>{{ t('view.favorite.avatars.local_favorites') }}</span>
-                            <template v-if="!refreshingLocalFavorites">
-                                <Button
-                                    class="rounded-full"
-                                    size="icon"
-                                    variant="outline"
-                                    @click.stop="refreshLocalAvatarFavorites"
-                                    ><RefreshCcw
-                                /></Button>
-                            </template>
-                            <Button size="sm" variant="ghost" v-else @click.stop="cancelLocalAvatarRefresh">
-                                <Loader />
-
-                                {{ t('view.favorite.avatars.cancel_refresh') }}
-                            </Button>
-                        </div>
-                        <div class="group-section__list">
-                            <template v-if="localAvatarFavoriteGroups.length">
-                                <div
-                                    v-for="group in localAvatarFavoriteGroups"
-                                    :key="group"
-                                    :class="[
-                                        'group-item',
-                                        { 'is-active': !hasSearchInput && isGroupActive('local', group) }
-                                    ]"
-                                    @click="handleGroupClick('local', group)">
-                                    <div class="group-item__top">
-                                        <span class="group-item__name">{{ group }}</span>
-                                        <div class="group-item__right">
-                                            <span class="group-item__count">{{
-                                                localAvatarFavGroupLength(group)
-                                            }}</span>
+                                <Slider
+                                    v-model="avatarCardSpacingValue"
+                                    class="favorites-dropdown__slider"
+                                    :min="avatarCardSpacingSlider.min"
+                                    :max="avatarCardSpacingSlider.max"
+                                    :step="avatarCardSpacingSlider.step" />
+                            </li>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem @click="handleAvatarImportClick">
+                                {{ t('view.favorite.import') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem @click="handleAvatarExportClick">
+                                {{ t('view.favorite.export') }}
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+            <ResizablePanelGroup
+                ref="avatarSplitterGroupRef"
+                direction="horizontal"
+                class="favorites-splitter"
+                @layout="handleAvatarSplitterLayout">
+                <ResizablePanel
+                    ref="avatarSplitterPanelRef"
+                    :default-size="avatarSplitterDefaultSize"
+                    :min-size="avatarSplitterMinSize"
+                    :max-size="avatarSplitterMaxSize"
+                    :collapsed-size="0"
+                    collapsible
+                    :order="1">
+                    <div class="favorites-groups-panel">
+                        <div class="group-section">
+                            <div class="group-section__header">
+                                <span>{{ t('view.favorite.avatars.vrchat_favorites') }}</span>
+                                <TooltipWrapper side="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
+                                    <Button
+                                        class="rounded-full"
+                                        variant="outline"
+                                        size="icon-sm"
+                                        :disabled="isFavoriteLoading"
+                                        @click.stop="handleRefreshFavorites">
+                                        <Spinner v-if="isFavoriteLoading" />
+                                        <RefreshCw v-else />
+                                    </Button>
+                                </TooltipWrapper>
+                            </div>
+                            <div class="group-section__list">
+                                <template v-if="favoriteAvatarGroups.length">
+                                    <div
+                                        v-for="group in favoriteAvatarGroups"
+                                        :key="group.key"
+                                        :class="[
+                                            'group-item',
+                                            { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
+                                        ]"
+                                        @click="handleGroupClick('remote', group.key)">
+                                        <div class="group-item__top">
+                                            <span class="group-item__name">{{ group.displayName }}</span>
+                                            <span class="group-item__count"
+                                                >{{ group.count }}/{{ group.capacity }}</span
+                                            >
+                                        </div>
+                                        <div class="group-item__bottom">
+                                            <Badge variant="outline">
+                                                {{ t(`view.favorite.visibility.${group.visibility}`) }}
+                                            </Badge>
                                             <DropdownMenu
-                                                :open="activeGroupMenu === localGroupMenuKey(group)"
-                                                @update:open="handleGroupMenuVisible(localGroupMenuKey(group), $event)">
+                                                :open="activeGroupMenu === remoteGroupMenuKey(group.key)"
+                                                @update:open="
+                                                    handleGroupMenuVisible(remoteGroupMenuKey(group.key), $event)
+                                                ">
                                                 <DropdownMenuTrigger asChild>
                                                     <Button
                                                         class="rounded-full"
-                                                        size="icon-sm"
                                                         variant="ghost"
-                                                        @click.stop
-                                                        ><Ellipsis
-                                                    /></Button>
+                                                        size="icon-sm"
+                                                        @click.stop>
+                                                        <MoreHorizontal />
+                                                    </Button>
                                                 </DropdownMenuTrigger>
-                                                <DropdownMenuContent side="right" class="w-50">
-                                                    <DropdownMenuItem @click="handleLocalRename(group)">
+                                                <DropdownMenuContent side="right" class="w-55">
+                                                    <DropdownMenuItem @click="handleRemoteRename(group)">
                                                         <span>{{ t('view.favorite.rename_tooltip') }}</span>
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem @click="handleCheckInvalidAvatars(group)">
-                                                        <span>{{ t('view.favorite.avatars.check_invalid') }}</span>
-                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSub>
+                                                        <DropdownMenuSubTrigger>
+                                                            <span>{{ t('view.favorite.visibility_tooltip') }}</span>
+                                                        </DropdownMenuSubTrigger>
+                                                        <DropdownMenuPortal>
+                                                            <DropdownMenuSubContent
+                                                                side="right"
+                                                                align="start"
+                                                                class="w-45">
+                                                                <DropdownMenuCheckboxItem
+                                                                    v-for="visibility in avatarGroupVisibilityOptions"
+                                                                    :key="visibility"
+                                                                    :model-value="group.visibility === visibility"
+                                                                    indicator-position="right"
+                                                                    @select="
+                                                                        handleVisibilitySelection(group, visibility)
+                                                                    ">
+                                                                    <span>{{
+                                                                        t(`view.favorite.visibility.${visibility}`)
+                                                                    }}</span>
+                                                                </DropdownMenuCheckboxItem>
+                                                            </DropdownMenuSubContent>
+                                                        </DropdownMenuPortal>
+                                                    </DropdownMenuSub>
                                                     <DropdownMenuItem
                                                         variant="destructive"
-                                                        @click="handleLocalDelete(group)">
-                                                        <span>{{ t('view.favorite.delete_tooltip') }}</span>
+                                                        @click="handleRemoteClear(group)">
+                                                        <span>{{ t('view.favorite.clear') }}</span>
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </div>
                                     </div>
-                                </div>
-                            </template>
-                            <div v-else class="group-empty">
-                                <DataTableEmpty type="nodata" />
-                            </div>
-                            <TooltipWrapper
-                                v-if="!isCreatingLocalGroup"
-                                :disabled="isLocalUserVrcPlusSupporter"
-                                :content="t('view.favorite.avatars.local_favorites')">
-                                <div
-                                    :class="[
-                                        'group-item',
-                                        'group-item--new',
-                                        { 'is-disabled': !isLocalUserVrcPlusSupporter }
-                                    ]"
-                                    @click="startLocalGroupCreation">
-                                    <Plus />
-                                    <span>{{ t('view.favorite.avatars.new_group') }}</span>
-                                </div>
-                            </TooltipWrapper>
-                            <InputGroupField
-                                v-else
-                                ref="newLocalGroupInput"
-                                v-model="newLocalGroupName"
-                                size="sm"
-                                class="group-item__input"
-                                :placeholder="t('view.favorite.avatars.new_group')"
-                                @keyup.enter="handleLocalGroupCreationConfirm"
-                                @keyup.esc="cancelLocalGroupCreation"
-                                @blur="cancelLocalGroupCreation" />
-                        </div>
-                    </div>
-                    <div class="group-section">
-                        <div class="group-section__header">
-                            <span>Local History</span>
-                            <DropdownMenu
-                                :open="activeGroupMenu === historyGroupMenuKey"
-                                @update:open="handleGroupMenuVisible(historyGroupMenuKey, $event)">
-                                <DropdownMenuTrigger asChild>
-                                    <Button class="rounded-full" size="icon-sm" variant="ghost" @click.stop
-                                        ><Ellipsis
-                                    /></Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent side="right" class="w-45">
-                                    <DropdownMenuItem variant="destructive" @click="handleHistoryClear">
-                                        <span>{{ t('view.favorite.clear_tooltip') }}</span>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                        <div class="group-section__list">
-                            <div
-                                :class="[
-                                    'group-item',
-                                    { 'is-active': !hasSearchInput && isGroupActive('history', historyGroupKey) }
-                                ]"
-                                @click="handleGroupClick('history', historyGroupKey)">
-                                <div class="group-item__top">
-                                    <span class="group-item__name">Local History</span>
-                                    <span class="group-item__count">{{ avatarHistory.length }}/100</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ResizablePanel>
-            <ResizableHandle @dragging="setAvatarSplitterDragging" />
-            <ResizablePanel :order="2">
-                <div class="favorites-content">
-                    <div class="favorites-content__header">
-                        <div class="favorites-content__title">
-                            <span v-if="isSearchActive">{{ t('view.favorite.avatars.search') }}</span>
-                            <template v-else-if="activeRemoteGroup">
-                                <span>
-                                    {{ activeRemoteGroup.displayName }}
-                                    <small>{{ activeRemoteGroup.count }}/{{ activeRemoteGroup.capacity }}</small>
-                                </span>
-                            </template>
-                            <template v-else-if="activeLocalGroupName">
-                                <span>
-                                    {{ activeLocalGroupName }}
-                                    <small>{{ activeLocalGroupCount }}</small>
-                                </span>
-                            </template>
-                            <template v-else-if="isHistorySelected">
-                                <span>
-                                    Local History
-                                    <small>{{ avatarHistory.length }}/100</small>
-                                </span>
-                            </template>
-                            <span v-else>No Group Selected</span>
-                        </div>
-                        <div class="favorites-content__edit">
-                            <span>{{ t('view.favorite.edit_mode') }}</span>
-                            <Switch v-model="avatarEditMode" :disabled="isSearchActive || !activeRemoteGroup" />
-                        </div>
-                    </div>
-                    <div class="favorites-content__edit-actions">
-                        <div
-                            v-if="avatarEditMode && !isSearchActive && activeRemoteGroup"
-                            class="favorites-content__actions">
-                            <Button size="sm" variant="outline" @click="toggleSelectAllAvatars">
-                                {{
-                                    isAllAvatarsSelected
-                                        ? t('view.favorite.deselect_all')
-                                        : t('view.favorite.select_all')
-                                }}
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="secondary"
-                                :disabled="!hasAvatarSelection"
-                                @click="clearSelectedAvatars">
-                                {{ t('view.favorite.clear') }}
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                :disabled="!hasAvatarSelection"
-                                @click="copySelectedAvatars">
-                                {{ t('view.favorite.copy') }}
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                :disabled="!hasAvatarSelection"
-                                @click="showAvatarBulkUnfavoriteSelectionConfirm">
-                                {{ t('view.favorite.bulk_unfavorite') }}
-                            </Button>
-                        </div>
-                    </div>
-                    <div ref="avatarFavoritesContainerRef" class="favorites-content__list">
-                        <template v-if="isSearchActive">
-                            <div class="favorites-content__scroll favorites-content__scroll--native">
-                                <div
-                                    v-if="avatarFavoriteSearchResults.length"
-                                    class="favorites-search-grid"
-                                    :style="avatarFavoritesGridStyle(avatarFavoriteSearchResults.length)">
-                                    <div
-                                        v-for="favorite in avatarFavoriteSearchResults"
-                                        :key="favorite.id"
-                                        class="favorites-search-card"
-                                        @click="showAvatarDialog(favorite.id)">
-                                        <div class="favorites-search-card__content">
-                                            <div
-                                                class="favorites-search-card__avatar"
-                                                :class="{ 'is-empty': !favorite.thumbnailImageUrl }">
-                                                <img
-                                                    v-if="favorite.thumbnailImageUrl"
-                                                    :src="favorite.thumbnailImageUrl"
-                                                    loading="lazy" />
-                                            </div>
-                                            <div class="favorites-search-card__detail">
-                                                <div class="favorites-search-card__title">
-                                                    <span class="name">{{ favorite.name }}</span>
-                                                </div>
-                                                <span class="text-xs">{{ favorite.authorName }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div v-else class="favorites-empty">
-                                    <DataTableEmpty type="nomatch" />
-                                </div>
-                            </div>
-                        </template>
-                        <template v-else-if="activeRemoteGroup">
-                            <div class="favorites-content__scroll favorites-content__scroll--native">
-                                <template v-if="currentRemoteFavorites.length">
-                                    <div
-                                        class="favorites-card-list"
-                                        :style="avatarFavoritesGridStyle(currentRemoteFavorites.length)">
-                                        <FavoritesAvatarItem
-                                            v-for="favorite in currentRemoteFavorites"
-                                            :key="favorite.id"
-                                            :favorite="favorite"
-                                            :group="activeRemoteGroup"
-                                            :selected="selectedFavoriteAvatars.includes(favorite.id)"
-                                            :edit-mode="avatarEditMode"
-                                            @toggle-select="toggleAvatarSelection(favorite.id, $event)"
-                                            @click="showAvatarDialog(favorite.id)" />
-                                    </div>
                                 </template>
-                                <div v-else class="favorites-empty">
-                                    <DataTableEmpty type="nodata" />
-                                </div>
-                            </div>
-                        </template>
-                        <template v-else-if="!remoteAvatarGroupsResolved">
-                            <div class="favorites-content__scroll favorites-content__scroll--native">
-                                <div
-                                    class="favorites-card-list"
-                                    :style="avatarFavoritesGridStyle(avatarGroupPlaceholders.length)">
+                                <template v-else>
                                     <div
                                         v-for="group in avatarGroupPlaceholders"
                                         :key="group.key"
-                                        class="favorites-card-placeholder-box"></div>
-                                </div>
-                            </div>
-                        </template>
-                        <template v-else-if="activeLocalGroupName">
-                            <ScrollArea class="favorites-content__scroll">
-                                <template v-if="currentLocalFavorites.length">
-                                    <div
-                                        class="favorites-card-list"
-                                        :style="avatarFavoritesGridStyle(currentLocalFavorites.length)">
-                                        <FavoritesAvatarItem
-                                            v-for="favorite in currentLocalFavorites"
-                                            :key="favorite.id"
-                                            :favorite="favorite"
-                                            :group="activeLocalGroupName"
-                                            is-local-favorite
-                                            :edit-mode="avatarEditMode"
-                                            @click="showAvatarDialog(favorite.id)" />
+                                        :class="[
+                                            'group-item',
+                                            'group-item--placeholder',
+                                            { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
+                                        ]">
+                                        <div class="group-item__top">
+                                            <span class="group-item__name">{{ group.displayName }}</span>
+                                            <span class="group-item__count">--/--</span>
+                                        </div>
+                                        <div class="group-item__bottom">
+                                            <div class="group-item__placeholder-tag"></div>
+                                        </div>
                                     </div>
                                 </template>
-                                <div v-else class="favorites-empty">
-                                    <DataTableEmpty type="nodata" />
-                                </div>
-                            </ScrollArea>
-                        </template>
-                        <template v-else-if="isHistorySelected">
-                            <div class="favorites-content__scroll favorites-content__scroll--native">
-                                <template v-if="avatarHistory.length">
+                            </div>
+                        </div>
+                        <div class="group-section">
+                            <div class="group-section__header">
+                                <span>{{ t('view.favorite.avatars.local_favorites') }}</span>
+                                <template v-if="!refreshingLocalFavorites">
+                                    <Button
+                                        class="rounded-full"
+                                        size="icon"
+                                        variant="outline"
+                                        @click.stop="refreshLocalAvatarFavorites"
+                                        ><RefreshCcw
+                                    /></Button>
+                                </template>
+                                <Button size="sm" variant="ghost" v-else @click.stop="cancelLocalAvatarRefresh">
+                                    <Loader />
+
+                                    {{ t('view.favorite.avatars.cancel_refresh') }}
+                                </Button>
+                            </div>
+                            <div class="group-section__list">
+                                <template v-if="localAvatarFavoriteGroups.length">
                                     <div
-                                        class="favorites-card-list"
-                                        :style="avatarFavoritesGridStyle(avatarHistory.length)">
-                                        <FavoritesAvatarLocalHistoryItem
-                                            v-for="favorite in avatarHistory"
-                                            :key="favorite.id"
-                                            :favorite="favorite"
-                                            @click="showAvatarDialog(favorite.id)" />
+                                        v-for="group in localAvatarFavoriteGroups"
+                                        :key="group"
+                                        :class="[
+                                            'group-item',
+                                            { 'is-active': !hasSearchInput && isGroupActive('local', group) }
+                                        ]"
+                                        @click="handleGroupClick('local', group)">
+                                        <div class="group-item__top">
+                                            <span class="group-item__name">{{ group }}</span>
+                                            <div class="group-item__right">
+                                                <span class="group-item__count">{{
+                                                    localAvatarFavGroupLength(group)
+                                                }}</span>
+                                                <DropdownMenu
+                                                    :open="activeGroupMenu === localGroupMenuKey(group)"
+                                                    @update:open="
+                                                        handleGroupMenuVisible(localGroupMenuKey(group), $event)
+                                                    ">
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button
+                                                            class="rounded-full"
+                                                            size="icon-sm"
+                                                            variant="ghost"
+                                                            @click.stop
+                                                            ><Ellipsis
+                                                        /></Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent side="right" class="w-50">
+                                                        <DropdownMenuItem @click="handleLocalRename(group)">
+                                                            <span>{{ t('view.favorite.rename_tooltip') }}</span>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem @click="handleCheckInvalidAvatars(group)">
+                                                            <span>{{ t('view.favorite.avatars.check_invalid') }}</span>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            variant="destructive"
+                                                            @click="handleLocalDelete(group)">
+                                                            <span>{{ t('view.favorite.delete_tooltip') }}</span>
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </div>
+                                        </div>
                                     </div>
                                 </template>
-                                <div v-else class="favorites-empty">
+                                <div v-else class="group-empty">
                                     <DataTableEmpty type="nodata" />
                                 </div>
+                                <TooltipWrapper
+                                    v-if="!isCreatingLocalGroup"
+                                    :disabled="isLocalUserVrcPlusSupporter"
+                                    :content="t('view.favorite.avatars.local_favorites')">
+                                    <div
+                                        :class="[
+                                            'group-item',
+                                            'group-item--new',
+                                            { 'is-disabled': !isLocalUserVrcPlusSupporter }
+                                        ]"
+                                        @click="startLocalGroupCreation">
+                                        <Plus />
+                                        <span>{{ t('view.favorite.avatars.new_group') }}</span>
+                                    </div>
+                                </TooltipWrapper>
+                                <InputGroupField
+                                    v-else
+                                    ref="newLocalGroupInput"
+                                    v-model="newLocalGroupName"
+                                    size="sm"
+                                    class="group-item__input"
+                                    :placeholder="t('view.favorite.avatars.new_group')"
+                                    @keyup.enter="handleLocalGroupCreationConfirm"
+                                    @keyup.esc="cancelLocalGroupCreation"
+                                    @blur="cancelLocalGroupCreation" />
                             </div>
-                        </template>
-                        <template v-else>
-                            <div class="favorites-empty">No Group Selected</div>
-                        </template>
+                        </div>
+                        <div class="group-section">
+                            <div class="group-section__header">
+                                <span>Local History</span>
+                                <DropdownMenu
+                                    :open="activeGroupMenu === historyGroupMenuKey"
+                                    @update:open="handleGroupMenuVisible(historyGroupMenuKey, $event)">
+                                    <DropdownMenuTrigger asChild>
+                                        <Button class="rounded-full" size="icon-sm" variant="ghost" @click.stop
+                                            ><Ellipsis
+                                        /></Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent side="right" class="w-45">
+                                        <DropdownMenuItem variant="destructive" @click="handleHistoryClear">
+                                            <span>{{ t('view.favorite.clear_tooltip') }}</span>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                            <div class="group-section__list">
+                                <div
+                                    :class="[
+                                        'group-item',
+                                        { 'is-active': !hasSearchInput && isGroupActive('history', historyGroupKey) }
+                                    ]"
+                                    @click="handleGroupClick('history', historyGroupKey)">
+                                    <div class="group-item__top">
+                                        <span class="group-item__name">Local History</span>
+                                        <span class="group-item__count">{{ avatarHistory.length }}/100</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </ResizablePanel>
-        </ResizablePanelGroup>
+                </ResizablePanel>
+                <ResizableHandle @dragging="setAvatarSplitterDragging" />
+                <ResizablePanel :order="2">
+                    <div class="favorites-content">
+                        <div class="favorites-content__header">
+                            <div class="favorites-content__title">
+                                <span v-if="isSearchActive">{{ t('view.favorite.avatars.search') }}</span>
+                                <template v-else-if="activeRemoteGroup">
+                                    <span>
+                                        {{ activeRemoteGroup.displayName }}
+                                        <small>{{ activeRemoteGroup.count }}/{{ activeRemoteGroup.capacity }}</small>
+                                    </span>
+                                </template>
+                                <template v-else-if="activeLocalGroupName">
+                                    <span>
+                                        {{ activeLocalGroupName }}
+                                        <small>{{ activeLocalGroupCount }}</small>
+                                    </span>
+                                </template>
+                                <template v-else-if="isHistorySelected">
+                                    <span>
+                                        Local History
+                                        <small>{{ avatarHistory.length }}/100</small>
+                                    </span>
+                                </template>
+                                <span v-else>No Group Selected</span>
+                            </div>
+                            <div class="favorites-content__edit">
+                                <span>{{ t('view.favorite.edit_mode') }}</span>
+                                <Switch v-model="avatarEditMode" :disabled="isSearchActive || !activeRemoteGroup" />
+                            </div>
+                        </div>
+                        <div class="favorites-content__edit-actions">
+                            <div
+                                v-if="avatarEditMode && !isSearchActive && activeRemoteGroup"
+                                class="favorites-content__actions">
+                                <Button size="sm" variant="outline" @click="toggleSelectAllAvatars">
+                                    {{
+                                        isAllAvatarsSelected
+                                            ? t('view.favorite.deselect_all')
+                                            : t('view.favorite.select_all')
+                                    }}
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="secondary"
+                                    :disabled="!hasAvatarSelection"
+                                    @click="clearSelectedAvatars">
+                                    {{ t('view.favorite.clear') }}
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    :disabled="!hasAvatarSelection"
+                                    @click="copySelectedAvatars">
+                                    {{ t('view.favorite.copy') }}
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    :disabled="!hasAvatarSelection"
+                                    @click="showAvatarBulkUnfavoriteSelectionConfirm">
+                                    {{ t('view.favorite.bulk_unfavorite') }}
+                                </Button>
+                            </div>
+                        </div>
+                        <div ref="avatarFavoritesContainerRef" class="favorites-content__list">
+                            <template v-if="isSearchActive">
+                                <div class="favorites-content__scroll favorites-content__scroll--native">
+                                    <div
+                                        v-if="avatarFavoriteSearchResults.length"
+                                        class="favorites-search-grid"
+                                        :style="avatarFavoritesGridStyle(avatarFavoriteSearchResults.length)">
+                                        <div
+                                            v-for="favorite in avatarFavoriteSearchResults"
+                                            :key="favorite.id"
+                                            class="favorites-search-card"
+                                            @click="showAvatarDialog(favorite.id)">
+                                            <div class="favorites-search-card__content">
+                                                <div
+                                                    class="favorites-search-card__avatar"
+                                                    :class="{ 'is-empty': !favorite.thumbnailImageUrl }">
+                                                    <img
+                                                        v-if="favorite.thumbnailImageUrl"
+                                                        :src="favorite.thumbnailImageUrl"
+                                                        loading="lazy" />
+                                                </div>
+                                                <div class="favorites-search-card__detail">
+                                                    <div class="favorites-search-card__title">
+                                                        <span class="name">{{ favorite.name }}</span>
+                                                    </div>
+                                                    <span class="text-xs">{{ favorite.authorName }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-else class="favorites-empty">
+                                        <DataTableEmpty type="nomatch" />
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-else-if="activeRemoteGroup">
+                                <div class="favorites-content__scroll favorites-content__scroll--native">
+                                    <template v-if="currentRemoteFavorites.length">
+                                        <div
+                                            class="favorites-card-list"
+                                            :style="avatarFavoritesGridStyle(currentRemoteFavorites.length)">
+                                            <FavoritesAvatarItem
+                                                v-for="favorite in currentRemoteFavorites"
+                                                :key="favorite.id"
+                                                :favorite="favorite"
+                                                :group="activeRemoteGroup"
+                                                :selected="selectedFavoriteAvatars.includes(favorite.id)"
+                                                :edit-mode="avatarEditMode"
+                                                @toggle-select="toggleAvatarSelection(favorite.id, $event)"
+                                                @click="showAvatarDialog(favorite.id)" />
+                                        </div>
+                                    </template>
+                                    <div v-else class="favorites-empty">
+                                        <DataTableEmpty type="nodata" />
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-else-if="!remoteAvatarGroupsResolved">
+                                <div class="favorites-content__scroll favorites-content__scroll--native">
+                                    <div
+                                        class="favorites-card-list"
+                                        :style="avatarFavoritesGridStyle(avatarGroupPlaceholders.length)">
+                                        <div
+                                            v-for="group in avatarGroupPlaceholders"
+                                            :key="group.key"
+                                            class="favorites-card-placeholder-box"></div>
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-else-if="activeLocalGroupName">
+                                <ScrollArea class="favorites-content__scroll">
+                                    <template v-if="currentLocalFavorites.length">
+                                        <div
+                                            class="favorites-card-list"
+                                            :style="avatarFavoritesGridStyle(currentLocalFavorites.length)">
+                                            <FavoritesAvatarItem
+                                                v-for="favorite in currentLocalFavorites"
+                                                :key="favorite.id"
+                                                :favorite="favorite"
+                                                :group="activeLocalGroupName"
+                                                is-local-favorite
+                                                :edit-mode="avatarEditMode"
+                                                @click="showAvatarDialog(favorite.id)" />
+                                        </div>
+                                    </template>
+                                    <div v-else class="favorites-empty">
+                                        <DataTableEmpty type="nodata" />
+                                    </div>
+                                </ScrollArea>
+                            </template>
+                            <template v-else-if="isHistorySelected">
+                                <div class="favorites-content__scroll favorites-content__scroll--native">
+                                    <template v-if="avatarHistory.length">
+                                        <div
+                                            class="favorites-card-list"
+                                            :style="avatarFavoritesGridStyle(avatarHistory.length)">
+                                            <FavoritesAvatarLocalHistoryItem
+                                                v-for="favorite in avatarHistory"
+                                                :key="favorite.id"
+                                                :favorite="favorite"
+                                                @click="showAvatarDialog(favorite.id)" />
+                                        </div>
+                                    </template>
+                                    <div v-else class="favorites-empty">
+                                        <DataTableEmpty type="nodata" />
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-else>
+                                <div class="favorites-empty">No Group Selected</div>
+                            </template>
+                        </div>
+                    </div>
+                </ResizablePanel>
+            </ResizablePanelGroup>
+        </div>
         <AvatarExportDialog v-model:avatarExportDialogVisible="avatarExportDialogVisible" />
     </div>
 </template>

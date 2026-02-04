@@ -1,6 +1,6 @@
 <template>
     <div class="x-container" ref="playerListRef">
-        <div class="flex h-full min-h-0 flex-col">
+        <div class="flex h-full min-h-0 flex-col overflow-auto">
             <div
                 v-if="currentInstanceWorld.ref.id"
                 ref="playerListHeaderRef"

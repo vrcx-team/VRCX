@@ -1,295 +1,309 @@
 <template>
-    <div class="favorites-page x-container">
-        <div class="favorites-toolbar">
-            <div>
-                <Select :model-value="sortFavorites" @update:modelValue="handleSortFavoritesChange">
-                    <SelectTrigger size="sm" class="favorites-toolbar__select">
-                        <span class="flex items-center gap-2">
-                            <ArrowUpDown class="h-4 w-4" />
-                            <SelectValue
-                                :placeholder="t('view.settings.appearance.appearance.sort_favorite_by_name')" />
-                        </span>
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem
-                                :value="false"
-                                :text-value="t('view.settings.appearance.appearance.sort_favorite_by_name')">
-                                {{ t('view.settings.appearance.appearance.sort_favorite_by_name') }}
-                            </SelectItem>
-                            <SelectItem
-                                :value="true"
-                                :text-value="t('view.settings.appearance.appearance.sort_favorite_by_date')">
-                                {{ t('view.settings.appearance.appearance.sort_favorite_by_date') }}
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </div>
-            <div class="favorites-toolbar__right">
-                <InputGroupSearch
-                    v-model="friendFavoriteSearch"
-                    class="favorites-toolbar__search"
-                    :placeholder="t('view.favorite.worlds.search')"
-                    @input="searchFriendFavorites" />
-                <DropdownMenu v-model:open="friendToolbarMenuOpen">
-                    <DropdownMenuTrigger as-child>
-                        <Button class="rounded-full" size="icon-sm" variant="ghost"><Ellipsis /></Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent class="favorites-dropdown">
-                        <li class="favorites-dropdown__control" @click.stop>
-                            <div class="favorites-dropdown__control-header">
-                                <span>Scale</span>
-                                <span class="favorites-dropdown__control-value"> {{ friendCardScalePercent }}% </span>
-                            </div>
-                            <Slider
-                                v-model="friendCardScaleValue"
-                                class="favorites-dropdown__slider"
-                                :min="friendCardScaleSlider.min"
-                                :max="friendCardScaleSlider.max"
-                                :step="friendCardScaleSlider.step" />
-                        </li>
-                        <li class="favorites-dropdown__control" @click.stop>
-                            <div class="favorites-dropdown__control-header">
-                                <span>Spacing</span>
-                                <span class="favorites-dropdown__control-value"> {{ friendCardSpacingPercent }}% </span>
-                            </div>
-                            <Slider
-                                v-model="friendCardSpacingValue"
-                                class="favorites-dropdown__slider"
-                                :min="friendCardSpacingSlider.min"
-                                :max="friendCardSpacingSlider.max"
-                                :step="friendCardSpacingSlider.step" />
-                        </li>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem @click="handleFriendImportClick">
-                            {{ t('view.favorite.import') }}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem @click="handleFriendExportClick">
-                            {{ t('view.favorite.export') }}
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
-        </div>
-        <ResizablePanelGroup
-            ref="friendSplitterGroupRef"
-            direction="horizontal"
-            class="favorites-splitter"
-            @layout="handleFriendSplitterLayout">
-            <ResizablePanel
-                ref="friendSplitterPanelRef"
-                :default-size="friendSplitterDefaultSize"
-                :min-size="friendSplitterMinSize"
-                :max-size="friendSplitterMaxSize"
-                :collapsed-size="0"
-                collapsible
-                :order="1">
-                <div class="favorites-groups-panel">
-                    <div class="group-section">
-                        <div class="group-section__header">
-                            <span>{{ t('view.favorite.worlds.vrchat_favorites') }}</span>
-                            <TooltipWrapper side="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
-                                <Button
-                                    class="rounded-full"
-                                    variant="outline"
-                                    size="icon-sm"
-                                    :disabled="isFavoriteLoading"
-                                    @click.stop="handleRefreshFavorites">
-                                    <Spinner v-if="isFavoriteLoading" />
-                                    <RefreshCw v-else />
-                                </Button>
-                            </TooltipWrapper>
-                        </div>
-                        <div class="group-section__list">
-                            <template v-if="favoriteFriendGroups.length">
-                                <div
-                                    v-for="group in favoriteFriendGroups"
-                                    :key="group.key"
-                                    :class="[
-                                        'group-item',
-                                        { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
-                                    ]"
-                                    @click="handleGroupClick('remote', group.key)">
-                                    <div class="group-item__top">
-                                        <span class="group-item__name">{{ group.displayName }}</span>
-                                        <span class="group-item__count">{{ group.count }}/{{ group.capacity }}</span>
-                                    </div>
-                                    <div class="group-item__bottom">
-                                        <Badge variant="outline">
-                                            {{ t(`view.favorite.visibility.${group.visibility}`) }}
-                                        </Badge>
-                                        <DropdownMenu
-                                            :open="activeGroupMenu === remoteGroupMenuKey(group.key)"
-                                            @update:open="
-                                                handleGroupMenuVisible(remoteGroupMenuKey(group.key), $event)
-                                            ">
-                                            <DropdownMenuTrigger asChild>
-                                                <Button class="rounded-full" variant="ghost" size="icon-sm" @click.stop>
-                                                    <MoreHorizontal />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent side="right" class="w-55">
-                                                <DropdownMenuItem @click="handleRemoteRename(group)">
-                                                    <span>{{ t('view.favorite.rename_tooltip') }}</span>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuSub>
-                                                    <DropdownMenuSubTrigger>
-                                                        <span>{{ t('view.favorite.visibility_tooltip') }}</span>
-                                                    </DropdownMenuSubTrigger>
-                                                    <DropdownMenuPortal>
-                                                        <DropdownMenuSubContent
-                                                            side="right"
-                                                            align="start"
-                                                            class="w-[180px]">
-                                                            <DropdownMenuCheckboxItem
-                                                                v-for="visibility in friendGroupVisibilityOptions"
-                                                                :key="visibility"
-                                                                :model-value="group.visibility === visibility"
-                                                                indicator-position="right"
-                                                                @select="handleVisibilitySelection(group, visibility)">
-                                                                <span>{{
-                                                                    t(`view.favorite.visibility.${visibility}`)
-                                                                }}</span>
-                                                            </DropdownMenuCheckboxItem>
-                                                        </DropdownMenuSubContent>
-                                                    </DropdownMenuPortal>
-                                                </DropdownMenuSub>
-                                                <DropdownMenuItem
-                                                    variant="destructive"
-                                                    @click="handleRemoteClear(group)">
-                                                    <span>{{ t('view.favorite.clear') }}</span>
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </div>
-                                </div>
-                            </template>
-                            <div v-else class="group-empty">
-                                <DataTableEmpty type="nodata" />
-                            </div>
-                        </div>
-                    </div>
+    <div class="x-container">
+        <div class="favorites-page">
+            <div class="favorites-toolbar">
+                <div>
+                    <Select :model-value="sortFavorites" @update:modelValue="handleSortFavoritesChange">
+                        <SelectTrigger size="sm" class="favorites-toolbar__select">
+                            <span class="flex items-center gap-2">
+                                <ArrowUpDown class="h-4 w-4" />
+                                <SelectValue
+                                    :placeholder="t('view.settings.appearance.appearance.sort_favorite_by_name')" />
+                            </span>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    :value="false"
+                                    :text-value="t('view.settings.appearance.appearance.sort_favorite_by_name')">
+                                    {{ t('view.settings.appearance.appearance.sort_favorite_by_name') }}
+                                </SelectItem>
+                                <SelectItem
+                                    :value="true"
+                                    :text-value="t('view.settings.appearance.appearance.sort_favorite_by_date')">
+                                    {{ t('view.settings.appearance.appearance.sort_favorite_by_date') }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                 </div>
-            </ResizablePanel>
-            <ResizableHandle @dragging="setFriendSplitterDragging" />
-            <ResizablePanel :order="2">
-                <div class="favorites-content">
-                    <div class="favorites-content__header">
-                        <div class="favorites-content__title">
-                            <span v-if="isSearchActive">{{ t('view.favorite.worlds.search') }}</span>
-                            <template v-else-if="activeRemoteGroup">
-                                <span>
-                                    {{ activeRemoteGroup.displayName }}
-                                    <small>{{ activeRemoteGroup.count }}/{{ activeRemoteGroup.capacity }}</small>
-                                </span>
-                            </template>
-                            <span v-else>No Group Selected</span>
-                        </div>
-                        <div class="favorites-content__edit">
-                            <span>{{ t('view.favorite.edit_mode') }}</span>
-                            <Switch v-model="friendEditMode" :disabled="isSearchActive || !activeRemoteGroup" />
-                        </div>
-                    </div>
-                    <div class="favorites-content__edit-actions">
-                        <div v-if="friendEditMode && !isSearchActive" class="favorites-content__actions">
-                            <Button size="sm" variant="outline" @click="toggleSelectAllFriends">
-                                {{
-                                    isAllFriendsSelected
-                                        ? t('view.favorite.deselect_all')
-                                        : t('view.favorite.select_all')
-                                }}
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="secondary"
-                                :disabled="!hasFriendSelection"
-                                @click="clearSelectedFriends">
-                                {{ t('view.favorite.clear') }}
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                :disabled="!hasFriendSelection"
-                                @click="copySelectedFriends">
-                                {{ t('view.favorite.copy') }}
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                :disabled="!hasFriendSelection"
-                                @click="showFriendBulkUnfavoriteSelectionConfirm">
-                                {{ t('view.favorite.bulk_unfavorite') }}
-                            </Button>
-                        </div>
-                    </div>
-                    <div ref="friendFavoritesContainerRef" class="favorites-content__list">
-                        <template v-if="activeRemoteGroup && !isSearchActive">
-                            <div class="favorites-content__scroll favorites-content__scroll--native">
-                                <template v-if="currentFriendFavorites.length">
+                <div class="favorites-toolbar__right">
+                    <InputGroupSearch
+                        v-model="friendFavoriteSearch"
+                        class="favorites-toolbar__search"
+                        :placeholder="t('view.favorite.worlds.search')"
+                        @input="searchFriendFavorites" />
+                    <DropdownMenu v-model:open="friendToolbarMenuOpen">
+                        <DropdownMenuTrigger as-child>
+                            <Button class="rounded-full" size="icon-sm" variant="ghost"><Ellipsis /></Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent class="favorites-dropdown">
+                            <li class="favorites-dropdown__control" @click.stop>
+                                <div class="favorites-dropdown__control-header">
+                                    <span>Scale</span>
+                                    <span class="favorites-dropdown__control-value">
+                                        {{ friendCardScalePercent }}%
+                                    </span>
+                                </div>
+                                <Slider
+                                    v-model="friendCardScaleValue"
+                                    class="favorites-dropdown__slider"
+                                    :min="friendCardScaleSlider.min"
+                                    :max="friendCardScaleSlider.max"
+                                    :step="friendCardScaleSlider.step" />
+                            </li>
+                            <li class="favorites-dropdown__control" @click.stop>
+                                <div class="favorites-dropdown__control-header">
+                                    <span>Spacing</span>
+                                    <span class="favorites-dropdown__control-value">
+                                        {{ friendCardSpacingPercent }}%
+                                    </span>
+                                </div>
+                                <Slider
+                                    v-model="friendCardSpacingValue"
+                                    class="favorites-dropdown__slider"
+                                    :min="friendCardSpacingSlider.min"
+                                    :max="friendCardSpacingSlider.max"
+                                    :step="friendCardSpacingSlider.step" />
+                            </li>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem @click="handleFriendImportClick">
+                                {{ t('view.favorite.import') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem @click="handleFriendExportClick">
+                                {{ t('view.favorite.export') }}
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+            <ResizablePanelGroup
+                ref="friendSplitterGroupRef"
+                direction="horizontal"
+                class="favorites-splitter"
+                @layout="handleFriendSplitterLayout">
+                <ResizablePanel
+                    ref="friendSplitterPanelRef"
+                    :default-size="friendSplitterDefaultSize"
+                    :min-size="friendSplitterMinSize"
+                    :max-size="friendSplitterMaxSize"
+                    :collapsed-size="0"
+                    collapsible
+                    :order="1">
+                    <div class="favorites-groups-panel">
+                        <div class="group-section">
+                            <div class="group-section__header">
+                                <span>{{ t('view.favorite.worlds.vrchat_favorites') }}</span>
+                                <TooltipWrapper side="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
+                                    <Button
+                                        class="rounded-full"
+                                        variant="outline"
+                                        size="icon-sm"
+                                        :disabled="isFavoriteLoading"
+                                        @click.stop="handleRefreshFavorites">
+                                        <Spinner v-if="isFavoriteLoading" />
+                                        <RefreshCw v-else />
+                                    </Button>
+                                </TooltipWrapper>
+                            </div>
+                            <div class="group-section__list">
+                                <template v-if="favoriteFriendGroups.length">
                                     <div
-                                        class="favorites-card-list"
-                                        :style="friendFavoritesGridStyle(currentFriendFavorites.length)">
-                                        <FavoritesFriendItem
-                                            v-for="favorite in currentFriendFavorites"
-                                            :key="favorite.id"
-                                            :favorite="favorite"
-                                            :group="activeRemoteGroup"
-                                            :selected="selectedFavoriteFriends.includes(favorite.id)"
-                                            :edit-mode="friendEditMode"
-                                            @toggle-select="toggleFriendSelection(favorite.id, $event)"
-                                            @click="showUserDialog(favorite.id)" />
+                                        v-for="group in favoriteFriendGroups"
+                                        :key="group.key"
+                                        :class="[
+                                            'group-item',
+                                            { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
+                                        ]"
+                                        @click="handleGroupClick('remote', group.key)">
+                                        <div class="group-item__top">
+                                            <span class="group-item__name">{{ group.displayName }}</span>
+                                            <span class="group-item__count"
+                                                >{{ group.count }}/{{ group.capacity }}</span
+                                            >
+                                        </div>
+                                        <div class="group-item__bottom">
+                                            <Badge variant="outline">
+                                                {{ t(`view.favorite.visibility.${group.visibility}`) }}
+                                            </Badge>
+                                            <DropdownMenu
+                                                :open="activeGroupMenu === remoteGroupMenuKey(group.key)"
+                                                @update:open="
+                                                    handleGroupMenuVisible(remoteGroupMenuKey(group.key), $event)
+                                                ">
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button
+                                                        class="rounded-full"
+                                                        variant="ghost"
+                                                        size="icon-sm"
+                                                        @click.stop>
+                                                        <MoreHorizontal />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent side="right" class="w-55">
+                                                    <DropdownMenuItem @click="handleRemoteRename(group)">
+                                                        <span>{{ t('view.favorite.rename_tooltip') }}</span>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSub>
+                                                        <DropdownMenuSubTrigger>
+                                                            <span>{{ t('view.favorite.visibility_tooltip') }}</span>
+                                                        </DropdownMenuSubTrigger>
+                                                        <DropdownMenuPortal>
+                                                            <DropdownMenuSubContent
+                                                                side="right"
+                                                                align="start"
+                                                                class="w-[180px]">
+                                                                <DropdownMenuCheckboxItem
+                                                                    v-for="visibility in friendGroupVisibilityOptions"
+                                                                    :key="visibility"
+                                                                    :model-value="group.visibility === visibility"
+                                                                    indicator-position="right"
+                                                                    @select="
+                                                                        handleVisibilitySelection(group, visibility)
+                                                                    ">
+                                                                    <span>{{
+                                                                        t(`view.favorite.visibility.${visibility}`)
+                                                                    }}</span>
+                                                                </DropdownMenuCheckboxItem>
+                                                            </DropdownMenuSubContent>
+                                                        </DropdownMenuPortal>
+                                                    </DropdownMenuSub>
+                                                    <DropdownMenuItem
+                                                        variant="destructive"
+                                                        @click="handleRemoteClear(group)">
+                                                        <span>{{ t('view.favorite.clear') }}</span>
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
                                     </div>
                                 </template>
-                                <div v-else class="favorites-empty">
+                                <div v-else class="group-empty">
                                     <DataTableEmpty type="nodata" />
                                 </div>
                             </div>
-                        </template>
-                        <template v-else-if="!isSearchActive">
-                            <div class="favorites-empty">No Group Selected</div>
-                        </template>
-                        <template v-else>
-                            <div class="favorites-content__scroll favorites-content__scroll--native">
-                                <div
-                                    v-if="friendFavoriteSearchResults.length"
-                                    class="favorites-search-grid"
-                                    :style="friendFavoritesGridStyle(friendFavoriteSearchResults.length)">
+                        </div>
+                    </div>
+                </ResizablePanel>
+                <ResizableHandle @dragging="setFriendSplitterDragging" />
+                <ResizablePanel :order="2">
+                    <div class="favorites-content">
+                        <div class="favorites-content__header">
+                            <div class="favorites-content__title">
+                                <span v-if="isSearchActive">{{ t('view.favorite.worlds.search') }}</span>
+                                <template v-else-if="activeRemoteGroup">
+                                    <span>
+                                        {{ activeRemoteGroup.displayName }}
+                                        <small>{{ activeRemoteGroup.count }}/{{ activeRemoteGroup.capacity }}</small>
+                                    </span>
+                                </template>
+                                <span v-else>No Group Selected</span>
+                            </div>
+                            <div class="favorites-content__edit">
+                                <span>{{ t('view.favorite.edit_mode') }}</span>
+                                <Switch v-model="friendEditMode" :disabled="isSearchActive || !activeRemoteGroup" />
+                            </div>
+                        </div>
+                        <div class="favorites-content__edit-actions">
+                            <div v-if="friendEditMode && !isSearchActive" class="favorites-content__actions">
+                                <Button size="sm" variant="outline" @click="toggleSelectAllFriends">
+                                    {{
+                                        isAllFriendsSelected
+                                            ? t('view.favorite.deselect_all')
+                                            : t('view.favorite.select_all')
+                                    }}
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="secondary"
+                                    :disabled="!hasFriendSelection"
+                                    @click="clearSelectedFriends">
+                                    {{ t('view.favorite.clear') }}
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    :disabled="!hasFriendSelection"
+                                    @click="copySelectedFriends">
+                                    {{ t('view.favorite.copy') }}
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    :disabled="!hasFriendSelection"
+                                    @click="showFriendBulkUnfavoriteSelectionConfirm">
+                                    {{ t('view.favorite.bulk_unfavorite') }}
+                                </Button>
+                            </div>
+                        </div>
+                        <div ref="friendFavoritesContainerRef" class="favorites-content__list">
+                            <template v-if="activeRemoteGroup && !isSearchActive">
+                                <div class="favorites-content__scroll favorites-content__scroll--native">
+                                    <template v-if="currentFriendFavorites.length">
+                                        <div
+                                            class="favorites-card-list"
+                                            :style="friendFavoritesGridStyle(currentFriendFavorites.length)">
+                                            <FavoritesFriendItem
+                                                v-for="favorite in currentFriendFavorites"
+                                                :key="favorite.id"
+                                                :favorite="favorite"
+                                                :group="activeRemoteGroup"
+                                                :selected="selectedFavoriteFriends.includes(favorite.id)"
+                                                :edit-mode="friendEditMode"
+                                                @toggle-select="toggleFriendSelection(favorite.id, $event)"
+                                                @click="showUserDialog(favorite.id)" />
+                                        </div>
+                                    </template>
+                                    <div v-else class="favorites-empty">
+                                        <DataTableEmpty type="nodata" />
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-else-if="!isSearchActive">
+                                <div class="favorites-empty">No Group Selected</div>
+                            </template>
+                            <template v-else>
+                                <div class="favorites-content__scroll favorites-content__scroll--native">
                                     <div
-                                        v-for="favorite in friendFavoriteSearchResults"
-                                        :key="favorite.id"
-                                        class="favorites-search-card"
-                                        @click="showUserDialog(favorite.id)">
-                                        <div class="favorites-search-card__content">
-                                            <div class="favorites-search-card__avatar">
-                                                <img :src="userImage(favorite, true)" loading="lazy" />
-                                            </div>
-                                            <div class="favorites-search-card__detail">
-                                                <div class="favorites-search-card__title">
-                                                    <span class="name">{{ favorite.displayName }}</span>
+                                        v-if="friendFavoriteSearchResults.length"
+                                        class="favorites-search-grid"
+                                        :style="friendFavoritesGridStyle(friendFavoriteSearchResults.length)">
+                                        <div
+                                            v-for="favorite in friendFavoriteSearchResults"
+                                            :key="favorite.id"
+                                            class="favorites-search-card"
+                                            @click="showUserDialog(favorite.id)">
+                                            <div class="favorites-search-card__content">
+                                                <div class="favorites-search-card__avatar">
+                                                    <img :src="userImage(favorite, true)" loading="lazy" />
                                                 </div>
-                                                <div
-                                                    v-if="favorite.location && favorite.location !== 'offline'"
-                                                    class="favorites-search-card__location">
-                                                    <Location
-                                                        :location="favorite.location"
-                                                        :traveling="favorite.travelingToLocation"
-                                                        :link="false" />
+                                                <div class="favorites-search-card__detail">
+                                                    <div class="favorites-search-card__title">
+                                                        <span class="name">{{ favorite.displayName }}</span>
+                                                    </div>
+                                                    <div
+                                                        v-if="favorite.location && favorite.location !== 'offline'"
+                                                        class="favorites-search-card__location">
+                                                        <Location
+                                                            :location="favorite.location"
+                                                            :traveling="favorite.travelingToLocation"
+                                                            :link="false" />
+                                                    </div>
+                                                    <span v-else class="text-xs">{{ favorite.statusDescription }}</span>
                                                 </div>
-                                                <span v-else class="text-xs">{{ favorite.statusDescription }}</span>
                                             </div>
                                         </div>
                                     </div>
+                                    <div v-else class="favorites-empty">
+                                        <DataTableEmpty type="nomatch" />
+                                    </div>
                                 </div>
-                                <div v-else class="favorites-empty">
-                                    <DataTableEmpty type="nomatch" />
-                                </div>
-                            </div>
-                        </template>
+                            </template>
+                        </div>
                     </div>
-                </div>
-            </ResizablePanel>
-        </ResizablePanelGroup>
+                </ResizablePanel>
+            </ResizablePanelGroup>
+        </div>
         <FriendExportDialog v-model:friendExportDialogVisible="friendExportDialogVisible" />
     </div>
 </template>

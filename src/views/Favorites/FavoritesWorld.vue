@@ -1,435 +1,453 @@
 <template>
-    <div class="favorites-page x-container">
-        <div class="favorites-toolbar">
-            <div>
-                <Select :model-value="sortFavorites" @update:modelValue="handleSortFavoritesChange">
-                    <SelectTrigger size="sm" class="favorites-toolbar__select">
-                        <span class="flex items-center gap-2">
-                            <ArrowUpDown class="h-4 w-4" />
-                            <SelectValue
-                                :placeholder="t('view.settings.appearance.appearance.sort_favorite_by_name')" />
-                        </span>
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem
-                                :value="false"
-                                :text-value="t('view.settings.appearance.appearance.sort_favorite_by_name')">
-                                {{ t('view.settings.appearance.appearance.sort_favorite_by_name') }}
-                            </SelectItem>
-                            <SelectItem
-                                :value="true"
-                                :text-value="t('view.settings.appearance.appearance.sort_favorite_by_date')">
-                                {{ t('view.settings.appearance.appearance.sort_favorite_by_date') }}
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
+    <div class="x-container">
+        <div class="favorites-page">
+            <div class="favorites-toolbar">
+                <div>
+                    <Select :model-value="sortFavorites" @update:modelValue="handleSortFavoritesChange">
+                        <SelectTrigger size="sm" class="favorites-toolbar__select">
+                            <span class="flex items-center gap-2">
+                                <ArrowUpDown class="h-4 w-4" />
+                                <SelectValue
+                                    :placeholder="t('view.settings.appearance.appearance.sort_favorite_by_name')" />
+                            </span>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    :value="false"
+                                    :text-value="t('view.settings.appearance.appearance.sort_favorite_by_name')">
+                                    {{ t('view.settings.appearance.appearance.sort_favorite_by_name') }}
+                                </SelectItem>
+                                <SelectItem
+                                    :value="true"
+                                    :text-value="t('view.settings.appearance.appearance.sort_favorite_by_date')">
+                                    {{ t('view.settings.appearance.appearance.sort_favorite_by_date') }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div class="favorites-toolbar__right">
+                    <InputGroupSearch
+                        v-model="worldFavoriteSearch"
+                        class="favorites-toolbar__search"
+                        :placeholder="t('view.favorite.worlds.search')"
+                        @input="searchWorldFavorites" />
+                    <DropdownMenu v-model:open="worldToolbarMenuOpen">
+                        <DropdownMenuTrigger as-child>
+                            <Button class="rounded-full" size="icon" variant="ghost"><Ellipsis /></Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent class="favorites-dropdown">
+                            <li class="favorites-dropdown__control" @click.stop>
+                                <div class="favorites-dropdown__control-header">
+                                    <span>Scale</span>
+                                    <span class="favorites-dropdown__control-value">
+                                        {{ worldCardScalePercent }}%
+                                    </span>
+                                </div>
+                                <Slider
+                                    v-model="worldCardScaleValue"
+                                    class="favorites-dropdown__slider"
+                                    :min="worldCardScaleSlider.min"
+                                    :max="worldCardScaleSlider.max"
+                                    :step="worldCardScaleSlider.step" />
+                            </li>
+                            <li class="favorites-dropdown__control" @click.stop>
+                                <div class="favorites-dropdown__control-header">
+                                    <span>Spacing</span>
+                                    <span class="favorites-dropdown__control-value">
+                                        {{ worldCardSpacingPercent }}%
+                                    </span>
+                                </div>
+                                <Slider
+                                    v-model="worldCardSpacingValue"
+                                    class="favorites-dropdown__slider"
+                                    :min="worldCardSpacingSlider.min"
+                                    :max="worldCardSpacingSlider.max"
+                                    :step="worldCardSpacingSlider.step" />
+                            </li>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem @click="handleWorldImportClick">
+                                {{ t('view.favorite.import') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem @click="handleWorldExportClick">
+                                {{ t('view.favorite.export') }}
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </div>
-            <div class="favorites-toolbar__right">
-                <InputGroupSearch
-                    v-model="worldFavoriteSearch"
-                    class="favorites-toolbar__search"
-                    :placeholder="t('view.favorite.worlds.search')"
-                    @input="searchWorldFavorites" />
-                <DropdownMenu v-model:open="worldToolbarMenuOpen">
-                    <DropdownMenuTrigger as-child>
-                        <Button class="rounded-full" size="icon" variant="ghost"><Ellipsis /></Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent class="favorites-dropdown">
-                        <li class="favorites-dropdown__control" @click.stop>
-                            <div class="favorites-dropdown__control-header">
-                                <span>Scale</span>
-                                <span class="favorites-dropdown__control-value"> {{ worldCardScalePercent }}% </span>
+            <ResizablePanelGroup
+                ref="worldSplitterGroupRef"
+                direction="horizontal"
+                class="favorites-splitter"
+                @layout="handleWorldSplitterLayout">
+                <ResizablePanel
+                    ref="worldSplitterPanelRef"
+                    :default-size="worldSplitterDefaultSize"
+                    :min-size="worldSplitterMinSize"
+                    :max-size="worldSplitterMaxSize"
+                    :collapsed-size="0"
+                    collapsible
+                    :order="1">
+                    <div class="favorites-groups-panel">
+                        <div class="group-section">
+                            <div class="group-section__header">
+                                <span>{{ t('view.favorite.worlds.vrchat_favorites') }}</span>
+                                <TooltipWrapper side="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
+                                    <Button
+                                        class="rounded-full"
+                                        variant="outline"
+                                        size="icon-sm"
+                                        :disabled="isFavoriteLoading"
+                                        @click.stop="handleRefreshFavorites">
+                                        <Spinner v-if="isFavoriteLoading" />
+                                        <RefreshCw v-else />
+                                    </Button>
+                                </TooltipWrapper>
                             </div>
-                            <Slider
-                                v-model="worldCardScaleValue"
-                                class="favorites-dropdown__slider"
-                                :min="worldCardScaleSlider.min"
-                                :max="worldCardScaleSlider.max"
-                                :step="worldCardScaleSlider.step" />
-                        </li>
-                        <li class="favorites-dropdown__control" @click.stop>
-                            <div class="favorites-dropdown__control-header">
-                                <span>Spacing</span>
-                                <span class="favorites-dropdown__control-value"> {{ worldCardSpacingPercent }}% </span>
+                            <div class="group-section__list">
+                                <template v-if="favoriteWorldGroups.length">
+                                    <div
+                                        v-for="group in favoriteWorldGroups"
+                                        :key="group.key"
+                                        :class="[
+                                            'group-item',
+                                            { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
+                                        ]"
+                                        @click="handleGroupClick('remote', group.key)">
+                                        <div class="group-item__top">
+                                            <span class="group-item__name">{{ group.displayName }}</span>
+                                            <span class="group-item__count"
+                                                >{{ group.count }}/{{ group.capacity }}</span
+                                            >
+                                        </div>
+                                        <div class="group-item__bottom">
+                                            <Badge variant="outline">
+                                                {{ t(`view.favorite.visibility.${group.visibility}`) }}
+                                            </Badge>
+                                            <DropdownMenu
+                                                :open="activeGroupMenu === remoteGroupMenuKey(group.key)"
+                                                @update:open="
+                                                    handleGroupMenuVisible(remoteGroupMenuKey(group.key), $event)
+                                                ">
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button
+                                                        class="rounded-full"
+                                                        variant="ghost"
+                                                        size="icon-sm"
+                                                        @click.stop>
+                                                        <MoreHorizontal />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent side="right" class="w-50">
+                                                    <DropdownMenuItem @click="handleRemoteRename(group)">
+                                                        <span>{{ t('view.favorite.rename_tooltip') }}</span>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSub>
+                                                        <DropdownMenuSubTrigger>
+                                                            <span>{{ t('view.favorite.visibility_tooltip') }}</span>
+                                                        </DropdownMenuSubTrigger>
+                                                        <DropdownMenuPortal>
+                                                            <DropdownMenuSubContent
+                                                                side="right"
+                                                                align="start"
+                                                                class="w-[200px]">
+                                                                <DropdownMenuCheckboxItem
+                                                                    v-for="visibility in worldGroupVisibilityOptions"
+                                                                    :key="visibility"
+                                                                    :model-value="group.visibility === visibility"
+                                                                    indicator-position="right"
+                                                                    @select="
+                                                                        handleVisibilitySelection(group, visibility)
+                                                                    ">
+                                                                    <span>{{
+                                                                        t(`view.favorite.visibility.${visibility}`)
+                                                                    }}</span>
+                                                                </DropdownMenuCheckboxItem>
+                                                            </DropdownMenuSubContent>
+                                                        </DropdownMenuPortal>
+                                                    </DropdownMenuSub>
+                                                    <DropdownMenuItem
+                                                        variant="destructive"
+                                                        @click="handleRemoteClear(group)">
+                                                        <span>{{ t('view.favorite.clear') }}</span>
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <div
+                                        v-for="group in worldGroupPlaceholders"
+                                        :key="group.key"
+                                        :class="[
+                                            'group-item',
+                                            'group-item--placeholder',
+                                            { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
+                                        ]">
+                                        <div class="group-item__top">
+                                            <span class="group-item__name">{{ group.displayName }}</span>
+                                            <span class="group-item__count">--/--</span>
+                                        </div>
+                                        <div class="group-item__bottom">
+                                            <div class="group-item__placeholder-tag"></div>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
-                            <Slider
-                                v-model="worldCardSpacingValue"
-                                class="favorites-dropdown__slider"
-                                :min="worldCardSpacingSlider.min"
-                                :max="worldCardSpacingSlider.max"
-                                :step="worldCardSpacingSlider.step" />
-                        </li>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem @click="handleWorldImportClick">
-                            {{ t('view.favorite.import') }}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem @click="handleWorldExportClick">
-                            {{ t('view.favorite.export') }}
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
-        </div>
-        <ResizablePanelGroup
-            ref="worldSplitterGroupRef"
-            direction="horizontal"
-            class="favorites-splitter"
-            @layout="handleWorldSplitterLayout">
-            <ResizablePanel
-                ref="worldSplitterPanelRef"
-                :default-size="worldSplitterDefaultSize"
-                :min-size="worldSplitterMinSize"
-                :max-size="worldSplitterMaxSize"
-                :collapsed-size="0"
-                collapsible
-                :order="1">
-                <div class="favorites-groups-panel">
-                    <div class="group-section">
-                        <div class="group-section__header">
-                            <span>{{ t('view.favorite.worlds.vrchat_favorites') }}</span>
-                            <TooltipWrapper side="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
+                        </div>
+                        <div class="group-section">
+                            <div class="group-section__header">
+                                <span>{{ t('view.favorite.worlds.local_favorites') }}</span>
                                 <Button
                                     class="rounded-full"
-                                    variant="outline"
                                     size="icon-sm"
-                                    :disabled="isFavoriteLoading"
-                                    @click.stop="handleRefreshFavorites">
-                                    <Spinner v-if="isFavoriteLoading" />
-                                    <RefreshCw v-else />
+                                    variant="outline"
+                                    v-if="!refreshingLocalFavorites"
+                                    @click.stop="refreshLocalWorldFavorites"
+                                    ><RefreshCcw
+                                /></Button>
+                                <Button size="icon-sm" variant="ghost" v-else @click.stop="cancelLocalWorldRefresh">
+                                    <RefreshCcw />
+                                    {{ t('view.favorite.worlds.cancel_refresh') }}
                                 </Button>
-                            </TooltipWrapper>
-                        </div>
-                        <div class="group-section__list">
-                            <template v-if="favoriteWorldGroups.length">
-                                <div
-                                    v-for="group in favoriteWorldGroups"
-                                    :key="group.key"
-                                    :class="[
-                                        'group-item',
-                                        { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
-                                    ]"
-                                    @click="handleGroupClick('remote', group.key)">
-                                    <div class="group-item__top">
-                                        <span class="group-item__name">{{ group.displayName }}</span>
-                                        <span class="group-item__count">{{ group.count }}/{{ group.capacity }}</span>
+                            </div>
+                            <div class="group-section__list">
+                                <template v-if="localWorldFavoriteGroups.length">
+                                    <div
+                                        v-for="group in localWorldFavoriteGroups"
+                                        :key="group"
+                                        :class="[
+                                            'group-item',
+                                            { 'is-active': !hasSearchInput && isGroupActive('local', group) }
+                                        ]"
+                                        @click="handleGroupClick('local', group)">
+                                        <div class="group-item__top">
+                                            <span class="group-item__name">{{ group }}</span>
+                                            <div class="group-item__right">
+                                                <span class="group-item__count">{{
+                                                    localWorldFavGroupLength(group)
+                                                }}</span>
+                                                <div class="group-item__bottom">
+                                                    <DropdownMenu
+                                                        :open="activeGroupMenu === localGroupMenuKey(group)"
+                                                        @update:open="
+                                                            handleGroupMenuVisible(localGroupMenuKey(group), $event)
+                                                        ">
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button
+                                                                class="rounded-full"
+                                                                size="icon-sm"
+                                                                variant="ghost"
+                                                                @click.stop
+                                                                ><Ellipsis
+                                                            /></Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent side="right" class="w-50">
+                                                            <DropdownMenuItem @click="handleLocalRename(group)">
+                                                                <span>{{ t('view.favorite.rename_tooltip') }}</span>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem
+                                                                variant="destructive"
+                                                                @click="handleLocalDelete(group)">
+                                                                <span>{{ t('view.favorite.delete_tooltip') }}</span>
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="group-item__bottom">
-                                        <Badge variant="outline">
-                                            {{ t(`view.favorite.visibility.${group.visibility}`) }}
-                                        </Badge>
-                                        <DropdownMenu
-                                            :open="activeGroupMenu === remoteGroupMenuKey(group.key)"
-                                            @update:open="
-                                                handleGroupMenuVisible(remoteGroupMenuKey(group.key), $event)
-                                            ">
-                                            <DropdownMenuTrigger asChild>
-                                                <Button class="rounded-full" variant="ghost" size="icon-sm" @click.stop>
-                                                    <MoreHorizontal />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent side="right" class="w-50">
-                                                <DropdownMenuItem @click="handleRemoteRename(group)">
-                                                    <span>{{ t('view.favorite.rename_tooltip') }}</span>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuSub>
-                                                    <DropdownMenuSubTrigger>
-                                                        <span>{{ t('view.favorite.visibility_tooltip') }}</span>
-                                                    </DropdownMenuSubTrigger>
-                                                    <DropdownMenuPortal>
-                                                        <DropdownMenuSubContent
-                                                            side="right"
-                                                            align="start"
-                                                            class="w-[200px]">
-                                                            <DropdownMenuCheckboxItem
-                                                                v-for="visibility in worldGroupVisibilityOptions"
-                                                                :key="visibility"
-                                                                :model-value="group.visibility === visibility"
-                                                                indicator-position="right"
-                                                                @select="handleVisibilitySelection(group, visibility)">
-                                                                <span>{{
-                                                                    t(`view.favorite.visibility.${visibility}`)
-                                                                }}</span>
-                                                            </DropdownMenuCheckboxItem>
-                                                        </DropdownMenuSubContent>
-                                                    </DropdownMenuPortal>
-                                                </DropdownMenuSub>
-                                                <DropdownMenuItem
-                                                    variant="destructive"
-                                                    @click="handleRemoteClear(group)">
-                                                    <span>{{ t('view.favorite.clear') }}</span>
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                                </template>
+                                <div v-else class="group-empty">
+                                    <DataTableEmpty type="nodata" />
+                                </div>
+                                <div
+                                    v-if="!isCreatingLocalGroup"
+                                    class="group-item group-item--new"
+                                    @click="startLocalGroupCreation">
+                                    <Plus />
+                                    <span>{{ t('view.favorite.worlds.new_group') }}</span>
+                                </div>
+                                <InputGroupField
+                                    v-else
+                                    ref="newLocalGroupInput"
+                                    v-model="newLocalGroupName"
+                                    size="sm"
+                                    class="group-item__input"
+                                    :placeholder="t('view.favorite.worlds.new_group')"
+                                    @keyup.enter="handleLocalGroupCreationConfirm"
+                                    @keyup.esc="cancelLocalGroupCreation"
+                                    @blur="cancelLocalGroupCreation" />
+                            </div>
+                        </div>
+                    </div>
+                </ResizablePanel>
+                <ResizableHandle @dragging="setWorldSplitterDragging" />
+                <ResizablePanel :order="2">
+                    <div class="favorites-content">
+                        <div class="favorites-content__header">
+                            <div class="favorites-content__title">
+                                <span v-if="isSearchActive">{{ t('view.favorite.worlds.search') }}</span>
+                                <template v-else-if="activeRemoteGroup">
+                                    <span
+                                        >{{ activeRemoteGroup.displayName }} &nbsp;<small
+                                            >{{ activeRemoteGroup.count }}/{{ activeRemoteGroup.capacity }}</small
+                                        ></span
+                                    >
+                                </template>
+                                <span v-else-if="activeLocalGroupName">
+                                    {{ activeLocalGroupName }}
+                                    <small>{{ activeLocalGroupCount }}</small>
+                                </span>
+                                <span v-else>No Group Selected</span>
+                            </div>
+                            <div class="favorites-content__edit">
+                                <span>{{ t('view.favorite.edit_mode') }}</span>
+                                <Switch v-model="worldEditMode" :disabled="isSearchActive" />
+                            </div>
+                        </div>
+                        <div class="favorites-content__edit-actions">
+                            <div v-if="worldEditMode && !isSearchActive" class="favorites-content__actions">
+                                <Button size="sm" variant="outline" @click="toggleSelectAllWorlds">
+                                    {{
+                                        isAllWorldsSelected
+                                            ? t('view.favorite.deselect_all')
+                                            : t('view.favorite.select_all')
+                                    }}
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="secondary"
+                                    :disabled="!hasWorldSelection"
+                                    @click="clearSelectedWorlds">
+                                    {{ t('view.favorite.clear') }}
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    :disabled="!hasWorldSelection"
+                                    @click="copySelectedWorlds">
+                                    {{ t('view.favorite.copy') }}
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    :disabled="!hasWorldSelection"
+                                    @click="showWorldBulkUnfavoriteSelectionConfirm">
+                                    {{ t('view.favorite.bulk_unfavorite') }}
+                                </Button>
+                            </div>
+                        </div>
+                        <div ref="worldFavoritesContainerRef" class="favorites-content__list">
+                            <template v-if="isSearchActive">
+                                <div class="favorites-content__scroll favorites-content__scroll--native">
+                                    <div
+                                        v-if="worldFavoriteSearchResults.length"
+                                        class="favorites-search-grid"
+                                        :style="worldFavoritesGridStyle(worldFavoriteSearchResults.length)">
+                                        <div
+                                            v-for="favorite in worldFavoriteSearchResults"
+                                            :key="favorite.id"
+                                            class="favorites-search-card"
+                                            @click="showWorldDialog(favorite.id)">
+                                            <div class="favorites-search-card__content">
+                                                <div
+                                                    class="favorites-search-card__avatar"
+                                                    :class="{ 'is-empty': !favorite.thumbnailImageUrl }">
+                                                    <img
+                                                        v-if="favorite.thumbnailImageUrl"
+                                                        :src="favorite.thumbnailImageUrl"
+                                                        loading="lazy" />
+                                                </div>
+                                                <div class="favorites-search-card__detail">
+                                                    <span class="name">{{ favorite.name || favorite.id }}</span>
+                                                    <span class="text-xs">
+                                                        {{ favorite.authorName }}
+                                                        <template v-if="favorite.occupants">
+                                                            ({{ favorite.occupants }})
+                                                        </template>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-else class="favorites-empty">
+                                        <DataTableEmpty type="nomatch" />
                                     </div>
                                 </div>
                             </template>
                             <template v-else>
                                 <div
-                                    v-for="group in worldGroupPlaceholders"
-                                    :key="group.key"
-                                    :class="[
-                                        'group-item',
-                                        'group-item--placeholder',
-                                        { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
-                                    ]">
-                                    <div class="group-item__top">
-                                        <span class="group-item__name">{{ group.displayName }}</span>
-                                        <span class="group-item__count">--/--</span>
-                                    </div>
-                                    <div class="group-item__bottom">
-                                        <div class="group-item__placeholder-tag"></div>
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                    <div class="group-section">
-                        <div class="group-section__header">
-                            <span>{{ t('view.favorite.worlds.local_favorites') }}</span>
-                            <Button
-                                class="rounded-full"
-                                size="icon-sm"
-                                variant="outline"
-                                v-if="!refreshingLocalFavorites"
-                                @click.stop="refreshLocalWorldFavorites"
-                                ><RefreshCcw
-                            /></Button>
-                            <Button size="icon-sm" variant="ghost" v-else @click.stop="cancelLocalWorldRefresh">
-                                <RefreshCcw />
-                                {{ t('view.favorite.worlds.cancel_refresh') }}
-                            </Button>
-                        </div>
-                        <div class="group-section__list">
-                            <template v-if="localWorldFavoriteGroups.length">
-                                <div
-                                    v-for="group in localWorldFavoriteGroups"
-                                    :key="group"
-                                    :class="[
-                                        'group-item',
-                                        { 'is-active': !hasSearchInput && isGroupActive('local', group) }
-                                    ]"
-                                    @click="handleGroupClick('local', group)">
-                                    <div class="group-item__top">
-                                        <span class="group-item__name">{{ group }}</span>
-                                        <div class="group-item__right">
-                                            <span class="group-item__count">{{ localWorldFavGroupLength(group) }}</span>
-                                            <div class="group-item__bottom">
-                                                <DropdownMenu
-                                                    :open="activeGroupMenu === localGroupMenuKey(group)"
-                                                    @update:open="
-                                                        handleGroupMenuVisible(localGroupMenuKey(group), $event)
-                                                    ">
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button
-                                                            class="rounded-full"
-                                                            size="icon-sm"
-                                                            variant="ghost"
-                                                            @click.stop
-                                                            ><Ellipsis
-                                                        /></Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent side="right" class="w-50">
-                                                        <DropdownMenuItem @click="handleLocalRename(group)">
-                                                            <span>{{ t('view.favorite.rename_tooltip') }}</span>
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem
-                                                            variant="destructive"
-                                                            @click="handleLocalDelete(group)">
-                                                            <span>{{ t('view.favorite.delete_tooltip') }}</span>
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </div>
+                                    v-if="activeRemoteGroup && isRemoteGroupSelected"
+                                    class="favorites-content__scroll favorites-content__scroll--native">
+                                    <template v-if="currentRemoteFavorites.length">
+                                        <div
+                                            class="favorites-card-list"
+                                            :style="worldFavoritesGridStyle(currentRemoteFavorites.length)">
+                                            <FavoritesWorldItem
+                                                v-for="favorite in currentRemoteFavorites"
+                                                :key="favorite.id"
+                                                :group="activeRemoteGroup"
+                                                :favorite="favorite"
+                                                :edit-mode="worldEditMode"
+                                                :selected="selectedFavoriteWorlds.includes(favorite.id)"
+                                                @toggle-select="toggleWorldSelection(favorite.id, $event)"
+                                                @click="showWorldDialog(favorite.id)" />
                                         </div>
+                                    </template>
+                                    <div v-else class="favorites-empty">
+                                        <DataTableEmpty type="nodata" />
                                     </div>
                                 </div>
-                            </template>
-                            <div v-else class="group-empty">
-                                <DataTableEmpty type="nodata" />
-                            </div>
-                            <div
-                                v-if="!isCreatingLocalGroup"
-                                class="group-item group-item--new"
-                                @click="startLocalGroupCreation">
-                                <Plus />
-                                <span>{{ t('view.favorite.worlds.new_group') }}</span>
-                            </div>
-                            <InputGroupField
-                                v-else
-                                ref="newLocalGroupInput"
-                                v-model="newLocalGroupName"
-                                size="sm"
-                                class="group-item__input"
-                                :placeholder="t('view.favorite.worlds.new_group')"
-                                @keyup.enter="handleLocalGroupCreationConfirm"
-                                @keyup.esc="cancelLocalGroupCreation"
-                                @blur="cancelLocalGroupCreation" />
-                        </div>
-                    </div>
-                </div>
-            </ResizablePanel>
-            <ResizableHandle @dragging="setWorldSplitterDragging" />
-            <ResizablePanel :order="2">
-                <div class="favorites-content">
-                    <div class="favorites-content__header">
-                        <div class="favorites-content__title">
-                            <span v-if="isSearchActive">{{ t('view.favorite.worlds.search') }}</span>
-                            <template v-else-if="activeRemoteGroup">
-                                <span
-                                    >{{ activeRemoteGroup.displayName }} &nbsp;<small
-                                        >{{ activeRemoteGroup.count }}/{{ activeRemoteGroup.capacity }}</small
-                                    ></span
-                                >
-                            </template>
-                            <span v-else-if="activeLocalGroupName">
-                                {{ activeLocalGroupName }}
-                                <small>{{ activeLocalGroupCount }}</small>
-                            </span>
-                            <span v-else>No Group Selected</span>
-                        </div>
-                        <div class="favorites-content__edit">
-                            <span>{{ t('view.favorite.edit_mode') }}</span>
-                            <Switch v-model="worldEditMode" :disabled="isSearchActive" />
-                        </div>
-                    </div>
-                    <div class="favorites-content__edit-actions">
-                        <div v-if="worldEditMode && !isSearchActive" class="favorites-content__actions">
-                            <Button size="sm" variant="outline" @click="toggleSelectAllWorlds">
-                                {{
-                                    isAllWorldsSelected
-                                        ? t('view.favorite.deselect_all')
-                                        : t('view.favorite.select_all')
-                                }}
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="secondary"
-                                :disabled="!hasWorldSelection"
-                                @click="clearSelectedWorlds">
-                                {{ t('view.favorite.clear') }}
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                :disabled="!hasWorldSelection"
-                                @click="copySelectedWorlds">
-                                {{ t('view.favorite.copy') }}
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                :disabled="!hasWorldSelection"
-                                @click="showWorldBulkUnfavoriteSelectionConfirm">
-                                {{ t('view.favorite.bulk_unfavorite') }}
-                            </Button>
-                        </div>
-                    </div>
-                    <div ref="worldFavoritesContainerRef" class="favorites-content__list">
-                        <template v-if="isSearchActive">
-                            <div class="favorites-content__scroll favorites-content__scroll--native">
                                 <div
-                                    v-if="worldFavoriteSearchResults.length"
-                                    class="favorites-search-grid"
-                                    :style="worldFavoritesGridStyle(worldFavoriteSearchResults.length)">
-                                    <div
-                                        v-for="favorite in worldFavoriteSearchResults"
-                                        :key="favorite.id"
-                                        class="favorites-search-card"
-                                        @click="showWorldDialog(favorite.id)">
-                                        <div class="favorites-search-card__content">
-                                            <div
-                                                class="favorites-search-card__avatar"
-                                                :class="{ 'is-empty': !favorite.thumbnailImageUrl }">
-                                                <img
-                                                    v-if="favorite.thumbnailImageUrl"
-                                                    :src="favorite.thumbnailImageUrl"
-                                                    loading="lazy" />
-                                            </div>
-                                            <div class="favorites-search-card__detail">
-                                                <span class="name">{{ favorite.name || favorite.id }}</span>
-                                                <span class="text-xs">
-                                                    {{ favorite.authorName }}
-                                                    <template v-if="favorite.occupants">
-                                                        ({{ favorite.occupants }})
-                                                    </template>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div v-else class="favorites-empty">
-                                    <DataTableEmpty type="nomatch" />
-                                </div>
-                            </div>
-                        </template>
-                        <template v-else>
-                            <div
-                                v-if="activeRemoteGroup && isRemoteGroupSelected"
-                                class="favorites-content__scroll favorites-content__scroll--native">
-                                <template v-if="currentRemoteFavorites.length">
-                                    <div
-                                        class="favorites-card-list"
-                                        :style="worldFavoritesGridStyle(currentRemoteFavorites.length)">
-                                        <FavoritesWorldItem
-                                            v-for="favorite in currentRemoteFavorites"
-                                            :key="favorite.id"
-                                            :group="activeRemoteGroup"
-                                            :favorite="favorite"
-                                            :edit-mode="worldEditMode"
-                                            :selected="selectedFavoriteWorlds.includes(favorite.id)"
-                                            @toggle-select="toggleWorldSelection(favorite.id, $event)"
-                                            @click="showWorldDialog(favorite.id)" />
-                                    </div>
-                                </template>
-                                <div v-else class="favorites-empty">
-                                    <DataTableEmpty type="nodata" />
-                                </div>
-                            </div>
-                            <div
-                                v-else-if="activeLocalGroupName && isLocalGroupSelected"
-                                ref="localFavoritesViewportRef"
-                                class="favorites-content__scroll favorites-content__scroll--native favorites-content__scroll--local focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
-                                data-reka-scroll-area-viewport=""
-                                data-slot="scroll-area-viewport"
-                                tabindex="0"
-                                style="overflow: hidden scroll">
-                                <template v-if="currentLocalFavorites.length">
-                                    <div class="favorites-card-virtual" :style="localVirtualContainerStyle">
-                                        <template v-for="item in localVirtualItems" :key="String(item.virtualItem.key)">
-                                            <div
-                                                v-if="item.row"
-                                                class="favorites-card-virtual-row"
-                                                :data-index="item.virtualItem.index"
-                                                :ref="localVirtualizer.measureElement"
-                                                :style="{ transform: `translateY(${item.virtualItem.start}px)` }">
-                                                <div class="favorites-card-virtual-row-grid">
-                                                    <FavoritesWorldLocalItem
-                                                        v-for="favorite in getLocalRowItems(item.row)"
-                                                        :key="favorite.key"
-                                                        :group="activeLocalGroupName"
-                                                        :favorite="favorite.favorite"
-                                                        :edit-mode="worldEditMode"
-                                                        @remove-local-world-favorite="removeLocalWorldFavorite"
-                                                        @click="showWorldDialog(favorite.favorite.id)" />
+                                    v-else-if="activeLocalGroupName && isLocalGroupSelected"
+                                    ref="localFavoritesViewportRef"
+                                    class="favorites-content__scroll favorites-content__scroll--native favorites-content__scroll--local focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
+                                    data-reka-scroll-area-viewport=""
+                                    data-slot="scroll-area-viewport"
+                                    tabindex="0"
+                                    style="overflow: hidden scroll">
+                                    <template v-if="currentLocalFavorites.length">
+                                        <div class="favorites-card-virtual" :style="localVirtualContainerStyle">
+                                            <template
+                                                v-for="item in localVirtualItems"
+                                                :key="String(item.virtualItem.key)">
+                                                <div
+                                                    v-if="item.row"
+                                                    class="favorites-card-virtual-row"
+                                                    :data-index="item.virtualItem.index"
+                                                    :ref="localVirtualizer.measureElement"
+                                                    :style="{ transform: `translateY(${item.virtualItem.start}px)` }">
+                                                    <div class="favorites-card-virtual-row-grid">
+                                                        <FavoritesWorldLocalItem
+                                                            v-for="favorite in getLocalRowItems(item.row)"
+                                                            :key="favorite.key"
+                                                            :group="activeLocalGroupName"
+                                                            :favorite="favorite.favorite"
+                                                            :edit-mode="worldEditMode"
+                                                            @remove-local-world-favorite="removeLocalWorldFavorite"
+                                                            @click="showWorldDialog(favorite.favorite.id)" />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </template>
+                                            </template>
+                                        </div>
+                                    </template>
+                                    <div v-else class="favorites-empty">
+                                        <DataTableEmpty type="nodata" />
                                     </div>
-                                </template>
+                                </div>
                                 <div v-else class="favorites-empty">
                                     <DataTableEmpty type="nodata" />
                                 </div>
-                            </div>
-                            <div v-else class="favorites-empty">
-                                <DataTableEmpty type="nodata" />
-                            </div>
-                        </template>
+                            </template>
+                        </div>
                     </div>
-                </div>
-            </ResizablePanel>
-        </ResizablePanelGroup>
+                </ResizablePanel>
+            </ResizablePanelGroup>
+        </div>
         <WorldExportDialog v-model:worldExportDialogVisible="worldExportDialogVisible" />
     </div>
 </template>
