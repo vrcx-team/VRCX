@@ -2253,7 +2253,8 @@
             "ok": "OK",
             "input_error": "URL/ID is required",
             "message": {
-                "error": "Invalid URL/ID"
+                "error": "Invalid URL/ID",
+                "opened_from_clipboard": "Opened from clipboard"
             }
         },
         "notification_timeout": {

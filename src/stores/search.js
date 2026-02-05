@@ -235,6 +235,10 @@ export const useSearchStore = defineStore('Search', () => {
         let trimemd = cbText.trim();
         if (!directAccessParse(trimemd)) {
             promptOmniDirectDialog();
+        } else {
+            toast.success(
+                t('prompt.direct_access_omni.message.opened_from_clipboard')
+            );
         }
     }
 
