@@ -455,10 +455,12 @@
                                     side="top"
                                     style="margin-left: 5px">
                                     <template #content>
-                                        <template v-for="(data, platform) in avatarDialog.fileAnalysis" :key="platform">
+                                        <template
+                                            v-for="(created_at, platform) in avatarDialogPlatformCreatedAt"
+                                            :key="platform">
                                             <div class="flex justify-between w-full">
                                                 <span class="mr-1">{{ platform }}:</span>
-                                                <span>{{ formatDateFilter(data.created_at, 'long') }}</span>
+                                                <span>{{ formatDateFilter(created_at, 'long') }}</span>
                                             </div>
                                         </template>
                                     </template>
@@ -570,6 +572,7 @@
 
     import {
         commaNumber,
+        compareUnityVersion,
         copyToClipboard,
         downloadAndSaveJson,
         formatDateFilter,
@@ -667,6 +670,10 @@
                     unityPackage.variant !== 'standard' &&
                     unityPackage.variant !== 'security'
                 ) {
+                    // skip imposters
+                    continue;
+                }
+                if (!compareUnityVersion(unityPackage.unitySortNumber)) {
                     continue;
                 }
                 let platform = 'PC';
@@ -675,12 +682,31 @@
                 } else if (unityPackage.platform === 'android') {
                     platform = 'Android';
                 } else if (unityPackage.platform) {
-                    ({ platform } = unityPackage);
+                    platform = unityPackage.platform;
                 }
                 platforms.push(`${platform}/${unityPackage.unityVersion}`);
             }
         }
         return platforms.join(', ');
+    });
+
+    const avatarDialogPlatformCreatedAt = computed(() => {
+        const { ref } = avatarDialog.value;
+        if (!ref.unityPackages) {
+            return null;
+        }
+        let newest = {};
+        for (const unityPackage of ref.unityPackages) {
+            if (unityPackage.variant && unityPackage.variant !== 'standard' && unityPackage.variant !== 'security') {
+                continue;
+            }
+            const platform = unityPackage.platform;
+            const createdAt = unityPackage.created_at;
+            if (!newest[platform] || new Date(createdAt) > new Date(newest[platform])) {
+                newest[platform] = createdAt;
+            }
+        }
+        return newest;
     });
 
     watch(

@@ -571,8 +571,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
         if (!providerUrl || !authorId) {
             return avatars;
         }
+        const url = `${providerUrl}?authorId=${encodeURIComponent(authorId)}`;
         try {
-            const url = `${providerUrl}?authorId=${encodeURIComponent(authorId)}`;
             const response = await webApiService.execute({
                 url,
                 method: 'GET',
