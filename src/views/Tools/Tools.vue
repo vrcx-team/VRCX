@@ -170,6 +170,21 @@
                                 </div>
                             </div>
                         </Card>
+                        <Card class="tool-card p-0 gap-0">
+                            <div class="tool-content" @click="showAutoChangeStatusDialog">
+                                <div class="tool-icon text-2xl">
+                                    <Settings />
+                                </div>
+                                <div class="tool-info">
+                                    <div class="tool-name">
+                                        {{ t('view.settings.general.automation.auto_change_status') }}
+                                    </div>
+                                    <div class="tool-description">
+                                        {{ t('view.settings.general.automation.auto_state_change_tooltip') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
                     </div>
                 </div>
 
@@ -301,6 +316,9 @@
                 v-model:isEditInviteMessagesDialogVisible="isEditInviteMessagesDialogVisible"
                 @close="isEditInviteMessagesDialogVisible = false" />
             <RegistryBackupDialog />
+            <AutoChangeStatusDialog
+                :isAutoChangeStatusDialogVisible="isAutoChangeStatusDialogVisible"
+                @close="isAutoChangeStatusDialogVisible = false" />
         </template>
     </div>
 </template>
@@ -330,6 +348,8 @@
     import { useAdvancedSettingsStore } from '../../stores/settings/advanced';
     import { useLaunchStore } from '../../stores/launch';
     import { useVrcxStore } from '../../stores/vrcx';
+
+    import AutoChangeStatusDialog from './dialogs/AutoChangeStatusDialog.vue';
 
     const GroupCalendarDialog = defineAsyncComponent(() => import('./dialogs/GroupCalendarDialog.vue'));
     const NoteExportDialog = defineAsyncComponent(() => import('./dialogs/NoteExportDialog.vue'));
@@ -364,6 +384,7 @@
     const isExportFriendsListDialogVisible = ref(false);
     const isExportAvatarsListDialogVisible = ref(false);
     const isEditInviteMessagesDialogVisible = ref(false);
+    const isAutoChangeStatusDialogVisible = ref(false);
     const isToolsTabVisible = computed(() => route.name === 'tools');
 
     const showGroupCalendarDialog = () => {
@@ -384,6 +405,10 @@
 
     const showEditInviteMessageDialog = () => {
         isEditInviteMessagesDialogVisible.value = true;
+    };
+
+    const showAutoChangeStatusDialog = () => {
+        isAutoChangeStatusDialogVisible.value = true;
     };
 
     function showExportDiscordNamesDialog() {
