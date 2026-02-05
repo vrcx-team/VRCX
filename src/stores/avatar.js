@@ -56,11 +56,9 @@ export const useAvatarStore = defineStore('Avatar', () => {
         isPC: false,
         isQuest: false,
         isIos: false,
-        bundleSizes: {},
         platformInfo: {},
         galleryImages: [],
         galleryLoading: false,
-        lastUpdated: '',
         inCache: false,
         cacheSize: '',
         cacheLocked: false,
@@ -202,8 +200,6 @@ export const useAvatarStore = defineStore('Avatar', () => {
         D.isIos = false;
         D.hasImposter = false;
         D.imposterVersion = '';
-        D.lastUpdated = '';
-        D.bundleSizes = {};
         D.platformInfo = {};
         D.galleryImages = [];
         D.galleryLoading = true;
@@ -247,10 +243,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
                         break;
                     }
                 }
-                if (Object.keys(D.bundleSizes).length === 0) {
-                    getBundleDateSize(ref).then((bundleSizes) => {
-                        D.bundleSizes = bundleSizes;
-                    });
+                if (Object.keys(D.fileAnalysis).length === 0) {
+                    getBundleDateSize(ref);
                 }
             })
             .catch((err) => {

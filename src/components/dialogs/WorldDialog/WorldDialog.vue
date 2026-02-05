@@ -60,9 +60,9 @@
                                     style="margin-right: 5px; margin-top: 5px">
                                     <Monitor class="h-4 w-4 x-tag-platform-pc" />
                                     <span
-                                        v-if="worldDialog.bundleSizes['standalonewindows']"
+                                        v-if="worldDialog.fileAnalysis.standalonewindows?._fileSize"
                                         :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']">
-                                        {{ worldDialog.bundleSizes['standalonewindows'].fileSize }}
+                                        {{ worldDialog.fileAnalysis.standalonewindows._fileSize }}
                                     </span>
                                 </Badge>
                             </TooltipWrapper>
@@ -74,9 +74,9 @@
                                     style="margin-right: 5px; margin-top: 5px">
                                     <Smartphone class="h-4 w-4 x-tag-platform-quest" />
                                     <span
-                                        v-if="worldDialog.bundleSizes['android']"
+                                        v-if="worldDialog.fileAnalysis.android?._fileSize"
                                         :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']">
-                                        {{ worldDialog.bundleSizes['android'].fileSize }}
+                                        {{ worldDialog.fileAnalysis.android._fileSize }}
                                     </span>
                                 </Badge>
                             </TooltipWrapper>
@@ -88,9 +88,9 @@
                                     style="margin-right: 5px; margin-top: 5px">
                                     <Apple class="h-4 w-4 text-[#8e8e93]" />
                                     <span
-                                        v-if="worldDialog.bundleSizes['ios']"
+                                        v-if="worldDialog.fileAnalysis.ios?._fileSize"
                                         :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']">
-                                        {{ worldDialog.bundleSizes['ios'].fileSize }}
+                                        {{ worldDialog.fileAnalysis.ios._fileSize }}
                                     </span>
                                 </Badge>
                             </TooltipWrapper>
@@ -566,13 +566,24 @@
                         </div>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
-                                <span class="name">
+                                <span class="name" style="display: inline">
                                     {{ t('dialog.world.info.last_updated') }}
                                 </span>
-                                <span v-if="worldDialog.lastUpdated" class="extra">
-                                    {{ formatDateFilter(worldDialog.lastUpdated, 'long') }}
-                                </span>
-                                <span v-else class="extra">
+                                <TooltipWrapper
+                                    v-if="Object.keys(worldDialog.fileAnalysis).length"
+                                    side="top"
+                                    style="margin-left: 5px">
+                                    <template #content>
+                                        <template v-for="(data, platform) in worldDialog.fileAnalysis" :key="platform">
+                                            <div class="flex justify-between w-full">
+                                                <span class="mr-1">{{ platform }}:</span>
+                                                <span>{{ formatDateFilter(data.created_at, 'long') }}</span>
+                                            </div>
+                                        </template>
+                                    </template>
+                                    <ChevronDown class="inline-block" />
+                                </TooltipWrapper>
+                                <span class="extra">
                                     {{ formatDateFilter(worldDialog.ref.updated_at, 'long') }}
                                 </span>
                             </div>
@@ -712,7 +723,7 @@
                         show-icon />
                     <br />
                     <vue-json-pretty
-                        v-if="Object.keys(worldDialog.fileAnalysis).length > 0"
+                        v-if="Object.keys(worldDialog.fileAnalysis).length"
                         :data="worldDialog.fileAnalysis"
                         :deep="2"
                         :theme="isDarkMode ? 'dark' : 'light'"

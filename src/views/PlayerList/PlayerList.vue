@@ -61,9 +61,9 @@
                             <Badge class="x-tag-platform-pc" variant="outline" style="margin-right: 5px"
                                 ><Monitor class="h-4 w-4" />
                                 <span
-                                    v-if="currentInstanceWorld.bundleSizes['standalonewindows']"
+                                    v-if="currentInstanceWorld.fileAnalysis.standalonewindows?._fileSize"
                                     :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
-                                    >{{ currentInstanceWorld.bundleSizes['standalonewindows'].fileSize }}</span
+                                    >{{ currentInstanceWorld.fileAnalysis.standalonewindows._fileSize }}</span
                                 >
                             </Badge>
                         </TooltipWrapper>
@@ -71,9 +71,9 @@
                             <Badge class="x-tag-platform-quest" variant="outline" style="margin-right: 5px"
                                 ><Smartphone class="h-4 w-4" />
                                 <span
-                                    v-if="currentInstanceWorld.bundleSizes['android']"
+                                    v-if="currentInstanceWorld.fileAnalysis.android?._fileSize"
                                     :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
-                                    >{{ currentInstanceWorld.bundleSizes['android'].fileSize }}</span
+                                    >{{ currentInstanceWorld.fileAnalysis.android._fileSize }}</span
                                 >
                             </Badge>
                         </TooltipWrapper>
@@ -81,9 +81,9 @@
                             <Badge class="text-[#8e8e93] border-[#8e8e93]" variant="outline" style="margin-right: 5px"
                                 ><Apple class="h-4 w-4 text-[#8e8e93]" />
                                 <span
-                                    v-if="currentInstanceWorld.bundleSizes['ios']"
+                                    v-if="currentInstanceWorld.fileAnalysis.ios?._fileSize"
                                     :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']"
-                                    >{{ currentInstanceWorld.bundleSizes['ios'].fileSize }}</span
+                                    >{{ currentInstanceWorld.fileAnalysis.ios._fileSize }}</span
                                 >
                             </Badge>
                         </TooltipWrapper>
@@ -129,7 +129,10 @@
                         <div class="detail">
                             <span class="name">{{ t('dialog.world.info.last_updated') }}</span>
                             <span class="block truncate text-xs">{{
-                                formatDateFilter(currentInstanceWorld.lastUpdated, 'long')
+                                formatDateFilter(
+                                    currentInstanceWorld.fileAnalysis.standalonewindows?.created_at,
+                                    'long'
+                                )
                             }}</span>
                         </div>
                     </div>

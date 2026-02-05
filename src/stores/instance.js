@@ -101,8 +101,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         focusViewDisabled: false,
         inCache: false,
         cacheSize: '',
-        bundleSizes: {},
-        lastUpdated: ''
+        fileAnalysis: {}
     });
 
     /** @type {import('vue').Ref<any>} */
@@ -386,8 +385,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 focusViewDisabled: false,
                 inCache: false,
                 cacheSize: '',
-                bundleSizes: {},
-                lastUpdated: ''
+                fileAnalysis: {}
             };
             currentInstanceLocation.value = {};
         } else if (instanceId !== currentInstanceLocation.value.tag) {
@@ -401,8 +399,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 focusViewDisabled: false,
                 inCache: false,
                 cacheSize: '',
-                bundleSizes: {},
-                lastUpdated: ''
+                fileAnalysis: {}
             };
             L = parseLocation(instanceId);
             currentInstanceLocation.value = L;
@@ -439,17 +436,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                                 error
                             );
                         });
-                    getBundleDateSize(args.ref)
-                        .then((bundleSizes) => {
-                            currentInstanceWorld.value.bundleSizes =
-                                bundleSizes;
-                        })
-                        .catch((error) => {
-                            console.error(
-                                'Error fetching bundle sizes:',
-                                error
-                            );
-                        });
+                    getBundleDateSize(args.ref);
                     return args;
                 })
                 .catch((error) => {
