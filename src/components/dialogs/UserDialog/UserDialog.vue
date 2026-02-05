@@ -432,7 +432,7 @@
                                 <Button
                                     class="rounded-full ml-1 text-xs"
                                     size="icon-sm"
-                                    variant="outline"
+                                    variant="ghost"
                                     @click.stop="resetHome()"
                                     ><Trash2 class="h-4 w-4" />
                                 </Button>
@@ -450,7 +450,7 @@
                                             <Button
                                                 class="rounded-full ml-1 text-xs"
                                                 size="icon-sm"
-                                                variant="outline"
+                                                variant="ghost"
                                                 @click.stop
                                                 ><Copy class="h-4 w-4" />
                                             </Button>
@@ -479,7 +479,7 @@
                     <div style="display: flex; align-items: center">
                         <Button
                             class="rounded-full"
-                            variant="outline"
+                            variant="ghost"
                             size="icon-sm"
                             :disabled="userDialog.isMutualFriendsLoading"
                             @click="getUserMutualFriends(userDialog.id)">
@@ -545,7 +545,7 @@
                     <div style="display: flex; align-items: center">
                         <Button
                             class="rounded-full"
-                            variant="outline"
+                            variant="ghost"
                             size="icon-sm"
                             :disabled="userDialog.isGroupsLoading"
                             @click="getUserGroups(userDialog.id)">
@@ -667,7 +667,7 @@
                                 <div style="margin-right: 3px; margin-left: 5px" @click.stop>
                                     <Button
                                         size="icon-sm"
-                                        variant="outline"
+                                        variant="ghost"
                                         style="
                                             display: block;
                                             padding: 7px;
@@ -680,7 +680,7 @@
                                     </Button>
                                     <Button
                                         size="icon-sm"
-                                        variant="outline"
+                                        variant="ghost"
                                         style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
                                         @click="moveGroupBottom(group.id)">
                                         <DownloadIcon />
@@ -932,7 +932,7 @@
                     <div style="display: flex; align-items: center">
                         <Button
                             class="rounded-full"
-                            variant="outline"
+                            variant="ghost"
                             size="icon-sm"
                             :disabled="userDialog.isWorldsLoading"
                             @click="refreshUserDialogWorlds()">
@@ -1082,7 +1082,7 @@
                         <Button
                             v-if="userDialog.ref.id === currentUser.id"
                             class="rounded-full"
-                            variant="outline"
+                            variant="ghost"
                             size="icon-sm"
                             :disabled="userDialog.isAvatarsLoading"
                             @click="refreshUserDialogAvatars()">
@@ -1092,7 +1092,7 @@
                         <Button
                             v-else
                             class="rounded-full"
-                            variant="outline"
+                            variant="ghost"
                             size="icon-sm"
                             :disabled="userDialog.isAvatarsLoading"
                             @click="setUserDialogAvatarsRemote(userDialog.id)">
@@ -1188,13 +1188,13 @@
             </template>
 
             <template #JSON>
-                <Button class="rounded-full mr-2" size="icon-sm" variant="outline" @click="refreshUserDialogTreeData()">
+                <Button class="rounded-full mr-2" size="icon-sm" variant="ghost" @click="refreshUserDialogTreeData()">
                     <RefreshCw />
                 </Button>
                 <Button
                     class="rounded-full"
                     size="icon-sm"
-                    variant="outline"
+                    variant="ghost"
                     @click="downloadAndSaveJson(userDialog.id, userDialog.ref)">
                     <Download />
                 </Button>

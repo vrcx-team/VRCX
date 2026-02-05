@@ -97,7 +97,7 @@
                                 <TooltipWrapper side="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
                                     <Button
                                         class="rounded-full"
-                                        variant="outline"
+                                        variant="ghost"
                                         size="icon-sm"
                                         :disabled="isFavoriteLoading"
                                         @click.stop="handleRefreshFavorites">

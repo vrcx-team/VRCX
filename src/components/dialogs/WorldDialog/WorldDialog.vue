@@ -455,7 +455,7 @@
                                                 <Button
                                                     class="rounded-full text-xs"
                                                     size="icon-sm"
-                                                    variant="outline"
+                                                    variant="ghost"
                                                     @click.stop
                                                     ><Copy class="h-4 w-4" />
                                                 </Button>
@@ -704,14 +704,14 @@
                     <Button
                         class="rounded-full mr-2"
                         size="icon-sm"
-                        variant="outline"
+                        variant="ghost"
                         @click="refreshWorldDialogTreeData()">
                         <RefreshCw />
                     </Button>
                     <Button
                         class="rounded-full"
                         size="icon-sm"
-                        variant="outline"
+                        variant="ghost"
                         @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)">
                         <Download />
                     </Button>

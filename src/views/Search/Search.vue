@@ -164,7 +164,7 @@
                             <TooltipWrapper side="bottom" :content="t('view.search.avatar.refresh_tooltip')">
                                 <Button
                                     class="rounded-full ml-1"
-                                    variant="outline"
+                                    variant="ghost"
                                     size="icon-sm"
                                     :disabled="userDialog.isAvatarsLoading"
                                     @click="refreshUserDialogAvatars">
@@ -227,26 +227,29 @@
                             </RadioGroup>
                         </div>
                     </div>
-                    <div style="display: flex; justify-content: end">
-                        <RadioGroup
+                    <div style="display: flex; justify-content: end" class="mt-2">
+                        <Select
                             :model-value="searchAvatarSort"
                             :disabled="searchAvatarFilterRemote !== 'local'"
-                            class="flex items-center gap-4"
                             style="margin: 5px"
                             @update:modelValue="handleSearchAvatarSortChange">
-                            <div class="flex items-center space-x-2">
-                                <RadioGroupItem id="searchAvatarSort-name" value="name" />
-                                <label for="searchAvatarSort-name">{{ t('view.search.avatar.sort_name') }}</label>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <RadioGroupItem id="searchAvatarSort-update" value="update" />
-                                <label for="searchAvatarSort-update">{{ t('view.search.avatar.sort_update') }}</label>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <RadioGroupItem id="searchAvatarSort-created" value="created" />
-                                <label for="searchAvatarSort-created">{{ t('view.search.avatar.sort_created') }}</label>
-                            </div>
-                        </RadioGroup>
+                            <SelectTrigger size="sm">
+                                <SelectValue :placeholder="t('view.search.avatar.sort_name')" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="name">
+                                        {{ t('view.search.avatar.sort_name') }}
+                                    </SelectItem>
+                                    <SelectItem value="update">
+                                        {{ t('view.search.avatar.sort_update') }}
+                                    </SelectItem>
+                                    <SelectItem value="created">
+                                        {{ t('view.search.avatar.sort_created') }}
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                     </div>
                     <div class="x-friend-list" style="margin-top: 20px; min-height: 500px">
                         <div

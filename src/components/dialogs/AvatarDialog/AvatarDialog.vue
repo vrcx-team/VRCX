@@ -421,7 +421,7 @@
                                                 <Button
                                                     class="rounded-full text-xs"
                                                     size="icon-sm"
-                                                    variant="outline"
+                                                    variant="ghost"
                                                     @click.stop
                                                     ><Copy class="h-4 w-4" />
                                                 </Button>
@@ -498,14 +498,14 @@
                     <Button
                         class="rounded-full mr-2"
                         size="icon-sm"
-                        variant="outline"
+                        variant="ghost"
                         @click="refreshAvatarDialogTreeData()">
                         <RefreshCw />
                     </Button>
                     <Button
                         class="rounded-full"
                         size="icon-sm"
-                        variant="outline"
+                        variant="ghost"
                         @click="downloadAndSaveJson(avatarDialog.id, avatarDialog.ref)">
                         <Download />
                     </Button>

@@ -94,6 +94,11 @@
         },
         "friends_locations": {
             "online_friends": "オンラインのフレンド",
+            "online": "オンライン",
+            "favorite": "お気に入り",
+            "same_instance": "同じインスタンス",
+            "active": "アクティブ",
+            "offline": "オフライン",
             "spacing": "表示間隔",
             "scale": "サイズ",
             "separate_same_instance_friends": "同じインスタンスのフレンドを分けて表示",

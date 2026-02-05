@@ -94,6 +94,11 @@
         },
         "friends_locations": {
             "online_friends": "Online Friends",
+            "online": "Online",
+            "favorite": "Favorites",
+            "same_instance": "Same instance",
+            "active": "Active",
+            "offline": "Offline",
             "spacing": "Spacing",
             "scale": "Scale",
             "separate_same_instance_friends": "Separate Same Instance Friends",

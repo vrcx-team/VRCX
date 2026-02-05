@@ -39,7 +39,7 @@
     });
 
     function onUpdateModelValue(value) {
-        if (!value || (Array.isArray(value) && !value.length)) {
+        if (props.type === 'single' && !value) {
             return;
         }
         emits('update:modelValue', value);

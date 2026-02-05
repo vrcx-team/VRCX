@@ -89,7 +89,7 @@
                     <ButtonGroup class="mr-2">
                         <TooltipWrapper :content="t('view.charts.instance_activity.previous_day')" side="top">
                             <Button
-                                variant="outline"
+                                variant="ghost"
                                 size="icon-sm"
                                 :disabled="isPrevDayBtnDisabled"
                                 @click="changeSelectedDateFromBtn(false)">
@@ -98,7 +98,7 @@
                         </TooltipWrapper>
                         <TooltipWrapper :content="t('view.charts.instance_activity.next_day')" side="top">
                             <Button
-                                variant="outline"
+                                variant="ghost"
                                 size="icon-sm"
                                 :disabled="isNextDayBtnDisabled"
                                 @click="changeSelectedDateFromBtn(true)">
