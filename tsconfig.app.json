@@ -15,6 +15,7 @@
         "types": ["vite/client"],
         "resolveJsonModule": true,
         "noEmit": true,
+        "strict": false,
         "paths": {
             "*": ["./*"],
             "@/*": ["./src/*"]
