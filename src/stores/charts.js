@@ -16,6 +16,19 @@ function createDefaultFetchState() {
     };
 }
 
+const EMPTY_USER_ID = 'usr_00000000-0000-0000-0000-000000000000';
+
+function normalizeIdentifier(value) {
+    if (typeof value === 'string') return value;
+    if (value === undefined || value === null) return '';
+    return String(value);
+}
+
+function isValidMutualIdentifier(value) {
+    const identifier = normalizeIdentifier(value);
+    return Boolean(identifier && identifier !== EMPTY_USER_ID);
+}
+
 export const useChartsStore = defineStore('Charts', () => {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
@@ -176,7 +189,11 @@ export const useChartsStore = defineStore('Charts', () => {
 
                 if (!args || isCancelled()) break;
 
-                collected.push(...args.json);
+                collected.push(
+                    ...args.json.filter((entry) =>
+                        isValidMutualIdentifier(entry?.id)
+                    )
+                );
 
                 if (args.json.length < 100) break;
                 offset += args.json.length;
@@ -259,17 +276,8 @@ export const useChartsStore = defineStore('Charts', () => {
                     const ids = [];
 
                     for (const entry of collection) {
-                        const identifier =
-                            typeof entry?.id === 'string'
-                                ? entry.id
-                                : entry?.id !== undefined && entry?.id !== null
-                                  ? String(entry.id)
-                                  : '';
-                        if (
-                            identifier &&
-                            identifier !==
-                                'usr_00000000-0000-0000-0000-000000000000'
-                        )
+                        const identifier = normalizeIdentifier(entry?.id);
+                        if (isValidMutualIdentifier(identifier))
                             ids.push(identifier);
                     }
 

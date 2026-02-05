@@ -337,7 +337,7 @@
         SquarePen,
         UserCheck
     } from 'lucide-vue-next';
-    import { computed, defineAsyncComponent, ref } from 'vue';
+    import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import { Card } from '@/components/ui/card';
     import { storeToRefs } from 'pinia';
@@ -350,6 +350,7 @@
     import { useVrcxStore } from '../../stores/vrcx';
 
     import AutoChangeStatusDialog from './dialogs/AutoChangeStatusDialog.vue';
+    import configRepository from '../../service/config.js';
 
     const GroupCalendarDialog = defineAsyncComponent(() => import('./dialogs/GroupCalendarDialog.vue'));
     const NoteExportDialog = defineAsyncComponent(() => import('./dialogs/NoteExportDialog.vue'));
@@ -357,7 +358,7 @@
     const ExportDiscordNamesDialog = defineAsyncComponent(() => import('./dialogs/ExportDiscordNamesDialog.vue'));
     const ExportFriendsListDialog = defineAsyncComponent(() => import('./dialogs/ExportFriendsListDialog.vue'));
     const ExportAvatarsListDialog = defineAsyncComponent(() => import('./dialogs/ExportAvatarsListDialog.vue'));
-    const RegistryBackupDialog = defineAsyncComponent(() => import('../Settings/dialogs/RegistryBackupDialog.vue'));
+    const RegistryBackupDialog = defineAsyncComponent(() => import('./dialogs/RegistryBackupDialog.vue'));
 
     const { t } = useI18n();
     const router = useRouter();
@@ -368,6 +369,7 @@
     const { showVRChatConfig } = useAdvancedSettingsStore();
     const { showLaunchOptions } = useLaunchStore();
     const { showRegistryBackupDialog } = useVrcxStore();
+    const toolsCategoryCollapsedConfigKey = 'VRCX_toolsCategoryCollapsed';
 
     const categoryCollapsed = ref({
         group: false,
@@ -401,7 +403,21 @@
 
     const toggleCategory = (category) => {
         categoryCollapsed.value[category] = !categoryCollapsed.value[category];
+        configRepository.setString(toolsCategoryCollapsedConfigKey, JSON.stringify(categoryCollapsed.value));
     };
+
+    onMounted(async () => {
+        const storedValue = await configRepository.getString(toolsCategoryCollapsedConfigKey, '{}');
+        try {
+            const parsed = JSON.parse(storedValue);
+            categoryCollapsed.value = {
+                ...categoryCollapsed.value,
+                ...parsed
+            };
+        } catch {
+            // ignore invalid stored value and keep defaults
+        }
+    });
 
     const showEditInviteMessageDialog = () => {
         isEditInviteMessagesDialogVisible.value = true;
