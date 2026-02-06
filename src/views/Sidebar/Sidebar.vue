@@ -31,12 +31,12 @@
                                             }}</span>
                                             <span v-if="!item.ref.isFriend" class="block truncate text-xs"></span>
                                             <span
-                                                v-else-if="item.ref.state === 'active'"
+                                                v-else-if="item.ref.state === 'offline'"
                                                 class="block truncate text-xs"
                                                 >{{ t('side_panel.search_result_active') }}</span
                                             >
                                             <span
-                                                v-else-if="item.ref.state === 'offline'"
+                                                v-else-if="item.ref.state === 'active'"
                                                 class="block truncate text-xs"
                                                 >{{ t('side_panel.search_result_offline') }}</span
                                             >
