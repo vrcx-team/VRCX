@@ -26,15 +26,16 @@
                     </div>
                 </div>
                 <div class="badges">
-                    <div @click="copyEventLink(event)" class="share-badge">
+                    <Button @click="copyEventLink(event)" size="icon" variant="secondary" class="rounded-full badge">
                         <Share2 />
-                    </div>
-                    <div v-if="isFollowing" @click="toggleEventFollow(event)" class="following-badge is-following">
+                    </Button>
+                    <Button
+                        @click="toggleEventFollow(event)"
+                        size="icon"
+                        :variant="isFollowing ? 'default' : 'secondary'"
+                        class="rounded-full badge">
                         <Star />
-                    </div>
-                    <div v-else @click="toggleEventFollow(event)" class="following-badge">
-                        <Star />
-                    </div>
+                    </Button>
                 </div>
             </Card>
         </PopoverTrigger>
@@ -303,29 +304,15 @@
         font-size: 15px;
     }
 
-    .event-card .badges .following-badge {
+    .event-card .badges .badge {
         display: flex;
         align-items: center;
         justify-content: center;
         width: 24px;
         height: 24px;
         gap: 4px;
-        border-radius: 50%;
         cursor: pointer;
-        background-color: var(--color-accent);
-    }
-
-    .event-card .badges .share-badge {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
-        gap: 4px;
-        border-radius: 50%;
-        cursor: pointer;
-        margin-right: 5px;
-        background-color: var(--color-accent);
+        margin-left: 5px;
     }
 
     .event-card .event-content {
