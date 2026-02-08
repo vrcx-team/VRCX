@@ -77,13 +77,26 @@
         feedTable.value.pageSizeLinked ? appearanceSettingsStore.tablePageSize : feedTable.value.pageSize
     );
 
+    function getFeedRowId(row) {
+        if (row?.id != null) return `id:${row.id}`;
+        if (row?.rowId != null) return `row:${row.rowId}`;
+
+        const type = row?.type ?? '';
+        const createdAt = row?.created_at ?? row?.createdAt ?? '';
+        const userId = row?.userId ?? row?.senderUserId ?? '';
+        const location = row?.location ?? row?.details?.location ?? '';
+        const message = row?.message ?? '';
+
+        return `${type}:${createdAt}:${userId}:${location}:${message}`;
+    }
+
     const { table, pagination } = useVrcxVueTable({
         get data() {
             return feedTableData.value;
         },
         persistKey: 'feed',
         columns: baseColumns,
-        getRowId: (row, index) => `${row.type}:${row.created_at ?? ''}:${row.rowId ?? index}`,
+        getRowId: getFeedRowId,
         enableExpanded: true,
         getRowCanExpand: () => true,
         initialSorting: [],
@@ -91,6 +104,9 @@
         initialPagination: {
             pageIndex: 0,
             pageSize: pageSize.value
+        },
+        tableOptions: {
+            autoResetExpanded: false
         }
     });
 
