@@ -334,7 +334,7 @@
                         "overlay_notifications": "Overlay Notifications",
                         "notification_position": "Notification Position",
                         "xsoverlay_notifications": "XSOverlay értesítések",
-                        "wlxoverlay_notifications": "WlxOverlay értesítések",
+                        "wayvr_notifications": "WayVR értesítések",
                         "ovrtoolkit_hud_notifications": "OVR Toolkit HUD értesítések",
                         "ovrtoolkit_wrist_notifications": "OVR Toolkit csukló értesítések",
                         "user_images": "User Images (slower)",

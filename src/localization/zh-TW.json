@@ -636,7 +636,7 @@
                         "overlay_notifications": "嵌入介面通知",
                         "notification_position": "通知位置",
                         "xsoverlay_notifications": "XSOverlay 通知",
-                        "wlxoverlay_notifications": "WlxOverlay 通知",
+                        "wayvr_notifications": "WayVR 通知",
                         "ovrtoolkit_hud_notifications": "OVR Toolkit HUD 通知",
                         "ovrtoolkit_wrist_notifications": "OVR Toolkit 手腕通知",
                         "user_images": "用戶照片（較慢）",
