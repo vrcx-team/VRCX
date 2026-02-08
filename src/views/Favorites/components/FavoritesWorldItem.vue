@@ -13,7 +13,7 @@
                         decoding="async"
                         fetchpriority="low" />
                 </div>
-                <div class="favorites-search-card__detail" v-once>
+                <div class="favorites-search-card__detail">
                     <div class="favorites-search-card__title">
                         <span class="name text-sm">{{ props.favorite.ref.name }}</span>
                         <span

@@ -6,7 +6,7 @@
             </div>
             <div class="favorites-search-card__detail">
                 <div class="favorites-search-card__title">
-                    <span class="name">{{ favorite.name }}</span>
+                    <span class="name text-sm">{{ favorite.name }}</span>
                 </div>
                 <span class="text-xs">{{ favorite.authorName }}</span>
             </div>
