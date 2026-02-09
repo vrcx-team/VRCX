@@ -6,18 +6,17 @@ import { useI18n } from 'vue-i18n';
 import { AppDebug } from '../service/appConfig';
 import { branches } from '../shared/constants';
 import { changeLogRemoveLinks } from '../shared/utils';
-import { useUiStore } from './ui';
 
 import configRepository from '../service/config';
 
 import * as workerTimers from 'worker-timers';
 
 export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
-    const uiStore = useUiStore();
     const { t } = useI18n();
 
     const arch = ref('x64');
     const noUpdater = ref(false);
+    const isMacOS = computed(() => navigator.platform.includes('Mac'));
 
     const appVersion = ref('');
     const autoUpdateVRCX = ref('Auto Download');
@@ -44,10 +43,13 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     const updateToastRelease = ref('');
 
     async function initVRCXUpdaterSettings() {
-        if (!WINDOWS) {
+        if (!LINUX) {
             arch.value = await window.electron.getArch();
             noUpdater.value = await window.electron.getNoUpdater();
             console.log('Architecture:', arch.value);
+        }
+        if (isMacOS.value) {
+            noUpdater.value = true;
         }
 
         const [VRCX_autoUpdateVRCX, VRCX_id] = await Promise.all([
