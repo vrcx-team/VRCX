@@ -106,7 +106,8 @@
             pageSize: pageSize.value
         },
         tableOptions: {
-            autoResetExpanded: false
+            autoResetExpanded: false,
+            autoResetPageIndex: false
         }
     });
 

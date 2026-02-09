@@ -154,6 +154,9 @@
         initialPagination: {
             pageIndex: 0,
             pageSize: pageSize.value
+        },
+        tableOptions: {
+            autoResetPageIndex: false
         }
     });
 
