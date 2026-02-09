@@ -211,6 +211,7 @@
             "copy": "コピー",
             "clear": "消去",
             "select_all": "全て選択",
+            "deselect_all": "すべて解除",
             "select_none": "選択解除",
             "bulk_unfavorite": "一括お気に入り解除モード",
             "refresh_favorites_tooltip": "全てのお気に入りを更新",
@@ -398,6 +399,15 @@
                     "mutual_friends_count": "共通のフレンド: {count}",
                     "edge": "{source} ↔ {target}"
                 },
+                "settings": {
+                    "title": "グラフレイアウト設定",
+                    "layout_iterations": "レイアウトの反復回数",
+                    "layout_iterations_help": "レイアウトの実行時間。値が大きいほど配置が安定します。",
+                    "layout_spacing": "レイアウトの間隔",
+                    "layout_spacing_help": "グラフの広がり。値が大きいほど余裕のある配置になります。",
+                    "edge_curvature": "線のカーブ具合",
+                    "edge_curvature_help": "線の曲がり具合。値が大きいほど密集した部分でも滑らかに表示されます。"
+                },
                 "force_dialog": {
                     "open_label": "図のレイアウト設定",
                     "title": "ネットワーク図のレイアウト設定",
@@ -552,7 +562,9 @@
                 "logging": {
                     "header": "ロギング",
                     "resource_load": "Udonでの文字列/画像読み込みを記録",
-                    "empty_avatar": "フィードにアバターを名前なしで記録"
+                    "empty_avatar": "フィードにアバターを名前なしで記録",
+                    "auto_login_delay": "自動ログイン遅延",
+                    "auto_login_delay_button": "遅延秒数を設定"
                 },
                 "automation": {
                     "header": "オートメーション",
@@ -575,7 +587,7 @@
                     "header": "法律上の注意事項",
                     "info": "VRCXはVRChatのアシスタント用アプリケーションで、フレンドに関する情報の提供や管理を行うツールです。本アプリケーションは非公式の「VRChat API SDK」を使用しています。",
                     "disclaimer1": "VRCXはVRChatによって承認されておらず、VRChatまたはVRChatの開発もしくは管理に公式に関与する者の見解や意見が反映されたものではありません。VRChatおよび関連するすべての財産はVRChat Inc.の商標または登録商標です。",
-                    "disclaimer2": "pypyとNatsumiはVRCXの使用によって発生したいかなる問題にも責任を負いません。自己責任でご使用ください！",
+                    "disclaimer2": "pypyとNatsumiおよびすべての貢献者はVRCXの使用によって発生したいかなる問題にも責任を負いません。自己責任でご使用ください！",
                     "open_source_software_notice": "オープンソースソフトウェアに関する注意事項"
                 },
                 "contributors": {
@@ -628,7 +640,10 @@
                     "table_density": "テーブルの行の高さ",
                     "table_density_standard": "標準",
                     "table_density_comfortable": "やや低め",
-                    "table_density_compact": "低め"
+                    "table_density_compact": "低め",
+                    "table_max_size": "最大読み込み件数",
+                    "table_page_sizes": "1ページあたりの表示数",
+                    "table_page_sizes_error": "1〜1000の数字を入力してください。"
                 },
                 "timedate": {
                     "header": "時刻と日付",
@@ -1012,7 +1027,8 @@
                 "18_plus_verified": "18歳以上確認済み",
                 "age_verified": "年齢認証済み",
                 "trust_level": "トラストランク",
-                "mutual_friends": "共通のフレンド"
+                "mutual_friends": "共通のフレンド",
+                "friend_number": "フレンド No."
             },
             "badges": {
                 "assigned": "授与済",
@@ -1174,8 +1190,8 @@
             },
             "note_memo": {
                 "header": "ノートとメモを編集",
-                "cancel":"キャンセル",
-                "confirm":"保存"
+                "cancel": "キャンセル",
+                "confirm": "保存"
             }
         },
         "world": {
@@ -1581,7 +1597,13 @@
                 "api_key": "API キー (オプション)",
                 "model": "モデル名",
                 "prompt_optional": "プロンプト (オプション)"
-            }
+            },
+            "fetch_models": "モデルを取得",
+            "fetching_models": "取得中...",
+            "msg_endpoint_required": "先にエンドポイントを入力してください",
+            "msg_models_fetched": "{count}件のモデルが見つかりました",
+            "msg_no_models_found": "モデルが見つかりません",
+            "msg_fetch_models_failed": "モデルの取得に失敗しました"
         },
         "set_world_tags": {
             "header": "ワールドのタグを設定",
@@ -1985,7 +2007,8 @@
             "my_emojis": "自分の絵文字",
             "default_emojis": "デフォルトの絵文字",
             "cancel": "キャンセル",
-            "send": "送信"
+            "send": "送信",
+            "select_default_emoji": "デフォルトの絵文字を選択"
         },
         "allowed_video_player_domains": {
             "header": "ビデオプレーヤーでの使用が許可されているのドメイン",
@@ -2053,6 +2076,7 @@
         "traveling": "移動中"
     },
     "message": {
+        "auto_login_delay_countdown": "自動ログインまで {seconds} 秒...",
         "vrcx_updater": {
             "failed": "アップデートの確認に失敗しました、{message}",
             "failed_install": "更新のインストールに失敗しました",
@@ -2074,6 +2098,12 @@
             "change_moderation_failed": "アバターのモデレーションの変更に失敗しました",
             "image_changed": "アバター画像が変更されました",
             "image_invalid": "アバター画像が無効です"
+        },
+        "avatar_lookup": {
+            "not_found": "検索プロバイダーでアバターが見つかりません",
+            "failed": "アバターの検索に失敗しました",
+            "private_or_not_found": "ユーザーのアバターは非公開、または検索プロバイダーで見つかりません",
+            "loading": "検索プロバイダーでアバターを検索中"
         },
         "database": {
             "upgrade_complete": "データベースのアップグレードが完了しました"
@@ -2231,7 +2261,8 @@
             "ok": "OK",
             "input_error": "URLまたはIDが必要です。",
             "message": {
-                "error": "無効なURLまたはIDです。"
+                "error": "無効なURLまたはIDです。",
+                "opened_from_clipboard": "クリップボードから開きました"
             }
         },
         "notification_timeout": {
@@ -2322,9 +2353,11 @@
         "change_table_size": {
             "header": "テーブルの最大数",
             "description": "データベースからUIページに読み込まれるエントリの量を制限します。テーブル数が多いとRAM使用量とパフォーマンスに影響を及ぼす可能性があります。",
-                    "table_max_size": "読み込むエントリの最大数",
-                    "table_page_sizes": "テーブルのページごとの表示件数:",
-                    "table_page_sizes_error": "ページサイズは1から1000の間の数字にしてください。",
+            "table_max_size": "読み込むエントリの最大数",
+            "table_max_size_error": "{min}〜{max}の数字を入力してください。",
+            "search_limit": "検索の上限",
+            "search_limit_error": "{min}〜{max}の数字を入力してください。",
+            "search_limit_warning": "値が大きすぎるとVRCXが重くなる可能性があります。",
             "cancel": "キャンセル",
             "save": "保存",
             "input_error": "有効な数字を入力してください。"
@@ -2376,6 +2409,11 @@
             "placeholder": "127.0.0.1:8080",
             "close": "閉じる",
             "restart": "再起動"
+        },
+        "auto_login_delay": {
+            "header": "自動ログイン待機時間",
+            "description": "遅延時間を秒数で入力してください (0で無効化、最大10)。",
+            "input_error": "0〜10の数字を入力してください。"
         },
         "redeem": {
             "header": "コードを引き換え",
@@ -2511,8 +2549,11 @@
         }
     },
     "common": {
-        "no_data": "Nデータがありません",
+        "no_data": "データがありません",
         "no_matching_records": "一致するレコードがありません",
+        "actions": {
+            "open": "開く"
+        },
         "time_units": {
             "y": "年",
             "d": "日",
