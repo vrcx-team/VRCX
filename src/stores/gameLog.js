@@ -173,26 +173,30 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     function insertGameLogSorted(entry) {
-        const data = gameLogTableData;
-        if (data.value.length === 0) {
-            data.value.push(entry);
+        const arr = gameLogTableData.value;
+        if (arr.length === 0) {
+            gameLogTableData.value = [entry];
             return;
         }
-        if (compareGameLogRows(entry, data.value[0]) < 0) {
-            data.value.unshift(entry);
+        if (compareGameLogRows(entry, arr[0]) < 0) {
+            gameLogTableData.value = [entry, ...arr];
             return;
         }
-        if (compareGameLogRows(entry, data[data.value.length - 1]) > 0) {
-            data.value.push(entry);
+        if (compareGameLogRows(entry, arr[arr.length - 1]) > 0) {
+            gameLogTableData.value = [...arr, entry];
             return;
         }
-        for (let i = 1; i < data.value.length; i++) {
-            if (compareGameLogRows(entry, data[i]) < 0) {
-                data.value.splice(i, 0, entry);
+        for (let i = 1; i < arr.length; i++) {
+            if (compareGameLogRows(entry, arr[i]) < 0) {
+                gameLogTableData.value = [
+                    ...arr.slice(0, i),
+                    entry,
+                    ...arr.slice(i)
+                ];
                 return;
             }
         }
-        data.value.push(entry);
+        gameLogTableData.value = [...arr, entry];
     }
 
     function clearNowPlaying() {
@@ -549,7 +553,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     function sweepGameLog() {
         const j = gameLogTableData.value.length;
         if (j > vrcxStore.maxTableSize + 50) {
-            gameLogTableData.value.splice(-50, 50);
+            gameLogTableData.value = gameLogTableData.value.slice(0, -50);
         }
     }
 
