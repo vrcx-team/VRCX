@@ -131,13 +131,25 @@
         gameLogTable.value.pageSizeLinked ? appearanceSettingsStore.tablePageSize : gameLogTable.value.pageSize
     );
 
+    function getGameLogRowId(row) {
+        if (row?.rowId != null) return `row:${row.rowId}`;
+
+        const type = row?.type ?? '';
+        const createdAt = row?.created_at ?? row?.createdAt ?? row?.dt ?? '';
+        const userId = row?.userId ?? '';
+        const displayName = row?.displayName ?? '';
+        const location = row?.location ?? '';
+
+        return `${type}:${createdAt}:${userId}:${displayName}:${location}`;
+    }
+
     const { table, pagination } = useVrcxVueTable({
         persistKey: 'gameLog',
         get data() {
             return gameLogTableData.value;
         },
         columns,
-        getRowId: (row, index) => `${row.type}:${row.rowId ?? index}`,
+        getRowId: getGameLogRowId,
         initialSorting: [],
         initialPagination: {
             pageIndex: 0,
