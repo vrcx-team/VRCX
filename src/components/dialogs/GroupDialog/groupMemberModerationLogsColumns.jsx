@@ -55,7 +55,6 @@ export const createColumns = ({ onShowUser }) => [
                 column,
                 label: t('dialog.group_member_moderation.display_name')
             }),
-        enableSorting: true,
         size: 160,
         cell: ({ row }) => {
             const original = row.original;

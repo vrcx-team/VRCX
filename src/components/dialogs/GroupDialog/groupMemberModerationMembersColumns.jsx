@@ -1,8 +1,29 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import { i18n } from '@/plugin';
 import { formatDateFilter } from '@/shared/utils';
+import { ArrowUpDown } from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
 
 const { t } = i18n.global;
+
+const sortButton = ({ column, label, descFirst = false }) => (
+    <Button
+        variant="ghost"
+        size="sm"
+        class="-ml-2 h-8 px-2"
+        onClick={() => {
+            const sorted = column.getIsSorted();
+            if (!sorted && descFirst) {
+                column.toggleSorting(true);
+                return;
+            }
+            column.toggleSorting(sorted === 'asc');
+        }}
+    >
+        {label}
+        <ArrowUpDown class="ml-1 h-4 w-4" />
+    </Button>
+);
 
 export const createColumns = ({
     randomUserColours,
@@ -64,7 +85,11 @@ export const createColumns = ({
     {
         id: 'displayName',
         accessorFn: (row) => row?.user?.displayName ?? '',
-        header: () => t('dialog.group_member_moderation.display_name'),
+        header: ({ column }) =>
+            sortButton({
+                column,
+                label: t('dialog.group_member_moderation.display_name')
+            }),
         size: 160,
         cell: ({ row }) => {
             const original = row.original;
@@ -91,7 +116,11 @@ export const createColumns = ({
     {
         id: 'roles',
         accessorFn: (row) => rolesText?.(row?.roleIds) ?? '',
-        header: () => t('dialog.group_member_moderation.roles'),
+        header: ({ column }) =>
+            sortButton({
+                column,
+                label: t('dialog.group_member_moderation.roles')
+            }),
         cell: ({ row }) => {
             const original = row.original;
             return <span>{rolesText?.(original?.roleIds) ?? ''}</span>;
@@ -99,7 +128,11 @@ export const createColumns = ({
     },
     {
         accessorKey: 'managerNotes',
-        header: () => t('dialog.group_member_moderation.notes'),
+        header: ({ column }) =>
+            sortButton({
+                column,
+                label: t('dialog.group_member_moderation.notes')
+            }),
         cell: ({ row }) => (
             <span onClick={(e) => e.stopPropagation()}>
                 {row.original?.managerNotes}
@@ -108,7 +141,11 @@ export const createColumns = ({
     },
     {
         accessorKey: 'joinedAt',
-        header: () => t('dialog.group_member_moderation.joined_at'),
+        header: ({ column }) =>
+            sortButton({
+                column,
+                label: t('dialog.group_member_moderation.joined_at')
+            }),
         size: 170,
         cell: ({ row }) => (
             <span>{formatDateFilter(row.original?.joinedAt, 'long')}</span>
@@ -116,7 +153,11 @@ export const createColumns = ({
     },
     {
         accessorKey: 'visibility',
-        header: () => t('dialog.group_member_moderation.visibility'),
+        header: ({ column }) =>
+            sortButton({
+                column,
+                label: t('dialog.group_member_moderation.visibility')
+            }),
         size: 120,
         cell: ({ row }) => <span>{row.original?.visibility}</span>
     }
