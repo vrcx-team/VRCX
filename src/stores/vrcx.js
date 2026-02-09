@@ -13,6 +13,7 @@ import {
     SEARCH_LIMIT_MIN,
     TABLE_MAX_SIZE_MAX
 } from '../shared/constants';
+import { avatarRequest, worldRequest } from '../api';
 import {
     clearPiniaActionTrail,
     getPiniaActionTrail
@@ -42,7 +43,6 @@ import { useUserStore } from './user';
 import { useVrcStatusStore } from './vrcStatus';
 import { useWorldStore } from './world';
 import { watchState } from '../service/watchState';
-import { worldRequest } from '../api';
 
 import configRepository from '../service/config';
 
@@ -639,10 +639,28 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             case 'local-favorite-world':
                 console.log('local-favorite-world', commandArg);
                 const [id, group] = commandArg.split(':');
-                worldRequest.getCachedWorld({ worldId: id }).then((args1) => {
+                if (!id || !group) {
+                    toast.error('Invalid local favorite world command');
+                    break;
+                }
+                worldRequest.getCachedWorld({ worldId: id }).then(() => {
                     searchStore.directAccessWorld(id);
                     favoriteStore.addLocalWorldFavorite(id, group);
-                    return args1;
+                });
+                break;
+            case 'local-favorite-avatar':
+                console.log('local-favorite-avatar', commandArg);
+                const [avatarIdFav, avatarGroup] = commandArg.split(':');
+                if (!avatarIdFav || !avatarGroup) {
+                    toast.error('Invalid local favorite avatar command');
+                    break;
+                }
+                avatarRequest.getAvatar({ avatarId: avatarIdFav }).then(() => {
+                    avatarStore.showAvatarDialog(avatarIdFav);
+                    favoriteStore.addLocalAvatarFavorite(
+                        avatarIdFav,
+                        avatarGroup
+                    );
                 });
                 break;
             case 'addavatardb':
