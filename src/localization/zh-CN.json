@@ -1,6 +1,6 @@
 {
     "language": "简体中文 (zh-CN)",
-    "translator": "flower_elf, Yingxue, Map1en, Stabrinai, xxKawa",
+    "translator": "flower_elf, Yingxue, Map1en, Stabrinai, xxKawa, Anteness",
     "nav_tooltip": {
         "friends_locations": "好友位置",
         "feed": "好友动态",
@@ -391,7 +391,7 @@
                 "notifications": {
                     "start_fetching": "开始拉取",
                     "mutual_friend_graph_ready_title": "关系网更新成功",
-                    "mutual_friend_graph_ready_message": "已完成共同好友数据的拉取，关系图谱现已更新",
+                    "mutual_friend_graph_ready_message": "已完成共同好友数据的拉取，关系网现已更新",
                     "friend_list_changed_fetch_again": "好友列表已更改。请再次拉取共同好友数据。"
                 },
                 "tooltip": {
@@ -399,28 +399,28 @@
                     "edge": "{source} ↔ {target}"
                 },
                 "settings": {
-                    "title": "图谱布局设置",
-                    "layout_iterations": "布局迭代次数",
-                    "layout_iterations_help": "布局运行的时间。数值越高，布局越稳定和有序。",
-                    "layout_spacing": "布局间距",
-                    "layout_spacing_help": "图谱的分布范围。数值越高，图谱越不拥挤。",
-                    "edge_curvature": "边的曲率",
-                    "edge_curvature_help": "线条的弯曲程度。数值越高，密集区域的线条越平滑。"
+                    "title": "关系网布局设置",
+                    "layout_iterations": "位置迭代次数",
+                    "layout_iterations_help": "好友节点的位置的计算时间。数值越高，节点的位置越稳定和有序。",
+                    "layout_spacing": "节点间距",
+                    "layout_spacing_help": "好友节点的分布范围。数值越高，关系网内的节点距离越远。",
+                    "edge_curvature": "连接线曲率",
+                    "edge_curvature_help": "连接线的弯曲程度。数值越高，密集区域的线条越平滑。"
                 },
                 "force_dialog": {
-                    "open_label": "调整图谱布局设置",
-                    "title": "图谱布局设置",
+                    "open_label": "调整关系网布局设置",
+                    "title": "关系网布局设置",
                     "description": "微调用于绘制共同好友图谱的力导向布局。",
-                    "repulsion": "排斥力",
-                    "edge_length_min": "边长（最小）",
-                    "edge_length_max": "边长（最大）",
-                    "gravity": "重力",
+                    "repulsion": "节点斥力",
+                    "edge_length_min": "连接线最小长度",
+                    "edge_length_max": "连接线最大长度",
+                    "gravity": "节点引力",
                     "apply": "应用",
                     "reset": "重置",
-                    "repulsion_help": "节点之间的排斥力。",
-                    "edge_length_min_help": "连接节点之间的最小距离。",
-                    "edge_length_max_help": "连接节点之间的最大距离。",
-                    "gravity_help": "拉力强度，将节点拉向图中心。",
+                    "repulsion_help": "节点与节点的排斥力强度，数值越高，节点与节点之间越趋向于保持更大距离。",
+                    "edge_length_min_help": "连接节点之间的线段的最小距离。",
+                    "edge_length_max_help": "连接节点之间的线段的最大距离。",
+                    "gravity_help": "节点引力强度，数值越高，节点越趋向于向关系网的中心位置聚集。",
                     "invalid_input": "输入无效，请输入非负数。"
                 }
             }
