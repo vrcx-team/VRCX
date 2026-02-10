@@ -140,7 +140,7 @@ export const createColumns = ({
             id: 'status',
             accessorFn: (row) => row?.ref?.statusDescription,
             header: () => t('table.playerList.status'),
-            size:200,
+            size: 200,
             minSize: 100,
             meta: {
                 stretch: true
@@ -290,10 +290,6 @@ export const createColumns = ({
             id: 'platform',
             header: () => t('table.playerList.platform'),
             size: 90,
-            meta: {
-                stretch: true
-            },
-            minSize: 20,
             enableSorting: false,
             cell: ({ row }) => {
                 const userRef = row.original?.ref;
@@ -302,11 +298,11 @@ export const createColumns = ({
 
                 const platformIcon =
                     platform === 'standalonewindows' ? (
-                        <Monitor class="h-4 w-4 x-tag-platform-pc" />
+                        <Monitor class="h-4 w-4 shrink-0 x-tag-platform-pc" />
                     ) : platform === 'android' ? (
-                        <Smartphone class="h-4 w-4 x-tag-platform-quest" />
+                        <Smartphone class="h-4 w-4 shrink-0 x-tag-platform-quest" />
                     ) : platform === 'ios' ? (
-                        <Apple class="h-4 w-4 x-tag-platform-ios" />
+                        <Apple class="h-4 w-4 shrink-0 x-tag-platform-ios" />
                     ) : platform ? (
                         <span>{String(platform)}</span>
                     ) : null;
