@@ -1,6 +1,6 @@
 {
     "language": "简体中文 (zh-CN)",
-    "translator": "flower_elf, Yingxue, Map1en, Stabrinai, xxKawa",
+    "translator": "flower_elf, Yingxue, Map1en, Stabrinai, xxKawa, Anteness",
     "nav_tooltip": {
         "friends_locations": "好友位置",
         "feed": "好友动态",
@@ -202,6 +202,11 @@
                 "no_invalid_found": "未发现失效模型",
                 "delete_cancelled": "已取消删除操作"
             },
+            "visibility": {
+                "public": "公开",
+                "friends": "仅好友",
+                "private": "私人"
+            },
             "edit_mode": "编辑模式",
             "copy": "复制",
             "clear": "清除",
@@ -265,8 +270,8 @@
             "filters": {
                 "requestInvite": "申请加入",
                 "invite": "邀请",
-                "requestInviteResponse": "回绝加入申请",
-                "inviteResponse": "回绝邀请",
+                "requestInviteResponse": "拒绝加入申请",
+                "inviteResponse": "拒绝邀请",
                 "friendRequest": "好友申请",
                 "ignoredFriendRequest": "忽略的好友申请",
                 "message": "消息",
@@ -385,29 +390,22 @@
                 },
                 "notifications": {
                     "start_fetching": "开始拉取",
-                    "mutual_friend_graph_ready_title": "好友关系网已更新",
-                    "mutual_friend_graph_ready_message": "已完成共同好友数据的拉取，图谱已更新",
+                    "mutual_friend_graph_ready_title": "关系网更新成功",
+                    "mutual_friend_graph_ready_message": "已完成共同好友数据的拉取，关系网现已更新",
                     "friend_list_changed_fetch_again": "好友列表已更改。请再次拉取共同好友数据。"
                 },
                 "tooltip": {
                     "mutual_friends_count": "与你有 {count} 个共同好友",
                     "edge": "{source} ↔ {target}"
                 },
-                "force_dialog": {
-                    "open_label": "调整图谱布局设置",
-                    "title": "图谱布局设置",
-                    "description": "微调用于绘制共同好友图谱的力导向布局。",
-                    "repulsion": "排斥力",
-                    "edge_length_min": "边长（最小）",
-                    "edge_length_max": "边长（最大）",
-                    "gravity": "重力",
-                    "apply": "应用",
-                    "reset": "重置",
-                    "repulsion_help": "节点之间的排斥力。",
-                    "edge_length_min_help": "连接节点之间的最小距离。",
-                    "edge_length_max_help": "连接节点之间的最大距离。",
-                    "gravity_help": "拉力强度，将节点拉向图中心。",
-                    "invalid_input": "输入无效，请输入非负数。"
+                "settings": {
+                    "title": "关系网布局设置",
+                    "layout_iterations": "位置迭代次数",
+                    "layout_iterations_help": "好友节点的位置的计算时间。数值越高，节点的位置越稳定和有序。",
+                    "layout_spacing": "节点间距",
+                    "layout_spacing_help": "好友节点的分布范围。数值越高，关系网内的节点距离越远。",
+                    "edge_curvature": "连接线曲率",
+                    "edge_curvature_help": "连接线的弯曲程度。数值越高，密集区域的线条越平滑。"
                 }
             }
         },
@@ -547,7 +545,9 @@
                 "logging": {
                     "header": "日志",
                     "resource_load": "显示世界内 Udon 网络资源的加载详情",
-                    "empty_avatar": "不在动态里记录模型名称"
+                    "empty_avatar": "不在动态里记录模型名称",
+                    "auto_login_delay": "自动登录延迟",
+                    "auto_login_delay_button": "设置延迟（秒）"
                 },
                 "automation": {
                     "header": "自动化",
@@ -560,8 +560,8 @@
                     "company_status": "有其他符合条件的人时",
                     "allowed_instance_types": "允许生效的房间类型",
                     "instance_type_placeholder": "所有类型的房间",
-                    "auto_invite_request_accept": "自动同意邀请请求",
-                    "auto_invite_request_accept_tooltip": "自动同意来自星标好友的邀请请求",
+                    "auto_invite_request_accept": "自动同意加入申请",
+                    "auto_invite_request_accept_tooltip": "自动同意来自星标好友的加入申请",
                     "auto_invite_request_accept_off": "关闭",
                     "auto_invite_request_accept_favs": "星标好友",
                     "auto_invite_request_accept_selected_favs": "选定的星标好友"
@@ -569,8 +569,8 @@
                 "legal_notice": {
                     "header": "法律声明",
                     "info": "VRCX 是一个提供VRChat好友管理的辅助应用。这个程序使用了非官方的 VRChat API (VRCSDK)。",
-                    "disclaimer1": "VRCX 不受 VRChat 的认可，也不反映 VRChat & 任何正式参与制作或管理 VRChat 的人员/团体的观点或意见。VRChat 是 VRChat Inc. 的商标。 VRChat © VRChat Inc.",
-                    "disclaimer2": "pypy 和 Natsumi 不对使用 VRCX 引起的任何问题负责。使用时请自负风险！",
+                    "disclaimer1": "VRCX 不受 VRChat 的认可，也不反映 VRChat 或者任何正式参与制作或管理 VRChat 的人员/团体的观点或意见。VRChat 是 VRChat Inc. 的商标。 VRChat © VRChat Inc.",
+                    "disclaimer2": "pypy & Natsumi 及本项目的全体贡献者，均不对使用 VRCX 引起的任何问题负责。使用时请自负风险！",
                     "open_source_software_notice": "开放源代码软件许可"
                 },
                 "contributors": {
@@ -617,10 +617,13 @@
                     "sort_instance_users_by": "房间玩家排序规则",
                     "sort_instance_users_by_time": "时间",
                     "sort_instance_users_by_alphabet": "字母顺序",
+                    "table_max_size": "条目读取设置",
+                    "table_page_sizes": "自定义分页",
+                    "table_page_sizes_error": "页面尺寸必须是 1 到 1000 之间的数字",
                     "show_notification_icon_dot": "显示托盘通知",
                     "striped_data_table_mode": "斑马纹表格模式",
                     "toggle_pointer_on_hover": "悬停时强制显示指针",
-                    "table_density": "表格宽度",
+                    "table_density": "行高密度",
                     "table_density_standard": "标准",
                     "table_density_comfortable": "舒适",
                     "table_density_compact": "紧凑"
@@ -668,9 +671,9 @@
                 },
                 "user_dialog": {
                     "header": "玩家信息",
-                    "vrchat_notes": "显示 VRChat 备注",
+                    "vrchat_notes": "显示线上备注",
                     "vrcx_memos": "显示本地备注",
-                    "export_vrcx_memos_into_vrchat_notes": "将本地备注转换成 VRChat 备注",
+                    "export_vrcx_memos_into_vrchat_notes": "将本地备注转换成线上备注",
                     "export_notes": "导出备注"
                 },
                 "user_colors": {
@@ -1068,7 +1071,7 @@
                 "instance_queuing_enabled": "允许排队加入",
                 "instance_disabled_content": "禁用的功能：",
                 "instance_creator": "房间建立者",
-                "note": "在线备注",
+                "note": "线上备注",
                 "note_placeholder": "点此添加备注",
                 "memo": "本地备注",
                 "memo_placeholder": "点此添加备注",
@@ -1105,7 +1108,8 @@
                 "close_instance": "关闭该房间",
                 "instance_age_gated": "房间具有年龄限制",
                 "open_previous_instance": "打开之前加入的房间的列表",
-                "show_mutual_friends": "是否允许查看共同好友"
+                "show_mutual_friends": "是否允许查看共同好友",
+                "show_discord_connections": "是否允许查看绑定的 Discord 账号信息"
             },
             "groups": {
                 "header": "群组",
@@ -1166,6 +1170,11 @@
                     "last_active": "最后活跃",
                     "friend_order": "添加顺序"
                 }
+            },
+            "note_memo": {
+                "header": "编辑线上备注和本地备注",
+                "cancel": "取消",
+                "confirm": "确定"
             }
         },
         "world": {
@@ -1471,7 +1480,7 @@
             "group_access_type": "房间类型",
             "group_access_type_members": "仅限群组成员",
             "group_access_type_plus": "群组+",
-            "group_access_type_public": "公开（受群组管理）",
+            "group_access_type_public": "公开",
             "region": "服务器位置",
             "region_usw": "美国西部",
             "region_use": "美国东部",
@@ -1569,9 +1578,15 @@
             "openai": {
                 "endpoint": "API 端点",
                 "api_key": "API 密钥（可选）",
-                "model": "模型名称",
+                "model": "要使用的大语言模型名称",
                 "prompt_optional": "提示词（可选）"
-            }
+            },
+            "fetch_models": "获取大语言模型列表",
+            "fetching_models": "获取中...",
+            "msg_endpoint_required": "请先填写端点地址",
+            "msg_models_fetched": "找到 {count} 个可用的大语言模型",
+            "msg_no_models_found": "未找到任何可用的大语言模型",
+            "msg_fetch_models_failed": "获取大语言模型列表失败"
         },
         "set_world_tags": {
             "header": "设置世界标签",
@@ -1741,14 +1756,14 @@
         },
         "note_export": {
             "header": "备注导出",
-            "description1": "这个过程将导出你所有的本地备注并将它们导入到 VRChat 备注中。",
+            "description1": "这个过程将导出你所有的本地备注并将它们导入到 VRChat 的线上备注中。",
             "description2": "请注意以下限制：",
             "description3": "- API 接口有速率限制，每个请求之间会有很大的延迟。",
             "description4": "- 每个备注的字数限制为 256 个字符。",
             "description5": "- 有脏话过滤器（对中文没什么用，但还是扫兴）。",
             "description6": "- 不能换行（换行符将会被替换成空格）。",
-            "description7": "- 这将会覆盖这些玩家现有的任何 VRChat 备注。",
-            "description8": "- 在这里所做的任何编辑都不会影响 VRCX 在本地写入的备注，但会在导出后会影响 VRChat 备注。",
+            "description7": "- 这将会覆盖这些玩家现有的任何 VRChat 线上备注。",
+            "description8": "- 在这里所做的任何编辑都不会影响 VRCX 在本地写入的备注，但会在导出后影响 VRChat 上显示的备注。",
             "refresh": "刷新",
             "export": "导出",
             "cancel": "取消",
@@ -1886,7 +1901,9 @@
                 "player_id": "玩家 ID",
                 "world_name": "世界名称",
                 "world_id": "世界 ID"
-            }
+            },
+            "no_results": "未找到结果",
+            "invalid_file": "选择的文件无效。请选择有效的 VRChat 截图。"
         },
         "registry_backup": {
             "header": "VRC 设置数据备份工具",
@@ -2017,7 +2034,7 @@
         "cancel_button": "取消",
         "message": "确定要{command}吗？",
         "logout": "确定要登出吗？",
-        "unfriend": "要删除这个好友吗？你可能会失去这个好友很久（真的很久！）",
+        "unfriend": "要删除这个好友吗？你可能会失去这个好友很久（真的很久）",
         "clear_avatar_history": "确定要清除模型使用历史吗？",
         "select_avatar": "确定要使用这个模型吗？",
         "invite": "确定要发送邀请吗？",
@@ -2041,6 +2058,7 @@
         "traveling": "正在传送"
     },
     "message": {
+        "auto_login_delay_countdown": "将在 {seconds} 秒后自动登录...",
         "vrcx_updater": {
             "failed": "无法检查更新，{message}",
             "failed_install": "无法安装更新",
@@ -2062,6 +2080,12 @@
             "change_moderation_failed": "无法更新模型状态",
             "image_changed": "已更改模型封面",
             "image_invalid": "上传的封面图片无效"
+        },
+        "avatar_lookup": {
+            "not_found": "在模型数据库中未能找到模型",
+            "failed": "在模型数据库中查找此模型信息时失败",
+            "private_or_not_found": "此玩家的模型是私人的，或者在公共模型数据库中未能找到",
+            "loading": "正在从指定的模型数据库中查找模型"
         },
         "database": {
             "upgrade_complete": "数据库升级完成"
@@ -2219,7 +2243,8 @@
             "ok": "确定",
             "input_error": "请输入链接或 ID",
             "message": {
-                "error": "无效的链接或 ID"
+                "error": "无效的链接或 ID",
+                "opened_from_clipboard": "已自动识别并打开剪贴板内的内容"
             }
         },
         "notification_timeout": {
@@ -2308,14 +2333,16 @@
             }
         },
         "change_table_size": {
-            "header": "最大读取记录数",
-            "description": "限制从数据库读取记录到界面接口的数量，较大的数据表大小可能会影响内存用量和程序性能",
-                    "table_max_size": "最大显示行数",
-                    "table_page_sizes": "每页显示行数",
-                    "table_page_sizes_error": "行数必须是 1 到 1000 之间的数字",
+            "header": "条目读取设置",
+            "description": "限制从数据库读取记录到界面接口的数量，较大的读取数量可能会影响内存用量和程序性能",
+            "table_max_size": "最大读取记录数",
+            "table_max_size_error": "请输入 {min} 到 {max} 之间的数字。",
+            "search_limit": "条目搜索限制",
+            "search_limit_error": "请输入 {min} 到 {max} 之间的数字。",
+            "search_limit_warning": "过大的数值可能会导致程序卡死，如无必要，不要修改这些值。",
             "cancel": "取消",
             "save": "保存",
-            "input_error": "请输入有效的数量"
+            "input_error": "请输入有效的数值"
         },
         "photon_lobby_timeout": {
             "header": "玩家超时阀值",
@@ -2357,6 +2384,11 @@
             "cancel": "取消",
             "save": "保存",
             "input_error": "请输入有效的秒数"
+        },
+        "auto_login_delay": {
+            "header": "自动登录延迟",
+            "description": "输入延迟时间（秒）（0 表示禁用，最大值为 10）。",
+            "input_error": "请输入 0 到 10 之间的整数。"
         },
         "proxy_settings": {
             "header": "代理服务器设置",
@@ -2501,6 +2533,9 @@
     "common": {
         "no_data": "无数据",
         "no_matching_records": "无匹配记录",
+        "actions": {
+            "open": "打开"
+        },
         "time_units": {
             "y": "年",
             "d": "天",
