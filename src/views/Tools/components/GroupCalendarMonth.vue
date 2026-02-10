@@ -161,7 +161,7 @@
         width: 100%;
         display: flex;
         align-items: flex-start;
-        padding: 0 12x 0 12px;
+        padding: 0 12px;
     }
 
     .date {

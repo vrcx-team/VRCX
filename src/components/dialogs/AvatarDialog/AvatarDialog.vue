@@ -54,9 +54,9 @@
                                         >{{ avatarDialog.platformInfo.pc.performanceRating }}</span
                                     >
                                     <span
-                                        v-if="avatarDialog.bundleSizes['standalonewindows']"
+                                        v-if="avatarDialog.fileAnalysis.standalonewindows?._fileSize"
                                         :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
-                                        >{{ avatarDialog.bundleSizes['standalonewindows'].fileSize }}</span
+                                        >{{ avatarDialog.fileAnalysis.standalonewindows._fileSize }}</span
                                     >
                                 </Badge>
                             </TooltipWrapper>
@@ -72,9 +72,9 @@
                                         >{{ avatarDialog.platformInfo.android.performanceRating }}</span
                                     >
                                     <span
-                                        v-if="avatarDialog.bundleSizes['android']"
+                                        v-if="avatarDialog.fileAnalysis.android?._fileSize"
                                         :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
-                                        >{{ avatarDialog.bundleSizes['android'].fileSize }}</span
+                                        >{{ avatarDialog.fileAnalysis.android._fileSize }}</span
                                     >
                                 </Badge>
                             </TooltipWrapper>
@@ -90,9 +90,9 @@
                                         >{{ avatarDialog.platformInfo.ios.performanceRating }}</span
                                     >
                                     <span
-                                        v-if="avatarDialog.bundleSizes['ios']"
+                                        v-if="avatarDialog.fileAnalysis.ios?._fileSize"
                                         :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']"
-                                        >{{ avatarDialog.bundleSizes['ios'].fileSize }}</span
+                                        >{{ avatarDialog.fileAnalysis.ios._fileSize }}</span
                                     >
                                 </Badge>
                             </TooltipWrapper>
@@ -421,7 +421,7 @@
                                                 <Button
                                                     class="rounded-full text-xs"
                                                     size="icon-sm"
-                                                    variant="outline"
+                                                    variant="ghost"
                                                     @click.stop
                                                     ><Copy class="h-4 w-4" />
                                                 </Button>
@@ -447,13 +447,26 @@
                         </div>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
-                                <span class="name">{{ t('dialog.avatar.info.last_updated') }}</span>
-                                <span v-if="avatarDialog.lastUpdated" class="extra">{{
-                                    formatDateFilter(avatarDialog.lastUpdated, 'long')
+                                <span class="name" style="display: inline">{{
+                                    t('dialog.avatar.info.last_updated')
                                 }}</span>
-                                <span v-else class="extra">{{
-                                    formatDateFilter(avatarDialog.ref.updated_at, 'long')
-                                }}</span>
+                                <TooltipWrapper
+                                    v-if="Object.keys(avatarDialog.fileAnalysis).length"
+                                    side="top"
+                                    style="margin-left: 5px">
+                                    <template #content>
+                                        <template
+                                            v-for="(created_at, platform) in avatarDialogPlatformCreatedAt"
+                                            :key="platform">
+                                            <div class="flex justify-between w-full">
+                                                <span class="mr-1">{{ platform }}:</span>
+                                                <span>{{ formatDateFilter(created_at, 'long') }}</span>
+                                            </div>
+                                        </template>
+                                    </template>
+                                    <ChevronDown class="inline-block" />
+                                </TooltipWrapper>
+                                <span class="extra">{{ formatDateFilter(avatarDialog.ref.updated_at, 'long') }}</span>
                             </div>
                         </div>
                         <div class="x-friend-item" style="cursor: default">
@@ -487,14 +500,14 @@
                     <Button
                         class="rounded-full mr-2"
                         size="icon-sm"
-                        variant="outline"
+                        variant="ghost"
                         @click="refreshAvatarDialogTreeData()">
                         <RefreshCw />
                     </Button>
                     <Button
                         class="rounded-full"
                         size="icon-sm"
-                        variant="outline"
+                        variant="ghost"
                         @click="downloadAndSaveJson(avatarDialog.id, avatarDialog.ref)">
                         <Download />
                     </Button>
@@ -506,7 +519,7 @@
                         show-icon />
                     <br />
                     <vue-json-pretty
-                        v-if="Object.keys(avatarDialog.fileAnalysis).length > 0"
+                        v-if="Object.keys(avatarDialog.fileAnalysis).length"
                         :data="avatarDialog.fileAnalysis"
                         :deep="2"
                         :theme="isDarkMode ? 'dark' : 'light'"
@@ -529,6 +542,7 @@
         Apple,
         Check,
         CheckCircle,
+        ChevronDown,
         Copy,
         Download,
         Ellipsis,
@@ -558,6 +572,7 @@
 
     import {
         commaNumber,
+        compareUnityVersion,
         copyToClipboard,
         downloadAndSaveJson,
         formatDateFilter,
@@ -655,6 +670,10 @@
                     unityPackage.variant !== 'standard' &&
                     unityPackage.variant !== 'security'
                 ) {
+                    // skip imposters
+                    continue;
+                }
+                if (!compareUnityVersion(unityPackage.unitySortNumber)) {
                     continue;
                 }
                 let platform = 'PC';
@@ -663,12 +682,31 @@
                 } else if (unityPackage.platform === 'android') {
                     platform = 'Android';
                 } else if (unityPackage.platform) {
-                    ({ platform } = unityPackage);
+                    platform = unityPackage.platform;
                 }
                 platforms.push(`${platform}/${unityPackage.unityVersion}`);
             }
         }
         return platforms.join(', ');
+    });
+
+    const avatarDialogPlatformCreatedAt = computed(() => {
+        const { ref } = avatarDialog.value;
+        if (!ref.unityPackages) {
+            return null;
+        }
+        let newest = {};
+        for (const unityPackage of ref.unityPackages) {
+            if (unityPackage.variant && unityPackage.variant !== 'standard' && unityPackage.variant !== 'security') {
+                continue;
+            }
+            const platform = unityPackage.platform;
+            const createdAt = unityPackage.created_at;
+            if (!newest[platform] || new Date(createdAt) > new Date(newest[platform])) {
+                newest[platform] = createdAt;
+            }
+        }
+        return newest;
     });
 
     watch(

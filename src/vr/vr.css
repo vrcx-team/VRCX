@@ -252,7 +252,8 @@ button {
     top: 0px;
     left: 0;
     width: 512px;
-    height: 512px;
+    height: 510px;
+    margin-bottom: 2px;
     z-index: 20;
     display: flex;
     flex-direction: column;

@@ -11,7 +11,9 @@
             :table-style="tableStyle"
             :page-sizes="pageSizes"
             :total-items="totalItems"
-            :on-page-size-change="handlePageSizeChange">
+            :on-page-size-change="handlePageSizeChange"
+            :on-page-change="handlePageChange"
+            :on-sort-change="handleSortChange">
             <template #toolbar>
                 <div style="display: flex; align-items: center; justify-content: space-between">
                     <Location :location="location.tag" style="font-size: 14px" />
@@ -43,15 +45,42 @@
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     const { lookupUser } = useUserStore();
-    const { previousInstancesInfoDialog } = storeToRefs(useInstanceStore());
+    const { previousInstancesInfoDialog, previousInstancesInfoState } = storeToRefs(useInstanceStore());
     const { gameLogIsFriend, gameLogIsFavorite } = useGameLogStore();
     const { t } = useI18n();
+
+    const dialogState = computed(() => {
+        return previousInstancesInfoState.value;
+    });
 
     const loading = ref(false);
     const rawRows = ref([]);
     const pageSizes = [10, 25, 50, 100];
-    const pageSize = ref(10);
+    const pageSize = computed({
+        get: () => dialogState.value.pageSize,
+        set: (value) => {
+            dialogState.value.pageSize = value;
+        }
+    });
+    const pageIndex = computed({
+        get: () => dialogState.value.pageIndex,
+        set: (value) => {
+            dialogState.value.pageIndex = value;
+        }
+    });
     const tableStyle = { maxHeight: '400px' };
+    const search = computed({
+        get: () => dialogState.value.search,
+        set: (value) => {
+            dialogState.value.search = value;
+        }
+    });
+    const sortBy = computed({
+        get: () => dialogState.value.sortBy,
+        set: (value) => {
+            dialogState.value.sortBy = value;
+        }
+    });
 
     const location = ref({
         tag: '',
@@ -79,7 +108,6 @@
 
     const { stringComparer } = storeToRefs(useSearchStore());
     const vrcxStore = useVrcxStore();
-    const search = ref('');
 
     const displayRows = computed(() => {
         const q = String(search.value ?? '')
@@ -103,9 +131,9 @@
         },
         columns: columns.value,
         getRowId: (row) => row?.id ?? row?.userId ?? row?.displayName ?? JSON.stringify(row ?? {}),
-        initialSorting: [{ id: 'created_at', desc: true }],
+        initialSorting: sortBy.value,
         initialPagination: {
-            pageIndex: 0,
+            pageIndex: pageIndex.value,
             pageSize: pageSize.value
         },
         tableOptions: {
@@ -134,6 +162,14 @@
         pageSize.value = size;
     };
 
+    const handlePageChange = (page) => {
+        pageIndex.value = Math.max(0, page - 1);
+    };
+
+    const handleSortChange = (sorting) => {
+        sortBy.value = sorting;
+    };
+
     watch(
         () => previousInstancesInfoDialog.value.visible,
         (value) => {
@@ -150,6 +186,10 @@
     function init() {
         loading.value = true;
         location.value = parseLocation(previousInstancesInfoDialog.value.instanceId);
+        if (previousInstancesInfoDialog.value.lastId !== previousInstancesInfoDialog.value.instanceId) {
+            table.setPageIndex(0);
+            previousInstancesInfoDialog.value.lastId = previousInstancesInfoDialog.value.instanceId;
+        }
     }
 
     function refreshPreviousInstancesInfoTable() {

@@ -4,7 +4,6 @@ import { Button } from '../../components/ui/button';
 import {
     Tooltip,
     TooltipContent,
-    TooltipProvider,
     TooltipTrigger
 } from '../../components/ui/tooltip';
 import { ArrowUpDown, FileText, Trash2, X } from 'lucide-vue-next';
@@ -65,16 +64,14 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                 const longText = formatDateFilter(createdAt, 'long');
 
                 return (
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <span>{shortText}</span>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">
-                                <span>{longText}</span>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span>{shortText}</span>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                            <span>{longText}</span>
+                        </TooltipContent>
+                    </Tooltip>
                 );
             }
         },
@@ -275,30 +272,26 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                             </button>
                         ) : null}
                         {canShowPrevious ? (
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <button
-                                            type="button"
-                                            class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
-                                            onClick={() =>
-                                                showPreviousInstancesInfoDialog(
-                                                    original.location
-                                                )
-                                            }
-                                        >
-                                            <FileText class="h-4 w-4" />
-                                        </button>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="top">
-                                        <span>
-                                            {t(
-                                                'dialog.previous_instances.info'
-                                            )}
-                                        </span>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button
+                                        type="button"
+                                        class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
+                                        onClick={() =>
+                                            showPreviousInstancesInfoDialog(
+                                                original.location
+                                            )
+                                        }
+                                    >
+                                        <FileText class="h-4 w-4" />
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent side="top">
+                                    <span>
+                                        {t('dialog.previous_instances.info')}
+                                    </span>
+                                </TooltipContent>
+                            </Tooltip>
                         ) : null}
                     </div>
                 );

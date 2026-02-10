@@ -763,7 +763,7 @@ export const useUserStore = defineStore('User', () => {
      *
      * @param {string} userId
      */
-    function showUserDialog(userId, options = {}) {
+    function showUserDialog(userId) {
         if (
             !userId ||
             typeof userId !== 'string' ||
@@ -773,8 +773,7 @@ export const useUserStore = defineStore('User', () => {
         }
         uiStore.openDialog({
             type: 'user',
-            id: userId,
-            skipBreadcrumb: options.skipBreadcrumb
+            id: userId
         });
         const D = userDialog.value;
         D.visible = true;
@@ -1208,7 +1207,7 @@ export const useUserStore = defineStore('User', () => {
         D.avatars = array;
     }
 
-    function refreshUserDialogAvatars(fileId) {
+    async function refreshUserDialogAvatars(fileId) {
         const D = userDialog.value;
         if (D.isAvatarsLoading) {
             return;
@@ -1233,7 +1232,7 @@ export const useUserStore = defineStore('User', () => {
             }
         }
         const map = new Map();
-        processBulk({
+        await processBulk({
             fn: avatarRequest.getAvatars,
             N: -1,
             params,

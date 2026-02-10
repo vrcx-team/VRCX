@@ -381,7 +381,7 @@
 
     import AvatarProviderDialog from '../../dialogs/AvatarProviderDialog.vue';
     import PhotonSettings from '../PhotonSettings.vue';
-    import RegistryBackupDialog from '../../dialogs/RegistryBackupDialog.vue';
+    import RegistryBackupDialog from '../../../Tools/dialogs/RegistryBackupDialog.vue';
     import SimpleSwitch from '../SimpleSwitch.vue';
     import TranslationApiDialog from '../../dialogs/TranslationApiDialog.vue';
     import YouTubeApiDialog from '../../dialogs/YouTubeApiDialog.vue';

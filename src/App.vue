@@ -10,7 +10,7 @@
             ondragover="event.preventDefault()"
             ondrop="event.preventDefault()">
             <RouterView></RouterView>
-            <Toaster position="top-center"></Toaster>
+            <Toaster position="top-center" :theme="theme"></Toaster>
 
             <AlertDialogModal></AlertDialogModal>
             <PromptDialogModal></PromptDialogModal>
@@ -40,6 +40,10 @@
     console.log(`isLinux: ${LINUX}`);
 
     const isMacOS = computed(() => navigator.platform.includes('Mac'));
+
+    const theme = computed(() => {
+        return store.appearanceSettings.isDarkMode ? 'dark' : 'light';
+    });
 
     initNoty();
 

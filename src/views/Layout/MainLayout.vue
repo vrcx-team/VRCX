@@ -23,7 +23,7 @@
                     <template #default="{ layout }">
                         <ResizablePanel :default-size="mainDefaultSize" :order="1">
                             <RouterView v-slot="{ Component }">
-                                <KeepAlive exclude="Charts">
+                                <KeepAlive exclude="ChartsInstance, ChartsMutual">
                                     <component :is="Component" />
                                 </KeepAlive>
                             </RouterView>

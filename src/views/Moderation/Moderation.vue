@@ -1,6 +1,6 @@
 <template>
     <div class="x-container" ref="moderationRef">
-        <div class="tool-slot">
+        <div class="mb-4 flex items-center">
             <Select
                 multiple
                 :model-value="
@@ -23,7 +23,7 @@
             <InputGroupField
                 v-model="playerModerationTable.filters[1].value"
                 :placeholder="t('view.moderation.search_placeholder')"
-                class="filter-input" />
+                class="filter-input flex-[0.4]" />
             <TooltipWrapper side="bottom" :content="t('view.moderation.refresh_tooltip')">
                 <Button
                     class="rounded-full"
@@ -200,11 +200,6 @@
 </script>
 
 <style scoped>
-    .tool-slot {
-        margin: 0 0 10px;
-        display: flex;
-        align-items: center;
-    }
     .filter-input {
         width: 150px;
         margin: 0 10px;

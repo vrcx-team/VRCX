@@ -59,7 +59,7 @@
     import { useAdvancedSettingsStore, useModalStore, useVrcxStore } from '../../../stores';
     import { downloadAndSaveJson, removeFromArray } from '../../../shared/utils';
     import { Switch } from '../../../components/ui/switch';
-    import { createColumns } from './registryBackupColumns.jsx';
+    import { createColumns } from '../../Settings/dialogs/registryBackupColumns.jsx';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     import configRepository from '../../../service/config';

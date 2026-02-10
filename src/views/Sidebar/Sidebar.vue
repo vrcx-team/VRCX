@@ -120,7 +120,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useFriendStore, useGroupStore, useSearchStore } from '../../stores';
-    import { userImage } from '../../shared/utils';
+    import { debounce, userImage } from '../../shared/utils';
 
     import FriendsSidebar from './components/FriendsSidebar.vue';
     import GroupsSidebar from './components/GroupsSidebar.vue';
@@ -139,13 +139,18 @@
     const quickSearchQuery = ref('');
     const isQuickSearchOpen = ref(false);
 
-    watch(
-        quickSearchQuery,
-        (value) => {
-            quickSearchRemoteMethod(String(value ?? ''));
-        },
-        { immediate: true }
-    );
+    const runQuickSearch = debounce((value) => {
+        quickSearchRemoteMethod(value);
+    }, 200);
+
+    watch(quickSearchQuery, (value) => {
+        const query = String(value ?? '').trim();
+        if (!query) {
+            quickSearchRemoteMethod('');
+            return;
+        }
+        runQuickSearch(query);
+    });
 
     function handleQuickSearchSelect(value) {
         if (!value) {

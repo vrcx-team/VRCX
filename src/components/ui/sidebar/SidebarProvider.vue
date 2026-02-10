@@ -117,7 +117,7 @@
                 '--sidebar-width': cssSidebarWidth,
                 '--sidebar-width-icon': cssSidebarWidthIcon
             }"
-            :class="cn('group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full', props.class)"
+            :class="cn('group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex w-full', props.class)"
             v-bind="$attrs">
             <slot />
         </div>

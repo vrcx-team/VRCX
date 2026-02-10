@@ -91,6 +91,11 @@
         },
         "friends_locations": {
             "online_friends": "在線好友",
+            "online": "上線",
+            "favorite": "收藏",
+            "same_instance": "Same Instance",
+            "active": "活躍",
+            "offline": "離線",
             "spacing": "間距",
             "scale": "縮放",
             "separate_same_instance_friends": "分開顯示同房好友",

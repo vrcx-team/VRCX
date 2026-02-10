@@ -627,7 +627,7 @@
                                             <Button
                                                 class="rounded-full ml-1 text-xs"
                                                 size="icon-sm"
-                                                variant="outline"
+                                                variant="ghost"
                                                 @click="copyToClipboard(groupDialog.ref.$url)"
                                                 ><Copy class="h-4 w-4" />
                                             </Button> </TooltipWrapper
@@ -643,7 +643,7 @@
                                             <Button
                                                 class="rounded-full ml-1 text-xs"
                                                 size="icon-sm"
-                                                variant="outline"
+                                                variant="ghost"
                                                 @click="copyToClipboard(groupDialog.id)"
                                                 ><Copy class="h-4 w-4" />
                                             </Button> </TooltipWrapper
@@ -840,7 +840,7 @@
                         <div style="margin-top: 10px">
                             <Button
                                 class="rounded-full h-6 w-6"
-                                variant="outline"
+                                variant="ghost"
                                 size="icon-sm"
                                 :loading="isGroupMembersLoading"
                                 circle
@@ -850,7 +850,7 @@
                             <Button
                                 class="rounded-full h-6 w-6 ml-2"
                                 size="icon-sm"
-                                variant="outline"
+                                variant="ghost"
                                 style="margin-left: 5px"
                                 @click="downloadAndSaveJson(`${groupDialog.id}_members`, groupDialog.members)">
                                 <Download class="h-4 w-4" />
@@ -1044,7 +1044,7 @@
                 <template #Photos>
                     <Button
                         class="rounded-full"
-                        variant="outline"
+                        variant="ghost"
                         size="icon-sm"
                         :disabled="isGroupGalleryLoading"
                         @click="getGroupGalleries">
@@ -1098,14 +1098,14 @@
                     <Button
                         class="rounded-full mr-2"
                         size="icon-sm"
-                        variant="outline"
+                        variant="ghost"
                         @click="refreshGroupDialogTreeData()">
                         <RefreshCw />
                     </Button>
                     <Button
                         class="rounded-full"
                         size="icon-sm"
-                        variant="outline"
+                        variant="ghost"
                         @click="downloadAndSaveJson(groupDialog.id, groupDialog.ref)">
                         <Download />
                     </Button>

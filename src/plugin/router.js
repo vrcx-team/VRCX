@@ -2,8 +2,6 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 
 import { watchState } from './../service/watchState';
 
-import MainLayout from '../views/Layout/MainLayout.vue';
-import Charts from './../views/Charts/Charts.vue';
 import FavoritesAvatar from './../views/Favorites/FavoritesAvatar.vue';
 import FavoritesFriend from './../views/Favorites/FavoritesFriend.vue';
 import FavoritesWorld from './../views/Favorites/FavoritesWorld.vue';
@@ -11,16 +9,17 @@ import Feed from './../views/Feed/Feed.vue';
 import FriendList from './../views/FriendList/FriendList.vue';
 import FriendLog from './../views/FriendLog/FriendLog.vue';
 import FriendsLocations from './../views/FriendsLocations/FriendsLocations.vue';
+import Gallery from './../views/Tools/Gallery.vue';
 import GameLog from './../views/GameLog/GameLog.vue';
 import Login from './../views/Login/Login.vue';
+import MainLayout from '../views/Layout/MainLayout.vue';
 import Moderation from './../views/Moderation/Moderation.vue';
 import Notification from './../views/Notifications/Notification.vue';
 import PlayerList from './../views/PlayerList/PlayerList.vue';
+import ScreenshotMetadata from './../views/Tools/ScreenshotMetadata.vue';
 import Search from './../views/Search/Search.vue';
 import Settings from './../views/Settings/Settings.vue';
 import Tools from './../views/Tools/Tools.vue';
-import Gallery from './../views/Tools/Gallery.vue';
-import ScreenshotMetadata from './../views/Tools/ScreenshotMetadata.vue';
 
 const routes = [
     {
@@ -82,7 +81,19 @@ const routes = [
             {
                 path: 'charts',
                 name: 'charts',
-                component: Charts
+                redirect: { name: 'charts-instance' }
+            },
+            {
+                path: 'charts/instance',
+                name: 'charts-instance',
+                component: () =>
+                    import('./../views/Charts/components/InstanceActivity.vue')
+            },
+            {
+                path: 'charts/mutual',
+                name: 'charts-mutual',
+                component: () =>
+                    import('./../views/Charts/components/MutualFriends.vue')
             },
             { path: 'tools', name: 'tools', component: Tools },
             {

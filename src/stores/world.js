@@ -46,8 +46,6 @@ export const useWorldStore = defineStore('World', () => {
         avatarScalingDisabled: false,
         focusViewDisabled: false,
         rooms: [],
-        bundleSizes: {},
-        lastUpdated: '',
         inCache: false,
         cacheSize: '',
         cacheLocked: false,
@@ -78,7 +76,7 @@ export const useWorldStore = defineStore('World', () => {
      * @param {string} tag
      * @param {string} shortName
      */
-    function showWorldDialog(tag, shortName = null, options = {}) {
+    function showWorldDialog(tag, shortName = null) {
         const D = worldDialog;
         const L = parseLocation(tag);
         if (L.worldId === '') {
@@ -86,8 +84,7 @@ export const useWorldStore = defineStore('World', () => {
         }
         uiStore.openDialog({
             type: 'world',
-            id: L.worldId,
-            skipBreadcrumb: options.skipBreadcrumb
+            id: L.worldId
         });
         D.visible = true;
         if (D.id === L.worldId) {
@@ -97,8 +94,6 @@ export const useWorldStore = defineStore('World', () => {
         L.shortName = shortName;
         D.id = L.worldId;
         D.$location = L;
-        D.bundleSizes = {};
-        D.lastUpdated = '';
         D.loading = true;
         D.inCache = false;
         D.cacheSize = '';
@@ -332,10 +327,8 @@ export const useWorldStore = defineStore('World', () => {
                     });
                 }
             }
-            if (Object.keys(worldDialog.bundleSizes).length === 0) {
-                getBundleDateSize(ref).then((bundleSizes) => {
-                    worldDialog.bundleSizes = bundleSizes;
-                });
+            if (Object.keys(worldDialog.fileAnalysis).length === 0) {
+                getBundleDateSize(ref);
             }
         }
         if (favoriteStore.localWorldFavoritesList.includes(ref.id)) {

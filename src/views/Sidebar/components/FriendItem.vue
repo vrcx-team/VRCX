@@ -68,6 +68,9 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import Location from '@/components/Location.vue';
+    import Timer from '@/components/Timer.vue';
+
     import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
     import { userImage, userStatusClass } from '../../../shared/utils';
 

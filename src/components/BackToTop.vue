@@ -1,6 +1,6 @@
 <script setup>
     import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-    import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+    import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
     import { ArrowUp } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
 
@@ -122,23 +122,21 @@
     <Teleport v-if="teleportTarget" :to="teleportTarget">
         <Transition name="back-to-top">
             <div v-if="visible" :style="wrapperStyle">
-                <TooltipProvider v-if="tooltip">
-                    <Tooltip>
-                        <TooltipTrigger as-child>
-                            <Button
-                                size="icon"
-                                variant="secondary"
-                                class="rounded-full shadow"
-                                aria-label="Back to top"
-                                @click="scrollToTop">
-                                <ArrowUp class="h-4 w-4" />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top">
-                            {{ tooltipText }}
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
+                <Tooltip v-if="tooltip">
+                    <TooltipTrigger as-child>
+                        <Button
+                            size="icon"
+                            variant="secondary"
+                            class="rounded-full shadow"
+                            aria-label="Back to top"
+                            @click="scrollToTop">
+                            <ArrowUp class="h-4 w-4" />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">
+                        {{ tooltipText }}
+                    </TooltipContent>
+                </Tooltip>
 
                 <Button
                     v-else
@@ -155,23 +153,21 @@
 
     <Transition v-else name="back-to-top">
         <div v-if="visible" :style="wrapperStyle">
-            <TooltipProvider v-if="tooltip">
-                <Tooltip>
-                    <TooltipTrigger as-child>
-                        <Button
-                            size="icon"
-                            variant="secondary"
-                            class="rounded-full shadow"
-                            aria-label="Back to top"
-                            @click="scrollToTop">
-                            <ArrowUp class="h-4 w-4" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top">
-                        {{ tooltipText }}
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
+            <Tooltip v-if="tooltip">
+                <TooltipTrigger as-child>
+                    <Button
+                        size="icon"
+                        variant="secondary"
+                        class="rounded-full shadow"
+                        aria-label="Back to top"
+                        @click="scrollToTop">
+                        <ArrowUp class="h-4 w-4" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                    {{ tooltipText }}
+                </TooltipContent>
+            </Tooltip>
 
             <Button
                 v-else

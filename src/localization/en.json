@@ -94,6 +94,11 @@
         },
         "friends_locations": {
             "online_friends": "Online Friends",
+            "online": "Online",
+            "favorite": "Favorites",
+            "same_instance": "Same instance",
+            "active": "Active",
+            "offline": "Offline",
             "spacing": "Spacing",
             "scale": "Scale",
             "separate_same_instance_friends": "Separate Same Instance Friends",
@@ -384,7 +389,7 @@
                     "fetch_cancelled_graph_not_updated": "Fetch cancelled"
                 },
                 "notifications": {
-                    "start_fetching": "Start fetching",
+                    "start_fetching": "Started fetching",
                     "mutual_friend_graph_ready_title": "Mutual Friend Network Graph",
                     "mutual_friend_graph_ready_message": "Mutual friend network graph is ready",
                     "friend_list_changed_fetch_again": "Friend list changed. Please fetch the mutual friend network again."
@@ -392,6 +397,15 @@
                 "tooltip": {
                     "mutual_friends_count": "Mutual friends: {count}",
                     "edge": "{source} ↔ {target}"
+                },
+                "settings": {
+                    "title": "Graph Layout Settings",
+                    "layout_iterations": "Layout iterations",
+                    "layout_iterations_help": "How long the layout runs. Higher means more stable and organized.",
+                    "layout_spacing": "Layout spacing",
+                    "layout_spacing_help": "How spread out the graph is. Higher means less crowded.",
+                    "edge_curvature": "Edge curvature",
+                    "edge_curvature_help": "How curved the lines are. Higher means smoother lines in dense areas."
                 },
                 "force_dialog": {
                     "open_label": "Adjust graph layout settings",
@@ -1581,7 +1595,13 @@
                 "api_key": "API Key (Optional)",
                 "model": "Model Name",
                 "prompt_optional": "Prompt (Optional)"
-            }
+            },
+            "fetch_models": "Fetch Models",
+            "fetching_models": "Fetching...",
+            "msg_endpoint_required": "Please fill in the endpoint first",
+            "msg_models_fetched": "Found {count} models",
+            "msg_no_models_found": "No models found",
+            "msg_fetch_models_failed": "Failed to fetch models"
         },
         "set_world_tags": {
             "header": "Set World Tags",
@@ -2076,6 +2096,12 @@
             "image_changed": "Avatar image changed",
             "image_invalid": "Current avatar image invalid"
         },
+        "avatar_lookup": {
+            "not_found": "Avatar not found in search providers",
+            "failed": "Avatar lookup failed",
+            "private_or_not_found": "Users avatar is private or not found in search providers",
+            "loading": "Searching for avatar using search providers"
+        },
         "database": {
             "upgrade_complete": "Database upgrade complete"
         },
@@ -2085,7 +2111,7 @@
         "file": {
             "not_image": "File isn't an image",
             "too_large": "File size too large",
-            "folder_missing": "Folder dosn't exist"
+            "folder_missing": "Folder doesn't exist"
         },
         "group": {
             "load_failed": "Failed to load group"
@@ -2232,7 +2258,8 @@
             "ok": "OK",
             "input_error": "URL/ID is required",
             "message": {
-                "error": "Invalid URL/ID"
+                "error": "Invalid URL/ID",
+                "opened_from_clipboard": "Opened from clipboard"
             }
         },
         "notification_timeout": {
@@ -2521,6 +2548,9 @@
     "common": {
         "no_data": "No data",
         "no_matching_records": "No matching records",
+        "actions": {
+            "open": "Open"
+        },
         "time_units": {
             "y": "y",
             "d": "d",

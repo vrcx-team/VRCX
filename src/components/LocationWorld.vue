@@ -7,7 +7,7 @@
         </span>
         <span v-if="groupName" @click="showGroupDialog" class="cursor-pointer">({{ groupName }})</span>
         <TooltipWrapper v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
-            <AlertTriangle :class="['inline-block', 'ml-5']" style="color: lightcoral" />
+            <AlertTriangle :class="['inline-block', 'ml-1']" style="color: lightcoral" />
         </TooltipWrapper>
         <Lock v-if="strict" style="display: inline-block; margin-left: 5px" />
     </span>

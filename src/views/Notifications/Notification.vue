@@ -8,7 +8,7 @@
             :total-items="totalItems"
             :on-page-size-change="handlePageSizeChange">
             <template #toolbar>
-                <div style="margin: 0 0 10px; display: flex; align-items: center">
+                <div class="mb-2 flex items-center">
                     <Select
                         multiple
                         :model-value="
@@ -240,6 +240,9 @@
         initialPagination: {
             pageIndex: 0,
             pageSize: pageSize.value
+        },
+        tableOptions: {
+            autoResetPageIndex: false
         }
     });
 
@@ -438,7 +441,8 @@
             .catch((err) => {
                 handleNotificationHide({ params });
                 notificationRequest.hideNotificationV2(params.notificationId);
-                throw err;
+                console.error('Notification response failed', err);
+                toast.error('Error');
             });
     }
 

@@ -5,7 +5,6 @@ import { Button } from '../../components/ui/button';
 import {
     Tooltip,
     TooltipContent,
-    TooltipProvider,
     TooltipTrigger
 } from '../../components/ui/tooltip';
 import {
@@ -24,6 +23,7 @@ const { t } = i18n.global;
 const expandedRow = ({ row }) => {
     const original = row.original;
     const type = original.type;
+    const { showFullscreenImageDialog } = useGalleryStore();
     if (type === 'GPS') {
         return (
             <div class="pl-5 text-sm">
@@ -81,7 +81,6 @@ const expandedRow = ({ row }) => {
     }
 
     if (type === 'Avatar') {
-        const { showFullscreenImageDialog } = useGalleryStore();
         return (
             <div class="pl-5 text-sm">
                 <div class="flex items-center">
@@ -243,16 +242,14 @@ export const columns = [
             const longText = formatDateFilter(createdAt, 'long');
 
             return (
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <span>{shortText}</span>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                            <span>{longText}</span>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <span>{shortText}</span>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                        <span>{longText}</span>
+                    </TooltipContent>
+                </Tooltip>
             );
         }
     },
@@ -280,7 +277,7 @@ export const columns = [
             const original = row.original;
             return (
                 <span
-                    class="cursor-pointer pr-2.5 cursor-pointer"
+                    class="cursor-pointer pr-2.5"
                     onClick={() => showUserDialog(original.userId)}
                 >
                     {original.displayName}

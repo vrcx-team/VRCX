@@ -16,24 +16,18 @@
                             </span>
                         </TooltipWrapper>
                     </div>
-                    <Select
-                        multiple
+                    <ToggleGroup
+                        type="multiple"
+                        variant="outline"
+                        size="sm"
                         :model-value="Array.isArray(feedTable.filter) ? feedTable.filter : []"
-                        @update:modelValue="handleFeedFilterChange">
-                        <SelectTrigger class="w-full" style="flex: 1">
-                            <SelectValue :placeholder="t('view.feed.filter_placeholder')" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem
-                                    v-for="type in ['GPS', 'Online', 'Offline', 'Status', 'Avatar', 'Bio']"
-                                    :key="type"
-                                    :value="type">
-                                    {{ t('view.feed.filters.' + type) }}
-                                </SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+                        @update:model-value="handleFeedFilterChange"
+                        class="w-full justify-start"
+                        style="flex: 1">
+                        <ToggleGroupItem v-for="type in feedFilterTypes" :key="type" :value="type">
+                            {{ t('view.feed.filters.' + type) }}
+                        </ToggleGroupItem>
+                    </ToggleGroup>
                     <InputGroupField
                         v-model="feedTable.search"
                         :placeholder="t('view.feed.search_placeholder')"
@@ -52,15 +46,8 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import {
-        Select,
-        SelectContent,
-        SelectGroup,
-        SelectItem,
-        SelectTrigger,
-        SelectValue
-    } from '../../components/ui/select';
     import { useAppearanceSettingsStore, useFeedStore, useVrcxStore } from '../../stores';
+    import { ToggleGroup, ToggleGroupItem } from '../../components/ui/toggle-group';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { InputGroupField } from '../../components/ui/input-group';
     import { Switch } from '../../components/ui/switch';
@@ -74,6 +61,7 @@
     const vrcxStore = useVrcxStore();
 
     const { t } = useI18n();
+    const feedFilterTypes = ['GPS', 'Online', 'Offline', 'Status', 'Avatar', 'Bio'];
 
     const feedRef = ref(null);
 
@@ -89,13 +77,26 @@
         feedTable.value.pageSizeLinked ? appearanceSettingsStore.tablePageSize : feedTable.value.pageSize
     );
 
+    function getFeedRowId(row) {
+        if (row?.id != null) return `id:${row.id}`;
+        if (row?.rowId != null) return `row:${row.rowId}`;
+
+        const type = row?.type ?? '';
+        const createdAt = row?.created_at ?? row?.createdAt ?? '';
+        const userId = row?.userId ?? row?.senderUserId ?? '';
+        const location = row?.location ?? row?.details?.location ?? '';
+        const message = row?.message ?? '';
+
+        return `${type}:${createdAt}:${userId}:${location}:${message}`;
+    }
+
     const { table, pagination } = useVrcxVueTable({
         get data() {
             return feedTableData.value;
         },
         persistKey: 'feed',
         columns: baseColumns,
-        getRowId: (row, index) => `${row.type}:${row.created_at ?? ''}:${row.rowId ?? index}`,
+        getRowId: getFeedRowId,
         enableExpanded: true,
         getRowCanExpand: () => true,
         initialSorting: [],
@@ -103,6 +104,10 @@
         initialPagination: {
             pageIndex: 0,
             pageSize: pageSize.value
+        },
+        tableOptions: {
+            autoResetExpanded: false,
+            autoResetPageIndex: false
         }
     });
 
@@ -121,7 +126,8 @@
     };
 
     function handleFeedFilterChange(value) {
-        feedTable.value.filter = Array.isArray(value) ? value : [];
+        const selected = Array.isArray(value) ? value : [];
+        feedTable.value.filter = selected.length === feedFilterTypes.length ? [] : selected;
         feedTableLookup();
     }
 

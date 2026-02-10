@@ -61,7 +61,8 @@
             notificationRequest
                 .sendInviteResponsePhoto(params, D.invite.id)
                 .catch((err) => {
-                    throw err;
+                    console.error('Invite response photo failed', err);
+                    toast.error(t('message.error'));
                 })
                 .then((args) => {
                     notificationRequest.hideNotification({
@@ -77,7 +78,8 @@
             notificationRequest
                 .sendInviteResponse(params, D.invite.id)
                 .catch((err) => {
-                    throw err;
+                    console.error('Invite response failed', err);
+                    toast.error('Error');
                 })
                 .then((args) => {
                     notificationRequest.hideNotification({

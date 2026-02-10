@@ -150,11 +150,11 @@
         storeToRefs(friendStore);
 
     const SEGMENTED_BASE_OPTIONS = [
-        { label: t('side_panel.online'), value: 'online' },
-        { label: t('side_panel.favorite'), value: 'favorite' },
-        { label: t('side_panel.same_instance'), value: 'same-instance' },
-        { label: t('side_panel.active'), value: 'active' },
-        { label: t('side_panel.offline'), value: 'offline' }
+        { label: t('view.friends_locations.online'), value: 'online' },
+        { label: t('view.friends_locations.favorite'), value: 'favorite' },
+        { label: t('view.friends_locations.same_instance'), value: 'same-instance' },
+        { label: t('view.friends_locations.active'), value: 'active' },
+        { label: t('view.friends_locations.offline'), value: 'offline' }
     ];
 
     const segmentedOptions = computed(() =>

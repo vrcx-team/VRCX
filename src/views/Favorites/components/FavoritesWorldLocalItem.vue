@@ -2,7 +2,7 @@
     <div :class="cardClasses" @click="$emit('click')">
         <template v-if="favorite.name">
             <div class="favorites-search-card__content">
-                <div class="favorites-search-card__avatar" :class="{ 'is-empty': !favorite.thumbnailImageUrl }" v-once>
+                <div class="favorites-search-card__avatar" :class="{ 'is-empty': !favorite.thumbnailImageUrl }">
                     <img
                         v-if="favorite.thumbnailImageUrl"
                         :src="smallThumbnail"
@@ -10,9 +10,9 @@
                         decoding="async"
                         fetchpriority="low" />
                 </div>
-                <div class="favorites-search-card__detail" v-once>
+                <div class="favorites-search-card__detail">
                     <div class="favorites-search-card__title">
-                        <span class="name">{{ props.favorite.name }}</span>
+                        <span class="name text-sm">{{ props.favorite.name }}</span>
                     </div>
                     <span class="text-xs">
                         {{ props.favorite.authorName }}

@@ -7,7 +7,7 @@
                 </div>
                 <div class="favorites-search-card__detail">
                     <div class="favorites-search-card__title">
-                        <span class="name" :style="displayNameStyle">{{ favorite.ref.displayName }}</span>
+                        <span class="name text-sm" :style="displayNameStyle">{{ favorite.ref.displayName }}</span>
                     </div>
                     <div v-if="favorite.ref.location !== 'offline'" class="favorites-search-card__location">
                         <Location
