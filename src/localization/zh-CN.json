@@ -398,6 +398,15 @@
                     "mutual_friends_count": "与你有 {count} 个共同好友",
                     "edge": "{source} ↔ {target}"
                 },
+                "settings": {
+                    "title": "图谱布局设置",
+                    "layout_iterations": "布局迭代次数",
+                    "layout_iterations_help": "布局运行的时间。数值越高，布局越稳定和有序。",
+                    "layout_spacing": "布局间距",
+                    "layout_spacing_help": "图谱的分布范围。数值越高，图谱越不拥挤。",
+                    "edge_curvature": "边的曲率",
+                    "edge_curvature_help": "线条的弯曲程度。数值越高，密集区域的线条越平滑。"
+                },
                 "force_dialog": {
                     "open_label": "调整图谱布局设置",
                     "title": "图谱布局设置",
