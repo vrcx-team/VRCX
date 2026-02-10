@@ -633,8 +633,8 @@
                     "sort_instance_users_by": "房间玩家排序规则",
                     "sort_instance_users_by_time": "时间",
                     "sort_instance_users_by_alphabet": "字母顺序",
-                    "table_max_size": "表格最大尺寸",
-                    "table_page_sizes": "表格页面尺寸",
+                    "table_max_size": "条目读取设置",
+                    "table_page_sizes": "自定义分页",
                     "table_page_sizes_error": "页面尺寸必须是 1 到 1000 之间的数字",
                     "show_notification_icon_dot": "显示托盘通知",
                     "striped_data_table_mode": "斑马纹表格模式",
@@ -2349,16 +2349,16 @@
             }
         },
         "change_table_size": {
-            "header": "最大读取记录数",
-            "description": "限制从数据库读取记录到界面接口的数量，较大的数据表大小可能会影响内存用量和程序性能",
+            "header": "条目读取设置",
+            "description": "限制从数据库读取记录到界面接口的数量，较大的读取数量可能会影响内存用量和程序性能",
             "table_max_size": "最大读取记录数",
             "table_max_size_error": "请输入 {min} 到 {max} 之间的数字。",
-            "search_limit": "搜索限制",
+            "search_limit": "条目搜索限制",
             "search_limit_error": "请输入 {min} 到 {max} 之间的数字。",
-            "search_limit_warning": "过大的数值可能会导致程序卡死。",
+            "search_limit_warning": "过大的数值可能会导致程序卡死，如无必要，不要修改这些值。",
             "cancel": "取消",
             "save": "保存",
-            "input_error": "请输入有效的数量"
+            "input_error": "请输入有效的数值"
         },
         "photon_lobby_timeout": {
             "header": "玩家超时阀值",
