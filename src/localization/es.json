@@ -440,7 +440,7 @@
                         "overlay_notifications": "Notificaciones de Superposición",
                         "notification_position": "Posición de Notificación",
                         "xsoverlay_notifications": "Notificaciones de XSOverlay",
-                        "wlxoverlay_notifications": "Notificaciones de WlxOverlay",
+                        "wayvr_notifications": "Notificaciones de WayVR",
                         "ovrtoolkit_hud_notifications": "Notificaciones de HUD de OVR Toolkit",
                         "ovrtoolkit_wrist_notifications": "Notificaciones de Muñeca de OVR Toolkit",
                         "user_images": "Imágenes de Usuario (más lento)",

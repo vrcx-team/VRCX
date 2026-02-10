@@ -592,7 +592,7 @@
                         "overlay_notifications": "Nakładka powiadomień",
                         "notification_position": "Pozycja powiadomień",
                         "xsoverlay_notifications": "Powiadomienia XSOverlay",
-                        "wlxoverlay_notifications": "Powiadomienia WlxOverlay",
+                        "wayvr_notifications": "Powiadomienia WayVR",
                         "ovrtoolkit_hud_notifications": "Powiadomienia OVR Toolkit na HUDzie",
                         "ovrtoolkit_wrist_notifications": "Powiadomienia OVR Toolkit na nadgarstku",
                         "user_images": "Obrazki użytkowników (wolniejsze)",

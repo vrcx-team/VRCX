@@ -121,7 +121,7 @@
             <template v-else>
                 <simple-switch
                     :label="
-                        t('view.settings.notifications.notifications.steamvr_notifications.wlxoverlay_notifications')
+                        t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')
                     "
                     :value="xsNotifications"
                     @change="

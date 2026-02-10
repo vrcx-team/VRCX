@@ -445,7 +445,7 @@
                         "overlay_notifications": "การแจ้งเตือนแบบโอเวอร์เลย์",
                         "notification_position": "ตำแหน่งการแจ้งเตือน",
                         "xsoverlay_notifications": "การแจ้งเตือนของ XSOverlay",
-                        "wlxoverlay_notifications": "การแจ้งเตือนของ WlxOverlay",
+                        "wayvr_notifications": "การแจ้งเตือนของ WayVR",
                         "ovrtoolkit_hud_notifications": "การแจ้งเตือน HUD ของ OVR Toolkit",
                         "ovrtoolkit_wrist_notifications": "การแจ้งเตือนบนข้อมือของ OVR Toolkit",
                         "user_images": "รูปภาพผู้ใช้ (ช้าลง)",
