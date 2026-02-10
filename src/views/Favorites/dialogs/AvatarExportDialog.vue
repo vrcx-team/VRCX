@@ -1,6 +1,6 @@
 <template>
     <Dialog v-model:open="isDialogVisible">
-        <DialogContent>
+        <DialogContent class="sm:max-w-xl">
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.avatar_export.header') }}</DialogTitle>
             </DialogHeader>

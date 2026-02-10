@@ -46,6 +46,18 @@ namespace VRCX
             }
         }
 
+        public void OpenDiscordProfile(string discordId)
+        {
+            if (!long.TryParse(discordId, out _))
+                throw new Exception("Invalid user ID");
+
+            var uri = $"discord://-/users/{discordId}";
+            Process.Start(new ProcessStartInfo(uri)
+            {
+                UseShellExecute = true
+            });
+        }
+
         public string GetLaunchCommand()
         {
             var command = StartupArgs.LaunchArguments.LaunchCommand;

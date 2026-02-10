@@ -421,6 +421,17 @@ function openExternalLink(link) {
         });
 }
 
+function openDiscordProfile(discordId) {
+    if (!discordId) {
+        toast.error('No Discord ID provided!');
+        return;
+    }
+    AppApi.OpenDiscordProfile(discordId).catch((err) => {
+        console.error('Failed to open Discord profile:', err);
+        toast.error('Failed to open Discord profile!');
+    });
+}
+
 /**
  *
  * @param {object} ref
@@ -537,6 +548,7 @@ export {
     buildTreeData,
     replaceBioSymbols,
     openExternalLink,
+    openDiscordProfile,
     getBundleDateSize,
     openFolderGeneric,
     debounce

@@ -312,7 +312,8 @@
                 "economy": {
                     "received": {
                         "gift": "Gift Received"
-                    }
+                    },
+                    "alert": "Economy Alert"
                 }
             }
         },
@@ -1026,7 +1027,9 @@
                 "18_plus_verified": "18+ Verified",
                 "age_verified": "Age Verified",
                 "trust_level": "Trust Level",
-                "mutual_friends": "Mutual Friends"
+                "mutual_friends": "Mutual Friends",
+                "open_in_discord": "Open in Discord",
+                "discord": "Discord"
             },
             "badges": {
                 "assigned": "Assigned",
@@ -1124,7 +1127,8 @@
                 "close_instance": "Close Instance",
                 "instance_age_gated": "age gated",
                 "open_previous_instance": "Open Previous Instances",
-                "show_mutual_friends": "Show Mutual Friends"
+                "show_mutual_friends": "Show Mutual Friends",
+                "show_discord_connections": "Show Discord Connections"
             },
             "groups": {
                 "header": "Groups",

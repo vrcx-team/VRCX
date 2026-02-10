@@ -240,7 +240,7 @@
                         <SelectItem value="Sort by Status">{{
                             t('view.settings.appearance.side_panel.sorting.status')
                         }}</SelectItem>
-                        <SelectItem value="Sort Private to ArrowDown">{{
+                        <SelectItem value="Sort Private to Bottom">{{
                             t('view.settings.appearance.side_panel.sorting.private_to_bottom')
                         }}</SelectItem>
                         <SelectItem value="Sort by Last Active">{{
@@ -273,7 +273,7 @@
                         <SelectItem value="Sort by Status">{{
                             t('view.settings.appearance.side_panel.sorting.status')
                         }}</SelectItem>
-                        <SelectItem value="Sort Private to ArrowDown">{{
+                        <SelectItem value="Sort Private to Bottom">{{
                             t('view.settings.appearance.side_panel.sorting.private_to_bottom')
                         }}</SelectItem>
                         <SelectItem value="Sort by Last Active">{{
@@ -306,7 +306,7 @@
                         <SelectItem value="Sort by Status">{{
                             t('view.settings.appearance.side_panel.sorting.status')
                         }}</SelectItem>
-                        <SelectItem value="Sort Private to ArrowDown">{{
+                        <SelectItem value="Sort Private to Bottom">{{
                             t('view.settings.appearance.side_panel.sorting.private_to_bottom')
                         }}</SelectItem>
                         <SelectItem value="Sort by Last Active">{{

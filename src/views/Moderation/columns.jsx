@@ -12,7 +12,7 @@ import { formatDateFilter } from '../../shared/utils';
 import { i18n } from '../../plugin';
 import { useUiStore, useUserStore } from '../../stores';
 
-const { t } = i18n.global;
+const { t, te } = i18n.global;
 
 export const createColumns = ({ onDelete, onDeletePrompt }) => {
     const { showUserDialog } = useUserStore();
@@ -66,9 +66,12 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             header: () => t('table.moderation.type'),
             cell: ({ row }) => {
                 const type = row.getValue('type');
+                const typeKey = `view.moderation.filters.${type}`;
+                const label = te(typeKey) ? t(typeKey) : type;
+
                 return (
                     <Badge variant="outline" class="text-muted-foreground">
-                        {t(`view.moderation.filters.${type}`)}
+                        {label}
                     </Badge>
                 );
             }

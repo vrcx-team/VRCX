@@ -43,7 +43,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     const updateToastRelease = ref('');
 
     async function initVRCXUpdaterSettings() {
-        if (!LINUX) {
+        if (LINUX) {
             arch.value = await window.electron.getArch();
             noUpdater.value = await window.electron.getNoUpdater();
             console.log('Architecture:', arch.value);
