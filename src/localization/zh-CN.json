@@ -1124,7 +1124,8 @@
                 "close_instance": "关闭该房间",
                 "instance_age_gated": "房间具有年龄限制",
                 "open_previous_instance": "打开之前加入的房间的列表",
-                "show_mutual_friends": "是否允许查看共同好友"
+                "show_mutual_friends": "是否允许查看共同好友",
+                "show_discord_connections": "是否允许查看绑定的 Discord 账号信息"
             },
             "groups": {
                 "header": "群组",
