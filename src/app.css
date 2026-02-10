@@ -291,6 +291,11 @@ i.x-status-icon.red {
     border-color: #3b82f6 !important;
 }
 
+.x-tag-discord {
+    color: #7289da;
+    border-color: #7289da !important;
+}
+
 .x-tag-border-left {
     border-left: 0.8px solid;
     margin-left: 5px;

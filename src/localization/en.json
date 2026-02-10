@@ -1027,7 +1027,9 @@
                 "18_plus_verified": "18+ Verified",
                 "age_verified": "Age Verified",
                 "trust_level": "Trust Level",
-                "mutual_friends": "Mutual Friends"
+                "mutual_friends": "Mutual Friends",
+                "open_in_discord": "Open in Discord",
+                "discord": "Discord"
             },
             "badges": {
                 "assigned": "Assigned",

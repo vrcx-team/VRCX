@@ -92,6 +92,11 @@ export const useUserStore = defineStore('User', () => {
         currentAvatarThumbnailImageUrl: '',
         date_joined: '',
         developerType: '',
+        discordDetails: {
+            global_name: '',
+            id: ''
+        },
+        discordId: '',
         displayName: '',
         emailVerified: false,
         fallbackAvatar: '',
@@ -491,6 +496,7 @@ export const useUserStore = defineStore('User', () => {
                 currentAvatarThumbnailImageUrl: '',
                 date_joined: '',
                 developerType: '',
+                discordId: '',
                 displayName: '',
                 friendKey: '',
                 friendRequestStatus: '',
@@ -1836,6 +1842,7 @@ export const useUserStore = defineStore('User', () => {
                 currentAvatarThumbnailImageUrl: '',
                 date_joined: '',
                 developerType: '',
+                discordId: '',
                 displayName: '',
                 emailVerified: false,
                 fallbackAvatar: '',
@@ -1991,6 +1998,7 @@ export const useUserStore = defineStore('User', () => {
             currentAvatarThumbnailImageUrl: json.currentAvatarThumbnailImageUrl,
             date_joined: json.date_joined,
             developerType: json.developerType,
+            discordId: json.discordId,
             displayName: json.displayName,
             friendKey: json.friendKey,
             // json.friendRequestStatus - missing from currentUser

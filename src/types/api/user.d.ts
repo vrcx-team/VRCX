@@ -133,6 +133,7 @@ interface GetUserResponse {
     currentAvatarThumbnailImageUrl: string;
     date_joined: string;
     developerType: string;
+    discordId: string;
     displayName: string;
     friendKey: string;
     friendRequestStatus?: string;
