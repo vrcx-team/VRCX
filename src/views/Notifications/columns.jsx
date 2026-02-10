@@ -34,7 +34,7 @@ import {
 
 import Emoji from '../../components/Emoji.vue';
 
-const { t } = i18n.global;
+const { t, te } = i18n.global;
 
 const isGroupId = (id) => typeof id === 'string' && id.startsWith('grp_');
 
@@ -145,7 +145,8 @@ export const createColumns = ({
             header: () => t('table.notification.type'),
             cell: ({ row }) => {
                 const original = row.original;
-                const label = t(`view.notification.filters.${original.type}`);
+                const typeKey = `view.notification.filters.${original.type}`;
+                const label = te(typeKey) ? t(typeKey) : original.type;
 
                 if (original.type === 'invite') {
                     return (
