@@ -406,22 +406,6 @@
                     "layout_spacing_help": "好友节点的分布范围。数值越高，关系网内的节点距离越远。",
                     "edge_curvature": "连接线曲率",
                     "edge_curvature_help": "连接线的弯曲程度。数值越高，密集区域的线条越平滑。"
-                },
-                "force_dialog": {
-                    "open_label": "调整关系网布局设置",
-                    "title": "关系网布局设置",
-                    "description": "设置节点参数，以调整关系网的布局",
-                    "repulsion": "节点斥力",
-                    "edge_length_min": "连接线最小长度",
-                    "edge_length_max": "连接线最大长度",
-                    "gravity": "节点引力",
-                    "apply": "应用",
-                    "reset": "重置",
-                    "repulsion_help": "节点与节点的排斥力强度，数值越高，节点与节点之间越趋向于保持更大距离。",
-                    "edge_length_min_help": "连接节点之间的线段的最小距离。",
-                    "edge_length_max_help": "连接节点之间的线段的最大距离。",
-                    "gravity_help": "节点引力强度，数值越高，节点越趋向于向关系网的中心位置聚集。",
-                    "invalid_input": "输入无效，请输入非负数。"
                 }
             }
         },
