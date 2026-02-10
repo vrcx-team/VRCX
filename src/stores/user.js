@@ -100,6 +100,7 @@ export const useUserStore = defineStore('User', () => {
         friends: [],
         googleId: '',
         hasBirthday: false,
+        hasDiscordFriendsOptOut: false,
         hasEmail: false,
         hasLoggedInFromClient: false,
         hasPendingEmail: false,
@@ -2054,6 +2055,12 @@ export const useUserStore = defineStore('User', () => {
         });
     }
 
+    function toggleDiscordFriendsOptOut() {
+        userRequest.saveCurrentUser({
+            hasDiscordFriendsOptOut: !currentUser.value.hasDiscordFriendsOptOut
+        });
+    }
+
     return {
         state,
 
@@ -2081,6 +2088,7 @@ export const useUserStore = defineStore('User', () => {
         handleConfig,
         showSendBoopDialog,
         checkNote,
-        toggleSharedConnectionsOptOut
+        toggleSharedConnectionsOptOut,
+        toggleDiscordFriendsOptOut
     };
 });

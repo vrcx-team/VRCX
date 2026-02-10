@@ -312,7 +312,8 @@
                 "economy": {
                     "received": {
                         "gift": "Gift Received"
-                    }
+                    },
+                    "alert": "Economy Alert"
                 }
             }
         },
@@ -1124,7 +1125,8 @@
                 "close_instance": "Close Instance",
                 "instance_age_gated": "age gated",
                 "open_previous_instance": "Open Previous Instances",
-                "show_mutual_friends": "Show Mutual Friends"
+                "show_mutual_friends": "Show Mutual Friends",
+                "show_discord_connections": "Show Discord Connections"
             },
             "groups": {
                 "header": "Groups",
