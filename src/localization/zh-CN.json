@@ -1593,7 +1593,7 @@
             "openai": {
                 "endpoint": "API 端点",
                 "api_key": "API 密钥（可选）",
-                "model": "模型名称",
+                "model": "要使用的大语言模型名称",
                 "prompt_optional": "提示词（可选）"
             },
             "fetch_models": "获取大语言模型列表",
