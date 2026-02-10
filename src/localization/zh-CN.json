@@ -410,7 +410,7 @@
                 "force_dialog": {
                     "open_label": "调整关系网布局设置",
                     "title": "关系网布局设置",
-                    "description": "微调用于绘制共同好友图谱的力导向布局。",
+                    "description": "设置节点参数，以调整关系网的布局",
                     "repulsion": "节点斥力",
                     "edge_length_min": "连接线最小长度",
                     "edge_length_max": "连接线最大长度",
