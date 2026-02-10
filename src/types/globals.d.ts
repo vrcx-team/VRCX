@@ -191,6 +191,7 @@ declare global {
         // Common Functions
         GetColourFromUserID(userId: string): Promise<number>;
         OpenLink(url: string): Promise<void>;
+        OpenDiscordProfile(discordId: string): Promise<void>;
         GetLaunchCommand(): Promise<string>;
         IPCAnnounceStart(): Promise<void>;
         SendIpc(type: string, data: string): Promise<void>;

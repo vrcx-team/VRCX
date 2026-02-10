@@ -1,6 +1,6 @@
 <template>
     <Dialog v-model:open="isVisible">
-        <DialogContent>
+        <DialogContent class="sm:max-w-xl">
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.friend_import.header') }}</DialogTitle>
             </DialogHeader>

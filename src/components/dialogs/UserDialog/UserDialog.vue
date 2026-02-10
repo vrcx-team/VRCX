@@ -402,6 +402,15 @@
                                 <span v-else class="extra">{{ t('dialog.user.info.avatar_cloning_deny') }}</span>
                             </div>
                         </div>
+                        <div class="x-friend-item" @click="toggleDiscordFriendsOptOut">
+                            <div class="detail">
+                                <span class="name">{{ t('dialog.user.info.show_discord_connections') }}</span>
+                                <span v-if="!currentUser.hasDiscordFriendsOptOut" class="extra">{{
+                                    t('dialog.user.info.avatar_cloning_allow')
+                                }}</span>
+                                <span v-else class="extra">{{ t('dialog.user.info.avatar_cloning_deny') }}</span>
+                            </div>
+                        </div>
                     </template>
                     <template v-else>
                         <div class="x-friend-item" style="cursor: default">
@@ -1368,7 +1377,8 @@
         sortUserDialogAvatars,
         refreshUserDialogAvatars,
         showSendBoopDialog,
-        toggleSharedConnectionsOptOut
+        toggleSharedConnectionsOptOut,
+        toggleDiscordFriendsOptOut
     } = useUserStore();
     const { favoriteLimits } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog, handleFavoriteWorldList } = useFavoriteStore();

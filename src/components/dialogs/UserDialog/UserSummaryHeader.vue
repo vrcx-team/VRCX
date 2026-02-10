@@ -121,6 +121,19 @@
                             {{ userDialog.mutualFriendCount }}
                         </Badge>
                     </TooltipWrapper>
+                    <TooltipWrapper
+                        v-if="userDialog.ref.discordId"
+                        side="top"
+                        :content="t('dialog.user.tags.open_in_discord')">
+                        <Badge
+                            variant="outline"
+                            class="x-tag-discord cursor-pointer"
+                            style="margin-right: 5px; margin-top: 5px"
+                            @click="openDiscordProfile(userDialog.ref.discordId)">
+                            <i class="ri-discord-line mr-1 h-4 w-4 inline-block" style="height: 1em; width: 1em"></i>
+                            {{ t('dialog.user.tags.discord') }}
+                        </Badge>
+                    </TooltipWrapper>
                     <Badge
                         v-if="userDialog.ref.$isTroll"
                         variant="outline"
@@ -272,7 +285,13 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { formatDateFilter, languageClass, userImage, userStatusClass } from '../../../shared/utils';
+    import {
+        formatDateFilter,
+        languageClass,
+        openDiscordProfile,
+        userImage,
+        userStatusClass
+    } from '../../../shared/utils';
     import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover';
     import { useGalleryStore, useUserStore } from '../../../stores';
     import { Badge } from '../../ui/badge';
