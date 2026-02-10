@@ -1496,7 +1496,7 @@
             "group_access_type": "房间类型",
             "group_access_type_members": "仅限群组成员",
             "group_access_type_plus": "群组+",
-            "group_access_type_public": "公开（受群组管理）",
+            "group_access_type_public": "公开",
             "region": "服务器位置",
             "region_usw": "美国西部",
             "region_use": "美国东部",
