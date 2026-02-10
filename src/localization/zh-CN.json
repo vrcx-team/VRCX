@@ -2049,7 +2049,7 @@
         "cancel_button": "取消",
         "message": "确定要{command}吗？",
         "logout": "确定要登出吗？",
-        "unfriend": "要删除这个好友吗？你可能会失去这个好友很久（真的很久！）",
+        "unfriend": "要删除这个好友吗？你可能会失去这个好友很久（真的很久）",
         "clear_avatar_history": "确定要清除模型使用历史吗？",
         "select_avatar": "确定要使用这个模型吗？",
         "invite": "确定要发送邀请吗？",
@@ -2354,7 +2354,7 @@
             "table_max_size_error": "请输入 {min} 到 {max} 之间的数字。",
             "search_limit": "搜索限制",
             "search_limit_error": "请输入 {min} 到 {max} 之间的数字。",
-            "search_limit_warning": "过大的数值可能会导致程序冻结。",
+            "search_limit_warning": "过大的数值可能会导致程序卡死。",
             "cancel": "取消",
             "save": "保存",
             "input_error": "请输入有效的数量"
