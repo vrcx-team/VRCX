@@ -125,6 +125,7 @@
 
     function closeResponseConfirmDialog() {
         sendInviteResponseConfirmDialog.value.visible = false;
+        editAndSendInviteResponseDialog.value.visible = false;
     }
 
     // function refreshInviteMessageTableData(...arg) {
