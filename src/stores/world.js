@@ -89,6 +89,7 @@ export const useWorldStore = defineStore('World', () => {
         D.visible = true;
         if (D.id === L.worldId) {
             uiStore.setDialogCrumbLabel('world', D.id, D.ref?.name || D.id);
+            instanceStore.applyWorldDialogInstances();
             return;
         }
         L.shortName = shortName;

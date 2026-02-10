@@ -143,6 +143,7 @@ export const useGroupStore = defineStore('Group', () => {
         D.visible = true;
         if (D.id === groupId) {
             uiStore.setDialogCrumbLabel('group', D.id, D.ref?.name || D.id);
+            instanceStore.applyGroupDialogInstances();
             return;
         }
         D.loading = true;
