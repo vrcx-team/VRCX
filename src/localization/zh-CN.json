@@ -390,8 +390,8 @@
                 },
                 "notifications": {
                     "start_fetching": "开始拉取",
-                    "mutual_friend_graph_ready_title": "好友关系网已更新",
-                    "mutual_friend_graph_ready_message": "已完成共同好友数据的拉取，图谱已更新",
+                    "mutual_friend_graph_ready_title": "关系网更新成功",
+                    "mutual_friend_graph_ready_message": "已完成共同好友数据的拉取，关系图谱现已更新",
                     "friend_list_changed_fetch_again": "好友列表已更改。请再次拉取共同好友数据。"
                 },
                 "tooltip": {
