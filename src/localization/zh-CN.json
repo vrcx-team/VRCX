@@ -687,9 +687,9 @@
                 },
                 "user_dialog": {
                     "header": "玩家信息",
-                    "vrchat_notes": "显示 VRChat 备注",
+                    "vrchat_notes": "显示线上备注",
                     "vrcx_memos": "显示本地备注",
-                    "export_vrcx_memos_into_vrchat_notes": "将本地备注转换成 VRChat 备注",
+                    "export_vrcx_memos_into_vrchat_notes": "将本地备注转换成线上备注",
                     "export_notes": "导出备注"
                 },
                 "user_colors": {
@@ -1087,7 +1087,7 @@
                 "instance_queuing_enabled": "允许排队加入",
                 "instance_disabled_content": "禁用的功能：",
                 "instance_creator": "房间建立者",
-                "note": "在线备注",
+                "note": "线上备注",
                 "note_placeholder": "点此添加备注",
                 "memo": "本地备注",
                 "memo_placeholder": "点此添加备注",
@@ -1188,7 +1188,7 @@
                 }
             },
             "note_memo": {
-                "header": "编辑在线备注和本地备注",
+                "header": "编辑线上备注和本地备注",
                 "cancel": "取消",
                 "confirm": "确定"
             }
@@ -1772,14 +1772,14 @@
         },
         "note_export": {
             "header": "备注导出",
-            "description1": "这个过程将导出你所有的本地备注并将它们导入到 VRChat 备注中。",
+            "description1": "这个过程将导出你所有的本地备注并将它们导入到 VRChat 的线上备注中。",
             "description2": "请注意以下限制：",
             "description3": "- API 接口有速率限制，每个请求之间会有很大的延迟。",
             "description4": "- 每个备注的字数限制为 256 个字符。",
             "description5": "- 有脏话过滤器（对中文没什么用，但还是扫兴）。",
             "description6": "- 不能换行（换行符将会被替换成空格）。",
-            "description7": "- 这将会覆盖这些玩家现有的任何 VRChat 备注。",
-            "description8": "- 在这里所做的任何编辑都不会影响 VRCX 在本地写入的备注，但会在导出后会影响 VRChat 备注。",
+            "description7": "- 这将会覆盖这些玩家现有的任何 VRChat 线上备注。",
+            "description8": "- 在这里所做的任何编辑都不会影响 VRCX 在本地写入的备注，但会在导出后会影响 VRChat 上显示的备注。",
             "refresh": "刷新",
             "export": "导出",
             "cancel": "取消",
