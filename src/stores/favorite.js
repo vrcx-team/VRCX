@@ -1536,6 +1536,15 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         if (hasLocalFriendFavorite(userId, group)) {
             return;
         }
+        for (const existingGroup in localFriendFavorites) {
+            const members = localFriendFavorites[existingGroup];
+            const idx = members?.indexOf(userId);
+            if (idx !== undefined && idx !== -1) {
+                members.splice(idx, 1);
+                database.removeFriendFromLocalFavorites(userId, existingGroup);
+                break;
+            }
+        }
         if (!localFriendFavorites[group]) {
             localFriendFavorites[group] = [];
         }
@@ -1546,6 +1555,10 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             favoriteDialog.value.objectId === userId
         ) {
             updateFavoriteDialog(userId);
+        }
+        const userDialog = userStore.userDialog;
+        if (userDialog.visible && userDialog.id === userId) {
+            userDialog.isFavorite = true;
         }
         if (
             generalSettingsStore.localFavoriteFriendsGroups.includes(
@@ -1570,6 +1583,20 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
+     * Check if a user is in any local friend favorite group.
+     * @param {string} userId
+     * @returns {boolean}
+     */
+    function isInAnyLocalFriendGroup(userId) {
+        for (const group in localFriendFavorites) {
+            if (localFriendFavorites[group]?.includes(userId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @param {string} userId
      * @param {string} group
      */
@@ -1587,6 +1614,12 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             favoriteDialog.value.objectId === userId
         ) {
             updateFavoriteDialog(userId);
+        }
+        const userDialog = userStore.userDialog;
+        if (userDialog.visible && userDialog.id === userId) {
+            userDialog.isFavorite =
+                getCachedFavoritesByObjectId(userId) ||
+                isInAnyLocalFriendGroup(userId);
         }
         if (
             generalSettingsStore.localFavoriteFriendsGroups.includes(
@@ -1806,6 +1839,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         getCachedFavoriteGroupsByTypeName,
         addLocalFriendFavorite,
         hasLocalFriendFavorite,
+        isInAnyLocalFriendGroup,
         removeLocalFriendFavorite,
         deleteLocalFriendFavoriteGroup,
         renameLocalFriendFavoriteGroup,

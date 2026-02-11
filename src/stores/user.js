@@ -907,9 +907,9 @@ export const useUserStore = defineStore('User', () => {
                             }
                         }
                     }
-                    D.isFavorite = favoriteStore.getCachedFavoritesByObjectId(
-                        D.id
-                    );
+                    D.isFavorite =
+                        favoriteStore.getCachedFavoritesByObjectId(D.id) ||
+                        favoriteStore.isInAnyLocalFriendGroup(D.id);
                     if (D.ref.friendRequestStatus === 'incoming') {
                         D.incomingRequest = true;
                     } else if (D.ref.friendRequestStatus === 'outgoing') {

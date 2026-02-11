@@ -307,6 +307,7 @@
                                     {{ t('view.favorite.clear') }}
                                 </Button>
                                 <Button
+                                    v-if="!isLocalGroupSelected"
                                     size="sm"
                                     variant="outline"
                                     :disabled="!hasFriendSelection"
@@ -493,7 +494,8 @@
         localFriendFavGroupLength,
         deleteLocalFriendFavoriteGroup,
         renameLocalFriendFavoriteGroup,
-        newLocalFriendFavoriteGroup
+        newLocalFriendFavoriteGroup,
+        removeLocalFriendFavorite
     } = favoriteStore;
     const userStore = useUserStore();
     const { showUserDialog } = userStore;
@@ -935,11 +937,17 @@
     }
 
     function bulkUnfavoriteSelectedFriends(ids) {
-        ids.forEach((id) => {
-            favoriteRequest.deleteFavorite({
-                objectId: id
+        if (isLocalGroupSelected.value && activeLocalGroupName.value) {
+            ids.forEach((id) => {
+                removeLocalFriendFavorite(id, activeLocalGroupName.value);
             });
-        });
+        } else {
+            ids.forEach((id) => {
+                favoriteRequest.deleteFavorite({
+                    objectId: id
+                });
+            });
+        }
         selectedFavoriteFriends.value = [];
         friendEditMode.value = false;
     }
