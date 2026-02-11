@@ -142,56 +142,42 @@
     loadFriendsGroupStates();
 
     const sameInstanceFriendId = computed(() => {
-        const sameInstanceFriendId = new Set();
+        const ids = new Set();
         for (const item of friendsInSameInstance.value) {
             for (const friend of item) {
                 if (isRealInstance(friend.ref?.$location.tag) || lastLocation.value.friendList.has(friend.id)) {
-                    sameInstanceFriendId.add(friend.id);
+                    ids.add(friend.id);
                 }
             }
         }
-        return sameInstanceFriendId;
+        return ids;
     });
 
-    const onlineFriendsByGroupStatus = computed(() => {
-        if (!isSidebarGroupByInstance.value || !isHideFriendsInSameInstance.value) {
-            return onlineFriends.value;
+    const shouldHideSameInstance = computed(() => isSidebarGroupByInstance.value && isHideFriendsInSameInstance.value);
+
+    function excludeSameInstance(list) {
+        if (!shouldHideSameInstance.value) {
+            return list;
         }
+        return list.filter((item) => !sameInstanceFriendId.value.has(item.id));
+    }
 
-        return onlineFriends.value.filter((item) => !sameInstanceFriendId.value.has(item.id));
-    });
+    const onlineFriendsByGroupStatus = computed(() => excludeSameInstance(onlineFriends.value));
 
-    const vipFriendsByGroupStatus = computed(() => {
-        if (!isSidebarGroupByInstance.value || !isHideFriendsInSameInstance.value) {
-            return vipFriends.value;
-        }
-
-        return vipFriends.value.filter((item) => !sameInstanceFriendId.value.has(item.id));
-    });
+    const vipFriendsByGroupStatus = computed(() => excludeSameInstance(vipFriends.value));
 
     // VIP friends divide by group
     const vipFriendsDivideByGroup = computed(() => {
-        const vipFriendsByGroup = { ...groupedByGroupKeyFavoriteFriends.value };
-        const result = [];
+        const remoteFriendsByGroup = groupedByGroupKeyFavoriteFriends.value;
 
-        for (const key in vipFriendsByGroup) {
-            if (Object.hasOwn(vipFriendsByGroup, key)) {
-                const groupFriends = vipFriendsByGroup[key];
-                // sort groupFriends using the order of vipFriends
-                // avoid unnecessary sorting
-                const filteredFriends = vipFriends.value.filter((friend) =>
-                    groupFriends.some((item) => {
-                        if (isSidebarGroupByInstance.value && isHideFriendsInSameInstance.value) {
-                            return item.id === friend.id && !sameInstanceFriendId.value.has(item.id);
-                        }
-                        return item.id === friend.id;
-                    })
-                );
+        // Build a normalized list of { key, groupName, memberIds }
+        const groups = [];
 
-                if (filteredFriends.length > 0) {
-                    const groupName = favoriteFriendGroups.value.find((item) => item.key === key)?.displayName || '';
-                    result.push(filteredFriends.map((item) => ({ groupName, key, ...item })));
-                }
+        for (const key in remoteFriendsByGroup) {
+            if (Object.hasOwn(remoteFriendsByGroup, key)) {
+                const groupName = favoriteFriendGroups.value.find((g) => g.key === key)?.displayName || '';
+                const memberIds = new Set(remoteFriendsByGroup[key].map((f) => f.id));
+                groups.push({ key, groupName, memberIds });
             }
         }
 
@@ -199,33 +185,22 @@
             if (selectedKey.startsWith('local:')) {
                 const groupName = selectedKey.slice(6);
                 const userIds = localFriendFavorites.value?.[groupName];
-                if (userIds && userIds.length) {
-                    const filteredFriends = vipFriends.value.filter((friend) => {
-                        if (isSidebarGroupByInstance.value && isHideFriendsInSameInstance.value) {
-                            return userIds.includes(friend.id) && !sameInstanceFriendId.value.has(friend.id);
-                        }
-                        return userIds.includes(friend.id);
-                    });
-                    if (filteredFriends.length > 0) {
-                        result.push(
-                            filteredFriends.map((item) => ({
-                                groupName,
-                                key: selectedKey,
-                                ...item
-                            }))
-                        );
-                    }
+                if (userIds?.length) {
+                    groups.push({ key: selectedKey, groupName, memberIds: new Set(userIds) });
                 }
             }
         }
 
-        return result.sort((a, b) => a[0].key.localeCompare(b[0].key));
-    });
+        // Filter vipFriends per group, preserving vipFriends sort order
+        const result = [];
+        for (const { key, groupName, memberIds } of groups) {
+            const filteredFriends = excludeSameInstance(vipFriends.value.filter((friend) => memberIds.has(friend.id)));
+            if (filteredFriends.length > 0) {
+                result.push(filteredFriends.map((item) => ({ groupName, key, ...item })));
+            }
+        }
 
-    const vipFriendsDisplayNumber = computed(() => {
-        return isSidebarDivideByFriendGroup.value
-            ? vipFriendsDivideByGroup.value.length
-            : vipFriendsByGroupStatus.value.length;
+        return result.sort((a, b) => a[0].key.localeCompare(b[0].key));
     });
 
     const buildToggleRow = ({
@@ -286,12 +261,16 @@
             rows.push({ type: 'me-item', key: `me:${currentUser.value?.id ?? 'me'}` });
         }
 
-        if (vipFriendsDisplayNumber.value) {
+        const vipFriendCount = isSidebarDivideByFriendGroup.value
+            ? vipFriendsDivideByGroup.value.length
+            : vipFriendsByGroupStatus.value.length;
+
+        if (vipFriendCount) {
             rows.push(
                 buildToggleRow({
                     key: 'vip-header',
                     label: t('side_panel.favorite'),
-                    count: vipFriendsDisplayNumber.value,
+                    count: vipFriendCount,
                     expanded: isVIPFriends.value,
                     onClick: toggleVIPFriends
                 })
