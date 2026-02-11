@@ -119,9 +119,22 @@
                     <SelectValue :placeholder="t('view.settings.general.favorites.group_placeholder')" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem v-for="group in favoriteFriendGroups" :key="group.key" :value="group.key">
-                        {{ group.displayName }}
-                    </SelectItem>
+                    <SelectGroup>
+                        <SelectItem v-for="group in favoriteFriendGroups" :key="group.key" :value="group.key">
+                            {{ group.displayName }}
+                        </SelectItem>
+                    </SelectGroup>
+                    <template v-if="localFriendFavoriteGroups.length">
+                        <SelectSeparator />
+                        <SelectGroup>
+                            <SelectItem
+                                v-for="group in localFriendFavoriteGroups"
+                                :key="'local:' + group"
+                                :value="'local:' + group">
+                                {{ group }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </template>
                 </SelectContent>
             </Select>
         </div>
@@ -189,7 +202,15 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../../components/ui/select';
+    import {
+        Select,
+        SelectContent,
+        SelectGroup,
+        SelectItem,
+        SelectSeparator,
+        SelectTrigger,
+        SelectValue
+    } from '../../../../components/ui/select';
     import { useFavoriteStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '../../../../stores';
     import { ToggleGroup, ToggleGroupItem } from '../../../../components/ui/toggle-group';
     import { links } from '../../../../shared/constants';
@@ -231,7 +252,7 @@
         promptProxySettings
     } = generalSettingsStore;
 
-    const { favoriteFriendGroups } = storeToRefs(favoriteStore);
+    const { favoriteFriendGroups, localFriendFavoriteGroups } = storeToRefs(favoriteStore);
 
     const { appVersion, autoUpdateVRCX, latestAppVersion, noUpdater } = storeToRefs(vrcxUpdaterStore);
     const { setAutoUpdateVRCX, checkForVRCXUpdate, showVRCXUpdateDialog, showChangeLogDialog } = vrcxUpdaterStore;

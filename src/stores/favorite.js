@@ -81,6 +81,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     const localAvatarFavorites = reactive({});
 
+    const localFriendFavorites = reactive({});
+
     const selectedFavoriteFriends = ref([]);
     const selectedFavoriteWorlds = ref([]);
     const selectedFavoriteAvatars = ref([]);
@@ -183,6 +185,18 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     const localAvatarFavGroupLength = computed(() => (group) => {
         const favoriteGroup = localAvatarFavorites[group];
+        if (!favoriteGroup) {
+            return 0;
+        }
+        return favoriteGroup.length;
+    });
+
+    const localFriendFavoriteGroups = computed(() =>
+        Object.keys(localFriendFavorites).sort()
+    );
+
+    const localFriendFavGroupLength = computed(() => (group) => {
+        const favoriteGroup = localFriendFavorites[group];
         if (!favoriteGroup) {
             return 0;
         }
@@ -1515,6 +1529,157 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
+     * @param {string} userId
+     * @param {string} group
+     */
+    function addLocalFriendFavorite(userId, group) {
+        if (hasLocalFriendFavorite(userId, group)) {
+            return;
+        }
+        if (!localFriendFavorites[group]) {
+            localFriendFavorites[group] = [];
+        }
+        localFriendFavorites[group].unshift(userId);
+        database.addFriendToLocalFavorites(userId, group);
+        if (
+            favoriteDialog.value.visible &&
+            favoriteDialog.value.objectId === userId
+        ) {
+            updateFavoriteDialog(userId);
+        }
+        if (
+            generalSettingsStore.localFavoriteFriendsGroups.includes(
+                `local:${group}`
+            )
+        ) {
+            friendStore.updateLocalFavoriteFriends();
+        }
+    }
+
+    /**
+     * @param {string} userId
+     * @param {string} group
+     * @returns {boolean}
+     */
+    function hasLocalFriendFavorite(userId, group) {
+        const favoriteGroup = localFriendFavorites[group];
+        if (!favoriteGroup) {
+            return false;
+        }
+        return favoriteGroup.includes(userId);
+    }
+
+    /**
+     * @param {string} userId
+     * @param {string} group
+     */
+    function removeLocalFriendFavorite(userId, group) {
+        const favoriteGroup = localFriendFavorites[group];
+        if (favoriteGroup) {
+            const idx = favoriteGroup.indexOf(userId);
+            if (idx !== -1) {
+                favoriteGroup.splice(idx, 1);
+            }
+        }
+        database.removeFriendFromLocalFavorites(userId, group);
+        if (
+            favoriteDialog.value.visible &&
+            favoriteDialog.value.objectId === userId
+        ) {
+            updateFavoriteDialog(userId);
+        }
+        if (
+            generalSettingsStore.localFavoriteFriendsGroups.includes(
+                `local:${group}`
+            )
+        ) {
+            friendStore.updateLocalFavoriteFriends();
+        }
+    }
+
+    /**
+     * @param {string} group
+     */
+    function deleteLocalFriendFavoriteGroup(group) {
+        delete localFriendFavorites[group];
+        database.deleteFriendFavoriteGroup(group);
+        if (
+            generalSettingsStore.localFavoriteFriendsGroups.includes(
+                `local:${group}`
+            )
+        ) {
+            friendStore.updateLocalFavoriteFriends();
+        }
+    }
+
+    /**
+     * @param {string} newName
+     * @param {string} group
+     */
+    function renameLocalFriendFavoriteGroup(newName, group) {
+        if (localFriendFavoriteGroups.value.includes(newName)) {
+            toast.error(
+                t('prompt.local_favorite_group_rename.message.error', {
+                    name: newName
+                })
+            );
+            return;
+        }
+        localFriendFavorites[newName] = localFriendFavorites[group];
+        delete localFriendFavorites[group];
+        database.renameFriendFavoriteGroup(newName, group);
+        const oldKey = `local:${group}`;
+        const idx =
+            generalSettingsStore.localFavoriteFriendsGroups.indexOf(oldKey);
+        if (idx !== -1) {
+            const updated = [
+                ...generalSettingsStore.localFavoriteFriendsGroups
+            ];
+            updated[idx] = `local:${newName}`;
+            generalSettingsStore.setLocalFavoriteFriendsGroups(updated);
+        }
+    }
+
+    /**
+     * @param {string} group
+     */
+    function newLocalFriendFavoriteGroup(group) {
+        if (localFriendFavoriteGroups.value.includes(group)) {
+            toast.error(
+                t('prompt.new_local_favorite_group.message.error', {
+                    name: group
+                })
+            );
+            return;
+        }
+        if (!localFriendFavorites[group]) {
+            localFriendFavorites[group] = [];
+        }
+    }
+
+    /**
+     * @returns {Promise<void>}
+     */
+    async function getLocalFriendFavorites() {
+        const localFavorites = Object.create(null);
+
+        const favorites = await database.getFriendFavorites();
+        for (let i = 0; i < favorites.length; ++i) {
+            const favorite = favorites[i];
+            if (!localFavorites[favorite.groupName]) {
+                localFavorites[favorite.groupName] = [];
+            }
+            localFavorites[favorite.groupName].unshift(favorite.userId);
+        }
+
+        if (Object.keys(localFavorites).length === 0) {
+            localFavorites.Favorites = [];
+        }
+
+        replaceReactiveObject(localFriendFavorites, localFavorites);
+    }
+
+    /**
      *
      * @param {string} objectId
      */
@@ -1545,6 +1710,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     async function saveSortFavoritesOption() {
         getLocalWorldFavorites();
+        getLocalFriendFavorites();
         appearanceSettingsStore.setSortFavorites();
     }
 
@@ -1552,6 +1718,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         refreshFavorites();
         getLocalWorldFavorites();
         getLocalAvatarFavorites();
+        getLocalFriendFavorites();
     }
 
     function compareByFavoriteSortOrder(a, b) {
@@ -1588,6 +1755,10 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         localWorldFavoritesList,
 
         localWorldFavoriteGroups,
+        localFriendFavorites,
+        localFriendFavoriteGroups,
+
+        localFriendFavGroupLength,
         groupedByGroupKeyFavoriteFriends,
         selectedFavoriteFriends,
         selectedFavoriteWorlds,
@@ -1632,6 +1803,13 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         getCachedFavoritesByObjectId,
         checkInvalidLocalAvatars,
         removeInvalidLocalAvatars,
-        getCachedFavoriteGroupsByTypeName
+        getCachedFavoriteGroupsByTypeName,
+        addLocalFriendFavorite,
+        hasLocalFriendFavorite,
+        removeLocalFriendFavorite,
+        deleteLocalFriendFavoriteGroup,
+        renameLocalFriendFavoriteGroup,
+        newLocalFriendFavoriteGroup,
+        getLocalFriendFavorites
     };
 });

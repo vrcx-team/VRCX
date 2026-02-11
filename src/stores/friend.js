@@ -317,6 +317,17 @@ export const useFriendStore = defineStore('Friend', () => {
                 localFavoriteFriends.add(ref.favoriteId);
             }
         }
+        for (const selectedKey of generalSettingsStore.localFavoriteFriendsGroups) {
+            if (selectedKey.startsWith('local:')) {
+                const groupName = selectedKey.slice(6);
+                const userIds = favoriteStore.localFriendFavorites[groupName];
+                if (userIds) {
+                    for (let i = 0; i < userIds.length; ++i) {
+                        localFavoriteFriends.add(userIds[i]);
+                    }
+                }
+            }
+        }
         updateSidebarFavorites();
     }
 

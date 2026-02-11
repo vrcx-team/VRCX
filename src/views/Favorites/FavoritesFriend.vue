@@ -183,6 +183,86 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="group-section">
+                            <div class="group-section__header">
+                                <span>{{ t('view.favorite.worlds.local_favorites') }}</span>
+                                <Button
+                                    class="rounded-full"
+                                    size="icon-sm"
+                                    variant="ghost"
+                                    @click.stop="getLocalFriendFavorites"
+                                    ><RefreshCcw />
+                                </Button>
+                            </div>
+                            <div class="group-section__list">
+                                <template v-if="localFriendFavoriteGroups.length">
+                                    <div
+                                        v-for="group in localFriendFavoriteGroups"
+                                        :key="group"
+                                        :class="[
+                                            'group-item',
+                                            { 'is-active': !hasSearchInput && isGroupActive('local', group) }
+                                        ]"
+                                        @click="handleGroupClick('local', group)">
+                                        <div class="group-item__top">
+                                            <span class="group-item__name">{{ group }}</span>
+                                            <div class="group-item__right">
+                                                <span class="group-item__count">{{
+                                                    localFriendFavGroupLength(group)
+                                                }}</span>
+                                                <div class="group-item__bottom">
+                                                    <DropdownMenu
+                                                        :open="activeGroupMenu === localGroupMenuKey(group)"
+                                                        @update:open="
+                                                            handleGroupMenuVisible(localGroupMenuKey(group), $event)
+                                                        ">
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button
+                                                                class="rounded-full"
+                                                                size="icon-sm"
+                                                                variant="ghost"
+                                                                @click.stop
+                                                                ><Ellipsis
+                                                            /></Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent side="right" class="w-50">
+                                                            <DropdownMenuItem @click="handleLocalRename(group)">
+                                                                <span>{{ t('view.favorite.rename_tooltip') }}</span>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem
+                                                                variant="destructive"
+                                                                @click="handleLocalDelete(group)">
+                                                                <span>{{ t('view.favorite.delete_tooltip') }}</span>
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                                <div v-else class="group-empty">
+                                    <DataTableEmpty type="nodata" />
+                                </div>
+                                <div
+                                    v-if="!isCreatingLocalGroup"
+                                    class="group-item group-item--new"
+                                    @click="startLocalGroupCreation">
+                                    <Plus />
+                                    <span>{{ t('view.favorite.worlds.new_group') }}</span>
+                                </div>
+                                <InputGroupField
+                                    v-else
+                                    ref="newLocalGroupInput"
+                                    v-model="newLocalGroupName"
+                                    size="sm"
+                                    class="group-item__input"
+                                    :placeholder="t('view.favorite.worlds.new_group')"
+                                    @keyup.enter="handleLocalGroupCreationConfirm"
+                                    @keyup.esc="cancelLocalGroupCreation"
+                                    @blur="cancelLocalGroupCreation" />
+                            </div>
+                        </div>
                     </div>
                 </ResizablePanel>
                 <ResizableHandle @dragging="setFriendSplitterDragging" />
@@ -197,11 +277,17 @@
                                         <small>{{ activeRemoteGroup.count }}/{{ activeRemoteGroup.capacity }}</small>
                                     </span>
                                 </template>
+                                <span v-else-if="activeLocalGroupName">
+                                    {{ activeLocalGroupName }}
+                                    <small>{{ activeLocalGroupCount }}</small>
+                                </span>
                                 <span v-else>No Group Selected</span>
                             </div>
                             <div class="favorites-content__edit">
                                 <span>{{ t('view.favorite.edit_mode') }}</span>
-                                <Switch v-model="friendEditMode" :disabled="isSearchActive || !activeRemoteGroup" />
+                                <Switch
+                                    v-model="friendEditMode"
+                                    :disabled="isSearchActive || (!activeRemoteGroup && !activeLocalGroupName)" />
                             </div>
                         </div>
                         <div class="favorites-content__edit-actions">
@@ -248,6 +334,28 @@
                                                 :key="favorite.id"
                                                 :favorite="favorite"
                                                 :group="activeRemoteGroup"
+                                                :selected="selectedFavoriteFriends.includes(favorite.id)"
+                                                :edit-mode="friendEditMode"
+                                                @toggle-select="toggleFriendSelection(favorite.id, $event)"
+                                                @click="showUserDialog(favorite.id)" />
+                                        </div>
+                                    </template>
+                                    <div v-else class="favorites-empty">
+                                        <DataTableEmpty type="nodata" />
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-else-if="!isSearchActive && activeLocalGroupName && isLocalGroupSelected">
+                                <div class="favorites-content__scroll favorites-content__scroll--native">
+                                    <template v-if="currentLocalFriendFavorites.length">
+                                        <div
+                                            class="favorites-card-list"
+                                            :style="friendFavoritesGridStyle(currentLocalFriendFavorites.length)">
+                                            <FavoritesFriendItem
+                                                v-for="favorite in currentLocalFriendFavorites"
+                                                :key="favorite.id"
+                                                :favorite="favorite"
+                                                :group="{ key: activeLocalGroupName, type: 'local' }"
                                                 :selected="selectedFavoriteFriends.includes(favorite.id)"
                                                 :edit-mode="friendEditMode"
                                                 @toggle-select="toggleFriendSelection(favorite.id, $event)"
@@ -309,11 +417,11 @@
 </template>
 
 <script setup>
+    import { ArrowUpDown, Check, Ellipsis, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
     import { computed, nextTick, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue';
-    import { ArrowUpDown, Check, Ellipsis, MoreHorizontal, RefreshCw } from 'lucide-vue-next';
+    import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
     import { DataTableEmpty } from '@/components/ui/data-table';
-    import { InputGroupSearch } from '@/components/ui/input-group';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -372,10 +480,24 @@
         groupedByGroupKeyFavoriteFriends,
         selectedFavoriteFriends,
         friendImportDialogInput,
-        isFavoriteLoading
+        isFavoriteLoading,
+        localFriendFavorites,
+        localFriendFavoriteGroups
     } = storeToRefs(favoriteStore);
-    const { showFriendImportDialog, refreshFavorites, getLocalWorldFavorites, handleFavoriteGroup } = favoriteStore;
-    const { showUserDialog } = useUserStore();
+    const {
+        showFriendImportDialog,
+        refreshFavorites,
+        getLocalWorldFavorites,
+        getLocalFriendFavorites,
+        handleFavoriteGroup,
+        localFriendFavGroupLength,
+        deleteLocalFriendFavoriteGroup,
+        renameLocalFriendFavoriteGroup,
+        newLocalFriendFavoriteGroup
+    } = favoriteStore;
+    const userStore = useUserStore();
+    const { showUserDialog } = userStore;
+    const { cachedUsers } = storeToRefs(userStore);
     const { t } = useI18n();
 
     const {
@@ -431,6 +553,9 @@
     const selectedGroup = ref(null);
     const activeGroupMenu = ref(null);
     const friendToolbarMenuOpen = ref(false);
+    const isCreatingLocalGroup = ref(false);
+    const newLocalGroupName = ref('');
+    const newLocalGroupInput = ref(null);
 
     function handleSortFavoritesChange(value) {
         const next = Boolean(value);
@@ -443,6 +568,8 @@
     const hasSearchInput = computed(() => friendFavoriteSearch.value.trim().length > 0);
     const isSearchActive = computed(() => friendFavoriteSearch.value.trim().length >= 3);
     const isRemoteGroupSelected = computed(() => selectedGroup.value?.type === 'remote');
+    const isLocalGroupSelected = computed(() => selectedGroup.value?.type === 'local');
+    const localGroupMenuKey = (key) => `local:${key}`;
 
     const closeFriendToolbarMenu = () => {
         friendToolbarMenuOpen.value = false;
@@ -603,6 +730,36 @@
         return groupedByGroupKeyFavoriteFriends.value[activeRemoteGroup.value.key] || [];
     });
 
+    const activeLocalGroupName = computed(() => {
+        if (!isLocalGroupSelected.value) {
+            return '';
+        }
+        return selectedGroup.value.key;
+    });
+
+    const activeLocalGroupCount = computed(() => {
+        if (!activeLocalGroupName.value) {
+            return 0;
+        }
+        const favorites = localFriendFavorites.value[activeLocalGroupName.value];
+        return favorites ? favorites.length : 0;
+    });
+
+    const currentLocalFriendFavorites = computed(() => {
+        if (!activeLocalGroupName.value) {
+            return [];
+        }
+        const userIds = localFriendFavorites.value[activeLocalGroupName.value] || [];
+        return userIds.map((userId) => {
+            const ref = cachedUsers.value.get(userId);
+            return {
+                id: userId,
+                ref: ref || undefined,
+                name: ref?.displayName || userId
+            };
+        });
+    });
+
     const isAllFriendsSelected = computed(() => {
         if (!activeRemoteGroup.value || !currentFriendFavorites.value.length) {
             return false;
@@ -642,6 +799,7 @@
     function handleRefreshFavorites() {
         refreshFavorites();
         getLocalWorldFavorites();
+        getLocalFriendFavorites();
     }
 
     function handleGroupMenuVisible(key, visible) {
@@ -670,6 +828,10 @@
                 return;
             }
         }
+        if (localFriendFavoriteGroups.value.length) {
+            selectGroup('local', localFriendFavoriteGroups.value[0]);
+            return;
+        }
         selectedGroup.value = null;
         clearSelectedFriends();
     }
@@ -680,6 +842,9 @@
         }
         if (group.type === 'remote') {
             return favoriteFriendGroups.value.some((item) => item.key === group.key);
+        }
+        if (group.type === 'local') {
+            return localFriendFavoriteGroups.value.includes(group.key);
         }
         return false;
     }
@@ -875,6 +1040,75 @@
         }
         return value.charAt(0).toUpperCase() + value.slice(1);
     }
+
+    function startLocalGroupCreation() {
+        isCreatingLocalGroup.value = true;
+        newLocalGroupName.value = '';
+        nextTick(() => {
+            newLocalGroupInput.value?.$el?.focus?.();
+        });
+    }
+
+    function cancelLocalGroupCreation() {
+        isCreatingLocalGroup.value = false;
+        newLocalGroupName.value = '';
+    }
+
+    function handleLocalGroupCreationConfirm() {
+        const name = newLocalGroupName.value.trim();
+        if (!name) {
+            cancelLocalGroupCreation();
+            return;
+        }
+        newLocalFriendFavoriteGroup(name);
+        isCreatingLocalGroup.value = false;
+        newLocalGroupName.value = '';
+        selectGroup('local', name);
+    }
+
+    function handleLocalRename(group) {
+        handleGroupMenuVisible(localGroupMenuKey(group), false);
+        modalStore
+            .prompt({
+                title: t('prompt.change_favorite_group_name.header'),
+                description: t('prompt.change_favorite_group_name.description'),
+                confirmText: t('prompt.change_favorite_group_name.change'),
+                cancelText: t('prompt.change_favorite_group_name.cancel'),
+                pattern: /\S+/,
+                inputValue: group,
+                errorMessage: t('prompt.change_favorite_group_name.input_error')
+            })
+            .then(({ ok, value }) => {
+                if (!ok) return;
+                const newName = value.trim();
+                if (!newName || newName === group) {
+                    return;
+                }
+                renameLocalFriendFavoriteGroup(newName, group);
+                if (isGroupActive('local', group)) {
+                    selectGroup('local', newName);
+                }
+                toast.success(t('prompt.change_favorite_group_name.message.success'));
+            })
+            .catch(() => {});
+    }
+
+    function handleLocalDelete(group) {
+        handleGroupMenuVisible(localGroupMenuKey(group), false);
+        modalStore
+            .confirm({
+                description: 'Continue? Delete Group',
+                title: 'Confirm'
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
+                deleteLocalFriendFavoriteGroup(group);
+                if (isGroupActive('local', group)) {
+                    selectDefaultGroup();
+                }
+            })
+            .catch(() => {});
+    }
 </script>
 
 <style scoped>
@@ -1005,6 +1239,19 @@
         text-align: center;
         font-size: 12px;
         padding: 12px 0;
+    }
+
+    .group-item--new {
+        border-style: dashed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-size: 14px;
+    }
+
+    .group-item__input {
+        width: 100%;
     }
 
     .favorites-content {

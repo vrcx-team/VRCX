@@ -1,5 +1,6 @@
 import { avatarFavorites } from './database/avatarFavorites.js';
 import { feed } from './database/feed.js';
+import { friendFavorites } from './database/friendFavorites.js';
 import { friendLogCurrent } from './database/friendLogCurrent.js';
 import { friendLogHistory } from './database/friendLogHistory.js';
 import { gameLog } from './database/gameLog.js';
@@ -30,6 +31,7 @@ const database = {
     ...friendLogCurrent,
     ...memos,
     ...avatarFavorites,
+    ...friendFavorites,
     ...worldFavorites,
     ...tableAlter,
     ...tableFixes,
@@ -125,6 +127,9 @@ const database = {
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS favorite_avatar (id INTEGER PRIMARY KEY, created_at TEXT, avatar_id TEXT, group_name TEXT)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS favorite_friend (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, group_name TEXT)`
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`

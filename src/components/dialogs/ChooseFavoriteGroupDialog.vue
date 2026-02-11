@@ -30,6 +30,27 @@
                     </Button>
                 </template>
             </div>
+            <div v-if="favoriteDialog.type === 'friend'" style="margin-top: 20px">
+                <span style="display: block; text-align: center">{{ t('dialog.favorite.local_favorites') }}</span>
+                <template v-for="group in localFriendFavoriteGroups" :key="group">
+                    <Button
+                        variant="outline"
+                        v-if="hasLocalFriendFavorite(favoriteDialog.objectId, group)"
+                        style="width: 100%; white-space: initial"
+                        class="my-1"
+                        @click="removeLocalFriendFavorite(favoriteDialog.objectId, group)">
+                        <Check />{{ group }} ({{ localFriendFavGroupLength(group) }})
+                    </Button>
+                    <Button
+                        variant="outline"
+                        v-else
+                        style="width: 100%; white-space: initial"
+                        class="my-1"
+                        @click="addLocalFriendFavorite(favoriteDialog.objectId, group)">
+                        {{ group }} ({{ localFriendFavGroupLength(group) }})
+                    </Button>
+                </template>
+            </div>
             <div v-if="favoriteDialog.type === 'world'" style="margin-top: 20px">
                 <span style="display: block; text-align: center">{{ t('dialog.favorite.local_favorites') }}</span>
                 <template v-for="group in localWorldFavoriteGroups" :key="group">
@@ -99,7 +120,8 @@
         favoriteWorldGroups,
         favoriteDialog,
         localWorldFavoriteGroups,
-        localAvatarFavoriteGroups
+        localAvatarFavoriteGroups,
+        localFriendFavoriteGroups
     } = storeToRefs(favoriteStore);
     const {
         localWorldFavGroupLength,
@@ -110,7 +132,11 @@
         localAvatarFavGroupLength,
         removeLocalAvatarFavorite,
         removeLocalWorldFavorite,
-        deleteFavoriteNoConfirm
+        deleteFavoriteNoConfirm,
+        localFriendFavGroupLength,
+        addLocalFriendFavorite,
+        hasLocalFriendFavorite,
+        removeLocalFriendFavorite
     } = favoriteStore;
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 

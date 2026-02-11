@@ -24,7 +24,10 @@
                         <Checkbox v-model="isSelected" />
                     </div>
                     <div class="favorites-search-card__action-group">
-                        <div class="favorites-search-card__action favorites-search-card__action--full" @click.stop>
+                        <div
+                            v-if="group?.type !== 'local'"
+                            class="favorites-search-card__action favorites-search-card__action--full"
+                            @click.stop>
                             <FavoritesMoveDropdown
                                 :favoriteGroup="favoriteFriendGroups"
                                 :currentGroup="group"
@@ -106,7 +109,7 @@
     const emit = defineEmits(['click', 'toggle-select']);
 
     const { favoriteFriendGroups } = storeToRefs(useFavoriteStore());
-    const { showFavoriteDialog } = useFavoriteStore();
+    const { showFavoriteDialog, removeLocalFriendFavorite } = useFavoriteStore();
     const { t } = useI18n();
 
     const isSelected = computed({
@@ -133,8 +136,12 @@
     });
 
     function handleDeleteFavorite() {
-        favoriteRequest.deleteFavorite({
-            objectId: props.favorite.id
-        });
+        if (props.group?.type === 'local') {
+            removeLocalFriendFavorite(props.favorite.id, props.group.key);
+        } else {
+            favoriteRequest.deleteFavorite({
+                objectId: props.favorite.id
+            });
+        }
     }
 </script>

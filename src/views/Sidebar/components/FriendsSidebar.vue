@@ -101,6 +101,7 @@
         useFavoriteStore,
         useFriendStore,
         useGameStore,
+        useGeneralSettingsStore,
         useLocationStore,
         useUserStore
     } from '../../../stores';
@@ -114,6 +115,8 @@
 
     const { t } = useI18n();
 
+    const generalSettingsStore = useGeneralSettingsStore();
+
     const friendStore = useFriendStore();
     const { vipFriends, onlineFriends, activeFriends, offlineFriends, friendsInSameInstance } =
         storeToRefs(friendStore);
@@ -121,7 +124,8 @@
         storeToRefs(useAppearanceSettingsStore());
     const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
     const { showUserDialog } = useUserStore();
-    const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends } = storeToRefs(useFavoriteStore());
+    const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends, localFriendFavorites } =
+        storeToRefs(useFavoriteStore());
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { currentUser } = storeToRefs(useUserStore());
@@ -187,6 +191,30 @@
                 if (filteredFriends.length > 0) {
                     const groupName = favoriteFriendGroups.value.find((item) => item.key === key)?.displayName || '';
                     result.push(filteredFriends.map((item) => ({ groupName, key, ...item })));
+                }
+            }
+        }
+
+        for (const selectedKey of generalSettingsStore.localFavoriteFriendsGroups) {
+            if (selectedKey.startsWith('local:')) {
+                const groupName = selectedKey.slice(6);
+                const userIds = localFriendFavorites.value?.[groupName];
+                if (userIds && userIds.length) {
+                    const filteredFriends = vipFriends.value.filter((friend) => {
+                        if (isSidebarGroupByInstance.value && isHideFriendsInSameInstance.value) {
+                            return userIds.includes(friend.id) && !sameInstanceFriendId.value.has(friend.id);
+                        }
+                        return userIds.includes(friend.id);
+                    });
+                    if (filteredFriends.length > 0) {
+                        result.push(
+                            filteredFriends.map((item) => ({
+                                groupName,
+                                key: selectedKey,
+                                ...item
+                            }))
+                        );
+                    }
                 }
             }
         }
