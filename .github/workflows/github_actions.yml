@@ -21,9 +21,8 @@ jobs:
             - uses: actions/checkout@v5
             - id: version
               run: |
-                  git_hash=$(git rev-parse --short "$GITHUB_SHA")
-                  export FILENAME="$(date '+%Y-%m-%dT%H.%M')-${git_hash}"
-                  export DATE="$(date '+%Y.%m.%d')"
+                  export FILENAME="$(cat Version)"
+                  export DATE="$(cat Version)"
                   echo "version=${FILENAME}" >> $GITHUB_OUTPUT
                   echo "date=${DATE}" >> $GITHUB_OUTPUT
 
@@ -55,7 +54,7 @@ jobs:
             - name: Check if we want to sign
               id: check_sign
               run: |
-                  echo "sign=${{ secrets.AZURE_CLIENT_ID != '' }}" >> $GITHUB_OUTPUT
+                echo "sign=${{ secrets.AZURE_CLIENT_ID != '' }}" >> $GITHUB_OUTPUT
             - name: Azure login
               if: steps.check_sign.outputs.sign == 'true'
               uses: azure/login@v2
@@ -375,15 +374,11 @@ jobs:
                   7z a -tzip ${file_name} * -mx=7 -xr0!*.log
                   mv ${file_name} ../../${file_name}
                   echo "Zip FileName: ${file_name}"
-
-            - name: Download x64 Electron AppImage artifacts
-              uses: actions/download-artifact@v6
+            - name: Upload Zip artifact
+              uses: actions/upload-artifact@v5
               with:
-                  name: Electron-AppImage-x64
-            - name: Download arm64 Electron AppImage artifacts
-              uses: actions/download-artifact@v6
-              with:
-                  name: Electron-AppImage-arm64
+                  name: VRCX-Zip
+                  path: 'VRCX_${{ needs.set_version.outputs.version }}.zip'
 
             - name: Download x64 Electron macOS artifacts
               uses: actions/download-artifact@v6
@@ -420,16 +415,3 @@ jobs:
                       SHA256SUMS.txt
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   release-url: ${{ steps.create_release.outputs.upload_url }}
-            - name: Bump Cask
-              env:
-                  HOMEBREW_GITHUB_TOKEN: ${{ secrets.HOMEBREW_GITHUB_TOKEN }}
-              run: |
-                  if [ -n "${HOMEBREW_GITHUB_TOKEN}" ]; then
-                      curl -L \
-                          -X POST \
-                          -H "Accept: application/vnd.github+json" \
-                          -H "Authorization: Bearer ${HOMEBREW_GITHUB_TOKEN}" \
-                          -H "X-GitHub-Api-Version: 2022-11-28" \
-                          https://api.github.com/repos/vrcx-team/homebrew-vrcx-tap/actions/workflows/bump.yml/dispatches \
-                          -d '{"ref":"main"}'
-                  fi
