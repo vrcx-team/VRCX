@@ -212,7 +212,6 @@
             "clear": "消去",
             "select_all": "全て選択",
             "deselect_all": "すべて解除",
-            "select_none": "選択解除",
             "bulk_unfavorite": "一括お気に入り解除モード",
             "refresh_favorites_tooltip": "全てのお気に入りを更新",
             "export": "エクスポート",
@@ -313,7 +312,8 @@
                 "economy": {
                     "received": {
                         "gift": "ギフトの受け取り"
-                    }
+                    },
+                    "alert": "エコノミーの通知"
                 }
             }
         },
@@ -634,16 +634,16 @@
                     "sort_instance_users_by": "インスタンス人数を並び替え:",
                     "sort_instance_users_by_time": "時間順",
                     "sort_instance_users_by_alphabet": "アルファベット順",
+                    "table_max_size": "最大読み込み件数",
+                    "table_page_sizes": "1ページあたりの表示数",
+                    "table_page_sizes_error": "1〜1000の数字を入力してください。",
                     "show_notification_icon_dot": "トレイ通知ドットを表示",
                     "striped_data_table_mode": "テーブルの行に交互に色を付ける",
                     "toggle_pointer_on_hover": "ホバー時にポインターを切り替え",
                     "table_density": "テーブルの行の高さ",
                     "table_density_standard": "標準",
                     "table_density_comfortable": "やや低め",
-                    "table_density_compact": "低め",
-                    "table_max_size": "最大読み込み件数",
-                    "table_page_sizes": "1ページあたりの表示数",
-                    "table_page_sizes_error": "1〜1000の数字を入力してください。"
+                    "table_density_compact": "低め"
                 },
                 "timedate": {
                     "header": "時刻と日付",
@@ -1028,6 +1028,7 @@
                 "age_verified": "年齢認証済み",
                 "trust_level": "トラストランク",
                 "mutual_friends": "共通のフレンド",
+                "open_in_discord": "Discordを開く",
                 "friend_number": "フレンド No."
             },
             "badges": {
@@ -1126,7 +1127,8 @@
                 "close_instance": "インスタンスを閉じる",
                 "instance_age_gated": "年齢制限あり",
                 "open_previous_instance": "前回のインスタンスを開く",
-                "show_mutual_friends": "共通のフレンドを表示"
+                "show_mutual_friends": "共通のフレンドを公開",
+                "show_discord_connections": "連携したDiscordを公開"
             },
             "groups": {
                 "header": "グループ",
@@ -2007,8 +2009,7 @@
             "my_emojis": "自分の絵文字",
             "default_emojis": "デフォルトの絵文字",
             "cancel": "キャンセル",
-            "send": "送信",
-            "select_default_emoji": "デフォルトの絵文字を選択"
+            "send": "送信"
         },
         "allowed_video_player_domains": {
             "header": "ビデオプレーヤーでの使用が許可されているのドメイン",
