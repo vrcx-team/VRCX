@@ -1,6 +1,20 @@
 {
     "language": "简体中文 (zh-CN)",
     "translator": "flower_elf, Yingxue, Map1en, Stabrinai, xxKawa, Anteness",
+    "common": {
+        "no_data": "无数据",
+        "no_matching_records": "无匹配记录",
+        "actions": {
+            "open": "打开"
+        },
+        "time_units": {
+            "y": "年",
+            "d": "天",
+            "h": "小时",
+            "m": "分钟",
+            "s": "秒"
+        }
+    },
     "nav_tooltip": {
         "friends_locations": "好友位置",
         "feed": "好友动态",
@@ -53,6 +67,22 @@
             "save": "保存",
             "cancel": "取消"
         }
+    },
+    "side_panel": {
+        "search_placeholder": "搜索",
+        "search_result_active": "活跃",
+        "search_result_offline": "离线",
+        "search_result_more": "搜索更多：",
+        "refresh_tooltip": "刷新好友列表",
+        "groups": "群组房间",
+        "friends": "好友",
+        "me": "我",
+        "favorite": "星标好友",
+        "same_instance": "同一房间",
+        "online": "在线",
+        "active": "活跃中（仅登录网页端）",
+        "offline": "离线",
+        "pending_offline": "可能离线"
     },
     "view": {
         "login": {
@@ -897,22 +927,6 @@
             }
         }
     },
-    "side_panel": {
-        "search_placeholder": "搜索",
-        "search_result_active": "活跃",
-        "search_result_offline": "离线",
-        "search_result_more": "搜索更多：",
-        "refresh_tooltip": "刷新好友列表",
-        "groups": "群组房间",
-        "friends": "好友",
-        "me": "我",
-        "favorite": "星标好友",
-        "same_instance": "同一房间",
-        "online": "在线",
-        "active": "活跃中（仅登录网页端）",
-        "offline": "离线",
-        "pending_offline": "可能离线"
-    },
     "dialog": {
         "alertdialog": {
             "ok": "确定",
@@ -1215,7 +1229,6 @@
                 "rename": "重命名",
                 "change_description": "更改描述",
                 "change_content_tags": "更改内容标签",
-                "change_styles": "更改风格",
                 "change_image": "更改封面",
                 "download_package": "下载 Unity Package",
                 "delete": "删除",
@@ -1352,16 +1365,6 @@
             "local_favorites": "本地收藏",
             "local_avatar_favorites": "模型收藏（需要 VRC+）"
         },
-        "invite": {
-            "header": "邀请",
-            "select_placeholder": "选择好友",
-            "add_self": "添加自己",
-            "add_friends_in_instance": "在房间中添加好友",
-            "add_favorite_friends": "添加星标",
-            "invite_with_message": "发送带消息的邀请",
-            "invite": "邀请",
-            "friends_in_instance": "在房间里的好友"
-        },
         "social_status": {
             "header": "社交状态",
             "history": "使用过的状态",
@@ -1432,6 +1435,22 @@
             "open_ingame": "在 VRChat 中打开",
             "display_name": "自定义房间名称 (需要 VRC+)"
         },
+        "launch": {
+            "header": "启动",
+            "url": "链接",
+            "short_url": "短链接",
+            "short_url_notice": "短链接会在一段时间后过期",
+            "location": "地点",
+            "copy_tooltip": "复制到剪贴板",
+            "start_as_desktop": "启动（桌面模式）",
+            "invite": "邀请",
+            "launch": "启动（VR模式）",
+            "open_ingame": "在 VRChat 中打开",
+            "self_invite": "邀请自己",
+            "game_running_warning": "你确定要启动另一个 VRChat 客户端吗？",
+            "confirm_yes": "是，确认启动",
+            "confirm_no": "否，我再想想"
+        },
         "launch_options": {
             "header": "启动选项",
             "description": "这些选项仅适用于高级用户。",
@@ -1439,6 +1458,259 @@
             "path_override": "VRChat客户端位置",
             "vrchat_docs": "VRChat 文档",
             "unity_manual": "Unity 手册",
+            "save": "保存"
+        },
+        "invite": {
+            "header": "邀请",
+            "select_placeholder": "选择好友",
+            "add_self": "添加自己",
+            "add_friends_in_instance": "在房间中添加好友",
+            "add_favorite_friends": "添加星标",
+            "invite_with_message": "发送带消息的邀请",
+            "invite": "邀请",
+            "friends_in_instance": "在房间里的好友"
+        },
+        "invite_to_group": {
+            "header": "邀请好友加入群组",
+            "description": "请不要滥用邀请功能，短时间内邀请大量玩家加入群组会导致你的账号被封禁。",
+            "choose_group_placeholder": "选择群组",
+            "groups_with_invite_permission": "有邀请权限的群组",
+            "choose_friends_placeholder": "选择好友",
+            "selected_users": "已选择的玩家",
+            "invite": "邀请"
+        },
+        "invite_message": {
+            "header": "发送消息",
+            "confirmation": "你确定要进行这个操作吗？",
+            "select_image": "选择图片",
+            "clear_selected_image": "清除选择",
+            "cancel": "取消",
+            "refresh": "刷新",
+            "confirm": "确定"
+        },
+        "invite_request_message": {
+            "header": "发送消息",
+            "cancel": "取消",
+            "refresh": "刷新"
+        },
+        "invite_response_message": {
+            "header": "对邀请的快捷回复",
+            "confirmation": "你确定要进行这个操作吗？",
+            "cancel": "取消",
+            "refresh": "刷新",
+            "confirm": "确定"
+        },
+        "invite_request_response_message": {
+            "header": "编辑并发送拒绝消息",
+            "cancel": "取消",
+            "refresh": "刷新"
+        },
+        "edit_invite_messages": {
+            "header": "编辑消息",
+            "invite_message_tab": "邀请",
+            "invite_request_tab": "申请加入",
+            "invite_request_response_tab": "回绝加入申请",
+            "invite_response_tab": "回绝邀请"
+        },
+        "edit_invite_message": {
+            "header": "编辑消息",
+            "description": "编辑冷却时间：一小时",
+            "cancel": "取消",
+            "save": "保存"
+        },
+        "edit_send_invite_message": {
+            "header": "编辑并发送邀请消息",
+            "description": "编辑冷却时间：一小时",
+            "cancel": "取消",
+            "send": "发送"
+        },
+        "edit_send_invite_response_message": {
+            "header": "编辑并发送拒绝消息",
+            "description": "编辑冷却时间：一小时",
+            "cancel": "取消",
+            "send": "发送"
+        },
+        "world_export": {
+            "header": "导出世界收藏夹"
+        },
+        "world_import": {
+            "header": "导入世界",
+            "description": "在下方输入世界 ID",
+            "process_list": "读取列表",
+            "process_progress": "进度：",
+            "select_vrchat_group_placeholder": "选择 VRChat 收藏夹",
+            "select_local_group_placeholder": "选择本地收藏夹",
+            "import": "导入世界",
+            "cancel": "取消",
+            "import_progress": "导入进度：",
+            "clear_table": "清除显示结果",
+            "errors": "错误：",
+            "clear_errors": "清除错误"
+        },
+        "avatar_export": {
+            "header": "导出模型收藏夹"
+        },
+        "avatar_import": {
+            "header": "导入模型",
+            "description": "在下方输入模型 ID",
+            "process_list": "读取列表",
+            "process_progress": "进度：",
+            "select_group_placeholder": "选择目标收藏夹",
+            "import": "导入",
+            "cancel": "取消",
+            "import_progress": "导入进度：",
+            "clear_table": "清除显示结果",
+            "errors": "错误：",
+            "clear_errors": "清除错误信息"
+        },
+        "friend_export": {
+            "header": "导出收藏（星标）好友"
+        },
+        "friend_import": {
+            "header": "导入好友",
+            "description": "在下方输入玩家 ID",
+            "process_list": "读取列表",
+            "process_progress": "进度：",
+            "select_group_placeholder": "选择目标分组",
+            "import": "导入",
+            "cancel": "取消",
+            "import_progress": "导入进度：",
+            "clear_table": "清除显示结果",
+            "errors": "错误：",
+            "clear_errors": "清除错误"
+        },
+        "export_friends_list": {
+            "header": "导出好友列表",
+            "csv": "CSV格式",
+            "json": "JSON格式"
+        },
+        "export_own_avatars": {
+            "header": "导出自己创建的模型的 ID"
+        },
+        "discord_names": {
+            "header": "Discord 名称",
+            "description": "点击好友列表中的“读取缺失的项目”按钮以搜索整个好友列表，而不仅仅是现有缓存"
+        },
+        "note_export": {
+            "header": "备注导出",
+            "description1": "这个过程将导出你所有的本地备注并将它们导入到 VRChat 的线上备注中。",
+            "description2": "请注意以下限制：",
+            "description3": "- API 接口有速率限制，每个请求之间会有很大的延迟。",
+            "description4": "- 每个备注的字数限制为 256 个字符。",
+            "description5": "- 有脏话过滤器（对中文没什么用，但还是扫兴）。",
+            "description6": "- 不能换行（换行符将会被替换成空格）。",
+            "description7": "- 这将会覆盖这些玩家现有的任何 VRChat 线上备注。",
+            "description8": "- 在这里所做的任何编辑都不会影响 VRCX 在本地写入的备注，但会在导出后影响 VRChat 上显示的备注。",
+            "refresh": "刷新",
+            "export": "导出",
+            "cancel": "取消",
+            "progress": "进度：",
+            "errors": "错误：",
+            "clear_errors": "清除错误信息"
+        },
+        "gallery_icons": {
+            "header": "相册与库存",
+            "recommended_image_size": "推荐的图片尺寸",
+            "gallery": "相册",
+            "icons": "图标",
+            "emojis": "Emojis（表情）",
+            "stickers": "贴纸",
+            "prints": "拍立得",
+            "inventory": "库存",
+            "refresh": "刷新",
+            "upload": "上传",
+            "clear": "清除",
+            "emoji_animation_styles": "动画样式",
+            "emoji_animation_type": "动画表情",
+            "emoji_animation_fps": "FPS：",
+            "emoji_animation_frame_count": "帧数：",
+            "emoji_loop_pingpong": "往返循环播放",
+            "flipbook_info": "选择一个 1024x1024 的 PNG 精灵表作为动画表情（最大 FPS 为64）",
+            "note": "备注",
+            "crop_print_border": "裁剪白边",
+            "consume_bundle": "拆开",
+            "item": "物品",
+            "sticker": "贴纸",
+            "drone_skin": "无人机皮肤",
+            "emoji": "Emoji（表情）",
+            "redeem": "兑换码兑换",
+            "create_animated_emoji": "动画表情生成器"
+        },
+        "gallery_select": {
+            "header": "选择图片",
+            "gallery": "相册",
+            "none": "无",
+            "refresh": "刷新",
+            "upload": "上传"
+        },
+        "change_content_image": {
+            "avatar": "更改模型封面",
+            "world": "更改世界封面",
+            "description": "推荐图片尺寸：1200 像素 x 900 像素 (4:3)",
+            "upload": "上传图片"
+        },
+        "screenshot_metadata": {
+            "header": "截图管理",
+            "drag": "拖放图片到这里",
+            "browse": "选择文件",
+            "last_screenshot": "上一张图片",
+            "copy_image": "复制图片",
+            "open_folder": "打开文件夹",
+            "delete_metadata": "删除当前图片的元数据",
+            "upload": "上传",
+            "search_placeholder": "搜索",
+            "search_type_placeholder": "搜索类型",
+            "search_types": {
+                "player_name": "玩家名称",
+                "player_id": "玩家 ID",
+                "world_name": "世界名称",
+                "world_id": "世界 ID"
+            },
+            "no_results": "未找到结果",
+            "invalid_file": "选择的文件无效。请选择有效的 VRChat 截图。"
+        },
+        "set_world_tags": {
+            "header": "设置世界标签",
+            "avatar_scaling_disabled": "关闭模型缩放功能",
+            "focus_view_disabled": "禁用焦点视图",
+            "enable_debugging": "为其他人启用世界调试菜单",
+            "author_tags": "作者添加的标签（以逗号分隔）",
+            "content_tags": "内容警告标签（以逗号分隔）",
+            "content_horror": "恐怖",
+            "content_gore": "血腥",
+            "content_violence": "暴力",
+            "content_adult": "成人内容",
+            "content_sex": "性暗示",
+            "default_content_settings": "默认内容设置",
+            "cancel": "取消",
+            "save": "保存"
+        },
+        "set_avatar_tags": {
+            "header": "设置模型标签",
+            "content_horror": "恐怖",
+            "content_gore": "血腥",
+            "content_violence": "暴力",
+            "content_adult": "成人内容",
+            "content_sex": "性暗示",
+            "custom_tags_placeholder": "输入自定义标签",
+            "select_all": "全选",
+            "select_none": "全不选",
+            "cancel": "取消",
+            "save": "保存"
+        },
+        "set_avatar_styles": {
+            "header": "设置模型风格",
+            "primary_style": "主要风格",
+            "secondary_style": "次要风格",
+            "select_style": "选择风格",
+            "save_success": "模型风格更改成功",
+            "save_failed": "模型风格更改失败",
+            "cancel": "取消",
+            "save": "保存"
+        },
+        "allowed_video_player_domains": {
+            "header": "允许在视频播放器使用的域名",
+            "add_domain": "添加域名",
             "save": "保存"
         },
         "config_json": {
@@ -1497,86 +1769,6 @@
             "msg_models_fetched": "找到 {count} 个可用的大语言模型",
             "msg_no_models_found": "未找到任何可用的大语言模型"
         },
-        "set_world_tags": {
-            "header": "设置世界标签",
-            "avatar_scaling_disabled": "关闭模型缩放功能",
-            "focus_view_disabled": "禁用焦点视图",
-            "enable_debugging": "为其他人启用世界调试菜单",
-            "author_tags": "作者添加的标签（以逗号分隔）",
-            "content_tags": "内容警告标签（以逗号分隔）",
-            "content_horror": "恐怖",
-            "content_gore": "血腥",
-            "content_violence": "暴力",
-            "content_adult": "成人内容",
-            "content_sex": "性暗示",
-            "default_content_settings": "默认内容设置",
-            "cancel": "取消",
-            "save": "保存"
-        },
-        "set_avatar_tags": {
-            "header": "设置模型标签",
-            "content_horror": "恐怖",
-            "content_gore": "血腥",
-            "content_violence": "暴力",
-            "content_adult": "成人内容",
-            "content_sex": "性暗示",
-            "custom_tags_placeholder": "输入自定义标签",
-            "select_all": "全选",
-            "select_none": "全不选",
-            "cancel": "取消",
-            "save": "保存"
-        },
-        "set_avatar_styles": {
-            "header": "设置模型风格",
-            "primary_style": "主要风格",
-            "secondary_style": "次要风格",
-            "select_style": "选择风格",
-            "save_success": "模型风格更改成功",
-            "save_failed": "模型风格更改失败",
-            "cancel": "取消",
-            "save": "保存"
-        },
-        "vrcx_updater": {
-            "header": "VRCX 更新",
-            "latest_version": "VRCX 已是最新版本",
-            "ready_for_update": "现已准备好安装更新，重启 VRCX 以开始安装",
-            "branch_stable": "稳定版",
-            "branch_nightly": "测试版",
-            "nightly_title": "测试版构建",
-            "nightly_notice": "测试版构建一般用于新功能测试。如果你需要稳定性，请使用稳定版构建。",
-            "release": "版本",
-            "download": "下载",
-            "install": "安装",
-            "cancel": "取消"
-        },
-        "launch": {
-            "header": "启动",
-            "url": "链接",
-            "short_url": "短链接",
-            "short_url_notice": "短链接会在一段时间后过期",
-            "location": "地点",
-            "copy_tooltip": "复制到剪贴板",
-            "start_as_desktop": "启动（桌面模式）",
-            "invite": "邀请",
-            "launch": "启动（VR模式）",
-            "open_ingame": "在 VRChat 中打开",
-            "self_invite": "邀请自己",
-            "game_running_warning": "你确定要启动另一个 VRChat 客户端吗？",
-            "confirm_yes": "是，确认启动",
-            "confirm_no": "否，我再想想"
-        },
-        "export_friends_list": {
-            "header": "导出好友列表",
-            "csv": "CSV格式",
-            "json": "JSON格式"
-        },
-        "export_own_avatars": {
-            "header": "导出自己创建的模型的 ID"
-        },
-        "discord_names": {
-            "header": "Discord 名称",
-            "description": "点击好友列表中的“读取缺失的项目”按钮以搜索整个好友列表，而不仅仅是现有缓存"
-        },
         "notification_position": {
             "header": "通知位置",
             "description": "选择通知位置",
@@ -1593,239 +1785,10 @@
             "reset": "重置为默认",
             "close": "关闭并保存"
         },
-        "world_export": {
-            "header": "导出世界收藏夹"
-        },
-        "world_import": {
-            "header": "导入世界",
-            "description": "在下方输入世界 ID",
-            "process_list": "读取列表",
-            "process_progress": "进度：",
-            "select_vrchat_group_placeholder": "选择 VRChat 收藏夹",
-            "select_local_group_placeholder": "选择本地收藏夹",
-            "import": "导入世界",
-            "cancel": "取消",
-            "import_progress": "导入进度：",
-            "clear_table": "清除显示结果",
-            "errors": "错误：",
-            "clear_errors": "清除错误"
-        },
-        "avatar_export": {
-            "header": "导出模型收藏夹"
-        },
-        "avatar_import": {
-            "header": "导入模型",
-            "description": "在下方输入模型 ID",
-            "process_list": "读取列表",
-            "process_progress": "进度：",
-            "select_group_placeholder": "选择目标收藏夹",
-            "import": "导入",
-            "cancel": "取消",
-            "import_progress": "导入进度：",
-            "clear_table": "清除显示结果",
-            "errors": "错误：",
-            "clear_errors": "清除错误信息"
-        },
-        "friend_export": {
-            "header": "导出收藏（星标）好友"
-        },
-        "friend_import": {
-            "header": "导入好友",
-            "description": "在下方输入玩家 ID",
-            "process_list": "读取列表",
-            "process_progress": "进度：",
-            "select_group_placeholder": "选择目标分组",
-            "import": "导入",
-            "cancel": "取消",
-            "import_progress": "导入进度：",
-            "clear_table": "清除显示结果",
-            "errors": "错误：",
-            "clear_errors": "清除错误"
-        },
-        "avatar_database_provider": {
-            "header": "模型数据库提供方",
-            "add_provider": "新增"
-        },
-        "chatbox_blacklist": {
-            "header": "聊天框黑名单",
-            "keyword_blacklist": "关键词黑名单",
-            "user_blacklist": "用户黑名单",
-            "add_item": "新增项目"
-        },
-        "invite_to_group": {
-            "header": "邀请好友加入群组",
-            "description": "请不要滥用邀请功能，短时间内邀请大量玩家加入群组会导致你的账号被封禁。",
-            "choose_group_placeholder": "选择群组",
-            "groups_with_invite_permission": "有邀请权限的群组",
-            "choose_friends_placeholder": "选择好友",
-            "selected_users": "已选择的玩家",
-            "invite": "邀请"
-        },
-        "note_export": {
-            "header": "备注导出",
-            "description1": "这个过程将导出你所有的本地备注并将它们导入到 VRChat 的线上备注中。",
-            "description2": "请注意以下限制：",
-            "description3": "- API 接口有速率限制，每个请求之间会有很大的延迟。",
-            "description4": "- 每个备注的字数限制为 256 个字符。",
-            "description5": "- 有脏话过滤器（对中文没什么用，但还是扫兴）。",
-            "description6": "- 不能换行（换行符将会被替换成空格）。",
-            "description7": "- 这将会覆盖这些玩家现有的任何 VRChat 线上备注。",
-            "description8": "- 在这里所做的任何编辑都不会影响 VRCX 在本地写入的备注，但会在导出后影响 VRChat 上显示的备注。",
-            "refresh": "刷新",
-            "export": "导出",
-            "cancel": "取消",
-            "progress": "进度：",
-            "errors": "错误：",
-            "clear_errors": "清除错误信息"
-        },
-        "edit_invite_message": {
-            "header": "编辑消息",
-            "description": "编辑冷却时间：一小时",
-            "cancel": "取消",
-            "save": "保存"
-        },
-        "edit_invite_messages": {
-            "header": "编辑消息",
-            "invite_message_tab": "邀请",
-            "invite_request_tab": "申请加入",
-            "invite_request_response_tab": "回绝加入申请",
-            "invite_response_tab": "回绝邀请"
-        },
-        "invite_message": {
-            "header": "发送消息",
-            "confirmation": "你确定要进行这个操作吗？",
-            "select_image": "选择图片",
-            "clear_selected_image": "清除选择",
-            "cancel": "取消",
-            "refresh": "刷新",
-            "confirm": "确定"
-        },
-        "invite_request_message": {
-            "header": "发送消息",
-            "cancel": "取消",
-            "refresh": "刷新"
-        },
-        "invite_response_message": {
-            "header": "对邀请的快捷回复",
-            "confirmation": "你确定要进行这个操作吗？",
-            "cancel": "取消",
-            "refresh": "刷新",
-            "confirm": "确定"
-        },
-        "invite_request_response_message": {
-            "header": "编辑并发送拒绝消息",
-            "cancel": "取消",
-            "refresh": "刷新"
-        },
-        "edit_send_invite_message": {
-            "header": "编辑并发送邀请消息",
-            "description": "编辑冷却时间：一小时",
-            "cancel": "取消",
-            "send": "发送"
-        },
-        "edit_send_invite_response_message": {
-            "header": "编辑并发送拒绝消息",
-            "description": "编辑冷却时间：一小时",
-            "cancel": "取消",
-            "send": "发送"
-        },
-        "gallery_icons": {
-            "header": "相册与库存",
-            "recommended_image_size": "推荐的图片尺寸",
-            "gallery": "相册",
-            "icons": "图标",
-            "emojis": "Emojis（表情）",
-            "stickers": "贴纸",
-            "prints": "拍立得",
-            "inventory": "库存",
-            "refresh": "刷新",
-            "upload": "上传",
-            "clear": "清除",
-            "emoji_animation_styles": "动画样式",
-            "emoji_animation_type": "动画表情",
-            "emoji_animation_fps": "FPS：",
-            "emoji_animation_frame_count": "帧数：",
-            "emoji_loop_pingpong": "往返循环播放",
-            "flipbook_info": "选择一个 1024x1024 的 PNG 精灵表作为动画表情（最大 FPS 为64）",
-            "note": "备注",
-            "crop_print_border": "裁剪白边",
-            "consume_bundle": "拆开",
-            "item": "物品",
-            "sticker": "贴纸",
-            "drone_skin": "无人机皮肤",
-            "emoji": "Emoji（表情）",
-            "redeem": "兑换码兑换",
-            "create_animated_emoji": "动画表情生成器"
-        },
-        "change_content_image": {
-            "avatar": "更改模型封面",
-            "world": "更改世界封面",
-            "description": "推荐图片尺寸：1200 像素 x 900 像素 (4:3)",
-            "upload": "上传图片"
-        },
         "previous_instances": {
             "header": "曾加入的房间",
             "info": "曾加入的房间",
             "search_placeholder": "搜索"
-        },
-        "change_log": {
-            "header": "更新日志",
-            "description": "考虑捐赠一下，以支持 VRCX 的未来发展",
-            "close": "关闭",
-            "donate": "捐赠支持",
-            "github": "在 GitHub 上查看"
-        },
-        "gallery_select": {
-            "header": "选择图片",
-            "gallery": "相册",
-            "none": "无",
-            "refresh": "刷新",
-            "upload": "上传"
-        },
-        "open_source": {
-            "header": "开放源代码许可条款",
-            "description": "VRCX 是基于开放源代码软件开发的。没有他们的贡献，这个程序不可能开发出来。"
-        },
-        "primary_password": {
-            "header": "设置独立密码",
-            "password_placeholder": "输入新密码",
-            "re_input_placeholder": "确认密码",
-            "ok": "确定"
-        },
-        "screenshot_metadata": {
-            "header": "截图管理",
-            "drag": "拖放图片到这里",
-            "browse": "选择文件",
-            "last_screenshot": "上一张图片",
-            "copy_image": "复制图片",
-            "open_folder": "打开文件夹",
-            "delete_metadata": "删除当前图片的元数据",
-            "upload": "上传",
-            "search_placeholder": "搜索",
-            "search_type_placeholder": "搜索类型",
-            "search_types": {
-                "player_name": "玩家名称",
-                "player_id": "玩家 ID",
-                "world_name": "世界名称",
-                "world_id": "世界 ID"
-            },
-            "no_results": "未找到结果",
-            "invalid_file": "选择的文件无效。请选择有效的 VRChat 截图。"
-        },
-        "registry_backup": {
-            "header": "VRC 设置数据备份工具",
-            "backup": "备份",
-            "restore": "还原",
-            "save_to_file": "保存到文件",
-            "delete": "删除",
-            "restore_from_file": "从文件恢复",
-            "reset": "重置",
-            "name": "名称",
-            "date": "日期",
-            "action": "操作",
-            "auto_backup": "开启自动备份（每三天备份一次，同时删除超过两周的备份）",
-            "ask_to_restore": "当未检测到本地 VRC 设置数据时，询问是否恢复",
-            "restore_prompt": "注意到你已启用 VRC 设置数据的自动备份，但这台计算机上没有发现任何备份。如果你想从备份中恢复数据，可以在此处进行恢复。"
         },
         "group_member_moderation": {
             "header": "群组成员管理",
@@ -1887,19 +1850,6 @@
             "create_post": "创建帖子",
             "edit_post": "编辑帖子"
         },
-        "boop_dialog": {
-            "header": "戳一戳",
-            "emoji_manager": "表情管理",
-            "select_emoji": "选择表情",
-            "default_emojis": "默认表情",
-            "cancel": "取消",
-            "send": "发送"
-        },
-        "allowed_video_player_domains": {
-            "header": "允许在视频播放器使用的域名",
-            "add_domain": "添加域名",
-            "save": "保存"
-        },
         "group_calendar": {
             "header": "活动日历",
             "list_view": "列表视图",
@@ -1924,6 +1874,68 @@
             "header": "管理群组成员",
             "choose_group_placeholder": "选择群组...",
             "moderation_tools": "打开管理工具"
+        },
+        "boop_dialog": {
+            "header": "戳一戳",
+            "emoji_manager": "表情管理",
+            "default_emojis": "默认表情",
+            "cancel": "取消",
+            "send": "发送"
+        },
+        "chatbox_blacklist": {
+            "header": "聊天框黑名单",
+            "keyword_blacklist": "关键词黑名单",
+            "user_blacklist": "用户黑名单",
+            "add_item": "新增项目"
+        },
+        "vrcx_updater": {
+            "header": "VRCX 更新",
+            "latest_version": "VRCX 已是最新版本",
+            "ready_for_update": "现已准备好安装更新，重启 VRCX 以开始安装",
+            "branch_stable": "稳定版",
+            "branch_nightly": "测试版",
+            "nightly_title": "测试版构建",
+            "nightly_notice": "测试版构建一般用于新功能测试。如果你需要稳定性，请使用稳定版构建。",
+            "release": "版本",
+            "download": "下载",
+            "install": "安装",
+            "cancel": "取消"
+        },
+        "change_log": {
+            "header": "更新日志",
+            "description": "考虑捐赠一下，以支持 VRCX 的未来发展",
+            "close": "关闭",
+            "donate": "捐赠支持",
+            "github": "在 GitHub 上查看"
+        },
+        "open_source": {
+            "header": "开放源代码许可条款",
+            "description": "VRCX 是基于开放源代码软件开发的。没有他们的贡献，这个程序不可能开发出来。"
+        },
+        "primary_password": {
+            "header": "设置独立密码",
+            "password_placeholder": "输入新密码",
+            "re_input_placeholder": "确认密码",
+            "ok": "确定"
+        },
+        "registry_backup": {
+            "header": "VRC 设置数据备份工具",
+            "backup": "备份",
+            "restore": "还原",
+            "save_to_file": "保存到文件",
+            "delete": "删除",
+            "restore_from_file": "从文件恢复",
+            "reset": "重置",
+            "name": "名称",
+            "date": "日期",
+            "action": "操作",
+            "auto_backup": "开启自动备份（每三天备份一次，同时删除超过两周的备份）",
+            "ask_to_restore": "当未检测到本地 VRC 设置数据时，询问是否恢复",
+            "restore_prompt": "注意到你已启用 VRC 设置数据的自动备份，但这台计算机上没有发现任何备份。如果你想从备份中恢复数据，可以在此处进行恢复。"
+        },
+        "avatar_database_provider": {
+            "header": "模型数据库提供方",
+            "add_provider": "新增"
         }
     },
     "confirm": {
@@ -1946,91 +1958,6 @@
         "restart_required_title": "需要重启",
         "restart_now": "立即重启",
         "restart_later": "稍后重启"
-    },
-    "status": {
-        "title": "VRChat 状态"
-    },
-    "location": {
-        "offline": "离线",
-        "private": "位于私人房间",
-        "traveling": "正在传送"
-    },
-    "message": {
-        "auto_login_delay_countdown": "将在 {seconds} 秒后自动登录...",
-        "vrcx_updater": {
-            "failed": "无法检查更新，{message}",
-            "failed_install": "无法安装更新",
-            "checking_hash": "正在校验文件..."
-        },
-        "api_handler": {
-            "avatar_private_or_deleted": "这个模型是私人的，或其已被删除"
-        },
-        "badge": {
-            "updated": "已更新徽章状态"
-        },
-        "instance": {
-            "closed": "房间已关闭",
-            "removed_form_queue": "已从等待队列中移除 {worldName}",
-            "not_allowed": "你无权访问此房间",
-            "create_failed": "房间创建失败"
-        },
-        "avatar": {
-            "change_moderation_failed": "无法更新模型状态"
-        },
-        "avatar_lookup": {
-            "not_found": "在模型数据库中未能找到模型",
-            "failed": "在模型数据库中查找此模型信息时失败",
-            "private_or_not_found": "此玩家的模型是私人的，或者在公共模型数据库中未能找到",
-            "loading": "正在从指定的模型数据库中查找模型"
-        },
-        "database": {
-            "upgrade_complete": "数据库升级完成"
-        },
-        "file": {
-            "not_image": "文件不是有效的图片格式",
-            "too_large": "文件大小过大",
-            "folder_missing": "文件夹不存在"
-        },
-        "group": {
-            "load_failed": "加载群组失败"
-        },
-        "invite": {
-            "self_sent": "已发送自我邀请",
-            "sent": "已发送邀请",
-            "message_update_failed": "VRChat API 未能更新消息，请重试"
-        },
-        "launch": {
-            "invalid_path": "无效路径，你必须输入 VRChat 文件夹所在的路径或 “launch.exe” 所在的路径"
-        },
-        "gallery": {
-            "uploaded": "图片已成功上传到相册",
-            "failed": "无法将图片上传到相册"
-        },
-        "upload": {
-            "loading": "上传中",
-            "success": "上传成功",
-            "error": "上传失败"
-        },
-        "world": {
-            "load_failed": "加载世界信息失败"
-        },
-        "user": {
-            "moderated": "已更新玩家状态",
-            "load_failed": "加载用户信息失败"
-        },
-        "friend": {
-            "load_failed": "加载好友列表失败，即将登出"
-        },
-        "vrcplus": {
-            "required": "需要 VRC+ 才能使用此功能"
-        },
-        "screenshot_metadata": {
-            "deleted": "已删除图片元数据",
-            "delete_failed": "删除图片元数据失败"
-        },
-        "crash": {
-            "vrcx_reload": "为保证稳定性，VRCX 已重新加载"
-        }
     },
     "prompt": {
         "totp": {
@@ -2221,6 +2148,91 @@
             "success": "兑换成功!"
         }
     },
+    "message": {
+        "auto_login_delay_countdown": "将在 {seconds} 秒后自动登录...",
+        "vrcx_updater": {
+            "failed": "无法检查更新，{message}",
+            "failed_install": "无法安装更新",
+            "checking_hash": "正在校验文件..."
+        },
+        "api_handler": {
+            "avatar_private_or_deleted": "这个模型是私人的，或其已被删除"
+        },
+        "badge": {
+            "updated": "已更新徽章状态"
+        },
+        "instance": {
+            "closed": "房间已关闭",
+            "removed_form_queue": "已从等待队列中移除 {worldName}",
+            "not_allowed": "你无权访问此房间",
+            "create_failed": "房间创建失败"
+        },
+        "avatar": {
+            "change_moderation_failed": "无法更新模型状态"
+        },
+        "avatar_lookup": {
+            "not_found": "在模型数据库中未能找到模型",
+            "failed": "在模型数据库中查找此模型信息时失败",
+            "private_or_not_found": "此玩家的模型是私人的，或者在公共模型数据库中未能找到",
+            "loading": "正在从指定的模型数据库中查找模型"
+        },
+        "database": {
+            "upgrade_complete": "数据库升级完成"
+        },
+        "file": {
+            "not_image": "文件不是有效的图片格式",
+            "too_large": "文件大小过大",
+            "folder_missing": "文件夹不存在"
+        },
+        "group": {
+            "load_failed": "加载群组失败"
+        },
+        "invite": {
+            "self_sent": "已发送自我邀请",
+            "sent": "已发送邀请",
+            "message_update_failed": "VRChat API 未能更新消息，请重试"
+        },
+        "launch": {
+            "invalid_path": "无效路径，你必须输入 VRChat 文件夹所在的路径或 “launch.exe” 所在的路径"
+        },
+        "gallery": {
+            "uploaded": "图片已成功上传到相册",
+            "failed": "无法将图片上传到相册"
+        },
+        "upload": {
+            "loading": "上传中",
+            "success": "上传成功",
+            "error": "上传失败"
+        },
+        "world": {
+            "load_failed": "加载世界信息失败"
+        },
+        "user": {
+            "moderated": "已更新玩家状态",
+            "load_failed": "加载用户信息失败"
+        },
+        "friend": {
+            "load_failed": "加载好友列表失败，即将登出"
+        },
+        "vrcplus": {
+            "required": "需要 VRC+ 才能使用此功能"
+        },
+        "screenshot_metadata": {
+            "deleted": "已删除图片元数据",
+            "delete_failed": "删除图片元数据失败"
+        },
+        "crash": {
+            "vrcx_reload": "为保证稳定性，VRCX 已重新加载"
+        }
+    },
+    "status": {
+        "title": "VRChat 状态"
+    },
+    "location": {
+        "offline": "离线",
+        "private": "位于私人房间",
+        "traveling": "正在传送"
+    },
     "table": {
         "pagination": {
             "rows_per_page": "每页显示行数",
@@ -2326,20 +2338,6 @@
             "time": "停留时间",
             "count": "加入次数",
             "action": "操作"
-        }
-    },
-    "common": {
-        "no_data": "无数据",
-        "no_matching_records": "无匹配记录",
-        "actions": {
-            "open": "打开"
-        },
-        "time_units": {
-            "y": "年",
-            "d": "天",
-            "h": "小时",
-            "m": "分钟",
-            "s": "秒"
         }
     },
     "vr": {

@@ -14,6 +14,22 @@
         "charts": "แผนภูมิ",
         "settings": "การตั้งค่า"
     },
+    "side_panel": {
+        "search_placeholder": "ค้นหา",
+        "search_result_active": "ออฟไลน์",
+        "search_result_offline": "กำลังใช้งาน",
+        "search_result_more": "ค้นหาเพิ่มเติม:",
+        "refresh_tooltip": "รีเฟรชเพื่อน",
+        "groups": "กลุ่ม",
+        "friends": "เพื่อน",
+        "me": "ฉัน",
+        "favorite": "รายการโปรด",
+        "same_instance": "อินสแตนซ์เดียวกัน",
+        "online": "ออนไลน์",
+        "active": "กำลังใช้งาน",
+        "offline": "ออฟไลน์",
+        "pending_offline": "กำลังจะออฟไลน์"
+    },
     "view": {
         "login": {
             "savedAccounts": "บัญชีที่บันทึกไว้",
@@ -120,12 +136,10 @@
             "copy": "คัดลอก",
             "clear": "ล้าง",
             "bulk_unfavorite": "เลิกถูกใจหลายรายการ",
-            "refresh_tooltip": "รีเฟรชรายการโปรดทั้งหมด",
             "export": "ส่งออก",
             "import": "นำเข้า",
             "move_tooltip": "ย้าย",
             "copy_tooltip": "คัดลอก",
-            "self_invite_tooltip": "เชิญตัวเอง",
             "unfavorite_tooltip": "เลิกถูกใจ",
             "visibility_tooltip": "เปลี่ยนการมองเห็น",
             "rename_tooltip": "เปลี่ยนชื่อ",
@@ -229,6 +243,19 @@
                 }
             }
         },
+        "tools": {
+            "export": {
+                "discord_names": "ชื่อ Discord",
+                "export_friend_list": "ส่งออกรายชื่อเพื่อน",
+                "export_own_avatars": "ส่งออกอวาตาร์ของตัวเอง"
+            },
+            "pictures": {
+                "pictures": {
+                    "vrc_photos": "รูปภาพ VRChat",
+                    "steam_screenshots": "สกรีนช็อตของ Steam"
+                }
+            }
+        },
         "profile": {
             "profile": {
                 "vrchat_credits": "VRChat Credits",
@@ -240,18 +267,6 @@
                 "user_online": "ผู้ใช้ออนไลน์ {count} คน",
                 "refresh": "คลิกเพื่อรีเฟรช"
             },
-            "direct_access": {
-                "header": "เข้าถึงโดยตรง",
-                "username": "ชื่อผู้ใช้",
-                "user_id": "ID ผู้ใช้",
-                "world_instance": "โลก/อินสแตนซ์",
-                "avatar": "อวาตาร์"
-            },
-            "invite_messages": "ข้อความเชิญ",
-            "invite_response_messages": "ข้อความตอบกลับคำเชิญ",
-            "invite_request_messages": "ข้อความขอคำเชิญ",
-            "invite_request_response_messages": "ข้อความตอบกลับคำขอเชิญ",
-            "past_display_names": "ชื่อที่แสดงในอดีต",
             "config_json": "Config JSON",
             "refresh_tooltip": "รีเฟรช",
             "clear_results_tooltip": "ล้างผลลัพธ์"
@@ -352,8 +367,7 @@
                     "sort_favorite_by_date": "วันที่",
                     "sort_instance_users_by": "เรียงผู้ใช้ในอินสแตนซ์ตาม",
                     "sort_instance_users_by_time": "เวลา",
-                    "sort_instance_users_by_alphabet": "ตัวอักษร",
-                    "page_size": "ขนาดหน้า:"
+                    "sort_instance_users_by_alphabet": "ตัวอักษร"
                 },
                 "timedate": {
                     "header": "เวลา/วันที่",
@@ -620,36 +634,7 @@
                     }
                 }
             }
-        },
-        "tools": {
-            "export": {
-                "discord_names": "ชื่อ Discord",
-                "export_friend_list": "ส่งออกรายชื่อเพื่อน",
-                "export_own_avatars": "ส่งออกอวาตาร์ของตัวเอง"
-            },
-            "pictures": {
-                "pictures": {
-                    "vrc_photos": "รูปภาพ VRChat",
-                    "steam_screenshots": "สกรีนช็อตของ Steam"
-                }
-            }
         }
-    },
-    "side_panel": {
-        "search_placeholder": "ค้นหา",
-        "search_result_active": "ออฟไลน์",
-        "search_result_offline": "กำลังใช้งาน",
-        "search_result_more": "ค้นหาเพิ่มเติม:",
-        "refresh_tooltip": "รีเฟรชเพื่อน",
-        "groups": "กลุ่ม",
-        "friends": "เพื่อน",
-        "me": "ฉัน",
-        "favorite": "รายการโปรด",
-        "same_instance": "อินสแตนซ์เดียวกัน",
-        "online": "ออนไลน์",
-        "active": "กำลังใช้งาน",
-        "offline": "ออฟไลน์",
-        "pending_offline": "กำลังจะออฟไลน์"
     },
     "dialog": {
         "user": {
@@ -664,7 +649,6 @@
             "previous_display_names": "ชื่อที่แสดงก่อนหน้า:",
             "pronouns": "สรรพนาม",
             "tags": {
-                "friend_no": "เพื่อนคนที่ {number}",
                 "vrchat_team": "ทีม VRChat",
                 "age_verified": "ยืนยันอายุแล้ว"
             },
@@ -692,7 +676,6 @@
                 "show_avatar_author": "แสดงผู้สร้างอวาตาร์",
                 "show_fallback_avatar": "แสดงรายละเอียดอวาตาร์สำรอง",
                 "show_previous_instances": "แสดงอินสแตนซ์ก่อนหน้า",
-                "show_previous_images": "แสดงรูปภาพก่อนหน้า",
                 "moderation_block": "บล็อก",
                 "moderation_unblock": "เลิกบล็อก",
                 "moderation_mute": "ปิดเสียง",
@@ -836,7 +819,6 @@
                 "make_home": "ตั้งเป็นโลกหลัก",
                 "reset_home": "รีเซ็ตโลกหลัก",
                 "show_previous_instances": "แสดงอินสแตนซ์ก่อนหน้า",
-                "show_previous_images": "แสดงรูปภาพก่อนหน้า",
                 "rename": "เปลี่ยนชื่อ",
                 "change_description": "เปลี่ยนคำอธิบาย",
                 "change_capacity": "เปลี่ยนความจุ",
@@ -918,7 +900,6 @@
                 "select_fallback": "เลือกอวาตาร์สำรอง",
                 "block": "บล็อกอวาตาร์",
                 "unblock": "เลิกบล็อกอวาตาร์",
-                "show_previous_images": "แสดงรูปภาพก่อนหน้า",
                 "make_public": "ตั้งเป็นสาธารณะ",
                 "make_private": "ตั้งเป็นส่วนตัว",
                 "rename": "เปลี่ยนชื่อ",
@@ -1032,7 +1013,6 @@
                 "load_more": "โหลดเพิ่มเติม...",
                 "sort_by": "เรียงตาม:",
                 "sorting": {
-                    "user_id": "ID ผู้ใช้ (จากน้อยไปมาก)",
                     "joined_at_asc": "วันที่เข้าร่วม (จากน้อยไปมาก)",
                     "joined_at_desc": "วันที่เข้าร่วม (จากมากไปน้อย)"
                 },
@@ -1059,16 +1039,6 @@
             "vrchat_favorites": "รายการโปรดของ VRChat",
             "local_favorites": "รายการโปรดในเครื่อง",
             "local_avatar_favorites": "รายการโปรดในเครื่อง (ต้องใช้ VRC+)"
-        },
-        "invite": {
-            "header": "เชิญ",
-            "select_placeholder": "เลือกเพื่อน",
-            "add_self": "เพิ่มตัวเอง",
-            "add_friends_in_instance": "เพิ่มเพื่อนในอินสแตนซ์",
-            "add_favorite_friends": "เพิ่มเพื่อนคนโปรด",
-            "invite_with_message": "เชิญพร้อมข้อความ",
-            "invite": "เชิญ",
-            "friends_in_instance": "เพื่อนในอินสแตนซ์"
         },
         "social_status": {
             "header": "สถานะโซเชียล",
@@ -1137,93 +1107,6 @@
             "legacy": "ดั้งเดิม",
             "roles": "บทบาท"
         },
-        "launch_options": {
-            "header": "ตัวเลือกการเปิด VRChat",
-            "description": "ตัวเลือกเหล่านี้สำหรับผู้ใช้ขั้นสูงเท่านั้น",
-            "example": "(เช่น หากต้องการเปลี่ยน fps สูงสุด: --fps=<N>)",
-            "path_override": "กำหนดเส้นทาง VRChat เอง",
-            "vrchat_docs": "เอกสาร VRChat",
-            "unity_manual": "คู่มือ Unity",
-            "save": "บันทึก"
-        },
-        "config_json": {
-            "header": "VRChat Config JSON",
-            "description1": "ตัวเลือกเหล่านี้สำหรับผู้ใช้ขั้นสูงเท่านั้น",
-            "description2": "เว้นว่างไว้เพื่อตั้งเป็นค่าเริ่มต้น, ต้องรีสตาร์ทเกมเพื่อใช้การตั้งค่า",
-            "cache_size": "ขนาดแคช:",
-            "refresh": "รีเฟรช",
-            "delete_all_cache": "ลบแคชทั้งหมด",
-            "delete_cache": "ลบแคช",
-            "delete_old_cache": "ลบเวอร์ชันเก่าออกจากแคช",
-            "sweep_cache": "กวาดล้างแคช",
-            "max_cache_size": "ขนาดแคชสูงสุด [GB] (ขั้นต่ำ 30)",
-            "cache_expiry_delay": "อายุแคช [วัน] (ขั้นต่ำ 30)",
-            "cache_directory": "ตำแหน่งโฟลเดอร์แคชที่กำหนดเอง",
-            "picture_directory": "ตำแหน่งโฟลเดอร์รูปภาพที่กำหนดเอง",
-            "fpv_steadycam_fov": "FOV ของกล้อง Steadycam มุมมองบุคคลที่หนึ่ง",
-            "camera_resolution": "ความละเอียดกล้อง",
-            "spout_resolution": "ความละเอียด Spout",
-            "screenshot_resolution": "ความละเอียดสกรีนช็อต",
-            "picture_sort_by_date": "จัดเรียงรูปภาพลงในโฟลเดอร์ตามวันที่",
-            "disable_discord_presence": "ปิดใช้งาน Discord Rich Presence",
-            "vrchat_docs": "เอกสาร VRChat",
-            "cancel": "ยกเลิก",
-            "save": "บันทึก"
-        },
-        "youtube_api": {
-            "header": "YouTube API",
-            "description": "ป้อนคีย์ YouTube API ของคุณ (ไม่จำเป็น)",
-            "placeholder": "คีย์ YouTube API",
-            "guide": "คู่มือ",
-            "save": "บันทึก"
-        },
-        "set_world_tags": {
-            "header": "ตั้งค่าแท็กโลก",
-            "avatar_scaling_disabled": "ปิดการปรับขนาดอวาตาร์",
-            "focus_view_disabled": "ปิดมุมมองโฟกัส",
-            "enable_debugging": "เปิดใช้งานการดีบักโลกสำหรับผู้อื่น",
-            "author_tags": "แท็กของผู้สร้าง (คั่นด้วยจุลภาค)",
-            "content_tags": "แท็กคำเตือนเนื้อหา",
-            "content_horror": "สยองขวัญ",
-            "content_gore": "เลือดสาด",
-            "content_violence": "ความรุนแรง",
-            "content_adult": "ผู้ใหญ่",
-            "content_sex": "เรื่องเพศ",
-            "default_content_settings": "การตั้งค่าเนื้อหาเริ่มต้น",
-            "cancel": "ยกเลิก",
-            "save": "บันทึก"
-        },
-        "set_avatar_tags": {
-            "header": "ตั้งค่าแท็กอวาตาร์",
-            "content_horror": "สยองขวัญ",
-            "content_gore": "เลือดสาด",
-            "content_violence": "ความรุนแรง",
-            "content_adult": "ผู้ใหญ่",
-            "content_sex": "เรื่องเพศ",
-            "custom_tags_placeholder": "แท็กที่กำหนดเอง",
-            "select_all": "เลือกทั้งหมด",
-            "select_none": "ไม่เลือกเลย",
-            "cancel": "ยกเลิก",
-            "save": "บันทึก"
-        },
-        "set_avatar_styles": {
-            "header": "ตั้งค่าสไตล์อวาตาร์",
-            "primary_style": "สไตล์หลัก",
-            "secondary_style": "สไตล์รอง",
-            "select_style": "เลือกสไตล์",
-            "save_success": "เปลี่ยนสไตล์อวาตาร์สำเร็จ",
-            "save_failed": "ไม่สามารถเปลี่ยนสไตล์อวาตาร์ได้",
-            "cancel": "ยกเลิก",
-            "save": "บันทึก"
-        },
-        "vrcx_updater": {
-            "header": "ตัวอัปเดต VRCX",
-            "latest_version": "VRCX เป็นเวอร์ชันล่าสุดแล้ว",
-            "ready_for_update": "พร้อมติดตั้งแล้ว, รีสตาร์ท VRCX เพื่อใช้งาน",
-            "download": "ดาวน์โหลด",
-            "install": "ติดตั้ง",
-            "cancel": "ยกเลิก"
-        },
         "launch": {
             "header": "เปิดเกม",
             "url": "URL",
@@ -1235,33 +1118,75 @@
             "invite": "เชิญ",
             "launch": "เปิดเกม"
         },
-        "export_friends_list": {
-            "header": "ส่งออกรายชื่อเพื่อน",
-            "csv": "CSV",
-            "json": "JSON"
+        "launch_options": {
+            "header": "ตัวเลือกการเปิด VRChat",
+            "description": "ตัวเลือกเหล่านี้สำหรับผู้ใช้ขั้นสูงเท่านั้น",
+            "example": "(เช่น หากต้องการเปลี่ยน fps สูงสุด: --fps=<N>)",
+            "path_override": "กำหนดเส้นทาง VRChat เอง",
+            "vrchat_docs": "เอกสาร VRChat",
+            "unity_manual": "คู่มือ Unity",
+            "save": "บันทึก"
         },
-        "export_own_avatars": {
-            "header": "ส่งออกอวาตาร์ของตัวเอง"
+        "invite": {
+            "header": "เชิญ",
+            "select_placeholder": "เลือกเพื่อน",
+            "add_self": "เพิ่มตัวเอง",
+            "add_friends_in_instance": "เพิ่มเพื่อนในอินสแตนซ์",
+            "add_favorite_friends": "เพิ่มเพื่อนคนโปรด",
+            "invite_with_message": "เชิญพร้อมข้อความ",
+            "invite": "เชิญ",
+            "friends_in_instance": "เพื่อนในอินสแตนซ์"
         },
-        "discord_names": {
-            "header": "ชื่อ Discord",
-            "description": "คลิก 'โหลดรายการที่ขาดหายไป' ในแท็บรายชื่อเพื่อนเพื่อค้นหารายชื่อเพื่อนทั้งหมด"
+        "invite_to_group": {
+            "header": "เชิญเข้ากลุ่ม",
+            "description": "อย่าสแปมเชิญผู้ใช้ เพราะคุณจะถูกจำกัดอัตราการส่ง",
+            "choose_group_placeholder": "เลือกกลุ่ม",
+            "choose_friends_placeholder": "เลือกเพื่อน",
+            "selected_users": "ผู้ใช้ที่เลือก"
         },
-        "notification_position": {
-            "header": "ตำแหน่งการแจ้งเตือน",
-            "description": "เลือกตำแหน่งการแจ้งเตือน",
-            "ok": "ตกลง"
+        "invite_message": {
+            "header": "ส่งข้อความเชิญ",
+            "confirmation": "คุณแน่ใจหรือไม่ว่าต้องการส่ง?",
+            "select_image": "เลือกรูปภาพ",
+            "clear_selected_image": "ล้างรูปภาพที่เลือก",
+            "cancel": "ยกเลิก",
+            "refresh": "รีเฟรช",
+            "confirm": "ยืนยัน"
         },
-        "shared_feed_filters": {
-            "notification": "ตัวกรองการแจ้งเตือน",
-            "wrist": "ตัวกรองฟีดบนข้อมือ",
-            "on": "เปิด",
-            "off": "ปิด",
-            "favorite": "รายการโปรด",
-            "friends": "เพื่อน",
-            "everyone": "ทุกคน",
-            "reset": "รีเซ็ต",
-            "close": "ปิด"
+        "invite_request_message": {
+            "header": "ส่งข้อความขอคำเชิญ",
+            "cancel": "ยกเลิก",
+            "refresh": "รีเฟรช"
+        },
+        "invite_response_message": {
+            "header": "ส่งข้อความตอบกลับคำเชิญ",
+            "confirmation": "คุณแน่ใจหรือไม่ว่าต้องการส่ง?",
+            "cancel": "ยกเลิก",
+            "refresh": "รีเฟรช",
+            "confirm": "ยืนยัน"
+        },
+        "invite_request_response_message": {
+            "header": "ส่งข้อความตอบกลับคำขอเชิญ",
+            "cancel": "ยกเลิก",
+            "refresh": "รีเฟรช"
+        },
+        "edit_invite_message": {
+            "header": "แก้ไขข้อความเชิญ",
+            "description": "มีคูลดาวน์ในการแก้ไข 1 ชั่วโมง",
+            "cancel": "ยกเลิก",
+            "save": "บันทึก"
+        },
+        "edit_send_invite_message": {
+            "header": "แก้ไขและส่งข้อความเชิญ",
+            "description": "มีคูลดาวน์ในการแก้ไข 1 ชั่วโมง",
+            "cancel": "ยกเลิก",
+            "send": "ส่ง"
+        },
+        "edit_send_invite_response_message": {
+            "header": "แก้ไขและส่งข้อความตอบกลับคำเชิญ",
+            "description": "มีคูลดาวน์ในการแก้ไข 1 ชั่วโมง",
+            "cancel": "ยกเลิก",
+            "send": "ส่ง"
         },
         "world_export": {
             "header": "ส่งออกโลกโปรด"
@@ -1312,23 +1237,17 @@
             "errors": "ข้อผิดพลาด:",
             "clear_errors": "ล้างข้อผิดพลาด"
         },
-        "avatar_database_provider": {
-            "header": "ผู้ให้บริการฐานข้อมูลอวาตาร์",
-            "add_provider": "เพิ่มผู้ให้บริการ"
+        "export_friends_list": {
+            "header": "ส่งออกรายชื่อเพื่อน",
+            "csv": "CSV",
+            "json": "JSON"
         },
-        "chatbox_blacklist": {
-            "header": "บัญชีดำกล่องแชท",
-            "keyword_blacklist": "บัญชีดำคำสำคัญ",
-            "user_blacklist": "บัญชีดำผู้ใช้",
-            "add_item": "เพิ่มรายการ"
+        "export_own_avatars": {
+            "header": "ส่งออกอวาตาร์ของตัวเอง"
         },
-        "invite_to_group": {
-            "header": "เชิญเข้ากลุ่ม",
-            "description": "อย่าสแปมเชิญผู้ใช้ เพราะคุณจะถูกจำกัดอัตราการส่ง",
-            "choose_group_placeholder": "เลือกกลุ่ม",
-            "groups": "กลุ่ม",
-            "choose_friends_placeholder": "เลือกเพื่อน",
-            "selected_users": "ผู้ใช้ที่เลือก"
+        "discord_names": {
+            "header": "ชื่อ Discord",
+            "description": "คลิก 'โหลดรายการที่ขาดหายไป' ในแท็บรายชื่อเพื่อนเพื่อค้นหารายชื่อเพื่อนทั้งหมด"
         },
         "note_export": {
             "header": "ส่งออกโน้ต",
@@ -1346,50 +1265,6 @@
             "progress": "ความคืบหน้า:",
             "errors": "ข้อผิดพลาด:",
             "clear_errors": "ล้างข้อผิดพลาด"
-        },
-        "edit_invite_message": {
-            "header": "แก้ไขข้อความเชิญ",
-            "description": "มีคูลดาวน์ในการแก้ไข 1 ชั่วโมง",
-            "cancel": "ยกเลิก",
-            "save": "บันทึก"
-        },
-        "invite_message": {
-            "header": "ส่งข้อความเชิญ",
-            "confirmation": "คุณแน่ใจหรือไม่ว่าต้องการส่ง?",
-            "select_image": "เลือกรูปภาพ",
-            "clear_selected_image": "ล้างรูปภาพที่เลือก",
-            "cancel": "ยกเลิก",
-            "refresh": "รีเฟรช",
-            "confirm": "ยืนยัน"
-        },
-        "invite_request_message": {
-            "header": "ส่งข้อความขอคำเชิญ",
-            "cancel": "ยกเลิก",
-            "refresh": "รีเฟรช"
-        },
-        "invite_response_message": {
-            "header": "ส่งข้อความตอบกลับคำเชิญ",
-            "confirmation": "คุณแน่ใจหรือไม่ว่าต้องการส่ง?",
-            "cancel": "ยกเลิก",
-            "refresh": "รีเฟรช",
-            "confirm": "ยืนยัน"
-        },
-        "invite_request_response_message": {
-            "header": "ส่งข้อความตอบกลับคำขอเชิญ",
-            "cancel": "ยกเลิก",
-            "refresh": "รีเฟรช"
-        },
-        "edit_send_invite_message": {
-            "header": "แก้ไขและส่งข้อความเชิญ",
-            "description": "มีคูลดาวน์ในการแก้ไข 1 ชั่วโมง",
-            "cancel": "ยกเลิก",
-            "send": "ส่ง"
-        },
-        "edit_send_invite_response_message": {
-            "header": "แก้ไขและส่งข้อความตอบกลับคำเชิญ",
-            "description": "มีคูลดาวน์ในการแก้ไข 1 ชั่วโมง",
-            "cancel": "ยกเลิก",
-            "send": "ส่ง"
         },
         "gallery_icons": {
             "header": "จัดการรูปภาพ, ไอคอน, อีโมจิ และสติกเกอร์",
@@ -1413,28 +1288,6 @@
             "crop_print_border": "ตัดขอบ Print",
             "consume_bundle": "ใช้"
         },
-        "change_content_image": {
-            "avatar": "เปลี่ยนรูปภาพอวาตาร์",
-            "world": "เปลี่ยนรูปภาพโลก",
-            "description": "ขนาดรูปภาพที่แนะนำ: 1200x900px (4:3)",
-            "refresh": "รีเฟรช",
-            "upload": "อัปโหลดรูปภาพ"
-        },
-        "previous_images": {
-            "header": "รูปภาพก่อนหน้า"
-        },
-        "previous_instances": {
-            "header": "อินสแตนซ์ก่อนหน้า",
-            "info": "ข้อมูลอินสแตนซ์ก่อนหน้า",
-            "search_placeholder": "ค้นหา"
-        },
-        "change_log": {
-            "header": "บันทึกการเปลี่ยนแปลง",
-            "description": "พิจารณาบริจาคเพื่อสนับสนุนการพัฒนา VRCX ในอนาคต",
-            "close": "ปิด",
-            "donate": "บริจาค",
-            "github": "GitHub"
-        },
         "gallery_select": {
             "header": "เลือกรูปภาพ",
             "gallery": "รูปภาพ",
@@ -1442,15 +1295,11 @@
             "refresh": "รีเฟรช",
             "upload": "อัปโหลด"
         },
-        "open_source": {
-            "header": "ประกาศเกี่ยวกับซอฟต์แวร์โอเพนซอร์ส",
-            "description": "VRCX พัฒนาขึ้นโดยใช้ซอฟต์แวร์โอเพนซอร์ส ซึ่งเป็นไปได้เพราะการมีส่วนร่วมของพวกเขา"
-        },
-        "primary_password": {
-            "header": "ต้องใช้รหัสผ่านหลัก",
-            "password_placeholder": "ป้อนรหัสผ่านใหม่",
-            "re_input_placeholder": "ป้อนรหัสผ่านอีกครั้ง",
-            "ok": "ตกลง"
+        "change_content_image": {
+            "avatar": "เปลี่ยนรูปภาพอวาตาร์",
+            "world": "เปลี่ยนรูปภาพโลก",
+            "description": "ขนาดรูปภาพที่แนะนำ: 1200x900px (4:3)",
+            "upload": "อัปโหลดรูปภาพ"
         },
         "screenshot_metadata": {
             "header": "ข้อมูลเมตาของสกรีนช็อต",
@@ -1461,19 +1310,101 @@
             "open_folder": "เปิดโฟลเดอร์",
             "upload": "อัปโหลด"
         },
-        "registry_backup": {
-            "header": "สำรองการตั้งค่ารีจิสทรีของ VRC",
-            "backup": "สำรองข้อมูล",
-            "restore": "กู้คืน",
-            "save_to_file": "บันทึกเป็นไฟล์",
-            "delete": "ลบ",
-            "restore_from_file": "กู้คืนจากไฟล์",
+        "set_world_tags": {
+            "header": "ตั้งค่าแท็กโลก",
+            "avatar_scaling_disabled": "ปิดการปรับขนาดอวาตาร์",
+            "focus_view_disabled": "ปิดมุมมองโฟกัส",
+            "enable_debugging": "เปิดใช้งานการดีบักโลกสำหรับผู้อื่น",
+            "author_tags": "แท็กของผู้สร้าง (คั่นด้วยจุลภาค)",
+            "content_tags": "แท็กคำเตือนเนื้อหา",
+            "content_horror": "สยองขวัญ",
+            "content_gore": "เลือดสาด",
+            "content_violence": "ความรุนแรง",
+            "content_adult": "ผู้ใหญ่",
+            "content_sex": "เรื่องเพศ",
+            "default_content_settings": "การตั้งค่าเนื้อหาเริ่มต้น",
+            "cancel": "ยกเลิก",
+            "save": "บันทึก"
+        },
+        "set_avatar_tags": {
+            "header": "ตั้งค่าแท็กอวาตาร์",
+            "content_horror": "สยองขวัญ",
+            "content_gore": "เลือดสาด",
+            "content_violence": "ความรุนแรง",
+            "content_adult": "ผู้ใหญ่",
+            "content_sex": "เรื่องเพศ",
+            "custom_tags_placeholder": "แท็กที่กำหนดเอง",
+            "select_all": "เลือกทั้งหมด",
+            "select_none": "ไม่เลือกเลย",
+            "cancel": "ยกเลิก",
+            "save": "บันทึก"
+        },
+        "set_avatar_styles": {
+            "header": "ตั้งค่าสไตล์อวาตาร์",
+            "primary_style": "สไตล์หลัก",
+            "secondary_style": "สไตล์รอง",
+            "select_style": "เลือกสไตล์",
+            "save_success": "เปลี่ยนสไตล์อวาตาร์สำเร็จ",
+            "save_failed": "ไม่สามารถเปลี่ยนสไตล์อวาตาร์ได้",
+            "cancel": "ยกเลิก",
+            "save": "บันทึก"
+        },
+        "allowed_video_player_domains": {
+            "header": "โดเมนเครื่องเล่นวิดีโอที่ได้รับอนุญาต",
+            "add_domain": "เพิ่มโดเมน",
+            "save": "บันทึก"
+        },
+        "config_json": {
+            "header": "VRChat Config JSON",
+            "description1": "ตัวเลือกเหล่านี้สำหรับผู้ใช้ขั้นสูงเท่านั้น",
+            "description2": "เว้นว่างไว้เพื่อตั้งเป็นค่าเริ่มต้น, ต้องรีสตาร์ทเกมเพื่อใช้การตั้งค่า",
+            "cache_size": "ขนาดแคช:",
+            "refresh": "รีเฟรช",
+            "delete_all_cache": "ลบแคชทั้งหมด",
+            "delete_cache": "ลบแคช",
+            "delete_old_cache": "ลบเวอร์ชันเก่าออกจากแคช",
+            "sweep_cache": "กวาดล้างแคช",
+            "max_cache_size": "ขนาดแคชสูงสุด [GB] (ขั้นต่ำ 30)",
+            "cache_expiry_delay": "อายุแคช [วัน] (ขั้นต่ำ 30)",
+            "cache_directory": "ตำแหน่งโฟลเดอร์แคชที่กำหนดเอง",
+            "picture_directory": "ตำแหน่งโฟลเดอร์รูปภาพที่กำหนดเอง",
+            "fpv_steadycam_fov": "FOV ของกล้อง Steadycam มุมมองบุคคลที่หนึ่ง",
+            "camera_resolution": "ความละเอียดกล้อง",
+            "spout_resolution": "ความละเอียด Spout",
+            "screenshot_resolution": "ความละเอียดสกรีนช็อต",
+            "picture_sort_by_date": "จัดเรียงรูปภาพลงในโฟลเดอร์ตามวันที่",
+            "disable_discord_presence": "ปิดใช้งาน Discord Rich Presence",
+            "vrchat_docs": "เอกสาร VRChat",
+            "cancel": "ยกเลิก",
+            "save": "บันทึก"
+        },
+        "youtube_api": {
+            "header": "YouTube API",
+            "description": "ป้อนคีย์ YouTube API ของคุณ (ไม่จำเป็น)",
+            "placeholder": "คีย์ YouTube API",
+            "guide": "คู่มือ",
+            "save": "บันทึก"
+        },
+        "notification_position": {
+            "header": "ตำแหน่งการแจ้งเตือน",
+            "description": "เลือกตำแหน่งการแจ้งเตือน",
+            "ok": "ตกลง"
+        },
+        "shared_feed_filters": {
+            "notification": "ตัวกรองการแจ้งเตือน",
+            "wrist": "ตัวกรองฟีดบนข้อมือ",
+            "on": "เปิด",
+            "off": "ปิด",
+            "favorite": "รายการโปรด",
+            "friends": "เพื่อน",
+            "everyone": "ทุกคน",
             "reset": "รีเซ็ต",
-            "name": "ชื่อ",
-            "date": "วันที่",
-            "action": "การดำเนินการ",
-            "auto_backup": "สำรองข้อมูลอัตโนมัติรายสัปดาห์",
-            "restore_prompt": "VRCX ตรวจพบว่าการสำรองข้อมูลการตั้งค่ารีจิสทรีของ VRC อัตโนมัติถูกเปิดใช้งาน แต่คอมพิวเตอร์เครื่องนี้ไม่มีข้อมูลสำรอง หากคุณต้องการกู้คืนจากข้อมูลสำรอง คุณสามารถทำได้จากที่นี่"
+            "close": "ปิด"
+        },
+        "previous_instances": {
+            "header": "อินสแตนซ์ก่อนหน้า",
+            "info": "ข้อมูลอินสแตนซ์ก่อนหน้า",
+            "search_placeholder": "ค้นหา"
         },
         "group_member_moderation": {
             "header": "การดูแลสมาชิกกลุ่ม",
@@ -1537,15 +1468,58 @@
         "boop_dialog": {
             "header": "Boop",
             "emoji_manager": "จัดการอีโมจิ",
-            "select_emoji": "เลือกอีโมจิ",
             "default_emojis": "อีโมจิเริ่มต้น",
             "cancel": "ยกเลิก",
             "send": "ส่ง"
         },
-        "allowed_video_player_domains": {
-            "header": "โดเมนเครื่องเล่นวิดีโอที่ได้รับอนุญาต",
-            "add_domain": "เพิ่มโดเมน",
-            "save": "บันทึก"
+        "chatbox_blacklist": {
+            "header": "บัญชีดำกล่องแชท",
+            "keyword_blacklist": "บัญชีดำคำสำคัญ",
+            "user_blacklist": "บัญชีดำผู้ใช้",
+            "add_item": "เพิ่มรายการ"
+        },
+        "vrcx_updater": {
+            "header": "ตัวอัปเดต VRCX",
+            "latest_version": "VRCX เป็นเวอร์ชันล่าสุดแล้ว",
+            "ready_for_update": "พร้อมติดตั้งแล้ว, รีสตาร์ท VRCX เพื่อใช้งาน",
+            "download": "ดาวน์โหลด",
+            "install": "ติดตั้ง",
+            "cancel": "ยกเลิก"
+        },
+        "change_log": {
+            "header": "บันทึกการเปลี่ยนแปลง",
+            "description": "พิจารณาบริจาคเพื่อสนับสนุนการพัฒนา VRCX ในอนาคต",
+            "close": "ปิด",
+            "donate": "บริจาค",
+            "github": "GitHub"
+        },
+        "open_source": {
+            "header": "ประกาศเกี่ยวกับซอฟต์แวร์โอเพนซอร์ส",
+            "description": "VRCX พัฒนาขึ้นโดยใช้ซอฟต์แวร์โอเพนซอร์ส ซึ่งเป็นไปได้เพราะการมีส่วนร่วมของพวกเขา"
+        },
+        "primary_password": {
+            "header": "ต้องใช้รหัสผ่านหลัก",
+            "password_placeholder": "ป้อนรหัสผ่านใหม่",
+            "re_input_placeholder": "ป้อนรหัสผ่านอีกครั้ง",
+            "ok": "ตกลง"
+        },
+        "registry_backup": {
+            "header": "สำรองการตั้งค่ารีจิสทรีของ VRC",
+            "backup": "สำรองข้อมูล",
+            "restore": "กู้คืน",
+            "save_to_file": "บันทึกเป็นไฟล์",
+            "delete": "ลบ",
+            "restore_from_file": "กู้คืนจากไฟล์",
+            "reset": "รีเซ็ต",
+            "name": "ชื่อ",
+            "date": "วันที่",
+            "action": "การดำเนินการ",
+            "auto_backup": "สำรองข้อมูลอัตโนมัติรายสัปดาห์",
+            "restore_prompt": "VRCX ตรวจพบว่าการสำรองข้อมูลการตั้งค่ารีจิสทรีของ VRC อัตโนมัติถูกเปิดใช้งาน แต่คอมพิวเตอร์เครื่องนี้ไม่มีข้อมูลสำรอง หากคุณต้องการกู้คืนจากข้อมูลสำรอง คุณสามารถทำได้จากที่นี่"
+        },
+        "avatar_database_provider": {
+            "header": "ผู้ให้บริการฐานข้อมูลอวาตาร์",
+            "add_provider": "เพิ่มผู้ให้บริการ"
         }
     },
     "confirm": {
@@ -1553,41 +1527,6 @@
         "confirm_button": "ยืนยัน",
         "cancel_button": "ยกเลิก",
         "message": "ดำเนินการต่อ {command}?"
-    },
-    "message": {
-        "vrcx_updater": {
-            "failed": "ไม่สามารถตรวจสอบการอัปเดตได้, {message}",
-            "failed_install": "ไม่สามารถติดตั้งการอัปเดตได้",
-            "checking_hash": "กำลังตรวจสอบแฮช..."
-        },
-        "api_handler": {
-            "avatar_private_or_deleted": "อวาตาร์เป็นส่วนตัวหรือถูกลบไปแล้ว"
-        },
-        "badge": {
-            "updated": "อัปเดตเหรียญตราแล้ว"
-        },
-        "instance": {
-            "closed": "อินสแตนซ์ถูกปิดแล้ว",
-            "removed_form_queue": "ลบอินสแตนซ์ {worldName} ออกจากคิวแล้ว",
-            "not_allowed": "คุณไม่ได้รับอนุญาตให้เข้าถึงอินสแตนซ์นี้"
-        },
-        "avatar": {
-            "change_moderation_failed": "ไม่สามารถเปลี่ยนการดูแลอวาตาร์ได้"
-        },
-        "file": {
-            "not_image": "ไฟล์ไม่ใช่รูปภาพ",
-            "too_large": "ขนาดไฟล์ใหญ่เกินไป"
-        },
-        "gallery": {
-            "uploaded": "อัปโหลดรูปภาพแกลเลอรีแล้ว",
-            "failed": "ไม่สามารถอัปโหลดรูปภาพแกลเลอรีได้"
-        },
-        "user": {
-            "moderated": "ดูแลผู้ใช้แล้ว"
-        },
-        "friend": {
-            "load_failed": "ไม่สามารถโหลดรายชื่อเพื่อนได้, กำลังออกจากระบบ"
-        }
     },
     "prompt": {
         "totp": {
@@ -1759,6 +1698,41 @@
             "description": "ป้อนที่อยู่และพอร์ตของพร็อกซีเซิร์ฟเวอร์",
             "close": "ปิด",
             "restart": "รีสตาร์ท"
+        }
+    },
+    "message": {
+        "vrcx_updater": {
+            "failed": "ไม่สามารถตรวจสอบการอัปเดตได้, {message}",
+            "failed_install": "ไม่สามารถติดตั้งการอัปเดตได้",
+            "checking_hash": "กำลังตรวจสอบแฮช..."
+        },
+        "api_handler": {
+            "avatar_private_or_deleted": "อวาตาร์เป็นส่วนตัวหรือถูกลบไปแล้ว"
+        },
+        "badge": {
+            "updated": "อัปเดตเหรียญตราแล้ว"
+        },
+        "instance": {
+            "closed": "อินสแตนซ์ถูกปิดแล้ว",
+            "removed_form_queue": "ลบอินสแตนซ์ {worldName} ออกจากคิวแล้ว",
+            "not_allowed": "คุณไม่ได้รับอนุญาตให้เข้าถึงอินสแตนซ์นี้"
+        },
+        "avatar": {
+            "change_moderation_failed": "ไม่สามารถเปลี่ยนการดูแลอวาตาร์ได้"
+        },
+        "file": {
+            "not_image": "ไฟล์ไม่ใช่รูปภาพ",
+            "too_large": "ขนาดไฟล์ใหญ่เกินไป"
+        },
+        "gallery": {
+            "uploaded": "อัปโหลดรูปภาพแกลเลอรีแล้ว",
+            "failed": "ไม่สามารถอัปโหลดรูปภาพแกลเลอรีได้"
+        },
+        "user": {
+            "moderated": "ดูแลผู้ใช้แล้ว"
+        },
+        "friend": {
+            "load_failed": "ไม่สามารถโหลดรายชื่อเพื่อนได้, กำลังออกจากระบบ"
         }
     },
     "table": {

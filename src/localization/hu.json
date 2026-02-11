@@ -13,6 +13,21 @@
         "friend_list": "Barátlista",
         "settings": "Beállítások"
     },
+    "side_panel": {
+        "search_placeholder": "Keresés",
+        "search_result_active": "Offline",
+        "search_result_offline": "Active",
+        "search_result_more": "Search More:",
+        "refresh_tooltip": "Refresh friends",
+        "groups": "Groups",
+        "friends": "Barátok",
+        "me": "ME",
+        "favorite": "FAVORITES",
+        "online": "ONLINE",
+        "active": "ACTIVE",
+        "offline": "OFFLINE",
+        "pending_offline": "Pending Offline"
+    },
     "view": {
         "login": {
             "savedAccounts": "Mentett fiókok",
@@ -92,9 +107,6 @@
                 "local_favorites": "Helyi kedvencek (VRC+ szükséges)",
                 "new_group": "Új csoport"
             },
-            "bulk_unfavorite_mode": "Tömeges kedvenc-eltávolítás mód",
-            "bulk_unfavorite_selection": "Tömeges kedvenc-eltávolítás kijelölés",
-            "refresh_tooltip": "Összes kedvenc frissítése",
             "export": "Exportálás",
             "import": "Importálás",
             "move_tooltip": "Mozgatás",
@@ -129,6 +141,13 @@
             "search_placeholder": "Keresés",
             "filter_placeholder": "Szűrés"
         },
+        "tools": {
+            "export": {
+                "discord_names": "Discord nevek",
+                "export_friend_list": "Barátlista exportálása",
+                "export_own_avatars": "Saját avatarok exportálása"
+            }
+        },
         "profile": {
             "profile": {
                 "vrchat_credits": "VRChat-kreditek",
@@ -140,18 +159,6 @@
                 "user_online": "{count} online felhasználó.",
                 "refresh": "Kattints ide a frissítéshez"
             },
-            "direct_access": {
-                "header": "Közvetlen hozzáférés",
-                "username": "Felhasználónév",
-                "user_id": "Azonosító",
-                "world_instance": "World/Instance",
-                "avatar": "Avatar"
-            },
-            "invite_messages": "Meghívó üzenetek",
-            "invite_response_messages": "Meghívó-válaszüzenetek",
-            "invite_request_messages": "Meghívókérelem-üzenetek",
-            "invite_request_response_messages": "Meghívókérelem-válaszüzenetek",
-            "past_display_names": "Past Display Names",
             "config_json": "Config JSON",
             "refresh_tooltip": "Frissítés",
             "clear_results_tooltip": "Eredmények törlése"
@@ -178,7 +185,6 @@
                 "vrcx_updater": {
                     "header": "VRCX frissítő",
                     "change_build": "Build váltása",
-                    "auto_update": "Automata frissítés",
                     "auto_update_off": "Kikapcsolva",
                     "auto_update_notify": "Értesítsen",
                     "auto_update_download": "Automatikus letöltés",
@@ -201,14 +207,7 @@
                     "empty_avatar": "Log avatars in feed without names"
                 },
                 "automation": {
-                    "auto_state_change": "Auto Status Change",
                     "auto_state_change_tooltip": "Automatically change status when there are other people in the instance (Alone / Company)",
-                    "auto_state_change_off": "Kikapcsolva",
-                    "auto_state_change_active_or_ask_me": "Active / Ask Me",
-                    "auto_state_change_active_or_busy": "Active / Busy",
-                    "auto_state_change_join_me_or_ask_me": "Join Me / Ask Me",
-                    "auto_state_change_join_me_or_busy": "Join Me / Busy",
-                    "auto_state_change_ask_me_or_busy": "Ask Me / Busy",
                     "auto_invite_request_accept": "Auto Accept Invite Requests",
                     "auto_invite_request_accept_tooltip": "Automatically accept invite requests from favorite friends",
                     "auto_invite_request_accept_off": "Kikapcsolva",
@@ -246,8 +245,7 @@
                     "sort_favorite_by_date": "dátum",
                     "sort_instance_users_by": "Sort Instance Users by",
                     "sort_instance_users_by_time": "idő",
-                    "sort_instance_users_by_alphabet": "betűrend",
-                    "page_size": "Lapméret:"
+                    "sort_instance_users_by_alphabet": "betűrend"
                 },
                 "timedate": {
                     "header": "Idő/Dátum",
@@ -259,24 +257,7 @@
                 "side_panel": {
                     "header": "Side Panel",
                     "sorting": {
-                        "header": "Sorting",
-                        "sort_default": "Default",
-                        "sort_private_to_bottom": "Sort Private to bottom",
-                        "sort_by_status": "Sort by status",
-                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
-                        "sort_by_location": "Sort by Location",
-                        "sort_favorite_by": "Kedvencek rendezése",
-                        "sort_favorite_by_alphabet": "betűrend",
-                        "sort_favorite_by_online_time": "online for",
-                        "sort_online_by": "Sort Online by",
-                        "sort_online_by_alphabet": "betűrend",
-                        "sort_online_by_online_time": "online for",
-                        "sort_active_by": "Sort Active by",
-                        "sort_active_by_alphabet": "betűrend",
-                        "sort_active_by_online_time": "online for",
-                        "sort_offline_by": "Sort Offline by",
-                        "sort_offline_by_alphabet": "betűrend",
-                        "sort_offline_by_offline_time": "offline for"
+                        "header": "Sorting"
                     }
                 },
                 "user_dialog": {
@@ -382,10 +363,6 @@
                         "header": "VRChat Quit Fix",
                         "description": "Kill VRChat after exiting game"
                     },
-                    "vrchat_osc_fix": {
-                        "header": "VRChat OSC Fix",
-                        "description": "Resuming and terminating the suspended install.exe process after exiting game"
-                    },
                     "auto_cache_management": {
                         "header": "Automatically Manage Cache When Closing VRChat",
                         "description": "Auto delete old versions from cache"
@@ -478,29 +455,7 @@
                     }
                 }
             }
-        },
-        "tools": {
-            "export": {
-                "discord_names": "Discord nevek",
-                "export_friend_list": "Barátlista exportálása",
-                "export_own_avatars": "Saját avatarok exportálása"
-            }
         }
-    },
-    "side_panel": {
-        "search_placeholder": "Keresés",
-        "search_result_active": "Offline",
-        "search_result_offline": "Active",
-        "search_result_more": "Search More:",
-        "refresh_tooltip": "Refresh friends",
-        "groups": "Groups",
-        "friends": "Barátok",
-        "me": "ME",
-        "favorite": "FAVORITES",
-        "online": "ONLINE",
-        "active": "ACTIVE",
-        "offline": "OFFLINE",
-        "pending_offline": "Pending Offline"
     },
     "dialog": {
         "user": {
@@ -515,7 +470,6 @@
             "previous_display_names": "Previous Display Names:",
             "pronouns": "Pronouns",
             "tags": {
-                "friend_no": "Friend No.{number}",
                 "vrchat_team": "VRChat Team"
             },
             "actions": {
@@ -536,7 +490,6 @@
                 "show_avatar_author": "Show Avatar Author",
                 "show_fallback_avatar": "Show Fallback Avatar Details",
                 "show_previous_instances": "Show Previous Instances",
-                "show_previous_images": "Show Previous Images",
                 "moderation_block": "Block",
                 "moderation_unblock": "Unblock",
                 "moderation_mute": "Mute",
@@ -659,13 +612,11 @@
                 "make_home": "Make Home",
                 "reset_home": "Reset Home",
                 "show_previous_instances": "Show Previous Instances",
-                "show_previous_images": "Show Previous Images",
                 "rename": "Átnevezés",
                 "change_description": "Change Description",
                 "change_capacity": "Change Capacity",
                 "change_recommended_capacity": "Change Recommended Capacity",
                 "change_preview": "Change Youtube Preview",
-                "change_tags": "Change Tags",
                 "change_image": "Change Image",
                 "download_package": "Download Unity Package",
                 "publish_to_labs": "Publish To Labs",
@@ -738,7 +689,6 @@
                 "select_fallback": "Select Fallback Avatar",
                 "block": "Block Avatar",
                 "unblock": "Unblock Avatar",
-                "show_previous_images": "Show Previous Images",
                 "make_public": "Make Public",
                 "make_private": "Make Private",
                 "rename": "Átnevezés",
@@ -845,7 +795,6 @@
                 "load_more": "Load more...",
                 "sort_by": "Sort By:",
                 "sorting": {
-                    "user_id": "User ID (Ascending)",
                     "joined_at_asc": "Joined At (Ascending)",
                     "joined_at_desc": "Joined At (Descending)"
                 },
@@ -872,16 +821,6 @@
             "vrchat_favorites": "VRChat-es kedvencek",
             "local_favorites": "Helyi kedvencek",
             "local_avatar_favorites": "Helyi kedvencek (VRC+ szükséges)"
-        },
-        "invite": {
-            "header": "Invite",
-            "select_placeholder": "Choose Friends",
-            "add_self": "Add Self",
-            "add_friends_in_instance": "Add Friends In Instance",
-            "add_favorite_friends": "Add Favorite Friends",
-            "invite_with_message": "Invite With Message",
-            "invite": "Invite",
-            "friends_in_instance": "Friends In Instance"
         },
         "social_status": {
             "header": "Social Status",
@@ -943,79 +882,6 @@
             "legacy": "Legacy",
             "roles": "Roles"
         },
-        "launch_options": {
-            "header": "VRChat Launch Options",
-            "description": "These options are for advanced users only.",
-            "example": "(to change max fps: --fps=<N> e.g.)",
-            "path_override": "VRChat Path Override",
-            "vrchat_docs": "VRChat Docs",
-            "unity_manual": "Unity Manual",
-            "save": "Save"
-        },
-        "config_json": {
-            "header": "VRChat Config JSON",
-            "description1": "These options are for advanced users only.",
-            "description2": "Leave field empty to set as default, game restart required to apply settings.",
-            "cache_size": "Cache Size:",
-            "refresh": "Frissítés",
-            "delete_all_cache": "Delete all cache",
-            "delete_cache": "Delete Cache",
-            "delete_old_cache": "Delete old versions from cache",
-            "sweep_cache": "Sweep Cache",
-            "max_cache_size": "Max Cache Size [GB] (min 30)",
-            "cache_expiry_delay": "Cache Expiry [Days] (min 30)",
-            "cache_directory": "Custom Cache Folder Location",
-            "picture_directory": "Custom Picture Folder Location",
-            "fpv_steadycam_fov": "First-Person Steadycam FOV",
-            "camera_resolution": "Camera Resolution",
-            "screenshot_resolution": "Screenshot Resolution",
-            "picture_sort_by_date": "Sort pictures into folders by date",
-            "disable_discord_presence": "Disable Discord Rich Presence",
-            "vrchat_docs": "VRChat Docs",
-            "cancel": "Mégse",
-            "save": "Save"
-        },
-        "youtube_api": {
-            "header": "YouTube API",
-            "description": "Enter your YouTube API Key (optional)",
-            "placeholder": "YouTube API Key",
-            "guide": "Guide",
-            "save": "Save"
-        },
-        "set_world_tags": {
-            "header": "Set World Tags",
-            "avatar_scaling_disabled": "Disable avatar scaling",
-            "enable_debugging": "Enable world debugging for others",
-            "author_tags": "Author Tags (comma separated)",
-            "content_tags": "Content Warning Tags",
-            "content_horror": "Horror",
-            "content_gore": "Gore",
-            "content_violence": "Violence",
-            "content_adult": "Adult",
-            "content_sex": "Sexual",
-            "cancel": "Mégse",
-            "save": "Save"
-        },
-        "set_avatar_tags": {
-            "header": "Set Avatar Tags",
-            "content_horror": "Horror",
-            "content_gore": "Gore",
-            "content_violence": "Violence",
-            "content_adult": "Adult",
-            "content_sex": "Sexual",
-            "custom_tags_placeholder": "Custom tags",
-            "select_all": "Select All",
-            "select_none": "Select None",
-            "cancel": "Mégse",
-            "save": "Save"
-        },
-        "vrcx_updater": {
-            "header": "VRCX frissítő",
-            "latest_version": "VRCX is up to date.",
-            "ready_for_update": "Ready for install, restart VRCX to apply.",
-            "download": "Download",
-            "install": "Install"
-        },
         "launch": {
             "header": "Launch",
             "url": "URL",
@@ -1027,33 +893,75 @@
             "invite": "Invite",
             "launch": "Launch"
         },
-        "export_friends_list": {
-            "header": "Barátlista exportálása",
-            "csv": "CSV",
-            "json": "JSON"
+        "launch_options": {
+            "header": "VRChat Launch Options",
+            "description": "These options are for advanced users only.",
+            "example": "(to change max fps: --fps=<N> e.g.)",
+            "path_override": "VRChat Path Override",
+            "vrchat_docs": "VRChat Docs",
+            "unity_manual": "Unity Manual",
+            "save": "Save"
         },
-        "export_own_avatars": {
-            "header": "Saját avatarok exportálása"
+        "invite": {
+            "header": "Invite",
+            "select_placeholder": "Choose Friends",
+            "add_self": "Add Self",
+            "add_friends_in_instance": "Add Friends In Instance",
+            "add_favorite_friends": "Add Favorite Friends",
+            "invite_with_message": "Invite With Message",
+            "invite": "Invite",
+            "friends_in_instance": "Friends In Instance"
         },
-        "discord_names": {
-            "header": "Discord nevek",
-            "description": "Click load missing entries in the Friends List tab to search entire friends list"
+        "invite_to_group": {
+            "header": "Invite To Group",
+            "description": "Don't spam invite users, you'll get rate limited.",
+            "choose_group_placeholder": "Choose Group",
+            "choose_friends_placeholder": "Choose Friends",
+            "selected_users": "Selected Users"
         },
-        "notification_position": {
-            "header": "Notification Position",
-            "description": "Choose a notification position.",
-            "ok": "OK"
+        "invite_message": {
+            "header": "Send Invite Message",
+            "confirmation": "Are you sure you want to send?",
+            "select_image": "Select Image",
+            "clear_selected_image": "Clear Selected Image",
+            "cancel": "Mégse",
+            "refresh": "Frissítés",
+            "confirm": "Confirm"
         },
-        "shared_feed_filters": {
-            "notification": "Notification Filters",
-            "wrist": "Wrist Feed Filters",
-            "on": "On",
-            "off": "Kikapcsolva",
-            "favorite": "Kedvencek",
-            "friends": "Barátok",
-            "everyone": "Everyone",
-            "reset": "Reset",
-            "close": "Close"
+        "invite_request_message": {
+            "header": "Send Invite Request Message",
+            "cancel": "Mégse",
+            "refresh": "Frissítés"
+        },
+        "invite_response_message": {
+            "header": "Send Invite Response Message",
+            "confirmation": "Are you sure you want to send?",
+            "cancel": "Mégse",
+            "refresh": "Frissítés",
+            "confirm": "Confirm"
+        },
+        "invite_request_response_message": {
+            "header": "Send Invite Request Response Message",
+            "cancel": "Mégse",
+            "refresh": "Frissítés"
+        },
+        "edit_invite_message": {
+            "header": "Edit Invite Message",
+            "description": "1 hour edit cool down time.",
+            "cancel": "Mégse",
+            "save": "Save"
+        },
+        "edit_send_invite_message": {
+            "header": "Edit and Send Invite Message",
+            "description": "1 hour edit cool down time.",
+            "cancel": "Mégse",
+            "send": "Send"
+        },
+        "edit_send_invite_response_message": {
+            "header": "Edit and Send Invite Response Message",
+            "description": "1 hour edit cool down time.",
+            "cancel": "Mégse",
+            "send": "Send"
         },
         "world_export": {
             "header": "World Favorites Export"
@@ -1104,23 +1012,17 @@
             "errors": "Errors:",
             "clear_errors": "Clear Errors"
         },
-        "avatar_database_provider": {
-            "header": "Avatar Database Provider",
-            "add_provider": "Add Provider"
+        "export_friends_list": {
+            "header": "Barátlista exportálása",
+            "csv": "CSV",
+            "json": "JSON"
         },
-        "chatbox_blacklist": {
-            "header": "Chatbox feketelista",
-            "keyword_blacklist": "Keyword Blacklist",
-            "user_blacklist": "User Blacklist",
-            "add_item": "Add Item"
+        "export_own_avatars": {
+            "header": "Saját avatarok exportálása"
         },
-        "invite_to_group": {
-            "header": "Invite To Group",
-            "description": "Don't spam invite users, you'll get rate limited.",
-            "choose_group_placeholder": "Choose Group",
-            "groups": "Groups",
-            "choose_friends_placeholder": "Choose Friends",
-            "selected_users": "Selected Users"
+        "discord_names": {
+            "header": "Discord nevek",
+            "description": "Click load missing entries in the Friends List tab to search entire friends list"
         },
         "note_export": {
             "header": "Note Export",
@@ -1139,53 +1041,8 @@
             "errors": "Errors:",
             "clear_errors": "Clear Errors"
         },
-        "edit_invite_message": {
-            "header": "Edit Invite Message",
-            "description": "1 hour edit cool down time.",
-            "cancel": "Mégse",
-            "save": "Save"
-        },
-        "invite_message": {
-            "header": "Send Invite Message",
-            "confirmation": "Are you sure you want to send?",
-            "select_image": "Select Image",
-            "clear_selected_image": "Clear Selected Image",
-            "cancel": "Mégse",
-            "refresh": "Frissítés",
-            "confirm": "Confirm"
-        },
-        "invite_request_message": {
-            "header": "Send Invite Request Message",
-            "cancel": "Mégse",
-            "refresh": "Frissítés"
-        },
-        "invite_response_message": {
-            "header": "Send Invite Response Message",
-            "confirmation": "Are you sure you want to send?",
-            "cancel": "Mégse",
-            "refresh": "Frissítés",
-            "confirm": "Confirm"
-        },
-        "invite_request_response_message": {
-            "header": "Send Invite Request Response Message",
-            "cancel": "Mégse",
-            "refresh": "Frissítés"
-        },
-        "edit_send_invite_message": {
-            "header": "Edit and Send Invite Message",
-            "description": "1 hour edit cool down time.",
-            "cancel": "Mégse",
-            "send": "Send"
-        },
-        "edit_send_invite_response_message": {
-            "header": "Edit and Send Invite Response Message",
-            "description": "1 hour edit cool down time.",
-            "cancel": "Mégse",
-            "send": "Send"
-        },
         "gallery_icons": {
             "header": "Photos, Icons and Emojis",
-            "description": "Recommended image size: 1200x900px (4:3)",
             "gallery": "Photos",
             "icons": "Icons",
             "emojis": "Emojis",
@@ -1199,28 +1056,6 @@
             "emoji_loop_pingpong": "Loop PingPong",
             "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)"
         },
-        "change_content_image": {
-            "avatar": "Change Avatar Image",
-            "world": "Change World Image",
-            "description": "Recommended image size: 1200x900px (4:3)",
-            "refresh": "Frissítés",
-            "upload": "Upload Image"
-        },
-        "previous_images": {
-            "header": "Previous Images"
-        },
-        "previous_instances": {
-            "header": "Previous Instances",
-            "info": "Previous Instance Info",
-            "search_placeholder": "Keresés"
-        },
-        "change_log": {
-            "header": "Változásnapló",
-            "description": "Consider donating to support future development of VRCX",
-            "close": "Close",
-            "donate": "Donate",
-            "github": "GitHub"
-        },
         "gallery_select": {
             "header": "Select Image",
             "gallery": "Photos",
@@ -1228,15 +1063,11 @@
             "refresh": "Frissítés",
             "upload": "Upload"
         },
-        "open_source": {
-            "header": "Nyílt forráskódú szoftverre vonatkozó megjegyzés",
-            "description": "VRCX is based on open source software. It was possible because of their contribution."
-        },
-        "primary_password": {
-            "header": "Primary Password Required",
-            "password_placeholder": "Input new password",
-            "re_input_placeholder": "Re-input password",
-            "ok": "OK"
+        "change_content_image": {
+            "avatar": "Change Avatar Image",
+            "world": "Change World Image",
+            "description": "Recommended image size: 1200x900px (4:3)",
+            "upload": "Upload Image"
         },
         "screenshot_metadata": {
             "header": "Screenshot Metadata",
@@ -1247,19 +1078,83 @@
             "open_folder": "Open Folder",
             "upload": "Upload"
         },
-        "registry_backup": {
-            "header": "VRC Registry Settings Backup",
-            "backup": "Backup",
-            "restore": "Restore",
-            "save_to_file": "Save to file",
-            "delete": "Törlés",
-            "restore_from_file": "Restore from file",
+        "set_world_tags": {
+            "header": "Set World Tags",
+            "avatar_scaling_disabled": "Disable avatar scaling",
+            "enable_debugging": "Enable world debugging for others",
+            "author_tags": "Author Tags (comma separated)",
+            "content_tags": "Content Warning Tags",
+            "content_horror": "Horror",
+            "content_gore": "Gore",
+            "content_violence": "Violence",
+            "content_adult": "Adult",
+            "content_sex": "Sexual",
+            "cancel": "Mégse",
+            "save": "Save"
+        },
+        "set_avatar_tags": {
+            "header": "Set Avatar Tags",
+            "content_horror": "Horror",
+            "content_gore": "Gore",
+            "content_violence": "Violence",
+            "content_adult": "Adult",
+            "content_sex": "Sexual",
+            "custom_tags_placeholder": "Custom tags",
+            "select_all": "Select All",
+            "select_none": "Select None",
+            "cancel": "Mégse",
+            "save": "Save"
+        },
+        "config_json": {
+            "header": "VRChat Config JSON",
+            "description1": "These options are for advanced users only.",
+            "description2": "Leave field empty to set as default, game restart required to apply settings.",
+            "cache_size": "Cache Size:",
+            "refresh": "Frissítés",
+            "delete_all_cache": "Delete all cache",
+            "delete_cache": "Delete Cache",
+            "delete_old_cache": "Delete old versions from cache",
+            "sweep_cache": "Sweep Cache",
+            "max_cache_size": "Max Cache Size [GB] (min 30)",
+            "cache_expiry_delay": "Cache Expiry [Days] (min 30)",
+            "cache_directory": "Custom Cache Folder Location",
+            "picture_directory": "Custom Picture Folder Location",
+            "fpv_steadycam_fov": "First-Person Steadycam FOV",
+            "camera_resolution": "Camera Resolution",
+            "screenshot_resolution": "Screenshot Resolution",
+            "picture_sort_by_date": "Sort pictures into folders by date",
+            "disable_discord_presence": "Disable Discord Rich Presence",
+            "vrchat_docs": "VRChat Docs",
+            "cancel": "Mégse",
+            "save": "Save"
+        },
+        "youtube_api": {
+            "header": "YouTube API",
+            "description": "Enter your YouTube API Key (optional)",
+            "placeholder": "YouTube API Key",
+            "guide": "Guide",
+            "save": "Save"
+        },
+        "notification_position": {
+            "header": "Notification Position",
+            "description": "Choose a notification position.",
+            "ok": "OK"
+        },
+        "shared_feed_filters": {
+            "notification": "Notification Filters",
+            "wrist": "Wrist Feed Filters",
+            "on": "On",
+            "off": "Kikapcsolva",
+            "favorite": "Kedvencek",
+            "friends": "Barátok",
+            "everyone": "Everyone",
             "reset": "Reset",
-            "name": "Name",
-            "date": "Date",
-            "action": "Action",
-            "auto_backup": "Weekly Auto Backup",
-            "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
+            "close": "Close"
+        },
+        "previous_instances": {
+            "header": "Previous Instances",
+            "info": "Previous Instance Info",
+            "search_placeholder": "Keresés"
         },
         "group_member_moderation": {
             "header": "Group Member Moderation",
@@ -1322,10 +1217,57 @@
         "boop_dialog": {
             "header": "Boop",
             "emoji_manager": "Emoji Manager",
-            "select_emoji": "Select Emoji",
             "default_emojis": "Default Emojis",
             "cancel": "Mégse",
             "send": "Send"
+        },
+        "chatbox_blacklist": {
+            "header": "Chatbox feketelista",
+            "keyword_blacklist": "Keyword Blacklist",
+            "user_blacklist": "User Blacklist",
+            "add_item": "Add Item"
+        },
+        "vrcx_updater": {
+            "header": "VRCX frissítő",
+            "latest_version": "VRCX is up to date.",
+            "ready_for_update": "Ready for install, restart VRCX to apply.",
+            "download": "Download",
+            "install": "Install"
+        },
+        "change_log": {
+            "header": "Változásnapló",
+            "description": "Consider donating to support future development of VRCX",
+            "close": "Close",
+            "donate": "Donate",
+            "github": "GitHub"
+        },
+        "open_source": {
+            "header": "Nyílt forráskódú szoftverre vonatkozó megjegyzés",
+            "description": "VRCX is based on open source software. It was possible because of their contribution."
+        },
+        "primary_password": {
+            "header": "Primary Password Required",
+            "password_placeholder": "Input new password",
+            "re_input_placeholder": "Re-input password",
+            "ok": "OK"
+        },
+        "registry_backup": {
+            "header": "VRC Registry Settings Backup",
+            "backup": "Backup",
+            "restore": "Restore",
+            "save_to_file": "Save to file",
+            "delete": "Törlés",
+            "restore_from_file": "Restore from file",
+            "reset": "Reset",
+            "name": "Name",
+            "date": "Date",
+            "action": "Action",
+            "auto_backup": "Weekly Auto Backup",
+            "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
+        },
+        "avatar_database_provider": {
+            "header": "Avatar Database Provider",
+            "add_provider": "Add Provider"
         }
     },
     "prompt": {

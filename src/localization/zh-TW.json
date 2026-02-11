@@ -51,6 +51,22 @@
             "cancel": "取消"
         }
     },
+    "side_panel": {
+        "search_placeholder": "搜尋",
+        "search_result_active": "活躍",
+        "search_result_offline": "離線",
+        "search_result_more": "搜尋更多：",
+        "refresh_tooltip": "重新整理好友",
+        "groups": "群組房間",
+        "friends": "好友",
+        "me": "我",
+        "favorite": "收藏",
+        "same_instance": "Same Instance",
+        "online": "上線",
+        "active": "活躍",
+        "offline": "離線",
+        "pending_offline": "待確認離線"
+    },
     "view": {
         "login": {
             "savedAccounts": "已儲存的帳號",
@@ -181,7 +197,6 @@
             "clear": "清除",
             "select_all": "選擇全部",
             "deselect_all": "取消選擇全部",
-            "bulk_unfavorite_mode": "批次解除好友",
             "refresh_favorites_tooltip": "重新整理 VRChat 收藏",
             "export": "匯出",
             "import": "匯入",
@@ -809,22 +824,6 @@
             }
         }
     },
-    "side_panel": {
-        "search_placeholder": "搜尋",
-        "search_result_active": "活躍",
-        "search_result_offline": "離線",
-        "search_result_more": "搜尋更多：",
-        "refresh_tooltip": "重新整理好友",
-        "groups": "群組房間",
-        "friends": "好友",
-        "me": "我",
-        "favorite": "收藏",
-        "same_instance": "Same Instance",
-        "online": "上線",
-        "active": "活躍",
-        "offline": "離線",
-        "pending_offline": "待確認離線"
-    },
     "dialog": {
         "user": {
             "status": {
@@ -838,7 +837,6 @@
             "previous_display_names": "過去的顯示名稱：",
             "pronouns": "代稱",
             "tags": {
-                "friend_no": "第 {number} 位好友",
                 "vrchat_team": "VRChat 團隊",
                 "age_verified": "年齡已驗證",
                 "trust_level": "信用等級",
@@ -1083,7 +1081,6 @@
                 "public": "公開",
                 "private": "私人",
                 "fallback": "備用",
-                "投影替身": "投影替身",
                 "future_proofing": "可未來更新",
                 "cache": "快取",
                 "content_horror": "恐怖",
@@ -1247,16 +1244,6 @@
             "local_favorites": "本地收藏",
             "local_avatar_favorites": "本地收藏 (需要 VRC+)"
         },
-        "invite": {
-            "header": "邀請用戶",
-            "select_placeholder": "選擇好友",
-            "add_self": "新增自己",
-            "add_friends_in_instance": "新增房間內的好友",
-            "add_favorite_friends": "新增收藏的好友",
-            "invite_with_message": "邀請訊息",
-            "invite": "邀請",
-            "friends_in_instance": "在房間裡的好友"
-        },
         "social_status": {
             "header": "社交狀態",
             "history": "過去的社交狀態",
@@ -1327,6 +1314,22 @@
             "open_ingame": "於遊戲中開啟",
             "display_name": "顯示名稱（VRC+）"
         },
+        "launch": {
+            "header": "啟動",
+            "url": "連結",
+            "short_url": "短連結",
+            "short_url_notice": "短網址會在一段時間後過期",
+            "location": "地點",
+            "copy_tooltip": "複製到剪貼簿",
+            "start_as_desktop": "啟動（桌面模式）",
+            "invite": "邀請",
+            "launch": "啟動（VR模式）",
+            "open_ingame": "於遊戲中開啟",
+            "self_invite": "自我邀請",
+            "game_running_warning": "你確定要啟動第二個 VRChat 房間嗎？",
+            "confirm_yes": "是",
+            "confirm_no": "否"
+        },
         "launch_options": {
             "header": "啟動選項",
             "description": "這些選項僅適用於高級用戶。",
@@ -1335,6 +1338,247 @@
             "vrchat_docs": "VRChat 文件",
             "unity_manual": "Unity 手冊",
             "save": "儲存"
+        },
+        "invite": {
+            "header": "邀請用戶",
+            "select_placeholder": "選擇好友",
+            "add_self": "新增自己",
+            "add_friends_in_instance": "新增房間內的好友",
+            "add_favorite_friends": "新增收藏的好友",
+            "invite_with_message": "邀請訊息",
+            "invite": "邀請",
+            "friends_in_instance": "在房間裡的好友"
+        },
+        "invite_to_group": {
+            "header": "邀請到群組",
+            "description": "別一直刷邀請用戶，你會被速率限制",
+            "choose_group_placeholder": "選擇群組",
+            "choose_friends_placeholder": "選擇好友",
+            "selected_users": "已選擇的用戶",
+            "invite": "邀請"
+        },
+        "invite_message": {
+            "header": "傳送邀請的訊息",
+            "confirmation": "你確定你要傳送邀請？",
+            "select_image": "選擇圖片",
+            "clear_selected_image": "清除選擇的圖片",
+            "cancel": "取消",
+            "refresh": "重新整理",
+            "confirm": "確定"
+        },
+        "invite_request_message": {
+            "header": "傳送邀請請求的訊息",
+            "cancel": "取消",
+            "refresh": "重新整理"
+        },
+        "invite_response_message": {
+            "header": "傳送邀請回覆的訊息",
+            "confirmation": "你確定你要傳送邀請回覆？",
+            "cancel": "取消",
+            "refresh": "重新整理",
+            "confirm": "確定"
+        },
+        "invite_request_response_message": {
+            "header": "傳送邀請請求回覆的訊息",
+            "cancel": "取消",
+            "refresh": "重新整理"
+        },
+        "edit_invite_messages": {
+            "header": "編輯邀請訊息",
+            "invite_message_tab": "邀請",
+            "invite_request_tab": "邀請請求",
+            "invite_request_response_tab": "邀請請求回覆",
+            "invite_response_tab": "邀請回覆"
+        },
+        "edit_invite_message": {
+            "header": "編輯邀請訊息",
+            "description": "一小時編輯冷卻時間。",
+            "cancel": "取消",
+            "save": "儲存"
+        },
+        "edit_send_invite_message": {
+            "header": "編輯並傳送邀請訊息",
+            "description": "一小時編輯冷卻時間。",
+            "cancel": "取消",
+            "send": "傳送"
+        },
+        "edit_send_invite_response_message": {
+            "header": "編輯並傳送邀請回覆訊息",
+            "description": "一小時編輯冷卻時間。",
+            "cancel": "取消",
+            "send": "傳送"
+        },
+        "world_export": {
+            "header": "世界收藏匯出"
+        },
+        "world_import": {
+            "header": "世界收藏匯入",
+            "description": "輸入世界 ID 列表",
+            "process_list": "讀取列表",
+            "process_progress": "進度：",
+            "select_vrchat_group_placeholder": "選擇 VRChat 群組",
+            "select_local_group_placeholder": "選擇本地群組",
+            "import": "匯入世界",
+            "cancel": "取消",
+            "import_progress": "匯入進度：",
+            "clear_table": "清除表格",
+            "errors": "錯誤：",
+            "clear_errors": "清除錯誤"
+        },
+        "avatar_export": {
+            "header": "角色收藏匯出"
+        },
+        "avatar_import": {
+            "header": "角色收藏匯入",
+            "description": "輸入角色 ID 列表",
+            "process_list": "讀取列表",
+            "process_progress": "進度：",
+            "select_group_placeholder": "選擇群組",
+            "import": "匯入角色",
+            "cancel": "取消",
+            "import_progress": "匯入進度：",
+            "clear_table": "清除表格",
+            "errors": "錯誤：",
+            "clear_errors": "清除錯誤"
+        },
+        "friend_export": {
+            "header": "好友收藏匯出"
+        },
+        "friend_import": {
+            "header": "好友收藏匯入",
+            "description": "輸入用戶 ID 列表",
+            "process_list": "讀取列表",
+            "process_progress": "進度：",
+            "select_group_placeholder": "選擇群組",
+            "import": "匯入好友",
+            "cancel": "取消",
+            "import_progress": "匯入進度：",
+            "clear_table": "清除表格",
+            "errors": "錯誤：",
+            "clear_errors": "清除錯誤"
+        },
+        "export_friends_list": {
+            "header": "匯出好友列表",
+            "csv": "CSV",
+            "json": "原始資料"
+        },
+        "export_own_avatars": {
+            "header": "匯出私有角色"
+        },
+        "discord_names": {
+            "header": "Discord 名稱",
+            "description": "點擊好友列表中的「讀取缺失的項目」來搜尋整個好友列表"
+        },
+        "note_export": {
+            "header": "備註匯出",
+            "description1": "此程序會將你所有的 VRCX 備忘錄匯出，並匯入至 VRChat 備註中。",
+            "description2": "請注意以下限制：",
+            "description3": "- API 端點有速率限制，請求之間需要長時間延遲。",
+            "description4": "- 每則備註最多 256 個字元。",
+            "description5": "- 含有髒話的內容將被過濾（禁止不雅用語）。",
+            "description6": "- 不支援換行（將以空格取代）。",
+            "description7": "- 這將覆蓋這些使用者現有的 VRChat 備註。",
+            "description8": "- 在此所做的編輯不會影響 VRCX 備忘錄，但匯出後會影響 VRChat 備註。",
+            "refresh": "重新整理",
+            "export": "匯出",
+            "cancel": "取消",
+            "progress": "進度：",
+            "errors": "錯誤：",
+            "clear_errors": "清除錯誤"
+        },
+        "gallery_icons": {
+            "header": "相簿和圖示",
+            "gallery": "相簿",
+            "icons": "圖示",
+            "emojis": "表情符號",
+            "stickers": "貼紙",
+            "prints": "拍立得",
+            "inventory": "物品庫",
+            "refresh": "重新整理",
+            "upload": "上傳",
+            "clear": "清除",
+            "emoji_animation_styles": "動畫樣式",
+            "emoji_animation_type": "動態表情符號",
+            "emoji_animation_fps": "FPS:",
+            "emoji_animation_frame_count": "影格數：",
+            "emoji_loop_pingpong": "Loop PingPong",
+            "flipbook_info": "選擇一個 1024x1024 PNG spritesheet 來當作動態表情符號，可用的幀格大小： 4、16 或 64 (最大 FPS 64、最大畫格 64)",
+            "note": "備註",
+            "crop_print_border": "裁剪拍立得邊框",
+            "consume_bundle": "消費",
+            "item": "物品",
+            "sticker": "貼紙",
+            "drone_skin": "無人機外觀",
+            "emoji": "表情符號",
+            "redeem": "兌換",
+            "create_animated_emoji": "動態表情符號生成器"
+        },
+        "gallery_select": {
+            "header": "選擇圖片",
+            "gallery": "相簿",
+            "none": "無",
+            "refresh": "重新刷新",
+            "upload": "上傳"
+        },
+        "change_content_image": {
+            "avatar": "變更角色圖片",
+            "world": "變更世界圖片",
+            "description": "推薦圖片尺寸：1200 像素 x 900 像素 (4:3)",
+            "upload": "上傳圖片"
+        },
+        "screenshot_metadata": {
+            "header": "螢幕截圖詳細資料",
+            "drag": "將螢幕截圖拖曳到這裡",
+            "browse": "瀏覽",
+            "last_screenshot": "最後一張螢幕截圖",
+            "copy_image": "複製圖片",
+            "open_folder": "開啟資料夾",
+            "delete_metadata": "刪除附加資料",
+            "upload": "上傳"
+        },
+        "set_world_tags": {
+            "header": "設定世界標籤",
+            "avatar_scaling_disabled": "關閉角色縮放",
+            "focus_view_disabled": "焦點檢視已停用",
+            "enable_debugging": "為其他人啟用世界偵錯",
+            "author_tags": "作者標籤(使用逗號分隔每個標籤)",
+            "content_tags": "內容警告標籤",
+            "content_horror": "恐怖",
+            "content_gore": "血腥",
+            "content_violence": "暴力",
+            "content_adult": "成人",
+            "content_sex": "色情",
+            "default_content_settings": "預設內容設定",
+            "cancel": "取消",
+            "save": "儲存"
+        },
+        "set_avatar_tags": {
+            "header": "設定角色標籤",
+            "content_horror": "恐怖",
+            "content_gore": "血腥",
+            "content_violence": "暴力",
+            "content_adult": "成人",
+            "content_sex": "色情",
+            "custom_tags_placeholder": "自訂標籤",
+            "select_all": "全選",
+            "select_none": "取消選取",
+            "cancel": "取消",
+            "save": "儲存"
+        },
+        "set_avatar_styles": {
+            "header": "設定角色風格",
+            "primary_style": "主風格",
+            "secondary_style": "次級風格",
+            "select_style": "選擇風格",
+            "save_success": "成功更改角色風格",
+            "save_failed": "無法更改變身風格",
+            "cancel": "取消",
+            "save": "保存"
+        },
+        "allowed_video_player_domains": {
+            "header": "允許影片播放器網域",
+            "add_domain": "新增網域",
+            "save": "保存"
         },
         "config_json": {
             "header": "VRChat JSON 設定檔",
@@ -1387,81 +1631,6 @@
                 "prompt_optional": "提示詞（選填）"
             }
         },
-        "set_world_tags": {
-            "header": "設定世界標籤",
-            "avatar_scaling_disabled": "關閉角色縮放",
-            "focus_view_disabled": "焦點檢視已停用",
-            "enable_debugging": "為其他人啟用世界偵錯",
-            "author_tags": "作者標籤(使用逗號分隔每個標籤)",
-            "content_tags": "內容警告標籤",
-            "content_horror": "恐怖",
-            "content_gore": "血腥",
-            "content_violence": "暴力",
-            "content_adult": "成人",
-            "content_sex": "色情",
-            "default_content_settings": "預設內容設定",
-            "cancel": "取消",
-            "save": "儲存"
-        },
-        "set_avatar_tags": {
-            "header": "設定角色標籤",
-            "content_horror": "恐怖",
-            "content_gore": "血腥",
-            "content_violence": "暴力",
-            "content_adult": "成人",
-            "content_sex": "色情",
-            "custom_tags_placeholder": "自訂標籤",
-            "select_all": "全選",
-            "select_none": "取消選取",
-            "cancel": "取消",
-            "save": "儲存"
-        },
-        "set_avatar_styles": {
-            "header": "設定角色風格",
-            "primary_style": "主風格",
-            "secondary_style": "次級風格",
-            "select_style": "選擇風格",
-            "save_success": "成功更改角色風格",
-            "save_failed": "無法更改變身風格",
-            "cancel": "取消",
-            "save": "保存"
-        },
-        "vrcx_updater": {
-            "header": "VRCX 更新器",
-            "latest_version": "VRCX 已是最新版本。",
-            "ready_for_update": "已準備好安裝更新，重新啟動 VRCX 來套用更新。",
-            "download": "下載",
-            "install": "安裝",
-            "cancel": "取消"
-        },
-        "launch": {
-            "header": "啟動",
-            "url": "連結",
-            "short_url": "短連結",
-            "short_url_notice": "短網址會在一段時間後過期",
-            "location": "地點",
-            "copy_tooltip": "複製到剪貼簿",
-            "start_as_desktop": "啟動（桌面模式）",
-            "invite": "邀請",
-            "launch": "啟動（VR模式）",
-            "open_ingame": "於遊戲中開啟",
-            "self_invite": "自我邀請",
-            "game_running_warning": "你確定要啟動第二個 VRChat 房間嗎？",
-            "confirm_yes": "是",
-            "confirm_no": "否"
-        },
-        "export_friends_list": {
-            "header": "匯出好友列表",
-            "csv": "CSV",
-            "json": "原始資料"
-        },
-        "export_own_avatars": {
-            "header": "匯出私有角色"
-        },
-        "discord_names": {
-            "header": "Discord 名稱",
-            "description": "點擊好友列表中的「讀取缺失的項目」來搜尋整個好友列表"
-        },
         "notification_position": {
             "header": "通知位置",
             "description": "選擇通知位置",
@@ -1478,229 +1647,10 @@
             "reset": "重設",
             "close": "關閉"
         },
-        "world_export": {
-            "header": "世界收藏匯出"
-        },
-        "world_import": {
-            "header": "世界收藏匯入",
-            "description": "輸入世界 ID 列表",
-            "process_list": "讀取列表",
-            "process_progress": "進度：",
-            "select_vrchat_group_placeholder": "選擇 VRChat 群組",
-            "select_local_group_placeholder": "選擇本地群組",
-            "import": "匯入世界",
-            "cancel": "取消",
-            "import_progress": "匯入進度：",
-            "clear_table": "清除表格",
-            "errors": "錯誤：",
-            "clear_errors": "清除錯誤"
-        },
-        "avatar_export": {
-            "header": "角色收藏匯出"
-        },
-        "avatar_import": {
-            "header": "角色收藏匯入",
-            "description": "輸入角色 ID 列表",
-            "process_list": "讀取列表",
-            "process_progress": "進度：",
-            "select_group_placeholder": "選擇群組",
-            "import": "匯入角色",
-            "cancel": "取消",
-            "import_progress": "匯入進度：",
-            "clear_table": "清除表格",
-            "errors": "錯誤：",
-            "clear_errors": "清除錯誤"
-        },
-        "friend_export": {
-            "header": "好友收藏匯出"
-        },
-        "friend_import": {
-            "header": "好友收藏匯入",
-            "description": "輸入用戶 ID 列表",
-            "process_list": "讀取列表",
-            "process_progress": "進度：",
-            "select_group_placeholder": "選擇群組",
-            "import": "匯入好友",
-            "cancel": "取消",
-            "import_progress": "匯入進度：",
-            "clear_table": "清除表格",
-            "errors": "錯誤：",
-            "clear_errors": "清除錯誤"
-        },
-        "avatar_database_provider": {
-            "header": "角色資料庫提供方",
-            "add_provider": "新增提供方"
-        },
-        "chatbox_blacklist": {
-            "header": "聊天框黑名單",
-            "keyword_blacklist": "關鍵字黑名單",
-            "user_blacklist": "用戶黑名單",
-            "add_item": "新增項目"
-        },
-        "invite_to_group": {
-            "header": "邀請到群組",
-            "description": "別一直刷邀請用戶，你會被速率限制",
-            "choose_group_placeholder": "選擇群組",
-            "groups": "群組",
-            "choose_friends_placeholder": "選擇好友",
-            "selected_users": "已選擇的用戶",
-            "invite": "邀請"
-        },
-        "note_export": {
-            "header": "備註匯出",
-            "description1": "此程序會將你所有的 VRCX 備忘錄匯出，並匯入至 VRChat 備註中。",
-            "description2": "請注意以下限制：",
-            "description3": "- API 端點有速率限制，請求之間需要長時間延遲。",
-            "description4": "- 每則備註最多 256 個字元。",
-            "description5": "- 含有髒話的內容將被過濾（禁止不雅用語）。",
-            "description6": "- 不支援換行（將以空格取代）。",
-            "description7": "- 這將覆蓋這些使用者現有的 VRChat 備註。",
-            "description8": "- 在此所做的編輯不會影響 VRCX 備忘錄，但匯出後會影響 VRChat 備註。",
-            "refresh": "重新整理",
-            "export": "匯出",
-            "cancel": "取消",
-            "progress": "進度：",
-            "errors": "錯誤：",
-            "clear_errors": "清除錯誤"
-        },
-        "edit_invite_message": {
-            "header": "編輯邀請訊息",
-            "description": "一小時編輯冷卻時間。",
-            "cancel": "取消",
-            "save": "儲存"
-        },
-        "edit_invite_messages": {
-            "header": "編輯邀請訊息",
-            "invite_message_tab": "邀請",
-            "invite_request_tab": "邀請請求",
-            "invite_request_response_tab": "邀請請求回覆",
-            "invite_response_tab": "邀請回覆"
-        },
-        "invite_message": {
-            "header": "傳送邀請的訊息",
-            "confirmation": "你確定你要傳送邀請？",
-            "select_image": "選擇圖片",
-            "clear_selected_image": "清除選擇的圖片",
-            "cancel": "取消",
-            "refresh": "重新整理",
-            "confirm": "確定"
-        },
-        "invite_request_message": {
-            "header": "傳送邀請請求的訊息",
-            "cancel": "取消",
-            "refresh": "重新整理"
-        },
-        "invite_response_message": {
-            "header": "傳送邀請回覆的訊息",
-            "confirmation": "你確定你要傳送邀請回覆？",
-            "cancel": "取消",
-            "refresh": "重新整理",
-            "confirm": "確定"
-        },
-        "invite_request_response_message": {
-            "header": "傳送邀請請求回覆的訊息",
-            "cancel": "取消",
-            "refresh": "重新整理"
-        },
-        "edit_send_invite_message": {
-            "header": "編輯並傳送邀請訊息",
-            "description": "一小時編輯冷卻時間。",
-            "cancel": "取消",
-            "send": "傳送"
-        },
-        "edit_send_invite_response_message": {
-            "header": "編輯並傳送邀請回覆訊息",
-            "description": "一小時編輯冷卻時間。",
-            "cancel": "取消",
-            "send": "傳送"
-        },
-        "gallery_icons": {
-            "header": "相簿和圖示",
-            "description": "推薦圖片尺寸：1200 像素 x 900 像素 (4:3)",
-            "gallery": "相簿",
-            "icons": "圖示",
-            "emojis": "表情符號",
-            "stickers": "貼紙",
-            "prints": "拍立得",
-            "inventory": "物品庫",
-            "refresh": "重新整理",
-            "upload": "上傳",
-            "clear": "清除",
-            "emoji_animation_styles": "動畫樣式",
-            "emoji_animation_type": "動態表情符號",
-            "emoji_animation_fps": "FPS:",
-            "emoji_animation_frame_count": "影格數：",
-            "emoji_loop_pingpong": "Loop PingPong",
-            "flipbook_info": "選擇一個 1024x1024 PNG spritesheet 來當作動態表情符號，可用的幀格大小： 4、16 或 64 (最大 FPS 64、最大畫格 64)",
-            "note": "備註",
-            "crop_print_border": "裁剪拍立得邊框",
-            "consume_bundle": "消費",
-            "item": "物品",
-            "sticker": "貼紙",
-            "drone_skin": "無人機外觀",
-            "emoji": "表情符號",
-            "redeem": "兌換",
-            "create_animated_emoji": "動態表情符號生成器"
-        },
-        "change_content_image": {
-            "avatar": "變更角色圖片",
-            "world": "變更世界圖片",
-            "description": "推薦圖片尺寸：1200 像素 x 900 像素 (4:3)",
-            "upload": "上傳圖片"
-        },
         "previous_instances": {
             "header": "過去的房間",
             "info": "過去的房間資訊",
             "search_placeholder": "搜尋"
-        },
-        "change_log": {
-            "header": "更新日誌",
-            "description": "考慮捐款來支持未來 VRCX 的開發：",
-            "close": "關閉",
-            "donate": "贊助",
-            "github": "GitHub"
-        },
-        "gallery_select": {
-            "header": "選擇圖片",
-            "gallery": "相簿",
-            "none": "無",
-            "refresh": "重新刷新",
-            "upload": "上傳"
-        },
-        "open_source": {
-            "header": "開放原始碼軟體授權條款",
-            "description": "VRCX 是基於開放原始碼軟體上開發的。沒有他們的貢獻的話，這個程式是不可能開發出來的。"
-        },
-        "primary_password": {
-            "header": "需要設定主密碼",
-            "password_placeholder": "輸入新密碼",
-            "re_input_placeholder": "確認密碼",
-            "ok": "確定"
-        },
-        "screenshot_metadata": {
-            "header": "螢幕截圖詳細資料",
-            "drag": "將螢幕截圖拖曳到這裡",
-            "browse": "瀏覽",
-            "last_screenshot": "最後一張螢幕截圖",
-            "copy_image": "複製圖片",
-            "open_folder": "開啟資料夾",
-            "delete_metadata": "刪除附加資料",
-            "upload": "上傳"
-        },
-        "registry_backup": {
-            "header": "VRC 註冊表設定備份",
-            "backup": "備份",
-            "restore": "還原",
-            "save_to_file": "儲存至檔案",
-            "delete": "刪除",
-            "restore_from_file": "從檔案還原",
-            "reset": "重設",
-            "name": "名稱",
-            "date": "日期",
-            "action": "操作",
-            "auto_backup": "每週自動備份",
-            "ask_to_restore": "當沒有 VRC 登錄設定時，要求還原",
-            "restore_prompt": "VRCX 已注意到 VRC 註冊表設定的自動備份已啟用，但這台電腦沒有任何備份，如果你想從備份還原，可以從這裡還原。"
         },
         "group_member_moderation": {
             "header": "群組成員管理",
@@ -1762,19 +1712,6 @@
             "create_post": "創建貼文",
             "edit_post": "編輯貼文"
         },
-        "boop_dialog": {
-            "header": "戳一下",
-            "emoji_manager": "管理表情符號",
-            "select_emoji": "選擇表情符號",
-            "default_emojis": "預設表情符號",
-            "cancel": "取消",
-            "send": "傳送"
-        },
-        "allowed_video_player_domains": {
-            "header": "允許影片播放器網域",
-            "add_domain": "新增網域",
-            "save": "保存"
-        },
         "group_calendar": {
             "header": "群組行事曆",
             "list_view": "清單檢視",
@@ -1799,6 +1736,63 @@
             "header": "管理群組成員",
             "choose_group_placeholder": "選擇群組",
             "moderation_tools": "管理工具"
+        },
+        "boop_dialog": {
+            "header": "戳一下",
+            "emoji_manager": "管理表情符號",
+            "default_emojis": "預設表情符號",
+            "cancel": "取消",
+            "send": "傳送"
+        },
+        "chatbox_blacklist": {
+            "header": "聊天框黑名單",
+            "keyword_blacklist": "關鍵字黑名單",
+            "user_blacklist": "用戶黑名單",
+            "add_item": "新增項目"
+        },
+        "vrcx_updater": {
+            "header": "VRCX 更新器",
+            "latest_version": "VRCX 已是最新版本。",
+            "ready_for_update": "已準備好安裝更新，重新啟動 VRCX 來套用更新。",
+            "download": "下載",
+            "install": "安裝",
+            "cancel": "取消"
+        },
+        "change_log": {
+            "header": "更新日誌",
+            "description": "考慮捐款來支持未來 VRCX 的開發：",
+            "close": "關閉",
+            "donate": "贊助",
+            "github": "GitHub"
+        },
+        "open_source": {
+            "header": "開放原始碼軟體授權條款",
+            "description": "VRCX 是基於開放原始碼軟體上開發的。沒有他們的貢獻的話，這個程式是不可能開發出來的。"
+        },
+        "primary_password": {
+            "header": "需要設定主密碼",
+            "password_placeholder": "輸入新密碼",
+            "re_input_placeholder": "確認密碼",
+            "ok": "確定"
+        },
+        "registry_backup": {
+            "header": "VRC 註冊表設定備份",
+            "backup": "備份",
+            "restore": "還原",
+            "save_to_file": "儲存至檔案",
+            "delete": "刪除",
+            "restore_from_file": "從檔案還原",
+            "reset": "重設",
+            "name": "名稱",
+            "date": "日期",
+            "action": "操作",
+            "auto_backup": "每週自動備份",
+            "ask_to_restore": "當沒有 VRC 登錄設定時，要求還原",
+            "restore_prompt": "VRCX 已注意到 VRC 註冊表設定的自動備份已啟用，但這台電腦沒有任何備份，如果你想從備份還原，可以從這裡還原。"
+        },
+        "avatar_database_provider": {
+            "header": "角色資料庫提供方",
+            "add_provider": "新增提供方"
         }
     },
     "confirm": {
@@ -1806,51 +1800,6 @@
         "confirm_button": "確定",
         "cancel_button": "取消",
         "message": "繼續 {command}?"
-    },
-    "status": {
-        "title": "VRChat 狀態"
-    },
-    "message": {
-        "vrcx_updater": {
-            "failed": "檢查更新失敗，{message}",
-            "failed_install": "安裝更新失敗",
-            "checking_hash": "檢查 hash..."
-        },
-        "api_handler": {
-            "avatar_private_or_deleted": "角色為私人或已刪除"
-        },
-        "badge": {
-            "updated": "徽章已更新"
-        },
-        "instance": {
-            "closed": "房間已關閉",
-            "removed_form_queue": "已從佇列中移除房間 {worldName}",
-            "not_allowed": "你無權進入此房間"
-        },
-        "avatar": {
-            "change_moderation_failed": "變更角色審核失敗"
-        },
-        "file": {
-            "not_image": "檔案不是圖片",
-            "too_large": "檔案大小太大"
-        },
-        "gallery": {
-            "uploaded": "相簿圖片已上傳",
-            "failed": "上傳相簿圖片失敗"
-        },
-        "user": {
-            "moderated": "用戶已進行審核"
-        },
-        "friend": {
-            "load_failed": "載入好友清單失敗，正在登出"
-        },
-        "screenshot_metadata": {
-            "deleted": "刪除截圖附加資料",
-            "delete_failed": "刪除截圖附加資料失敗"
-        },
-        "crash": {
-            "vrcx_reload": "為確保穩定性，已重新載入 VRCX"
-        }
     },
     "prompt": {
         "totp": {
@@ -1985,8 +1934,6 @@
             "header": "最大表格大小",
             "description": "限制從資料庫讀取紀錄到介面的數量，較大的資料表大小可能會影響記憶體用量和效能",
             "table_max_size": "表格大小",
-            "table_page_sizes": "表格每頁筆數",
-            "table_page_sizes_error": "每頁筆數必須是 1 到 1000 之間的數字",
             "cancel": "取消",
             "save": "儲存"
         },
@@ -2032,6 +1979,51 @@
             "redeem": "兌換",
             "success": "代碼兌換成功"
         }
+    },
+    "message": {
+        "vrcx_updater": {
+            "failed": "檢查更新失敗，{message}",
+            "failed_install": "安裝更新失敗",
+            "checking_hash": "檢查 hash..."
+        },
+        "api_handler": {
+            "avatar_private_or_deleted": "角色為私人或已刪除"
+        },
+        "badge": {
+            "updated": "徽章已更新"
+        },
+        "instance": {
+            "closed": "房間已關閉",
+            "removed_form_queue": "已從佇列中移除房間 {worldName}",
+            "not_allowed": "你無權進入此房間"
+        },
+        "avatar": {
+            "change_moderation_failed": "變更角色審核失敗"
+        },
+        "file": {
+            "not_image": "檔案不是圖片",
+            "too_large": "檔案大小太大"
+        },
+        "gallery": {
+            "uploaded": "相簿圖片已上傳",
+            "failed": "上傳相簿圖片失敗"
+        },
+        "user": {
+            "moderated": "用戶已進行審核"
+        },
+        "friend": {
+            "load_failed": "載入好友清單失敗，正在登出"
+        },
+        "screenshot_metadata": {
+            "deleted": "刪除截圖附加資料",
+            "delete_failed": "刪除截圖附加資料失敗"
+        },
+        "crash": {
+            "vrcx_reload": "為確保穩定性，已重新載入 VRCX"
+        }
+    },
+    "status": {
+        "title": "VRChat 狀態"
     },
     "table": {
         "pagination": {
