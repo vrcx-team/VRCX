@@ -225,6 +225,11 @@
             "unfavorite_tooltip": "お気に入り解除",
             "edit_favorite_tooltip": "お気に入りを編集",
             "visibility_tooltip": "表示設定を変更",
+            "visibility": {
+                "public": "公開",
+                "friends": "フレンドにのみ公開",
+                "private": "非公開"
+            },
             "rename_tooltip": "名前を変更",
             "clear_tooltip": "クリア",
             "delete_tooltip": "消去",

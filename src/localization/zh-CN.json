@@ -225,6 +225,11 @@
             "unfavorite_tooltip": "取消收藏",
             "edit_favorite_tooltip": "编辑收藏",
             "visibility_tooltip": "更改可见性",
+            "visibility": {
+                "public": "公开",
+                "friends": "仅好友",
+                "private": "私人"
+            },
             "rename_tooltip": "重命名",
             "clear_tooltip": "清除",
             "delete_tooltip": "删除",

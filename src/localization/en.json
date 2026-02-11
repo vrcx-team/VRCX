@@ -225,6 +225,11 @@
             "unfavorite_tooltip": "Unfavorite",
             "edit_favorite_tooltip": "Edit Favorite",
             "visibility_tooltip": "Change Visibility",
+            "visibility": {
+                "public": "Public",
+                "friends": "Friends",
+                "private": "Private"
+            },
             "rename_tooltip": "Rename",
             "clear_tooltip": "Clear",
             "delete_tooltip": "Delete",
