@@ -11,7 +11,6 @@
         "moderation": "Moderáció",
         "notification": "Értesítés",
         "friend_list": "Barátlista",
-        "profile": "Profil",
         "settings": "Beállítások"
     },
     "view": {
@@ -33,7 +32,6 @@
         },
         "feed": {
             "favorites_only_tooltip": "Csak a kedvencek szűrése",
-            "filter_placeholder": "Szűrés",
             "search_placeholder": "Keresés"
         },
         "game_log": {
@@ -82,18 +80,13 @@
             "next_page": "Következő"
         },
         "favorite": {
-            "friends": {
-                "header": "Barátok"
-            },
             "worlds": {
-                "header": "Világok",
                 "search": "Keresés",
                 "vrchat_favorites": "VRChat-es kedvencek",
                 "local_favorites": "Helyi kedvencek",
                 "new_group": "Új csoport"
             },
             "avatars": {
-                "header": "Avatárok",
                 "search": "Keresés",
                 "vrchat_favorites": "VRChat-es kedvencek",
                 "local_favorites": "Helyi kedvencek (VRC+ szükséges)",
@@ -112,7 +105,6 @@
             "delete_tooltip": "Törlés",
             "unavailable_tooltip": "Nem elérhető",
             "private": "Privát",
-            "sort_by": "Rendezés",
             "select_avatar_tooltip": "Select Avatar"
         },
         "friend_log": {
@@ -130,39 +122,23 @@
             "refresh_tooltip": "Frissítés"
         },
         "friend_list": {
-            "header": "Barátlista",
             "bulk_unfriend": "Tömeges barát-eltávolítás mód",
             "bulk_unfriend_selection": "Tömeges barát-eltávolítás kijelölés",
             "load": "Hiányzó bejegyzések betöltése",
-            "load_tooltip": "Betöltés",
             "favorites_only_tooltip": "Csak a kedvencek szűrése",
             "search_placeholder": "Keresés",
-            "filter_placeholder": "Szűrés",
-            "refresh_tooltip": "Frissítés",
-            "clear_tooltip": "Eredmények törlése",
-            "cancel_tooltip": "Mégse"
+            "filter_placeholder": "Szűrés"
         },
         "profile": {
             "profile": {
-                "header": "Profil",
-                "last_activity": "Utolsó aktivitás",
-                "two_factor": "Kétlépcsős hitelesítés (2FA)",
-                "two_factor_enabled": "Bekapcsolva",
-                "two_factor_disabled": "Kikapcsolva",
                 "vrchat_credits": "VRChat-kreditek",
-                "refresh": "Kattints ide a frissítéshez",
-                "logout": "Kijelentkezés",
-                "manage_gallery_inventory_icon": "Képek/ikonok/emojik kezelése",
-                "export_notes": "Jegyzetek exportálása"
+                "refresh": "Kattints ide a frissítéshez"
             },
             "game_info": {
                 "header": "Játékinformáció",
                 "online_users": "Online felhasználók",
                 "user_online": "{count} online felhasználó.",
                 "refresh": "Kattints ide a frissítéshez"
-            },
-            "vrc_sdk_downloads": {
-                "header": "VRC SDK letöltések"
             },
             "direct_access": {
                 "header": "Közvetlen hozzáférés",
@@ -177,8 +153,6 @@
             "invite_request_response_messages": "Meghívókérelem-válaszüzenetek",
             "past_display_names": "Past Display Names",
             "config_json": "Config JSON",
-            "current_user_json": "Current User JSON",
-            "feedback": "Visszajelzés",
             "refresh_tooltip": "Frissítés",
             "clear_results_tooltip": "Eredmények törlése"
         },
@@ -227,7 +201,6 @@
                     "empty_avatar": "Log avatars in feed without names"
                 },
                 "automation": {
-                    "header": "Automatizáció",
                     "auto_state_change": "Auto Status Change",
                     "auto_state_change_tooltip": "Automatically change status when there are other people in the instance (Alone / Company)",
                     "auto_state_change_off": "Kikapcsolva",
@@ -267,7 +240,6 @@
                     "theme_mode_material3": "Material 3",
                     "zoom": "Nagyítás",
                     "vrcplus_profile_icons": "VRCPlus profil ikonok",
-                    "tooltips": "Tooltips",
                     "nicknames": "Memo Nicknames",
                     "sort_favorite_by": "Kedvencek rendezése",
                     "sort_favorite_by_name": "név",
@@ -305,15 +277,12 @@
                         "sort_offline_by": "Sort Offline by",
                         "sort_offline_by_alphabet": "betűrend",
                         "sort_offline_by_offline_time": "offline for"
-                    },
-                    "width": "Szélesség"
+                    }
                 },
                 "user_dialog": {
                     "header": "User Dialog",
                     "vrchat_notes": "VRChat Notes",
-                    "vrcx_memos": "VRCX Memos",
-                    "export_vrcx_memos_into_vrchat_notes": "Export VRCX Memos into VRChat notes",
-                    "export_notes": "Jegyzetek exportálása"
+                    "vrcx_memos": "VRCX Memos"
                 },
                 "user_colors": {
                     "header": "Felhasználói színek",
@@ -399,11 +368,8 @@
             },
             "advanced": {
                 "advanced": {
-                    "header": "Haladó",
                     "launch_options": "Launch Options",
-                    "screenshot_metadata": "Screenshot Metadata",
                     "vrc_registry_backup": "VRC Registry Backup",
-                    "common_folders": "Common Folders",
                     "primary_password": {
                         "header": "Primary Password",
                         "description": "Encrypt password (disables auto login)"
@@ -454,15 +420,11 @@
                         "header": "App Launcher",
                         "folder": "Auto-Launch Folder",
                         "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts in this folder.",
-                        "enable": "Enable",
                         "auto_close": "Auto close apps"
                     },
                     "cache_debug": {
                         "header": "VRCX Instance Cache/Debug",
                         "udon_exception_logging": "Udon Exception Logging",
-                        "gpu_fix": "SteamVR Overlay GPU Fix",
-                        "gpu_fix_notice": "(requires restart)",
-                        "gpu_fix_warning": "Only enable this option if the SteamVR overlay isn't working and you have 2 GPUs",
                         "disable_gamelog": "Disable GameLog",
                         "disable_gamelog_notice": "(will likely break things)",
                         "user_cache": "User cache:",
@@ -530,7 +492,6 @@
         "search_result_active": "Offline",
         "search_result_offline": "Active",
         "search_result_more": "Search More:",
-        "direct_access_tooltip": "Direct access ID/URL from clipboard",
         "refresh_tooltip": "Refresh friends",
         "groups": "Groups",
         "friends": "Barátok",
@@ -632,10 +593,8 @@
                 "copy_id": "Copy ID",
                 "copy_url": "Copy URL",
                 "copy_display_name": "Copy DisplayName",
-                "accuracy_notice": "Info from local database may not be accurate",
                 "instance_full": "full",
                 "instance_closed": "closed",
-                "instance_hard_closed": "hard closed",
                 "close_instance": "Close Instance"
             },
             "groups": {
@@ -718,9 +677,7 @@
                 "public_count": "Public {count}",
                 "private_count": "Private {count}",
                 "capacity_count": "Capacity {count} ({max})",
-                "self_invite_tooltip": "Invite Yourself",
                 "refresh_instance_info": "Refresh Instance Info",
-                "instance_full": "full",
                 "instance_creator": "Instance Creator"
             },
             "info": {
@@ -749,8 +706,7 @@
                 "platform": "Platform",
                 "last_visited": "Last Visited",
                 "visit_count": "Visit Count",
-                "time_spent": "Time Spent",
-                "accuracy_notice": "Info from local database may not be accurate"
+                "time_spent": "Time Spent"
             },
             "json": {
                 "header": "JSON"
@@ -772,13 +728,11 @@
             },
             "labels": {
                 "public": "(Public)",
-                "private": "(Private)",
-                "own": "(Own)"
+                "private": "(Private)"
             },
             "actions": {
                 "delete_cache_tooltip": "Delete avatar from cache",
                 "favorite_tooltip": "Kedvencek",
-                "unfavorite_tooltip": "Remove from favorites",
                 "refresh": "Frissítés",
                 "select": "Select Avatar",
                 "select_fallback": "Select Fallback Avatar",
@@ -812,8 +766,7 @@
                 "memo_placeholder": "Click to add a memo"
             },
             "json": {
-                "header": "JSON",
-                "file_analysis": "File Analysis"
+                "header": "JSON"
             }
         },
         "group": {
@@ -857,7 +810,6 @@
                 "header": "Info",
                 "instances": "Instances",
                 "announcement": "Announcement",
-                "instance_full": "full",
                 "rules": "Rules",
                 "members": "Members",
                 "created_at": "Created At",
@@ -939,10 +891,7 @@
         },
         "language": {
             "header": "Nyelvezet",
-            "add_language": "Add Language",
-            "select_language": "Select Language",
-            "ok": "OK",
-            "cancel": "Mégse"
+            "select_language": "Select Language"
         },
         "bio": {
             "header": "Bio",
@@ -1049,7 +998,6 @@
         },
         "set_avatar_tags": {
             "header": "Set Avatar Tags",
-            "content_tags": "Content Warning Tags",
             "content_horror": "Horror",
             "content_gore": "Gore",
             "content_violence": "Violence",
@@ -1316,8 +1264,6 @@
         "group_member_moderation": {
             "header": "Group Member Moderation",
             "filter_type": "Filter Type",
-            "select_type": "Select Type",
-            "search_placeholder": "Keresés",
             "members": "Members",
             "bans": "Bans",
             "invites": "Invites",
@@ -1337,7 +1283,6 @@
             "accept_join_requests": "Accept Join Requests",
             "reject_join_requests": "Reject Join Requests",
             "block_join_requests": "Block Join Requests",
-            "group_members": "Group Members",
             "progress": "Progress:",
             "display_name": "Display Name",
             "visibility": "Visibility",
@@ -1378,7 +1323,6 @@
             "header": "Boop",
             "emoji_manager": "Emoji Manager",
             "select_emoji": "Select Emoji",
-            "my_emojis": "My Emojis",
             "default_emojis": "Default Emojis",
             "cancel": "Mégse",
             "send": "Send"
@@ -1390,7 +1334,6 @@
             "description": "Enter a numeric code from your authenticator app",
             "use_otp": "Use OTP",
             "verify": "Verify",
-            "input_placeholder": "Code",
             "input_error": "Invalid Code"
         },
         "otp": {
@@ -1398,7 +1341,6 @@
             "description": "Enter one of your saved recovery codes",
             "use_totp": "Use TOTP",
             "verify": "Verify",
-            "input_placeholder": "Code",
             "input_error": "Invalid Code"
         },
         "email_otp": {
@@ -1406,7 +1348,6 @@
             "description": "Enter a numeric code that was sent to your email",
             "resend": "Resend Email",
             "verify": "Verify",
-            "input_placeholder": "Code",
             "input_error": "Invalid Code"
         },
         "primary_password": {
@@ -1418,47 +1359,9 @@
             "description": "Enter a new name",
             "cancel": "Mégse",
             "change": "Change",
-            "input_placeholder": "Name",
             "input_error": "Name is required",
             "message": {
                 "success": "Group renamed"
-            }
-        },
-        "direct_access_user_id": {
-            "header": "Közvetlen hozzáférés",
-            "description": "Enter a User URL or ID (UUID)",
-            "cancel": "Mégse",
-            "ok": "OK",
-            "input_error": "User URL/ID is required",
-            "message": {
-                "error": "Invalid URL/ID"
-            }
-        },
-        "direct_access_username": {
-            "header": "Közvetlen hozzáférés",
-            "description": "Enter a Username",
-            "cancel": "Mégse",
-            "ok": "OK",
-            "input_error": "Username is required"
-        },
-        "direct_access_world_id": {
-            "header": "Közvetlen hozzáférés",
-            "description": "Enter a World URL or ID (UUID)",
-            "cancel": "Mégse",
-            "ok": "OK",
-            "input_error": "World URL/ID is required",
-            "message": {
-                "error": "Invalid URL/ID"
-            }
-        },
-        "direct_access_avatar_id": {
-            "header": "Közvetlen hozzáférés",
-            "description": "Enter a Avatar URL or ID (UUID)",
-            "cancel": "Mégse",
-            "ok": "OK",
-            "input_error": "Avatar URL/ID is required",
-            "message": {
-                "error": "Invalid URL/ID"
             }
         },
         "direct_access_omni": {
@@ -1538,8 +1441,6 @@
         "change_world_recommended_capacity": {
             "header": "Change Recommended Capacity",
             "description": "Enter world recommended capacity (soft cap)",
-            "cancel": "Mégse",
-            "ok": "OK",
             "input_error": "Valid number is required",
             "message": {
                 "success": "World recommended capacity changed"
@@ -1559,10 +1460,9 @@
         "change_table_size": {
             "header": "Max Table Size",
             "description": "Limit amount of entries loaded from database to UI pages, larger table sizes will impact RAM usage and performance",
-                    "table_max_size": "Maximális táblázatméret",
+            "table_max_size": "Maximális táblázatméret",
             "cancel": "Mégse",
-            "save": "Save",
-            "input_error": "Valid number is required"
+            "save": "Save"
         },
         "photon_lobby_timeout": {
             "header": "User Timeout Threshold",
@@ -1579,11 +1479,6 @@
             "input_error": "Valid number is required"
         },
         "new_local_favorite_group": {
-            "header": "Új csoport",
-            "description": "Enter a world favorite group name",
-            "cancel": "Mégse",
-            "ok": "OK",
-            "input_error": "Name is required",
             "message": {
                 "error": "Group already exists with the name {name}"
             }
@@ -1598,17 +1493,9 @@
                 "error": "Group already exists with the name {name}"
             }
         },
-        "pending_offline_delay": {
-            "header": "Pending Offline",
-            "description": "Set pending offline delay in seconds (default: 110)",
-            "cancel": "Mégse",
-            "save": "Save",
-            "input_error": "Valid number is required"
-        },
         "proxy_settings": {
             "header": "Proxy Settings",
             "description": "Enter proxy server address and port",
-            "placeholder": "127.0.0.1:8080",
             "close": "Close",
             "restart": "Restart"
         }
@@ -1662,7 +1549,6 @@
             "type": "Type",
             "user": "Felhasználó",
             "group": "Csoport",
-            "user_group": "User/Group",
             "photo": "Photo",
             "message": "Message",
             "action": "Action"
@@ -1689,22 +1575,7 @@
                 "message": "Message",
                 "cool_down": "Cool Down",
                 "action": "Action"
-            },
-            "previous_display_name": {
-                "date": "Date",
-                "name": "Name"
             }
-        },
-        "social_status": {
-            "no": "No.",
-            "status": "Status"
-        },
-        "download_history": {
-            "time": "Time",
-            "name": "Name",
-            "type": "Type",
-            "status": "Status",
-            "cancel": "Mégse"
         },
         "import": {
             "image": "Image",

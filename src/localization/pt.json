@@ -11,7 +11,6 @@
         "moderation": "Moderação",
         "notification": "Notificação",
         "friend_list": "Lista de amigos",
-        "profile": "Perfil",
         "settings": "Configurações"
     },
     "view": {
@@ -33,7 +32,6 @@
         },
         "feed": {
             "favorites_only_tooltip": "Filtrar apenas favoritos",
-            "filter_placeholder": "Filtro",
             "search_placeholder": "Procurar"
         },
         "game_log": {
@@ -82,18 +80,13 @@
             "next_page": "Próximo"
         },
         "favorite": {
-            "friends": {
-                "header": "Amigos"
-            },
             "worlds": {
-                "header": "Mundos",
                 "search": "Procurar",
                 "vrchat_favorites": "Favoritos do VRChat",
                 "local_favorites": "Locais Favoritos",
                 "new_group": "Novo Grupo"
             },
             "avatars": {
-                "header": "Avatares",
                 "search": "Procurar",
                 "vrchat_favorites": "Favoritos do VRChat",
                 "local_favorites": "Favoritos Locais (Requer VRC+)",
@@ -112,7 +105,6 @@
             "delete_tooltip": "Excluir",
             "unavailable_tooltip": "Indisponível",
             "private": "Privado",
-            "sort_by": "Ordenar Por",
             "select_avatar_tooltip": "Selecionar Avatar"
         },
         "friend_log": {
@@ -130,39 +122,23 @@
             "refresh_tooltip": "Atualizar"
         },
         "friend_list": {
-            "header": "Lista de amigos",
             "bulk_unfriend": "Modo Desfazer Amizade em Massa",
             "bulk_unfriend_selection": "Seleção Desfazer Amizade em Massa",
             "load": "Carregar entradas ausentes",
-            "load_tooltip": "Carregar",
             "favorites_only_tooltip": "Filtrar apenas favoritos",
             "search_placeholder": "Procurar",
-            "filter_placeholder": "Filtro",
-            "refresh_tooltip": "Atualizar",
-            "clear_tooltip": "Limpar Resultados",
-            "cancel_tooltip": "Cancelar"
+            "filter_placeholder": "Filtro"
         },
         "profile": {
             "profile": {
-                "header": "Perfil",
-                "last_activity": "Última Atividade",
-                "two_factor": "Autenticação de Dois Fatores (2FA)",
-                "two_factor_enabled": "Ativado",
-                "two_factor_disabled": "Desativado",
                 "vrchat_credits": "Créditos do VRChat",
-                "refresh": "Clique para atualizar",
-                "logout": "Encerrar Sessão",
-                "manage_gallery_inventory_icon": "Gerenciar Fotos/Icones/Emojis",
-                "export_notes": "Exportar Notas"
+                "refresh": "Clique para atualizar"
             },
             "game_info": {
                 "header": "Informações do Jogo",
                 "online_users": "Usuários Online",
                 "user_online": "{count} usuários online.",
                 "refresh": "Clique para atualizar"
-            },
-            "vrc_sdk_downloads": {
-                "header": "Downloads do SDK do VRC"
             },
             "direct_access": {
                 "header": "Acesso Direto",
@@ -177,8 +153,6 @@
             "invite_request_response_messages": "Enviar Pedido de Solicitação de Convite por Mensagem",
             "past_display_names": "Nome de Exibição Passado",
             "config_json": "Configuração JSON",
-            "current_user_json": "Usuário atual JSON",
-            "feedback": "Feedback",
             "refresh_tooltip": "Atualizar",
             "clear_results_tooltip": "Limpar Resultados"
         },
@@ -227,7 +201,6 @@
                     "empty_avatar": "Registrar Avatares no feed sem os nomes"
                 },
                 "automation": {
-                    "header": "Automatização",
                     "auto_state_change": "Mudar os Status Automaticamente",
                     "auto_state_change_tooltip": "Mudar o status automaticamente quando houver outras pessoas na instância (Sozinho / Com Companhia)",
                     "auto_state_change_off": "Desligado",
@@ -267,7 +240,6 @@
                     "theme_mode_material3": "Material 3",
                     "zoom": "Zoom",
                     "vrcplus_profile_icons": "Ícones do Perfil do VRCPlus",
-                    "tooltips": "Dicas",
                     "nicknames": "Apelidos de Memo",
                     "sort_favorite_by": "Ordenar Favoritos por",
                     "sort_favorite_by_name": "nome",
@@ -305,15 +277,12 @@
                         "sort_offline_by": "Ordenar Offline por",
                         "sort_offline_by_alphabet": "alfabético",
                         "sort_offline_by_offline_time": "offline para"
-                    },
-                    "width": "Largura"
+                    }
                 },
                 "user_dialog": {
                     "header": "Diálogo do Usuário",
                     "vrchat_notes": "Notas do VRChat",
-                    "vrcx_memos": "Memos VRCX",
-                    "export_vrcx_memos_into_vrchat_notes": "Exportar Memos do VRCX para as Notas do VRChat",
-                    "export_notes": "Exportar Notas"
+                    "vrcx_memos": "Memos VRCX"
                 },
                 "user_colors": {
                     "header": "Cores do Usuário",
@@ -399,11 +368,8 @@
             },
             "advanced": {
                 "advanced": {
-                    "header": "Avançado",
                     "launch_options": "Opções de Inicialização",
-                    "screenshot_metadata": "Screenshot Metadata",
                     "vrc_registry_backup": "Backup do Registro VRC",
-                    "common_folders": "Pastas Comuns",
                     "primary_password": {
                         "header": "Senha Primaria",
                         "description": "Criptografar senha (desativa o login automático)"
@@ -454,15 +420,11 @@
                         "header": "App Launcher",
                         "folder": "Auto-Iniciar Pasta",
                         "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts in this folder.",
-                        "enable": "Ativado",
                         "auto_close": "Fechar aplicativos automaticamente"
                     },
                     "cache_debug": {
                         "header": "VRCX Instance Cache/Debug",
                         "udon_exception_logging": "Udon Exception Logging",
-                        "gpu_fix": "SteamVR Overlay GPU Fix",
-                        "gpu_fix_notice": "(requer reinicialização)",
-                        "gpu_fix_warning": "Somente ative esta opção se a sobreposição de SteamVR não estiver funcionando e você tiver 2 GPUs",
                         "disable_gamelog": "Desabilitar Registro De Jogo",
                         "disable_gamelog_notice": "(provavelmente quebrará coisas)",
                         "user_cache": "Cache do Usuário:",
@@ -530,7 +492,6 @@
         "search_result_active": "Offline",
         "search_result_offline": "Ativo",
         "search_result_more": "Pesquisar Mais:",
-        "direct_access_tooltip": "Direct access ID/URL from clipboard",
         "refresh_tooltip": "Atualizar Amigos",
         "groups": "Grupos",
         "friends": "Amigos",
@@ -632,10 +593,8 @@
                 "copy_id": "Copiar ID",
                 "copy_url": "Copiar URL",
                 "copy_display_name": "Copiar NomeDeExibição",
-                "accuracy_notice": "Info from local database may not be accurate",
                 "instance_full": "cheio",
                 "instance_closed": "fechado",
-                "instance_hard_closed": "fechamento forçado",
                 "close_instance": "Fechar Instância"
             },
             "groups": {
@@ -718,9 +677,7 @@
                 "public_count": "Público {count}",
                 "private_count": "Privado {count}",
                 "capacity_count": "Capacidade {count} ({max})",
-                "self_invite_tooltip": "Convide Você Mesmo",
                 "refresh_instance_info": "Atualizar Informação da Instância",
-                "instance_full": "cheio",
                 "instance_creator": "Criador da Instância"
             },
             "info": {
@@ -749,8 +706,7 @@
                 "platform": "Plataforma",
                 "last_visited": "Última Visita",
                 "visit_count": "Número de Visitas",
-                "time_spent": "Tempo Gasto",
-                "accuracy_notice": "Info from local database may not be accurate"
+                "time_spent": "Tempo Gasto"
             },
             "json": {
                 "header": "JSON"
@@ -772,13 +728,11 @@
             },
             "labels": {
                 "public": "(Público)",
-                "private": "(Privado)",
-                "own": "(Próprio)"
+                "private": "(Privado)"
             },
             "actions": {
                 "delete_cache_tooltip": "Excluir Avatar do Cache",
                 "favorite_tooltip": "Favoritos",
-                "unfavorite_tooltip": "Remover dos Favoritos",
                 "refresh": "Atualizar",
                 "select": "Selecionar Avatar",
                 "select_fallback": "Selecionar Avatar Reserva",
@@ -812,8 +766,7 @@
                 "memo_placeholder": "Click to add a memo"
             },
             "json": {
-                "header": "JSON",
-                "file_analysis": "Análise de Arquivos"
+                "header": "JSON"
             }
         },
         "group": {
@@ -857,7 +810,6 @@
                 "header": "Informação",
                 "instances": "Instâncias",
                 "announcement": "Anúncio",
-                "instance_full": "cheio",
                 "rules": "Regras",
                 "members": "Membros",
                 "created_at": "Criado Em",
@@ -939,10 +891,7 @@
         },
         "language": {
             "header": "Idioma",
-            "add_language": "Adicionar Linguagem",
-            "select_language": "Selecionar Linguagem",
-            "ok": "OK",
-            "cancel": "Cancelar"
+            "select_language": "Selecionar Linguagem"
         },
         "bio": {
             "header": "Bio",
@@ -1049,7 +998,6 @@
         },
         "set_avatar_tags": {
             "header": "Definir Etiquetas do Avatar",
-            "content_tags": "Etiquetas de Aviso de Conteúdo",
             "content_horror": "Terror",
             "content_gore": "Gore",
             "content_violence": "Violencia",
@@ -1316,8 +1264,6 @@
         "group_member_moderation": {
             "header": "Moderação dos Membros do Grupo",
             "filter_type": "Tipo de Filtro",
-            "select_type": "Selecione o Tipo",
-            "search_placeholder": "Procurar",
             "members": "Membros",
             "bans": "Banimentos",
             "invites": "Convites",
@@ -1337,7 +1283,6 @@
             "accept_join_requests": "Aceitar Pedidos para Entrar",
             "reject_join_requests": "Rejeitar Pedidos para Entrar",
             "block_join_requests": "Bloquear Pedidos para Entrar",
-            "group_members": "Membros do Grupo",
             "progress": "Processo:",
             "display_name": "Mostrar Nome",
             "visibility": "Visibilidade",
@@ -1378,7 +1323,6 @@
             "header": "Boop",
             "emoji_manager": "Gerenciador do Emoji",
             "select_emoji": "Selecionar Emoji",
-            "my_emojis": "Meus Emojis",
             "default_emojis": "Emojis Padrões",
             "cancel": "Cancelar",
             "send": "Enviar"
@@ -1390,7 +1334,6 @@
             "description": "Insira um código numérico do seu aplicativo de autenticação",
             "use_otp": "Usar OTP",
             "verify": "Verificar",
-            "input_placeholder": "Código",
             "input_error": "Código Inválido"
         },
         "otp": {
@@ -1398,7 +1341,6 @@
             "description": "Insira um dos seus códigos de recuperação salvos",
             "use_totp": "Usar TOTP",
             "verify": "Verificar",
-            "input_placeholder": "Código",
             "input_error": "Código Inválido"
         },
         "email_otp": {
@@ -1406,7 +1348,6 @@
             "description": "Insira um código numérico que foi enviado para o seu email",
             "resend": "Reenviar Email",
             "verify": "Verificar",
-            "input_placeholder": "Código",
             "input_error": "Código Inválido"
         },
         "primary_password": {
@@ -1418,47 +1359,9 @@
             "description": "Insira um novo nome",
             "cancel": "Cancelar",
             "change": "Mudar",
-            "input_placeholder": "Nome",
             "input_error": "Nome é obrigatório",
             "message": {
                 "success": "Grupo renomeado"
-            }
-        },
-        "direct_access_user_id": {
-            "header": "Acesso Direto",
-            "description": "Insira uma URL ou ID do Usuário (UUID)",
-            "cancel": "Cancelar",
-            "ok": "OK",
-            "input_error": "URL/ID do Usuário é obrigatório",
-            "message": {
-                "error": "URL/ID Inválido"
-            }
-        },
-        "direct_access_username": {
-            "header": "Acesso Direto",
-            "description": "Insira um Nome de Usuário",
-            "cancel": "Cancelar",
-            "ok": "OK",
-            "input_error": "Nome de Usuário é obrigatório"
-        },
-        "direct_access_world_id": {
-            "header": "Acesso Direto",
-            "description": "Insirir URL ou ID do Mundo (UUID)",
-            "cancel": "Cancelar",
-            "ok": "OK",
-            "input_error": "URL/ID do mundo é obrigatório",
-            "message": {
-                "error": "URL/ID Inválido"
-            }
-        },
-        "direct_access_avatar_id": {
-            "header": "Acesso Direto",
-            "description": "Insirir URL ou ID do Avatar (UUID)",
-            "cancel": "Cancelar",
-            "ok": "OK",
-            "input_error": "URL/ID do Avatar é obrigatório",
-            "message": {
-                "error": "URL/ID Inválido"
             }
         },
         "direct_access_omni": {
@@ -1538,8 +1441,6 @@
         "change_world_recommended_capacity": {
             "header": "Mudar Capacidade Recomendada",
             "description": "Insirir capacidade recomendada do mundo (limite mínimo)",
-            "cancel": "Cancelar",
-            "ok": "OK",
             "input_error": "Validação do número é obrigatório",
             "message": {
                 "success": "Capacidade recomendada do mundo alterada"
@@ -1559,10 +1460,9 @@
         "change_table_size": {
             "header": "Max Table Size",
             "description": "Limitar quantidade de entradas carregadas do banco de dados para páginas da interface, tamanhos maiores de tabela terão impacto no uso e desempenho da memória RAM",
-                    "table_max_size": "Tamanho Máximo da Tabela",
+            "table_max_size": "Tamanho Máximo da Tabela",
             "cancel": "Cancelar",
-            "save": "Salvar",
-            "input_error": "Validação do número é obrigatório"
+            "save": "Salvar"
         },
         "photon_lobby_timeout": {
             "header": "Tempo limite do usuário",
@@ -1579,11 +1479,6 @@
             "input_error": "Validação do número é obrigatório"
         },
         "new_local_favorite_group": {
-            "header": "Novo Grupo",
-            "description": "Insira um nome do grupo favorito de mundo",
-            "cancel": "Cancelar",
-            "ok": "OK",
-            "input_error": "Nome é obrigatório",
             "message": {
                 "error": "Grupo já existe com o nome {name}"
             }
@@ -1598,17 +1493,9 @@
                 "error": "Grupo já existe com o nome {name}"
             }
         },
-        "pending_offline_delay": {
-            "header": "Pendências Offline",
-            "description": "Definir atraso pendente em segundos (padrão: 110)",
-            "cancel": "Cancelar",
-            "save": "Salvar",
-            "input_error": "Validação do número é obrigatório"
-        },
         "proxy_settings": {
             "header": "Definições de Proxy",
             "description": "Enter proxy server address and port",
-            "placeholder": "127.0.0.1:8080",
             "close": "Fechar",
             "restart": "Reiniciar"
         }
@@ -1662,7 +1549,6 @@
             "type": "Tipo",
             "user": "Usuário",
             "group": "Grupo",
-            "user_group": "Usuário/Grupo",
             "photo": "Foto",
             "message": "Mensagem",
             "action": "Ação"
@@ -1689,22 +1575,7 @@
                 "message": "Mensagem",
                 "cool_down": "Limitar",
                 "action": "Ação"
-            },
-            "previous_display_name": {
-                "date": "Data",
-                "name": "Nome"
             }
-        },
-        "social_status": {
-            "no": "Não.",
-            "status": "Status"
-        },
-        "download_history": {
-            "time": "Tempo",
-            "name": "Nome",
-            "type": "Tipo",
-            "status": "Status",
-            "cancel": "Cancelar"
         },
         "import": {
             "image": "Imagem",

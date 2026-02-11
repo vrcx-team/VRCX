@@ -11,7 +11,6 @@
         "moderation": "Moderace",
         "notification": "Upozornění",
         "friend_list": "Seznam přátel",
-        "profile": "Profil",
         "settings": "Nastavení"
     },
     "view": {
@@ -33,7 +32,6 @@
         },
         "feed": {
             "favorites_only_tooltip": "Zobrazit pouze oblíbené",
-            "filter_placeholder": "Filtrovat",
             "search_placeholder": "Vyhledat"
         },
         "game_log": {
@@ -82,25 +80,18 @@
             "next_page": "Další"
         },
         "favorite": {
-            "friends": {
-                "header": "Přátelé"
-            },
             "worlds": {
-                "header": "Světy",
                 "search": "Vyhledávání",
                 "vrchat_favorites": "VRChat Oblíbené",
                 "local_favorites": "Lokální Oblíbené",
                 "new_group": "Nová skupina",
-                "refresh": "Obnovit",
                 "cancel_refresh": "Zrušit obnovení"
             },
             "avatars": {
-                "header": "Avatary",
                 "search": "Vyhledávání",
                 "vrchat_favorites": "VRChat Oblíbené",
                 "local_favorites": "Lokální Oblíbené (Potřeba VRC+)",
                 "new_group": "Nová skupina",
-                "refresh": "Obnovit",
                 "cancel_refresh": "Zrušit obnovení"
             },
             "edit_mode": "Režim úprav",
@@ -120,7 +111,6 @@
             "delete_tooltip": "Smazat",
             "unavailable_tooltip": "Nedostupný",
             "private": "Soukromý",
-            "sort_by": "Seřadit podle",
             "select_avatar_tooltip": "Vybrat avatar"
         },
         "friend_log": {
@@ -138,39 +128,23 @@
             "refresh_tooltip": "Obnovit"
         },
         "friend_list": {
-            "header": "Seznam přátel",
             "bulk_unfriend": "Hromadné odebrání přátel",
             "bulk_unfriend_selection": "Výběr hromadného odebrání přátel",
             "load": "Načíst chybějící položky",
-            "load_tooltip": "Načíst",
             "favorites_only_tooltip": "Zobrazit pouze oblíbené",
             "search_placeholder": "Vyhledat",
-            "filter_placeholder": "Filtrovat",
-            "refresh_tooltip": "Obnovit",
-            "clear_tooltip": "Vymazat výsledky",
-            "cancel_tooltip": "Zrušit"
+            "filter_placeholder": "Filtrovat"
         },
         "profile": {
             "profile": {
-                "header": "Profil",
-                "last_activity": "Poslední aktivita",
-                "two_factor": "Dvou-fázové ověření (2FA)",
-                "two_factor_enabled": "Aktivováno",
-                "two_factor_disabled": "Deaktivováno",
                 "v_bucks": "V-Bucks",
-                "refresh": "Obnovit",
-                "logout": "Odhlásit se",
-                "manage_gallery_inventory_icon": "Manage Photos/Icons/Emojis/Stickers",
-                "export_notes": "Exportovat Poznámky "
+                "refresh": "Obnovit"
             },
             "game_info": {
                 "header": "Herní Info",
                 "online_users": "Online Hráči",
                 "user_online": "{count} hráčů online.",
                 "refresh": "Obnovit"
-            },
-            "vrc_sdk_downloads": {
-                "header": "VRC SDK Stažené"
             },
             "direct_access": {
                 "header": "Přímý přístup",
@@ -185,8 +159,6 @@
             "invite_request_response_messages": "Zprávý odpovědí na žádost o pozvání",
             "past_display_names": "Minulé přezdívky",
             "config_json": "Konfigurační JSON",
-            "current_user_json": "Aktuální Uživatelské JSON",
-            "feedback": "Zpětná vazba",
             "refresh_tooltip": "Obnovit",
             "clear_results_tooltip": "Vymazat výsledky"
         },
@@ -226,7 +198,6 @@
                     "disable_gpu_acceleration": "Vypnout GPU Akceleraci",
                     "disable_gpu_acceleration_tooltip": "Tuto možnost změnte pouze, pokud víte co děláte, narušujete SteamVR Overlay, může opravit UI problémy, vyžaduje restart VRCX",
                     "disable_vr_overlay_gpu_acceleration": "Vypnout GPU akceleraci VR Overlay",
-                    "disable_vr_overlay_gpu_acceleration_tooltip": "GPU akcelerace VR překrytí může působit pád VRCX nebo VRAM Leaking, vyžaduje restart VRCX",
                     "proxy": "Nastavení proxy"
                 },
                 "favorites": {
@@ -239,7 +210,6 @@
                     "empty_avatar": "Záznam avatarů v kanálu bez jmen"
                 },
                 "automation": {
-                    "header": "Automatizace",
                     "auto_change_status": "Automaticky měnit status",
                     "auto_state_change_tooltip": "Automaticky změnit status když v instanci jsou další lidé (Sám / Společnost)",
                     "alone_condition": "Kondice pro samotného",
@@ -280,7 +250,6 @@
                     "theme_mode_material3": "Material 3",
                     "zoom": "Přiblížení",
                     "vrcplus_profile_icons": "VRCPlus Profilové ikony",
-                    "tooltips": "Popisky",
                     "nicknames": "Přezdívky v poznámkách",
                     "sort_favorite_by": "Řadit oblíbené podle",
                     "sort_favorite_by_name": "jména",
@@ -304,22 +273,17 @@
                         "alphabetical": "Abecedně",
                         "private_to_bottom": "Soukromé dolů",
                         "status": "Status",
-                        "status_and_private_to_bottom": "Status a soukromé dolů",
                         "location": "Lokace",
                         "last_active": "Naposledy aktivní",
                         "last_seen": "Naposledy viděn",
                         "time_in_instance": "Čas v instanci",
-                        "placeholder": "Řazení",
-                        "dropdown_header": "Vybrat způsob řazení"
-                    },
-                    "width": "Šířka"
+                        "placeholder": "Řazení"
+                    }
                 },
                 "user_dialog": {
                     "header": "Dialog uživatele",
                     "vrchat_notes": "VRChat poznámky",
-                    "vrcx_memos": "VRCX poznámky",
-                    "export_vrcx_memos_into_vrchat_notes": "Exportovat VRCX poznámky do VRChat poznámek",
-                    "export_notes": "Exportovat poznámky"
+                    "vrcx_memos": "VRCX poznámky"
                 },
                 "user_colors": {
                     "header": "Uživatelské barvy",
@@ -409,11 +373,8 @@
             },
             "advanced": {
                 "advanced": {
-                    "header": "Advanced",
                     "launch_options": "Launch Options",
-                    "screenshot_metadata": "Screenshot Metadata",
                     "vrc_registry_backup": "VRC Registry Backup",
-                    "common_folders": "Common Folders",
                     "primary_password": {
                         "header": "Primary Password",
                         "description": "Encrypt password (disables auto login)"
@@ -469,15 +430,11 @@
                         "header": "App Launcher",
                         "folder": "Auto-Launch Folder",
                         "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts in this folder.",
-                        "enable": "Enable",
                         "auto_close": "Auto close apps"
                     },
                     "cache_debug": {
                         "header": "VRCX Instance Cache/Debug",
                         "udon_exception_logging": "Udon Exception Logging",
-                        "gpu_fix": "SteamVR Overlay GPU Fix",
-                        "gpu_fix_notice": "(requires restart)",
-                        "gpu_fix_warning": "Only enable this option if the SteamVR overlay isn't working and you have 2 GPUs",
                         "disable_gamelog": "Disable GameLog",
                         "disable_gamelog_notice": "(will likely break things)",
                         "user_cache": "User cache:",
@@ -552,7 +509,6 @@
         "search_result_active": "Offline",
         "search_result_offline": "Active",
         "search_result_more": "Search More:",
-        "direct_access_tooltip": "Direct access ID/URL from clipboard",
         "refresh_tooltip": "Refresh friends",
         "groups": "Groups",
         "friends": "Friends",
@@ -662,10 +618,8 @@
                 "copy_id": "Copy ID",
                 "copy_url": "Copy URL",
                 "copy_display_name": "Copy DisplayName",
-                "accuracy_notice": "Info from local database may not be accurate",
                 "instance_full": "full",
                 "instance_closed": "closed",
-                "instance_hard_closed": "hard closed",
                 "close_instance": "Close Instance",
                 "instance_age_gated": "age gated"
             },
@@ -725,7 +679,6 @@
                 "private": "Private",
                 "avatar_scaling_disabled": "Avatar Scaling Disabled",
                 "focus_view_disabled": "Focus View Disabled",
-                "stickers_disabled": "Stickers Disabled",
                 "future_proofing": "Future Proofing",
                 "labs": "Labs",
                 "cache": "Cache",
@@ -765,9 +718,7 @@
                 "public_count": "Public {count}",
                 "private_count": "Private {count}",
                 "capacity_count": "Capacity {count} ({max})",
-                "self_invite_tooltip": "Invite Yourself",
                 "refresh_instance_info": "Refresh Instance Info",
-                "instance_full": "full",
                 "instance_creator": "Instance Creator"
             },
             "info": {
@@ -796,8 +747,7 @@
                 "platform": "Platform",
                 "last_visited": "Last Visited",
                 "visit_count": "Visit Count",
-                "time_spent": "Time Spent",
-                "accuracy_notice": "Info from local database may not be accurate"
+                "time_spent": "Time Spent"
             },
             "json": {
                 "header": "JSON"
@@ -819,13 +769,11 @@
             },
             "labels": {
                 "public": "(Public)",
-                "private": "(Private)",
-                "own": "(Own)"
+                "private": "(Private)"
             },
             "actions": {
                 "delete_cache_tooltip": "Delete avatar from cache",
                 "favorite_tooltip": "Favorites",
-                "unfavorite_tooltip": "Remove from favorites",
                 "refresh": "Refresh",
                 "select": "Select Avatar",
                 "select_fallback": "Select Fallback Avatar",
@@ -857,8 +805,7 @@
                 "memo_placeholder": "Click to add a memo"
             },
             "json": {
-                "header": "JSON",
-                "file_analysis": "File Analysis"
+                "header": "JSON"
             }
         },
         "group": {
@@ -903,7 +850,6 @@
                 "header": "Info",
                 "instances": "Instances",
                 "announcement": "Announcement",
-                "instance_full": "full",
                 "rules": "Rules",
                 "members": "Members",
                 "created_at": "Created At",
@@ -985,10 +931,7 @@
         },
         "language": {
             "header": "Language",
-            "add_language": "Add Language",
-            "select_language": "Select Language",
-            "ok": "OK",
-            "cancel": "Cancel"
+            "select_language": "Select Language"
         },
         "bio": {
             "header": "Bio",
@@ -1085,7 +1028,6 @@
             "header": "Set World Tags",
             "avatar_scaling_disabled": "Disable avatar scaling",
             "focus_view_disabled": "Disable focus view",
-            "stickers_disabled": "Disable stickers",
             "enable_debugging": "Enable world debugging for others",
             "author_tags": "Author Tags (comma separated)",
             "content_tags": "Content Warning Tags",
@@ -1099,7 +1041,6 @@
         },
         "set_avatar_tags": {
             "header": "Set Avatar Tags",
-            "content_tags": "Content Warning Tags",
             "content_horror": "Horror",
             "content_gore": "Gore",
             "content_violence": "Violence",
@@ -1376,8 +1317,6 @@
         "group_member_moderation": {
             "header": "Group Member Moderation",
             "filter_type": "Filter Type",
-            "select_type": "Select Type",
-            "search_placeholder": "Search",
             "members": "Members",
             "bans": "Bans",
             "invites": "Invites",
@@ -1397,7 +1336,6 @@
             "accept_join_requests": "Accept Join Requests",
             "reject_join_requests": "Reject Join Requests",
             "block_join_requests": "Block Join Requests",
-            "group_members": "Group Members",
             "progress": "Progress:",
             "display_name": "Display Name",
             "visibility": "Visibility",
@@ -1438,7 +1376,6 @@
             "header": "Boop",
             "emoji_manager": "Emoji Manager",
             "select_emoji": "Select Emoji",
-            "my_emojis": "My Emojis",
             "default_emojis": "Default Emojis",
             "cancel": "Cancel",
             "send": "Send"
@@ -1471,33 +1408,15 @@
             "not_allowed": "You're not allowed to access this instance"
         },
         "avatar": {
-            "change_moderation_failed": "Failed to change avatar moderation",
-            "image_changed": "Avatar image changed",
-            "image_invalid": "Current avatar image invalid"
-        },
-        "emoji": {
-            "uploaded": "Emoji uploaded"
+            "change_moderation_failed": "Failed to change avatar moderation"
         },
         "file": {
             "not_image": "File isn't an image",
             "too_large": "File size too large"
         },
-        "print": {
-            "uploaded": "Print uploaded"
-        },
-        "sticker": {
-            "uploaded": "Sticker uploaded"
-        },
         "gallery": {
             "uploaded": "Gallery image uploaded",
             "failed": "Failed to upload gallery image"
-        },
-        "world": {
-            "image_changed": "World image changed",
-            "image_invalid": "Current world image invalid"
-        },
-        "icon": {
-            "uploaded": "Icon uploaded"
         },
         "user": {
             "moderated": "User moderated"
@@ -1512,7 +1431,6 @@
             "description": "Enter a numeric code from your authenticator app",
             "use_otp": "Use OTP",
             "verify": "Verify",
-            "input_placeholder": "Code",
             "input_error": "Invalid Code"
         },
         "otp": {
@@ -1520,7 +1438,6 @@
             "description": "Enter one of your saved recovery codes",
             "use_totp": "Use TOTP",
             "verify": "Verify",
-            "input_placeholder": "Code",
             "input_error": "Invalid Code"
         },
         "email_otp": {
@@ -1528,7 +1445,6 @@
             "description": "Enter a numeric code that was sent to your email",
             "resend": "Resend Email",
             "verify": "Verify",
-            "input_placeholder": "Code",
             "input_error": "Invalid Code"
         },
         "primary_password": {
@@ -1540,47 +1456,9 @@
             "description": "Enter a new name",
             "cancel": "Cancel",
             "change": "Change",
-            "input_placeholder": "Name",
             "input_error": "Name is required",
             "message": {
                 "success": "Group renamed"
-            }
-        },
-        "direct_access_user_id": {
-            "header": "Direct Access",
-            "description": "Enter a User URL or ID (UUID)",
-            "cancel": "Cancel",
-            "ok": "OK",
-            "input_error": "User URL/ID is required",
-            "message": {
-                "error": "Invalid URL/ID"
-            }
-        },
-        "direct_access_username": {
-            "header": "Direct Access",
-            "description": "Enter a Username",
-            "cancel": "Cancel",
-            "ok": "OK",
-            "input_error": "Username is required"
-        },
-        "direct_access_world_id": {
-            "header": "Direct Access",
-            "description": "Enter a World URL or ID (UUID)",
-            "cancel": "Cancel",
-            "ok": "OK",
-            "input_error": "World URL/ID is required",
-            "message": {
-                "error": "Invalid URL/ID"
-            }
-        },
-        "direct_access_avatar_id": {
-            "header": "Direct Access",
-            "description": "Enter a Avatar URL or ID (UUID)",
-            "cancel": "Cancel",
-            "ok": "OK",
-            "input_error": "Avatar URL/ID is required",
-            "message": {
-                "error": "Invalid URL/ID"
             }
         },
         "direct_access_omni": {
@@ -1660,8 +1538,6 @@
         "change_world_recommended_capacity": {
             "header": "Change Recommended Capacity",
             "description": "Enter world recommended capacity (soft cap)",
-            "cancel": "Cancel",
-            "ok": "OK",
             "input_error": "Valid number is required",
             "message": {
                 "success": "World recommended capacity changed"
@@ -1681,10 +1557,9 @@
         "change_table_size": {
             "header": "Max Table Size",
             "description": "Limit amount of entries loaded from database to UI pages, larger table sizes will impact RAM usage and performance",
-                    "table_max_size": "Magimální velikost tabulky",
+            "table_max_size": "Magimální velikost tabulky",
             "cancel": "Cancel",
-            "save": "Save",
-            "input_error": "Valid number is required"
+            "save": "Save"
         },
         "photon_lobby_timeout": {
             "header": "User Timeout Threshold",
@@ -1701,11 +1576,6 @@
             "input_error": "Valid number is required"
         },
         "new_local_favorite_group": {
-            "header": "New Group",
-            "description": "Enter a world favorite group name",
-            "cancel": "Cancel",
-            "ok": "OK",
-            "input_error": "Name is required",
             "message": {
                 "error": "Group already exists with the name {name}"
             }
@@ -1720,17 +1590,9 @@
                 "error": "Group already exists with the name {name}"
             }
         },
-        "pending_offline_delay": {
-            "header": "Pending Offline",
-            "description": "Set pending offline delay in seconds (default: 110)",
-            "cancel": "Cancel",
-            "save": "Save",
-            "input_error": "Valid number is required"
-        },
         "proxy_settings": {
             "header": "Proxy Settings",
             "description": "Enter proxy server address and port",
-            "placeholder": "127.0.0.1:8080",
             "close": "Close",
             "restart": "Restart"
         }
@@ -1784,7 +1646,6 @@
             "type": "Type",
             "user": "User",
             "group": "Group",
-            "user_group": "User/Group",
             "photo": "Photo",
             "message": "Message",
             "action": "Action"
@@ -1811,22 +1672,7 @@
                 "message": "Message",
                 "cool_down": "Cool Down",
                 "action": "Action"
-            },
-            "previous_display_name": {
-                "date": "Date",
-                "name": "Name"
             }
-        },
-        "social_status": {
-            "no": "No.",
-            "status": "Status"
-        },
-        "download_history": {
-            "time": "Time",
-            "name": "Name",
-            "type": "Type",
-            "status": "Status",
-            "cancel": "Cancel"
         },
         "import": {
             "image": "Image",
@@ -1935,7 +1781,6 @@
                 "error_message": "Error Message",
                 "endpoint": "Endpoint",
                 "missing_credentials": "Missing Credentials",
-                "avatar_private_or_deleted": "Avatar private or deleted",
                 "vpn_in_use": "VRChat currently blocks most VPNs. Please disable any connected VPNs and try again.",
                 "login_error": "Login Error",
                 "invalid_json_response": "Invalid JSON response",

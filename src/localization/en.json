@@ -18,8 +18,6 @@
         "friend_list": "Friend List",
         "charts": "Charts",
         "tools": "Tools",
-        "about": "About",
-        "profile": "Profile",
         "settings": "Settings",
         "manage": "Manage",
         "help_support": "Help & Support",
@@ -47,7 +45,6 @@
             "folder_selected": "Folder items",
             "folder_selected_empty": "No items selected",
             "delete_folder": "Delete Folder",
-            "assign_folder": "Add to folder",
             "remove_from_folder": "Remove from folder",
             "folder_empty": "No items in this folder",
             "invalid_folder": "Folder must have a name and contain at least two items.",
@@ -55,11 +52,6 @@
             "restore_default_confirm": "Restore navigation to its default order?",
             "save": "Save",
             "cancel": "Cancel"
-        },
-        "icon_picker": {
-            "search_placeholder": "Search icon name or tags",
-            "pick_icon": "Pick Icon",
-            "no_icon_found": "No icons found"
         }
     },
     "view": {
@@ -81,7 +73,6 @@
         },
         "feed": {
             "favorites_only_tooltip": "Filter favorites only",
-            "filter_placeholder": "Filter",
             "search_placeholder": "Search",
             "filters": {
                 "GPS": "GPS",
@@ -93,7 +84,6 @@
             }
         },
         "friends_locations": {
-            "online_friends": "Online Friends",
             "online": "Online",
             "favorite": "Favorites",
             "same_instance": "Same instance",
@@ -102,7 +92,6 @@
             "spacing": "Spacing",
             "scale": "Scale",
             "separate_same_instance_friends": "Separate Same Instance Friends",
-            "no_matching_friends": "No Matching Friends",
             "loading_more": "Loading more..."
         },
         "game_log": {
@@ -164,32 +153,22 @@
             "next_page": "Next"
         },
         "favorite": {
-            "friends": {
-                "header": "Friends"
-            },
             "worlds": {
-                "header": "Worlds",
                 "search": "Search",
                 "vrchat_favorites": "VRChat Favorites",
                 "local_favorites": "Local Favorites",
                 "new_group": "New Group",
-                "refresh": "Refresh",
                 "cancel_refresh": "Cancel Refresh"
             },
             "avatars": {
-                "header": "Avatars",
                 "search": "Search",
                 "vrchat_favorites": "VRChat Favorites",
                 "local_favorites": "Local Favorites (Requires VRC+)",
                 "new_group": "New Group",
-                "refresh": "Refresh",
                 "cancel_refresh": "Cancel Refresh",
                 "check_invalid": "Check for deleted/private avatars",
                 "check_description": "Detect and remove invalid avatars from this group",
                 "checking": "Checking for invalid avatars...",
-                "check_progress": "Progress: {current}/{total}",
-                "check_complete": "Check complete!",
-                "check_summary": "Checked {total} avatars, found {invalid} invalid, removed {removed}",
                 "removed_list_header": "Avatars pending deletion:",
                 "copy_removed_ids": "Copy Avatar IDs",
                 "copied_ids": "Avatar IDs copied to clipboard",
@@ -201,11 +180,6 @@
                 "delete_summary": "Successfully deleted {removed} invalid avatars",
                 "no_invalid_found": "No invalid avatars found",
                 "delete_cancelled": "Delete operation cancelled"
-            },
-            "visibility": {
-                "public": "Public",
-                "friends": "Friends",
-                "private": "Private"
             },
             "edit_mode": "Edit Mode",
             "copy": "Copy",
@@ -226,7 +200,6 @@
             "delete_tooltip": "Delete",
             "unavailable_tooltip": "Unavailable",
             "private": "Private",
-            "sort_by": "Sort By",
             "select_avatar_tooltip": "Select Avatar"
         },
         "friend_log": {
@@ -318,11 +291,9 @@
             }
         },
         "friend_list": {
-            "header": "Friend List",
             "bulk_unfriend": "Bulk Unfriend Mode",
             "bulk_unfriend_selection": "Bulk Unfriend Selection",
             "load": "Load missing entries",
-            "load_tooltip": "Load",
             "load_dialog_title": "Load missing entries",
             "load_dialog_message": "Retrieving missing profile fields for your friends.",
             "load_cancel": "Cancel",
@@ -330,13 +301,9 @@
             "favorites_only_tooltip": "Filter favorites only",
             "search_placeholder": "Search",
             "filter_placeholder": "Filter",
-            "refresh_tooltip": "Refresh",
-            "clear_tooltip": "Clear Results",
-            "cancel_tooltip": "Cancel",
             "load_mutual_friends": "Load Mutual Friends"
         },
         "charts": {
-            "header": "Charts",
             "instance_activity": {
                 "header": "Instance Activity",
                 "online_time": "Online Time",
@@ -344,11 +311,9 @@
                 "next_day": "Next Day",
                 "refresh": "Refresh",
                 "tips": {
-                    "header": "Tips",
                     "online_time": "Online time refers to the game time recorded by VRCX for the current day.",
                     "click_Y_axis": "Click Y-axis label to navigate to the instance details or open User dialog.",
-                    "click_instance_name": "Click instance name to open Previous Instance Info dialog.",
-                    "accuracy_notice": "Info from local database may not be accurate"
+                    "click_instance_name": "Click instance name to open Previous Instance Info dialog."
                 },
                 "settings": {
                     "header": "Settings",
@@ -395,10 +360,6 @@
                     "mutual_friend_graph_ready_message": "Mutual friend network graph is ready",
                     "friend_list_changed_fetch_again": "Friend list changed. Please fetch the mutual friend network again."
                 },
-                "tooltip": {
-                    "mutual_friends_count": "Mutual friends: {count}",
-                    "edge": "{source} ↔ {target}"
-                },
                 "settings": {
                     "title": "Graph Layout Settings",
                     "layout_iterations": "Layout iterations",
@@ -407,22 +368,6 @@
                     "layout_spacing_help": "How spread out the graph is. Higher means less crowded.",
                     "edge_curvature": "Edge curvature",
                     "edge_curvature_help": "How curved the lines are. Higher means smoother lines in dense areas."
-                },
-                "force_dialog": {
-                    "open_label": "Adjust graph layout settings",
-                    "title": "Graph Layout Settings",
-                    "description": "Fine-tune the force-directed layout used to draw the mutual friend graph.",
-                    "repulsion": "Repulsion",
-                    "edge_length_min": "Edge length (min)",
-                    "edge_length_max": "Edge length (max)",
-                    "gravity": "Gravity",
-                    "apply": "Apply",
-                    "reset": "Reset",
-                    "repulsion_help": "Repulsion between nodes.",
-                    "edge_length_min_help": "Minimum distance between connected nodes.",
-                    "edge_length_max_help": "Maximum distance between connected nodes.",
-                    "gravity_help": "Pull strength toward the graph center.",
-                    "invalid_input": "Please enter non-negative numbers."
                 }
             }
         },
@@ -433,7 +378,6 @@
                 "calendar": "Calendar",
                 "calendar_description": "Group Events Calendar"
             },
-            "image": {},
             "user": {
                 "discord_names_description": "Find the Discord usernames of your VRChat friends",
                 "export_friend_list_description": "Export your friends list from VRChat",
@@ -452,7 +396,6 @@
                 "pictures": {
                     "vrc_photos": "VRChat Photos",
                     "steam_screenshots": "Steam Screenshots",
-                    "open_folder": "Open Folder",
                     "vrc_photos_description": "Opens your VRChat photos folder",
                     "steam_screenshots_description": "Opens your Steam screenshots folder"
                 },
@@ -487,16 +430,8 @@
         },
         "profile": {
             "profile": {
-                "header": "Profile",
-                "last_activity": "Last Activity",
-                "two_factor": "Two-Factor Auth (2FA)",
-                "two_factor_enabled": "Enabled",
-                "two_factor_disabled": "Disabled",
                 "vrchat_credits": "VRChat Credits",
-                "refresh": "Click to refresh",
-                "logout": "Logout",
-                "manage_gallery_inventory_icon": "Manage VRC+ Images & Inventory",
-                "export_notes": "Export Notes"
+                "refresh": "Click to refresh"
             },
             "game_info": {
                 "header": "Game Info",
@@ -504,12 +439,7 @@
                 "user_online": "{count} users online.",
                 "refresh": "Click to refresh"
             },
-            "vrc_sdk_downloads": {
-                "header": "VRC SDK Downloads"
-            },
             "config_json": "Config JSON",
-            "current_user_json": "Current User JSON",
-            "feedback": "Feedback",
             "refresh_tooltip": "Refresh",
             "clear_results_tooltip": "Clear results"
         },
@@ -551,7 +481,6 @@
                     "disable_gpu_acceleration": "Disable GPU Acceleration",
                     "disable_gpu_acceleration_tooltip": "Only change this option if you know what you're doing, may fix issues with UI, requires restarting VRCX",
                     "disable_vr_overlay_gpu_acceleration": "Disable VR Overlay GPU Acceleration",
-                    "disable_vr_overlay_gpu_acceleration_tooltip": "VR Overlay GPU acceleration can cause VRCX to crash or cause VRAM memory leaks, requires restarting VRCX",
                     "proxy": "Proxy settings",
                     "startup_linux": "Add \"--startup\" arg to startup VRCX.desktop file to start VRCX minimized at system startup"
                 },
@@ -567,7 +496,6 @@
                     "auto_login_delay_button": "Set delay seconds"
                 },
                 "automation": {
-                    "header": "Automation",
                     "auto_change_status": "Auto Change Status",
                     "auto_state_change_tooltip": "Automatically change status when there are other people in the instance (Alone / Company)",
                     "alone_condition": "Alone Condition",
@@ -624,7 +552,6 @@
                     "theme_mode_material3": "Material 3",
                     "zoom": "Zoom",
                     "vrcplus_profile_icons": "VRCPlus Profile Icons",
-                    "tooltips": "Tooltips",
                     "show_instance_id": "Show Instance Name",
                     "age_gated_instances": "Age Gated Instances",
                     "nicknames": "Memo Nicknames",
@@ -670,15 +597,12 @@
                         "alphabetical": "Alphabetical",
                         "private_to_bottom": "Private to Bottom",
                         "status": "Status",
-                        "status_and_private_to_bottom": "Status and Private to Bottom",
                         "location": "Location",
                         "last_active": "Last Active",
                         "last_seen": "Last Seen",
                         "time_in_instance": "Time in Instance",
-                        "placeholder": "Sort Order",
-                        "dropdown_header": "Choose Sort Order"
+                        "placeholder": "Sort Order"
                     },
-                    "width": "Width",
                     "group_by_instance": "Group by Instance",
                     "group_by_instance_tooltip": "Enabling this will group friends by instance when there is more than one friend in the same instance.",
                     "hide_friends_in_same_instance": "Hide Friends in Same Instance",
@@ -689,9 +613,7 @@
                 "user_dialog": {
                     "header": "User Dialog",
                     "vrchat_notes": "VRChat Notes",
-                    "vrcx_memos": "VRCX Memos",
-                    "export_vrcx_memos_into_vrchat_notes": "Export VRCX Memos into VRChat notes",
-                    "export_notes": "Export Notes"
+                    "vrcx_memos": "VRCX Memos"
                 },
                 "user_colors": {
                     "header": "User Colors",
@@ -804,18 +726,14 @@
             },
             "pictures": {
                 "pictures": {
-                    "header": "Pictures",
                     "auto_delete_old_prints": "Auto Delete Old Prints",
                     "auto_delete_prints_from_vrc": "Delete Old Prints from VRC when reaching print limit"
                 }
             },
             "advanced": {
                 "advanced": {
-                    "header": "Advanced",
                     "launch_options": "Launch Options",
-                    "screenshot_metadata": "Screenshot Metadata",
                     "vrc_registry_backup": "VRC Registry Backup",
-                    "common_folders": "Common Folders",
                     "primary_password": {
                         "header": "Primary Password",
                         "description": "Encrypt password (disables auto login)"
@@ -911,16 +829,12 @@
                         "header": "App Launcher",
                         "folder": "Auto-Launch Folder",
                         "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts inside this folder, alteratively use the platform-specific subfolders",
-                        "enable": "Enable",
                         "auto_close": "Auto close apps",
                         "run_process_once": "Open single instance of app"
                     },
                     "cache_debug": {
                         "header": "VRCX Instance Cache/Debug",
                         "udon_exception_logging": "Udon Exception Logging",
-                        "gpu_fix": "SteamVR Overlay GPU Fix",
-                        "gpu_fix_notice": "(requires restart)",
-                        "gpu_fix_warning": "Only enable this option if the SteamVR overlay isn't working and you have 2 GPUs",
                         "disable_gamelog": "Disable GameLog",
                         "disable_gamelog_notice": "(will likely break things)",
                         "user_cache": "User cache:",
@@ -989,7 +903,6 @@
         "search_result_active": "Offline",
         "search_result_offline": "Active",
         "search_result_more": "Search More:",
-        "direct_access_tooltip": "Direct access ID/URL from clipboard",
         "refresh_tooltip": "Refresh friends",
         "groups": "Groups",
         "friends": "Friends",
@@ -1024,7 +937,6 @@
             "tags": {
                 "friend_number": "Friend Number",
                 "vrchat_team": "VRChat Team",
-                "18_plus_verified": "18+ Verified",
                 "age_verified": "Age Verified",
                 "trust_level": "Trust Level",
                 "mutual_friends": "Mutual Friends",
@@ -1120,10 +1032,8 @@
                 "copy_url": "Copy URL",
                 "copy_display_name": "Copy DisplayName",
                 "vrcplus_hides_avatar": "When a VRC+ profile photo is set, avatar info is hidden. This also hides avatar changes in the feed",
-                "accuracy_notice": "Info from local database may not be accurate",
                 "instance_full": "full",
                 "instance_closed": "Instance closed",
-                "instance_hard_closed": "Instance hard closed",
                 "close_instance": "Close Instance",
                 "instance_age_gated": "age gated",
                 "open_previous_instance": "Open Previous Instances",
@@ -1202,7 +1112,6 @@
                 "private": "Private",
                 "avatar_scaling_disabled": "Avatar Scaling Disabled",
                 "focus_view_disabled": "Focus View Disabled",
-                "stickers_disabled": "Stickers Disabled",
                 "future_proofing": "Future Proofing",
                 "labs": "Labs",
                 "cache": "Cache",
@@ -1242,9 +1151,7 @@
                 "public_count": "Public {count}",
                 "private_count": "Private {count}",
                 "capacity_count": "Capacity {count} ({max})",
-                "self_invite_tooltip": "Invite Yourself",
                 "refresh_instance_info": "Refresh Instance Info",
-                "instance_full": "full",
                 "instance_creator": "Instance Creator"
             },
             "info": {
@@ -1273,8 +1180,7 @@
                 "platform": "Platform",
                 "last_visited": "Last Visited",
                 "visit_count": "Visit Count",
-                "time_spent": "Time Spent",
-                "accuracy_notice": "Info from local database may not be accurate"
+                "time_spent": "Time Spent"
             },
             "json": {
                 "header": "JSON"
@@ -1296,13 +1202,11 @@
             },
             "labels": {
                 "public": "(Public)",
-                "private": "(Private)",
-                "own": "(Own)"
+                "private": "(Private)"
             },
             "actions": {
                 "delete_cache_tooltip": "Delete avatar from cache",
                 "favorite_tooltip": "Favorites",
-                "unfavorite_tooltip": "Remove from favorites",
                 "refresh": "Refresh",
                 "share": "Share",
                 "select": "Select Avatar",
@@ -1339,8 +1243,7 @@
                 "gallery": "Gallery"
             },
             "json": {
-                "header": "JSON",
-                "file_analysis": "File Analysis"
+                "header": "JSON"
             }
         },
         "group": {
@@ -1388,7 +1291,6 @@
                 "header": "Info",
                 "instances": "Instances",
                 "announcement": "Announcement",
-                "instance_full": "full",
                 "rules": "Rules",
                 "members": "Members",
                 "created_at": "Created At",
@@ -1471,10 +1373,7 @@
         },
         "language": {
             "header": "Language",
-            "add_language": "Add Language",
-            "select_language": "Select Language",
-            "ok": "OK",
-            "cancel": "Cancel"
+            "select_language": "Select Language"
         },
         "bio": {
             "header": "Bio",
@@ -1505,8 +1404,6 @@
             "region_use": "US East",
             "region_eu": "Europe",
             "region_jp": "Japan",
-            "content_settings": "Content Settings",
-            "content_placeholder": "Enabled Content",
             "content_emoji": "Emoji",
             "content_stickers": "Stickers",
             "content_pedestals": "Pedestals",
@@ -1581,16 +1478,13 @@
         "translation_api": {
             "header": "Bio Translation API",
             "description": "Enter your Google translate API Key",
-            "placeholder": "Google Translate API Key",
             "guide": "Guide",
             "mode": "Provider",
             "mode_google": "Google Translate",
             "mode_openai": "OpenAI",
             "test": "Test",
             "save": "Save",
-            "msg_disabled": "Translation API disabled",
             "msg_fill_endpoint_model": "Please fill endpoint and model",
-            "msg_settings_invalid": "Translation settings invalid",
             "msg_settings_saved": "Translation settings saved",
             "msg_test_success": "Test succeeded",
             "msg_test_failed": "Test failed",
@@ -1604,14 +1498,12 @@
             "fetching_models": "Fetching...",
             "msg_endpoint_required": "Please fill in the endpoint first",
             "msg_models_fetched": "Found {count} models",
-            "msg_no_models_found": "No models found",
-            "msg_fetch_models_failed": "Failed to fetch models"
+            "msg_no_models_found": "No models found"
         },
         "set_world_tags": {
             "header": "Set World Tags",
             "avatar_scaling_disabled": "Disable avatar scaling",
             "focus_view_disabled": "Disable focus view",
-            "stickers_disabled": "Disable stickers",
             "enable_debugging": "Enable world debugging for others",
             "author_tags": "Author Tags (comma separated)",
             "content_tags": "Content Warning Tags",
@@ -1626,7 +1518,6 @@
         },
         "set_avatar_tags": {
             "header": "Set Avatar Tags",
-            "content_tags": "Content Warning Tags",
             "content_horror": "Horror",
             "content_gore": "Gore",
             "content_violence": "Violence",
@@ -1942,8 +1833,6 @@
         "group_member_moderation": {
             "header": "Group Member Moderation",
             "filter_type": "Filter Type",
-            "select_type": "Select Type",
-            "search_placeholder": "Search",
             "members": "Members",
             "bans": "Bans",
             "invites": "Invites",
@@ -1963,7 +1852,6 @@
             "accept_join_requests": "Accept Join Requests",
             "reject_join_requests": "Reject Join Requests",
             "block_join_requests": "Block Join Requests",
-            "group_members": "Group Members",
             "progress": "Progress:",
             "display_name": "Display Name",
             "visibility": "Visibility",
@@ -2006,7 +1894,6 @@
             "header": "Boop",
             "emoji_manager": "Emoji Manager",
             "select_default_emoji": "Select Default Emoji",
-            "my_emojis": "My Emojis",
             "default_emojis": "Default Emojis",
             "cancel": "Cancel",
             "send": "Send"
@@ -2039,12 +1926,7 @@
         "moderate_group": {
             "header": "Moderate Group Member",
             "choose_group_placeholder": "Choose Group",
-            "groups_with_moderation_permission": "Groups with Moderation Permission",
             "moderation_tools": "Moderation Tools"
-        },
-        "fullscreen_image": {
-            "download_and_save_image": "Download and save image",
-            "copy_image_to_clipboard": "Copy image to clipboard"
         }
     },
     "confirm": {
@@ -2096,9 +1978,7 @@
             "create_failed": "Failed to create instance"
         },
         "avatar": {
-            "change_moderation_failed": "Failed to change avatar moderation",
-            "image_changed": "Avatar image changed",
-            "image_invalid": "Current avatar image invalid"
+            "change_moderation_failed": "Failed to change avatar moderation"
         },
         "avatar_lookup": {
             "not_found": "Avatar not found in search providers",
@@ -2108,9 +1988,6 @@
         },
         "database": {
             "upgrade_complete": "Database upgrade complete"
-        },
-        "emoji": {
-            "uploaded": "Emoji uploaded"
         },
         "file": {
             "not_image": "File isn't an image",
@@ -2128,24 +2005,9 @@
         "launch": {
             "invalid_path": "Invalid path, you must enter VRChat folder or launch.exe"
         },
-        "print": {
-            "uploaded": "Print uploaded"
-        },
-        "sticker": {
-            "uploaded": "Sticker uploaded"
-        },
         "gallery": {
             "uploaded": "Gallery image uploaded",
             "failed": "Failed to upload gallery image"
-        },
-        "avatar_gallery": {
-            "uploaded": "Avatar gallery image uploaded",
-            "failed": "Failed to upload avatar gallery image",
-            "deleted": "Avatar gallery image deleted",
-            "not_found": "Avatar gallery fileId not found",
-            "already_first": "Already first image",
-            "already_last": "Already last image",
-            "reordered": "Successfully reordered avatar gallery images"
         },
         "upload": {
             "loading": "Uploading",
@@ -2153,12 +2015,7 @@
             "error": "Upload failed"
         },
         "world": {
-            "image_changed": "World image changed",
-            "image_invalid": "Current world image invalid",
             "load_failed": "Failed to load world"
-        },
-        "icon": {
-            "uploaded": "Icon uploaded"
         },
         "user": {
             "moderated": "User moderated",
@@ -2184,7 +2041,6 @@
             "description": "Enter a numeric code from your authenticator app",
             "use_otp": "Use OTP",
             "verify": "Verify",
-            "input_placeholder": "Code",
             "input_error": "Invalid Code"
         },
         "otp": {
@@ -2192,7 +2048,6 @@
             "description": "Enter one of your saved recovery codes",
             "use_totp": "Use TOTP",
             "verify": "Verify",
-            "input_placeholder": "Code",
             "input_error": "Invalid Code"
         },
         "email_otp": {
@@ -2200,7 +2055,6 @@
             "description": "Enter a numeric code that was sent to your email",
             "resend": "Resend Email",
             "verify": "Verify",
-            "input_placeholder": "Code",
             "input_error": "Invalid Code"
         },
         "primary_password": {
@@ -2212,47 +2066,9 @@
             "description": "Enter a new name",
             "cancel": "Cancel",
             "change": "Change",
-            "input_placeholder": "Name",
             "input_error": "Name is required",
             "message": {
                 "success": "Group renamed"
-            }
-        },
-        "direct_access_user_id": {
-            "header": "Direct Access",
-            "description": "Enter a User URL or ID (UUID)",
-            "cancel": "Cancel",
-            "ok": "OK",
-            "input_error": "User URL/ID is required",
-            "message": {
-                "error": "Invalid URL/ID"
-            }
-        },
-        "direct_access_username": {
-            "header": "Direct Access",
-            "description": "Enter a Username",
-            "cancel": "Cancel",
-            "ok": "OK",
-            "input_error": "Username is required"
-        },
-        "direct_access_world_id": {
-            "header": "Direct Access",
-            "description": "Enter a World URL or ID (UUID)",
-            "cancel": "Cancel",
-            "ok": "OK",
-            "input_error": "World URL/ID is required",
-            "message": {
-                "error": "Invalid URL/ID"
-            }
-        },
-        "direct_access_avatar_id": {
-            "header": "Direct Access",
-            "description": "Enter a Avatar URL or ID (UUID)",
-            "cancel": "Cancel",
-            "ok": "OK",
-            "input_error": "Avatar URL/ID is required",
-            "message": {
-                "error": "Invalid URL/ID"
             }
         },
         "direct_access_omni": {
@@ -2333,8 +2149,6 @@
         "change_world_recommended_capacity": {
             "header": "Change Recommended Capacity",
             "description": "Enter world recommended capacity (soft cap)",
-            "cancel": "Cancel",
-            "ok": "OK",
             "input_error": "Valid number is required",
             "message": {
                 "success": "World recommended capacity changed"
@@ -2360,8 +2174,7 @@
             "search_limit_error": "Enter a number between {min} and {max}.",
             "search_limit_warning": "Too large values can freeze the app.",
             "cancel": "Cancel",
-            "save": "Save",
-            "input_error": "Valid number is required"
+            "save": "Save"
         },
         "photon_lobby_timeout": {
             "header": "User Timeout Threshold",
@@ -2378,11 +2191,6 @@
             "input_error": "Valid number is required"
         },
         "new_local_favorite_group": {
-            "header": "New Group",
-            "description": "Enter a world favorite group name",
-            "cancel": "Cancel",
-            "ok": "OK",
-            "input_error": "Name is required",
             "message": {
                 "error": "Group already exists with the name {name}"
             }
@@ -2397,13 +2205,6 @@
                 "error": "Group already exists with the name {name}"
             }
         },
-        "pending_offline_delay": {
-            "header": "Pending Offline",
-            "description": "Set pending offline delay in seconds (default: 110)",
-            "cancel": "Cancel",
-            "save": "Save",
-            "input_error": "Valid number is required"
-        },
         "auto_login_delay": {
             "header": "Auto-login delay",
             "description": "Enter delay in seconds (0 to disable, max 10).",
@@ -2412,7 +2213,6 @@
         "proxy_settings": {
             "header": "Proxy Settings",
             "description": "Enter proxy server address and port",
-            "placeholder": "127.0.0.1:8080",
             "close": "Close",
             "restart": "Restart"
         },
@@ -2421,8 +2221,6 @@
             "description": "Enter your code to redeem",
             "cancel": "Cancel",
             "redeem": "Redeem",
-            "input_placeholder": "Code",
-            "input_error": "Code is required",
             "success": "Code redeemed successfully"
         }
     },
@@ -2484,7 +2282,6 @@
             "type": "Type",
             "user": "User",
             "group": "Group",
-            "user_group": "User/Group",
             "photo": "Photo",
             "message": "Message",
             "action": "Action"
@@ -2512,22 +2309,7 @@
                 "message": "Message",
                 "cool_down": "Cool Down",
                 "action": "Action"
-            },
-            "previous_display_name": {
-                "date": "Date",
-                "name": "Name"
             }
-        },
-        "social_status": {
-            "no": "No.",
-            "status": "Status"
-        },
-        "download_history": {
-            "time": "Time",
-            "name": "Name",
-            "type": "Type",
-            "status": "Status",
-            "cancel": "Cancel"
         },
         "import": {
             "image": "Image",
@@ -2650,7 +2432,6 @@
                 "error_message": "Error Message",
                 "endpoint": "Endpoint",
                 "missing_credentials": "Missing Credentials",
-                "avatar_private_or_deleted": "Avatar private or deleted",
                 "vpn_in_use": "VRChat currently blocks most VPNs. Please disable any connected VPNs and try again.",
                 "login_error": "Login Error",
                 "invalid_json_response": "Invalid JSON response",

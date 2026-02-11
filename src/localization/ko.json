@@ -11,7 +11,6 @@
         "moderation": "음소거 및 차단",
         "notification": "알림",
         "friend_list": "친구 목록",
-        "profile": "프로필",
         "settings": "설정"
     },
     "view": {
@@ -33,7 +32,6 @@
         },
         "feed": {
             "favorites_only_tooltip": "친한 친구만 보기",
-            "filter_placeholder": "필터",
             "search_placeholder": "검색"
         },
         "game_log": {
@@ -82,18 +80,13 @@
             "next_page": "다음"
         },
         "favorite": {
-            "friends": {
-                "header": "친구"
-            },
             "worlds": {
-                "header": "월드",
                 "search": "검색",
                 "vrchat_favorites": "VRChat 즐겨찾기",
                 "local_favorites": "VRCX 즐겨찾기",
                 "new_group": "새 그룹"
             },
             "avatars": {
-                "header": "아바타",
                 "search": "검색",
                 "vrchat_favorites": "VRChat 즐겨찾기",
                 "local_favorites": "Local Favorites (Requires VRC+)",
@@ -101,9 +94,6 @@
                 "check_invalid": "이 그룹의 유효하지 않은 모델 확인",
                 "check_description": "이 그룹에서 유효하지 않은 모델을 감지하고 삭제",
                 "checking": "유효하지 않은 모델 확인 중...",
-                "check_progress": "확인 진행: {current}/{total}",
-                "check_complete": "확인 완료!",
-                "check_summary": "{total}개의 모델을 확인했고, {invalid}개의 유효하지 않은 모델을 발견했으며, {removed}개를 제거했습니다",
                 "removed_list_header": "제거된 모델 목록:",
                 "copy_removed_ids": "제거된 모델 ID 복사",
                 "checking_progress": "모델 확인 중 ({current}/{total})...",
@@ -126,7 +116,6 @@
             "delete_tooltip": "지우기",
             "unavailable_tooltip": "Unavailable",
             "private": "비공개",
-            "sort_by": "Sort By",
             "select_avatar_tooltip": "아바타 선택"
         },
         "friend_log": {
@@ -144,39 +133,23 @@
             "refresh_tooltip": "새로고침"
         },
         "friend_list": {
-            "header": "친구 목록",
             "bulk_unfriend": "친구 끊기 모드",
             "bulk_unfriend_selection": "선택한 친구 끊기",
             "load": "누락된 친구 불러오기",
-            "load_tooltip": "불러오기",
             "favorites_only_tooltip": "친한 친구만 보기",
             "search_placeholder": "검색",
-            "filter_placeholder": "필터",
-            "refresh_tooltip": "새로고침",
-            "clear_tooltip": "비우기",
-            "cancel_tooltip": "취소"
+            "filter_placeholder": "필터"
         },
         "profile": {
             "profile": {
-                "header": "프로필",
-                "last_activity": "마지막 활동",
-                "two_factor": "2단계 인증 (2FA)",
-                "two_factor_enabled": "사용",
-                "two_factor_disabled": "사용 안 함",
                 "vrchat_credits": "VRChat 크레딧",
-                "refresh": "새로고침",
-                "logout": "로그아웃",
-                "manage_gallery_inventory_icon": "Manage Photos/Icons/Emojis",
-                "export_notes": "메모 내보내기"
+                "refresh": "새로고침"
             },
             "game_info": {
                 "header": "VRChat 정보",
                 "online_users": "온라인 유저 수",
                 "user_online": "{count}명 온라인",
                 "refresh": "새로고침"
-            },
-            "vrc_sdk_downloads": {
-                "header": "VRC SDK 다운로드"
             },
             "direct_access": {
                 "header": "빠른 접근",
@@ -191,8 +164,6 @@
             "invite_request_response_messages": "초대 요청 답장 메시지",
             "past_display_names": "이전 닉네임",
             "config_json": "VRChat 설정 JSON",
-            "current_user_json": "현재 유저 JSON",
-            "feedback": "피드백",
             "refresh_tooltip": "새로고침",
             "clear_results_tooltip": "비우기"
         },
@@ -241,7 +212,6 @@
                     "empty_avatar": "Log avatars in feed without names"
                 },
                 "automation": {
-                    "header": "자동화",
                     "auto_state_change": "자동 상태 변경",
                     "auto_state_change_tooltip": "인스턴스에 다른 사람이 있을 때 상태를 자동으로 바꿉니다",
                     "auto_state_change_off": "끄기",
@@ -281,7 +251,6 @@
                     "theme_mode_material3": "머티리얼 3",
                     "zoom": "Zoom",
                     "vrcplus_profile_icons": "VRC+ 프로필 사진으로 표시",
-                    "tooltips": "Tooltips",
                     "nicknames": "Memo Nicknames",
                     "sort_favorite_by": "즐겨찾기 순서",
                     "sort_favorite_by_name": "이름순",
@@ -319,15 +288,12 @@
                         "sort_offline_by": "오프라인 순서",
                         "sort_offline_by_alphabet": "이름순",
                         "sort_offline_by_offline_time": "시간순"
-                    },
-                    "width": "너비"
+                    }
                 },
                 "user_dialog": {
                     "header": "유저 정보 대화 상자",
                     "vrchat_notes": "VRChat Notes",
-                    "vrcx_memos": "VRCX Memos",
-                    "export_vrcx_memos_into_vrchat_notes": "VRCX 메모를 VRChat 메모로 내보내기",
-                    "export_notes": "메모 내보내기"
+                    "vrcx_memos": "VRCX Memos"
                 },
                 "user_colors": {
                     "header": "유저 색상",
@@ -413,11 +379,8 @@
             },
             "advanced": {
                 "advanced": {
-                    "header": "고급",
                     "launch_options": "VRChat 실행 설정",
-                    "screenshot_metadata": "스크린샷 메타데이터",
                     "vrc_registry_backup": "VRC Registry Backup",
-                    "common_folders": "Common Folders",
                     "primary_password": {
                         "header": "잠금 비밀번호",
                         "description": "비밀번호 암호화 사용 (자동 로그인 불가)"
@@ -468,15 +431,11 @@
                         "header": "앱 실행",
                         "folder": "자동 실행 폴더",
                         "folder_tooltip": "VRChat 실행 시 자동으로 실행할 프로그램들을 이 폴더에 넣어주세요",
-                        "enable": "사용",
                         "auto_close": "자동 종료"
                     },
                     "cache_debug": {
                         "header": "VRCX 인스턴스 캐시/디버그",
                         "udon_exception_logging": "Udon 예외(exception) 로깅",
-                        "gpu_fix": "SteamVR 오버레이 GPU 해결",
-                        "gpu_fix_notice": "(재시작 필요)",
-                        "gpu_fix_warning": "SteamVR이 작동하지 않고, 그래픽 카드가 2개 이상일 때만 사용하세요",
                         "disable_gamelog": "VRChat 로그 비활성화",
                         "disable_gamelog_notice": "(아마도 고장날 수 있음)",
                         "user_cache": "유저 캐시:",
@@ -544,7 +503,6 @@
         "search_result_active": "오프라인",
         "search_result_offline": "활성",
         "search_result_more": "더 보기:",
-        "direct_access_tooltip": "클립보드에서 ID/URL 빠른 접근",
         "refresh_tooltip": "새로고침",
         "groups": "그룹",
         "friends": "친구",
@@ -646,10 +604,8 @@
                 "copy_id": "Copy ID",
                 "copy_url": "Copy URL",
                 "copy_display_name": "Copy DisplayName",
-                "accuracy_notice": "VRCX 기준이라서 정확하지 않을 수 있습니다",
                 "instance_full": "풀방",
                 "instance_closed": "closed",
-                "instance_hard_closed": "hard closed",
                 "close_instance": "Close Instance"
             },
             "groups": {
@@ -732,9 +688,7 @@
                 "public_count": "공개 {count}",
                 "private_count": "비공개 {count}",
                 "capacity_count": "인원 제한 {count} ({max})",
-                "self_invite_tooltip": "나에게 초대 보내기",
                 "refresh_instance_info": "인스턴스 정보 새로고침",
-                "instance_full": "풀방",
                 "instance_creator": "방파개"
             },
             "info": {
@@ -763,8 +717,7 @@
                 "platform": "플랫폼",
                 "last_visited": "마지막 방문",
                 "visit_count": "방문 횟수",
-                "time_spent": "방문 시간",
-                "accuracy_notice": "VRCX 기준이라서 정확하지 않을 수 있습니다"
+                "time_spent": "방문 시간"
             },
             "json": {
                 "header": "JSON"
@@ -786,13 +739,11 @@
             },
             "labels": {
                 "public": "(공개)",
-                "private": "(비공개)",
-                "own": "(소유)"
+                "private": "(비공개)"
             },
             "actions": {
                 "delete_cache_tooltip": "캐시에서 아바타 삭제",
                 "favorite_tooltip": "즐겨찾기",
-                "unfavorite_tooltip": "즐겨찾기 해제",
                 "refresh": "새로고침",
                 "select": "아바타 선택",
                 "select_fallback": "대체 아바타 선택",
@@ -826,8 +777,7 @@
                 "memo_placeholder": "-"
             },
             "json": {
-                "header": "JSON",
-                "file_analysis": "파일 분석"
+                "header": "JSON"
             }
         },
         "group": {
@@ -871,7 +821,6 @@
                 "header": "정보",
                 "instances": "인스턴스",
                 "announcement": "공지사항",
-                "instance_full": "풀방",
                 "rules": "규칙",
                 "members": "회원",
                 "created_at": "설립일",
@@ -953,10 +902,7 @@
         },
         "language": {
             "header": "언어 설정",
-            "add_language": "언어 추가",
-            "select_language": "언어 선택",
-            "ok": "확인",
-            "cancel": "취소"
+            "select_language": "언어 선택"
         },
         "bio": {
             "header": "자기소개 설정",
@@ -1063,7 +1009,6 @@
         },
         "set_avatar_tags": {
             "header": "Set Avatar Tags",
-            "content_tags": "Content Warning Tags",
             "content_horror": "Horror",
             "content_gore": "Gore",
             "content_violence": "Violence",
@@ -1330,8 +1275,6 @@
         "group_member_moderation": {
             "header": "Group Member Moderation",
             "filter_type": "Filter Type",
-            "select_type": "Select Type",
-            "search_placeholder": "검색",
             "members": "회원",
             "bans": "Bans",
             "invites": "Invites",
@@ -1351,7 +1294,6 @@
             "accept_join_requests": "Accept Join Requests",
             "reject_join_requests": "Reject Join Requests",
             "block_join_requests": "Block Join Requests",
-            "group_members": "Group Members",
             "progress": "진행:",
             "display_name": "Display Name",
             "visibility": "Visibility",
@@ -1392,7 +1334,6 @@
             "header": "Boop",
             "emoji_manager": "Emoji Manager",
             "select_emoji": "Select Emoji",
-            "my_emojis": "My Emojis",
             "default_emojis": "Default Emojis",
             "cancel": "취소",
             "send": "보내기"
@@ -1404,7 +1345,6 @@
             "description": "인증기 앱의 숫자 코드를 입력하세요",
             "use_otp": "OTP 사용",
             "verify": "확인",
-            "input_placeholder": "코드",
             "input_error": "잘못된 코드"
         },
         "otp": {
@@ -1412,7 +1352,6 @@
             "description": "복구 코드 중 하나를 입력하세요",
             "use_totp": "Use TOTP",
             "verify": "확인",
-            "input_placeholder": "코드",
             "input_error": "잘못된 코드"
         },
         "email_otp": {
@@ -1420,7 +1359,6 @@
             "description": "이메일로 전송된 숫자 코드를 입력하세요",
             "resend": "이메일 재전송",
             "verify": "확인",
-            "input_placeholder": "코드",
             "input_error": "잘못된 코드"
         },
         "primary_password": {
@@ -1432,47 +1370,9 @@
             "description": "새 이름 입력",
             "cancel": "취소",
             "change": "변경",
-            "input_placeholder": "이름",
             "input_error": "이름 필요",
             "message": {
                 "success": "그룹 이름 변경됨"
-            }
-        },
-        "direct_access_user_id": {
-            "header": "빠른 접근",
-            "description": "유저 URL 혹은 ID (UUID) 입력",
-            "cancel": "취소",
-            "ok": "확인",
-            "input_error": "유저 URL/ID만 입력 가능",
-            "message": {
-                "error": "잘못된 URL/ID"
-            }
-        },
-        "direct_access_username": {
-            "header": "빠른 접근",
-            "description": "닉네임 입력",
-            "cancel": "취소",
-            "ok": "확인",
-            "input_error": "잘못된 닉네임"
-        },
-        "direct_access_world_id": {
-            "header": "빠른 접근",
-            "description": "월드 URL 혹은 ID (UUID) 입력",
-            "cancel": "취소",
-            "ok": "확인",
-            "input_error": "월드 URL/ID 필요",
-            "message": {
-                "error": "잘못된 URL/ID"
-            }
-        },
-        "direct_access_avatar_id": {
-            "header": "빠른 접근",
-            "description": "아바타 URL 혹은 ID (UUID) 입력",
-            "cancel": "취소",
-            "ok": "확인",
-            "input_error": "아바타 URL/ID 필요",
-            "message": {
-                "error": "잘못된 URL/ID"
             }
         },
         "direct_access_omni": {
@@ -1552,8 +1452,6 @@
         "change_world_recommended_capacity": {
             "header": "Change Recommended Capacity",
             "description": "Enter world recommended capacity (soft cap)",
-            "cancel": "취소",
-            "ok": "확인",
             "input_error": "숫자만 입력 가능",
             "message": {
                 "success": "World recommended capacity changed"
@@ -1573,10 +1471,9 @@
         "change_table_size": {
             "header": "최대 테이블 크기",
             "description": "테이블이 커질수록 메모리 사용량과 성능에 영향을 줍니다",
-                    "table_max_size": "최대 테이블 크기",
+            "table_max_size": "최대 테이블 크기",
             "cancel": "취소",
-            "save": "저장",
-            "input_error": "숫자만 입력 가능"
+            "save": "저장"
         },
         "photon_lobby_timeout": {
             "header": "유저 시간 제한",
@@ -1593,11 +1490,6 @@
             "input_error": "숫자만 입력 가능"
         },
         "new_local_favorite_group": {
-            "header": "새 그룹",
-            "description": "월드 즐겨찾기 그룹 이름 입력",
-            "cancel": "취소",
-            "ok": "확인",
-            "input_error": "잘못된 이름",
             "message": {
                 "error": "중복된 이름입니다: {name}"
             }
@@ -1612,17 +1504,9 @@
                 "error": "중복된 이름입니다: {name}"
             }
         },
-        "pending_offline_delay": {
-            "header": "오프라인 대기",
-            "description": "오프라인 대기 시간 초를 입력 (기본: 110)",
-            "cancel": "취소",
-            "save": "저장",
-            "input_error": "숫자만 입력 가능"
-        },
         "proxy_settings": {
             "header": "Proxy Settings",
             "description": "Enter proxy server address and port",
-            "placeholder": "127.0.0.1:8080",
             "close": "닫기",
             "restart": "Restart"
         }
@@ -1676,7 +1560,6 @@
             "type": "유형",
             "user": "유저",
             "group": "그룹",
-            "user_group": "User/Group",
             "photo": "사진",
             "message": "메시지",
             "action": "작업"
@@ -1703,22 +1586,7 @@
                 "message": "메시지",
                 "cool_down": "쿨타임",
                 "action": "작업"
-            },
-            "previous_display_name": {
-                "date": "날짜",
-                "name": "이름"
             }
-        },
-        "social_status": {
-            "no": "No",
-            "status": "상태"
-        },
-        "download_history": {
-            "time": "시간",
-            "name": "이름",
-            "type": "유형",
-            "status": "상태",
-            "cancel": "취소"
         },
         "import": {
             "image": "이미지",

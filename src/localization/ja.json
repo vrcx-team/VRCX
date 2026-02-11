@@ -18,8 +18,6 @@
         "friend_list": "フレンドリスト",
         "charts": "チャート",
         "tools": "ツール",
-        "about": "情報",
-        "profile": "プロフィール",
         "settings": "設定",
         "manage": "管理",
         "help_support": "ヘルプ & サポート",
@@ -47,7 +45,6 @@
             "folder_selected": "フォルダ内の項目",
             "folder_selected_empty": "選択されている項目がありません",
             "delete_folder": "フォルダを削除",
-            "assign_folder": "フォルダに追加",
             "remove_from_folder": "フォルダから削除",
             "folder_empty": "このフォルダに項目がありません",
             "invalid_folder": "フォルダには名前が必要であり、少なくとも2つ以上の項目を含まなければなりません。",
@@ -55,11 +52,6 @@
             "restore_default_confirm": "ナビゲーションをデフォルトの順序に戻しますか？",
             "save": "保存",
             "cancel": "キャンセル"
-        },
-        "icon_picker": {
-            "search_placeholder": "アイコン名またはタグを検索",
-            "pick_icon": "アイコンを選択",
-            "no_icon_found": "アイコンが見つかりません"
         }
     },
     "view": {
@@ -81,7 +73,6 @@
         },
         "feed": {
             "favorites_only_tooltip": "お気に入りのみ",
-            "filter_placeholder": "フィルター",
             "search_placeholder": "検索",
             "filters": {
                 "GPS": "現在地",
@@ -93,7 +84,6 @@
             }
         },
         "friends_locations": {
-            "online_friends": "オンラインのフレンド",
             "online": "オンライン",
             "favorite": "お気に入り",
             "same_instance": "同じインスタンス",
@@ -102,7 +92,6 @@
             "spacing": "表示間隔",
             "scale": "サイズ",
             "separate_same_instance_friends": "同じインスタンスのフレンドを分けて表示",
-            "no_matching_friends": "該当するフレンドはいません",
             "loading_more": "読み込み中..."
         },
         "game_log": {
@@ -164,32 +153,22 @@
             "next_page": "次"
         },
         "favorite": {
-            "friends": {
-                "header": "フレンド"
-            },
             "worlds": {
-                "header": "ワールド",
                 "search": "検索",
                 "vrchat_favorites": "VRChatのお気に入り",
                 "local_favorites": "ローカルのお気に入り",
                 "new_group": "グループ作成",
-                "refresh": "更新",
                 "cancel_refresh": "キャッシュ削除"
             },
             "avatars": {
-                "header": "アバター",
                 "search": "検索",
                 "vrchat_favorites": "VRChatのお気に入り",
                 "local_favorites": "ローカルのお気に入り (VRC+が必要)",
                 "new_group": "グループ作成",
-                "refresh": "更新",
                 "cancel_refresh": "キャッシュ削除",
                 "check_invalid": "このグループの無効なアバターをチェック",
                 "check_description": "このグループ内の無効なアバターを検出して削除",
                 "checking": "無効なアバターをチェック中...",
-                "check_progress": "進行状況：{current}/{total}",
-                "check_complete": "チェック完了！",
-                "check_summary": "{total}個のアバターをチェックし、{invalid}個の無効なアバターを発見、{removed}個を削除しました",
                 "removed_list_header": "削除されたアバターリスト：",
                 "copy_removed_ids": "削除されたアバターIDをコピー",
                 "copied_ids": "アバターIDをクリップボードにコピーしました",
@@ -201,11 +180,6 @@
                 "delete_summary": "{removed}個の無効なアバターを正常に削除しました",
                 "no_invalid_found": "無効なアバターは見つかりませんでした",
                 "delete_cancelled": "削除操作がキャンセルされました"
-            },
-            "visibility": {
-                "public": "公開",
-                "friends": "フレンドにのみ公開",
-                "private": "非公開"
             },
             "edit_mode": "編集モード",
             "copy": "コピー",
@@ -226,7 +200,6 @@
             "delete_tooltip": "消去",
             "unavailable_tooltip": "利用不可",
             "private": "プライベート",
-            "sort_by": "並べ替え:",
             "select_avatar_tooltip": "アバターを使用"
         },
         "friend_log": {
@@ -318,11 +291,9 @@
             }
         },
         "friend_list": {
-            "header": "フレンドリスト",
             "bulk_unfriend": "一括フレンド解除モード",
             "bulk_unfriend_selection": "フレンド解除",
             "load": "不足するエントリを読み込む",
-            "load_tooltip": "読み込む",
             "load_dialog_title": "不足するエントリの読み込み",
             "load_dialog_message": "不足するフレンドエントリを読み込みますか？ この操作は数分かかる場合があります。",
             "load_cancel": "キャンセル",
@@ -330,13 +301,9 @@
             "favorites_only_tooltip": "お気に入りのみ",
             "search_placeholder": "検索",
             "filter_placeholder": "フィルター",
-            "refresh_tooltip": "更新",
-            "clear_tooltip": "結果を消去",
-            "cancel_tooltip": "キャンセル",
             "load_mutual_friends": "共通のフレンドを読み込む"
         },
         "charts": {
-            "header": "チャート",
             "instance_activity": {
                 "header": "インスタンスログ",
                 "online_time": "オンライン時間",
@@ -344,11 +311,9 @@
                 "next_day": "翌日",
                 "refresh": "更新",
                 "tips": {
-                    "header": "ヒント",
                     "online_time": "オンライン時間とは、VRCXが記録した当日のゲームプレイ時間です。",
                     "click_Y_axis": "Y軸ラベルをクリックで、インスタンスの詳細へジャンプ、またはユーザーダイアログを表示できます。",
-                    "click_instance_name": "インスタンス名をクリックで、以前のインスタンス情報ダイアログを表示できます。",
-                    "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。"
+                    "click_instance_name": "インスタンス名をクリックで、以前のインスタンス情報ダイアログを表示できます。"
                 },
                 "settings": {
                     "header": "設定",
@@ -395,10 +360,6 @@
                     "mutual_friend_graph_ready_message": "共通のフレンドのネットワーク図が準備できました",
                     "friend_list_changed_fetch_again": "フレンドリストが変更されました。共通のフレンドのつながりを再取得してください。"
                 },
-                "tooltip": {
-                    "mutual_friends_count": "共通のフレンド: {count}",
-                    "edge": "{source} ↔ {target}"
-                },
                 "settings": {
                     "title": "グラフレイアウト設定",
                     "layout_iterations": "レイアウトの反復回数",
@@ -407,22 +368,6 @@
                     "layout_spacing_help": "グラフの広がり。値が大きいほど余裕のある配置になります。",
                     "edge_curvature": "線のカーブ具合",
                     "edge_curvature_help": "線の曲がり具合。値が大きいほど密集した部分でも滑らかに表示されます。"
-                },
-                "force_dialog": {
-                    "open_label": "図のレイアウト設定",
-                    "title": "ネットワーク図のレイアウト設定",
-                    "description": "共通のフレンドのネットワーク図に適用するレイアウトを調整します。",
-                    "repulsion": "反発力 (距離)",
-                    "edge_length_min": "最小間隔",
-                    "edge_length_max": "最大間隔",
-                    "gravity": "重力",
-                    "apply": "適用",
-                    "reset": "リセット",
-                    "repulsion_help": "ノード間の反発力の強さ",
-                    "edge_length_min_help": "接続されたノード間の最小距離。",
-                    "edge_length_max_help": "接続されたノード間の最大距離。",
-                    "gravity_help": "グラフ中心への引き寄せ強度。",
-                    "invalid_input": "マイナスではない数値を入力してください。"
                 }
             }
         },
@@ -433,7 +378,6 @@
                 "calendar": "カレンダー",
                 "calendar_description": "グループのイベントカレンダー"
             },
-            "image": {},
             "user": {
                 "discord_names_description": "フレンドのDiscordユーザー名を取得",
                 "export_friend_list_description": "VRChatからフレンドリストをエクスポート",
@@ -452,7 +396,6 @@
                 "pictures": {
                     "vrc_photos": "VRChatの写真",
                     "steam_screenshots": "Steamのスクリーンショット",
-                    "open_folder": "フォルダを開く",
                     "vrc_photos_description": "VRChatの写真フォルダを開く",
                     "steam_screenshots_description": "Steamのスクリーンショットフォルダを開く"
                 },
@@ -487,16 +430,8 @@
         },
         "profile": {
             "profile": {
-                "header": "プロフィール",
-                "last_activity": "最終活動時間",
-                "two_factor": "2段階認証 (2FA)",
-                "two_factor_enabled": "有効",
-                "two_factor_disabled": "無効",
                 "vrchat_credits": "VRChatクレジット",
-                "refresh": "クリックして更新",
-                "logout": "ログアウト",
-                "manage_gallery_inventory_icon": "ギャラリー/インベントリを管理",
-                "export_notes": "ノートをエクスポート"
+                "refresh": "クリックして更新"
             },
             "game_info": {
                 "header": "ゲーム情報",
@@ -504,12 +439,7 @@
                 "user_online": "{count} 人のユーザーがオンライン",
                 "refresh": "クリックして更新"
             },
-            "vrc_sdk_downloads": {
-                "header": "VRChat SDKのダウンロード"
-            },
             "config_json": "設定のJSON",
-            "current_user_json": "現在のユーザーのJSON",
-            "feedback": "フィードバック",
             "refresh_tooltip": "更新",
             "clear_results_tooltip": "結果を消去"
         },
@@ -551,7 +481,6 @@
                     "disable_gpu_acceleration": "GPUアクセラレーションを無効化",
                     "disable_gpu_acceleration_tooltip": "このオプションは「自分がしていることを理解している場合」にのみ変更してください。SteamVRオーバーレイに問題が発生する可能性があります。UI表示に問題が発生した場合は、これを無効に戻して再起動してください。",
                     "disable_vr_overlay_gpu_acceleration": "VRオーバーレイのGPUアクセラレーション無効化",
-                    "disable_vr_overlay_gpu_acceleration_tooltip": "GPUアクセラレーションの無効化は、VRCXのクラッシュやメモリリークを引き起こす可能性があります。問題が発生した場合は、このオプションを有効に戻して再起動してください。",
                     "proxy": "プロキシ設定",
                     "startup_linux": "システムの起動時にVRCXを最小化した状態で起動するには、自動起動用のVRCX.desktopファイルに \"--startup\" 引数を追加します。"
                 },
@@ -567,7 +496,6 @@
                     "auto_login_delay_button": "遅延秒数を設定"
                 },
                 "automation": {
-                    "header": "オートメーション",
                     "auto_change_status": "自動ステータス変更",
                     "auto_state_change_tooltip": "自身のいるインスタンスに他のプレイヤーがいる場合、自動的にステータスを変更します。(一人/複数人)",
                     "alone_condition": "一人の判定条件",
@@ -624,7 +552,6 @@
                     "theme_mode_material3": "Material 3",
                     "zoom": "ズーム",
                     "vrcplus_profile_icons": "VRC+ プロフィールアイコン",
-                    "tooltips": "ツールチップ",
                     "show_instance_id": "インスタンス名を表示",
                     "age_gated_instances": "年齢制限付きインスタンス",
                     "nicknames": "ニックネームにメモを表示",
@@ -670,15 +597,12 @@
                         "alphabetical": "アルファベット順",
                         "private_to_bottom": "プライベートを下に",
                         "status": "ステータス",
-                        "status_and_private_to_bottom": "ステータスとプライベートを下に",
                         "location": "場所",
                         "last_active": "最終活動時間",
                         "last_seen": "最後に見た日時",
                         "time_in_instance": "インスタンスにいた時間",
-                        "placeholder": "並べ替え",
-                        "dropdown_header": "並べ替え順を選択"
+                        "placeholder": "並べ替え"
                     },
-                    "width": "幅",
                     "group_by_instance": "インスタンスごとにまとめる",
                     "group_by_instance_tooltip": "同一のインスタンスに複数のフレンドがいる場合に、そのフレンドをインスタンスごとにまとめて表示します。",
                     "hide_friends_in_same_instance": "同じインスタンスにいるフレンドを表示しない",
@@ -689,9 +613,7 @@
                 "user_dialog": {
                     "header": "ユーザーダイアログ",
                     "vrchat_notes": "VRChatのノートを表示",
-                    "vrcx_memos": "VRCXのメモを表示",
-                    "export_vrcx_memos_into_vrchat_notes": "VRCXのメモをVRChatのノートにエクスポート",
-                    "export_notes": "ノートをエクスポート"
+                    "vrcx_memos": "VRCXのメモを表示"
                 },
                 "user_colors": {
                     "header": "ユーザーの色",
@@ -804,18 +726,14 @@
             },
             "pictures": {
                 "pictures": {
-                    "header": "写真",
                     "auto_delete_old_prints": "古いプリントを自動削除",
                     "auto_delete_prints_from_vrc": "プリント上限に達したときVRCから古いプリントを削除"
                 }
             },
             "advanced": {
                 "advanced": {
-                    "header": "詳細設定",
                     "launch_options": "VRChatの起動オプション",
-                    "screenshot_metadata": "スクリーンショットの管理",
                     "vrc_registry_backup": "VRChatのレジストリバックアップ",
-                    "common_folders": "共通フォルダ",
                     "primary_password": {
                         "header": "プライマリーパスワード",
                         "description": "パスワードを暗号化 (自動ログイン無効化)"
@@ -911,16 +829,12 @@
                         "header": "アプリケーションの自動起動",
                         "folder": "フォルダ",
                         "folder_tooltip": "VRChatと一緒に起動させたいアプリケーションのショートカットを配置してください。",
-                        "enable": "有効化する",
                         "auto_close": "VRChat終了時に自動終了",
                         "run_process_once": "アプリを単一インスタンスで開く"
                     },
                     "cache_debug": {
                         "header": "VRCXインスタンス キャッシュ/デバッグ",
                         "udon_exception_logging": "Udonの例外エラーを記録",
-                        "gpu_fix": "GPU Fixを有効化する",
-                        "gpu_fix_notice": "(再起動が必要です)",
-                        "gpu_fix_warning": "SteamVRオーバーレイが機能せず、なおかつ2つ以上のGPUを使用している時のみこのオプションを有効化してください。",
                         "disable_gamelog": "ゲームログを無効化",
                         "disable_gamelog_notice": "(何かが壊れる可能性があります)",
                         "user_cache": "ユーザーキャッシュ:",
@@ -989,7 +903,6 @@
         "search_result_active": "オフライン",
         "search_result_offline": "アクティブ",
         "search_result_more": "もっと検索:",
-        "direct_access_tooltip": "クリップボードのIDまたはURLから直接アクセス",
         "refresh_tooltip": "フレンドを更新",
         "groups": "グループ",
         "friends": "フレンド",
@@ -1024,7 +937,6 @@
             "tags": {
                 "friend_no": "フレンド No.{number}",
                 "vrchat_team": "VRChat 開発チーム",
-                "18_plus_verified": "18歳以上確認済み",
                 "age_verified": "年齢認証済み",
                 "trust_level": "トラストランク",
                 "mutual_friends": "共通のフレンド",
@@ -1120,10 +1032,8 @@
                 "copy_url": "URLをコピー",
                 "copy_display_name": "表示名をコピー",
                 "vrcplus_hides_avatar": "VRC+のプロフィール画像が設定されている場合、そのプレイヤーのアバター情報、フィード内のアバター変更は表示されません。",
-                "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。",
                 "instance_full": "満員",
                 "instance_closed": "閉じられました",
-                "instance_hard_closed": "hard closed",
                 "close_instance": "インスタンスを閉じる",
                 "instance_age_gated": "年齢制限あり",
                 "open_previous_instance": "前回のインスタンスを開く",
@@ -1202,7 +1112,6 @@
                 "private": "プライベート",
                 "avatar_scaling_disabled": "アバタースケーリング 使用不可",
                 "focus_view_disabled": "フォーカスビュー 使用不可",
-                "stickers_disabled": "ステッカー使用不可",
                 "future_proofing": "Future Proofing",
                 "labs": "ラボ",
                 "cache": "キャッシュ",
@@ -1242,9 +1151,7 @@
                 "public_count": "パブリック {count}",
                 "private_count": "プライベート {count}",
                 "capacity_count": "最大人数 {count} ({max})",
-                "self_invite_tooltip": "自分を招待",
                 "refresh_instance_info": "インスタンス情報を更新",
-                "instance_full": "満員",
                 "instance_creator": "インスタンス作成者"
             },
             "info": {
@@ -1273,8 +1180,7 @@
                 "platform": "プラットフォーム",
                 "last_visited": "最後に参加した日時",
                 "visit_count": "参加回数",
-                "time_spent": "過ごした時間",
-                "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。"
+                "time_spent": "過ごした時間"
             },
             "json": {
                 "header": "JSON"
@@ -1296,13 +1202,11 @@
             },
             "labels": {
                 "public": "(パブリック)",
-                "private": "(プライベート)",
-                "own": "(自分)"
+                "private": "(プライベート)"
             },
             "actions": {
                 "delete_cache_tooltip": "キャッシュからアバターを削除",
                 "favorite_tooltip": "お気に入り",
-                "unfavorite_tooltip": "お気に入りから削除",
                 "refresh": "更新",
                 "share": "共有",
                 "select": "アバターを使用",
@@ -1339,8 +1243,7 @@
                 "gallery": "ギャラリー"
             },
             "json": {
-                "header": "JSON",
-                "file_analysis": "ファイルの分析"
+                "header": "JSON"
             }
         },
         "group": {
@@ -1388,7 +1291,6 @@
                 "header": "情報",
                 "instances": "インスタンス",
                 "announcement": "お知らせ",
-                "instance_full": "満員",
                 "rules": "ルール",
                 "members": "メンバー数",
                 "created_at": "作成日時",
@@ -1471,10 +1373,7 @@
         },
         "language": {
             "header": "言語",
-            "add_language": "言語を追加",
-            "select_language": "言語を選択",
-            "ok": "OK",
-            "cancel": "キャンセル"
+            "select_language": "言語を選択"
         },
         "bio": {
             "header": "自己紹介",
@@ -1505,8 +1404,6 @@
             "region_use": "アメリカ(東)",
             "region_eu": "ヨーロッパ",
             "region_jp": "日本",
-            "content_settings": "コンテンツ設定",
-            "content_placeholder": "有効なコンテンツ",
             "content_emoji": "絵文字",
             "content_stickers": "ステッカー",
             "content_pedestals": "ペデスタル",
@@ -1581,16 +1478,13 @@
         "translation_api": {
             "header": "プロフィールの翻訳API",
             "description": "Google 翻訳のAPIキーを入力",
-            "placeholder": "Google 翻訳 API Key",
             "guide": "設定方法",
             "mode": "翻訳サービスプロバイダ",
             "mode_google": "Google 翻訳",
             "mode_openai": "OpenAI",
             "test": "テスト",
             "save": "保存",
-            "msg_disabled": "翻訳APIは無効です",
             "msg_fill_endpoint_model": "APIエンドポイントとモデル名を入力してください",
-            "msg_settings_invalid": "翻訳設定が無効です",
             "msg_settings_saved": "翻訳設定が保存されました",
             "msg_test_success": "テストに成功しました",
             "msg_test_failed": "テストに失敗しました",
@@ -1604,14 +1498,12 @@
             "fetching_models": "取得中...",
             "msg_endpoint_required": "先にエンドポイントを入力してください",
             "msg_models_fetched": "{count}件のモデルが見つかりました",
-            "msg_no_models_found": "モデルが見つかりません",
-            "msg_fetch_models_failed": "モデルの取得に失敗しました"
+            "msg_no_models_found": "モデルが見つかりません"
         },
         "set_world_tags": {
             "header": "ワールドのタグを設定",
             "avatar_scaling_disabled": "アバタースケーリングを無効化",
             "focus_view_disabled": "フォーカスビューを無効化",
-            "stickers_disabled": "ステッカー使用不可",
             "enable_debugging": "ワールドデバッグを他のユーザー向けに有効化",
             "author_tags": "タグ (コンマ区切り)",
             "content_tags": "コンテンツ タグ (コンマ区切り)",
@@ -1626,7 +1518,6 @@
         },
         "set_avatar_tags": {
             "header": "アバタータグを設定",
-            "content_tags": "コンテンツ警告タグ",
             "content_horror": "極度のホラー",
             "content_gore": "過剰なゴア",
             "content_violence": "写実的な暴力",
@@ -1942,8 +1833,6 @@
         "group_member_moderation": {
             "header": "グループメンバーを管理",
             "filter_type": "種類でフィルタリング",
-            "select_type": "種類を選択",
-            "search_placeholder": "検索",
             "members": "メンバー数",
             "bans": "BAN",
             "invites": "招待",
@@ -1963,7 +1852,6 @@
             "accept_join_requests": "参加リクエストを許可",
             "reject_join_requests": "参加リクエストを拒否",
             "block_join_requests": "参加リクエストをブロック",
-            "group_members": "グループメンバー:",
             "progress": "進捗:",
             "display_name": "表示名",
             "visibility": "表示範囲",
@@ -2006,7 +1894,6 @@
             "header": "Boop",
             "emoji_manager": "絵文字を管理",
             "select_emoji": "絵文字を選択",
-            "my_emojis": "自分の絵文字",
             "default_emojis": "デフォルトの絵文字",
             "cancel": "キャンセル",
             "send": "送信"
@@ -2039,12 +1926,7 @@
         "moderate_group": {
             "header": "グループメンバーを管理",
             "choose_group_placeholder": "グループを選択",
-            "groups_with_moderation_permission": "モデレーション権限のあるグループ",
             "moderation_tools": "選択したグループの管理"
-        },
-        "fullscreen_image": {
-            "download_and_save_image": "画像をダウンロードして保存",
-            "copy_image_to_clipboard": "画像をクリップボードにコピー"
         }
     },
     "confirm": {
@@ -2096,9 +1978,7 @@
             "create_failed": "インスタンスの作成に失敗しました"
         },
         "avatar": {
-            "change_moderation_failed": "アバターのモデレーションの変更に失敗しました",
-            "image_changed": "アバター画像が変更されました",
-            "image_invalid": "アバター画像が無効です"
+            "change_moderation_failed": "アバターのモデレーションの変更に失敗しました"
         },
         "avatar_lookup": {
             "not_found": "検索プロバイダーでアバターが見つかりません",
@@ -2108,9 +1988,6 @@
         },
         "database": {
             "upgrade_complete": "データベースのアップグレードが完了しました"
-        },
-        "emoji": {
-            "uploaded": "絵文字がアップロードされました"
         },
         "file": {
             "not_image": "ファイルが画像ではありません",
@@ -2128,24 +2005,9 @@
         "launch": {
             "invalid_path": "無効なパスです。VRChatフォルダまたはlaunch.exeを指定してください。"
         },
-        "print": {
-            "uploaded": "プリントがアップロードされました"
-        },
-        "sticker": {
-            "uploaded": "ステッカーがアップロードされました"
-        },
         "gallery": {
             "uploaded": "ギャラリー画像がアップロードされました",
             "failed": "ギャラリー画像のアップロードに失敗しました"
-        },
-        "avatar_gallery": {
-            "uploaded": "アバターギャラリー画像がアップロードされました",
-            "failed": "アバターギャラリー画像のアップロードに失敗しました",
-            "deleted": "アバターギャラリー画像が削除されました",
-            "not_found": "アバターギャラリーファイルIDが見つかりません",
-            "already_first": "すでに最初の画像です",
-            "already_last": "すでに最後の画像です",
-            "reordered": "アバターギャラリー画像の並び替えに成功しました"
         },
         "upload": {
             "loading": "アップロード中",
@@ -2153,12 +2015,7 @@
             "error": "アップロードに失敗しました"
         },
         "world": {
-            "image_changed": "ワールド画像が変更されました",
-            "image_invalid": "現在のワールド画像が無効です",
             "load_failed": "ワールドの読み込みに失敗しました"
-        },
-        "icon": {
-            "uploaded": "アイコンがアップロードされました"
         },
         "user": {
             "moderated": "ユーザーがモデレートされました",
@@ -2184,7 +2041,6 @@
             "description": "認証アプリの数字を入力してください。",
             "use_otp": "OTPを使う",
             "verify": "認証",
-            "input_placeholder": "コード",
             "input_error": "無効なコードです。"
         },
         "otp": {
@@ -2192,7 +2048,6 @@
             "description": "保存したリカバリーコードのどれか一つを入力してください。",
             "use_totp": "TOTPを使う",
             "verify": "認証",
-            "input_placeholder": "コード",
             "input_error": "無効なコードです。"
         },
         "email_otp": {
@@ -2200,7 +2055,6 @@
             "description": "メールに送られてきた数字を入力してください。",
             "resend": "メールを再送信",
             "verify": "認証",
-            "input_placeholder": "コード",
             "input_error": "無効なコードです。"
         },
         "primary_password": {
@@ -2212,47 +2066,9 @@
             "description": "新しい名前を入力してください。",
             "cancel": "キャンセル",
             "change": "変更",
-            "input_placeholder": "名前",
             "input_error": "名前が必要です。",
             "message": {
                 "success": "グループの名前を変更しました。"
-            }
-        },
-        "direct_access_user_id": {
-            "header": "ダイレクトアクセス",
-            "description": "ユーザーURLまたはID (UUID) を入力してください。",
-            "cancel": "キャンセル",
-            "ok": "OK",
-            "input_error": "ユーザーURLまたはIDが必要です。",
-            "message": {
-                "error": "無効なURLまたはIDです。"
-            }
-        },
-        "direct_access_username": {
-            "header": "ダイレクトアクセス",
-            "description": "ユーザーネームを入力してください。",
-            "cancel": "キャンセル",
-            "ok": "OK",
-            "input_error": "ユーザーネームが必要です。"
-        },
-        "direct_access_world_id": {
-            "header": "ダイレクトアクセス",
-            "description": "ワールドURLまたはID (UUID) を入力してください。",
-            "cancel": "キャンセル",
-            "ok": "OK",
-            "input_error": "ワールドURLまたはIDが必要です。",
-            "message": {
-                "error": "無効なURLまたはIDです。"
-            }
-        },
-        "direct_access_avatar_id": {
-            "header": "ダイレクトアクセス",
-            "description": "アバターURLまたはID (UUID) を入力してください。",
-            "cancel": "キャンセル",
-            "ok": "OK",
-            "input_error": "アバターURLまたはIDが必要です。",
-            "message": {
-                "error": "無効なURLまたはIDです。"
             }
         },
         "direct_access_omni": {
@@ -2333,8 +2149,6 @@
         "change_world_recommended_capacity": {
             "header": "推奨人数を変更",
             "description": "ワールドの推奨人数を入力してください。 (ソフトキャップ)",
-            "cancel": "キャンセル",
-            "ok": "OK",
             "input_error": "有効な数字を入力してください。",
             "message": {
                 "success": "ワールドの推奨人数を変更しました。"
@@ -2360,8 +2174,7 @@
             "search_limit_error": "{min}〜{max}の数字を入力してください。",
             "search_limit_warning": "値が大きすぎるとVRCXが重くなる可能性があります。",
             "cancel": "キャンセル",
-            "save": "保存",
-            "input_error": "有効な数字を入力してください。"
+            "save": "保存"
         },
         "photon_lobby_timeout": {
             "header": "ユーザータイムアウトのしきい値",
@@ -2378,11 +2191,6 @@
             "input_error": "有効な数字を入力してください。"
         },
         "new_local_favorite_group": {
-            "header": "新しいグループ",
-            "description": "お気に入りグループ名を入力してください。",
-            "cancel": "キャンセル",
-            "ok": "OK",
-            "input_error": "名前を入力してください。",
             "message": {
                 "error": "このグループ名は既に {name} として存在しています。"
             }
@@ -2397,17 +2205,9 @@
                 "error": "このグループ名は既に {name} として存在しています。"
             }
         },
-        "pending_offline_delay": {
-            "header": "オフラインの保留時間",
-            "description": "オフライン保留の待機秒数を指定してください。 (デフォルト: 110)",
-            "cancel": "キャンセル",
-            "save": "保存",
-            "input_error": "有効な数字を入力してください。"
-        },
         "proxy_settings": {
             "header": "プロキシ設定",
             "description": "プロキシサーバーのアドレスとポートを入力してください。",
-            "placeholder": "127.0.0.1:8080",
             "close": "閉じる",
             "restart": "再起動"
         },
@@ -2421,8 +2221,6 @@
             "description": "引き換えたいコードを入力してください。",
             "cancel": "キャンセル",
             "redeem": "引き換える",
-            "input_placeholder": "コード",
-            "input_error": "コードを入力してください。",
             "success": "コードを引き換えました。"
         }
     },
@@ -2484,7 +2282,6 @@
             "type": "種類",
             "user": "ユーザー",
             "group": "グループ",
-            "user_group": "ユーザーまたはグループ",
             "photo": "画像",
             "message": "メッセージ",
             "action": "アクション"
@@ -2512,22 +2309,7 @@
                 "message": "メッセージ",
                 "cool_down": "クールダウン",
                 "action": "アクション"
-            },
-            "previous_display_name": {
-                "date": "日付",
-                "name": "名前"
             }
-        },
-        "social_status": {
-            "no": "No.",
-            "status": "ステータス"
-        },
-        "download_history": {
-            "time": "時間",
-            "name": "名前",
-            "type": "種類",
-            "status": "ステータス",
-            "cancel": "キャンセル"
         },
         "import": {
             "image": "画像",
@@ -2650,7 +2432,6 @@
                 "error_message": "エラーメッセージ",
                 "endpoint": "エンドポイント",
                 "missing_credentials": "認証情報不足",
-                "avatar_private_or_deleted": "アバターは非公開または削除されました",
                 "vpn_in_use": "VRChatは現在ほとんどのVPNをブロックしています。接続中のVPNを無効にして、もう一度お試しください。",
                 "login_error": "ログインエラー",
                 "invalid_json_response": "無効なJSONレスポンス",
