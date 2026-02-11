@@ -90,6 +90,7 @@ export const useWorldStore = defineStore('World', () => {
         if (D.id === L.worldId) {
             uiStore.setDialogCrumbLabel('world', D.id, D.ref?.name || D.id);
             instanceStore.applyWorldDialogInstances();
+            D.loading = false;
             return;
         }
         L.shortName = shortName;
@@ -159,6 +160,7 @@ export const useWorldStore = defineStore('World', () => {
                         D.ref?.name || D.id
                     );
                     D.visible = true;
+                    D.loading = false;
                     D.isFavorite = favoriteStore.getCachedFavoritesByObjectId(
                         D.id
                     );
@@ -206,7 +208,6 @@ export const useWorldStore = defineStore('World', () => {
                         });
                     }
                 }
-                D.visible = true;
             });
     }
 

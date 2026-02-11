@@ -144,6 +144,7 @@ export const useGroupStore = defineStore('Group', () => {
         if (D.id === groupId) {
             uiStore.setDialogCrumbLabel('group', D.id, D.ref?.name || D.id);
             instanceStore.applyGroupDialogInstances();
+            D.loading = false;
             return;
         }
         D.loading = true;
@@ -185,6 +186,7 @@ export const useGroupStore = defineStore('Group', () => {
                     D.inGroup = args.ref.membershipStatus === 'member';
                     D.ownerDisplayName = args.ref.ownerId;
                     D.visible = true;
+                    D.loading = false;
                     userRequest
                         .getCachedUser({
                             userId: args.ref.ownerId
