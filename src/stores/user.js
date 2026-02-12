@@ -790,7 +790,7 @@ export const useUserStore = defineStore('User', () => {
                 D.id,
                 D.ref?.displayName || D.id
             );
-            applyUserDialogLocation();
+            applyUserDialogLocation(true);
             return;
         }
         D.id = userId;
