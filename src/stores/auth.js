@@ -613,13 +613,12 @@ export const useAuthStore = defineStore('Auth', () => {
         AppApi.FlashWindow();
         twoFactorAuthDialogVisible.value = true;
         modalStore
-            .prompt({
+            .otpPrompt({
                 title: t('prompt.totp.header'),
                 description: t('prompt.totp.description'),
+                mode: 'totp',
                 cancelText: t('prompt.totp.use_otp'),
-                confirmText: t('prompt.totp.verify'),
-                pattern: /^[0-9]{6}$/,
-                errorMessage: t('prompt.totp.input_error')
+                confirmText: t('prompt.totp.verify')
             })
             .then(({ ok, reason, value }) => {
                 twoFactorAuthDialogVisible.value = false;
@@ -653,13 +652,12 @@ export const useAuthStore = defineStore('Auth', () => {
         }
         twoFactorAuthDialogVisible.value = true;
         modalStore
-            .prompt({
+            .otpPrompt({
                 title: t('prompt.otp.header'),
                 description: t('prompt.otp.description'),
+                mode: 'otp',
                 cancelText: t('prompt.otp.use_totp'),
-                confirmText: t('prompt.otp.verify'),
-                pattern: /^[a-z0-9]{4}-[a-z0-9]{4}$/,
-                errorMessage: t('prompt.otp.input_error')
+                confirmText: t('prompt.otp.verify')
             })
             .then(({ ok, reason, value }) => {
                 twoFactorAuthDialogVisible.value = false;
@@ -672,7 +670,7 @@ export const useAuthStore = defineStore('Auth', () => {
 
                 authRequest
                     .verifyOTP({
-                        code: value.trim()
+                        code: `${value.slice(0, 4)}-${value.slice(4)}`
                     })
                     .catch((err) => {
                         console.error(err);
@@ -694,13 +692,12 @@ export const useAuthStore = defineStore('Auth', () => {
         AppApi.FlashWindow();
         twoFactorAuthDialogVisible.value = true;
         modalStore
-            .prompt({
+            .otpPrompt({
                 title: t('prompt.email_otp.header'),
                 description: t('prompt.email_otp.description'),
+                mode: 'emailOtp',
                 cancelText: t('prompt.email_otp.resend'),
-                confirmText: t('prompt.email_otp.verify'),
-                pattern: /^[0-9]{6}$/,
-                errorMessage: t('prompt.email_otp.input_error')
+                confirmText: t('prompt.email_otp.verify')
             })
             .then(({ ok, reason, value }) => {
                 twoFactorAuthDialogVisible.value = false;

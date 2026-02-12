@@ -8,6 +8,7 @@
 
             <AlertDialogModal></AlertDialogModal>
             <PromptDialogModal></PromptDialogModal>
+            <OtpDialogModal></OtpDialogModal>
 
             <VRCXUpdateDialog></VRCXUpdateDialog>
         </div>
@@ -25,6 +26,7 @@
 
     import AlertDialogModal from './components/ui/alert-dialog/AlertDialogModal.vue';
     import MacOSTitleBar from './components/MacOSTitleBar.vue';
+    import OtpDialogModal from './components/ui/dialog/OtpDialogModal.vue';
     import PromptDialogModal from './components/ui/dialog/PromptDialogModal.vue';
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
 

@@ -45,6 +45,16 @@ import { useI18n } from 'vue-i18n';
  * @property {boolean=} dismissible
  */
 
+/**
+ * @typedef {Object} OtpPromptOptions
+ * @property {string} title
+ * @property {string} description
+ * @property {'totp' | 'emailOtp' | 'otp'} mode
+ * @property {string=} confirmText
+ * @property {string=} cancelText
+ * @property {boolean=} dismissible
+ */
+
 export const useModalStore = defineStore('Modal', () => {
     const { t } = useI18n();
 
@@ -67,10 +77,20 @@ export const useModalStore = defineStore('Modal', () => {
     const promptPattern = ref(null);
     const promptErrorMessage = ref('');
 
+    const otpOpen = ref(false);
+    const otpTitle = ref('');
+    const otpDescription = ref('');
+    const otpOkText = ref('');
+    const otpCancelText = ref('');
+    const otpDismissible = ref(true);
+    const otpMode = ref('totp'); // 'totp' | 'emailOtp' | 'otp'
+
     /** @type {{ resolve: ((result: ConfirmResult) => void) | null } | null} */
     let pending = null;
     /** @type {{ resolve: ((result: PromptResult) => void) | null } | null} */
     let pendingPrompt = null;
+    /** @type {{ resolve: ((result: PromptResult) => void) | null } | null} */
+    let pendingOtp = null;
 
     function closeDialog() {
         alertOpen.value = false;
@@ -271,6 +291,88 @@ export const useModalStore = defineStore('Modal', () => {
         promptOpen.value = !!open;
     }
 
+    // --- OTP dialog ---
+
+    function closeOtpDialog() {
+        otpOpen.value = false;
+    }
+
+    /**
+     * @param {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
+     * @param {string} value
+     */
+    function finishOtp(reason, value) {
+        const resolve = pendingOtp?.resolve;
+        pendingOtp = null;
+        closeOtpDialog();
+        if (resolve) resolve({ ok: reason === 'ok', reason, value });
+    }
+
+    /**
+     * @param {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
+     * @param {string} value
+     */
+    function finishOtpWithoutClosing(reason, value) {
+        const resolve = pendingOtp?.resolve;
+        pendingOtp = null;
+        if (resolve) resolve({ ok: reason === 'ok', reason, value });
+    }
+
+    /**
+     * @param {OtpPromptOptions} options
+     * @returns {Promise<PromptResult>}
+     */
+    function openOtp(options) {
+        if (pendingOtp) {
+            finishOtpWithoutClosing('replaced', '');
+        }
+
+        otpTitle.value = options.title;
+        otpDescription.value = options.description;
+        otpDismissible.value = options.dismissible !== false;
+        otpMode.value = options.mode || 'totp';
+
+        otpOkText.value =
+            options.confirmText || t('dialog.alertdialog.confirm');
+        otpCancelText.value =
+            options.cancelText || t('dialog.alertdialog.cancel');
+
+        otpOpen.value = true;
+
+        return new Promise((resolve) => {
+            pendingOtp = { resolve };
+        });
+    }
+
+    /**
+     * otpPrompt: always resolve({ok, reason, value})
+     * @param {OtpPromptOptions} options
+     * @returns {Promise<PromptResult>}
+     */
+    function otpPrompt(options) {
+        return openOtp(options);
+    }
+
+    function handleOtpOk(value) {
+        if (!pendingOtp) return;
+        finishOtp('ok', value ?? '');
+    }
+
+    function handleOtpCancel(value) {
+        if (!pendingOtp) return;
+        finishOtp('cancel', value ?? '');
+    }
+
+    function handleOtpDismiss(value) {
+        if (!pendingOtp) return;
+        if (!otpDismissible.value) return;
+        finishOtp('dismiss', value ?? '');
+    }
+
+    function setOtpOpen(open) {
+        otpOpen.value = !!open;
+    }
+
     return {
         alertOpen,
         alertMode,
@@ -289,10 +391,18 @@ export const useModalStore = defineStore('Modal', () => {
         promptInputType,
         promptPattern,
         promptErrorMessage,
+        otpOpen,
+        otpTitle,
+        otpDescription,
+        otpOkText,
+        otpCancelText,
+        otpDismissible,
+        otpMode,
 
         confirm,
         alert,
         prompt,
+        otpPrompt,
 
         handleOk,
         handleCancel,
@@ -301,6 +411,10 @@ export const useModalStore = defineStore('Modal', () => {
         handlePromptCancel,
         handlePromptDismiss,
         setAlertOpen,
-        setPromptOpen
+        setPromptOpen,
+        handleOtpOk,
+        handleOtpCancel,
+        handleOtpDismiss,
+        setOtpOpen
     };
 });

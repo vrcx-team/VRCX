@@ -319,5 +319,156 @@ describe('useModalStore', () => {
             store.handlePromptOk('test');
             expect(store.promptOpen).toBe(false);
         });
+
+        test('handleOtpOk does nothing without pending otp', () => {
+            store.handleOtpOk('123456');
+            expect(store.otpOpen).toBe(false);
+        });
+    });
+
+    describe('otpPrompt', () => {
+        test('opens otp dialog with correct mode and text', () => {
+            store.otpPrompt({
+                title: 'TOTP Verification',
+                description: 'Enter your 6-digit code',
+                mode: 'totp',
+                confirmText: 'Verify',
+                cancelText: 'Use recovery code'
+            });
+
+            expect(store.otpOpen).toBe(true);
+            expect(store.otpTitle).toBe('TOTP Verification');
+            expect(store.otpDescription).toBe('Enter your 6-digit code');
+            expect(store.otpMode).toBe('totp');
+            expect(store.otpOkText).toBe('Verify');
+            expect(store.otpCancelText).toBe('Use recovery code');
+
+            store.handleOtpCancel('');
+        });
+
+        test('resolves with value on handleOtpOk', async () => {
+            const promise = store.otpPrompt({
+                title: 'T',
+                description: 'D',
+                mode: 'totp'
+            });
+
+            store.handleOtpOk('123456');
+
+            const result = await promise;
+            expect(result.ok).toBe(true);
+            expect(result.reason).toBe('ok');
+            expect(result.value).toBe('123456');
+            expect(store.otpOpen).toBe(false);
+        });
+
+        test('resolves ok:false on handleOtpCancel', async () => {
+            const promise = store.otpPrompt({
+                title: 'T',
+                description: 'D',
+                mode: 'emailOtp'
+            });
+
+            store.handleOtpCancel('123');
+
+            const result = await promise;
+            expect(result.ok).toBe(false);
+            expect(result.reason).toBe('cancel');
+            expect(result.value).toBe('123');
+            expect(store.otpOpen).toBe(false);
+        });
+
+        test('resolves ok:false on handleOtpDismiss when dismissible', async () => {
+            const promise = store.otpPrompt({
+                title: 'T',
+                description: 'D',
+                mode: 'totp'
+            });
+
+            store.handleOtpDismiss('');
+
+            const result = await promise;
+            expect(result.ok).toBe(false);
+            expect(result.reason).toBe('dismiss');
+        });
+
+        test('does not dismiss when dismissible is false', async () => {
+            const promise = store.otpPrompt({
+                title: 'T',
+                description: 'D',
+                mode: 'totp',
+                dismissible: false
+            });
+
+            expect(store.otpDismissible).toBe(false);
+            store.handleOtpDismiss('');
+            expect(store.otpOpen).toBe(true);
+
+            store.handleOtpCancel('');
+            await promise;
+        });
+
+        test('sets otp mode correctly', () => {
+            store.otpPrompt({
+                title: 'T',
+                description: 'D',
+                mode: 'otp'
+            });
+
+            expect(store.otpMode).toBe('otp');
+
+            store.handleOtpCancel('');
+        });
+
+        test('defaults mode to totp when not specified', () => {
+            store.otpPrompt({
+                title: 'T',
+                description: 'D'
+            });
+
+            expect(store.otpMode).toBe('totp');
+
+            store.handleOtpCancel('');
+        });
+
+        test('replaces previous otp dialog with reason replaced', async () => {
+            const first = store.otpPrompt({
+                title: 'First',
+                description: 'D',
+                mode: 'totp'
+            });
+            const second = store.otpPrompt({
+                title: 'Second',
+                description: 'D',
+                mode: 'emailOtp'
+            });
+
+            const firstResult = await first;
+            expect(firstResult.ok).toBe(false);
+            expect(firstResult.reason).toBe('replaced');
+            expect(firstResult.value).toBe('');
+
+            expect(store.otpTitle).toBe('Second');
+            expect(store.otpMode).toBe('emailOtp');
+            expect(store.otpOpen).toBe(true);
+
+            store.handleOtpOk('654321');
+            const secondResult = await second;
+            expect(secondResult.ok).toBe(true);
+            expect(secondResult.value).toBe('654321');
+        });
+
+        test('uses default button text from i18n', () => {
+            store.otpPrompt({
+                title: 'T',
+                description: 'D',
+                mode: 'totp'
+            });
+
+            expect(store.otpOkText).toBe(en.dialog.alertdialog.confirm);
+            expect(store.otpCancelText).toBe(en.dialog.alertdialog.cancel);
+
+            store.handleOtpCancel('');
+        });
     });
 });
