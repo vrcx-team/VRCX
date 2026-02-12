@@ -1,14 +1,6 @@
 import { defineStore } from 'pinia';
-import { i18n } from '@/plugin';
 import { ref } from 'vue';
-
-function translate(key, fallback) {
-    try {
-        return i18n.global.t(key);
-    } catch {
-        return fallback;
-    }
-}
+import { useI18n } from 'vue-i18n';
 
 /**
  * @typedef {Object} ConfirmResult
@@ -53,9 +45,9 @@ function translate(key, fallback) {
  * @property {boolean=} dismissible
  */
 
-// TODO: Method chains for confirm
-
 export const useModalStore = defineStore('Modal', () => {
+    const { t } = useI18n();
+
     const alertOpen = ref(false);
     const alertMode = ref('confirm'); // 'confirm' | 'alert'
     const alertTitle = ref('');
@@ -146,15 +138,13 @@ export const useModalStore = defineStore('Modal', () => {
 
         if (mode === 'alert') {
             alertOkText.value =
-                options.confirmText || translate('dialog.alertdialog.ok', 'OK');
+                options.confirmText || t('dialog.alertdialog.ok');
             alertCancelText.value = '';
         } else {
             alertOkText.value =
-                options.confirmText ||
-                translate('dialog.alertdialog.confirm', 'Confirm');
+                options.confirmText || t('dialog.alertdialog.confirm');
             alertCancelText.value =
-                options.cancelText ||
-                translate('dialog.alertdialog.cancel', 'Cancel');
+                options.cancelText || t('dialog.alertdialog.cancel');
         }
 
         alertOpen.value = true;
@@ -186,15 +176,12 @@ export const useModalStore = defineStore('Modal', () => {
         promptInputType.value = options.inputType || 'text';
         promptPattern.value = options.pattern ?? null;
         promptErrorMessage.value =
-            options.errorMessage ||
-            translate('dialog.prompt.input_invalid', '输入错误');
+            options.errorMessage || t('dialog.prompt.input_invalid');
 
         promptOkText.value =
-            options.confirmText ||
-            translate('dialog.alertdialog.confirm', 'Confirm');
+            options.confirmText || t('dialog.alertdialog.confirm');
         promptCancelText.value =
-            options.cancelText ||
-            translate('dialog.alertdialog.cancel', 'Cancel');
+            options.cancelText || t('dialog.alertdialog.cancel');
 
         promptOpen.value = true;
 
