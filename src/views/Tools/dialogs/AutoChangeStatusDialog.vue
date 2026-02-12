@@ -36,6 +36,22 @@
                             </SelectItem>
                         </SelectContent>
                     </Select>
+
+                    <SimpleSwitch
+                        style="margin-top: 8px"
+                        :label="t('view.settings.general.automation.change_status_description')"
+                        :value="autoStateChangeAloneDescEnabled"
+                        :disabled="!autoStateChangeEnabled"
+                        @change="setAutoStateChangeAloneDescEnabled" />
+                    <Input
+                        v-if="autoStateChangeAloneDescEnabled"
+                        :model-value="autoStateChangeAloneDesc"
+                        :disabled="!autoStateChangeEnabled"
+                        :maxlength="32"
+                        :placeholder="t('view.settings.general.automation.status_description_placeholder')"
+                        style="margin-top: 8px"
+                        size="sm"
+                        @update:modelValue="setAutoStateChangeAloneDesc" />
                 </div>
 
                 <div>
@@ -62,6 +78,22 @@
                             </SelectItem>
                         </SelectContent>
                     </Select>
+
+                    <SimpleSwitch
+                        style="margin-top: 8px"
+                        :label="t('view.settings.general.automation.change_status_description')"
+                        :value="autoStateChangeCompanyDescEnabled"
+                        :disabled="!autoStateChangeEnabled"
+                        @change="setAutoStateChangeCompanyDescEnabled" />
+                    <Input
+                        v-if="autoStateChangeCompanyDescEnabled"
+                        :model-value="autoStateChangeCompanyDesc"
+                        :disabled="!autoStateChangeEnabled"
+                        :maxlength="32"
+                        :placeholder="t('view.settings.general.automation.status_description_placeholder')"
+                        style="margin-top: 8px"
+                        size="sm"
+                        @update:modelValue="setAutoStateChangeCompanyDesc" />
                 </div>
 
                 <div>
@@ -147,6 +179,7 @@
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
     import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
     import { Info } from 'lucide-vue-next';
+    import { Input } from '@/components/ui/input';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -172,6 +205,10 @@
         autoStateChangeCompanyStatus,
         autoStateChangeInstanceTypes,
         autoStateChangeNoFriends,
+        autoStateChangeAloneDescEnabled,
+        autoStateChangeAloneDesc,
+        autoStateChangeCompanyDescEnabled,
+        autoStateChangeCompanyDesc,
         autoAcceptInviteRequests
     } = storeToRefs(generalSettingsStore);
 
@@ -181,6 +218,10 @@
         setAutoStateChangeCompanyStatus,
         setAutoStateChangeInstanceTypes,
         setAutoStateChangeNoFriends,
+        setAutoStateChangeAloneDescEnabled,
+        setAutoStateChangeAloneDesc,
+        setAutoStateChangeCompanyDescEnabled,
+        setAutoStateChangeCompanyDesc,
         setAutoAcceptInviteRequests
     } = generalSettingsStore;
 

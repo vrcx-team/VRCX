@@ -546,7 +546,9 @@
                     "auto_invite_request_accept_tooltip": "Automatically accept invite requests from favorite friends",
                     "auto_invite_request_accept_off": "Off",
                     "auto_invite_request_accept_favs": "All Favorites",
-                    "auto_invite_request_accept_selected_favs": "VRCX Favorites"
+                    "auto_invite_request_accept_selected_favs": "VRCX Favorites",
+                    "change_status_description": "Override status description",
+                    "status_description_placeholder": "Status description (max 32 characters)"
                 },
                 "legal_notice": {
                     "header": "Legal Notice",

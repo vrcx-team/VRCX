@@ -1628,22 +1628,33 @@ export const useUserStore = defineStore('User', () => {
             return;
         }
 
-        userRequest
-            .saveCurrentUser({
-                status: newStatus
-            })
-            .then(() => {
-                const text = `Status automatically changed to ${newStatus}`;
-                if (AppDebug.errorNoty) {
-                    AppDebug.errorNoty.close();
-                }
-                AppDebug.errorNoty = new Noty({
-                    type: 'info',
-                    text
-                });
-                AppDebug.errorNoty.show();
-                console.log(text);
+        const params = { status: newStatus };
+        if (
+            withCompany &&
+            generalSettingsStore.autoStateChangeCompanyDescEnabled
+        ) {
+            params.statusDescription =
+                generalSettingsStore.autoStateChangeCompanyDesc;
+        } else if (
+            !withCompany &&
+            generalSettingsStore.autoStateChangeAloneDescEnabled
+        ) {
+            params.statusDescription =
+                generalSettingsStore.autoStateChangeAloneDesc;
+        }
+
+        userRequest.saveCurrentUser(params).then(() => {
+            const text = `Status automatically changed to ${newStatus}`;
+            if (AppDebug.errorNoty) {
+                AppDebug.errorNoty.close();
+            }
+            AppDebug.errorNoty = new Noty({
+                type: 'info',
+                text
             });
+            AppDebug.errorNoty.show();
+            console.log(text);
+        });
     }
 
     function addCustomTag(data) {
