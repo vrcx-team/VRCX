@@ -48,7 +48,7 @@ describe('String Utils', () => {
     describe('textToHex', () => {
         test('converts basic text', () => {
             expect(textToHex('ABC')).toBe('41 42 43');
-            expect(textToHex('Hello')).toBe('48 65 6c 6c 6f');
+            expect(textToHex('Hello')).toBe('48 65 6C 6C 6F');
         });
 
         test('handles special cases', () => {
