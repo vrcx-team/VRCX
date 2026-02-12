@@ -74,29 +74,22 @@
                             @click="copyUserDisplayName(currentUser.username)"></span>
                     </template>
                 </div>
-                <div style="margin-top: 5px" v-show="!userDialog.loading">
+                <div class="mt-2 flex items-center gap-1" v-show="!userDialog.loading">
                     <TooltipWrapper side="top" :content="t('dialog.user.tags.trust_level')">
-                        <Badge
-                            variant="outline"
-                            class="name"
-                            :class="userDialog.ref.$trustClass"
-                            style="margin-right: 5px; margin-top: 5px">
-                            <Shield class="mr-1 h-4 w-4 inline-block" /> {{ userDialog.ref.$trustLevel }}
+                        <Badge variant="outline" class="name" :class="userDialog.ref.$trustClass">
+                            <Shield class="h-4 w-4" /> {{ userDialog.ref.$trustLevel }}
                         </Badge>
                     </TooltipWrapper>
                     <TooltipWrapper
                         v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
                         side="top"
                         :content="t('dialog.user.tags.age_verified')">
-                        <Badge
-                            variant="outline"
-                            class="x-tag-age-verification"
-                            style="margin-right: 5px; margin-top: 5px">
+                        <Badge variant="outline" class="x-tag-age-verification">
                             <template v-if="userDialog.ref.ageVerificationStatus === '18+'">
-                                <IdCard class="mr-1 h-4 w-4 inline-block" /> 18+
+                                <IdCard class="h-4 w-4" /> 18+
                             </template>
                             <template v-else>
-                                <IdCard class="mr-1 h-4 w-4 inline-block" />
+                                <IdCard class="h-4 w-4" />
                             </template>
                         </Badge>
                     </TooltipWrapper>
@@ -104,8 +97,8 @@
                         v-if="userDialog.isFriend && userDialog.friend"
                         side="top"
                         :content="t('dialog.user.tags.friend_number')">
-                        <Badge variant="outline" class="x-tag-friend" style="margin-right: 5px; margin-top: 5px">
-                            <UserPlus class="mr-1 h-4 w-4 inline-block" />
+                        <Badge variant="outline" class="x-tag-friend">
+                            <UserPlus class="h-4 w-4" />
                             {{ userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : '' }}
                         </Badge>
                     </TooltipWrapper>
@@ -113,11 +106,8 @@
                         v-if="userDialog.mutualFriendCount"
                         side="top"
                         :content="t('dialog.user.tags.mutual_friends')">
-                        <Badge
-                            variant="outline"
-                            class="x-tag-mutual-friend border-zinc-500/50! dark:border-zinc-400!"
-                            style="margin-right: 5px; margin-top: 5px">
-                            <Users class="mr-1 h-4 w-4 inline-block" />
+                        <Badge variant="outline" class="x-tag-mutual-friend border-zinc-500/50! dark:border-zinc-400!">
+                            <Users class="h-4 w-4" />
                             {{ userDialog.mutualFriendCount }}
                         </Badge>
                     </TooltipWrapper>
@@ -128,60 +118,35 @@
                         <Badge
                             variant="outline"
                             class="x-tag-discord cursor-pointer"
-                            style="margin-right: 5px; margin-top: 5px"
                             @click="openDiscordProfile(userDialog.ref.discordId)">
-                            <i class="ri-discord-line mr-1 h-4 w-4 inline-block" style="height: 1em; width: 1em"></i>
+                            <i class="ri-discord-line text-xs"></i>
                             {{ t('dialog.user.tags.discord') }}
                         </Badge>
                     </TooltipWrapper>
-                    <Badge
-                        v-if="userDialog.ref.$isTroll"
-                        variant="outline"
-                        class="x-tag-troll"
-                        style="margin-right: 5px; margin-top: 5px">
-                        Nuisance
-                    </Badge>
-                    <Badge
-                        v-if="userDialog.ref.$isProbableTroll"
-                        variant="outline"
-                        class="x-tag-troll"
-                        style="margin-right: 5px; margin-top: 5px">
+                    <Badge v-if="userDialog.ref.$isTroll" variant="outline" class="x-tag-troll"> Nuisance </Badge>
+                    <Badge v-if="userDialog.ref.$isProbableTroll" variant="outline" class="x-tag-troll">
                         Almost Nuisance
                     </Badge>
-                    <Badge
-                        v-if="userDialog.ref.$isModerator"
-                        variant="outline"
-                        class="x-tag-vip"
-                        style="margin-right: 5px; margin-top: 5px">
+                    <Badge v-if="userDialog.ref.$isModerator" variant="outline" class="x-tag-vip">
                         {{ t('dialog.user.tags.vrchat_team') }}
                     </Badge>
 
                     <TooltipWrapper v-if="userDialog.ref.$platform === 'standalonewindows'" side="top" content="PC">
-                        <Badge variant="outline" class="x-tag-platform-pc" style="margin-right: 5px; margin-top: 5px">
-                            <Monitor class="h-4 w-4 x-tag-platform-pc" />
+                        <Badge variant="outline" class="x-tag-platform-pc">
+                            <Monitor class="m-0.5 x-tag-platform-pc" />
                         </Badge>
                     </TooltipWrapper>
                     <TooltipWrapper v-else-if="userDialog.ref.$platform === 'android'" side="top" content="Android">
-                        <Badge
-                            variant="outline"
-                            class="x-tag-platform-quest"
-                            style="margin-right: 5px; margin-top: 5px">
-                            <Smartphone class="h-4 w-4 x-tag-platform-quest" />
+                        <Badge variant="outline" class="x-tag-platform-quest">
+                            <Smartphone class="m-0.5 x-tag-platform-quest" />
                         </Badge>
                     </TooltipWrapper>
                     <TooltipWrapper v-else-if="userDialog.ref.$platform === 'ios'" side="top" content="iOS">
-                        <Badge
-                            variant="outline"
-                            class="text-[#8e8e93] border-[#8e8e93]"
-                            style="margin-right: 5px; margin-top: 5px">
-                            <Apple class="h-4 w-4 text-[#8e8e93]" />
+                        <Badge variant="outline" class="text-[#8e8e93] border-[#8e8e93]">
+                            <Apple class="m-0.5 text-[#8e8e93]" />
                         </Badge>
                     </TooltipWrapper>
-                    <Badge
-                        v-else-if="userDialog.ref.$platform"
-                        variant="outline"
-                        class="x-tag-platform-other"
-                        style="margin-right: 5px; margin-top: 5px">
+                    <Badge v-else-if="userDialog.ref.$platform" variant="outline" class="x-tag-platform-other">
                         {{ userDialog.ref.$platform }}
                     </Badge>
 
@@ -193,10 +158,10 @@
                             color: userDialog.ref.$customTagColour,
                             'border-color': userDialog.ref.$customTagColour
                         }"
-                        style="margin-right: 5px; margin-top: 5px"
                         >{{ userDialog.ref.$customTag }}</Badge
                     >
-                    <br />
+                </div>
+                <div class="mt-1">
                     <TooltipWrapper v-for="badge in userDialog.ref.badges" :key="badge.badgeId" side="top">
                         <template #content>
                             <span>{{ badge.badgeName }}</span>
@@ -261,7 +226,7 @@
                         </div>
                     </TooltipWrapper>
                 </div>
-                <div style="margin-top: 5px">
+                <div>
                     <span style="font-size: 12px" v-text="userDialog.ref.statusDescription"></span>
                 </div>
             </div>

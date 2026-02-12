@@ -3,14 +3,30 @@
         <div style="position: absolute; top: 0; left: 0; margin: 5px">
             <TooltipWrapper v-if="!noUpdater" side="top" :content="t('view.login.updater')">
                 <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="showVRCXUpdateDialog"
-                    ><CircleArrowDown
+                    ><ArrowBigDownDash
                 /></Button>
             </TooltipWrapper>
             <TooltipWrapper side="top" :content="t('view.login.proxy_settings')">
-                <Button class="rounded-full text-xs" size="icon-sm" variant="ghost" @click="promptProxySettings"
-                    ><Route
+                <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="promptProxySettings"
+                    ><Earth
                 /></Button>
             </TooltipWrapper>
+            <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                    <Button class="rounded-full text-xs" size="icon-sm" variant="ghost">
+                        <Languages />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent class="max-h-80 overflow-y-auto text-xs">
+                    <DropdownMenuCheckboxItem
+                        v-for="language in languageCodes"
+                        :key="language"
+                        :model-value="appLanguage === language"
+                        @select="changeAppLanguage(language)">
+                        {{ getLanguageName(language) }}
+                    </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
         <div class="x-login">
             <div class="x-login-form-container">
@@ -60,11 +76,11 @@
                                 </Field>
                             </VeeField>
                         </FieldGroup>
-                        <label class="inline-flex items-center gap-2 mr-2">
+                        <label class="inline-flex items-center gap-2 mr-2 text-sm">
                             <Checkbox v-model="loginForm.saveCredentials" />
                             <span>{{ t('view.login.field.saveCredentials') }}</span>
                         </label>
-                        <label class="inline-flex items-center gap-2" style="margin-top: 10px">
+                        <label class="inline-flex items-center gap-2 text-sm" style="margin-top: 10px">
                             <Checkbox v-model="enableCustomEndpoint" @update:modelValue="handleCustomEndpointToggle" />
                             <span>{{ t('view.login.field.devEndpoint') }}</span>
                         </label>
@@ -145,12 +161,11 @@
                                     <span class="block truncate text-xs" v-text="user.loginParams.endpoint"></span>
                                 </div>
                                 <Button
-                                    class="rounded-full"
                                     size="icon-sm"
                                     variant="ghost"
-                                    style="margin-left: 10px"
+                                    class="cursor-pointer ml-2"
                                     @click.stop="clickDeleteSavedLogin(user.user.id)"
-                                    ><Trash2 class="h-3 w-3"
+                                    ><Minus class="text-sm"
                                 /></Button>
                             </div>
                         </div>
@@ -186,8 +201,14 @@
 
 <script setup>
     import { Field, FieldContent, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+    import { ArrowBigDownDash, Earth, Languages, Minus } from 'lucide-vue-next';
+    import {
+        DropdownMenu,
+        DropdownMenuCheckboxItem,
+        DropdownMenuContent,
+        DropdownMenuTrigger
+    } from '@/components/ui/dropdown-menu';
     import { onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
-    import { CircleArrowDown, Route, Trash2 } from 'lucide-vue-next';
     import { Field as VeeField, useForm } from 'vee-validate';
     import { useRoute, useRouter } from 'vue-router';
     import { Button } from '@/components/ui/button';
@@ -198,7 +219,13 @@
     import { useI18n } from 'vue-i18n';
     import { z } from 'zod';
 
-    import { useAuthStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '../../stores';
+    import {
+        useAppearanceSettingsStore,
+        useAuthStore,
+        useGeneralSettingsStore,
+        useVRCXUpdaterStore
+    } from '../../stores';
+    import { getLanguageName, languageCodes } from '../../localization';
     import { openExternalLink, userImage } from '../../shared/utils';
     import { AppDebug } from '../../service/appConfig';
     import { watchState } from '../../service/watchState';
@@ -210,6 +237,10 @@
     const { toggleCustomEndpoint, relogin, deleteSavedLogin, login, getAllSavedCredentials } = useAuthStore();
     const { promptProxySettings } = useGeneralSettingsStore();
     const { noUpdater } = storeToRefs(useVRCXUpdaterStore());
+
+    const appearanceSettingsStore = useAppearanceSettingsStore();
+    const { appLanguage } = storeToRefs(appearanceSettingsStore);
+    const { changeAppLanguage } = appearanceSettingsStore;
 
     const { t } = useI18n();
 
