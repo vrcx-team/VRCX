@@ -10,9 +10,9 @@ import {
     useSearchStore,
     useWorldStore
 } from '../../stores';
+import { escapeTag, replaceBioSymbols } from './base/string';
 import { AppDebug } from '../../service/appConfig.js';
 import { compareUnityVersion } from './avatar';
-import { escapeTag } from './base/string';
 import { miscRequest } from '../../api';
 
 /**
@@ -343,52 +343,6 @@ function buildTreeData(json) {
         return 0;
     });
     return node;
-}
-
-/**
- *
- * @param {string} text
- * @returns {string}
- */
-function replaceBioSymbols(text) {
-    if (typeof text !== 'string') {
-        return '';
-    }
-    const symbolList = {
-        '@': '＠',
-        '#': '＃',
-        $: '＄',
-        '%': '％',
-        '&': '＆',
-        '=': '＝',
-        '+': '＋',
-        '/': '⁄',
-        '\\': '＼',
-        ';': ';',
-        ':': '˸',
-        ',': '‚',
-        '?': '？',
-        '!': 'ǃ',
-        '"': '＂',
-        '<': '≺',
-        '>': '≻',
-        '.': '․',
-        '^': '＾',
-        '{': '｛',
-        '}': '｝',
-        '[': '［',
-        ']': '］',
-        '(': '（',
-        ')': '）',
-        '|': '｜',
-        '*': '∗'
-    };
-    let newText = text;
-    for (const key in symbolList) {
-        const regex = new RegExp(symbolList[key], 'g');
-        newText = newText.replace(regex, key);
-    }
-    return newText.replace(/ {1,}/g, ' ').trimRight();
 }
 
 /**
