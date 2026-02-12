@@ -1,6 +1,6 @@
 {
     "language": "日本語 (ja)",
-    "translator": "Assault1892, Yuu198, paralleltree, kazu3jp, Cayahuanca, ecto0310, Map1en",
+    "translator": "Assault1892, Yuu198, paralleltree, kazu3jp, Cayahuanca, ecto0310, Map1en, neco222",
     "common": {
         "no_data": "データがありません",
         "no_matching_records": "一致するレコードがありません",
@@ -82,11 +82,11 @@
         "online": "オンライン",
         "active": "アクティブ",
         "offline": "オフライン",
-        "pending_offline": "オフライン (保留)"
+        "pending_offline": "オフライン (予定)"
     },
     "view": {
         "login": {
-            "savedAccounts": "保存済みのアカウント",
+            "savedAccounts": "ログイン済みのアカウント",
             "login": "ログイン",
             "register": "新規登録",
             "forgotPassword": "パスワードを忘れた場合",
@@ -95,7 +95,7 @@
             "field": {
                 "username": "ユーザーネームまたはメールアドレス",
                 "password": "パスワード",
-                "saveCredentials": "資格情報を保存",
+                "saveCredentials": "ログイン情報を保存",
                 "devEndpoint": "開発者用エンドポイント",
                 "endpoint": "エンドポイント",
                 "websocket": "ウェブソケット"
@@ -373,7 +373,7 @@
                     "title": "共通のフレンドのつながり",
                     "message": "共通のフレンドのデータが取得されていません。データを取得しますか？ この操作は数分かかる場合があります。",
                     "confirm": "取得する",
-                    "cancel": "あとで"
+                    "cancel": "キャンセル"
                 },
                 "enable_sharing_prompt": {
                     "title": "共通のフレンドの公開を有効にする",
@@ -825,7 +825,7 @@
                         "header": "YouTube API",
                         "enable": "有効化する",
                         "youtube_api_key": "YouTube APIキー",
-                        "enable_tooltip": "ゲームログに表示する動画のタイトルと、動画の時間 (長さ) を取得します。"
+                        "enable_tooltip": "ゲームログに動画のタイトルと、動画の長さを取得し表示しするます。"
                     },
                     "translation_api": {
                         "header": "プロフィールの翻訳API",
@@ -1046,7 +1046,7 @@
                 "copy_display_name": "表示名をコピー",
                 "vrcplus_hides_avatar": "VRC+のプロフィール画像が設定されている場合、そのプレイヤーのアバター情報、フィード内のアバター変更は表示されません。",
                 "instance_full": "満員",
-                "instance_closed": "閉じられました",
+                "instance_closed": "閉じたインスタンス",
                 "close_instance": "インスタンスを閉じる",
                 "instance_age_gated": "年齢制限あり",
                 "open_previous_instance": "前回のインスタンスを開く",
