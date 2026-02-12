@@ -360,6 +360,7 @@
 
     async function bulkUnfriendSelection() {
         if (!selectedFriends.value.size) return;
+        const selectedFriendsCount = selectedFriends.value.size;
         for (const item of friendsListDisplayData.value) {
             if (selectedFriends.value.has(item.id)) {
                 console.log(`Unfriending ${item.displayName} (${item.id})`);
@@ -368,7 +369,7 @@
             }
         }
         modalStore.alert({
-            description: `Unfriended ${selectedFriends.value.size} friends.`,
+            description: `Unfriended ${selectedFriendsCount} friends.`,
             title: 'Bulk Unfriend Complete'
         });
         selectedFriends.value.clear();
