@@ -200,11 +200,8 @@ export const useWorldStore = defineStore('World', () => {
                     if (args.cache) {
                         worldRequest.getWorld(args.params).then((args1) => {
                             if (D.id === args1.ref.id) {
-                                D.loading = false;
-                                D.ref = args1.ref;
                                 updateVRChatWorldCache();
                             }
-                            return args1;
                         });
                     }
                 }

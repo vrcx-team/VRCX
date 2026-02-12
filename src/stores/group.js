@@ -187,13 +187,15 @@ export const useGroupStore = defineStore('Group', () => {
                     D.ownerDisplayName = args.ref.ownerId;
                     D.visible = true;
                     D.loading = false;
+                    if (args.cache) {
+                        groupRequest.getGroup(args.params);
+                    }
                     userRequest
                         .getCachedUser({
                             userId: args.ref.ownerId
                         })
                         .then((args1) => {
                             D.ownerDisplayName = args1.ref.displayName;
-                            return args1;
                         });
                     database.getLastGroupVisit(D.ref.name).then((r) => {
                         if (D.id === args.ref.id) {

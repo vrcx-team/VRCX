@@ -919,6 +919,9 @@ export const useUserStore = defineStore('User', () => {
                     if (locationStore.lastLocation.playerList.has(D.ref.id)) {
                         inCurrentWorld = true;
                     }
+                    if (args.cache) {
+                        userRequest.getUser(args.params);
+                    }
                     if (userId !== currentUser.value.id) {
                         database
                             .getUserStats(D.ref, inCurrentWorld)
