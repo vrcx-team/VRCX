@@ -68,7 +68,7 @@
             dialogState.value.pageIndex = value;
         }
     });
-    const tableStyle = { maxHeight: '400px' };
+    const tableStyle = { maxHeight: '100%' };
     const search = computed({
         get: () => dialogState.value.search,
         set: (value) => {

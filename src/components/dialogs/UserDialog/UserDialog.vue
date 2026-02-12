@@ -519,20 +519,6 @@
                         </Select>
                     </div>
                 </div>
-                <div
-                    v-if="mutualFriendsError"
-                    @click="openExternalLink('https://docs.vrchat.com/docs/vrchat-202542#mutuals')"
-                    style="
-                        margin-top: 20px;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        color: #f56c6c;
-                        cursor: pointer;
-                    ">
-                    <AlertTriangle style="margin-right: 5px" />
-                    <span>Mutual Friends unavailable due to VRChat staged rollout, click for more info</span>
-                </div>
                 <ul class="x-friend-list" style="margin-top: 10px; overflow: auto; max-height: 250px; min-width: 130px">
                     <li
                         v-for="user in userDialog.mutualFriends"
@@ -1477,7 +1463,6 @@
 
     const isEditNoteAndMemoDialogVisible = ref(false);
     const vrchatCredit = ref(null);
-    const mutualFriendsError = ref(false);
     const treeData = ref({});
 
     const userDialogAvatars = computed(() => {
@@ -2189,7 +2174,6 @@
                     const mutualIds = userDialog.value.mutualFriends.map((u) => u.id);
                     database.updateMutualsForFriend(userId, mutualIds);
                 }
-                mutualFriendsError.value = !success;
             }
         });
     }

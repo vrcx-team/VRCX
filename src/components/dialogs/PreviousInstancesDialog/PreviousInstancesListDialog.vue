@@ -105,7 +105,7 @@
             getListState().pageSize = value;
         }
     });
-    const tableStyle = { maxHeight: '400px' };
+    const tableStyle = { maxHeight: '100%' };
     const search = computed({
         get: () => getListState().search,
         set: (value) => {
