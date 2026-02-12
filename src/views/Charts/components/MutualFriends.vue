@@ -4,24 +4,52 @@
             class="mt-0 flex min-h-[calc(100vh-140px)] flex-col items-center justify-betweenpt-12"
             ref="mutualGraphRef">
             <div class="flex items-center w-full">
-                <div class="options-container flex flex-wrap items-center gap-3 bg-transparent pb-3 shadow-none">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <TooltipWrapper :content="fetchButtonLabel" side="top">
-                            <Button :disabled="fetchButtonDisabled" @click="startFetch">
-                                <Spinner v-if="isFetching" />
-                                {{ fetchButtonLabel }}
-                            </Button>
-                        </TooltipWrapper>
-
+                <div class="options-container flex items-center gap-3 bg-transparent pb-3 shadow-none">
+                    <div>
                         <TooltipWrapper
                             v-if="isFetching"
                             :content="t('view.charts.mutual_friend.actions.stop_fetching')"
                             side="top">
                             <Button variant="destructive" :disabled="status.cancelRequested" @click="cancelFetch">
+                                <Spinner />
                                 {{ t('view.charts.mutual_friend.actions.stop') }}
                             </Button>
                         </TooltipWrapper>
+
+                        <TooltipWrapper v-else :content="fetchButtonLabel" side="top">
+                            <Button :disabled="fetchButtonDisabled" @click="startFetch">
+                                {{ fetchButtonLabel }}
+                            </Button>
+                        </TooltipWrapper>
                     </div>
+                    <VirtualCombobox
+                        v-if="graphReady"
+                        :model-value="selectedFriendId"
+                        @update:modelValue="navigateToFriend"
+                        :groups="friendPickerGroups"
+                        :placeholder="t('view.charts.mutual_friend.actions.go_to_friend')"
+                        :search-placeholder="t('view.charts.mutual_friend.actions.go_to_friend')"
+                        :close-on-select="true"
+                        :deselect-on-reselect="true">
+                        <template #item="{ item, selected }">
+                            <div class="x-friend-item flex w-full items-center">
+                                <template v-if="item.user">
+                                    <div :class="['avatar', userStatusClass(item.user)]">
+                                        <img :src="userImage(item.user)" loading="lazy" />
+                                    </div>
+                                    <div class="detail">
+                                        <span class="name" :style="{ color: item.user.$userColour }">{{
+                                            item.user.displayName
+                                        }}</span>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <span>{{ item.label }}</span>
+                                </template>
+                                <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                            </div>
+                        </template>
+                    </VirtualCombobox>
                 </div>
                 <div class="ml-auto flex items-center gap-2">
                     <Sheet>
@@ -146,11 +174,12 @@
     import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { Empty, EmptyDescription, EmptyHeader } from '@/components/ui/empty';
+    import { Check as CheckIcon, Settings } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Progress } from '@/components/ui/progress';
-    import { Settings } from 'lucide-vue-next';
     import { Slider } from '@/components/ui/slider';
     import { Spinner } from '@/components/ui/spinner';
+    import { VirtualCombobox } from '@/components/ui/virtual-combobox';
     import { createNodeBorderProgram } from '@sigma/node-border';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -171,6 +200,7 @@
         useModalStore,
         useUserStore
     } from '../../../stores';
+    import { userImage, userStatusClass } from '../../../shared/utils';
     import { database } from '../../../service/database';
     import { watchState } from '../../../service/watchState';
 
@@ -300,7 +330,6 @@
 
     const graphNodeCount = ref(0);
     const isLoadingSnapshot = ref(false);
-    const loadingToastId = ref(null);
     const totalFriends = computed(() => friends.value.size);
     const isOptOut = computed(() => Boolean(currentUser.value?.hasSharedConnectionsOptOut));
     const graphReady = computed(() => graphNodeCount.value > 0);
@@ -318,6 +347,36 @@
 
     const canvasBackground = computed(() => 'transparent');
 
+    const selectedFriendId = ref(null);
+
+    const friendPickerGroups = computed(() => {
+        if (!currentGraph || !graphNodeCount.value) return [];
+        const currentUserId = currentUser.value?.id;
+        const items = [];
+        currentGraph.forEachNode((nodeId, attrs) => {
+            if (nodeId === currentUserId) return;
+            const cached = cachedUsers.get(nodeId);
+            const displayName = cached?.displayName || attrs.label || nodeId;
+            items.push({
+                value: nodeId,
+                label: displayName,
+                search: displayName,
+                user: cached || null
+            });
+        });
+        items.sort((a, b) => a.label.localeCompare(b.label));
+        return [{ key: 'friends', label: t('side_panel.friends'), items }];
+    });
+
+    function navigateToFriend(friendId) {
+        selectedFriendId.value = friendId;
+        if (!friendId || !currentGraph || !sigmaInstance) return;
+        if (!currentGraph.hasNode(friendId)) return;
+        const nodeDisplayData = sigmaInstance.getNodeDisplayData(friendId);
+        if (!nodeDisplayData) return;
+        const camera = sigmaInstance.getCamera();
+        camera.animate({ x: nodeDisplayData.x, y: nodeDisplayData.y, ratio: 0.15 }, { duration: 300 });
+    }
     const mutualGraphResizeObserver = new ResizeObserver(() => {
         setMutualGraphHeight();
     });
@@ -651,7 +710,7 @@
             if (isHover) {
                 res.color = '#facc15';
                 res.size = (data.size || 4) * 1.6;
-                res.label = data.label;
+                res.label = `${data.label} (${neighbors.size})`;
                 res.labelColor = '#111827';
                 res.zIndex = 3;
                 return res;

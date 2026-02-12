@@ -1,7 +1,7 @@
 <template>
     <Popover v-model:open="isOpen">
         <PopoverTrigger as-child>
-            <Button variant="outline" size="sm" role="combobox" class="w-full justify-between" :disabled="disabled">
+            <Button variant="outline" role="combobox" class="w-full justify-between" :disabled="disabled">
                 <slot name="trigger" :text="selectionSummaryText" :clear="clearSelection">
                     <span class="truncate">
                         {{ selectionSummaryText || placeholder }}

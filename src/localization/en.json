@@ -366,7 +366,8 @@
                     "start_fetch": "Start Fetch",
                     "fetch_again": "Fetch Again",
                     "stop": "Stop",
-                    "stop_fetching": "Stop fetching"
+                    "stop_fetching": "Stop fetching",
+                    "go_to_friend": "Go to friend"
                 },
                 "status": {
                     "no_friends_to_process": "You have no friends to process",
