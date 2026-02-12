@@ -5,7 +5,9 @@
         "no_data": "No data",
         "no_matching_records": "No matching records",
         "actions": {
-            "open": "Open"
+            "open": "Open",
+            "confirm": "Confirm",
+            "clear": "Clear"
         },
         "time_units": {
             "y": "y",

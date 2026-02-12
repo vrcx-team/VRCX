@@ -35,6 +35,32 @@
                         style="flex: 0.4; margin-left: 10px"
                         @keyup.enter="feedTableLookup"
                         @change="feedTableLookup" />
+                    <Popover v-model:open="popoverOpen">
+                        <PopoverTrigger as-child>
+                            <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                class="ml-2 text-muted-foreground"
+                                :class="{ 'text-accent-foreground': hasDateFilter }">
+                                <Funnel />
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent class="w-auto" side="bottom" align="end">
+                            <RangeCalendar
+                                v-model="dateRange"
+                                :locale="locale"
+                                :max-value="todayDate"
+                                :number-of-months="2" />
+                            <div class="flex justify-end gap-2 mt-3">
+                                <Button variant="outline" size="sm" @click="clearDateFilter">
+                                    {{ t('common.actions.clear') }}
+                                </Button>
+                                <Button size="sm" @click="applyDateFilter">
+                                    {{ t('common.actions.confirm') }}
+                                </Button>
+                            </div>
+                        </PopoverContent>
+                    </Popover>
                 </div>
             </template>
         </DataTableLayout>
@@ -43,13 +69,20 @@
 
 <script setup>
     import { computed, ref, watch } from 'vue';
+    import { getLocalTimeZone, today } from '@internationalized/date';
+    import { Funnel } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import dayjs from 'dayjs';
+
+    import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { useAppearanceSettingsStore, useFeedStore, useVrcxStore } from '../../stores';
     import { ToggleGroup, ToggleGroupItem } from '../../components/ui/toggle-group';
+    import { Button } from '../../components/ui/button';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { InputGroupField } from '../../components/ui/input-group';
+    import { RangeCalendar } from '../../components/ui/range-calendar';
     import { Switch } from '../../components/ui/switch';
     import { columns as baseColumns } from './columns.jsx';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
@@ -60,8 +93,38 @@
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();
 
-    const { t } = useI18n();
+    const { t, locale } = useI18n();
     const feedFilterTypes = ['GPS', 'Online', 'Offline', 'Status', 'Avatar', 'Bio'];
+
+    const popoverOpen = ref(false);
+    const todayDate = today(getLocalTimeZone());
+    const dateRange = ref(undefined);
+    const hasDateFilter = computed(() => !!(feedTable.value.dateFrom || feedTable.value.dateTo));
+
+    function applyDateFilter() {
+        if (dateRange.value?.start) {
+            const s = dateRange.value.start;
+            feedTable.value.dateFrom = dayjs(`${s.year}-${s.month}-${s.day}`).startOf('day').toISOString();
+        } else {
+            feedTable.value.dateFrom = '';
+        }
+        if (dateRange.value?.end) {
+            const e = dateRange.value.end;
+            feedTable.value.dateTo = dayjs(`${e.year}-${e.month}-${e.day}`).endOf('day').toISOString();
+        } else {
+            feedTable.value.dateTo = '';
+        }
+        popoverOpen.value = false;
+        feedTableLookup();
+    }
+
+    function clearDateFilter() {
+        dateRange.value = undefined;
+        feedTable.value.dateFrom = '';
+        feedTable.value.dateTo = '';
+        popoverOpen.value = false;
+        feedTableLookup();
+    }
 
     const feedRef = ref(null);
 
