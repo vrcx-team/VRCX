@@ -151,6 +151,7 @@
                             </span>
                             <div class="extra">
                                 <AvatarInfo
+                                    :key="userDialog.id"
                                     :imageurl="userDialog.ref.currentAvatarImageUrl"
                                     :userid="userDialog.id"
                                     :avatartags="userDialog.ref.currentAvatarTags"

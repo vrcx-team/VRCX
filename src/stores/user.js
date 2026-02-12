@@ -484,7 +484,7 @@ export const useUserStore = defineStore('User', () => {
             delete json.currentAvatarThumbnailImageUrl;
         }
         if (typeof ref === 'undefined') {
-            ref = {
+            ref = reactive({
                 ageVerificationStatus: '',
                 ageVerified: false,
                 allowAvatarCopying: false,
@@ -553,7 +553,7 @@ export const useUserStore = defineStore('User', () => {
                 $moderations: {},
                 //
                 ...json
-            };
+            });
             if (locationStore.lastLocation.playerList.has(json.id)) {
                 // update $location_at from instance join time
                 const player = locationStore.lastLocation.playerList.get(
@@ -644,12 +644,12 @@ export const useUserStore = defineStore('User', () => {
         if (ref.location === 'traveling') {
             ref.$location = parseLocation(ref.travelingToLocation);
             if (!currentTravelers.has(ref.id) && ref.travelingToLocation) {
-                const travelRef = ref({
+                const travelRef = reactive({
                     created_at: new Date().toJSON(),
                     ...ref
                 });
-                currentTravelers.set(ref.id, travelRef.value);
-                onPlayerTraveling(travelRef.value);
+                currentTravelers.set(ref.id, travelRef);
+                onPlayerTraveling(travelRef);
             }
         } else {
             ref.$location = parseLocation(ref.location);
