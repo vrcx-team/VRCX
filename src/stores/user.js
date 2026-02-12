@@ -1,4 +1,4 @@
-import { computed, nextTick, reactive, ref, shallowReactive, watch } from 'vue';
+import { computed, reactive, ref, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -484,7 +484,7 @@ export const useUserStore = defineStore('User', () => {
             delete json.currentAvatarThumbnailImageUrl;
         }
         if (typeof ref === 'undefined') {
-            ref = reactive({
+            ref = {
                 ageVerificationStatus: '',
                 ageVerified: false,
                 allowAvatarCopying: false,
@@ -553,7 +553,7 @@ export const useUserStore = defineStore('User', () => {
                 $moderations: {},
                 //
                 ...json
-            });
+            };
             if (locationStore.lastLocation.playerList.has(json.id)) {
                 // update $location_at from instance join time
                 const player = locationStore.lastLocation.playerList.get(
@@ -644,12 +644,12 @@ export const useUserStore = defineStore('User', () => {
         if (ref.location === 'traveling') {
             ref.$location = parseLocation(ref.travelingToLocation);
             if (!currentTravelers.has(ref.id) && ref.travelingToLocation) {
-                const travelRef = reactive({
+                const travelRef = ref({
                     created_at: new Date().toJSON(),
                     ...ref
                 });
-                currentTravelers.set(ref.id, travelRef);
-                onPlayerTraveling(travelRef);
+                currentTravelers.set(ref.id, travelRef.value);
+                onPlayerTraveling(travelRef.value);
             }
         } else {
             ref.$location = parseLocation(ref.location);
