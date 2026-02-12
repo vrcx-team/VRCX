@@ -2,13 +2,7 @@
     <TooltipProvider>
         <MacOSTitleBar></MacOSTitleBar>
 
-        <div
-            id="x-app"
-            class="x-app"
-            :class="{ 'with-macos-titlebar': isMacOS }"
-            ondragenter="event.preventDefault()"
-            ondragover="event.preventDefault()"
-            ondrop="event.preventDefault()">
+        <div id="x-app" class="x-app" :class="{ 'with-macos-titlebar': isMacOS }">
             <RouterView></RouterView>
             <Toaster position="top-center" :theme="theme"></Toaster>
 
