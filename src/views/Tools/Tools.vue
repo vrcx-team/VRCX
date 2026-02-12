@@ -52,7 +52,7 @@
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="openVrcPhotosFolder">
                                 <div class="tool-icon text-2xl">
-                                    <FolderOpen />
+                                    <Folder />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.pictures.pictures.vrc_photos') }}</div>
@@ -65,7 +65,7 @@
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="openVrcScreenshotsFolder">
                                 <div class="tool-icon text-2xl">
-                                    <FolderOpen />
+                                    <Folder />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">
@@ -158,7 +158,7 @@
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showRegistryBackupDialog">
                                 <div class="tool-icon text-2xl">
-                                    <Package />
+                                    <Settings />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">
@@ -220,7 +220,7 @@
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportDiscordNamesDialog">
                                 <div class="tool-icon text-2xl">
-                                    <MessageSquare />
+                                    <FolderInput />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.export.discord_names') }}</div>
@@ -233,7 +233,7 @@
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showNoteExportDialog">
                                 <div class="tool-icon text-2xl">
-                                    <UserCheck />
+                                    <FolderInput />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.export.export_notes') }}</div>
@@ -247,7 +247,7 @@
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportFriendsListDialog">
                                 <div class="tool-icon text-2xl">
-                                    <UserCheck />
+                                    <FolderInput />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.export.export_friend_list') }}</div>
@@ -260,7 +260,7 @@
                         <Card class="tool-card p-0 gap-0">
                             <div class="tool-content" @click="showExportAvatarsListDialog">
                                 <div class="tool-icon text-2xl">
-                                    <UserCheck />
+                                    <FolderInput />
                                 </div>
                                 <div class="tool-info">
                                     <div class="tool-name">{{ t('view.tools.export.export_own_avatars') }}</div>
@@ -329,13 +329,10 @@
         Camera,
         ChevronDown,
         Folder,
-        FolderOpen,
+        FolderInput,
         Images,
-        MessageSquare,
-        Package,
         Settings,
-        SquarePen,
-        UserCheck
+        SquarePen
     } from 'lucide-vue-next';
     import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
