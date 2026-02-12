@@ -183,5 +183,9 @@
     "dependencies": {
         "hazardous": "^0.3.0",
         "node-api-dotnet": "^0.9.19"
+    },
+    "engines": {
+        "node": ">=24.13.0",
+        "npm": ">=11.9.0"
     }
 }
