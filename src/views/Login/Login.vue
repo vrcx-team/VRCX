@@ -13,9 +13,11 @@
             </TooltipWrapper>
             <DropdownMenu>
                 <DropdownMenuTrigger as-child>
-                    <Button class="rounded-full text-xs" size="icon-sm" variant="ghost">
-                        <Languages />
-                    </Button>
+                    <TooltipWrapper side="top" :content="t('view.login.language')">
+                        <Button class="rounded-full text-xs" size="icon-sm" variant="ghost">
+                            <Languages />
+                        </Button>
+                    </TooltipWrapper>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent class="max-h-80 overflow-y-auto text-xs">
                     <DropdownMenuCheckboxItem
