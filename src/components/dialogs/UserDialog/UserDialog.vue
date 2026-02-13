@@ -1334,12 +1334,14 @@
             { value: 'Info', label: t('dialog.user.info.header') },
             { value: 'Groups', label: t('dialog.user.groups.header') },
             { value: 'Worlds', label: t('dialog.user.worlds.header') },
-            { value: 'favorite-worlds', label: t('dialog.user.favorite_worlds.header') },
             { value: 'Avatars', label: t('dialog.user.avatars.header') },
             { value: 'JSON', label: t('dialog.user.json.header') }
         ];
-        if (userDialog.value.id !== currentUser.value.id && !currentUser.value.hasSharedConnectionsOptOut) {
-            tabs.splice(1, 0, { value: 'mutual', label: t('dialog.user.mutual_friends.header') });
+        if (userDialog.value.id !== currentUser.value.id) {
+            if (!currentUser.value.hasSharedConnectionsOptOut) {
+                tabs.splice(1, 0, { value: 'mutual', label: t('dialog.user.mutual_friends.header') });
+            }
+            tabs.splice(3, 0, { value: 'favorite-worlds', label: t('dialog.user.favorite_worlds.header') });
         }
         return tabs;
     });
