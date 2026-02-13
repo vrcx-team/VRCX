@@ -567,7 +567,6 @@
     import configRepository from '../../service/config.js';
 
     import * as workerTimers from 'worker-timers';
-    // import Badge from 'src/components/ui/badge/Badge.vue';
 
     const AVATAR_GROUP_PLACEHOLDERS = Array.from({ length: 5 }, (_, index) => ({
         key: `avatar:avatars${index + 1}`,
