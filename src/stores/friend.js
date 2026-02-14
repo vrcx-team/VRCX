@@ -67,6 +67,38 @@ export const useFriendStore = defineStore('Friend', () => {
 
     const localFavoriteFriends = reactive(new Set());
 
+    const allFavoriteFriendIds = computed(() => {
+        const favoriteStore = useFavoriteStore();
+        const set = new Set();
+        for (const ref of favoriteStore.cachedFavorites.values()) {
+            if (ref.type === 'friend') {
+                set.add(ref.favoriteId);
+            }
+        }
+        for (const groupName in favoriteStore.localFriendFavorites) {
+            const userIds = favoriteStore.localFriendFavorites[groupName];
+            if (userIds) {
+                for (const id of userIds) {
+                    set.add(id);
+                }
+            }
+        }
+        return set;
+    });
+
+    const allFavoriteOnlineFriends = computed(() => {
+        return Array.from(friends.values())
+            .filter(
+                (f) =>
+                    f.state === 'online' && allFavoriteFriendIds.value.has(f.id)
+            )
+            .sort(
+                getFriendsSortFunction(
+                    appearanceSettingsStore.sidebarSortMethods
+                )
+            );
+    });
+
     const isRefreshFriendsLoading = ref(false);
     const onlineFriendCount = ref(0);
 
@@ -1663,6 +1695,8 @@ export const useFriendStore = defineStore('Friend', () => {
         offlineFriends,
         friendsInSameInstance,
 
+        allFavoriteFriendIds,
+        allFavoriteOnlineFriends,
         localFavoriteFriends,
         isRefreshFriendsLoading,
         onlineFriendCount,

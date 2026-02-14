@@ -108,8 +108,14 @@
     const { t } = useI18n();
 
     const friendStore = useFriendStore();
-    const { vipFriends, onlineFriends, activeFriends, offlineFriends, friendsInSameInstance } =
-        storeToRefs(friendStore);
+    const {
+        allFavoriteOnlineFriends,
+        allFavoriteFriendIds,
+        onlineFriends,
+        activeFriends,
+        offlineFriends,
+        friendsInSameInstance
+    } = storeToRefs(friendStore);
     const {
         isSidebarGroupByInstance,
         isHideFriendsInSameInstance,
@@ -157,13 +163,15 @@
         return list.filter((item) => !sameInstanceFriendId.value.has(item.id));
     }
 
-    const onlineFriendsByGroupStatus = computed(() => excludeSameInstance(onlineFriends.value));
+    const onlineFriendsByGroupStatus = computed(() =>
+        excludeSameInstance(onlineFriends.value.filter((f) => !allFavoriteFriendIds.value.has(f.id)))
+    );
 
     const vipFriendsByGroupStatus = computed(() => {
         const selectedGroups = sidebarFavoriteGroups.value;
         const hasFilter = selectedGroups.length > 0;
         if (!hasFilter) {
-            return excludeSameInstance(vipFriends.value);
+            return excludeSameInstance(allFavoriteOnlineFriends.value);
         }
         // Filter to only include VIP friends whose group key is in selectedGroups
         const allowedIds = new Set();
@@ -179,7 +187,7 @@
                 for (const f of remoteFriendsByGroup[key]) allowedIds.add(f.id);
             }
         }
-        return excludeSameInstance(vipFriends.value.filter((f) => allowedIds.has(f.id)));
+        return excludeSameInstance(allFavoriteOnlineFriends.value.filter((f) => allowedIds.has(f.id)));
     });
 
     // VIP friends divide by group
@@ -212,7 +220,9 @@
         // Filter vipFriends per group, preserving vipFriends sort order
         const result = [];
         for (const { key, groupName, memberIds } of groups) {
-            const filteredFriends = excludeSameInstance(vipFriends.value.filter((friend) => memberIds.has(friend.id)));
+            const filteredFriends = excludeSameInstance(
+                allFavoriteOnlineFriends.value.filter((friend) => memberIds.has(friend.id))
+            );
             if (filteredFriends.length > 0) {
                 result.push(filteredFriends.map((item) => ({ groupName, key, ...item })));
             }

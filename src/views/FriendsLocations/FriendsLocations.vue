@@ -146,8 +146,14 @@
     const { t } = useI18n();
 
     const friendStore = useFriendStore();
-    const { onlineFriends, vipFriends, activeFriends, offlineFriends, friendsInSameInstance } =
-        storeToRefs(friendStore);
+    const {
+        onlineFriends,
+        allFavoriteOnlineFriends,
+        allFavoriteFriendIds,
+        activeFriends,
+        offlineFriends,
+        friendsInSameInstance
+    } = storeToRefs(friendStore);
 
     const SEGMENTED_BASE_OPTIONS = [
         { label: t('view.friends_locations.online'), value: 'online' },
@@ -322,7 +328,7 @@
     const filteredFriends = computed(() => {
         if (normalizedSearchTerm.value) {
             const pools = [
-                ...toEntries(vipFriends.value),
+                ...toEntries(allFavoriteOnlineFriends.value),
                 ...toEntries(onlineFriends.value),
                 ...toEntries(activeFriends.value),
                 ...toEntries(offlineFriends.value)
@@ -349,7 +355,9 @@
                             .filter((id) => typeof id === 'string' || typeof id === 'number')
                     );
 
-                    const remainingOnline = toEntries(onlineFriends.value)
+                    const remainingOnline = toEntries(
+                        onlineFriends.value.filter((f) => !allFavoriteFriendIds.value.has(f.id))
+                    )
                         .filter((entry) => {
                             if (!entry?.id) {
                                 return true;
@@ -364,10 +372,10 @@
                     return [...sameEntries, ...remainingOnline];
                 }
 
-                return toEntries(onlineFriends.value);
+                return toEntries(onlineFriends.value.filter((f) => !allFavoriteFriendIds.value.has(f.id)));
             }
             case 'favorite':
-                return toEntries(vipFriends.value);
+                return toEntries(allFavoriteOnlineFriends.value);
             case 'same-instance':
                 return sameInstanceEntries.value;
             case 'active':

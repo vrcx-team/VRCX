@@ -142,7 +142,7 @@
 
     const emit = defineEmits(['lookup-user']);
 
-    const { friends } = storeToRefs(useFriendStore());
+    const { friends, allFavoriteFriendIds } = storeToRefs(useFriendStore());
     const modalStore = useModalStore();
     const { getAllUserStats, getAllUserMutualCount, confirmDeleteFriend, handleFriendDelete } = useFriendStore();
     const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
@@ -286,7 +286,7 @@
         }
         for (const ctx of friends.value.values()) {
             if (!ctx.ref) continue;
-            if (friendsListSearchFilterVIP.value && !ctx.isVIP) continue;
+            if (friendsListSearchFilterVIP.value && !allFavoriteFriendIds.value.has(ctx.id)) continue;
             if (query) {
                 let match = false;
                 if (!match && filters.includes('Display Name') && ctx.ref.displayName) {

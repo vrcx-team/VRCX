@@ -186,8 +186,8 @@
     import BackToTop from '@/components/BackToTop.vue';
     import dayjs from 'dayjs';
 
-    import { useAppearanceSettingsStore, useFavoriteStore, useFriendStore, useUserStore } from '../../../stores';
     import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/popover';
+    import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
     import { parseLocation, timeToText } from '../../../shared/utils';
     import { Slider } from '../../../components/ui/slider';
     import { Switch } from '../../../components/ui/switch';
@@ -204,31 +204,10 @@
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const friendStore = useFriendStore();
-    const favoriteStore = useFavoriteStore();
-    const { isDarkMode, dtHour12 } = storeToRefs(appearanceSettingsStore);
-    const { friends } = storeToRefs(friendStore);
-    const { cachedFavorites, localFriendFavorites } = storeToRefs(favoriteStore);
+    const { friends, allFavoriteFriendIds } = storeToRefs(friendStore);
     const { currentUser } = storeToRefs(useUserStore());
     const { t } = useI18n();
-
-    // All favorite friends (remote + local)
-    const allFavoriteFriends = computed(() => {
-        const set = new Set();
-        for (const ref of cachedFavorites.value.values()) {
-            if (ref.type === 'friend') {
-                set.add(ref.favoriteId);
-            }
-        }
-        for (const group in localFriendFavorites.value) {
-            const userIds = localFriendFavorites.value[group];
-            if (userIds) {
-                for (const id of userIds) {
-                    set.add(id);
-                }
-            }
-        }
-        return set;
-    });
+    const { isDarkMode, dtHour12 } = storeToRefs(appearanceSettingsStore);
 
     const instanceActivityRef = ref(null);
 
@@ -394,7 +373,7 @@
     onMounted(async () => {
         try {
             getAllDateOfActivity();
-            await getActivityData(selectedDate, currentUser, friends, allFavoriteFriends, () =>
+            await getActivityData(selectedDate, currentUser, friends, allFavoriteFriendIds, () =>
                 handleIntersectionObserver(activityDetailChartRef)
             );
             await getWorldNameData();
@@ -419,7 +398,7 @@
     reloadData = async function () {
         isLoading.value = true;
         try {
-            await getActivityData(selectedDate, currentUser, friends, allFavoriteFriends, () =>
+            await getActivityData(selectedDate, currentUser, friends, allFavoriteFriendIds, () =>
                 handleIntersectionObserver(activityDetailChartRef)
             );
             await getWorldNameData();
