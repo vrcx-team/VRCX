@@ -144,30 +144,6 @@
             </Select>
         </div>
         <div class="options-container">
-            <span class="header">{{ t('view.settings.general.logging.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.advanced.advanced.cache_debug.udon_exception_logging')"
-                :value="udonExceptionLogging"
-                @change="setUdonExceptionLogging" />
-            <simple-switch
-                :label="t('view.settings.general.logging.resource_load')"
-                :value="logResourceLoad"
-                @change="setLogResourceLoad" />
-            <simple-switch
-                :label="t('view.settings.general.logging.empty_avatar')"
-                :value="logEmptyAvatars"
-                @change="setLogEmptyAvatars" />
-            <simple-switch
-                :label="t('view.settings.general.logging.auto_login_delay')"
-                :value="autoLoginDelayEnabled"
-                @change="setAutoLoginDelayEnabled" />
-            <div v-if="autoLoginDelayEnabled" class="options-container-item">
-                <Button size="sm" variant="outline" @click="promptAutoLoginDelaySeconds">
-                    {{ t('view.settings.general.logging.auto_login_delay_button') }}
-                </Button>
-            </div>
-        </div>
-        <div class="options-container">
             <span class="header">{{ t('view.settings.general.contributors.header') }}</span>
             <div class="options-container-item">
                 <img
@@ -237,11 +213,7 @@
         isCloseToTray,
         disableGpuAcceleration,
         disableVrOverlayGpuAcceleration,
-        localFavoriteFriendsGroups,
-        udonExceptionLogging,
-        logResourceLoad,
-        logEmptyAvatars,
-        autoLoginDelayEnabled
+        localFavoriteFriendsGroups
     } = storeToRefs(generalSettingsStore);
 
     const {
@@ -250,11 +222,6 @@
         setIsCloseToTray,
         setDisableGpuAcceleration,
         setDisableVrOverlayGpuAcceleration,
-        setUdonExceptionLogging,
-        setLogResourceLoad,
-        setLogEmptyAvatars,
-        setAutoLoginDelayEnabled,
-        promptAutoLoginDelaySeconds,
         setLocalFavoriteFriendsGroups,
         promptProxySettings
     } = generalSettingsStore;

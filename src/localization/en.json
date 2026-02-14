@@ -629,6 +629,12 @@
                     "table_density_comfortable": "Comfortable",
                     "table_density_compact": "Compact"
                 },
+                "display": {
+                    "header": "Display"
+                },
+                "sorting_tables": {
+                    "header": "Sorting & Tables"
+                },
                 "timedate": {
                     "header": "Time/Date",
                     "time_format": "Time Format",
@@ -784,6 +790,12 @@
                 "advanced": {
                     "launch_options": "Launch Options",
                     "vrc_registry_backup": "VRC Registry Backup",
+                    "vrchat_settings": {
+                        "header": "VRChat"
+                    },
+                    "vrcx_settings": {
+                        "header": "VRCX"
+                    },
                     "primary_password": {
                         "header": "Primary Password",
                         "description": "Encrypt password (disables auto login)"

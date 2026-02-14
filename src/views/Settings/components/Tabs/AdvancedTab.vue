@@ -1,14 +1,7 @@
 <template>
     <div>
         <div class="options-container">
-            <span class="sub-header">{{ t('view.settings.advanced.advanced.primary_password.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.advanced.advanced.primary_password.description')"
-                :value="enablePrimaryPassword"
-                :disabled="!enablePrimaryPassword"
-                :long-label="true"
-                @change="enablePrimaryPasswordChange" />
-
+            <span class="header">{{ t('view.settings.advanced.advanced.vrchat_settings.header') }}</span>
             <span class="sub-header">{{ t('view.settings.advanced.advanced.relaunch_vrchat.header') }}</span>
             <simple-switch
                 :label="t('view.settings.advanced.advanced.relaunch_vrchat.description')"
@@ -36,6 +29,16 @@
                 :value="selfInviteOverride"
                 :long-label="true"
                 @change="setSelfInviteOverride" />
+        </div>
+        <div class="options-container">
+            <span class="header">{{ t('view.settings.advanced.advanced.vrcx_settings.header') }}</span>
+            <span class="sub-header">{{ t('view.settings.advanced.advanced.primary_password.header') }}</span>
+            <simple-switch
+                :label="t('view.settings.advanced.advanced.primary_password.description')"
+                :value="enablePrimaryPassword"
+                :disabled="!enablePrimaryPassword"
+                :long-label="true"
+                @change="enablePrimaryPasswordChange" />
 
             <div v-if="branch === 'Nightly'">
                 <span class="sub-header">{{
@@ -46,6 +49,29 @@
                     :value="sentryErrorReporting"
                     :long-label="true"
                     @change="setSentryErrorReporting()" />
+            </div>
+
+            <span class="sub-header">{{ t('view.settings.general.logging.header') }}</span>
+            <simple-switch
+                :label="t('view.settings.advanced.advanced.cache_debug.udon_exception_logging')"
+                :value="udonExceptionLogging"
+                @change="setUdonExceptionLogging" />
+            <simple-switch
+                :label="t('view.settings.general.logging.resource_load')"
+                :value="logResourceLoad"
+                @change="setLogResourceLoad" />
+            <simple-switch
+                :label="t('view.settings.general.logging.empty_avatar')"
+                :value="logEmptyAvatars"
+                @change="setLogEmptyAvatars" />
+            <simple-switch
+                :label="t('view.settings.general.logging.auto_login_delay')"
+                :value="autoLoginDelayEnabled"
+                @change="setAutoLoginDelayEnabled" />
+            <div v-if="autoLoginDelayEnabled" class="options-container-item">
+                <Button size="sm" variant="outline" @click="promptAutoLoginDelaySeconds">
+                    {{ t('view.settings.general.logging.auto_login_delay_button') }}
+                </Button>
             </div>
         </div>
         <div class="options-container">
@@ -364,6 +390,7 @@
         useAvatarProviderStore,
         useAvatarStore,
         useGameLogStore,
+        useGeneralSettingsStore,
         useGroupStore,
         useInstanceStore,
         useLaunchStore,
@@ -397,6 +424,17 @@
     const { clearVRCXCache, showRegistryBackupDialog } = useVrcxStore();
     const { showConsole } = useUiStore();
     const { disableGameLogDialog } = useGameLogStore();
+
+    const generalSettingsStore = useGeneralSettingsStore();
+    const { udonExceptionLogging, logResourceLoad, logEmptyAvatars, autoLoginDelayEnabled } =
+        storeToRefs(generalSettingsStore);
+    const {
+        setUdonExceptionLogging,
+        setLogResourceLoad,
+        setLogEmptyAvatars,
+        setAutoLoginDelayEnabled,
+        promptAutoLoginDelaySeconds
+    } = generalSettingsStore;
 
     const { cachedUsers } = useUserStore();
     const { cachedWorlds } = useWorldStore();

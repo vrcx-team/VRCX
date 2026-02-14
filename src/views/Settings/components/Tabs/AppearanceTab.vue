@@ -75,6 +75,9 @@
                     setDisplayVRCPlusIconsAsAvatar();
                     saveOpenVROption();
                 " />
+        </div>
+        <div class="options-container">
+            <span class="header">{{ t('view.settings.appearance.display.header') }}</span>
             <simple-switch
                 :label="t('view.settings.appearance.appearance.show_instance_id')"
                 :value="showInstanceIdInLocation"
@@ -87,6 +90,10 @@
                     saveOpenVROption();
                 " />
             <simple-switch
+                :label="t('view.settings.appearance.appearance.age_gated_instances')"
+                :value="isAgeGatedInstancesVisible"
+                @change="setIsAgeGatedInstancesVisible" />
+            <simple-switch
                 :label="t('view.settings.appearance.appearance.striped_data_table_mode')"
                 :value="isDataTableStriped"
                 @change="toggleStripedDataTable" />
@@ -94,10 +101,9 @@
                 :label="t('view.settings.appearance.appearance.toggle_pointer_on_hover')"
                 :value="showPointerOnHover"
                 @change="togglePointerOnHover" />
-            <simple-switch
-                :label="t('view.settings.appearance.appearance.age_gated_instances')"
-                :value="isAgeGatedInstancesVisible"
-                @change="setIsAgeGatedInstancesVisible" />
+        </div>
+        <div class="options-container">
+            <span class="header">{{ t('view.settings.appearance.sorting_tables.header') }}</span>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.sort_favorite_by') }}</span>
                 <RadioGroup
