@@ -11,7 +11,8 @@
                     {{ friend.ref.displayName }} ({{ friend.$nickName }})
                 </span>
                 <span v-else class="name" :style="{ color: friend.ref.$userColour }"
-                    >{{ friend.ref.displayName }}{{ isGroupByInstance && friend.isVIP ? ' ⭐' : '' }}</span
+                    >{{ friend.ref.displayName
+                    }}{{ isGroupByInstance && allFavoriteFriendIds.has(friend.id) ? ' ⭐' : '' }}</span
                 >
 
                 <span v-if="isFriendActiveOrOffline" class="block truncate text-xs">{{
@@ -80,7 +81,7 @@
     });
 
     const { hideNicknames } = storeToRefs(useAppearanceSettingsStore());
-    const { isRefreshFriendsLoading } = storeToRefs(useFriendStore());
+    const { isRefreshFriendsLoading, allFavoriteFriendIds } = storeToRefs(useFriendStore());
     const { confirmDeleteFriend } = useFriendStore();
     const { showUserDialog } = useUserStore();
     const { t } = useI18n();
