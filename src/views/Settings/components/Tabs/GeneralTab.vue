@@ -109,7 +109,12 @@
             </div>
         </div>
         <div class="options-container">
-            <span class="header">{{ t('view.settings.general.favorites.header') }}</span>
+            <span class="header inline-flex items-center"
+                >{{ t('view.settings.general.favorites.header') }}
+                <TooltipWrapper side="top" :content="t('view.settings.general.favorites.header_tooltip')">
+                    <Info style="width: 12px; height: 12px; margin-left: 4px; vertical-align: middle; cursor: help" />
+                </TooltipWrapper>
+            </span>
             <br />
             <Select
                 :model-value="localFavoriteFriendsGroups"
@@ -199,6 +204,7 @@
 <script setup>
     import { computed, defineAsyncComponent, ref } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Info } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -217,6 +223,7 @@
     import { openExternalLink } from '../../../../shared/utils';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
+    import TooltipWrapper from '../../../../components/ui/tooltip/TooltipWrapper.vue';
 
     const { t } = useI18n();
 

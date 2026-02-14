@@ -534,7 +534,8 @@
                     "startup_linux": "Add \"--startup\" arg to startup VRCX.desktop file to start VRCX minimized at system startup"
                 },
                 "favorites": {
-                    "header": "VRCX Favorite Friends",
+                    "header": "Favorite Groups for Filtering",
+                    "header_tooltip": "Choose which favorite groups are treated as VIP for filtering in Feed, Game Log, Notifications, and VR Overlay",
                     "group_placeholder": "Choose Groups"
                 },
                 "logging": {
