@@ -292,9 +292,12 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
         if (
             args.params.type === 'friend' &&
-            generalSettingsStore.localFavoriteFriendsGroups.includes(
-                'friend:' + args.params.tags
-            )
+            (!generalSettingsStore.localFavoriteFriendsGroups.some(
+                (key) => !key.startsWith('local:')
+            ) ||
+                generalSettingsStore.localFavoriteFriendsGroups.includes(
+                    'friend:' + args.params.tags
+                ))
         ) {
             friendStore.updateLocalFavoriteFriends();
         }
@@ -793,17 +796,19 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             };
             cachedFavorites.set(ref.id, ref);
             cachedFavoritesByObjectId.set(ref.favoriteId, ref);
+            ref.$groupKey = `${ref.type}:${String(ref.tags[0])}`;
             if (
                 ref.type === 'friend' &&
-                (generalSettingsStore.localFavoriteFriendsGroups.length === 0 ||
+                (!generalSettingsStore.localFavoriteFriendsGroups.some(
+                    (key) => !key.startsWith('local:')
+                ) ||
                     generalSettingsStore.localFavoriteFriendsGroups.includes(
-                        ref.groupKey
+                        ref.$groupKey
                     ))
             ) {
                 friendStore.localFavoriteFriends.add(ref.favoriteId);
                 friendStore.updateSidebarFavorites();
             }
-            ref.$groupKey = `${ref.type}:${String(ref.tags[0])}`;
             if (!isFavoriteLoading.value) {
                 countFavoriteGroups();
             }
@@ -1551,13 +1556,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         if (userDialog.visible && userDialog.id === userId) {
             userDialog.isFavorite = true;
         }
-        if (
-            generalSettingsStore.localFavoriteFriendsGroups.includes(
-                `local:${group}`
-            )
-        ) {
-            friendStore.updateLocalFavoriteFriends();
-        }
+        friendStore.updateLocalFavoriteFriends();
     }
 
     /**
@@ -1612,13 +1611,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 getCachedFavoritesByObjectId(userId) ||
                 isInAnyLocalFriendGroup(userId);
         }
-        if (
-            generalSettingsStore.localFavoriteFriendsGroups.includes(
-                `local:${group}`
-            )
-        ) {
-            friendStore.updateLocalFavoriteFriends();
-        }
+        friendStore.updateLocalFavoriteFriends();
     }
 
     /**
@@ -1627,13 +1620,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     function deleteLocalFriendFavoriteGroup(group) {
         delete localFriendFavorites[group];
         database.deleteFriendFavoriteGroup(group);
-        if (
-            generalSettingsStore.localFavoriteFriendsGroups.includes(
-                `local:${group}`
-            )
-        ) {
-            friendStore.updateLocalFavoriteFriends();
-        }
+        friendStore.updateLocalFavoriteFriends();
     }
 
     /**
@@ -1701,6 +1688,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
 
         replaceReactiveObject(localFriendFavorites, localFavorites);
+        friendStore.updateLocalFavoriteFriends();
     }
 
     /**

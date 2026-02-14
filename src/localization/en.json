@@ -84,7 +84,17 @@
         "online": "ONLINE",
         "active": "ACTIVE",
         "offline": "OFFLINE",
-        "pending_offline": "Pending Offline"
+        "pending_offline": "Pending Offline",
+        "settings": {
+            "group_by_instance": "Group by Instance",
+            "split_favorite_friends": "Show Favorite Groups",
+            "hide_friends_in_same_instance": "Hide Grouped Friends",
+            "sort_primary": "Sort by",
+            "sort_secondary": "Then by",
+            "sort_tertiary": "Then by",
+            "favorite_groups": "Favorite Groups",
+            "favorite_groups_placeholder": "All Groups"
+        }
     },
     "view": {
         "login": {
@@ -635,7 +645,6 @@
                     "yellow": "Yellow"
                 },
                 "side_panel": {
-                    "header": "Side Panel",
                     "sorting": {
                         "header": "Sort Order",
                         "alphabetical": "Alphabetical",
@@ -646,13 +655,7 @@
                         "last_seen": "Last Seen",
                         "time_in_instance": "Time in Instance",
                         "placeholder": "Sort Order"
-                    },
-                    "group_by_instance": "Group by Instance",
-                    "group_by_instance_tooltip": "Enabling this will group friends by instance when there is more than one friend in the same instance.",
-                    "hide_friends_in_same_instance": "Hide Friends in Same Instance",
-                    "hide_friends_in_same_instance_tooltip": "Hide Friends from Friend List When They Are in the Same Instance.",
-                    "split_favorite_friends": "Split Favorite Friends",
-                    "split_favorite_friends_tooltip": "Separate favorite friends into their individual groups."
+                    }
                 },
                 "user_dialog": {
                     "header": "User Dialog",

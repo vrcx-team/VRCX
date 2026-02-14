@@ -305,26 +305,25 @@ export const useFriendStore = defineStore('Friend', () => {
     function updateLocalFavoriteFriends() {
         const favoriteStore = useFavoriteStore();
         localFavoriteFriends.clear();
+        const groups = generalSettingsStore.localFavoriteFriendsGroups;
+        const hasRemoteGroupFilter = groups.some(
+            (key) => !key.startsWith('local:')
+        );
+        // Remote favorites: filter by selected remote groups
         for (const ref of favoriteStore.cachedFavorites.values()) {
             if (
                 ref.type === 'friend' &&
-                (generalSettingsStore.localFavoriteFriendsGroups.includes(
-                    ref.$groupKey
-                ) ||
-                    generalSettingsStore.localFavoriteFriendsGroups.length ===
-                        0)
+                (!hasRemoteGroupFilter || groups.includes(ref.$groupKey))
             ) {
                 localFavoriteFriends.add(ref.favoriteId);
             }
         }
-        for (const selectedKey of generalSettingsStore.localFavoriteFriendsGroups) {
-            if (selectedKey.startsWith('local:')) {
-                const groupName = selectedKey.slice(6);
-                const userIds = favoriteStore.localFriendFavorites[groupName];
-                if (userIds) {
-                    for (let i = 0; i < userIds.length; ++i) {
-                        localFavoriteFriends.add(userIds[i]);
-                    }
+        // Local favorites: always include all
+        for (const groupName in favoriteStore.localFriendFavorites) {
+            const userIds = favoriteStore.localFriendFavorites[groupName];
+            if (userIds) {
+                for (let i = 0; i < userIds.length; ++i) {
+                    localFavoriteFriends.add(userIds[i]);
                 }
             }
         }
