@@ -28,7 +28,7 @@
                             </template>
 
                             <template v-else-if="item.row.type === 'me-item'">
-                                <div class="x-friend-item" @click="showUserDialog(currentUser.id)">
+                                <div class="x-friend-item hover:bg-muted/50" @click="showUserDialog(currentUser.id)">
                                     <div class="avatar" :class="userStatusClass(currentUser)">
                                         <img :src="userImage(currentUser)" loading="lazy" />
                                     </div>

@@ -546,8 +546,10 @@
                     "auto_login_delay_button": "Set delay seconds"
                 },
                 "automation": {
-                    "auto_change_status": "Auto Change Status",
-                    "auto_state_change_tooltip": "Automatically change status when there are other people in the instance (Alone / Company)",
+                    "auto_change_status": "Auto Status & Invites",
+                    "auto_change_status_switch": "Auto Change Status",
+                    "auto_state_change_tooltip": "Configure automatic status changes and invite request handling",
+                    "auto_state_change_switch_tooltip": "Automatically change status when there are other people in the instance (Alone / Company)",
                     "alone_condition": "Consider alone when",
                     "alone": "No other user",
                     "no_friends": "No friend in instance",

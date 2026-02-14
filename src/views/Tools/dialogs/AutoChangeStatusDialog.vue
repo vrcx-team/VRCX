@@ -7,9 +7,9 @@
 
             <FieldGroup class="gap-4">
                 <SimpleSwitch
-                    :label="t('view.settings.general.automation.auto_change_status')"
+                    :label="t('view.settings.general.automation.auto_change_status_switch')"
                     :value="autoStateChangeEnabled"
-                    :tooltip="t('view.settings.general.automation.auto_state_change_tooltip')"
+                    :tooltip="t('view.settings.general.automation.auto_state_change_switch_tooltip')"
                     @change="setAutoStateChangeEnabled" />
 
                 <Field>
