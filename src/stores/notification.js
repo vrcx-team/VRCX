@@ -247,10 +247,40 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         if (
             generalSettingsStore.autoAcceptInviteRequests ===
-                'Selected Favorites' &&
-            !friendStore.localFavoriteFriends.has(ref.senderUserId)
+            'Selected Favorites'
         ) {
-            return;
+            const groups = generalSettingsStore.autoAcceptInviteGroups;
+            if (groups.length === 0) {
+                return;
+            } else {
+                let found = false;
+                for (const groupKey of groups) {
+                    if (groupKey.startsWith('local:')) {
+                        const localGroup = groupKey.slice(6);
+                        const localFavs =
+                            favoriteStore.localFriendFavorites.get(localGroup);
+                        if (localFavs && localFavs.has(ref.senderUserId)) {
+                            found = true;
+                            break;
+                        }
+                    } else {
+                        const remoteFavs =
+                            favoriteStore.cachedFavorites.get(groupKey);
+                        if (
+                            remoteFavs &&
+                            remoteFavs.some(
+                                (f) => f.favoriteId === ref.senderUserId
+                            )
+                        ) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (!found) {
+                    return;
+                }
+            }
         }
         if (!checkCanInvite(currentLocation)) {
             return;

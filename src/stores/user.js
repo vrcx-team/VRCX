@@ -1616,7 +1616,39 @@ export const useUserStore = defineStore('User', () => {
 
         let withCompany = locationStore.lastLocation.playerList.size > 1;
         if (generalSettingsStore.autoStateChangeNoFriends) {
-            withCompany = locationStore.lastLocation.friendList.size >= 1;
+            const selectedGroups = generalSettingsStore.autoStateChangeGroups;
+            if (selectedGroups.length > 0) {
+                const groupFriendIds = new Set();
+                for (const ref of favoriteStore.cachedFavorites.values()) {
+                    if (
+                        ref.type === 'friend' &&
+                        selectedGroups.includes(ref.$groupKey)
+                    ) {
+                        groupFriendIds.add(ref.favoriteId);
+                    }
+                }
+                for (const selectedKey of selectedGroups) {
+                    if (selectedKey.startsWith('local:')) {
+                        const groupName = selectedKey.slice(6);
+                        const userIds =
+                            favoriteStore.localFriendFavorites[groupName];
+                        if (userIds) {
+                            for (let i = 0; i < userIds.length; ++i) {
+                                groupFriendIds.add(userIds[i]);
+                            }
+                        }
+                    }
+                }
+                withCompany = false;
+                for (const friendId of locationStore.lastLocation.friendList.keys()) {
+                    if (groupFriendIds.has(friendId)) {
+                        withCompany = true;
+                        break;
+                    }
+                }
+            } else {
+                withCompany = locationStore.lastLocation.friendList.size >= 1;
+            }
         }
 
         const currentStatus = currentUser.value.status;

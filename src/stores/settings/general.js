@@ -39,7 +39,9 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     const autoStateChangeAloneDesc = ref('');
     const autoStateChangeCompanyDescEnabled = ref(false);
     const autoStateChangeCompanyDesc = ref('');
+    const autoStateChangeGroups = ref([]);
     const autoAcceptInviteRequests = ref('Off');
+    const autoAcceptInviteGroups = ref([]);
 
     async function initGeneralSettings() {
         const [
@@ -64,7 +66,9 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             autoStateChangeAloneDescConfig,
             autoStateChangeCompanyDescEnabledConfig,
             autoStateChangeCompanyDescConfig,
-            autoAcceptInviteRequestsConfig
+            autoStateChangeGroupsStrConfig,
+            autoAcceptInviteRequestsConfig,
+            autoAcceptInviteGroupsStrConfig
         ] = await Promise.all([
             configRepository.getBool('VRCX_StartAtWindowsStartup', false),
             VRCXStorage.Get('VRCX_StartAsMinimizedState'),
@@ -102,7 +106,9 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
                 false
             ),
             configRepository.getString('VRCX_autoStateChangeCompanyDesc', ''),
-            configRepository.getString('VRCX_autoAcceptInviteRequests', 'Off')
+            configRepository.getString('VRCX_autoStateChangeGroups', '[]'),
+            configRepository.getString('VRCX_autoAcceptInviteRequests', 'Off'),
+            configRepository.getString('VRCX_autoAcceptInviteGroups', '[]')
         ]);
 
         isStartAtWindowsStartup.value = isStartAtWindowsStartupConfig;
@@ -146,7 +152,13 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         autoStateChangeCompanyDescEnabled.value =
             autoStateChangeCompanyDescEnabledConfig;
         autoStateChangeCompanyDesc.value = autoStateChangeCompanyDescConfig;
+        autoStateChangeGroups.value = JSON.parse(
+            autoStateChangeGroupsStrConfig
+        );
         autoAcceptInviteRequests.value = autoAcceptInviteRequestsConfig;
+        autoAcceptInviteGroups.value = JSON.parse(
+            autoAcceptInviteGroupsStrConfig
+        );
     }
 
     initGeneralSettings();
@@ -323,6 +335,17 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         );
     }
     /**
+     * @param {Array} value
+     */
+    function setAutoStateChangeGroups(value) {
+        autoStateChangeGroups.value = value;
+        configRepository.setString(
+            'VRCX_autoStateChangeGroups',
+            JSON.stringify(autoStateChangeGroups.value)
+        );
+    }
+
+    /**
      * @param {string} value
      */
     function setAutoAcceptInviteRequests(value) {
@@ -330,6 +353,17 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         configRepository.setString(
             'VRCX_autoAcceptInviteRequests',
             autoAcceptInviteRequests.value
+        );
+    }
+
+    /**
+     * @param {string[]} value
+     */
+    function setAutoAcceptInviteGroups(value) {
+        autoAcceptInviteGroups.value = value;
+        configRepository.setString(
+            'VRCX_autoAcceptInviteGroups',
+            JSON.stringify(autoAcceptInviteGroups.value)
         );
     }
 
@@ -398,7 +432,9 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         autoStateChangeAloneDesc,
         autoStateChangeCompanyDescEnabled,
         autoStateChangeCompanyDesc,
+        autoStateChangeGroups,
         autoAcceptInviteRequests,
+        autoAcceptInviteGroups,
 
         setIsStartAtWindowsStartup,
         setIsStartAsMinimizedState,
@@ -420,7 +456,9 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         setAutoStateChangeAloneDesc,
         setAutoStateChangeCompanyDescEnabled,
         setAutoStateChangeCompanyDesc,
+        setAutoStateChangeGroups,
         setAutoAcceptInviteRequests,
+        setAutoAcceptInviteGroups,
         promptProxySettings
     };
 });

@@ -13,6 +13,93 @@
                     @change="setAutoStateChangeEnabled" />
 
                 <Field>
+                    <FieldLabel>{{ t('view.settings.general.automation.alone_condition') }}</FieldLabel>
+                    <FieldContent>
+                        <RadioGroup
+                            :model-value="autoStateChangeNoFriends ? 'true' : 'false'"
+                            :disabled="!autoStateChangeEnabled"
+                            class="gap-2 flex"
+                            @update:modelValue="handleAutoStateChangeNoFriendsRadio">
+                            <div class="flex items-center space-x-2">
+                                <RadioGroupItem id="autoStateChangeNoFriends-false" value="false" />
+                                <label for="autoStateChangeNoFriends-false">
+                                    {{ t('view.settings.general.automation.alone') }}
+                                </label>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <RadioGroupItem id="autoStateChangeNoFriends-true" value="true" />
+                                <label for="autoStateChangeNoFriends-true">
+                                    {{ t('view.settings.general.automation.no_friends') }}
+                                </label>
+                            </div>
+                        </RadioGroup>
+                    </FieldContent>
+                </Field>
+
+                <Field>
+                    <FieldLabel>{{ t('view.settings.general.automation.auto_change_status_groups') }}</FieldLabel>
+                    <FieldContent>
+                        <Select
+                            :model-value="autoStateChangeGroups"
+                            :disabled="!autoStateChangeEnabled || !autoStateChangeNoFriends"
+                            multiple
+                            @update:modelValue="setAutoStateChangeGroups">
+                            <SelectTrigger size="sm">
+                                <SelectValue
+                                    :placeholder="
+                                        t('view.settings.general.automation.auto_change_status_groups_placeholder')
+                                    " />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem
+                                        v-for="group in favoriteFriendGroups"
+                                        :key="group.key"
+                                        :value="group.key">
+                                        {{ group.displayName }}
+                                    </SelectItem>
+                                </SelectGroup>
+                                <template v-if="localFriendFavoriteGroups.length">
+                                    <SelectSeparator />
+                                    <SelectGroup>
+                                        <SelectItem
+                                            v-for="group in localFriendFavoriteGroups"
+                                            :key="'local:' + group"
+                                            :value="'local:' + group">
+                                            {{ group }}
+                                        </SelectItem>
+                                    </SelectGroup>
+                                </template>
+                            </SelectContent>
+                        </Select>
+                    </FieldContent>
+                </Field>
+
+                <Field>
+                    <FieldLabel>{{ t('view.settings.general.automation.allowed_instance_types') }}</FieldLabel>
+                    <FieldContent>
+                        <Select
+                            :model-value="autoStateChangeInstanceTypes"
+                            :disabled="!autoStateChangeEnabled"
+                            multiple
+                            @update:modelValue="setAutoStateChangeInstanceTypes">
+                            <SelectTrigger size="sm">
+                                <SelectValue
+                                    :placeholder="t('view.settings.general.automation.instance_type_placeholder')" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem
+                                    v-for="instanceType in instanceTypes"
+                                    :key="instanceType"
+                                    :value="instanceType">
+                                    {{ translateAccessType(instanceType) }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </FieldContent>
+                </Field>
+
+                <Field>
                     <FieldLabel>{{ t('view.settings.general.automation.alone_status') }}</FieldLabel>
                     <FieldContent>
                         <Select
@@ -96,48 +183,32 @@
                     </FieldContent>
                 </Field>
 
-                <Field>
-                    <FieldLabel>{{ t('view.settings.general.automation.allowed_instance_types') }}</FieldLabel>
-                    <FieldContent>
-                        <Select
-                            :model-value="autoStateChangeInstanceTypes"
-                            :disabled="!autoStateChangeEnabled"
-                            multiple
-                            @update:modelValue="setAutoStateChangeInstanceTypes">
-                            <SelectTrigger size="sm">
-                                <SelectValue
-                                    :placeholder="t('view.settings.general.automation.instance_type_placeholder')" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem
-                                    v-for="instanceType in instanceTypes"
-                                    :key="instanceType"
-                                    :value="instanceType">
-                                    {{ instanceType }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </FieldContent>
-                </Field>
+                <FieldSeparator></FieldSeparator>
+
+                <SimpleSwitch
+                    :label="t('view.settings.general.automation.auto_invite_request_accept')"
+                    :tooltip="t('view.settings.general.automation.auto_invite_request_accept_tooltip')"
+                    :value="autoAcceptInviteRequests !== 'Off'"
+                    @change="handleAutoAcceptInviteSwitch" />
 
                 <Field>
-                    <FieldLabel>{{ t('view.settings.general.automation.alone_condition') }}</FieldLabel>
+                    <FieldLabel>{{ t('view.settings.general.automation.auto_invite_request_accept') }}</FieldLabel>
                     <FieldContent>
                         <RadioGroup
-                            :model-value="autoStateChangeNoFriends ? 'true' : 'false'"
-                            :disabled="!autoStateChangeEnabled"
+                            :model-value="autoAcceptInviteMode"
+                            :disabled="autoAcceptInviteRequests === 'Off'"
                             class="gap-2 flex"
-                            @update:modelValue="handleAutoStateChangeNoFriendsRadio">
+                            @update:modelValue="handleAutoAcceptInviteModeChange">
                             <div class="flex items-center space-x-2">
-                                <RadioGroupItem id="autoStateChangeNoFriends-false" value="false" />
-                                <label for="autoStateChangeNoFriends-false">
-                                    {{ t('view.settings.general.automation.alone') }}
+                                <RadioGroupItem id="autoAcceptInvite-all" value="All Favorites" />
+                                <label for="autoAcceptInvite-all">
+                                    {{ t('view.settings.general.automation.auto_invite_request_accept_favs') }}
                                 </label>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <RadioGroupItem id="autoStateChangeNoFriends-true" value="true" />
-                                <label for="autoStateChangeNoFriends-true">
-                                    {{ t('view.settings.general.automation.no_friends') }}
+                                <RadioGroupItem id="autoAcceptInvite-selected" value="Selected Favorites" />
+                                <label for="autoAcceptInvite-selected">
+                                    {{ t('view.settings.general.automation.auto_invite_request_accept_selected_favs') }}
                                 </label>
                             </div>
                         </RadioGroup>
@@ -145,32 +216,41 @@
                 </Field>
 
                 <Field>
-                    <FieldLabel>
-                        {{ t('view.settings.general.automation.auto_invite_request_accept') }}
-                        <TooltipWrapper
-                            side="top"
-                            :content="t('view.settings.general.automation.auto_invite_request_accept_tooltip')">
-                            <Info class="inline-block" />
-                        </TooltipWrapper>
-                    </FieldLabel>
+                    <FieldLabel>{{ t('view.settings.general.automation.auto_accept_invite_groups') }}</FieldLabel>
                     <FieldContent>
-                        <ToggleGroup
-                            type="single"
-                            required
-                            variant="outline"
-                            size="sm"
-                            :model-value="autoAcceptInviteRequests"
-                            @update:model-value="setAutoAcceptInviteRequests">
-                            <ToggleGroupItem value="Off">{{
-                                t('view.settings.general.automation.auto_invite_request_accept_off')
-                            }}</ToggleGroupItem>
-                            <ToggleGroupItem value="All Favorites">{{
-                                t('view.settings.general.automation.auto_invite_request_accept_favs')
-                            }}</ToggleGroupItem>
-                            <ToggleGroupItem value="Selected Favorites">{{
-                                t('view.settings.general.automation.auto_invite_request_accept_selected_favs')
-                            }}</ToggleGroupItem>
-                        </ToggleGroup>
+                        <Select
+                            :model-value="autoAcceptInviteGroups"
+                            :disabled="autoAcceptInviteRequests !== 'Selected Favorites'"
+                            multiple
+                            @update:modelValue="setAutoAcceptInviteGroups">
+                            <SelectTrigger size="sm">
+                                <SelectValue
+                                    :placeholder="
+                                        t('view.settings.general.automation.auto_accept_invite_groups_placeholder')
+                                    " />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem
+                                        v-for="group in favoriteFriendGroups"
+                                        :key="group.key"
+                                        :value="group.key">
+                                        {{ group.displayName }}
+                                    </SelectItem>
+                                </SelectGroup>
+                                <template v-if="localFriendFavoriteGroups.length">
+                                    <SelectSeparator />
+                                    <SelectGroup>
+                                        <SelectItem
+                                            v-for="group in localFriendFavoriteGroups"
+                                            :key="'local:' + group"
+                                            :value="'local:' + group">
+                                            {{ group }}
+                                        </SelectItem>
+                                    </SelectGroup>
+                                </template>
+                            </SelectContent>
+                        </Select>
                     </FieldContent>
                 </Field>
             </FieldGroup>
@@ -179,18 +259,25 @@
 </template>
 
 <script setup>
-    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import {
+        Select,
+        SelectContent,
+        SelectGroup,
+        SelectItem,
+        SelectSeparator,
+        SelectTrigger,
+        SelectValue
+    } from '@/components/ui/select';
+    import { Field, FieldContent, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field';
     import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-    import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-    import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-    import { Info } from 'lucide-vue-next';
     import { Input } from '@/components/ui/input';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useGeneralSettingsStore } from '../../../stores';
+    import { useFavoriteStore, useGeneralSettingsStore } from '../../../stores';
+    import { accessTypeLocaleKeyMap } from '../../../shared/constants';
 
     import SimpleSwitch from '../../Settings/components/SimpleSwitch.vue';
 
@@ -215,8 +302,13 @@
         autoStateChangeAloneDesc,
         autoStateChangeCompanyDescEnabled,
         autoStateChangeCompanyDesc,
-        autoAcceptInviteRequests
+        autoStateChangeGroups,
+        autoAcceptInviteRequests,
+        autoAcceptInviteGroups
     } = storeToRefs(generalSettingsStore);
+
+    const favoriteStore = useFavoriteStore();
+    const { favoriteFriendGroups, localFriendFavoriteGroups } = storeToRefs(favoriteStore);
 
     const {
         setAutoStateChangeEnabled,
@@ -228,7 +320,9 @@
         setAutoStateChangeAloneDesc,
         setAutoStateChangeCompanyDescEnabled,
         setAutoStateChangeCompanyDesc,
-        setAutoAcceptInviteRequests
+        setAutoStateChangeGroups,
+        setAutoAcceptInviteRequests,
+        setAutoAcceptInviteGroups
     } = generalSettingsStore;
 
     const instanceTypes = computed(() => [
@@ -242,11 +336,47 @@
         'groupOnly'
     ]);
 
+    const instanceTypeToMapKey = {
+        groupOnly: 'groupMembers'
+    };
+
+    function translateAccessType(accessTypeNameRaw) {
+        const mapKey = instanceTypeToMapKey[accessTypeNameRaw] || accessTypeNameRaw;
+        const key = accessTypeLocaleKeyMap[mapKey];
+        if (!key) {
+            return accessTypeNameRaw;
+        }
+        if (mapKey === 'groupPublic' || mapKey === 'groupPlus' || mapKey === 'groupMembers') {
+            const groupKey = accessTypeLocaleKeyMap['group'];
+            return t(groupKey) + ' ' + t(key);
+        }
+        return t(key);
+    }
+
     function handleAutoStateChangeNoFriendsRadio(value) {
         const nextValue = value === 'true';
         if (nextValue !== autoStateChangeNoFriends.value) {
             setAutoStateChangeNoFriends();
         }
+    }
+
+    const autoAcceptInviteMode = computed(() => {
+        if (autoAcceptInviteRequests.value === 'Off') {
+            return 'All Favorites';
+        }
+        return autoAcceptInviteRequests.value;
+    });
+
+    function handleAutoAcceptInviteSwitch(enabled) {
+        if (enabled) {
+            setAutoAcceptInviteRequests(autoAcceptInviteMode.value);
+        } else {
+            setAutoAcceptInviteRequests('Off');
+        }
+    }
+
+    function handleAutoAcceptInviteModeChange(value) {
+        setAutoAcceptInviteRequests(value);
     }
 
     function closeDialog() {
