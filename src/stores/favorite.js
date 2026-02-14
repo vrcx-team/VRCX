@@ -1536,15 +1536,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         if (hasLocalFriendFavorite(userId, group)) {
             return;
         }
-        for (const existingGroup in localFriendFavorites) {
-            const members = localFriendFavorites[existingGroup];
-            const idx = members?.indexOf(userId);
-            if (idx !== undefined && idx !== -1) {
-                members.splice(idx, 1);
-                database.removeFriendFromLocalFavorites(userId, existingGroup);
-                break;
-            }
-        }
         if (!localFriendFavorites[group]) {
             localFriendFavorites[group] = [];
         }
