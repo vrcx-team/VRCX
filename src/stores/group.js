@@ -131,13 +131,13 @@ export const useGroupStore = defineStore('Group', () => {
         if (!groupId) {
             return;
         }
-        uiStore.openDialog({
+        const isMainDialogOpen = uiStore.openDialog({
             type: 'group',
             id: groupId
         });
         const D = groupDialog.value;
         D.visible = true;
-        if (D.id === groupId) {
+        if (isMainDialogOpen && D.id === groupId) {
             uiStore.setDialogCrumbLabel('group', D.id, D.ref?.name || D.id);
             instanceStore.applyGroupDialogInstances();
             D.loading = false;

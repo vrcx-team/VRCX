@@ -1,4 +1,4 @@
-import { reactive, shallowReactive, watch } from 'vue';
+import { nextTick, reactive, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -82,15 +82,15 @@ export const useWorldStore = defineStore('World', () => {
         if (L.worldId === '') {
             return;
         }
-        uiStore.openDialog({
+        const isMainDialogOpen = uiStore.openDialog({
             type: 'world',
             id: L.worldId
         });
         D.visible = true;
-        if (D.id === L.worldId) {
+        if (isMainDialogOpen && D.id === L.worldId) {
             uiStore.setDialogCrumbLabel('world', D.id, D.ref?.name || D.id);
             instanceStore.applyWorldDialogInstances();
-            D.loading = false;
+            nextTick(() => (D.loading = false));
             return;
         }
         L.shortName = shortName;
@@ -144,7 +144,7 @@ export const useWorldStore = defineStore('World', () => {
                 worldId: L.worldId
             })
             .catch((err) => {
-                D.loading = false;
+                nextTick(() => (D.loading = false));
                 D.id = null;
                 D.visible = false;
                 uiStore.jumpBackDialogCrumb();

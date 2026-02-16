@@ -230,6 +230,7 @@ export const useUiStore = defineStore('Ui', () => {
             clearDialogCrumbs();
         }
         pushDialogCrumb(type, id, label);
+        return hadActiveDialog;
     }
 
     // Make sure file drops outside of the screenshot manager don't navigate to the file path dropped.

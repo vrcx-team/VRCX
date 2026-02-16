@@ -203,8 +203,11 @@ namespace VRCX
                 }
 
                 logger.Fatal(e, "Unhandled Exception, program dying");
-                MessageBox.Show(e.ToString(), "PLEASE REPORT IN https://vrcx.app/discord", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                var result = MessageBox.Show(e.ToString(), $"{Version} crashed, open Discord for support?", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                if (result == DialogResult.Yes)
+                {
+                    AppApiInstance.OpenLink("https://vrcx.app/discord");
+                }
                 Environment.Exit(0);
             }
         }

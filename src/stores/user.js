@@ -778,13 +778,13 @@ export const useUserStore = defineStore('User', () => {
         ) {
             return;
         }
-        uiStore.openDialog({
+        const isMainDialogOpen = uiStore.openDialog({
             type: 'user',
             id: userId
         });
         const D = userDialog.value;
         D.visible = true;
-        if (D.id === userId) {
+        if (isMainDialogOpen && D.id === userId) {
             uiStore.setDialogCrumbLabel(
                 'user',
                 D.id,
