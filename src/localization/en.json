@@ -94,6 +94,16 @@
             "sort_tertiary": "Then by",
             "favorite_groups": "Favorite Groups",
             "favorite_groups_placeholder": "All Groups"
+        },
+        "notifications": "Notifications",
+        "notification_center": {
+            "title": "Notification Center",
+            "view_more": "View More",
+            "tab_friend": "Friend",
+            "tab_group": "Group",
+            "tab_other": "Other",
+            "past_notifications": "Past",
+            "no_notifications": "No notifications"
         }
     },
     "view": {

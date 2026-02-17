@@ -74,6 +74,18 @@
                         <RefreshCw v-else />
                     </Button>
                 </TooltipWrapper>
+                <TooltipWrapper side="bottom" :content="t('side_panel.notifications')">
+                    <Button
+                        class="rounded-full relative"
+                        variant="ghost"
+                        size="icon-sm"
+                        @click="isNotificationCenterOpen = !isNotificationCenterOpen">
+                        <Bell />
+                        <span
+                            v-if="hasUnseenNotifications"
+                            class="absolute top-0.5 right-0.5 size-2 rounded-full bg-red-500" />
+                    </Button>
+                </TooltipWrapper>
                 <Popover>
                     <PopoverTrigger as-child>
                         <Button class="rounded-full" variant="ghost" size="icon-sm">
@@ -235,6 +247,7 @@
                 </div>
             </template>
         </TabsUnderline>
+        <NotificationCenterSheet />
     </div>
 </template>
 
@@ -248,9 +261,9 @@
         SelectTrigger,
         SelectValue
     } from '@/components/ui/select';
+    import { Bell, RefreshCw, Settings } from 'lucide-vue-next';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { computed, ref, watch } from 'vue';
-    import { RefreshCw, Settings } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { Input } from '@/components/ui/input';
@@ -266,18 +279,21 @@
         useFavoriteStore,
         useFriendStore,
         useGroupStore,
+        useNotificationStore,
         useSearchStore
     } from '../../stores';
     import { debounce, userImage } from '../../shared/utils';
 
     import FriendsSidebar from './components/FriendsSidebar.vue';
     import GroupsSidebar from './components/GroupsSidebar.vue';
+    import NotificationCenterSheet from './components/NotificationCenterSheet.vue';
 
     const { friends, isRefreshFriendsLoading, onlineFriendCount } = storeToRefs(useFriendStore());
     const { refreshFriendsList } = useFriendStore();
     const { quickSearchRemoteMethod, quickSearchChange } = useSearchStore();
     const { quickSearchItems } = storeToRefs(useSearchStore());
     const { groupInstances } = storeToRefs(useGroupStore());
+    const { isNotificationCenterOpen, hasUnseenNotifications } = storeToRefs(useNotificationStore());
     const { t } = useI18n();
 
     const appearanceSettingsStore = useAppearanceSettingsStore();

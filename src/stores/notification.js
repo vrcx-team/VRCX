@@ -1,11 +1,14 @@
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
+import { useI18n } from 'vue-i18n';
 
 import Noty from 'noty';
 
 import {
     checkCanInvite,
     displayLocation,
+    escapeTag,
     extractFileId,
     extractFileVersion,
     getUserMemo,
@@ -14,6 +17,7 @@ import {
     replaceBioSymbols
 } from '../shared/utils';
 import {
+    friendRequest,
     instanceRequest,
     notificationRequest,
     userRequest,
@@ -29,6 +33,7 @@ import { useGameStore } from './game';
 import { useGeneralSettingsStore } from './settings/general';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
+import { useModalStore } from './modal';
 import { useNotificationsSettingsStore } from './settings/notifications';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
@@ -39,6 +44,7 @@ import { watchState } from '../service/watchState';
 import configRepository from '../service/config';
 
 export const useNotificationStore = defineStore('Notification', () => {
+    const { t } = useI18n();
     const generalSettingsStore = useGeneralSettingsStore();
     const locationStore = useLocationStore();
     const favoriteStore = useFavoriteStore();
@@ -52,6 +58,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     const gameStore = useGameStore();
     const sharedFeedStore = useSharedFeedStore();
     const instanceStore = useInstanceStore();
+    const modalStore = useModalStore();
 
     const notificationInitStatus = ref(false);
     const notificationTable = ref({
@@ -74,6 +81,49 @@ export const useNotificationStore = defineStore('Notification', () => {
     });
     const unseenNotifications = ref([]);
     const isNotificationsLoading = ref(false);
+    const isNotificationCenterOpen = ref(false);
+
+    const FRIEND_TYPES = new Set([
+        'friendRequest',
+        'ignoredFriendRequest',
+        'invite',
+        'requestInvite',
+        'inviteResponse',
+        'requestInviteResponse',
+        'boop'
+    ]);
+    const GROUP_TYPES_PREFIX = ['group.', 'moderation.'];
+    const GROUP_EXACT_TYPES = new Set(['groupChange', 'event.announcement']);
+
+    function getNotificationCategory(type) {
+        if (!type) return 'other';
+        if (FRIEND_TYPES.has(type)) return 'friend';
+        if (
+            GROUP_EXACT_TYPES.has(type) ||
+            GROUP_TYPES_PREFIX.some((p) => type.startsWith(p))
+        )
+            return 'group';
+        return 'other';
+    }
+
+    const friendNotifications = computed(() =>
+        notificationTable.value.data.filter(
+            (n) => getNotificationCategory(n.type) === 'friend'
+        )
+    );
+    const groupNotifications = computed(() =>
+        notificationTable.value.data.filter(
+            (n) => getNotificationCategory(n.type) === 'group'
+        )
+    );
+    const otherNotifications = computed(() =>
+        notificationTable.value.data.filter(
+            (n) => getNotificationCategory(n.type) === 'other'
+        )
+    );
+    const hasUnseenNotifications = computed(
+        () => unseenNotifications.value.length > 0
+    );
 
     const notyMap = {};
 
@@ -2374,6 +2424,144 @@ export const useNotificationStore = defineStore('Notification', () => {
         });
     }
 
+    function acceptFriendRequestNotification(row) {
+        modalStore
+            .confirm({
+                description: t('confirm.accept_friend_request'),
+                title: t('confirm.title')
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
+                notificationRequest.acceptFriendRequestNotification({
+                    notificationId: row.id
+                });
+            })
+            .catch(() => {});
+    }
+
+    async function hideNotification(row) {
+        if (row.type === 'ignoredFriendRequest') {
+            const args = await friendRequest.deleteHiddenFriendRequest(
+                { notificationId: row.id },
+                row.senderUserId
+            );
+            handleNotificationHide(args);
+        } else {
+            notificationRequest.hideNotification({
+                notificationId: row.id
+            });
+        }
+    }
+
+    function hideNotificationPrompt(row) {
+        modalStore
+            .confirm({
+                description: t('confirm.decline_type', { type: row.type }),
+                title: t('confirm.title')
+            })
+            .then(({ ok }) => {
+                if (ok) hideNotification(row);
+            })
+            .catch(() => {});
+    }
+
+    function acceptRequestInvite(row) {
+        modalStore
+            .confirm({
+                description: t('confirm.send_invite'),
+                title: t('confirm.title')
+            })
+            .then(({ ok }) => {
+                if (!ok) return;
+                let currentLocation = locationStore.lastLocation.location;
+                if (locationStore.lastLocation.location === 'traveling') {
+                    currentLocation = locationStore.lastLocationDestination;
+                }
+                if (!currentLocation) {
+                    currentLocation = userStore.currentUser?.$locationTag;
+                }
+                const L = parseLocation(currentLocation);
+                worldRequest
+                    .getCachedWorld({ worldId: L.worldId })
+                    .then((args) => {
+                        notificationRequest
+                            .sendInvite(
+                                {
+                                    instanceId: L.tag,
+                                    worldId: L.tag,
+                                    worldName: args.ref.name,
+                                    rsvp: true
+                                },
+                                row.senderUserId
+                            )
+                            .then((_args) => {
+                                toast(t('message.invite.sent'));
+                                notificationRequest.hideNotification({
+                                    notificationId: row.id
+                                });
+                                return _args;
+                            });
+                    });
+            })
+            .catch(() => {});
+    }
+
+    function sendNotificationResponse(notificationId, responses, responseType) {
+        if (!Array.isArray(responses) || responses.length === 0) return;
+        let responseData = '';
+        for (let i = 0; i < responses.length; i++) {
+            if (responses[i].type === responseType) {
+                responseData = responses[i].data;
+                break;
+            }
+        }
+        const params = { notificationId, responseType, responseData };
+        notificationRequest
+            .sendNotificationResponse(params)
+            .then((json) => {
+                if (!json) return;
+                const args = { json, params };
+                handleNotificationHide(args);
+                new Noty({
+                    type: 'success',
+                    text: escapeTag(args.json)
+                }).show();
+            })
+            .catch((err) => {
+                handleNotificationHide({ params });
+                notificationRequest.hideNotificationV2(params.notificationId);
+                console.error('Notification response failed', err);
+                toast.error('Error');
+            });
+    }
+
+    function deleteNotificationLog(row) {
+        const idx = notificationTable.value.data.findIndex(
+            (e) => e.id === row.id
+        );
+        if (idx !== -1) {
+            notificationTable.value.data.splice(idx, 1);
+        }
+        if (
+            row.type !== 'friendRequest' &&
+            row.type !== 'ignoredFriendRequest'
+        ) {
+            database.deleteNotification(row.id);
+        }
+    }
+
+    function deleteNotificationLogPrompt(row) {
+        modalStore
+            .confirm({
+                description: t('confirm.delete_type', { type: row.type }),
+                title: t('confirm.title')
+            })
+            .then(({ ok }) => {
+                if (ok) deleteNotificationLog(row);
+            })
+            .catch(() => {});
+    }
+
     return {
         notificationInitStatus,
         notificationTable,
@@ -2396,6 +2584,22 @@ export const useNotificationStore = defineStore('Notification', () => {
         handleNotificationHide,
         handleNotification,
         handleNotificationV2,
-        testNotification
+        testNotification,
+
+        // Notification actions
+        acceptFriendRequestNotification,
+        hideNotification,
+        hideNotificationPrompt,
+        acceptRequestInvite,
+        sendNotificationResponse,
+        deleteNotificationLog,
+        deleteNotificationLogPrompt,
+
+        isNotificationCenterOpen,
+        friendNotifications,
+        groupNotifications,
+        otherNotifications,
+        hasUnseenNotifications,
+        getNotificationCategory
     };
 });

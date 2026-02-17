@@ -92,7 +92,6 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import Noty from 'noty';
     import dayjs from 'dayjs';
 
     import {
@@ -100,17 +99,13 @@
         useGalleryStore,
         useGroupStore,
         useInviteStore,
-        useLocationStore,
-        useModalStore,
         useNotificationStore,
         useUserStore,
         useVrcxStore
     } from '../../stores';
-    import { convertFileUrlToImageUrl, escapeTag, parseLocation } from '../../shared/utils';
-    import { friendRequest, notificationRequest, worldRequest } from '../../api';
     import { DataTableLayout } from '../../components/ui/data-table';
+    import { convertFileUrlToImageUrl } from '../../shared/utils';
     import { createColumns } from './columns.jsx';
-    import { database } from '../../service/database';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
@@ -120,16 +115,22 @@
 
     const { showUserDialog } = useUserStore();
     const { showGroupDialog } = useGroupStore();
-    const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
     const { refreshInviteMessageTableData } = useInviteStore();
     const { clearInviteImageUpload } = useGalleryStore();
     const { notificationTable, isNotificationsLoading } = storeToRefs(useNotificationStore());
-    const { refreshNotifications, handleNotificationHide } = useNotificationStore();
+    const {
+        refreshNotifications,
+        acceptFriendRequestNotification,
+        hideNotification,
+        hideNotificationPrompt,
+        acceptRequestInvite,
+        sendNotificationResponse,
+        deleteNotificationLog,
+        deleteNotificationLogPrompt
+    } = useNotificationStore();
     const { showFullscreenImageDialog } = useGalleryStore();
-    const { currentUser } = storeToRefs(useUserStore());
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();
-    const modalStore = useModalStore();
 
     const { t } = useI18n();
 
@@ -329,24 +330,6 @@
         return convertFileUrlToImageUrl(url);
     }
 
-    function acceptFriendRequestNotification(row) {
-        // FIXME: 메시지 수정
-        modalStore
-            .confirm({
-                description: t('confirm.accept_friend_request'),
-                title: t('confirm.title')
-            })
-            .then(({ ok }) => {
-                if (!ok) {
-                    return;
-                }
-                notificationRequest.acceptFriendRequestNotification({
-                    notificationId: row.id
-                });
-            })
-            .catch(() => {});
-    }
-
     function showSendInviteResponseDialog(invite) {
         sendInviteResponseDialog.value.invite = invite;
         sendInviteResponseDialog.value.messageSlot = {};
@@ -355,153 +338,12 @@
         sendInviteResponseDialogVisible.value = true;
     }
 
-    function acceptRequestInvite(row) {
-        modalStore
-            .confirm({
-                description: t('confirm.send_invite'),
-                title: t('confirm.title')
-            })
-            .then(({ ok }) => {
-                if (!ok) {
-                    return;
-                }
-                let currentLocation = lastLocation.value.location;
-                if (lastLocation.value.location === 'traveling') {
-                    currentLocation = lastLocationDestination.value;
-                }
-                if (!currentLocation) {
-                    // game log disabled, use API location
-                    currentLocation = currentUser.$locationTag;
-                }
-                const L = parseLocation(currentLocation);
-                worldRequest
-                    .getCachedWorld({
-                        worldId: L.worldId
-                    })
-                    .then((args) => {
-                        notificationRequest
-                            .sendInvite(
-                                {
-                                    instanceId: L.tag,
-                                    worldId: L.tag,
-                                    worldName: args.ref.name,
-                                    rsvp: true
-                                },
-                                row.senderUserId
-                            )
-                            .then((_args) => {
-                                toast(t('message.invite.sent'));
-                                notificationRequest.hideNotification({
-                                    notificationId: row.id
-                                });
-                                return _args;
-                            });
-                    });
-            })
-            .catch(() => {});
-    }
-
     function showSendInviteRequestResponseDialog(invite) {
         sendInviteResponseDialog.value.invite = invite;
         sendInviteResponseDialog.value.messageSlot = {};
         refreshInviteMessageTableData('requestResponse');
         clearInviteImageUpload();
         sendInviteRequestResponseDialogVisible.value = true;
-    }
-
-    function sendNotificationResponse(notificationId, responses, responseType) {
-        if (!Array.isArray(responses) || responses.length === 0) {
-            return;
-        }
-        let responseData = '';
-        for (let i = 0; i < responses.length; i++) {
-            if (responses[i].type === responseType) {
-                responseData = responses[i].data;
-                break;
-            }
-        }
-        const params = {
-            notificationId,
-            responseType,
-            responseData
-        };
-        notificationRequest
-            .sendNotificationResponse(params)
-            .then((json) => {
-                if (!json) {
-                    return;
-                }
-                const args = {
-                    json,
-                    params
-                };
-                handleNotificationHide(args);
-                new Noty({
-                    type: 'success',
-                    text: escapeTag(args.json)
-                }).show();
-                console.log('NOTIFICATION:RESPONSE', args);
-            })
-            .catch((err) => {
-                handleNotificationHide({ params });
-                notificationRequest.hideNotificationV2(params.notificationId);
-                console.error('Notification response failed', err);
-                toast.error('Error');
-            });
-    }
-
-    async function hideNotification(row) {
-        if (row.type === 'ignoredFriendRequest') {
-            const args = await friendRequest.deleteHiddenFriendRequest(
-                {
-                    notificationId: row.id
-                },
-                row.senderUserId
-            );
-            useNotificationStore().handleNotificationHide(args);
-        } else {
-            notificationRequest.hideNotification({
-                notificationId: row.id
-            });
-        }
-    }
-
-    function hideNotificationPrompt(row) {
-        modalStore
-            .confirm({
-                description: t('confirm.decline_type', { type: row.type }),
-                title: t('confirm.title')
-            })
-            .then(({ ok }) => {
-                if (ok) {
-                    hideNotification(row);
-                }
-            })
-            .catch(() => {});
-    }
-
-    function deleteNotificationLog(row) {
-        const idx = notificationTable.value.data.findIndex((e) => e.id === row.id);
-        if (idx !== -1) {
-            notificationTable.value.data.splice(idx, 1);
-        }
-        if (row.type !== 'friendRequest' && row.type !== 'ignoredFriendRequest') {
-            database.deleteNotification(row.id);
-        }
-    }
-
-    function deleteNotificationLogPrompt(row) {
-        modalStore
-            .confirm({
-                description: t('confirm.delete_type', { type: row.type }),
-                title: t('confirm.title')
-            })
-            .then(({ ok }) => {
-                if (ok) {
-                    deleteNotificationLog(row);
-                }
-            })
-            .catch(() => {});
     }
 </script>
 
