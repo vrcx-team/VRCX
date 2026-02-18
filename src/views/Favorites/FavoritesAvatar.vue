@@ -121,7 +121,7 @@
                                             >
                                         </div>
                                         <div class="group-item__bottom">
-                                            <Badge variant="outline">
+                                            <Badge :variant="getBadgeVariant(group.visibility)">
                                                 {{ t(`view.favorite.visibility.${group.visibility}`) }}
                                             </Badge>
                                             <DropdownMenu
@@ -712,6 +712,17 @@
     onBeforeMount(() => {
         loadAvatarSplitterPreferences();
     });
+
+    function getBadgeVariant(visibility) {
+        switch (visibility) {
+            case 'public':
+                return 'default';
+            case 'friends':
+                return 'secondary';
+            case 'private':
+                return 'destructive';
+        }
+    }
 
     async function loadAvatarSplitterPreferences() {
         const storedSize = await configRepository.getString('VRCX_FavoritesAvatarSplitter', '260');
