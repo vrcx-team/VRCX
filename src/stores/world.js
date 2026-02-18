@@ -84,7 +84,9 @@ export const useWorldStore = defineStore('World', () => {
         }
         const isMainDialogOpen = uiStore.openDialog({
             type: 'world',
-            id: L.worldId
+            id: L.worldId,
+            tag,
+            shortName
         });
         D.visible = true;
         if (isMainDialogOpen && D.id === L.worldId) {

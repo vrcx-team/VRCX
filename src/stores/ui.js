@@ -69,7 +69,8 @@ export const useUiStore = defineStore('Ui', () => {
         }
     });
 
-    function pushDialogCrumb(type, id, label = '') {
+    function pushDialogCrumb(data) {
+        const { type, id, label } = data;
         if (!type || !id) {
             return;
         }
@@ -91,7 +92,10 @@ export const useUiStore = defineStore('Ui', () => {
             }
             return;
         }
-        items.push({ type, id, label: label || id });
+        if (!data.label) {
+            data.label = data.id;
+        }
+        items.push(data);
     }
 
     function setDialogCrumbLabel(type, id, label) {
@@ -135,7 +139,7 @@ export const useUiStore = defineStore('Ui', () => {
             return;
         }
         if (item.type === 'world') {
-            worldStore.showWorldDialog(item.id, null);
+            worldStore.showWorldDialog(item.tag, item.shortName);
             return;
         }
         if (item.type === 'avatar') {
@@ -187,7 +191,16 @@ export const useUiStore = defineStore('Ui', () => {
         clearDialogCrumbs();
     }
 
-    function openDialog({ type, id, label = '' }) {
+    /**
+     * @param {Object} data
+     * @param {string} data.type
+     * @param {string} data.id
+     * @param {string?} data.tag
+     * @param {string?} data.shortName
+     * @returns {boolean}
+     */
+    function openDialog(data) {
+        const { type } = data;
         const userStore = useUserStore();
         const worldStore = useWorldStore();
         const avatarStore = useAvatarStore();
@@ -229,7 +242,7 @@ export const useUiStore = defineStore('Ui', () => {
         if (!hadActiveDialog) {
             clearDialogCrumbs();
         }
-        pushDialogCrumb(type, id, label);
+        pushDialogCrumb(data);
         return hadActiveDialog;
     }
 

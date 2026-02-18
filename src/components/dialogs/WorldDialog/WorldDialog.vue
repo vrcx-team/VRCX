@@ -1155,9 +1155,9 @@
                 showChangeWorldImageDialog();
                 break;
             case 'Refresh':
-                const worldId = D.id;
+                const { tag, shortName } = worldDialog.value.$location;
                 D.id = '';
-                showWorldDialog(worldId);
+                showWorldDialog(tag, shortName);
                 break;
             case 'New Instance':
                 showNewInstanceDialog(D.$location.tag);
