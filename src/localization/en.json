@@ -791,7 +791,6 @@
                 "rpc": {
                     "vr": "VR",
                     "desktop": "Desktop",
-                    "join_button": "Join",
                     "powered_by_vrcx": "Powered by VRCX",
                     "private_world": "Private World"
                 }

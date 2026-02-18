@@ -753,7 +753,6 @@
                 "rpc": {
                     "vr": "VR 模式",
                     "desktop": "桌面模式",
-                    "join_button": "加入",
                     "powered_by_vrcx": "由 VRCX 强力驱动",
                     "private_world": "私人世界"
                 }

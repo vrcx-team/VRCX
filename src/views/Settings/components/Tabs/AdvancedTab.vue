@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.advanced.advanced.vrchat_settings.header') }}</span>
+        <div class="options-container mt-2!">
+            <div class="header">{{ t('view.settings.advanced.advanced.vrchat_settings.header') }}</div>
             <span class="sub-header">{{ t('view.settings.advanced.advanced.relaunch_vrchat.header') }}</span>
             <simple-switch
                 :label="t('view.settings.advanced.advanced.relaunch_vrchat.description')"
@@ -31,7 +31,7 @@
                 @change="setSelfInviteOverride" />
         </div>
         <div class="options-container">
-            <span class="header">{{ t('view.settings.advanced.advanced.vrcx_settings.header') }}</span>
+            <div class="header">{{ t('view.settings.advanced.advanced.vrcx_settings.header') }}</div>
             <span class="sub-header">{{ t('view.settings.advanced.advanced.primary_password.header') }}</span>
             <simple-switch
                 :label="t('view.settings.advanced.advanced.primary_password.description')"

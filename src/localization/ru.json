@@ -524,7 +524,6 @@
                 "rpc": {
                     "vr": "VR",
                     "desktop": "Десктоп‑режим",
-                    "join_button": "Присоединиться",
                     "powered_by_vrcx": "Powered by VRCX",
                     "private_world": "Приватный мир"
                 }

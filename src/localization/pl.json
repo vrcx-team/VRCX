@@ -626,7 +626,6 @@
                 "rpc": {
                     "vr": "VR",
                     "desktop": "PC",
-                    "join_button": "Dołącz",
                     "powered_by_vrcx": "Obsługiwane przez VRCX",
                     "private_world": "Prywatny świat"
                 }
