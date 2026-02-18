@@ -808,10 +808,24 @@
                 showFavoriteDialog('avatar', D.id);
                 break;
             default:
+                const commandLabelMap = {
+                    'Delete Favorite': t('dialog.avatar.actions.favorite_tooltip'),
+                    'Select Fallback Avatar': t('dialog.avatar.actions.select_fallback'),
+                    'Block Avatar': t('dialog.avatar.actions.block'),
+                    'Unblock Avatar': t('dialog.avatar.actions.unblock'),
+                    'Make Public': t('dialog.avatar.actions.make_public'),
+                    'Make Private': t('dialog.avatar.actions.make_private'),
+                    Delete: t('dialog.avatar.actions.delete'),
+                    'Delete Imposter': t('dialog.avatar.actions.delete_impostor'),
+                    'Create Imposter': t('dialog.avatar.actions.create_impostor'),
+                    'Regenerate Imposter': t('dialog.avatar.actions.regenerate_impostor')
+                };
                 modalStore
                     .confirm({
-                        title: 'Confirm',
-                        description: `Continue? ${command}`
+                        title: t('confirm.title'),
+                        description: t('confirm.command_question', {
+                            command: commandLabelMap[command] ?? command
+                        })
                     })
                     .then(({ ok }) => {
                         if (!ok) return;

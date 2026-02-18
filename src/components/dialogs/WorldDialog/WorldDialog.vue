@@ -1032,12 +1032,21 @@
             case 'Unpublish':
             case 'Delete Persistent Data':
             case 'Delete':
+                const commandLabelMap = {
+                    'Delete Favorite': t('dialog.world.actions.favorites_tooltip'),
+                    'Make Home': t('dialog.world.actions.make_home'),
+                    'Reset Home': t('dialog.world.actions.reset_home'),
+                    Publish: t('dialog.world.actions.publish_to_labs'),
+                    Unpublish: t('dialog.world.actions.unpublish'),
+                    'Delete Persistent Data': t('dialog.world.actions.delete_persistent_data'),
+                    Delete: t('dialog.world.actions.delete')
+                };
                 modalStore
                     .confirm({
                         description: t('confirm.command_question', {
-                            command
+                            command: commandLabelMap[command] ?? command
                         }),
-                        title: 'Confirm'
+                        title: t('confirm.title')
                     })
                     .then(({ ok }) => {
                         if (!ok) return;

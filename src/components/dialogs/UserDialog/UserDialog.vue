@@ -2388,8 +2388,10 @@
     function resetHome() {
         modalStore
             .confirm({
-                description: 'Continue? Reset Home',
-                title: 'Confirm'
+                description: t('confirm.command_question', {
+                    command: t('dialog.user.actions.reset_home')
+                }),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) return;

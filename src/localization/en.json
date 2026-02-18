@@ -1041,7 +1041,8 @@
                 "unfriend": "Unfriend",
                 "unfriend_success_msg": "Unfriended",
                 "logout": "Logout",
-                "edit_note_memo": "Edit Note and Memo"
+                "edit_note_memo": "Edit Note and Memo",
+                "reset_home": "Reset Home"
             },
             "info": {
                 "header": "Info",
