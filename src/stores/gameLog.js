@@ -1,6 +1,7 @@
 import { reactive, ref, shallowRef, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
+import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
 import dayjs from 'dayjs';
@@ -56,6 +57,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     const modalStore = useModalStore();
 
     const router = useRouter();
+    const { t } = useI18n();
 
     const state = reactive({
         lastLocationAvatarList: new Map()
@@ -1420,16 +1422,14 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     async function disableGameLogDialog() {
         if (gameStore.isGameRunning) {
-            toast.error(
-                'VRChat needs to be closed before this option can be changed'
-            );
+            toast.error(t('message.gamelog.vrchat_must_be_closed'));
             return;
         }
         if (!advancedSettingsStore.gameLogDisabled) {
             modalStore
                 .confirm({
-                    description: 'Continue? Disable GameLog',
-                    title: 'Confirm'
+                    description: t('confirm.disable_gamelog'),
+                    title: t('confirm.title')
                 })
                 .then(({ ok }) => {
                     if (!ok) return;

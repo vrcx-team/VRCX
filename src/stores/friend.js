@@ -1641,7 +1641,7 @@ export const useFriendStore = defineStore('Friend', () => {
         modalStore
             .confirm({
                 description: t('confirm.unfriend'),
-                title: 'Confirm'
+                title: t('confirm.title')
             })
             .then(async ({ ok }) => {
                 if (!ok) return;

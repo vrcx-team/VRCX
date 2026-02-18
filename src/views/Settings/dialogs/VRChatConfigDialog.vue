@@ -330,8 +330,8 @@
     function showDeleteAllVRChatCacheConfirm() {
         modalStore
             .confirm({
-                description: 'Continue? all VRChat cache',
-                title: 'Confirm'
+                description: t('confirm.clear_cache'),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (ok) {
@@ -344,9 +344,9 @@
     async function deleteAllVRChatCache() {
         try {
             await AssetBundleManager.DeleteAllCache();
-            toast.success('All VRChat cache deleted');
+            toast.success(t('message.cache.deleted'));
         } catch (error) {
-            toast.error(`Error deleting VRChat cache: ${error.message}`);
+            toast.error(t('message.cache.delete_error', { error: error.message }));
         }
         getVRChatCacheSize();
     }
@@ -441,7 +441,7 @@
                 const parsedConfig = JSON.parse(config);
                 VRChatConfigFile.value = { ...VRChatConfigFile.value, ...parsedConfig };
             } catch {
-                toast.error('Invalid JSON in config.json');
+                toast.error(t('message.cache.invalid_config'));
                 throw new Error('Invalid JSON in config.json');
             }
         }

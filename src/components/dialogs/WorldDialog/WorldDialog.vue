@@ -1062,7 +1062,7 @@
                                         homeLocation: D.id
                                     })
                                     .then((args) => {
-                                        toast.success('Home world updated');
+                                        toast.success(t('message.world.home_updated'));
                                         return args;
                                     });
                                 break;
@@ -1072,7 +1072,7 @@
                                         homeLocation: ''
                                     })
                                     .then((args) => {
-                                        toast.success('Home world has been reset');
+                                        toast.success(t('message.world.home_reset'));
                                         return args;
                                     });
                                 break;
@@ -1082,7 +1082,7 @@
                                         worldId: D.id
                                     })
                                     .then((args) => {
-                                        toast.success('World has been published');
+                                        toast.success(t('message.world.published'));
                                         return args;
                                     });
                                 break;
@@ -1092,7 +1092,7 @@
                                         worldId: D.id
                                     })
                                     .then((args) => {
-                                        toast.success('World has been unpublished');
+                                        toast.success(t('message.world.unpublished'));
                                         return args;
                                     });
                                 break;
@@ -1105,7 +1105,7 @@
                                         if (args.params.worldId === worldDialog.value.id && worldDialog.value.visible) {
                                             worldDialog.value.hasPersistData = false;
                                         }
-                                        toast.success('Persistent data has been deleted');
+                                        toast.success(t('message.world.persistent_data_deleted'));
                                         return args;
                                     });
                                 break;
@@ -1127,7 +1127,7 @@
                                             const array = Array.from(map.values());
                                             userDialog.value.worlds = array;
                                         }
-                                        toast.success('World has been deleted');
+                                        toast.success(t('message.world.deleted'));
                                         D.visible = false;
                                         return args;
                                     });
@@ -1365,33 +1365,33 @@
         navigator.clipboard
             .writeText(worldDialog.value.id)
             .then(() => {
-                toast.success('World ID copied to clipboard');
+                toast.success(t('message.world.id_copied'));
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                toast.error('Copy failed');
+                toast.error(t('message.copy_failed'));
             });
     }
     function copyWorldUrl() {
         navigator.clipboard
             .writeText(`https://vrchat.com/home/world/${worldDialog.value.id}`)
             .then(() => {
-                toast.success('World URL copied to clipboard');
+                toast.success(t('message.world.url_copied'));
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                toast.error('Copy failed');
+                toast.error(t('message.copy_failed'));
             });
     }
     function copyWorldName() {
         navigator.clipboard
             .writeText(worldDialog.value.ref.name)
             .then(() => {
-                toast.success('World name copied to clipboard');
+                toast.success(t('message.world.name_copied'));
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                toast.error('Copy failed');
+                toast.error(t('message.copy_failed'));
             });
     }
     function showWorldAllowedDomainsDialog() {

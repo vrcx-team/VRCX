@@ -1137,7 +1137,7 @@
                     favoriteGroupId: args.json.id
                 }
             });
-            toast.success('Group visibility changed');
+            toast.success(t('message.group.visibility_updated'));
             if (menuKey) {
                 handleGroupMenuVisible(menuKey, false);
             }
@@ -1174,8 +1174,8 @@
     function promptLocalWorldFavoriteGroupDelete(group) {
         modalStore
             .confirm({
-                description: `Delete Group? ${group}`,
-                title: 'Confirm'
+                description: t('confirm.delete_group', { name: group }),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (ok) {
@@ -1188,8 +1188,8 @@
     function clearFavoriteGroup(ctx) {
         modalStore
             .confirm({
-                description: 'Continue? Clear Group',
-                title: 'Confirm'
+                description: t('confirm.clear_group'),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (ok) {

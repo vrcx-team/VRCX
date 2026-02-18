@@ -123,9 +123,11 @@
                             {{ t('dialog.user.tags.discord') }}
                         </Badge>
                     </TooltipWrapper>
-                    <Badge v-if="userDialog.ref.$isTroll" variant="outline" class="x-tag-troll"> Nuisance </Badge>
+                    <Badge v-if="userDialog.ref.$isTroll" variant="outline" class="x-tag-troll">
+                        {{ t('view.settings.appearance.user_colors.trust_levels.nuisance') }}
+                    </Badge>
                     <Badge v-if="userDialog.ref.$isProbableTroll" variant="outline" class="x-tag-troll">
-                        Almost Nuisance
+                        {{ t('view.favorite.avatars.almost_nuisance') }}
                     </Badge>
                     <Badge v-if="userDialog.ref.$isModerator" variant="outline" class="x-tag-vip">
                         {{ t('dialog.user.tags.vrchat_team') }}

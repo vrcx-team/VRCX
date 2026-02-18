@@ -2,6 +2,9 @@
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { Button } from '@/components/ui/button';
     import { computed } from 'vue';
+    import { useI18n } from 'vue-i18n';
+
+    const { t } = useI18n();
 
     const props = defineProps({
         modelValue: { type: String, default: '' },
@@ -93,7 +96,9 @@
                 @input="onInput" />
 
             <div v-if="clearable" class="mt-3 flex justify-end">
-                <Button variant="ghost" size="sm" :disabled="disabled" @click="clear"> Clear </Button>
+                <Button variant="ghost" size="sm" :disabled="disabled" @click="clear">
+                    {{ t('view.favorite.clear') }}
+                </Button>
             </div>
         </PopoverContent>
     </Popover>

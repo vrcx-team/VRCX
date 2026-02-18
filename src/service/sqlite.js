@@ -1,3 +1,4 @@
+import { i18n } from '../plugin/i18n';
 import { openExternalLink } from '../shared/utils';
 import { useModalStore } from '../stores';
 
@@ -23,7 +24,7 @@ class SQLiteService {
             }
             if (e.message.includes('database or disk is full')) {
                 modalStore.alert({
-                    description: 'Please free up some disk space.',
+                    description: i18n.global.t('message.database.disk_space'),
                     title: 'Disk containing database is full'
                 });
             }
@@ -39,7 +40,7 @@ class SQLiteService {
             }
             if (e.message.includes('disk I/O error')) {
                 modalStore.alert({
-                    description: 'Please check your disk for errors.',
+                    description: i18n.global.t('message.database.disk_error'),
                     title: 'Disk I/O error'
                 });
             }

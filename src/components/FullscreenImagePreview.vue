@@ -103,6 +103,7 @@
     import { acquireModalPortalLayer } from '@/lib/modalPortalLayers';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
+    import { useI18n } from 'vue-i18n';
 
     import Noty from 'noty';
 
@@ -111,6 +112,7 @@
 
     const galleryStore = useGalleryStore();
     const { fullscreenImageDialog } = storeToRefs(galleryStore);
+    const { t } = useI18n();
 
     const viewerEl = ref(null);
     const portalLayer = acquireModalPortalLayer();
@@ -286,7 +288,7 @@
 
     async function copyImageToClipboard(url) {
         if (!url) return;
-        const msg = toast.info('Downloading image...');
+        const msg = toast.info(t('message.image.downloading'));
         try {
             const response = await webApiService.execute({ url, method: 'GET' });
             if (response.status !== 200 || !String(response.data).startsWith('data:image/png')) {
@@ -294,7 +296,7 @@
             }
             const blob = await (await fetch(response.data)).blob();
             await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-            toast.success('Image copied to clipboard');
+            toast.success(t('message.image.copied_to_clipboard'));
         } catch (error) {
             console.error('Error downloading image:', error);
             new Noty({ type: 'error', text: escapeTag(`Failed to download image. ${url}`) }).show();
@@ -305,7 +307,7 @@
 
     async function downloadAndSaveImage(url, fileName) {
         if (!url) return;
-        const msg = toast.info('Downloading image...');
+        const msg = toast.info(t('message.image.downloading'));
         try {
             const response = await webApiService.execute({ url, method: 'GET' });
             if (response.status !== 200 || !String(response.data).startsWith('data:image/png')) {

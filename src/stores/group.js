@@ -583,8 +583,8 @@ export const useGroupStore = defineStore('Group', () => {
     function leaveGroupPrompt(groupId) {
         modalStore
             .confirm({
-                description: 'Are you sure you want to leave this group?',
-                title: 'Confirm'
+                description: t('confirm.leave_group'),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) return;
@@ -617,7 +617,7 @@ export const useGroupStore = defineStore('Group', () => {
             })
             .then((args) => {
                 handleGroupMemberProps(args);
-                toast.success('Group visibility updated');
+                toast.success(t('message.group.visibility_updated'));
                 return args;
             });
     }
@@ -629,7 +629,7 @@ export const useGroupStore = defineStore('Group', () => {
             })
             .then((args) => {
                 handleGroupMemberProps(args);
-                toast.success('Group subscription updated');
+                toast.success(t('message.group.subscription_updated'));
                 return args;
             });
     }

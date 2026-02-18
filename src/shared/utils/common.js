@@ -13,6 +13,7 @@ import {
 import { escapeTag, replaceBioSymbols } from './base/string';
 import { AppDebug } from '../../service/appConfig.js';
 import { compareUnityVersion } from './avatar';
+import { i18n } from '../../plugin/i18n';
 import { miscRequest } from '../../api';
 
 /**
@@ -170,7 +171,7 @@ function copyToClipboard(text, message = 'Copied successfully!') {
         })
         .catch((err) => {
             console.error('Copy failed:', err);
-            toast.error('Copy failed!');
+            toast.error(i18n.global.t('message.copy_failed'));
         });
 }
 

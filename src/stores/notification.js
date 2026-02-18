@@ -2531,7 +2531,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 handleNotificationHide({ params });
                 notificationRequest.hideNotificationV2(params.notificationId);
                 console.error('Notification response failed', err);
-                toast.error('Error');
+                toast.error(t('message.error'));
             });
     }
 

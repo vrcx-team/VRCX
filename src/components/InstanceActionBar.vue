@@ -359,8 +359,8 @@
     const closeInstance = (location) => {
         modalStore
             .confirm({
-                description: 'Continue? X Instance, nobody will be able to join',
-                title: 'Confirm'
+                description: t('confirm.close_instance'),
+                title: t('confirm.title')
             })
             .then(async ({ ok }) => {
                 if (!ok) return;

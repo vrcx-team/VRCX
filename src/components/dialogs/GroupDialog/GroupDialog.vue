@@ -1467,8 +1467,8 @@
     function confirmDeleteGroupPost(post) {
         modalStore
             .confirm({
-                description: 'Are you sure you want to delete this post?',
-                title: 'Confirm'
+                description: t('confirm.delete_post'),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) return;
@@ -1570,8 +1570,8 @@
     function blockGroup(groupId) {
         modalStore
             .confirm({
-                description: 'Are you sure you want to block this group?',
-                title: 'Confirm'
+                description: t('confirm.block_group'),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) return;
@@ -1591,8 +1591,8 @@
     function unblockGroup(groupId) {
         modalStore
             .confirm({
-                description: 'Are you sure you want to unblock this group?',
-                title: 'Confirm'
+                description: t('confirm.unblock_group'),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) return;
@@ -1628,9 +1628,9 @@
                     getGroupDialogGroup(id);
                 }
                 if (args.json.membershipStatus === 'member') {
-                    toast.success('Group joined');
+                    toast.success(t('message.group.joined'));
                 } else if (args.json.membershipStatus === 'requested') {
-                    toast.success('Group join request sent');
+                    toast.success(t('message.group.join_request_sent'));
                 }
                 return args;
             });

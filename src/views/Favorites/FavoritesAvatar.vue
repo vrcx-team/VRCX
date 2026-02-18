@@ -40,7 +40,7 @@
                         <DropdownMenuContent class="favorites-dropdown">
                             <li class="favorites-dropdown__control" @click.stop>
                                 <div class="favorites-dropdown__control-header">
-                                    <span>Scale</span>
+                                    <span>{{ t('view.friends_locations.scale') }}</span>
                                     <span class="favorites-dropdown__control-value">{{ avatarCardScalePercent }}%</span>
                                 </div>
                                 <Slider
@@ -52,7 +52,7 @@
                             </li>
                             <li class="favorites-dropdown__control" @click.stop>
                                 <div class="favorites-dropdown__control-header">
-                                    <span>Spacing</span>
+                                    <span>{{ t('view.friends_locations.spacing') }}</span>
                                     <span class="favorites-dropdown__control-value">
                                         {{ avatarCardSpacingPercent }}%
                                     </span>
@@ -294,7 +294,7 @@
                         </div>
                         <div class="group-section">
                             <div class="group-section__header">
-                                <span>Local History</span>
+                                <span>{{ t('view.favorite.avatars.local_history') }}</span>
                                 <DropdownMenu
                                     :open="activeGroupMenu === historyGroupMenuKey"
                                     @update:open="handleGroupMenuVisible(historyGroupMenuKey, $event)">
@@ -318,7 +318,9 @@
                                     ]"
                                     @click="handleGroupClick('history', historyGroupKey)">
                                     <div class="group-item__top">
-                                        <span class="group-item__name">Local History</span>
+                                        <span class="group-item__name">{{
+                                            t('view.favorite.avatars.local_history')
+                                        }}</span>
                                         <span class="group-item__count">{{ avatarHistory.length }}/100</span>
                                     </div>
                                 </div>
@@ -350,7 +352,7 @@
                                         <small>{{ avatarHistory.length }}/100</small>
                                     </span>
                                 </template>
-                                <span v-else>No Group Selected</span>
+                                <span v-else>{{ t('view.favorite.avatars.no_group_selected') }}</span>
                             </div>
                             <div class="favorites-content__edit">
                                 <span>{{ t('view.favorite.edit_mode') }}</span>
@@ -500,7 +502,7 @@
                                 </div>
                             </template>
                             <template v-else>
-                                <div class="favorites-empty">No Group Selected</div>
+                                <div class="favorites-empty">{{ t('view.favorite.avatars.no_group_selected') }}</div>
                             </template>
                         </div>
                     </div>
@@ -1237,8 +1239,8 @@
     function clearFavoriteGroup(ctx) {
         modalStore
             .confirm({
-                description: 'Continue? Clear Group',
-                title: 'Confirm'
+                description: t('confirm.clear_group'),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (ok) {
@@ -1279,8 +1281,8 @@
     function promptLocalAvatarFavoriteGroupDelete(group) {
         modalStore
             .confirm({
-                description: `Delete Group? ${group}`,
-                title: 'Confirm'
+                description: t('confirm.delete_group', { name: group }),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (ok) {

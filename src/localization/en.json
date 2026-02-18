@@ -134,7 +134,8 @@
                 "Status": "Status",
                 "Avatar": "Avatar",
                 "Bio": "Bio"
-            }
+            },
+            "photon_event_logging": "Photon Event Logging"
         },
         "friends_locations": {
             "online": "Online",
@@ -232,7 +233,11 @@
                 "confirm_delete_description": "Found {count} invalid avatars, delete them?",
                 "delete_summary": "Successfully deleted {removed} invalid avatars",
                 "no_invalid_found": "No invalid avatars found",
-                "delete_cancelled": "Delete operation cancelled"
+                "delete_cancelled": "Delete operation cancelled",
+                "local_history": "Local History",
+                "no_group_selected": "No Group Selected",
+                "styles": "Styles",
+                "almost_nuisance": "Almost Nuisance"
             },
             "edit_mode": "Edit Mode",
             "copy": "Copy",
@@ -2002,6 +2007,19 @@
         "decline_type": "Continue? Decline {type}",
         "delete_type": "Continue? {type}",
         "command_question": "Continue? {command}",
+        "clear_group": "Continue? Clear Group",
+        "delete_group": "Continue? Delete Group {name}",
+        "delete_post": "Are you sure you want to delete this post?",
+        "block_group": "Are you sure you want to block this group?",
+        "unblock_group": "Are you sure you want to unblock this group?",
+        "leave_group": "Are you sure you want to leave this group?",
+        "disable_gamelog": "Continue? Disable GameLog",
+        "restore_backup": "Continue? Restore Backup",
+        "delete_vrc_registry": "Continue? Delete VRC Registry Settings",
+        "clear_cache": "Continue? Clear all VRChat cache",
+        "close_instance": "Continue? Close Instance, nobody will be able to join",
+        "bulk_unfavorite": "Are you sure you want to unfavorite {count} favorites?\nThis action cannot be undone.",
+        "bulk_unfavorite_title": "Delete {count} favorites?",
         "restart_required_title": "Restart Required",
         "restart_now": "Restart Now",
         "restart_later": "Later"
@@ -2176,6 +2194,11 @@
                 "error": "Group already exists with the name {name}"
             }
         },
+        "backup_name": {
+            "header": "Backup Name",
+            "description": "Enter a name for the backup",
+            "input_error": "Name is required"
+        },
         "auto_login_delay": {
             "header": "Auto-login delay",
             "description": "Enter delay in seconds (0 to disable, max 10).",
@@ -2215,7 +2238,15 @@
             "create_failed": "Failed to create instance"
         },
         "avatar": {
-            "change_moderation_failed": "Failed to change avatar moderation"
+            "change_moderation_failed": "Failed to change avatar moderation",
+            "fallback_changed": "Fallback avatar changed",
+            "blocked": "Avatar blocked",
+            "updated_public": "Avatar updated to public",
+            "updated_private": "Avatar updated to private",
+            "deleted": "Avatar deleted",
+            "impostor_deleted": "Imposter deleted",
+            "impostor_queued": "Imposter queued for creation",
+            "impostor_regenerated": "Imposter deleted and queued for creation"
         },
         "avatar_lookup": {
             "not_found": "Avatar not found in search providers",
@@ -2224,7 +2255,9 @@
             "loading": "Searching for avatar using search providers"
         },
         "database": {
-            "upgrade_complete": "Database upgrade complete"
+            "upgrade_complete": "Database upgrade complete",
+            "disk_space": "Please free up some disk space.",
+            "disk_error": "Please check your disk for errors."
         },
         "file": {
             "not_image": "File isn't an image",
@@ -2232,12 +2265,19 @@
             "folder_missing": "Folder doesn't exist"
         },
         "group": {
-            "load_failed": "Failed to load group"
+            "load_failed": "Failed to load group",
+            "joined": "Group joined",
+            "join_request_sent": "Group join request sent",
+            "visibility_updated": "Group visibility updated",
+            "subscription_updated": "Group subscription updated"
         },
         "invite": {
             "self_sent": "Self invite sent",
             "sent": "Invite sent",
-            "message_update_failed": "VRChat API didn't update message, try again"
+            "message_update_failed": "VRChat API didn't update message, try again",
+            "message_updated": "Invite message updated",
+            "response_sent": "Invite response message sent",
+            "response_photo_sent": "Invite response photo message sent"
         },
         "launch": {
             "invalid_path": "Invalid path, you must enter VRChat folder or launch.exe"
@@ -2252,7 +2292,16 @@
             "error": "Upload failed"
         },
         "world": {
-            "load_failed": "Failed to load world"
+            "load_failed": "Failed to load world",
+            "home_updated": "Home world updated",
+            "home_reset": "Home world has been reset",
+            "published": "World has been published",
+            "unpublished": "World has been unpublished",
+            "persistent_data_deleted": "Persistent data has been deleted",
+            "deleted": "World has been deleted",
+            "id_copied": "World ID copied to clipboard",
+            "url_copied": "World URL copied to clipboard",
+            "name_copied": "World name copied to clipboard"
         },
         "user": {
             "moderated": "User moderated",
@@ -2270,7 +2319,27 @@
         },
         "crash": {
             "vrcx_reload": "VRCX was reloaded for stability"
-        }
+        },
+        "image": {
+            "downloading": "Downloading image...",
+            "copied_to_clipboard": "Image copied to clipboard"
+        },
+        "registry": {
+            "restored": "VRC registry settings restored",
+            "deleted": "VRC registry settings deleted",
+            "restore_failed": "Failed to restore VRC registry settings, check console for full error: {error}",
+            "invalid_json": "Invalid JSON"
+        },
+        "cache": {
+            "deleted": "All VRChat cache deleted",
+            "delete_error": "Error deleting VRChat cache: {error}",
+            "invalid_config": "Invalid JSON in config.json"
+        },
+        "gamelog": {
+            "vrchat_must_be_closed": "VRChat needs to be closed before this option can be changed"
+        },
+        "copy_failed": "Copy failed",
+        "error": "Error"
     },
     "status": {
         "title": "VRChat Status"
@@ -2481,5 +2550,11 @@
                 "unavailable": "Service may be unavailable due to VRChat internal issues"
             }
         }
+    },
+    "accessibility": {
+        "toggle_sidebar": "Toggle Sidebar",
+        "back_to_top": "Back to top",
+        "toggle_password": "Toggle password visibility",
+        "clear_input": "Clear input"
     }
 }

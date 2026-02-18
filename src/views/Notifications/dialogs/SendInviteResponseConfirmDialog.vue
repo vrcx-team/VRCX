@@ -68,7 +68,7 @@
                     notificationRequest.hideNotification({
                         notificationId: D.invite.id
                     });
-                    toast.success('Invite response photo message sent');
+                    toast.success(t('message.invite.response_photo_sent'));
                     return args;
                 })
                 .finally(() => {
@@ -79,13 +79,13 @@
                 .sendInviteResponse(params, D.invite.id)
                 .catch((err) => {
                     console.error('Invite response failed', err);
-                    toast.error('Error');
+                    toast.error(t('message.error'));
                 })
                 .then((args) => {
                     notificationRequest.hideNotification({
                         notificationId: D.invite.id
                     });
-                    toast.success('Invite response message sent');
+                    toast.success(t('message.invite.response_sent'));
                     return args;
                 })
                 .finally(() => {
