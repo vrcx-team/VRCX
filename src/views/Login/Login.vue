@@ -118,7 +118,7 @@
                                     variant="ghost"
                                     class="cursor-pointer ml-2"
                                     @click.stop="clickDeleteSavedLogin(user.user.id)"
-                                    ><Minus class="text-sm"
+                                    ><Trash2 class="text-sm"
                                 /></Button>
                             </div>
                         </div>
@@ -161,7 +161,7 @@
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
     import { onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
-    import { ArrowBigDownDash, Languages, Minus } from 'lucide-vue-next';
+    import { ArrowBigDownDash, Languages, Trash2 } from 'lucide-vue-next';
     import { Field as VeeField, useForm } from 'vee-validate';
     import { useRoute, useRouter } from 'vue-router';
     import { Button } from '@/components/ui/button';
