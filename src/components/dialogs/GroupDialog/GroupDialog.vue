@@ -369,7 +369,7 @@
                                     :instance="room.ref"
                                     :friendcount="room.friendCount"
                                     :show-launch="false"
-                                    refresh-tooltip="RefreshCw player count"
+                                    refresh-tooltip="Refresh player count"
                                     :on-refresh="() => refreshInstancePlayerCount(room.tag)" />
                             </div>
                             <div
