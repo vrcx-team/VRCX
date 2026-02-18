@@ -146,7 +146,7 @@
                                     v-if="userDialog.ref.profilePicOverride && !userDialog.ref.currentAvatarImageUrl"
                                     side="top"
                                     :content="t('dialog.user.info.vrcplus_hides_avatar')">
-                                    <Info />
+                                    <Info class="inline-block" />
                                 </TooltipWrapper>
                             </span>
                             <div class="extra">

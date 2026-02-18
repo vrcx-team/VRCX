@@ -1005,8 +1005,7 @@
                 "showcased": "Showcased"
             },
             "actions": {
-                "favorite_tooltip": "Add to favorites",
-                "unfavorite_tooltip": "Remove from favorites",
+                "favorites_tooltip": "Favorites",
                 "refresh": "Refresh",
                 "share": "Share",
                 "invite": "Invite",

@@ -18,7 +18,7 @@
                     v-for="(link, index) in bioDialog.bioLinks"
                     :key="index"
                     v-model="bioDialog.bioLinks[index]"
-                    :maxlength="64"
+                    :maxlength="1000"
                     show-count
                     size="sm"
                     style="margin-top: 5px">
