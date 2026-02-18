@@ -112,6 +112,11 @@
             "move_tooltip": "Mover",
             "unfavorite_tooltip": "Desfavoritar",
             "visibility_tooltip": "Alterar Visibilidade",
+            "visibility": {
+                "public": "Público",
+                "friends": "Amigos",
+                "private": "Privado"
+            },
             "rename_tooltip": "Renomear",
             "clear_tooltip": "Limpar",
             "delete_tooltip": "Excluir",

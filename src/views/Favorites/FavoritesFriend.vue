@@ -123,8 +123,10 @@
                                             >
                                         </div>
                                         <div class="group-item__bottom">
-                                            <Badge variant="outline">
-                                                {{ t(`view.favorite.visibility.${group.visibility}`) }}
+                                            <Badge
+                                                :class="friendGroupVisibilitColors[group.visibility]"
+                                                variant="outline">
+                                                {{ formatVisibility(group.visibility) }}
                                             </Badge>
                                             <DropdownMenu
                                                 :open="activeGroupMenu === remoteGroupMenuKey(group.key)"
@@ -152,7 +154,7 @@
                                                             <DropdownMenuSubContent
                                                                 side="right"
                                                                 align="start"
-                                                                class="w-[180px]">
+                                                                class="w-45">
                                                                 <DropdownMenuCheckboxItem
                                                                     v-for="visibility in friendGroupVisibilityOptions"
                                                                     :key="visibility"
@@ -462,6 +464,11 @@
     import configRepository from '../../service/config.js';
 
     const friendGroupVisibilityOptions = ref(['public', 'friends', 'private']);
+    const friendGroupVisibilitColors = {
+        public: 'text-green-500 border-green-500',
+        friends: 'text-cyan-500 border-cyan-500',
+        private: 'text-red-500 border-red-500'
+    };
 
     const friendSplitterSize = ref(260);
     const friendSplitterFallbackWidth = typeof window !== 'undefined' && window.innerWidth ? window.innerWidth : 1200;

@@ -121,7 +121,9 @@
                                             >
                                         </div>
                                         <div class="group-item__bottom">
-                                            <Badge variant="outline">
+                                            <Badge
+                                                :class="avatarGroupVisibilityColors[group.visibility]"
+                                                variant="outline">
                                                 {{ t(`view.favorite.visibility.${group.visibility}`) }}
                                             </Badge>
                                             <DropdownMenu
@@ -573,6 +575,11 @@
         displayName: `Group ${index + 1}`
     }));
 
+    const avatarGroupVisibilityColors = {
+        public: 'text-green-500 border-green-500',
+        friends: 'text-cyan-500 border-cyan-500',
+        private: 'text-red-500 border-red-500'
+    };
     const avatarGroupVisibilityOptions = ref(['public', 'friends', 'private']);
     const historyGroupKey = 'local-history';
     const avatarSplitterSize = ref(260);
