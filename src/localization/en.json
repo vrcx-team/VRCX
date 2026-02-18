@@ -114,6 +114,7 @@
             "forgotPassword": "Forgot Password?",
             "updater": "Updater",
             "proxy_settings": "Proxy settings",
+            "settings": "Settings",
             "language": "Language",
             "field": {
                 "username": "Username or Email",

@@ -1,14 +1,10 @@
 <template>
     <div class="x-login-container">
         <div style="position: absolute; top: 0; left: 0; margin: 5px">
+            <LoginSettingsDialog />
             <TooltipWrapper v-if="!noUpdater" side="top" :content="t('view.login.updater')">
                 <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="showVRCXUpdateDialog"
                     ><ArrowBigDownDash
-                /></Button>
-            </TooltipWrapper>
-            <TooltipWrapper side="top" :content="t('view.login.proxy_settings')">
-                <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="promptProxySettings"
-                    ><Earth
                 /></Button>
             </TooltipWrapper>
             <DropdownMenu>
@@ -82,52 +78,7 @@
                             <Checkbox v-model="loginForm.saveCredentials" />
                             <span>{{ t('view.login.field.saveCredentials') }}</span>
                         </label>
-                        <label class="inline-flex items-center gap-2 text-sm" style="margin-top: 10px">
-                            <Checkbox v-model="enableCustomEndpoint" @update:modelValue="handleCustomEndpointToggle" />
-                            <span>{{ t('view.login.field.devEndpoint') }}</span>
-                        </label>
-                        <FieldGroup v-if="enableCustomEndpoint" class="mt-3 gap-3">
-                            <VeeField v-slot="{ field, errors }" name="endpoint">
-                                <Field :data-invalid="!!errors.length">
-                                    <FieldLabel for="login-form-endpoint">
-                                        {{ t('view.login.field.endpoint') }}
-                                    </FieldLabel>
-                                    <FieldContent>
-                                        <InputGroupField
-                                            id="login-form-endpoint"
-                                            :model-value="field.value"
-                                            autocomplete="off"
-                                            name="endpoint"
-                                            :placeholder="AppDebug.endpointDomainVrchat"
-                                            :aria-invalid="!!errors.length"
-                                            clearable
-                                            @update:modelValue="field.onChange"
-                                            @blur="field.onBlur" />
-                                        <FieldError v-if="errors.length" :errors="errors" />
-                                    </FieldContent>
-                                </Field>
-                            </VeeField>
-                            <VeeField v-slot="{ field, errors }" name="websocket">
-                                <Field :data-invalid="!!errors.length">
-                                    <FieldLabel for="login-form-websocket">
-                                        {{ t('view.login.field.websocket') }}
-                                    </FieldLabel>
-                                    <FieldContent>
-                                        <InputGroupField
-                                            id="login-form-websocket"
-                                            :model-value="field.value"
-                                            autocomplete="off"
-                                            name="websocket"
-                                            :placeholder="AppDebug.websocketDomainVrchat"
-                                            :aria-invalid="!!errors.length"
-                                            clearable
-                                            @update:modelValue="field.onChange"
-                                            @blur="field.onBlur" />
-                                        <FieldError v-if="errors.length" :errors="errors" />
-                                    </FieldContent>
-                                </Field>
-                            </VeeField>
-                        </FieldGroup>
+
                         <Field class="mt-2">
                             <Button type="submit" size="lg" style="width: 100%">{{ t('view.login.login') }}</Button>
                         </Field>
@@ -203,7 +154,6 @@
 
 <script setup>
     import { Field, FieldContent, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
-    import { ArrowBigDownDash, Earth, Languages, Minus } from 'lucide-vue-next';
     import {
         DropdownMenu,
         DropdownMenuCheckboxItem,
@@ -211,6 +161,7 @@
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
     import { onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
+    import { ArrowBigDownDash, Languages, Minus } from 'lucide-vue-next';
     import { Field as VeeField, useForm } from 'vee-validate';
     import { useRoute, useRouter } from 'vue-router';
     import { Button } from '@/components/ui/button';
@@ -221,23 +172,18 @@
     import { useI18n } from 'vue-i18n';
     import { z } from 'zod';
 
-    import {
-        useAppearanceSettingsStore,
-        useAuthStore,
-        useGeneralSettingsStore,
-        useVRCXUpdaterStore
-    } from '../../stores';
+    import { useAppearanceSettingsStore, useAuthStore, useVRCXUpdaterStore } from '../../stores';
     import { getLanguageName, languageCodes } from '../../localization';
     import { openExternalLink, userImage } from '../../shared/utils';
-    import { AppDebug } from '../../service/appConfig';
     import { watchState } from '../../service/watchState';
+
+    import LoginSettingsDialog from './Dialog/LoginSettingsDialog.vue';
 
     const { showVRCXUpdateDialog } = useVRCXUpdaterStore();
     const router = useRouter();
     const route = useRoute();
-    const { loginForm, enableCustomEndpoint } = storeToRefs(useAuthStore());
-    const { toggleCustomEndpoint, relogin, deleteSavedLogin, login, getAllSavedCredentials } = useAuthStore();
-    const { promptProxySettings } = useGeneralSettingsStore();
+    const { loginForm } = storeToRefs(useAuthStore());
+    const { relogin, deleteSavedLogin, login, getAllSavedCredentials } = useAuthStore();
     const { noUpdater } = storeToRefs(useVRCXUpdaterStore());
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -252,19 +198,15 @@
     const formSchema = toTypedSchema(
         z.object({
             username: z.string().min(1, requiredMessage),
-            password: z.string().min(1, requiredMessage),
-            endpoint: z.string().optional(),
-            websocket: z.string().optional()
+            password: z.string().min(1, requiredMessage)
         })
     );
 
-    const { handleSubmit, resetForm, setValues, values } = useForm({
+    const { handleSubmit, resetForm, values } = useForm({
         validationSchema: formSchema,
         initialValues: {
             username: loginForm.value.username,
-            password: loginForm.value.password,
-            endpoint: loginForm.value.endpoint,
-            websocket: loginForm.value.websocket
+            password: loginForm.value.password
         }
     });
 
@@ -281,20 +223,9 @@
     const onSubmit = handleSubmit(async (formValues) => {
         loginForm.value.username = formValues.username ?? '';
         loginForm.value.password = formValues.password ?? '';
-        loginForm.value.endpoint = formValues.endpoint ?? '';
-        loginForm.value.websocket = formValues.websocket ?? '';
         await login();
         await updateSavedCredentials();
     });
-
-    async function handleCustomEndpointToggle() {
-        await toggleCustomEndpoint();
-        setValues({
-            ...values,
-            endpoint: loginForm.value.endpoint,
-            websocket: loginForm.value.websocket
-        });
-    }
 
     async function updateSavedCredentials() {
         if (watchState.isLoggedIn) {
@@ -337,9 +268,7 @@
         resetForm({
             values: {
                 username: '',
-                password: '',
-                endpoint: '',
-                websocket: ''
+                password: ''
             }
         });
         loginForm.value.username = '';
@@ -354,8 +283,6 @@
         (formValues) => {
             loginForm.value.username = formValues.username ?? '';
             loginForm.value.password = formValues.password ?? '';
-            loginForm.value.endpoint = formValues.endpoint ?? '';
-            loginForm.value.websocket = formValues.websocket ?? '';
         },
         { deep: true }
     );
