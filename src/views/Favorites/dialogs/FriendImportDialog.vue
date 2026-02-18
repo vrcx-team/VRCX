@@ -25,26 +25,44 @@
                 :rows="10"
                 style="margin-top: 10px"
                 input-class="resize-none" />
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
-                <div>
-                    <Select
-                        :model-value="friendImportFavoriteGroupSelection"
-                        @update:modelValue="handleFriendImportGroupSelect">
-                        <SelectTrigger size="sm">
-                            <SelectValue :placeholder="t('dialog.friend_import.select_group_placeholder')" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem
-                                    v-for="groupAPI in favoriteFriendGroups"
-                                    :key="groupAPI.name"
-                                    :value="groupAPI.name"
-                                    :disabled="groupAPI.count >= groupAPI.capacity">
-                                    {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                                </SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+            <div>
+                <div class="mb-2">
+                    <div class="flex items-center gap-2">
+                        <Select
+                            :model-value="friendImportFavoriteGroupSelection"
+                            @update:modelValue="handleFriendImportGroupSelect">
+                            <SelectTrigger size="sm">
+                                <SelectValue :placeholder="t('dialog.friend_import.select_group_placeholder')" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem
+                                        v-for="groupAPI in favoriteFriendGroups"
+                                        :key="groupAPI.name"
+                                        :value="groupAPI.name"
+                                        :disabled="groupAPI.count >= groupAPI.capacity">
+                                        {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+
+                        <Select
+                            :model-value="friendImportLocalFavoriteGroupSelection"
+                            @update:modelValue="handleFriendImportLocalGroupSelect"
+                            style="margin-left: 10px">
+                            <SelectTrigger size="sm">
+                                <SelectValue :placeholder="t('dialog.world_import.select_local_group_placeholder')" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem v-for="group in localFriendFavoriteGroups" :key="group" :value="group">
+                                        {{ group }} ({{ localFriendFavGroupLength(group) }})
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
                     <span v-if="friendImportDialog.friendImportFavoriteGroup" style="margin-left: 5px">
                         {{ friendImportTable.data.length }} /
                         {{
@@ -64,7 +82,11 @@
                     </Button>
                     <Button
                         size="sm"
-                        :disabled="friendImportTable.data.length === 0 || !friendImportDialog.friendImportFavoriteGroup"
+                        :disabled="
+                            friendImportTable.data.length === 0 ||
+                            (!friendImportDialog.friendImportFavoriteGroup &&
+                                !friendImportDialog.friendImportLocalFavoriteGroup)
+                        "
                         @click="importFriendImportTable">
                         {{ t('dialog.friend_import.import') }}
                     </Button>
@@ -118,10 +140,10 @@
     const emit = defineEmits(['update:friendImportDialogInput']);
 
     const { showUserDialog } = useUserStore();
-    const { favoriteFriendGroups, friendImportDialogInput, friendImportDialogVisible } =
+    const { favoriteFriendGroups, friendImportDialogInput, friendImportDialogVisible, localFriendFavoriteGroups } =
         storeToRefs(useFavoriteStore());
     const { showFullscreenImageDialog } = useGalleryStore();
-    const { getCachedFavoritesByObjectId } = useFavoriteStore();
+    const { getCachedFavoritesByObjectId, localFriendFavGroupLength, addLocalFriendFavorite } = useFavoriteStore();
 
     const friendImportDialog = ref({
         loading: false,
@@ -131,11 +153,13 @@
         userIdList: new Set(),
         errors: '',
         friendImportFavoriteGroup: null,
+        friendImportLocalFavoriteGroup: null,
         importProgress: 0,
         importProgressTotal: 0
     });
 
     const friendImportFavoriteGroupSelection = ref('');
+    const friendImportLocalFavoriteGroupSelection = ref('');
 
     const friendImportTable = ref({
         data: [],
@@ -203,6 +227,11 @@
         }
     }
 
+    function handleFriendImportLocalGroupSelect(value) {
+        friendImportLocalFavoriteGroupSelection.value = value;
+        selectFriendImportLocalGroup(value || null);
+    }
+
     function cancelFriendImport() {
         friendImportDialog.value.loading = false;
     }
@@ -215,13 +244,23 @@
         friendImportDialog.value.userIdList = new Set();
     }
     function selectFriendImportGroup(group) {
+        friendImportDialog.value.friendImportLocalFavoriteGroup = null;
         friendImportDialog.value.friendImportFavoriteGroup = group;
         friendImportFavoriteGroupSelection.value = group?.name ?? '';
+        friendImportLocalFavoriteGroupSelection.value = '';
     }
+
+    function selectFriendImportLocalGroup(group) {
+        friendImportDialog.value.friendImportFavoriteGroup = null;
+        friendImportDialog.value.friendImportLocalFavoriteGroup = group;
+        friendImportFavoriteGroupSelection.value = '';
+        friendImportLocalFavoriteGroupSelection.value = group ?? '';
+    }
+
     async function importFriendImportTable() {
         const D = friendImportDialog.value;
         D.loading = true;
-        if (!D.friendImportFavoriteGroup) {
+        if (!D.friendImportFavoriteGroup && !D.friendImportLocalFavoriteGroup) {
             return;
         }
         const data = [...friendImportTable.value.data].reverse();
@@ -233,10 +272,14 @@
                     break;
                 }
                 ref = data[i];
-                if (getCachedFavoritesByObjectId(ref.id)) {
-                    throw new Error('Friend is already in favorites');
+                if (D.friendImportFavoriteGroup) {
+                    if (getCachedFavoritesByObjectId(ref.id)) {
+                        throw new Error('Friend is already in favorites');
+                    }
+                    await addFavoriteUser(ref, D.friendImportFavoriteGroup, false);
+                } else if (D.friendImportLocalFavoriteGroup) {
+                    addLocalFriendFavorite(ref.id, D.friendImportLocalFavoriteGroup);
                 }
-                await addFavoriteUser(ref, D.friendImportFavoriteGroup, false);
                 removeFromArray(friendImportTable.value.data, ref);
                 D.userIdList.delete(ref.id);
                 D.importProgress++;

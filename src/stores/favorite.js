@@ -162,6 +162,12 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             .map((fav) => fav.id)
     );
 
+    const localFriendFavoritesList = computed(() =>
+        Object.values(localFriendFavorites)
+            .flat()
+            .map((userId) => userId)
+    );
+
     const groupedByGroupKeyFavoriteFriends = computed(() => {
         const groupedByGroupKeyFavoriteFriends = {};
         favoriteFriends.value.forEach((friend) => {
@@ -1765,6 +1771,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         localAvatarFavoriteGroups,
         favoriteDialog,
         localWorldFavoritesList,
+        localFriendFavoritesList,
 
         localWorldFavoriteGroups,
         localFriendFavorites,

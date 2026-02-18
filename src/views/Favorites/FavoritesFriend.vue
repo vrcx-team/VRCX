@@ -930,7 +930,7 @@
         modalStore
             .confirm({
                 description: `Are you sure you want to unfavorite ${total} favorites?\n            This action cannot be undone.`,
-                title: `Trash2 ${total} favorites?`
+                title: `Delete ${total} favorites?`
             })
             .then(({ ok }) => ok && bulkUnfavoriteSelectedFriends([...selectedFavoriteFriends.value]))
             .catch(() => {});
@@ -958,11 +958,13 @@
                 description: 'Continue? Clear Group',
                 title: 'Confirm'
             })
-            .then(() => {
-                favoriteRequest.clearFavoriteGroup({
-                    type: ctx.type,
-                    group: ctx.name
-                });
+            .then(({ ok }) => {
+                if (ok) {
+                    favoriteRequest.clearFavoriteGroup({
+                        type: ctx.type,
+                        group: ctx.name
+                    });
+                }
             })
             .catch(() => {});
     }

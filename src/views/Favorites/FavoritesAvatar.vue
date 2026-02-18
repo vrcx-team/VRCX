@@ -591,7 +591,8 @@
         localAvatarFavorites,
         selectedFavoriteAvatars,
         isFavoriteLoading,
-        localAvatarFavoriteGroups
+        localAvatarFavoriteGroups,
+        avatarImportDialogInput
     } = storeToRefs(favoriteStore);
     const {
         showAvatarImportDialog,
@@ -1239,11 +1240,13 @@
                 description: 'Continue? Clear Group',
                 title: 'Confirm'
             })
-            .then(() => {
-                favoriteRequest.clearFavoriteGroup({
-                    type: ctx.type,
-                    group: ctx.name
-                });
+            .then(({ ok }) => {
+                if (ok) {
+                    favoriteRequest.clearFavoriteGroup({
+                        type: ctx.type,
+                        group: ctx.name
+                    });
+                }
             })
             .catch(() => {});
     }
@@ -1276,10 +1279,14 @@
     function promptLocalAvatarFavoriteGroupDelete(group) {
         modalStore
             .confirm({
-                description: `Trash2 Group? ${group}`,
+                description: `Delete Group? ${group}`,
                 title: 'Confirm'
             })
-            .then(() => deleteLocalAvatarFavoriteGroup(group))
+            .then(({ ok }) => {
+                if (ok) {
+                    deleteLocalAvatarFavoriteGroup(group);
+                }
+            })
             .catch(() => {});
     }
 
@@ -1398,6 +1405,55 @@
             worker.value = null;
         }
         refreshingLocalFavorites.value = false;
+    }
+
+    function toggleSelectAllAvatars() {
+        if (!activeRemoteGroup.value) {
+            return;
+        }
+        if (isAllAvatarsSelected.value) {
+            selectedFavoriteAvatars.value = [];
+        } else {
+            selectedFavoriteAvatars.value = currentRemoteFavorites.value.map((fav) => fav.id);
+        }
+    }
+
+    function copySelectedAvatars() {
+        if (!selectedFavoriteAvatars.value.length) {
+            return;
+        }
+        const idList = selectedFavoriteAvatars.value.map((id) => `${id}\n`).join('');
+        avatarImportDialogInput.value = idList;
+        showAvatarImportDialog();
+    }
+
+    function showAvatarBulkUnfavoriteSelectionConfirm() {
+        if (!selectedFavoriteAvatars.value.length) {
+            return;
+        }
+        const total = selectedFavoriteAvatars.value.length;
+        modalStore
+            .confirm({
+                description: `Are you sure you want to unfavorite ${total} favorites?
+            This action cannot be undone.`,
+                title: `Delete ${total} favorites?`
+            })
+            .then(({ ok }) => {
+                if (ok) {
+                    bulkUnfavoriteSelectedAvatars(selectedFavoriteAvatars.value);
+                }
+            })
+            .catch(() => {});
+    }
+
+    function bulkUnfavoriteSelectedAvatars(ids) {
+        ids.forEach((id) => {
+            favoriteRequest.deleteFavorite({
+                objectId: id
+            });
+        });
+        selectedFavoriteAvatars.value = [];
+        avatarEditMode.value = false;
     }
 
     onBeforeUnmount(() => {

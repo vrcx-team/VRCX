@@ -1095,9 +1095,13 @@
             .confirm({
                 description: `Are you sure you want to unfavorite ${total} favorites?
             This action cannot be undone.`,
-                title: `Trash2 ${total} favorites?`
+                title: `Delete ${total} favorites?`
             })
-            .then(() => bulkUnfavoriteSelectedWorlds([...selectedFavoriteWorlds.value]))
+            .then(({ ok }) => {
+                if (ok) {
+                    bulkUnfavoriteSelectedWorlds([...selectedFavoriteWorlds.value]);
+                }
+            })
             .catch(() => {});
     }
 
@@ -1170,10 +1174,14 @@
     function promptLocalWorldFavoriteGroupDelete(group) {
         modalStore
             .confirm({
-                description: `Trash2 Group? ${group}`,
+                description: `Delete Group? ${group}`,
                 title: 'Confirm'
             })
-            .then(() => deleteLocalWorldFavoriteGroup(group))
+            .then(({ ok }) => {
+                if (ok) {
+                    deleteLocalWorldFavoriteGroup(group);
+                }
+            })
             .catch(() => {});
     }
 
@@ -1183,11 +1191,13 @@
                 description: 'Continue? Clear Group',
                 title: 'Confirm'
             })
-            .then(() => {
-                favoriteRequest.clearFavoriteGroup({
-                    type: ctx.type,
-                    group: ctx.name
-                });
+            .then(({ ok }) => {
+                if (ok) {
+                    favoriteRequest.clearFavoriteGroup({
+                        type: ctx.type,
+                        group: ctx.name
+                    });
+                }
             })
             .catch(() => {});
     }
