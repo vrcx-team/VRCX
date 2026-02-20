@@ -855,8 +855,8 @@
         position: absolute;
         top: 6px;
         right: 3px;
-        width: 5px;
-        height: 5px;
+        width: 6px;
+        height: 6px;
         background-color: #ef4444;
         border-radius: 50%;
         transform: translateY(-50%);
@@ -866,8 +866,8 @@
         position: absolute;
         top: 6px;
         left: 3px;
-        width: 5px;
-        height: 5px;
+        width: 6px;
+        height: 6px;
         background-color: #ef4444;
         border-radius: 50%;
         transform: translateY(-50%);

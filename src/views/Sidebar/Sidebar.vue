@@ -83,7 +83,7 @@
                         <Bell />
                         <span
                             v-if="hasUnseenNotifications"
-                            class="absolute top-0.5 right-0.5 size-2 rounded-full bg-red-500" />
+                            class="absolute top-0.5 right-0.5 size-1.5 rounded-full bg-red-500" />
                     </Button>
                 </TooltipWrapper>
                 <Popover>
