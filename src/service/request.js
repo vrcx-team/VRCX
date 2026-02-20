@@ -121,6 +121,13 @@ export function request(endpoint, options) {
                 if (AppDebug.debugWebRequests) {
                     console.log(init, 'parsed data', response.data);
                 }
+                if (response.data.error) {
+                    $throw(
+                        response.data.error.status_code || 0,
+                        response.data.error.message,
+                        endpoint
+                    );
+                }
                 return response;
             } catch (e) {
                 console.error(e);

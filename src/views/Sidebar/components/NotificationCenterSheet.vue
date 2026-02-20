@@ -92,9 +92,9 @@
     const activeTab = ref('friend');
 
     const activeCount = computed(() => ({
-        friend: friendNotifications.value.filter((n) => !n.$isExpired).length,
-        group: groupNotifications.value.filter((n) => !n.$isExpired).length,
-        other: otherNotifications.value.filter((n) => !n.$isExpired).length
+        friend: friendNotifications.value.length,
+        group: groupNotifications.value.length,
+        other: otherNotifications.value.length
     }));
 
     // Dialog state

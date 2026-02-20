@@ -1,4 +1,5 @@
 import { useGalleryStore, useNotificationStore } from '../stores';
+import { notificationRequest } from '.';
 import { request } from '../service/request';
 
 /**
@@ -6,6 +7,10 @@ import { request } from '../service/request';
  */
 function getGalleryStore() {
     return useGalleryStore();
+}
+
+function getNotificationStore() {
+    return useNotificationStore();
 }
 
 const notificationReq = {
@@ -201,14 +206,20 @@ const notificationReq = {
                     json,
                     params
                 };
-                useNotificationStore().handleNotificationAccept(args);
+                getNotificationStore().handleNotificationAccept(args);
                 return args;
             })
             .catch((err) => {
                 // if friend request could not be found, delete it
                 if (err && err.message && err.message.includes('404')) {
-                    useNotificationStore().handleNotificationHide({ params });
+                    getNotificationStore().handleNotificationHide(
+                        params.notificationId
+                    );
                 }
+                return {
+                    json: null,
+                    params
+                };
             });
     },
 
@@ -227,7 +238,41 @@ const notificationReq = {
                 json,
                 params
             };
-            useNotificationStore().handleNotificationHide(args);
+            getNotificationStore().handleNotificationHide(
+                params.notificationId
+            );
+            return args;
+        });
+    },
+
+    /**
+     * @param {{ notificationId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
+    seeNotification(params) {
+        return request(`auth/user/notifications/${params.notificationId}/see`, {
+            method: 'PUT'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    /**
+     * @param {{ notificationId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
+    seeNotificationV2(params) {
+        return request(`notifications/${params.notificationId}/see`, {
+            method: 'POST'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
             return args;
         });
     },
@@ -244,7 +289,24 @@ const notificationReq = {
         return request(`notifications/${params.notificationId}/respond`, {
             method: 'POST',
             params
-        });
+        })
+            .then((json) => {
+                const args = {
+                    json,
+                    params
+                };
+                return args;
+            })
+            .catch(() => {
+                getNotificationStore().handleNotificationV2Hide(
+                    params.notificationId
+                );
+                notificationRequest.hideNotificationV2(params.notificationId);
+                return {
+                    json: null,
+                    params
+                };
+            });
     },
 
     hideNotificationV2(notificationId) {

@@ -1,8 +1,5 @@
 <template>
-    <Item
-        size="sm"
-        :variant="notification.$isExpired ? 'default' : 'muted'"
-        :class="[{ 'opacity-50': notification.$isExpired }, 'mb-1.5']">
+    <Item size="sm" variant="muted" class="mb-1.5">
         <ItemMedia variant="image" class="cursor-pointer" @click.stop="openSender">
             <Avatar class="size-full">
                 <AvatarImage v-if="avatarUrl" :src="avatarUrl" />
@@ -18,7 +15,7 @@
                     {{ typeLabel }}
                 </Badge>
                 <span
-                    v-if="!notification.$isExpired && isUnseen"
+                    v-if="!isNotificationExpired(notification) && !isSeen"
                     class="ml-auto size-2 shrink-0 rounded-full bg-blue-500" />
             </ItemTitle>
             <TooltipWrapper v-if="displayMessage" side="top" :content="displayMessage" :delay-duration="600">
@@ -33,7 +30,7 @@
                 {{ relativeTime }}
             </span>
             <div class="flex items-center gap-1">
-                <template v-if="!notification.$isExpired">
+                <template v-if="!isNotificationExpired(notification)">
                     <TooltipWrapper
                         v-if="notification.type === 'friendRequest'"
                         side="top"
@@ -134,9 +131,10 @@
     } from 'lucide-vue-next';
     import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+    import { computed, onMounted } from 'vue';
     import { Badge } from '@/components/ui/badge';
     import { TooltipWrapper } from '@/components/ui/tooltip';
-    import { computed } from 'vue';
+    import { notificationRequest } from '@/api';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -158,6 +156,7 @@
     const notificationStore = useNotificationStore();
     const { lastLocation } = storeToRefs(useLocationStore());
     const { isGameRunning } = storeToRefs(useGameStore());
+    const { openNotificationLink, isNotificationExpired, handleNotificationV2Hide } = useNotificationStore();
 
     const senderName = computed(() => {
         const n = props.notification;
@@ -224,6 +223,7 @@
 
     const showDecline = computed(() => {
         const type = props.notification.type;
+        const link = props.notification.link;
         return (
             type !== 'requestInviteResponse' &&
             type !== 'inviteResponse' &&
@@ -232,7 +232,8 @@
             type !== 'groupChange' &&
             !type?.includes('group.') &&
             !type?.includes('moderation.') &&
-            !type?.includes('instance.')
+            !type?.includes('instance.') &&
+            !link?.startsWith('economy.')
         );
     });
 
@@ -242,11 +243,16 @@
         const n = props.notification;
         const type = n.type;
         if (type === 'friendRequest' || type === 'ignoredFriendRequest') return false;
-        if (type?.includes('group.') || type?.includes('moderation.') || type?.includes('instance.')) return false;
-        if (n.link?.startsWith('economy.')) return false;
-        // For active notifications, group.queueReady is handled separately
-        if (!n.$isExpired && type === 'group.queueReady') return false;
         return true;
+    });
+
+    const isSeen = computed(() => {
+        const n = props.notification;
+        if (typeof n.seen === 'boolean') {
+            return n.seen;
+        }
+        // Fallback for v1 notifications without seen property
+        return !props.isUnseen;
     });
 
     const canInvite = computed(() => {
@@ -284,27 +290,6 @@
         notificationStore.sendNotificationResponse(props.notification.id, props.notification.responses, response.type);
     }
 
-    function openNotificationLink(link) {
-        if (!link) return;
-        const data = link.split(':');
-        if (!data.length) return;
-        switch (data[0]) {
-            case 'group':
-                groupStore.showGroupDialog(data[1]);
-                break;
-            case 'user':
-                userStore.showUserDialog(data[1]);
-                break;
-            case 'event': {
-                const ids = data[1].split(',');
-                if (ids.length >= 2) {
-                    groupStore.showGroupDialog(ids[0]);
-                }
-                break;
-            }
-        }
-    }
-
     function openSender() {
         const userId = props.notification.senderUserId;
         if (!userId) return;
@@ -314,4 +299,36 @@
             userStore.showUserDialog(userId);
         }
     }
+
+    onMounted(() => {
+        // Mark as seen
+        if (isNotificationExpired(props.notification) || isSeen.value) {
+            return;
+        }
+        const params = { notificationId: props.notification.id };
+        if (!props.notification.version || props.notification.version < 2) {
+            notificationRequest.seeNotification({ notificationId: props.notification.id }).then((args) => {
+                console.log('Marked notification-v1 as seen:', args.json);
+                notificationStore.handleNotificationSee(props.notification.id);
+            });
+            return;
+        }
+        notificationRequest
+            .seeNotificationV2(params)
+            .then((args) => {
+                console.log('Marked notification-v2 as seen:', args.json);
+                const newArgs = {
+                    params,
+                    json: {
+                        ...args.json,
+                        seen: true
+                    }
+                };
+                notificationStore.handleNotificationV2Update(newArgs);
+            })
+            .catch((err) => {
+                console.error('Failed to mark notification-v2 as seen:', err);
+                handleNotificationV2Hide(props.notification.id);
+            });
+    });
 </script>

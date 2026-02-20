@@ -94,6 +94,7 @@
     const { showGalleryPage, refreshEmojiTable } = useGalleryStore();
     const { emojiTable } = storeToRefs(useGalleryStore());
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
+    const { isNotificationExpired, handleNotificationV2Hide } = useNotificationStore();
 
     const fileId = ref('');
     const displayName = ref('');
@@ -161,14 +162,12 @@
         const array = notificationTable.value.data;
         for (let i = array.length - 1; i >= 0; i--) {
             const ref = array[i];
-            if (ref.type !== 'boop' || ref.$isExpired || ref.senderUserId !== userId) {
+            if (ref.type !== 'boop' || isNotificationExpired(ref) || ref.link !== `user:${userId}`) {
                 continue;
             }
-            notificationRequest.sendNotificationResponse({
-                notificationId: ref.id,
-                responseType: 'delete',
-                responseData: ''
-            });
+            console.log('Dismissing boop notification with id', ref.id);
+            handleNotificationV2Hide(ref.id);
+            notificationRequest.hideNotificationV2(ref.id);
         }
     }
 </script>

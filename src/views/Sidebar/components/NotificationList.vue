@@ -11,7 +11,7 @@
                     @show-invite-request-response="$emit('show-invite-request-response', $event)" />
             </div>
             <div v-else class="flex items-center justify-center p-8 text-sm text-muted-foreground">
-                {{ t('side_panel.notification_center.no_notifications') }}
+                {{ t('side_panel.notification_center.no_new_notifications') }}
             </div>
 
             <template v-if="expiredNotifications.length">
@@ -73,11 +73,13 @@
 
     const sortedNotifications = computed(() => [...props.notifications].sort((a, b) => getTs(b) - getTs(a)));
 
-    const activeNotifications = computed(() => sortedNotifications.value.filter((n) => !n.$isExpired));
+    const activeNotifications = computed(() =>
+        sortedNotifications.value.filter((n) => getTs(n) > dayjs().subtract(1, 'week').valueOf())
+    );
 
     const MAX_EXPIRED = 20;
 
     const expiredNotifications = computed(() =>
-        sortedNotifications.value.filter((n) => n.$isExpired).slice(0, MAX_EXPIRED)
+        sortedNotifications.value.filter((n) => getTs(n) <= dayjs().subtract(1, 'week').valueOf()).slice(0, MAX_EXPIRED)
     );
 </script>

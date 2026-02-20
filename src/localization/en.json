@@ -103,7 +103,7 @@
             "tab_group": "Group",
             "tab_other": "Other",
             "past_notifications": "Past",
-            "no_notifications": "No notifications"
+            "no_new_notifications": "No new notifications"
         }
     },
     "view": {
@@ -334,7 +334,8 @@
                     },
                     "report": {
                         "closed": "Moderation Report Closed"
-                    }
+                    },
+                    "contentrestriction": "Moderation Content Restriction"
                 },
                 "instance": {
                     "closed": "Instance Closed"

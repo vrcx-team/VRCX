@@ -1,43 +1,45 @@
 <template>
     <Dialog
         :open="changeAvatarImageDialogVisible"
-        @update:open="(open) => {
-            if (!open) closeDialog();
-        }">
+        @update:open="
+            (open) => {
+                if (!open) closeDialog();
+            }
+        ">
         <DialogContent class="x-dialog sm:max-w-212.5">
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.change_content_image.avatar') }}</DialogTitle>
             </DialogHeader>
 
             <div>
-            <input
-                id="AvatarImageUploadButton"
-                type="file"
-                accept="image/*"
-                style="display: none"
-                @change="onFileChangeAvatarImage" />
-            <span>{{ t('dialog.change_content_image.description') }}</span>
-            <br />
-            <Button
-                variant="outline"
-                size="icon-sm"
-                :disabled="changeAvatarImageDialogLoading"
-                @click="uploadAvatarImage">
-                <Upload />
-                {{ t('dialog.change_content_image.upload') }}
-            </Button>
-            <br />
-            <div class="inline-block p-1 pb-0 hover:rounded-sm">
-                <img :src="previousImageUrl" class="img-size" loading="lazy" />
-            </div>
+                <input
+                    id="AvatarImageUploadButton"
+                    type="file"
+                    accept="image/*"
+                    style="display: none"
+                    @change="onFileChangeAvatarImage" />
+                <span>{{ t('dialog.change_content_image.description') }}</span>
+                <br />
+                <Button
+                    variant="outline"
+                    size="sm"
+                    :disabled="changeAvatarImageDialogLoading"
+                    @click="uploadAvatarImage">
+                    <Upload />
+                    {{ t('dialog.change_content_image.upload') }}
+                </Button>
+                <br />
+                <div class="inline-block p-1 pb-0 hover:rounded-sm">
+                    <img :src="previousImageUrl" class="img-size" loading="lazy" />
+                </div>
             </div>
         </DialogContent>
     </Dialog>
 </template>
 
 <script setup>
-    import { Button } from '@/components/ui/button';
     import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { Button } from '@/components/ui/button';
     import { Upload } from 'lucide-vue-next';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';

@@ -42,7 +42,9 @@
                                         'group.queueReady',
                                         'moderation.warning.group',
                                         'moderation.report.closed',
-                                        'instance.closed'
+                                        'moderation.contentrestriction',
+                                        'instance.closed',
+                                        'economy.alert'
                                     ]"
                                     :key="type"
                                     :value="type">
@@ -89,7 +91,6 @@
     import { RefreshCw } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
-    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import dayjs from 'dayjs';
@@ -97,10 +98,8 @@
     import {
         useAppearanceSettingsStore,
         useGalleryStore,
-        useGroupStore,
         useInviteStore,
         useNotificationStore,
-        useUserStore,
         useVrcxStore
     } from '../../stores';
     import { DataTableLayout } from '../../components/ui/data-table';
@@ -113,8 +112,6 @@
     import SendInviteResponseDialog from './dialogs/SendInviteResponseDialog.vue';
     import configRepository from '../../service/config';
 
-    const { showUserDialog } = useUserStore();
-    const { showGroupDialog } = useGroupStore();
     const { refreshInviteMessageTableData } = useInviteStore();
     const { clearInviteImageUpload } = useGalleryStore();
     const { notificationTable, isNotificationsLoading } = storeToRefs(useNotificationStore());
@@ -126,7 +123,8 @@
         acceptRequestInvite,
         sendNotificationResponse,
         deleteNotificationLog,
-        deleteNotificationLogPrompt
+        deleteNotificationLogPrompt,
+        openNotificationLink
     } = useNotificationStore();
     const { showFullscreenImageDialog } = useGalleryStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -292,38 +290,6 @@
     function handleNotificationFilterChange(value) {
         notificationTable.value.filters[0].value = Array.isArray(value) ? value : [];
         saveTableFilters();
-    }
-
-    function openNotificationLink(link) {
-        if (!link) {
-            return;
-        }
-        const data = link.split(':');
-        if (!data.length) {
-            return;
-        }
-        switch (data[0]) {
-            case 'group':
-                showGroupDialog(data[1]);
-                break;
-            case 'user':
-                showUserDialog(data[1]);
-                break;
-            case 'event':
-                const ids = data[1].split(',');
-                if (ids.length < 2) {
-                    console.error('Invalid event notification link:', data[1]);
-                    return;
-                }
-
-                showGroupDialog(ids[0]);
-                // ids[1] cal_ is the event id
-                break;
-            case 'openNotificationLink':
-            default:
-                toast.error('Unsupported notification link type');
-                break;
-        }
     }
 
     function getSmallThumbnailUrl(url) {
