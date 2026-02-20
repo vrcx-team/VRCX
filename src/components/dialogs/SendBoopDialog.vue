@@ -6,9 +6,6 @@
             </DialogHeader>
             <span>{{ displayName }}</span>
 
-            <br />
-            <br />
-
             <div v-if="sendBoopDialog.visible" style="width: 100%">
                 <VirtualCombobox
                     v-model="emojiModel"
@@ -17,16 +14,14 @@
                     :search-placeholder="t('dialog.boop_dialog.select_default_emoji')"
                     :clearable="true"
                     :close-on-select="true"
-                    :deselect-on-reselect="true">
+                    :deselect-on-reselect="true"
+                    :maxHeight="230">
                     <template #item="{ item, selected }">
                         <span v-text="item.label"></span>
                         <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
                     </template>
                 </VirtualCombobox>
             </div>
-
-            <br />
-            <br />
 
             <div
                 v-if="isLocalUserVrcPlusSupporter"
