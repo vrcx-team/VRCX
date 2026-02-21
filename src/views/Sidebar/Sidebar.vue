@@ -74,7 +74,7 @@
                         <RefreshCw v-else />
                     </Button>
                 </TooltipWrapper>
-                <TooltipWrapper side="bottom" :content="t('side_panel.notifications')">
+                <TooltipWrapper side="bottom" :content="t('side_panel.notification_center.title')">
                     <Button
                         class="rounded-full relative"
                         variant="ghost"
@@ -83,7 +83,7 @@
                         <Bell />
                         <span
                             v-if="hasUnseenNotifications"
-                            class="absolute top-0.5 right-0.5 size-1.5 rounded-full bg-red-500" />
+                            class="absolute top-0.5 right-0.25 size-1.5 rounded-full bg-red-500" />
                     </Button>
                 </TooltipWrapper>
                 <Popover>
