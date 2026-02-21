@@ -1,136 +1,224 @@
 <template>
-    <Item size="sm" variant="muted" class="mb-1.5">
-        <ItemMedia variant="image" class="cursor-pointer" @click.stop="openSender">
-            <Avatar class="size-full">
-                <AvatarImage v-if="avatarUrl" :src="avatarUrl" />
-                <AvatarFallback class="text-muted-foreground">
-                    <component :is="typeIcon" class="size-4" />
-                </AvatarFallback>
-            </Avatar>
-        </ItemMedia>
-        <ItemContent class="min-w-0">
-            <ItemTitle class="min-w-0 w-full">
-                <span class="truncate cursor-pointer" @click.stop="openSender">{{ senderName }}</span>
-                <Badge variant="secondary" class="shrink-0 text-muted-foreground text-[10px]">
-                    {{ typeLabel }}
-                </Badge>
-                <span
-                    v-if="!isNotificationExpired(notification) && !isSeen"
-                    class="ml-auto size-2 shrink-0 rounded-full bg-blue-500" />
-            </ItemTitle>
-            <ItemDescription v-if="notification.type === 'invite' && notification.details?.worldId" class="text-xs">
-                <Location
-                    :location="notification.details.worldId"
-                    :hint="notification.details.worldName || ''"
-                    :grouphint="notification.details.groupName || ''"
-                    link />
-            </ItemDescription>
-            <ItemDescription
-                v-else-if="
-                    (notification.type === 'group.queueReady' || notification.type === 'instance.closed') &&
-                    notification.location
-                "
-                class="text-xs">
-                <Location
-                    :location="notification.location"
-                    :hint="notification.worldName || ''"
-                    :grouphint="notification.groupName || ''"
-                    link />
-            </ItemDescription>
-            <TooltipWrapper v-if="displayMessage" side="top" :content="displayMessage" :delay-duration="600">
-                <ItemDescription class="text-xs select-none">
-                    {{ displayMessage }}
-                </ItemDescription>
-            </TooltipWrapper>
-        </ItemContent>
+    <HoverCard :open-delay="400" :close-delay="100">
+        <HoverCardTrigger as-child>
+            <Item size="sm" variant="muted" class="mb-1.5">
+                <ItemMedia variant="image" class="cursor-pointer" @click.stop="openSender">
+                    <Avatar class="size-full">
+                        <AvatarImage v-if="avatarUrl" :src="avatarUrl" />
+                        <AvatarFallback class="text-muted-foreground">
+                            <component :is="typeIcon" class="size-4" />
+                        </AvatarFallback>
+                    </Avatar>
+                </ItemMedia>
+                <ItemContent class="min-w-0">
+                    <ItemTitle class="min-w-0 w-full">
+                        <span class="truncate cursor-pointer" @click.stop="openSender">{{ senderName }}</span>
+                        <Badge variant="secondary" class="shrink-0 text-muted-foreground text-[10px]">
+                            {{ typeLabel }}
+                        </Badge>
+                        <span
+                            v-if="!isNotificationExpired(notification) && !isSeen"
+                            class="ml-auto size-2 shrink-0 rounded-full bg-blue-500" />
+                    </ItemTitle>
+                    <ItemDescription
+                        v-if="notification.type === 'invite' && notification.details?.worldId"
+                        class="text-xs">
+                        <Location
+                            :location="notification.details.worldId"
+                            :hint="notification.details.worldName || ''"
+                            :grouphint="notification.details.groupName || ''"
+                            link />
+                    </ItemDescription>
+                    <ItemDescription
+                        v-else-if="
+                            (notification.type === 'group.queueReady' || notification.type === 'instance.closed') &&
+                            notification.location
+                        "
+                        class="text-xs">
+                        <Location
+                            :location="notification.location"
+                            :hint="notification.worldName || ''"
+                            :grouphint="notification.groupName || ''"
+                            link />
+                    </ItemDescription>
+                    <ItemDescription v-if="displayMessage" class="text-xs select-none truncate">
+                        {{ displayMessage }}
+                    </ItemDescription>
+                </ItemContent>
 
-        <div class="flex h-full shrink-0 flex-col items-end justify-between gap-1">
-            <TooltipWrapper v-if="relativeTime" side="top" :content="absoluteTime">
-                <span class="text-[10px] text-muted-foreground whitespace-nowrap">
-                    {{ relativeTime }}
-                </span>
-            </TooltipWrapper>
-            <div class="flex items-center gap-1">
-                <template v-if="!isNotificationExpired(notification)">
-                    <TooltipWrapper
-                        v-if="notification.type === 'friendRequest'"
-                        side="top"
-                        :content="t('view.notification.actions.accept')">
-                        <button
-                            type="button"
-                            class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
-                            @click.stop="notificationStore.acceptFriendRequestNotification(notification)">
-                            <Check class="size-3" />
-                        </button>
+                <div class="flex h-full shrink-0 flex-col items-end justify-between gap-1">
+                    <TooltipWrapper v-if="relativeTime" side="top" :content="absoluteTime">
+                        <span class="text-[10px] text-muted-foreground whitespace-nowrap">
+                            {{ relativeTime }}
+                        </span>
                     </TooltipWrapper>
+                    <div class="flex items-center gap-1">
+                        <template v-if="!isNotificationExpired(notification)">
+                            <TooltipWrapper
+                                v-if="notification.type === 'friendRequest'"
+                                side="top"
+                                :content="t('view.notification.actions.accept')">
+                                <button
+                                    type="button"
+                                    class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
+                                    @click.stop="notificationStore.acceptFriendRequestNotification(notification)">
+                                    <Check class="size-3" />
+                                </button>
+                            </TooltipWrapper>
 
-                    <TooltipWrapper
-                        v-if="notification.type === 'invite'"
-                        side="top"
-                        :content="t('view.notification.actions.decline_with_message')">
-                        <button
-                            type="button"
-                            class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
-                            @click.stop="$emit('show-invite-response', notification)">
-                            <MessageCircle class="size-3" />
-                        </button>
-                    </TooltipWrapper>
+                            <TooltipWrapper
+                                v-if="notification.type === 'invite'"
+                                side="top"
+                                :content="t('view.notification.actions.decline_with_message')">
+                                <button
+                                    type="button"
+                                    class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
+                                    @click.stop="$emit('show-invite-response', notification)">
+                                    <MessageCircle class="size-3" />
+                                </button>
+                            </TooltipWrapper>
 
-                    <template v-if="notification.type === 'requestInvite'">
-                        <TooltipWrapper v-if="canInvite" side="top" :content="t('view.notification.actions.invite')">
-                            <button
-                                type="button"
-                                class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
-                                @click.stop="notificationStore.acceptRequestInvite(notification)">
-                                <Check class="size-3" />
-                            </button>
-                        </TooltipWrapper>
-                        <TooltipWrapper side="top" :content="t('view.notification.actions.decline_with_message')">
-                            <button
-                                type="button"
-                                class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
-                                @click.stop="$emit('show-invite-request-response', notification)">
-                                <MessageCircle class="size-3" />
-                            </button>
-                        </TooltipWrapper>
-                    </template>
+                            <template v-if="notification.type === 'requestInvite'">
+                                <TooltipWrapper
+                                    v-if="canInvite"
+                                    side="top"
+                                    :content="t('view.notification.actions.invite')">
+                                    <button
+                                        type="button"
+                                        class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
+                                        @click.stop="notificationStore.acceptRequestInvite(notification)">
+                                        <Check class="size-3" />
+                                    </button>
+                                </TooltipWrapper>
+                                <TooltipWrapper
+                                    side="top"
+                                    :content="t('view.notification.actions.decline_with_message')">
+                                    <button
+                                        type="button"
+                                        class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
+                                        @click.stop="$emit('show-invite-request-response', notification)">
+                                        <MessageCircle class="size-3" />
+                                    </button>
+                                </TooltipWrapper>
+                            </template>
 
-                    <template v-if="hasResponses">
+                            <template v-if="hasResponses">
+                                <TooltipWrapper
+                                    v-for="response in notification.responses"
+                                    :key="`${response.text}:${response.type}`"
+                                    side="top"
+                                    :content="response.text">
+                                    <button
+                                        type="button"
+                                        class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
+                                        @click.stop="handleResponse(response)">
+                                        <component :is="getResponseIcon(response)" class="size-3" />
+                                    </button>
+                                </TooltipWrapper>
+                            </template>
+
+                            <TooltipWrapper
+                                v-if="showDecline"
+                                side="top"
+                                :content="t('view.notification.actions.decline')">
+                                <button
+                                    type="button"
+                                    class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-muted"
+                                    @click.stop="notificationStore.hideNotificationPrompt(notification)">
+                                    <X class="size-3" />
+                                </button>
+                            </TooltipWrapper>
+                        </template>
+
                         <TooltipWrapper
-                            v-for="response in notification.responses"
-                            :key="`${response.text}:${response.type}`"
+                            v-if="showDeleteLog"
                             side="top"
-                            :content="response.text">
+                            :content="t('view.notification.actions.delete_log')">
                             <button
                                 type="button"
-                                class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
-                                @click.stop="handleResponse(response)">
-                                <component :is="getResponseIcon(response)" class="size-3" />
+                                class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-muted"
+                                @click.stop="notificationStore.deleteNotificationLogPrompt(notification)">
+                                <Trash2 class="size-3" />
                             </button>
                         </TooltipWrapper>
-                    </template>
+                    </div>
+                </div>
+            </Item>
+        </HoverCardTrigger>
+        <HoverCardContent side="left" :side-offset="8" class="w-80 p-3">
+            <!-- Group notifications -->
+            <template v-if="isGroupType">
+                <div class="flex items-center gap-2 mb-2">
+                    <Avatar class="size-8 shrink-0 rounded">
+                        <AvatarImage v-if="hoverImageUrl" :src="hoverImageUrl" />
+                        <AvatarFallback class="text-muted-foreground rounded">
+                            <Users class="size-4" />
+                        </AvatarFallback>
+                    </Avatar>
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium truncate">{{ groupDisplayName }}</p>
+                        <p class="text-xs text-muted-foreground">{{ typeLabel }}</p>
+                    </div>
+                </div>
+                <p v-if="hoverTitle" class="text-sm font-medium mb-1">{{ hoverTitle }}</p>
+                <p
+                    v-if="notification.message"
+                    class="text-xs text-muted-foreground whitespace-pre-line warp-break-words leading-relaxed">
+                    {{ notification.message }}
+                </p>
+            </template>
 
-                    <TooltipWrapper v-if="showDecline" side="top" :content="t('view.notification.actions.decline')">
-                        <button
-                            type="button"
-                            class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-muted"
-                            @click.stop="notificationStore.hideNotificationPrompt(notification)">
-                            <X class="size-3" />
-                        </button>
-                    </TooltipWrapper>
-                </template>
+            <!-- Friend  -->
+            <template v-else-if="isFriendType">
+                <div class="flex items-center gap-2 mb-2">
+                    <Avatar class="size-8 shrink-0">
+                        <AvatarImage v-if="avatarUrl" :src="avatarUrl" />
+                        <AvatarFallback class="text-muted-foreground">
+                            <component :is="typeIcon" class="size-4" />
+                        </AvatarFallback>
+                    </Avatar>
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium truncate">{{ senderName }}</p>
+                        <p class="text-xs text-muted-foreground">{{ typeLabel }}</p>
+                    </div>
+                </div>
+                <p v-if="notification.details?.worldName" class="text-xs mb-1">
+                    <span class="text-muted-foreground">World: </span>{{ notification.details.worldName }}
+                </p>
+                <p v-if="friendMessage" class="text-xs text-muted-foreground warp-break-words leading-relaxed">
+                    {{ friendMessage }}
+                </p>
+            </template>
 
-                <TooltipWrapper v-if="showDeleteLog" side="top" :content="t('view.notification.actions.delete_log')">
-                    <button
-                        type="button"
-                        class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-muted"
-                        @click.stop="notificationStore.deleteNotificationLogPrompt(notification)">
-                        <Trash2 class="size-3" />
-                    </button>
-                </TooltipWrapper>
+            <!-- Other notifications -->
+            <template v-else>
+                <div class="flex items-center gap-2 mb-2">
+                    <Avatar class="size-8 shrink-0">
+                        <AvatarImage v-if="avatarUrl" :src="avatarUrl" />
+                        <AvatarFallback class="text-muted-foreground">
+                            <component :is="typeIcon" class="size-4" />
+                        </AvatarFallback>
+                    </Avatar>
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium truncate">{{ senderName || notification.type }}</p>
+                        <p class="text-xs text-muted-foreground">{{ typeLabel }}</p>
+                    </div>
+                </div>
+                <p v-if="notification.title" class="text-sm font-medium mb-1">{{ notification.title }}</p>
+                <p
+                    v-if="displayMessage"
+                    class="text-xs text-muted-foreground whitespace-pre-line wrap-break-words leading-relaxed">
+                    {{ displayMessage }}
+                </p>
+            </template>
+
+            <!-- Time (always shown) -->
+            <Separator v-if="absoluteTime" class="my-2" />
+            <div v-if="absoluteTime" class="flex items-center gap-2 text-[10px] text-muted-foreground">
+                <CalendarDays />{{ absoluteTime }}
             </div>
-        </div>
-    </Item>
+        </HoverCardContent>
+    </HoverCard>
 </template>
 
 <script setup>
@@ -138,6 +226,7 @@
         Ban,
         Bell,
         BellOff,
+        CalendarDays,
         Check,
         Link,
         Mail,
@@ -152,8 +241,10 @@
     } from 'lucide-vue-next';
     import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+    import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
     import { computed, onMounted } from 'vue';
     import { Badge } from '@/components/ui/badge';
+    import { Separator } from '@/components/ui/separator';
     import { TooltipWrapper } from '@/components/ui/tooltip';
     import { notificationRequest } from '@/api';
     import { storeToRefs } from 'pinia';
@@ -276,6 +367,44 @@
         const type = n.type;
         if (type === 'friendRequest' || type === 'ignoredFriendRequest') return false;
         return true;
+    });
+
+    const isGroupType = computed(() => {
+        const type = props.notification.type;
+        return type?.startsWith('group.') || type === 'groupChange';
+    });
+
+    const isFriendType = computed(() => {
+        const type = props.notification.type;
+        return [
+            'invite',
+            'requestInvite',
+            'inviteResponse',
+            'requestInviteResponse',
+            'friendRequest',
+            'ignoredFriendRequest',
+            'boop'
+        ].includes(type);
+    });
+
+    const groupDisplayName = computed(() => {
+        const n = props.notification;
+        return n.data?.groupName || n.groupName || n.details?.groupName || n.senderUsername || '';
+    });
+
+    const hoverTitle = computed(() => {
+        const n = props.notification;
+        return n.data?.announcementTitle || n.title || '';
+    });
+
+    const hoverImageUrl = computed(() => {
+        const n = props.notification;
+        return n.imageUrl || n.details?.imageUrl || null;
+    });
+
+    const friendMessage = computed(() => {
+        const n = props.notification;
+        return n.message || n.details?.inviteMessage || n.details?.requestMessage || n.details?.responseMessage || '';
     });
 
     const isSeen = computed(() => {
