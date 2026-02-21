@@ -479,6 +479,12 @@ export const useNotificationStore = defineStore('Notification', () => {
                 delete json[key];
             }
         }
+        if (json.message) {
+            json.message = replaceBioSymbols(json.message);
+        }
+        if (json.title) {
+            json.title = replaceBioSymbols(json.title);
+        }
         let ref = notificationTable.value.data.find((n) => n.id === json.id);
         if (typeof ref === 'undefined') {
             ref = {
@@ -493,8 +499,11 @@ export const useNotificationStore = defineStore('Notification', () => {
                 title: '',
                 imageUrl: '',
                 seen: false,
+                senderUserId: '',
+                senderUsername: '',
                 data: {},
                 responses: [],
+                details: {},
                 version: 2,
                 ...json
             };
