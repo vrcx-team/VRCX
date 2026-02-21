@@ -124,6 +124,16 @@ export const useNotificationStore = defineStore('Notification', () => {
             (n) => getNotificationCategory(n.type) === 'other'
         )
     );
+    const unseenSet = computed(() => new Set(unseenNotifications.value));
+    const unseenFriendNotifications = computed(() =>
+        friendNotifications.value.filter((n) => unseenSet.value.has(n.id))
+    );
+    const unseenGroupNotifications = computed(() =>
+        groupNotifications.value.filter((n) => unseenSet.value.has(n.id))
+    );
+    const unseenOtherNotifications = computed(() =>
+        otherNotifications.value.filter((n) => unseenSet.value.has(n.id))
+    );
     const hasUnseenNotifications = computed(
         () => unseenNotifications.value.length > 0
     );
@@ -2703,6 +2713,9 @@ export const useNotificationStore = defineStore('Notification', () => {
         friendNotifications,
         groupNotifications,
         otherNotifications,
+        unseenFriendNotifications,
+        unseenGroupNotifications,
+        unseenOtherNotifications,
         hasUnseenNotifications,
         getNotificationCategory,
         isNotificationExpired,
