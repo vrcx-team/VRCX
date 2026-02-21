@@ -18,6 +18,25 @@
                     v-if="!isNotificationExpired(notification) && !isSeen"
                     class="ml-auto size-2 shrink-0 rounded-full bg-blue-500" />
             </ItemTitle>
+            <ItemDescription v-if="notification.type === 'invite' && notification.details?.worldId" class="text-xs">
+                <Location
+                    :location="notification.details.worldId"
+                    :hint="notification.details.worldName || ''"
+                    :grouphint="notification.details.groupName || ''"
+                    link />
+            </ItemDescription>
+            <ItemDescription
+                v-else-if="
+                    (notification.type === 'group.queueReady' || notification.type === 'instance.closed') &&
+                    notification.location
+                "
+                class="text-xs">
+                <Location
+                    :location="notification.location"
+                    :hint="notification.worldName || ''"
+                    :grouphint="notification.groupName || ''"
+                    link />
+            </ItemDescription>
             <TooltipWrapper v-if="displayMessage" side="top" :content="displayMessage" :delay-duration="600">
                 <ItemDescription class="text-xs select-none">
                     {{ displayMessage }}
@@ -25,7 +44,7 @@
             </TooltipWrapper>
         </ItemContent>
 
-        <div class="flex shrink-0 flex-col items-end gap-1">
+        <div class="flex h-full shrink-0 flex-col items-end justify-between gap-1">
             <TooltipWrapper v-if="relativeTime" side="top" :content="absoluteTime">
                 <span class="text-[10px] text-muted-foreground whitespace-nowrap">
                     {{ relativeTime }}
@@ -145,6 +164,8 @@
     import { useGameStore, useGroupStore, useLocationStore, useNotificationStore, useUserStore } from '../../../stores';
     import { checkCanInvite, userImage } from '../../../shared/utils';
 
+    import Location from '../../../components/Location.vue';
+
     const props = defineProps({
         notification: { type: Object, required: true },
         isUnseen: { type: Boolean, default: false }
@@ -162,9 +183,9 @@
 
     const senderName = computed(() => {
         const n = props.notification;
-        if (n.senderUsername && n.senderUsername?.Value === null) {
-            return n.title || n.data?.groupName || n.groupName || n.details?.groupName || '';
-        }
+        // if (n.senderUsername && n.senderUsername?.Value === null) {
+        //     return n.title || n.data?.groupName || n.groupName || n.details?.groupName || '';
+        // }
         return n.senderUsername || n.data?.groupName || n.groupName || n.details?.groupName || '';
     });
 

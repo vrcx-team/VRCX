@@ -2651,6 +2651,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     function deleteNotificationLogPrompt(row) {
         modalStore
             .confirm({
+                // TODO: type translation
                 description: t('confirm.delete_type', { type: row.type }),
                 title: t('confirm.title')
             })
