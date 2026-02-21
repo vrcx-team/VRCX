@@ -194,9 +194,9 @@ const feed = {
         if (avatar) {
             let avatarQuery = '';
             if (aviPrivate) {
-                avatarQuery = 'AND user_id = owner_id';
+                avatarQuery = 'OR user_id = owner_id';
             } else if (aviPublic) {
-                avatarQuery = 'AND user_id != owner_id';
+                avatarQuery = 'OR user_id != owner_id';
             }
             selects.push(
                 `SELECT * FROM (SELECT id, created_at, user_id, display_name, 'Avatar' AS type, NULL AS location, NULL AS world_name, NULL AS previous_location, NULL AS time, NULL AS group_name, NULL AS status, NULL AS status_description, NULL AS previous_status, NULL AS previous_status_description, NULL AS bio, NULL AS previous_bio, owner_id, avatar_name, current_avatar_image_url, current_avatar_thumbnail_image_url, previous_current_avatar_image_url, previous_current_avatar_thumbnail_image_url FROM ${dbVars.userPrefix}_feed_avatar WHERE (display_name LIKE @searchLike OR avatar_name LIKE @searchLike) ${avatarQuery} ${dateQuery} ${vipQuery} ORDER BY created_at DESC, id DESC LIMIT @perTable)`
