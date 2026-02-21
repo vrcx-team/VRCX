@@ -32,6 +32,7 @@ import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
 import { useGameStore } from './game';
 import { useGeneralSettingsStore } from './settings/general';
+import { useGroupStore } from './group';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
 import { useModalStore } from './modal';
@@ -60,6 +61,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     const sharedFeedStore = useSharedFeedStore();
     const instanceStore = useInstanceStore();
     const modalStore = useModalStore();
+    const groupStore = useGroupStore();
 
     const notificationInitStatus = ref(false);
     const notificationTable = ref({

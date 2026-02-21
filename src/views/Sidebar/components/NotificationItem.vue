@@ -292,11 +292,17 @@
 
     function openSender() {
         const userId = props.notification.senderUserId;
-        if (!userId) return;
-        if (userId.startsWith('grp_')) {
-            groupStore.showGroupDialog(userId);
-        } else {
-            userStore.showUserDialog(userId);
+        if (userId) {
+            if (userId.startsWith('grp_')) {
+                groupStore.showGroupDialog(userId);
+            } else {
+                userStore.showUserDialog(userId);
+            }
+            return;
+        }
+        const link = props.notification.link;
+        if (link) {
+            openNotificationLink(link);
         }
     }
 
