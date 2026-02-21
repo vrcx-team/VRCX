@@ -30,6 +30,7 @@
                 <TabsContent value="friend" class="mt-0 min-h-0 flex-1 overflow-hidden">
                     <NotificationList
                         :notifications="unseenFriendNotifications"
+                        :recent-notifications="recentFriendNotifications"
                         @show-invite-response="showSendInviteResponseDialog"
                         @show-invite-request-response="showSendInviteRequestResponseDialog"
                         @navigate-to-table="navigateToTable" />
@@ -37,6 +38,7 @@
                 <TabsContent value="group" class="mt-0 min-h-0 flex-1 overflow-hidden">
                     <NotificationList
                         :notifications="unseenGroupNotifications"
+                        :recent-notifications="recentGroupNotifications"
                         @show-invite-response="showSendInviteResponseDialog"
                         @show-invite-request-response="showSendInviteRequestResponseDialog"
                         @navigate-to-table="navigateToTable" />
@@ -44,6 +46,7 @@
                 <TabsContent value="other" class="mt-0 min-h-0 flex-1 overflow-hidden">
                     <NotificationList
                         :notifications="unseenOtherNotifications"
+                        :recent-notifications="recentOtherNotifications"
                         @show-invite-response="showSendInviteResponseDialog"
                         @show-invite-request-response="showSendInviteRequestResponseDialog"
                         @navigate-to-table="navigateToTable" />
@@ -78,8 +81,15 @@
     const { refreshInviteMessageTableData } = useInviteStore();
     const { clearInviteImageUpload } = useGalleryStore();
 
-    const { isNotificationCenterOpen, unseenFriendNotifications, unseenGroupNotifications, unseenOtherNotifications } =
-        storeToRefs(useNotificationStore());
+    const {
+        isNotificationCenterOpen,
+        unseenFriendNotifications,
+        unseenGroupNotifications,
+        unseenOtherNotifications,
+        recentFriendNotifications,
+        recentGroupNotifications,
+        recentOtherNotifications
+    } = storeToRefs(useNotificationStore());
 
     const activeTab = ref('friend');
 

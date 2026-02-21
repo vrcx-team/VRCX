@@ -134,6 +134,34 @@ export const useNotificationStore = defineStore('Notification', () => {
     const unseenOtherNotifications = computed(() =>
         otherNotifications.value.filter((n) => unseenSet.value.has(n.id))
     );
+    const recentCutoff = computed(() => dayjs().subtract(24, 'hour').valueOf());
+    function getNotificationTs(n) {
+        const raw = n.created_at ?? n.createdAt;
+        if (typeof raw === 'number') return raw > 1e12 ? raw : raw * 1000;
+        const ts = dayjs(raw).valueOf();
+        return Number.isFinite(ts) ? ts : 0;
+    }
+    const recentFriendNotifications = computed(() =>
+        friendNotifications.value.filter(
+            (n) =>
+                !unseenSet.value.has(n.id) &&
+                getNotificationTs(n) > recentCutoff.value
+        )
+    );
+    const recentGroupNotifications = computed(() =>
+        groupNotifications.value.filter(
+            (n) =>
+                !unseenSet.value.has(n.id) &&
+                getNotificationTs(n) > recentCutoff.value
+        )
+    );
+    const recentOtherNotifications = computed(() =>
+        otherNotifications.value.filter(
+            (n) =>
+                !unseenSet.value.has(n.id) &&
+                getNotificationTs(n) > recentCutoff.value
+        )
+    );
     const hasUnseenNotifications = computed(
         () => unseenNotifications.value.length > 0
     );
@@ -2716,6 +2744,9 @@ export const useNotificationStore = defineStore('Notification', () => {
         unseenFriendNotifications,
         unseenGroupNotifications,
         unseenOtherNotifications,
+        recentFriendNotifications,
+        recentGroupNotifications,
+        recentOtherNotifications,
         hasUnseenNotifications,
         getNotificationCategory,
         isNotificationExpired,

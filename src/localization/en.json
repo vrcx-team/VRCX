@@ -102,8 +102,8 @@
             "tab_friend": "Friend",
             "tab_group": "Group",
             "tab_other": "Other",
-            "past_notifications": "Past",
-            "no_new_notifications": "No new notifications"
+            "past_notifications": "Last 24 hours",
+            "no_new_notifications": "No new notifications in the last 24 hours"
         }
     },
     "view": {

@@ -9,7 +9,7 @@
             </Avatar>
         </ItemMedia>
         <ItemContent class="min-w-0">
-            <ItemTitle class="min-w-0">
+            <ItemTitle class="min-w-0 w-full">
                 <span class="truncate cursor-pointer" @click.stop="openSender">{{ senderName }}</span>
                 <Badge variant="secondary" class="shrink-0 text-muted-foreground text-[10px]">
                     {{ typeLabel }}
@@ -19,16 +19,18 @@
                     class="ml-auto size-2 shrink-0 rounded-full bg-blue-500" />
             </ItemTitle>
             <TooltipWrapper v-if="displayMessage" side="top" :content="displayMessage" :delay-duration="600">
-                <ItemDescription class="text-xs select-none line-clamp-3">
+                <ItemDescription class="text-xs select-none">
                     {{ displayMessage }}
                 </ItemDescription>
             </TooltipWrapper>
         </ItemContent>
 
         <div class="flex shrink-0 flex-col items-end gap-1">
-            <span class="text-[10px] text-muted-foreground whitespace-nowrap">
-                {{ relativeTime }}
-            </span>
+            <TooltipWrapper v-if="relativeTime" side="top" :content="absoluteTime">
+                <span class="text-[10px] text-muted-foreground whitespace-nowrap">
+                    {{ relativeTime }}
+                </span>
+            </TooltipWrapper>
             <div class="flex items-center gap-1">
                 <template v-if="!isNotificationExpired(notification)">
                     <TooltipWrapper
@@ -160,15 +162,18 @@
 
     const senderName = computed(() => {
         const n = props.notification;
+        if (n.senderUsername && n.senderUsername?.Value === null) {
+            return n.title || n.data?.groupName || n.groupName || n.details?.groupName || '';
+        }
         return n.senderUsername || n.data?.groupName || n.groupName || n.details?.groupName || '';
     });
 
     const avatarUrl = computed(() => {
         const n = props.notification;
-        const userId = n.senderUserId;
+        const userId = typeof n.senderUserId === 'string' ? n.senderUserId : '';
 
         // Group notifications: use details.imageUrl or imageUrl
-        if (userId?.startsWith('grp_') || n.type?.startsWith('group.') || n.type === 'groupChange') {
+        if (userId.startsWith('grp_') || n.type?.startsWith('group.') || n.type === 'groupChange') {
             return n.details?.imageUrl || n.imageUrl || n.senderUserIcon || null;
         }
 
@@ -215,10 +220,16 @@
         return '';
     });
 
+    const createdAtValue = computed(() => props.notification.created_at || props.notification.createdAt);
+
     const relativeTime = computed(() => {
-        const createdAt = props.notification.created_at || props.notification.createdAt;
-        if (!createdAt) return '';
-        return dayjs(createdAt).fromNow(true);
+        if (!createdAtValue.value) return '';
+        return dayjs(createdAtValue.value).fromNow(true);
+    });
+
+    const absoluteTime = computed(() => {
+        if (!createdAtValue.value) return '';
+        return dayjs(createdAtValue.value).format('YYYY-MM-DD HH:mm:ss');
     });
 
     const showDecline = computed(() => {
@@ -291,16 +302,24 @@
     }
 
     function openSender() {
-        const userId = props.notification.senderUserId;
-        if (userId) {
-            if (userId.startsWith('grp_')) {
-                groupStore.showGroupDialog(userId);
-            } else {
-                userStore.showUserDialog(userId);
+        const n = props.notification;
+        const userId = typeof n.senderUserId === 'string' ? n.senderUserId : '';
+
+        // Group notifications: try to find a group ID
+        if (userId.startsWith('grp_') || n.type?.startsWith('group.') || n.type === 'groupChange') {
+            const groupId = userId.startsWith('grp_') ? userId : n.data?.groupId || n.details?.groupId || '';
+            if (groupId) {
+                groupStore.showGroupDialog(groupId);
+                return;
             }
+        }
+
+        if (userId) {
+            userStore.showUserDialog(userId);
             return;
         }
-        const link = props.notification.link;
+
+        const link = n.link;
         if (link) {
             openNotificationLink(link);
         }
