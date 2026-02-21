@@ -245,7 +245,7 @@
     import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-    import { computed, onMounted } from 'vue';
+    import { computed, onBeforeUnmount } from 'vue';
     import { Badge } from '@/components/ui/badge';
     import { Separator } from '@/components/ui/separator';
     import { TooltipWrapper } from '@/components/ui/tooltip';
@@ -478,7 +478,7 @@
         }
     }
 
-    onMounted(() => {
+    onBeforeUnmount(() => {
         // Mark as seen
         if (isNotificationExpired(props.notification) || isSeen.value) {
             return;
