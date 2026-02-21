@@ -145,8 +145,8 @@
                 </div>
             </Item>
         </HoverCardTrigger>
-        <HoverCardContent side="left" :side-offset="8" class="w-80 p-3">
-            <!-- Group notifications -->
+        <HoverCardContent side="left" :side-offset="8" class="w-100 p-3">
+            <!-- Group  -->
             <template v-if="isGroupType">
                 <div class="flex items-center gap-2 mb-2">
                     <Avatar class="size-8 shrink-0 rounded">
@@ -182,15 +182,19 @@
                         <p class="text-xs text-muted-foreground">{{ typeLabel }}</p>
                     </div>
                 </div>
-                <p v-if="notification.details?.worldName" class="text-xs mb-1">
-                    <span class="text-muted-foreground">World: </span>{{ notification.details.worldName }}
-                </p>
+                <div v-if="notification.details?.worldId" class="text-xs mb-1">
+                    <Location
+                        :location="notification.details.worldId"
+                        :hint="notification.details.worldName || ''"
+                        :grouphint="notification.details.groupName || ''"
+                        link />
+                </div>
                 <p v-if="friendMessage" class="text-xs text-muted-foreground warp-break-words leading-relaxed">
                     {{ friendMessage }}
                 </p>
             </template>
 
-            <!-- Other notifications -->
+            <!-- Other  -->
             <template v-else>
                 <div class="flex items-center gap-2 mb-2">
                     <Avatar class="size-8 shrink-0">
@@ -212,7 +216,6 @@
                 </p>
             </template>
 
-            <!-- Time (always shown) -->
             <Separator v-if="absoluteTime" class="my-2" />
             <div v-if="absoluteTime" class="flex items-center gap-2 text-[10px] text-muted-foreground">
                 <CalendarDays />{{ absoluteTime }}
