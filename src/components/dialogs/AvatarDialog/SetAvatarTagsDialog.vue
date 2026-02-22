@@ -63,7 +63,7 @@
                     >{{ props.setAvatarTagsDialog.selectedAvatarIds.length }} /
                     {{ setAvatarTagsDialog.ownAvatars.length }}</span
                 >
-                <Loader2 v-if="setAvatarTagsDialog.loading" class="is-loading" style="margin-left: 5px" />
+                <Spinner v-if="setAvatarTagsDialog.loading" class="inline-block ml-2" />
                 <br />
                 <div class="x-friend-list" style="margin-top: 10px; min-height: 60px; max-height: 280px">
                     <div
@@ -111,7 +111,7 @@
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
-    import { Loader2 } from 'lucide-vue-next';
+    import { Spinner } from '@/components/ui/spinner';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
     import { watch } from 'vue';

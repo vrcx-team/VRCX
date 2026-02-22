@@ -242,7 +242,7 @@
                 }
             }
         }
-        worldExportContent.value = lines.join('\n');
+        worldExportContent.value = lines.reverse().join('\n');
     }
 
     function selectWorldExportGroup(group) {

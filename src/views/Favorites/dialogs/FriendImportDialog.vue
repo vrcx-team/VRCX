@@ -10,7 +10,7 @@
                     <div v-if="friendImportDialog.progress">
                         {{ t('dialog.friend_import.process_progress') }} {{ friendImportDialog.progress }} /
                         {{ friendImportDialog.progressTotal }}
-                        <Loader2 style="margin: 0 5px" />
+                        <Spinner class="inline-block ml-1 mr-1" />
                     </div>
                     <Button v-if="friendImportDialog.loading" size="sm" variant="secondary" @click="cancelFriendImport">
                         {{ t('dialog.friend_import.cancel') }}
@@ -93,7 +93,7 @@
                 </div>
             </div>
             <span v-if="friendImportDialog.importProgress" style="margin: 10px">
-                <Loader2 style="margin-right: 5px" />
+                <Spinner class="inline-block ml-2 mr-2" />
                 {{ t('dialog.friend_import.import_progress') }} {{ friendImportDialog.importProgress }}/{{
                     friendImportDialog.importProgressTotal
                 }}
@@ -124,7 +124,7 @@
     import { Button } from '@/components/ui/button';
     import { DataTableLayout } from '@/components/ui/data-table';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
-    import { Loader2 } from 'lucide-vue-next';
+    import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -340,11 +340,10 @@
                 }
             }
             D.progress++;
-            if (D.progress === userIdList.size) {
-                D.progress = 0;
-            }
         }
         D.loading = false;
+        D.progress = 0;
+        D.progressTotal = 0;
     }
     function resetFriendImport() {
         friendImportDialog.value.input = '';

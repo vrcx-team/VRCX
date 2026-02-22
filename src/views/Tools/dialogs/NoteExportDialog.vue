@@ -37,7 +37,7 @@
                 {{ t('dialog.note_export.cancel') }}
             </Button>
             <span v-if="loading" style="margin: 10px">
-                <Loader2 style="margin-right: 5px" />
+                <Spinner class="inline-block ml-2 mr-2" />
                 {{ t('dialog.note_export.progress') }} {{ progress }}/{{ progressTotal }}
             </span>
 
@@ -67,7 +67,7 @@
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { DataTableLayout } from '@/components/ui/data-table';
-    import { Loader2 } from 'lucide-vue-next';
+    import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

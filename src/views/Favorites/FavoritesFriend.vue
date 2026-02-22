@@ -1242,6 +1242,12 @@
         font-weight: 600;
     }
 
+    .group-item__right {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
+
     .group-item__count {
         font-size: 12px;
     }

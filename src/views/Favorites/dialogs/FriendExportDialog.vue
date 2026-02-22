@@ -207,7 +207,7 @@
                 }
             }
         }
-        friendExportContent.value = lines.join('\n');
+        friendExportContent.value = lines.reverse().join('\n');
     }
 
     function selectFriendExportGroup(group) {

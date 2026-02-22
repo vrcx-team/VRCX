@@ -1599,7 +1599,6 @@
         display: flex;
         align-items: center;
         flex-direction: column;
-        gap: 6px;
     }
 
     .group-item__count {

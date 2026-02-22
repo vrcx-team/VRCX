@@ -3,7 +3,7 @@
         <span v-if="avatarName" class="flex items-center mr-1"
             >{{ avatarName }} <Lock v-if="avatarType && avatarType === '(own)'" class="h-4 w-4 ml-1"
         /></span>
-        <span v-else class="text-muted-foreground">Unknown Avatar</span>
+        <span v-else class="flex items-center mr-1 text-muted-foreground">Unknown Avatar</span>
         <TooltipWrapper v-if="avatarTags">
             <template #content>
                 <span class="truncate">{{ avatarTags }}</span>

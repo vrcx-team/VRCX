@@ -1202,6 +1202,7 @@ export const useUserStore = defineStore('User', () => {
 
     async function refreshUserDialogAvatars(fileId) {
         const D = userDialog.value;
+        const userId = D.id;
         if (D.isAvatarsLoading) {
             return;
         }
@@ -1237,7 +1238,9 @@ export const useUserStore = defineStore('User', () => {
             },
             done: () => {
                 const array = Array.from(map.values());
-                sortUserDialogAvatars(array);
+                if (userId === D.id) {
+                    sortUserDialogAvatars(array);
+                }
                 D.isAvatarsLoading = false;
                 if (fileId) {
                     D.loading = false;
@@ -1871,6 +1874,10 @@ export const useUserStore = defineStore('User', () => {
                 currentAvatarThumbnailImageUrl: '',
                 date_joined: '',
                 developerType: '',
+                discordDetails: {
+                    global_name: '',
+                    id: ''
+                },
                 discordId: '',
                 displayName: '',
                 emailVerified: false,
@@ -1880,6 +1887,7 @@ export const useUserStore = defineStore('User', () => {
                 friends: [],
                 googleId: '',
                 hasBirthday: false,
+                hasDiscordFriendsOptOut: false,
                 hasEmail: false,
                 hasLoggedInFromClient: false,
                 hasPendingEmail: false,
