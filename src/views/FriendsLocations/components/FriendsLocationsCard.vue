@@ -159,8 +159,8 @@
 
     .friend-card__status-dot--active-join {
         background: transparent;
-        border: calc(2px * var(--card-scale)) solid #409eff;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #409eff 40%, transparent);
+        border: calc(2px * var(--card-scale)) solid #00b8ff;
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #00b8ff 40%, transparent);
     }
 
     .friend-card__status-dot--active-ask {
@@ -176,8 +176,8 @@
     }
 
     .friend-card__status-dot--join {
-        background: #409eff;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #409eff 40%, transparent);
+        background: #00b8ff;
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #00b8ff 40%, transparent);
     }
 
     .friend-card__status-dot--busy {

@@ -1353,10 +1353,10 @@
                         </template>
                         <template v-else-if="feed.type === 'OnPlayerJoined'">
                             <span style="margin-left: 10px; color: #a3a3a3">has joined</span>
-                            <span v-if="feed.platform === 'Desktop'" style="color: #409eff; margin-left: 10px"
+                            <span v-if="feed.platform === 'Desktop'" style="color: #00b8ff; margin-left: 10px"
                                 >Desktop</span
                             >
-                            <span v-else-if="feed.platform === 'VR'" style="color: #409eff; margin-left: 10px">VR</span>
+                            <span v-else-if="feed.platform === 'VR'" style="color: #00b8ff; margin-left: 10px">VR</span>
                             <span v-else-if="feed.platform === 'Quest'" style="color: #67c23a; margin-left: 10px"
                                 >Android</span
                             >

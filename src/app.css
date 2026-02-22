@@ -155,7 +155,7 @@ img.friends-list-avatar {
 }
 
 .x-friend-item > .avatar.joinme::after {
-    background: #409eff;
+    background: #00b8ff;
     mask-image: url(/images/masks/joinme.svg);
 }
 
@@ -241,7 +241,7 @@ i.x-user-status.online {
 }
 
 i.x-user-status.joinme {
-    background: #409eff;
+    background: #00b8ff;
     mask-image: url(/images/masks/joinme.svg);
 }
 
@@ -260,7 +260,7 @@ i.x-status-icon.green {
 }
 
 i.x-status-icon.blue {
-    background: #409eff;
+    background: #00b8ff;
 }
 
 i.x-status-icon.orange {

@@ -145,6 +145,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         friendNotifications.value.filter(
             (n) =>
                 !unseenSet.value.has(n.id) &&
+                n.seen !== false &&
                 getNotificationTs(n) > recentCutoff.value
         )
     );
@@ -152,6 +153,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         groupNotifications.value.filter(
             (n) =>
                 !unseenSet.value.has(n.id) &&
+                n.seen !== false &&
                 getNotificationTs(n) > recentCutoff.value
         )
     );
@@ -159,6 +161,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         otherNotifications.value.filter(
             (n) =>
                 !unseenSet.value.has(n.id) &&
+                n.seen !== false &&
                 getNotificationTs(n) > recentCutoff.value
         )
     );
