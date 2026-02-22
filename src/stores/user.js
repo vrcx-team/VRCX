@@ -949,21 +949,22 @@ export const useUserStore = defineStore('User', () => {
                                             notification.created_at
                                         );
                                     }
-                                    if (!D.dateFriended) {
-                                        if (notification.type === 'Unfriend') {
-                                            D.unFriended = true;
-                                            if (
-                                                !appearanceSettingsStore.hideUnfriends
-                                            ) {
-                                                D.dateFriended =
-                                                    notification.created_at;
-                                            }
-                                        }
-                                        if (notification.type === 'Friend') {
-                                            D.unFriended = false;
+                                    if (
+                                        !D.dateFriended &&
+                                        notification.type === 'Unfriend'
+                                    ) {
+                                        D.unFriended = true;
+                                        if (
+                                            !appearanceSettingsStore.hideUnfriends
+                                        ) {
                                             D.dateFriended =
                                                 notification.created_at;
                                         }
+                                    }
+                                    if (notification.type === 'Friend') {
+                                        D.unFriended = false;
+                                        D.dateFriended =
+                                            notification.created_at;
                                     }
                                     if (
                                         notification.type === 'Friend' ||
