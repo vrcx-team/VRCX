@@ -73,14 +73,31 @@
         if (status.joinme) {
             return 'friend-card__status-dot--join';
         }
-        if (status.online || status.active) {
+        if (status.online) {
             return 'friend-card__status-dot--online';
+        }
+        // sometimes appearing and sometimes disappearing
+        if (status.active) {
+            const friendStatus = props.friend.status;
+            if (friendStatus === 'join me') {
+                return 'friend-card__status-dot--active-join';
+            }
+            if (friendStatus === 'ask me') {
+                return 'friend-card__status-dot--active-ask';
+            }
+            if (friendStatus === 'busy') {
+                return 'friend-card__status-dot--active-busy';
+            }
+            return 'friend-card__status-dot--active';
         }
         if (status.askme) {
             return 'friend-card__status-dot--ask';
         }
         if (status.busy) {
             return 'friend-card__status-dot--busy';
+        }
+        if (status.offline) {
+            return 'friend-card__status-dot--offline';
         }
 
         return 'friend-card__status-dot--hidden';
@@ -134,6 +151,30 @@
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #67c23a 40%, transparent);
     }
 
+    .friend-card__status-dot--active {
+        background: transparent;
+        border: calc(2px * var(--card-scale)) solid #67c23a;
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #67c23a 40%, transparent);
+    }
+
+    .friend-card__status-dot--active-join {
+        background: transparent;
+        border: calc(2px * var(--card-scale)) solid #409eff;
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #409eff 40%, transparent);
+    }
+
+    .friend-card__status-dot--active-ask {
+        background: transparent;
+        border: calc(2px * var(--card-scale)) solid #ff9500;
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #ff9500 40%, transparent);
+    }
+
+    .friend-card__status-dot--active-busy {
+        background: transparent;
+        border: calc(2px * var(--card-scale)) solid #ff2c2c;
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #ff2c2c 40%, transparent);
+    }
+
     .friend-card__status-dot--join {
         background: #409eff;
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #409eff 40%, transparent);
@@ -147,6 +188,10 @@
     .friend-card__status-dot--ask {
         background: #ff9500;
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #ff9500 40%, transparent);
+    }
+
+    .friend-card__status-dot--offline {
+        background: #737f8d;
     }
 
     .friend-card__body {
