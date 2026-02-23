@@ -365,3 +365,7 @@ i.x-status-icon.red {
 .force-pointer-on-hover input[type='submit'] {
     cursor: pointer !important;
 }
+
+[data-sonner-toast] [data-content] [data-description] {
+    white-space: pre-line;
+}
