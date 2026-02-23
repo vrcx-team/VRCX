@@ -433,7 +433,10 @@
                     "layout_spacing": "Layout spacing",
                     "layout_spacing_help": "How spread out the graph is. Higher means less crowded.",
                     "edge_curvature": "Edge curvature",
-                    "edge_curvature_help": "How curved the lines are. Higher means smoother lines in dense areas."
+                    "edge_curvature_help": "How curved the lines are. Higher means smoother lines in dense areas.",
+                    "community_separation": "Community separation",
+                    "community_separation_help": "How far apart different communities are pushed. Higher means more distinct clusters.",
+                    "reset_defaults": "Reset to defaults"
                 }
             }
         },

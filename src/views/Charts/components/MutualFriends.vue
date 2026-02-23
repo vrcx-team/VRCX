@@ -133,7 +133,35 @@
                                         </p>
                                     </FieldContent>
                                 </Field>
+
+                                <Field>
+                                    <FieldLabel>{{
+                                        t('view.charts.mutual_friend.settings.community_separation')
+                                    }}</FieldLabel>
+                                    <FieldContent>
+                                        <div class="flex items-center gap-3">
+                                            <Slider
+                                                v-model="communitySeparationModel"
+                                                :min="COMMUNITY_SEPARATION_MIN"
+                                                :max="COMMUNITY_SEPARATION_MAX"
+                                                :step="0.1" />
+                                            <span
+                                                class="min-w-12 text-right text-sm text-muted-foreground tabular-nums">
+                                                {{ communitySeparationLabel }}
+                                            </span>
+                                        </div>
+                                        <p class="mt-1 text-xs text-muted-foreground">
+                                            {{ t('view.charts.mutual_friend.settings.community_separation_help') }}
+                                        </p>
+                                    </FieldContent>
+                                </Field>
                             </FieldGroup>
+
+                            <div class="p-4 pt-0">
+                                <Button variant="outline" size="sm" class="w-full" @click="resetLayoutSettings">
+                                    {{ t('view.charts.mutual_friend.settings.reset_defaults') }}
+                                </Button>
+                            </div>
                         </SheetContent>
                     </Sheet>
 
@@ -204,6 +232,8 @@
     import { database } from '../../../service/database';
     import { watchState } from '../../../service/watchState';
 
+    import configRepository from '../../../service/config';
+
     const { t } = useI18n();
     const friendStore = useFriendStore();
     const userStore = useUserStore();
@@ -255,12 +285,17 @@
     const LAYOUT_SPACING_MAX = 240;
     const EDGE_CURVATURE_MIN = 0;
     const EDGE_CURVATURE_MAX = 0.2;
+    const COMMUNITY_SEPARATION_MIN = 0;
+    const COMMUNITY_SEPARATION_MAX = 3;
 
-    const layoutSettings = reactive({
+    const LAYOUT_DEFAULTS = {
         layoutIterations: 800,
         layoutSpacing: 60,
-        edgeCurvature: 0.1
-    });
+        edgeCurvature: 0.1,
+        communitySeparation: 0
+    };
+
+    const layoutSettings = reactive({ ...LAYOUT_DEFAULTS });
 
     const layoutIterationsModel = computed({
         get: () => [layoutSettings.layoutIterations],
@@ -298,6 +333,19 @@
 
     const edgeCurvatureLabel = computed(() => layoutSettings.edgeCurvature.toFixed(2));
 
+    const communitySeparationModel = computed({
+        get: () => [layoutSettings.communitySeparation],
+        set: (value) => {
+            const next = clampNumber(
+                value?.[0] ?? layoutSettings.communitySeparation,
+                COMMUNITY_SEPARATION_MIN,
+                COMMUNITY_SEPARATION_MAX
+            );
+            layoutSettings.communitySeparation = Number(next.toFixed(1));
+        }
+    });
+    const communitySeparationLabel = computed(() => layoutSettings.communitySeparation.toFixed(1));
+
     let lastLayoutSpacing = layoutSettings.layoutSpacing;
 
     watch(isDarkMode, () => {
@@ -307,13 +355,57 @@
 
     watch(
         () => [layoutSettings.layoutIterations, layoutSettings.layoutSpacing],
-        () => scheduleLayoutUpdate({ runLayout: true })
+        () => {
+            scheduleLayoutUpdate({ runLayout: true });
+            persistLayoutSettings();
+        }
     );
 
     watch(
         () => layoutSettings.edgeCurvature,
-        () => scheduleLayoutUpdate({ runLayout: false })
+        () => {
+            scheduleLayoutUpdate({ runLayout: false });
+            persistLayoutSettings();
+        }
     );
+
+    watch(
+        () => layoutSettings.communitySeparation,
+        () => {
+            scheduleLayoutUpdate({ runLayout: true });
+            persistLayoutSettings();
+        }
+    );
+
+    async function loadLayoutSettings() {
+        const [iterations, spacing, curvature, separation] = await Promise.all([
+            configRepository.getInt('VRCX_MutualGraphLayoutIterations', LAYOUT_DEFAULTS.layoutIterations),
+            configRepository.getInt('VRCX_MutualGraphLayoutSpacing', LAYOUT_DEFAULTS.layoutSpacing),
+            configRepository.getFloat('VRCX_MutualGraphEdgeCurvature', LAYOUT_DEFAULTS.edgeCurvature),
+            configRepository.getFloat('VRCX_MutualGraphCommunitySeparation', LAYOUT_DEFAULTS.communitySeparation)
+        ]);
+        layoutSettings.layoutIterations = clampNumber(iterations, LAYOUT_ITERATIONS_MIN, LAYOUT_ITERATIONS_MAX);
+        layoutSettings.layoutSpacing = clampNumber(spacing, LAYOUT_SPACING_MIN, LAYOUT_SPACING_MAX);
+        layoutSettings.edgeCurvature = clampNumber(curvature, EDGE_CURVATURE_MIN, EDGE_CURVATURE_MAX);
+        layoutSettings.communitySeparation = clampNumber(
+            separation,
+            COMMUNITY_SEPARATION_MIN,
+            COMMUNITY_SEPARATION_MAX
+        );
+        lastLayoutSpacing = layoutSettings.layoutSpacing;
+    }
+
+    function persistLayoutSettings() {
+        configRepository.setInt('VRCX_MutualGraphLayoutIterations', layoutSettings.layoutIterations);
+        configRepository.setInt('VRCX_MutualGraphLayoutSpacing', layoutSettings.layoutSpacing);
+        configRepository.setFloat('VRCX_MutualGraphEdgeCurvature', layoutSettings.edgeCurvature);
+        configRepository.setFloat('VRCX_MutualGraphCommunitySeparation', layoutSettings.communitySeparation);
+    }
+
+    function resetLayoutSettings() {
+        Object.assign(layoutSettings, LAYOUT_DEFAULTS);
+        persistLayoutSettings();
+    }
 
     const isFetching = computed({
         get: () => status.isFetching,
@@ -390,6 +482,7 @@
     }
 
     onMounted(() => {
+        loadLayoutSettings();
         nextTick(() => {
             if (!graphContainerRef.value) return;
 
@@ -473,8 +566,7 @@
     function runLayout(graph, { reinitialize } = {}) {
         if (reinitialize) initPositions(graph);
 
-        let iterations = clampNumber(layoutSettings.layoutIterations, LAYOUT_ITERATIONS_MIN, LAYOUT_ITERATIONS_MAX);
-        iterations = Math.min(iterations, Math.round(Math.sqrt(graph.order) * 20));
+        const iterations = clampNumber(layoutSettings.layoutIterations, LAYOUT_ITERATIONS_MIN, LAYOUT_ITERATIONS_MAX);
         const spacing = clampNumber(layoutSettings.layoutSpacing, LAYOUT_SPACING_MIN, LAYOUT_SPACING_MAX);
         const t = (spacing - LAYOUT_SPACING_MIN) / (LAYOUT_SPACING_MAX - LAYOUT_SPACING_MIN);
         const clampedT = clampNumber(t, 0, 1);
@@ -514,13 +606,68 @@
         });
     }
 
+    function applyCommunitySeparation(graph) {
+        const separation = layoutSettings.communitySeparation;
+        if (separation <= 0) return;
+
+        const communities = new Map();
+        graph.forEachNode((node, attrs) => {
+            const cid = attrs.community;
+            if (cid === undefined) return;
+            if (!communities.has(cid)) communities.set(cid, { nodes: [], cx: 0, cy: 0 });
+            communities.get(cid).nodes.push({ node, x: attrs.x, y: attrs.y });
+        });
+
+        // compute per-community centroid
+        for (const [, data] of communities) {
+            let sx = 0,
+                sy = 0;
+            for (const n of data.nodes) {
+                sx += n.x;
+                sy += n.y;
+            }
+            data.cx = sx / data.nodes.length;
+            data.cy = sy / data.nodes.length;
+        }
+
+        // compute global centroid
+        let gcx = 0,
+            gcy = 0,
+            total = 0;
+        for (const [, data] of communities) {
+            gcx += data.cx * data.nodes.length;
+            gcy += data.cy * data.nodes.length;
+            total += data.nodes.length;
+        }
+        gcx /= total;
+        gcy /= total;
+
+        // push each community away from global centroid
+        for (const [, data] of communities) {
+            const dx = data.cx - gcx;
+            const dy = data.cy - gcy;
+            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+            const pushX = (dx / dist) * separation * 100;
+            const pushY = (dy / dist) * separation * 100;
+            for (const n of data.nodes) {
+                graph.mergeNodeAttributes(n.node, {
+                    x: n.x + pushX,
+                    y: n.y + pushY
+                });
+            }
+        }
+    }
+
     function scheduleLayoutUpdate({ runLayout: shouldRunLayout }) {
         if (!currentGraph) return;
         if (pendingLayoutUpdate) clearTimeout(pendingLayoutUpdate);
         pendingLayoutUpdate = setTimeout(() => {
             pendingLayoutUpdate = null;
             applyEdgeCurvature(currentGraph);
-            if (shouldRunLayout) runLayout(currentGraph, { reinitialize: false });
+            if (shouldRunLayout) {
+                runLayout(currentGraph, { reinitialize: false });
+                applyCommunitySeparation(currentGraph);
+            }
             renderGraph(currentGraph);
         }, 100);
     }
@@ -595,6 +742,7 @@
         if (graph.order > 1) {
             runLayout(graph, { reinitialize: true });
             assignCommunitiesAndColors(graph);
+            applyCommunitySeparation(graph);
             applyEdgeCurvature(graph);
         }
 
