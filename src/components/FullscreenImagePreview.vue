@@ -1,7 +1,8 @@
 <template>
     <Dialog v-model:open="open">
         <DialogPortal :to="portalTo">
-            <RekaDialogOverlay class="fixed inset-0 bg-background/80 backdrop-blur-sm" />
+            <RekaDialogOverlay
+                :class="cn('fixed inset-0 bg-background/80', !disableGpuAcceleration && 'backdrop-blur-sm')" />
 
             <RekaDialogContent
                 class="fixed inset-0 p-6 sm:p-10 border-0 bg-transparent shadow-none outline-none"
@@ -101,8 +102,10 @@
     import { Button } from '@/components/ui/button';
     import { Dialog } from '@/components/ui/dialog';
     import { acquireModalPortalLayer } from '@/lib/modalPortalLayers';
+    import { cn } from '@/lib/utils';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
+    import { useGeneralSettingsStore } from '@/stores/settings/general';
     import { useI18n } from 'vue-i18n';
 
     import Noty from 'noty';
@@ -112,6 +115,7 @@
 
     const galleryStore = useGalleryStore();
     const { fullscreenImageDialog } = storeToRefs(galleryStore);
+    const { disableGpuAcceleration } = storeToRefs(useGeneralSettingsStore());
     const { t } = useI18n();
 
     const viewerEl = ref(null);
