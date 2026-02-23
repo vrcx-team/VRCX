@@ -157,6 +157,52 @@
                                 </Field>
                             </FieldGroup>
 
+                            <FieldGroup class="gap-4 p-4">
+                                <Field>
+                                    <FieldLabel>{{
+                                        t('view.charts.mutual_friend.settings.exclude_friends')
+                                    }}</FieldLabel>
+                                    <FieldContent>
+                                        <VirtualCombobox
+                                            v-model="excludedFriendIds"
+                                            :groups="excludePickerGroups"
+                                            :placeholder="
+                                                t('view.charts.mutual_friend.settings.exclude_friends_placeholder')
+                                            "
+                                            :search-placeholder="t('view.charts.mutual_friend.actions.go_to_friend')"
+                                            :multiple="true">
+                                            <template #item="{ item, selected }">
+                                                <div class="x-friend-item flex w-full items-center">
+                                                    <template v-if="item.user">
+                                                        <div :class="['avatar', userStatusClass(item.user)]">
+                                                            <img :src="userImage(item.user)" loading="lazy" />
+                                                        </div>
+                                                        <div class="detail">
+                                                            <span
+                                                                class="name"
+                                                                :style="{ color: item.user.$userColour }"
+                                                                >{{ item.user.displayName }}</span
+                                                            >
+                                                        </div>
+                                                    </template>
+                                                    <template v-else>
+                                                        <span>{{ item.label }}</span>
+                                                    </template>
+                                                    <CheckIcon
+                                                        :class="[
+                                                            'ml-auto size-4',
+                                                            selected ? 'opacity-100' : 'opacity-0'
+                                                        ]" />
+                                                </div>
+                                            </template>
+                                        </VirtualCombobox>
+                                        <p class="mt-1 text-xs text-muted-foreground">
+                                            {{ t('view.charts.mutual_friend.settings.exclude_friends_help') }}
+                                        </p>
+                                    </FieldContent>
+                                </Field>
+                            </FieldGroup>
+
                             <div class="p-4 pt-0">
                                 <Button variant="outline" size="sm" class="w-full" @click="resetLayoutSettings">
                                     {{ t('view.charts.mutual_friend.settings.reset_defaults') }}
@@ -278,6 +324,7 @@
     let resizeObserver = null;
     let pendingRender = null;
     let pendingLayoutUpdate = null;
+    let lastMutualMap = null;
 
     const LAYOUT_ITERATIONS_MIN = 300;
     const LAYOUT_ITERATIONS_MAX = 1500;
@@ -404,6 +451,7 @@
 
     function resetLayoutSettings() {
         Object.assign(layoutSettings, LAYOUT_DEFAULTS);
+        excludedFriendIds.value = [];
         persistLayoutSettings();
     }
 
@@ -440,6 +488,51 @@
     const canvasBackground = computed(() => 'transparent');
 
     const selectedFriendId = ref(null);
+
+    const EXCLUDED_FRIENDS_KEY = 'VRCX_MutualGraphExcludedFriends';
+    const excludedFriendIds = ref(loadExcludedFriends());
+
+    function loadExcludedFriends() {
+        try {
+            const stored = localStorage.getItem(EXCLUDED_FRIENDS_KEY);
+            if (stored) return JSON.parse(stored);
+        } catch {
+            /* ignore */
+        }
+        return [];
+    }
+
+    function saveExcludedFriends() {
+        localStorage.setItem(EXCLUDED_FRIENDS_KEY, JSON.stringify(excludedFriendIds.value));
+    }
+
+    watch(excludedFriendIds, () => {
+        saveExcludedFriends();
+        if (lastMutualMap) applyGraph(lastMutualMap);
+    });
+
+    const excludePickerGroups = computed(() => {
+        if (!lastMutualMap) return [];
+        const currentUserId = currentUser.value?.id;
+        const seen = new Set();
+        const items = [];
+        for (const [friendId, { mutuals }] of lastMutualMap.entries()) {
+            if (friendId === currentUserId || seen.has(friendId)) continue;
+            seen.add(friendId);
+            const cached = cachedUsers.get(friendId);
+            const displayName = cached?.displayName || friendId;
+            items.push({ value: friendId, label: displayName, search: displayName, user: cached || null });
+            for (const mutual of mutuals) {
+                if (!mutual?.id || mutual.id === currentUserId || seen.has(mutual.id)) continue;
+                seen.add(mutual.id);
+                const mc = cachedUsers.get(mutual.id);
+                const mName = mc?.displayName || mutual.displayName || mutual.id;
+                items.push({ value: mutual.id, label: mName, search: mName, user: mc || null });
+            }
+        }
+        items.sort((a, b) => a.label.localeCompare(b.label));
+        return [{ key: 'friends', label: t('side_panel.friends'), items }];
+    });
 
     const friendPickerGroups = computed(() => {
         if (!currentGraph || !graphNodeCount.value) return [];
@@ -693,11 +786,12 @@
             allowSelfLoops: false
         });
 
+        const excludeSet = new Set(excludedFriendIds.value);
         const nodeDegree = new Map();
         const nodeNames = new Map();
 
         function ensureNode(id, name) {
-            if (!id) return;
+            if (!id || excludeSet.has(id)) return;
             if (!graph.hasNode(id)) {
                 graph.addNode(id);
                 nodeDegree.set(id, 0);
@@ -707,6 +801,7 @@
 
         function addEdge(source, target) {
             if (!source || !target || source === target) return;
+            if (excludeSet.has(source) || excludeSet.has(target)) return;
             const [a, b] = [source, target].sort();
             const key = `${a}__${b}`;
             if (graph.hasEdge(key)) return;
@@ -928,6 +1023,7 @@
     }
 
     function applyGraph(mutualMap) {
+        lastMutualMap = mutualMap;
         const graph = buildGraphFromMutualMap(mutualMap);
         currentGraph = graph;
         renderGraph(graph);

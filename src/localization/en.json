@@ -436,7 +436,10 @@
                     "edge_curvature_help": "How curved the lines are. Higher means smoother lines in dense areas.",
                     "community_separation": "Community separation",
                     "community_separation_help": "How far apart different communities are pushed. Higher means more distinct clusters.",
-                    "reset_defaults": "Reset to defaults"
+                    "reset_defaults": "Reset to defaults",
+                    "exclude_friends": "Exclude friends",
+                    "exclude_friends_placeholder": "Select friends to exclude",
+                    "exclude_friends_help": "Selected friends will be hidden from the graph."
                 }
             }
         },
