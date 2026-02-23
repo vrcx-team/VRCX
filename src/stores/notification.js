@@ -400,7 +400,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (ref) {
             ref.seen = true;
         }
-        database.seenNotificationV2(ref);
+        database.seenNotificationV2(notificationId);
     }
 
     function handleNotificationAccept(args) {
