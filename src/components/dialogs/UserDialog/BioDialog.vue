@@ -12,7 +12,8 @@
                     :rows="5"
                     :placeholder="t('dialog.bio.bio_placeholder')"
                     class="mb-2.5"
-                    show-count />
+                    show-count
+                    autosize />
 
                 <InputGroupAction
                     v-for="(link, index) in bioDialog.bioLinks"
