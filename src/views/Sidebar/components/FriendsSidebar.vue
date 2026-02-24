@@ -120,7 +120,8 @@
         isSidebarGroupByInstance,
         isHideFriendsInSameInstance,
         isSidebarDivideByFriendGroup,
-        sidebarFavoriteGroups
+        sidebarFavoriteGroups,
+        sidebarFavoriteGroupOrder
     } = storeToRefs(useAppearanceSettingsStore());
     const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
     const { showUserDialog } = useUserStore();
@@ -228,7 +229,15 @@
             }
         }
 
-        return result.sort((a, b) => a[0].key.localeCompare(b[0].key));
+        const order = sidebarFavoriteGroupOrder.value;
+        return result.sort((a, b) => {
+            const idxA = order.indexOf(a[0]?.key);
+            const idxB = order.indexOf(b[0]?.key);
+            if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+            if (idxA !== -1) return -1;
+            if (idxB !== -1) return 1;
+            return (a[0]?.key ?? '').localeCompare(b[0]?.key ?? '');
+        });
     });
 
     const buildToggleRow = ({

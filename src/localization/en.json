@@ -7,7 +7,8 @@
         "actions": {
             "open": "Open",
             "confirm": "Confirm",
-            "clear": "Clear"
+            "clear": "Clear",
+            "reset": "Reset"
         },
         "time_units": {
             "y": "y",
@@ -93,7 +94,8 @@
             "sort_secondary": "Then by",
             "sort_tertiary": "Then by",
             "favorite_groups": "Favorite Groups",
-            "favorite_groups_placeholder": "All Groups"
+            "favorite_groups_placeholder": "All Groups",
+            "edit_group_order": "Edit Group Order"
         },
         "notifications": "Notifications",
         "notification_center": {

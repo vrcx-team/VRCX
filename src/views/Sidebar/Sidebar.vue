@@ -86,7 +86,7 @@
                             class="absolute top-1 right-1.25 size-1.5 rounded-full bg-red-500" />
                     </Button>
                 </TooltipWrapper>
-                <Popover>
+                <Popover v-model:open="isSettingsPopoverOpen">
                     <PopoverTrigger as-child>
                         <Button class="rounded-full" variant="ghost" size="icon-sm">
                             <Settings />
@@ -112,6 +112,17 @@
                                     :model-value="isSidebarDivideByFriendGroup"
                                     @update:modelValue="setIsSidebarDivideByFriendGroup" />
                             </div>
+                            <Button
+                                v-if="isSidebarDivideByFriendGroup"
+                                variant="outline"
+                                size="sm"
+                                class="w-full text-xs"
+                                @click="
+                                    isSettingsPopoverOpen = false;
+                                    isGroupOrderSheetOpen = true;
+                                ">
+                                {{ t('side_panel.settings.edit_group_order') }}
+                            </Button>
                             <div class="flex flex-col gap-1.5">
                                 <span>{{ t('side_panel.settings.favorite_groups') }}</span>
                                 <Select
@@ -248,6 +259,7 @@
             </template>
         </TabsUnderline>
         <NotificationCenterSheet />
+        <GroupOrderSheet v-model:open="isGroupOrderSheetOpen" />
     </div>
 </template>
 
@@ -285,6 +297,7 @@
     import { debounce, userImage } from '../../shared/utils';
 
     import FriendsSidebar from './components/FriendsSidebar.vue';
+    import GroupOrderSheet from './components/GroupOrderSheet.vue';
     import GroupsSidebar from './components/GroupsSidebar.vue';
     import NotificationCenterSheet from './components/NotificationCenterSheet.vue';
 
@@ -357,6 +370,8 @@
     });
 
     const CLEAR_VALUE = '__clear__';
+    const isGroupOrderSheetOpen = ref(false);
+    const isSettingsPopoverOpen = ref(false);
 
     const sortOptions = computed(() => [
         { value: 'Sort Alphabetically', label: t('view.settings.appearance.side_panel.sorting.alphabetical') },
