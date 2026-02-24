@@ -28,35 +28,79 @@
                             </template>
 
                             <template v-else-if="item.row.type === 'me-item'">
-                                <div class="x-friend-item hover:bg-muted/50" @click="showUserDialog(currentUser.id)">
-                                    <div class="avatar" :class="userStatusClass(currentUser)">
-                                        <img :src="userImage(currentUser)" loading="lazy" />
-                                    </div>
-                                    <div class="detail h-9 flex flex-col justify-between">
-                                        <span class="name" :style="{ color: currentUser.$userColour }">{{
-                                            currentUser.displayName
-                                        }}</span>
-                                        <Location
-                                            v-if="isGameRunning && !gameLogDisabled"
-                                            class="extra block truncate text-xs"
-                                            :location="lastLocation.location"
-                                            :traveling="lastLocationDestination"
-                                            :link="false" />
-                                        <Location
-                                            v-else-if="
-                                                isRealInstance(currentUser.$locationTag) ||
-                                                isRealInstance(currentUser.$travelingToLocation)
-                                            "
-                                            class="extra block truncate text-xs"
-                                            :location="currentUser.$locationTag"
-                                            :traveling="currentUser.$travelingToLocation"
-                                            :link="false" />
+                                <ContextMenu>
+                                    <ContextMenuTrigger as-child>
+                                        <div
+                                            class="x-friend-item hover:bg-muted/50"
+                                            @click="showUserDialog(currentUser.id)">
+                                            <div class="avatar" :class="userStatusClass(currentUser)">
+                                                <img :src="userImage(currentUser)" loading="lazy" />
+                                            </div>
+                                            <div class="detail h-9 flex flex-col justify-between">
+                                                <span class="name" :style="{ color: currentUser.$userColour }">{{
+                                                    currentUser.displayName
+                                                }}</span>
+                                                <Location
+                                                    v-if="isGameRunning && !gameLogDisabled"
+                                                    class="extra block truncate text-xs"
+                                                    :location="lastLocation.location"
+                                                    :traveling="lastLocationDestination"
+                                                    :link="false" />
+                                                <Location
+                                                    v-else-if="
+                                                        isRealInstance(currentUser.$locationTag) ||
+                                                        isRealInstance(currentUser.$travelingToLocation)
+                                                    "
+                                                    class="extra block truncate text-xs"
+                                                    :location="currentUser.$locationTag"
+                                                    :traveling="currentUser.$travelingToLocation"
+                                                    :link="false" />
 
-                                        <span v-else class="extra block truncate text-xs">{{
-                                            currentUser.statusDescription
-                                        }}</span>
-                                    </div>
-                                </div>
+                                                <span v-else class="extra block truncate text-xs">{{
+                                                    currentUser.statusDescription
+                                                }}</span>
+                                            </div>
+                                        </div>
+                                    </ContextMenuTrigger>
+                                    <ContextMenuContent>
+                                        <ContextMenuSub>
+                                            <ContextMenuSubTrigger>
+                                                {{ t('dialog.user.actions.edit_status') }}
+                                            </ContextMenuSubTrigger>
+                                            <ContextMenuSubContent>
+                                                <ContextMenuCheckboxItem
+                                                    v-for="option in statusOptions"
+                                                    :key="option.value"
+                                                    :model-value="currentUser.status === option.value"
+                                                    class="gap-2"
+                                                    @click="changeStatus(option.value)">
+                                                    <i class="x-user-status" :class="option.statusClass"></i>
+                                                    {{ option.label }}
+                                                </ContextMenuCheckboxItem>
+                                            </ContextMenuSubContent>
+                                        </ContextMenuSub>
+                                        <ContextMenuSub>
+                                            <ContextMenuSubTrigger>
+                                                {{ t('dialog.social_status.history') }}
+                                            </ContextMenuSubTrigger>
+                                            <ContextMenuSubContent>
+                                                <ContextMenuCheckboxItem
+                                                    :model-value="!currentUser.statusDescription"
+                                                    @click="setStatusFromHistory('')">
+                                                    {{ t('dialog.gallery_select.none') }}
+                                                </ContextMenuCheckboxItem>
+                                                <ContextMenuSeparator v-if="recentStatuses.length" />
+                                                <ContextMenuCheckboxItem
+                                                    v-for="(item, idx) in recentStatuses"
+                                                    :key="idx"
+                                                    :model-value="currentUser.statusDescription === item"
+                                                    @click="setStatusFromHistory(item)">
+                                                    {{ item }}
+                                                </ContextMenuCheckboxItem>
+                                            </ContextMenuSubContent>
+                                        </ContextMenuSub>
+                                    </ContextMenuContent>
+                                </ContextMenu>
                             </template>
 
                             <template v-else-if="item.row.type === 'instance-header'">
@@ -79,15 +123,29 @@
         </div>
         <BackToTop :virtualizer="virtualizer" :target="scrollViewportRef" :tooltip="false" />
     </div>
+    <SocialStatusDialog
+        :social-status-dialog="socialStatusDialog"
+        :social-status-history-table="socialStatusHistoryTable" />
 </template>
 
 <script setup>
     import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
     import { ChevronDown } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
     import { useVirtualizer } from '@tanstack/vue-virtual';
 
+    import {
+        ContextMenu,
+        ContextMenuCheckboxItem,
+        ContextMenuContent,
+        ContextMenuSeparator,
+        ContextMenuSub,
+        ContextMenuSubContent,
+        ContextMenuSubTrigger,
+        ContextMenuTrigger
+    } from '../../../components/ui/context-menu';
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
@@ -99,10 +157,12 @@
     } from '../../../stores';
     import { isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
     import { getFriendsLocations } from '../../../shared/utils/location.js';
+    import { userRequest } from '../../../api';
 
     import BackToTop from '../../../components/BackToTop.vue';
     import FriendItem from './FriendItem.vue';
     import Location from '../../../components/Location.vue';
+    import SocialStatusDialog from '../../../components/dialogs/UserDialog/SocialStatusDialog.vue';
     import configRepository from '../../../service/config';
 
     const { t } = useI18n();
@@ -547,4 +607,56 @@
             virtualizer.value?.measure?.();
         });
     });
+
+    const statusOptions = computed(() => [
+        {
+            value: 'join me',
+            statusClass: 'joinme',
+            label: t('dialog.user.status.join_me')
+        },
+        {
+            value: 'active',
+            statusClass: 'online',
+            label: t('dialog.user.status.online')
+        },
+        {
+            value: 'ask me',
+            statusClass: 'askme',
+            label: t('dialog.user.status.ask_me')
+        },
+        {
+            value: 'busy',
+            statusClass: 'busy',
+            label: t('dialog.user.status.busy')
+        }
+    ]);
+
+    const recentStatuses = computed(() => {
+        const history = currentUser.value?.statusHistory;
+        if (!history || !history.length) return [];
+        return history.slice(0, 10);
+    });
+
+    const socialStatusDialog = ref({
+        visible: false,
+        loading: false,
+        status: '',
+        statusDescription: ''
+    });
+    const socialStatusHistoryTable = ref({
+        data: [],
+        layout: 'table'
+    });
+
+    function changeStatus(value) {
+        userRequest.saveCurrentUser({ status: value }).then(() => {
+            toast.success('Status updated');
+        });
+    }
+
+    function setStatusFromHistory(status) {
+        userRequest.saveCurrentUser({ statusDescription: status }).then(() => {
+            toast.success('Status updated');
+        });
+    }
 </script>
