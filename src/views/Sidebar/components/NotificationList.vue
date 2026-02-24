@@ -33,11 +33,7 @@
             </div>
 
             <div class="flex justify-center py-3">
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    class="text-xs text-muted-foreground"
-                    @click="$emit('navigate-to-table')">
+                <Button variant="secondary" size="sm" class="text-xs" @click="$emit('navigate-to-table')">
                     {{ t('side_panel.notification_center.view_more') }}
                 </Button>
             </div>

@@ -279,7 +279,7 @@
         // if (n.senderUsername && n.senderUsername?.Value === null) {
         //     return n.title || n.data?.groupName || n.groupName || n.details?.groupName || '';
         // }
-        return n.senderUsername || n.data?.groupName || n.groupName || n.details?.groupName || '';
+        return n.title || n.senderUsername || n.data?.groupName || n.groupName || n.details?.groupName || '';
     });
 
     const avatarUrl = computed(() => {
@@ -391,7 +391,7 @@
 
     const groupDisplayName = computed(() => {
         const n = props.notification;
-        return n.data?.groupName || n.groupName || n.details?.groupName || n.senderUsername || '';
+        return n.title || n.data?.groupName || n.groupName || n.details?.groupName || n.senderUsername || '';
     });
 
     const hoverTitle = computed(() => {
