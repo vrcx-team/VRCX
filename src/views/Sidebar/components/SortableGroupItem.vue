@@ -1,4 +1,5 @@
 <script setup>
+    import { Item, ItemContent, ItemMedia, ItemTitle } from '@/components/ui/item';
     import { computed, ref } from 'vue';
     import { GripVertical } from 'lucide-vue-next';
     import { useSortable } from '@dnd-kit/vue/sortable';
@@ -19,11 +20,17 @@
 </script>
 
 <template>
-    <div
+    <Item
         ref="element"
-        class="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm select-none cursor-grab active:cursor-grabbing"
+        variant="outline"
+        size="sm"
+        class="cursor-grab select-none active:cursor-grabbing"
         :class="{ 'opacity-50': isDragSource }">
-        <GripVertical class="size-4 shrink-0 text-muted-foreground" />
-        <span class="truncate">{{ label }}</span>
-    </div>
+        <ItemMedia>
+            <GripVertical class="size-4 text-muted-foreground" />
+        </ItemMedia>
+        <ItemContent>
+            <ItemTitle class="truncate">{{ label }}</ItemTitle>
+        </ItemContent>
+    </Item>
 </template>
