@@ -1,5 +1,5 @@
 <template>
-    <div ref="scrollRootRef" class="relative h-full">
+    <div class="relative h-full">
         <div ref="scrollViewportRef" class="h-full w-full overflow-auto">
             <div class="x-friend-list px-1.5 py-2.5">
                 <div v-if="virtualRows.length" class="relative w-full box-border" :style="virtualContainerStyle">
@@ -123,9 +123,6 @@
         </div>
         <BackToTop :virtualizer="virtualizer" :target="scrollViewportRef" :tooltip="false" />
     </div>
-    <SocialStatusDialog
-        :social-status-dialog="socialStatusDialog"
-        :social-status-history-table="socialStatusHistoryTable" />
 </template>
 
 <script setup>
@@ -155,14 +152,13 @@
         useLocationStore,
         useUserStore
     } from '../../../stores';
-    import { isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
+    import { getFriendsSortFunction, isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
     import { getFriendsLocations } from '../../../shared/utils/location.js';
     import { userRequest } from '../../../api';
 
     import BackToTop from '../../../components/BackToTop.vue';
     import FriendItem from './FriendItem.vue';
     import Location from '../../../components/Location.vue';
-    import SocialStatusDialog from '../../../components/dialogs/UserDialog/SocialStatusDialog.vue';
     import configRepository from '../../../service/config';
 
     const { t } = useI18n();
@@ -176,13 +172,15 @@
         offlineFriends,
         friendsInSameInstance
     } = storeToRefs(friendStore);
+    const appearanceSettingsStore = useAppearanceSettingsStore();
     const {
         isSidebarGroupByInstance,
         isHideFriendsInSameInstance,
         isSidebarDivideByFriendGroup,
         sidebarFavoriteGroups,
-        sidebarFavoriteGroupOrder
-    } = storeToRefs(useAppearanceSettingsStore());
+        sidebarFavoriteGroupOrder,
+        sidebarSortMethods
+    } = storeToRefs(appearanceSettingsStore);
     const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
     const { showUserDialog } = useUserStore();
     const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends, localFriendFavorites } =
@@ -199,7 +197,6 @@
     const isSidebarGroupByInstanceCollapsed = ref(false);
     const collapsedFavGroups = reactive(new Set());
     const scrollViewportRef = ref(null);
-    const scrollRootRef = ref(null);
 
     loadFriendsGroupStates();
 
@@ -224,9 +221,35 @@
         return list.filter((item) => !sameInstanceFriendId.value.has(item.id));
     }
 
-    const onlineFriendsByGroupStatus = computed(() =>
-        excludeSameInstance(onlineFriends.value.filter((f) => !allFavoriteFriendIds.value.has(f.id)))
-    );
+    const onlineFriendsByGroupStatus = computed(() => {
+        const selectedGroups = sidebarFavoriteGroups.value;
+        const hasFilter = selectedGroups.length > 0;
+        if (!hasFilter) {
+            return excludeSameInstance(onlineFriends.value.filter((f) => !allFavoriteFriendIds.value.has(f.id)));
+        }
+        // When group filter is active, friends in unselected groups should appear in the online list
+        const displayedVipIds = new Set();
+        const remoteFriendsByGroup = groupedByGroupKeyFavoriteFriends.value;
+        for (const key of selectedGroups) {
+            if (key.startsWith('local:')) {
+                const groupName = key.slice(6);
+                const userIds = localFriendFavorites.value?.[groupName];
+                if (userIds) {
+                    for (const id of userIds) displayedVipIds.add(id);
+                }
+            } else if (remoteFriendsByGroup[key]) {
+                for (const f of remoteFriendsByGroup[key]) displayedVipIds.add(f.id);
+            }
+        }
+        const nonFavOnline = onlineFriends.value.filter((f) => !displayedVipIds.has(f.id));
+        const existingIds = new Set(nonFavOnline.map((f) => f.id));
+        const unselectedGroupFriends = allFavoriteOnlineFriends.value.filter(
+            (f) => !displayedVipIds.has(f.id) && !existingIds.has(f.id)
+        );
+        return excludeSameInstance(
+            [...nonFavOnline, ...unselectedGroupFriends].sort(getFriendsSortFunction(sidebarSortMethods.value))
+        );
+    });
 
     const vipFriendsByGroupStatus = computed(() => {
         const selectedGroups = sidebarFavoriteGroups.value;
@@ -635,17 +658,6 @@
         const history = currentUser.value?.statusHistory;
         if (!history || !history.length) return [];
         return history.slice(0, 10);
-    });
-
-    const socialStatusDialog = ref({
-        visible: false,
-        loading: false,
-        status: '',
-        statusDescription: ''
-    });
-    const socialStatusHistoryTable = ref({
-        data: [],
-        layout: 'table'
     });
 
     function changeStatus(value) {
