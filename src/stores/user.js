@@ -950,23 +950,6 @@ export const useUserStore = defineStore('User', () => {
                                         );
                                     }
                                     if (
-                                        !D.dateFriended &&
-                                        notification.type === 'Unfriend'
-                                    ) {
-                                        D.unFriended = true;
-                                        if (
-                                            !appearanceSettingsStore.hideUnfriends
-                                        ) {
-                                            D.dateFriended =
-                                                notification.created_at;
-                                        }
-                                    }
-                                    if (notification.type === 'Friend') {
-                                        D.unFriended = false;
-                                        D.dateFriended =
-                                            notification.created_at;
-                                    }
-                                    if (
                                         notification.type === 'Friend' ||
                                         (notification.type === 'Unfriend' &&
                                             !appearanceSettingsStore.hideUnfriends)
@@ -975,6 +958,14 @@ export const useUserStore = defineStore('User', () => {
                                     }
                                 }
                                 D.dateFriendedInfo = dateFriendedInfo;
+                                if (dateFriendedInfo.length > 0) {
+                                    const latestFriendedInfo =
+                                        dateFriendedInfo[0];
+                                    D.unFriended =
+                                        latestFriendedInfo.type === 'Unfriend';
+                                    D.dateFriended =
+                                        latestFriendedInfo.created_at;
+                                }
                                 displayNameMap.forEach(
                                     (updated_at, displayName) => {
                                         D.previousDisplayNames.push({
