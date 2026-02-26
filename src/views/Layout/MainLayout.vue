@@ -29,23 +29,22 @@
                             </RouterView>
                         </ResizablePanel>
 
-                        <template v-if="isSideBarTabShow">
-                            <ResizableHandle
-                                with-handle
-                                :class="[
-                                    isAsideCollapsed(layout) ? 'opacity-100' : 'opacity-0',
-                                    'z-20 [&>div]:-translate-x-1/2'
-                                ]"></ResizableHandle>
-                            <ResizablePanel
-                                :default-size="asideDefaultSize"
-                                :min-size="asideMinSize"
-                                :collapsed-size="0"
-                                collapsible
-                                :order="2"
-                                :style="{ maxWidth: `${asideMaxPx}px` }">
-                                <Sidebar></Sidebar>
-                            </ResizablePanel>
-                        </template>
+                        <ResizableHandle
+                            with-handle
+                            :class="[
+                                isAsideCollapsed(layout) ? 'opacity-100' : 'opacity-0',
+                                'z-20 [&>div]:-translate-x-1/2'
+                            ]"></ResizableHandle>
+                        <ResizablePanel
+                            ref="asidePanelRef"
+                            :default-size="asideDefaultSize"
+                            :min-size="asideMinSize"
+                            :collapsed-size="0"
+                            collapsible
+                            :order="2"
+                            :style="{ maxWidth: `${asideMaxPx}px` }">
+                            <Sidebar></Sidebar>
+                        </ResizablePanel>
                     </template>
                 </ResizablePanelGroup>
             </SidebarInset>
@@ -83,7 +82,7 @@
 </template>
 
 <script setup>
-    import { computed, onUnmounted, watch } from 'vue';
+    import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useRouter } from 'vue-router';
 
@@ -171,6 +170,17 @@
         isAsideCollapsedStatic,
         isSideBarTabShow
     } = useMainLayoutResizable();
+
+    const asidePanelRef = ref(null);
+
+    watch(isSideBarTabShow, async (show) => {
+        await nextTick();
+        if (show) {
+            asidePanelRef.value?.expand();
+        } else {
+            asidePanelRef.value?.collapse();
+        }
+    });
 
     watch(
         () => watchState.isLoggedIn,

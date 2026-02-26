@@ -102,7 +102,6 @@ export const useAppearanceSettingsStore = defineStore(
             return ![
                 'friends-locations',
                 'friend-list',
-                'charts',
                 'charts-instance',
                 'charts-mutual'
             ].includes(currentRouteName);
