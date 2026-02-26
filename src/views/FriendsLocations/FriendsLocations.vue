@@ -94,6 +94,18 @@
                             </header>
                         </template>
 
+                        <template v-else-if="item.row.type === 'group-header'">
+                            <div
+                                class="flex cursor-pointer select-none items-center gap-1.5 px-1 py-1.5 text-[13px] font-semibold hover:opacity-80"
+                                @click="toggleGroupCollapse(item.row.groupKey)">
+                                <ChevronDown
+                                    class="size-4 shrink-0 transition-transform duration-200 ease-in-out"
+                                    :class="{ '-rotate-90': item.row.collapsed }" />
+                                <span class="flex-none">{{ item.row.label }}</span>
+                                <span class="text-xs font-normal opacity-70">({{ item.row.count }})</span>
+                            </div>
+                        </template>
+
                         <template v-else-if="item.row.type === 'divider'">
                             <div class="friend-view__divider"><span class="friend-view__divider-text"></span></div>
                         </template>
@@ -123,10 +135,10 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+    import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+    import { ChevronDown, Loader2, Settings } from 'lucide-vue-next';
     import { Field, FieldContent, FieldLabel } from '@/components/ui/field';
     import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-    import { Loader2, Settings } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { InputGroupSearch } from '@/components/ui/input-group';
@@ -135,10 +147,11 @@
     import { useVirtualizer } from '@tanstack/vue-virtual';
 
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
+    import { useAppearanceSettingsStore, useFavoriteStore, useFriendStore } from '../../stores';
     import { Slider } from '../../components/ui/slider';
     import { Switch } from '../../components/ui/switch';
     import { getFriendsLocations } from '../../shared/utils/location.js';
-    import { useFriendStore } from '../../stores';
+    import { getFriendsSortFunction } from '../../shared/utils';
 
     import FriendLocationCard from './components/FriendsLocationsCard.vue';
     import configRepository from '../../service/config.js';
@@ -154,6 +167,15 @@
         offlineFriends,
         friendsInSameInstance
     } = storeToRefs(friendStore);
+
+    const appearanceSettingsStore = useAppearanceSettingsStore();
+    const { isSidebarDivideByFriendGroup, sidebarFavoriteGroups, sidebarFavoriteGroupOrder, sidebarSortMethods } =
+        storeToRefs(appearanceSettingsStore);
+
+    const favoriteStore = useFavoriteStore();
+    const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends, localFriendFavorites } = storeToRefs(favoriteStore);
+
+    const collapsedGroups = reactive(new Set());
 
     const SEGMENTED_BASE_OPTIONS = [
         { label: t('view.friends_locations.online'), value: 'online' },
@@ -325,6 +347,96 @@
         });
     };
 
+    const displayedVipIds = computed(() => {
+        const selectedGroups = sidebarFavoriteGroups.value;
+        const hasFilter = selectedGroups.length > 0;
+        if (!hasFilter) return allFavoriteFriendIds.value;
+
+        const ids = new Set();
+        const remoteFriendsByGroup = groupedByGroupKeyFavoriteFriends.value;
+        for (const key of selectedGroups) {
+            if (key.startsWith('local:')) {
+                const groupName = key.slice(6);
+                const userIds = localFriendFavorites.value?.[groupName];
+                if (userIds) {
+                    for (const id of userIds) ids.add(id);
+                }
+            } else if (remoteFriendsByGroup[key]) {
+                for (const f of remoteFriendsByGroup[key]) ids.add(f.id);
+            }
+        }
+        return ids;
+    });
+
+    const vipFriendsByGroupStatus = computed(() => {
+        const selectedGroups = sidebarFavoriteGroups.value;
+        if (selectedGroups.length === 0) return allFavoriteOnlineFriends.value;
+        return allFavoriteOnlineFriends.value.filter((f) => displayedVipIds.value.has(f.id));
+    });
+
+    const onlineFriendsByGroupStatus = computed(() => {
+        const selectedGroups = sidebarFavoriteGroups.value;
+        if (selectedGroups.length === 0) {
+            return onlineFriends.value.filter((f) => !allFavoriteFriendIds.value.has(f.id));
+        }
+        const nonFavOnline = onlineFriends.value.filter((f) => !displayedVipIds.value.has(f.id));
+        const existingIds = new Set(nonFavOnline.map((f) => f.id));
+        const unselectedGroupFriends = allFavoriteOnlineFriends.value.filter(
+            (f) => !displayedVipIds.value.has(f.id) && !existingIds.has(f.id)
+        );
+        return [...nonFavOnline, ...unselectedGroupFriends].sort(getFriendsSortFunction(sidebarSortMethods.value));
+    });
+
+    const vipFriendsDivideByGroup = computed(() => {
+        const remoteFriendsByGroup = groupedByGroupKeyFavoriteFriends.value;
+        const selectedGroups = sidebarFavoriteGroups.value;
+        const hasFilter = selectedGroups.length > 0;
+
+        const groups = [];
+        for (const key in remoteFriendsByGroup) {
+            if (Object.hasOwn(remoteFriendsByGroup, key)) {
+                if (hasFilter && !selectedGroups.includes(key)) continue;
+                const groupName = favoriteFriendGroups.value.find((g) => g.key === key)?.displayName || '';
+                const memberIds = new Set(remoteFriendsByGroup[key].map((f) => f.id));
+                groups.push({ key, groupName, memberIds });
+            }
+        }
+        for (const groupName in localFriendFavorites.value) {
+            const selectedKey = `local:${groupName}`;
+            if (hasFilter && !selectedGroups.includes(selectedKey)) continue;
+            const userIds = localFriendFavorites.value[groupName];
+            if (userIds?.length) {
+                groups.push({ key: selectedKey, groupName, memberIds: new Set(userIds) });
+            }
+        }
+
+        const result = [];
+        for (const { key, groupName, memberIds } of groups) {
+            const filteredFriends = allFavoriteOnlineFriends.value.filter((friend) => memberIds.has(friend.id));
+            if (filteredFriends.length > 0) {
+                result.push({ key, groupName, friends: filteredFriends });
+            }
+        }
+
+        const order = sidebarFavoriteGroupOrder.value;
+        return result.sort((a, b) => {
+            const idxA = order.indexOf(a.key);
+            const idxB = order.indexOf(b.key);
+            if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+            if (idxA !== -1) return -1;
+            if (idxB !== -1) return 1;
+            return (a.key ?? '').localeCompare(b.key ?? '');
+        });
+    });
+
+    function toggleGroupCollapse(groupKey) {
+        if (collapsedGroups.has(groupKey)) {
+            collapsedGroups.delete(groupKey);
+        } else {
+            collapsedGroups.add(groupKey);
+        }
+    }
+
     const filteredFriends = computed(() => {
         if (normalizedSearchTerm.value) {
             const pools = [
@@ -355,9 +467,7 @@
                             .filter((id) => typeof id === 'string' || typeof id === 'number')
                     );
 
-                    const remainingOnline = toEntries(
-                        onlineFriends.value.filter((f) => !allFavoriteFriendIds.value.has(f.id))
-                    )
+                    const remainingOnline = toEntries(onlineFriendsByGroupStatus.value)
                         .filter((entry) => {
                             if (!entry?.id) {
                                 return true;
@@ -372,10 +482,10 @@
                     return [...sameEntries, ...remainingOnline];
                 }
 
-                return toEntries(onlineFriends.value.filter((f) => !allFavoriteFriendIds.value.has(f.id)));
+                return toEntries(onlineFriendsByGroupStatus.value);
             }
             case 'favorite':
-                return toEntries(allFavoriteOnlineFriends.value);
+                return toEntries(vipFriendsByGroupStatus.value);
             case 'same-instance':
                 return sameInstanceEntries.value;
             case 'active':
@@ -560,6 +670,10 @@
         return rows;
     };
 
+    const isFavoriteDivideByGroup = computed(
+        () => isSidebarDivideByFriendGroup.value && activeSegment.value === 'favorite' && !normalizedSearchTerm.value
+    );
+
     const virtualRows = computed(() => {
         const rows = [];
 
@@ -623,6 +737,29 @@
             return rows;
         }
 
+        if (isFavoriteDivideByGroup.value) {
+            for (const group of vipFriendsDivideByGroup.value) {
+                const isCollapsed = collapsedGroups.has(group.key);
+                rows.push({
+                    type: 'group-header',
+                    key: `gh:${group.key}`,
+                    label: group.groupName,
+                    count: group.friends.length,
+                    groupKey: group.key,
+                    collapsed: isCollapsed
+                });
+                if (!isCollapsed) {
+                    const items = group.friends.map((friend) => ({
+                        key: `fg:${group.key}:${friend?.id ?? friend?.userId ?? friend?.displayName ?? Math.random()}`,
+                        friend,
+                        displayInstanceInfo: true
+                    }));
+                    rows.push(...chunkCardItems(items, `vg:${group.key}`));
+                }
+            }
+            return rows;
+        }
+
         const entries = filteredFriends.value;
         if (entries.length) {
             const items = entries.map((entry) => ({
@@ -652,6 +789,9 @@
         }
         if (row.type === 'header') {
             return 32;
+        }
+        if (row.type === 'group-header') {
+            return 40;
         }
         if (row.type === 'divider') {
             return 36;
@@ -966,6 +1106,11 @@
 
     .friend-view__instance-count {
         font-size: 12px;
+    }
+
+    .friend-view__virtual-row--group-header {
+        padding: 2px;
+        padding-bottom: calc(var(--friend-card-gap, 14px) - 8px);
     }
 
     .friend-view__empty {
