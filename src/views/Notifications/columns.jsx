@@ -1,4 +1,9 @@
 import Location from '../../components/Location.vue';
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage
+} from '../../components/ui/avatar';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import {
@@ -12,6 +17,7 @@ import {
     Ban,
     BellOff,
     Check,
+    ImageOff,
     Link,
     MessageCircle,
     Reply,
@@ -403,32 +409,43 @@ export const createColumns = ({
                 }
 
                 if (original.details?.imageUrl) {
+                    const detailsUrl = getSmallThumbnailUrl(
+                        original.details.imageUrl
+                    );
                     return (
-                        <img
-                            class="cursor-pointer h-7.5 w-7.5 rounded object-cover"
-                            src={getSmallThumbnailUrl(
-                                original.details.imageUrl
-                            )}
+                        <Avatar
+                            class="cursor-pointer size-7.5 rounded"
                             onClick={() =>
                                 showFullscreenImageDialog(
                                     original.details.imageUrl
                                 )
                             }
-                            loading="lazy"
-                        />
+                        >
+                            <AvatarImage
+                                src={detailsUrl}
+                                class="object-cover"
+                            />
+                            <AvatarFallback class="rounded">
+                                <ImageOff class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
                     );
                 }
 
                 if (original.imageUrl) {
+                    const imgUrl = getSmallThumbnailUrl(original.imageUrl);
                     return (
-                        <img
-                            class="cursor-pointer h-7.5 w-7.5 rounded object-cover"
-                            src={getSmallThumbnailUrl(original.imageUrl)}
+                        <Avatar
+                            class="cursor-pointer size-7.5 rounded"
                             onClick={() =>
                                 showFullscreenImageDialog(original.imageUrl)
                             }
-                            loading="lazy"
-                        />
+                        >
+                            <AvatarImage src={imgUrl} class="object-cover" />
+                            <AvatarFallback class="rounded">
+                                <ImageOff class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
                     );
                 }
 
