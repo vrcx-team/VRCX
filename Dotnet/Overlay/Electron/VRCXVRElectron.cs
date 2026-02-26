@@ -25,6 +25,7 @@ namespace VRCX
         private readonly List<string[]> _deviceList;
         private readonly ReaderWriterLockSlim _deviceListLock;
         private bool _active;
+        private bool _isOverlayStarted;
         private bool _menuButton;
         private int _overlayHand;
         private GLTextureWriter _overlayTextureWriter;
@@ -213,6 +214,7 @@ namespace VRCX
 
                         active = true;
                         SetupTextures();
+                        _isOverlayStarted = true;
                     }
 
                     while (system.PollNextEvent(ref e, (uint)Marshal.SizeOf(e)))
@@ -220,6 +222,7 @@ namespace VRCX
                         var type = (EVREventType)e.eventType;
                         if (type == EVREventType.VREvent_Quit)
                         {
+                            _isOverlayStarted = false;
                             active = false;
                             IsHmdAfk = false;
                             OpenVR.Shutdown();
@@ -290,6 +293,7 @@ namespace VRCX
                 else if (active)
                 {
                     active = false;
+                    _isOverlayStarted = false;
                     IsHmdAfk = false;
                     OpenVR.Shutdown();
                     _deviceListLock.EnterWriteLock();
@@ -848,9 +852,11 @@ namespace VRCX
 
         public override void ExecuteVrOverlayFunction(string function, string json)
         {
-            //if (_hmdOverlaySocket == null || !_hmdOverlaySocket.Connected) return;
-            // if (_hmdOverlay.IsLoading)
-            //     Restart();
+            if (!_isOverlayStarted)
+            {
+                _overlayFunctionQueue.Clear();
+                return;
+            }
 
             _overlayFunctionQueue.Enqueue(new KeyValuePair<string, string>(function, json));
         }
