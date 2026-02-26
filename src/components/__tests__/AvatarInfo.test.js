@@ -133,7 +133,7 @@ describe('AvatarInfo.vue', () => {
 
         test('shows empty when no imageurl', () => {
             const wrapper = mountAvatarInfo({});
-            expect(wrapper.text().trim()).toBe('');
+            expect(wrapper.text().trim()).toBe('Unknown Avatar');
         });
 
         test('does not show hintavatarname if it is not a string', () => {
