@@ -31,7 +31,7 @@
                         type="multiple"
                         variant="outline"
                         size="sm"
-                        :model-value="Array.isArray(feedTable.filter) ? feedTable.filter : []"
+                        :model-value="activeFilterSelection"
                         @update:model-value="handleFeedFilterChange"
                         class="w-full justify-start"
                         style="flex: 1">
@@ -199,9 +199,30 @@
         }
     };
 
+    const activeFilterSelection = computed(() => {
+        const filter = feedTable.value.filter;
+        if (!Array.isArray(filter) || filter.length === 0) {
+            return [...feedFilterTypes];
+        }
+        return filter;
+    });
+
     function handleFeedFilterChange(value) {
         const selected = Array.isArray(value) ? value : [];
-        feedTable.value.filter = selected.length === feedFilterTypes.length ? [] : selected;
+        const wasAllSelected = !Array.isArray(feedTable.value.filter) || feedTable.value.filter.length === 0;
+
+        if (selected.length === 0) {
+            feedTable.value.filter = [];
+        } else if (wasAllSelected) {
+            const clicked = feedFilterTypes.filter((t) => !selected.includes(t));
+            if (clicked.length === 1) {
+                feedTable.value.filter = clicked;
+            } else {
+                feedTable.value.filter = selected.length === feedFilterTypes.length ? [] : selected;
+            }
+        } else {
+            feedTable.value.filter = selected.length === feedFilterTypes.length ? [] : selected;
+        }
         feedTableLookup();
     }
 
