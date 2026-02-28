@@ -191,8 +191,7 @@
     });
 
     const totalItems = computed(() => {
-        const length = table.getFilteredRowModel().rows.length;
-        return length;
+        return table.getFilteredRowModel().rows.length;
     });
 
     const handlePageSizeChange = (size) => {

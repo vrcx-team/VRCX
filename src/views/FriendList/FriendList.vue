@@ -124,10 +124,10 @@
     import { Button } from '@/components/ui/button';
     import { InputGroupField } from '@/components/ui/input-group';
     import { Progress } from '@/components/ui/progress';
+    import { Star } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
-    import { Star } from 'lucide-vue-next';
     import { useRoute } from 'vue-router';
 
     import {
@@ -217,9 +217,7 @@
     });
 
     const totalItems = computed(() => {
-        const length = table.getFilteredRowModel().rows.length;
-        const max = vrcxStore.maxTableSize;
-        return length > max ? max : length;
+        return table.getFilteredRowModel().rows.length;
     });
 
     const handlePageSizeChange = (size) => {
