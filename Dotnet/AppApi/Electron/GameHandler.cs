@@ -31,10 +31,8 @@ namespace VRCX
 
         public override bool IsSteamVRRunning()
         {
-            var processNames = new[] { "vrmonitor", "monado-service" };
-            foreach (var name in processNames)
             {
-                var processes = Process.GetProcessesByName(name);
+                var processes = Process.GetProcessesByName("vrmonitor");
                 var isSteamVRRunning = processes.Length > 0;
                 foreach (var process in processes)
                     process.Dispose();
@@ -42,14 +40,25 @@ namespace VRCX
                 if (isSteamVRRunning)
                     return true;
             }
-            
-            // Check for wivrn-server (requires full scan)
-            var allProcesses = Process.GetProcesses();
-            var isRunning = allProcesses.Any(process => process.ProcessName.EndsWith("wivrn-server"));
-            foreach (var process in allProcesses)
-                process.Dispose();
+            #if LINUX
+            var xr_config = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME")+"/openxr/1/active_runtime.json";
+            if (Path.Exists(xr_config)){
 
-            return isRunning;
+                var wivrn_pipe = Environment.GetEnvironmentVariable("XDG_RUNTIME_DIR")+"/wivrn/comp_ipc";
+                //both need to be checked as the pipe is created before the headset connects but openxr apps won't work without the config
+                if (Path.Exists(wivrn_pipe)){
+                    return true;
+                }else{
+                    var processes = Process.GetProcessesByName("monado-service");
+                    var isSteamVRRunning = processes.Length > 0;
+                    foreach (var process in processes)
+                        process.Dispose();
+                    if (isSteamVRRunning)
+                        return true;
+                }
+            }
+            #endif
+            return false;
         }
 
         public override int QuitGame()
