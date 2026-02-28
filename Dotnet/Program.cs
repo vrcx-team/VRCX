@@ -89,6 +89,11 @@ namespace VRCX
             if (StartupArgs.LaunchArguments.IsOverlay)
                 fileName = Path.Join(AppDataDirectory, "logs", "VRCX.Overlay.log");
 
+            // check directory exist
+            var logDir = Path.GetDirectoryName(fileName);
+            if (!string.IsNullOrEmpty(logDir))
+                Directory.CreateDirectory(logDir);
+
             LogManager.Setup().LoadConfiguration(builder =>
             {
                 var fileTarget = new FileTarget("fileTarget")
