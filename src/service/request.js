@@ -146,11 +146,7 @@ export function request(endpoint, options) {
                 // ignore expected API errors
                 $throw(response.status, response.data || '', endpoint);
             }
-            $throw(
-                response.status,
-                response.data || response.statusText,
-                endpoint
-            );
+            return response;
         })
         .then(({ data, status }) => {
             if (status === 200) {
