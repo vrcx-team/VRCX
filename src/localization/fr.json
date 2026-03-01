@@ -1,17 +1,46 @@
 {
     "language": "Français (fr)",
     "translator": "Hactazia",
+    "common": {
+        "no_data": "No data",
+        "no_matching_records": "No matching records",
+        "actions": {
+            "open": "Ouvert",
+            "confirm": "Confirmer",
+            "clear": "Nettoyer",
+            "reset": "Réinitialiser"
+        },
+        "time_units": {
+            "y": "y",
+            "d": "d",
+            "h": "h",
+            "m": "m",
+            "s": "s"
+        }
+    },
     "nav_tooltip": {
+        "friends_locations": "Position des amis",
         "feed": "Actualité",
         "game_log": "Historique de jeu",
         "player_list": "Liste des joueurs",
         "search": "Rechercher",
         "favorites": "Favoris",
+        "favorite_friends": "Ami préféré",
+        "favorite_worlds": "Monde favoris",
+        "favorite_avatars": "Avatar favoris",
+        "social": "Social",
         "friend_log": "Historique des amis",
         "moderation": "Modération",
         "notification": "Notification",
         "friend_list": "Liste des amis",
-        "settings": "Paramètres"
+        "charts": "Charts",
+        "tools": "Outils",
+        "settings": "Paramètre",
+        "manage": "Manage",
+        "help_support": "Aide & Support",
+        "expand_menu": "Agrandire le Menu",
+        "collapse_menu": "Collapse Menu",
+        "toggle_theme": "Changer le theme"
     },
     "side_panel": {
         "search_placeholder": "Rechercher",
@@ -55,7 +84,19 @@
                 "Status": "Statut",
                 "Avatar": "Avatar",
                 "Bio": "Bio"
-            }
+            },
+            "photon_event_logging": "Photon Event Logging"
+        },
+        "friends_locations": {
+            "online": "En ligne",
+            "favorite": "Favoris",
+            "same_instance": "Instance actuel",
+            "active": "Active",
+            "offline": "Offline",
+            "spacing": "Spacing",
+            "scale": "Scale",
+            "separate_same_instance_friends": "Separate Same Instance Friends",
+            "loading_more": "Charger plus..."
         },
         "game_log": {
             "filter_placeholder": "Filtrer",
@@ -86,7 +127,9 @@
             "search_placeholder": "Rechercher",
             "clear_results_tooltip": "Vider les résultats de la recherche",
             "user": {
-                "header": "Utilisateur"
+                "header": "Utilisateur",
+                "search_by_bio": "Rechercher dans la bio",
+                "sort_by_last_logged_in": "dernière personne connecté"
             },
             "world": {
                 "header": "Monde",
@@ -126,11 +169,31 @@
                 "vrchat_favorites": "Favoris VRChat",
                 "local_favorites": "Favoris locaux (Requires VRC+)",
                 "new_group": "Nouveau groupe",
-                "cancel_refresh": "Annuler la réactualisation"
+                "cancel_refresh": "Annuler la réactualisation",
+                 "check_invalid": "Check for deleted/private avatars",
+                "check_description": "Detect and remove invalid avatars from this group",
+                "checking": "Checking for invalid avatars...",
+                "removed_list_header": "Avatars pending deletion:",
+                "copy_removed_ids": "Copy Avatar IDs",
+                "copied_ids": "Avatar IDs copied to clipboard",
+                "copy_failed": "Failed to copy to clipboard",
+                "dismiss": "Dismiss",
+                "checking_progress": "Checking avatar ({current}/{total})...",
+                "confirm_delete_invalid": "Delete Invalid Avatars?",
+                "confirm_delete_description": "Found {count} invalid avatars, delete them?",
+                "delete_summary": "Successfully deleted {removed} invalid avatars",
+                "no_invalid_found": "No invalid avatars found",
+                "delete_cancelled": "Delete operation cancelled",
+                "local_history": "Local History",
+                "no_group_selected": "Aucun groupe selectionner",
+                "styles": "Styles",
+                "almost_nuisance": "Almost Nuisance"
             },
             "edit_mode": "Mode édition",
             "copy": "Copier",
             "clear": "Vider",
+            "select_all": "Selectionner tous",
+            "deselect_all": "Deslectionner tous",
             "bulk_unfavorite": "Mode suppression des favoris",
             "export": "Exporter",
             "import": "Importer",
@@ -138,6 +201,11 @@
             "copy_tooltip": "Copier",
             "unfavorite_tooltip": "Retirer des favoris",
             "visibility_tooltip": "Changer la visibilité",
+            "visibility": {
+                "public": "Public",
+                "friends": "Amis",
+                "private": "Privée"
+            },
             "rename_tooltip": "Renommer",
             "clear_tooltip": "Vider",
             "delete_tooltip": "Supprimer",
@@ -175,6 +243,13 @@
             "filter_placeholder": "Filtrer",
             "search_placeholder": "Rechercher",
             "refresh_tooltip": "Actualiser",
+            "actions": {
+                "accept": "Accepter",
+                "invite": "Inviter",
+                "decline": "Décliner",
+                "delete_log": "SUpprimer les logs",
+                "decline_with_message": "Décliner avec un message"
+            },
             "filters": {
                 "requestInvite": "Demande d'invitation",
                 "invite": "Invitation",
@@ -185,13 +260,19 @@
                 "message": "Message",
                 "boop": "Boop",
                 "groupChange": "Changement de groupe",
+                "event": {
+                    "announcement": "Evénement annoncer"
+                },
                 "group": {
                     "announcement": "Annonce de groupe",
                     "informative": "Publication de groupe",
                     "invite": "Invitation de groupe",
                     "joinRequest": "Demande de rejoindre le groupe",
                     "transfer": "Transfert de groupe",
-                    "queueReady": "File d'attente prête"
+                    "queueReady": "File d'attente prête",
+                    "event": {
+                        "created": "Group d'évenement créer"
+                    }
                 },
                 "moderation": {
                     "warning": {
@@ -203,6 +284,19 @@
                 },
                 "instance": {
                     "closed": "Instance fermée"
+                },
+                "badge": {
+                    "earned": "Badge reçu"
+                },
+                "vrcplus": {
+                    "gift": "VRC+ Gift"
+                },
+                "localNotifs": "System",
+                "economy": {
+                    "received": {
+                        "gift": "Don reçu"
+                    },
+                    "alert": "Economie alterte"
                 }
             }
         },
@@ -210,11 +304,99 @@
             "bulk_unfriend": "Mode suppression des amis",
             "bulk_unfriend_selection": "Valider la suppression des amis",
             "load": "Charger les données manquantes",
+            "load_cancel": "Cancel",
+            "load_complete": "Missing entries loaded",
             "favorites_only_tooltip": "Filtrer uniquement les favoris",
             "search_placeholder": "Rechercher",
             "filter_placeholder": "Filtrer"
         },
+        "charts": {
+            "instance_activity": {
+                "header": "Activité dan l'instance",
+                "online_time": "Temps en ligne",
+                "previous_day": "Jour précédent",
+                "next_day": "Jour suivant",
+                "refresh": "Rafraîchir",
+                "tips": {
+                    "online_time": "Online time refers to the game time recorded by VRCX for the current day.",
+                    "click_Y_axis": "Click Y-axis label to navigate to the instance details or open User dialog.",
+                    "click_instance_name": "Click instance name to open Previous Instance Info dialog."
+                },
+                "settings": {
+                    "header": "Settings",
+                    "bar_width": "Bar Width",
+                    "show_solo_instance": "Show Solo Instance",
+                    "show_no_friend_instance": "Show No Friend Instance",
+                    "show_detail": "Show Detail"
+                }
+            },
+            "mutual_friend": {
+                "tab_label": "Mutual Friend Network",
+                "actions": {
+                    "start_fetch": "Start Fetch",
+                    "fetch_again": "Fetch Again",
+                    "stop": "Stop",
+                    "stop_fetching": "Stop fetching",
+                    "go_to_friend": "Go to friend"
+                },
+                "status": {
+                    "no_friends_to_process": "You have no friends to process",
+                    "loading_cache": "Loading cached mutual friends from database"
+                },
+                "progress": {
+                    "friends_processed": "Friends processed",
+                    "no_relationships_discovered": "No relationships discovered"
+                },
+                "prompt": {
+                    "title": "Mutual Friend Network",
+                    "message": "No cached mutual friend data was found. Start fetching now? This may take a while, we will notify you when it is finishes",
+                    "confirm": "Start Fetch",
+                    "cancel": "Maybe Later"
+                },
+                "enable_sharing_prompt": {
+                    "title": "Enable Mutual Friends Sharing",
+                    "message": "Mutual friends sharing is currently disabled. Do you want to enable it now?",
+                    "confirm": "Enable",
+                    "cancel": "Cancel"
+                },
+                "messages": {
+                    "fetch_cancelled_graph_not_updated": "Fetch cancelled"
+                },
+                "notifications": {
+                    "start_fetching": "Started fetching",
+                    "mutual_friend_graph_ready_title": "Mutual Friend Network Graph",
+                    "mutual_friend_graph_ready_message": "Mutual friend network graph is ready",
+                    "friend_list_changed_fetch_again": "Friend list changed. Please fetch the mutual friend network again."
+                },
+                "settings": {
+                    "title": "Graph Layout Settings",
+                    "layout_iterations": "Layout iterations",
+                    "layout_iterations_help": "How long the layout runs. Higher means more stable and organized.",
+                    "layout_spacing": "Layout spacing",
+                    "layout_spacing_help": "How spread out the graph is. Higher means less crowded.",
+                    "edge_curvature": "Edge curvature",
+                    "edge_curvature_help": "How curved the lines are. Higher means smoother lines in dense areas.",
+                    "community_separation": "Community separation",
+                    "community_separation_help": "How far apart different communities are pushed. Higher means more distinct clusters.",
+                    "reset_defaults": "Reset to defaults",
+                    "exclude_friends": "Exclude friends",
+                    "exclude_friends_placeholder": "Select friends to exclude",
+                    "exclude_friends_help": "Selected friends will be hidden from the graph."
+                }
+            }
+        },
         "tools": {
+            "header": "Outils",
+            "group": {
+                "header": "Groupe",
+                "calendar": "Calendrier",
+                "calendar_description": "Groupe d'événement dans le calendrier"
+            },
+            "user": {
+                "discord_names_description": "Find the Discord usernames of your VRChat friends",
+                "export_friend_list_description": "Export your friends list from VRChat",
+                "export_own_avatars_description": "Export your personal avatars from VRChat"
+            },
             "export": {
                 "discord_names": "Pseudonymes Discord",
                 "export_friend_list": "Exporter la liste d'amis",
@@ -1630,9 +1812,55 @@
         },
         "friend": {
             "load_failed": "Échec du chargement de la liste d'amis, déconnexion..."
-        }
+        },
+        "vrcplus": {
+            "required": "VRCPlus required"
+        },
+        "screenshot_metadata": {
+            "deleted": "Screenshot metadata deleted",
+            "delete_failed": "Failed to delete screenshot metadata"
+        },
+        "crash": {
+            "vrcx_reload": "VRCX was reloaded for stability"
+        },
+        "image": {
+            "downloading": "Downloading image...",
+            "copied_to_clipboard": "Image copied to clipboard"
+        },
+        "registry": {
+            "restored": "VRC registry settings restored",
+            "deleted": "VRC registry settings deleted",
+            "restore_failed": "Failed to restore VRC registry settings, check console for full error: {error}",
+            "invalid_json": "Invalid JSON"
+        },
+        "cache": {
+            "deleted": "All VRChat cache deleted",
+            "delete_error": "Error deleting VRChat cache: {error}",
+            "invalid_config": "Invalid JSON in config.json"
+        },
+        "gamelog": {
+            "vrchat_must_be_closed": "VRChat needs to be closed before this option can be changed"
+        },
+        "copy_failed": "Copy failed",
+        "error": "Error"
+    },
+    "status": {
+        "title": "VRChat Status"
+    },
+    "location": {
+        "offline": "Offline",
+        "private": "Private",
+        "traveling": "Traveling"
     },
     "table": {
+        "pagination": {
+            "rows_per_page": "ligne par page",
+            "first": "premier",
+            "previous": "Précédant",
+            "next": "suivant",
+            "last": "dernier",
+            "more_pages": "plus de pages"
+        },
         "feed": {
             "date": "Date",
             "type": "Type",
@@ -1819,8 +2047,15 @@
                 "vpn_in_use": "VRChat bloque actuellement la plupart des VPN. Veuillez désactiver tout VPN connecté et réessayer.",
                 "login_error": "Erreur de connexion",
                 "invalid_json_response": "Réponse JSON invalide",
-                "403_404_bailing_request": "En attente d'une autorisation dû à un récent 404/403"
+                "403_404_bailing_request": "En attente d'une autorisation dû à un récent 404/403",
+                "unavailable": "Service may be unavailable due to VRChat internal issues"
             }
         }
+    },
+    "accessibility": {
+        "toggle_sidebar": "Afficher la barre latérale",
+        "back_to_top": "Retour en haut",
+        "toggle_password": "Afficher le mto de passe",
+        "clear_input": "Effacer la saisie"
     }
 }
