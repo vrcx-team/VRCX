@@ -123,9 +123,14 @@
                                             >
                                         </div>
                                         <div class="group-item__bottom">
-                                            <Badge variant="outline">
-                                                {{ t(`view.favorite.visibility.${group.visibility}`) }}
-                                            </Badge>
+                                            <span class="group-item__visibility">
+                                                <span class="group-item__visibility-text">{{
+                                                    t(`view.favorite.visibility.${group.visibility}`)
+                                                }}</span>
+                                                <span
+                                                    class="group-item__visibility-dot"
+                                                    :class="friendGroupVisibilityDotColors[group.visibility]"></span>
+                                            </span>
                                             <DropdownMenu
                                                 :open="activeGroupMenu === remoteGroupMenuKey(group.key)"
                                                 @update:open="
@@ -451,7 +456,6 @@
     import { useAppearanceSettingsStore, useFavoriteStore, useModalStore, useUserStore } from '../../stores';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { debounce, userImage } from '../../shared/utils';
-    import { Badge } from '../../components/ui/badge';
     import { Slider } from '../../components/ui/slider';
     import { Switch } from '../../components/ui/switch';
     import { favoriteRequest } from '../../api';
@@ -462,10 +466,10 @@
     import configRepository from '../../service/config.js';
 
     const friendGroupVisibilityOptions = ref(['public', 'friends', 'private']);
-    const friendGroupVisibilitColors = {
-        public: 'text-green-500 border-green-500',
-        friends: 'text-cyan-500 border-cyan-500',
-        private: 'text-red-500 border-red-500'
+    const friendGroupVisibilityDotColors = {
+        public: 'bg-green-500',
+        friends: 'bg-sky-500',
+        private: 'bg-red-500'
     };
 
     const friendSplitterSize = ref(260);
@@ -1262,6 +1266,24 @@
         align-items: center;
         justify-content: space-between;
         gap: 8px;
+    }
+
+    .group-item__visibility {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .group-item__visibility-text {
+        font-size: 11px;
+        color: var(--muted-foreground);
+    }
+
+    .group-item__visibility-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
     }
 
     .group-item.is-active {
