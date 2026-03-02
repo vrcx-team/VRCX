@@ -178,14 +178,14 @@ export const useAvatarStore = defineStore('Avatar', () => {
      */
     function showAvatarDialog(avatarId) {
         const D = avatarDialog.value;
-        uiStore.openDialog({
+        const isMainDialogOpen = uiStore.openDialog({
             type: 'avatar',
             id: avatarId
         });
         D.visible = true;
-        if (D.id === avatarId) {
+        if (isMainDialogOpen && D.id === avatarId) {
             uiStore.setDialogCrumbLabel('avatar', D.id, D.ref?.name || D.id);
-            D.loading = false;
+            nextTick(() => (D.loading = false));
             return;
         }
         D.loading = true;
@@ -213,7 +213,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         if (typeof ref2 !== 'undefined') {
             D.ref = ref2;
             uiStore.setDialogCrumbLabel('avatar', D.id, D.ref?.name || D.id);
-            D.loading = false;
+            nextTick(() => (D.loading = false));
         }
         avatarRequest
             .getAvatar({ avatarId })

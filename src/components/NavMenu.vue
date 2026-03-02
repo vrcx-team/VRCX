@@ -12,14 +12,16 @@
                                     @click="handleMenuItemClick(item)">
                                     <i
                                         :class="item.icon"
-                                        class="inline-flex size-6 items-center justify-center text-lg" />
+                                        class="inline-flex size-6 items-center justify-center text-lg relative">
+                                        <span
+                                            v-if="isNavItemNotified(item)"
+                                            class="notify-dot-not-collapsed"
+                                            :class="{ '-right-1!': isCollapsed }"
+                                            aria-hidden="true"></span>
+                                    </i>
                                     <span v-show="!isCollapsed">{{
                                         item.titleIsCustom ? item.title : t(item.title || '')
                                     }}</span>
-                                    <span
-                                        v-if="isNavItemNotified(item)"
-                                        class="notify-dot-not-collapsed"
-                                        aria-hidden="true"></span>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
 
@@ -34,14 +36,15 @@
                                             :tooltip="item.titleIsCustom ? item.title : t(item.title || '')">
                                             <i
                                                 :class="item.icon"
-                                                class="inline-flex size-6 items-center justify-center text-lg" />
+                                                class="inline-flex size-6 items-center justify-center text-lg relative"
+                                                ><span
+                                                    v-if="isNavItemNotified(item)"
+                                                    class="notify-dot -right-1!"
+                                                    aria-hidden="true"></span
+                                            ></i>
                                             <span v-show="!isCollapsed">{{
                                                 item.titleIsCustom ? item.title : t(item.title || '')
                                             }}</span>
-                                            <span
-                                                v-if="isNavItemNotified(item)"
-                                                class="notify-dot"
-                                                aria-hidden="true"></span>
                                         </SidebarMenuButton>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent side="right" align="start" class="w-56">
@@ -52,12 +55,13 @@
                                             <i
                                                 v-if="entry.icon"
                                                 :class="entry.icon"
-                                                class="inline-flex size-4 items-center justify-center text-base" />
-                                            <span>{{ t(entry.label) }}</span
-                                            ><span
-                                                v-if="isEntryNotified(entry)"
-                                                class="notify-dot left-6!"
-                                                aria-hidden="true"></span>
+                                                class="inline-flex size-4 items-center justify-center text-base relative"
+                                                ><span
+                                                    v-if="isEntryNotified(entry)"
+                                                    class="notify-dot -right-1! top-0.5!"
+                                                    aria-hidden="true"></span
+                                            ></i>
+                                            <span>{{ t(entry.label) }}</span>
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
@@ -75,14 +79,16 @@
                                                 :tooltip="item.titleIsCustom ? item.title : t(item.title || '')">
                                                 <i
                                                     :class="item.icon"
-                                                    class="inline-flex size-6 items-center justify-center text-lg" />
+                                                    class="inline-flex size-6 items-center justify-center text-lg relative"
+                                                    ><span
+                                                        v-if="isNavItemNotified(item)"
+                                                        class="notify-dot"
+                                                        aria-hidden="true"></span
+                                                ></i>
                                                 <span v-show="!isCollapsed">{{
                                                     item.titleIsCustom ? item.title : t(item.title || '')
                                                 }}</span>
-                                                <span
-                                                    v-if="isNavItemNotified(item)"
-                                                    class="notify-dot left-1!"
-                                                    aria-hidden="true"></span>
+
                                                 <ChevronRight
                                                     v-show="!isCollapsed"
                                                     class="ml-auto transition-transform"
@@ -98,12 +104,13 @@
                                                         <i
                                                             v-if="entry.icon"
                                                             :class="entry.icon"
-                                                            class="inline-flex size-5 items-center justify-center text-base" />
+                                                            class="inline-flex size-5 items-center justify-center text-base relative"
+                                                            ><span
+                                                                v-if="isEntryNotified(entry)"
+                                                                class="notify-dot -right-0.5!"
+                                                                aria-hidden="true"></span
+                                                        ></i>
                                                         <span>{{ t(entry.label) }}</span>
-                                                        <span
-                                                            v-if="isEntryNotified(entry)"
-                                                            class="notify-dot left-0.75!"
-                                                            aria-hidden="true"></span>
                                                     </SidebarMenuSubButton>
                                                 </SidebarMenuSubItem>
                                             </SidebarMenuSub>
@@ -224,8 +231,12 @@
                                                     :aria-label="themeColorDisplayName(theme)"
                                                     :title="themeColorDisplayName(theme)"
                                                     @click="handleThemeColorSelect(theme)"
-                                                    class="h-3.5 w-3.5 shrink-0 rounded-sm"
-                                                    :class="currentThemeColor === theme.key ? 'ring-1 --ring' : ''"
+                                                    class="h-3.5 w-3.5 shrink-0 rounded-sm transition-transform hover:scale-125"
+                                                    :class="
+                                                        currentThemeColor === theme.key
+                                                            ? 'ring-1 ring-ring ring-offset-1 ring-offset-background'
+                                                            : ''
+                                                    "
                                                     :style="{ backgroundColor: theme.swatch }"></button>
                                             </TooltipWrapper>
                                         </div>
@@ -291,8 +302,9 @@
     <CustomNavDialog
         v-model:visible="customNavDialogVisible"
         :layout="navLayout"
-        @save="handleCustomNavSave"
-        @reset="handleCustomNavReset" />
+        :hidden-keys="navHiddenKeys"
+        :default-layout="defaultNavLayout"
+        @save="handleCustomNavSave" />
 </template>
 
 <script setup>
@@ -335,7 +347,6 @@
     import {
         useAppearanceSettingsStore,
         useAuthStore,
-        useModalStore,
         useSearchStore,
         useUiStore,
         useVRCXUpdaterStore
@@ -349,7 +360,6 @@
 
     const { t, locale } = useI18n();
     const router = useRouter();
-    const modalStore = useModalStore();
 
     const createDefaultNavLayout = () => [
         { type: 'item', key: 'feed' },
@@ -374,6 +384,7 @@
             items: ['friend-log', 'friend-list', 'moderation']
         },
         { type: 'item', key: 'notification' },
+        { type: 'item', key: 'my-avatars' },
         {
             type: 'folder',
             id: 'default-folder-charts',
@@ -387,7 +398,23 @@
     ];
 
     const navDefinitionMap = new Map(navDefinitions.map((item) => [item.key, item]));
-    const DEFAULT_FOLDER_ICON = 'ri-menu-fold-line';
+    const DEFAULT_FOLDER_ICON = 'ri-folder-line';
+
+    const normalizeHiddenKeys = (hiddenKeys = []) => {
+        if (!Array.isArray(hiddenKeys)) {
+            return [];
+        }
+        const seen = new Set();
+        const normalized = [];
+        hiddenKeys.forEach((key) => {
+            if (!key || seen.has(key) || !navDefinitionMap.has(key)) {
+                return;
+            }
+            seen.add(key);
+            normalized.push(key);
+        });
+        return normalized;
+    };
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
     const { pendingVRCXUpdate, pendingVRCXInstall, appVersion } = storeToRefs(VRCXUpdaterStore);
@@ -422,14 +449,7 @@
             if (entry.type === 'folder') {
                 const folderDefinitions = (entry.items || []).map((key) => navDefinitionMap.get(key)).filter(Boolean);
 
-                if (folderDefinitions.length < 2) {
-                    folderDefinitions.forEach((definition) => {
-                        items.push({
-                            ...definition,
-                            index: definition.key,
-                            titleIsCustom: false
-                        });
-                    });
+                if (folderDefinitions.length === 0) {
                     return;
                 }
 
@@ -506,10 +526,17 @@
         }
     );
 
-    const generateFolderId = () => `nav-folder-${dayjs().toISOString()}-${Math.random().toString().slice(2, 4)}`;
+    const generateFolderId = () => {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+            return `nav-folder-${crypto.randomUUID()}`;
+        }
+        return `nav-folder-${dayjs().toISOString()}-${Math.random().toString().slice(2, 4)}`;
+    };
 
-    const sanitizeLayout = (layout) => {
+    const sanitizeLayout = (layout, hiddenKeys = []) => {
         const usedKeys = new Set();
+        const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys);
+        const hiddenSet = new Set(normalizedHiddenKeys);
         const normalized = [];
         const chartsKeys = ['charts-instance', 'charts-mutual'];
 
@@ -560,7 +587,7 @@
                         usedKeys.add(key);
                     });
 
-                    if (folderItems.length >= 2) {
+                    if (folderItems.length >= 1) {
                         const folderNameKey = entry.nameKey || null;
                         const folderName = folderNameKey ? t(folderNameKey) : entry.name || '';
                         normalized.push({
@@ -571,15 +598,13 @@
                             icon: entry.icon || DEFAULT_FOLDER_ICON,
                             items: folderItems
                         });
-                    } else {
-                        folderItems.forEach((key) => appendItemEntry(key));
                     }
                 }
             });
         }
 
         navDefinitions.forEach((item) => {
-            if (!usedKeys.has(item.key)) {
+            if (!usedKeys.has(item.key) && !hiddenSet.has(item.key)) {
                 if (chartsKeys.includes(item.key)) {
                     return;
                 }
@@ -587,7 +612,7 @@
             }
         });
 
-        if (!chartsKeys.some((key) => usedKeys.has(key))) {
+        if (!chartsKeys.some((key) => usedKeys.has(key)) && !chartsKeys.some((key) => hiddenSet.has(key))) {
             appendChartsFolder();
         }
 
@@ -647,13 +672,17 @@
     };
 
     const customNavDialogVisible = ref(false);
+    const navHiddenKeys = ref([]);
+    const defaultNavLayout = computed(() => sanitizeLayout(createDefaultNavLayout(), []));
 
-    const saveNavLayout = async (layout) => {
+    const saveNavLayout = async (layout, hiddenKeys = []) => {
+        const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys);
         try {
             await configRepository.setString(
                 'VRCX_customNavMenuLayoutList',
                 JSON.stringify({
-                    layout
+                    layout,
+                    hiddenKeys: normalizedHiddenKeys
                 })
             );
         } catch (error) {
@@ -665,33 +694,18 @@
         customNavDialogVisible.value = true;
     };
 
-    const handleCustomNavSave = async (layout) => {
-        const sanitized = sanitizeLayout(layout);
+    const handleCustomNavSave = async (layout, hiddenKeys = []) => {
+        const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys);
+        const sanitized = sanitizeLayout(layout, normalizedHiddenKeys);
         navLayout.value = sanitized;
-        await saveNavLayout(sanitized);
+        navHiddenKeys.value = normalizedHiddenKeys;
+        await saveNavLayout(sanitized, normalizedHiddenKeys);
         customNavDialogVisible.value = false;
-    };
-
-    const handleCustomNavReset = () => {
-        modalStore
-            .confirm({
-                description: t('nav_menu.custom_nav.restore_default_confirm'),
-                title: t('confirm.title'),
-                confirmText: t('nav_menu.custom_nav.restore_default'),
-                cancelText: t('nav_menu.custom_nav.cancel')
-            })
-            .then(async ({ ok }) => {
-                if (!ok) return;
-                const defaults = sanitizeLayout(createDefaultNavLayout());
-                navLayout.value = defaults;
-                await saveNavLayout(defaults);
-                customNavDialogVisible.value = false;
-            })
-            .catch(() => {});
     };
 
     const loadNavMenuConfig = async () => {
         let layoutData = null;
+        let hiddenKeysData = [];
         try {
             const storedValue = await configRepository.getString('VRCX_customNavMenuLayoutList');
             if (storedValue) {
@@ -700,16 +714,23 @@
                     layoutData = parsed;
                 } else if (Array.isArray(parsed?.layout)) {
                     layoutData = parsed.layout;
+                    hiddenKeysData = Array.isArray(parsed.hiddenKeys) ? parsed.hiddenKeys : [];
                 }
             }
         } catch (error) {
             console.error('Failed to load custom nav', error);
         } finally {
+            const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeysData);
             const fallbackLayout = layoutData?.length ? layoutData : createDefaultNavLayout();
-            const sanitized = sanitizeLayout(fallbackLayout);
+            const sanitized = sanitizeLayout(fallbackLayout, normalizedHiddenKeys);
             navLayout.value = sanitized;
-            if (layoutData?.length && JSON.stringify(sanitized) !== JSON.stringify(fallbackLayout)) {
-                await saveNavLayout(sanitized);
+            navHiddenKeys.value = normalizedHiddenKeys;
+            if (
+                layoutData?.length &&
+                (JSON.stringify(sanitized) !== JSON.stringify(fallbackLayout) ||
+                    JSON.stringify(normalizedHiddenKeys) !== JSON.stringify(hiddenKeysData))
+            ) {
+                await saveNavLayout(sanitized, normalizedHiddenKeys);
             }
             navLayoutReady.value = true;
             navigateToFirstNavEntry();
@@ -853,10 +874,10 @@
 
     .notify-dot {
         position: absolute;
-        top: 6px;
-        right: 3px;
-        width: 5px;
-        height: 5px;
+        top: 4px;
+        right: 0;
+        width: 6px;
+        height: 6px;
         background-color: #ef4444;
         border-radius: 50%;
         transform: translateY(-50%);
@@ -864,10 +885,10 @@
 
     .notify-dot-not-collapsed {
         position: absolute;
-        top: 6px;
-        left: 3px;
-        width: 5px;
-        height: 5px;
+        top: 4px;
+        right: 0;
+        width: 6px;
+        height: 6px;
         background-color: #ef4444;
         border-radius: 50%;
         transform: translateY(-50%);

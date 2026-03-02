@@ -4,6 +4,7 @@ import {
     escapeTag,
     escapeTagRecursive,
     localeIncludes,
+    replaceBioSymbols,
     textToHex
 } from '../string';
 
@@ -48,7 +49,7 @@ describe('String Utils', () => {
     describe('textToHex', () => {
         test('converts basic text', () => {
             expect(textToHex('ABC')).toBe('41 42 43');
-            expect(textToHex('Hello')).toBe('48 65 6c 6c 6f');
+            expect(textToHex('Hello')).toBe('48 65 6C 6C 6F');
         });
 
         test('handles special cases', () => {
@@ -97,6 +98,38 @@ describe('String Utils', () => {
 
         test('preserves image links', () => {
             expect(changeLogRemoveLinks('![image](url)')).toBe('![image](url)');
+        });
+    });
+
+    describe('replaceBioSymbols', () => {
+        test('replaces fullwidth symbols with ASCII equivalents', () => {
+            expect(replaceBioSymbols('＠user')).toBe('@user');
+            expect(replaceBioSymbols('＃tag')).toBe('#tag');
+            expect(replaceBioSymbols('１＋１＝２')).toBe('１+１=２');
+        });
+
+        test('replaces multiple different symbols', () => {
+            expect(replaceBioSymbols('（hello）')).toBe('(hello)');
+            expect(replaceBioSymbols('［test］')).toBe('[test]');
+            expect(replaceBioSymbols('｛obj｝')).toBe('{obj}');
+        });
+
+        test('collapses multiple spaces', () => {
+            expect(replaceBioSymbols('hello   world')).toBe('hello world');
+        });
+
+        test('handles non-string input', () => {
+            expect(replaceBioSymbols(null)).toBe('');
+            expect(replaceBioSymbols(undefined)).toBe('');
+            expect(replaceBioSymbols(123)).toBe('');
+        });
+
+        test('handles empty string', () => {
+            expect(replaceBioSymbols('')).toBe('');
+        });
+
+        test('preserves normal ASCII text', () => {
+            expect(replaceBioSymbols('hello world')).toBe('hello world');
         });
     });
 });

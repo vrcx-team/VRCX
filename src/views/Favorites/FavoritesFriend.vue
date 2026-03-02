@@ -123,10 +123,8 @@
                                             >
                                         </div>
                                         <div class="group-item__bottom">
-                                            <Badge
-                                                :class="friendGroupVisibilitColors[group.visibility]"
-                                                variant="outline">
-                                                {{ formatVisibility(group.visibility) }}
+                                            <Badge variant="outline">
+                                                {{ t(`view.favorite.visibility.${group.visibility}`) }}
                                             </Badge>
                                             <DropdownMenu
                                                 :open="activeGroupMenu === remoteGroupMenuKey(group.key)"
@@ -801,6 +799,17 @@
         }
     );
 
+    function getBadgeVariant(visibility) {
+        switch (visibility) {
+            case 'public':
+                return 'default';
+            case 'friends':
+                return 'secondary';
+            case 'private':
+                return 'destructive';
+        }
+    }
+
     function showFriendExportDialog() {
         friendExportDialogVisible.value = true;
     }
@@ -937,7 +946,7 @@
         modalStore
             .confirm({
                 description: `Are you sure you want to unfavorite ${total} favorites?\n            This action cannot be undone.`,
-                title: `Trash2 ${total} favorites?`
+                title: `Delete ${total} favorites?`
             })
             .then(({ ok }) => ok && bulkUnfavoriteSelectedFriends([...selectedFavoriteFriends.value]))
             .catch(() => {});
@@ -962,14 +971,16 @@
     function clearFavoriteGroup(ctx) {
         modalStore
             .confirm({
-                description: 'Continue? Clear Group',
-                title: 'Confirm'
+                description: t('confirm.clear_group'),
+                title: t('confirm.title')
             })
-            .then(() => {
-                favoriteRequest.clearFavoriteGroup({
-                    type: ctx.type,
-                    group: ctx.name
-                });
+            .then(({ ok }) => {
+                if (ok) {
+                    favoriteRequest.clearFavoriteGroup({
+                        type: ctx.type,
+                        group: ctx.name
+                    });
+                }
             })
             .catch(() => {});
     }
@@ -1040,7 +1051,7 @@
                     favoriteGroupId: args.json.id
                 }
             });
-            toast.success('Group visibility changed');
+            toast.success(t('message.group.visibility_updated'));
             if (menuKey) {
                 handleGroupMenuVisible(menuKey, false);
             }
@@ -1112,8 +1123,8 @@
         handleGroupMenuVisible(localGroupMenuKey(group), false);
         modalStore
             .confirm({
-                description: 'Continue? Delete Group',
-                title: 'Confirm'
+                description: t('confirm.delete_group', { name: group }),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) return;
@@ -1234,6 +1245,12 @@
 
     .group-item__name {
         font-weight: 600;
+    }
+
+    .group-item__right {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
     }
 
     .group-item__count {

@@ -35,7 +35,13 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     const autoStateChangeCompanyStatus = ref('busy');
     const autoStateChangeInstanceTypes = ref([]);
     const autoStateChangeNoFriends = ref(false);
+    const autoStateChangeAloneDescEnabled = ref(false);
+    const autoStateChangeAloneDesc = ref('');
+    const autoStateChangeCompanyDescEnabled = ref(false);
+    const autoStateChangeCompanyDesc = ref('');
+    const autoStateChangeGroups = ref([]);
     const autoAcceptInviteRequests = ref('Off');
+    const autoAcceptInviteGroups = ref([]);
 
     async function initGeneralSettings() {
         const [
@@ -56,7 +62,13 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             autoStateChangeCompanyStatusConfig,
             autoStateChangeInstanceTypesStrConfig,
             autoStateChangeNoFriendsConfig,
-            autoAcceptInviteRequestsConfig
+            autoStateChangeAloneDescEnabledConfig,
+            autoStateChangeAloneDescConfig,
+            autoStateChangeCompanyDescEnabledConfig,
+            autoStateChangeCompanyDescConfig,
+            autoStateChangeGroupsStrConfig,
+            autoAcceptInviteRequestsConfig,
+            autoAcceptInviteGroupsStrConfig
         ] = await Promise.all([
             configRepository.getBool('VRCX_StartAtWindowsStartup', false),
             VRCXStorage.Get('VRCX_StartAsMinimizedState'),
@@ -84,7 +96,19 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
                 '[]'
             ),
             configRepository.getBool('VRCX_autoStateChangeNoFriends', false),
-            configRepository.getString('VRCX_autoAcceptInviteRequests', 'Off')
+            configRepository.getBool(
+                'VRCX_autoStateChangeAloneDescEnabled',
+                false
+            ),
+            configRepository.getString('VRCX_autoStateChangeAloneDesc', ''),
+            configRepository.getBool(
+                'VRCX_autoStateChangeCompanyDescEnabled',
+                false
+            ),
+            configRepository.getString('VRCX_autoStateChangeCompanyDesc', ''),
+            configRepository.getString('VRCX_autoStateChangeGroups', '[]'),
+            configRepository.getString('VRCX_autoAcceptInviteRequests', 'Off'),
+            configRepository.getString('VRCX_autoAcceptInviteGroups', '[]')
         ]);
 
         isStartAtWindowsStartup.value = isStartAtWindowsStartupConfig;
@@ -122,7 +146,19 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             autoStateChangeInstanceTypesStrConfig
         );
         autoStateChangeNoFriends.value = autoStateChangeNoFriendsConfig;
+        autoStateChangeAloneDescEnabled.value =
+            autoStateChangeAloneDescEnabledConfig;
+        autoStateChangeAloneDesc.value = autoStateChangeAloneDescConfig;
+        autoStateChangeCompanyDescEnabled.value =
+            autoStateChangeCompanyDescEnabledConfig;
+        autoStateChangeCompanyDesc.value = autoStateChangeCompanyDescConfig;
+        autoStateChangeGroups.value = JSON.parse(
+            autoStateChangeGroupsStrConfig
+        );
         autoAcceptInviteRequests.value = autoAcceptInviteRequestsConfig;
+        autoAcceptInviteGroups.value = JSON.parse(
+            autoAcceptInviteGroupsStrConfig
+        );
     }
 
     initGeneralSettings();
@@ -262,6 +298,53 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             autoStateChangeNoFriends.value
         );
     }
+    function setAutoStateChangeAloneDescEnabled() {
+        autoStateChangeAloneDescEnabled.value =
+            !autoStateChangeAloneDescEnabled.value;
+        configRepository.setBool(
+            'VRCX_autoStateChangeAloneDescEnabled',
+            autoStateChangeAloneDescEnabled.value
+        );
+    }
+    /**
+     * @param {string} value
+     */
+    function setAutoStateChangeAloneDesc(value) {
+        autoStateChangeAloneDesc.value = value;
+        configRepository.setString(
+            'VRCX_autoStateChangeAloneDesc',
+            autoStateChangeAloneDesc.value
+        );
+    }
+    function setAutoStateChangeCompanyDescEnabled() {
+        autoStateChangeCompanyDescEnabled.value =
+            !autoStateChangeCompanyDescEnabled.value;
+        configRepository.setBool(
+            'VRCX_autoStateChangeCompanyDescEnabled',
+            autoStateChangeCompanyDescEnabled.value
+        );
+    }
+    /**
+     * @param {string} value
+     */
+    function setAutoStateChangeCompanyDesc(value) {
+        autoStateChangeCompanyDesc.value = value;
+        configRepository.setString(
+            'VRCX_autoStateChangeCompanyDesc',
+            autoStateChangeCompanyDesc.value
+        );
+    }
+    /**
+     * @param {Array} value
+     */
+    function setAutoStateChangeGroups(value) {
+        autoStateChangeGroups.value = value;
+        configRepository.setString(
+            'VRCX_autoStateChangeGroups',
+            JSON.stringify(autoStateChangeGroups.value)
+        );
+    }
+
     /**
      * @param {string} value
      */
@@ -270,6 +353,17 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         configRepository.setString(
             'VRCX_autoAcceptInviteRequests',
             autoAcceptInviteRequests.value
+        );
+    }
+
+    /**
+     * @param {string[]} value
+     */
+    function setAutoAcceptInviteGroups(value) {
+        autoAcceptInviteGroups.value = value;
+        configRepository.setString(
+            'VRCX_autoAcceptInviteGroups',
+            JSON.stringify(autoAcceptInviteGroups.value)
         );
     }
 
@@ -334,7 +428,13 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         autoStateChangeCompanyStatus,
         autoStateChangeInstanceTypes,
         autoStateChangeNoFriends,
+        autoStateChangeAloneDescEnabled,
+        autoStateChangeAloneDesc,
+        autoStateChangeCompanyDescEnabled,
+        autoStateChangeCompanyDesc,
+        autoStateChangeGroups,
         autoAcceptInviteRequests,
+        autoAcceptInviteGroups,
 
         setIsStartAtWindowsStartup,
         setIsStartAsMinimizedState,
@@ -352,7 +452,13 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         setAutoStateChangeCompanyStatus,
         setAutoStateChangeInstanceTypes,
         setAutoStateChangeNoFriends,
+        setAutoStateChangeAloneDescEnabled,
+        setAutoStateChangeAloneDesc,
+        setAutoStateChangeCompanyDescEnabled,
+        setAutoStateChangeCompanyDesc,
+        setAutoStateChangeGroups,
         setAutoAcceptInviteRequests,
+        setAutoAcceptInviteGroups,
         promptProxySettings
     };
 });

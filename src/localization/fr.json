@@ -1556,13 +1556,6 @@
                 "success": "L'aperçu YouTube a été changé"
             }
         },
-        "change_table_size": {
-            "header": "Taille maximale du tableau",
-            "description": "Limite le nombre d'entrées chargées depuis la base de données. Des tableaux plus grands auront un impact sur l'utilisation de la RAM et sur les performances.",
-            "table_max_size": "Taille maximale du tableau",
-            "cancel": "Annuler",
-            "save": "Sauvegarder"
-        },
         "photon_lobby_timeout": {
             "header": "Seuil d'attente de l'utilisateur",
             "description": "Saisissez le nombre de secondes (par défaut : 3)",
@@ -1597,6 +1590,13 @@
             "description": "Enter proxy server address and port",
             "close": "Fermer",
             "restart": "Restart"
+        },
+        "table_entries_settings": {
+            "header": "Taille maximale du tableau",
+            "description": "Limite le nombre d'entrées chargées depuis la base de données. Des tableaux plus grands auront un impact sur l'utilisation de la RAM et sur les performances.",
+            "table_max_entries": "Taille maximale du tableau",
+            "cancel": "Annuler",
+            "save": "Sauvegarder"
         }
     },
     "message": {

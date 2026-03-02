@@ -4,14 +4,20 @@
             <div
                 class="avatar"
                 :class="isFriendActiveOrOffline ? undefined : userStatusClass(friend.ref, friend.pendingOffline)">
-                <img :src="userImage(friend.ref, true)" loading="lazy" />
+                <Avatar class="size-full rounded-full">
+                    <AvatarImage :src="userImage(friend.ref, true)" class="object-cover" />
+                    <AvatarFallback>
+                        <User class="size-5 text-muted-foreground" />
+                    </AvatarFallback>
+                </Avatar>
             </div>
             <div class="detail h-9 flex flex-col justify-between">
                 <span v-if="!hideNicknames && friend.$nickName" class="name" :style="{ color: friend.ref.$userColour }">
                     {{ friend.ref.displayName }} ({{ friend.$nickName }})
                 </span>
                 <span v-else class="name" :style="{ color: friend.ref.$userColour }"
-                    >{{ friend.ref.displayName }}{{ isGroupByInstance && friend.isVIP ? ' ⭐' : '' }}</span
+                    >{{ friend.ref.displayName
+                    }}{{ isGroupByInstance && allFavoriteFriendIds.has(friend.id) ? ' ⭐' : '' }}</span
                 >
 
                 <span v-if="isFriendActiveOrOffline" class="block truncate text-xs">{{
@@ -47,23 +53,14 @@
                 ><Trash2 class="h-4 w-4" />
             </Button>
         </template>
-
-        <!-- <div v-else class="skeleton" aria-busy="true" aria-label="Loading">
-            <div>
-                <Skeleton class="h-10 w-10 rounded-full" />
-                <div>
-                    <Skeleton class="h-3.5 w-1/2" />
-                    <Skeleton class="mt-1.5 h-3 w-full" />
-                </div>
-            </div>
-        </div> -->
     </div>
 </template>
 
 <script setup>
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+    import { Trash2, User } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Spinner } from '@/components/ui/spinner';
-    import { Trash2 } from 'lucide-vue-next';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -80,7 +77,7 @@
     });
 
     const { hideNicknames } = storeToRefs(useAppearanceSettingsStore());
-    const { isRefreshFriendsLoading } = storeToRefs(useFriendStore());
+    const { isRefreshFriendsLoading, allFavoriteFriendIds } = storeToRefs(useFriendStore());
     const { confirmDeleteFriend } = useFriendStore();
     const { showUserDialog } = useUserStore();
     const { t } = useI18n();

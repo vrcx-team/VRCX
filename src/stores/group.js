@@ -16,14 +16,12 @@ import {
 } from '../shared/utils';
 import { database } from '../service/database.js';
 import { groupDialogFilterOptions } from '../shared/constants/';
-import { useAvatarStore } from './avatar';
 import { useGameStore } from './game';
 import { useInstanceStore } from './instance';
 import { useModalStore } from './modal';
 import { useNotificationStore } from './notification';
 import { useUiStore } from './ui';
 import { useUserStore } from './user';
-import { useWorldStore } from './world';
 import { watchState } from '../service/watchState';
 
 import configRepository from '../service/config';
@@ -34,8 +32,6 @@ export const useGroupStore = defineStore('Group', () => {
     const instanceStore = useInstanceStore();
     const gameStore = useGameStore();
     const userStore = useUserStore();
-    const worldStore = useWorldStore();
-    const avatarStore = useAvatarStore();
     const notificationStore = useNotificationStore();
     const modalStore = useModalStore();
     const uiStore = useUiStore();
@@ -135,13 +131,13 @@ export const useGroupStore = defineStore('Group', () => {
         if (!groupId) {
             return;
         }
-        uiStore.openDialog({
+        const isMainDialogOpen = uiStore.openDialog({
             type: 'group',
             id: groupId
         });
         const D = groupDialog.value;
         D.visible = true;
-        if (D.id === groupId) {
+        if (isMainDialogOpen && D.id === groupId) {
             uiStore.setDialogCrumbLabel('group', D.id, D.ref?.name || D.id);
             instanceStore.applyGroupDialogInstances();
             D.loading = false;
@@ -187,13 +183,15 @@ export const useGroupStore = defineStore('Group', () => {
                     D.ownerDisplayName = args.ref.ownerId;
                     D.visible = true;
                     D.loading = false;
+                    if (args.cache) {
+                        groupRequest.getGroup(args.params);
+                    }
                     userRequest
                         .getCachedUser({
                             userId: args.ref.ownerId
                         })
                         .then((args1) => {
                             D.ownerDisplayName = args1.ref.displayName;
-                            return args1;
                         });
                     database.getLastGroupVisit(D.ref.name).then((r) => {
                         if (D.id === args.ref.id) {
@@ -585,8 +583,8 @@ export const useGroupStore = defineStore('Group', () => {
     function leaveGroupPrompt(groupId) {
         modalStore
             .confirm({
-                description: 'Are you sure you want to leave this group?',
-                title: 'Confirm'
+                description: t('confirm.leave_group'),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) return;
@@ -619,7 +617,7 @@ export const useGroupStore = defineStore('Group', () => {
             })
             .then((args) => {
                 handleGroupMemberProps(args);
-                toast.success('Group visibility updated');
+                toast.success(t('message.group.visibility_updated'));
                 return args;
             });
     }
@@ -631,7 +629,7 @@ export const useGroupStore = defineStore('Group', () => {
             })
             .then((args) => {
                 handleGroupMemberProps(args);
-                toast.success('Group subscription updated');
+                toast.success(t('message.group.subscription_updated'));
                 return args;
             });
     }

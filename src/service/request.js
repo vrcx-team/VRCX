@@ -4,10 +4,8 @@ import Noty from 'noty';
 
 import {
     useAuthStore,
-    useAvatarStore,
     useModalStore,
     useNotificationStore,
-    useUiStore,
     useUpdateLoopStore,
     useUserStore
 } from '../stores';
@@ -32,12 +30,10 @@ const t = i18n.global.t;
  */
 export function request(endpoint, options) {
     const userStore = useUserStore();
-    const avatarStore = useAvatarStore();
     const authStore = useAuthStore();
     const modalStore = useModalStore();
     const notificationStore = useNotificationStore();
     const updateLoopStore = useUpdateLoopStore();
-    const uiStore = useUiStore();
     if (
         !watchState.isLoggedIn &&
         endpoint.startsWith('/auth') &&
@@ -121,6 +117,13 @@ export function request(endpoint, options) {
                 if (AppDebug.debugWebRequests) {
                     console.log(init, 'parsed data', response.data);
                 }
+                if (response.data.error) {
+                    $throw(
+                        response.data.error.status_code || 0,
+                        response.data.error.message,
+                        endpoint
+                    );
+                }
                 return response;
             } catch (e) {
                 console.error(e);
@@ -143,11 +146,7 @@ export function request(endpoint, options) {
                 // ignore expected API errors
                 $throw(response.status, response.data || '', endpoint);
             }
-            $throw(
-                response.status,
-                response.data || response.statusText,
-                endpoint
-            );
+            return response;
         })
         .then(({ data, status }) => {
             if (status === 200) {
@@ -312,17 +311,13 @@ export function $throw(code, error, endpoint) {
     if (endpoint?.endsWith('/mutuals') && (code === 403 || code === -1)) {
         ignoreError = true;
     }
-    const text = message.map((s) => escapeTag(s)).join('<br>');
+    const text = message.map((s) => escapeTag(s)).join('\n');
 
     if (text.length && !ignoreError) {
-        if (AppDebug.errorNoty) {
-            AppDebug.errorNoty.close();
-        }
-        AppDebug.errorNoty = new Noty({
-            type: 'error',
-            text
+        toast.error(message[0], {
+            description: message.slice(1).join('\n'),
+            position: 'bottom-left'
         });
-        AppDebug.errorNoty.show();
     }
     const e = new Error(text);
     e.status = code;

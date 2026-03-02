@@ -105,7 +105,7 @@
             getListState().pageSize = value;
         }
     });
-    const tableStyle = { maxHeight: '400px' };
+    const tableStyle = { maxHeight: '100%' };
     const search = computed({
         get: () => getListState().search,
         set: (value) => {
@@ -237,9 +237,7 @@
     );
 
     const totalItems = computed(() => {
-        const length = table.getFilteredRowModel().rows.length;
-        const max = vrcxStore.maxTableSize;
-        return length > max ? max : length;
+        return table.getFilteredRowModel().rows.length;
     });
 
     const handlePageSizeChange = (size) => {

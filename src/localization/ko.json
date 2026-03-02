@@ -1410,13 +1410,6 @@
                 "success": "월드 유튜브 미리보기 변경됨"
             }
         },
-        "change_table_size": {
-            "header": "최대 테이블 크기",
-            "description": "테이블이 커질수록 메모리 사용량과 성능에 영향을 줍니다",
-            "table_max_size": "최대 테이블 크기",
-            "cancel": "취소",
-            "save": "저장"
-        },
         "photon_lobby_timeout": {
             "header": "유저 시간 제한",
             "description": "초를 입력 (기본: 3)",
@@ -1451,6 +1444,13 @@
             "description": "Enter proxy server address and port",
             "close": "닫기",
             "restart": "Restart"
+        },
+        "table_entries_settings": {
+            "header": "최대 테이블 크기",
+            "description": "테이블이 커질수록 메모리 사용량과 성능에 영향을 줍니다",
+            "table_max_entries": "최대 테이블 크기",
+            "cancel": "취소",
+            "save": "저장"
         }
     },
     "table": {

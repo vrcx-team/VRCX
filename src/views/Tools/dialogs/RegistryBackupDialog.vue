@@ -119,8 +119,8 @@
     function restoreVrcRegistryBackup(row) {
         modalStore
             .confirm({
-                description: 'Continue? Restore Backup',
-                title: 'Confirm'
+                description: t('confirm.restore_backup'),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) {
@@ -129,11 +129,11 @@
                 const data = JSON.stringify(row.data);
                 AppApi.SetVRChatRegistry(data)
                     .then(() => {
-                        toast.success('VRC registry settings restored');
+                        toast.success(t('message.registry.restored'));
                     })
                     .catch((e) => {
                         console.error(e);
-                        toast.error(`Failed to restore VRC registry settings, check console for full error: ${e}`);
+                        toast.error(t('message.registry.restore_failed', { error: e }));
                     });
             })
             .catch(() => {});
@@ -153,15 +153,15 @@
     function deleteVrcRegistry() {
         modalStore
             .confirm({
-                description: 'Continue? Delete VRC Registry Settings',
-                title: 'Confirm'
+                description: t('confirm.delete_vrc_registry'),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) {
                     return;
                 }
                 AppApi.DeleteVRChatRegistryFolder().then(() => {
-                    toast.success('VRC registry settings deleted');
+                    toast.success(t('message.registry.deleted'));
                 });
             })
             .catch(() => {});
@@ -175,11 +175,11 @@
     function promptVrcRegistryBackupName() {
         modalStore
             .prompt({
-                title: 'Backup Name',
-                description: 'Enter a name for the backup',
+                title: t('prompt.backup_name.header'),
+                description: t('prompt.backup_name.description'),
                 inputValue: 'Backup',
                 pattern: /\S+/,
-                errorMessage: 'Name is required'
+                errorMessage: t('prompt.backup_name.input_error')
             })
             .then(({ ok, value }) => {
                 if (!ok) return;
@@ -245,14 +245,14 @@
             }
             AppApi.SetVRChatRegistry(json)
                 .then(() => {
-                    toast.success('VRC registry settings restored');
+                    toast.success(t('message.registry.restored'));
                 })
                 .catch((e) => {
                     console.error(e);
-                    toast.error(`Failed to restore VRC registry settings, check console for full error: ${e}`);
+                    toast.error(t('message.registry.restore_failed', { error: e }));
                 });
         } catch {
-            toast.error('Invalid JSON');
+            toast.error(t('message.registry.invalid_json'));
         }
     }
 

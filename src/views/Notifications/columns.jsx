@@ -1,4 +1,9 @@
 import Location from '../../components/Location.vue';
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage
+} from '../../components/ui/avatar';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import {
@@ -12,6 +17,7 @@ import {
     Ban,
     BellOff,
     Check,
+    ImageOff,
     Link,
     MessageCircle,
     Reply,
@@ -29,7 +35,8 @@ import {
     useLocationStore,
     useUiStore,
     useUserStore,
-    useWorldStore
+    useWorldStore,
+    useNotificationStore
 } from '../../stores';
 
 import Emoji from '../../components/Emoji.vue';
@@ -61,6 +68,7 @@ export const createColumns = ({
     const { currentUser } = storeToRefs(useUserStore());
     const { lastLocation } = storeToRefs(useLocationStore());
     const { isGameRunning } = storeToRefs(useGameStore());
+    const { isNotificationExpired } = useNotificationStore();
 
     const canInvite = () => {
         const location = lastLocation.value?.location;
@@ -385,7 +393,8 @@ export const createColumns = ({
             cell: ({ row }) => {
                 const original = row.original;
                 if (original.type === 'boop') {
-                    const imageUrl = original.details?.imageUrl;
+                    const imageUrl =
+                        original.details?.imageUrl || original.imageUrl;
                     if (!imageUrl || imageUrl.startsWith('default_')) {
                         return null;
                     }
@@ -400,32 +409,43 @@ export const createColumns = ({
                 }
 
                 if (original.details?.imageUrl) {
+                    const detailsUrl = getSmallThumbnailUrl(
+                        original.details.imageUrl
+                    );
                     return (
-                        <img
-                            class="cursor-pointer h-7.5 w-7.5 rounded object-cover"
-                            src={getSmallThumbnailUrl(
-                                original.details.imageUrl
-                            )}
+                        <Avatar
+                            class="cursor-pointer size-7.5 rounded"
                             onClick={() =>
                                 showFullscreenImageDialog(
                                     original.details.imageUrl
                                 )
                             }
-                            loading="lazy"
-                        />
+                        >
+                            <AvatarImage
+                                src={detailsUrl}
+                                class="object-cover"
+                            />
+                            <AvatarFallback class="rounded">
+                                <ImageOff class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
                     );
                 }
 
                 if (original.imageUrl) {
+                    const imgUrl = getSmallThumbnailUrl(original.imageUrl);
                     return (
-                        <img
-                            class="cursor-pointer h-7.5 w-7.5 rounded object-cover"
-                            src={getSmallThumbnailUrl(original.imageUrl)}
+                        <Avatar
+                            class="cursor-pointer size-7.5 rounded"
                             onClick={() =>
                                 showFullscreenImageDialog(original.imageUrl)
                             }
-                            loading="lazy"
-                        />
+                        >
+                            <AvatarImage src={imgUrl} class="object-cover" />
+                            <AvatarFallback class="rounded">
+                                <ImageOff class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
                     );
                 }
 
@@ -455,7 +475,28 @@ export const createColumns = ({
                                 />
                             </div>
                         ) : null}
+                        {original.message && original.title ? (
+                            <TooltipWrapper
+                                content={`${original.title}, ${original.message}`}
+                                delayDuration={500}
+                            >
+                                <span class="block w-full min-w-0 truncate">
+                                    {`${original.title}, ${original.message}`}
+                                </span>
+                            </TooltipWrapper>
+                        ) : null}
+                        {!original.message && original.title ? (
+                            <TooltipWrapper
+                                content={original.title}
+                                delayDuration={500}
+                            >
+                                <span class="block w-full min-w-0 truncate">
+                                    {original.title}
+                                </span>
+                            </TooltipWrapper>
+                        ) : null}
                         {original.message &&
+                        !original.title &&
                         original.message !==
                             `This is a generated invite to ${original.details?.worldName}` ? (
                             <TooltipWrapper
@@ -529,16 +570,12 @@ export const createColumns = ({
                     !original.link?.startsWith('economy.');
                 const showDeleteLog =
                     original.type !== 'friendRequest' &&
-                    original.type !== 'ignoredFriendRequest' &&
-                    !original.type?.includes('group.') &&
-                    !original.type?.includes('moderation.') &&
-                    !original.type?.includes('instance.') &&
-                    !original.link?.startsWith('economy.');
+                    original.type !== 'ignoredFriendRequest';
 
                 return (
                     <div class="flex items-center justify-end gap-2">
                         {original.senderUserId !== currentUser.value?.id &&
-                        !original.$isExpired ? (
+                        !isNotificationExpired(original) ? (
                             <span class="inline-flex items-center gap-2">
                                 {original.type === 'friendRequest' ? (
                                     <Tooltip>

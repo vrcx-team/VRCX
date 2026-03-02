@@ -99,11 +99,58 @@ function changeLogRemoveLinks(text) {
     return text.replace(/([^!])\[[^\]]+\]\([^)]+\)/g, '$1');
 }
 
+/**
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+function replaceBioSymbols(text) {
+    if (typeof text !== 'string') {
+        return '';
+    }
+    const symbolList = {
+        '@': '＠',
+        '#': '＃',
+        $: '＄',
+        '%': '％',
+        '&': '＆',
+        '=': '＝',
+        '+': '＋',
+        '/': '⁄',
+        '\\': '＼',
+        ';': ';',
+        ':': '˸',
+        ',': '‚',
+        '?': '？',
+        '!': 'ǃ',
+        '"': '＂',
+        '<': '≺',
+        '>': '≻',
+        '.': '․',
+        '^': '＾',
+        '{': '｛',
+        '}': '｝',
+        '[': '［',
+        ']': '］',
+        '(': '（',
+        ')': '）',
+        '|': '｜',
+        '*': '∗'
+    };
+    let newText = text;
+    for (const key in symbolList) {
+        const regex = new RegExp(symbolList[key], 'g');
+        newText = newText.replace(regex, key);
+    }
+    return newText.replace(/ {1,}/g, ' ').trimRight();
+}
+
 export {
     escapeTag,
     escapeTagRecursive,
     textToHex,
     commaNumber,
     localeIncludes,
-    changeLogRemoveLinks
+    changeLogRemoveLinks,
+    replaceBioSymbols
 };

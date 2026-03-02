@@ -4,8 +4,15 @@
     "common": {
         "no_data": "No data",
         "no_matching_records": "No matching records",
+        "feature_relocated": {
+            "title": "Deprecation Notice",
+            "description": "This feature will be removed in a future update. Please use {feature} instead."
+        },
         "actions": {
-            "open": "Open"
+            "open": "Open",
+            "confirm": "Confirm",
+            "clear": "Clear",
+            "reset": "Reset"
         },
         "time_units": {
             "y": "y",
@@ -25,6 +32,7 @@
         "favorite_friends": "Favorite Friends",
         "favorite_worlds": "Favorite Worlds",
         "favorite_avatars": "Favorite Avatars",
+        "my_avatars": "My Avatars",
         "social": "Social",
         "friend_log": "Friend Log",
         "moderation": "Moderation",
@@ -51,21 +59,20 @@
         "custom_nav": {
             "header": "Customize Navigation",
             "dialog_title": "Customize Navigation Menu",
-            "add_folder": "Add Folder",
+            "new_folder": "New Folder",
             "folder_name_placeholder": "Folder name",
             "folder_icon_placeholder": "Icon class (e.g. ri-menu-fold-line)",
             "edit_folder": "Edit Folder",
-            "folder_available": "Available items",
-            "folder_selected": "Folder items",
-            "folder_selected_empty": "No items selected",
             "delete_folder": "Delete Folder",
-            "remove_from_folder": "Remove from folder",
-            "folder_empty": "No items in this folder",
-            "invalid_folder": "Folder must have a name and contain at least two items.",
+            "folder_empty": "This folder is empty",
+            "folder_drop_here": "Drag items here",
+            "hide": "Hide",
+            "show": "Show",
+            "hidden_items": "Hidden",
+            "confirm": "Confirm",
+            "cancel": "Cancel",
             "restore_default": "Restore Default",
-            "restore_default_confirm": "Restore navigation to its default order?",
-            "save": "Save",
-            "cancel": "Cancel"
+            "restore_default_confirm": "Restore navigation to its default order?"
         }
     },
     "side_panel": {
@@ -82,7 +89,28 @@
         "online": "ONLINE",
         "active": "ACTIVE",
         "offline": "OFFLINE",
-        "pending_offline": "Pending Offline"
+        "pending_offline": "Pending Offline",
+        "settings": {
+            "group_by_instance": "Group by Instance",
+            "split_favorite_friends": "Show Favorite Groups",
+            "hide_friends_in_same_instance": "Hide Grouped Friends",
+            "sort_primary": "Sort by",
+            "sort_secondary": "Then by",
+            "sort_tertiary": "Then by",
+            "favorite_groups": "Favorite Groups",
+            "favorite_groups_placeholder": "All Groups",
+            "edit_group_order": "Edit Group Order"
+        },
+        "notifications": "Notifications",
+        "notification_center": {
+            "title": "Notification Center",
+            "view_more": "View More",
+            "tab_friend": "Friend",
+            "tab_group": "Group",
+            "tab_other": "Other",
+            "past_notifications": "Last 24 hours",
+            "no_new_notifications": "No new notifications in the past 24 hours"
+        }
     },
     "view": {
         "login": {
@@ -92,6 +120,8 @@
             "forgotPassword": "Forgot Password?",
             "updater": "Updater",
             "proxy_settings": "Proxy settings",
+            "settings": "Settings",
+            "language": "Language",
             "field": {
                 "username": "Username or Email",
                 "password": "Password",
@@ -111,7 +141,8 @@
                 "Status": "Status",
                 "Avatar": "Avatar",
                 "Bio": "Bio"
-            }
+            },
+            "photon_event_logging": "Photon Event Logging"
         },
         "friends_locations": {
             "online": "Online",
@@ -149,6 +180,10 @@
                 "status_tooltip": "VRCX Companion Status"
             }
         },
+        "my_avatars": {
+            "filter": "Filter",
+            "clear_filters": "Clear All"
+        },
         "search": {
             "search_placeholder": "Search",
             "clear_results_tooltip": "Clear Search Results",
@@ -168,6 +203,7 @@
                 "refresh_tooltip": "Refresh own avatars",
                 "result_count": "Results {count}",
                 "all": "All",
+                "all_tags": "All Tags",
                 "public": "Public",
                 "private": "Private",
                 "local": "Local",
@@ -209,7 +245,11 @@
                 "confirm_delete_description": "Found {count} invalid avatars, delete them?",
                 "delete_summary": "Successfully deleted {removed} invalid avatars",
                 "no_invalid_found": "No invalid avatars found",
-                "delete_cancelled": "Delete operation cancelled"
+                "delete_cancelled": "Delete operation cancelled",
+                "local_history": "Local History",
+                "no_group_selected": "No Group Selected",
+                "styles": "Styles",
+                "almost_nuisance": "Almost Nuisance"
             },
             "edit_mode": "Edit Mode",
             "copy": "Copy",
@@ -305,7 +345,8 @@
                     },
                     "report": {
                         "closed": "Moderation Report Closed"
-                    }
+                    },
+                    "contentrestriction": "Moderation Content Restriction"
                 },
                 "instance": {
                     "closed": "Instance Closed"
@@ -364,7 +405,8 @@
                     "start_fetch": "Start Fetch",
                     "fetch_again": "Fetch Again",
                     "stop": "Stop",
-                    "stop_fetching": "Stop fetching"
+                    "stop_fetching": "Stop fetching",
+                    "go_to_friend": "Go to friend"
                 },
                 "status": {
                     "no_friends_to_process": "You have no friends to process",
@@ -402,7 +444,13 @@
                     "layout_spacing": "Layout spacing",
                     "layout_spacing_help": "How spread out the graph is. Higher means less crowded.",
                     "edge_curvature": "Edge curvature",
-                    "edge_curvature_help": "How curved the lines are. Higher means smoother lines in dense areas."
+                    "edge_curvature_help": "How curved the lines are. Higher means smoother lines in dense areas.",
+                    "community_separation": "Community separation",
+                    "community_separation_help": "How far apart different communities are pushed. Higher means more distinct clusters.",
+                    "reset_defaults": "Reset to defaults",
+                    "exclude_friends": "Exclude friends",
+                    "exclude_friends_placeholder": "Select friends to exclude",
+                    "exclude_friends_help": "Selected friends will be hidden from the graph."
                 }
             }
         },
@@ -520,7 +568,8 @@
                     "startup_linux": "Add \"--startup\" arg to startup VRCX.desktop file to start VRCX minimized at system startup"
                 },
                 "favorites": {
-                    "header": "VRCX Favorite Friends",
+                    "header": "Favorite Groups for Filtering",
+                    "header_tooltip": "Choose which favorite groups are treated as VIP for filtering in Feed, Game Log, Notifications, and VR Overlay",
                     "group_placeholder": "Choose Groups"
                 },
                 "logging": {
@@ -531,20 +580,27 @@
                     "auto_login_delay_button": "Set delay seconds"
                 },
                 "automation": {
-                    "auto_change_status": "Auto Change Status",
-                    "auto_state_change_tooltip": "Automatically change status when there are other people in the instance (Alone / Company)",
-                    "alone_condition": "Alone Condition",
-                    "alone": "Alone",
-                    "no_friends": "No Friends",
+                    "auto_change_status": "Auto Status & Invites",
+                    "auto_change_status_switch": "Auto Change Status",
+                    "auto_state_change_tooltip": "Configure automatic status changes and invite request handling",
+                    "auto_state_change_switch_tooltip": "Automatically change status when there are other people in the instance (Alone / Company)",
+                    "alone_condition": "Consider alone when",
+                    "alone": "No other user",
+                    "no_friends": "No friend in instance",
                     "alone_status": "Alone Status",
                     "company_status": "Company Status",
-                    "allowed_instance_types": "Allowed Instance Types",
+                    "allowed_instance_types": "Active in instance types",
                     "instance_type_placeholder": "All Instance Types",
                     "auto_invite_request_accept": "Auto Accept Invite Requests",
                     "auto_invite_request_accept_tooltip": "Automatically accept invite requests from favorite friends",
-                    "auto_invite_request_accept_off": "Off",
                     "auto_invite_request_accept_favs": "All Favorites",
-                    "auto_invite_request_accept_selected_favs": "VRCX Favorites"
+                    "auto_invite_request_accept_selected_favs": "VRCX Favorites",
+                    "change_status_description": "Override status description",
+                    "status_description_placeholder": "Status description (max 32 characters)",
+                    "auto_change_status_groups": "Only count friends from",
+                    "auto_change_status_groups_placeholder": "Choose Groups",
+                    "auto_accept_invite_groups": "Only accept from",
+                    "auto_accept_invite_groups_placeholder": "Choose Groups"
                 },
                 "legal_notice": {
                     "header": "Legal Notice",
@@ -596,7 +652,6 @@
                     "sort_instance_users_by": "Sort Instance Users by",
                     "sort_instance_users_by_time": "Time",
                     "sort_instance_users_by_alphabet": "Alphabetical",
-                    "table_max_size": "Table Max Size",
                     "table_page_sizes": "Table Page Sizes",
                     "table_page_sizes_error": "Page size must be a number between 1 and 1000",
                     "show_notification_icon_dot": "Show Tray Notification Dot",
@@ -605,7 +660,14 @@
                     "table_density": "Table Density",
                     "table_density_standard": "Standard",
                     "table_density_comfortable": "Comfortable",
-                    "table_density_compact": "Compact"
+                    "table_density_compact": "Compact",
+                    "table_entries_settings": "Table Entries Settings"
+                },
+                "display": {
+                    "header": "Display"
+                },
+                "sorting_tables": {
+                    "header": "Sorting & Tables"
                 },
                 "timedate": {
                     "header": "Time/Date",
@@ -626,7 +688,6 @@
                     "yellow": "Yellow"
                 },
                 "side_panel": {
-                    "header": "Side Panel",
                     "sorting": {
                         "header": "Sort Order",
                         "alphabetical": "Alphabetical",
@@ -637,13 +698,7 @@
                         "last_seen": "Last Seen",
                         "time_in_instance": "Time in Instance",
                         "placeholder": "Sort Order"
-                    },
-                    "group_by_instance": "Group by Instance",
-                    "group_by_instance_tooltip": "Enabling this will group friends by instance when there is more than one friend in the same instance.",
-                    "hide_friends_in_same_instance": "Hide Friends in Same Instance",
-                    "hide_friends_in_same_instance_tooltip": "Hide Friends from Friend List When They Are in the Same Instance.",
-                    "split_favorite_friends": "Split Favorite Friends",
-                    "split_favorite_friends_tooltip": "Separate favorite friends into their individual groups."
+                    }
                 },
                 "user_dialog": {
                     "header": "User Dialog",
@@ -754,7 +809,6 @@
                 "rpc": {
                     "vr": "VR",
                     "desktop": "Desktop",
-                    "join_button": "Join",
                     "powered_by_vrcx": "Powered by VRCX",
                     "private_world": "Private World"
                 }
@@ -769,6 +823,12 @@
                 "advanced": {
                     "launch_options": "Launch Options",
                     "vrc_registry_backup": "VRC Registry Backup",
+                    "vrchat_settings": {
+                        "header": "VRChat"
+                    },
+                    "vrcx_settings": {
+                        "header": "VRCX"
+                    },
                     "primary_password": {
                         "header": "Primary Password",
                         "description": "Encrypt password (disables auto login)"
@@ -968,8 +1028,7 @@
                 "showcased": "Showcased"
             },
             "actions": {
-                "favorite_tooltip": "Add to favorites",
-                "unfavorite_tooltip": "Remove from favorites",
+                "favorites_tooltip": "Favorites",
                 "refresh": "Refresh",
                 "share": "Share",
                 "invite": "Invite",
@@ -1005,7 +1064,8 @@
                 "unfriend": "Unfriend",
                 "unfriend_success_msg": "Unfriended",
                 "logout": "Logout",
-                "edit_note_memo": "Edit Note and Memo"
+                "edit_note_memo": "Edit Note and Memo",
+                "reset_home": "Reset Home"
             },
             "info": {
                 "header": "Info",
@@ -1243,7 +1303,10 @@
                 "delete": "Delete",
                 "delete_impostor": "Delete Impostor",
                 "regenerate_impostor": "Regenerate Impostor",
-                "create_impostor": "Create Impostor"
+                "create_impostor": "Create Impostor",
+                "manage_tags": "Manage Tags",
+                "manage_tags_placeholder": "Add a tag...",
+                "manage_tags_hint": "Click a tag to change its color"
             },
             "info": {
                 "header": "Info",
@@ -1255,7 +1318,11 @@
                 "last_updated": "Last Updated",
                 "version": "Version",
                 "platform": "Platform",
+                "pc_performance": "PC Performance",
+                "android_performance": "Android Performance",
+                "ios_performance": "iOS Performance",
                 "time_spent": "Time Spent",
+                "tags": "Tags",
                 "memo": "Memo",
                 "memo_placeholder": "Click to add a memo",
                 "listings": "Listings",
@@ -1643,7 +1710,8 @@
             "drone_skin": "Drone Skin",
             "emoji": "Emoji",
             "redeem": "Redeem",
-            "create_animated_emoji": "Animated Emoji Generator"
+            "create_animated_emoji": "Animated Emoji Generator",
+            "crop_image": "Confirm Upload"
         },
         "gallery_select": {
             "header": "Select Image",
@@ -1656,7 +1724,9 @@
             "avatar": "Change Avatar Image",
             "world": "Change World Image",
             "description": "Recommended image size: 1200x900px (4:3)",
-            "upload": "Upload Image"
+            "upload": "Upload Image",
+            "confirm": "Confirm Crop",
+            "cancel": "Cancel"
         },
         "screenshot_metadata": {
             "header": "Screenshot Metadata",
@@ -1965,6 +2035,19 @@
         "decline_type": "Continue? Decline {type}",
         "delete_type": "Continue? {type}",
         "command_question": "Continue? {command}",
+        "clear_group": "Continue? Clear Group",
+        "delete_group": "Continue? Delete Group {name}",
+        "delete_post": "Are you sure you want to delete this post?",
+        "block_group": "Are you sure you want to block this group?",
+        "unblock_group": "Are you sure you want to unblock this group?",
+        "leave_group": "Are you sure you want to leave this group?",
+        "disable_gamelog": "Continue? Disable GameLog",
+        "restore_backup": "Continue? Restore Backup",
+        "delete_vrc_registry": "Continue? Delete VRC Registry Settings",
+        "clear_cache": "Continue? Clear all VRChat cache",
+        "close_instance": "Continue? Close Instance, nobody will be able to join",
+        "bulk_unfavorite": "Are you sure you want to unfavorite {count} favorites?\nThis action cannot be undone.",
+        "bulk_unfavorite_title": "Delete {count} favorites?",
         "restart_required_title": "Restart Required",
         "restart_now": "Restart Now",
         "restart_later": "Later"
@@ -2099,17 +2182,6 @@
                 "success": "World YouTube preview changed"
             }
         },
-        "change_table_size": {
-            "header": "Max Table Size",
-            "description": "Limit amount of entries loaded from database to UI pages, larger table sizes will impact RAM usage and performance",
-            "table_max_size": "Table Max Size",
-            "table_max_size_error": "Enter a number between {min} and {max}.",
-            "search_limit": "Search limit",
-            "search_limit_error": "Enter a number between {min} and {max}.",
-            "search_limit_warning": "Too large values can freeze the app.",
-            "cancel": "Cancel",
-            "save": "Save"
-        },
         "photon_lobby_timeout": {
             "header": "User Timeout Threshold",
             "description": "Enter amount of seconds (default: 3)",
@@ -2139,6 +2211,11 @@
                 "error": "Group already exists with the name {name}"
             }
         },
+        "backup_name": {
+            "header": "Backup Name",
+            "description": "Enter a name for the backup",
+            "input_error": "Name is required"
+        },
         "auto_login_delay": {
             "header": "Auto-login delay",
             "description": "Enter delay in seconds (0 to disable, max 10).",
@@ -2156,10 +2233,35 @@
             "cancel": "Cancel",
             "redeem": "Redeem",
             "success": "Code redeemed successfully"
+        },
+        "table_entries_settings": {
+            "header": "Table Entries Settings",
+            "description": "Limit the number of entries the VRCX logs from the database to the UI. A large number may impact RAM usage and performance",
+            "table_max_entries": "Table Max Entries",
+            "table_max_entries_error": "Enter a number between {min} and {max}.",
+            "table_max_entries_hint": "Valid range: {min} – {max}.",
+            "search_limit_returns": "Search Limit Returns",
+            "search_limit_returns_error": "Enter a number between {min} and {max}.",
+            "search_limit_returns_hint": "Valid range: {min} – {max}.",
+            "search_limit_returns_warning": "Too large values can freeze the app.",
+            "cancel": "Cancel",
+            "save": "Save"
         }
     },
     "message": {
         "auto_login_delay_countdown": "Auto-login in {seconds}s...",
+        "auth": {
+            "login_greeting": "Hello there, {name}!",
+            "logout_greeting": "See you again, {name}!",
+            "email_2fa_resent": "Email 2FA resent.",
+            "email_2fa_no_credentials": "Cannot send 2FA email without saved credentials. Please login again.",
+            "incorrect_primary_password": "Incorrect primary password",
+            "saved_credentials_invalid": "Saved credentials are no longer valid.",
+            "account_removed": "Account removed.",
+            "auto_login_success": "Automatically logged in.",
+            "auto_login_failed": "Failed to login automatically.",
+            "offline": "You're offline."
+        },
         "vrcx_updater": {
             "failed": "Failed to check for update, {message}",
             "failed_install": "Failed to install update",
@@ -2178,7 +2280,15 @@
             "create_failed": "Failed to create instance"
         },
         "avatar": {
-            "change_moderation_failed": "Failed to change avatar moderation"
+            "change_moderation_failed": "Failed to change avatar moderation",
+            "fallback_changed": "Fallback avatar changed",
+            "blocked": "Avatar blocked",
+            "updated_public": "Avatar updated to public",
+            "updated_private": "Avatar updated to private",
+            "deleted": "Avatar deleted",
+            "impostor_deleted": "Imposter deleted",
+            "impostor_queued": "Imposter queued for creation",
+            "impostor_regenerated": "Imposter deleted and queued for creation"
         },
         "avatar_lookup": {
             "not_found": "Avatar not found in search providers",
@@ -2187,7 +2297,9 @@
             "loading": "Searching for avatar using search providers"
         },
         "database": {
-            "upgrade_complete": "Database upgrade complete"
+            "upgrade_complete": "Database upgrade complete",
+            "disk_space": "Please free up some disk space.",
+            "disk_error": "Please check your disk for errors."
         },
         "file": {
             "not_image": "File isn't an image",
@@ -2195,12 +2307,19 @@
             "folder_missing": "Folder doesn't exist"
         },
         "group": {
-            "load_failed": "Failed to load group"
+            "load_failed": "Failed to load group",
+            "joined": "Group joined",
+            "join_request_sent": "Group join request sent",
+            "visibility_updated": "Group visibility updated",
+            "subscription_updated": "Group subscription updated"
         },
         "invite": {
             "self_sent": "Self invite sent",
             "sent": "Invite sent",
-            "message_update_failed": "VRChat API didn't update message, try again"
+            "message_update_failed": "VRChat API didn't update message, try again",
+            "message_updated": "Invite message updated",
+            "response_sent": "Invite response message sent",
+            "response_photo_sent": "Invite response photo message sent"
         },
         "launch": {
             "invalid_path": "Invalid path, you must enter VRChat folder or launch.exe"
@@ -2215,7 +2334,16 @@
             "error": "Upload failed"
         },
         "world": {
-            "load_failed": "Failed to load world"
+            "load_failed": "Failed to load world",
+            "home_updated": "Home world updated",
+            "home_reset": "Home world has been reset",
+            "published": "World has been published",
+            "unpublished": "World has been unpublished",
+            "persistent_data_deleted": "Persistent data has been deleted",
+            "deleted": "World has been deleted",
+            "id_copied": "World ID copied to clipboard",
+            "url_copied": "World URL copied to clipboard",
+            "name_copied": "World name copied to clipboard"
         },
         "user": {
             "moderated": "User moderated",
@@ -2233,7 +2361,27 @@
         },
         "crash": {
             "vrcx_reload": "VRCX was reloaded for stability"
-        }
+        },
+        "image": {
+            "downloading": "Downloading image...",
+            "copied_to_clipboard": "Image copied to clipboard"
+        },
+        "registry": {
+            "restored": "VRC registry settings restored",
+            "deleted": "VRC registry settings deleted",
+            "restore_failed": "Failed to restore VRC registry settings, check console for full error: {error}",
+            "invalid_json": "Invalid JSON"
+        },
+        "cache": {
+            "deleted": "All VRChat cache deleted",
+            "delete_error": "Error deleting VRChat cache: {error}",
+            "invalid_config": "Invalid JSON in config.json"
+        },
+        "gamelog": {
+            "vrchat_must_be_closed": "VRChat needs to be closed before this option can be changed"
+        },
+        "copy_failed": "Copy failed",
+        "error": "Error"
     },
     "status": {
         "title": "VRChat Status"
@@ -2444,5 +2592,11 @@
                 "unavailable": "Service may be unavailable due to VRChat internal issues"
             }
         }
+    },
+    "accessibility": {
+        "toggle_sidebar": "Toggle Sidebar",
+        "back_to_top": "Back to top",
+        "toggle_password": "Toggle password visibility",
+        "clear_input": "Clear input"
     }
 }

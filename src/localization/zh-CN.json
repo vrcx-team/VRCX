@@ -225,6 +225,11 @@
             "unfavorite_tooltip": "取消收藏",
             "edit_favorite_tooltip": "编辑收藏",
             "visibility_tooltip": "更改可见性",
+            "visibility": {
+                "public": "公开",
+                "friends": "仅好友",
+                "private": "私人"
+            },
             "rename_tooltip": "重命名",
             "clear_tooltip": "清除",
             "delete_tooltip": "删除",
@@ -590,7 +595,6 @@
                     "sort_instance_users_by": "房间玩家排序规则",
                     "sort_instance_users_by_time": "时间",
                     "sort_instance_users_by_alphabet": "字母顺序",
-                    "table_max_size": "条目读取设置",
                     "table_page_sizes": "自定义分页",
                     "table_page_sizes_error": "页面尺寸必须是 1 到 1000 之间的数字",
                     "show_notification_icon_dot": "显示托盘通知",
@@ -599,7 +603,8 @@
                     "table_density": "行高密度",
                     "table_density_standard": "标准",
                     "table_density_comfortable": "舒适",
-                    "table_density_compact": "紧凑"
+                    "table_density_compact": "紧凑",
+                    "table_entries_settings": "条目读取设置"
                 },
                 "timedate": {
                     "header": "时间 / 日期",
@@ -748,7 +753,6 @@
                 "rpc": {
                     "vr": "VR 模式",
                     "desktop": "桌面模式",
-                    "join_button": "加入",
                     "powered_by_vrcx": "由 VRCX 强力驱动",
                     "private_world": "私人世界"
                 }
@@ -1963,7 +1967,7 @@
         "totp": {
             "header": "双重认证",
             "description": "输入你的身份验证应用中的验证码",
-            "use_otp": "使用一次性邮件验证码或备用验证码",
+            "use_otp": "使用备用验证码",
             "verify": "验证",
             "input_error": "无效的验证码"
         },
@@ -2089,17 +2093,6 @@
                 "success": "世界的 YouTube 预览已成功更改"
             }
         },
-        "change_table_size": {
-            "header": "条目读取设置",
-            "description": "限制从数据库读取记录到界面接口的数量，较大的读取数量可能会影响内存用量和程序性能",
-            "table_max_size": "最大读取记录数",
-            "table_max_size_error": "请输入 {min} 到 {max} 之间的数字。",
-            "search_limit": "条目搜索限制",
-            "search_limit_error": "请输入 {min} 到 {max} 之间的数字。",
-            "search_limit_warning": "过大的数值可能会导致程序卡死，如无必要，不要修改这些值。",
-            "cancel": "取消",
-            "save": "保存"
-        },
         "photon_lobby_timeout": {
             "header": "玩家超时阀值",
             "description": "输入秒数（默认值：3）",
@@ -2146,6 +2139,19 @@
             "cancel": "取消",
             "redeem": "兑换",
             "success": "兑换成功!"
+        },
+        "table_entries_settings": {
+            "header": "条目读取设置",
+            "description": "限制从数据库读取记录到界面接口的数量，较大的读取数量可能会影响内存用量和程序性能",
+            "table_max_entries": "最大读取记录数",
+            "table_max_entries_error": "请输入 {min} 到 {max} 之间的数字。",
+            "table_max_entries_hint": "请输入 {min} 到 {max} 之间的数字。",
+            "search_limit_returns": "条目搜索限制",
+            "search_limit_returns_error": "请输入 {min} 到 {max} 之间的数字。",
+            "search_limit_returns_hint": "请输入 {min} 到 {max} 之间的数字。",
+            "search_limit_returns_warning": "过大的数值可能会导致程序卡死，如无必要，不要修改这些值。",
+            "cancel": "取消",
+            "save": "保存"
         }
     },
     "message": {

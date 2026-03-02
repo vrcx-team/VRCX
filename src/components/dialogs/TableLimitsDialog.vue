@@ -2,13 +2,13 @@
     <Dialog v-model:open="tableLimitsDialog.visible">
         <DialogContent class="x-dialog sm:max-w-110">
             <DialogHeader>
-                <DialogTitle>{{ t('prompt.change_table_size.header') }}</DialogTitle>
-                <DialogDescription>{{ t('prompt.change_table_size.description') }}</DialogDescription>
+                <DialogTitle>{{ t('prompt.table_entries_settings.header') }}</DialogTitle>
+                <DialogDescription>{{ t('prompt.table_entries_settings.description') }}</DialogDescription>
             </DialogHeader>
 
             <FieldGroup class="mt-3 gap-3">
                 <Field>
-                    <FieldLabel>{{ t('prompt.change_table_size.table_max_size') }}</FieldLabel>
+                    <FieldLabel>{{ t('prompt.table_entries_settings.table_max_entries') }}</FieldLabel>
                     <FieldContent>
                         <InputGroupField
                             v-model="tableLimitsDialog.maxTableSize"
@@ -21,7 +21,7 @@
                     </p>
                 </Field>
                 <Field>
-                    <FieldLabel>{{ t('prompt.change_table_size.search_limit') }}</FieldLabel>
+                    <FieldLabel>{{ t('prompt.table_entries_settings.search_limit_returns') }}</FieldLabel>
                     <FieldContent>
                         <InputGroupField
                             v-model="tableLimitsDialog.searchLimit"
@@ -33,17 +33,17 @@
                         {{ searchLimitError || searchLimitHint }}
                     </p>
                     <p class="mt-1 text-xs text-muted-foreground">
-                        {{ t('prompt.change_table_size.search_limit_warning') }}
+                        {{ t('prompt.table_entries_settings.search_limit_returns_warning') }}
                     </p>
                 </Field>
             </FieldGroup>
 
             <DialogFooter>
                 <Button variant="secondary" class="mr-2" @click="closeTableLimitsDialog">
-                    {{ t('prompt.change_table_size.cancel') }}
+                    {{ t('prompt.table_entries_settings.cancel') }}
                 </Button>
                 <Button :disabled="isSaveDisabled" @click="saveTableLimitsDialog">
-                    {{ t('prompt.change_table_size.save') }}
+                    {{ t('prompt.table_entries_settings.save') }}
                 </Button>
             </DialogFooter>
         </DialogContent>
@@ -84,7 +84,7 @@
     const maxTableSizeError = computed(() => {
         const n = Number(tableLimitsDialog.value.maxTableSize);
         if (!Number.isFinite(n) || n < TABLE_MAX_SIZE_MIN || n > TABLE_MAX_SIZE_MAX) {
-            return t('prompt.change_table_size.table_max_size_error', {
+            return t('prompt.table_entries_settings.table_max_entries_error', {
                 min: TABLE_MAX_SIZE_MIN,
                 max: TABLE_MAX_SIZE_MAX
             });
@@ -93,7 +93,7 @@
     });
 
     const maxTableSizeHint = computed(() =>
-        t('prompt.change_table_size.table_max_size_error', {
+        t('prompt.table_entries_settings.table_max_entries_hint', {
             min: TABLE_MAX_SIZE_MIN,
             max: TABLE_MAX_SIZE_MAX
         })
@@ -102,7 +102,7 @@
     const searchLimitError = computed(() => {
         const n = Number(tableLimitsDialog.value.searchLimit);
         if (!Number.isFinite(n) || n < SEARCH_LIMIT_MIN || n > SEARCH_LIMIT_MAX) {
-            return t('prompt.change_table_size.search_limit_error', {
+            return t('prompt.table_entries_settings.search_limit_returns_error', {
                 min: SEARCH_LIMIT_MIN,
                 max: SEARCH_LIMIT_MAX
             });
@@ -111,7 +111,7 @@
     });
 
     const searchLimitHint = computed(() =>
-        t('prompt.change_table_size.search_limit_error', {
+        t('prompt.table_entries_settings.search_limit_returns_hint', {
             min: SEARCH_LIMIT_MIN,
             max: SEARCH_LIMIT_MAX
         })

@@ -67,6 +67,38 @@ export const useFriendStore = defineStore('Friend', () => {
 
     const localFavoriteFriends = reactive(new Set());
 
+    const allFavoriteFriendIds = computed(() => {
+        const favoriteStore = useFavoriteStore();
+        const set = new Set();
+        for (const ref of favoriteStore.cachedFavorites.values()) {
+            if (ref.type === 'friend') {
+                set.add(ref.favoriteId);
+            }
+        }
+        for (const groupName in favoriteStore.localFriendFavorites) {
+            const userIds = favoriteStore.localFriendFavorites[groupName];
+            if (userIds) {
+                for (const id of userIds) {
+                    set.add(id);
+                }
+            }
+        }
+        return set;
+    });
+
+    const allFavoriteOnlineFriends = computed(() => {
+        return Array.from(friends.values())
+            .filter(
+                (f) =>
+                    f.state === 'online' && allFavoriteFriendIds.value.has(f.id)
+            )
+            .sort(
+                getFriendsSortFunction(
+                    appearanceSettingsStore.sidebarSortMethods
+                )
+            );
+    });
+
     const isRefreshFriendsLoading = ref(false);
     const onlineFriendCount = ref(0);
 
@@ -305,26 +337,25 @@ export const useFriendStore = defineStore('Friend', () => {
     function updateLocalFavoriteFriends() {
         const favoriteStore = useFavoriteStore();
         localFavoriteFriends.clear();
+        const groups = generalSettingsStore.localFavoriteFriendsGroups;
+        const hasRemoteGroupFilter = groups.some(
+            (key) => !key.startsWith('local:')
+        );
+        // Remote favorites: filter by selected remote groups
         for (const ref of favoriteStore.cachedFavorites.values()) {
             if (
                 ref.type === 'friend' &&
-                (generalSettingsStore.localFavoriteFriendsGroups.includes(
-                    ref.$groupKey
-                ) ||
-                    generalSettingsStore.localFavoriteFriendsGroups.length ===
-                        0)
+                (!hasRemoteGroupFilter || groups.includes(ref.$groupKey))
             ) {
                 localFavoriteFriends.add(ref.favoriteId);
             }
         }
-        for (const selectedKey of generalSettingsStore.localFavoriteFriendsGroups) {
-            if (selectedKey.startsWith('local:')) {
-                const groupName = selectedKey.slice(6);
-                const userIds = favoriteStore.localFriendFavorites[groupName];
-                if (userIds) {
-                    for (let i = 0; i < userIds.length; ++i) {
-                        localFavoriteFriends.add(userIds[i]);
-                    }
+        // Local favorites: always include all
+        for (const groupName in favoriteStore.localFriendFavorites) {
+            const userIds = favoriteStore.localFriendFavorites[groupName];
+            if (userIds) {
+                for (let i = 0; i < userIds.length; ++i) {
+                    localFavoriteFriends.add(userIds[i]);
                 }
             }
         }
@@ -1610,7 +1641,7 @@ export const useFriendStore = defineStore('Friend', () => {
         modalStore
             .confirm({
                 description: t('confirm.unfriend'),
-                title: 'Confirm'
+                title: t('confirm.title')
             })
             .then(async ({ ok }) => {
                 if (!ok) return;
@@ -1664,6 +1695,8 @@ export const useFriendStore = defineStore('Friend', () => {
         offlineFriends,
         friendsInSameInstance,
 
+        allFavoriteFriendIds,
+        allFavoriteOnlineFriends,
         localFavoriteFriends,
         isRefreshFriendsLoading,
         onlineFriendCount,

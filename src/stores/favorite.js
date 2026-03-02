@@ -162,6 +162,12 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             .map((fav) => fav.id)
     );
 
+    const localFriendFavoritesList = computed(() =>
+        Object.values(localFriendFavorites)
+            .flat()
+            .map((userId) => userId)
+    );
+
     const groupedByGroupKeyFavoriteFriends = computed(() => {
         const groupedByGroupKeyFavoriteFriends = {};
         favoriteFriends.value.forEach((friend) => {
@@ -292,9 +298,12 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
         if (
             args.params.type === 'friend' &&
-            generalSettingsStore.localFavoriteFriendsGroups.includes(
-                'friend:' + args.params.tags
-            )
+            (!generalSettingsStore.localFavoriteFriendsGroups.some(
+                (key) => !key.startsWith('local:')
+            ) ||
+                generalSettingsStore.localFavoriteFriendsGroups.includes(
+                    'friend:' + args.params.tags
+                ))
         ) {
             friendStore.updateLocalFavoriteFriends();
         }
@@ -793,17 +802,19 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             };
             cachedFavorites.set(ref.id, ref);
             cachedFavoritesByObjectId.set(ref.favoriteId, ref);
+            ref.$groupKey = `${ref.type}:${String(ref.tags[0])}`;
             if (
                 ref.type === 'friend' &&
-                (generalSettingsStore.localFavoriteFriendsGroups.length === 0 ||
+                (!generalSettingsStore.localFavoriteFriendsGroups.some(
+                    (key) => !key.startsWith('local:')
+                ) ||
                     generalSettingsStore.localFavoriteFriendsGroups.includes(
-                        ref.groupKey
+                        ref.$groupKey
                     ))
             ) {
                 friendStore.localFavoriteFriends.add(ref.favoriteId);
                 friendStore.updateSidebarFavorites();
             }
-            ref.$groupKey = `${ref.type}:${String(ref.tags[0])}`;
             if (!isFavoriteLoading.value) {
                 countFavoriteGroups();
             }
@@ -1536,15 +1547,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         if (hasLocalFriendFavorite(userId, group)) {
             return;
         }
-        for (const existingGroup in localFriendFavorites) {
-            const members = localFriendFavorites[existingGroup];
-            const idx = members?.indexOf(userId);
-            if (idx !== undefined && idx !== -1) {
-                members.splice(idx, 1);
-                database.removeFriendFromLocalFavorites(userId, existingGroup);
-                break;
-            }
-        }
         if (!localFriendFavorites[group]) {
             localFriendFavorites[group] = [];
         }
@@ -1560,13 +1562,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         if (userDialog.visible && userDialog.id === userId) {
             userDialog.isFavorite = true;
         }
-        if (
-            generalSettingsStore.localFavoriteFriendsGroups.includes(
-                `local:${group}`
-            )
-        ) {
-            friendStore.updateLocalFavoriteFriends();
-        }
+        friendStore.updateLocalFavoriteFriends();
     }
 
     /**
@@ -1621,13 +1617,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 getCachedFavoritesByObjectId(userId) ||
                 isInAnyLocalFriendGroup(userId);
         }
-        if (
-            generalSettingsStore.localFavoriteFriendsGroups.includes(
-                `local:${group}`
-            )
-        ) {
-            friendStore.updateLocalFavoriteFriends();
-        }
+        friendStore.updateLocalFavoriteFriends();
     }
 
     /**
@@ -1636,13 +1626,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     function deleteLocalFriendFavoriteGroup(group) {
         delete localFriendFavorites[group];
         database.deleteFriendFavoriteGroup(group);
-        if (
-            generalSettingsStore.localFavoriteFriendsGroups.includes(
-                `local:${group}`
-            )
-        ) {
-            friendStore.updateLocalFavoriteFriends();
-        }
+        friendStore.updateLocalFavoriteFriends();
     }
 
     /**
@@ -1710,6 +1694,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
 
         replaceReactiveObject(localFriendFavorites, localFavorites);
+        friendStore.updateLocalFavoriteFriends();
     }
 
     /**
@@ -1786,6 +1771,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         localAvatarFavoriteGroups,
         favoriteDialog,
         localWorldFavoritesList,
+        localFriendFavoritesList,
 
         localWorldFavoriteGroups,
         localFriendFavorites,

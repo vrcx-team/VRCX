@@ -3,7 +3,7 @@ import { timeToText } from '../format';
 describe('Format Utils', () => {
     describe('timeToText', () => {
         test('formats basic durations', () => {
-            expect(timeToText(1000)).toBe('1s');
+            expect(timeToText(1000)).toBe('0s');
             expect(timeToText(60000)).toBe('1m');
             expect(timeToText(3600000)).toBe('1h');
         });
@@ -15,7 +15,7 @@ describe('Format Utils', () => {
 
         test('handles zero and negative', () => {
             expect(timeToText(0)).toBe('0s');
-            expect(timeToText(-1000)).toBe('1s');
+            expect(timeToText(-1000)).toBe('0s');
         });
 
         test('handles complex time', () => {

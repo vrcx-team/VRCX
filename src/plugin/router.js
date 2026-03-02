@@ -14,6 +14,7 @@ import GameLog from './../views/GameLog/GameLog.vue';
 import Login from './../views/Login/Login.vue';
 import MainLayout from '../views/Layout/MainLayout.vue';
 import Moderation from './../views/Moderation/Moderation.vue';
+import MyAvatars from './../views/MyAvatars/MyAvatars.vue';
 import Notification from './../views/Notifications/Notification.vue';
 import PlayerList from './../views/PlayerList/PlayerList.vue';
 import ScreenshotMetadata from './../views/Tools/ScreenshotMetadata.vue';
@@ -67,6 +68,11 @@ const routes = [
                 path: 'social/moderation',
                 name: 'moderation',
                 component: Moderation
+            },
+            {
+                path: 'my-avatars',
+                name: 'my-avatars',
+                component: MyAvatars
             },
             {
                 path: 'notification',

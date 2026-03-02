@@ -1,4 +1,4 @@
-import { replaceBioSymbols } from './common';
+import { replaceBioSymbols } from './base/string';
 import { useAuthStore } from '../../stores';
 
 /**

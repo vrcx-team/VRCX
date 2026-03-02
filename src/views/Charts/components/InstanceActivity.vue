@@ -204,10 +204,10 @@
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const friendStore = useFriendStore();
-    const { isDarkMode, dtHour12 } = storeToRefs(appearanceSettingsStore);
-    const { localFavoriteFriends, friends } = storeToRefs(friendStore);
+    const { friends, allFavoriteFriendIds } = storeToRefs(friendStore);
     const { currentUser } = storeToRefs(useUserStore());
     const { t } = useI18n();
+    const { isDarkMode, dtHour12 } = storeToRefs(appearanceSettingsStore);
 
     const instanceActivityRef = ref(null);
 
@@ -373,7 +373,7 @@
     onMounted(async () => {
         try {
             getAllDateOfActivity();
-            await getActivityData(selectedDate, currentUser, friends, localFavoriteFriends, () =>
+            await getActivityData(selectedDate, currentUser, friends, allFavoriteFriendIds, () =>
                 handleIntersectionObserver(activityDetailChartRef)
             );
             await getWorldNameData();
@@ -398,7 +398,7 @@
     reloadData = async function () {
         isLoading.value = true;
         try {
-            await getActivityData(selectedDate, currentUser, friends, localFavoriteFriends, () =>
+            await getActivityData(selectedDate, currentUser, friends, allFavoriteFriendIds, () =>
                 handleIntersectionObserver(activityDetailChartRef)
             );
             await getWorldNameData();

@@ -75,6 +75,9 @@
                     setDisplayVRCPlusIconsAsAvatar();
                     saveOpenVROption();
                 " />
+        </div>
+        <div class="options-container">
+            <span class="header">{{ t('view.settings.appearance.display.header') }}</span>
             <simple-switch
                 :label="t('view.settings.appearance.appearance.show_instance_id')"
                 :value="showInstanceIdInLocation"
@@ -87,6 +90,10 @@
                     saveOpenVROption();
                 " />
             <simple-switch
+                :label="t('view.settings.appearance.appearance.age_gated_instances')"
+                :value="isAgeGatedInstancesVisible"
+                @change="setIsAgeGatedInstancesVisible" />
+            <simple-switch
                 :label="t('view.settings.appearance.appearance.striped_data_table_mode')"
                 :value="isDataTableStriped"
                 @change="toggleStripedDataTable" />
@@ -94,10 +101,9 @@
                 :label="t('view.settings.appearance.appearance.toggle_pointer_on_hover')"
                 :value="showPointerOnHover"
                 @change="togglePointerOnHover" />
-            <simple-switch
-                :label="t('view.settings.appearance.appearance.age_gated_instances')"
-                :value="isAgeGatedInstancesVisible"
-                @change="setIsAgeGatedInstancesVisible" />
+        </div>
+        <div class="options-container">
+            <span class="header">{{ t('view.settings.appearance.sorting_tables.header') }}</span>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.sort_favorite_by') }}</span>
                 <RadioGroup
@@ -191,7 +197,7 @@
 
             <div class="options-container-item">
                 <Button size="sm" variant="outline" @click="showTableLimitsDialog">{{
-                    t('view.settings.appearance.appearance.table_max_size')
+                    t('view.settings.appearance.appearance.table_entries_settings')
                 }}</Button>
             </div>
         </div>
@@ -224,123 +230,7 @@
                 :value="dtIsoFormat"
                 @change="setDtIsoFormat" />
         </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.appearance.side_panel.header') }}</span>
-            <br />
-            <div class="options-container-item">
-                <span class="name">{{ t('view.settings.appearance.side_panel.sorting.header') }}</span>
-                <Select :model-value="sidebarSortMethod1" @update:modelValue="setSidebarSortMethod1">
-                    <SelectTrigger style="width: 170px" size="sm">
-                        <SelectValue :placeholder="t('view.settings.appearance.side_panel.sorting.placeholder')" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="Sort Alphabetically">{{
-                            t('view.settings.appearance.side_panel.sorting.alphabetical')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Status">{{
-                            t('view.settings.appearance.side_panel.sorting.status')
-                        }}</SelectItem>
-                        <SelectItem value="Sort Private to Bottom">{{
-                            t('view.settings.appearance.side_panel.sorting.private_to_bottom')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Last Active">{{
-                            t('view.settings.appearance.side_panel.sorting.last_active')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Last Seen">{{
-                            t('view.settings.appearance.side_panel.sorting.last_seen')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Time in Instance">{{
-                            t('view.settings.appearance.side_panel.sorting.time_in_instance')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Location">{{
-                            t('view.settings.appearance.side_panel.sorting.location')
-                        }}</SelectItem>
-                    </SelectContent>
-                </Select>
-                <ArrowRight style="margin: 5px" />
-                <Select
-                    :model-value="sidebarSortMethod2"
-                    :disabled="!sidebarSortMethod1"
-                    @update:modelValue="(v) => setSidebarSortMethod2(v === SELECT_CLEAR_VALUE ? '' : v)">
-                    <SelectTrigger style="width: 170px" size="sm">
-                        <SelectValue :placeholder="t('view.settings.appearance.side_panel.sorting.placeholder')" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem :value="SELECT_CLEAR_VALUE">{{ t('dialog.gallery_select.none') }}</SelectItem>
-                        <SelectItem value="Sort Alphabetically">{{
-                            t('view.settings.appearance.side_panel.sorting.alphabetical')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Status">{{
-                            t('view.settings.appearance.side_panel.sorting.status')
-                        }}</SelectItem>
-                        <SelectItem value="Sort Private to Bottom">{{
-                            t('view.settings.appearance.side_panel.sorting.private_to_bottom')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Last Active">{{
-                            t('view.settings.appearance.side_panel.sorting.last_active')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Last Seen">{{
-                            t('view.settings.appearance.side_panel.sorting.last_seen')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Time in Instance">{{
-                            t('view.settings.appearance.side_panel.sorting.time_in_instance')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Location">{{
-                            t('view.settings.appearance.side_panel.sorting.location')
-                        }}</SelectItem>
-                    </SelectContent>
-                </Select>
-                <ArrowRight style="margin: 5px" />
-                <Select
-                    :model-value="sidebarSortMethod3"
-                    :disabled="!sidebarSortMethod2"
-                    @update:modelValue="(v) => setSidebarSortMethod3(v === SELECT_CLEAR_VALUE ? '' : v)">
-                    <SelectTrigger style="width: 170px" size="sm">
-                        <SelectValue :placeholder="t('view.settings.appearance.side_panel.sorting.placeholder')" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem :value="SELECT_CLEAR_VALUE">{{ t('dialog.gallery_select.none') }}</SelectItem>
-                        <SelectItem value="Sort Alphabetically">{{
-                            t('view.settings.appearance.side_panel.sorting.alphabetical')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Status">{{
-                            t('view.settings.appearance.side_panel.sorting.status')
-                        }}</SelectItem>
-                        <SelectItem value="Sort Private to Bottom">{{
-                            t('view.settings.appearance.side_panel.sorting.private_to_bottom')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Last Active">{{
-                            t('view.settings.appearance.side_panel.sorting.last_active')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Last Seen">{{
-                            t('view.settings.appearance.side_panel.sorting.last_seen')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Time in Instance">{{
-                            t('view.settings.appearance.side_panel.sorting.time_in_instance')
-                        }}</SelectItem>
-                        <SelectItem value="Sort by Location">{{
-                            t('view.settings.appearance.side_panel.sorting.location')
-                        }}</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-            <simple-switch
-                :label="t('view.settings.appearance.side_panel.group_by_instance')"
-                :value="isSidebarGroupByInstance"
-                :tooltip="t('view.settings.appearance.side_panel.group_by_instance_tooltip')"
-                @change="setIsSidebarGroupByInstance"></simple-switch>
-            <simple-switch
-                v-if="isSidebarGroupByInstance"
-                :label="t('view.settings.appearance.side_panel.hide_friends_in_same_instance')"
-                :value="isHideFriendsInSameInstance"
-                :tooltip="t('view.settings.appearance.side_panel.hide_friends_in_same_instance_tooltip')"
-                @change="setIsHideFriendsInSameInstance"></simple-switch>
-            <simple-switch
-                :label="t('view.settings.appearance.side_panel.split_favorite_friends')"
-                :value="isSidebarDivideByFriendGroup"
-                :tooltip="t('view.settings.appearance.side_panel.split_favorite_friends_tooltip')"
-                @change="setIsSidebarDivideByFriendGroup"></simple-switch>
-        </div>
+
         <div class="options-container">
             <span class="header">{{ t('view.settings.appearance.user_dialog.header') }}</span>
             <simple-switch
@@ -457,9 +347,9 @@
         TagsInputItemDelete,
         TagsInputItemText
     } from '@/components/ui/tags-input';
-    import { ArrowRight, CheckIcon, ChevronDown, Info } from 'lucide-vue-next';
     import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { computed, onBeforeUnmount, ref, watch } from 'vue';
+    import { CheckIcon, ChevronDown, Info } from 'lucide-vue-next';
     import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '@/stores';
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
     import { getLanguageName, languageCodes } from '@/localization';
@@ -490,12 +380,6 @@
         instanceUsersSortAlphabetical,
         dtHour12,
         dtIsoFormat,
-        sidebarSortMethod1,
-        sidebarSortMethod2,
-        sidebarSortMethod3,
-        isSidebarGroupByInstance,
-        isHideFriendsInSameInstance,
-        isSidebarDivideByFriendGroup,
         hideUserNotes,
         hideUserMemos,
         hideUnfriends,
@@ -519,12 +403,6 @@
         setInstanceUsersSortAlphabetical,
         setDtHour12,
         setDtIsoFormat,
-        setSidebarSortMethod1,
-        setSidebarSortMethod2,
-        setSidebarSortMethod3,
-        setIsSidebarGroupByInstance,
-        setIsHideFriendsInSameInstance,
-        setIsSidebarDivideByFriendGroup,
         setHideUserNotes,
         setHideUserMemos,
         setHideUnfriends,
@@ -591,8 +469,6 @@
             }
         }
     });
-
-    const SELECT_CLEAR_VALUE = '__clear__';
 
     const TABLE_PAGE_SIZE_SUGGESTIONS = Object.freeze([5, 10, 15, 20, 25, 30, 50, 75, 100, 150, 200, 250, 500, 1000]);
 

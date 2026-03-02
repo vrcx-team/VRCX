@@ -338,9 +338,7 @@ export const useDiscordPresenceSettingsStore = defineStore(
                 partyMaxSize = 0;
                 stateText = '';
             }
-            let buttonText = t(
-                'view.settings.discord_presence.rpc.join_button'
-            );
+            let buttonText = 'Join';
             let buttonUrl = state.lastLocationDetails.joinUrl;
             if (!discordJoinButton.value) {
                 buttonText = '';

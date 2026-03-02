@@ -8,10 +8,8 @@ import Noty from 'noty';
 import {
     DEFAULT_MAX_TABLE_SIZE,
     DEFAULT_SEARCH_LIMIT,
-    LEGACY_MAX_TABLE_SIZE_DEFAULT,
     SEARCH_LIMIT_MAX,
-    SEARCH_LIMIT_MIN,
-    TABLE_MAX_SIZE_MAX
+    SEARCH_LIMIT_MIN
 } from '../shared/constants';
 import { avatarRequest, worldRequest } from '../api';
 import {
@@ -156,31 +154,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         state.windowState = await VRCXStorage.Get('VRCX_WindowState');
 
         maxTableSize.value = await configRepository.getInt(
-            'VRCX_maxTableSize',
-            LEGACY_MAX_TABLE_SIZE_DEFAULT
+            'VRCX_maxTableSize_v2',
+            DEFAULT_MAX_TABLE_SIZE
         );
-        if (maxTableSize.value > TABLE_MAX_SIZE_MAX) {
-            maxTableSize.value = TABLE_MAX_SIZE_MAX;
-        }
-        const maxTableSizeMigrated = await configRepository.getBool(
-            'VRCX_maxTableSizeMigrated500',
-            false
-        );
-        // Migrate old default table size (1000) to new default (500)
-        if (
-            maxTableSize.value === LEGACY_MAX_TABLE_SIZE_DEFAULT &&
-            !maxTableSizeMigrated
-        ) {
-            maxTableSize.value = DEFAULT_MAX_TABLE_SIZE;
-            await configRepository.setInt(
-                'VRCX_maxTableSize',
-                maxTableSize.value
-            );
-            await configRepository.setBool(
-                'VRCX_maxTableSizeMigrated500',
-                true
-            );
-        }
         database.setMaxTableSize(maxTableSize.value);
 
         searchLimit.value = await configRepository.getInt(

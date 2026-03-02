@@ -1404,13 +1404,6 @@
                 "success": "Pré-visualização do YouTube no Mundo foi alterada"
             }
         },
-        "change_table_size": {
-            "header": "Max Table Size",
-            "description": "Limitar quantidade de entradas carregadas do banco de dados para páginas da interface, tamanhos maiores de tabela terão impacto no uso e desempenho da memória RAM",
-            "table_max_size": "Tamanho Máximo da Tabela",
-            "cancel": "Cancelar",
-            "save": "Salvar"
-        },
         "photon_lobby_timeout": {
             "header": "Tempo limite do usuário",
             "description": "Insira o valor em segundos (padrão: 3)",
@@ -1445,6 +1438,13 @@
             "description": "Enter proxy server address and port",
             "close": "Fechar",
             "restart": "Reiniciar"
+        },
+        "table_entries_settings": {
+            "header": "Max Table Size",
+            "description": "Limitar quantidade de entradas carregadas do banco de dados para páginas da interface, tamanhos maiores de tabela terão impacto no uso e desempenho da memória RAM",
+            "table_max_entries": "Tamanho Máximo da Tabela",
+            "cancel": "Cancelar",
+            "save": "Salvar"
         }
     },
     "table": {

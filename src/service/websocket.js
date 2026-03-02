@@ -215,16 +215,8 @@ function handlePipeline(args) {
         case 'notification-v2-delete':
             console.log('notification-v2-delete', content);
             for (var id of content.ids) {
-                notificationStore.handleNotificationHide({
-                    params: {
-                        notificationId: id
-                    }
-                });
-                notificationStore.handleNotificationSee({
-                    params: {
-                        notificationId: id
-                    }
-                });
+                notificationStore.handleNotificationV2Hide(id);
+                notificationStore.handleNotificationSee(id);
             }
             break;
 
@@ -239,37 +231,17 @@ function handlePipeline(args) {
             break;
 
         case 'see-notification':
-            notificationStore.handleNotificationSee({
-                params: {
-                    notificationId: content
-                }
-            });
+            notificationStore.handleNotificationSee(content);
             break;
 
         case 'hide-notification':
-            notificationStore.handleNotificationHide({
-                params: {
-                    notificationId: content
-                }
-            });
-            notificationStore.handleNotificationSee({
-                params: {
-                    notificationId: content
-                }
-            });
+            notificationStore.handleNotificationHide(content);
+            notificationStore.handleNotificationSee(content);
             break;
 
         case 'response-notification':
-            notificationStore.handleNotificationHide({
-                params: {
-                    notificationId: content.notificationId
-                }
-            });
-            notificationStore.handleNotificationSee({
-                params: {
-                    notificationId: content.notificationId
-                }
-            });
+            notificationStore.handleNotificationHide(content.notificationId);
+            notificationStore.handleNotificationSee(content.notificationId);
             break;
 
         case 'friend-add':

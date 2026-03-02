@@ -84,6 +84,13 @@ const navDefinitions = [
         routeName: 'notification'
     },
     {
+        key: 'my-avatars',
+        icon: 'ri-contacts-book-3-line',
+        tooltip: 'nav_tooltip.my_avatars',
+        labelKey: 'nav_tooltip.my_avatars',
+        routeName: 'my-avatars'
+    },
+    {
         key: 'charts-instance',
         icon: 'ri-bar-chart-horizontal-line',
         tooltip: 'view.charts.instance_activity.header',

@@ -4,24 +4,52 @@
             class="mt-0 flex min-h-[calc(100vh-140px)] flex-col items-center justify-betweenpt-12"
             ref="mutualGraphRef">
             <div class="flex items-center w-full">
-                <div class="options-container flex flex-wrap items-center gap-3 bg-transparent pb-3 shadow-none">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <TooltipWrapper :content="fetchButtonLabel" side="top">
-                            <Button :disabled="fetchButtonDisabled" @click="startFetch">
-                                <Spinner v-if="isFetching" />
-                                {{ fetchButtonLabel }}
-                            </Button>
-                        </TooltipWrapper>
-
+                <div class="options-container flex items-center gap-3 bg-transparent pb-3 shadow-none">
+                    <div>
                         <TooltipWrapper
                             v-if="isFetching"
                             :content="t('view.charts.mutual_friend.actions.stop_fetching')"
                             side="top">
                             <Button variant="destructive" :disabled="status.cancelRequested" @click="cancelFetch">
+                                <Spinner />
                                 {{ t('view.charts.mutual_friend.actions.stop') }}
                             </Button>
                         </TooltipWrapper>
+
+                        <TooltipWrapper v-else :content="fetchButtonLabel" side="top">
+                            <Button :disabled="fetchButtonDisabled" @click="startFetch">
+                                {{ fetchButtonLabel }}
+                            </Button>
+                        </TooltipWrapper>
                     </div>
+                    <VirtualCombobox
+                        v-if="graphReady"
+                        :model-value="selectedFriendId"
+                        @update:modelValue="navigateToFriend"
+                        :groups="friendPickerGroups"
+                        :placeholder="t('view.charts.mutual_friend.actions.go_to_friend')"
+                        :search-placeholder="t('view.charts.mutual_friend.actions.go_to_friend')"
+                        :close-on-select="true"
+                        :deselect-on-reselect="true">
+                        <template #item="{ item, selected }">
+                            <div class="x-friend-item flex w-full items-center">
+                                <template v-if="item.user">
+                                    <div :class="['avatar', userStatusClass(item.user)]">
+                                        <img :src="userImage(item.user)" loading="lazy" />
+                                    </div>
+                                    <div class="detail">
+                                        <span class="name" :style="{ color: item.user.$userColour }">{{
+                                            item.user.displayName
+                                        }}</span>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <span>{{ item.label }}</span>
+                                </template>
+                                <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                            </div>
+                        </template>
+                    </VirtualCombobox>
                 </div>
                 <div class="ml-auto flex items-center gap-2">
                     <Sheet>
@@ -105,7 +133,81 @@
                                         </p>
                                     </FieldContent>
                                 </Field>
+
+                                <Field>
+                                    <FieldLabel>{{
+                                        t('view.charts.mutual_friend.settings.community_separation')
+                                    }}</FieldLabel>
+                                    <FieldContent>
+                                        <div class="flex items-center gap-3">
+                                            <Slider
+                                                v-model="communitySeparationModel"
+                                                :min="COMMUNITY_SEPARATION_MIN"
+                                                :max="COMMUNITY_SEPARATION_MAX"
+                                                :step="0.1" />
+                                            <span
+                                                class="min-w-12 text-right text-sm text-muted-foreground tabular-nums">
+                                                {{ communitySeparationLabel }}
+                                            </span>
+                                        </div>
+                                        <p class="mt-1 text-xs text-muted-foreground">
+                                            {{ t('view.charts.mutual_friend.settings.community_separation_help') }}
+                                        </p>
+                                    </FieldContent>
+                                </Field>
                             </FieldGroup>
+
+                            <FieldGroup class="gap-4 p-4">
+                                <Field>
+                                    <FieldLabel>{{
+                                        t('view.charts.mutual_friend.settings.exclude_friends')
+                                    }}</FieldLabel>
+                                    <FieldContent>
+                                        <VirtualCombobox
+                                            v-model="excludedFriendIds"
+                                            :groups="excludePickerGroups"
+                                            :placeholder="
+                                                t('view.charts.mutual_friend.settings.exclude_friends_placeholder')
+                                            "
+                                            :search-placeholder="t('view.charts.mutual_friend.actions.go_to_friend')"
+                                            :multiple="true">
+                                            <template #item="{ item, selected }">
+                                                <div class="x-friend-item flex w-full items-center">
+                                                    <template v-if="item.user">
+                                                        <div :class="['avatar', userStatusClass(item.user)]">
+                                                            <img :src="userImage(item.user)" loading="lazy" />
+                                                        </div>
+                                                        <div class="detail">
+                                                            <span
+                                                                class="name"
+                                                                :style="{ color: item.user.$userColour }"
+                                                                >{{ item.user.displayName }}</span
+                                                            >
+                                                        </div>
+                                                    </template>
+                                                    <template v-else>
+                                                        <span>{{ item.label }}</span>
+                                                    </template>
+                                                    <CheckIcon
+                                                        :class="[
+                                                            'ml-auto size-4',
+                                                            selected ? 'opacity-100' : 'opacity-0'
+                                                        ]" />
+                                                </div>
+                                            </template>
+                                        </VirtualCombobox>
+                                        <p class="mt-1 text-xs text-muted-foreground">
+                                            {{ t('view.charts.mutual_friend.settings.exclude_friends_help') }}
+                                        </p>
+                                    </FieldContent>
+                                </Field>
+                            </FieldGroup>
+
+                            <div class="p-4 pt-0">
+                                <Button variant="outline" size="sm" class="w-full" @click="resetLayoutSettings">
+                                    {{ t('view.charts.mutual_friend.settings.reset_defaults') }}
+                                </Button>
+                            </div>
                         </SheetContent>
                     </Sheet>
 
@@ -146,11 +248,12 @@
     import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { Empty, EmptyDescription, EmptyHeader } from '@/components/ui/empty';
+    import { Check as CheckIcon, Settings } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Progress } from '@/components/ui/progress';
-    import { Settings } from 'lucide-vue-next';
     import { Slider } from '@/components/ui/slider';
     import { Spinner } from '@/components/ui/spinner';
+    import { VirtualCombobox } from '@/components/ui/virtual-combobox';
     import { createNodeBorderProgram } from '@sigma/node-border';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -171,8 +274,11 @@
         useModalStore,
         useUserStore
     } from '../../../stores';
+    import { userImage, userStatusClass } from '../../../shared/utils';
     import { database } from '../../../service/database';
     import { watchState } from '../../../service/watchState';
+
+    import configRepository from '../../../service/config';
 
     const { t } = useI18n();
     const friendStore = useFriendStore();
@@ -218,6 +324,7 @@
     let resizeObserver = null;
     let pendingRender = null;
     let pendingLayoutUpdate = null;
+    let lastMutualMap = null;
 
     const LAYOUT_ITERATIONS_MIN = 300;
     const LAYOUT_ITERATIONS_MAX = 1500;
@@ -225,12 +332,17 @@
     const LAYOUT_SPACING_MAX = 240;
     const EDGE_CURVATURE_MIN = 0;
     const EDGE_CURVATURE_MAX = 0.2;
+    const COMMUNITY_SEPARATION_MIN = 0;
+    const COMMUNITY_SEPARATION_MAX = 3;
 
-    const layoutSettings = reactive({
+    const LAYOUT_DEFAULTS = {
         layoutIterations: 800,
         layoutSpacing: 60,
-        edgeCurvature: 0.1
-    });
+        edgeCurvature: 0.1,
+        communitySeparation: 0
+    };
+
+    const layoutSettings = reactive({ ...LAYOUT_DEFAULTS });
 
     const layoutIterationsModel = computed({
         get: () => [layoutSettings.layoutIterations],
@@ -268,6 +380,19 @@
 
     const edgeCurvatureLabel = computed(() => layoutSettings.edgeCurvature.toFixed(2));
 
+    const communitySeparationModel = computed({
+        get: () => [layoutSettings.communitySeparation],
+        set: (value) => {
+            const next = clampNumber(
+                value?.[0] ?? layoutSettings.communitySeparation,
+                COMMUNITY_SEPARATION_MIN,
+                COMMUNITY_SEPARATION_MAX
+            );
+            layoutSettings.communitySeparation = Number(next.toFixed(1));
+        }
+    });
+    const communitySeparationLabel = computed(() => layoutSettings.communitySeparation.toFixed(1));
+
     let lastLayoutSpacing = layoutSettings.layoutSpacing;
 
     watch(isDarkMode, () => {
@@ -277,13 +402,58 @@
 
     watch(
         () => [layoutSettings.layoutIterations, layoutSettings.layoutSpacing],
-        () => scheduleLayoutUpdate({ runLayout: true })
+        () => {
+            scheduleLayoutUpdate({ runLayout: true });
+            persistLayoutSettings();
+        }
     );
 
     watch(
         () => layoutSettings.edgeCurvature,
-        () => scheduleLayoutUpdate({ runLayout: false })
+        () => {
+            scheduleLayoutUpdate({ runLayout: false });
+            persistLayoutSettings();
+        }
     );
+
+    watch(
+        () => layoutSettings.communitySeparation,
+        () => {
+            scheduleLayoutUpdate({ runLayout: true });
+            persistLayoutSettings();
+        }
+    );
+
+    async function loadLayoutSettings() {
+        const [iterations, spacing, curvature, separation] = await Promise.all([
+            configRepository.getInt('VRCX_MutualGraphLayoutIterations', LAYOUT_DEFAULTS.layoutIterations),
+            configRepository.getInt('VRCX_MutualGraphLayoutSpacing', LAYOUT_DEFAULTS.layoutSpacing),
+            configRepository.getFloat('VRCX_MutualGraphEdgeCurvature', LAYOUT_DEFAULTS.edgeCurvature),
+            configRepository.getFloat('VRCX_MutualGraphCommunitySeparation', LAYOUT_DEFAULTS.communitySeparation)
+        ]);
+        layoutSettings.layoutIterations = clampNumber(iterations, LAYOUT_ITERATIONS_MIN, LAYOUT_ITERATIONS_MAX);
+        layoutSettings.layoutSpacing = clampNumber(spacing, LAYOUT_SPACING_MIN, LAYOUT_SPACING_MAX);
+        layoutSettings.edgeCurvature = clampNumber(curvature, EDGE_CURVATURE_MIN, EDGE_CURVATURE_MAX);
+        layoutSettings.communitySeparation = clampNumber(
+            separation,
+            COMMUNITY_SEPARATION_MIN,
+            COMMUNITY_SEPARATION_MAX
+        );
+        lastLayoutSpacing = layoutSettings.layoutSpacing;
+    }
+
+    function persistLayoutSettings() {
+        configRepository.setInt('VRCX_MutualGraphLayoutIterations', layoutSettings.layoutIterations);
+        configRepository.setInt('VRCX_MutualGraphLayoutSpacing', layoutSettings.layoutSpacing);
+        configRepository.setFloat('VRCX_MutualGraphEdgeCurvature', layoutSettings.edgeCurvature);
+        configRepository.setFloat('VRCX_MutualGraphCommunitySeparation', layoutSettings.communitySeparation);
+    }
+
+    function resetLayoutSettings() {
+        Object.assign(layoutSettings, LAYOUT_DEFAULTS);
+        excludedFriendIds.value = [];
+        persistLayoutSettings();
+    }
 
     const isFetching = computed({
         get: () => status.isFetching,
@@ -300,7 +470,6 @@
 
     const graphNodeCount = ref(0);
     const isLoadingSnapshot = ref(false);
-    const loadingToastId = ref(null);
     const totalFriends = computed(() => friends.value.size);
     const isOptOut = computed(() => Boolean(currentUser.value?.hasSharedConnectionsOptOut));
     const graphReady = computed(() => graphNodeCount.value > 0);
@@ -318,6 +487,81 @@
 
     const canvasBackground = computed(() => 'transparent');
 
+    const selectedFriendId = ref(null);
+
+    const EXCLUDED_FRIENDS_KEY = 'VRCX_MutualGraphExcludedFriends';
+    const excludedFriendIds = ref(loadExcludedFriends());
+
+    function loadExcludedFriends() {
+        try {
+            const stored = localStorage.getItem(EXCLUDED_FRIENDS_KEY);
+            if (stored) return JSON.parse(stored);
+        } catch {
+            /* ignore */
+        }
+        return [];
+    }
+
+    function saveExcludedFriends() {
+        localStorage.setItem(EXCLUDED_FRIENDS_KEY, JSON.stringify(excludedFriendIds.value));
+    }
+
+    watch(excludedFriendIds, () => {
+        saveExcludedFriends();
+        if (lastMutualMap) applyGraph(lastMutualMap);
+    });
+
+    const excludePickerGroups = computed(() => {
+        if (!lastMutualMap) return [];
+        const currentUserId = currentUser.value?.id;
+        const seen = new Set();
+        const items = [];
+        for (const [friendId, { mutuals }] of lastMutualMap.entries()) {
+            if (friendId === currentUserId || seen.has(friendId)) continue;
+            seen.add(friendId);
+            const cached = cachedUsers.get(friendId);
+            const displayName = cached?.displayName || friendId;
+            items.push({ value: friendId, label: displayName, search: displayName, user: cached || null });
+            for (const mutual of mutuals) {
+                if (!mutual?.id || mutual.id === currentUserId || seen.has(mutual.id)) continue;
+                seen.add(mutual.id);
+                const mc = cachedUsers.get(mutual.id);
+                const mName = mc?.displayName || mutual.displayName || mutual.id;
+                items.push({ value: mutual.id, label: mName, search: mName, user: mc || null });
+            }
+        }
+        items.sort((a, b) => a.label.localeCompare(b.label));
+        return [{ key: 'friends', label: t('side_panel.friends'), items }];
+    });
+
+    const friendPickerGroups = computed(() => {
+        if (!currentGraph || !graphNodeCount.value) return [];
+        const currentUserId = currentUser.value?.id;
+        const items = [];
+        currentGraph.forEachNode((nodeId, attrs) => {
+            if (nodeId === currentUserId) return;
+            const cached = cachedUsers.get(nodeId);
+            const displayName = cached?.displayName || attrs.label || nodeId;
+            items.push({
+                value: nodeId,
+                label: displayName,
+                search: displayName,
+                user: cached || null
+            });
+        });
+        items.sort((a, b) => a.label.localeCompare(b.label));
+        return [{ key: 'friends', label: t('side_panel.friends'), items }];
+    });
+
+    function navigateToFriend(friendId) {
+        selectedFriendId.value = friendId;
+        if (!friendId || !currentGraph || !sigmaInstance) return;
+        if (!currentGraph.hasNode(friendId)) return;
+        const nodeDisplayData = sigmaInstance.getNodeDisplayData(friendId);
+        if (!nodeDisplayData) return;
+        const camera = sigmaInstance.getCamera();
+        camera.animate({ x: nodeDisplayData.x, y: nodeDisplayData.y, ratio: 0.15 }, { duration: 300 });
+    }
     const mutualGraphResizeObserver = new ResizeObserver(() => {
         setMutualGraphHeight();
     });
@@ -331,6 +575,7 @@
     }
 
     onMounted(() => {
+        loadLayoutSettings();
         nextTick(() => {
             if (!graphContainerRef.value) return;
 
@@ -414,8 +659,7 @@
     function runLayout(graph, { reinitialize } = {}) {
         if (reinitialize) initPositions(graph);
 
-        let iterations = clampNumber(layoutSettings.layoutIterations, LAYOUT_ITERATIONS_MIN, LAYOUT_ITERATIONS_MAX);
-        iterations = Math.min(iterations, Math.round(Math.sqrt(graph.order) * 20));
+        const iterations = clampNumber(layoutSettings.layoutIterations, LAYOUT_ITERATIONS_MIN, LAYOUT_ITERATIONS_MAX);
         const spacing = clampNumber(layoutSettings.layoutSpacing, LAYOUT_SPACING_MIN, LAYOUT_SPACING_MAX);
         const t = (spacing - LAYOUT_SPACING_MIN) / (LAYOUT_SPACING_MAX - LAYOUT_SPACING_MIN);
         const clampedT = clampNumber(t, 0, 1);
@@ -455,13 +699,68 @@
         });
     }
 
+    function applyCommunitySeparation(graph) {
+        const separation = layoutSettings.communitySeparation;
+        if (separation <= 0) return;
+
+        const communities = new Map();
+        graph.forEachNode((node, attrs) => {
+            const cid = attrs.community;
+            if (cid === undefined) return;
+            if (!communities.has(cid)) communities.set(cid, { nodes: [], cx: 0, cy: 0 });
+            communities.get(cid).nodes.push({ node, x: attrs.x, y: attrs.y });
+        });
+
+        // compute per-community centroid
+        for (const [, data] of communities) {
+            let sx = 0,
+                sy = 0;
+            for (const n of data.nodes) {
+                sx += n.x;
+                sy += n.y;
+            }
+            data.cx = sx / data.nodes.length;
+            data.cy = sy / data.nodes.length;
+        }
+
+        // compute global centroid
+        let gcx = 0,
+            gcy = 0,
+            total = 0;
+        for (const [, data] of communities) {
+            gcx += data.cx * data.nodes.length;
+            gcy += data.cy * data.nodes.length;
+            total += data.nodes.length;
+        }
+        gcx /= total;
+        gcy /= total;
+
+        // push each community away from global centroid
+        for (const [, data] of communities) {
+            const dx = data.cx - gcx;
+            const dy = data.cy - gcy;
+            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+            const pushX = (dx / dist) * separation * 100;
+            const pushY = (dy / dist) * separation * 100;
+            for (const n of data.nodes) {
+                graph.mergeNodeAttributes(n.node, {
+                    x: n.x + pushX,
+                    y: n.y + pushY
+                });
+            }
+        }
+    }
+
     function scheduleLayoutUpdate({ runLayout: shouldRunLayout }) {
         if (!currentGraph) return;
         if (pendingLayoutUpdate) clearTimeout(pendingLayoutUpdate);
         pendingLayoutUpdate = setTimeout(() => {
             pendingLayoutUpdate = null;
             applyEdgeCurvature(currentGraph);
-            if (shouldRunLayout) runLayout(currentGraph, { reinitialize: false });
+            if (shouldRunLayout) {
+                runLayout(currentGraph, { reinitialize: false });
+                applyCommunitySeparation(currentGraph);
+            }
             renderGraph(currentGraph);
         }, 100);
     }
@@ -487,11 +786,12 @@
             allowSelfLoops: false
         });
 
+        const excludeSet = new Set(excludedFriendIds.value);
         const nodeDegree = new Map();
         const nodeNames = new Map();
 
         function ensureNode(id, name) {
-            if (!id) return;
+            if (!id || excludeSet.has(id)) return;
             if (!graph.hasNode(id)) {
                 graph.addNode(id);
                 nodeDegree.set(id, 0);
@@ -501,6 +801,7 @@
 
         function addEdge(source, target) {
             if (!source || !target || source === target) return;
+            if (excludeSet.has(source) || excludeSet.has(target)) return;
             const [a, b] = [source, target].sort();
             const key = `${a}__${b}`;
             if (graph.hasEdge(key)) return;
@@ -536,6 +837,7 @@
         if (graph.order > 1) {
             runLayout(graph, { reinitialize: true });
             assignCommunitiesAndColors(graph);
+            applyCommunitySeparation(graph);
             applyEdgeCurvature(graph);
         }
 
@@ -651,7 +953,7 @@
             if (isHover) {
                 res.color = '#facc15';
                 res.size = (data.size || 4) * 1.6;
-                res.label = data.label;
+                res.label = `${data.label} (${neighbors.size})`;
                 res.labelColor = '#111827';
                 res.zIndex = 3;
                 return res;
@@ -721,6 +1023,7 @@
     }
 
     function applyGraph(mutualMap) {
+        lastMutualMap = mutualMap;
         const graph = buildGraphFromMutualMap(mutualMap);
         currentGraph = graph;
         renderGraph(graph);

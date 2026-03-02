@@ -4,13 +4,20 @@
             v-if="image.frames"
             class="avatar"
             :style="generateEmojiStyle(imageUrl, image.framesOverTime, image.frames, image.loopStyle, size)"></div>
-        <img v-else :src="imageUrl" class="avatar" :style="{ width: size + 'px', height: size + 'px' }" />
+        <Avatar v-else class="rounded" :style="{ width: size + 'px', height: size + 'px' }">
+            <AvatarImage :src="imageUrl" class="object-cover" />
+            <AvatarFallback class="rounded">
+                <ImageOff class="size-4 text-muted-foreground" />
+            </AvatarFallback>
+        </Avatar>
     </div>
 </template>
 
 <script setup>
     import { onMounted, ref, watch } from 'vue';
+    import { ImageOff } from 'lucide-vue-next';
 
+    import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
     import { extractFileId, generateEmojiStyle } from '../shared/utils';
     import { useGalleryStore } from '../stores';
 

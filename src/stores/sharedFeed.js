@@ -93,9 +93,9 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
     );
 
     watch(
-        () => watchState.isLoggedIn,
-        (isLoggedIn) => {
-            if (isLoggedIn) {
+        () => [watchState.isFriendsLoaded, watchState.isFavoritesLoaded],
+        ([isFriendsLoaded, isFavoritesLoaded]) => {
+            if (isFriendsLoaded && isFavoritesLoaded) {
                 sharedFeedData.value = [];
                 loadSharedFeed();
             }

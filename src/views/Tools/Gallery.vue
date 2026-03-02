@@ -559,6 +559,14 @@
                 </div>
             </template>
         </TabsUnderline>
+
+        <ImageCropDialog
+            :open="cropDialogOpen"
+            :title="cropDialogTitle"
+            :aspect-ratio="cropDialogAspectRatio"
+            :file="cropDialogFile"
+            @update:open="cropDialogOpen = $event"
+            @confirm="onCropConfirm" />
     </div>
 </template>
 
@@ -592,11 +600,12 @@
     } from '../../shared/utils';
     import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../api';
     import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useModalStore, useUserStore } from '../../stores';
+    import { handleImageUploadInput, readFileAsBase64, withUploadTimeout } from '../../shared/utils/imageUpload';
     import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../shared/constants';
     import { AppDebug } from '../../service/appConfig';
-    import { handleImageUploadInput } from '../../shared/utils/imageUpload';
 
     import Emoji from '../../components/Emoji.vue';
+    import ImageCropDialog from '../../components/dialogs/ImageCropDialog.vue';
 
     const { t } = useI18n();
     const router = useRouter();
@@ -663,6 +672,12 @@
     const pendingUploads = ref(0);
     const isUploading = computed(() => pendingUploads.value > 0);
 
+    const cropDialogOpen = ref(false);
+    const cropDialogTitle = ref('');
+    const cropDialogAspectRatio = ref(4 / 3);
+    const cropDialogFile = ref(null);
+    const cropDialogUploadHandler = ref(null);
+
     onMounted(() => {
         galleryDialogVisible.value = true;
         loadGalleryData();
@@ -685,6 +700,28 @@
         router.push({ name: 'tools' });
     }
 
+    function openCropDialog(file, title, aspectRatio, handler) {
+        cropDialogTitle.value = title;
+        cropDialogAspectRatio.value = aspectRatio;
+        cropDialogFile.value = file;
+        cropDialogUploadHandler.value = handler;
+        cropDialogOpen.value = true;
+    }
+
+    async function onCropConfirm(blob) {
+        if (!cropDialogUploadHandler.value) {
+            return;
+        }
+        const handler = cropDialogUploadHandler.value;
+        cropDialogUploadHandler.value = null;
+        cropDialogFile.value = null;
+        try {
+            await handler(blob);
+        } finally {
+            cropDialogOpen.value = false;
+        }
+    }
+
     function onFileChangeGallery(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#GalleryUploadButton',
@@ -694,41 +731,25 @@
         if (!file) {
             return;
         }
-        startUpload();
-        const r = new FileReader();
-        const handleReaderError = () => finishUpload();
-        r.onerror = handleReaderError;
-        r.onabort = handleReaderError;
-        r.onload = function () {
-            try {
-                const base64Body = btoa(r.result.toString());
-                const uploadPromise = vrcPlusImageRequest.uploadGalleryImage(base64Body).then((args) => {
-                    handleGalleryImageAdd(args);
-                    return args;
-                });
-                toast.promise(uploadPromise, {
-                    loading: t('message.upload.loading'),
-                    success: t('message.upload.success'),
-                    error: t('message.upload.error')
-                });
-                uploadPromise
-                    .catch((error) => {
-                        console.error('Failed to upload', error);
-                    })
-                    .finally(() => finishUpload());
-            } catch (error) {
-                finishUpload();
-                console.error('Failed to process image', error);
-            }
-        };
-        try {
-            r.readAsBinaryString(file);
-        } catch (error) {
-            clearInput();
-            finishUpload();
-            console.error('Failed to read file', error);
-        }
         clearInput();
+        openCropDialog(file, t('dialog.change_content_image.upload'), 4 / 3, async (blob) => {
+            startUpload();
+            try {
+                await withUploadTimeout(
+                    (async () => {
+                        const base64Body = await readFileAsBase64(blob);
+                        const args = await vrcPlusImageRequest.uploadGalleryImage(base64Body);
+                        handleGalleryImageAdd(args);
+                    })()
+                );
+                toast.success(t('message.upload.success'));
+            } catch (error) {
+                console.error('Failed to upload', error);
+                toast.error(t('message.upload.error'));
+            } finally {
+                finishUpload();
+            }
+        });
     }
 
     function displayGalleryUpload() {
@@ -789,43 +810,27 @@
         if (!file) {
             return;
         }
-        startUpload();
-        const r = new FileReader();
-        const handleReaderError = () => finishUpload();
-        r.onerror = handleReaderError;
-        r.onabort = handleReaderError;
-        r.onload = function () {
-            try {
-                const base64Body = btoa(r.result.toString());
-                const uploadPromise = vrcPlusIconRequest.uploadVRCPlusIcon(base64Body).then((args) => {
-                    if (Object.keys(VRCPlusIconsTable.value).length !== 0) {
-                        VRCPlusIconsTable.value.unshift(args.json);
-                    }
-                    return args;
-                });
-                toast.promise(uploadPromise, {
-                    loading: t('message.upload.loading'),
-                    success: t('message.upload.success'),
-                    error: t('message.upload.error')
-                });
-                uploadPromise
-                    .catch((error) => {
-                        console.error('Failed to upload VRC+ icon', error);
-                    })
-                    .finally(() => finishUpload());
-            } catch (error) {
-                finishUpload();
-                console.error('Failed to process upload', error);
-            }
-        };
-        try {
-            r.readAsBinaryString(file);
-        } catch (error) {
-            clearInput();
-            finishUpload();
-            console.error('Failed to read file', error);
-        }
         clearInput();
+        openCropDialog(file, t('dialog.change_content_image.upload'), 1 / 1, async (blob) => {
+            startUpload();
+            try {
+                await withUploadTimeout(
+                    (async () => {
+                        const base64Body = await readFileAsBase64(blob);
+                        const args = await vrcPlusIconRequest.uploadVRCPlusIcon(base64Body);
+                        if (Object.keys(VRCPlusIconsTable.value).length !== 0) {
+                            VRCPlusIconsTable.value.unshift(args.json);
+                        }
+                    })()
+                );
+                toast.success(t('message.upload.success'));
+            } catch (error) {
+                console.error('Failed to upload VRC+ icon', error);
+                toast.error(t('message.upload.error'));
+            } finally {
+                finishUpload();
+            }
+        });
     }
 
     function displayVRCPlusIconUpload() {
@@ -908,57 +913,41 @@
         if (!file) {
             return;
         }
-        startUpload();
         // set Emoji settings from fileName
         parseEmojiFileName(file.name);
-        const r = new FileReader();
-        const handleReaderError = () => finishUpload();
-        r.onerror = handleReaderError;
-        r.onabort = handleReaderError;
-        r.onload = function () {
-            try {
-                const params = {
-                    tag: emojiAnimType.value ? 'emojianimated' : 'emoji',
-                    animationStyle: emojiAnimationStyle.value.toLowerCase(),
-                    maskTag: 'square'
-                };
-                if (emojiAnimType.value) {
-                    params.frames = emojiAnimFrameCount.value;
-                    params.framesOverTime = emojiAnimFps.value;
-                }
-                if (emojiAnimLoopPingPong.value) {
-                    params.loopStyle = 'pingpong';
-                }
-                const base64Body = btoa(r.result.toString());
-                const uploadPromise = vrcPlusImageRequest.uploadEmoji(base64Body, params).then((args) => {
-                    if (Object.keys(emojiTable.value).length !== 0) {
-                        emojiTable.value.unshift(args.json);
-                    }
-                    return args;
-                });
-                toast.promise(uploadPromise, {
-                    loading: t('message.upload.loading'),
-                    success: t('message.upload.success'),
-                    error: t('message.upload.error')
-                });
-                uploadPromise
-                    .catch((error) => {
-                        console.error('Failed to upload', error);
-                    })
-                    .finally(() => finishUpload());
-            } catch (error) {
-                finishUpload();
-                console.error('Failed to process upload', error);
-            }
-        };
-        try {
-            r.readAsBinaryString(file);
-        } catch (error) {
-            clearInput();
-            finishUpload();
-            console.error('Failed to read file', error);
-        }
         clearInput();
+        openCropDialog(file, t('dialog.change_content_image.upload'), 1 / 1, async (blob) => {
+            startUpload();
+            try {
+                await withUploadTimeout(
+                    (async () => {
+                        const params = {
+                            tag: emojiAnimType.value ? 'emojianimated' : 'emoji',
+                            animationStyle: emojiAnimationStyle.value.toLowerCase(),
+                            maskTag: 'square'
+                        };
+                        if (emojiAnimType.value) {
+                            params.frames = emojiAnimFrameCount.value;
+                            params.framesOverTime = emojiAnimFps.value;
+                        }
+                        if (emojiAnimLoopPingPong.value) {
+                            params.loopStyle = 'pingpong';
+                        }
+                        const base64Body = await readFileAsBase64(blob);
+                        const args = await vrcPlusImageRequest.uploadEmoji(base64Body, params);
+                        if (Object.keys(emojiTable.value).length !== 0) {
+                            emojiTable.value.unshift(args.json);
+                        }
+                    })()
+                );
+                toast.success(t('message.upload.success'));
+            } catch (error) {
+                console.error('Failed to upload', error);
+                toast.error(t('message.upload.error'));
+            } finally {
+                finishUpload();
+            }
+        });
     }
 
     function displayEmojiUpload() {
@@ -988,45 +977,29 @@
         if (!file) {
             return;
         }
-        startUpload();
-        const r = new FileReader();
-        const handleReaderError = () => finishUpload();
-        r.onerror = handleReaderError;
-        r.onabort = handleReaderError;
-        r.onload = function () {
-            try {
-                const params = {
-                    tag: 'sticker',
-                    maskTag: 'square'
-                };
-                const base64Body = btoa(r.result.toString());
-                const uploadPromise = vrcPlusImageRequest.uploadSticker(base64Body, params).then((args) => {
-                    handleStickerAdd(args);
-                    return args;
-                });
-                toast.promise(uploadPromise, {
-                    loading: t('message.upload.loading'),
-                    success: t('message.upload.success'),
-                    error: t('message.upload.error')
-                });
-                uploadPromise
-                    .catch((error) => {
-                        console.error('Failed to upload', error);
-                    })
-                    .finally(() => finishUpload());
-            } catch (error) {
-                finishUpload();
-                console.error('Failed to process upload', error);
-            }
-        };
-        try {
-            r.readAsBinaryString(file);
-        } catch (error) {
-            clearInput();
-            finishUpload();
-            console.error('Failed to read file', error);
-        }
         clearInput();
+        openCropDialog(file, t('dialog.change_content_image.upload'), 1 / 1, async (blob) => {
+            startUpload();
+            try {
+                await withUploadTimeout(
+                    (async () => {
+                        const params = {
+                            tag: 'sticker',
+                            maskTag: 'square'
+                        };
+                        const base64Body = await readFileAsBase64(blob);
+                        const args = await vrcPlusImageRequest.uploadSticker(base64Body, params);
+                        handleStickerAdd(args);
+                    })()
+                );
+                toast.success(t('message.upload.success'));
+            } catch (error) {
+                console.error('Failed to upload', error);
+                toast.error(t('message.upload.error'));
+            } finally {
+                finishUpload();
+            }
+        });
     }
 
     function displayStickerUpload() {
@@ -1057,55 +1030,37 @@
         if (!file) {
             return;
         }
-        startUpload();
-        const r = new FileReader();
-        const handleReaderError = () => finishUpload();
-        r.onerror = handleReaderError;
-        r.onabort = handleReaderError;
-        r.onload = function () {
+        clearInput();
+        openCropDialog(file, t('dialog.change_content_image.upload'), 16 / 9, async (blob) => {
+            startUpload();
             try {
-                const date = new Date();
-                // why the fuck isn't this UTC
-                date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-                const timestamp = date.toISOString().slice(0, 19);
-                const params = {
-                    note: printUploadNote.value,
-                    // worldId: '',
-                    timestamp
-                };
-                const base64Body = btoa(r.result.toString());
-                const cropWhiteBorder = printCropBorder.value;
-                const uploadPromise = vrcPlusImageRequest
-                    .uploadPrint(base64Body, cropWhiteBorder, params)
-                    .then((args) => {
+                await withUploadTimeout(
+                    (async () => {
+                        const date = new Date();
+                        // why the fuck isn't this UTC
+                        date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+                        const timestamp = date.toISOString().slice(0, 19);
+                        const params = {
+                            note: printUploadNote.value,
+                            // worldId: '',
+                            timestamp
+                        };
+                        const base64Body = await readFileAsBase64(blob);
+                        const cropWhiteBorder = printCropBorder.value;
+                        const args = await vrcPlusImageRequest.uploadPrint(base64Body, cropWhiteBorder, params);
                         if (Object.keys(printTable.value).length !== 0) {
                             printTable.value.unshift(args.json);
                         }
-                        return args;
-                    });
-                toast.promise(uploadPromise, {
-                    loading: t('message.upload.loading'),
-                    success: t('message.upload.success'),
-                    error: t('message.upload.error')
-                });
-                uploadPromise
-                    .catch((error) => {
-                        console.error('Failed to upload', error);
-                    })
-                    .finally(() => finishUpload());
+                    })()
+                );
+                toast.success(t('message.upload.success'));
             } catch (error) {
+                console.error('Failed to upload', error);
+                toast.error(t('message.upload.error'));
+            } finally {
                 finishUpload();
-                console.error('Failed to process upload', error);
             }
-        };
-        try {
-            r.readAsBinaryString(file);
-        } catch (error) {
-            clearInput();
-            finishUpload();
-            console.error('Failed to read file', error);
-        }
-        clearInput();
+        });
     }
 
     function displayPrintUpload() {

@@ -78,9 +78,9 @@ export const useAuthStore = defineStore('Auth', () => {
                 updateStoredUser(currentUser);
                 new Noty({
                     type: 'success',
-                    text: `Hello there, <strong>${escapeTag(
-                        currentUser.displayName
-                    )}</strong>!`
+                    text: t('message.auth.login_greeting', {
+                        name: `<strong>${escapeTag(currentUser.displayName)}</strong>`
+                    })
                 }).show();
             }
         },
@@ -155,9 +155,9 @@ export const useAuthStore = defineStore('Auth', () => {
         if (watchState.isLoggedIn) {
             new Noty({
                 type: 'success',
-                text: `See you again, <strong>${escapeTag(
-                    userStore.currentUser.displayName
-                )}</strong>!`
+                text: t('message.auth.logout_greeting', {
+                    name: `<strong>${escapeTag(userStore.currentUser.displayName)}</strong>`
+                })
             }).show();
         }
         userStore.userDialog.visible = false;
@@ -238,7 +238,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 relogin(user).then(() => {
                     new Noty({
                         type: 'success',
-                        text: 'Email 2FA resent.'
+                        text: t('message.auth.email_2fa_resent')
                     }).show();
                 });
                 return;
@@ -246,7 +246,7 @@ export const useAuthStore = defineStore('Auth', () => {
         }
         new Noty({
             type: 'error',
-            text: 'Cannot send 2FA email without saved credentials. Please login again.'
+            text: t('message.auth.email_2fa_no_credentials')
         }).show();
     }
 
@@ -462,7 +462,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 try {
                     password = await checkPrimaryPassword(loginParams);
                 } catch (err) {
-                    toast.error('Incorrect primary password');
+                    toast.error(t('message.auth.incorrect_primary_password'));
                     throw err;
                 }
             }
@@ -481,7 +481,7 @@ export const useAuthStore = defineStore('Auth', () => {
             }
         } catch (err) {
             if (err.message.includes('Invalid Username/Email or Password')) {
-                toast.error('Saved credentials are no longer valid.');
+                toast.error(t('message.auth.saved_credentials_invalid'));
                 await deleteSavedLogin(user.user.id);
             }
             throw err;
@@ -506,7 +506,7 @@ export const useAuthStore = defineStore('Auth', () => {
         );
         new Noty({
             type: 'success',
-            text: 'Account removed.'
+            text: t('message.auth.account_removed')
         }).show();
     }
 
@@ -613,13 +613,12 @@ export const useAuthStore = defineStore('Auth', () => {
         AppApi.FlashWindow();
         twoFactorAuthDialogVisible.value = true;
         modalStore
-            .prompt({
+            .otpPrompt({
                 title: t('prompt.totp.header'),
                 description: t('prompt.totp.description'),
+                mode: 'totp',
                 cancelText: t('prompt.totp.use_otp'),
-                confirmText: t('prompt.totp.verify'),
-                pattern: /^[0-9]{6}$/,
-                errorMessage: t('prompt.totp.input_error')
+                confirmText: t('prompt.totp.verify')
             })
             .then(({ ok, reason, value }) => {
                 twoFactorAuthDialogVisible.value = false;
@@ -653,13 +652,12 @@ export const useAuthStore = defineStore('Auth', () => {
         }
         twoFactorAuthDialogVisible.value = true;
         modalStore
-            .prompt({
+            .otpPrompt({
                 title: t('prompt.otp.header'),
                 description: t('prompt.otp.description'),
+                mode: 'otp',
                 cancelText: t('prompt.otp.use_totp'),
-                confirmText: t('prompt.otp.verify'),
-                pattern: /^[a-z0-9]{4}-[a-z0-9]{4}$/,
-                errorMessage: t('prompt.otp.input_error')
+                confirmText: t('prompt.otp.verify')
             })
             .then(({ ok, reason, value }) => {
                 twoFactorAuthDialogVisible.value = false;
@@ -672,7 +670,7 @@ export const useAuthStore = defineStore('Auth', () => {
 
                 authRequest
                     .verifyOTP({
-                        code: value.trim()
+                        code: `${value.slice(0, 4)}-${value.slice(4)}`
                     })
                     .catch((err) => {
                         console.error(err);
@@ -694,13 +692,12 @@ export const useAuthStore = defineStore('Auth', () => {
         AppApi.FlashWindow();
         twoFactorAuthDialogVisible.value = true;
         modalStore
-            .prompt({
+            .otpPrompt({
                 title: t('prompt.email_otp.header'),
                 description: t('prompt.email_otp.description'),
+                mode: 'emailOtp',
                 cancelText: t('prompt.email_otp.resend'),
-                confirmText: t('prompt.email_otp.verify'),
-                pattern: /^[0-9]{6}$/,
-                errorMessage: t('prompt.email_otp.input_error')
+                confirmText: t('prompt.email_otp.verify')
             })
             .then(({ ok, reason, value }) => {
                 twoFactorAuthDialogVisible.value = false;
@@ -827,7 +824,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 }
                 AppDebug.errorNoty = new Noty({
                     type: 'success',
-                    text: 'Automatically logged in.'
+                    text: t('message.auth.auto_login_success')
                 }).show();
                 console.log('Automatically logged in.');
             })
@@ -837,15 +834,16 @@ export const useAuthStore = defineStore('Auth', () => {
                 }
                 AppDebug.errorNoty = new Noty({
                     type: 'error',
-                    text: 'Failed to login automatically.'
+                    text: t('message.auth.auto_login_failed')
                 }).show();
                 console.error('Failed to login automatically.', err);
             })
             .finally(() => {
+                attemptingAutoLogin.value = false;
                 if (!navigator.onLine) {
                     AppDebug.errorNoty = new Noty({
                         type: 'error',
-                        text: `You're offline.`
+                        text: t('message.auth.offline')
                     }).show();
                     console.error(`You're offline.`);
                 }

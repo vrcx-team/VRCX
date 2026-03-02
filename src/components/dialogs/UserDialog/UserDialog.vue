@@ -146,11 +146,12 @@
                                     v-if="userDialog.ref.profilePicOverride && !userDialog.ref.currentAvatarImageUrl"
                                     side="top"
                                     :content="t('dialog.user.info.vrcplus_hides_avatar')">
-                                    <Info />
+                                    <Info class="inline-block" />
                                 </TooltipWrapper>
                             </span>
                             <div class="extra">
                                 <AvatarInfo
+                                    :key="userDialog.id"
                                     :imageurl="userDialog.ref.currentAvatarImageUrl"
                                     :userid="userDialog.id"
                                     :avatartags="userDialog.ref.currentAvatarTags"
@@ -518,20 +519,6 @@
                             </SelectContent>
                         </Select>
                     </div>
-                </div>
-                <div
-                    v-if="mutualFriendsError"
-                    @click="openExternalLink('https://docs.vrchat.com/docs/vrchat-202542#mutuals')"
-                    style="
-                        margin-top: 20px;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        color: #f56c6c;
-                        cursor: pointer;
-                    ">
-                    <AlertTriangle style="margin-right: 5px" />
-                    <span>Mutual Friends unavailable due to VRChat staged rollout, click for more info</span>
                 </div>
                 <ul class="x-friend-list" style="margin-top: 10px; overflow: auto; max-height: 250px; min-width: 130px">
                     <li
@@ -1032,6 +1019,9 @@
                         @click="getUserFavoriteWorlds(userDialog.id)">
                     </Button> -->
                 <template v-if="userDialog.userFavoriteWorlds && userDialog.userFavoriteWorlds.length > 0">
+                    <DeprecationAlert
+                        v-if="userDialog.ref.id === currentUser.id"
+                        :feature-name="t('nav_tooltip.favorite_worlds')" />
                     <TabsUnderline
                         v-model="favoriteWorldsTab"
                         :items="favoriteWorldTabs"
@@ -1086,6 +1076,9 @@
             </template>
 
             <template #Avatars>
+                <DeprecationAlert
+                    v-if="userDialog.ref.id === currentUser.id"
+                    :feature-name="t('nav_tooltip.my_avatars')" />
                 <div style="display: flex; align-items: center; justify-content: space-between">
                     <div style="display: flex; align-items: center">
                         <Button
@@ -1272,6 +1265,7 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import DeprecationAlert from '@/components/DeprecationAlert.vue';
     import VueJsonPretty from 'vue-json-pretty';
 
     import {
@@ -1477,7 +1471,6 @@
 
     const isEditNoteAndMemoDialogVisible = ref(false);
     const vrchatCredit = ref(null);
-    const mutualFriendsError = ref(false);
     const treeData = ref({});
 
     const userDialogAvatars = computed(() => {
@@ -2189,7 +2182,6 @@
                     const mutualIds = userDialog.value.mutualFriends.map((u) => u.id);
                     database.updateMutualsForFriend(userId, mutualIds);
                 }
-                mutualFriendsError.value = !success;
             }
         });
     }
@@ -2401,8 +2393,10 @@
     function resetHome() {
         modalStore
             .confirm({
-                description: 'Continue? Reset Home',
-                title: 'Confirm'
+                description: t('confirm.command_question', {
+                    command: t('dialog.user.actions.reset_home')
+                }),
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) return;

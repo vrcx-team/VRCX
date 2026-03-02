@@ -6,9 +6,6 @@
             </DialogHeader>
             <span>{{ displayName }}</span>
 
-            <br />
-            <br />
-
             <div v-if="sendBoopDialog.visible" style="width: 100%">
                 <VirtualCombobox
                     v-model="emojiModel"
@@ -17,16 +14,14 @@
                     :search-placeholder="t('dialog.boop_dialog.select_default_emoji')"
                     :clearable="true"
                     :close-on-select="true"
-                    :deselect-on-reselect="true">
+                    :deselect-on-reselect="true"
+                    :maxHeight="230">
                     <template #item="{ item, selected }">
                         <span v-text="item.label"></span>
                         <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
                     </template>
                 </VirtualCombobox>
             </div>
-
-            <br />
-            <br />
 
             <div
                 v-if="isLocalUserVrcPlusSupporter"
@@ -94,6 +89,7 @@
     const { showGalleryPage, refreshEmojiTable } = useGalleryStore();
     const { emojiTable } = storeToRefs(useGalleryStore());
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
+    const { isNotificationExpired, handleNotificationV2Hide } = useNotificationStore();
 
     const fileId = ref('');
     const displayName = ref('');
@@ -161,14 +157,12 @@
         const array = notificationTable.value.data;
         for (let i = array.length - 1; i >= 0; i--) {
             const ref = array[i];
-            if (ref.type !== 'boop' || ref.$isExpired || ref.senderUserId !== userId) {
+            if (ref.type !== 'boop' || isNotificationExpired(ref) || ref.link !== `user:${userId}`) {
                 continue;
             }
-            notificationRequest.sendNotificationResponse({
-                notificationId: ref.id,
-                responseType: 'delete',
-                responseData: ''
-            });
+            console.log('Dismissing boop notification with id', ref.id);
+            handleNotificationV2Hide(ref.id);
+            notificationRequest.hideNotificationV2(ref.id);
         }
     }
 </script>

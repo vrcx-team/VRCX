@@ -15,11 +15,20 @@
                     <div class="mb-2 flex items-center justify-between">
                         <div class="flex flex-none mr-2 items-center">
                             <TooltipWrapper side="bottom" :content="t('view.friend_list.favorites_only_tooltip')">
-                                <span class="inline-flex">
-                                    <Switch
-                                        v-model="friendsListSearchFilterVIP"
-                                        @update:modelValue="friendsListSearchChange" />
-                                </span>
+                                <div>
+                                    <Toggle
+                                        variant="outline"
+                                        size="sm"
+                                        :model-value="friendsListSearchFilterVIP"
+                                        @update:modelValue="
+                                            (v) => {
+                                                friendsListSearchFilterVIP = v;
+                                                friendsListSearchChange();
+                                            }
+                                        ">
+                                        <Star />
+                                    </Toggle>
+                                </div>
                             </TooltipWrapper>
                             <Select
                                 multiple
@@ -115,6 +124,7 @@
     import { Button } from '@/components/ui/button';
     import { InputGroupField } from '@/components/ui/input-group';
     import { Progress } from '@/components/ui/progress';
+    import { Star } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -131,6 +141,7 @@
     import { friendRequest, userRequest } from '../../api';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { Switch } from '../../components/ui/switch';
+    import { Toggle } from '../../components/ui/toggle';
     import { createColumns } from './columns.jsx';
     import { localeIncludes } from '../../shared/utils';
     import removeConfusables, { removeWhitespace } from '../../service/confusables';
@@ -142,11 +153,11 @@
 
     const emit = defineEmits(['lookup-user']);
 
-    const { friends } = storeToRefs(useFriendStore());
+    const { friends, allFavoriteFriendIds } = storeToRefs(useFriendStore());
     const modalStore = useModalStore();
     const { getAllUserStats, getAllUserMutualCount, confirmDeleteFriend, handleFriendDelete } = useFriendStore();
-    const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
-    const vrcxStore = useVrcxStore();
+    const appearanceSettingsStore = useAppearanceSettingsStore();
+    const { randomUserColours } = storeToRefs(appearanceSettingsStore);
     const { showUserDialog } = useUserStore();
     const { stringComparer, friendsListSearch } = storeToRefs(useSearchStore());
 
@@ -159,8 +170,8 @@
     const friendsListSearchFilterVIP = ref(false);
     const selectedFriends = ref(new Set());
     const friendsListDisplayData = ref([]);
-    const pageSizes = [50, 100, 250, 500];
-    const pageSize = ref(100);
+    const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
+    const pageSize = computed(() => appearanceSettingsStore.tablePageSize);
     const defaultSorting = [{ id: 'friendNumber', desc: true }];
 
     // const initialColumnPinning = {
@@ -206,13 +217,11 @@
     });
 
     const totalItems = computed(() => {
-        const length = table.getFilteredRowModel().rows.length;
-        const max = vrcxStore.maxTableSize;
-        return length > max ? max : length;
+        return table.getFilteredRowModel().rows.length;
     });
 
     const handlePageSizeChange = (size) => {
-        pageSize.value = size;
+        appearanceSettingsStore.setTablePageSize(size);
     };
 
     const handleRowClick = (row) => {
@@ -286,7 +295,7 @@
         }
         for (const ctx of friends.value.values()) {
             if (!ctx.ref) continue;
-            if (friendsListSearchFilterVIP.value && !ctx.isVIP) continue;
+            if (friendsListSearchFilterVIP.value && !allFavoriteFriendIds.value.has(ctx.id)) continue;
             if (query) {
                 let match = false;
                 if (!match && filters.includes('Display Name') && ctx.ref.displayName) {
@@ -360,6 +369,7 @@
 
     async function bulkUnfriendSelection() {
         if (!selectedFriends.value.size) return;
+        const selectedFriendsCount = selectedFriends.value.size;
         for (const item of friendsListDisplayData.value) {
             if (selectedFriends.value.has(item.id)) {
                 console.log(`Unfriending ${item.displayName} (${item.id})`);
@@ -368,7 +378,7 @@
             }
         }
         modalStore.alert({
-            description: `Unfriended ${selectedFriends.value.size} friends.`,
+            description: `Unfriended ${selectedFriendsCount} friends.`,
             title: 'Bulk Unfriend Complete'
         });
         selectedFriends.value.clear();

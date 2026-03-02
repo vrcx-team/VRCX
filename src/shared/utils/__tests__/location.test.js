@@ -1,4 +1,4 @@
-import { displayLocation, parseLocation } from '../location';
+import { displayLocation, parseLocation } from '../locationParser';
 
 describe('Location Utils', () => {
     describe('parseLocation', () => {

@@ -1,114 +1,88 @@
 <template>
     <Dialog :open="visible" @update:open="(open) => (open ? null : handleClose())">
-        <DialogContent class="custom-nav-dialog sm:min-w-[50vw]">
+        <DialogContent class="sm:min-w-140">
             <DialogHeader>
                 <DialogTitle>{{ t('nav_menu.custom_nav.dialog_title') }}</DialogTitle>
             </DialogHeader>
-            <div class="custom-nav-dialog__list" v-if="localLayout.length">
-                <div
-                    v-for="(entry, index) in localLayout"
-                    :key="entry.key || entry.id"
-                    :class="['custom-nav-entry', `custom-nav-entry--${entry.type}`]">
-                    <template v-if="entry.type === 'item'">
-                        <div class="custom-nav-entry__info">
-                            <i :class="definitionsMap.get(entry.key)?.icon"></i>
-                            <span>{{ t(definitionsMap.get(entry.key)?.labelKey || entry.key) }}</span>
-                        </div>
-                        <div class="custom-nav-entry__controls">
-                            <div class="custom-nav-entry__move">
-                                <Button
-                                    class="rounded-full w-6 h-6 text-xs"
-                                    size="icon-sm"
-                                    variant="outline"
-                                    :disabled="index === 0"
-                                    @click="handleMoveEntry(index, -1)">
-                                    <i class="ri-arrow-up-line"></i>
-                                </Button>
-                                <Button
-                                    class="rounded-full w-6 h-6 text-xs"
-                                    size="icon-sm"
-                                    variant="outline"
-                                    :disabled="index === localLayout.length - 1"
-                                    @click="handleMoveEntry(index, 1)">
-                                    <i class="ri-arrow-down-line"></i>
-                                </Button>
-                            </div>
-                        </div>
-                    </template>
-                    <template v-else>
-                        <div class="custom-nav-entry__folder-header">
-                            <div class="custom-nav-entry__info">
-                                <i :class="entry.icon || defaultFolderIcon"></i>
-                                <span>{{
-                                    entry.name?.trim() || t('nav_menu.custom_nav.folder_name_placeholder')
-                                }}</span>
-                            </div>
-                            <div class="custom-nav-entry__actions">
-                                <Button
-                                    size="icon-sm w-6 h-6 text-xs"
-                                    variant="outline"
-                                    @click="openFolderEditor(index)">
-                                    <i class="ri-edit-box-line"></i>
-                                    {{ t('nav_menu.custom_nav.edit_folder') }}
-                                </Button>
-                                <div class="custom-nav-entry__move">
-                                    <Button
-                                        class="rounded-full text-xs w-6 h-6"
-                                        size="icon-sm"
-                                        variant="outline"
-                                        :disabled="index === 0"
-                                        @click="handleMoveEntry(index, -1)">
-                                        <i class="ri-arrow-up-line"></i>
-                                    </Button>
-                                    <Button
-                                        class="rounded-full text-xs w-6 h-6"
-                                        size="icon-sm"
-                                        variant="outline"
-                                        :disabled="index === localLayout.length - 1"
-                                        @click="handleMoveEntry(index, 1)">
-                                        <i class="ri-arrow-down-line"></i>
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="custom-nav-entry__folder-items">
-                            <template v-if="entry.items?.length">
-                                <Badge
-                                    v-for="key in entry.items"
-                                    :key="`${entry.id}-${key}`"
-                                    variant="outline"
-                                    class="custom-nav-entry__folder-tag">
-                                    {{ t(definitionsMap.get(key)?.labelKey || key) }}
-                                </Badge>
+
+            <div class="min-h-[40vh] max-h-[60vh] overflow-y-auto">
+                <DragDropProvider @dragStart="onDragStart" @dragOver="onDragOver" @dragEnd="onDragEnd">
+                    <Tree
+                        :items="treeItems"
+                        :get-key="(item) => item.id"
+                        :get-children="(item) => item.children"
+                        :expanded="expandedKeys"
+                        class="gap-0.5 pr-3"
+                        @update:expanded="(val) => (expandedKeys = val)">
+                        <template #default="{ flattenItems }">
+                            <template v-for="(item, idx) in flattenItems" :key="item._id">
+                                <template v-if="item.value?._placeholder">
+                                    <div
+                                        class="rounded-md border border-dashed border-muted-foreground/25 p-1.5 text-sm text-muted-foreground/50 mt-1">
+                                        {{ t('nav_menu.custom_nav.folder_drop_here') }}
+                                    </div>
+                                </template>
+                                <SortableTreeNode
+                                    v-else
+                                    :item="item"
+                                    :index="getSortableIndex(idx, flattenItems)"
+                                    :definitions-map="definitionsMap"
+                                    :drag-state="dragState"
+                                    @edit-folder="openFolderEditor"
+                                    @delete-folder="handleDeleteFolder"
+                                    @hide="handleHideItem"
+                                    @toggle="handleTreeToggle(item)" />
                             </template>
-                            <span v-else class="custom-nav-entry__folder-empty">
-                                {{ t('nav_menu.custom_nav.folder_empty') }}
-                            </span>
+                        </template>
+                    </Tree>
+                </DragDropProvider>
+
+                <template v-if="hiddenItems.length">
+                    <div class="my-3 flex items-center gap-2 pr-3">
+                        <Separator class="flex-1" />
+                        <span class="text-xs text-muted-foreground">
+                            {{ t('nav_menu.custom_nav.hidden_items') }}
+                        </span>
+                        <Separator class="flex-1" />
+                    </div>
+                    <div class="flex flex-col gap-0.5 pr-3">
+                        <div
+                            v-for="item in hiddenItems"
+                            :key="item.key"
+                            class="group flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground"
+                            @click="handleShowItem(item.key)">
+                            <span class="size-4 shrink-0" />
+                            <span class="size-4 shrink-0" />
+                            <i v-if="item.icon" :class="item.icon" class="text-base" />
+                            <span class="flex-1 truncate">{{ item.label }}</span>
+                            <Button
+                                size="icon-sm"
+                                variant="ghost"
+                                class="ml-auto size-6 shrink-0 opacity-0 group-hover:opacity-100"
+                                @click.stop="handleShowItem(item.key)">
+                                <Minus class="size-3.5" />
+                            </Button>
                         </div>
-                    </template>
-                </div>
+                    </div>
+                </template>
             </div>
-            <!-- <el-alert
-                v-if="invalidFolders.length"
-                type="warning"
-                :closable="false"
-                :title="t('nav_menu.custom_nav.invalid_folder')" /> -->
+
             <DialogFooter>
-                <div class="custom-nav-dialog__footer">
-                    <div class="custom-nav-dialog__footer-left">
-                        <Button variant="outline" @click="openFolderEditor()">
-                            {{ t('nav_menu.custom_nav.add_folder') }}
+                <div class="flex w-full items-center justify-between">
+                    <div class="flex gap-2">
+                        <Button variant="outline" @click="handleAddFolder">
+                            {{ t('nav_menu.custom_nav.new_folder') }}
                         </Button>
-                        <Button variant="outline" @click="handleReset">
+                        <Button variant="ghost" class="text-destructive" @click="handleReset">
                             {{ t('nav_menu.custom_nav.restore_default') }}
                         </Button>
                     </div>
-                    <div class="custom-nav-dialog__footer-right">
+                    <div class="flex gap-2">
                         <Button variant="secondary" @click="handleClose">
                             {{ t('nav_menu.custom_nav.cancel') }}
                         </Button>
-                        <Button :disabled="isSaveDisabled" @click="handleSave">
-                            {{ t('nav_menu.custom_nav.save') }}
+                        <Button @click="handleSave">
+                            {{ t('common.actions.confirm') }}
                         </Button>
                     </div>
                 </div>
@@ -117,138 +91,52 @@
     </Dialog>
 
     <Dialog v-model:open="folderEditor.visible">
-        <DialogContent class="folder-editor-dialog sm:max-w-[50vw]">
+        <DialogContent class="sm:max-w-100">
             <DialogHeader>
-                <DialogTitle>
-                    {{
-                        folderEditor.isEditing
-                            ? t('nav_menu.custom_nav.edit_folder')
-                            : t('nav_menu.custom_nav.add_folder')
-                    }}
-                </DialogTitle>
+                <DialogTitle>{{ t('nav_menu.custom_nav.edit_folder') }}</DialogTitle>
             </DialogHeader>
-            <div class="folder-editor">
-                <div class="folder-editor__form">
-                    <InputGroupField
-                        class="col-span-2"
-                        v-model="folderEditor.data.name"
-                        :placeholder="t('nav_menu.custom_nav.folder_name_placeholder')" />
-                    <InputGroupField
-                        class="col-span-2"
-                        v-model="folderEditor.data.icon"
-                        :placeholder="t('nav_menu.custom_nav.folder_icon_placeholder')">
-                        <template #trailing>
-                            <HoverCard>
-                                <HoverCardTrigger as-child>
-                                    <InputGroupButton
-                                        size="icon-xs"
-                                        :aria-label="t('nav_menu.custom_nav.folder_icon_placeholder')">
-                                        <LinkIcon class="size-3.5" />
-                                    </InputGroupButton>
-                                </HoverCardTrigger>
-                                <HoverCardContent side="bottom" align="end" class="w-80">
-                                    <div class="text-sm leading-snug">
-                                        <div>
-                                            Find the icon you want on this site and paste its class name here, e.g.
-                                            <span class="font-mono">ri-arrow-left-up-line</span>
-                                        </div>
-                                        <div class="mt-2">
-                                            <a
-                                                class="cursor-pointer text-blue-600"
-                                                @click.prevent="openExternalLink('https://remixicon.com/')">
-                                                https://remixicon.com/
-                                            </a>
-                                        </div>
+            <div class="flex flex-col gap-3">
+                <InputGroupField
+                    v-model="folderEditor.data.name"
+                    :placeholder="t('nav_menu.custom_nav.folder_name_placeholder')" />
+                <InputGroupField
+                    v-model="folderEditor.data.icon"
+                    :placeholder="t('nav_menu.custom_nav.folder_icon_placeholder')">
+                    <template #trailing>
+                        <HoverCard>
+                            <HoverCardTrigger as-child>
+                                <InputGroupButton
+                                    size="icon-xs"
+                                    :aria-label="t('nav_menu.custom_nav.folder_icon_placeholder')">
+                                    <LinkIcon class="size-3.5" />
+                                </InputGroupButton>
+                            </HoverCardTrigger>
+                            <HoverCardContent side="bottom" align="end" class="w-80">
+                                <div class="text-sm leading-snug">
+                                    <div>
+                                        Find the icon you want on this site and paste its class name here, e.g.
+                                        <span class="font-mono">ri-arrow-left-up-line</span>
                                     </div>
-                                </HoverCardContent>
-                            </HoverCard>
-                        </template>
-                    </InputGroupField>
-                </div>
-                <div class="folder-editor__lists">
-                    <div class="folder-editor__column">
-                        <div class="folder-editor__column-title">
-                            {{ t('nav_menu.custom_nav.folder_available') }}
-                        </div>
-                        <div v-if="!folderEditorAvailableItems.length" class="folder-editor__empty">
-                            {{ t('nav_menu.custom_nav.folder_empty') }}
-                        </div>
-                        <ScrollArea v-else type="always" class="folder-editor__scroll">
-                            <div
-                                v-for="item in folderEditorAvailableItems"
-                                :key="item.key"
-                                class="folder-editor__option">
-                                <label class="folder-editor__option-label">
-                                    <Checkbox
-                                        :model-value="folderEditor.data.items.includes(item.key)"
-                                        @update:modelValue="(val) => toggleFolderItem(item.key, val)" />
-                                    <span>
-                                        <i :class="item.icon"></i>
-                                        {{ t(item.labelKey) }}
-                                    </span>
-                                </label>
-                            </div>
-                        </ScrollArea>
-                    </div>
-                    <div class="folder-editor__column folder-editor__column--selected">
-                        <div class="folder-editor__column-title">
-                            {{ t('nav_menu.custom_nav.folder_selected') }}
-                        </div>
-                        <div v-if="!folderEditor.data.items.length" class="folder-editor__empty">
-                            {{ t('nav_menu.custom_nav.folder_selected_empty') }}
-                        </div>
-                        <div
-                            v-for="(key, index) in folderEditor.data.items"
-                            :key="`selected-${key}`"
-                            class="folder-editor__selected-item">
-                            <div class="folder-editor__selected-label">
-                                <i :class="definitionsMap.get(key)?.icon"></i>
-                                <span>{{ t(definitionsMap.get(key)?.labelKey || key) }}</span>
-                            </div>
-                            <div class="folder-editor__selected-actions">
-                                <div class="custom-nav-entry__move">
-                                    <Button
-                                        class="rounded-full text-xs w-6 h-6"
-                                        size="icon-sm"
-                                        variant="outline"
-                                        :disabled="index === 0"
-                                        @click="handleFolderItemMove(index, -1)">
-                                        <i class="ri-arrow-up-line"></i>
-                                    </Button>
-                                    <Button
-                                        class="rounded-full text-xs w-6 h-6"
-                                        size="icon-sm"
-                                        variant="outline"
-                                        :disabled="index === folderEditor.data.items.length - 1"
-                                        @click="handleFolderItemMove(index, 1)">
-                                        <i class="ri-arrow-down-line"></i>
-                                    </Button>
+                                    <div class="mt-2">
+                                        <a
+                                            class="cursor-pointer text-blue-600"
+                                            @click.prevent="openExternalLink('https://remixicon.com/')">
+                                            https://remixicon.com/
+                                        </a>
+                                    </div>
                                 </div>
-                                <Button size="sm" variant="outline" @click="toggleFolderItem(key, false)">
-                                    {{ t('nav_menu.custom_nav.remove_from_folder') }}
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                            </HoverCardContent>
+                        </HoverCard>
+                    </template>
+                </InputGroupField>
             </div>
             <DialogFooter>
-                <div class="folder-editor__footer">
-                    <Button
-                        variant="destructive"
-                        v-if="folderEditor.isEditing"
-                        :disabled="!canDeleteFolder"
-                        @click="handleFolderEditorDelete">
-                        {{ t('nav_menu.custom_nav.delete_folder') }}
-                    </Button>
-                    <div class="folder-editor__footer-spacer"></div>
-                    <Button variant="secondary" class="mr-2" @click="closeFolderEditor">
-                        {{ t('nav_menu.custom_nav.cancel') }}
-                    </Button>
-                    <Button :disabled="folderEditorSaveDisabled" @click="handleFolderEditorSave">
-                        {{ t('nav_menu.custom_nav.save') }}
-                    </Button>
-                </div>
+                <Button variant="secondary" @click="folderEditor.visible = false">
+                    {{ t('nav_menu.custom_nav.cancel') }}
+                </Button>
+                <Button :disabled="!folderEditor.data.name?.trim()" @click="handleFolderEditorSave">
+                    {{ t('common.actions.confirm') }}
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>
@@ -258,20 +146,21 @@
     import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, reactive, ref, watch } from 'vue';
     import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+    import { Link as LinkIcon, Minus } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
-    import { Link as LinkIcon } from 'lucide-vue-next';
+    import { DragDropProvider } from '@dnd-kit/vue';
+    import { isSortable } from '@dnd-kit/vue/sortable';
     import { openExternalLink } from '@/shared/utils/common';
     import { useI18n } from 'vue-i18n';
 
     import dayjs from 'dayjs';
 
     import { InputGroupButton, InputGroupField } from '../ui/input-group';
-    import { Badge } from '../ui/badge';
-    import { Checkbox } from '../ui/checkbox';
-    import { ScrollArea } from '../ui/scroll-area';
+    import { Separator } from '../ui/separator';
+    import { Tree } from '../ui/tree';
     import { navDefinitions } from '../../shared/constants/ui.js';
 
-    // import IconPicker from '../IconPicker.vue';
+    import SortableTreeNode from './SortableTreeNode.vue';
 
     const props = defineProps({
         visible: {
@@ -282,18 +171,21 @@
             type: Array,
             default: () => []
         },
-        defaultFolderIcon: {
-            type: String
+        hiddenKeys: {
+            type: Array,
+            default: () => []
+        },
+        defaultLayout: {
+            type: Array,
+            default: () => []
         }
     });
 
-    const emit = defineEmits(['update:visible', 'save', 'reset']);
+    const emit = defineEmits(['update:visible', 'save']);
     const { t } = useI18n();
 
     const cloneLayout = (source) => {
-        if (!Array.isArray(source)) {
-            return [];
-        }
+        if (!Array.isArray(source)) return [];
         return source.map((entry) => {
             if (entry?.type === 'folder') {
                 return {
@@ -309,420 +201,506 @@
     };
 
     const localLayout = ref(cloneLayout(props.layout));
+    const hiddenKeySet = ref(new Set());
+    const hiddenPlacement = ref(new Map());
+    const DEFAULT_FOLDER_ICON = 'ri-folder-line';
 
     const folderEditor = reactive({
         visible: false,
         isEditing: false,
-        index: -1,
-        data: {
-            id: '',
-            name: '',
-            icon: '',
-            items: []
-        }
+        editingId: null,
+        data: { id: '', name: '', icon: '' }
     });
+
+    const dragState = reactive({
+        active: false,
+        sourceId: null,
+        sourceIsFolder: false,
+        overTargetId: null,
+        overIsFolder: false,
+        lastOverNode: null
+    });
+
+    const createFolderId = () => {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+            return `custom-folder-${crypto.randomUUID()}`;
+        }
+        return `custom-folder-${dayjs().toISOString()}-${Math.random().toString().slice(2, 7)}`;
+    };
 
     watch(
         () => props.visible,
         (visible) => {
             if (visible) {
                 localLayout.value = cloneLayout(props.layout);
+                hiddenKeySet.value = new Set(props.hiddenKeys || []);
+                hiddenPlacement.value = new Map();
+                expandedKeys.value = localLayout.value.filter((e) => e.type === 'folder').map((e) => e.id);
             }
         }
     );
 
     const definitionsMap = computed(() => {
         const map = new Map();
-        navDefinitions.forEach((definition) => {
-            if (definition?.key) {
-                map.set(definition.key, definition);
-            }
+        navDefinitions.forEach((def) => {
+            if (def?.key) map.set(def.key, def);
         });
         return map;
     });
 
-    const folderEntries = computed(() => localLayout.value.filter((entry) => entry.type === 'folder'));
+    const treeItems = computed(() => {
+        return localLayout.value.map((entry) => {
+            if (entry.type === 'folder') {
+                const children = (entry.items || [])
+                    .map((key) => {
+                        const def = definitionsMap.value.get(key);
+                        if (!def) return null;
+                        return { id: key, type: 'item', key, level: 1, parentId: entry.id };
+                    })
+                    .filter(Boolean);
 
-    const invalidFolders = computed(() =>
-        folderEntries.value.filter((entry) => !entry.name?.trim() || entry.items?.length < 2)
+                const folderChildren = children.length
+                    ? children
+                    : [{ id: `${entry.id}__placeholder`, _placeholder: true, level: 1 }];
+
+                return {
+                    id: entry.id,
+                    type: 'folder',
+                    name: entry.name,
+                    icon: entry.icon,
+                    level: 0,
+                    children: folderChildren
+                };
+            }
+            return { id: entry.key, type: 'item', key: entry.key, level: 0 };
+        });
+    });
+
+    const expandedKeys = ref([]);
+
+    const hiddenItems = computed(() =>
+        navDefinitions
+            .filter((def) => hiddenKeySet.value.has(def.key))
+            .map((def) => ({
+                key: def.key,
+                icon: def.icon,
+                label: t(def.labelKey)
+            }))
     );
 
-    const isSaveDisabled = computed(() => invalidFolders.value.length > 0);
+    const getSortableIndex = (originalIdx, flattenItems) => {
+        let sortableIdx = 0;
+        for (let i = 0; i < originalIdx; i++) {
+            if (!flattenItems[i]?.value?._placeholder) sortableIdx += 1;
+        }
+        return sortableIdx;
+    };
 
-    const handleMoveEntry = (index, direction) => {
-        const targetIndex = index + direction;
-        if (targetIndex < 0 || targetIndex >= localLayout.value.length) {
+    const handleHideItem = (key) => {
+        let placement = null;
+        for (let i = 0; i < localLayout.value.length; i++) {
+            const entry = localLayout.value[i];
+            if (entry.type === 'item' && entry.key === key) {
+                placement = { parentId: null, index: i };
+                localLayout.value.splice(i, 1);
+                break;
+            }
+            if (entry.type === 'folder') {
+                const idx = entry.items?.indexOf(key);
+                if (idx !== undefined && idx >= 0) {
+                    placement = { parentId: String(entry.id), index: idx };
+                    entry.items.splice(idx, 1);
+                    break;
+                }
+            }
+        }
+        if (placement) {
+            hiddenPlacement.value.set(key, placement);
+        }
+        hiddenKeySet.value.add(key);
+        localLayout.value = [...localLayout.value];
+    };
+
+    const handleShowItem = (key) => {
+        hiddenKeySet.value.delete(key);
+        hiddenKeySet.value = new Set(hiddenKeySet.value);
+        const placement = hiddenPlacement.value.get(key) || null;
+
+        let restored = false;
+        if (placement?.parentId) {
+            const folder = localLayout.value.find(
+                (entry) => entry.type === 'folder' && String(entry.id) === placement.parentId
+            );
+            if (folder) {
+                const insertAt = Math.max(0, Math.min(placement.index, folder.items.length));
+                folder.items.splice(insertAt, 0, key);
+                restored = true;
+            }
+        }
+
+        if (!restored && placement && placement.parentId === null) {
+            const insertAt = Math.max(0, Math.min(placement.index, localLayout.value.length));
+            localLayout.value.splice(insertAt, 0, { type: 'item', key });
+            restored = true;
+        }
+
+        if (!restored) {
+            localLayout.value.push({ type: 'item', key });
+        }
+
+        hiddenPlacement.value.delete(key);
+        localLayout.value = [...localLayout.value];
+    };
+
+    const handleDeleteFolder = (folderId) => {
+        const idx = localLayout.value.findIndex((e) => e.type === 'folder' && e.id === folderId);
+        if (idx < 0) return;
+        const folder = localLayout.value[idx];
+        const childItems = (folder.items || []).map((key) => ({ type: 'item', key }));
+        localLayout.value.splice(idx, 1, ...childItems);
+        localLayout.value = [...localLayout.value];
+    };
+
+    const handleTreeToggle = (item) => {
+        const id = item.value?.id;
+        if (!id) return;
+        if (expandedKeys.value.includes(id)) {
+            expandedKeys.value = expandedKeys.value.filter((k) => k !== id);
+        } else {
+            expandedKeys.value = [...expandedKeys.value, id];
+        }
+    };
+
+    const buildVisibleNodes = () => {
+        const list = [];
+        for (const entry of localLayout.value) {
+            if (entry.type === 'folder') {
+                const folderId = String(entry.id);
+                list.push({ type: 'folder', id: folderId });
+                if (!expandedKeys.value.includes(entry.id)) {
+                    continue;
+                }
+                for (const key of entry.items || []) {
+                    list.push({ type: 'item', id: String(key), key, parentId: folderId });
+                }
+            } else {
+                list.push({ type: 'item', id: String(entry.key), key: entry.key });
+            }
+        }
+        return list;
+    };
+
+    const resolveNodeFromDnDEntity = (entity, nodes, options = {}) => {
+        const { allowIndexFallback = true } = options;
+        if (!entity) return null;
+
+        if (entity.id !== undefined && entity.id !== null) {
+            const rawId = String(entity.id);
+            const normalizedId = rawId.endsWith('__placeholder') ? rawId.slice(0, -'__placeholder'.length) : rawId;
+            const byId = findVisibleNodeById(normalizedId, nodes);
+            if (byId) return byId;
+        }
+
+        if (
+            allowIndexFallback &&
+            typeof entity.index === 'number' &&
+            entity.index >= 0 &&
+            entity.index < nodes.length
+        ) {
+            return nodes[entity.index] || null;
+        }
+
+        return null;
+    };
+
+    const resetDragState = () => {
+        dragState.active = false;
+        dragState.sourceId = null;
+        dragState.sourceIsFolder = false;
+        dragState.overTargetId = null;
+        dragState.overIsFolder = false;
+        dragState.lastOverNode = null;
+    };
+
+    const findVisibleNodeById = (id, nodes = null) => {
+        const normalizedId = String(id);
+        const source = nodes || buildVisibleNodes();
+        return source.find((node) => node.id === normalizedId) || null;
+    };
+
+    const getNodeIndex = (nodes, needle) => {
+        if (!needle) return -1;
+        return nodes.findIndex((node) => {
+            if (node.type !== needle.type) return false;
+            if (node.id !== needle.id) return false;
+            return (node.parentId || null) === (needle.parentId || null);
+        });
+    };
+
+    const onDragStart = (event) => {
+        const { source } = event.operation;
+        if (!source) return;
+
+        const nodes = buildVisibleNodes();
+        const sourceNode = resolveNodeFromDnDEntity(source, nodes);
+        if (!sourceNode) return;
+
+        dragState.active = true;
+        dragState.sourceId = sourceNode.id;
+        dragState.sourceIsFolder = sourceNode.type === 'folder';
+        dragState.lastOverNode = null;
+    };
+
+    const onDragOver = (event) => {
+        const { target } = event.operation;
+        if (!target) {
+            dragState.overTargetId = null;
+            dragState.overIsFolder = false;
             return;
         }
-        const entries = [...localLayout.value];
-        const [entry] = entries.splice(index, 1);
-        entries.splice(targetIndex, 0, entry);
+
+        const nodes = buildVisibleNodes();
+        const rawTargetNode = resolveNodeFromDnDEntity(target, nodes, { allowIndexFallback: false });
+        let targetNode = rawTargetNode;
+
+        // hovering over a folder child maps to its parent folder as top-level target
+        if (dragState.sourceIsFolder && rawTargetNode?.parentId) {
+            const parentFolderNode = findVisibleNodeById(rawTargetNode.parentId, nodes);
+            if (parentFolderNode?.type === 'folder') {
+                targetNode = parentFolderNode;
+            }
+        }
+
+        dragState.overTargetId = targetNode?.id || null;
+        dragState.overIsFolder = targetNode?.type === 'folder' && !dragState.sourceIsFolder;
+        if (!targetNode) return;
+
+        const isSelfTarget = dragState.sourceId && String(targetNode.id) === String(dragState.sourceId);
+        if (isSelfTarget) return;
+
+        if (dragState.sourceIsFolder && targetNode.parentId) return;
+
+        dragState.lastOverNode = {
+            type: targetNode.type,
+            id: String(targetNode.id),
+            parentId: targetNode.parentId ? String(targetNode.parentId) : null
+        };
+    };
+
+    const removeItemFromEntries = (entries, key) => {
+        const normalizedKey = String(key);
+        for (let i = 0; i < entries.length; i++) {
+            const entry = entries[i];
+            if (entry.type === 'item' && String(entry.key) === normalizedKey) {
+                entries.splice(i, 1);
+                return true;
+            }
+            if (entry.type === 'folder') {
+                const idx = entry.items.findIndex((k) => String(k) === normalizedKey);
+                if (idx >= 0) {
+                    entry.items.splice(idx, 1);
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    const moveItemByTarget = (sourceItemId, targetNode, movingDown) => {
+        const entries = cloneLayout(localLayout.value);
+        const removed = removeItemFromEntries(entries, sourceItemId);
+        if (!removed) return;
+
+        if (!targetNode) {
+            entries.push({ type: 'item', key: sourceItemId });
+            localLayout.value = entries;
+            return;
+        }
+
+        if (targetNode.type === 'folder') {
+            const folder = entries.find((e) => e.type === 'folder' && String(e.id) === targetNode.id);
+            if (!folder) return;
+            folder.items.push(sourceItemId);
+            localLayout.value = entries;
+            return;
+        }
+
+        if (targetNode.parentId) {
+            const folder = entries.find((e) => e.type === 'folder' && String(e.id) === targetNode.parentId);
+            if (!folder) return;
+            const targetIdx = folder.items.findIndex((k) => String(k) === targetNode.id);
+            if (targetIdx < 0) return;
+            const insertAt = targetIdx + (movingDown ? 1 : 0);
+            folder.items.splice(insertAt, 0, sourceItemId);
+            localLayout.value = entries;
+            return;
+        }
+
+        const targetTopIdx = entries.findIndex((e) => e.type === 'item' && String(e.key) === targetNode.id);
+        if (targetTopIdx < 0) return;
+        const insertAt = targetTopIdx + (movingDown ? 1 : 0);
+        entries.splice(insertAt, 0, { type: 'item', key: sourceItemId });
         localLayout.value = entries;
     };
 
-    const folderEditorSaveDisabled = computed(() => {
-        const nameInvalid = !folderEditor.data.name?.trim();
-        const insufficientItems = folderEditor.data.items.length < 2;
-        return nameInvalid || insufficientItems;
-    });
+    const moveFolderByTarget = (sourceFolderId, targetNode, movingDown, allowAppendWhenNoTarget = false) => {
+        const entries = cloneLayout(localLayout.value);
+        const sourceIdx = entries.findIndex((e) => e.type === 'folder' && String(e.id) === sourceFolderId);
+        if (sourceIdx < 0) return;
+        const [folder] = entries.splice(sourceIdx, 1);
 
-    const canDeleteFolder = computed(() => {
-        return localLayout.value[folderEditor.index]?.type === 'folder';
-    });
+        if (targetNode?.parentId) return;
 
-    const usedKeysExcludingEditor = computed(() => {
-        const set = new Set();
-        localLayout.value.forEach((entry) => {
-            if (entry.type !== 'folder') {
-                return;
-            }
-            if (folderEditor.isEditing && entry.id === folderEditor.data.id) {
-                return;
-            }
-            entry.items?.forEach((key) => set.add(key));
-        });
-        return set;
-    });
-
-    const folderEditorAvailableItems = computed(() =>
-        navDefinitions.filter(
-            (definition) =>
-                !usedKeysExcludingEditor.value.has(definition.key) || folderEditor.data.items.includes(definition.key)
-        )
-    );
-
-    const openFolderEditor = (index) => {
-        const isEditing = index !== undefined && index !== null;
-        folderEditor.isEditing = isEditing;
-        folderEditor.index = isEditing ? index : -1;
-        if (folderEditor.isEditing) {
-            const entry = localLayout.value[index];
-            folderEditor.data = {
-                id: entry.id,
-                name: entry.name,
-                icon: entry.icon,
-                items: Array.isArray(entry.items) ? [...entry.items] : []
-            };
-        } else {
-            folderEditor.data = {
-                id: `custom-folder-${dayjs().toISOString()}-${Math.random().toString().slice(2, 7)}`,
-                name: '',
-                icon: '',
-                items: []
-            };
+        if (!targetNode) {
+            if (!allowAppendWhenNoTarget) return;
+            entries.push(folder);
+            localLayout.value = entries;
+            return;
         }
+
+        const targetTopIdx = entries.findIndex((e) => {
+            if (targetNode.type === 'folder') {
+                return e.type === 'folder' && String(e.id) === targetNode.id;
+            }
+            return e.type === 'item' && String(e.key) === targetNode.id;
+        });
+        if (targetTopIdx < 0) return;
+
+        const insertAt = targetTopIdx + (movingDown ? 1 : 0);
+        entries.splice(insertAt, 0, folder);
+        localLayout.value = entries;
+    };
+
+    const onDragEnd = (event) => {
+        const sourceIdSnapshot = dragState.sourceId ? String(dragState.sourceId) : null;
+        const sourceIsFolderSnapshot = !!dragState.sourceIsFolder;
+        const wasOverFolder = dragState.overIsFolder;
+        const overTargetId = dragState.overTargetId ? String(dragState.overTargetId) : null;
+        const lastOverNodeSnapshot = dragState.lastOverNode
+            ? {
+                  type: dragState.lastOverNode.type,
+                  id: String(dragState.lastOverNode.id),
+                  parentId: dragState.lastOverNode.parentId ? String(dragState.lastOverNode.parentId) : null
+              }
+            : null;
+
+        resetDragState();
+
+        if (event.canceled) return;
+
+        const { source, target } = event.operation;
+        if (!isSortable(source)) return;
+
+        const visibleNodes = buildVisibleNodes();
+        const sourceNode =
+            (sourceIdSnapshot
+                ? visibleNodes.find(
+                      (node) =>
+                          node.id === sourceIdSnapshot && node.type === (sourceIsFolderSnapshot ? 'folder' : 'item')
+                  )
+                : null) || resolveNodeFromDnDEntity(source, visibleNodes);
+        if (!sourceNode) return;
+
+        const isFolderDrag = sourceNode.type === 'folder';
+        const resolvedLastOverNode = lastOverNodeSnapshot
+            ? findVisibleNodeById(lastOverNodeSnapshot.id, visibleNodes) || lastOverNodeSnapshot
+            : null;
+        const hoveredTarget = resolveNodeFromDnDEntity(target, visibleNodes, { allowIndexFallback: false });
+        let targetNode = resolvedLastOverNode || hoveredTarget || null;
+
+        if (isFolderDrag && targetNode?.parentId) {
+            targetNode = findVisibleNodeById(targetNode.parentId, visibleNodes) || targetNode;
+        }
+
+        if (isFolderDrag && overTargetId && !resolvedLastOverNode) {
+            return;
+        }
+
+        if (!isFolderDrag && overTargetId && wasOverFolder) {
+            targetNode = findVisibleNodeById(overTargetId, visibleNodes) || targetNode;
+        }
+
+        if (
+            targetNode &&
+            targetNode.type === sourceNode.type &&
+            targetNode.id === sourceNode.id &&
+            (targetNode.parentId || null) === (sourceNode.parentId || null)
+        ) {
+            return;
+        }
+
+        const sourceNodeIndex = getNodeIndex(visibleNodes, sourceNode);
+        const targetNodeIndex = getNodeIndex(visibleNodes, targetNode);
+        const movingDown = sourceNodeIndex >= 0 && targetNodeIndex >= 0 ? sourceNodeIndex < targetNodeIndex : false;
+        if (isFolderDrag) {
+            const allowAppendWhenNoTarget = !overTargetId && !resolvedLastOverNode;
+            moveFolderByTarget(sourceNode.id, targetNode, movingDown, allowAppendWhenNoTarget);
+        } else {
+            moveItemByTarget(sourceNode.id, targetNode, movingDown);
+        }
+    };
+
+    const openFolderEditor = (folderId) => {
+        const entry = localLayout.value.find((e) => e.type === 'folder' && e.id === folderId);
+        if (!entry) return;
+        folderEditor.isEditing = true;
+        folderEditor.editingId = folderId;
+        folderEditor.data = { id: entry.id, name: entry.name, icon: entry.icon };
         folderEditor.visible = true;
     };
 
-    const closeFolderEditor = () => {
-        folderEditor.visible = false;
-    };
-
-    const toggleFolderItem = (key, enabled) => {
-        if (enabled) {
-            if (!folderEditor.data.items.includes(key)) {
-                folderEditor.data.items.push(key);
-            }
-        } else {
-            folderEditor.data.items = folderEditor.data.items.filter((item) => item !== key);
-        }
-    };
-
-    const handleFolderItemMove = (index, direction) => {
-        const targetIndex = index + direction;
-        if (targetIndex < 0 || targetIndex >= folderEditor.data.items.length) {
-            return;
-        }
-        const items = [...folderEditor.data.items];
-        const [item] = items.splice(index, 1);
-        items.splice(targetIndex, 0, item);
-        folderEditor.data.items = items;
-    };
-
-    const applyFolderChanges = () => {
-        const sanitizedItems = folderEditor.data.items.filter((key) => definitionsMap.value.has(key));
-        const sanitizedIcon = folderEditor.data.icon?.trim() || '';
-        const entries = [...localLayout.value];
-
-        if (folderEditor.isEditing) {
-            const targetIndex = folderEditor.index;
-            if (targetIndex < 0) {
-                return;
-            }
-            const existing = entries[targetIndex];
-            if (!existing || existing.type !== 'folder') {
-                return;
-            }
-            const removedItems = existing.items.filter((key) => !sanitizedItems.includes(key));
-            entries.splice(targetIndex, 1);
-
-            const filteredEntries = entries.filter(
-                (entry) => !(entry.type === 'item' && sanitizedItems.includes(entry.key))
-            );
-
-            filteredEntries.splice(targetIndex, 0, {
-                type: 'folder',
-                id: folderEditor.data.id,
-                name: folderEditor.data.name.trim(),
-                icon: sanitizedIcon,
-                items: sanitizedItems
-            });
-
-            if (removedItems.length) {
-                const insertItems = removedItems.map((key) => ({ type: 'item', key }));
-                filteredEntries.splice(targetIndex + 1, 0, ...insertItems);
-            }
-
-            localLayout.value = filteredEntries;
-            return;
-        }
-
-        const filteredEntries = entries.filter(
-            (entry) => !(entry.type === 'item' && sanitizedItems.includes(entry.key))
-        );
-
-        filteredEntries.push({
-            type: 'folder',
-            id: folderEditor.data.id,
-            name: folderEditor.data.name.trim(),
-            icon: sanitizedIcon,
-            items: sanitizedItems
-        });
-
-        localLayout.value = filteredEntries;
+    const handleAddFolder = () => {
+        folderEditor.isEditing = false;
+        folderEditor.editingId = null;
+        folderEditor.data = {
+            id: createFolderId(),
+            name: '',
+            icon: ''
+        };
+        folderEditor.visible = true;
     };
 
     const handleFolderEditorSave = () => {
-        if (folderEditorSaveDisabled.value) {
-            return;
-        }
-        applyFolderChanges();
-        closeFolderEditor();
-    };
+        if (!folderEditor.data.name?.trim()) return;
 
-    const handleFolderEditorDelete = () => {
-        if (!folderEditor.isEditing) {
-            return;
+        if (folderEditor.isEditing) {
+            const entry = localLayout.value.find((e) => e.type === 'folder' && e.id === folderEditor.editingId);
+            if (entry) {
+                entry.name = folderEditor.data.name.trim();
+                entry.icon = folderEditor.data.icon?.trim() || DEFAULT_FOLDER_ICON;
+                localLayout.value = [...localLayout.value];
+            }
+        } else {
+            localLayout.value.push({
+                type: 'folder',
+                id: folderEditor.data.id,
+                name: folderEditor.data.name.trim(),
+                icon: folderEditor.data.icon?.trim() || DEFAULT_FOLDER_ICON,
+                items: []
+            });
+            localLayout.value = [...localLayout.value];
+            if (!expandedKeys.value.includes(folderEditor.data.id)) {
+                expandedKeys.value = [...expandedKeys.value, folderEditor.data.id];
+            }
         }
-        const entries = [...localLayout.value];
-        const targetIndex = folderEditor.index;
-        if (targetIndex < 0) {
-            return;
-        }
-        const folder = entries[targetIndex];
-        if (!folder || folder.type !== 'folder') {
-            return;
-        }
-        entries.splice(targetIndex, 1);
-        const restoredItems = (folder.items || []).map((key) => ({ type: 'item', key }));
-        entries.splice(targetIndex, 0, ...restoredItems);
-        localLayout.value = entries;
-        closeFolderEditor();
+        folderEditor.visible = false;
     };
 
     const handleSave = () => {
-        if (isSaveDisabled.value) {
-            return;
-        }
-        emit('save', cloneLayout(localLayout.value));
+        const cleanedLayout = localLayout.value.filter(
+            (entry) => !(entry.type === 'folder' && (!entry.items || entry.items.length === 0))
+        );
+        emit('save', cloneLayout(cleanedLayout), [...hiddenKeySet.value]);
     };
 
     const handleReset = () => {
-        emit('reset');
+        localLayout.value = cloneLayout(props.defaultLayout || []);
+        hiddenKeySet.value = new Set();
+        hiddenPlacement.value = new Map();
+        expandedKeys.value = localLayout.value.filter((e) => e.type === 'folder').map((e) => e.id);
     };
 
     const handleClose = () => {
         emit('update:visible', false);
     };
 </script>
-
-<style scoped>
-    .custom-nav-dialog__list {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-        overflow-y: auto;
-        padding-right: 4px;
-    }
-
-    .custom-nav-entry {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 10px 12px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        width: 100%;
-        margin: 0 auto;
-    }
-
-    .custom-nav-entry__info {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 500;
-    }
-
-    .custom-nav-entry__info i {
-        font-size: 16px;
-    }
-
-    .custom-nav-entry__controls {
-        display: flex;
-        justify-content: flex-end;
-    }
-
-    .custom-nav-entry__move {
-        display: flex;
-        gap: 4px;
-    }
-
-    .custom-nav-entry__folder-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    .custom-nav-entry__actions {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .custom-nav-entry__folder-items {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-    }
-
-    .custom-nav-entry__folder-tag {
-        margin: 0;
-    }
-
-    .custom-nav-entry__folder-empty {
-        font-size: 12px;
-    }
-
-    .custom-nav-dialog__footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-    }
-
-    .custom-nav-dialog__footer-left {
-        display: flex;
-        gap: 8px;
-    }
-
-    .custom-nav-dialog__footer-right {
-        display: flex;
-        gap: 8px;
-    }
-
-    .folder-editor__form {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 8px;
-        align-items: center;
-        margin-bottom: 12px;
-    }
-
-    .folder-editor__icon-picker {
-        justify-self: end;
-    }
-
-    .folder-editor__lists {
-        display: grid;
-        grid-template-columns: minmax(220px, 0.9fr) minmax(260px, 1.1fr);
-        gap: 12px;
-    }
-
-    .folder-editor__column {
-        border-radius: 8px;
-        padding: 10px;
-        min-height: 220px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .folder-editor__column-title {
-        font-weight: 600;
-        margin-bottom: 8px;
-    }
-
-    .folder-editor__empty {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        text-align: center;
-    }
-
-    .folder-editor__scroll {
-        max-height: 240px;
-    }
-
-    .folder-editor__option {
-        padding: 4px 0;
-    }
-
-    .folder-editor__option-label {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .folder-editor__option-label i {
-        font-size: 14px;
-    }
-
-    .folder-editor__selected-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 6px 0;
-    }
-
-    .folder-editor__selected-item:last-child {
-        border-bottom: none;
-    }
-
-    .folder-editor__selected-label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex: 1;
-        min-width: 0;
-    }
-
-    .folder-editor__selected-label i {
-        font-size: 14px;
-    }
-
-    .folder-editor__selected-actions {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    .folder-editor__column--selected {
-        min-height: 260px;
-    }
-
-    .folder-editor__footer {
-        display: flex;
-        align-items: center;
-        width: 100%;
-    }
-
-    .folder-editor__footer-spacer {
-        flex: 1;
-    }
-</style>

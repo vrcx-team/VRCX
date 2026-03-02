@@ -400,7 +400,7 @@ i.x-user-status.online {
 }
 
 i.x-user-status.joinme {
-    background: #409eff;
+    background: #00b8ff;
     mask-image: url(/images/masks/joinme.svg);
 }
 

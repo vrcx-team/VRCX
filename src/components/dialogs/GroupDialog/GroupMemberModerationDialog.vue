@@ -532,7 +532,7 @@
                         >{{ t('dialog.group_member_moderation.unban') }}</Button
                     >
                     <span v-if="progressCurrent" style="margin-top: 10px">
-                        <Loader2 class="is-loading" style="margin-left: 5px; margin-right: 5px" />
+                        <Spinner class="inline-block ml-2 mr-2" />
                         {{ t('dialog.group_member_moderation.progress') }} {{ progressCurrent }}/{{ progressTotal }}
                     </span>
                     <Button

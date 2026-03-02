@@ -109,7 +109,12 @@
             </div>
         </div>
         <div class="options-container">
-            <span class="header">{{ t('view.settings.general.favorites.header') }}</span>
+            <span class="header inline-flex items-center"
+                >{{ t('view.settings.general.favorites.header') }}
+                <TooltipWrapper side="top" :content="t('view.settings.general.favorites.header_tooltip')">
+                    <Info style="width: 12px; height: 12px; margin-left: 4px; vertical-align: middle; cursor: help" />
+                </TooltipWrapper>
+            </span>
             <br />
             <Select
                 :model-value="localFavoriteFriendsGroups"
@@ -137,30 +142,6 @@
                     </template>
                 </SelectContent>
             </Select>
-        </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.general.logging.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.advanced.advanced.cache_debug.udon_exception_logging')"
-                :value="udonExceptionLogging"
-                @change="setUdonExceptionLogging" />
-            <simple-switch
-                :label="t('view.settings.general.logging.resource_load')"
-                :value="logResourceLoad"
-                @change="setLogResourceLoad" />
-            <simple-switch
-                :label="t('view.settings.general.logging.empty_avatar')"
-                :value="logEmptyAvatars"
-                @change="setLogEmptyAvatars" />
-            <simple-switch
-                :label="t('view.settings.general.logging.auto_login_delay')"
-                :value="autoLoginDelayEnabled"
-                @change="setAutoLoginDelayEnabled" />
-            <div v-if="autoLoginDelayEnabled" class="options-container-item">
-                <Button size="sm" variant="outline" @click="promptAutoLoginDelaySeconds">
-                    {{ t('view.settings.general.logging.auto_login_delay_button') }}
-                </Button>
-            </div>
         </div>
         <div class="options-container">
             <span class="header">{{ t('view.settings.general.contributors.header') }}</span>
@@ -199,6 +180,7 @@
 <script setup>
     import { computed, defineAsyncComponent, ref } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Info } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -217,6 +199,7 @@
     import { openExternalLink } from '../../../../shared/utils';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
+    import TooltipWrapper from '../../../../components/ui/tooltip/TooltipWrapper.vue';
 
     const { t } = useI18n();
 
@@ -230,11 +213,7 @@
         isCloseToTray,
         disableGpuAcceleration,
         disableVrOverlayGpuAcceleration,
-        localFavoriteFriendsGroups,
-        udonExceptionLogging,
-        logResourceLoad,
-        logEmptyAvatars,
-        autoLoginDelayEnabled
+        localFavoriteFriendsGroups
     } = storeToRefs(generalSettingsStore);
 
     const {
@@ -243,11 +222,6 @@
         setIsCloseToTray,
         setDisableGpuAcceleration,
         setDisableVrOverlayGpuAcceleration,
-        setUdonExceptionLogging,
-        setLogResourceLoad,
-        setLogEmptyAvatars,
-        setAutoLoginDelayEnabled,
-        promptAutoLoginDelaySeconds,
         setLocalFavoriteFriendsGroups,
         promptProxySettings
     } = generalSettingsStore;

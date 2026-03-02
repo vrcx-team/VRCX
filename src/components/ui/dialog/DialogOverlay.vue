@@ -2,6 +2,8 @@
     import { DialogOverlay } from 'reka-ui';
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
+    import { storeToRefs } from 'pinia';
+    import { useGeneralSettingsStore } from '@/stores/settings/general';
 
     const props = defineProps({
         forceMount: { type: Boolean, required: false },
@@ -11,6 +13,7 @@
     });
 
     const delegatedProps = reactiveOmit(props, 'class');
+    const { disableGpuAcceleration } = storeToRefs(useGeneralSettingsStore());
 </script>
 
 <template>
@@ -19,7 +22,8 @@
         v-bind="delegatedProps"
         :class="
             cn(
-                'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/40 backdrop-blur-xs',
+                'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/40',
+                !disableGpuAcceleration && 'backdrop-blur-xs',
                 props.class
             )
         ">

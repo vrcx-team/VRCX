@@ -1,5 +1,5 @@
 import { instanceRequest } from '../../api';
-import { parseLocation } from './location';
+import { parseLocation } from './locationParser';
 
 /**
  *

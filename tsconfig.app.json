@@ -12,7 +12,7 @@
         "moduleResolution": "bundler",
         "forceConsistentCasingInFileNames": true,
         "lib": ["esnext", "dom", "dom.iterable"],
-        "types": ["vite/client"],
+        "types": ["vite/client", "vitest/globals"],
         "resolveJsonModule": true,
         "noEmit": true,
         "strict": false,

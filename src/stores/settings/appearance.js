@@ -77,6 +77,8 @@ export const useAppearanceSettingsStore = defineStore(
         const isSidebarGroupByInstance = ref(true);
         const isHideFriendsInSameInstance = ref(false);
         const isSidebarDivideByFriendGroup = ref(false);
+        const sidebarFavoriteGroups = ref([]);
+        const sidebarFavoriteGroupOrder = ref([]);
         const hideUserNotes = ref(false);
         const hideUserMemos = ref(false);
         const hideUnfriends = ref(false);
@@ -100,7 +102,6 @@ export const useAppearanceSettingsStore = defineStore(
             return ![
                 'friends-locations',
                 'friend-list',
-                'charts',
                 'charts-instance',
                 'charts-mutual'
             ].includes(currentRouteName);
@@ -150,6 +151,8 @@ export const useAppearanceSettingsStore = defineStore(
                 isSidebarGroupByInstanceConfig,
                 isHideFriendsInSameInstanceConfig,
                 isSidebarDivideByFriendGroupConfig,
+                sidebarFavoriteGroupsConfig,
+                sidebarFavoriteGroupOrderConfig,
                 hideUserNotesConfig,
                 hideUserMemosConfig,
                 hideUnfriendsConfig,
@@ -204,6 +207,11 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getBool(
                     'VRCX_sidebarDivideByFriendGroup',
                     true
+                ),
+                configRepository.getString('VRCX_sidebarFavoriteGroups', '[]'),
+                configRepository.getString(
+                    'VRCX_sidebarFavoriteGroupOrder',
+                    '[]'
                 ),
                 configRepository.getBool('VRCX_hideUserNotes', false),
                 configRepository.getBool('VRCX_hideUserMemos', false),
@@ -293,6 +301,12 @@ export const useAppearanceSettingsStore = defineStore(
                 isHideFriendsInSameInstanceConfig;
             isSidebarDivideByFriendGroup.value =
                 isSidebarDivideByFriendGroupConfig;
+            sidebarFavoriteGroups.value = JSON.parse(
+                sidebarFavoriteGroupsConfig
+            );
+            sidebarFavoriteGroupOrder.value = JSON.parse(
+                sidebarFavoriteGroupOrderConfig
+            );
             hideUserNotes.value = hideUserNotesConfig;
             hideUserMemos.value = hideUserMemosConfig;
             hideUnfriends.value = hideUnfriendsConfig;
@@ -701,6 +715,26 @@ export const useAppearanceSettingsStore = defineStore(
                 isSidebarDivideByFriendGroup.value
             );
         }
+        /**
+         * @param {string[]} value
+         */
+        function setSidebarFavoriteGroups(value) {
+            sidebarFavoriteGroups.value = value;
+            configRepository.setString(
+                'VRCX_sidebarFavoriteGroups',
+                JSON.stringify(value)
+            );
+        }
+        /**
+         * @param {string[]} value
+         */
+        function setSidebarFavoriteGroupOrder(value) {
+            sidebarFavoriteGroupOrder.value = value;
+            configRepository.setString(
+                'VRCX_sidebarFavoriteGroupOrder',
+                JSON.stringify(value)
+            );
+        }
         function setHideUserNotes() {
             hideUserNotes.value = !hideUserNotes.value;
             configRepository.setBool('VRCX_hideUserNotes', hideUserNotes.value);
@@ -868,7 +902,7 @@ export const useAppearanceSettingsStore = defineStore(
                 vrcxStore.maxTableSize ?? 500
             );
             tableLimitsDialog.value.searchLimit = Number(
-                vrcxStore.searchLimit ?? 5000
+                vrcxStore.searchLimit ?? 50000
             );
             tableLimitsDialog.value.visible = true;
         }
@@ -897,9 +931,9 @@ export const useAppearanceSettingsStore = defineStore(
             }
 
             vrcxStore.maxTableSize = nextMaxTableSize;
-            await configRepository.setString(
-                'VRCX_maxTableSize',
-                vrcxStore.maxTableSize.toString()
+            await configRepository.setInt(
+                'VRCX_maxTableSize_v2',
+                vrcxStore.maxTableSize
             );
             database.setMaxTableSize(vrcxStore.maxTableSize);
 
@@ -958,6 +992,8 @@ export const useAppearanceSettingsStore = defineStore(
             isSidebarGroupByInstance,
             isHideFriendsInSameInstance,
             isSidebarDivideByFriendGroup,
+            sidebarFavoriteGroups,
+            sidebarFavoriteGroupOrder,
             hideUserNotes,
             hideUserMemos,
             hideUnfriends,
@@ -995,6 +1031,8 @@ export const useAppearanceSettingsStore = defineStore(
             setIsSidebarGroupByInstance,
             setIsHideFriendsInSameInstance,
             setIsSidebarDivideByFriendGroup,
+            setSidebarFavoriteGroups,
+            setSidebarFavoriteGroupOrder,
             setHideUserNotes,
             setHideUserMemos,
             setHideUnfriends,

@@ -34,9 +34,36 @@
                     <TableBody>
                         <template v-if="table.getRowModel().rows?.length">
                             <template v-for="row in table.getRowModel().rows" :key="row.id">
+                                <ContextMenu v-if="$slots['row-context-menu']">
+                                    <ContextMenuTrigger as-child>
+                                        <TableRow
+                                            @click="handleRowClick(row)"
+                                            :class="[
+                                                'group/row',
+                                                isDataTableStriped ? 'even:bg-muted/20' : '',
+                                                rowClass?.(row) ?? ''
+                                            ]">
+                                            <TableCell
+                                                v-for="cell in row.getVisibleCells()"
+                                                :key="cell.id"
+                                                :class="getCellClass(cell)"
+                                                :style="getPinnedStyle(cell.column)">
+                                                <FlexRender
+                                                    :render="cell.column.columnDef.cell"
+                                                    :props="cell.getContext()" />
+                                            </TableCell>
+                                        </TableRow>
+                                    </ContextMenuTrigger>
+                                    <slot name="row-context-menu" :row="row" />
+                                </ContextMenu>
                                 <TableRow
+                                    v-else
                                     @click="handleRowClick(row)"
-                                    :class="isDataTableStriped ? 'even:bg-muted/20' : ''">
+                                    :class="[
+                                        'group/row',
+                                        isDataTableStriped ? 'even:bg-muted/20' : '',
+                                        rowClass?.(row) ?? ''
+                                    ]">
                                     <TableCell
                                         v-for="cell in row.getVisibleCells()"
                                         :key="cell.id"
@@ -133,6 +160,7 @@
     } from '../pagination';
     import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../table';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../select';
+    import { ContextMenu, ContextMenuTrigger } from '../context-menu';
 
     import DataTableEmpty from './DataTableEmpty.vue';
 
@@ -181,6 +209,10 @@
             default: null
         },
         onRowClick: {
+            type: Function,
+            default: null
+        },
+        rowClass: {
             type: Function,
             default: null
         }

@@ -302,6 +302,7 @@ function createWindow() {
     const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
     const width = parseInt(VRCXStorage.Get('VRCX_SizeWidth')) || 1920;
     const height = parseInt(VRCXStorage.Get('VRCX_SizeHeight')) || 1080;
+    const zoomLevel = parseFloat(VRCXStorage.Get('VRCX_ZoomLevel')) || 0;
     mainWindow = new BrowserWindow({
         x,
         y,
@@ -339,21 +340,31 @@ function createWindow() {
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
 
+    mainWindow.webContents.on('did-finish-load', () => {
+        mainWindow.webContents.setZoomLevel(zoomLevel);
+    });
+
     mainWindow.webContents.on('before-input-event', (event, input) => {
         if (input.control && input.key === '=') {
             mainWindow.webContents.setZoomLevel(
                 mainWindow.webContents.getZoomLevel() + 1
             );
         }
+        if (input.control && input.key === '-') {
+            mainWindow.webContents.setZoomLevel(
+                mainWindow.webContents.getZoomLevel() - 1
+            );
+        }
     });
 
     mainWindow.webContents.on('zoom-changed', (event, zoomDirection) => {
-        const currentZoom = mainWindow.webContents.getZoomLevel();
+        let currentZoom = mainWindow.webContents.getZoomLevel();
         if (zoomDirection === 'in') {
-            mainWindow.webContents.setZoomLevel(currentZoom + 1);
+            mainWindow.webContents.setZoomLevel(++currentZoom);
         } else {
-            mainWindow.webContents.setZoomLevel(currentZoom - 1);
+            mainWindow.webContents.setZoomLevel(--currentZoom);
         }
+        VRCXStorage.Set('VRCX_ZoomLevel', currentZoom.toString());
     });
     mainWindow.webContents.setVisualZoomLevelLimits(1, 5);
 

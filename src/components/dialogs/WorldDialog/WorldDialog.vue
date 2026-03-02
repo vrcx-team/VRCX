@@ -744,9 +744,19 @@
             <NewInstanceDialog
                 :new-instance-dialog-location-tag="newInstanceDialogLocationTag"
                 :last-location="lastLocation" />
-            <ChangeWorldImageDialog
-                v-model:change-world-image-dialog-visible="changeWorldImageDialogVisible"
-                v-model:previousImageUrl="previousImageUrl" />
+            <input
+                id="WorldImageUploadButton"
+                type="file"
+                accept="image/*"
+                style="display: none"
+                @change="onFileChangeWorldImage" />
+            <ImageCropDialog
+                :open="cropDialogOpen"
+                :title="t('dialog.change_content_image.world')"
+                :aspect-ratio="4 / 3"
+                :file="cropDialogFile"
+                @update:open="cropDialogOpen = $event"
+                @confirm="onCropConfirmWorld" />
         </template>
     </div>
 </template>
@@ -813,7 +823,6 @@
         useInstanceStore,
         useInviteStore,
         useLocationStore,
-        useModalStore,
         useUserStore,
         useWorldStore
     } from '../../../stores';
@@ -824,21 +833,24 @@
         DropdownMenuSeparator,
         DropdownMenuTrigger
     } from '../../ui/dropdown-menu';
+    import {
+        handleImageUploadInput,
+        readFileAsBase64,
+        resizeImageToFitLimits,
+        uploadImageLegacy,
+        withUploadTimeout
+    } from '../../../shared/utils/imageUpload';
     import { favoriteRequest, miscRequest, userRequest, worldRequest } from '../../../api';
     import { Badge } from '../../ui/badge';
     import { database } from '../../../service/database.js';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
 
+    import ImageCropDialog from '../ImageCropDialog.vue';
     import InstanceActionBar from '../../InstanceActionBar.vue';
 
-    const modalStore = useModalStore();
-    const { translateText } = useAdvancedSettingsStore();
-    const { bioLanguage, translationApi } = storeToRefs(useAdvancedSettingsStore());
-
-    const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog.vue'));
-    const ChangeWorldImageDialog = defineAsyncComponent(() => import('./ChangeWorldImageDialog.vue'));
     const SetWorldTagsDialog = defineAsyncComponent(() => import('./SetWorldTagsDialog.vue'));
     const WorldAllowedDomainsDialog = defineAsyncComponent(() => import('./WorldAllowedDomainsDialog.vue'));
+    const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog.vue'));
 
     const { isAgeGatedInstancesVisible, isDarkMode } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
@@ -853,6 +865,8 @@
     const { instanceJoinHistory } = storeToRefs(useInstanceStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { showFullscreenImageDialog } = useGalleryStore();
+    const { translationApi } = storeToRefs(useAdvancedSettingsStore());
+
     const { t } = useI18n();
     const worldDialogTabs = computed(() => [
         { value: 'Instances', label: t('dialog.world.instances.header') },
@@ -868,8 +882,9 @@
     });
     const isSetWorldTagsDialogVisible = ref(false);
     const newInstanceDialogLocationTag = ref('');
-    const changeWorldImageDialogVisible = ref(false);
-    const previousImageUrl = ref('');
+    const cropDialogOpen = ref(false);
+    const cropDialogFile = ref(null);
+    const changeWorldImageLoading = ref(false);
     const translatedDescription = ref('');
     const isTranslating = ref(false);
 
@@ -1008,9 +1023,50 @@
     }
 
     function showChangeWorldImageDialog() {
-        const { imageUrl } = worldDialog.value.ref;
-        previousImageUrl.value = imageUrl;
-        changeWorldImageDialogVisible.value = true;
+        document.getElementById('WorldImageUploadButton').click();
+    }
+
+    function onFileChangeWorldImage(e) {
+        const { file, clearInput } = handleImageUploadInput(e, {
+            inputSelector: '#WorldImageUploadButton',
+            tooLargeMessage: () => t('message.file.too_large'),
+            invalidTypeMessage: () => t('message.file.not_image')
+        });
+        if (!file) {
+            return;
+        }
+        if (!worldDialog.value.visible || worldDialog.value.loading) {
+            clearInput();
+            return;
+        }
+        clearInput();
+        cropDialogFile.value = file;
+        cropDialogOpen.value = true;
+    }
+
+    async function onCropConfirmWorld(blob) {
+        changeWorldImageLoading.value = true;
+        try {
+            await withUploadTimeout(
+                (async () => {
+                    const base64Body = await readFileAsBase64(blob);
+                    const base64File = await resizeImageToFitLimits(base64Body);
+                    await uploadImageLegacy('world', {
+                        entityId: worldDialog.value.id,
+                        imageUrl: worldDialog.value.ref.imageUrl,
+                        base64File,
+                        blob
+                    });
+                })()
+            );
+            toast.success(t('message.upload.success'));
+        } catch (error) {
+            console.error('World image upload process failed:', error);
+            toast.error(t('message.upload.error'));
+        } finally {
+            changeWorldImageLoading.value = false;
+            cropDialogOpen.value = false;
+        }
     }
 
     function showNewInstanceDialog(tag) {
@@ -1032,12 +1088,21 @@
             case 'Unpublish':
             case 'Delete Persistent Data':
             case 'Delete':
+                const commandLabelMap = {
+                    'Delete Favorite': t('dialog.world.actions.favorites_tooltip'),
+                    'Make Home': t('dialog.world.actions.make_home'),
+                    'Reset Home': t('dialog.world.actions.reset_home'),
+                    Publish: t('dialog.world.actions.publish_to_labs'),
+                    Unpublish: t('dialog.world.actions.unpublish'),
+                    'Delete Persistent Data': t('dialog.world.actions.delete_persistent_data'),
+                    Delete: t('dialog.world.actions.delete')
+                };
                 modalStore
                     .confirm({
                         description: t('confirm.command_question', {
-                            command
+                            command: commandLabelMap[command] ?? command
                         }),
-                        title: 'Confirm'
+                        title: t('confirm.title')
                     })
                     .then(({ ok }) => {
                         if (!ok) return;
@@ -1053,7 +1118,7 @@
                                         homeLocation: D.id
                                     })
                                     .then((args) => {
-                                        toast.success('Home world updated');
+                                        toast.success(t('message.world.home_updated'));
                                         return args;
                                     });
                                 break;
@@ -1063,7 +1128,7 @@
                                         homeLocation: ''
                                     })
                                     .then((args) => {
-                                        toast.success('Home world has been reset');
+                                        toast.success(t('message.world.home_reset'));
                                         return args;
                                     });
                                 break;
@@ -1073,7 +1138,7 @@
                                         worldId: D.id
                                     })
                                     .then((args) => {
-                                        toast.success('World has been published');
+                                        toast.success(t('message.world.published'));
                                         return args;
                                     });
                                 break;
@@ -1083,7 +1148,7 @@
                                         worldId: D.id
                                     })
                                     .then((args) => {
-                                        toast.success('World has been unpublished');
+                                        toast.success(t('message.world.unpublished'));
                                         return args;
                                     });
                                 break;
@@ -1096,7 +1161,7 @@
                                         if (args.params.worldId === worldDialog.value.id && worldDialog.value.visible) {
                                             worldDialog.value.hasPersistData = false;
                                         }
-                                        toast.success('Persistent data has been deleted');
+                                        toast.success(t('message.world.persistent_data_deleted'));
                                         return args;
                                     });
                                 break;
@@ -1118,7 +1183,7 @@
                                             const array = Array.from(map.values());
                                             userDialog.value.worlds = array;
                                         }
-                                        toast.success('World has been deleted');
+                                        toast.success(t('message.world.deleted'));
                                         D.visible = false;
                                         return args;
                                     });
@@ -1146,9 +1211,9 @@
                 showChangeWorldImageDialog();
                 break;
             case 'Refresh':
-                const worldId = D.id;
+                const { tag, shortName } = worldDialog.value.$location;
                 D.id = '';
-                showWorldDialog(worldId);
+                showWorldDialog(tag, shortName);
                 break;
             case 'New Instance':
                 showNewInstanceDialog(D.$location.tag);
@@ -1356,33 +1421,33 @@
         navigator.clipboard
             .writeText(worldDialog.value.id)
             .then(() => {
-                toast.success('World ID copied to clipboard');
+                toast.success(t('message.world.id_copied'));
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                toast.error('Copy failed');
+                toast.error(t('message.copy_failed'));
             });
     }
     function copyWorldUrl() {
         navigator.clipboard
             .writeText(`https://vrchat.com/home/world/${worldDialog.value.id}`)
             .then(() => {
-                toast.success('World URL copied to clipboard');
+                toast.success(t('message.world.url_copied'));
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                toast.error('Copy failed');
+                toast.error(t('message.copy_failed'));
             });
     }
     function copyWorldName() {
         navigator.clipboard
             .writeText(worldDialog.value.ref.name)
             .then(() => {
-                toast.success('World name copied to clipboard');
+                toast.success(t('message.world.name_copied'));
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                toast.error('Copy failed');
+                toast.error(t('message.copy_failed'));
             });
     }
     function showWorldAllowedDomainsDialog() {

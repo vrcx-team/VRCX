@@ -626,7 +626,6 @@
                 "rpc": {
                     "vr": "VR",
                     "desktop": "PC",
-                    "join_button": "Dołącz",
                     "powered_by_vrcx": "Obsługiwane przez VRCX",
                     "private_world": "Prywatny świat"
                 }
@@ -1906,13 +1905,6 @@
                 "success": "Zmieniono podgląd YouTube"
             }
         },
-        "change_table_size": {
-            "header": "Maksymalny rozmiar tabeli",
-            "description": "Ogranicz liczbę wpisów wyświetlanych z bazy danych, większe tabele wpłyną na zużycie RAM",
-            "table_max_size": "Maks. wyników w tabeli",
-            "cancel": "Anuluj",
-            "save": "Zapisz"
-        },
         "photon_lobby_timeout": {
             "header": "Próg limitu czasu użytkownika",
             "description": "Wprowadź liczbę sekund (domyślnie: 3)",
@@ -1954,6 +1946,13 @@
             "cancel": "Anuluj",
             "redeem": "Użyj",
             "success": "Pomyślnie wykorzystano kod"
+        },
+        "table_entries_settings": {
+            "header": "Maksymalny rozmiar tabeli",
+            "description": "Ogranicz liczbę wpisów wyświetlanych z bazy danych, większe tabele wpłyną na zużycie RAM",
+            "table_max_entries": "Maks. wyników w tabeli",
+            "cancel": "Anuluj",
+            "save": "Zapisz"
         }
     },
     "message": {

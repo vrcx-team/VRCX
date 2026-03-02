@@ -249,7 +249,7 @@
                 }
             }
         }
-        avatarExportContent.value = lines.join('\n');
+        avatarExportContent.value = lines.reverse().join('\n');
     }
     function selectAvatarExportGroup(group) {
         avatarExportFavoriteGroup.value = group;

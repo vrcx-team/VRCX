@@ -19,6 +19,8 @@ export const useFeedStore = defineStore('Feed', () => {
     const feedTableData = shallowRef([]);
     const feedTable = ref({
         search: '',
+        dateFrom: '',
+        dateTo: '',
         vip: false,
         loading: false,
         filter: [],
@@ -146,17 +148,21 @@ export const useFeedStore = defineStore('Feed', () => {
                 vipList = Array.from(friendStore.localFavoriteFriends.values());
             }
             const search = feedTable.value.search.trim();
-            const rows = search
-                ? await database.searchFeedDatabase(
-                      search,
-                      feedTable.value.filter,
-                      vipList,
-                      vrcxStore.searchLimit
-                  )
-                : await database.lookupFeedDatabase(
-                      feedTable.value.filter,
-                      vipList
-                  );
+            const { dateFrom, dateTo } = feedTable.value;
+            const rows =
+                search || dateFrom || dateTo
+                    ? await database.searchFeedDatabase(
+                          search,
+                          feedTable.value.filter,
+                          vipList,
+                          vrcxStore.searchLimit,
+                          dateFrom,
+                          dateTo
+                      )
+                    : await database.lookupFeedDatabase(
+                          feedTable.value.filter,
+                          vipList
+                      );
             feedTableData.value = [];
             feedTableData.value = [...feedTableData.value, ...rows];
         } finally {
@@ -180,6 +186,18 @@ export const useFeedStore = defineStore('Feed', () => {
             return;
         }
         if (!feedSearch(feed)) {
+            return;
+        }
+        if (
+            feedTable.value.dateFrom &&
+            feed.created_at < feedTable.value.dateFrom
+        ) {
+            return;
+        }
+        if (
+            feedTable.value.dateTo &&
+            feed.created_at > feedTable.value.dateTo
+        ) {
             return;
         }
         feedTableData.value = [feed, ...feedTableData.value];

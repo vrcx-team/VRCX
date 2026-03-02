@@ -1,4 +1,4 @@
-import { nextTick, reactive, ref, watch } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -8,6 +8,7 @@ import {
     compareByDisplayName,
     compareById,
     compareByLocationAt,
+    debounce,
     displayLocation,
     getAvailablePlatforms,
     getBundleDateSize,
@@ -734,6 +735,10 @@ export const useInstanceStore = defineStore('Instance', () => {
     }
 
     function applyWorldDialogInstances() {
+        debounce(applyWorldDialogInstancesDebounced, 100)();
+    }
+
+    function applyWorldDialogInstancesDebounced() {
         let ref;
         let instance;
         const D = worldStore.worldDialog;

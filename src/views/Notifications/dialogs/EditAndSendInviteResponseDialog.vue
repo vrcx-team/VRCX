@@ -76,7 +76,7 @@
                 .editInviteMessage(params, messageType, slot)
                 .catch((err) => {
                     console.error('Invite response message update failed', err);
-                    toast.error('Error');
+                    toast.error(t('message.error'));
                 })
                 .then((args) => {
                     if (args.json[slot].message === I.messageSlot.message) {
@@ -84,7 +84,7 @@
                         toast.error(errorMessage);
                         throw new Error(errorMessage);
                     } else {
-                        toast('Invite message updated');
+                        toast(t('message.invite.message_updated'));
                     }
                     return args;
                 });
@@ -98,13 +98,13 @@
                 .sendInviteResponsePhoto(params, I.invite.id)
                 .catch((err) => {
                     console.error('Invite response photo failed', err);
-                    toast.error('Error');
+                    toast.error(t('message.error'));
                 })
                 .then((args) => {
                     notificationRequest.hideNotification({
                         notificationId: I.invite.id
                     });
-                    toast.success('Invite response message sent');
+                    toast.success(t('message.invite.response_sent'));
                     return args;
                 })
                 .finally(() => {
@@ -115,13 +115,13 @@
                 .sendInviteResponse(params, I.invite.id)
                 .catch((err) => {
                     console.error('Invite response failed', err);
-                    toast.error('Error');
+                    toast.error(t('message.error'));
                 })
                 .then((args) => {
                     notificationRequest.hideNotification({
                         notificationId: I.invite.id
                     });
-                    toast.success('Invite response message sent');
+                    toast.success(t('message.invite.response_sent'));
                     return args;
                 })
                 .finally(() => {

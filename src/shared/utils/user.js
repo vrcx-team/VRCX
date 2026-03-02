@@ -72,9 +72,11 @@ function removeEmojis(text) {
  */
 function userStatusClass(user, pendingOffline = false) {
     const userStore = useUserStore();
-    const style = {};
+    const style = {
+        'status-icon': true
+    };
     if (typeof user === 'undefined') {
-        return style;
+        return null;
     }
     let id = '';
     if (user.id) {
@@ -83,10 +85,18 @@ function userStatusClass(user, pendingOffline = false) {
         id = user.userId;
     }
     if (id === userStore.currentUser.id) {
-        return statusClass(user.status);
+        const platform = userStore.currentUser.presence?.platform;
+        return {
+            ...style,
+            ...statusClass(user.status),
+            mobile:
+                platform &&
+                platform !== 'standalonewindows' &&
+                platform !== 'web'
+        };
     }
     if (!user.isFriend) {
-        return style;
+        return null;
     }
     if (pendingOffline) {
         // Pending offline
@@ -124,6 +134,9 @@ function userStatusClass(user, pendingOffline = false) {
     } else if (user.status === 'busy') {
         // Do Not Disturb
         style.busy = true;
+    } else {
+        // Unknown status
+        return null;
     }
     if (
         user.$platform &&
@@ -141,21 +154,26 @@ function userStatusClass(user, pendingOffline = false) {
  * @returns {object}
  */
 function statusClass(status) {
-    const style = {};
-    if (typeof status !== 'undefined') {
-        if (status === 'active') {
-            // Online
-            style.online = true;
-        } else if (status === 'join me') {
-            // Join Me
-            style.joinme = true;
-        } else if (status === 'ask me') {
-            // Ask Me
-            style.askme = true;
-        } else if (status === 'busy') {
-            // Do Not Disturb
-            style.busy = true;
-        }
+    if (typeof status === 'undefined') {
+        return null;
+    }
+    const style = {
+        'status-icon': true
+    };
+    if (status === 'active') {
+        // Online
+        style.online = true;
+    } else if (status === 'join me') {
+        // Join Me
+        style.joinme = true;
+    } else if (status === 'ask me') {
+        // Ask Me
+        style.askme = true;
+    } else if (status === 'busy') {
+        // Do Not Disturb
+        style.busy = true;
+    } else {
+        return null;
     }
     return style;
 }

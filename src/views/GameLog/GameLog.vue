@@ -11,9 +11,20 @@
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
                     <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
                         <TooltipWrapper side="bottom" :content="t('view.feed.favorites_only_tooltip')">
-                            <span class="inline-flex">
-                                <Switch v-model="gameLogTable.vip" @update:modelValue="gameLogTableLookup" />
-                            </span>
+                            <div>
+                                <Toggle
+                                    variant="outline"
+                                    size="sm"
+                                    :model-value="gameLogTable.vip"
+                                    @update:modelValue="
+                                        (v) => {
+                                            gameLogTable.vip = v;
+                                            gameLogTableLookup();
+                                        }
+                                    ">
+                                    <Star />
+                                </Toggle>
+                            </div>
                         </TooltipWrapper>
                     </div>
                     <Select
@@ -59,7 +70,8 @@
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref, watch } from 'vue';
-    import { Switch } from '@/components/ui/switch';
+    import { Star } from 'lucide-vue-next';
+    import { Toggle } from '@/components/ui/toggle';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

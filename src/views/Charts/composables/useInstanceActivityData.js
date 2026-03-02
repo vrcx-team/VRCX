@@ -63,7 +63,8 @@ export function useInstanceActivityData() {
             isFriend:
                 item.user_id === currentUser.value.id
                     ? null
-                    : friends.value.has(item.user_id),
+                    : friends.value.has(item.user_id) ||
+                      localFavoriteFriends.value.has(item.user_id),
             isFavorite:
                 item.user_id === currentUser.value.id
                     ? null

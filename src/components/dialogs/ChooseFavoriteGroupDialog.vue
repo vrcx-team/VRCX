@@ -32,22 +32,18 @@
             </div>
             <div v-if="favoriteDialog.type === 'friend'" style="margin-top: 20px">
                 <span style="display: block; text-align: center">{{ t('dialog.favorite.local_favorites') }}</span>
-                <template v-if="currentLocalFriendGroup">
+                <template v-for="group in localFriendFavoriteGroups" :key="group">
                     <Button
                         variant="outline"
+                        v-if="hasLocalFriendFavorite(favoriteDialog.objectId, group)"
                         style="width: 100%; white-space: initial"
                         class="my-1"
-                        @click="removeLocalFriendFavorite(favoriteDialog.objectId, currentLocalFriendGroup)">
-                        <Check />{{ currentLocalFriendGroup }} ({{
-                            localFriendFavGroupLength(currentLocalFriendGroup)
-                        }})
+                        @click="removeLocalFriendFavorite(favoriteDialog.objectId, group)">
+                        <Check />{{ group }} ({{ localFriendFavGroupLength(group) }})
                     </Button>
-                </template>
-                <template v-else>
                     <Button
                         variant="outline"
-                        v-for="group in localFriendFavoriteGroups"
-                        :key="group"
+                        v-else
                         style="width: 100%; white-space: initial"
                         class="my-1"
                         @click="addLocalFriendFavorite(favoriteDialog.objectId, group)">
@@ -152,16 +148,6 @@
         set: (v) => {
             favoriteDialog.value.visible = v;
         }
-    });
-
-    const currentLocalFriendGroup = computed(() => {
-        const objectId = favoriteDialog.value.objectId;
-        for (const group of localFriendFavoriteGroups.value) {
-            if (hasLocalFriendFavorite(objectId, group)) {
-                return group;
-            }
-        }
-        return null;
     });
 
     watch(

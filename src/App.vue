@@ -2,18 +2,13 @@
     <TooltipProvider>
         <MacOSTitleBar></MacOSTitleBar>
 
-        <div
-            id="x-app"
-            class="x-app"
-            :class="{ 'with-macos-titlebar': isMacOS }"
-            ondragenter="event.preventDefault()"
-            ondragover="event.preventDefault()"
-            ondrop="event.preventDefault()">
+        <div id="x-app" class="x-app" :class="{ 'with-macos-titlebar': isMacOS }">
             <RouterView></RouterView>
             <Toaster position="top-center" :theme="theme"></Toaster>
 
             <AlertDialogModal></AlertDialogModal>
             <PromptDialogModal></PromptDialogModal>
+            <OtpDialogModal></OtpDialogModal>
 
             <VRCXUpdateDialog></VRCXUpdateDialog>
         </div>
@@ -31,6 +26,7 @@
 
     import AlertDialogModal from './components/ui/alert-dialog/AlertDialogModal.vue';
     import MacOSTitleBar from './components/MacOSTitleBar.vue';
+    import OtpDialogModal from './components/ui/dialog/OtpDialogModal.vue';
     import PromptDialogModal from './components/ui/dialog/PromptDialogModal.vue';
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
 
