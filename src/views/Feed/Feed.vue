@@ -9,7 +9,36 @@
             :on-page-size-change="handlePageSizeChange">
             <template #toolbar>
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
-                    <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
+                    <div style="flex: none; display: flex; align-items: center" class="mr-2">
+                        <Popover v-model:open="popoverOpen">
+                            <PopoverTrigger as-child>
+                                <Button variant="outline" size="sm" class="mx-2 h-8 gap-1.5">
+                                    <ListFilter class="size-4" />
+                                    {{ t('view.my_avatars.filter') }}
+                                    <Badge
+                                        v-if="activeFilterCount"
+                                        variant="secondary"
+                                        class="ml-0.5 h-4.5 min-w-4.5 rounded-full px-1 text-xs">
+                                        {{ activeFilterCount }}
+                                    </Badge>
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent class="w-auto" side="bottom" align="end">
+                                <RangeCalendar
+                                    v-model="dateRange"
+                                    :locale="locale"
+                                    :max-value="todayDate"
+                                    :number-of-months="2" />
+                                <div class="flex justify-end gap-2 mt-3">
+                                    <Button variant="outline" size="sm" @click="clearDateFilter">
+                                        {{ t('common.actions.clear') }}
+                                    </Button>
+                                    <Button size="sm" @click="applyDateFilter">
+                                        {{ t('common.actions.confirm') }}
+                                    </Button>
+                                </div>
+                            </PopoverContent>
+                        </Popover>
                         <TooltipWrapper side="bottom" :content="t('view.feed.favorites_only_tooltip')">
                             <div>
                                 <Toggle
@@ -49,35 +78,6 @@
                         style="flex: 0.4; margin-left: 10px"
                         @keyup.enter="feedTableLookup"
                         @change="feedTableLookup" />
-                    <Popover v-model:open="popoverOpen">
-                        <PopoverTrigger as-child>
-                            <Button variant="outline" size="sm" class="ml-2 h-8 gap-1.5">
-                                <ListFilter class="size-4" />
-                                {{ t('view.my_avatars.filter') }}
-                                <Badge
-                                    v-if="activeFilterCount"
-                                    variant="secondary"
-                                    class="ml-0.5 h-4.5 min-w-4.5 rounded-full px-1 text-xs">
-                                    {{ activeFilterCount }}
-                                </Badge>
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent class="w-auto" side="bottom" align="end">
-                            <RangeCalendar
-                                v-model="dateRange"
-                                :locale="locale"
-                                :max-value="todayDate"
-                                :number-of-months="2" />
-                            <div class="flex justify-end gap-2 mt-3">
-                                <Button variant="outline" size="sm" @click="clearDateFilter">
-                                    {{ t('common.actions.clear') }}
-                                </Button>
-                                <Button size="sm" @click="applyDateFilter">
-                                    {{ t('common.actions.confirm') }}
-                                </Button>
-                            </div>
-                        </PopoverContent>
-                    </Popover>
                 </div>
             </template>
         </DataTableLayout>
