@@ -407,7 +407,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     const seeQueue = [];
     const seenIds = new Set();
     let seeProcessing = false;
-    const SEE_CONCURRENCY = 5;
+    const SEE_CONCURRENCY = 2;
 
     async function processSeeQueue() {
         if (seeProcessing) return;

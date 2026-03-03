@@ -1310,6 +1310,7 @@
             },
             "info": {
                 "header": "Info",
+                "name": "Name",
                 "id": "Avatar ID",
                 "id_tooltip": "Copy to clipboard",
                 "copy_id": "Copy ID",

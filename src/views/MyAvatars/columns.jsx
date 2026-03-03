@@ -80,20 +80,6 @@ export function getColumns({
             }
         },
         {
-            id: 'index',
-            accessorFn: (_row, index) => index + 1,
-            header: ({ column }) =>
-                sortButton({ column, label: 'No.', descFirst: true }),
-            size: 60,
-            enableResizing: false,
-            meta: {
-                class: 'text-right'
-            },
-            cell: ({ row }) => (
-                <span class="text-muted-foreground">{row.index + 1}</span>
-            )
-        },
-        {
             id: 'thumbnail',
             header: () => null,
             size: 64,
@@ -114,8 +100,9 @@ export function getColumns({
         },
         {
             id: 'name',
-            accessorKey: 'name',
-            header: ({ column }) => sortButton({ column, label: 'Name' }),
+            accessorKey: 'Name',
+            header: ({ column }) =>
+                sortButton({ column, label: t('dialog.avatar.info.name') }),
             size: 200,
             cell: ({ row }) => {
                 const ref = row.original;
@@ -134,7 +121,7 @@ export function getColumns({
         },
         {
             id: 'platforms',
-            header: () => 'Platforms',
+            header: () => t('dialog.avatar.info.platform'),
             size: 120,
             enableSorting: false,
             cell: ({ row }) => {
