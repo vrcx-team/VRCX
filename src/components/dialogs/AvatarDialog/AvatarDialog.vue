@@ -598,6 +598,7 @@
         useGalleryStore,
         useGameStore,
         useModalStore,
+        useUiStore,
         useUserStore
     } from '../../../stores';
     import {
@@ -637,6 +638,7 @@
     const { showFullscreenImageDialog } = useGalleryStore();
     const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
     const modalStore = useModalStore();
+    const uiStore = useUiStore();
 
     const { t } = useI18n();
     const avatarDialogTabs = computed(() => [
@@ -936,7 +938,7 @@
                                         }
 
                                         toast.success(t('message.avatar.deleted'));
-                                        D.visible = false;
+                                        uiStore.jumpBackDialogCrumb();
                                         return args;
                                     });
                                 break;
