@@ -44,6 +44,14 @@ function filterSizingByColumns(sizing, columns) {
     return out;
 }
 
+function filterSortingByColumns(sorting, columns) {
+    if (!Array.isArray(sorting)) {
+        return [];
+    }
+    const ids = new Set((columns ?? []).map((c) => c?.id).filter(Boolean));
+    return sorting.filter((s) => s && ids.has(s.id));
+}
+
 function getColumnId(col) {
     return col?.id ?? col?.accessorKey ?? null;
 }
@@ -134,6 +142,7 @@ export function useVrcxVueTable(options) {
 
         persistKey,
         persistColumnSizing = true,
+        persistSorting = true,
         persistDebounceMs = 200,
 
         tableOptions = {}
@@ -144,7 +153,6 @@ export function useVrcxVueTable(options) {
     if (!hasData) console.warn('useVrcxVueTable: `data` is required');
     if (!hasColumns) console.warn('useVrcxVueTable: `columns` is required');
 
-    const sorting = ref(initialSorting ?? []);
     const expanded = ref(initialExpanded ?? {});
     const pagination = ref(initialPagination ?? { pageIndex: 0, pageSize: 50 });
     const columnPinning = ref(initialColumnPinning ?? { left: [], right: [] });
@@ -169,6 +177,13 @@ export function useVrcxVueTable(options) {
     }
 
     const persisted = readPersisted();
+
+    let resolvedSorting = initialSorting ?? [];
+    if (persisted && persistSorting && Array.isArray(persisted.sorting)) {
+        resolvedSorting = persisted.sorting;
+    }
+    const sorting = ref(resolvedSorting);
+
     if (persisted && persistColumnSizing && persisted.columnSizing) {
         columnSizing.value = persisted.columnSizing;
     }
@@ -290,6 +305,19 @@ export function useVrcxVueTable(options) {
                 const cols = table.getAllLeafColumns?.() ?? [];
                 persistWrite({
                     columnSizing: filterSizingByColumns(val, cols)
+                });
+            },
+            { deep: true }
+        );
+    }
+
+    if (storageKey && persistSorting) {
+        watch(
+            sorting,
+            (val) => {
+                const cols = table.getAllLeafColumns?.() ?? [];
+                persistWrite({
+                    sorting: filterSortingByColumns(val, cols)
                 });
             },
             { deep: true }
