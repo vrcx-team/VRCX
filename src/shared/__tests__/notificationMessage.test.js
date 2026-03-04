@@ -2,7 +2,7 @@ import {
     getNotificationMessage,
     getUserIdFromNoty,
     toNotificationText
-} from '../notificationMessage';
+} from '../utils/notificationMessage';
 
 // Mock displayLocation to return a predictable string
 vi.mock('../utils', () => ({

@@ -27,12 +27,12 @@ import {
     getNotificationMessage,
     getUserIdFromNoty as getUserIdFromNotyBase,
     toNotificationText
-} from '../../shared/notificationMessage';
+} from '../../shared/utils/notificationMessage';
 import { database, dbVars } from '../../service/database';
 import {
     getNotificationCategory,
     getNotificationTs
-} from '../../shared/notificationCategory';
+} from '../../shared/utils/notificationCategory';
 import { AppDebug } from '../../service/appConfig';
 import { createOverlayDispatch } from './overlayDispatch';
 import { useAdvancedSettingsStore } from '../settings/advanced';

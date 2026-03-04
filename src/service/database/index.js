@@ -1,20 +1,20 @@
-import { avatarFavorites } from './database/avatarFavorites.js';
-import { avatarTags } from './database/avatarTags.js';
-import { feed } from './database/feed.js';
-import { friendFavorites } from './database/friendFavorites.js';
-import { friendLogCurrent } from './database/friendLogCurrent.js';
-import { friendLogHistory } from './database/friendLogHistory.js';
-import { gameLog } from './database/gameLog.js';
-import { memos } from './database/memos.js';
-import { moderation } from './database/moderation.js';
-import { mutualGraph } from './database/mutualGraph.js';
-import { notifications } from './database/notifications.js';
-import { tableAlter } from './database/tableAlter.js';
-import { tableFixes } from './database/tableFixes.js';
-import { tableSize } from './database/tableSize.js';
-import { worldFavorites } from './database/worldFavorites.js';
+import { avatarFavorites } from './avatarFavorites.js';
+import { avatarTags } from './avatarTags.js';
+import { feed } from './feed.js';
+import { friendFavorites } from './friendFavorites.js';
+import { friendLogCurrent } from './friendLogCurrent.js';
+import { friendLogHistory } from './friendLogHistory.js';
+import { gameLog } from './gameLog.js';
+import { memos } from './memos.js';
+import { moderation } from './moderation.js';
+import { mutualGraph } from './mutualGraph.js';
+import { notifications } from './notifications.js';
+import { tableAlter } from './tableAlter.js';
+import { tableFixes } from './tableFixes.js';
+import { tableSize } from './tableSize.js';
+import { worldFavorites } from './worldFavorites.js';
 
-import sqliteService from './sqlite.js';
+import sqliteService from '../sqlite.js';
 
 const dbVars = {
     userId: '',

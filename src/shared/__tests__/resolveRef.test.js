@@ -1,4 +1,4 @@
-import { resolveRef } from '../resolveRef';
+import { resolveRef } from '../utils/resolveRef';
 
 describe('resolveRef', () => {
     const emptyDefault = { id: '', name: '' };

@@ -30,7 +30,7 @@ import {
     instanceContentSettings
 } from '../shared/constants';
 import { database } from '../service/database';
-import { resolveRef } from '../shared/resolveRef';
+import { resolveRef } from '../shared/utils/resolveRef';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFriendStore } from './friend';
 import { useGroupStore } from './group';

@@ -842,7 +842,7 @@
     } from '../../../shared/utils/imageUpload';
     import { favoriteRequest, miscRequest, userRequest, worldRequest } from '../../../api';
     import { Badge } from '../../ui/badge';
-    import { database } from '../../../service/database.js';
+    import { database } from '../../../service/database';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
 
     import ImageCropDialog from '../ImageCropDialog.vue';

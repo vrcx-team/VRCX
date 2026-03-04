@@ -2,7 +2,7 @@ import { extractFileId, extractFileVersion } from '../../shared/utils';
 import {
     getNotificationMessage,
     toNotificationText
-} from '../../shared/notificationMessage';
+} from '../../shared/utils/notificationMessage';
 
 /**
  * Creates the overlay dispatch functions for the Notification store.

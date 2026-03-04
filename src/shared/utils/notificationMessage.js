@@ -1,4 +1,4 @@
-import { displayLocation } from './utils';
+import { displayLocation } from './locationParser';
 
 /**
  * Extracts the notification title and body from a notification object.

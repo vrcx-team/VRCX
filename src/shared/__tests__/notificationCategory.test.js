@@ -3,7 +3,7 @@ import {
     GROUP_EXACT_TYPES,
     getNotificationCategory,
     getNotificationTs
-} from '../notificationCategory';
+} from '../utils/notificationCategory';
 
 describe('getNotificationCategory', () => {
     test('returns "other" for falsy type', () => {

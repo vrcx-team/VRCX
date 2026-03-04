@@ -37,7 +37,7 @@ import { userRequest } from '../../api';
 import { watchState } from '../../service/watchState';
 
 import configRepository from '../../service/config';
-import gameLogService from '../../service/gamelog.js';
+import gameLogService from '../../service/gameLog.js';
 
 import * as workerTimers from 'worker-timers';
 
