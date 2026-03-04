@@ -1,5 +1,6 @@
 import {
     getNotificationMessage,
+    getUserIdFromNoty,
     toNotificationText
 } from '../notificationMessage';
 
@@ -342,5 +343,89 @@ describe('toNotificationText', () => {
         expect(
             toNotificationText('', 'User has spawned a portal', 'PortalSpawn')
         ).toBe('User has spawned a portal');
+    });
+});
+
+describe('getNotificationMessage with displayNameOverride', () => {
+    test('overrides displayName in title', () => {
+        const result = getNotificationMessage(
+            { type: 'OnPlayerJoined', displayName: 'Alice' },
+            '',
+            'NickAlice'
+        );
+        expect(result).toEqual({ title: 'NickAlice', body: 'has joined' });
+    });
+
+    test('overrides senderUsername in sender-based types', () => {
+        const result = getNotificationMessage(
+            { type: 'friendRequest', senderUsername: 'Bob' },
+            '',
+            'NickBob'
+        );
+        expect(result).toEqual({
+            title: 'NickBob',
+            body: 'has sent you a friend request'
+        });
+    });
+
+    test('overrides previousDisplayName in DisplayName type', () => {
+        const result = getNotificationMessage(
+            {
+                type: 'DisplayName',
+                previousDisplayName: 'OldName',
+                displayName: 'NewName'
+            },
+            '',
+            'NickOld'
+        );
+        expect(result).toEqual({
+            title: 'NickOld',
+            body: 'changed their name to NewName'
+        });
+    });
+
+    test('falls back to noty fields when override is empty', () => {
+        const result = getNotificationMessage(
+            { type: 'OnPlayerLeft', displayName: 'Alice' },
+            '',
+            ''
+        );
+        expect(result).toEqual({ title: 'Alice', body: 'has left' });
+    });
+
+    test('falls back to noty fields when override is undefined', () => {
+        const result = getNotificationMessage(
+            { type: 'OnPlayerLeft', displayName: 'Alice' },
+            ''
+        );
+        expect(result).toEqual({ title: 'Alice', body: 'has left' });
+    });
+});
+
+describe('getUserIdFromNoty', () => {
+    test('returns userId when present', () => {
+        expect(getUserIdFromNoty({ userId: 'usr_1' })).toBe('usr_1');
+    });
+
+    test('returns senderUserId when userId is missing', () => {
+        expect(getUserIdFromNoty({ senderUserId: 'usr_2' })).toBe('usr_2');
+    });
+
+    test('returns sourceUserId as last priority', () => {
+        expect(getUserIdFromNoty({ sourceUserId: 'usr_3' })).toBe('usr_3');
+    });
+
+    test('prefers userId over senderUserId', () => {
+        expect(
+            getUserIdFromNoty({ userId: 'usr_1', senderUserId: 'usr_2' })
+        ).toBe('usr_1');
+    });
+
+    test('returns empty string when no id fields', () => {
+        expect(getUserIdFromNoty({ displayName: 'Alice' })).toBe('');
+    });
+
+    test('returns empty string for empty object', () => {
+        expect(getUserIdFromNoty({})).toBe('');
     });
 });

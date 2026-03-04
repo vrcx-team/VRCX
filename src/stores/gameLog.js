@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 
 import {
+    compareGameLogRows,
     convertYoutubeTime,
     findUserByDisplayName,
     formatSeconds,
@@ -142,39 +143,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     init();
-
-    function getGameLogCreatedAtTs(row) {
-        const createdAtRaw = row?.created_at ?? row?.createdAt ?? row?.dt;
-        if (typeof createdAtRaw === 'number') {
-            const ts =
-                createdAtRaw > 1_000_000_000_000
-                    ? createdAtRaw
-                    : createdAtRaw * 1000;
-            return Number.isFinite(ts) ? ts : 0;
-        }
-
-        const createdAt = typeof createdAtRaw === 'string' ? createdAtRaw : '';
-        const ts = dayjs(createdAt).valueOf();
-        return Number.isFinite(ts) ? ts : 0;
-    }
-
-    function compareGameLogRows(a, b) {
-        const aTs = getGameLogCreatedAtTs(a);
-        const bTs = getGameLogCreatedAtTs(b);
-        if (aTs !== bTs) {
-            return bTs - aTs;
-        }
-
-        const aRowId = typeof a?.rowId === 'number' ? a.rowId : 0;
-        const bRowId = typeof b?.rowId === 'number' ? b.rowId : 0;
-        if (aRowId !== bRowId) {
-            return bRowId - aRowId;
-        }
-
-        const aUid = typeof a?.uid === 'string' ? a.uid : '';
-        const bUid = typeof b?.uid === 'string' ? b.uid : '';
-        return aUid < bUid ? 1 : aUid > bUid ? -1 : 0;
-    }
 
     function insertGameLogSorted(entry) {
         const arr = gameLogTableData.value;

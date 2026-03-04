@@ -3,23 +3,28 @@ import { displayLocation } from './utils';
 /**
  * Extracts the notification title and body from a notification object.
  * This is the single source of truth for notification message content,
- * used by desktop toast, XS overlay, and OVRT overlay.
+ * used by desktop toast, XS overlay, OVRT overlay, and TTS.
  *
  * @param {object} noty - The notification object
  * @param {string} message - Pre-built invite/request message string
+ * @param {string} [displayNameOverride] - Optional override for the display
+ *   name used in the title (e.g. a nickname from user memo for TTS).
  * @returns {{ title: string, body: string } | null}
  */
-export function getNotificationMessage(noty, message) {
+export function getNotificationMessage(noty, message, displayNameOverride) {
+    const name = displayNameOverride || noty.displayName;
+    const sender = displayNameOverride || noty.senderUsername;
+
     switch (noty.type) {
         case 'OnPlayerJoined':
-            return { title: noty.displayName, body: 'has joined' };
+            return { title: name, body: 'has joined' };
         case 'OnPlayerLeft':
-            return { title: noty.displayName, body: 'has left' };
+            return { title: name, body: 'has left' };
         case 'OnPlayerJoining':
-            return { title: noty.displayName, body: 'is joining' };
+            return { title: name, body: 'is joining' };
         case 'GPS':
             return {
-                title: noty.displayName,
+                title: name,
                 body: `is in ${displayLocation(
                     noty.location,
                     noty.worldName,
@@ -36,20 +41,20 @@ export function getNotificationMessage(noty, message) {
                 )}`;
             }
             return {
-                title: noty.displayName,
+                title: name,
                 body: `has logged in${locationName}`
             };
         }
         case 'Offline':
-            return { title: noty.displayName, body: 'has logged out' };
+            return { title: name, body: 'has logged out' };
         case 'Status':
             return {
-                title: noty.displayName,
+                title: name,
                 body: `status is now ${noty.status} ${noty.statusDescription}`
             };
         case 'invite':
             return {
-                title: noty.senderUsername,
+                title: sender,
                 body: `has invited you to ${displayLocation(
                     noty.details.worldId,
                     noty.details.worldName
@@ -57,45 +62,45 @@ export function getNotificationMessage(noty, message) {
             };
         case 'requestInvite':
             return {
-                title: noty.senderUsername,
+                title: sender,
                 body: `has requested an invite${message}`
             };
         case 'inviteResponse':
             return {
-                title: noty.senderUsername,
+                title: sender,
                 body: `has responded to your invite${message}`
             };
         case 'requestInviteResponse':
             return {
-                title: noty.senderUsername,
+                title: sender,
                 body: `has responded to your invite request${message}`
             };
         case 'friendRequest':
             return {
-                title: noty.senderUsername,
+                title: sender,
                 body: 'has sent you a friend request'
             };
         case 'Friend':
-            return { title: noty.displayName, body: 'is now your friend' };
+            return { title: name, body: 'is now your friend' };
         case 'Unfriend':
             return {
-                title: noty.displayName,
+                title: name,
                 body: 'is no longer your friend'
             };
         case 'TrustLevel':
             return {
-                title: noty.displayName,
+                title: name,
                 body: `trust level is now ${noty.trustLevel}`
             };
         case 'DisplayName':
             return {
-                title: noty.previousDisplayName,
+                title: displayNameOverride || noty.previousDisplayName,
                 body: `changed their name to ${noty.displayName}`
             };
         case 'boop':
-            return { title: noty.senderUsername, body: noty.message };
+            return { title: sender, body: noty.message };
         case 'groupChange':
-            return { title: noty.senderUsername, body: noty.message };
+            return { title: sender, body: noty.message };
         case 'group.announcement':
             return { title: 'Group Announcement', body: noty.message };
         case 'group.informative':
@@ -111,9 +116,9 @@ export function getNotificationMessage(noty, message) {
         case 'instance.closed':
             return { title: 'Instance Closed', body: noty.message };
         case 'PortalSpawn':
-            if (noty.displayName) {
+            if (name) {
                 return {
-                    title: noty.displayName,
+                    title: name,
                     body: `has spawned a portal to ${displayLocation(
                         noty.instanceId,
                         noty.worldName,
@@ -124,12 +129,12 @@ export function getNotificationMessage(noty, message) {
             return { title: '', body: 'User has spawned a portal' };
         case 'AvatarChange':
             return {
-                title: noty.displayName,
+                title: name,
                 body: `changed into avatar ${noty.name}`
             };
         case 'ChatBoxMessage':
             return {
-                title: noty.displayName,
+                title: name,
                 body: `said ${noty.text}`
             };
         case 'Event':
@@ -140,32 +145,32 @@ export function getNotificationMessage(noty, message) {
             return { title: 'Now playing', body: noty.notyName };
         case 'BlockedOnPlayerJoined':
             return {
-                title: noty.displayName,
+                title: name,
                 body: 'Blocked user has joined'
             };
         case 'BlockedOnPlayerLeft':
             return {
-                title: noty.displayName,
+                title: name,
                 body: 'Blocked user has left'
             };
         case 'MutedOnPlayerJoined':
             return {
-                title: noty.displayName,
+                title: name,
                 body: 'Muted user has joined'
             };
         case 'MutedOnPlayerLeft':
             return {
-                title: noty.displayName,
+                title: name,
                 body: 'Muted user has left'
             };
         case 'Blocked':
-            return { title: noty.displayName, body: 'has blocked you' };
+            return { title: name, body: 'has blocked you' };
         case 'Unblocked':
-            return { title: noty.displayName, body: 'has unblocked you' };
+            return { title: name, body: 'has unblocked you' };
         case 'Muted':
-            return { title: noty.displayName, body: 'has muted you' };
+            return { title: name, body: 'has muted you' };
         case 'Unmuted':
-            return { title: noty.displayName, body: 'has unmuted you' };
+            return { title: name, body: 'has unmuted you' };
         default:
             return null;
     }
@@ -225,4 +230,19 @@ export function toNotificationText(title, body, type) {
         return customFmt(title);
     }
     return title ? `${title} ${body}` : body;
+}
+
+/**
+ * Extract a userId from a notification object by checking common fields.
+ * Does NOT perform display-name-based lookups - the caller should handle
+ * that fallback when a cached user map is available.
+ *
+ * @param {object} noty
+ * @returns {string}
+ */
+export function getUserIdFromNoty(noty) {
+    if (noty.userId) return noty.userId;
+    if (noty.senderUserId) return noty.senderUserId;
+    if (noty.sourceUserId) return noty.sourceUserId;
+    return '';
 }

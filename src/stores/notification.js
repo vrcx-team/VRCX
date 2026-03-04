@@ -8,7 +8,6 @@ import dayjs from 'dayjs';
 
 import {
     checkCanInvite,
-    displayLocation,
     escapeTag,
     executeWithBackoff,
     extractFileId,
@@ -26,15 +25,16 @@ import {
     userRequest,
     worldRequest
 } from '../api';
+import {
+    getNotificationMessage,
+    getUserIdFromNoty as getUserIdFromNotyBase,
+    toNotificationText
+} from '../shared/notificationMessage';
 import { database, dbVars } from '../service/database';
 import {
     getNotificationCategory,
     getNotificationTs
 } from '../shared/notificationCategory';
-import {
-    getNotificationMessage,
-    toNotificationText
-} from '../shared/notificationMessage';
 import { AppDebug } from '../service/appConfig';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAppearanceSettingsStore } from './settings/appearance';
@@ -969,202 +969,11 @@ export const useNotificationStore = defineStore('Notification', () => {
                 displayName = nickName;
             }
         }
-        switch (noty.type) {
-            case 'OnPlayerJoined':
-                notificationsSettingsStore.speak(`${displayName} has joined`);
-                break;
-            case 'OnPlayerLeft':
-                notificationsSettingsStore.speak(`${displayName} has left`);
-                break;
-            case 'OnPlayerJoining':
-                notificationsSettingsStore.speak(`${displayName} is joining`);
-                break;
-            case 'GPS':
-                notificationsSettingsStore.speak(
-                    `${displayName} is in ${displayLocation(
-                        noty.location,
-                        noty.worldName,
-                        noty.groupName
-                    )}`
-                );
-                break;
-            case 'Online':
-                let locationName = '';
-                if (noty.worldName) {
-                    locationName = ` to ${displayLocation(
-                        noty.location,
-                        noty.worldName,
-                        noty.groupName
-                    )}`;
-                }
-                notificationsSettingsStore.speak(
-                    `${displayName} has logged in${locationName}`
-                );
-                break;
-            case 'Offline':
-                notificationsSettingsStore.speak(
-                    `${displayName} has logged out`
-                );
-                break;
-            case 'Status':
-                notificationsSettingsStore.speak(
-                    `${displayName} status is now ${noty.status} ${noty.statusDescription}`
-                );
-                break;
-            case 'invite':
-                notificationsSettingsStore.speak(
-                    `${displayName} has invited you to ${displayLocation(
-                        noty.details.worldId,
-                        noty.details.worldName,
-                        noty.groupName
-                    )}${message}`
-                );
-                break;
-            case 'requestInvite':
-                notificationsSettingsStore.speak(
-                    `${displayName} has requested an invite${message}`
-                );
-                break;
-            case 'inviteResponse':
-                notificationsSettingsStore.speak(
-                    `${displayName} has responded to your invite${message}`
-                );
-                break;
-            case 'requestInviteResponse':
-                notificationsSettingsStore.speak(
-                    `${displayName} has responded to your invite request${message}`
-                );
-                break;
-            case 'friendRequest':
-                notificationsSettingsStore.speak(
-                    `${displayName} has sent you a friend request`
-                );
-                break;
-            case 'Friend':
-                notificationsSettingsStore.speak(
-                    `${displayName} is now your friend`
-                );
-                break;
-            case 'Unfriend':
-                notificationsSettingsStore.speak(
-                    `${displayName} is no longer your friend`
-                );
-                break;
-            case 'TrustLevel':
-                notificationsSettingsStore.speak(
-                    `${displayName} trust level is now ${noty.trustLevel}`
-                );
-                break;
-            case 'DisplayName':
-                notificationsSettingsStore.speak(
-                    `${noty.previousDisplayName} changed their name to ${noty.displayName}`
-                );
-                break;
-            case 'boop':
-                notificationsSettingsStore.speak(noty.message);
-                break;
-            case 'groupChange':
-                notificationsSettingsStore.speak(
-                    `${displayName} ${noty.message}`
-                );
-                break;
-            case 'group.announcement':
-                notificationsSettingsStore.speak(noty.message);
-                break;
-            case 'group.informative':
-                notificationsSettingsStore.speak(noty.message);
-                break;
-            case 'group.invite':
-                notificationsSettingsStore.speak(noty.message);
-                break;
-            case 'group.joinRequest':
-                notificationsSettingsStore.speak(noty.message);
-                break;
-            case 'group.transfer':
-                notificationsSettingsStore.speak(noty.message);
-                break;
-            case 'group.queueReady':
-                notificationsSettingsStore.speak(noty.message);
-                break;
-            case 'instance.closed':
-                notificationsSettingsStore.speak(noty.message);
-                break;
-            case 'PortalSpawn':
-                if (displayName) {
-                    notificationsSettingsStore.speak(
-                        `${displayName} has spawned a portal to ${displayLocation(
-                            noty.instanceId,
-                            noty.worldName,
-                            noty.groupName
-                        )}`
-                    );
-                } else {
-                    notificationsSettingsStore.speak(
-                        'User has spawned a portal'
-                    );
-                }
-                break;
-            case 'AvatarChange':
-                notificationsSettingsStore.speak(
-                    `${displayName} changed into avatar ${noty.name}`
-                );
-                break;
-            case 'ChatBoxMessage':
-                notificationsSettingsStore.speak(
-                    `${displayName} said ${noty.text}`
-                );
-                break;
-            case 'Event':
-                notificationsSettingsStore.speak(noty.data);
-                break;
-            case 'External':
-                notificationsSettingsStore.speak(noty.message);
-                break;
-            case 'VideoPlay':
-                notificationsSettingsStore.speak(
-                    `Now playing: ${noty.notyName}`
-                );
-                break;
-            case 'BlockedOnPlayerJoined':
-                notificationsSettingsStore.speak(
-                    `Blocked user ${displayName} has joined`
-                );
-                break;
-            case 'BlockedOnPlayerLeft':
-                notificationsSettingsStore.speak(
-                    `Blocked user ${displayName} has left`
-                );
-                break;
-            case 'MutedOnPlayerJoined':
-                notificationsSettingsStore.speak(
-                    `Muted user ${displayName} has joined`
-                );
-                break;
-            case 'MutedOnPlayerLeft':
-                notificationsSettingsStore.speak(
-                    `Muted user ${displayName} has left`
-                );
-                break;
-            case 'Blocked':
-                notificationsSettingsStore.speak(
-                    `${displayName} has blocked you`
-                );
-                break;
-            case 'Unblocked':
-                notificationsSettingsStore.speak(
-                    `${displayName} has unblocked you`
-                );
-                break;
-            case 'Muted':
-                notificationsSettingsStore.speak(
-                    `${displayName} has muted you`
-                );
-                break;
-            case 'Unmuted':
-                notificationsSettingsStore.speak(
-                    `${displayName} has unmuted you`
-                );
-                break;
+        const msg = getNotificationMessage(noty, message, displayName);
+        if (msg) {
+            notificationsSettingsStore.speak(
+                toNotificationText(msg.title, msg.body, noty.type)
+            );
         }
     }
 
@@ -1282,19 +1091,15 @@ export const useNotificationStore = defineStore('Notification', () => {
      * @returns
      */
     function getUserIdFromNoty(noty) {
-        let userId = '';
-        if (noty.userId) {
-            userId = noty.userId;
-        } else if (noty.senderUserId) {
-            userId = noty.senderUserId;
-        } else if (noty.sourceUserId) {
-            userId = noty.sourceUserId;
-        } else if (noty.displayName) {
-            userId =
+        const id = getUserIdFromNotyBase(noty);
+        if (id) return id;
+        if (noty.displayName) {
+            return (
                 findUserByDisplayName(userStore.cachedUsers, noty.displayName)
-                    ?.id ?? '';
+                    ?.id ?? ''
+            );
         }
-        return userId;
+        return '';
     }
 
     /**
