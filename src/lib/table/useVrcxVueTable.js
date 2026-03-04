@@ -13,7 +13,7 @@ import { computed, ref, unref, watch } from 'vue';
  *
  * @param str
  */
-function safeJsonParse(str) {
+export function safeJsonParse(str) {
     if (!str) {
         return null;
     }
@@ -44,7 +44,7 @@ function debounce(fn, wait) {
  * @param sizing
  * @param columns
  */
-function filterSizingByColumns(sizing, columns) {
+export function filterSizingByColumns(sizing, columns) {
     if (!sizing || typeof sizing !== 'object') {
         return {};
     }
@@ -63,7 +63,7 @@ function filterSizingByColumns(sizing, columns) {
  * @param sorting
  * @param columns
  */
-function filterSortingByColumns(sorting, columns) {
+export function filterSortingByColumns(sorting, columns) {
     if (!Array.isArray(sorting)) {
         return [];
     }
@@ -76,7 +76,7 @@ function filterSortingByColumns(sorting, columns) {
  * @param order
  * @param columns
  */
-function filterOrderByColumns(order, columns) {
+export function filterOrderByColumns(order, columns) {
     if (!Array.isArray(order)) {
         return [];
     }
@@ -89,7 +89,7 @@ function filterOrderByColumns(order, columns) {
  * @param visibility
  * @param columns
  */
-function filterVisibilityByColumns(visibility, columns) {
+export function filterVisibilityByColumns(visibility, columns) {
     if (!visibility || typeof visibility !== 'object') {
         return {};
     }
@@ -107,7 +107,7 @@ function filterVisibilityByColumns(visibility, columns) {
  *
  * @param col
  */
-function getColumnId(col) {
+export function getColumnId(col) {
     return col?.id ?? col?.accessorKey ?? null;
 }
 
@@ -115,7 +115,7 @@ function getColumnId(col) {
  *
  * @param columns
  */
-function findStretchColumnId(columns) {
+export function findStretchColumnId(columns) {
     if (!Array.isArray(columns)) {
         return null;
     }
@@ -153,7 +153,7 @@ function resolveMaybeGetter(func) {
  * @param spacerId
  * @param stretchAfterId
  */
-function withSpacerColumn(columns, enabled, spacerId, stretchAfterId) {
+export function withSpacerColumn(columns, enabled, spacerId, stretchAfterId) {
     if (!enabled) {
         return columns;
     }

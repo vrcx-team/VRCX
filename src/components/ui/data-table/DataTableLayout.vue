@@ -264,6 +264,13 @@
     } from '../pagination';
     import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../table';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../select';
+    import {
+        getColStyle,
+        getToggleableColumns,
+        isReorderable as isReorderableHelper,
+        isSpacer,
+        resolveHeaderLabel
+    } from './dataTableHelpers.js';
     import { ContextMenu, ContextMenuCheckboxItem, ContextMenuContent, ContextMenuTrigger } from '../context-menu';
 
     import DataTableEmpty from './DataTableEmpty.vue';
@@ -396,20 +403,7 @@
         return null;
     };
 
-    const isSpacer = (col) => col?.id === '__spacer';
-
-    const isStretch = (col) => {
-        return !!col?.columnDef?.meta?.stretch;
-    };
-
-    const isReorderable = (header) => {
-        const col = header?.column;
-        if (!col) return false;
-        if (isSpacer(col)) return false;
-        if (getPinnedState(col)) return false;
-        if (col.columnDef?.meta?.disableReorder) return false;
-        return true;
-    };
+    const isReorderable = (header) => isReorderableHelper(header, getPinnedState);
 
     const reorderableIndex = (headers, actualIndex) => {
         let sortableIdx = 0;
@@ -463,32 +457,8 @@
 
     const toggleableColumns = computed(() => {
         const cols = props.table?.getAllLeafColumns?.() ?? [];
-        return cols.filter((col) => {
-            if (isSpacer(col)) return false;
-            if (isStretch(col)) return false;
-            if (col.columnDef?.meta?.disableVisibilityToggle) return false;
-            if (!col.columnDef?.meta?.label) return false;
-            return true;
-        });
+        return getToggleableColumns(cols);
     });
-
-    const resolveHeaderLabel = (col) => {
-        const label = col?.columnDef?.meta?.label;
-        if (typeof label === 'function') return label();
-        return label ?? col?.id ?? '';
-    };
-
-    const getColStyle = (col) => {
-        if (isSpacer(col)) return { width: '0px' };
-
-        if (isStretch(col)) {
-            return null;
-        }
-
-        const size = col?.getSize?.();
-        if (!Number.isFinite(size)) return null;
-        return { width: `${size}px` };
-    };
 
     const getHeaderClass = (header) => {
         const columnDef = header?.column?.columnDef;

@@ -75,7 +75,7 @@ export function getColumns({
                                 'h-4 w-4',
                                 isActive
                                     ? 'text-primary'
-                                    : 'text-muted-foreground/0 group-hover/row:text-muted-foreground/40'
+                                    : 'text-muted-foreground/0 group-hover/row:text-muted-foreground'
                             ]}
                         />
                     </div>
