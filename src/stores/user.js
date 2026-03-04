@@ -13,6 +13,7 @@ import {
     compareByName,
     compareByUpdatedAt,
     extractFileId,
+    findUserByDisplayName,
     getAllUserMemos,
     getGroupName,
     getUserMemo,
@@ -1257,11 +1258,10 @@ export const useUserStore = defineStore('User', () => {
         if (!ref.displayName || ref.displayName.substring(0, 3) === 'ID:') {
             return;
         }
-        for (ctx of cachedUsers.values()) {
-            if (ctx.displayName === ref.displayName) {
-                showUserDialog(ctx.id);
-                return;
-            }
+        const found = findUserByDisplayName(cachedUsers, ref.displayName);
+        if (found) {
+            showUserDialog(found.id);
+            return;
         }
         searchStore.searchText = ref.displayName;
         await searchStore.searchUserByDisplayName(ref.displayName);

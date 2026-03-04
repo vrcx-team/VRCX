@@ -22,3 +22,4 @@ export * from './world';
 export * from './memos';
 export * from './throttle';
 export * from './retry';
+export * from './gameLog';

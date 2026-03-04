@@ -8,7 +8,9 @@ import dayjs from 'dayjs';
 
 import {
     convertYoutubeTime,
+    findUserByDisplayName,
     formatSeconds,
+    gameLogSearchFilter,
     getGroupName,
     isRpcWorld,
     parseLocation,
@@ -221,12 +223,11 @@ export const useGameLogStore = defineStore('GameLog', () => {
         const ctx = structuredClone(data);
         if (nowPlaying.value.url !== ctx.videoUrl) {
             if (!ctx.userId && ctx.displayName) {
-                for (const ref of userStore.cachedUsers.values()) {
-                    if (ref.displayName === ctx.displayName) {
-                        ctx.userId = ref.id;
-                        break;
-                    }
-                }
+                ctx.userId =
+                    findUserByDisplayName(
+                        userStore.cachedUsers,
+                        ctx.displayName
+                    )?.id ?? '';
             }
             notificationStore.queueGameLogNoty(ctx);
             addGameLog(ctx);
@@ -324,12 +325,11 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 ctx = data[i];
                 if (ctx.type === 'OnPlayerJoined') {
                     if (!ctx.userId) {
-                        for (let ref of userStore.cachedUsers.values()) {
-                            if (ref.displayName === ctx.displayName) {
-                                ctx.userId = ref.id;
-                                break;
-                            }
-                        }
+                        ctx.userId =
+                            findUserByDisplayName(
+                                userStore.cachedUsers,
+                                ctx.displayName
+                            )?.id ?? '';
                     }
                     const userMap = {
                         displayName: ctx.displayName,
@@ -484,72 +484,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     function gameLogSearch(row) {
-        const value = gameLogTable.value.search.trim().toUpperCase();
-        if (!value) {
-            return true;
-        }
-        if (
-            (value.startsWith('wrld_') || value.startsWith('grp_')) &&
-            String(row.location).toUpperCase().includes(value)
-        ) {
-            return true;
-        }
-        switch (row.type) {
-            case 'Location':
-                if (String(row.worldName).toUpperCase().includes(value)) {
-                    return true;
-                }
-                return false;
-            case 'OnPlayerJoined':
-                if (String(row.displayName).toUpperCase().includes(value)) {
-                    return true;
-                }
-                return false;
-            case 'OnPlayerLeft':
-                if (String(row.displayName).toUpperCase().includes(value)) {
-                    return true;
-                }
-                return false;
-            case 'PortalSpawn':
-                if (String(row.displayName).toUpperCase().includes(value)) {
-                    return true;
-                }
-                if (String(row.worldName).toUpperCase().includes(value)) {
-                    return true;
-                }
-                return false;
-            case 'Event':
-                if (String(row.data).toUpperCase().includes(value)) {
-                    return true;
-                }
-                return false;
-            case 'External':
-                if (String(row.message).toUpperCase().includes(value)) {
-                    return true;
-                }
-                if (String(row.displayName).toUpperCase().includes(value)) {
-                    return true;
-                }
-                return false;
-            case 'VideoPlay':
-                if (String(row.displayName).toUpperCase().includes(value)) {
-                    return true;
-                }
-                if (String(row.videoName).toUpperCase().includes(value)) {
-                    return true;
-                }
-                if (String(row.videoUrl).toUpperCase().includes(value)) {
-                    return true;
-                }
-                return false;
-            case 'StringLoad':
-            case 'ImageLoad':
-                if (String(row.resourceUrl).toUpperCase().includes(value)) {
-                    return true;
-                }
-                return false;
-        }
-        return true;
+        return gameLogSearchFilter(row, gameLogTable.value.search);
     }
 
     function sweepGameLog() {
@@ -566,12 +501,11 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
         let userId = String(gameLog.userId || '');
         if (!userId && gameLog.displayName) {
-            for (const ref of userStore.cachedUsers.values()) {
-                if (ref.displayName === gameLog.displayName) {
-                    userId = ref.id;
-                    break;
-                }
-            }
+            userId =
+                findUserByDisplayName(
+                    userStore.cachedUsers,
+                    gameLog.displayName
+                )?.id ?? '';
         }
         switch (gameLog.type) {
             case 'location-destination':
@@ -890,12 +824,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 const photonId = parseInt(gameLog.photonId, 10);
                 const ref2 = photonStore.photonLobby.get(photonId);
                 if (typeof ref2 === 'undefined') {
-                    for (const ctx of userStore.cachedUsers.values()) {
-                        if (ctx.displayName === gameLog.displayName) {
-                            photonStore.photonLobby.set(photonId, ctx);
-                            photonStore.photonLobbyCurrent.set(photonId, ctx);
-                            break;
-                        }
+                    const foundUser = findUserByDisplayName(
+                        userStore.cachedUsers,
+                        gameLog.displayName
+                    );
+                    if (foundUser) {
+                        photonStore.photonLobby.set(photonId, foundUser);
+                        photonStore.photonLobbyCurrent.set(photonId, foundUser);
                     }
                     const ctx1 = {
                         displayName: gameLog.displayName
@@ -1101,12 +1036,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
         let userId = '';
         if (displayName) {
-            for (const ref of userStore.cachedUsers.values()) {
-                if (ref.displayName === displayName) {
-                    userId = ref.id;
-                    break;
-                }
-            }
+            userId =
+                findUserByDisplayName(userStore.cachedUsers, displayName)?.id ??
+                '';
         }
         if (videoId === 'YouTube') {
             const entry1 = {
@@ -1172,12 +1104,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
         let userId = '';
         if (displayName) {
-            for (let ref of userStore.cachedUsers.values()) {
-                if (ref.displayName === displayName) {
-                    userId = ref.id;
-                    break;
-                }
-            }
+            userId =
+                findUserByDisplayName(userStore.cachedUsers, displayName)?.id ??
+                '';
         }
         if (videoId === 'YouTube') {
             const entry1 = {
@@ -1238,12 +1167,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
         let userId = '';
         if (displayName) {
-            for (const ref of userStore.cachedUsers.values()) {
-                if (ref.displayName === displayName) {
-                    userId = ref.id;
-                    break;
-                }
-            }
+            userId =
+                findUserByDisplayName(userStore.cachedUsers, displayName)?.id ??
+                '';
         }
         if (videoId === 'YouTube') {
             const entry1 = {
@@ -1298,12 +1224,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
         let userId = '';
         if (displayName) {
-            for (const ref of userStore.cachedUsers.values()) {
-                if (ref.displayName === displayName) {
-                    userId = ref.id;
-                    break;
-                }
-            }
+            userId =
+                findUserByDisplayName(userStore.cachedUsers, displayName)?.id ??
+                '';
         }
         const entry1 = {
             created_at: gameLog.dt,
@@ -1358,12 +1281,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
         let userId = '';
         if (displayName) {
-            for (const ref of userStore.cachedUsers.values()) {
-                if (ref.displayName === displayName) {
-                    userId = ref.id;
-                    break;
-                }
-            }
+            userId =
+                findUserByDisplayName(userStore.cachedUsers, displayName)?.id ??
+                '';
         }
         const entry1 = {
             created_at: gameLog.dt,
