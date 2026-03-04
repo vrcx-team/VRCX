@@ -10,7 +10,75 @@
                     <colgroup>
                         <col v-for="col in table.getVisibleLeafColumns()" :key="col.id" :style="getColStyle(col)" />
                     </colgroup>
-                    <TableHeader>
+                    <ContextMenu v-if="enableColumnVisibility">
+                        <ContextMenuTrigger as-child>
+                            <TableHeader>
+                                <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
+                                    <template v-if="enableColumnReorder">
+                                        <DragDropProvider @dragEnd="onHeaderDragEnd">
+                                            <template v-for="(header, hIdx) in headerGroup.headers" :key="header.id">
+                                                <SortableTableHead
+                                                    v-if="isReorderable(header)"
+                                                    :header="header"
+                                                    :index="reorderableIndex(headerGroup.headers, hIdx)"
+                                                    :header-class="getHeaderClass(header)"
+                                                    :pinned-style="getPinnedStyle(header.column)" />
+                                                <TableHead
+                                                    v-else
+                                                    :class="getHeaderClass(header)"
+                                                    :style="getPinnedStyle(header.column)">
+                                                    <template v-if="!header.isPlaceholder">
+                                                        <FlexRender
+                                                            :render="header.column.columnDef.header"
+                                                            :props="header.getContext()" />
+                                                        <div
+                                                            v-if="header.column.getCanResize?.()"
+                                                            class="absolute right-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
+                                                            @mousedown.stop="header.getResizeHandler?.()($event)"
+                                                            @touchstart.stop="header.getResizeHandler?.()($event)">
+                                                            <div
+                                                                class="absolute right-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
+                                                        </div>
+                                                    </template>
+                                                </TableHead>
+                                            </template>
+                                        </DragDropProvider>
+                                    </template>
+                                    <template v-else>
+                                        <TableHead
+                                            v-for="header in headerGroup.headers"
+                                            :key="header.id"
+                                            :class="getHeaderClass(header)"
+                                            :style="getPinnedStyle(header.column)">
+                                            <template v-if="!header.isPlaceholder">
+                                                <FlexRender
+                                                    :render="header.column.columnDef.header"
+                                                    :props="header.getContext()" />
+                                                <div
+                                                    v-if="header.column.getCanResize?.()"
+                                                    class="absolute right-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
+                                                    @mousedown.stop="header.getResizeHandler?.()($event)"
+                                                    @touchstart.stop="header.getResizeHandler?.()($event)">
+                                                    <div
+                                                        class="absolute right-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
+                                                </div>
+                                            </template>
+                                        </TableHead>
+                                    </template>
+                                </TableRow>
+                            </TableHeader>
+                        </ContextMenuTrigger>
+                        <ContextMenuContent class="w-48">
+                            <ContextMenuCheckboxItem
+                                v-for="col in toggleableColumns"
+                                :key="col.id"
+                                :model-value="col.getIsVisible()"
+                                @update:model-value="col.toggleVisibility(!!$event)">
+                                {{ resolveHeaderLabel(col) }}
+                            </ContextMenuCheckboxItem>
+                        </ContextMenuContent>
+                    </ContextMenu>
+                    <TableHeader v-else>
                         <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
                             <template v-if="enableColumnReorder">
                                 <DragDropProvider @dragEnd="onHeaderDragEnd">
@@ -196,7 +264,7 @@
     } from '../pagination';
     import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../table';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../select';
-    import { ContextMenu, ContextMenuTrigger } from '../context-menu';
+    import { ContextMenu, ContextMenuCheckboxItem, ContextMenuContent, ContextMenuTrigger } from '../context-menu';
 
     import DataTableEmpty from './DataTableEmpty.vue';
     import SortableTableHead from './SortableTableHead.vue';
@@ -254,6 +322,10 @@
             default: null
         },
         enableColumnReorder: {
+            type: Boolean,
+            default: true
+        },
+        enableColumnVisibility: {
             type: Boolean,
             default: true
         }
@@ -387,6 +459,23 @@
 
         const fullOrder = [...fixedBefore, ...newOrder, ...fixedAfter];
         props.table.setColumnOrder(fullOrder);
+    };
+
+    const toggleableColumns = computed(() => {
+        const cols = props.table?.getAllLeafColumns?.() ?? [];
+        return cols.filter((col) => {
+            if (isSpacer(col)) return false;
+            if (isStretch(col)) return false;
+            if (col.columnDef?.meta?.disableVisibilityToggle) return false;
+            if (!col.columnDef?.meta?.label) return false;
+            return true;
+        });
+    });
+
+    const resolveHeaderLabel = (col) => {
+        const label = col?.columnDef?.meta?.label;
+        if (typeof label === 'function') return label();
+        return label ?? col?.id ?? '';
     };
 
     const getColStyle = (col) => {

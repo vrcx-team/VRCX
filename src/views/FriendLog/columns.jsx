@@ -31,6 +31,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         {
             accessorKey: 'created_at',
             size: 120,
+            meta: { label: () => t('table.friendLog.date') },
             header: ({ column }) => (
                 <Button
                     variant="ghost"
@@ -64,6 +65,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
 
             size: 160,
             header: () => t('table.friendLog.type'),
+            meta: { label: () => t('table.friendLog.type') },
             cell: ({ row }) => {
                 const type = row.getValue('type');
                 return (
@@ -79,7 +81,8 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             minSize: 80,
             header: () => t('table.friendLog.user'),
             meta: {
-                stretch: true
+                stretch: true,
+                label: () => t('table.friendLog.user')
             },
             cell: ({ row }) => {
                 const original = row.original;
@@ -113,7 +116,8 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
         {
             id: 'action',
             meta: {
-                class: 'w-[80px] max-w-[80px] text-right'
+                class: 'w-[80px] max-w-[80px] text-right',
+                label: () => t('table.friendLog.action')
             },
             size: 80,
             maxSize: 80,

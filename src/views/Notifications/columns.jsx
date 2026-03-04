@@ -102,6 +102,7 @@ export const createColumns = ({
             accessorFn: (row) => getNotificationCreatedAtTs(row),
             id: 'created_at',
             size: 120,
+            meta: { label: () => t('table.notification.date') },
             header: ({ column }) => (
                 <Button
                     variant="ghost"
@@ -151,6 +152,7 @@ export const createColumns = ({
             accessorKey: 'type',
             size: 180,
             header: () => t('table.notification.type'),
+            meta: { label: () => t('table.notification.type') },
             cell: ({ row }) => {
                 const original = row.original;
                 const typeKey = `view.notification.filters.${original.type}`;
@@ -228,7 +230,8 @@ export const createColumns = ({
         {
             accessorKey: 'senderUsername',
             meta: {
-                class: 'overflow-hidden'
+                class: 'overflow-hidden',
+                label: () => t('table.notification.user')
             },
             size: 150,
             header: () => t('table.notification.user'),
@@ -284,7 +287,8 @@ export const createColumns = ({
         {
             accessorKey: 'groupName',
             meta: {
-                class: 'overflow-hidden'
+                class: 'overflow-hidden',
+                label: () => t('table.notification.group')
             },
             size: 150,
             header: () => t('table.notification.group'),
@@ -390,6 +394,7 @@ export const createColumns = ({
             accessorKey: 'photo',
             size: 80,
             header: () => t('table.notification.photo'),
+            meta: { label: () => t('table.notification.photo') },
             cell: ({ row }) => {
                 const original = row.original;
                 if (original.type === 'boop') {
@@ -458,7 +463,8 @@ export const createColumns = ({
             enableSorting: false,
             meta: {
                 class: 'min-w-0 overflow-hidden',
-                stretch: true
+                stretch: true,
+                label: () => t('table.notification.message')
             },
             minSize: 100,
             cell: ({ row }) => {
@@ -548,7 +554,8 @@ export const createColumns = ({
         {
             id: 'action',
             meta: {
-                class: 'text-right'
+                class: 'text-right',
+                label: () => t('table.notification.action')
             },
             size: 120,
             minSize: 120,

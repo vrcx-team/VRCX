@@ -86,6 +86,25 @@ function filterOrderByColumns(order, columns) {
 
 /**
  *
+ * @param visibility
+ * @param columns
+ */
+function filterVisibilityByColumns(visibility, columns) {
+    if (!visibility || typeof visibility !== 'object') {
+        return {};
+    }
+    const ids = new Set((columns ?? []).map((c) => c?.id).filter(Boolean));
+    const out = {};
+    for (const [key, value] of Object.entries(visibility)) {
+        if (ids.has(key)) {
+            out[key] = value;
+        }
+    }
+    return out;
+}
+
+/**
+ *
  * @param col
  */
 function getColumnId(col) {
@@ -200,6 +219,9 @@ export function useVrcxVueTable(options) {
         enableColumnReorder = true,
         initialColumnOrder,
 
+        enableColumnVisibility = true,
+        initialColumnVisibility,
+
         fillRemainingSpace = true,
         spacerColumnId = '__spacer',
 
@@ -207,6 +229,7 @@ export function useVrcxVueTable(options) {
         persistColumnSizing = true,
         persistSorting = true,
         persistColumnOrder = true,
+        persistColumnVisibility = true,
         persistDebounceMs = 200,
 
         tableOptions = {}
@@ -222,6 +245,7 @@ export function useVrcxVueTable(options) {
     const columnPinning = ref(initialColumnPinning ?? { left: [], right: [] });
     const columnSizing = ref(initialColumnSizing ?? {});
     const columnOrder = ref(initialColumnOrder ?? []);
+    const columnVisibility = ref(initialColumnVisibility ?? {});
 
     const storageKey = persistKey ? `vrcx:table:${persistKey}` : null;
 
@@ -266,6 +290,10 @@ export function useVrcxVueTable(options) {
         Array.isArray(persisted.columnOrder)
     ) {
         columnOrder.value = persisted.columnOrder;
+    }
+
+    if (persisted && persistColumnVisibility && persisted.columnVisibility) {
+        columnVisibility.value = persisted.columnVisibility;
     }
 
     const state = {};
@@ -335,6 +363,13 @@ export function useVrcxVueTable(options) {
         'columnOrder',
         columnOrder,
         'onColumnOrderChange'
+    );
+
+    register(
+        enableColumnVisibility,
+        'columnVisibility',
+        columnVisibility,
+        'onColumnVisibilityChange'
     );
 
     if (enableFiltering) {
@@ -433,6 +468,19 @@ export function useVrcxVueTable(options) {
         );
     }
 
+    if (storageKey && persistColumnVisibility) {
+        watch(
+            columnVisibility,
+            (val) => {
+                const cols = table.getAllLeafColumns?.() ?? [];
+                persistWrite({
+                    columnVisibility: filterVisibilityByColumns(val, cols)
+                });
+            },
+            { deep: true }
+        );
+    }
+
     return {
         table,
         sorting,
@@ -440,6 +488,7 @@ export function useVrcxVueTable(options) {
         expanded,
         columnPinning,
         columnSizing,
-        columnOrder
+        columnOrder,
+        columnVisibility
     };
 }

@@ -198,4 +198,73 @@ describe('useVrcxVueTable persistence', () => {
         );
         expect(stored?.columnOrder).toBeUndefined();
     });
+
+    it('persists columnVisibility to localStorage when visibility changes', async () => {
+        const { columnVisibility } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date', 'status'),
+            persistKey: 'test-col-vis'
+        });
+
+        columnVisibility.value = { name: false, status: true };
+
+        await new Promise((r) => setTimeout(r, 300));
+
+        const stored = JSON.parse(
+            localStorage.getItem('vrcx:table:test-col-vis')
+        );
+        expect(stored).toBeTruthy();
+        expect(stored.columnVisibility).toEqual({ name: false, status: true });
+    });
+
+    it('restores persisted columnVisibility on init', () => {
+        localStorage.setItem(
+            'vrcx:table:test-restore-vis',
+            JSON.stringify({ columnVisibility: { date: false } })
+        );
+
+        const { columnVisibility } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date', 'status'),
+            persistKey: 'test-restore-vis'
+        });
+
+        expect(columnVisibility.value).toEqual({ date: false });
+    });
+
+    it('filters stale columnVisibility entries on persist', async () => {
+        const { columnVisibility } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date'),
+            persistKey: 'test-stale-vis'
+        });
+
+        columnVisibility.value = { removed_col: false, name: false };
+
+        await new Promise((r) => setTimeout(r, 300));
+
+        const stored = JSON.parse(
+            localStorage.getItem('vrcx:table:test-stale-vis')
+        );
+        expect(stored).toBeTruthy();
+        expect(stored.columnVisibility).toEqual({ name: false });
+    });
+
+    it('does not persist columnVisibility when persistColumnVisibility is false', async () => {
+        const { columnVisibility } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date'),
+            persistKey: 'test-no-persist-vis',
+            persistColumnVisibility: false
+        });
+
+        columnVisibility.value = { name: false };
+
+        await new Promise((r) => setTimeout(r, 300));
+
+        const stored = JSON.parse(
+            localStorage.getItem('vrcx:table:test-no-persist-vis')
+        );
+        expect(stored?.columnVisibility).toBeUndefined();
+    });
 });
