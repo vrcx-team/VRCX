@@ -358,9 +358,13 @@ export const useNotificationStore = defineStore('Notification', () => {
                         });
                         AppDebug.errorNoty.show();
                         console.log(text);
-                        notificationRequest.hideNotification({
-                            notificationId: ref.id
-                        });
+                        notificationRequest
+                            .hideNotification({
+                                notificationId: ref.id
+                            })
+                            .then(() => {
+                                handleNotificationHide(ref.id);
+                            });
                         return _args;
                     })
                     .catch((err) => {
@@ -1173,9 +1177,18 @@ export const useNotificationStore = defineStore('Notification', () => {
             })
             .then(({ ok }) => {
                 if (!ok) return;
-                notificationRequest.acceptFriendRequestNotification({
-                    notificationId: row.id
-                });
+                notificationRequest
+                    .acceptFriendRequestNotification({
+                        notificationId: row.id
+                    })
+                    .then((args) => {
+                        handleNotificationAccept(args);
+                    })
+                    .catch((err) => {
+                        if (err && err.message && err.message.includes('404')) {
+                            handleNotificationHide(row.id);
+                        }
+                    });
             })
             .catch(() => {});
     }
@@ -1188,9 +1201,13 @@ export const useNotificationStore = defineStore('Notification', () => {
             );
             handleNotificationHide(row.id);
         } else {
-            notificationRequest.hideNotification({
-                notificationId: row.id
-            });
+            notificationRequest
+                .hideNotification({
+                    notificationId: row.id
+                })
+                .then(() => {
+                    handleNotificationHide(row.id);
+                });
         }
     }
 
@@ -1237,9 +1254,13 @@ export const useNotificationStore = defineStore('Notification', () => {
                             )
                             .then((_args) => {
                                 toast(t('message.invite.sent'));
-                                notificationRequest.hideNotification({
-                                    notificationId: row.id
-                                });
+                                notificationRequest
+                                    .hideNotification({
+                                        notificationId: row.id
+                                    })
+                                    .then(() => {
+                                        handleNotificationHide(row.id);
+                                    });
                                 return _args;
                             });
                     });
@@ -1257,15 +1278,21 @@ export const useNotificationStore = defineStore('Notification', () => {
             }
         }
         const params = { notificationId, responseType, responseData };
-        notificationRequest.sendNotificationResponse(params).then((args) => {
-            console.log('Notification response', args);
-            if (!args.json) return;
-            handleNotificationV2Hide(notificationId);
-            new Noty({
-                type: 'success',
-                text: escapeTag(args.json)
-            }).show();
-        });
+        notificationRequest
+            .sendNotificationResponse(params)
+            .then((args) => {
+                console.log('Notification response', args);
+                if (!args.json) return;
+                handleNotificationV2Hide(notificationId);
+                new Noty({
+                    type: 'success',
+                    text: escapeTag(args.json)
+                }).show();
+            })
+            .catch(() => {
+                handleNotificationV2Hide(notificationId);
+                notificationRequest.hideNotificationV2(notificationId);
+            });
     }
 
     function deleteNotificationLog(row) {
