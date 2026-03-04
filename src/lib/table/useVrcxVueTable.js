@@ -9,6 +9,10 @@ import {
 } from '@tanstack/vue-table';
 import { computed, ref, unref, watch } from 'vue';
 
+/**
+ *
+ * @param str
+ */
 function safeJsonParse(str) {
     if (!str) {
         return null;
@@ -20,6 +24,11 @@ function safeJsonParse(str) {
     }
 }
 
+/**
+ *
+ * @param fn
+ * @param wait
+ */
 function debounce(fn, wait) {
     let t = 0;
     return (...args) => {
@@ -30,6 +39,11 @@ function debounce(fn, wait) {
     };
 }
 
+/**
+ *
+ * @param sizing
+ * @param columns
+ */
 function filterSizingByColumns(sizing, columns) {
     if (!sizing || typeof sizing !== 'object') {
         return {};
@@ -44,6 +58,11 @@ function filterSizingByColumns(sizing, columns) {
     return out;
 }
 
+/**
+ *
+ * @param sorting
+ * @param columns
+ */
 function filterSortingByColumns(sorting, columns) {
     if (!Array.isArray(sorting)) {
         return [];
@@ -52,10 +71,31 @@ function filterSortingByColumns(sorting, columns) {
     return sorting.filter((s) => s && ids.has(s.id));
 }
 
+/**
+ *
+ * @param order
+ * @param columns
+ */
+function filterOrderByColumns(order, columns) {
+    if (!Array.isArray(order)) {
+        return [];
+    }
+    const ids = new Set((columns ?? []).map((c) => c?.id).filter(Boolean));
+    return order.filter((id) => ids.has(id));
+}
+
+/**
+ *
+ * @param col
+ */
 function getColumnId(col) {
     return col?.id ?? col?.accessorKey ?? null;
 }
 
+/**
+ *
+ * @param columns
+ */
 function findStretchColumnId(columns) {
     if (!Array.isArray(columns)) {
         return null;
@@ -68,16 +108,32 @@ function findStretchColumnId(columns) {
     return null;
 }
 
+/**
+ *
+ * @param updaterOrValue
+ * @param targetRef
+ */
 function setRef(updaterOrValue, targetRef) {
     targetRef.value = isFunction(updaterOrValue)
         ? updaterOrValue(targetRef.value)
         : updaterOrValue;
 }
 
+/**
+ *
+ * @param func
+ */
 function resolveMaybeGetter(func) {
     return typeof func === 'function' ? func() : unref(func);
 }
 
+/**
+ *
+ * @param columns
+ * @param enabled
+ * @param spacerId
+ * @param stretchAfterId
+ */
 function withSpacerColumn(columns, enabled, spacerId, stretchAfterId) {
     if (!enabled) {
         return columns;
@@ -116,6 +172,10 @@ function withSpacerColumn(columns, enabled, spacerId, stretchAfterId) {
     return [...columns, spacerColumn];
 }
 
+/**
+ *
+ * @param options
+ */
 export function useVrcxVueTable(options) {
     const {
         getRowId,
@@ -137,12 +197,16 @@ export function useVrcxVueTable(options) {
         columnResizeMode = 'onChange',
         initialColumnSizing,
 
+        enableColumnReorder = true,
+        initialColumnOrder,
+
         fillRemainingSpace = true,
         spacerColumnId = '__spacer',
 
         persistKey,
         persistColumnSizing = true,
         persistSorting = true,
+        persistColumnOrder = true,
         persistDebounceMs = 200,
 
         tableOptions = {}
@@ -157,9 +221,13 @@ export function useVrcxVueTable(options) {
     const pagination = ref(initialPagination ?? { pageIndex: 0, pageSize: 50 });
     const columnPinning = ref(initialColumnPinning ?? { left: [], right: [] });
     const columnSizing = ref(initialColumnSizing ?? {});
+    const columnOrder = ref(initialColumnOrder ?? []);
 
     const storageKey = persistKey ? `vrcx:table:${persistKey}` : null;
 
+    /**
+     *
+     */
     function readPersisted() {
         if (!storageKey) {
             return null;
@@ -167,6 +235,10 @@ export function useVrcxVueTable(options) {
         return safeJsonParse(localStorage.getItem(storageKey));
     }
 
+    /**
+     *
+     * @param patch
+     */
     function writePersisted(patch) {
         if (!storageKey) {
             return;
@@ -188,11 +260,28 @@ export function useVrcxVueTable(options) {
         columnSizing.value = persisted.columnSizing;
     }
 
+    if (
+        persisted &&
+        persistColumnOrder &&
+        Array.isArray(persisted.columnOrder)
+    ) {
+        columnOrder.value = persisted.columnOrder;
+    }
+
     const state = {};
     const handlers = {};
     const rowModels = {};
     const extra = {};
 
+    /**
+     *
+     * @param enabled
+     * @param key
+     * @param r
+     * @param onChangeKey
+     * @param rowModelPart
+     * @param extraPart
+     */
     function register(enabled, key, r, onChangeKey, rowModelPart, extraPart) {
         if (!enabled) {
             return;
@@ -239,6 +328,13 @@ export function useVrcxVueTable(options) {
         'onColumnSizingChange',
         null,
         { enableColumnResizing: true, columnResizeMode }
+    );
+
+    register(
+        enableColumnReorder,
+        'columnOrder',
+        columnOrder,
+        'onColumnOrderChange'
     );
 
     if (enableFiltering) {
@@ -324,12 +420,26 @@ export function useVrcxVueTable(options) {
         );
     }
 
+    if (storageKey && persistColumnOrder) {
+        watch(
+            columnOrder,
+            (val) => {
+                const cols = table.getAllLeafColumns?.() ?? [];
+                persistWrite({
+                    columnOrder: filterOrderByColumns(val, cols)
+                });
+            },
+            { deep: true }
+        );
+    }
+
     return {
         table,
         sorting,
         pagination,
         expanded,
         columnPinning,
-        columnSizing
+        columnSizing,
+        columnOrder
     };
 }

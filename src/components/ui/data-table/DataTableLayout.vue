@@ -12,23 +12,57 @@
                     </colgroup>
                     <TableHeader>
                         <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-                            <TableHead
-                                v-for="header in headerGroup.headers"
-                                :key="header.id"
-                                :class="getHeaderClass(header)"
-                                :style="getPinnedStyle(header.column)">
-                                <template v-if="!header.isPlaceholder">
-                                    <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
-                                    <div
-                                        v-if="header.column.getCanResize?.()"
-                                        class="absolute right-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
-                                        @mousedown.stop="header.getResizeHandler?.()($event)"
-                                        @touchstart.stop="header.getResizeHandler?.()($event)">
+                            <template v-if="enableColumnReorder">
+                                <DragDropProvider @dragEnd="onHeaderDragEnd">
+                                    <template v-for="(header, hIdx) in headerGroup.headers" :key="header.id">
+                                        <SortableTableHead
+                                            v-if="isReorderable(header)"
+                                            :header="header"
+                                            :index="reorderableIndex(headerGroup.headers, hIdx)"
+                                            :header-class="getHeaderClass(header)"
+                                            :pinned-style="getPinnedStyle(header.column)" />
+                                        <TableHead
+                                            v-else
+                                            :class="getHeaderClass(header)"
+                                            :style="getPinnedStyle(header.column)">
+                                            <template v-if="!header.isPlaceholder">
+                                                <FlexRender
+                                                    :render="header.column.columnDef.header"
+                                                    :props="header.getContext()" />
+                                                <div
+                                                    v-if="header.column.getCanResize?.()"
+                                                    class="absolute right-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
+                                                    @mousedown.stop="header.getResizeHandler?.()($event)"
+                                                    @touchstart.stop="header.getResizeHandler?.()($event)">
+                                                    <div
+                                                        class="absolute right-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
+                                                </div>
+                                            </template>
+                                        </TableHead>
+                                    </template>
+                                </DragDropProvider>
+                            </template>
+                            <template v-else>
+                                <TableHead
+                                    v-for="header in headerGroup.headers"
+                                    :key="header.id"
+                                    :class="getHeaderClass(header)"
+                                    :style="getPinnedStyle(header.column)">
+                                    <template v-if="!header.isPlaceholder">
+                                        <FlexRender
+                                            :render="header.column.columnDef.header"
+                                            :props="header.getContext()" />
                                         <div
-                                            class="absolute right-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
-                                    </div>
-                                </template>
-                            </TableHead>
+                                            v-if="header.column.getCanResize?.()"
+                                            class="absolute right-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
+                                            @mousedown.stop="header.getResizeHandler?.()($event)"
+                                            @touchstart.stop="header.getResizeHandler?.()($event)">
+                                            <div
+                                                class="absolute right-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
+                                        </div>
+                                    </template>
+                                </TableHead>
+                            </template>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -144,8 +178,10 @@
 
 <script setup>
     import { computed, nextTick, ref, watch } from 'vue';
+    import { DragDropProvider } from '@dnd-kit/vue';
     import { FlexRender } from '@tanstack/vue-table';
     import { Spinner } from '@/components/ui/spinner';
+    import { isSortable } from '@dnd-kit/vue/sortable';
     import { storeToRefs } from 'pinia';
     import { useAppearanceSettingsStore } from '@/stores/';
     import { useI18n } from 'vue-i18n';
@@ -163,6 +199,7 @@
     import { ContextMenu, ContextMenuTrigger } from '../context-menu';
 
     import DataTableEmpty from './DataTableEmpty.vue';
+    import SortableTableHead from './SortableTableHead.vue';
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { isDataTableStriped } = storeToRefs(appearanceSettingsStore);
@@ -215,6 +252,10 @@
         rowClass: {
             type: Function,
             default: null
+        },
+        enableColumnReorder: {
+            type: Boolean,
+            default: true
         }
     });
 
@@ -287,6 +328,65 @@
 
     const isStretch = (col) => {
         return !!col?.columnDef?.meta?.stretch;
+    };
+
+    const isReorderable = (header) => {
+        const col = header?.column;
+        if (!col) return false;
+        if (isSpacer(col)) return false;
+        if (getPinnedState(col)) return false;
+        if (col.columnDef?.meta?.disableReorder) return false;
+        return true;
+    };
+
+    const reorderableIndex = (headers, actualIndex) => {
+        let sortableIdx = 0;
+        for (let i = 0; i < actualIndex; i++) {
+            if (isReorderable(headers[i])) {
+                sortableIdx++;
+            }
+        }
+        return sortableIdx;
+    };
+
+    const onHeaderDragEnd = (event) => {
+        if (event.canceled) return;
+        const { source } = event.operation;
+        if (!isSortable(source)) return;
+
+        const { initialIndex, index } = source;
+        if (initialIndex === index) return;
+
+        const allColumns = props.table.getVisibleLeafColumns?.() ?? [];
+        const reorderableIds = allColumns
+            .filter((col) => {
+                if (isSpacer(col)) return false;
+                if (getPinnedState(col)) return false;
+                if (col.columnDef?.meta?.disableReorder) return false;
+                return true;
+            })
+            .map((col) => col.id);
+
+        const newOrder = [...reorderableIds];
+        const [moved] = newOrder.splice(initialIndex, 1);
+        newOrder.splice(index, 0, moved);
+
+        const fixedBefore = [];
+        const fixedAfter = [];
+        for (const col of allColumns) {
+            if (!reorderableIds.includes(col.id)) {
+                const colIdx = allColumns.indexOf(col);
+                const firstReorderableIdx = allColumns.findIndex((c) => reorderableIds.includes(c.id));
+                if (colIdx < firstReorderableIdx || firstReorderableIdx === -1) {
+                    fixedBefore.push(col.id);
+                } else {
+                    fixedAfter.push(col.id);
+                }
+            }
+        }
+
+        const fullOrder = [...fixedBefore, ...newOrder, ...fixedAfter];
+        props.table.setColumnOrder(fullOrder);
     };
 
     const getColStyle = (col) => {

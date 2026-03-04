@@ -2,6 +2,10 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { useVrcxVueTable } from '../useVrcxVueTable';
 
+/**
+ *
+ * @param {...any} ids
+ */
 function makeColumns(...ids) {
     return ids.map((id) => ({ id, header: id, accessorKey: id }));
 }
@@ -122,5 +126,76 @@ describe('useVrcxVueTable persistence', () => {
         });
 
         expect(sorting.value).toEqual([{ id: 'date', desc: true }]);
+    });
+
+    it('persists columnOrder to localStorage when order changes', async () => {
+        const { columnOrder } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date', 'status'),
+            persistKey: 'test-col-order'
+        });
+
+        columnOrder.value = ['date', 'name', 'status'];
+
+        await new Promise((r) => setTimeout(r, 300));
+
+        const stored = JSON.parse(
+            localStorage.getItem('vrcx:table:test-col-order')
+        );
+        expect(stored).toBeTruthy();
+        expect(stored.columnOrder).toEqual(['date', 'name', 'status']);
+    });
+
+    it('restores persisted columnOrder on init', () => {
+        localStorage.setItem(
+            'vrcx:table:test-restore-order',
+            JSON.stringify({ columnOrder: ['status', 'name', 'date'] })
+        );
+
+        const { columnOrder } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date', 'status'),
+            persistKey: 'test-restore-order'
+        });
+
+        expect(columnOrder.value).toEqual(['status', 'name', 'date']);
+    });
+
+    it('filters stale columnOrder entries on persist', async () => {
+        const { columnOrder } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date'),
+            persistKey: 'test-stale-order'
+        });
+
+        // Include a column ID that doesn't exist
+        columnOrder.value = ['removed_col', 'date', 'name'];
+
+        await new Promise((r) => setTimeout(r, 300));
+
+        const stored = JSON.parse(
+            localStorage.getItem('vrcx:table:test-stale-order')
+        );
+        expect(stored).toBeTruthy();
+        // 'removed_col' should be filtered out
+        expect(stored.columnOrder).toEqual(['date', 'name']);
+    });
+
+    it('does not persist columnOrder when persistColumnOrder is false', async () => {
+        const { columnOrder } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date'),
+            persistKey: 'test-no-persist-order',
+            persistColumnOrder: false
+        });
+
+        columnOrder.value = ['date', 'name'];
+
+        await new Promise((r) => setTimeout(r, 300));
+
+        const stored = JSON.parse(
+            localStorage.getItem('vrcx:table:test-no-persist-order')
+        );
+        expect(stored?.columnOrder).toBeUndefined();
     });
 });
