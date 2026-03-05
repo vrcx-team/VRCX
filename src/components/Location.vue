@@ -35,6 +35,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import { getGroupName, getWorldName, parseLocation, resolveRegion, translateAccessType } from '../shared/utils';
     import {
         useAppearanceSettingsStore,
         useGroupStore,
@@ -42,7 +43,6 @@
         useSearchStore,
         useWorldStore
     } from '../stores';
-    import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
     import { Spinner } from './ui/spinner';
     import { accessTypeLocaleKeyMap } from '../shared/constants';
 
@@ -118,6 +118,9 @@
         }
     );
 
+    /**
+     *
+     */
     function currentInstanceId() {
         if (typeof props.traveling !== 'undefined' && props.location === 'traveling') {
             return props.traveling;
@@ -125,6 +128,9 @@
         return props.location;
     }
 
+    /**
+     *
+     */
     function resetState() {
         text.value = '';
         region.value = '';
@@ -135,6 +141,9 @@
         instanceName.value = '';
     }
 
+    /**
+     *
+     */
     function parse() {
         if (isDisposed) {
             return;
@@ -159,6 +168,10 @@
         strict.value = L.strict;
     }
 
+    /**
+     *
+     * @param L
+     */
     function applyInstanceRef(L) {
         const instanceRef = cachedInstances.get(L.tag);
         if (typeof instanceRef === 'undefined') {
@@ -173,6 +186,11 @@
         }
     }
 
+    /**
+     *
+     * @param L
+     * @param instanceId
+     */
     function updateGroupName(L, instanceId) {
         if (props.grouphint) {
             groupName.value = props.grouphint;
@@ -189,18 +207,28 @@
         });
     }
 
+    /**
+     *
+     * @param L
+     */
     function updateRegion(L) {
-        region.value = '';
-        if (!L.isOffline && !L.isPrivate && !L.isTraveling) {
-            region.value = L.region;
-            if (!L.region && L.instanceId) {
-                region.value = 'us';
-            }
-        }
+        region.value = resolveRegion(L);
     }
 
+    /**
+     *
+     * @param accessTypeName
+     */
+    function getAccessTypeLabel(accessTypeName) {
+        return translateAccessType(accessTypeName, t, accessTypeLocaleKeyMap);
+    }
+
+    /**
+     *
+     * @param L
+     */
     function setText(L) {
-        const accessTypeLabel = translateAccessType(L.accessTypeName);
+        const accessTypeLabel = getAccessTypeLabel(L.accessTypeName);
 
         if (L.isOffline) {
             text.value = t('location.offline');
@@ -225,7 +253,7 @@
                 getWorldName(L.worldId).then((name) => {
                     if (!isDisposed && name && currentInstanceId() === L.tag) {
                         if (L.instanceId) {
-                            text.value = `${name} · ${translateAccessType(L.accessTypeName)}`;
+                            text.value = `${name} · ${getAccessTypeLabel(L.accessTypeName)}`;
                         } else {
                             text.value = name;
                         }
@@ -239,18 +267,9 @@
         }
     }
 
-    function translateAccessType(accessTypeNameRaw) {
-        const key = accessTypeLocaleKeyMap[accessTypeNameRaw];
-        if (!key) {
-            return accessTypeNameRaw;
-        }
-        if (accessTypeNameRaw === 'groupPublic' || accessTypeNameRaw === 'groupPlus') {
-            const groupKey = accessTypeLocaleKeyMap['group'];
-            return t(groupKey) + ' ' + t(key);
-        }
-        return t(key);
-    }
-
+    /**
+     *
+     */
     function handleShowWorldDialog() {
         if (props.link) {
             let instanceId = currentInstanceId();
@@ -266,6 +285,9 @@
         }
     }
 
+    /**
+     *
+     */
     function handleShowGroupDialog() {
         let location = currentInstanceId();
         if (!location) {

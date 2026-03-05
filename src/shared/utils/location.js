@@ -1,9 +1,17 @@
 import { isRealInstance } from './instance.js';
 import { useLocationStore } from '../../stores/location.js';
 
-// Re-export pure parsing functions from the standalone module
-export { parseLocation, displayLocation } from './locationParser.js';
+export {
+    parseLocation,
+    displayLocation,
+    resolveRegion,
+    translateAccessType
+} from './locationParser.js';
 
+/**
+ *
+ * @param friendsArr
+ */
 function getFriendsLocations(friendsArr) {
     const locationStore = useLocationStore();
     // prevent the instance title display as "Traveling".

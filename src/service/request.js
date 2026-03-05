@@ -23,6 +23,64 @@ export let failedGetRequests = new Map();
 const t = i18n.global.t;
 
 /**
+ * @param {string} endpoint
+ * @param {object} [options]
+ * @returns {object} init object ready for webApiService.execute
+ */
+export function buildRequestInit(endpoint, options) {
+    const init = {
+        url: `${AppDebug.endpointDomain}/${endpoint}`,
+        method: 'GET',
+        ...options
+    };
+    const { params } = init;
+    if (init.method === 'GET') {
+        // transform body to url
+        if (params === Object(params)) {
+            const url = new URL(init.url);
+            const { searchParams } = url;
+            for (const key in params) {
+                searchParams.set(key, params[key]);
+            }
+            init.url = url.toString();
+        }
+    } else if (
+        init.uploadImage ||
+        init.uploadFilePUT ||
+        init.uploadImageLegacy
+    ) {
+        // nothing — upload requests handle their own body
+    } else {
+        init.headers = {
+            'Content-Type': 'application/json;charset=utf-8',
+            ...init.headers
+        };
+        init.body = params === Object(params) ? JSON.stringify(params) : '{}';
+    }
+    return init;
+}
+
+/**
+ * Parses a raw response: JSON-decodes response.data and detects API-level errors.
+ * @param {{status: number, data?: string}} response
+ * @returns {{status: number, data?: any, hasApiError?: boolean, parseError?: boolean}}
+ */
+export function parseResponse(response) {
+    if (!response.data) {
+        return response;
+    }
+    try {
+        response.data = JSON.parse(response.data);
+        if (response.data?.error) {
+            return { ...response, hasApiError: true };
+        }
+        return response;
+    } catch {
+        return { ...response, parseError: true };
+    }
+}
+
+/**
  * @template T
  * @param {string} endpoint
  * @param {RequestInit & { params?: any } & {customMsg?: string}} [options]
@@ -42,11 +100,7 @@ export function request(endpoint, options) {
         throw `API request blocked while logged out: ${endpoint}`;
     }
     let req;
-    const init = {
-        url: `${AppDebug.endpointDomain}/${endpoint}`,
-        method: 'GET',
-        ...options
-    };
+    const init = buildRequestInit(endpoint, options);
     const { params } = init;
     if (init.method === 'GET') {
         // don't retry recent 404/403
@@ -62,15 +116,6 @@ export function request(endpoint, options) {
             }
             failedGetRequests.delete(endpoint);
         }
-        // transform body to url
-        if (params === Object(params)) {
-            const url = new URL(init.url);
-            const { searchParams } = url;
-            for (const key in params) {
-                searchParams.set(key, params[key]);
-            }
-            init.url = url.toString();
-        }
         // merge requests
         req = pendingGetRequests.get(init.url);
         if (typeof req !== 'undefined') {
@@ -80,18 +125,6 @@ export function request(endpoint, options) {
             }
             pendingGetRequests.delete(init.url);
         }
-    } else if (
-        init.uploadImage ||
-        init.uploadFilePUT ||
-        init.uploadImageLegacy
-    ) {
-        // nothing
-    } else {
-        init.headers = {
-            'Content-Type': 'application/json;charset=utf-8',
-            ...init.headers
-        };
-        init.body = params === Object(params) ? JSON.stringify(params) : '{}';
     }
     req = webApiService
         .execute(init)
@@ -106,47 +139,43 @@ export function request(endpoint, options) {
             ) {
                 throw `API request blocked while logged out: ${endpoint}`;
             }
-            if (!response.data) {
-                if (AppDebug.debugWebRequests) {
-                    console.log(init, 'no data', response);
+            const parsed = parseResponse(response);
+            if (AppDebug.debugWebRequests) {
+                if (!parsed.data) {
+                    console.log(init, 'no data', parsed);
+                } else {
+                    console.log(init, 'parsed data', parsed.data);
                 }
-                return response;
             }
-            try {
-                response.data = JSON.parse(response.data);
-                if (AppDebug.debugWebRequests) {
-                    console.log(init, 'parsed data', response.data);
-                }
-                if (response.data?.error) {
-                    $throw(
-                        response.data.error.status_code || 0,
-                        response.data.error.message,
-                        endpoint
-                    );
-                }
-                return response;
-            } catch (e) {
-                console.error(e);
-            }
-            if (response.status === 200) {
+            if (parsed.hasApiError) {
                 $throw(
-                    0,
-                    t('api.error.message.invalid_json_response'),
+                    parsed.data.error.status_code || 0,
+                    parsed.data.error.message,
                     endpoint
                 );
             }
-            if (
-                response.status === 429 &&
-                init.url.endsWith('/instances/groups')
-            ) {
-                updateLoopStore.nextGroupInstanceRefresh = 120; // 1min
-                $throw(429, t('api.status_code.429'), endpoint);
+            if (parsed.parseError) {
+                console.error('JSON parse error for', endpoint);
+                if (parsed.status === 200) {
+                    $throw(
+                        0,
+                        t('api.error.message.invalid_json_response'),
+                        endpoint
+                    );
+                }
+                if (
+                    parsed.status === 429 &&
+                    init.url.endsWith('/instances/groups')
+                ) {
+                    updateLoopStore.nextGroupInstanceRefresh = 120; // 1min
+                    $throw(429, t('api.status_code.429'), endpoint);
+                }
+                if (parsed.status === 504 || parsed.status === 502) {
+                    // ignore expected API errors
+                    $throw(parsed.status, parsed.data || '', endpoint);
+                }
             }
-            if (response.status === 504 || response.status === 502) {
-                // ignore expected API errors
-                $throw(response.status, response.data || '', endpoint);
-            }
-            return response;
+            return parsed;
         })
         .then(({ data, status }) => {
             if (status === 200) {
@@ -260,6 +289,39 @@ export function request(endpoint, options) {
 
 /**
  * @param {number} code
+ * @param {string} [endpoint]
+ * @returns {boolean}
+ */
+export function shouldIgnoreError(code, endpoint) {
+    if (
+        (code === 404 || code === -1) &&
+        typeof endpoint === 'string' &&
+        endpoint.split('/').length === 2 &&
+        (endpoint.startsWith('users/') ||
+            endpoint.startsWith('worlds/') ||
+            endpoint.startsWith('avatars/') ||
+            endpoint.startsWith('groups/') ||
+            endpoint.startsWith('file/'))
+    ) {
+        return true;
+    }
+    if (
+        (code === 403 || code === 404 || code === -1) &&
+        endpoint?.startsWith('instances/')
+    ) {
+        return true;
+    }
+    if (endpoint?.startsWith('analysis/')) {
+        return true;
+    }
+    if (endpoint?.endsWith('/mutuals') && (code === 403 || code === -1)) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * @param {number} code
  * @param {string|object} [error]
  * @param {string} [endpoint]
  */
@@ -284,32 +346,12 @@ export function $throw(code, error, endpoint) {
             `${t('api.error.message.endpoint')}: "${typeof endpoint === 'string' ? endpoint : JSON.stringify(endpoint)}"`
         );
     }
-    let ignoreError = false;
+    const ignoreError = shouldIgnoreError(code, endpoint);
     if (
-        (code === 404 || code === -1) &&
-        typeof endpoint === 'string' &&
-        endpoint.split('/').length === 2 &&
-        (endpoint.startsWith('users/') ||
-            endpoint.startsWith('worlds/') ||
-            endpoint.startsWith('avatars/') ||
-            endpoint.startsWith('groups/') ||
-            endpoint.startsWith('file/'))
+        (code === 403 || code === 404 || code === -1) &&
+        endpoint?.includes('/mutuals/friends')
     ) {
-        ignoreError = true;
-    }
-    if (code === 403 || code === 404 || code === -1) {
-        if (endpoint?.startsWith('instances/')) {
-            ignoreError = true;
-        }
-        if (endpoint?.includes('/mutuals/friends')) {
-            message[1] = `${t('api.error.message.error_message')}: "${t('api.error.message.unavailable')}"`;
-        }
-    }
-    if (endpoint?.startsWith('analysis/')) {
-        ignoreError = true;
-    }
-    if (endpoint?.endsWith('/mutuals') && (code === 403 || code === -1)) {
-        ignoreError = true;
+        message[1] = `${t('api.error.message.error_message')}: "${t('api.error.message.unavailable')}"`;
     }
     const text = message.map((s) => escapeTag(s)).join('\n');
 
@@ -327,18 +369,16 @@ export function $throw(code, error, endpoint) {
 
 /**
  * Processes data in bulk by making paginated requests until all data is fetched or limits are reached.
- *
  * @async
  * @function processBulk
  * @param {object} options - Configuration options for bulk processing
  * @param {function} options.fn - The function to call for each batch request. Must return a result with a 'json' property containing an array
- * @param {object} [options.params={}] - Parameters to pass to the function. Will be modified to include pagination
- * @param {number} [options.N=-1] - Maximum number of items to fetch. -1 for unlimited, 0 for fetch until page size not met
- * @param {string} [options.limitParam='n'] - The parameter name used for page size in the request
+ * @param {object} [options.params] - Parameters to pass to the function. Will be modified to include pagination
+ * @param {number} [options.N] - Maximum number of items to fetch. -1 for unlimited, 0 for fetch until page size not met
+ * @param {string} [options.limitParam] - The parameter name used for page size in the request
  * @param {function} [options.handle] - Callback function to handle each batch result
  * @param {function} [options.done] - Callback function called when processing is complete. Receives boolean indicating success
  * @returns {Promise<void>} Promise that resolves when bulk processing is complete
- *
  * @example
  * await processBulk({
  *   fn: fetchUsers,

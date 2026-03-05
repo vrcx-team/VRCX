@@ -62,6 +62,7 @@
     import { storeToRefs } from 'pinia';
     import { useVirtualizer } from '@tanstack/vue-virtual';
 
+    import { buildGroupHeaderRow, buildGroupItemRow, estimateGroupRowSize, getGroupId } from '../groupsSidebarUtils';
     import { useAppearanceSettingsStore, useGroupStore } from '../../../stores';
     import { convertFileUrlToImageUrl } from '../../../shared/utils';
 
@@ -98,50 +99,27 @@
         return Array.from(groupMap.values()).sort(sortGroupInstancesByInGame);
     });
 
-    const buildGroupHeaderRow = (group, index) => ({
-        type: 'group-header',
-        key: `group-header:${getGroupId(group)}`,
-        groupId: getGroupId(group),
-        label: group[0]?.group?.name ?? '',
-        count: group.length,
-        isCollapsed: Boolean(groupInstancesCfg.value[getGroupId(group)]?.isCollapsed),
-        headerPaddingTop: index === 0 ? '0px' : '10px'
-    });
+    const buildGroupHeaderRowLocal = (group, index) => buildGroupHeaderRow(group, index, groupInstancesCfg.value);
 
-    const buildGroupItemRow = (ref, index, groupId) => ({
-        type: 'group-item',
-        key: `group-item:${groupId}:${ref?.instance?.id ?? index}`,
-        ownerId: ref?.instance?.ownerId ?? '',
-        iconUrl: ref?.group?.iconUrl ?? '',
-        name: ref?.group?.name ?? '',
-        userCount: ref?.instance?.userCount ?? 0,
-        capacity: ref?.instance?.capacity ?? 0,
-        location: ref?.instance?.location ?? '',
-        isVisible: Boolean(isAgeGatedInstancesVisible.value || !(ref?.ageGate || ref?.location?.includes('~ageGate')))
-    });
+    const buildGroupItemRowLocal = (ref, index, groupId) =>
+        buildGroupItemRow(ref, index, groupId, isAgeGatedInstancesVisible.value);
 
     const virtualRows = computed(() => {
         const rows = [];
         groupedGroupInstances.value.forEach((group, index) => {
             if (!group?.length) return;
             const groupId = getGroupId(group);
-            rows.push(buildGroupHeaderRow(group, index));
+            rows.push(buildGroupHeaderRowLocal(group, index));
             if (!groupInstancesCfg.value[groupId]?.isCollapsed) {
                 group.forEach((ref, idx) => {
-                    rows.push(buildGroupItemRow(ref, idx, groupId));
+                    rows.push(buildGroupItemRowLocal(ref, idx, groupId));
                 });
             }
         });
         return rows;
     });
 
-    const estimateRowSize = (row) => {
-        if (!row) return 44;
-        if (row.type === 'group-header') {
-            return 30;
-        }
-        return 52;
-    };
+    const estimateRowSize = (row) => estimateGroupRowSize(row);
 
     const virtualizer = useVirtualizer(
         computed(() => ({
@@ -170,16 +148,20 @@
         transform: `translateY(${item.virtualItem.start}px)`
     });
 
+    /**
+     *
+     * @param url
+     */
     function getSmallGroupIconUrl(url) {
         return convertFileUrlToImageUrl(url);
     }
 
+    /**
+     *
+     * @param groupId
+     */
     function toggleGroupSidebarCollapse(groupId) {
         groupInstancesCfg.value[groupId].isCollapsed = !groupInstancesCfg.value[groupId].isCollapsed;
-    }
-
-    function getGroupId(group) {
-        return group[0]?.group?.groupId || '';
     }
 
     onMounted(() => {

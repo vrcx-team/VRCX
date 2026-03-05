@@ -257,6 +257,7 @@
         useGroupStore,
         useNotificationStore
     } from '../../stores';
+    import { normalizeFavoriteGroupsChange, resolveFavoriteGroups } from './sidebarSettingsUtils';
     import { useGlobalSearchStore } from '../../stores/globalSearch';
 
     import FriendsSidebar from './components/FriendsSidebar.vue';
@@ -317,30 +318,16 @@
         return keys;
     });
 
-    const resolvedSidebarFavoriteGroups = computed(() => {
-        if (sidebarFavoriteGroups.value.length === 0) {
-            return allFavoriteGroupKeys.value;
-        }
-        return sidebarFavoriteGroups.value;
-    });
+    const resolvedSidebarFavoriteGroups = computed(() =>
+        resolveFavoriteGroups(sidebarFavoriteGroups.value, allFavoriteGroupKeys.value)
+    );
 
     /**
      *
      * @param value
      */
     function handleFavoriteGroupsChange(value) {
-        if (!value || value.length === 0) {
-            // Deselected all → reset to all (store as empty)
-            setSidebarFavoriteGroups([]);
-            return;
-        }
-        // If all groups are selected, store as empty (= all)
-        const allKeys = allFavoriteGroupKeys.value;
-        if (value.length >= allKeys.length && allKeys.every((k) => value.includes(k))) {
-            setSidebarFavoriteGroups([]);
-            return;
-        }
-        setSidebarFavoriteGroups(value);
+        setSidebarFavoriteGroups(normalizeFavoriteGroupsChange(value, allFavoriteGroupKeys.value));
     }
 
     const selectedFavGroupLabel = computed(() => {

@@ -76,6 +76,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useFavoriteStore, useWorldStore } from '../../../stores';
+    import { formatCsvRow } from '../../../shared/utils';
 
     const props = defineProps({
         worldExportDialogVisible: {
@@ -117,6 +118,11 @@
         { label: 'Thumbnail', value: 'thumbnailImageUrl' }
     ]);
 
+    /**
+     *
+     * @param label
+     * @param checked
+     */
     function toggleWorldExportOption(label, checked) {
         const selection = exportSelectedOptions.value;
         const index = selection.indexOf(label);
@@ -146,6 +152,9 @@
         }
     );
 
+    /**
+     *
+     */
     function showWorldExportDialog() {
         worldExportFavoriteGroup.value = null;
         worldExportLocalFavoriteGroup.value = null;
@@ -154,6 +163,10 @@
         updateWorldExportDialog();
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleWorldExportGroupSelect(value) {
         worldExportFavoriteGroupSelection.value = value;
         if (value === WORLD_EXPORT_ALL_VALUE) {
@@ -164,6 +177,10 @@
         selectWorldExportGroup(group);
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleWorldExportLocalGroupSelect(value) {
         worldExportLocalFavoriteGroupSelection.value = value;
         if (value === WORLD_EXPORT_NONE_VALUE) {
@@ -173,6 +190,10 @@
         selectWorldExportLocalGroup(value);
     }
 
+    /**
+     *
+     * @param event
+     */
     function handleCopyWorldExportData(event) {
         if (event.target.tagName === 'TEXTAREA') {
             event.target.select();
@@ -188,25 +209,13 @@
             });
     }
 
+    /**
+     *
+     */
     function updateWorldExportDialog() {
-        const formatter = function (str) {
-            if (/[\x00-\x1f,"]/.test(str) === true) {
-                return `"${str.replace(/"/g, '""')}"`;
-            }
-            return str;
-        };
-
         const propsForQuery = exportSelectOptions.value
             .filter((option) => exportSelectedOptions.value.includes(option.label))
             .map((option) => option.value);
-
-        function resText(ref) {
-            let resArr = [];
-            propsForQuery.forEach((e) => {
-                resArr.push(formatter(ref?.[e]));
-            });
-            return resArr.join(',');
-        }
 
         const lines = [exportSelectedOptions.value.join(',')];
 
@@ -215,7 +224,7 @@
                 if (worldExportFavoriteGroup.value === group) {
                     favoriteWorlds.value.forEach((ref) => {
                         if (group.key === ref.groupKey) {
-                            lines.push(resText(ref.ref));
+                            lines.push(formatCsvRow(ref.ref, propsForQuery));
                         }
                     });
                 }
@@ -227,24 +236,28 @@
             }
             for (let i = 0; i < favoriteGroup.length; ++i) {
                 const ref = favoriteGroup[i];
-                lines.push(resText(ref));
+                lines.push(formatCsvRow(ref, propsForQuery));
             }
         } else {
             // export all
             favoriteWorlds.value.forEach((ref) => {
-                lines.push(resText(ref.ref));
+                lines.push(formatCsvRow(ref.ref, propsForQuery));
             });
             for (let i = 0; i < localWorldFavoritesList.length; ++i) {
                 const worldId = localWorldFavoritesList[i];
                 const ref = cachedWorlds.get(worldId);
                 if (typeof ref !== 'undefined') {
-                    lines.push(resText(ref));
+                    lines.push(formatCsvRow(ref, propsForQuery));
                 }
             }
         }
         worldExportContent.value = lines.reverse().join('\n');
     }
 
+    /**
+     *
+     * @param group
+     */
     function selectWorldExportGroup(group) {
         worldExportFavoriteGroup.value = group;
         worldExportLocalFavoriteGroup.value = null;
@@ -253,6 +266,10 @@
         updateWorldExportDialog();
     }
 
+    /**
+     *
+     * @param group
+     */
     function selectWorldExportLocalGroup(group) {
         worldExportLocalFavoriteGroup.value = group;
         worldExportFavoriteGroup.value = null;

@@ -152,6 +152,7 @@
         useLocationStore,
         useUserStore
     } from '../../../stores';
+    import { buildFriendRow, buildInstanceHeaderRow, buildToggleRow, estimateRowSize } from '../friendsSidebarUtils';
     import { getFriendsSortFunction, isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
     import { getFriendsLocations } from '../../../shared/utils/location.js';
     import { userRequest } from '../../../api';
@@ -214,6 +215,10 @@
 
     const shouldHideSameInstance = computed(() => isSidebarGroupByInstance.value && isHideFriendsInSameInstance.value);
 
+    /**
+     *
+     * @param list
+     */
     function excludeSameInstance(list) {
         if (!shouldHideSameInstance.value) {
             return list;
@@ -321,41 +326,6 @@
             if (idxB !== -1) return 1;
             return (a[0]?.key ?? '').localeCompare(b[0]?.key ?? '');
         });
-    });
-
-    const buildToggleRow = ({
-        key,
-        label,
-        count = null,
-        expanded = true,
-        headerPadding = null,
-        paddingBottom = null,
-        onClick = null
-    }) => ({
-        type: 'toggle-header',
-        key,
-        label,
-        count,
-        expanded,
-        headerPadding,
-        paddingBottom,
-        onClick
-    });
-    const buildFriendRow = (friend, key, options = {}) => ({
-        type: 'friend-item',
-        key,
-        friend,
-        isGroupByInstance: options.isGroupByInstance,
-        paddingBottom: options.paddingBottom,
-        itemStyle: options.itemStyle
-    });
-
-    const buildInstanceHeaderRow = (location, count, key) => ({
-        type: 'instance-header',
-        key,
-        location,
-        count,
-        paddingBottom: 4
     });
 
     const virtualRows = computed(() => {
@@ -521,22 +491,6 @@
         return rows;
     });
 
-    const estimateRowSize = (row) => {
-        if (!row) {
-            return 44;
-        }
-        if (row.type === 'toggle-header') {
-            return 28 + (row.paddingBottom || 0);
-        }
-        if (row.type === 'vip-subheader') {
-            return 24 + (row.paddingBottom || 0);
-        }
-        if (row.type === 'instance-header') {
-            return 26 + (row.paddingBottom || 0);
-        }
-        return 52 + (row.paddingBottom || 0);
-    };
-
     const virtualizer = useVirtualizer(
         computed(() => ({
             count: virtualRows.value.length,
@@ -568,6 +522,9 @@
         };
     };
 
+    /**
+     *
+     */
     function saveFriendsGroupStates() {
         configRepository.setBool('VRCX_isFriendsGroupMe', isFriendsGroupMe.value);
         configRepository.setBool('VRCX_isFriendsGroupFavorites', isVIPFriends.value);
@@ -576,6 +533,9 @@
         configRepository.setBool('VRCX_isFriendsGroupOffline', isOfflineFriends.value);
     }
 
+    /**
+     *
+     */
     async function loadFriendsGroupStates() {
         isFriendsGroupMe.value = await configRepository.getBool('VRCX_isFriendsGroupMe', true);
         isVIPFriends.value = await configRepository.getBool('VRCX_isFriendsGroupFavorites', true);
@@ -588,31 +548,49 @@
         );
     }
 
+    /**
+     *
+     */
     function toggleSwitchGroupByInstanceCollapsed() {
         isSidebarGroupByInstanceCollapsed.value = !isSidebarGroupByInstanceCollapsed.value;
         configRepository.setBool('VRCX_sidebarGroupByInstanceCollapsed', isSidebarGroupByInstanceCollapsed.value);
     }
 
+    /**
+     *
+     */
     function toggleFriendsGroupMe() {
         isFriendsGroupMe.value = !isFriendsGroupMe.value;
         saveFriendsGroupStates();
     }
 
+    /**
+     *
+     */
     function toggleVIPFriends() {
         isVIPFriends.value = !isVIPFriends.value;
         saveFriendsGroupStates();
     }
 
+    /**
+     *
+     */
     function toggleOnlineFriends() {
         isOnlineFriends.value = !isOnlineFriends.value;
         saveFriendsGroupStates();
     }
 
+    /**
+     *
+     */
     function toggleActiveFriends() {
         isActiveFriends.value = !isActiveFriends.value;
         saveFriendsGroupStates();
     }
 
+    /**
+     *
+     */
     function toggleOfflineFriends() {
         isOfflineFriends.value = !isOfflineFriends.value;
         saveFriendsGroupStates();
@@ -660,12 +638,20 @@
         return history.slice(0, 10);
     });
 
+    /**
+     *
+     * @param value
+     */
     function changeStatus(value) {
         userRequest.saveCurrentUser({ status: value }).then(() => {
             toast.success('Status updated');
         });
     }
 
+    /**
+     *
+     * @param status
+     */
     function setStatusFromHistory(status) {
         userRequest.saveCurrentUser({ statusDescription: status }).then(() => {
             toast.success('Status updated');

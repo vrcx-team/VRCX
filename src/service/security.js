@@ -11,6 +11,10 @@ const hexToUint8Array = (hexStr) => {
 const uint8ArrayToHex = (arr) =>
     arr.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
 
+/**
+ *
+ * @param key
+ */
 function stdAESKey(key) {
     const tKey = new TextEncoder().encode(key);
     let sk = tKey;
@@ -22,6 +26,11 @@ function stdAESKey(key) {
     return sk.slice(0, 32);
 }
 
+/**
+ *
+ * @param plaintext
+ * @param key
+ */
 async function encrypt(plaintext, key) {
     let iv = window.crypto.getRandomValues(new Uint8Array(12));
     let sharedKey = await window.crypto.subtle.importKey(
@@ -43,6 +52,11 @@ async function encrypt(plaintext, key) {
     return uint8ArrayToHex(encrypted);
 }
 
+/**
+ *
+ * @param ciphertext
+ * @param key
+ */
 async function decrypt(ciphertext, key) {
     let text = hexToUint8Array(ciphertext);
     if (!text) return '';
@@ -65,3 +79,5 @@ export default {
     decrypt,
     encrypt
 };
+
+export { hexToUint8Array, uint8ArrayToHex, stdAESKey };

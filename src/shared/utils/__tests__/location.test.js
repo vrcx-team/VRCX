@@ -1,4 +1,10 @@
-import { displayLocation, parseLocation } from '../locationParser';
+import {
+    displayLocation,
+    parseLocation,
+    resolveRegion,
+    translateAccessType
+} from '../locationParser';
+import { accessTypeLocaleKeyMap } from '../../constants';
 
 describe('Location Utils', () => {
     describe('parseLocation', () => {
@@ -406,6 +412,100 @@ describe('Location Utils', () => {
                     expect(result.worldId).toBeDefined();
                 }).not.toThrow();
             });
+        });
+    });
+
+    describe('resolveRegion', () => {
+        test('returns empty string for offline', () => {
+            const L = parseLocation('offline');
+            expect(resolveRegion(L)).toBe('');
+        });
+
+        test('returns empty string for private', () => {
+            const L = parseLocation('private');
+            expect(resolveRegion(L)).toBe('');
+        });
+
+        test('returns empty string for traveling', () => {
+            const L = parseLocation('traveling');
+            expect(resolveRegion(L)).toBe('');
+        });
+
+        test('returns explicit region when present', () => {
+            const L = parseLocation('wrld_12345:67890~region(eu)');
+            expect(resolveRegion(L)).toBe('eu');
+        });
+
+        test('defaults to us when instance exists but no region', () => {
+            const L = parseLocation('wrld_12345:67890');
+            expect(resolveRegion(L)).toBe('us');
+        });
+
+        test('returns empty string for world-only (no instance)', () => {
+            const L = parseLocation('wrld_12345');
+            expect(resolveRegion(L)).toBe('');
+        });
+
+        test('returns jp region', () => {
+            const L = parseLocation('wrld_12345:67890~region(jp)');
+            expect(resolveRegion(L)).toBe('jp');
+        });
+    });
+
+    describe('translateAccessType', () => {
+        // Simple mock translation: returns the key itself
+        const t = (key) => key;
+
+        test('returns raw name when not in keyMap', () => {
+            expect(
+                translateAccessType('unknown', t, accessTypeLocaleKeyMap)
+            ).toBe('unknown');
+        });
+
+        test('translates public', () => {
+            expect(
+                translateAccessType('public', t, accessTypeLocaleKeyMap)
+            ).toBe(accessTypeLocaleKeyMap['public']);
+        });
+
+        test('translates invite', () => {
+            expect(
+                translateAccessType('invite', t, accessTypeLocaleKeyMap)
+            ).toBe(accessTypeLocaleKeyMap['invite']);
+        });
+
+        test('translates friends', () => {
+            expect(
+                translateAccessType('friends', t, accessTypeLocaleKeyMap)
+            ).toBe(accessTypeLocaleKeyMap['friends']);
+        });
+
+        test('translates friends+', () => {
+            expect(
+                translateAccessType('friends+', t, accessTypeLocaleKeyMap)
+            ).toBe(accessTypeLocaleKeyMap['friends+']);
+        });
+
+        test('prefixes Group for groupPublic', () => {
+            const result = translateAccessType(
+                'groupPublic',
+                t,
+                accessTypeLocaleKeyMap
+            );
+            expect(result).toBe(
+                `${accessTypeLocaleKeyMap['group']} ${accessTypeLocaleKeyMap['groupPublic']}`
+            );
+        });
+
+        test('prefixes Group for groupPlus', () => {
+            const result = translateAccessType(
+                'groupPlus',
+                t,
+                accessTypeLocaleKeyMap
+            );
+            expect(result).toBe(
+                `${accessTypeLocaleKeyMap['group']} ${accessTypeLocaleKeyMap['groupPlus']}`
+            );
         });
     });
 });

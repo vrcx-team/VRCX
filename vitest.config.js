@@ -18,11 +18,16 @@ export default defineConfig({
         include: ['src/**/*.{test,spec}.js'],
         coverage: {
             reporter: ['text', 'text-summary'],
-            include: ['src/shared/utils/**/*.js', 'src/components/**/*.vue'],
             exclude: [
-                'src/shared/utils/**/*.test.js',
-                'src/shared/utils/**/__tests__/**',
-                'src/components/**/__tests__/**'
+                'src/public/**',
+                'src/vr/**',
+                'src/types/**',
+                'src/styles/**',
+                'src/ipc-electron/**',
+                'src/localization/**',
+                'src/lib/**/!(*.test).js',
+                'src/components/ui/**/*.vue',
+                'src/components/ui/**/index.js'
             ]
         }
     },

@@ -356,6 +356,7 @@
         useUiStore,
         useVRCXUpdaterStore
     } from '../stores';
+    import { getFirstNavRoute, isEntryNotified, normalizeHiddenKeys, sanitizeLayout } from './navMenuUtils';
     import { THEME_CONFIG, links, navDefinitions } from '../shared/constants';
     import { openExternalLink } from '../shared/utils';
 
@@ -418,23 +419,6 @@
     ];
 
     const navDefinitionMap = new Map(navDefinitions.map((item) => [item.key, item]));
-    const DEFAULT_FOLDER_ICON = 'ri-folder-line';
-
-    const normalizeHiddenKeys = (hiddenKeys = []) => {
-        if (!Array.isArray(hiddenKeys)) {
-            return [];
-        }
-        const seen = new Set();
-        const normalized = [];
-        hiddenKeys.forEach((key) => {
-            if (!key || seen.has(key) || !navDefinitionMap.has(key)) {
-                return;
-            }
-            seen.add(key);
-            normalized.push(key);
-        });
-        return normalized;
-    };
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
     const { pendingVRCXUpdate, pendingVRCXInstall, appVersion } = storeToRefs(VRCXUpdaterStore);
@@ -498,7 +482,7 @@
         const currentRouteName = currentRoute?.name;
         const navKey = currentRoute?.meta?.navKey || currentRouteName;
         if (!navKey) {
-            return getFirstNavRoute(navLayout.value) || 'feed';
+            return getFirstNavRouteLocal(navLayout.value) || 'feed';
         }
 
         for (const entry of navLayout.value) {
@@ -510,7 +494,7 @@
             }
         }
 
-        return getFirstNavRoute(navLayout.value) || 'feed';
+        return getFirstNavRouteLocal(navLayout.value) || 'feed';
     });
 
     const version = computed(() => appVersion.value?.split('VRCX ')?.[1] || '-');
@@ -553,90 +537,8 @@
         return `nav-folder-${dayjs().toISOString()}-${Math.random().toString().slice(2, 4)}`;
     };
 
-    const sanitizeLayout = (layout, hiddenKeys = []) => {
-        const usedKeys = new Set();
-        const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys);
-        const hiddenSet = new Set(normalizedHiddenKeys);
-        const normalized = [];
-        const chartsKeys = ['charts-instance', 'charts-mutual'];
-
-        const appendItemEntry = (key, target = normalized) => {
-            if (!key || usedKeys.has(key) || !navDefinitionMap.has(key)) {
-                return;
-            }
-            target.push({ type: 'item', key });
-            usedKeys.add(key);
-        };
-
-        const appendChartsFolder = (target = normalized) => {
-            if (chartsKeys.some((key) => usedKeys.has(key))) {
-                return;
-            }
-            if (!chartsKeys.every((key) => navDefinitionMap.has(key))) {
-                return;
-            }
-            chartsKeys.forEach((key) => usedKeys.add(key));
-            target.push({
-                type: 'folder',
-                id: 'default-folder-charts',
-                nameKey: 'nav_tooltip.charts',
-                name: t('nav_tooltip.charts'),
-                icon: 'ri-pie-chart-line',
-                items: [...chartsKeys]
-            });
-        };
-
-        if (Array.isArray(layout)) {
-            layout.forEach((entry) => {
-                if (entry?.type === 'item') {
-                    if (entry.key === 'charts') {
-                        appendChartsFolder();
-                        return;
-                    }
-                    appendItemEntry(entry.key);
-                    return;
-                }
-
-                if (entry?.type === 'folder') {
-                    const folderItems = [];
-                    (entry.items || []).forEach((key) => {
-                        if (!key || usedKeys.has(key) || !navDefinitionMap.has(key)) {
-                            return;
-                        }
-                        folderItems.push(key);
-                        usedKeys.add(key);
-                    });
-
-                    if (folderItems.length >= 1) {
-                        const folderNameKey = entry.nameKey || null;
-                        const folderName = folderNameKey ? t(folderNameKey) : entry.name || '';
-                        normalized.push({
-                            type: 'folder',
-                            id: entry.id || generateFolderId(),
-                            name: folderName,
-                            nameKey: folderNameKey,
-                            icon: entry.icon || DEFAULT_FOLDER_ICON,
-                            items: folderItems
-                        });
-                    }
-                }
-            });
-        }
-
-        navDefinitions.forEach((item) => {
-            if (!usedKeys.has(item.key) && !hiddenSet.has(item.key)) {
-                if (chartsKeys.includes(item.key)) {
-                    return;
-                }
-                appendItemEntry(item.key);
-            }
-        });
-
-        if (!chartsKeys.some((key) => usedKeys.has(key)) && !chartsKeys.some((key) => hiddenSet.has(key))) {
-            appendChartsFolder();
-        }
-
-        return normalized;
+    const sanitizeLayoutLocal = (layout, hiddenKeys = []) => {
+        return sanitizeLayout(layout, hiddenKeys, navDefinitionMap, navDefinitions, t, generateFolderId);
     };
 
     const themeDisplayName = (themeKey) => {
@@ -693,10 +595,10 @@
 
     const customNavDialogVisible = ref(false);
     const navHiddenKeys = ref([]);
-    const defaultNavLayout = computed(() => sanitizeLayout(createDefaultNavLayout(), []));
+    const defaultNavLayout = computed(() => sanitizeLayoutLocal(createDefaultNavLayout(), []));
 
     const saveNavLayout = async (layout, hiddenKeys = []) => {
-        const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys);
+        const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys, navDefinitionMap);
         try {
             await configRepository.setString(
                 'VRCX_customNavMenuLayoutList',
@@ -715,8 +617,8 @@
     };
 
     const handleCustomNavSave = async (layout, hiddenKeys = []) => {
-        const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys);
-        const sanitized = sanitizeLayout(layout, normalizedHiddenKeys);
+        const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys, navDefinitionMap);
+        const sanitized = sanitizeLayoutLocal(layout, normalizedHiddenKeys);
         navLayout.value = sanitized;
         navHiddenKeys.value = normalizedHiddenKeys;
         await saveNavLayout(sanitized, normalizedHiddenKeys);
@@ -740,9 +642,9 @@
         } catch (error) {
             console.error('Failed to load custom nav', error);
         } finally {
-            const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeysData);
+            const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeysData, navDefinitionMap);
             const fallbackLayout = layoutData?.length ? layoutData : createDefaultNavLayout();
-            const sanitized = sanitizeLayout(fallbackLayout, normalizedHiddenKeys);
+            const sanitized = sanitizeLayoutLocal(fallbackLayout, normalizedHiddenKeys);
             navLayout.value = sanitized;
             navHiddenKeys.value = normalizedHiddenKeys;
             if (
@@ -764,26 +666,6 @@
         }
     };
 
-    const isEntryNotified = (entry) => {
-        if (!entry) {
-            return false;
-        }
-        const targets = [];
-        if (entry.index) {
-            targets.push(entry.index);
-        }
-        if (entry.routeName) {
-            targets.push(entry.routeName);
-        }
-        if (entry.path) {
-            const lastSegment = entry.path.split('/').pop();
-            if (lastSegment) {
-                targets.push(lastSegment);
-            }
-        }
-        return targets.some((key) => notifiedMenus.value.includes(key));
-    };
-
     const isNavItemNotified = (item) => {
         if (!item) {
             return false;
@@ -792,7 +674,7 @@
             return true;
         }
         if (item.children?.length) {
-            return item.children.some((entry) => isEntryNotified(entry));
+            return item.children.some((entry) => isEntryNotified(entry, notifiedMenus.value));
         }
         return false;
     };
@@ -828,30 +710,14 @@
      *
      * @param layout
      */
-    function getFirstNavRoute(layout) {
-        for (const entry of layout) {
-            if (entry.type === 'item') {
-                const definition = navDefinitionMap.get(entry.key);
-                if (definition?.routeName) {
-                    return definition.routeName;
-                }
-            }
-            if (entry.type === 'folder' && entry.items?.length) {
-                const definition = entry.items.map((key) => navDefinitionMap.get(key)).find((def) => def?.routeName);
-                if (definition?.routeName) {
-                    return definition.routeName;
-                }
-            }
-        }
-        return null;
-    }
+    const getFirstNavRouteLocal = (layout) => getFirstNavRoute(layout, navDefinitionMap);
 
     let hasNavigatedToInitialRoute = false;
     const navigateToFirstNavEntry = () => {
         if (hasNavigatedToInitialRoute) {
             return;
         }
-        const firstRoute = getFirstNavRoute(navLayout.value);
+        const firstRoute = getFirstNavRouteLocal(navLayout.value);
         if (!firstRoute) {
             return;
         }

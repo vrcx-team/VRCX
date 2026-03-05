@@ -62,6 +62,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useFavoriteStore, useUserStore } from '../../../stores';
+    import { formatCsvField } from '../../../shared/utils';
 
     const { t } = useI18n();
 
@@ -111,12 +112,19 @@
         }
     );
 
+    /**
+     *
+     */
     function showFriendExportDialog() {
         friendExportFavoriteGroup.value = null;
         friendExportFavoriteGroupSelection.value = FRIEND_EXPORT_ALL_VALUE;
         updateFriendExportDialog();
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleFriendExportGroupSelect(value) {
         friendExportFavoriteGroupSelection.value = value;
         if (value === FRIEND_EXPORT_ALL_VALUE) {
@@ -127,6 +135,10 @@
         selectFriendExportGroup(group);
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleFriendExportLocalGroupSelect(value) {
         friendExportLocalFavoriteGroupSelection.value = value;
         if (value === FRIEND_EXPORT_NONE_VALUE) {
@@ -136,6 +148,10 @@
         selectFriendExportLocalGroup(value);
     }
 
+    /**
+     *
+     * @param event
+     */
     function handleCopyFriendExportData(event) {
         if (event.target.tagName === 'TEXTAREA') {
             event.target.select();
@@ -151,26 +167,10 @@
             });
     }
 
+    /**
+     *
+     */
     function updateFriendExportDialog() {
-        const needsCsvQuotes = (text) => {
-            for (let i = 0; i < text.length; i++) {
-                if (text.charCodeAt(i) < 0x20) {
-                    return true;
-                }
-            }
-            return text.includes(',') || text.includes('"');
-        };
-
-        const formatter = function (value) {
-            if (value === null || typeof value === 'undefined') {
-                return '';
-            }
-            const text = String(value);
-            if (needsCsvQuotes(text)) {
-                return `"${text.replace(/"/g, '""')}"`;
-            }
-            return text;
-        };
         const lines = ['UserID,Name'];
 
         if (friendExportFavoriteGroup.value) {
@@ -178,7 +178,7 @@
                 if (friendExportFavoriteGroup.value === group) {
                     favoriteFriends.value.forEach((ref) => {
                         if (group.key === ref.groupKey) {
-                            lines.push(`${formatter(ref.id)},${formatter(ref.name)}`);
+                            lines.push(`${formatCsvField(ref.id)},${formatCsvField(ref.name)}`);
                         }
                     });
                 }
@@ -191,25 +191,29 @@
             favoriteGroup.forEach((userId) => {
                 const ref = cachedUsers.value.get(userId);
                 if (typeof ref !== 'undefined') {
-                    lines.push(`${formatter(ref.id)},${formatter(ref.displayName)}`);
+                    lines.push(`${formatCsvField(ref.id)},${formatCsvField(ref.displayName)}`);
                 }
             });
         } else {
             // export all
             favoriteFriends.value.forEach((ref) => {
-                lines.push(`${formatter(ref.id)},${formatter(ref.name)}`);
+                lines.push(`${formatCsvField(ref.id)},${formatCsvField(ref.name)}`);
             });
             for (let i = 0; i < localFriendFavoritesList.value.length; ++i) {
                 const userId = localFriendFavoritesList.value[i];
                 const ref = cachedUsers.value.get(userId);
                 if (typeof ref !== 'undefined') {
-                    lines.push(`${formatter(ref.id)},${formatter(ref.displayName)}`);
+                    lines.push(`${formatCsvField(ref.id)},${formatCsvField(ref.displayName)}`);
                 }
             }
         }
         friendExportContent.value = lines.reverse().join('\n');
     }
 
+    /**
+     *
+     * @param group
+     */
     function selectFriendExportGroup(group) {
         friendExportFavoriteGroup.value = group;
         friendExportLocalFavoriteGroup.value = null;
@@ -218,6 +222,10 @@
         updateFriendExportDialog();
     }
 
+    /**
+     *
+     * @param groupName
+     */
     function selectFriendExportLocalGroup(groupName) {
         friendExportLocalFavoriteGroup.value = groupName;
         friendExportFavoriteGroup.value = null;

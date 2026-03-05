@@ -73,6 +73,7 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import { formatCsvField, formatCsvRow } from '../../../shared/utils';
     import { useAvatarStore, useFavoriteStore } from '../../../stores';
 
     const { t } = useI18n();
@@ -114,6 +115,11 @@
         { label: 'Thumbnail', value: 'thumbnailImageUrl' }
     ]);
 
+    /**
+     *
+     * @param label
+     * @param checked
+     */
     function toggleAvatarExportOption(label, checked) {
         const selection = exportSelectedOptions.value;
         const index = selection.indexOf(label);
@@ -143,6 +149,9 @@
         }
     );
 
+    /**
+     *
+     */
     function showAvatarExportDialog() {
         avatarExportFavoriteGroup.value = null;
         avatarExportLocalFavoriteGroup.value = null;
@@ -151,6 +160,10 @@
         updateAvatarExportDialog();
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleAvatarExportFavoriteGroupSelect(value) {
         avatarExportFavoriteGroupSelection.value = value;
         if (value === AVATAR_EXPORT_ALL_VALUE) {
@@ -161,6 +174,10 @@
         selectAvatarExportGroup(group);
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleAvatarExportLocalFavoriteGroupSelect(value) {
         avatarExportLocalFavoriteGroupSelection.value = value;
         if (value === AVATAR_EXPORT_NONE_VALUE) {
@@ -169,6 +186,10 @@
         }
         selectAvatarExportLocalGroup(value);
     }
+    /**
+     *
+     * @param event
+     */
     function handleCopyAvatarExportData(event) {
         if (event.target.tagName === 'TEXTAREA') {
             event.target.select();
@@ -183,37 +204,13 @@
                 toast.error('Copy failed!');
             });
     }
+    /**
+     *
+     */
     function updateAvatarExportDialog() {
-        const needsCsvQuotes = (text) => {
-            for (let i = 0; i < text.length; i++) {
-                if (text.charCodeAt(i) < 0x20) {
-                    return true;
-                }
-            }
-            return text.includes(',') || text.includes('"');
-        };
-
-        const formatter = function (value) {
-            if (value === null || typeof value === 'undefined') {
-                return '';
-            }
-            const text = String(value);
-            if (needsCsvQuotes(text)) {
-                return `"${text.replace(/"/g, '""')}"`;
-            }
-            return text;
-        };
         const propsForQuery = exportSelectOptions.value
             .filter((option) => exportSelectedOptions.value.includes(option.label))
             .map((option) => option.value);
-
-        function resText(ref) {
-            let resArr = [];
-            propsForQuery.forEach((e) => {
-                resArr.push(formatter(ref?.[e]));
-            });
-            return resArr.join(',');
-        }
 
         const lines = [exportSelectedOptions.value.join(',')];
 
@@ -222,7 +219,7 @@
                 if (!avatarExportFavoriteGroup.value || avatarExportFavoriteGroup.value === group) {
                     favoriteAvatars.value.forEach((ref) => {
                         if (group.key === ref.groupKey) {
-                            lines.push(resText(ref.ref));
+                            lines.push(formatCsvRow(ref.ref, propsForQuery));
                         }
                     });
                 }
@@ -234,23 +231,27 @@
             }
             for (let i = 0; i < favoriteGroup.length; ++i) {
                 const ref = favoriteGroup[i];
-                lines.push(resText(ref));
+                lines.push(formatCsvRow(ref, propsForQuery));
             }
         } else {
             // export all
             favoriteAvatars.value.forEach((ref) => {
-                lines.push(resText(ref.ref));
+                lines.push(formatCsvRow(ref.ref, propsForQuery));
             });
             for (let i = 0; i < localAvatarFavoritesList.value.length; ++i) {
                 const avatarId = localAvatarFavoritesList.value[i];
                 const ref = cachedAvatars.get(avatarId);
                 if (typeof ref !== 'undefined') {
-                    lines.push(resText(ref));
+                    lines.push(formatCsvRow(ref, propsForQuery));
                 }
             }
         }
         avatarExportContent.value = lines.reverse().join('\n');
     }
+    /**
+     *
+     * @param group
+     */
     function selectAvatarExportGroup(group) {
         avatarExportFavoriteGroup.value = group;
         avatarExportLocalFavoriteGroup.value = null;
@@ -258,6 +259,10 @@
         avatarExportLocalFavoriteGroupSelection.value = AVATAR_EXPORT_NONE_VALUE;
         updateAvatarExportDialog();
     }
+    /**
+     *
+     * @param group
+     */
     function selectAvatarExportLocalGroup(group) {
         avatarExportLocalFavoriteGroup.value = group;
         avatarExportFavoriteGroup.value = null;
