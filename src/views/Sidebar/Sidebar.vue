@@ -2,65 +2,17 @@
     <div class="x-aside-container">
         <div style="display: flex; align-items: baseline">
             <div style="flex: 1; padding: 10px; padding-left: 0">
-                <Popover v-model:open="isQuickSearchOpen">
-                    <PopoverTrigger as-child>
-                        <Input
-                            v-model="quickSearchQuery"
-                            :placeholder="t('side_panel.search_placeholder')"
-                            autocomplete="off" />
-                    </PopoverTrigger>
-                    <PopoverContent
-                        side="bottom"
-                        align="start"
-                        class="x-quick-search-popover w-(--reka-popover-trigger-width) p-2"
-                        @open-auto-focus.prevent
-                        @close-auto-focus.prevent>
-                        <div class="max-h-80 overflow-auto">
-                            <button
-                                v-for="item in quickSearchItems"
-                                :key="item.value"
-                                type="button"
-                                class="w-full bg-transparent p-0 text-left"
-                                @mousedown.prevent
-                                @click="handleQuickSearchSelect(item.value)">
-                                <div class="x-friend-item">
-                                    <template v-if="item.ref">
-                                        <div class="detail">
-                                            <span class="name" :style="{ color: item.ref.$userColour }">{{
-                                                item.ref.displayName
-                                            }}</span>
-                                            <span v-if="!item.ref.isFriend" class="block truncate text-xs"></span>
-                                            <span
-                                                v-else-if="item.ref.state === 'offline'"
-                                                class="block truncate text-xs"
-                                                >{{ t('side_panel.search_result_active') }}</span
-                                            >
-                                            <span
-                                                v-else-if="item.ref.state === 'active'"
-                                                class="block truncate text-xs"
-                                                >{{ t('side_panel.search_result_offline') }}</span
-                                            >
-                                            <Location
-                                                v-else
-                                                class="text-xs"
-                                                :location="item.ref.location"
-                                                :traveling="item.ref.travelingToLocation"
-                                                :link="false" />
-                                        </div>
-                                        <img :src="userImage(item.ref)" class="avatar" loading="lazy" />
-                                    </template>
-                                    <span v-else>
-                                        {{ t('side_panel.search_result_more') }}
-                                        <span style="font-weight: bold">{{ item.label }}</span>
-                                    </span>
-                                </div>
-                            </button>
-                            <div v-if="quickSearchItems.length === 0" class="px-2 py-2 text-xs opacity-70">
-                                <DataTableEmpty type="nomatch" />
-                            </div>
-                        </div>
-                    </PopoverContent>
-                </Popover>
+                <button
+                    type="button"
+                    class="border-input dark:bg-input/30 flex h-9 w-full items-center gap-1 rounded-md border bg-transparent px-3 shadow-xs transition-[color,box-shadow] hover:border-ring cursor-pointer"
+                    @click="openGlobalSearch">
+                    <Search class="size-4 shrink-0 opacity-50" />
+                    <span class="flex-1 text-left text-sm text-muted-foreground truncate">{{
+                        t('side_panel.search_placeholder')
+                    }}</span>
+                    <Kbd>{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
+                    <Kbd>K</Kbd>
+                </button>
             </div>
             <div class="flex items-center mx-1 gap-1">
                 <TooltipWrapper side="bottom" :content="t('side_panel.refresh_tooltip')">
@@ -270,6 +222,7 @@
         </TabsUnderline>
         <NotificationCenterSheet />
         <GroupOrderSheet v-model:open="isGroupOrderSheetOpen" />
+        <GlobalSearchDialog />
     </div>
 </template>
 
@@ -283,13 +236,13 @@
         SelectTrigger,
         SelectValue
     } from '@/components/ui/select';
-    import { Bell, RefreshCw, Settings } from 'lucide-vue-next';
+    import { Bell, RefreshCw, Search, Settings } from 'lucide-vue-next';
     import { Field, FieldContent, FieldLabel } from '@/components/ui/field';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-    import { computed, ref, watch } from 'vue';
+    import { computed, ref } from 'vue';
+    import { useMagicKeys, whenever } from '@vueuse/core';
     import { Button } from '@/components/ui/button';
-    import { DataTableEmpty } from '@/components/ui/data-table';
-    import { Input } from '@/components/ui/input';
+    import { Kbd } from '@/components/ui/kbd';
     import { Separator } from '@/components/ui/separator';
     import { Spinner } from '@/components/ui/spinner';
     import { Switch } from '@/components/ui/switch';
@@ -302,23 +255,36 @@
         useFavoriteStore,
         useFriendStore,
         useGroupStore,
-        useNotificationStore,
-        useSearchStore
+        useNotificationStore
     } from '../../stores';
-    import { debounce, userImage } from '../../shared/utils';
+    import { useGlobalSearchStore } from '../../stores/globalSearch';
 
     import FriendsSidebar from './components/FriendsSidebar.vue';
+    import GlobalSearchDialog from '../../components/GlobalSearchDialog.vue';
     import GroupOrderSheet from './components/GroupOrderSheet.vue';
     import GroupsSidebar from './components/GroupsSidebar.vue';
     import NotificationCenterSheet from './components/NotificationCenterSheet.vue';
 
     const { friends, isRefreshFriendsLoading, onlineFriendCount } = storeToRefs(useFriendStore());
     const { refreshFriendsList } = useFriendStore();
-    const { quickSearchRemoteMethod, quickSearchChange } = useSearchStore();
-    const { quickSearchItems } = storeToRefs(useSearchStore());
     const { groupInstances } = storeToRefs(useGroupStore());
     const { isNotificationCenterOpen, hasUnseenNotifications } = storeToRefs(useNotificationStore());
+    const globalSearchStore = useGlobalSearchStore();
     const { t } = useI18n();
+
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
+    // Keyboard shortcut: Ctrl+K (Windows) / ⌘K (Mac)
+    const keys = useMagicKeys();
+    whenever(keys['Meta+k'], () => openGlobalSearch());
+    whenever(keys['Ctrl+k'], () => openGlobalSearch());
+
+    /**
+     *
+     */
+    function openGlobalSearch() {
+        globalSearchStore.open();
+    }
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const {
@@ -358,6 +324,10 @@
         return sidebarFavoriteGroups.value;
     });
 
+    /**
+     *
+     * @param value
+     */
     function handleFavoriteGroupsChange(value) {
         if (!value || value.length === 0) {
             // Deselected all → reset to all (store as empty)
@@ -398,31 +368,6 @@
         { value: 'friends', label: t('side_panel.friends') },
         { value: 'groups', label: t('side_panel.groups') }
     ]);
-
-    const quickSearchQuery = ref('');
-    const isQuickSearchOpen = ref(false);
-
-    const runQuickSearch = debounce((value) => {
-        quickSearchRemoteMethod(value);
-    }, 200);
-
-    watch(quickSearchQuery, (value) => {
-        const query = String(value ?? '').trim();
-        if (!query) {
-            quickSearchRemoteMethod('');
-            return;
-        }
-        runQuickSearch(query);
-    });
-
-    function handleQuickSearchSelect(value) {
-        if (!value) {
-            return;
-        }
-        isQuickSearchOpen.value = false;
-        quickSearchQuery.value = '';
-        quickSearchChange(String(value));
-    }
 </script>
 
 <style scoped>

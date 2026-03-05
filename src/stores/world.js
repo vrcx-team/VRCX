@@ -14,9 +14,8 @@ import {
 } from '../shared/utils';
 import { instanceRequest, miscRequest, worldRequest } from '../api';
 import { database } from '../service/database';
-import { useAvatarStore } from './avatar';
+import { processBulk } from '../service/request';
 import { useFavoriteStore } from './favorite';
-import { useGroupStore } from './group';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
 import { useUiStore } from './ui';
@@ -28,8 +27,6 @@ export const useWorldStore = defineStore('World', () => {
     const favoriteStore = useFavoriteStore();
     const instanceStore = useInstanceStore();
     const userStore = useUserStore();
-    const avatarStore = useAvatarStore();
-    const groupStore = useGroupStore();
     const uiStore = useUiStore();
     const { t } = useI18n();
 
@@ -64,9 +61,12 @@ export const useWorldStore = defineStore('World', () => {
 
     watch(
         () => watchState.isLoggedIn,
-        () => {
+        (isLoggedIn) => {
             worldDialog.visible = false;
             cachedWorlds.clear();
+            if (isLoggedIn) {
+                preloadOwnWorlds();
+            }
         },
         { flush: 'sync' }
     );
@@ -210,6 +210,9 @@ export const useWorldStore = defineStore('World', () => {
             });
     }
 
+    /**
+     *
+     */
     function updateVRChatWorldCache() {
         const D = worldDialog;
         if (D.visible) {
@@ -228,6 +231,10 @@ export const useWorldStore = defineStore('World', () => {
         }
     }
 
+    /**
+     *
+     * @param WorldCache
+     */
     function cleanupWorldCache(WorldCache) {
         const maxCacheSize = 10000;
 
@@ -339,11 +346,36 @@ export const useWorldStore = defineStore('World', () => {
         return ref;
     }
 
+    /**
+     * Preload all own worlds into cache at startup for global search.
+     */
+    async function preloadOwnWorlds() {
+        const params = {
+            n: 50,
+            offset: 0,
+            sort: 'updated',
+            order: 'descending',
+            releaseStatus: 'all',
+            user: 'me'
+        };
+        await processBulk({
+            fn: (p) => worldRequest.getWorlds(p),
+            N: -1,
+            params,
+            handle: (args) => {
+                for (const json of args.json) {
+                    applyWorld(json);
+                }
+            }
+        });
+    }
+
     return {
         worldDialog,
         cachedWorlds,
         showWorldDialog,
         updateVRChatWorldCache,
-        applyWorld
+        applyWorld,
+        preloadOwnWorlds
     };
 });
