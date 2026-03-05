@@ -8,7 +8,7 @@
                             <SidebarMenuItem v-if="!item.children?.length">
                                 <SidebarMenuButton
                                     :is-active="activeMenuIndex === item.index"
-                                    :tooltip="item.titleIsCustom ? item.title : t(item.title || '')"
+                                    :tooltip="getItemTooltip(item)"
                                     @click="handleMenuItemClick(item)">
                                     <i
                                         :class="item.icon"
@@ -22,6 +22,10 @@
                                     <span v-show="!isCollapsed">{{
                                         item.titleIsCustom ? item.title : t(item.title || '')
                                     }}</span>
+                                    <template v-if="item.action === 'direct-access' && !isCollapsed">
+                                        <Kbd class="ml-auto">{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
+                                        <Kbd>D</Kbd>
+                                    </template>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
 
@@ -333,9 +337,10 @@
         DropdownMenuSubTrigger,
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
-    import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
+    import { computed, defineAsyncComponent, h, onMounted, ref, watch } from 'vue';
     import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
     import { ChevronRight, Heart } from 'lucide-vue-next';
+    import { Kbd } from '@/components/ui/kbd';
     import { TooltipWrapper } from '@/components/ui/tooltip';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -360,6 +365,21 @@
 
     const { t, locale } = useI18n();
     const router = useRouter();
+
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
+    const getItemTooltip = (item) => {
+        const label = item.titleIsCustom ? item.title : t(item.title || '');
+        if (item.action !== 'direct-access') {
+            return label;
+        }
+        return () =>
+            h('span', { class: 'inline-flex items-center gap-1' }, [
+                label,
+                h(Kbd, () => (isMac ? '⌘' : 'Ctrl')),
+                h(Kbd, () => 'D')
+            ]);
+    };
 
     const createDefaultNavLayout = () => [
         { type: 'item', key: 'feed' },
@@ -804,6 +824,10 @@
         router.push({ name: routeName });
     };
 
+    /**
+     *
+     * @param layout
+     */
     function getFirstNavRoute(layout) {
         for (const entry of layout) {
             if (entry.type === 'item') {

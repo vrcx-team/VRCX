@@ -76,7 +76,7 @@
         }
     },
     "side_panel": {
-        "search_placeholder": "Search...",
+        "search_placeholder": "Quick Search...",
         "search_no_results": "No results found",
         "search_min_chars": "Type at least 2 characters",
         "search_categories": "Search for...",
@@ -1935,7 +1935,7 @@
             "export_bans": "Export Bans",
             "import_bans": "Import Bans",
             "import_bans_description": "Paste CSV or user IDs below. The userId column will be auto-detected from CSV headers, or all usr_ IDs will be extracted.",
-            "import_bans_warning": "Do not import too many users at once. The API is rate-limited and may fail. You are responsible for any consequences.",
+            "import_bans_warning": "Do not import too many at once. This is a sensitive operation actively monitored and enforced by the official, use at your own risk!",
             "import_bans_placeholder": "Paste CSV or user IDs here (one per line)\nusr_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
             "import_bans_start": "Import & Ban",
             "import_bans_clear_errors": "Clear Errors"

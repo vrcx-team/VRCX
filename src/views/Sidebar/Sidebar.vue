@@ -4,7 +4,7 @@
             <div style="flex: 1; padding: 10px; padding-left: 0">
                 <button
                     type="button"
-                    class="border-input dark:bg-input/30 flex h-9 w-full items-center gap-1 rounded-md border bg-transparent px-3 shadow-xs transition-[color,box-shadow] hover:border-ring cursor-pointer"
+                    class="border-input dark:bg-input/30 flex h-9 w-full items-center gap-2 rounded-md border bg-transparent px-3 shadow-xs transition-[color,box-shadow] hover:border-ring cursor-pointer"
                     @click="openGlobalSearch">
                     <Search class="size-4 shrink-0 opacity-50" />
                     <span class="flex-1 text-left text-sm text-muted-foreground truncate">{{
