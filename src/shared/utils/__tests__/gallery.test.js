@@ -1,4 +1,5 @@
 import {
+    generateEmojiStyle,
     getEmojiFileName,
     getPrintFileName,
     getPrintLocalDate
@@ -309,6 +310,49 @@ describe('Gallery Utils', () => {
                 expect(typeof result).toBe('string');
                 expect(result.endsWith('.png')).toBe(true);
             });
+        });
+    });
+
+    describe('generateEmojiStyle', () => {
+        test('returns CSS with background url and animation', () => {
+            const style = generateEmojiStyle(
+                'https://example.com/emoji.png',
+                10,
+                4,
+                'linear',
+                100
+            );
+            expect(style).toContain("url('https://example.com/emoji.png')");
+            expect(style).toContain('animation:');
+            expect(style).toContain('steps(1)');
+        });
+
+        test('uses 2 framesPerLine for frameCount <= 4', () => {
+            const style = generateEmojiStyle('u', 10, 4, 'linear', 100);
+            // frameSize = 1024/2 = 512
+            expect(style).toContain('512px');
+        });
+
+        test('uses 4 framesPerLine for frameCount 5-16', () => {
+            const style = generateEmojiStyle('u', 10, 8, 'linear', 100);
+            // frameSize = 1024/4 = 256
+            expect(style).toContain('256px');
+        });
+
+        test('uses 8 framesPerLine for frameCount > 16', () => {
+            const style = generateEmojiStyle('u', 10, 20, 'linear', 100);
+            // frameSize = 1024/8 = 128
+            expect(style).toContain('128px');
+        });
+
+        test('uses alternate for pingpong loopStyle', () => {
+            const style = generateEmojiStyle('u', 10, 4, 'pingpong', 100);
+            expect(style).toContain('alternate');
+        });
+
+        test('uses none for non-pingpong loopStyle', () => {
+            const style = generateEmojiStyle('u', 10, 4, 'linear', 100);
+            expect(style).toMatch(/\bnone\b/);
         });
     });
 });
