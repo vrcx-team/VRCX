@@ -1,6 +1,6 @@
 <template>
     <Sidebar side="left" variant="sidebar" collapsible="icon">
-        <SidebarContent class="pt-2">
+        <SidebarContent class="pt-2" style="container-type: inline-size">
             <SidebarGroup>
                 <SidebarGroupContent>
                     <SidebarMenu v-if="navLayoutReady">
@@ -22,10 +22,12 @@
                                     <span v-show="!isCollapsed">{{
                                         item.titleIsCustom ? item.title : t(item.title || '')
                                     }}</span>
-                                    <template v-if="item.action === 'direct-access' && !isCollapsed">
-                                        <Kbd class="ml-auto">{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
+                                    <span
+                                        v-if="item.action === 'direct-access' && !isCollapsed"
+                                        class="nav-shortcut-hint ml-auto inline-flex items-center gap-0.5">
+                                        <Kbd>{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
                                         <Kbd>D</Kbd>
-                                    </template>
+                                    </span>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
 
@@ -782,5 +784,11 @@
         background-color: #ef4444;
         border-radius: 50%;
         transform: translateY(-50%);
+    }
+
+    @container (max-width: 250px) {
+        .nav-shortcut-hint {
+            display: none;
+        }
     }
 </style>

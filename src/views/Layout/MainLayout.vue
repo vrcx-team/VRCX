@@ -120,8 +120,7 @@
     const router = useRouter();
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const { navWidth, isNavCollapsed, showStatusBar } =
-        storeToRefs(appearanceSettingsStore);
+    const { navWidth, isNavCollapsed, showStatusBar } = storeToRefs(appearanceSettingsStore);
 
     const sidebarOpen = computed(() => !isNavCollapsed.value);
 

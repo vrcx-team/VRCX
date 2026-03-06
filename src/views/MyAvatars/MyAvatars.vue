@@ -5,6 +5,7 @@
             :table-style="tableHeightStyle"
             :page-sizes="pageSizes"
             :total-items="filteredAvatars.length"
+            :loading="isLoading"
             :on-page-size-change="handlePageSizeChange"
             :on-row-click="handleRowClick"
             :row-class="getRowClass"
@@ -347,7 +348,18 @@
         if (currentUser.value.currentAvatar === avatarId) {
             return;
         }
-        selectAvatarWithoutConfirmation(avatarId);
+        const avatar = avatars.value.find((a) => a.id === avatarId);
+        const avatarName = avatar?.name || avatarId;
+        modalStore
+            .confirm({
+                title: t('confirm.title'),
+                description: `${t('confirm.select_avatar')}\n${avatarName}`
+            })
+            .then(({ ok }) => {
+                if (ok) {
+                    selectAvatarWithoutConfirmation(avatarId);
+                }
+            });
     }
 
     /**
