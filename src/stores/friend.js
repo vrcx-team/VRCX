@@ -777,7 +777,7 @@ export const useFriendStore = defineStore('Friend', () => {
         async function fetchPage(offset) {
             const result = await executeWithBackoff(
                 async () => {
-                    const { json } = await friendRequest.getFriends({
+                    const { json } = await friendRequest.getCachedFriends({
                         ...args,
                         n: PAGE_SIZE,
                         offset

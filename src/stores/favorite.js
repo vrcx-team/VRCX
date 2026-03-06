@@ -542,7 +542,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
         isFavoriteGroupLoading.value = true;
         processBulk({
-            fn: favoriteRequest.getFavoriteGroups,
+            fn: favoriteRequest.getCachedFavoriteGroups,
             N: -1,
             params: {
                 n: 50,
@@ -707,7 +707,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
         isFavoriteLoading.value = true;
         try {
-            const args = await favoriteRequest.getFavoriteLimits();
+            const args = await favoriteRequest.getCachedFavoriteLimits();
             favoriteLimits.value = {
                 ...favoriteLimits.value,
                 ...args.json
@@ -717,7 +717,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
         let newFavoriteSortOrder = [];
         processBulk({
-            fn: favoriteRequest.getFavorites,
+            fn: favoriteRequest.getCachedFavorites,
             N: -1,
             params: {
                 n: 300,
@@ -839,7 +839,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             offset: 0,
             tag
         };
-        const args = await favoriteRequest.getFavoriteAvatars(params);
+        const args = await favoriteRequest.getCachedFavoriteAvatars(params);
         handleFavoriteAvatarList(args);
     }
 
@@ -848,8 +848,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      */
     function refreshFavoriteItems() {
         const types = {
-            world: [0, favoriteRequest.getFavoriteWorlds],
-            avatar: [0, favoriteRequest.getFavoriteAvatars]
+            world: [0, favoriteRequest.getCachedFavoriteWorlds],
+            avatar: [0, favoriteRequest.getCachedFavoriteAvatars]
         };
         const tags = [];
         for (const ref of cachedFavorites.values()) {

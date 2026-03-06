@@ -9,6 +9,7 @@ import {
     userRequest,
     worldRequest
 } from '../api';
+import { patchGroupFromEvent } from '../query';
 import {
     convertFileUrlToImageUrl,
     hasGroupPermission,
@@ -127,17 +128,18 @@ export const useGroupStore = defineStore('Group', () => {
         { flush: 'sync' }
     );
 
-    function showGroupDialog(groupId) {
+    function showGroupDialog(groupId, options = {}) {
         if (!groupId) {
             return;
         }
+        const forceRefresh = Boolean(options?.forceRefresh);
         const isMainDialogOpen = uiStore.openDialog({
             type: 'group',
             id: groupId
         });
         const D = groupDialog.value;
         D.visible = true;
-        if (isMainDialogOpen && D.id === groupId) {
+        if (isMainDialogOpen && D.id === groupId && !forceRefresh) {
             uiStore.setDialogCrumbLabel('group', D.id, D.ref?.name || D.id);
             instanceStore.applyGroupDialogInstances();
             D.loading = false;
@@ -159,10 +161,15 @@ export const useGroupStore = defineStore('Group', () => {
         D.members = [];
         D.memberFilter = groupDialogFilterOptions.everyone;
         D.calendar = [];
-        groupRequest
-            .getCachedGroup({
-                groupId
-            })
+        const loadGroupRequest = forceRefresh
+            ? groupRequest.getGroup({
+                  groupId,
+                  includeRoles: false
+              })
+            : groupRequest.getCachedGroup({
+                  groupId
+              });
+        loadGroupRequest
             .catch((err) => {
                 D.loading = false;
                 D.id = null;
@@ -172,29 +179,27 @@ export const useGroupStore = defineStore('Group', () => {
                 throw err;
             })
             .then((args) => {
-                if (groupId === args.ref.id) {
-                    D.ref = args.ref;
+                const ref = args.ref || applyGroup(args.json);
+                if (groupId === ref.id) {
+                    D.ref = ref;
                     uiStore.setDialogCrumbLabel(
                         'group',
                         D.id,
                         D.ref?.name || D.id
                     );
-                    D.inGroup = args.ref.membershipStatus === 'member';
-                    D.ownerDisplayName = args.ref.ownerId;
+                    D.inGroup = ref.membershipStatus === 'member';
+                    D.ownerDisplayName = ref.ownerId;
                     D.visible = true;
                     D.loading = false;
-                    if (args.cache) {
-                        groupRequest.getGroup(args.params);
-                    }
                     userRequest
                         .getCachedUser({
-                            userId: args.ref.ownerId
+                            userId: ref.ownerId
                         })
                         .then((args1) => {
                             D.ownerDisplayName = args1.ref.displayName;
                         });
                     database.getLastGroupVisit(D.ref.name).then((r) => {
-                        if (D.id === args.ref.id) {
+                        if (D.id === ref.id) {
                             D.lastVisit = r.created_at;
                         }
                     });
@@ -400,33 +405,37 @@ export const useGroupStore = defineStore('Group', () => {
      */
     async function getAllGroupPosts(params) {
         const n = 100;
-        let posts = [];
+        const posts = [];
         let offset = 0;
-        let total = 0;
-        const args = await groupRequest.getGroupPosts({
-            groupId: params.groupId,
-            n,
-            offset
-        });
+        let total = Infinity;
+        let pages = 0;
         do {
-            posts = posts.concat(args.json.posts);
-            total = args.json.total;
+            const args = await groupRequest.getCachedGroupPosts({
+                groupId: params.groupId,
+                n,
+                offset
+            });
+            const pagePosts = args.json?.posts ?? [];
+            total = Number(args.json?.total ?? pagePosts.length);
+            posts.push(...pagePosts);
             offset += n;
-        } while (offset < total);
+            pages += 1;
+            if (pagePosts.length === 0) {
+                break;
+            }
+        } while (offset < total && pages < 50);
         const returnArgs = {
             posts,
             params
         };
         const D = groupDialog.value;
-        if (D.id === args.params.groupId) {
-            for (const post of args.json.posts) {
+        if (D.id === params.groupId) {
+            for (const post of posts) {
                 post.title = replaceBioSymbols(post.title);
                 post.text = replaceBioSymbols(post.text);
             }
-            if (args.json.posts.length > 0) {
-                D.announcement = args.json.posts[0];
-            }
-            D.posts = args.json.posts;
+            D.announcement = posts[0] ?? {};
+            D.posts = posts;
             updateGroupPostSearch();
         }
 
@@ -437,7 +446,7 @@ export const useGroupStore = defineStore('Group', () => {
         const D = groupDialog.value;
         D.isGetGroupDialogGroupLoading = false;
         return groupRequest
-            .getGroup({ groupId, includeRoles: true })
+            .getCachedGroup({ groupId, includeRoles: true })
             .catch((err) => {
                 throw err;
             })
@@ -447,6 +456,7 @@ export const useGroupStore = defineStore('Group', () => {
                     D.loading = false;
                     D.ref = ref;
                     D.inGroup = ref.membershipStatus === 'member';
+                    D.memberRoles = [];
                     for (const role of ref.roles) {
                         if (
                             D.ref &&
@@ -487,14 +497,14 @@ export const useGroupStore = defineStore('Group', () => {
                                 });
                             }
                         });
-                    groupRequest.getGroupCalendar(groupId).then((args) => {
+                    groupRequest.getCachedGroupCalendar(groupId).then((args) => {
                         if (groupDialog.value.id === args.params.groupId) {
                             D.calendar = args.json.results;
                             for (const event of D.calendar) {
                                 applyGroupEvent(event);
                                 // fetch again for isFollowing
                                 groupRequest
-                                    .getGroupCalendarEvent({
+                                    .getCachedGroupCalendarEvent({
                                         groupId,
                                         eventId: event.id
                                     })
@@ -782,6 +792,7 @@ export const useGroupStore = defineStore('Group', () => {
             D.inGroup = ref.membershipStatus === 'member';
             D.ref = ref;
         }
+        patchGroupFromEvent(ref);
         return ref;
     }
 

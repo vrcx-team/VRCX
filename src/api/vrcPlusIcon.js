@@ -1,4 +1,21 @@
 import { request } from '../service/request';
+import {
+    entityQueryPolicies,
+    fetchWithEntityPolicy,
+    queryClient,
+    queryKeys
+} from '../query';
+
+function refetchActiveGalleryQueries() {
+    queryClient
+        .invalidateQueries({
+            queryKey: ['gallery'],
+            refetchType: 'active'
+        })
+        .catch((err) => {
+            console.error('Failed to refresh gallery queries:', err);
+        });
+}
 
 const VRCPlusIconsReq = {
     getFileList(params) {
@@ -14,6 +31,17 @@ const VRCPlusIconsReq = {
         });
     },
 
+    getCachedFileList(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.galleryFiles(params),
+            policy: entityQueryPolicies.galleryCollection,
+            queryFn: () => VRCPlusIconsReq.getFileList(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
+    },
+
     deleteFile(fileId) {
         return request(`file/${fileId}`, {
             method: 'DELETE'
@@ -22,6 +50,7 @@ const VRCPlusIconsReq = {
                 json,
                 fileId
             };
+            refetchActiveGalleryQueries();
             return args;
         });
     },
@@ -40,6 +69,7 @@ const VRCPlusIconsReq = {
                 json,
                 params
             };
+            refetchActiveGalleryQueries();
             return args;
         });
     }

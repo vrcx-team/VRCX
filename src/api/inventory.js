@@ -1,4 +1,21 @@
 import { request } from '../service/request';
+import {
+    entityQueryPolicies,
+    fetchWithEntityPolicy,
+    queryClient,
+    queryKeys
+} from '../query';
+
+function refetchActiveInventoryQueries() {
+    queryClient
+        .invalidateQueries({
+            queryKey: ['inventory'],
+            refetchType: 'active'
+        })
+        .catch((err) => {
+            console.error('Failed to refresh inventory queries:', err);
+        });
+}
 
 const inventoryReq = {
     /**
@@ -18,6 +35,17 @@ const inventoryReq = {
             };
             return args;
         });
+    },
+
+    getCachedUserInventoryItem(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.userInventoryItem(params),
+            policy: entityQueryPolicies.inventoryCollection,
+            queryFn: () => inventoryReq.getUserInventoryItem(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
     },
 
     /**
@@ -54,6 +82,17 @@ const inventoryReq = {
         });
     },
 
+    getCachedInventoryItems(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.inventoryItems(params),
+            policy: entityQueryPolicies.inventoryCollection,
+            queryFn: () => inventoryReq.getInventoryItems(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
+    },
+
     /**
      * @param {{ inventoryId: string }} params
      * @returns {Promise<{json: any, params}>}
@@ -67,6 +106,7 @@ const inventoryReq = {
                 json,
                 params
             };
+            refetchActiveInventoryQueries();
             return args;
         });
     },
@@ -102,6 +142,7 @@ const inventoryReq = {
                 json,
                 params
             };
+            refetchActiveInventoryQueries();
             return args;
         });
     }

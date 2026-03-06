@@ -1318,7 +1318,7 @@
         userRequest,
         worldRequest
     } from '../../../api';
-    import { processBulk, request } from '../../../service/request';
+    import { processBulk } from '../../../service/request';
     import { userDialogGroupSortingOptions, userDialogMutualFriendSortingOptions } from '../../../shared/constants';
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import { database } from '../../../service/database';
@@ -1429,6 +1429,8 @@
     const userDialogLastFavoriteWorld = ref('');
 
     const favoriteWorldsTab = ref('0');
+    const userDialogWorldsRequestId = ref(0);
+    const userDialogFavoriteWorldsRequestId = ref(0);
 
     const sendInviteDialogVisible = ref(false);
     const sendInviteDialog = ref({
@@ -2388,6 +2390,7 @@
         if (D.isWorldsLoading) {
             return;
         }
+        const requestId = ++userDialogWorldsRequestId.value;
         D.isWorldsLoading = true;
         const params = {
             n: 50,
@@ -2402,30 +2405,40 @@
             params.user = 'me';
             params.releaseStatus = 'all';
         }
-        const map = new Map();
-        for (const ref of cachedWorlds.values()) {
-            if (ref.authorId === D.id && (ref.authorId === currentUser.value.id || ref.releaseStatus === 'public')) {
-                cachedWorlds.delete(ref.id);
-            }
-        }
-        processBulk({
-            fn: worldRequest.getWorlds,
-            N: -1,
-            params,
-            handle: (args) => {
-                for (const json of args.json) {
-                    const $ref = cachedWorlds.get(json.id);
-                    if (typeof $ref !== 'undefined') {
-                        map.set($ref.id, $ref);
+        const worlds = [];
+        const worldIds = new Set();
+        (async () => {
+            try {
+                let offset = 0;
+                while (true) {
+                    const args = await worldRequest.getCachedWorlds({
+                        ...params,
+                        offset
+                    });
+                    if (requestId !== userDialogWorldsRequestId.value || D.id !== params.userId) {
+                        return;
                     }
+                    for (const world of args.json) {
+                        if (!worldIds.has(world.id)) {
+                            worldIds.add(world.id);
+                            worlds.push(world);
+                        }
+                    }
+                    if (args.json.length < params.n) {
+                        break;
+                    }
+                    offset += params.n;
                 }
-            },
-            done: () => {
-                if (D.id === params.userId) {
-                    setUserDialogWorlds(D.id);
+                if (requestId === userDialogWorldsRequestId.value && D.id === params.userId) {
+                    userDialog.value.worlds = worlds;
                 }
-                D.isWorldsLoading = false;
+            } finally {
+                if (requestId === userDialogWorldsRequestId.value) {
+                    D.isWorldsLoading = false;
+                }
             }
+        })().catch((err) => {
+            console.error('refreshUserDialogWorlds failed', err);
         });
     }
 
@@ -2434,25 +2447,28 @@
      * @param userId
      */
     async function getUserFavoriteWorlds(userId) {
+        const requestId = ++userDialogFavoriteWorldsRequestId.value;
         userDialog.value.isFavoriteWorldsLoading = true;
         favoriteWorldsTab.value = '0';
         userDialog.value.userFavoriteWorlds = [];
         const worldLists = [];
-        let params = {
+        const groupArgs = await favoriteRequest.getCachedFavoriteGroups({
             ownerId: userId,
             n: 100,
             offset: 0
-        };
-        const json = await request('favorite/groups', {
-            method: 'GET',
-            params
         });
-        for (let i = 0; i < json.length; ++i) {
-            const list = json[i];
-            if (list.type !== 'world') {
-                continue;
+        if (requestId !== userDialogFavoriteWorldsRequestId.value || userDialog.value.id !== userId) {
+            if (requestId === userDialogFavoriteWorldsRequestId.value) {
+                userDialog.value.isFavoriteWorldsLoading = false;
             }
-            params = {
+            return;
+        }
+        const worldGroups = groupArgs.json.filter((list) => list.type === 'world');
+        const tasks = worldGroups.map(async (list) => {
+            if (list.type !== 'world') {
+                return null;
+            }
+            const params = {
                 ownerId: userId,
                 n: 100,
                 offset: 0,
@@ -2460,15 +2476,26 @@
                 tag: list.name
             };
             try {
-                const args = await favoriteRequest.getFavoriteWorlds(params);
+                const args = await favoriteRequest.getCachedFavoriteWorlds(params);
                 handleFavoriteWorldList(args);
-                worldLists.push([list.displayName, list.visibility, args.json]);
+                return [list.displayName, list.visibility, args.json];
             } catch (err) {
                 console.error('getUserFavoriteWorlds', err);
+                return null;
+            }
+        });
+        const results = await Promise.all(tasks);
+        for (const result of results) {
+            if (result) {
+                worldLists.push(result);
             }
         }
-        userDialog.value.userFavoriteWorlds = worldLists;
-        userDialog.value.isFavoriteWorldsLoading = false;
+        if (requestId === userDialogFavoriteWorldsRequestId.value) {
+            if (userDialog.value.id === userId) {
+                userDialog.value.userFavoriteWorlds = worldLists;
+            }
+            userDialog.value.isFavoriteWorldsLoading = false;
+        }
     }
 
     /**

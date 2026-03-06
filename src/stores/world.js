@@ -13,6 +13,7 @@ import {
     replaceBioSymbols
 } from '../shared/utils';
 import { instanceRequest, miscRequest, worldRequest } from '../api';
+import { patchWorldFromEvent } from '../query';
 import { database } from '../service/database';
 import { processBulk } from '../service/request';
 import { useFavoriteStore } from './favorite';
@@ -76,8 +77,9 @@ export const useWorldStore = defineStore('World', () => {
      * @param {string} tag
      * @param {string} shortName
      */
-    function showWorldDialog(tag, shortName = null) {
+    function showWorldDialog(tag, shortName = null, options = {}) {
         const D = worldDialog;
+        const forceRefresh = Boolean(options?.forceRefresh);
         const L = parseLocation(tag);
         if (L.worldId === '') {
             return;
@@ -89,7 +91,7 @@ export const useWorldStore = defineStore('World', () => {
             shortName
         });
         D.visible = true;
-        if (isMainDialogOpen && D.id === L.worldId) {
+        if (isMainDialogOpen && D.id === L.worldId && !forceRefresh) {
             uiStore.setDialogCrumbLabel('world', D.id, D.ref?.name || D.id);
             instanceStore.applyWorldDialogInstances();
             nextTick(() => (D.loading = false));
@@ -141,10 +143,14 @@ export const useWorldStore = defineStore('World', () => {
                 D.timeSpent = ref.timeSpent;
             }
         });
-        worldRequest
-            .getCachedWorld({
-                worldId: L.worldId
-            })
+        const loadWorldRequest = forceRefresh
+            ? worldRequest.getWorld({
+                  worldId: L.worldId
+              })
+            : worldRequest.getCachedWorld({
+                  worldId: L.worldId
+              });
+        loadWorldRequest
             .catch((err) => {
                 nextTick(() => (D.loading = false));
                 D.id = null;
@@ -199,13 +205,6 @@ export const useWorldStore = defineStore('World', () => {
                             }
                         });
 
-                    if (args.cache) {
-                        worldRequest.getWorld(args.params).then((args1) => {
-                            if (D.id === args1.ref.id) {
-                                updateVRChatWorldCache();
-                            }
-                        });
-                    }
                 }
             });
     }
@@ -343,6 +342,7 @@ export const useWorldStore = defineStore('World', () => {
             // update db cache
             database.addWorldToCache(ref);
         }
+        patchWorldFromEvent(ref);
         return ref;
     }
 

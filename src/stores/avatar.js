@@ -13,6 +13,7 @@ import {
     storeAvatarImage
 } from '../shared/utils';
 import { avatarRequest, miscRequest } from '../api';
+import { patchAvatarFromEvent } from '../query';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
 import { processBulk } from '../service/request';
@@ -170,6 +171,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             // update db cache
             database.addAvatarToCache(avatarRef);
         }
+        patchAvatarFromEvent(ref);
         return ref;
     }
 
@@ -178,14 +180,15 @@ export const useAvatarStore = defineStore('Avatar', () => {
      * @param {string} avatarId
      * @returns
      */
-    function showAvatarDialog(avatarId) {
+    function showAvatarDialog(avatarId, options = {}) {
         const D = avatarDialog.value;
+        const forceRefresh = Boolean(options?.forceRefresh);
         const isMainDialogOpen = uiStore.openDialog({
             type: 'avatar',
             id: avatarId
         });
         D.visible = true;
-        if (isMainDialogOpen && D.id === avatarId) {
+        if (isMainDialogOpen && D.id === avatarId && !forceRefresh) {
             uiStore.setDialogCrumbLabel('avatar', D.id, D.ref?.name || D.id);
             nextTick(() => (D.loading = false));
             return;
@@ -217,8 +220,10 @@ export const useAvatarStore = defineStore('Avatar', () => {
             uiStore.setDialogCrumbLabel('avatar', D.id, D.ref?.name || D.id);
             nextTick(() => (D.loading = false));
         }
-        avatarRequest
-            .getAvatar({ avatarId })
+        const loadAvatarRequest = forceRefresh
+            ? avatarRequest.getAvatar({ avatarId })
+            : avatarRequest.getCachedAvatar({ avatarId });
+        loadAvatarRequest
             .then((args) => {
                 const ref = applyAvatar(args.json);
                 D.ref = ref;

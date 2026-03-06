@@ -1,5 +1,22 @@
 import { request } from '../service/request';
 import { useUserStore } from '../stores/user';
+import {
+    entityQueryPolicies,
+    fetchWithEntityPolicy,
+    queryClient,
+    queryKeys
+} from '../query';
+
+function refetchActiveFriendListQueries() {
+    queryClient
+        .invalidateQueries({
+            queryKey: ['friends'],
+            refetchType: 'active'
+        })
+        .catch((err) => {
+            console.error('Failed to refresh friend list queries:', err);
+        });
+}
 
 const friendReq = {
     /**
@@ -28,6 +45,22 @@ const friendReq = {
     },
 
     /**
+     * Fetch friends from query cache if still fresh. Otherwise, calls API.
+     * @param {{ n: number, offset: number, offline?: boolean }} params
+     * @returns {Promise<{json: any, params: { n: number, offset: number, offline?: boolean }, cache?: boolean}>}
+     */
+    getCachedFriends(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.friends(params),
+            policy: entityQueryPolicies.friendList,
+            queryFn: () => friendReq.getFriends(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
+    },
+
+    /**
      * @param {{ userId: string }} params
      * @returns {Promise<{json: any, params: { userId: string }}>}
      */
@@ -39,6 +72,7 @@ const friendReq = {
                 json,
                 params
             };
+            refetchActiveFriendListQueries();
             return args;
         });
     },
@@ -55,6 +89,7 @@ const friendReq = {
                 json,
                 params
             };
+            refetchActiveFriendListQueries();
             return args;
         });
     },
@@ -72,6 +107,7 @@ const friendReq = {
                 json,
                 params
             };
+            refetchActiveFriendListQueries();
             return args;
         });
     },

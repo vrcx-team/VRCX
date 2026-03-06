@@ -1212,8 +1212,7 @@
                 break;
             case 'Refresh':
                 const { tag, shortName } = worldDialog.value.$location;
-                D.id = '';
-                showWorldDialog(tag, shortName);
+                showWorldDialog(tag, shortName, { forceRefresh: true });
                 break;
             case 'New Instance':
                 showNewInstanceDialog(D.$location.tag);

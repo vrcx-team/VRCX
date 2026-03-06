@@ -1537,8 +1537,7 @@
                 break;
             case 'Refresh':
                 const groupId = D.id;
-                D.id = '';
-                showGroupDialog(groupId);
+                showGroupDialog(groupId, { forceRefresh: true });
                 break;
             case 'Leave Group':
                 leaveGroupPrompt(D.id);
@@ -1713,7 +1712,7 @@
         }
         if (D.inGroup) {
             await groupRequest
-                .getGroupMember({
+                .getCachedGroupMember({
                     groupId: D.id,
                     userId: currentUser.value.id
                 })
@@ -1744,7 +1743,7 @@
         D.memberSearch = '';
         isGroupMembersLoading.value = true;
         await groupRequest
-            .getGroupMembers(params)
+            .getCachedGroupMembers(params)
             .finally(() => {
                 isGroupMembersLoading.value = false;
             })
@@ -1784,10 +1783,11 @@
         updateGroupDialogData({ ...groupDialog.value, galleries: {} });
         groupDialogGalleryCurrentName.value = '0';
         isGroupGalleryLoading.value = true;
-        for (let i = 0; i < groupDialog.value.ref.galleries.length; i++) {
-            const gallery = groupDialog.value.ref.galleries[i];
-            await getGroupGallery(groupDialog.value.id, gallery.id);
-        }
+        const groupId = groupDialog.value.id;
+        const tasks = (groupDialog.value.ref.galleries || []).map((gallery) =>
+            getGroupGallery(groupId, gallery.id)
+        );
+        await Promise.allSettled(tasks);
         isGroupGalleryLoading.value = false;
     }
 
@@ -1801,7 +1801,7 @@
             };
             const count = 50; // 5000 max
             for (let i = 0; i < count; i++) {
-                const args = await groupRequest.getGroupGallery(params);
+                const args = await groupRequest.getCachedGroupGallery(params);
                 if (args) {
                     for (const json of args.json) {
                         if (groupDialog.value.id === json.groupId) {
@@ -1850,7 +1850,7 @@
 
     async function setGroupMemberSortOrder(sortOrder) {
         const D = groupDialog.value;
-        if (D.memberSortOrder.value === sortOrder) {
+        if (D.memberSortOrder?.value === sortOrder?.value) {
             return;
         }
         D.memberSortOrder = sortOrder;

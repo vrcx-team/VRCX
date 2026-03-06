@@ -1,5 +1,11 @@
 import { request } from '../service/request';
 import { useUserStore } from '../stores';
+import {
+    entityQueryPolicies,
+    fetchWithEntityPolicy,
+    patchAndRefetchActiveQuery,
+    queryKeys
+} from '../query';
 
 /**
  * @returns {string}
@@ -39,26 +45,14 @@ const userReq = {
      * @type {import('../types/api/user').GetCachedUser}
      */
     getCachedUser(params) {
-        const userStore = useUserStore();
-        return new Promise((resolve, reject) => {
-            const ref = userStore.cachedUsers.get(params.userId);
-            if (typeof ref === 'undefined') {
-                userReq
-                    .getUser(params)
-                    .then((args) => {
-                        args.ref = userStore.applyUser(args.json);
-                        resolve(args);
-                    })
-                    .catch(reject);
-            } else {
-                resolve({
-                    cache: true,
-                    json: ref,
-                    params,
-                    ref
-                });
-            }
-        });
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.user(params.userId),
+            policy: entityQueryPolicies.user,
+            queryFn: () => userReq.getUser(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
     },
 
     /**
@@ -149,6 +143,12 @@ const userReq = {
                 params,
                 ref: userStore.applyCurrentUser(json)
             };
+            patchAndRefetchActiveQuery({
+                queryKey: queryKeys.user(args.ref.id),
+                nextData: args
+            }).catch((err) => {
+                console.error('Failed to refresh user query after mutation:', err);
+            });
             return args;
         });
     },

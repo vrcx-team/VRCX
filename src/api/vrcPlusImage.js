@@ -1,8 +1,25 @@
 import { request } from '../service/request';
 import { useUserStore } from '../stores';
+import {
+    entityQueryPolicies,
+    fetchWithEntityPolicy,
+    queryClient,
+    queryKeys
+} from '../query';
 
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
+}
+
+function refetchActiveGalleryQueries() {
+    queryClient
+        .invalidateQueries({
+            queryKey: ['gallery'],
+            refetchType: 'active'
+        })
+        .catch((err) => {
+            console.error('Failed to refresh gallery queries:', err);
+        });
 }
 const vrcPlusImageReq = {
     uploadGalleryImage(imageData) {
@@ -19,6 +36,7 @@ const vrcPlusImageReq = {
                 json,
                 params
             };
+            refetchActiveGalleryQueries();
             return args;
         });
     },
@@ -34,6 +52,7 @@ const vrcPlusImageReq = {
                 json,
                 params
             };
+            refetchActiveGalleryQueries();
             return args;
         });
     },
@@ -51,6 +70,17 @@ const vrcPlusImageReq = {
         });
     },
 
+    getCachedPrints(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.prints(params),
+            policy: entityQueryPolicies.galleryCollection,
+            queryFn: () => vrcPlusImageReq.getPrints(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
+    },
+
     deletePrint(printId) {
         return request(`prints/${printId}`, {
             method: 'DELETE'
@@ -59,6 +89,7 @@ const vrcPlusImageReq = {
                 json,
                 printId
             };
+            refetchActiveGalleryQueries();
             return args;
         });
     },
@@ -74,6 +105,7 @@ const vrcPlusImageReq = {
                 json,
                 params
             };
+            refetchActiveGalleryQueries();
             return args;
         });
     },
@@ -90,6 +122,17 @@ const vrcPlusImageReq = {
         });
     },
 
+    getCachedPrint(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.print(params.printId),
+            policy: entityQueryPolicies.galleryCollection,
+            queryFn: () => vrcPlusImageReq.getPrint(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
+    },
+
     uploadEmoji(imageData, params) {
         return request('file/image', {
             uploadImage: true,
@@ -101,6 +144,7 @@ const vrcPlusImageReq = {
                 json,
                 params
             };
+            refetchActiveGalleryQueries();
             return args;
         });
     }

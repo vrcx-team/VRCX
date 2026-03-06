@@ -25,6 +25,7 @@ import {
     userRequest,
     worldRequest
 } from '../api';
+import { patchInstanceFromEvent } from '../query';
 import {
     accessTypeLocaleKeyMap,
     instanceContentSettings
@@ -573,6 +574,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             }
         }
         lastInstanceApplied.value = ref.id;
+        patchInstanceFromEvent(ref);
         return ref;
     }
 

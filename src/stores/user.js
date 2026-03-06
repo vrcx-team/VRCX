@@ -29,6 +29,7 @@ import {
     instanceRequest,
     userRequest
 } from '../api';
+import { patchUserFromEvent } from '../query';
 import { processBulk, request } from '../service/request';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
@@ -764,6 +765,7 @@ export const useUserStore = defineStore('User', () => {
                 }
             }
         }
+        patchUserFromEvent(ref);
         return ref;
     }
 
@@ -919,9 +921,6 @@ export const useUserStore = defineStore('User', () => {
                     let inCurrentWorld = false;
                     if (locationStore.lastLocation.playerList.has(D.ref.id)) {
                         inCurrentWorld = true;
-                    }
-                    if (args.cache) {
-                        userRequest.getUser(args.params);
                     }
                     if (userId !== currentUser.value.id) {
                         database
