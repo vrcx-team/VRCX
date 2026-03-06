@@ -8,11 +8,17 @@ import dayjs from 'dayjs';
 
 import {
     compareGameLogRows,
+    createJoinLeaveEntry,
+    createLocationEntry,
+    createPortalSpawnEntry,
+    createResourceLoadEntry,
     findUserByDisplayName,
     formatSeconds,
     gameLogSearchFilter,
     getGroupName,
+    parseInventoryFromUrl,
     parseLocation,
+    parsePrintFromUrl,
     replaceBioSymbols
 } from '../../shared/utils';
 import { AppDebug } from '../../service/appConfig';
@@ -131,6 +137,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         { flush: 'sync' }
     );
 
+    /**
+     *
+     */
     async function init() {
         gameLogTable.value.filter = JSON.parse(
             await configRepository.getString('VRCX_gameLogTableFilters', '[]')
@@ -143,6 +152,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     init();
 
+    /**
+     *
+     * @param entry
+     */
     function insertGameLogSorted(entry) {
         const arr = gameLogTableData.value;
         if (arr.length === 0) {
@@ -170,6 +183,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         gameLogTableData.value = [...arr, entry];
     }
 
+    /**
+     *
+     */
     function clearNowPlaying() {
         nowPlaying.value = {
             url: '',
@@ -186,6 +202,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
         vrStore.updateVrNowPlaying();
     }
 
+    /**
+     *
+     * @param data
+     */
     function setNowPlaying(data) {
         const ctx = structuredClone(data);
         if (nowPlaying.value.url !== ctx.videoUrl) {
@@ -257,6 +277,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         advancedSettingsStore
     });
 
+    /**
+     *
+     */
     function updateNowPlaying() {
         const np = nowPlaying.value;
         if (!nowPlaying.value.playing) {
@@ -275,6 +298,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         workerTimers.setTimeout(() => updateNowPlaying(), 1000);
     }
 
+    /**
+     *
+     */
     async function tryLoadPlayerList() {
         // TODO: make this work again
         if (!gameStore.isGameRunning) {
@@ -355,6 +381,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
     }
 
+    /**
+     *
+     * @param row
+     */
     function gameLogIsFriend(row) {
         if (typeof row.isFriend !== 'undefined') {
             return row.isFriend;
@@ -365,6 +395,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
         return friendStore.friends.has(row.userId);
     }
 
+    /**
+     *
+     * @param row
+     */
     function gameLogIsFavorite(row) {
         if (typeof row.isFavorite !== 'undefined') {
             return row.isFavorite;
@@ -375,6 +409,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         return friendStore.localFavoriteFriends.has(row.userId);
     }
 
+    /**
+     *
+     */
     async function gameLogTableLookup() {
         await configRepository.setString(
             'VRCX_gameLogTableFilters',
@@ -416,6 +453,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
     }
 
+    /**
+     *
+     * @param entry
+     */
     function addGameLog(entry) {
         entry.isFriend = gameLogIsFriend(entry);
         entry.isFavorite = gameLogIsFavorite(entry);
@@ -456,6 +497,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
         uiStore.notifyMenu('game-log');
     }
 
+    /**
+     *
+     * @param input
+     */
     async function addGamelogLocationToDatabase(input) {
         const groupName = await getGroupName(input.location);
         const entry = {
@@ -465,10 +510,17 @@ export const useGameLogStore = defineStore('GameLog', () => {
         database.addGamelogLocationToDatabase(entry);
     }
 
+    /**
+     *
+     * @param row
+     */
     function gameLogSearch(row) {
         return gameLogSearchFilter(row, gameLogTable.value.search);
     }
 
+    /**
+     *
+     */
     function sweepGameLog() {
         const j = gameLogTableData.value.length;
         if (j > vrcxStore.maxTableSize + 50) {
@@ -476,6 +528,11 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
     }
 
+    /**
+     *
+     * @param gameLog
+     * @param location
+     */
     function addGameLogEntry(gameLog, location) {
         let entry = undefined;
         if (advancedSettingsStore.gameLogDisabled) {
@@ -543,15 +600,12 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     gameLog.dt
                 );
                 const L = parseLocation(gameLog.location);
-                entry = {
-                    created_at: gameLog.dt,
-                    type: 'Location',
-                    location: gameLog.location,
-                    worldId: L.worldId,
-                    worldName,
-                    groupName: '',
-                    time: 0
-                };
+                entry = createLocationEntry(
+                    gameLog.dt,
+                    gameLog.location,
+                    L.worldId,
+                    worldName
+                );
                 getGroupName(gameLog.location).then((groupName) => {
                     entry.groupName = groupName;
                 });
@@ -595,14 +649,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 }
                 vrStore.updateVRLastLocation();
                 instanceStore.getCurrentInstanceUserList();
-                entry = {
-                    created_at: gameLog.dt,
-                    type: 'OnPlayerJoined',
-                    displayName: gameLog.displayName,
+                entry = createJoinLeaveEntry(
+                    'OnPlayerJoined',
+                    gameLog.dt,
+                    gameLog.displayName,
                     location,
-                    userId,
-                    time: 0
-                };
+                    userId
+                );
                 database.addGamelogJoinLeaveToDatabase(entry);
                 break;
             case 'player-left':
@@ -617,29 +670,21 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 photonStore.photonLobbyAvatars.delete(userId);
                 vrStore.updateVRLastLocation();
                 instanceStore.getCurrentInstanceUserList();
-                entry = {
-                    created_at: gameLog.dt,
-                    type: 'OnPlayerLeft',
-                    displayName: gameLog.displayName,
+                entry = createJoinLeaveEntry(
+                    'OnPlayerLeft',
+                    gameLog.dt,
+                    gameLog.displayName,
                     location,
                     userId,
                     time
-                };
+                );
                 database.addGamelogJoinLeaveToDatabase(entry);
                 break;
             case 'portal-spawn':
                 if (vrcxStore.ipcEnabled && gameStore.isGameRunning) {
                     break;
                 }
-                entry = {
-                    created_at: gameLog.dt,
-                    type: 'PortalSpawn',
-                    location,
-                    displayName: '',
-                    userId: '',
-                    instanceId: '',
-                    worldName: ''
-                };
+                entry = createPortalSpawnEntry(gameLog.dt, location);
                 database.addGamelogPortalSpawnToDatabase(entry);
                 break;
             case 'video-play':
@@ -665,15 +710,12 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     break;
                 }
                 lastResourceloadUrl.value = gameLog.resourceUrl;
-                entry = {
-                    created_at: gameLog.dt,
-                    type:
-                        gameLog.type === 'resource-load-string'
-                            ? 'StringLoad'
-                            : 'ImageLoad',
-                    resourceUrl: gameLog.resourceUrl,
+                entry = createResourceLoadEntry(
+                    gameLog.type,
+                    gameLog.dt,
+                    gameLog.resourceUrl,
                     location
-                };
+                );
                 database.addGamelogResourceLoadToDatabase(entry);
                 break;
             case 'screenshot':
@@ -711,42 +753,18 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 // }
 
                 if (advancedSettingsStore.saveInstanceEmoji) {
-                    try {
-                        // https://api.vrchat.cloud/api/1/user/usr_032383a7-748c-4fb2-94e4-bcb928e5de6b/inventory/inv_75781d65-92fe-4a80-a1ff-27ee6e843b08
-                        const url = new URL(gameLog.url);
-                        if (
-                            url.pathname.substring(0, 12) === '/api/1/user/' &&
-                            url.pathname.includes('/inventory/inv_')
-                        ) {
-                            const pathArray = url.pathname.split('/');
-                            const userId = pathArray[4];
-                            const inventoryId = pathArray[6];
-                            if (userId && inventoryId.length === 40) {
-                                galleryStore.queueCheckInstanceInventory(
-                                    inventoryId,
-                                    userId
-                                );
-                            }
-                        }
-                    } catch (err) {
-                        console.error(err);
+                    const inv = parseInventoryFromUrl(gameLog.url);
+                    if (inv) {
+                        galleryStore.queueCheckInstanceInventory(
+                            inv.inventoryId,
+                            inv.userId
+                        );
                     }
                 }
                 if (advancedSettingsStore.saveInstancePrints) {
-                    try {
-                        let printId = '';
-                        const url1 = new URL(gameLog.url);
-                        if (
-                            url1.pathname.substring(0, 14) === '/api/1/prints/'
-                        ) {
-                            const pathArray = url1.pathname.split('/');
-                            printId = pathArray[4];
-                        }
-                        if (printId && printId.length === 41) {
-                            galleryStore.queueSavePrintToFile(printId);
-                        }
-                    } catch (err) {
-                        console.error(err);
+                    const printId = parsePrintFromUrl(gameLog.url);
+                    if (printId) {
+                        galleryStore.queueSavePrintToFile(printId);
                     }
                 }
                 break;
@@ -902,12 +920,19 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
     }
 
+    /**
+     *
+     */
     async function getGameLogTable() {
         await database.initTables();
         const dateTill = await database.getLastDateGameLogDatabase();
         updateGameLog(dateTill);
     }
 
+    /**
+     *
+     * @param dateTill
+     */
     async function updateGameLog(dateTill) {
         await gameLogService.setDateTill(dateTill);
         await new Promise((resolve) => {
@@ -923,6 +948,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     // use in C#
+    /**
+     *
+     * @param json
+     */
     function addGameLogEvent(json) {
         const rawLogs = JSON.parse(json);
         const gameLog = gameLogService.parseRawGameLog(
@@ -941,6 +970,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         addGameLogEntry(gameLog, locationStore.lastLocation.location);
     }
 
+    /**
+     *
+     */
     async function disableGameLogDialog() {
         if (gameStore.isGameRunning) {
             toast.error(t('message.gamelog.vrchat_must_be_closed'));
@@ -962,6 +994,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
     }
 
+    /**
+     *
+     */
     async function initGameLogTable() {
         gameLogTable.value.loading = true;
         const rows = await database.lookupGameLogDatabase(

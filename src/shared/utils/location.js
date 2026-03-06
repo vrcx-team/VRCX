@@ -37,3 +37,36 @@ function getFriendsLocations(friendsArr) {
 }
 
 export { getFriendsLocations };
+
+/**
+ * Get the display text for a location — synchronous, pure function.
+ * Does NOT handle async world name lookups (those stay in the component).
+ * @param {object} L - Parsed location object from parseLocation()
+ * @param {object} options
+ * @param {string} [options.hint] - Hint string (e.g. from props)
+ * @param {string|undefined} [options.worldName] - Cached world name, if available
+ * @param {string} options.accessTypeLabel - Translated access type label
+ * @param {Function} options.t - i18n translate function
+ * @returns {string} Display text for the location
+ */
+function getLocationText(L, { hint, worldName, accessTypeLabel, t }) {
+    if (L.isOffline) {
+        return t('location.offline');
+    }
+    if (L.isPrivate) {
+        return t('location.private');
+    }
+    if (L.isTraveling) {
+        return t('location.traveling');
+    }
+    if (typeof hint === 'string' && hint !== '') {
+        return L.instanceId ? `${hint} · ${accessTypeLabel}` : hint;
+    }
+    if (L.worldId) {
+        const name = worldName || L.worldId;
+        return L.instanceId ? `${name} · ${accessTypeLabel}` : name;
+    }
+    return '';
+}
+
+export { getLocationText };

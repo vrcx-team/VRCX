@@ -35,7 +35,14 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { getGroupName, getWorldName, parseLocation, resolveRegion, translateAccessType } from '../shared/utils';
+    import {
+        getGroupName,
+        getLocationText,
+        getWorldName,
+        parseLocation,
+        resolveRegion,
+        translateAccessType
+    } from '../shared/utils';
     import {
         useAppearanceSettingsStore,
         useGroupStore,
@@ -229,41 +236,27 @@
      */
     function setText(L) {
         const accessTypeLabel = getAccessTypeLabel(L.accessTypeName);
+        const cachedRef = L.worldId ? cachedWorlds.get(L.worldId) : undefined;
+        const worldName = typeof cachedRef !== 'undefined' ? cachedRef.name : undefined;
 
-        if (L.isOffline) {
-            text.value = t('location.offline');
-        } else if (L.isPrivate) {
-            text.value = t('location.private');
-        } else if (L.isTraveling) {
-            text.value = t('location.traveling');
-        } else if (typeof props.hint === 'string' && props.hint !== '') {
-            if (L.instanceId) {
-                text.value = `${props.hint} · ${accessTypeLabel}`;
-            } else {
-                text.value = props.hint;
-            }
-        } else if (L.worldId) {
-            if (L.instanceId) {
-                text.value = `${L.worldId} · ${accessTypeLabel}`;
-            } else {
-                text.value = L.worldId;
-            }
-            const ref = cachedWorlds.get(L.worldId);
-            if (typeof ref === 'undefined') {
-                getWorldName(L.worldId).then((name) => {
-                    if (!isDisposed && name && currentInstanceId() === L.tag) {
-                        if (L.instanceId) {
-                            text.value = `${name} · ${getAccessTypeLabel(L.accessTypeName)}`;
-                        } else {
-                            text.value = name;
-                        }
-                    }
-                });
-            } else if (L.instanceId) {
-                text.value = `${ref.name} · ${accessTypeLabel}`;
-            } else {
-                text.value = ref.name;
-            }
+        text.value = getLocationText(L, {
+            hint: props.hint,
+            worldName,
+            accessTypeLabel,
+            t
+        });
+
+        if (L.worldId && typeof cachedRef === 'undefined') {
+            getWorldName(L.worldId).then((name) => {
+                if (!isDisposed && name && currentInstanceId() === L.tag) {
+                    text.value = getLocationText(L, {
+                        hint: props.hint,
+                        worldName: name,
+                        accessTypeLabel: getAccessTypeLabel(L.accessTypeName),
+                        t
+                    });
+                }
+            });
         }
     }
 

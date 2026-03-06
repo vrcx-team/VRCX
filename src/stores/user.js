@@ -12,6 +12,10 @@ import {
     compareByLocationAt,
     compareByName,
     compareByUpdatedAt,
+    computeUserPlatform,
+    createDefaultUserRef,
+    diffObjectProps,
+    evictMapCache,
     extractFileId,
     findUserByDisplayName,
     getAllUserMemos,
@@ -20,8 +24,8 @@ import {
     getWorldName,
     isRealInstance,
     parseLocation,
-    removeEmojis,
-    replaceBioSymbols
+    replaceBioSymbols,
+    sanitizeUserJson
 } from '../shared/utils';
 import {
     avatarRequest,
@@ -29,10 +33,10 @@ import {
     instanceRequest,
     userRequest
 } from '../api';
-import { patchUserFromEvent } from '../query';
 import { processBulk, request } from '../service/request';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
+import { patchUserFromEvent } from '../query';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAuthStore } from './auth';
 import { useAvatarStore } from './avatar';
@@ -344,6 +348,10 @@ export const useUserStore = defineStore('User', () => {
         { flush: 'sync' }
     );
 
+    /**
+     *
+     * @param args
+     */
     function handleConfig(args) {
         const authStore = useAuthStore();
         const ref = {
@@ -419,143 +427,18 @@ export const useUserStore = defineStore('User', () => {
     }
 
     const robotUrl = `${AppDebug.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
-
-    /**
-     *
-     * @param {Map<string, any>} userCache
-     * @param {Map<string, any>} friendMap
-     */
-    function cleanupUserCache(userCache, friendMap) {
-        const bufferSize = 300;
-
-        const currentFriendCount = friendMap.size;
-        const currentTotalSize = userCache.size;
-
-        const effectiveMaxSize = currentFriendCount + bufferSize;
-
-        if (currentTotalSize <= effectiveMaxSize) {
-            return;
-        }
-
-        const targetDeleteCount = currentTotalSize - effectiveMaxSize;
-        let deletedCount = 0;
-        const keysToDelete = [];
-
-        for (const userId of userCache.keys()) {
-            if (friendMap.has(userId)) {
-                continue;
-            }
-
-            if (deletedCount >= targetDeleteCount) {
-                break;
-            }
-
-            keysToDelete.push(userId);
-            deletedCount++;
-        }
-
-        for (const id of keysToDelete) {
-            userCache.delete(id);
-        }
-
-        console.log(
-            `User cache cleanup: Deleted ${deletedCount}. Current cache size: ${userCache.size}`
-        );
-    }
     /**
      *
      * @param {import('../types/api/user').GetUserResponse} json
      * @returns {import('../types/api/user').VrcxUser}
      */
     function applyUser(json) {
-        let hasPropChanged = false;
-        const changedProps = {};
         let ref = cachedUsers.get(json.id);
-        if (json.statusDescription) {
-            json.statusDescription = replaceBioSymbols(json.statusDescription);
-            json.statusDescription = removeEmojis(json.statusDescription);
-        }
-        if (json.bio) {
-            json.bio = replaceBioSymbols(json.bio);
-        }
-        if (json.note) {
-            json.note = replaceBioSymbols(json.note);
-        }
-        if (json.currentAvatarImageUrl === robotUrl) {
-            delete json.currentAvatarImageUrl;
-            delete json.currentAvatarThumbnailImageUrl;
-        }
+        let hasPropChanged = false;
+        let changedProps = {};
+        sanitizeUserJson(json, robotUrl);
         if (typeof ref === 'undefined') {
-            ref = reactive({
-                ageVerificationStatus: '',
-                ageVerified: false,
-                allowAvatarCopying: false,
-                badges: [],
-                bio: '',
-                bioLinks: [],
-                currentAvatarImageUrl: '',
-                currentAvatarTags: [],
-                currentAvatarThumbnailImageUrl: '',
-                date_joined: '',
-                developerType: '',
-                discordId: '',
-                displayName: '',
-                friendKey: '',
-                friendRequestStatus: '',
-                id: '',
-                instanceId: '',
-                isFriend: false,
-                last_activity: '',
-                last_login: '',
-                last_mobile: null,
-                last_platform: '',
-                location: '',
-                platform: '',
-                note: null,
-                profilePicOverride: '',
-                profilePicOverrideThumbnail: '',
-                pronouns: '',
-                state: '',
-                status: '',
-                statusDescription: '',
-                tags: [],
-                travelingToInstance: '',
-                travelingToLocation: '',
-                travelingToWorld: '',
-                userIcon: '',
-                worldId: '',
-                // only in bulk request
-                fallbackAvatar: '',
-                // VRCX
-                $location: {},
-                $location_at: Date.now(),
-                $online_for: Date.now(),
-                $travelingToTime: Date.now(),
-                $offline_for: null,
-                $active_for: Date.now(),
-                $isVRCPlus: false,
-                $isModerator: false,
-                $isTroll: false,
-                $isProbableTroll: false,
-                $trustLevel: 'Visitor',
-                $trustClass: 'x-tag-untrusted',
-                $userColour: '',
-                $trustSortNum: 1,
-                $languages: [],
-                $joinCount: 0,
-                $timeSpent: 0,
-                $lastSeen: '',
-                $mutualCount: 0,
-                $nickName: '',
-                $previousLocation: '',
-                $customTag: '',
-                $customTagColour: '',
-                $friendNumber: 0,
-                $platform: '',
-                $moderations: {},
-                //
-                ...json
-            });
+            ref = reactive(createDefaultUserRef(json));
             if (locationStore.lastLocation.playerList.has(json.id)) {
                 // update $location_at from instance join time
                 const player = locationStore.lastLocation.playerList.get(
@@ -581,7 +464,12 @@ export const useUserStore = defineStore('User', () => {
                 ref.$customTag = '';
                 ref.$customTagColour = '';
             }
-            cleanupUserCache(cachedUsers, friendStore.friends);
+            evictMapCache(
+                cachedUsers,
+                friendStore.friends.size + 300,
+                (_value, key) => friendStore.friends.has(key),
+                { logLabel: 'User cache cleanup' }
+            );
             cachedUsers.set(ref.id, ref);
             friendStore.updateFriend(ref.id);
         } else {
@@ -589,59 +477,23 @@ export const useUserStore = defineStore('User', () => {
                 // offline event before GPS to offline location
                 friendStore.updateFriend(ref.id, json.state);
             }
-            for (const prop in ref) {
-                if (typeof json[prop] === 'undefined') {
-                    continue;
-                }
-                // Only compare primitive values
-                if (ref[prop] === null || typeof ref[prop] !== 'object') {
-                    changedProps[prop] = true;
-                }
-            }
-            for (const prop in json) {
-                if (typeof ref[prop] === 'undefined') {
-                    continue;
-                }
-                if (Array.isArray(json[prop]) && Array.isArray(ref[prop])) {
-                    if (!arraysMatch(json[prop], ref[prop])) {
-                        changedProps[prop] = true;
-                    }
-                } else if (
-                    json[prop] === null ||
-                    typeof json[prop] !== 'object'
-                ) {
-                    changedProps[prop] = true;
-                }
-            }
-            for (const prop in changedProps) {
-                const asIs = ref[prop];
-                const toBe = json[prop];
-                if (asIs === toBe) {
-                    delete changedProps[prop];
-                } else {
-                    hasPropChanged = true;
-                    changedProps[prop] = [toBe, asIs];
-                }
-            }
+            const {
+                hasPropChanged: _hasPropChanged,
+                changedProps: _changedProps
+            } = diffObjectProps(ref, json, arraysMatch);
             for (const prop in json) {
                 if (typeof json[prop] !== 'undefined') {
                     ref[prop] = json[prop];
                 }
             }
+            hasPropChanged = _hasPropChanged;
+            changedProps = _changedProps;
         }
         ref.$moderations = moderationStore.getUserModerations(ref.id);
         ref.$isVRCPlus = ref.tags.includes('system_supporter');
         appearanceSettingsStore.applyUserTrustLevel(ref);
         applyUserLanguage(ref);
-        if (
-            ref.platform &&
-            ref.platform !== 'offline' &&
-            ref.platform !== 'web'
-        ) {
-            ref.$platform = ref.platform;
-        } else {
-            ref.$platform = ref.last_platform;
-        }
+        ref.$platform = computeUserPlatform(ref.platform, ref.last_platform);
         // traveling
         if (ref.location === 'traveling') {
             ref.$location = parseLocation(ref.travelingToLocation);
@@ -1180,6 +1032,10 @@ export const useUserStore = defineStore('User', () => {
         D.instance.friendCount = friendCount;
     }
 
+    /**
+     *
+     * @param array
+     */
     function sortUserDialogAvatars(array) {
         const D = userDialog.value;
         if (D.avatarSorting === 'update') {
@@ -1192,6 +1048,10 @@ export const useUserStore = defineStore('User', () => {
         D.avatars = array;
     }
 
+    /**
+     *
+     * @param fileId
+     */
     async function refreshUserDialogAvatars(fileId) {
         const D = userDialog.value;
         const userId = D.id;
@@ -1248,6 +1108,10 @@ export const useUserStore = defineStore('User', () => {
         });
     }
 
+    /**
+     *
+     * @param ref
+     */
     async function lookupUser(ref) {
         let ctx;
         if (ref.userId) {
@@ -1577,6 +1441,9 @@ export const useUserStore = defineStore('User', () => {
         }
     }
 
+    /**
+     *
+     */
     function updateAutoStateChange() {
         if (
             !generalSettingsStore.autoStateChangeEnabled ||
@@ -1683,6 +1550,10 @@ export const useUserStore = defineStore('User', () => {
         });
     }
 
+    /**
+     *
+     * @param data
+     */
     function addCustomTag(data) {
         if (data.Tag) {
             customUserTags.set(data.UserId, {
@@ -1708,6 +1579,9 @@ export const useUserStore = defineStore('User', () => {
         sharedFeedStore.addTag(data.UserId, data.TagColour);
     }
 
+    /**
+     *
+     */
     async function initUserNotes() {
         state.lastNoteCheck = new Date();
         state.lastDbNoteDate = null;
@@ -1735,6 +1609,9 @@ export const useUserStore = defineStore('User', () => {
         }
     }
 
+    /**
+     *
+     */
     async function getLatestUserNotes() {
         state.lastNoteCheck = new Date();
         const params = {
@@ -1793,6 +1670,11 @@ export const useUserStore = defineStore('User', () => {
         }
     }
 
+    /**
+     *
+     * @param userId
+     * @param newNote
+     */
     async function checkNote(userId, newNote) {
         // last check was more than than 5 minutes ago
         if (
@@ -1814,6 +1696,9 @@ export const useUserStore = defineStore('User', () => {
         }
     }
 
+    /**
+     *
+     */
     function getCurrentUser() {
         return request('auth/user', {
             method: 'GET'
@@ -2079,11 +1964,18 @@ export const useUserStore = defineStore('User', () => {
         return ref;
     }
 
+    /**
+     *
+     * @param userId
+     */
     function showSendBoopDialog(userId) {
         sendBoopDialog.value.userId = userId;
         sendBoopDialog.value.visible = true;
     }
 
+    /**
+     *
+     */
     function toggleSharedConnectionsOptOut() {
         userRequest.saveCurrentUser({
             hasSharedConnectionsOptOut:
@@ -2091,6 +1983,9 @@ export const useUserStore = defineStore('User', () => {
         });
     }
 
+    /**
+     *
+     */
     function toggleDiscordFriendsOptOut() {
         userRequest.saveCurrentUser({
             hasDiscordFriendsOptOut: !currentUser.value.hasDiscordFriendsOptOut

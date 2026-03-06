@@ -5,17 +5,19 @@ import { useI18n } from 'vue-i18n';
 
 import {
     checkVRChatCache,
+    createDefaultAvatarRef,
     extractFileId,
     getAvailablePlatforms,
     getBundleDateSize,
     getPlatformInfo,
     replaceBioSymbols,
+    sanitizeEntityJson,
     storeAvatarImage
 } from '../shared/utils';
 import { avatarRequest, miscRequest } from '../api';
-import { patchAvatarFromEvent } from '../query';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
+import { patchAvatarFromEvent } from '../query';
 import { processBulk } from '../service/request';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
@@ -92,40 +94,10 @@ export const useAvatarStore = defineStore('Avatar', () => {
      * @returns {object} ref
      */
     function applyAvatar(json) {
-        json.name = replaceBioSymbols(json.name);
-        json.description = replaceBioSymbols(json.description);
+        sanitizeEntityJson(json, ['name', 'description']);
         let ref = cachedAvatars.get(json.id);
         if (typeof ref === 'undefined') {
-            ref = {
-                acknowledgements: '',
-                authorId: '',
-                authorName: '',
-                created_at: '',
-                description: '',
-                featured: false,
-                highestPrice: null,
-                id: '',
-                imageUrl: '',
-                listingDate: null,
-                lock: false,
-                lowestPrice: null,
-                name: '',
-                pendingUpload: false,
-                performance: {},
-                productId: null,
-                publishedListings: [],
-                releaseStatus: '',
-                searchable: false,
-                styles: [],
-                tags: [],
-                thumbnailImageUrl: '',
-                unityPackageUrl: '',
-                unityPackageUrlObject: {},
-                unityPackages: [],
-                updated_at: '',
-                version: 0,
-                ...json
-            };
+            ref = createDefaultAvatarRef(json);
             cachedAvatars.set(ref.id, ref);
         } else {
             const { unityPackages } = ref;
@@ -178,6 +150,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     /**
      *
      * @param {string} avatarId
+     * @param options
      * @returns
      */
     function showAvatarDialog(avatarId, options = {}) {

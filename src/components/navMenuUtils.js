@@ -179,5 +179,8 @@ export function isEntryNotified(entry, notifiedMenus) {
             targets.push(lastSegment);
         }
     }
+    if (!Array.isArray(notifiedMenus)) {
+        return false;
+    }
     return targets.some((key) => notifiedMenus.includes(key));
 }

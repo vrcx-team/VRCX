@@ -8,8 +8,11 @@ import {
     compareByDisplayName,
     compareById,
     compareByLocationAt,
+    computeDisabledContentSettings,
+    createDefaultInstanceRef,
     debounce,
     displayLocation,
+    evictMapCache,
     getAvailablePlatforms,
     getBundleDateSize,
     getGroupName,
@@ -25,12 +28,12 @@ import {
     userRequest,
     worldRequest
 } from '../api';
-import { patchInstanceFromEvent } from '../query';
 import {
     accessTypeLocaleKeyMap,
     instanceContentSettings
 } from '../shared/constants';
 import { database } from '../service/database';
+import { patchInstanceFromEvent } from '../query';
 import { resolveRef } from '../shared/utils/resolveRef';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFriendStore } from './friend';
@@ -66,30 +69,26 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     let cachedInstances = new Map();
 
+    /**
+     *
+     */
     function cleanInstanceCache() {
-        const maxSize = 200;
-        if (cachedInstances.size <= maxSize) {
-            return;
-        }
-        const removable = [];
-        cachedInstances.forEach((ref, id) => {
-            if (
-                [...friendStore.friends.values()].some(
-                    (f) => f.$location?.tag === id
-                )
-            ) {
-                return;
+        const friendLocationTags = new Set(
+            [...friendStore.friends.values()]
+                .map((f) => f.$location?.tag)
+                .filter(Boolean)
+        );
+        evictMapCache(
+            cachedInstances,
+            200,
+            (_value, key) => friendLocationTags.has(key),
+            {
+                sortFn: (a, b) =>
+                    (Date.parse(a.value.$fetchedAt) || 0) -
+                    (Date.parse(b.value.$fetchedAt) || 0),
+                logLabel: 'Instance cache cleanup'
             }
-            removable.push({
-                id,
-                fetchedAt: Date.parse(ref.$fetchedAt) || 0
-            });
-        });
-        removable.sort((a, b) => a.fetchedAt - b.fetchedAt);
-        const overBy = cachedInstances.size - maxSize;
-        for (let i = 0; i < overBy && i < removable.length; i++) {
-            cachedInstances.delete(removable[i].id);
-        }
+        );
     }
 
     const lastInstanceApplied = ref('');
@@ -183,6 +182,9 @@ export const useInstanceStore = defineStore('Instance', () => {
         { flush: 'sync' }
     );
 
+    /**
+     *
+     */
     async function getInstanceJoinHistory() {
         try {
             const data = await database.getInstanceJoinHistory();
@@ -195,6 +197,11 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
     }
 
+    /**
+     *
+     * @param location
+     * @param dateTime
+     */
     function addInstanceJoinHistory(location, dateTime) {
         if (!location || !dateTime) {
             return;
@@ -208,11 +215,18 @@ export const useInstanceStore = defineStore('Instance', () => {
         instanceJoinHistory.set(location, epoch);
     }
 
+    /**
+     *
+     */
     function hidePreviousInstancesDialogs() {
         previousInstancesInfoDialog.value.visible = false;
         previousInstancesListDialog.value.visible = false;
     }
 
+    /**
+     *
+     * @param input
+     */
     function resolveUserRef(input) {
         return resolveRef(input, {
             emptyDefault: { id: '', displayName: '' },
@@ -222,6 +236,10 @@ export const useInstanceStore = defineStore('Instance', () => {
         });
     }
 
+    /**
+     *
+     * @param input
+     */
     function resolveWorldRef(input) {
         return resolveRef(input, {
             emptyDefault: { id: '', name: '' },
@@ -231,6 +249,10 @@ export const useInstanceStore = defineStore('Instance', () => {
         });
     }
 
+    /**
+     *
+     * @param input
+     */
     function resolveGroupRef(input) {
         return resolveRef(input, {
             emptyDefault: { id: '', name: '' },
@@ -240,6 +262,10 @@ export const useInstanceStore = defineStore('Instance', () => {
         });
     }
 
+    /**
+     *
+     * @param accessTypeNameRaw
+     */
     function translateAccessType(accessTypeNameRaw) {
         const key = accessTypeLocaleKeyMap[accessTypeNameRaw];
         if (!key) {
@@ -255,6 +281,11 @@ export const useInstanceStore = defineStore('Instance', () => {
         return t(key);
     }
 
+    /**
+     *
+     * @param instanceId
+     * @param worldNameOverride
+     */
     function formatPreviousInstancesInfoLabel(
         instanceId,
         worldNameOverride = ''
@@ -275,6 +306,10 @@ export const useInstanceStore = defineStore('Instance', () => {
         return `${baseLabel} · ${accessTypeLabel}`;
     }
 
+    /**
+     *
+     * @param instanceId
+     */
     function showPreviousInstancesInfoDialog(instanceId) {
         previousInstancesInfoDialog.value.visible = true;
         previousInstancesInfoDialog.value.instanceId = instanceId;
@@ -308,6 +343,11 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
     }
 
+    /**
+     *
+     * @param variant
+     * @param targetRef
+     */
     async function showPreviousInstancesListDialog(variant, targetRef) {
         previousInstancesListDialog.value.variant = variant;
         let resolved = null;
@@ -335,6 +375,9 @@ export const useInstanceStore = defineStore('Instance', () => {
         });
     }
 
+    /**
+     *
+     */
     function updateCurrentInstanceWorld() {
         let L;
         let instanceId = locationStore.lastLocation.location;
@@ -472,53 +515,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
         let ref = cachedInstances.get(json.id);
         if (typeof ref === 'undefined') {
-            ref = {
-                id: '',
-                location: '',
-                instanceId: '',
-                name: '',
-                worldId: '',
-                type: '',
-                ownerId: '',
-                tags: [],
-                active: false,
-                full: false,
-                n_users: 0,
-                hasCapacityForYou: true, // not present depending on endpoint
-                capacity: 0,
-                recommendedCapacity: 0,
-                userCount: 0,
-                queueEnabled: false, // only present with group instance type
-                queueSize: 0, // only present when queuing is enabled
-                platforms: {},
-                gameServerVersion: 0,
-                hardClose: null, // boolean or null
-                closedAt: null, // string or null
-                secureName: '',
-                shortName: '',
-                world: {},
-                users: [], // only present when you're the owner
-                clientNumber: '',
-                contentSettings: {},
-                photonRegion: '',
-                region: '',
-                canRequestInvite: false,
-                permanent: false,
-                private: '', // part of instance tag
-                hidden: '', // part of instance tag
-                nonce: '', // only present when you're the owner
-                strict: false, // deprecated
-                displayName: null,
-                groupAccessType: null, // only present with group instance type
-                roleRestricted: false, // only present with group instance type
-                instancePersistenceEnabled: null,
-                playerPersistenceEnabled: null,
-                ageGate: null,
-                // VRCX
-                $fetchedAt: '',
-                $disabledContentSettings: [],
-                ...json
-            };
+            ref = createDefaultInstanceRef(json);
             cachedInstances.set(ref.id, ref);
             cleanInstanceCache();
         } else {
@@ -535,18 +532,10 @@ export const useInstanceStore = defineStore('Instance', () => {
                     return args;
                 });
         }
-        ref.$disabledContentSettings = [];
-        if (json.contentSettings && Object.keys(json.contentSettings).length) {
-            for (const setting of instanceContentSettings) {
-                if (
-                    typeof json.contentSettings[setting] === 'undefined' ||
-                    json.contentSettings[setting] === true
-                ) {
-                    continue;
-                }
-                ref.$disabledContentSettings.push(setting);
-            }
-        }
+        ref.$disabledContentSettings = computeDisabledContentSettings(
+            json.contentSettings,
+            instanceContentSettings
+        );
         if (ref.displayName) {
             ref.displayName = replaceBioSymbols(ref.displayName);
         }
@@ -578,6 +567,10 @@ export const useInstanceStore = defineStore('Instance', () => {
         return ref;
     }
 
+    /**
+     *
+     * @param location
+     */
     async function getInstanceName(location) {
         let instanceName = '';
 
@@ -701,10 +694,16 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
     }
 
+    /**
+     *
+     */
     function applyWorldDialogInstances() {
         debounce(applyWorldDialogInstancesDebounced, 100)();
     }
 
+    /**
+     *
+     */
     function applyWorldDialogInstancesDebounced() {
         let ref;
         let instance;
@@ -1079,6 +1078,9 @@ export const useInstanceStore = defineStore('Instance', () => {
         D.instances = rooms;
     }
 
+    /**
+     *
+     */
     function removeAllQueuedInstances() {
         queuedInstances.forEach((ref) => {
             toast.info(`Removed instance ${ref.$worldName} from queue`);
@@ -1233,6 +1235,9 @@ export const useInstanceStore = defineStore('Instance', () => {
         // workerTimers.setTimeout(this.instanceQueueTimeout, 3600000);
     }
 
+    /**
+     *
+     */
     function getCurrentInstanceUserList() {
         if (!watchState.isFriendsLoaded) {
             return;
@@ -1250,6 +1255,9 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
     }
 
+    /**
+     *
+     */
     function updatePlayerListExecute() {
         try {
             updatePlayerListDebounce();
@@ -1260,6 +1268,9 @@ export const useInstanceStore = defineStore('Instance', () => {
         state.updatePlayerListPending = false;
     }
 
+    /**
+     *
+     */
     function updatePlayerListDebounce() {
         const users = [];
         const pushUser = function (ref) {

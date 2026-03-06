@@ -5,16 +5,18 @@ import { useI18n } from 'vue-i18n';
 
 import {
     checkVRChatCache,
+    createDefaultWorldRef,
+    evictMapCache,
     getAvailablePlatforms,
     getBundleDateSize,
     getWorldMemo,
     isRealInstance,
     parseLocation,
-    replaceBioSymbols
+    sanitizeEntityJson
 } from '../shared/utils';
 import { instanceRequest, miscRequest, worldRequest } from '../api';
-import { patchWorldFromEvent } from '../query';
 import { database } from '../service/database';
+import { patchWorldFromEvent } from '../query';
 import { processBulk } from '../service/request';
 import { useFavoriteStore } from './favorite';
 import { useInstanceStore } from './instance';
@@ -76,6 +78,7 @@ export const useWorldStore = defineStore('World', () => {
      *
      * @param {string} tag
      * @param {string} shortName
+     * @param options
      */
     function showWorldDialog(tag, shortName = null, options = {}) {
         const D = worldDialog;
@@ -204,7 +207,6 @@ export const useWorldStore = defineStore('World', () => {
                                     args.json !== false;
                             }
                         });
-
                 }
             });
     }
@@ -235,20 +237,9 @@ export const useWorldStore = defineStore('World', () => {
      * @param WorldCache
      */
     function cleanupWorldCache(WorldCache) {
-        const maxCacheSize = 10000;
-
-        if (WorldCache.size <= maxCacheSize) {
-            return;
-        }
-
-        const deletedCount = WorldCache.size - maxCacheSize;
-        while (WorldCache.size > maxCacheSize) {
-            const deletedKey = WorldCache.keys().next().value;
-            WorldCache.delete(deletedKey);
-        }
-        console.log(
-            `World cache cleanup: Deleted ${deletedCount}. Current cache size: ${WorldCache.size}`
-        );
+        evictMapCache(WorldCache, 10000, () => false, {
+            logLabel: 'World cache cleanup'
+        });
     }
 
     /**
@@ -257,55 +248,10 @@ export const useWorldStore = defineStore('World', () => {
      * @returns {object} ref
      */
     function applyWorld(json) {
-        if (json.name) {
-            json.name = replaceBioSymbols(json.name);
-        }
-        if (json.description) {
-            json.description = replaceBioSymbols(json.description);
-        }
+        sanitizeEntityJson(json, ['name', 'description']);
         let ref = cachedWorlds.get(json.id);
         if (typeof ref === 'undefined') {
-            ref = {
-                id: '',
-                name: '',
-                description: '',
-                defaultContentSettings: {},
-                authorId: '',
-                authorName: '',
-                capacity: 0,
-                recommendedCapacity: 0,
-                tags: [],
-                releaseStatus: '',
-                imageUrl: '',
-                thumbnailImageUrl: '',
-                assetUrl: '',
-                assetUrlObject: {},
-                pluginUrl: '',
-                pluginUrlObject: {},
-                unityPackageUrl: '',
-                unityPackageUrlObject: {},
-                unityPackages: [],
-                version: 0,
-                favorites: 0,
-                created_at: '',
-                updated_at: '',
-                publicationDate: '',
-                labsPublicationDate: '',
-                visits: 0,
-                popularity: 0,
-                heat: 0,
-                publicOccupants: 0,
-                privateOccupants: 0,
-                occupants: 0,
-                instances: [],
-                featured: false,
-                organization: '',
-                previewYoutubeId: '',
-                // VRCX
-                $isLabs: false,
-                //
-                ...json
-            };
+            ref = createDefaultWorldRef(json);
             cleanupWorldCache(cachedWorlds);
             cachedWorlds.set(ref.id, ref);
         } else {

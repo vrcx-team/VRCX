@@ -2,6 +2,7 @@ import { useAppearanceSettingsStore, useUserStore } from '../../stores';
 import { HueToHex } from './base/ui';
 import { convertFileUrlToImageUrl } from './common';
 import { languageMappings } from '../constants';
+import { removeEmojis } from './base/string';
 import { timeToText } from './base/format';
 
 /**
@@ -44,24 +45,6 @@ function languageClass(language) {
 async function getNameColour(userId) {
     const hue = await AppApi.GetColourFromUserID(userId);
     return HueToHex(hue);
-}
-
-/**
- *
- * @param {string} text
- * @returns
- */
-function removeEmojis(text) {
-    if (!text) {
-        return '';
-    }
-    return text
-        .replace(
-            /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
-            ''
-        )
-        .replace(/\s+/g, ' ')
-        .trim();
 }
 
 /**
