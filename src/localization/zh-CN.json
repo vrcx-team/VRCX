@@ -1904,7 +1904,7 @@
             "data": "数据",
             "note": "备注",
             "roles": "身份组",
-            "user_id": "输入用户名 / 玩家 ID",
+            "user_id": "用户名 / 玩家 ID",
             "user_id_placeholder": "用户名 / 玩家 ID",
             "select_user": "选择玩家",
             "selected_users": "已选择的玩家",
@@ -1915,7 +1915,14 @@
             "selected_roles": "已选择的身份组",
             "remove_roles": "移除身份组",
             "add_roles": "添加身份组",
-            "export_logs": "导出日志"
+            "export_logs": "导出日志",
+            "export_bans": "导出封禁列表",
+            "import_bans": "导入封禁列表",
+            "import_bans_description": "在下方粘贴 CSV 格式的文本或玩家 ID。程序会自动从中解析出玩家 ID 并将其添加到封禁列表中。",
+            "import_bans_warning": "不要一次性导入太多，API 有速率限制，太多可能会导致操作失败甚至是账号限制，使用此功能说明你已经了解这些风险。",
+            "import_bans_placeholder": "在下方粘贴 CSV 或玩家 ID (每行一个)\nusr_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "import_bans_start": "导入并封禁",
+            "import_bans_clear_errors": "清除错误信息"
         },
         "group_post_edit": {
             "header": "创建/编辑帖子",
