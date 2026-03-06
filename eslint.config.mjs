@@ -1,4 +1,5 @@
 import { defineConfig } from 'eslint/config';
+import { jsdoc } from 'eslint-plugin-jsdoc';
 
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
@@ -75,6 +76,9 @@ export default defineConfig([
             'vue/no-use-v-if-with-v-for': 'warn'
         }
     },
+    jsdoc({
+        config: 'flat/recommended'
+    }),
     {
         plugins: { 'pretty-import': prettyImport },
         rules: {

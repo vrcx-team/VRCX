@@ -291,6 +291,21 @@ function userOnlineFor(ref) {
     return '-';
 }
 
+/**
+ * Find a user object from cachedUsers by displayName.
+ * @param {Map} cachedUsers
+ * @param {string} displayName
+ * @returns {object|undefined}
+ */
+function findUserByDisplayName(cachedUsers, displayName) {
+    for (const ref of cachedUsers.values()) {
+        if (ref.displayName === displayName) {
+            return ref;
+        }
+    }
+    return undefined;
+}
+
 export {
     userOnlineForTimestamp,
     languageClass,
@@ -301,5 +316,6 @@ export {
     userImage,
     userImageFull,
     parseUserUrl,
-    userOnlineFor
+    userOnlineFor,
+    findUserByDisplayName
 };

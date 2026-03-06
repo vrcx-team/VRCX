@@ -43,6 +43,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             accessorFn: (row) => getCreatedAt(row),
             id: 'created_at',
             size: 140,
+            meta: { label: () => t('table.gameLog.date') },
             header: ({ column }) => (
                 <Button
                     variant="ghost"
@@ -70,6 +71,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             accessorKey: 'type',
             size: 150,
             header: () => t('table.gameLog.type'),
+            meta: { label: () => t('table.gameLog.type') },
             cell: ({ row }) => {
                 const original = row.original;
                 const label = t(`view.game_log.filters.${original.type}`);
@@ -94,6 +96,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             accessorKey: 'displayName',
             size: 200,
             header: () => t('table.gameLog.user'),
+            meta: { label: () => t('table.gameLog.user') },
             cell: ({ row }) => {
                 const original = row.original;
                 const isFriend = original.isFriend;
@@ -121,7 +124,8 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             enableSorting: false,
             minSize: 150,
             meta: {
-                stretch: true
+                stretch: true,
+                label: () => t('table.gameLog.detail')
             },
             cell: ({ row }) => {
                 const original = row.original;
@@ -248,7 +252,8 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
         {
             id: 'action',
             meta: {
-                class: 'text-right'
+                class: 'text-right',
+                label: () => t('table.gameLog.action')
             },
             size: 90,
             minSize: 90,

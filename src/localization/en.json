@@ -1915,7 +1915,14 @@
             "selected_roles": "Selected Roles",
             "remove_roles": "Remove Roles",
             "add_roles": "Add Roles",
-            "export_logs": "Export Logs"
+            "export_logs": "Export Logs",
+            "export_bans": "Export Bans",
+            "import_bans": "Import Bans",
+            "import_bans_description": "Paste CSV or user IDs below. The userId column will be auto-detected from CSV headers, or all usr_ IDs will be extracted.",
+            "import_bans_warning": "Do not import too many users at once. The API is rate-limited and may fail. You are responsible for any consequences.",
+            "import_bans_placeholder": "Paste CSV or user IDs here (one per line)\nusr_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "import_bans_start": "Import & Ban",
+            "import_bans_clear_errors": "Clear Errors"
         },
         "group_post_edit": {
             "header": "Create/Edit Post",

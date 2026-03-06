@@ -1,6 +1,6 @@
 <template>
     <Alert variant="warning" class="mb-4">
-        <MessageSquareWarning class="text-lg" />
+        <MessageSquareWarning />
         <AlertTitle>{{ t('common.feature_relocated.title') }}</AlertTitle>
         <AlertDescription>
             <i18n-t keypath="common.feature_relocated.description" tag="span">

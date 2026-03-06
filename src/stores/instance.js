@@ -30,6 +30,7 @@ import {
     instanceContentSettings
 } from '../shared/constants';
 import { database } from '../service/database';
+import { resolveRef } from '../shared/utils/resolveRef';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFriendStore } from './friend';
 import { useGroupStore } from './group';
@@ -211,67 +212,31 @@ export const useInstanceStore = defineStore('Instance', () => {
         previousInstancesListDialog.value.visible = false;
     }
 
-    async function resolveUserRef(input) {
-        if (!input) {
-            return { id: '', displayName: '' };
-        }
-        if (typeof input === 'string') {
-            input = { id: input, displayName: '' };
-        }
-        const id = input.id || input.userId || '';
-        let displayName = input.displayName || '';
-        if (id && !displayName) {
-            try {
-                const args = await userRequest.getCachedUser({ userId: id });
-                displayName = args?.ref?.displayName || displayName;
-                return { ...args.ref, id, displayName };
-            } catch {
-                return { ...input, id, displayName };
-            }
-        }
-        return { ...input, id, displayName };
+    function resolveUserRef(input) {
+        return resolveRef(input, {
+            emptyDefault: { id: '', displayName: '' },
+            idAlias: 'userId',
+            nameKey: 'displayName',
+            fetchFn: (id) => userRequest.getCachedUser({ userId: id })
+        });
     }
 
-    async function resolveWorldRef(input) {
-        if (!input) {
-            return { id: '', name: '' };
-        }
-        if (typeof input === 'string') {
-            input = { id: input, name: '' };
-        }
-        const id = input.id || input.worldId || '';
-        let name = input.name || '';
-        if (id && !name) {
-            try {
-                const args = await worldRequest.getCachedWorld({ worldId: id });
-                name = args?.ref?.name || name;
-                return { ...args.ref, id, name };
-            } catch {
-                return { ...input, id, name };
-            }
-        }
-        return { ...input, id, name };
+    function resolveWorldRef(input) {
+        return resolveRef(input, {
+            emptyDefault: { id: '', name: '' },
+            idAlias: 'worldId',
+            nameKey: 'name',
+            fetchFn: (id) => worldRequest.getCachedWorld({ worldId: id })
+        });
     }
 
-    async function resolveGroupRef(input) {
-        if (!input) {
-            return { id: '', name: '' };
-        }
-        if (typeof input === 'string') {
-            input = { id: input, name: '' };
-        }
-        const id = input.id || input.groupId || '';
-        let name = input.name || '';
-        if (id && !name) {
-            try {
-                const args = await groupRequest.getCachedGroup({ groupId: id });
-                name = args?.ref?.name || name;
-                return { ...args.ref, id, name };
-            } catch {
-                return { ...input, id, name };
-            }
-        }
-        return { ...input, id, name };
+    function resolveGroupRef(input) {
+        return resolveRef(input, {
+            emptyDefault: { id: '', name: '' },
+            idAlias: 'groupId',
+            nameKey: 'name',
+            fetchFn: (id) => groupRequest.getCachedGroup({ groupId: id })
+        });
     }
 
     function translateAccessType(accessTypeNameRaw) {

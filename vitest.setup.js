@@ -20,6 +20,13 @@ globalThis.LogWatcher = new Proxy({}, { get: () => noopAsync });
 globalThis.Discord = new Proxy({}, { get: () => noopAsync });
 globalThis.AssetBundleManager = new Proxy({}, { get: () => noopAsync });
 
+// ResizeObserver polyfill (needed by @dnd-kit/vue at import time)
+globalThis.ResizeObserver ??= class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+};
+
 // Browser API stubs not available in jsdom
 globalThis.speechSynthesis = {
     getVoices: () => [],

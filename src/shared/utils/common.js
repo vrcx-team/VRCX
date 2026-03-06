@@ -10,41 +10,18 @@ import {
     useSearchStore,
     useWorldStore
 } from '../../stores';
+import {
+    extractFileId,
+    extractFileVersion,
+    extractVariantVersion
+} from './fileUtils';
 import { escapeTag, replaceBioSymbols } from './base/string';
+import { getFaviconUrl, replaceVrcPackageUrl } from './urlUtils';
 import { AppDebug } from '../../service/appConfig.js';
 import { compareUnityVersion } from './avatar';
+import { getAvailablePlatforms } from './platformUtils';
 import { i18n } from '../../plugin/i18n';
 import { miscRequest } from '../../api';
-
-/**
- *
- * @param {object} unityPackages
- * @returns
- */
-function getAvailablePlatforms(unityPackages) {
-    let isPC = false;
-    let isQuest = false;
-    let isIos = false;
-    if (typeof unityPackages === 'object') {
-        for (const unityPackage of unityPackages) {
-            if (
-                unityPackage.variant &&
-                unityPackage.variant !== 'standard' &&
-                unityPackage.variant !== 'security'
-            ) {
-                continue;
-            }
-            if (unityPackage.platform === 'standalonewindows') {
-                isPC = true;
-            } else if (unityPackage.platform === 'android') {
-                isQuest = true;
-            } else if (unityPackage.platform === 'ios') {
-                isIos = true;
-            }
-        }
-    }
-    return { isPC, isQuest, isIos };
-}
 
 /**
  * @param {string} fileName
@@ -177,24 +154,6 @@ function copyToClipboard(text, message = 'Copied successfully!') {
 
 /**
  *
- * @param {string} resource
- * @returns {string}
- */
-function getFaviconUrl(resource) {
-    if (!resource) {
-        return '';
-    }
-    try {
-        const url = new URL(resource);
-        return `https://icons.duckduckgo.com/ip2/${url.host}.ico`;
-    } catch (err) {
-        console.error('Invalid URL:', resource, err);
-        return '';
-    }
-}
-
-/**
- *
  * @param {string} url
  * @param {number} resolution
  * @returns {string}
@@ -220,130 +179,6 @@ function convertFileUrlToImageUrl(url, resolution = 128) {
     }
     // no match return origin url
     return url;
-}
-
-/**
- *
- * @param {string} url
- * @returns {string}
- */
-function replaceVrcPackageUrl(url) {
-    if (!url) {
-        return '';
-    }
-    return url.replace('https://api.vrchat.cloud/', 'https://vrchat.com/');
-}
-
-/**
- *
- * @param {string} s
- * @returns {string}
- */
-function extractFileId(s) {
-    const match = String(s).match(/file_[0-9A-Za-z-]+/);
-    return match ? match[0] : '';
-}
-
-/**
- *
- * @param {string} s
- * @returns {string}
- */
-function extractFileVersion(s) {
-    const match = /(?:\/file_[0-9A-Za-z-]+\/)([0-9]+)/gi.exec(s);
-    return match ? match[1] : '';
-}
-
-/**
- *
- * @param {string} url
- * @returns {string}
- */
-function extractVariantVersion(url) {
-    if (!url) {
-        return '0';
-    }
-    try {
-        const params = new URLSearchParams(new URL(url).search);
-        const version = params.get('v');
-        if (version) {
-            return version;
-        }
-        return '0';
-    } catch {
-        return '0';
-    }
-}
-
-/**
- *
- * @param {object} json
- * @returns {Array}
- */
-function buildTreeData(json) {
-    const node = [];
-    for (const key in json) {
-        if (key[0] === '$') {
-            continue;
-        }
-        const value = json[key];
-        if (Array.isArray(value) && value.length === 0) {
-            node.push({
-                key,
-                value: '[]'
-            });
-        } else if (value === Object(value) && Object.keys(value).length === 0) {
-            node.push({
-                key,
-                value: '{}'
-            });
-        } else if (Array.isArray(value)) {
-            node.push({
-                children: value.map((val, idx) => {
-                    if (val === Object(val)) {
-                        return {
-                            children: buildTreeData(val),
-                            key: idx
-                        };
-                    }
-                    return {
-                        key: idx,
-                        value: val
-                    };
-                }),
-                key
-            });
-        } else if (value === Object(value)) {
-            node.push({
-                children: buildTreeData(value),
-                key
-            });
-        } else {
-            node.push({
-                key,
-                value: String(value)
-            });
-        }
-    }
-    node.sort(function (a, b) {
-        const A = String(a.key).toUpperCase();
-        const B = String(b.key).toUpperCase();
-        // sort _ to top
-        if (A.startsWith('_') && !B.startsWith('_')) {
-            return -1;
-        }
-        if (B.startsWith('_') && !A.startsWith('_')) {
-            return 1;
-        }
-        if (A < B) {
-            return -1;
-        }
-        if (A > B) {
-            return 1;
-        }
-        return 0;
-    });
-    return node;
 }
 
 /**
@@ -500,7 +335,6 @@ export {
     extractFileId,
     extractFileVersion,
     extractVariantVersion,
-    buildTreeData,
     replaceBioSymbols,
     openExternalLink,
     openDiscordProfile,

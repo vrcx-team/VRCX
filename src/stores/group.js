@@ -14,7 +14,7 @@ import {
     hasGroupPermission,
     replaceBioSymbols
 } from '../shared/utils';
-import { database } from '../service/database.js';
+import { database } from '../service/database';
 import { groupDialogFilterOptions } from '../shared/constants/';
 import { useGameStore } from './game';
 import { useInstanceStore } from './instance';

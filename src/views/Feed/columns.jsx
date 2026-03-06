@@ -225,6 +225,7 @@ export const columns = [
     {
         accessorKey: 'created_at',
         size: 140,
+        meta: { label: () => t('table.feed.date') },
         header: ({ column }) => (
             <Button
                 variant="ghost"
@@ -257,6 +258,7 @@ export const columns = [
         accessorKey: 'type',
         size: 130,
         header: () => t('table.feed.type'),
+        meta: { label: () => t('table.feed.type') },
         cell: ({ row }) => {
             const type = row.getValue('type');
             return (
@@ -272,6 +274,7 @@ export const columns = [
         accessorKey: 'displayName',
         size: 190,
         header: () => t('table.feed.user'),
+        meta: { label: () => t('table.feed.user') },
         cell: ({ row }) => {
             const { showUserDialog } = useUserStore();
             const original = row.original;
@@ -291,7 +294,8 @@ export const columns = [
         enableSorting: false,
         minSize: 100,
         meta: {
-            stretch: true
+            stretch: true,
+            label: () => t('table.feed.detail')
         },
         cell: ({ row }) => {
             const original = row.original;
