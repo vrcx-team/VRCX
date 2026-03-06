@@ -53,6 +53,7 @@ import { useWristOverlaySettingsStore } from '../settings/wristOverlay';
 import { watchState } from '../../service/watchState';
 
 import configRepository from '../../service/config';
+import { emitWebhookEvent } from '../../service/webhookEvent';
 
 export const useNotificationStore = defineStore('Notification', () => {
     const { t } = useI18n();
@@ -174,6 +175,16 @@ export const useNotificationStore = defineStore('Notification', () => {
 
     init();
 
+    function getNotificationWebhookType(type) {
+        const map = {
+            friendRequest: 'friend_request',
+            ignoredFriendRequest: 'friend_request',
+            requestInvite: 'request_invite',
+            invite: 'invite'
+        };
+        return map[type] || type.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
+    }
+
     function handleNotification(args) {
         args.ref = applyNotification(args.json);
         const { ref } = args;
@@ -191,6 +202,16 @@ export const useNotificationStore = defineStore('Notification', () => {
             }
         }
         if (ref.senderUserId !== userStore.currentUser.id) {
+            const payload = {
+                id: ref.id,
+                type: ref.type,
+                senderUserId: ref.senderUserId,
+                senderUsername: ref.senderUsername,
+                message: ref.message,
+                details: ref.details,
+                createdAt: ref.created_at
+            };
+            emitWebhookEvent(`notification.${getNotificationWebhookType(ref.type)}.received`, payload);
             if (
                 ref.type !== 'friendRequest' &&
                 ref.type !== 'ignoredFriendRequest' &&
@@ -246,6 +267,14 @@ export const useNotificationStore = defineStore('Notification', () => {
             ref.type === 'ignoredFriendRequest' ||
             ref.type.includes('.')
         ) {
+            if (ref.type === 'friendRequest' || ref.type === 'ignoredFriendRequest') {
+                emitWebhookEvent('notification.friend_request.declined', {
+                    id: ref.id,
+                    senderUserId: ref.senderUserId,
+                    senderUsername: ref.senderUsername,
+                    createdAt: ref.created_at
+                });
+            }
             removeFromArray(notificationTable.value.data, ref);
         } else {
             ref.$isExpired = true;
@@ -466,6 +495,12 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         ref.$isExpired = true;
         args.ref = ref;
+        emitWebhookEvent('notification.friend_request.accepted', {
+            id: ref.id,
+            senderUserId: ref.senderUserId,
+            senderUsername: ref.senderUsername,
+            createdAt: ref.created_at
+        });
         handleNotificationExpire({
             ref,
             params: {
@@ -1254,6 +1289,11 @@ export const useNotificationStore = defineStore('Notification', () => {
                             )
                             .then((_args) => {
                                 toast(t('message.invite.sent'));
+                                emitWebhookEvent('notification.invite.sent', {
+                                    targetUserId: row.senderUserId,
+                                    source: 'requestInvite.accept',
+                                    createdAt: new Date().toISOString()
+                                });
                                 notificationRequest
                                     .hideNotification({
                                         notificationId: row.id

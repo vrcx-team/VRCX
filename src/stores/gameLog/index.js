@@ -37,6 +37,7 @@ import { userRequest } from '../../api';
 import { watchState } from '../../service/watchState';
 
 import configRepository from '../../service/config';
+import { emitWebhookEvent } from '../../service/webhookEvent';
 import gameLogService from '../../service/gameLog.js';
 
 import * as workerTimers from 'worker-timers';
@@ -604,6 +605,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     time: 0
                 };
                 database.addGamelogJoinLeaveToDatabase(entry);
+                emitWebhookEvent('instance.player_count_changed', {
+                    location,
+                    count: locationStore.lastLocation.playerList.size,
+                    action: 'joined',
+                    userId,
+                    displayName: gameLog.displayName
+                });
                 break;
             case 'player-left':
                 const ref1 = locationStore.lastLocation.playerList.get(userId);
@@ -626,6 +634,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     time
                 };
                 database.addGamelogJoinLeaveToDatabase(entry);
+                emitWebhookEvent('instance.player_count_changed', {
+                    location,
+                    count: locationStore.lastLocation.playerList.size,
+                    action: 'left',
+                    userId,
+                    displayName: gameLog.displayName
+                });
                 break;
             case 'portal-spawn':
                 if (vrcxStore.ipcEnabled && gameStore.isGameRunning) {
@@ -647,7 +662,17 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 if (lastVideoUrl.value === gameLog.videoUrl) {
                     break;
                 }
+                const previousVideoUrl = lastVideoUrl.value;
                 lastVideoUrl.value = gameLog.videoUrl;
+                emitWebhookEvent(
+                    previousVideoUrl ? 'world.media.changed' : 'world.media.detected',
+                    {
+                        location,
+                        previousUrl: previousVideoUrl,
+                        url: gameLog.videoUrl,
+                        userId
+                    }
+                );
                 addGameLogVideo(gameLog, location, userId);
                 break;
             case 'video-sync':
@@ -664,7 +689,19 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 ) {
                     break;
                 }
+                const previousResourceloadUrl = lastResourceloadUrl.value;
                 lastResourceloadUrl.value = gameLog.resourceUrl;
+                emitWebhookEvent(
+                    previousResourceloadUrl
+                        ? 'world.media.changed'
+                        : 'world.media.detected',
+                    {
+                        location,
+                        previousUrl: previousResourceloadUrl,
+                        url: gameLog.resourceUrl,
+                        resourceType: gameLog.type
+                    }
+                );
                 entry = {
                     created_at: gameLog.dt,
                     type:

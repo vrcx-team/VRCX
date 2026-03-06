@@ -8,6 +8,7 @@ import {
     initSentry
 } from './plugin';
 import { initPiniaPlugins, pinia } from './stores';
+import { emitWebhookEvent } from './service/webhookEvent';
 
 import App from './App.vue';
 
@@ -24,3 +25,5 @@ initRouter(app);
 await initSentry(app);
 
 app.mount('#root');
+
+emitWebhookEvent('app.started');
