@@ -368,7 +368,6 @@
                                     :currentlocation="lastLocation.location"
                                     :instance="room.ref"
                                     :friendcount="room.friendCount"
-                                    :show-launch="false"
                                     refresh-tooltip="Refresh player count"
                                     :on-refresh="() => refreshInstancePlayerCount(room.tag)" />
                             </div>
@@ -1784,9 +1783,7 @@
         groupDialogGalleryCurrentName.value = '0';
         isGroupGalleryLoading.value = true;
         const groupId = groupDialog.value.id;
-        const tasks = (groupDialog.value.ref.galleries || []).map((gallery) =>
-            getGroupGallery(groupId, gallery.id)
-        );
+        const tasks = (groupDialog.value.ref.galleries || []).map((gallery) => getGroupGallery(groupId, gallery.id));
         await Promise.allSettled(tasks);
         isGroupGalleryLoading.value = false;
     }
