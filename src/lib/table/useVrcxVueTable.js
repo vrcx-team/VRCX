@@ -230,6 +230,7 @@ export function useVrcxVueTable(options) {
         persistSorting = true,
         persistColumnOrder = true,
         persistColumnVisibility = true,
+        persistPageSize = true,
         persistDebounceMs = 200,
 
         tableOptions = {}
@@ -294,6 +295,18 @@ export function useVrcxVueTable(options) {
 
     if (persisted && persistColumnVisibility && persisted.columnVisibility) {
         columnVisibility.value = persisted.columnVisibility;
+    }
+
+    if (
+        persisted &&
+        persistPageSize &&
+        typeof persisted.pageSize === 'number' &&
+        persisted.pageSize > 0
+    ) {
+        pagination.value = {
+            ...pagination.value,
+            pageSize: persisted.pageSize
+        };
     }
 
     const state = {};
@@ -478,6 +491,17 @@ export function useVrcxVueTable(options) {
                 });
             },
             { deep: true }
+        );
+    }
+
+    if (storageKey && persistPageSize) {
+        watch(
+            () => pagination.value.pageSize,
+            (val) => {
+                if (typeof val === 'number' && val > 0) {
+                    persistWrite({ pageSize: val });
+                }
+            }
         );
     }
 

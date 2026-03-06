@@ -222,11 +222,6 @@
     });
 
     const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
-    const pageSize = computed(() =>
-        notificationTable.value.pageSizeLinked
-            ? appearanceSettingsStore.tablePageSize
-            : notificationTable.value.pageSize
-    );
 
     const { table, pagination } = useVrcxVueTable({
         persistKey: 'notifications',
@@ -238,7 +233,7 @@
         initialSorting: [{ id: 'created_at', desc: true }],
         initialPagination: {
             pageIndex: 0,
-            pageSize: pageSize.value
+            pageSize: appearanceSettingsStore.tablePageSize
         },
         tableOptions: {
             autoResetPageIndex: false
@@ -252,24 +247,12 @@
     });
 
     const handlePageSizeChange = (size) => {
-        if (notificationTable.value.pageSizeLinked) {
-            appearanceSettingsStore.setTablePageSize(size);
-        } else {
-            notificationTable.value.pageSize = size;
-        }
-    };
-
-    watch(pageSize, (size) => {
-        if (pagination.value.pageSize === size) {
-            return;
-        }
         pagination.value = {
             ...pagination.value,
             pageIndex: 0,
             pageSize: size
         };
-        table.setPageSize(size);
-    });
+    };
 
     const sendInviteResponseDialog = ref({
         messageSlot: {},

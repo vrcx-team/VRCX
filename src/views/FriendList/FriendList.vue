@@ -171,7 +171,6 @@
     const selectedFriends = ref(new Set());
     const friendsListDisplayData = ref([]);
     const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
-    const pageSize = computed(() => appearanceSettingsStore.tablePageSize);
     const defaultSorting = [{ id: 'friendNumber', desc: true }];
 
     // const initialColumnPinning = {
@@ -212,7 +211,7 @@
         initialSorting: defaultSorting,
         initialPagination: {
             pageIndex: 0,
-            pageSize: pageSize.value
+            pageSize: appearanceSettingsStore.tablePageSize
         }
     });
 
@@ -221,7 +220,11 @@
     });
 
     const handlePageSizeChange = (size) => {
-        appearanceSettingsStore.setTablePageSize(size);
+        pagination.value = {
+            ...pagination.value,
+            pageIndex: 0,
+            pageSize: size
+        };
     };
 
     const handleRowClick = (row) => {
@@ -251,18 +254,6 @@
         { immediate: true }
     );
 
-    watch(pageSize, (size) => {
-        if (pagination.value.pageSize === size) {
-            return;
-        }
-        pagination.value = {
-            ...pagination.value,
-            pageIndex: 0,
-            pageSize: size
-        };
-        table.setPageSize(size);
-    });
-
     const route = useRoute();
 
     watch(
@@ -280,6 +271,9 @@
         }
     );
 
+    /**
+     *
+     */
     function friendsListSearchChange() {
         friendsListLoading.value = true;
         let query = '';
@@ -333,6 +327,10 @@
         });
     }
 
+    /**
+     *
+     * @param id
+     */
     function toggleFriendSelection(id) {
         if (selectedFriends.value.has(id)) {
             selectedFriends.value.delete(id);
@@ -341,12 +339,18 @@
         }
     }
 
+    /**
+     *
+     */
     function toggleFriendsListBulkUnfriendMode() {
         if (!friendsListBulkUnfriendMode.value) {
             selectedFriends.value.clear();
         }
     }
 
+    /**
+     *
+     */
     function showBulkUnfriendSelectionConfirm() {
         const pending = friendsListDisplayData.value
             .filter((item) => selectedFriends.value.has(item.id))
@@ -367,6 +371,9 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     */
     async function bulkUnfriendSelection() {
         if (!selectedFriends.value.size) return;
         const selectedFriendsCount = selectedFriends.value.size;
@@ -384,6 +391,9 @@
         selectedFriends.value.clear();
     }
 
+    /**
+     *
+     */
     async function friendsListLoadUsers() {
         const toFetch = Array.from(friends.value.values())
             .filter((ctx) => ctx.ref && !ctx.ref.date_joined)
@@ -419,21 +429,35 @@
         }
     }
 
+    /**
+     *
+     */
     function cancelFriendsListLoad() {
         friendsListLoading.value = false;
         friendsListLoadDialogVisible.value = false;
     }
 
+    /**
+     *
+     * @param val
+     */
     function selectFriendsListRow(val) {
         if (!val) return;
         if (!val.id) emit('lookup-user', val);
         else showUserDialog(val.id);
     }
 
+    /**
+     *
+     */
     function openChartsTab() {
         router.push({ name: 'charts' });
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleFriendListFilterChange(value) {
         friendsListSearchFilters.value = Array.isArray(value) ? value : [];
         friendsListSearchChange();

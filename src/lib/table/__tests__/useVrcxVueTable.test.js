@@ -267,4 +267,69 @@ describe('useVrcxVueTable persistence', () => {
         );
         expect(stored?.columnVisibility).toBeUndefined();
     });
+
+    it('persists pageSize to localStorage when pagination changes', async () => {
+        const { table } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date'),
+            persistKey: 'test-page-size',
+            initialPagination: { pageIndex: 0, pageSize: 10 }
+        });
+
+        table.setPageSize(25);
+
+        await new Promise((r) => setTimeout(r, 300));
+
+        const stored = JSON.parse(
+            localStorage.getItem('vrcx:table:test-page-size')
+        );
+        expect(stored).toBeTruthy();
+        expect(stored.pageSize).toBe(25);
+    });
+
+    it('restores persisted pageSize on init, overriding initialPagination', () => {
+        localStorage.setItem(
+            'vrcx:table:test-restore-ps',
+            JSON.stringify({ pageSize: 50 })
+        );
+
+        const { pagination } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date'),
+            persistKey: 'test-restore-ps',
+            initialPagination: { pageIndex: 0, pageSize: 10 }
+        });
+
+        expect(pagination.value.pageSize).toBe(50);
+    });
+
+    it('uses initialPagination.pageSize when no persisted data exists', () => {
+        const { pagination } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date'),
+            persistKey: 'test-initial-ps',
+            initialPagination: { pageIndex: 0, pageSize: 25 }
+        });
+
+        expect(pagination.value.pageSize).toBe(25);
+    });
+
+    it('does not persist pageSize when persistPageSize is false', async () => {
+        const { table } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date'),
+            persistKey: 'test-no-persist-ps',
+            persistPageSize: false,
+            initialPagination: { pageIndex: 0, pageSize: 10 }
+        });
+
+        table.setPageSize(50);
+
+        await new Promise((r) => setTimeout(r, 300));
+
+        const stored = JSON.parse(
+            localStorage.getItem('vrcx:table:test-no-persist-ps')
+        );
+        expect(stored?.pageSize).toBeUndefined();
+    });
 });

@@ -120,6 +120,9 @@
     const hasDateFilter = computed(() => !!(feedTable.value.dateFrom || feedTable.value.dateTo));
     const activeFilterCount = computed(() => (hasDateFilter.value ? 1 : 0));
 
+    /**
+     *
+     */
     function applyDateFilter() {
         if (dateRange.value?.start) {
             const s = dateRange.value.start;
@@ -137,6 +140,9 @@
         feedTableLookup();
     }
 
+    /**
+     *
+     */
     function clearDateFilter() {
         dateRange.value = undefined;
         feedTable.value.dateFrom = '';
@@ -155,10 +161,11 @@
     });
 
     const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
-    const pageSize = computed(() =>
-        feedTable.value.pageSizeLinked ? appearanceSettingsStore.tablePageSize : feedTable.value.pageSize
-    );
 
+    /**
+     *
+     * @param row
+     */
     function getFeedRowId(row) {
         if (row?.id != null) return `id:${row.id}`;
         if (row?.rowId != null) return `row:${row.rowId}`;
@@ -185,7 +192,7 @@
         initialExpanded: {},
         initialPagination: {
             pageIndex: 0,
-            pageSize: pageSize.value
+            pageSize: appearanceSettingsStore.tablePageSize
         },
         tableOptions: {
             autoResetExpanded: false,
@@ -200,11 +207,11 @@
     });
 
     const handlePageSizeChange = (size) => {
-        if (feedTable.value.pageSizeLinked) {
-            appearanceSettingsStore.setTablePageSize(size);
-        } else {
-            feedTable.value.pageSize = size;
-        }
+        pagination.value = {
+            ...pagination.value,
+            pageIndex: 0,
+            pageSize: size
+        };
     };
 
     const activeFilterSelection = computed(() => {
@@ -215,6 +222,10 @@
         return filter;
     });
 
+    /**
+     *
+     * @param value
+     */
     function handleFeedFilterChange(value) {
         const selected = Array.isArray(value) ? value : [];
         const wasAll = activeFilterSelection.value.includes('All');
@@ -230,16 +241,4 @@
         }
         feedTableLookup();
     }
-
-    watch(pageSize, (size) => {
-        if (pagination.value.pageSize === size) {
-            return;
-        }
-        pagination.value = {
-            ...pagination.value,
-            pageIndex: 0,
-            pageSize: size
-        };
-        table.setPageSize(size);
-    });
 </script>

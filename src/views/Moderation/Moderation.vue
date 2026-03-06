@@ -152,11 +152,6 @@
     });
 
     const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
-    const pageSize = computed(() =>
-        playerModerationTable.value.pageSizeLinked
-            ? appearanceSettingsStore.tablePageSize
-            : playerModerationTable.value.pageSize
-    );
 
     const { table, pagination } = useVrcxVueTable({
         persistKey: 'moderation',
@@ -168,7 +163,7 @@
         initialSorting: [{ id: 'created', desc: true }],
         initialPagination: {
             pageIndex: 0,
-            pageSize: pageSize.value
+            pageSize: appearanceSettingsStore.tablePageSize
         }
     });
 
@@ -177,24 +172,12 @@
     });
 
     const handlePageSizeChange = (size) => {
-        if (playerModerationTable.value.pageSizeLinked) {
-            appearanceSettingsStore.setTablePageSize(size);
-        } else {
-            playerModerationTable.value.pageSize = size;
-        }
-    };
-
-    watch(pageSize, (size) => {
-        if (pagination.value.pageSize === size) {
-            return;
-        }
         pagination.value = {
             ...pagination.value,
             pageIndex: 0,
             pageSize: size
         };
-        table.setPageSize(size);
-    });
+    };
 </script>
 
 <style scoped>

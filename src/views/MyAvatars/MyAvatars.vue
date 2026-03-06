@@ -230,7 +230,6 @@
     const { currentUser } = storeToRefs(useUserStore());
 
     const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
-    const pageSize = computed(() => appearanceSettingsStore.tablePageSize);
 
     const containerRef = ref(null);
     const searchText = ref('');
@@ -595,19 +594,17 @@
         initialSorting: [{ id: 'updated_at', desc: true }],
         initialPagination: {
             pageIndex: 0,
-            pageSize: pageSize.value
+            pageSize: appearanceSettingsStore.tablePageSize
         }
     });
 
     const handlePageSizeChange = (size) => {
-        appearanceSettingsStore.setTablePageSize(size);
+        pagination.value = {
+            ...pagination.value,
+            pageIndex: 0,
+            pageSize: size
+        };
     };
-
-    watch(pageSize, (size) => {
-        if (pagination.value.pageSize === size) return;
-        pagination.value = { ...pagination.value, pageIndex: 0, pageSize: size };
-        table.setPageSize(size);
-    });
 
     /**
      *

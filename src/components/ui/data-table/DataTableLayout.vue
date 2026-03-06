@@ -503,6 +503,19 @@
         set: (size) => handlePageSizeChange(size)
     });
 
+    // When the current pageSize is not in the available pageSizes list
+    watch(
+        [pageSizeProxy, () => props.pageSizes],
+        ([current, sizes]) => {
+            if (!sizes?.length || sizes.includes(current)) {
+                return;
+            }
+            const nearest = sizes.reduce((prev, s) => (Math.abs(s - current) < Math.abs(prev - current) ? s : prev));
+            handlePageSizeChange(nearest);
+        },
+        { immediate: true }
+    );
+
     const pageSizeValue = computed({
         get: () => String(pageSizeProxy.value),
         set: (value) => handlePageSizeChange(Number(value))
