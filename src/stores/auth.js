@@ -24,6 +24,7 @@ import security from '../service/security';
 import webApiService from '../service/webapi';
 
 import * as workerTimers from 'worker-timers';
+import { emitWebhookEvent } from '../service/webhookEvent';
 
 export const useAuthStore = defineStore('Auth', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
@@ -198,6 +199,9 @@ export const useAuthStore = defineStore('Auth', () => {
                 .getConfig()
                 .catch((err) => {
                     loginForm.value.loading = false;
+                    emitWebhookEvent('app.login_failed', {
+                        message: err?.message || String(err)
+                    });
                     throw err;
                 })
                 .then(() => {
@@ -779,6 +783,10 @@ export const useAuthStore = defineStore('Auth', () => {
         } else {
             updateLoopStore.nextCurrentUserRefresh = 420; // 7mins
             userStore.applyCurrentUser(json);
+            emitWebhookEvent('app.login_succeeded', {
+                userId: json.id,
+                displayName: json.displayName
+            });
             initWebsocket();
         }
     }

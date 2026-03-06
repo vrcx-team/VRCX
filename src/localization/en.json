@@ -762,6 +762,21 @@
                         "use_memo_nicknames": "Use Memo Nicknames",
                         "play": "Play",
                         "tts_test_placeholder": "Test TTS"
+                    },
+                    "webhook": {
+                        "header": "Webhook Event Export",
+                        "enable": "Enable Webhook Event Export",
+                        "url": "Webhook URL",
+                        "url_placeholder": "https://example.com/vrcx/events",
+                        "bearer_token": "Bearer Token (optional)",
+                        "bearer_token_placeholder": "Paste token without Bearer prefix",
+                        "test_event_name": "Test Event Name",
+                        "test_event_name_placeholder": "vrcx.webhook.test",
+                        "test_payload": "Test Payload (JSON)",
+                        "send_test": "Send Webhook Test",
+                        "test_payload_invalid": "Webhook test payload must be valid JSON",
+                        "test_sent": "Webhook test sent",
+                        "test_not_sent": "Webhook test not sent (check enable/url)"
                     }
                 }
             },

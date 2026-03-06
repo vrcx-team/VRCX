@@ -272,6 +272,49 @@
                 }}</Button>
             </div>
         </div>
+        <div class="options-container">
+            <span class="sub-header">{{ t('view.settings.notifications.notifications.webhook.header') }}</span>
+            <simple-switch
+                :label="t('view.settings.notifications.notifications.webhook.enable')"
+                :value="webhookEventExportEnabled"
+                @change="setWebhookEventExportEnabled" />
+            <div class="options-container-item">
+                <span class="name">{{ t('view.settings.notifications.notifications.webhook.url') }}</span>
+                <InputGroupField
+                    :model-value="webhookEventExportUrl"
+                    :placeholder="t('view.settings.notifications.notifications.webhook.url_placeholder')"
+                    style="width: 360px; max-width: 100%"
+                    @update:model-value="setWebhookEventExportUrl" />
+            </div>
+            <div class="options-container-item">
+                <span class="name">{{ t('view.settings.notifications.notifications.webhook.bearer_token') }}</span>
+                <InputGroupField
+                    :model-value="webhookEventExportBearerToken"
+                    :placeholder="t('view.settings.notifications.notifications.webhook.bearer_token_placeholder')"
+                    style="width: 360px; max-width: 100%"
+                    @update:model-value="setWebhookEventExportBearerToken" />
+            </div>
+            <div class="options-container-item">
+                <span class="name">{{ t('view.settings.notifications.notifications.webhook.test_event_name') }}</span>
+                <InputGroupField
+                    v-model="webhookEventTestName"
+                    :placeholder="t('view.settings.notifications.notifications.webhook.test_event_name_placeholder')"
+                    style="width: 240px; max-width: 100%" />
+            </div>
+            <div class="options-container-item" style="align-items: flex-start">
+                <span class="name">{{ t('view.settings.notifications.notifications.webhook.test_payload') }}</span>
+                <InputGroupTextareaField
+                    v-model="webhookEventTestPayload"
+                    :rows="3"
+                    style="width: 360px; max-width: 100%"
+                    input-class="resize-y" />
+            </div>
+            <div class="options-container-item">
+                <Button size="sm" variant="outline" @click="testWebhookEventExport">
+                    <Play />{{ t('view.settings.notifications.notifications.webhook.send_test') }}
+                </Button>
+            </div>
+        </div>
         <NotificationPositionDialog v-model:isNotificationPositionDialogVisible="isNotificationPositionDialogVisible" />
         <FeedFiltersDialog v-model:feedFiltersDialogMode="feedFiltersDialogMode" />
     </div>
@@ -281,7 +324,7 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { InputGroupTextareaField } from '@/components/ui/input-group';
+    import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { Play } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -319,7 +362,12 @@
         notificationTTSNickName,
         isTestTTSVisible,
         notificationTTSTest,
-        TTSvoices
+        TTSvoices,
+        webhookEventExportEnabled,
+        webhookEventExportUrl,
+        webhookEventExportBearerToken,
+        webhookEventTestName,
+        webhookEventTestPayload
     } = storeToRefs(notificationsSettingsStore);
 
     const { notificationOpacity } = storeToRefs(advancedSettingsStore);
@@ -339,7 +387,11 @@
         changeTTSVoice,
         saveNotificationTTS,
         testNotificationTTS,
-        promptNotificationTimeout
+        promptNotificationTimeout,
+        setWebhookEventExportEnabled,
+        setWebhookEventExportUrl,
+        setWebhookEventExportBearerToken,
+        testWebhookEventExport
     } = notificationsSettingsStore;
 
     const { testNotification } = useNotificationStore();

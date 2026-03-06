@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
 import { sharedFeedFiltersDefaults } from '../../shared/constants';
@@ -7,6 +8,7 @@ import { useModalStore } from '../modal';
 import { useVrStore } from '../vr';
 
 import configRepository from '../../service/config';
+import { configureWebhookEventExporter, emitWebhookEvent } from '../../service/webhookEvent';
 
 export const useNotificationsSettingsStore = defineStore(
     'NotificationsSettings',
@@ -119,6 +121,11 @@ export const useNotificationsSettingsStore = defineStore(
         const notificationTTSTest = ref('');
         const notificationPosition = ref('topCenter');
         const notificationTimeout = ref(3000);
+        const webhookEventExportEnabled = ref(false);
+        const webhookEventExportUrl = ref('');
+        const webhookEventExportBearerToken = ref('');
+        const webhookEventTestName = ref('vrcx.webhook.test');
+        const webhookEventTestPayload = ref('{\n  "message": "hello from VRCX"\n}');
 
         async function initNotificationsSettings() {
             const [
@@ -136,7 +143,10 @@ export const useNotificationsSettingsStore = defineStore(
                 sharedFeedFiltersConfig,
                 notificationTTSVoiceConfig,
                 notificationPositionConfig,
-                notificationTimeoutConfig
+                notificationTimeoutConfig,
+                webhookEventExportEnabledConfig,
+                webhookEventExportUrlConfig,
+                webhookEventExportBearerTokenConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_overlayToast', 'Game Running'),
                 configRepository.getBool('VRCX_overlayNotifications', true),
@@ -158,7 +168,10 @@ export const useNotificationsSettingsStore = defineStore(
                     'VRCX_notificationPosition',
                     'topCenter'
                 ),
-                configRepository.getString('VRCX_notificationTimeout', '3000')
+                configRepository.getString('VRCX_notificationTimeout', '3000'),
+                configRepository.getBool('VRCX_eventExportEnabled', false),
+                configRepository.getString('VRCX_eventExportWebhookUrl', ''),
+                configRepository.getString('VRCX_eventExportBearerToken', '')
             ]);
 
             overlayToast.value = overlayToastConfig;
@@ -177,6 +190,10 @@ export const useNotificationsSettingsStore = defineStore(
             TTSvoices.value = speechSynthesis.getVoices();
             notificationPosition.value = notificationPositionConfig;
             notificationTimeout.value = Number(notificationTimeoutConfig);
+            webhookEventExportEnabled.value = webhookEventExportEnabledConfig;
+            webhookEventExportUrl.value = webhookEventExportUrlConfig;
+            webhookEventExportBearerToken.value =
+                webhookEventExportBearerTokenConfig;
 
             initSharedFeedFilters();
 
@@ -410,6 +427,47 @@ export const useNotificationsSettingsStore = defineStore(
             speechSynthesis.speak(tts);
         }
 
+        async function saveWebhookEventExportSettings() {
+            await configureWebhookEventExporter({
+                enabled: webhookEventExportEnabled.value,
+                webhookUrl: webhookEventExportUrl.value,
+                bearerToken: webhookEventExportBearerToken.value
+            });
+        }
+
+        function setWebhookEventExportEnabled() {
+            webhookEventExportEnabled.value = !webhookEventExportEnabled.value;
+            saveWebhookEventExportSettings();
+        }
+
+        function setWebhookEventExportUrl(value) {
+            webhookEventExportUrl.value = value;
+            saveWebhookEventExportSettings();
+        }
+
+        function setWebhookEventExportBearerToken(value) {
+            webhookEventExportBearerToken.value = value;
+            saveWebhookEventExportSettings();
+        }
+
+        async function testWebhookEventExport() {
+            let payload = {};
+            try {
+                payload = JSON.parse(webhookEventTestPayload.value || '{}');
+            } catch (err) {
+                toast.error(t('view.settings.notifications.notifications.webhook.test_payload_invalid'));
+                return;
+            }
+            await saveWebhookEventExportSettings();
+            const eventName = webhookEventTestName.value?.trim() || 'vrcx.webhook.test';
+            const ok = await emitWebhookEvent(eventName, payload);
+            if (ok) {
+                toast.success(t('view.settings.notifications.notifications.webhook.test_sent'));
+            } else {
+                toast.error(t('view.settings.notifications.notifications.webhook.test_not_sent'));
+            }
+        }
+
         function promptNotificationTimeout() {
             modalStore
                 .prompt({
@@ -456,6 +514,11 @@ export const useNotificationsSettingsStore = defineStore(
             notificationTTSTest,
             notificationPosition,
             notificationTimeout,
+            webhookEventExportEnabled,
+            webhookEventExportUrl,
+            webhookEventExportBearerToken,
+            webhookEventTestName,
+            webhookEventTestPayload,
 
             setOverlayToast,
             setOpenVR,
@@ -474,7 +537,11 @@ export const useNotificationsSettingsStore = defineStore(
             testNotificationTTS,
             speak,
             changeNotificationPosition,
-            promptNotificationTimeout
+            promptNotificationTimeout,
+            setWebhookEventExportEnabled,
+            setWebhookEventExportUrl,
+            setWebhookEventExportBearerToken,
+            testWebhookEventExport
         };
     }
 );

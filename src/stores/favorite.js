@@ -18,6 +18,7 @@ import { useGeneralSettingsStore } from './settings/general';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
 import { watchState } from '../service/watchState';
+import { emitWebhookEvent } from '../service/webhookEvent';
 
 export const useFavoriteStore = defineStore('Favorite', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -312,6 +313,17 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     function handleFavorite(args) {
         args.ref = applyFavoriteCached(args.json);
+        if (args.ref.type === 'world' || args.ref.type === 'vrcPlusWorld') {
+            emitWebhookEvent('favorite.world.added', {
+                favoriteId: args.ref.favoriteId,
+                groupKey: args.ref.$groupKey
+            });
+        } else if (args.ref.type === 'avatar') {
+            emitWebhookEvent('favorite.avatar.added', {
+                favoriteId: args.ref.favoriteId,
+                groupKey: args.ref.$groupKey
+            });
+        }
         applyFavorite(args.ref.type, args.ref.favoriteId);
         friendStore.updateFriend(args.ref.favoriteId);
         const { ref } = args;
@@ -370,6 +382,17 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     function handleFavoriteAtDelete(ref) {
+        if (ref.type === 'world' || ref.type === 'vrcPlusWorld') {
+            emitWebhookEvent('favorite.world.removed', {
+                favoriteId: ref.favoriteId,
+                groupKey: ref.$groupKey
+            });
+        } else if (ref.type === 'avatar') {
+            emitWebhookEvent('favorite.avatar.removed', {
+                favoriteId: ref.favoriteId,
+                groupKey: ref.$groupKey
+            });
+        }
         const favorite = state.favoriteObjects.get(ref.favoriteId);
         removeFromArray(state.favoriteFriends_, favorite);
         removeFromArray(state.favoriteWorlds_, favorite);

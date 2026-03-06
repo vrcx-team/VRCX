@@ -706,6 +706,21 @@
                         "use_memo_nicknames": "使用备注昵称",
                         "play": "播放",
                         "tts_test_placeholder": "测试 TTS"
+                    },
+                    "webhook": {
+                        "header": "Webhook 事件导出",
+                        "enable": "启用 Webhook 事件导出",
+                        "url": "Webhook 地址",
+                        "url_placeholder": "https://example.com/vrcx/events",
+                        "bearer_token": "Bearer Token（可选）",
+                        "bearer_token_placeholder": "粘贴令牌（无需 Bearer 前缀）",
+                        "test_event_name": "测试事件名",
+                        "test_event_name_placeholder": "vrcx.webhook.test",
+                        "test_payload": "测试载荷（JSON）",
+                        "send_test": "发送 Webhook 测试",
+                        "test_payload_invalid": "Webhook 测试载荷必须是有效 JSON",
+                        "test_sent": "Webhook 测试已发送",
+                        "test_not_sent": "Webhook 测试未发送（请检查开关/地址）"
                     }
                 }
             },

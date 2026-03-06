@@ -36,6 +36,7 @@ import { useUserStore } from './user';
 import { watchState } from '../service/watchState';
 
 import configRepository from '../service/config';
+import { emitWebhookEvent } from '../service/webhookEvent';
 
 import * as workerTimers from 'worker-timers';
 
@@ -596,6 +597,14 @@ export const useFriendStore = defineStore('Friend', () => {
                 };
                 feedStore.addFeed(feed);
                 database.addOnlineOfflineToDatabase(feed);
+                emitWebhookEvent('friend.offline', {
+                    userId: ref.id,
+                    displayName: ref.displayName,
+                    location,
+                    worldName,
+                    groupName,
+                    time
+                });
             } else if (
                 newState === 'online' &&
                 (ctx.state === 'offline' || ctx.state === 'active')
@@ -620,6 +629,13 @@ export const useFriendStore = defineStore('Friend', () => {
                 };
                 feedStore.addFeed(feed);
                 database.addOnlineOfflineToDatabase(feed);
+                emitWebhookEvent('friend.online', {
+                    userId: id,
+                    displayName: ctx.name,
+                    location,
+                    worldName,
+                    groupName
+                });
             }
             if (newState === 'active') {
                 ctx.ref.$active_for = Date.now();
