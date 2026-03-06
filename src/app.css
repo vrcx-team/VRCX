@@ -351,3 +351,11 @@ i.x-status-icon.red {
 [data-sonner-toast] [data-content] [data-description] {
     white-space: pre-line;
 }
+
+.main-layout-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+}

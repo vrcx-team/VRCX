@@ -1,3 +1,5 @@
+import { reactive } from 'vue';
+
 import Noty from 'noty';
 
 import {
@@ -22,6 +24,20 @@ import * as workerTimers from 'worker-timers';
 let webSocket = null;
 let lastWebSocketMessage = '';
 
+/**
+ * Reactive WebSocket state for status bar telemetry.
+ * - connected: whether the WS is currently open
+ * - messageCount: total messages received (used for rate delta)
+ */
+export const wsState = reactive({
+    connected: false,
+    messageCount: 0,
+    bytesReceived: 0
+});
+
+/**
+ *
+ */
 export function initWebsocket() {
     if (!watchState.isFriendsLoaded || webSocket !== null) {
         return;
@@ -53,11 +69,13 @@ function connectWebSocket(token) {
     }
     const socket = new WebSocket(`${AppDebug.websocketDomain}/?auth=${token}`);
     socket.onopen = () => {
+        wsState.connected = true;
         if (AppDebug.debugWebSocket) {
             console.log('WebSocket connected');
         }
     };
     socket.onclose = () => {
+        wsState.connected = false;
         if (webSocket === socket) {
             webSocket = null;
         }
@@ -96,6 +114,8 @@ function connectWebSocket(token) {
     };
     socket.onmessage = ({ data }) => {
         try {
+            wsState.messageCount++;
+            wsState.bytesReceived += data.length;
             if (lastWebSocketMessage === data) {
                 // pls no spam
                 return;

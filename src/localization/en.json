@@ -660,6 +660,7 @@
                     "zoom": "Zoom",
                     "vrcplus_profile_icons": "VRCPlus Profile Icons",
                     "show_instance_id": "Show Instance Name",
+                    "show_status_bar": "Show Status Bar",
                     "age_gated_instances": "Age Gated Instances",
                     "nicknames": "Memo Nicknames",
                     "sort_favorite_by": "Sort Favorites by",
@@ -2627,5 +2628,26 @@
         "back_to_top": "Back to top",
         "toggle_password": "Toggle password visibility",
         "clear_input": "Clear input"
+    },
+    "status_bar": {
+        "vrchat": "VRChat",
+        "vrchat_running": "VRChat is running",
+        "vrchat_stopped": "VRChat is not running",
+        "steamvr": "SteamVR",
+        "steamvr_running": "SteamVR is running",
+        "steamvr_stopped": "SteamVR is not running",
+        "proxy": "Proxy",
+        "ws_connected": "Connected",
+        "ws_disconnected": "Disconnected",
+        "ws_avg_per_minute": "{count} avg/min",
+        "zoom": "Zoom",
+        "zoom_tooltip": "Click to adjust zoom level",
+        "app_uptime": "Application uptime",
+        "app_uptime_short": "Uptime",
+        "clocks": "Clocks",
+        "clock": "Clock",
+        "clocks_label": "Clocks",
+        "clocks_none": "None",
+        "timezone": "Timezone"
     }
 }

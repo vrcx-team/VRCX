@@ -109,6 +109,7 @@ export const useAppearanceSettingsStore = defineStore(
 
         const isDataTableStriped = ref(false);
         const showPointerOnHover = ref(false);
+        const showStatusBar = ref(true);
         const tableLimitsDialog = ref({
             visible: false,
             maxTableSize: 500,
@@ -167,6 +168,7 @@ export const useAppearanceSettingsStore = defineStore(
                 navIsCollapsedConfig,
                 dataTableStripedConfig,
                 showPointerOnHoverConfig,
+                showStatusBarConfig,
                 appFontFamilyConfig,
                 lastDarkThemeConfig
             ] = await Promise.all([
@@ -230,6 +232,7 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getBool('VRCX_navIsCollapsed', false),
                 configRepository.getBool('VRCX_dataTableStriped', false),
                 configRepository.getBool('VRCX_showPointerOnHover', false),
+                configRepository.getBool('VRCX_showStatusBar', true),
                 configRepository.getString(
                     'VRCX_fontFamily',
                     APP_FONT_DEFAULT_KEY
@@ -330,6 +333,7 @@ export const useAppearanceSettingsStore = defineStore(
             isNavCollapsed.value = navIsCollapsedConfig;
             isDataTableStriped.value = dataTableStripedConfig;
             showPointerOnHover.value = showPointerOnHoverConfig;
+            showStatusBar.value = showStatusBarConfig;
 
             applyPointerHoverClass();
 
@@ -559,6 +563,13 @@ export const useAppearanceSettingsStore = defineStore(
                 'VRCX_showInstanceIdInLocation',
                 showInstanceIdInLocation.value
             );
+        }
+        /**
+         *
+         */
+        function setShowStatusBar() {
+            showStatusBar.value = !showStatusBar.value;
+            configRepository.setBool('VRCX_showStatusBar', showStatusBar.value);
         }
         /**
          *
@@ -1088,6 +1099,7 @@ export const useAppearanceSettingsStore = defineStore(
             isNavCollapsed,
             isDataTableStriped,
             showPointerOnHover,
+            showStatusBar,
             tableLimitsDialog,
             TABLE_MAX_SIZE_MIN,
             TABLE_MAX_SIZE_MAX,
@@ -1098,6 +1110,7 @@ export const useAppearanceSettingsStore = defineStore(
             setDisplayVRCPlusIconsAsAvatar,
             setHideNicknames,
             setShowInstanceIdInLocation,
+            setShowStatusBar,
             setIsAgeGatedInstancesVisible,
             setSortFavorites,
             setInstanceUsersSortAlphabetical,
