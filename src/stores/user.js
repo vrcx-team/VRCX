@@ -51,6 +51,7 @@ import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
 import { useWorldStore } from './world';
 import { watchState } from '../service/watchState';
+import { emitWebhookEvent } from '../service/webhookEvent';
 
 import * as workerTimers from 'worker-timers';
 
@@ -746,6 +747,30 @@ export const useUserStore = defineStore('User', () => {
                 D.outgoingRequest = true;
             }
         }
+        if (changedProps.displayName) {
+            emitWebhookEvent('friend.name_changed', {
+                userId: ref.id,
+                displayName: changedProps.displayName[0],
+                previousDisplayName: changedProps.displayName[1]
+            });
+        }
+        if (changedProps.last_login) {
+            emitWebhookEvent('friend.last_seen_updated', {
+                userId: ref.id,
+                displayName: ref.displayName,
+                lastLogin: changedProps.last_login[0],
+                previousLastLogin: changedProps.last_login[1]
+            });
+        }
+        if (changedProps.date_joined) {
+            emitWebhookEvent('friend.time_together_updated', {
+                userId: ref.id,
+                displayName: ref.displayName,
+                dateJoined: changedProps.date_joined[0],
+                previousDateJoined: changedProps.date_joined[1]
+            });
+        }
+
         if (hasPropChanged) {
             if (
                 changedProps.location &&
@@ -1359,6 +1384,12 @@ export const useUserStore = defineStore('User', () => {
             if (previousLocation === 'offline') {
                 previousLocation = '';
             }
+            emitWebhookEvent('friend.location_changed', {
+                userId: ref.id,
+                displayName: ref.displayName,
+                previousLocation,
+                location: newLocation
+            });
             if (!previousLocation) {
                 // no previous location
                 if (AppDebug.debugFriendState) {
@@ -1501,6 +1532,14 @@ export const useUserStore = defineStore('User', () => {
                 };
                 feedStore.addFeed(feed);
                 database.addAvatarToDatabase(feed);
+                emitWebhookEvent('friend.avatar_changed', {
+                    userId: ref.id,
+                    displayName: ref.displayName,
+                    currentAvatarImageUrl,
+                    currentAvatarThumbnailImageUrl,
+                    previousCurrentAvatarImageUrl,
+                    previousCurrentAvatarThumbnailImageUrl
+                });
             }
         }
         // if status is offline, ignore status and statusDescription
@@ -1548,6 +1587,14 @@ export const useUserStore = defineStore('User', () => {
             };
             feedStore.addFeed(feed);
             database.addStatusToDatabase(feed);
+            emitWebhookEvent('friend.status_changed', {
+                userId: ref.id,
+                displayName: ref.displayName,
+                status,
+                previousStatus,
+                statusDescription,
+                previousStatusDescription
+            });
         }
         if (props.bio && props.bio[0] && props.bio[1]) {
             let bio = '';
@@ -1574,6 +1621,12 @@ export const useUserStore = defineStore('User', () => {
             props.note[0] !== null &&
             props.note[0] !== props.note[1]
         ) {
+            emitWebhookEvent('friend.note_updated', {
+                userId: ref.id,
+                displayName: ref.displayName,
+                note: props.note[0],
+                previousNote: props.note[1]
+            });
             checkNote(ref.id, props.note[0]);
         }
     }

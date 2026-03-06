@@ -16,6 +16,7 @@ import { useNotificationStore } from './notification';
 import { usePhotonStore } from './photon';
 import { useUserStore } from './user';
 import { useVrStore } from './vr';
+import { emitWebhookEvent } from '../service/webhookEvent';
 
 export const useLocationStore = defineStore('Location', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
@@ -128,6 +129,15 @@ export const useLocationStore = defineStore('Location', () => {
             notificationStore.queueGameLogNoty(entry);
             gameLogStore.addGameLog(entry);
             instanceStore.addInstanceJoinHistory(location, dt);
+            emitWebhookEvent('self.world_joined', {
+                location,
+                worldId: L.worldId,
+                worldName: entry.worldName,
+                groupName: entry.groupName
+            });
+            emitWebhookEvent('self.instance_changed', {
+                location
+            });
 
             userStore.applyUserDialogLocation();
             instanceStore.applyWorldDialogInstances();
@@ -162,6 +172,12 @@ export const useLocationStore = defineStore('Location', () => {
             photonStore.photonEventTablePrevious.data =
                 photonStore.photonEventTable.data;
             photonStore.photonEventTable.data = [];
+        }
+        const previousLocation = lastLocation.value.location;
+        if (previousLocation) {
+            emitWebhookEvent('self.world_left', {
+                location: previousLocation
+            });
         }
         const playerList = Array.from(lastLocation.value.playerList.values());
         const dataBaseEntries = [];

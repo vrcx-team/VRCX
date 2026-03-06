@@ -21,6 +21,7 @@ import { useVrStore } from './vr';
 import { useWorldStore } from './world';
 
 import configRepository from '../service/config.js';
+import { emitWebhookEvent } from '../service/webhookEvent';
 
 import * as workerTimers from 'worker-timers';
 
@@ -105,6 +106,7 @@ export const useGameStore = defineStore('Game', () => {
                 return;
             }
             state.lastCrashedTime = new Date();
+            emitWebhookEvent('vrchat.crash_detected', { location });
             // wait a bit for SteamVR to potentially close before deciding to relaunch
             let restartDelay = 8000;
             if (isGameNoVR.value) {
@@ -125,6 +127,7 @@ export const useGameStore = defineStore('Game', () => {
         }
         AppApi.FocusWindow();
         const message = 'VRChat crashed, attempting to rejoin last instance';
+        emitWebhookEvent('vrchat.auto_restart_triggered', { location });
         toast(message);
         const entry = {
             created_at: new Date().toJSON(),
@@ -134,6 +137,7 @@ export const useGameStore = defineStore('Game', () => {
         database.addGamelogEventToDatabase(entry);
         notificationStore.queueGameLogNoty(entry);
         gameLogStore.addGameLog(entry);
+        emitWebhookEvent('vrchat.rejoin_last_instance', { location });
         launchStore.launchGame(location, '', isGameNoVR.value);
     }
 
@@ -155,10 +159,12 @@ export const useGameStore = defineStore('Game', () => {
         if (isGameRunningArg !== isGameRunning.value) {
             isGameRunning.value = isGameRunningArg;
             if (isGameRunningArg) {
+                emitWebhookEvent('vrchat.started');
                 userStore.currentUser.$online_for = Date.now();
                 userStore.currentUser.$offline_for = '';
                 userStore.currentUser.$previousAvatarSwapTime = Date.now();
             } else {
+                emitWebhookEvent('vrchat.closed');
                 await configRepository.setBool('isGameNoVR', isGameNoVR.value);
                 userStore.currentUser.$online_for = 0;
                 userStore.currentUser.$offline_for = Date.now();
