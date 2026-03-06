@@ -40,7 +40,6 @@ export function getToggleableColumns(cols) {
     if (!Array.isArray(cols)) return [];
     return cols.filter((col) => {
         if (isSpacer(col)) return false;
-        if (isStretch(col)) return false;
         if (col.columnDef?.meta?.disableVisibilityToggle) return false;
         if (!col.columnDef?.meta?.label) return false;
         return true;
@@ -71,6 +70,7 @@ export function isReorderable(header, getPinnedState) {
     const col = header?.column;
     if (!col) return false;
     if (isSpacer(col)) return false;
+    if (!col.columnDef?.meta?.label) return false;
     if (getPinnedState?.(col)) return false;
     if (col.columnDef?.meta?.disableReorder) return false;
     return true;

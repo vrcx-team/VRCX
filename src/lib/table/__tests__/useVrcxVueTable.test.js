@@ -332,4 +332,88 @@ describe('useVrcxVueTable persistence', () => {
         );
         expect(stored?.pageSize).toBeUndefined();
     });
+
+    it('resetAll clears both columnSizing and columnOrder', async () => {
+        const { columnSizing, columnOrder, resetAll } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date'),
+            persistKey: 'test-reset-all',
+            enableColumnResizing: true,
+            enableColumnReorder: true
+        });
+
+        columnSizing.value = { name: 200 };
+        columnOrder.value = ['date', 'name'];
+        await new Promise((r) => setTimeout(r, 300));
+
+        resetAll();
+
+        expect(columnSizing.value).toEqual({});
+        expect(columnOrder.value).toEqual([]);
+
+        const stored = JSON.parse(
+            localStorage.getItem('vrcx:table:test-reset-all')
+        );
+        expect(stored?.columnSizing).toBeUndefined();
+        expect(stored?.columnOrder).toBeUndefined();
+    });
+
+    it('persists columnOrderLocked to localStorage', async () => {
+        const { columnOrderLocked } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date'),
+            persistKey: 'test-lock-order'
+        });
+
+        expect(columnOrderLocked.value).toBe(false);
+
+        columnOrderLocked.value = true;
+
+        // Watcher is async, wait for it to fire
+        await new Promise((r) => setTimeout(r, 50));
+
+        const stored = JSON.parse(
+            localStorage.getItem('vrcx:table:test-lock-order')
+        );
+        expect(stored?.columnOrderLocked).toBe(true);
+    });
+
+    it('restores columnOrderLocked from localStorage on init', () => {
+        localStorage.setItem(
+            'vrcx:table:test-restore-lock',
+            JSON.stringify({ columnOrderLocked: true })
+        );
+
+        const { columnOrderLocked } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date'),
+            persistKey: 'test-restore-lock'
+        });
+
+        expect(columnOrderLocked.value).toBe(true);
+    });
+
+    it('attaches controls to table.options.meta when persistKey is set', () => {
+        const { table } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date'),
+            persistKey: 'test-meta'
+        });
+
+        const meta = table.options.meta;
+        expect(meta.resetAll).toBeTypeOf('function');
+        expect(meta.columnOrderLocked).toBeDefined();
+        expect(meta.columnOrderLocked.value).toBe(false);
+    });
+
+    it('does not attach controls to meta without persistKey', () => {
+        const { table } = useVrcxVueTable({
+            data: [],
+            columns: makeColumns('name', 'date')
+        });
+
+        const meta = table.options.meta;
+        expect(meta.resetAll).toBeUndefined();
+        expect(meta.columnOrderLocked).toBeUndefined();
+    });
 });

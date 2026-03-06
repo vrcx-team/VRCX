@@ -2417,6 +2417,10 @@
         "traveling": "Traveling"
     },
     "table": {
+        "header_menu": {
+            "reset_all": "Reset All",
+            "lock_column_order": "Lock Column Order"
+        },
         "pagination": {
             "rows_per_page": "Rows per page",
             "first": "First",

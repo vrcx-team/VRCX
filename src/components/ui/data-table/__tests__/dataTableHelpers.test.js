@@ -85,12 +85,12 @@ describe('getToggleableColumns', () => {
         expect(getToggleableColumns(cols)[0].id).toBe('name');
     });
 
-    it('excludes stretch columns', () => {
+    it('includes stretch columns', () => {
         const cols = [
             mockCol('name', { label: 'Name' }),
             mockCol('detail', { stretch: true, label: 'Detail' })
         ];
-        expect(getToggleableColumns(cols)).toHaveLength(1);
+        expect(getToggleableColumns(cols)).toHaveLength(2);
     });
 
     it('excludes columns with disableVisibilityToggle', () => {
@@ -153,9 +153,14 @@ describe('getColStyle', () => {
 describe('isReorderable', () => {
     const noPinning = () => false;
 
-    it('returns true for normal column', () => {
-        const header = { column: mockCol('name') };
+    it('returns true for normal column with label', () => {
+        const header = { column: mockCol('name', { label: 'Name' }) };
         expect(isReorderable(header, noPinning)).toBe(true);
+    });
+
+    it('returns false for column without label', () => {
+        const header = { column: mockCol('expander') };
+        expect(isReorderable(header, noPinning)).toBe(false);
     });
 
     it('returns false for spacer column', () => {
@@ -164,13 +169,15 @@ describe('isReorderable', () => {
     });
 
     it('returns false for pinned column', () => {
-        const header = { column: mockCol('name') };
+        const header = { column: mockCol('name', { label: 'Name' }) };
         const isPinned = () => true;
         expect(isReorderable(header, isPinned)).toBe(false);
     });
 
     it('returns false for columns with disableReorder', () => {
-        const header = { column: mockCol('name', { disableReorder: true }) };
+        const header = {
+            column: mockCol('name', { label: 'Name', disableReorder: true })
+        };
         expect(isReorderable(header, noPinning)).toBe(false);
     });
 

@@ -273,6 +273,21 @@ export function useVrcxVueTable(options) {
         localStorage.setItem(storageKey, JSON.stringify(next));
     }
 
+    /**
+     * @param keys
+     */
+    function removePersisted(keys) {
+        if (!storageKey) {
+            return;
+        }
+        const cur = safeJsonParse(localStorage.getItem(storageKey)) ?? {};
+        for (const key of keys) {
+            delete cur[key];
+        }
+        cur.updatedAt = Date.now();
+        localStorage.setItem(storageKey, JSON.stringify(cur));
+    }
+
     const persisted = readPersisted();
 
     let resolvedSorting = initialSorting ?? [];
@@ -308,6 +323,9 @@ export function useVrcxVueTable(options) {
             pageSize: persisted.pageSize
         };
     }
+
+    // Column order lock — persisted per-table
+    const columnOrderLocked = ref(persisted?.columnOrderLocked === true);
 
     const state = {};
     const handlers = {};
@@ -417,6 +435,11 @@ export function useVrcxVueTable(options) {
 
         state,
 
+        meta: {
+            resetAll: storageKey ? resetAll : undefined,
+            columnOrderLocked: storageKey ? columnOrderLocked : undefined
+        },
+
         ...tableOptions
     });
 
@@ -505,6 +528,20 @@ export function useVrcxVueTable(options) {
         );
     }
 
+    if (storageKey) {
+        watch(columnOrderLocked, (val) => {
+            writePersisted({ columnOrderLocked: val });
+        });
+    }
+
+    /**
+     */
+    function resetAll() {
+        columnSizing.value = {};
+        columnOrder.value = [];
+        removePersisted(['columnSizing', 'columnOrder']);
+    }
+
     return {
         table,
         sorting,
@@ -513,6 +550,8 @@ export function useVrcxVueTable(options) {
         columnPinning,
         columnSizing,
         columnOrder,
-        columnVisibility
+        columnVisibility,
+        columnOrderLocked,
+        resetAll
     };
 }

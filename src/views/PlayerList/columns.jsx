@@ -187,7 +187,10 @@ export const createColumns = ({
                 }),
             size: 110,
             enableHiding: true,
-            meta: { label: () => t('table.playerList.photonId') },
+            meta: {
+                label: () => t('table.playerList.photonId'),
+                disableVisibilityToggle: true
+            },
             sortingFn: (rowA, rowB) =>
                 (rowA.original?.photonId ?? 0) - (rowB.original?.photonId ?? 0),
             cell: ({ row }) => {
