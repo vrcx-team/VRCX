@@ -21,7 +21,7 @@
                     :class="['group/main-layout flex-1 h-full min-w-0', { 'aside-collapsed': isAsideCollapsedStatic }]"
                     @layout="handleLayout">
                     <template #default="{ layout }">
-                        <ResizablePanel :default-size="mainDefaultSize" :order="1">
+                        <ResizablePanel :default-size="mainDefaultSize" :order="1" :size-unit="'px'">
                             <RouterView v-slot="{ Component }">
                                 <KeepAlive exclude="ChartsInstance, ChartsMutual">
                                     <component :is="Component" />
@@ -42,6 +42,7 @@
                             :collapsed-size="0"
                             collapsible
                             :order="2"
+                            :size-unit="'px'"
                             :style="{ maxWidth: `${asideMaxPx}px` }">
                             <Sidebar></Sidebar>
                         </ResizablePanel>

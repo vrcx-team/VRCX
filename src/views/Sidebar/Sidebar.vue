@@ -1,17 +1,17 @@
 <template>
     <div class="x-aside-container">
         <div style="display: flex; align-items: baseline">
-            <div style="flex: 1; padding: 10px; padding-left: 0">
+            <div class="search-container" style="flex: 1; padding: 10px; padding-left: 0">
                 <button
                     type="button"
-                    class="border-input dark:bg-input/30 flex h-9 w-full items-center gap-2 rounded-md border bg-transparent px-3 shadow-xs transition-[color,box-shadow] hover:border-ring cursor-pointer"
+                    class="border-input dark:bg-input/30 flex h-9 w-full items-center gap-2 rounded-md border bg-transparent px-3 shadow-xs transition-[color,box-shadow] hover:border-ring cursor-pointer overflow-hidden"
                     @click="openGlobalSearch">
                     <Search class="size-4 shrink-0 opacity-50" />
-                    <span class="flex-1 text-left text-sm text-muted-foreground truncate">{{
+                    <span class="search-text flex-1 min-w-0 text-left text-sm text-muted-foreground truncate">{{
                         t('side_panel.search_placeholder')
                     }}</span>
-                    <Kbd>{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
-                    <Kbd>K</Kbd>
+                    <Kbd class="search-kbd shrink-0">{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
+                    <Kbd class="search-kbd shrink-0">K</Kbd>
                 </button>
             </div>
             <div class="flex items-center mx-1 gap-1">
@@ -372,5 +372,21 @@
     .sidebar-tab-count {
         font-size: 12px;
         margin-left: 10px;
+    }
+
+    .search-container {
+        container-type: inline-size;
+    }
+
+    @container (max-width: 150px) {
+        .search-text {
+            display: none;
+        }
+    }
+
+    @container (max-width: 80px) {
+        .search-kbd {
+            display: none;
+        }
     }
 </style>

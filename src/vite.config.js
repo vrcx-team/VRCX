@@ -124,6 +124,7 @@ export default defineConfig(({ mode }) => {
                 'reka-ui',
                 'pinia',
                 'vue-i18n',
+                'tailwindcss',
                 'lucide-vue-next',
                 '@vueuse/core',
                 'vue-sonner',
