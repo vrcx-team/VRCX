@@ -111,10 +111,52 @@
                             </template>
 
                             <template v-else-if="item.row.type === 'friend-item'">
-                                <FriendItem
-                                    :friend="item.row.friend"
-                                    :style="item.row.itemStyle"
-                                    :is-group-by-instance="item.row.isGroupByInstance" />
+                                <ContextMenu>
+                                    <ContextMenuTrigger as-child>
+                                        <FriendItem
+                                            :friend="item.row.friend"
+                                            :style="item.row.itemStyle"
+                                            :is-group-by-instance="item.row.isGroupByInstance" />
+                                    </ContextMenuTrigger>
+                                    <ContextMenuContent>
+                                        <ContextMenuItem
+                                            v-if="item.row.friend.state === 'online'"
+                                            @click="friendRequestInvite(item.row.friend)">
+                                            {{ t('dialog.user.actions.request_invite') }}
+                                        </ContextMenuItem>
+                                        <ContextMenuItem
+                                            v-if="isGameRunning"
+                                            :disabled="!canInviteToMyLocation"
+                                            @click="friendInvite(item.row.friend)">
+                                            {{ t('dialog.user.actions.invite') }}
+                                        </ContextMenuItem>
+                                        <ContextMenuItem
+                                            :disabled="!currentUser.isBoopingEnabled"
+                                            @click="friendSendBoop(item.row.friend)">
+                                            {{ t('dialog.user.actions.send_boop') }}
+                                        </ContextMenuItem>
+                                        <ContextMenuSeparator
+                                            v-if="
+                                                item.row.friend.state === 'online' && hasFriendLocation(item.row.friend)
+                                            " />
+                                        <ContextMenuItem
+                                            v-if="
+                                                item.row.friend.state === 'online' && hasFriendLocation(item.row.friend)
+                                            "
+                                            :disabled="!canJoinFriend(item.row.friend)"
+                                            @click="friendJoin(item.row.friend)">
+                                            {{ t('dialog.user.info.launch_invite_tooltip') }}
+                                        </ContextMenuItem>
+                                        <ContextMenuItem
+                                            v-if="
+                                                item.row.friend.state === 'online' && hasFriendLocation(item.row.friend)
+                                            "
+                                            :disabled="!canJoinFriend(item.row.friend)"
+                                            @click="friendInviteSelf(item.row.friend)">
+                                            {{ t('dialog.user.info.self_invite_tooltip') }}
+                                        </ContextMenuItem>
+                                    </ContextMenuContent>
+                                </ContextMenu>
                             </template>
                         </div>
                     </template>
@@ -137,6 +179,7 @@
         ContextMenu,
         ContextMenuCheckboxItem,
         ContextMenuContent,
+        ContextMenuItem,
         ContextMenuSeparator,
         ContextMenuSub,
         ContextMenuSubContent,
@@ -149,13 +192,16 @@
         useFavoriteStore,
         useFriendStore,
         useGameStore,
+        useLaunchStore,
         useLocationStore,
         useUserStore
     } from '../../../stores';
     import { buildFriendRow, buildInstanceHeaderRow, buildToggleRow, estimateRowSize } from '../friendsSidebarUtils';
     import { getFriendsSortFunction, isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
+    import { instanceRequest, notificationRequest, userRequest, worldRequest } from '../../../api';
+    import { checkCanInvite, checkCanInviteSelf } from '../../../shared/utils/invite.js';
     import { getFriendsLocations } from '../../../shared/utils/location.js';
-    import { userRequest } from '../../../api';
+    import { parseLocation } from '../../../shared/utils';
 
     import BackToTop from '../../../components/BackToTop.vue';
     import FriendItem from './FriendItem.vue';
@@ -183,7 +229,8 @@
         sidebarSortMethods
     } = storeToRefs(appearanceSettingsStore);
     const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
-    const { showUserDialog } = useUserStore();
+    const { showUserDialog, showSendBoopDialog } = useUserStore();
+    const launchStore = useLaunchStore();
     const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends, localFriendFavorites } =
         storeToRefs(useFavoriteStore());
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
@@ -656,5 +703,94 @@
         userRequest.saveCurrentUser({ statusDescription: status }).then(() => {
             toast.success('Status updated');
         });
+    }
+
+    const canInviteToMyLocation = computed(() => checkCanInvite(lastLocation.value.location));
+
+    /**
+     * @param {object} friend - friend item from friend list
+     * @returns {boolean} whether the friend has a valid joinable location
+     */
+    function hasFriendLocation(friend) {
+        const loc = friend.ref?.location;
+        return !!loc && isRealInstance(loc);
+    }
+
+    /**
+     * @param {object} friend - friend item from friend list
+     * @returns {boolean} whether the current user can join friend's instance
+     */
+    function canJoinFriend(friend) {
+        const loc = friend.ref?.location;
+        if (!loc || !isRealInstance(loc)) return false;
+        return checkCanInviteSelf(loc);
+    }
+
+    /**
+     * @param {object} friend - friend item from friend list
+     */
+    function friendRequestInvite(friend) {
+        notificationRequest.sendRequestInvite({ platform: 'standalonewindows' }, friend.id).then(() => {
+            toast.success('Request invite sent');
+        });
+    }
+
+    /**
+     * @param {object} friend - friend item from friend list
+     */
+    function friendInvite(friend) {
+        let currentLocation = lastLocation.value.location;
+        if (currentLocation === 'traveling') {
+            currentLocation = lastLocationDestination.value;
+        }
+        const L = parseLocation(currentLocation);
+        worldRequest.getCachedWorld({ worldId: L.worldId }).then((args) => {
+            notificationRequest
+                .sendInvite(
+                    {
+                        instanceId: L.tag,
+                        worldId: L.tag,
+                        worldName: args.ref.name
+                    },
+                    friend.id
+                )
+                .then(() => {
+                    toast.success(t('message.invite.sent'));
+                });
+        });
+    }
+
+    /**
+     * @param {object} friend - friend item from friend list
+     */
+    function friendSendBoop(friend) {
+        showSendBoopDialog(friend.id);
+    }
+
+    /**
+     * Join friend's instance (launch dialog)
+     * @param {object} friend - friend item from friend list
+     */
+    function friendJoin(friend) {
+        const loc = friend.ref?.location;
+        if (!loc) return;
+        launchStore.showLaunchDialog(loc);
+    }
+
+    /**
+     * @param {object} friend - friend item from friend list
+     */
+    function friendInviteSelf(friend) {
+        const loc = friend.ref?.location;
+        if (!loc) return;
+        const L = parseLocation(loc);
+        instanceRequest
+            .selfInvite({
+                instanceId: L.instanceId,
+                worldId: L.worldId
+            })
+            .then(() => {
+                toast.success(t('message.invite.self_sent'));
+            });
     }
 </script>
