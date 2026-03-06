@@ -203,11 +203,11 @@ export function getColumns({
             }
         },
         {
-            id: 'releaseStatus',
+            id: 'visibility',
             accessorKey: 'releaseStatus',
-            header: () => t('dialog.avatar.tags.public'),
+            header: () => t('dialog.avatar.info.visibility'),
             size: 120,
-            meta: { label: () => t('dialog.avatar.tags.public') },
+            meta: { label: () => t('dialog.avatar.info.visibility') },
             cell: ({ row }) => {
                 const ref = row.original;
                 return (

@@ -1339,6 +1339,7 @@
                 "android_performance": "Android Performance",
                 "ios_performance": "iOS Performance",
                 "time_spent": "Time Spent",
+                "visibility": "Visibility",
                 "tags": "Tags",
                 "memo": "Memo",
                 "memo_placeholder": "Click to add a memo",

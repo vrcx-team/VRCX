@@ -27,7 +27,7 @@
                         <PopoverContent class="w-auto p-3" align="start">
                             <div class="flex flex-col gap-3">
                                 <Field>
-                                    <FieldLabel>{{ t('dialog.avatar.tags.public') }}</FieldLabel>
+                                    <FieldLabel>{{ t('dialog.avatar.info.visibility') }}</FieldLabel>
                                     <FieldContent>
                                         <ToggleGroup
                                             type="single"
@@ -283,6 +283,10 @@
         return count;
     });
 
+    /**
+     *
+     * @param tag
+     */
     function toggleTagFilter(tag) {
         const next = new Set(tagFilters.value);
         if (next.has(tag)) next.delete(tag);
@@ -290,6 +294,9 @@
         tagFilters.value = next;
     }
 
+    /**
+     *
+     */
     function clearFilters() {
         releaseStatusFilter.value = 'all';
         tagFilters.value = new Set();
@@ -325,10 +332,18 @@
         return list;
     });
 
+    /**
+     *
+     * @param avatarId
+     */
     function handleShowAvatarDialog(avatarId) {
         showAvatarDialog(avatarId);
     }
 
+    /**
+     *
+     * @param avatarId
+     */
     function handleWearAvatar(avatarId) {
         if (currentUser.value.currentAvatar === avatarId) {
             return;
@@ -336,6 +351,12 @@
         selectAvatarWithoutConfirmation(avatarId);
     }
 
+    /**
+     *
+     * @param command
+     * @param labelKey
+     * @param fn
+     */
     function confirmAndRun(command, labelKey, fn) {
         modalStore
             .confirm({
@@ -349,6 +370,11 @@
             });
     }
 
+    /**
+     *
+     * @param action
+     * @param avatarRef
+     */
     function handleContextMenuAction(action, avatarRef) {
         switch (action) {
             case 'details':
@@ -441,6 +467,12 @@
         }
     }
 
+    /**
+     *
+     * @param root0
+     * @param root0.avatarId
+     * @param root0.tags
+     */
     async function onSaveTags({ avatarId, tags: newEntries }) {
         const avatar = avatars.value.find((a) => a.id === avatarId);
         const oldEntries = avatar?.$tags || [];
@@ -469,6 +501,10 @@
         avatarTagsMap.value = new Map(avatarTagsMap.value);
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangeAvatarImage(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: imageUploadInput.value,
@@ -483,6 +519,10 @@
         cropDialogOpen.value = true;
     }
 
+    /**
+     *
+     * @param blob
+     */
     async function onCropConfirmAvatar(blob) {
         const avatarRef = changeImageAvatarRef.value;
         if (!avatarRef) return;
@@ -527,10 +567,18 @@
         currentAvatarId
     });
 
+    /**
+     *
+     * @param row
+     */
     function handleRowClick(row) {
         handleWearAvatar(row.original.id);
     }
 
+    /**
+     *
+     * @param row
+     */
     function getRowClass(row) {
         if (row.original.id === currentAvatarId.value) {
             return 'bg-primary/10 hover:bg-primary/15';
@@ -561,6 +609,9 @@
         table.setPageSize(size);
     });
 
+    /**
+     *
+     */
     async function refreshAvatars() {
         if (isLoading.value) {
             return;
