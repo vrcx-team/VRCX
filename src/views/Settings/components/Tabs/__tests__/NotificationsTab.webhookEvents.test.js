@@ -2,10 +2,6 @@ import { computed, ref } from 'vue';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 
-const setWebhookEventEnabledMock = vi.fn();
-const setAllWebhookEventsEnabledMock = vi.fn();
-const resetWebhookEventEnabledDefaultsMock = vi.fn();
-
 const notificationsSettingsRefs = {
     overlayToast: ref('Always'),
     openVR: ref(false),
@@ -24,10 +20,7 @@ const notificationsSettingsRefs = {
     webhookEventExportEnabled: ref(true),
     webhookEventExportUrl: ref('https://example.com'),
     webhookEventExportBearerToken: ref(''),
-    webhookEventEnabledMap: ref({
-        'friend.online': true,
-        'notification.received.dynamic': true
-    }),
+    webhookEventEnabledMap: ref({ 'friend.online': true }),
     webhookEventTestName: ref('vrcx.webhook.test'),
     webhookEventTestPayload: ref('{}')
 };
@@ -80,11 +73,9 @@ const storesMockFactory = vi.hoisted(() => () => ({
         setWebhookEventExportEnabled: vi.fn(),
         setWebhookEventExportUrl: vi.fn(),
         setWebhookEventExportBearerToken: vi.fn(),
-        setWebhookEventEnabled: (...args) => setWebhookEventEnabledMock(...args),
-        setAllWebhookEventsEnabled: (...args) =>
-            setAllWebhookEventsEnabledMock(...args),
-        resetWebhookEventEnabledDefaults: (...args) =>
-            resetWebhookEventEnabledDefaultsMock(...args),
+        setWebhookEventEnabled: vi.fn(),
+        setAllWebhookEventsEnabled: vi.fn(),
+        resetWebhookEventEnabledDefaults: vi.fn(),
         testWebhookEventExport: vi.fn()
     }),
     useAdvancedSettingsStore: () => ({
@@ -110,62 +101,45 @@ describe('NotificationsTab webhook event controls', () => {
         vi.clearAllMocks();
     });
 
-    test('renders grouped webhook event controls', () => {
+    test('renders webhook filter dialog entry button only', () => {
         const wrapper = shallowMount(NotificationsTab, {
             global: {
                 stubs: {
                     FeedFiltersDialog: true,
-                    NotificationPositionDialog: true
+                    NotificationPositionDialog: true,
+                    WebhookEventFiltersDialog: true
                 }
             }
         });
 
-        expect(wrapper.text()).toContain(
-            'view.settings.notifications.notifications.webhook.events.header'
-        );
-        expect(wrapper.text()).toContain(
+        expect(wrapper.text()).not.toContain(
             'view.settings.notifications.notifications.webhook.events.categories.friend'
         );
-        expect(wrapper.text()).toContain('friend.online');
+        const dialog = wrapper.find('webhook-event-filters-dialog-stub');
+        expect(dialog.exists()).toBe(true);
+        expect(dialog.attributes('iswebhookeventfiltersdialogvisible')).toBe(
+            'false'
+        );
     });
 
-    test('clicking bulk action buttons invokes store actions', async () => {
+    test('clicking filter button opens webhook event dialog', async () => {
         const wrapper = shallowMount(NotificationsTab, {
             global: {
                 stubs: {
                     FeedFiltersDialog: true,
-                    NotificationPositionDialog: true
+                    NotificationPositionDialog: true,
+                    WebhookEventFiltersDialog: true
                 }
             }
         });
-
         const buttons = wrapper.findAllComponents({ name: 'Button' });
-        expect(buttons.length).toBeGreaterThan(3);
-        await buttons.at(-3).vm.$emit('click');
-        await buttons.at(-2).vm.$emit('click');
-        await buttons.at(-1).vm.$emit('click');
-
-        expect(setAllWebhookEventsEnabledMock).toHaveBeenCalledWith(true);
-        expect(setAllWebhookEventsEnabledMock).toHaveBeenCalledWith(false);
-        expect(resetWebhookEventEnabledDefaultsMock).toHaveBeenCalledTimes(1);
-    });
-
-    test('clicking event toggle invokes setWebhookEventEnabled', async () => {
-        const wrapper = shallowMount(NotificationsTab, {
-            global: {
-                stubs: {
-                    FeedFiltersDialog: true,
-                    NotificationPositionDialog: true
-                }
-            }
-        });
-
-        const toggle = wrapper.findAllComponents({ name: 'SimpleSwitch' }).at(-1);
-        expect(toggle).toBeTruthy();
-        toggle.vm.$emit('change', false);
-
-        const call = setWebhookEventEnabledMock.mock.calls.at(-1);
-        expect(call?.[0]).toEqual(expect.any(String));
-        expect(call?.[1]).toBe(false);
+        const button = buttons.at(-1);
+        expect(button).toBeTruthy();
+        await button.vm.$emit('click');
+        const dialog = wrapper.find('webhook-event-filters-dialog-stub');
+        expect(dialog.exists()).toBe(true);
+        expect(dialog.attributes('iswebhookeventfiltersdialogvisible')).toBe(
+            'true'
+        );
     });
 });

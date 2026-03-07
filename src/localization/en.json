@@ -779,6 +779,7 @@
                         "test_not_sent": "Webhook test not sent (check enable/url)",
                         "events": {
                             "header": "Webhook Event Items",
+                            "open_filters": "Webhook Event Filters",
                             "actions": {
                                 "enable_all": "Enable All",
                                 "disable_all": "Disable All",

@@ -723,6 +723,7 @@
                         "test_not_sent": "Webhook 测试未发送（请检查开关/地址）",
                         "events": {
                             "header": "Webhook 事件项",
+                            "open_filters": "Webhook 事件筛选",
                             "actions": {
                                 "enable_all": "全部启用",
                                 "disable_all": "全部禁用",

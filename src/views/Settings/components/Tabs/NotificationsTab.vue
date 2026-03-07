@@ -314,47 +314,16 @@
                     <Play />{{ t('view.settings.notifications.notifications.webhook.send_test') }}
                 </Button>
             </div>
-            <div class="options-container-item" style="align-items: center; gap: 8px">
-                <span class="name">{{ t('view.settings.notifications.notifications.webhook.events.header') }}</span>
-                <Button size="sm" variant="outline" @click="setAllWebhookEventsEnabled(true)">
-                    {{ t('view.settings.notifications.notifications.webhook.events.actions.enable_all') }}
+            <div class="options-container-item">
+                <Button size="sm" variant="outline" @click="showWebhookEventFiltersDialog">
+                    {{ t('view.settings.notifications.notifications.webhook.events.open_filters') }}
                 </Button>
-                <Button size="sm" variant="outline" @click="setAllWebhookEventsEnabled(false)">
-                    {{ t('view.settings.notifications.notifications.webhook.events.actions.disable_all') }}
-                </Button>
-                <Button size="sm" variant="outline" @click="resetWebhookEventEnabledDefaults">
-                    {{ t('view.settings.notifications.notifications.webhook.events.actions.reset_defaults') }}
-                </Button>
-            </div>
-            <div
-                v-for="group in webhookEventGroups"
-                :key="group.category"
-                class="options-container-item"
-                style="display: block">
-                <span class="name" style="display: inline-block; margin-bottom: 6px">
-                    {{ t(group.titleKey) }}
-                </span>
-                <div
-                    v-for="eventDef in group.items"
-                    :key="eventDef.key"
-                    style="margin-left: 8px; margin-bottom: 8px">
-                    <simple-switch
-                        :label="t(eventDef.labelKey)"
-                        :value="Boolean(webhookEventEnabledMap[eventDef.key])"
-                        @change="
-                            setWebhookEventEnabled(
-                                eventDef.key,
-                                Boolean($event)
-                            )
-                        " />
-                    <div style="margin-left: 235px; font-size: 11px; color: var(--el-text-color-secondary)">
-                        {{ t(eventDef.descriptionKey) }} ({{ eventDef.key }})
-                    </div>
-                </div>
             </div>
         </div>
         <NotificationPositionDialog v-model:isNotificationPositionDialogVisible="isNotificationPositionDialogVisible" />
         <FeedFiltersDialog v-model:feedFiltersDialogMode="feedFiltersDialogMode" />
+        <WebhookEventFiltersDialog
+            v-model:isWebhookEventFiltersDialogVisible="isWebhookEventFiltersDialogVisible" />
     </div>
 </template>
 
@@ -366,10 +335,6 @@
     import { Play } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import {
-        WEBHOOK_DYNAMIC_EVENT_RULES,
-        WEBHOOK_EVENT_DEFS
-    } from '../../../../shared/constants/webhookEvents';
 
     import {
         useAdvancedSettingsStore,
@@ -382,6 +347,7 @@
 
     import FeedFiltersDialog from '../../dialogs/FeedFiltersDialog.vue';
     import NotificationPositionDialog from '../../dialogs/NotificationPositionDialog.vue';
+    import WebhookEventFiltersDialog from '../../dialogs/WebhookEventFiltersDialog.vue';
     import SimpleSwitch from '../SimpleSwitch.vue';
 
     const { t } = useI18n();
@@ -408,7 +374,6 @@
         webhookEventExportEnabled,
         webhookEventExportUrl,
         webhookEventExportBearerToken,
-        webhookEventEnabledMap,
         webhookEventTestName,
         webhookEventTestPayload
     } = storeToRefs(notificationsSettingsStore);
@@ -434,9 +399,6 @@
         setWebhookEventExportEnabled,
         setWebhookEventExportUrl,
         setWebhookEventExportBearerToken,
-        setWebhookEventEnabled,
-        setAllWebhookEventsEnabled,
-        resetWebhookEventEnabledDefaults,
         testWebhookEventExport
     } = notificationsSettingsStore;
 
@@ -446,36 +408,8 @@
 
     const feedFiltersDialogMode = ref('');
     const isNotificationPositionDialogVisible = ref(false);
+    const isWebhookEventFiltersDialogVisible = ref(false);
     const isLinux = computed(() => LINUX);
-    const webhookEventCategoryOrder = [
-        'notification',
-        'friend',
-        'self',
-        'instance',
-        'favorite',
-        'vrchat',
-        'app'
-    ];
-    const webhookEventGroups = computed(() => {
-        const allEvents = [...WEBHOOK_EVENT_DEFS, ...WEBHOOK_DYNAMIC_EVENT_RULES];
-        const grouped = new Map();
-        for (const category of webhookEventCategoryOrder) {
-            grouped.set(category, []);
-        }
-        for (const eventDef of allEvents) {
-            if (!grouped.has(eventDef.category)) {
-                grouped.set(eventDef.category, []);
-            }
-            grouped.get(eventDef.category).push(eventDef);
-        }
-        return Array.from(grouped.entries())
-            .filter(([, items]) => items.length > 0)
-            .map(([category, items]) => ({
-                category,
-                titleKey: `view.settings.notifications.notifications.webhook.events.categories.${category}`,
-                items
-            }));
-    });
     const notificationOpacityValue = computed({
         get: () => [notificationOpacity.value],
         set: (value) => {
@@ -505,5 +439,9 @@
 
     function showNotificationPositionDialog() {
         isNotificationPositionDialogVisible.value = true;
+    }
+
+    function showWebhookEventFiltersDialog() {
+        isWebhookEventFiltersDialogVisible.value = true;
     }
 </script>
