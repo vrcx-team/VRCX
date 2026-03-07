@@ -146,13 +146,9 @@ export const useWorldStore = defineStore('World', () => {
                 D.timeSpent = ref.timeSpent;
             }
         });
-        const loadWorldRequest = forceRefresh
-            ? worldRequest.getWorld({
-                  worldId: L.worldId
-              })
-            : worldRequest.getCachedWorld({
-                  worldId: L.worldId
-              });
+        const loadWorldRequest = worldRequest.getWorld({
+            worldId: L.worldId
+        });
         loadWorldRequest
             .catch((err) => {
                 nextTick(() => (D.loading = false));
