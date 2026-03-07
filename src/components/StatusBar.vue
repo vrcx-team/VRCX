@@ -235,13 +235,12 @@
         defaultVisibility,
         formatAppUptime,
         formatUtcHour,
-        loadClockCount,
-        loadClocks,
-        loadVisibility,
         normalizeClock,
         normalizeUtcHour,
         parseClockOffset
     } from './statusBarUtils';
+
+    import configRepository from '../service/config';
 
     dayjs.extend(utc);
     dayjs.extend(timezone);
@@ -256,7 +255,7 @@
 
     const VISIBILITY_KEY = 'VRCX_statusBarVisibility';
 
-    const visibility = reactive(loadVisibility(localStorage));
+    const visibility = reactive({ ...defaultVisibility });
 
     /**
      *
@@ -264,7 +263,7 @@
      */
     function toggleVisibility(key) {
         visibility[key] = !visibility[key];
-        localStorage.setItem(VISIBILITY_KEY, JSON.stringify(visibility));
+        configRepository.setString(VISIBILITY_KEY, JSON.stringify(visibility));
     }
 
     // --- WebSocket message rate + sparkline ---
@@ -368,8 +367,8 @@
     const localOffset = normalizeUtcHour(dayjs().utcOffset() / 60);
     const defaultClocks = [{ offset: localOffset }, { offset: 0 }, { offset: localOffset < 0 ? 9 : -5 }];
 
-    const clocks = ref(loadClocks(localStorage, defaultClocks));
-    const clockCount = ref(loadClockCount(localStorage));
+    const clocks = ref(defaultClocks.map((c) => ({ ...c })));
+    const clockCount = ref(3);
     const clockPopoverOpen = reactive([false, false, false]);
 
     const visibleClocks = computed(() => clocks.value.slice(0, clockCount.value));
@@ -378,7 +377,7 @@
      *
      */
     function saveClocks() {
-        localStorage.setItem(CLOCKS_KEY, JSON.stringify(clocks.value));
+        configRepository.setString(CLOCKS_KEY, JSON.stringify(clocks.value));
     }
 
     /**
@@ -387,10 +386,10 @@
      */
     function setClockCount(val) {
         clockCount.value = Number(val);
-        localStorage.setItem(CLOCK_COUNT_KEY, String(clockCount.value));
+        configRepository.setString(CLOCK_COUNT_KEY, String(clockCount.value));
         if (clockCount.value > 0) {
             visibility.clocks = true;
-            localStorage.setItem(VISIBILITY_KEY, JSON.stringify(visibility));
+            configRepository.setString(VISIBILITY_KEY, JSON.stringify(visibility));
         }
     }
 
@@ -427,7 +426,34 @@
         });
     });
 
-    onMounted(() => {
+    onMounted(async () => {
+        const [savedVis, savedClocks, savedClockCount] = await Promise.all([
+            configRepository.getString(VISIBILITY_KEY, null),
+            configRepository.getString(CLOCKS_KEY, null),
+            configRepository.getString(CLOCK_COUNT_KEY, null)
+        ]);
+        if (savedVis) {
+            try {
+                Object.assign(visibility, JSON.parse(savedVis));
+            } catch {
+                // ignore
+            }
+        }
+        if (savedClocks) {
+            try {
+                const parsed = JSON.parse(savedClocks);
+                if (Array.isArray(parsed) && parsed.length === 3) {
+                    clocks.value = parsed.map(normalizeClock);
+                }
+            } catch {
+                // ignore
+            }
+        }
+        if (savedClockCount !== null) {
+            const n = Number(savedClockCount);
+            if (n >= 0 && n <= 3) clockCount.value = n;
+        }
+
         drawSparkline();
     });
 
