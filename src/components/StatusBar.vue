@@ -278,7 +278,6 @@
 
     const wsCanvasRef = ref(null);
     const now = useNow({ interval: 1000 });
-    const appStartAt = dayjs();
 
     useIntervalFn(() => {
         const delta = wsState.messageCount - lastMsgCount;
@@ -360,13 +359,14 @@
     });
 
     const appUptimeText = computed(() => {
-        const elapsedSeconds = dayjs(now.value).diff(appStartAt, 'second');
+        const elapsedSeconds = Math.floor((now.value - vrcxStore.appStartAt) / 1000);
         return formatAppUptime(elapsedSeconds);
     });
 
     const CLOCKS_KEY = 'VRCX_statusBarClocks';
     const CLOCK_COUNT_KEY = 'VRCX_statusBarClockCount';
-    const defaultClocks = [{ offset: normalizeUtcHour(dayjs().utcOffset() / 60) }, { offset: 0 }, { offset: -5 }];
+    const localOffset = normalizeUtcHour(dayjs().utcOffset() / 60);
+    const defaultClocks = [{ offset: localOffset }, { offset: 0 }, { offset: localOffset < 0 ? 9 : -5 }];
 
     const clocks = ref(loadClocks(localStorage, defaultClocks));
     const clockCount = ref(loadClockCount(localStorage));
@@ -397,6 +397,7 @@
     /**
      *
      * @param clock
+     * @returns {string}
      */
     function formatClock(clock) {
         try {
@@ -501,7 +502,8 @@
         align-items: center;
         background: var(--sidebar);
         border-top: 1px solid var(--border);
-        font-size: 11px;
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 12px;
         user-select: none;
         overflow: hidden;
     }
@@ -578,7 +580,6 @@
     }
 
     .status-label-mono {
-        font-family: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
         font-size: 10px;
         color: hsl(var(--foreground));
     }

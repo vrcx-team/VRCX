@@ -83,7 +83,11 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     const maxTableSize = ref(DEFAULT_MAX_TABLE_SIZE);
     const searchLimit = ref(DEFAULT_SEARCH_LIMIT);
     const proxyServer = ref('');
+    const appStartAt = Date.now();
 
+    /**
+     *
+     */
     async function init() {
         if (LINUX) {
             window.electron.ipcRenderer.on('launch-command', (command) => {
@@ -176,6 +180,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
     init();
 
+    /**
+     *
+     */
     async function updateDatabaseVersion() {
         // requires dbVars.userPrefix to be already set
         const databaseVersion = 13;
@@ -226,6 +233,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         }
     }
 
+    /**
+     *
+     */
     function clearVRCXCache() {
         console.log('Clearing VRCX cache...');
         failedGetRequests.clear();
@@ -280,6 +290,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         galleryStore.cachedEmoji.clear();
     }
 
+    /**
+     *
+     * @param data
+     */
     function eventVrcxMessage(data) {
         let entry;
         switch (data.MsgType) {
@@ -337,6 +351,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         }
     }
 
+    /**
+     *
+     */
     async function saveVRCXWindowOption() {
         if (LINUX) {
             VRCXStorage.Set('VRCX_LocationX', state.locationX.toString());
@@ -347,6 +364,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         }
     }
 
+    /**
+     *
+     * @param path
+     */
     async function processScreenshot(path) {
         let newPath = path;
         if (advancedSettingsStore.screenshotHelper) {
@@ -401,6 +422,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     // use in C# side
+    /**
+     *
+     * @param json
+     */
     function ipcEvent(json) {
         if (!watchState.isLoggedIn) {
             return;
@@ -537,6 +562,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         { flush: 'sync' }
     );
 
+    /**
+     *
+     */
     async function startupLaunchCommand() {
         const command = await AppApi.GetLaunchCommand();
         if (!command) {
@@ -585,6 +613,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     // called from C#
+    /**
+     *
+     * @param input
+     */
     function eventLaunchCommand(input) {
         if (!watchState.isLoggedIn) {
             return;
@@ -689,6 +721,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         }
     }
 
+    /**
+     *
+     * @param name
+     */
     async function backupVrcRegistry(name) {
         let regJson;
         try {
@@ -722,6 +758,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         // await this.updateRegistryBackupDialog();
     }
 
+    /**
+     *
+     */
     async function checkAutoBackupRestoreVrcRegistry() {
         if (
             !advancedSettingsStore.vrcRegistryAutoBackup ||
@@ -764,10 +803,16 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         }
     }
 
+    /**
+     *
+     */
     function showRegistryBackupDialog() {
         isRegistryBackupDialogVisible.value = true;
     }
 
+    /**
+     *
+     */
     async function tryAutoBackupVrcRegistry() {
         if (!advancedSettingsStore.vrcRegistryAutoBackup) {
             return;
@@ -815,6 +860,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     return {
         state,
 
+        appStartAt,
         proxyServer,
         currentlyDroppingFile,
         isRegistryBackupDialogVisible,
