@@ -333,29 +333,33 @@ describe('useVrcxVueTable persistence', () => {
         expect(stored?.pageSize).toBeUndefined();
     });
 
-    it('resetAll clears both columnSizing and columnOrder', async () => {
-        const { columnSizing, columnOrder, resetAll } = useVrcxVueTable({
-            data: [],
-            columns: makeColumns('name', 'date'),
-            persistKey: 'test-reset-all',
-            enableColumnResizing: true,
-            enableColumnReorder: true
-        });
+    it('resetAll clears columnSizing, columnOrder, and columnVisibility', async () => {
+        const { columnSizing, columnOrder, columnVisibility, resetAll } =
+            useVrcxVueTable({
+                data: [],
+                columns: makeColumns('name', 'date'),
+                persistKey: 'test-reset-all',
+                enableColumnResizing: true,
+                enableColumnReorder: true
+            });
 
         columnSizing.value = { name: 200 };
         columnOrder.value = ['date', 'name'];
+        columnVisibility.value = { name: false };
         await new Promise((r) => setTimeout(r, 300));
 
         resetAll();
 
         expect(columnSizing.value).toEqual({});
         expect(columnOrder.value).toEqual([]);
+        expect(columnVisibility.value).toEqual({});
 
         const stored = JSON.parse(
             localStorage.getItem('vrcx:table:test-reset-all')
         );
         expect(stored?.columnSizing).toBeUndefined();
         expect(stored?.columnOrder).toBeUndefined();
+        expect(stored?.columnVisibility).toBeUndefined();
     });
 
     it('persists columnOrderLocked to localStorage', async () => {

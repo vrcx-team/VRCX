@@ -786,7 +786,7 @@
         transform: translateY(-50%);
     }
 
-    @container (max-width: 250px) {
+    @container (max-width: 220px) {
         .nav-shortcut-hint {
             display: none;
         }

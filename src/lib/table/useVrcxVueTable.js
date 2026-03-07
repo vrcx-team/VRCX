@@ -539,7 +539,8 @@ export function useVrcxVueTable(options) {
     function resetAll() {
         columnSizing.value = {};
         columnOrder.value = [];
-        removePersisted(['columnSizing', 'columnOrder']);
+        columnVisibility.value = {};
+        removePersisted(['columnSizing', 'columnOrder', 'columnVisibility']);
     }
 
     return {

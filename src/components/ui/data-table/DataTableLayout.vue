@@ -15,7 +15,7 @@
                             <TableHeader>
                                 <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
                                     <template v-if="effectiveColumnReorder">
-                                        <DragDropProvider @dragEnd="onHeaderDragEnd">
+                                        <DragDropProvider :key="dndContextKey" @dragEnd="onHeaderDragEnd">
                                             <template v-for="(header, hIdx) in headerGroup.headers" :key="header.id">
                                                 <SortableTableHead
                                                     v-if="isReorderable(header)"
@@ -97,7 +97,7 @@
                             <TableHeader>
                                 <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
                                     <template v-if="effectiveColumnReorder">
-                                        <DragDropProvider @dragEnd="onHeaderDragEnd">
+                                        <DragDropProvider :key="dndContextKey" @dragEnd="onHeaderDragEnd">
                                             <template v-for="(header, hIdx) in headerGroup.headers" :key="header.id">
                                                 <SortableTableHead
                                                     v-if="isReorderable(header)"
@@ -420,6 +420,8 @@
     );
 
     const effectiveColumnReorder = computed(() => props.enableColumnReorder && tcColumnOrderLocked.value !== true);
+
+    const dndContextKey = computed(() => (props.table?.getVisibleLeafColumns?.() ?? []).map((c) => c.id).join(','));
 
     const emptyType = computed(() => {
         const totalRows = props.table?.getCoreRowModel?.().rows?.length ?? 0;
