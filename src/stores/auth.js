@@ -10,6 +10,7 @@ import { AppDebug } from '../service/appConfig';
 import { authRequest } from '../api';
 import { database } from '../service/database';
 import { escapeTag } from '../shared/utils';
+import { queryClient } from '../query';
 import { request } from '../service/request';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useGeneralSettingsStore } from './settings/general';
@@ -98,6 +99,9 @@ export const useAuthStore = defineStore('Auth', () => {
         { flush: 'sync' }
     );
 
+    /**
+     *
+     */
     async function init() {
         const [lastUserLoggedIn, enableCustomEndpoint] = await Promise.all([
             configRepository.getString('lastUserLoggedIn', ''),
@@ -109,6 +113,9 @@ export const useAuthStore = defineStore('Auth', () => {
 
     init();
 
+    /**
+     *
+     */
     async function getAllSavedCredentials() {
         let savedCredentials = {};
         try {
@@ -146,11 +153,18 @@ export const useAuthStore = defineStore('Auth', () => {
         return savedCredentials;
     }
 
+    /**
+     *
+     * @param userId
+     */
     async function getSavedCredentials(userId) {
         const savedCredentials = await getAllSavedCredentials();
         return savedCredentials[userId];
     }
 
+    /**
+     *
+     */
     async function handleLogoutEvent() {
         if (watchState.isLoggedIn) {
             new Noty({
@@ -173,6 +187,7 @@ export const useAuthStore = defineStore('Auth', () => {
         attemptingAutoLogin.value = false;
         state.autoLoginAttempts.clear();
         closeWebSocket();
+        queryClient.clear();
     }
 
     /**
@@ -214,6 +229,9 @@ export const useAuthStore = defineStore('Auth', () => {
         }
     }
 
+    /**
+     *
+     */
     async function clearCookiesTryLogin() {
         await webApiService.clearCookies();
         if (loginForm.value.lastUserLoggedIn) {
@@ -227,6 +245,9 @@ export const useAuthStore = defineStore('Auth', () => {
         }
     }
 
+    /**
+     *
+     */
     async function resendEmail2fa() {
         if (loginForm.value.lastUserLoggedIn) {
             const user = await getSavedCredentials(
@@ -250,6 +271,9 @@ export const useAuthStore = defineStore('Auth', () => {
         }).show();
     }
 
+    /**
+     *
+     */
     function enablePrimaryPasswordChange() {
         advancedSettingsStore.enablePrimaryPassword =
             !advancedSettingsStore.enablePrimaryPassword;
@@ -319,6 +343,9 @@ export const useAuthStore = defineStore('Auth', () => {
                 });
         }
     }
+    /**
+     *
+     */
     async function setPrimaryPassword() {
         await configRepository.setBool(
             'enablePrimaryPassword',
@@ -343,6 +370,10 @@ export const useAuthStore = defineStore('Auth', () => {
         }
     }
 
+    /**
+     *
+     * @param user
+     */
     async function updateStoredUser(user) {
         const savedCredentials = await getAllSavedCredentials();
         if (credentialsToSave.value) {
@@ -371,6 +402,9 @@ export const useAuthStore = defineStore('Auth', () => {
         await configRepository.setString('lastUserLoggedIn', user.id);
     }
 
+    /**
+     *
+     */
     async function migrateStoredUsers() {
         const savedCredentials = await getAllSavedCredentials();
         for (const name in savedCredentials) {
@@ -386,6 +420,10 @@ export const useAuthStore = defineStore('Auth', () => {
         );
     }
 
+    /**
+     *
+     * @param args
+     */
     function checkPrimaryPassword(args) {
         return new Promise((resolve, reject) => {
             if (!advancedSettingsStore.enablePrimaryPassword) {
@@ -413,6 +451,9 @@ export const useAuthStore = defineStore('Auth', () => {
         });
     }
 
+    /**
+     *
+     */
     async function toggleCustomEndpoint() {
         await configRepository.setBool(
             'VRCX_enableCustomEndpoint',
@@ -422,6 +463,9 @@ export const useAuthStore = defineStore('Auth', () => {
         loginForm.value.websocket = '';
     }
 
+    /**
+     *
+     */
     function logout() {
         modalStore
             .confirm({
@@ -441,6 +485,10 @@ export const useAuthStore = defineStore('Auth', () => {
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param user
+     */
     async function relogin(user) {
         const { loginParams } = user;
         if (user.cookies) {
@@ -490,6 +538,10 @@ export const useAuthStore = defineStore('Auth', () => {
         }
     }
 
+    /**
+     *
+     * @param userId
+     */
     async function deleteSavedLogin(userId) {
         const savedCredentials = await getAllSavedCredentials();
         delete savedCredentials[userId];
@@ -510,6 +562,9 @@ export const useAuthStore = defineStore('Auth', () => {
         }).show();
     }
 
+    /**
+     *
+     */
     async function login() {
         // TODO: remove/refactor saveCredentials & primaryPassword (security)
         await webApiService.clearCookies();
@@ -606,6 +661,9 @@ export const useAuthStore = defineStore('Auth', () => {
         }
     }
 
+    /**
+     *
+     */
     function promptTOTP() {
         if (twoFactorAuthDialogVisible.value) {
             return;
@@ -646,6 +704,9 @@ export const useAuthStore = defineStore('Auth', () => {
             });
     }
 
+    /**
+     *
+     */
     function promptOTP() {
         if (twoFactorAuthDialogVisible.value) {
             return;
@@ -685,6 +746,9 @@ export const useAuthStore = defineStore('Auth', () => {
             });
     }
 
+    /**
+     *
+     */
     function promptEmailOTP() {
         if (twoFactorAuthDialogVisible.value) {
             return;
@@ -768,6 +832,10 @@ export const useAuthStore = defineStore('Auth', () => {
         });
     }
 
+    /**
+     *
+     * @param json
+     */
     function handleCurrentUserUpdate(json) {
         if (
             json.requiresTwoFactorAuth &&
@@ -783,6 +851,9 @@ export const useAuthStore = defineStore('Auth', () => {
         }
     }
 
+    /**
+     *
+     */
     async function handleAutoLogin() {
         if (attemptingAutoLogin.value) {
             return;
@@ -850,6 +921,9 @@ export const useAuthStore = defineStore('Auth', () => {
             });
     }
 
+    /**
+     *
+     */
     async function applyAutoLoginDelay() {
         if (!generalSettingsStore.autoLoginDelayEnabled) {
             return;
@@ -878,6 +952,9 @@ export const useAuthStore = defineStore('Auth', () => {
         }
     }
 
+    /**
+     *
+     */
     async function loginComplete() {
         await database.initUserTables(userStore.currentUser.id);
         watchState.isLoggedIn = true;
