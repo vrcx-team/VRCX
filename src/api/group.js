@@ -1,8 +1,28 @@
 import { useGroupStore, useUserStore } from '../stores';
 import { request } from '../service/request';
+import {
+    entityQueryPolicies,
+    fetchWithEntityPolicy,
+    queryClient,
+    queryKeys
+} from '../query';
 
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
+}
+
+function refetchActiveGroupScope(groupId) {
+    if (!groupId) {
+        return;
+    }
+    queryClient
+        .invalidateQueries({
+            queryKey: ['group', groupId],
+            refetchType: 'active'
+        })
+        .catch((err) => {
+            console.error('Failed to refresh scoped group queries:', err);
+        });
 }
 const groupReq = {
     /**
@@ -20,6 +40,7 @@ const groupReq = {
                 groupId,
                 params
             };
+            refetchActiveGroupScope(groupId);
             return args;
         });
     },
@@ -52,6 +73,7 @@ const groupReq = {
                 json,
                 params
             };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -78,26 +100,18 @@ const groupReq = {
      * @return { Promise<{json: any, ref: any, cache?: boolean, params}> }
      */
     getCachedGroup(params) {
-        const groupStore = useGroupStore();
-        return new Promise((resolve, reject) => {
-            const ref = groupStore.cachedGroups.get(params.groupId);
-            if (typeof ref === 'undefined') {
-                groupReq
-                    .getGroup(params)
-                    .then((args) => {
-                        args.ref = groupStore.applyGroup(args.json);
-                        resolve(args);
-                    })
-                    .catch(reject);
-            } else {
-                resolve({
-                    cache: true,
-                    json: ref,
-                    params,
-                    ref
-                });
-            }
-        });
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.group(params.groupId, params.includeRoles),
+            policy: entityQueryPolicies.group,
+            queryFn: () => groupReq.getGroup(params).then((args) => {
+                const groupStore = useGroupStore();
+                args.ref = groupStore.applyGroup(args.json);
+                return args;
+            })
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
     },
     /**
      * @param {{ userId: string }} params
@@ -141,6 +155,7 @@ const groupReq = {
                 json,
                 params
             };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -156,6 +171,7 @@ const groupReq = {
                 json,
                 params
             };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -195,6 +211,7 @@ const groupReq = {
                 groupId,
                 params
             };
+            refetchActiveGroupScope(groupId);
             return args;
         });
     },
@@ -217,6 +234,7 @@ const groupReq = {
                 json,
                 params
             };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -239,6 +257,7 @@ const groupReq = {
                 json,
                 params
             };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -273,6 +292,16 @@ const groupReq = {
             return args;
         });
     },
+    getCachedGroupPosts(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.groupPosts(params),
+            policy: entityQueryPolicies.groupCollection,
+            queryFn: () => groupReq.getGroupPosts(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
+    },
     editGroupPost(params) {
         return request(`groups/${params.groupId}/posts/${params.postId}`, {
             method: 'PUT',
@@ -282,6 +311,7 @@ const groupReq = {
                 json,
                 params
             };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -294,6 +324,7 @@ const groupReq = {
                 json,
                 params
             };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -315,6 +346,16 @@ const groupReq = {
             return args;
         });
     },
+    getCachedGroupMember(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.groupMember(params),
+            policy: entityQueryPolicies.groupCollection,
+            queryFn: () => groupReq.getGroupMember(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
+    },
     /**
      * @param {{
      * groupId: string,
@@ -334,6 +375,16 @@ const groupReq = {
             };
             return args;
         });
+    },
+    getCachedGroupMembers(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.groupMembers(params),
+            policy: entityQueryPolicies.groupCollection,
+            queryFn: () => groupReq.getGroupMembers(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
     },
     /**
      * @param {{
@@ -370,6 +421,7 @@ const groupReq = {
                 json,
                 params
             };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -388,6 +440,7 @@ const groupReq = {
                 json,
                 params
             };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -427,6 +480,7 @@ const groupReq = {
                 json,
                 params
             };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -445,6 +499,7 @@ const groupReq = {
                 json,
                 params
             };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -456,6 +511,7 @@ const groupReq = {
                 json,
                 params
             };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -496,6 +552,7 @@ const groupReq = {
                 json,
                 params
             };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -510,7 +567,7 @@ const groupReq = {
                 json,
                 params
             };
-
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -526,6 +583,7 @@ const groupReq = {
                 json,
                 params
             };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
@@ -698,6 +756,16 @@ const groupReq = {
             return args;
         });
     },
+    getCachedGroupGallery(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.groupGallery(params),
+            policy: entityQueryPolicies.groupCollection,
+            queryFn: () => groupReq.getGroupGallery(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
+    },
 
     getGroupCalendar(groupId) {
         return request(`calendar/${groupId}`, {
@@ -711,6 +779,16 @@ const groupReq = {
             };
             return args;
         });
+    },
+    getCachedGroupCalendar(groupId) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.groupCalendar(groupId),
+            policy: entityQueryPolicies.groupCollection,
+            queryFn: () => groupReq.getGroupCalendar(groupId)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
     },
 
     /**
@@ -730,6 +808,16 @@ const groupReq = {
             };
             return args;
         });
+    },
+    getCachedGroupCalendarEvent(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.groupCalendarEvent(params),
+            policy: entityQueryPolicies.groupCollection,
+            queryFn: () => groupReq.getGroupCalendarEvent(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
     },
 
     /**

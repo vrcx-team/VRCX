@@ -1,8 +1,25 @@
 import { useFavoriteStore, useUserStore } from '../stores';
 import { request } from '../service/request';
+import {
+    entityQueryPolicies,
+    fetchWithEntityPolicy,
+    queryClient,
+    queryKeys
+} from '../query';
 
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
+}
+
+function refetchActiveFavoriteQueries() {
+    queryClient
+        .invalidateQueries({
+            queryKey: ['favorite'],
+            refetchType: 'active'
+        })
+        .catch((err) => {
+            console.error('Failed to refresh favorite queries:', err);
+        });
 }
 
 const favoriteReq = {
@@ -15,6 +32,17 @@ const favoriteReq = {
             };
             return args;
         });
+    },
+
+    getCachedFavoriteLimits() {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.favoriteLimits(),
+            policy: entityQueryPolicies.favoriteCollection,
+            queryFn: () => favoriteReq.getFavoriteLimits()
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
     },
 
     /**
@@ -33,6 +61,17 @@ const favoriteReq = {
         });
     },
 
+    getCachedFavorites(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.favorites(params),
+            policy: entityQueryPolicies.favoriteCollection,
+            queryFn: () => favoriteReq.getFavorites(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
+    },
+
     /**
      * @type {import('../types/api/favorite').AddFavorite}
      */
@@ -46,6 +85,7 @@ const favoriteReq = {
                 params
             };
             useFavoriteStore().handleFavoriteAdd(args);
+            refetchActiveFavoriteQueries();
             return args;
         });
     },
@@ -63,6 +103,7 @@ const favoriteReq = {
                 params
             };
             useFavoriteStore().handleFavoriteDelete(params.objectId);
+            refetchActiveFavoriteQueries();
             return args;
         });
     },
@@ -84,6 +125,17 @@ const favoriteReq = {
         });
     },
 
+    getCachedFavoriteGroups(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.favoriteGroups(params),
+            policy: entityQueryPolicies.favoriteCollection,
+            queryFn: () => favoriteReq.getFavoriteGroups(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
+    },
+
     /**
      *
      * @param {{ type: string, group: string, displayName?: string, visibility?: string }} params group is a name
@@ -101,6 +153,7 @@ const favoriteReq = {
                 json,
                 params
             };
+            refetchActiveFavoriteQueries();
             return args;
         });
     },
@@ -125,6 +178,7 @@ const favoriteReq = {
                 params
             };
             useFavoriteStore().handleFavoriteGroupClear(args);
+            refetchActiveFavoriteQueries();
             return args;
         });
     },
@@ -145,6 +199,17 @@ const favoriteReq = {
         });
     },
 
+    getCachedFavoriteWorlds(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.favoriteWorlds(params),
+            policy: entityQueryPolicies.favoriteCollection,
+            queryFn: () => favoriteReq.getFavoriteWorlds(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
+    },
+
     /**
      * @type {import('../types/api/favorite').GetFavoriteAvatars}
      */
@@ -159,6 +224,17 @@ const favoriteReq = {
             };
             return args;
         });
+    },
+
+    getCachedFavoriteAvatars(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.favoriteAvatars(params),
+            policy: entityQueryPolicies.favoriteCollection,
+            queryFn: () => favoriteReq.getFavoriteAvatars(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
     }
 };
 

@@ -1,9 +1,4 @@
 /**
- * Pure location parsing utilities with no external dependencies.
- * These functions are extracted to enable clean unit testing.
- */
-
-/**
  *
  * @param {string} location
  * @param {string} worldName
@@ -146,4 +141,39 @@ function parseLocation(tag) {
     return ctx;
 }
 
-export { parseLocation, displayLocation };
+/**
+ * @param {object} L - A parsed location object from parseLocation()
+ * @returns {string} region code (e.g. 'us', 'eu', 'jp') or empty string
+ */
+function resolveRegion(L) {
+    if (L.isOffline || L.isPrivate || L.isTraveling) {
+        return '';
+    }
+    if (L.region) {
+        return L.region;
+    }
+    if (L.instanceId) {
+        return 'us';
+    }
+    return '';
+}
+
+/**
+ * @param {string} accessTypeName - Raw access type name from parseLocation
+ * @param {function} t - Translation function (e.g. i18n.global.t)
+ * @param {object} keyMap - Mapping of access type names to locale keys
+ * @returns {string} Translated access type label
+ */
+function translateAccessType(accessTypeName, t, keyMap) {
+    const key = keyMap[accessTypeName];
+    if (!key) {
+        return accessTypeName;
+    }
+    if (accessTypeName === 'groupPublic' || accessTypeName === 'groupPlus') {
+        const groupKey = keyMap['group'];
+        return t(groupKey) + ' ' + t(key);
+    }
+    return t(key);
+}
+
+export { parseLocation, displayLocation, resolveRegion, translateAccessType };

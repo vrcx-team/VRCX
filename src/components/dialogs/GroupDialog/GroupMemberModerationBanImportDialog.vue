@@ -34,14 +34,18 @@
                 <Button size="sm" :disabled="!csvInput.trim() || importing" @click="parseAndImport">
                     {{ t('dialog.group_member_moderation.import_bans_start') }}
                 </Button>
-                <Button v-if="importing" size="sm" variant="secondary" @click="cancelImport">
+                <Button v-if="importing" size="sm" variant="destructive" @click="cancelImport">
+                    <Spinner />
                     {{ t('dialog.group_member_moderation.cancel') }}
                 </Button>
-                <span v-if="importing" class="text-sm">
-                    <Spinner class="inline-block ml-2 mr-2" />
-                    {{ t('dialog.group_member_moderation.progress') }}
-                    {{ progressCurrent }}/{{ progressTotal }}
-                </span>
+            </div>
+
+            <div v-if="importing" class="mt-2">
+                <div class="flex justify-between text-sm mb-1">
+                    <span>{{ t('dialog.group_member_moderation.progress') }}</span>
+                    <strong>{{ progressCurrent }} / {{ progressTotal }}</strong>
+                </div>
+                <Progress :model-value="progressPercent" class="h-3" />
             </div>
 
             <template v-if="errors">
@@ -63,11 +67,12 @@
 <script setup>
     import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Alert, AlertDescription } from '@/components/ui/alert';
+    import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
+    import { Progress } from '@/components/ui/progress';
     import { Spinner } from '@/components/ui/spinner';
     import { TriangleAlert } from 'lucide-vue-next';
-    import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
 
     import { groupRequest } from '../../../api';
@@ -96,6 +101,10 @@
     const progressTotal = ref(0);
     const errors = ref('');
     const resultMessage = ref('');
+
+    const progressPercent = computed(() =>
+        progressTotal.value ? Math.min(100, Math.round((progressCurrent.value / progressTotal.value) * 100)) : 0
+    );
 
     /**
      * Parse CSV input and extract user IDs.

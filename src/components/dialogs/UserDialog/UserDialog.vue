@@ -1318,7 +1318,7 @@
         userRequest,
         worldRequest
     } from '../../../api';
-    import { processBulk, request } from '../../../service/request';
+    import { processBulk } from '../../../service/request';
     import { userDialogGroupSortingOptions, userDialogMutualFriendSortingOptions } from '../../../shared/constants';
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import { database } from '../../../service/database';
@@ -1429,6 +1429,8 @@
     const userDialogLastFavoriteWorld = ref('');
 
     const favoriteWorldsTab = ref('0');
+    const userDialogWorldsRequestId = ref(0);
+    const userDialogFavoriteWorldsRequestId = ref(0);
 
     const sendInviteDialogVisible = ref(false);
     const sendInviteDialog = ref({
@@ -1501,6 +1503,10 @@
         }
     );
 
+    /**
+     *
+     * @param visibility
+     */
     function userFavoriteWorldsStatus(visibility) {
         const style = {};
         if (visibility === 'public') {
@@ -1513,6 +1519,10 @@
         return style;
     }
 
+    /**
+     *
+     * @param user
+     */
     function getUserStateText(user) {
         let state = '';
         if (user.state === 'active') {
@@ -1528,6 +1538,10 @@
         return state;
     }
 
+    /**
+     *
+     * @param status
+     */
     function getUserStatusText(status) {
         if (status === 'active') {
             return t('dialog.user.status.active');
@@ -1544,6 +1558,9 @@
         return t('dialog.user.status.offline');
     }
 
+    /**
+     *
+     */
     function refreshUserDialogTreeData() {
         const D = userDialog.value;
         if (D.id === currentUser.value.id) {
@@ -1556,6 +1573,10 @@
         treeData.value = formatJsonVars(D.ref);
     }
 
+    /**
+     *
+     * @param tabName
+     */
     function handleUserDialogTab(tabName) {
         userDialog.value.lastActiveTab = tabName;
         const userId = userDialog.value.id;
@@ -1604,10 +1625,17 @@
         }
     }
 
+    /**
+     *
+     */
     function loadLastActiveTab() {
         handleUserDialogTab(userDialog.value.lastActiveTab);
     }
 
+    /**
+     *
+     * @param tabName
+     */
     function userDialogTabClick(tabName) {
         if (tabName === userDialog.value.lastActiveTab) {
             if (tabName === 'JSON') {
@@ -1618,17 +1646,26 @@
         handleUserDialogTab(tabName);
     }
 
+    /**
+     *
+     */
     function showPronounsDialog() {
         const D = pronounsDialog.value;
         D.pronouns = currentUser.value.pronouns;
         D.visible = true;
     }
 
+    /**
+     *
+     */
     function showLanguageDialog() {
         const D = languageDialog.value;
         D.visible = true;
     }
 
+    /**
+     *
+     */
     function showSocialStatusDialog() {
         const D = socialStatusDialog.value;
         const { statusHistory } = currentUser.value;
@@ -1646,6 +1683,10 @@
         D.visible = true;
     }
 
+    /**
+     *
+     * @param userId
+     */
     async function setUserDialogAvatarsRemote(userId) {
         if (avatarRemoteDatabase.value && userId !== currentUser.value.id) {
             userDialog.value.isAvatarsLoading = true;
@@ -1672,6 +1713,10 @@
         sortUserDialogAvatars(userDialog.value.avatars);
     }
 
+    /**
+     *
+     * @param badge
+     */
     async function toggleBadgeVisibility(badge) {
         if (badge.hidden) {
             badge.showcased = false;
@@ -1684,6 +1729,10 @@
         handleBadgeUpdate(args);
     }
 
+    /**
+     *
+     * @param badge
+     */
     async function toggleBadgeShowcased(badge) {
         if (badge.showcased) {
             badge.hidden = false;
@@ -1696,12 +1745,21 @@
         handleBadgeUpdate(args);
     }
 
+    /**
+     *
+     * @param args
+     */
     function handleBadgeUpdate(args) {
         if (args.json) {
             toast.success(t('message.badge.updated'));
         }
     }
 
+    /**
+     *
+     * @param userId
+     * @param type
+     */
     function setPlayerModeration(userId, type) {
         const D = userDialog.value;
         AppApi.SetVRChatUserModeration(currentUser.value.id, userId, type).then((result) => {
@@ -1722,6 +1780,11 @@
         });
     }
 
+    /**
+     *
+     * @param params
+     * @param userId
+     */
     function showSendInviteDialog(params, userId) {
         sendInviteDialog.value = {
             params,
@@ -1733,6 +1796,11 @@
         sendInviteDialogVisible.value = true;
     }
 
+    /**
+     *
+     * @param params
+     * @param userId
+     */
     function showSendInviteRequestDialog(params, userId) {
         sendInviteDialog.value = {
             params,
@@ -1744,12 +1812,21 @@
         sendInviteRequestDialogVisible.value = true;
     }
 
+    /**
+     *
+     * @param groupId
+     * @param userId
+     */
     function showInviteGroupDialog(groupId, userId) {
         inviteGroupDialog.value.groupId = groupId;
         inviteGroupDialog.value.userId = userId;
         inviteGroupDialog.value.visible = true;
     }
 
+    /**
+     *
+     * @param command
+     */
     function userDialogCommand(command) {
         let L;
         const D = userDialog.value;
@@ -1892,6 +1969,10 @@
         }
     }
 
+    /**
+     *
+     * @param args
+     */
     function handleSendFriendRequest(args) {
         const ref = cachedUsers.get(args.params.userId);
         if (typeof ref === 'undefined') {
@@ -1917,6 +1998,10 @@
         }
     }
 
+    /**
+     *
+     * @param args
+     */
     function handleCancelFriendRequest(args) {
         const ref = cachedUsers.get(args.params.userId);
         if (typeof ref === 'undefined') {
@@ -1937,6 +2022,10 @@
         D.outgoingRequest = false;
     }
 
+    /**
+     *
+     * @param args
+     */
     function handleSendPlayerModeration(args) {
         const ref = applyPlayerModeration(args.json);
         const D = userDialog.value;
@@ -1955,6 +2044,11 @@
         toast.success(t('message.user.moderated'));
     }
 
+    /**
+     *
+     * @param command
+     * @param userId
+     */
     async function performUserDialogCommand(command, userId) {
         let args;
         let key;
@@ -2092,6 +2186,10 @@
         }
     }
 
+    /**
+     *
+     * @param userId
+     */
     function reportUserForHacking(userId) {
         miscRequest.reportUser({
             userId,
@@ -2101,6 +2199,10 @@
         });
     }
 
+    /**
+     *
+     * @param userId
+     */
     async function getUserGroups(userId) {
         exitEditModeCurrentUserGroups();
         userDialog.value.isGroupsLoading = true;
@@ -2161,6 +2263,10 @@
         userDialog.value.isGroupsLoading = false;
     }
 
+    /**
+     *
+     * @param userId
+     */
     async function getUserMutualFriends(userId) {
         userDialog.value.mutualFriends = [];
         if (currentUser.value.hasSharedConnectionsOptOut) {
@@ -2200,6 +2306,11 @@
         });
     }
 
+    /**
+     *
+     * @param a
+     * @param b
+     */
     function sortGroupsByInGame(a, b) {
         const aIndex = inGameGroupOrder.value.indexOf(a?.id);
         const bIndex = inGameGroupOrder.value.indexOf(b?.id);
@@ -2215,6 +2326,9 @@
         return aIndex - bIndex;
     }
 
+    /**
+     *
+     */
     async function sortCurrentUserGroups() {
         const D = userDialog.value;
         let sortMethod = () => 0;
@@ -2237,6 +2351,10 @@
         userDialog.value.userGroups.remainingGroups.sort(sortMethod);
     }
 
+    /**
+     *
+     * @param userId
+     */
     function setUserDialogAvatars(userId) {
         const avatars = new Set();
         userDialogAvatars.value.forEach((avatar) => {
@@ -2250,6 +2368,10 @@
         sortUserDialogAvatars(userDialog.value.avatars);
     }
 
+    /**
+     *
+     * @param userId
+     */
     function setUserDialogWorlds(userId) {
         const worlds = [];
         for (const ref of cachedWorlds.values()) {
@@ -2260,11 +2382,15 @@
         userDialog.value.worlds = worlds;
     }
 
+    /**
+     *
+     */
     function refreshUserDialogWorlds() {
         const D = userDialog.value;
         if (D.isWorldsLoading) {
             return;
         }
+        const requestId = ++userDialogWorldsRequestId.value;
         D.isWorldsLoading = true;
         const params = {
             n: 50,
@@ -2279,53 +2405,70 @@
             params.user = 'me';
             params.releaseStatus = 'all';
         }
-        const map = new Map();
-        for (const ref of cachedWorlds.values()) {
-            if (ref.authorId === D.id && (ref.authorId === currentUser.value.id || ref.releaseStatus === 'public')) {
-                cachedWorlds.delete(ref.id);
-            }
-        }
-        processBulk({
-            fn: worldRequest.getWorlds,
-            N: -1,
-            params,
-            handle: (args) => {
-                for (const json of args.json) {
-                    const $ref = cachedWorlds.get(json.id);
-                    if (typeof $ref !== 'undefined') {
-                        map.set($ref.id, $ref);
+        const worlds = [];
+        const worldIds = new Set();
+        (async () => {
+            try {
+                let offset = 0;
+                while (true) {
+                    const args = await worldRequest.getCachedWorlds({
+                        ...params,
+                        offset
+                    });
+                    if (requestId !== userDialogWorldsRequestId.value || D.id !== params.userId) {
+                        return;
                     }
+                    for (const world of args.json) {
+                        if (!worldIds.has(world.id)) {
+                            worldIds.add(world.id);
+                            worlds.push(world);
+                        }
+                    }
+                    if (args.json.length < params.n) {
+                        break;
+                    }
+                    offset += params.n;
                 }
-            },
-            done: () => {
-                if (D.id === params.userId) {
-                    setUserDialogWorlds(D.id);
+                if (requestId === userDialogWorldsRequestId.value && D.id === params.userId) {
+                    userDialog.value.worlds = worlds;
                 }
-                D.isWorldsLoading = false;
+            } finally {
+                if (requestId === userDialogWorldsRequestId.value) {
+                    D.isWorldsLoading = false;
+                }
             }
+        })().catch((err) => {
+            console.error('refreshUserDialogWorlds failed', err);
         });
     }
 
+    /**
+     *
+     * @param userId
+     */
     async function getUserFavoriteWorlds(userId) {
+        const requestId = ++userDialogFavoriteWorldsRequestId.value;
         userDialog.value.isFavoriteWorldsLoading = true;
         favoriteWorldsTab.value = '0';
         userDialog.value.userFavoriteWorlds = [];
         const worldLists = [];
-        let params = {
+        const groupArgs = await favoriteRequest.getCachedFavoriteGroups({
             ownerId: userId,
             n: 100,
             offset: 0
-        };
-        const json = await request('favorite/groups', {
-            method: 'GET',
-            params
         });
-        for (let i = 0; i < json.length; ++i) {
-            const list = json[i];
-            if (list.type !== 'world') {
-                continue;
+        if (requestId !== userDialogFavoriteWorldsRequestId.value || userDialog.value.id !== userId) {
+            if (requestId === userDialogFavoriteWorldsRequestId.value) {
+                userDialog.value.isFavoriteWorldsLoading = false;
             }
-            params = {
+            return;
+        }
+        const worldGroups = groupArgs.json.filter((list) => list.type === 'world');
+        const tasks = worldGroups.map(async (list) => {
+            if (list.type !== 'world') {
+                return null;
+            }
+            const params = {
                 ownerId: userId,
                 n: 100,
                 offset: 0,
@@ -2333,17 +2476,31 @@
                 tag: list.name
             };
             try {
-                const args = await favoriteRequest.getFavoriteWorlds(params);
+                const args = await favoriteRequest.getCachedFavoriteWorlds(params);
                 handleFavoriteWorldList(args);
-                worldLists.push([list.displayName, list.visibility, args.json]);
+                return [list.displayName, list.visibility, args.json];
             } catch (err) {
                 console.error('getUserFavoriteWorlds', err);
+                return null;
+            }
+        });
+        const results = await Promise.all(tasks);
+        for (const result of results) {
+            if (result) {
+                worldLists.push(result);
             }
         }
-        userDialog.value.userFavoriteWorlds = worldLists;
-        userDialog.value.isFavoriteWorldsLoading = false;
+        if (requestId === userDialogFavoriteWorldsRequestId.value) {
+            if (userDialog.value.id === userId) {
+                userDialog.value.userFavoriteWorlds = worldLists;
+            }
+            userDialog.value.isFavoriteWorldsLoading = false;
+        }
     }
 
+    /**
+     *
+     */
     function showBioDialog() {
         const D = bioDialog.value;
         D.bio = currentUser.value.bio;
@@ -2351,6 +2508,9 @@
         D.visible = true;
     }
 
+    /**
+     *
+     */
     async function translateBio() {
         if (translateLoading.value) {
             return;
@@ -2388,22 +2548,35 @@
         }
     }
 
+    /**
+     *
+     * @param userRef
+     */
     function showPreviousInstancesListDialog(userRef) {
         instanceStore.showPreviousInstancesListDialog('user', userRef);
     }
 
+    /**
+     *
+     */
     function toggleAvatarCopying() {
         userRequest.saveCurrentUser({
             allowAvatarCopying: !currentUser.value.allowAvatarCopying
         });
     }
 
+    /**
+     *
+     */
     function toggleAllowBooping() {
         userRequest.saveCurrentUser({
             isBoopingEnabled: !currentUser.value.isBoopingEnabled
         });
     }
 
+    /**
+     *
+     */
     function resetHome() {
         modalStore
             .confirm({
@@ -2426,14 +2599,26 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param userId
+     */
     function copyUserId(userId) {
         copyToClipboard(userId, 'User ID copied to clipboard');
     }
 
+    /**
+     *
+     * @param userId
+     */
     function copyUserURL(userId) {
         copyToClipboard(`https://vrchat.com/home/user/${userId}`, 'User URL copied to clipboard');
     }
 
+    /**
+     *
+     * @param displayName
+     */
     function copyUserDisplayName(displayName) {
         copyToClipboard(displayName, 'User DisplayName copied to clipboard');
     }
@@ -2449,6 +2634,10 @@
         return found ? String(found[0]) : '';
     });
 
+    /**
+     *
+     * @param key
+     */
     function setUserDialogGroupSortingByKey(key) {
         const option = userDialogGroupSortingOptions[key];
         if (!option) {
@@ -2457,6 +2646,10 @@
         setUserDialogGroupSorting(option);
     }
 
+    /**
+     *
+     * @param sortOrder
+     */
     async function setUserDialogGroupSorting(sortOrder) {
         const D = userDialog.value;
         if (D.groupSorting.value === sortOrder.value) {
@@ -2477,6 +2670,10 @@
         return found ? String(found[0]) : '';
     });
 
+    /**
+     *
+     * @param key
+     */
     function setUserDialogMutualFriendSortingByKey(key) {
         const option = userDialogMutualFriendSortingOptions[key];
         if (!option) {
@@ -2485,6 +2682,10 @@
         setUserDialogMutualFriendSorting(option);
     }
 
+    /**
+     *
+     * @param sortOrder
+     */
     async function setUserDialogMutualFriendSorting(sortOrder) {
         const D = userDialog.value;
         D.mutualFriendSorting = sortOrder;
@@ -2501,6 +2702,9 @@
         }
     }
 
+    /**
+     *
+     */
     async function exitEditModeCurrentUserGroups() {
         userDialogGroupEditMode.value = false;
         userDialogGroupEditGroups.value = [];
@@ -2509,6 +2713,9 @@
         await sortCurrentUserGroups();
     }
 
+    /**
+     *
+     */
     async function editModeCurrentUserGroups() {
         await updateInGameGroupOrder();
         userDialogGroupEditGroups.value = Array.from(currentUserGroups.value.values());
@@ -2516,6 +2723,9 @@
         userDialogGroupEditMode.value = true;
     }
 
+    /**
+     *
+     */
     async function saveInGameGroupOrder() {
         userDialogGroupEditGroups.value.sort(sortGroupsByInGame);
         try {
@@ -2531,6 +2741,9 @@
     }
 
     // Select all groups currently in the editable list by collecting their IDs
+    /**
+     *
+     */
     function selectAllGroups() {
         const allSelected = userDialogGroupEditSelectedGroupIds.value.length === userDialogGroupEditGroups.value.length;
 
@@ -2547,6 +2760,10 @@
 
     const bulkGroupActionValue = ref('');
 
+    /**
+     *
+     * @param value
+     */
     function handleBulkGroupAction(value) {
         bulkGroupActionValue.value = value;
 
@@ -2563,6 +2780,10 @@
     }
 
     // Apply the given visibility to all selected groups
+    /**
+     *
+     * @param newVisibility
+     */
     async function bulkSetVisibility(newVisibility) {
         for (const groupId of userDialogGroupEditSelectedGroupIds.value) {
             setGroupVisibility(groupId, newVisibility);
@@ -2570,6 +2791,9 @@
     }
 
     // Leave (remove user from) all selected groups
+    /**
+     *
+     */
     function bulkLeaveGroups() {
         for (const groupId of userDialogGroupEditSelectedGroupIds.value) {
             leaveGroup(groupId);
@@ -2577,6 +2801,10 @@
     }
 
     // Toggle individual group selection for bulk actions
+    /**
+     *
+     * @param groupId
+     */
     function toggleGroupSelection(groupId) {
         const index = userDialogGroupEditSelectedGroupIds.value.indexOf(groupId);
         if (index === -1) {
@@ -2586,6 +2814,10 @@
         }
     }
 
+    /**
+     *
+     * @param groupId
+     */
     function moveGroupUp(groupId) {
         const index = inGameGroupOrder.value.indexOf(groupId);
         if (index > 0) {
@@ -2595,6 +2827,10 @@
         }
     }
 
+    /**
+     *
+     * @param groupId
+     */
     function moveGroupDown(groupId) {
         const index = inGameGroupOrder.value.indexOf(groupId);
         if (index < inGameGroupOrder.value.length - 1) {
@@ -2604,6 +2840,10 @@
         }
     }
 
+    /**
+     *
+     * @param groupId
+     */
     function moveGroupTop(groupId) {
         const index = inGameGroupOrder.value.indexOf(groupId);
         if (index > 0) {
@@ -2613,6 +2853,10 @@
         }
     }
 
+    /**
+     *
+     * @param groupId
+     */
     function moveGroupBottom(groupId) {
         const index = inGameGroupOrder.value.indexOf(groupId);
         if (index < inGameGroupOrder.value.length - 1) {
@@ -2622,6 +2866,10 @@
         }
     }
 
+    /**
+     *
+     * @param sortOrder
+     */
     async function setUserDialogWorldSorting(sortOrder) {
         const D = userDialog.value;
         if (D.worldSorting.value === sortOrder.value) {
@@ -2642,6 +2890,10 @@
         return found ? String(found[0]) : '';
     });
 
+    /**
+     *
+     * @param key
+     */
     function setUserDialogWorldSortingByKey(key) {
         const option = userDialogWorldSortingOptions[key];
         if (!option) {
@@ -2650,6 +2902,10 @@
         setUserDialogWorldSorting(option);
     }
 
+    /**
+     *
+     * @param order
+     */
     async function setUserDialogWorldOrder(order) {
         const D = userDialog.value;
         if (D.worldOrder.value === order.value) {
@@ -2670,6 +2926,10 @@
         return found ? String(found[0]) : '';
     });
 
+    /**
+     *
+     * @param key
+     */
     function setUserDialogWorldOrderByKey(key) {
         const option = userDialogWorldOrderOptions[key];
         if (!option) {
@@ -2678,16 +2938,26 @@
         setUserDialogWorldOrder(option);
     }
 
+    /**
+     *
+     * @param sortOption
+     */
     function changeUserDialogAvatarSorting(sortOption) {
         const D = userDialog.value;
         D.avatarSorting = sortOption;
         sortUserDialogAvatars(D.avatars);
     }
 
+    /**
+     *
+     */
     function closeInviteDialog() {
         clearInviteImageUpload();
     }
 
+    /**
+     *
+     */
     function getVRChatCredits() {
         miscRequest.getVRChatCredits().then((args) => (vrchatCredit.value = args.json?.balance));
     }

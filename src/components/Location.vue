@@ -36,13 +36,20 @@
     import { useI18n } from 'vue-i18n';
 
     import {
+        getGroupName,
+        getLocationText,
+        getWorldName,
+        parseLocation,
+        resolveRegion,
+        translateAccessType
+    } from '../shared/utils';
+    import {
         useAppearanceSettingsStore,
         useGroupStore,
         useInstanceStore,
         useSearchStore,
         useWorldStore
     } from '../stores';
-    import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
     import { Spinner } from './ui/spinner';
     import { accessTypeLocaleKeyMap } from '../shared/constants';
 
@@ -118,6 +125,9 @@
         }
     );
 
+    /**
+     *
+     */
     function currentInstanceId() {
         if (typeof props.traveling !== 'undefined' && props.location === 'traveling') {
             return props.traveling;
@@ -125,6 +135,9 @@
         return props.location;
     }
 
+    /**
+     *
+     */
     function resetState() {
         text.value = '';
         region.value = '';
@@ -135,6 +148,9 @@
         instanceName.value = '';
     }
 
+    /**
+     *
+     */
     function parse() {
         if (isDisposed) {
             return;
@@ -159,6 +175,10 @@
         strict.value = L.strict;
     }
 
+    /**
+     *
+     * @param L
+     */
     function applyInstanceRef(L) {
         const instanceRef = cachedInstances.get(L.tag);
         if (typeof instanceRef === 'undefined') {
@@ -173,6 +193,11 @@
         }
     }
 
+    /**
+     *
+     * @param L
+     * @param instanceId
+     */
     function updateGroupName(L, instanceId) {
         if (props.grouphint) {
             groupName.value = props.grouphint;
@@ -189,68 +214,55 @@
         });
     }
 
+    /**
+     *
+     * @param L
+     */
     function updateRegion(L) {
-        region.value = '';
-        if (!L.isOffline && !L.isPrivate && !L.isTraveling) {
-            region.value = L.region;
-            if (!L.region && L.instanceId) {
-                region.value = 'us';
-            }
-        }
+        region.value = resolveRegion(L);
     }
 
+    /**
+     *
+     * @param accessTypeName
+     */
+    function getAccessTypeLabel(accessTypeName) {
+        return translateAccessType(accessTypeName, t, accessTypeLocaleKeyMap);
+    }
+
+    /**
+     *
+     * @param L
+     */
     function setText(L) {
-        const accessTypeLabel = translateAccessType(L.accessTypeName);
+        const accessTypeLabel = getAccessTypeLabel(L.accessTypeName);
+        const cachedRef = L.worldId ? cachedWorlds.get(L.worldId) : undefined;
+        const worldName = typeof cachedRef !== 'undefined' ? cachedRef.name : undefined;
 
-        if (L.isOffline) {
-            text.value = t('location.offline');
-        } else if (L.isPrivate) {
-            text.value = t('location.private');
-        } else if (L.isTraveling) {
-            text.value = t('location.traveling');
-        } else if (typeof props.hint === 'string' && props.hint !== '') {
-            if (L.instanceId) {
-                text.value = `${props.hint} · ${accessTypeLabel}`;
-            } else {
-                text.value = props.hint;
-            }
-        } else if (L.worldId) {
-            if (L.instanceId) {
-                text.value = `${L.worldId} · ${accessTypeLabel}`;
-            } else {
-                text.value = L.worldId;
-            }
-            const ref = cachedWorlds.get(L.worldId);
-            if (typeof ref === 'undefined') {
-                getWorldName(L.worldId).then((name) => {
-                    if (!isDisposed && name && currentInstanceId() === L.tag) {
-                        if (L.instanceId) {
-                            text.value = `${name} · ${translateAccessType(L.accessTypeName)}`;
-                        } else {
-                            text.value = name;
-                        }
-                    }
-                });
-            } else if (L.instanceId) {
-                text.value = `${ref.name} · ${accessTypeLabel}`;
-            } else {
-                text.value = ref.name;
-            }
+        text.value = getLocationText(L, {
+            hint: props.hint,
+            worldName,
+            accessTypeLabel,
+            t
+        });
+
+        if (L.worldId && typeof cachedRef === 'undefined') {
+            getWorldName(L.worldId).then((name) => {
+                if (!isDisposed && name && currentInstanceId() === L.tag) {
+                    text.value = getLocationText(L, {
+                        hint: props.hint,
+                        worldName: name,
+                        accessTypeLabel: getAccessTypeLabel(L.accessTypeName),
+                        t
+                    });
+                }
+            });
         }
     }
 
-    function translateAccessType(accessTypeNameRaw) {
-        const key = accessTypeLocaleKeyMap[accessTypeNameRaw];
-        if (!key) {
-            return accessTypeNameRaw;
-        }
-        if (accessTypeNameRaw === 'groupPublic' || accessTypeNameRaw === 'groupPlus') {
-            const groupKey = accessTypeLocaleKeyMap['group'];
-            return t(groupKey) + ' ' + t(key);
-        }
-        return t(key);
-    }
-
+    /**
+     *
+     */
     function handleShowWorldDialog() {
         if (props.link) {
             let instanceId = currentInstanceId();
@@ -266,6 +278,9 @@
         }
     }
 
+    /**
+     *
+     */
     function handleShowGroupDialog() {
         let location = currentInstanceId();
         if (!location) {

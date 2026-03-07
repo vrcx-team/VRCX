@@ -823,6 +823,7 @@
         useInstanceStore,
         useInviteStore,
         useLocationStore,
+        useModalStore,
         useUserStore,
         useWorldStore
     } from '../../../stores';
@@ -866,6 +867,7 @@
     const { isGameRunning } = storeToRefs(useGameStore());
     const { showFullscreenImageDialog } = useGalleryStore();
     const { translationApi } = storeToRefs(useAdvancedSettingsStore());
+    const modalStore = useModalStore();
 
     const { t } = useI18n();
     const worldDialogTabs = computed(() => [
@@ -997,6 +999,10 @@
         }
     );
 
+    /**
+     *
+     * @param tabName
+     */
     function handleWorldDialogTab(tabName) {
         worldDialog.value.lastActiveTab = tabName;
         if (tabName === 'JSON') {
@@ -1004,10 +1010,17 @@
         }
     }
 
+    /**
+     *
+     */
     function loadLastActiveTab() {
         handleWorldDialogTab(worldDialog.value.lastActiveTab);
     }
 
+    /**
+     *
+     * @param tabName
+     */
     function worldDialogTabClick(tabName) {
         if (tabName === worldDialog.value.lastActiveTab) {
             if (tabName === 'JSON') {
@@ -1018,14 +1031,24 @@
         handleWorldDialogTab(tabName);
     }
 
+    /**
+     *
+     */
     function handleDialogOpen() {
         treeData.value = {};
     }
 
+    /**
+     *
+     */
     function showChangeWorldImageDialog() {
         document.getElementById('WorldImageUploadButton').click();
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangeWorldImage(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#WorldImageUploadButton',
@@ -1044,6 +1067,10 @@
         cropDialogOpen.value = true;
     }
 
+    /**
+     *
+     * @param blob
+     */
     async function onCropConfirmWorld(blob) {
         changeWorldImageLoading.value = true;
         try {
@@ -1069,12 +1096,20 @@
         }
     }
 
+    /**
+     *
+     * @param tag
+     */
     function showNewInstanceDialog(tag) {
         // trigger watcher
         newInstanceDialogLocationTag.value = '';
         nextTick(() => (newInstanceDialogLocationTag.value = tag));
     }
 
+    /**
+     *
+     * @param command
+     */
     function worldDialogCommand(command) {
         const D = worldDialog.value;
         if (D.visible === false) {
@@ -1212,8 +1247,7 @@
                 break;
             case 'Refresh':
                 const { tag, shortName } = worldDialog.value.$location;
-                D.id = '';
-                showWorldDialog(tag, shortName);
+                showWorldDialog(tag, shortName, { forceRefresh: true });
                 break;
             case 'New Instance':
                 showNewInstanceDialog(D.$location.tag);
@@ -1244,6 +1278,10 @@
         }
     }
 
+    /**
+     *
+     * @param world
+     */
     function promptRenameWorld(world) {
         modalStore
             .prompt({
@@ -1270,6 +1308,10 @@
             })
             .catch(() => {});
     }
+    /**
+     *
+     * @param world
+     */
     function promptChangeWorldDescription(world) {
         modalStore
             .prompt({
@@ -1297,6 +1339,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param world
+     */
     function promptChangeWorldCapacity(world) {
         modalStore
             .prompt({
@@ -1325,6 +1371,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param world
+     */
     function promptChangeWorldRecommendedCapacity(world) {
         modalStore
             .prompt({
@@ -1353,6 +1403,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param world
+     */
     function promptChangeWorldYouTubePreview(world) {
         modalStore
             .prompt({
@@ -1398,6 +1452,9 @@
             })
             .catch(() => {});
     }
+    /**
+     *
+     */
     function onWorldMemoChange() {
         const worldId = worldDialog.value.id;
         const memo = worldDialog.value.memo;
@@ -1411,12 +1468,22 @@
             database.deleteWorldMemo(worldId);
         }
     }
+    /**
+     *
+     * @param worldRef
+     */
     function showPreviousInstancesListDialog(worldRef) {
         openPreviousInstancesListDialog('world', worldRef);
     }
+    /**
+     *
+     */
     function refreshWorldDialogTreeData() {
         treeData.value = formatJsonVars(worldDialog.value.ref);
     }
+    /**
+     *
+     */
     function copyWorldId() {
         navigator.clipboard
             .writeText(worldDialog.value.id)
@@ -1428,6 +1495,9 @@
                 toast.error(t('message.copy_failed'));
             });
     }
+    /**
+     *
+     */
     function copyWorldUrl() {
         navigator.clipboard
             .writeText(`https://vrchat.com/home/world/${worldDialog.value.id}`)
@@ -1439,6 +1509,9 @@
                 toast.error(t('message.copy_failed'));
             });
     }
+    /**
+     *
+     */
     function copyWorldName() {
         navigator.clipboard
             .writeText(worldDialog.value.ref.name)
@@ -1450,6 +1523,9 @@
                 toast.error(t('message.copy_failed'));
             });
     }
+    /**
+     *
+     */
     function showWorldAllowedDomainsDialog() {
         const D = worldAllowedDomainsDialog.value;
         D.worldId = worldDialog.value.id;
@@ -1457,6 +1533,9 @@
         D.visible = true;
     }
 
+    /**
+     *
+     */
     async function translateDescription() {
         if (isTranslating.value) return;
 

@@ -19,6 +19,7 @@ html {
     padding: 10px;
     overflow: hidden auto;
     box-sizing: border-box;
+    min-width: 0;
     background: var(--background);
     height: calc(100vh - 20px);
     margin: 10px 0 10px 0;
@@ -350,4 +351,14 @@ i.x-status-icon.red {
 
 [data-sonner-toast] [data-content] [data-description] {
     white-space: pre-line;
+}
+
+.main-layout-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
 }

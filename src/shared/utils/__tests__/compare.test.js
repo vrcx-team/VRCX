@@ -2,7 +2,10 @@ import {
     compareByCreatedAt,
     compareByCreatedAtAscending,
     compareByDisplayName,
+    compareById,
+    compareByFriendOrder,
     compareByLastActive,
+    compareByLastActiveRef,
     compareByLastSeen,
     compareByLocation,
     compareByLocationAt,
@@ -373,6 +376,103 @@ describe('Compare Functions', () => {
                 ref: { location: 'z' }
             };
             expect(typeof compareByLocation(a, b)).toBe('number');
+        });
+    });
+
+    describe('compareById', () => {
+        test('compares objects by id property ascending', () => {
+            const a = { id: 'usr_aaa' };
+            const b = { id: 'usr_bbb' };
+            expect(compareById(a, b)).toBeLessThan(0);
+            expect(compareById(b, a)).toBeGreaterThan(0);
+        });
+
+        test('returns 0 for equal ids', () => {
+            const a = { id: 'usr_123' };
+            const b = { id: 'usr_123' };
+            expect(compareById(a, b)).toBe(0);
+        });
+
+        test('handles non-string id properties', () => {
+            expect(compareById({ id: null }, { id: 'usr_1' })).toBe(0);
+            expect(compareById({}, { id: 'usr_1' })).toBe(0);
+            expect(compareById({ id: 123 }, { id: 'usr_1' })).toBe(0);
+        });
+    });
+
+    describe('compareByLastActiveRef', () => {
+        test('compares online users by $online_for descending', () => {
+            const a = { state: 'online', $online_for: 100 };
+            const b = { state: 'online', $online_for: 200 };
+            // a.$online_for < b.$online_for → 1 (b is more recent)
+            expect(compareByLastActiveRef(a, b)).toBe(1);
+            expect(compareByLastActiveRef(b, a)).toBe(-1);
+        });
+
+        test('falls back to last_login when $online_for is equal', () => {
+            const a = {
+                state: 'online',
+                $online_for: 100,
+                last_login: '2023-01-01'
+            };
+            const b = {
+                state: 'online',
+                $online_for: 100,
+                last_login: '2023-01-02'
+            };
+            expect(compareByLastActiveRef(a, b)).toBe(1);
+            expect(compareByLastActiveRef(b, a)).toBe(-1);
+        });
+
+        test('compares non-online users by last_activity descending', () => {
+            const a = {
+                state: 'offline',
+                last_activity: '2023-01-01'
+            };
+            const b = {
+                state: 'offline',
+                last_activity: '2023-01-02'
+            };
+            expect(compareByLastActiveRef(a, b)).toBe(1);
+            expect(compareByLastActiveRef(b, a)).toBe(-1);
+        });
+
+        test('compares mixed online states by last_activity', () => {
+            const a = {
+                state: 'online',
+                last_activity: '2023-06-01'
+            };
+            const b = {
+                state: 'offline',
+                last_activity: '2023-01-01'
+            };
+            // not both online, so compares by last_activity
+            expect(compareByLastActiveRef(a, b)).toBe(-1);
+        });
+    });
+
+    describe('compareByFriendOrder', () => {
+        test('compares by $friendNumber descending', () => {
+            const a = { $friendNumber: 10 };
+            const b = { $friendNumber: 20 };
+            // b.$friendNumber - a.$friendNumber = 10
+            expect(compareByFriendOrder(a, b)).toBe(10);
+            expect(compareByFriendOrder(b, a)).toBe(-10);
+        });
+
+        test('returns 0 for equal $friendNumber', () => {
+            const a = { $friendNumber: 5 };
+            const b = { $friendNumber: 5 };
+            expect(compareByFriendOrder(a, b)).toBe(0);
+        });
+
+        test('handles undefined inputs', () => {
+            expect(compareByFriendOrder(undefined, { $friendNumber: 1 })).toBe(
+                0
+            );
+            expect(compareByFriendOrder({ $friendNumber: 1 }, undefined)).toBe(
+                0
+            );
         });
     });
 

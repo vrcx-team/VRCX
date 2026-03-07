@@ -111,10 +111,52 @@
                             </template>
 
                             <template v-else-if="item.row.type === 'friend-item'">
-                                <FriendItem
-                                    :friend="item.row.friend"
-                                    :style="item.row.itemStyle"
-                                    :is-group-by-instance="item.row.isGroupByInstance" />
+                                <ContextMenu>
+                                    <ContextMenuTrigger as-child>
+                                        <FriendItem
+                                            :friend="item.row.friend"
+                                            :style="item.row.itemStyle"
+                                            :is-group-by-instance="item.row.isGroupByInstance" />
+                                    </ContextMenuTrigger>
+                                    <ContextMenuContent>
+                                        <ContextMenuItem
+                                            v-if="item.row.friend.state === 'online'"
+                                            @click="friendRequestInvite(item.row.friend)">
+                                            {{ t('dialog.user.actions.request_invite') }}
+                                        </ContextMenuItem>
+                                        <ContextMenuItem
+                                            v-if="isGameRunning"
+                                            :disabled="!canInviteToMyLocation"
+                                            @click="friendInvite(item.row.friend)">
+                                            {{ t('dialog.user.actions.invite') }}
+                                        </ContextMenuItem>
+                                        <ContextMenuItem
+                                            :disabled="!currentUser.isBoopingEnabled"
+                                            @click="friendSendBoop(item.row.friend)">
+                                            {{ t('dialog.user.actions.send_boop') }}
+                                        </ContextMenuItem>
+                                        <ContextMenuSeparator
+                                            v-if="
+                                                item.row.friend.state === 'online' && hasFriendLocation(item.row.friend)
+                                            " />
+                                        <ContextMenuItem
+                                            v-if="
+                                                item.row.friend.state === 'online' && hasFriendLocation(item.row.friend)
+                                            "
+                                            :disabled="!canJoinFriend(item.row.friend)"
+                                            @click="friendJoin(item.row.friend)">
+                                            {{ t('dialog.user.info.launch_invite_tooltip') }}
+                                        </ContextMenuItem>
+                                        <ContextMenuItem
+                                            v-if="
+                                                item.row.friend.state === 'online' && hasFriendLocation(item.row.friend)
+                                            "
+                                            :disabled="!canJoinFriend(item.row.friend)"
+                                            @click="friendInviteSelf(item.row.friend)">
+                                            {{ t('dialog.user.info.self_invite_tooltip') }}
+                                        </ContextMenuItem>
+                                    </ContextMenuContent>
+                                </ContextMenu>
                             </template>
                         </div>
                     </template>
@@ -137,6 +179,7 @@
         ContextMenu,
         ContextMenuCheckboxItem,
         ContextMenuContent,
+        ContextMenuItem,
         ContextMenuSeparator,
         ContextMenuSub,
         ContextMenuSubContent,
@@ -149,12 +192,16 @@
         useFavoriteStore,
         useFriendStore,
         useGameStore,
+        useLaunchStore,
         useLocationStore,
         useUserStore
     } from '../../../stores';
+    import { buildFriendRow, buildInstanceHeaderRow, buildToggleRow, estimateRowSize } from '../friendsSidebarUtils';
     import { getFriendsSortFunction, isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
+    import { instanceRequest, notificationRequest, userRequest, worldRequest } from '../../../api';
+    import { checkCanInvite, checkCanInviteSelf } from '../../../shared/utils/invite.js';
     import { getFriendsLocations } from '../../../shared/utils/location.js';
-    import { userRequest } from '../../../api';
+    import { parseLocation } from '../../../shared/utils';
 
     import BackToTop from '../../../components/BackToTop.vue';
     import FriendItem from './FriendItem.vue';
@@ -182,7 +229,8 @@
         sidebarSortMethods
     } = storeToRefs(appearanceSettingsStore);
     const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
-    const { showUserDialog } = useUserStore();
+    const { showUserDialog, showSendBoopDialog } = useUserStore();
+    const launchStore = useLaunchStore();
     const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends, localFriendFavorites } =
         storeToRefs(useFavoriteStore());
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
@@ -214,6 +262,10 @@
 
     const shouldHideSameInstance = computed(() => isSidebarGroupByInstance.value && isHideFriendsInSameInstance.value);
 
+    /**
+     *
+     * @param list
+     */
     function excludeSameInstance(list) {
         if (!shouldHideSameInstance.value) {
             return list;
@@ -321,41 +373,6 @@
             if (idxB !== -1) return 1;
             return (a[0]?.key ?? '').localeCompare(b[0]?.key ?? '');
         });
-    });
-
-    const buildToggleRow = ({
-        key,
-        label,
-        count = null,
-        expanded = true,
-        headerPadding = null,
-        paddingBottom = null,
-        onClick = null
-    }) => ({
-        type: 'toggle-header',
-        key,
-        label,
-        count,
-        expanded,
-        headerPadding,
-        paddingBottom,
-        onClick
-    });
-    const buildFriendRow = (friend, key, options = {}) => ({
-        type: 'friend-item',
-        key,
-        friend,
-        isGroupByInstance: options.isGroupByInstance,
-        paddingBottom: options.paddingBottom,
-        itemStyle: options.itemStyle
-    });
-
-    const buildInstanceHeaderRow = (location, count, key) => ({
-        type: 'instance-header',
-        key,
-        location,
-        count,
-        paddingBottom: 4
     });
 
     const virtualRows = computed(() => {
@@ -521,22 +538,6 @@
         return rows;
     });
 
-    const estimateRowSize = (row) => {
-        if (!row) {
-            return 44;
-        }
-        if (row.type === 'toggle-header') {
-            return 28 + (row.paddingBottom || 0);
-        }
-        if (row.type === 'vip-subheader') {
-            return 24 + (row.paddingBottom || 0);
-        }
-        if (row.type === 'instance-header') {
-            return 26 + (row.paddingBottom || 0);
-        }
-        return 52 + (row.paddingBottom || 0);
-    };
-
     const virtualizer = useVirtualizer(
         computed(() => ({
             count: virtualRows.value.length,
@@ -568,6 +569,9 @@
         };
     };
 
+    /**
+     *
+     */
     function saveFriendsGroupStates() {
         configRepository.setBool('VRCX_isFriendsGroupMe', isFriendsGroupMe.value);
         configRepository.setBool('VRCX_isFriendsGroupFavorites', isVIPFriends.value);
@@ -576,6 +580,9 @@
         configRepository.setBool('VRCX_isFriendsGroupOffline', isOfflineFriends.value);
     }
 
+    /**
+     *
+     */
     async function loadFriendsGroupStates() {
         isFriendsGroupMe.value = await configRepository.getBool('VRCX_isFriendsGroupMe', true);
         isVIPFriends.value = await configRepository.getBool('VRCX_isFriendsGroupFavorites', true);
@@ -588,31 +595,49 @@
         );
     }
 
+    /**
+     *
+     */
     function toggleSwitchGroupByInstanceCollapsed() {
         isSidebarGroupByInstanceCollapsed.value = !isSidebarGroupByInstanceCollapsed.value;
         configRepository.setBool('VRCX_sidebarGroupByInstanceCollapsed', isSidebarGroupByInstanceCollapsed.value);
     }
 
+    /**
+     *
+     */
     function toggleFriendsGroupMe() {
         isFriendsGroupMe.value = !isFriendsGroupMe.value;
         saveFriendsGroupStates();
     }
 
+    /**
+     *
+     */
     function toggleVIPFriends() {
         isVIPFriends.value = !isVIPFriends.value;
         saveFriendsGroupStates();
     }
 
+    /**
+     *
+     */
     function toggleOnlineFriends() {
         isOnlineFriends.value = !isOnlineFriends.value;
         saveFriendsGroupStates();
     }
 
+    /**
+     *
+     */
     function toggleActiveFriends() {
         isActiveFriends.value = !isActiveFriends.value;
         saveFriendsGroupStates();
     }
 
+    /**
+     *
+     */
     function toggleOfflineFriends() {
         isOfflineFriends.value = !isOfflineFriends.value;
         saveFriendsGroupStates();
@@ -660,15 +685,112 @@
         return history.slice(0, 10);
     });
 
+    /**
+     *
+     * @param value
+     */
     function changeStatus(value) {
         userRequest.saveCurrentUser({ status: value }).then(() => {
             toast.success('Status updated');
         });
     }
 
+    /**
+     *
+     * @param status
+     */
     function setStatusFromHistory(status) {
         userRequest.saveCurrentUser({ statusDescription: status }).then(() => {
             toast.success('Status updated');
         });
+    }
+
+    const canInviteToMyLocation = computed(() => checkCanInvite(lastLocation.value.location));
+
+    /**
+     * @param {object} friend - friend item from friend list
+     * @returns {boolean} whether the friend has a valid joinable location
+     */
+    function hasFriendLocation(friend) {
+        const loc = friend.ref?.location;
+        return !!loc && isRealInstance(loc);
+    }
+
+    /**
+     * @param {object} friend - friend item from friend list
+     * @returns {boolean} whether the current user can join friend's instance
+     */
+    function canJoinFriend(friend) {
+        const loc = friend.ref?.location;
+        if (!loc || !isRealInstance(loc)) return false;
+        return checkCanInviteSelf(loc);
+    }
+
+    /**
+     * @param {object} friend - friend item from friend list
+     */
+    function friendRequestInvite(friend) {
+        notificationRequest.sendRequestInvite({ platform: 'standalonewindows' }, friend.id).then(() => {
+            toast.success('Request invite sent');
+        });
+    }
+
+    /**
+     * @param {object} friend - friend item from friend list
+     */
+    function friendInvite(friend) {
+        let currentLocation = lastLocation.value.location;
+        if (currentLocation === 'traveling') {
+            currentLocation = lastLocationDestination.value;
+        }
+        const L = parseLocation(currentLocation);
+        worldRequest.getCachedWorld({ worldId: L.worldId }).then((args) => {
+            notificationRequest
+                .sendInvite(
+                    {
+                        instanceId: L.tag,
+                        worldId: L.tag,
+                        worldName: args.ref.name
+                    },
+                    friend.id
+                )
+                .then(() => {
+                    toast.success(t('message.invite.sent'));
+                });
+        });
+    }
+
+    /**
+     * @param {object} friend - friend item from friend list
+     */
+    function friendSendBoop(friend) {
+        showSendBoopDialog(friend.id);
+    }
+
+    /**
+     * Join friend's instance (launch dialog)
+     * @param {object} friend - friend item from friend list
+     */
+    function friendJoin(friend) {
+        const loc = friend.ref?.location;
+        if (!loc) return;
+        launchStore.showLaunchDialog(loc);
+    }
+
+    /**
+     * @param {object} friend - friend item from friend list
+     */
+    function friendInviteSelf(friend) {
+        const loc = friend.ref?.location;
+        if (!loc) return;
+        const L = parseLocation(loc);
+        instanceRequest
+            .selfInvite({
+                instanceId: L.instanceId,
+                worldId: L.worldId
+            })
+            .then(() => {
+                toast.success(t('message.invite.self_sent'));
+            });
     }
 </script>

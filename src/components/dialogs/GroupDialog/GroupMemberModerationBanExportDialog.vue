@@ -38,7 +38,7 @@
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { useI18n } from 'vue-i18n';
 
-    import { copyToClipboard } from '../../../shared/utils';
+    import { copyToClipboard, formatCsvField } from '../../../shared/utils';
 
     const { t } = useI18n();
 
@@ -77,6 +77,11 @@
 
     const checkedExportBansOptions = ref(['userId', 'displayName', 'roles', 'managerNotes', 'joinedAt', 'bannedAt']);
 
+    /**
+     *
+     * @param label
+     * @param checked
+     */
     function toggleExportOption(label, checked) {
         const selection = checkedExportBansOptions.value;
         const index = selection.indexOf(label);
@@ -88,6 +93,11 @@
         updateExportContent();
     }
 
+    /**
+     *
+     * @param item
+     * @param key
+     */
     function getRowValue(item, key) {
         switch (key) {
             case 'displayName':
@@ -101,9 +111,10 @@
         }
     }
 
+    /**
+     *
+     */
     function updateExportContent() {
-        const formatter = (str) => (/[\x00-\x1f,"]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str);
-
         const sortedCheckedOptions = exportBansOptions
             .filter((option) => checkedExportBansOptions.value.includes(option.label))
             .map((option) => option.label);
@@ -111,16 +122,22 @@
         const header = `${sortedCheckedOptions.join(',')}\n`;
 
         const content = props.groupBansModerationTable.data
-            .map((item) => sortedCheckedOptions.map((key) => formatter(String(getRowValue(item, key)))).join(','))
+            .map((item) => sortedCheckedOptions.map((key) => formatCsvField(String(getRowValue(item, key)))).join(','))
             .join('\n');
 
         exportContent.value = header + content;
     }
 
+    /**
+     *
+     */
     function handleCopyExportContent() {
         copyToClipboard(exportContent.value);
     }
 
+    /**
+     *
+     */
     function setIsGroupBansExportDialogVisible() {
         emit('update:isGroupBansExportDialogVisible', false);
     }

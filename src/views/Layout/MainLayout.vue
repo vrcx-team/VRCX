@@ -1,54 +1,60 @@
 <template>
     <template v-if="watchState.isLoggedIn">
-        <SidebarProvider
-            :open="sidebarOpen"
-            :width="navWidth"
-            :width-icon="48"
-            class="relative flex-1 h-full min-w-0"
-            @update:open="handleSidebarOpenChange">
-            <NavMenu />
+        <div class="main-layout-wrapper">
+            <SidebarProvider
+                :open="sidebarOpen"
+                :width="navWidth"
+                :width-icon="48"
+                class="relative flex-1 h-full min-w-0 min-h-0"
+                @update:open="handleSidebarOpenChange">
+                <NavMenu />
 
-            <div
-                v-show="sidebarOpen"
-                class="absolute top-0 bottom-0 z-30 w-1 cursor-ew-resize select-none"
-                :style="{ left: 'var(--sidebar-width)' }"
-                @pointerdown.prevent="startNavResize" />
+                <div
+                    v-show="sidebarOpen"
+                    class="absolute top-0 bottom-0 z-30 w-1 cursor-ew-resize select-none"
+                    :style="{ left: 'var(--sidebar-width)' }"
+                    @pointerdown.prevent="startNavResize" />
 
-            <SidebarInset class="min-w-0 bg-sidebar">
-                <ResizablePanelGroup
-                    direction="horizontal"
-                    auto-save-id="vrcx-main-layout-right-sidebar"
-                    :class="['group/main-layout flex-1 h-full min-w-0', { 'aside-collapsed': isAsideCollapsedStatic }]"
-                    @layout="handleLayout">
-                    <template #default="{ layout }">
-                        <ResizablePanel :default-size="mainDefaultSize" :order="1">
-                            <RouterView v-slot="{ Component }">
-                                <KeepAlive exclude="ChartsInstance, ChartsMutual">
-                                    <component :is="Component" />
-                                </KeepAlive>
-                            </RouterView>
-                        </ResizablePanel>
+                <SidebarInset class="min-w-0 bg-sidebar">
+                    <ResizablePanelGroup
+                        direction="horizontal"
+                        auto-save-id="vrcx-main-layout-right-sidebar"
+                        :class="[
+                            'group/main-layout flex-1 h-full min-w-0',
+                            { 'aside-collapsed': isAsideCollapsedStatic }
+                        ]"
+                        @layout="handleLayout">
+                        <template #default="{ layout }">
+                            <ResizablePanel :default-size="mainDefaultSize" :order="1">
+                                <RouterView v-slot="{ Component }">
+                                    <KeepAlive exclude="ChartsInstance, ChartsMutual">
+                                        <component :is="Component" />
+                                    </KeepAlive>
+                                </RouterView>
+                            </ResizablePanel>
 
-                        <ResizableHandle
-                            with-handle
-                            :class="[
-                                isAsideCollapsed(layout) ? 'opacity-100' : 'opacity-0',
-                                'z-20 [&>div]:-translate-x-1/2'
-                            ]"></ResizableHandle>
-                        <ResizablePanel
-                            ref="asidePanelRef"
-                            :default-size="asideDefaultSize"
-                            :min-size="asideMinSize"
-                            :collapsed-size="0"
-                            collapsible
-                            :order="2"
-                            :style="{ maxWidth: `${asideMaxPx}px` }">
-                            <Sidebar></Sidebar>
-                        </ResizablePanel>
-                    </template>
-                </ResizablePanelGroup>
-            </SidebarInset>
-        </SidebarProvider>
+                            <ResizableHandle
+                                with-handle
+                                :class="[
+                                    isAsideCollapsed(layout) ? 'opacity-100' : 'opacity-0',
+                                    'z-20 [&>div]:-translate-x-1/2'
+                                ]"></ResizableHandle>
+                            <ResizablePanel
+                                ref="asidePanelRef"
+                                :default-size="asideDefaultSize"
+                                :min-size="asideMinSize"
+                                :collapsed-size="0"
+                                collapsible
+                                :order="2"
+                                :style="{ maxWidth: `${asideMaxPx}px` }">
+                                <Sidebar></Sidebar>
+                            </ResizablePanel>
+                        </template>
+                    </ResizablePanelGroup>
+                </SidebarInset>
+            </SidebarProvider>
+            <StatusBar v-if="showStatusBar" />
+        </div>
 
         <!-- ## Dialogs ## -->
         <MainDialogContainer></MainDialogContainer>
@@ -106,13 +112,14 @@
     import PrimaryPasswordDialog from '../Settings/dialogs/PrimaryPasswordDialog.vue';
     import SendBoopDialog from '../../components/dialogs/SendBoopDialog.vue';
     import Sidebar from '../Sidebar/Sidebar.vue';
+    import StatusBar from '../../components/StatusBar.vue';
     import VRChatConfigDialog from '../Settings/dialogs/VRChatConfigDialog.vue';
     import WorldImportDialog from '../Favorites/dialogs/WorldImportDialog.vue';
 
     const router = useRouter();
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const { navWidth, isNavCollapsed } = storeToRefs(appearanceSettingsStore);
+    const { navWidth, isNavCollapsed, showStatusBar } = storeToRefs(appearanceSettingsStore);
 
     const sidebarOpen = computed(() => !isNavCollapsed.value);
 

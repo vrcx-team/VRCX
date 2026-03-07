@@ -30,6 +30,7 @@ export const useUiStore = defineStore('Ui', () => {
 
     const ctrlR = keys['Ctrl+R'];
     const ctrlD = keys['Ctrl+D'];
+    const metaD = keys['Meta+D'];
     const shift = keys['Shift'];
     const ctrlShiftI = keys['Ctrl+Shift+I'];
     const altShiftR = keys['Alt+Shift+R'];
@@ -46,6 +47,12 @@ export const useUiStore = defineStore('Ui', () => {
     });
 
     watch(ctrlD, (isPressed) => {
+        if (isPressed) {
+            directAccessPaste();
+        }
+    });
+
+    watch(metaD, (isPressed) => {
         if (isPressed) {
             directAccessPaste();
         }
@@ -301,6 +308,11 @@ export const useUiStore = defineStore('Ui', () => {
         updateTrayIconNotify();
     }
 
+    function clearAllNotifications() {
+        notifiedMenus.value = [];
+        updateTrayIconNotify();
+    }
+
     function updateTrayIconNotify(force = false) {
         const newState =
             appearanceSettings.notificationIconDot &&
@@ -325,6 +337,7 @@ export const useUiStore = defineStore('Ui', () => {
 
         notifyMenu,
         removeNotify,
+        clearAllNotifications,
         showConsole,
         updateTrayIconNotify,
         pushDialogCrumb,

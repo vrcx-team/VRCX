@@ -1,5 +1,11 @@
 import { request } from '../service/request';
 import { useUserStore } from '../stores';
+import {
+    entityQueryPolicies,
+    fetchWithEntityPolicy,
+    patchAndRefetchActiveQuery,
+    queryKeys
+} from '../query';
 
 const avatarReq = {
     /**
@@ -15,6 +21,22 @@ const avatarReq = {
             };
             return args;
         });
+    },
+
+    /**
+     * Fetch avatar from query cache if fresh. Otherwise, calls API.
+     * @param {{avatarId: string}} params
+     * @returns {Promise<{json: any, ref?: any, cache?: boolean, params: {avatarId: string}}>}
+     */
+    getCachedAvatar(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.avatar(params.avatarId),
+            policy: entityQueryPolicies.avatar,
+            queryFn: () => avatarReq.getAvatar(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
     },
 
     /**
@@ -46,6 +68,12 @@ const avatarReq = {
                 json,
                 params
             };
+            patchAndRefetchActiveQuery({
+                queryKey: queryKeys.avatar(params.id),
+                nextData: args
+            }).catch((err) => {
+                console.error('Failed to refresh avatar query after mutation:', err);
+            });
             return args;
         });
     },
@@ -64,7 +92,20 @@ const avatarReq = {
                 json,
                 params
             };
-            userStore.applyCurrentUser(json);
+            const ref = userStore.applyCurrentUser(json);
+            patchAndRefetchActiveQuery({
+                queryKey: queryKeys.user(ref.id),
+                nextData: {
+                    json,
+                    params: { userId: ref.id },
+                    ref
+                }
+            }).catch((err) => {
+                console.error(
+                    'Failed to refresh current user query after avatar select:',
+                    err
+                );
+            });
             return args;
         });
     },
@@ -83,7 +124,20 @@ const avatarReq = {
                 json,
                 params
             };
-            userStore.applyCurrentUser(json);
+            const ref = userStore.applyCurrentUser(json);
+            patchAndRefetchActiveQuery({
+                queryKey: queryKeys.user(ref.id),
+                nextData: {
+                    json,
+                    params: { userId: ref.id },
+                    ref
+                }
+            }).catch((err) => {
+                console.error(
+                    'Failed to refresh current user query after fallback avatar select:',
+                    err
+                );
+            });
             return args;
         });
     },

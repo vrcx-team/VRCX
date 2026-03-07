@@ -1,10 +1,10 @@
 <template>
     <div class="x-container" ref="playerListRef">
-        <div class="flex h-full min-h-0 flex-col overflow-auto">
+        <div class="flex h-full min-h-0 flex-col overflow-y-auto overflow-x-hidden">
             <div
                 v-if="currentInstanceWorld.ref.id"
                 ref="playerListHeaderRef"
-                style="display: flex; height: 120px"
+                style="display: flex; min-height: 120px"
                 class="mb-7">
                 <img
                     :src="currentInstanceWorld.ref.thumbnailImageUrl"
@@ -110,7 +110,7 @@
                     <div style="margin-top: 5px">
                         <span
                             v-show="currentInstanceWorld.ref.name !== currentInstanceWorld.ref.description"
-                            class="inline-block max-w-full truncate align-middle text-xs"
+                            class="inline-block max-w-full align-middle text-xs break-words"
                             v-text="currentInstanceWorld.ref.description"></span>
                     </div>
                 </div>
@@ -223,11 +223,18 @@
         loading: false
     });
 
+    /**
+     *
+     */
     function showChatboxBlacklistDialog() {
         const D = chatboxBlacklistDialog.value;
         D.visible = true;
     }
 
+    /**
+     *
+     * @param val
+     */
     function selectCurrentInstanceRow(val) {
         if (val === null) {
             return;
@@ -240,18 +247,32 @@
         }
     }
 
+    /**
+     *
+     * @param userId
+     */
     async function deleteChatboxUserBlacklist(userId) {
         chatboxUserBlacklist.value.delete(userId);
         await saveChatboxUserBlacklist();
         getCurrentInstanceUserList();
     }
 
+    /**
+     *
+     * @param user
+     */
     async function addChatboxUserBlacklist(user) {
         chatboxUserBlacklist.value.set(user.id, user.displayName);
         await saveChatboxUserBlacklist();
         getCurrentInstanceUserList();
     }
 
+    /**
+     *
+     * @param a
+     * @param b
+     * @param field
+     */
     function sortAlphabetically(a, b, field) {
         if (!a[field] || !b[field]) return 0;
         return a[field].toLowerCase().localeCompare(b[field].toLowerCase());

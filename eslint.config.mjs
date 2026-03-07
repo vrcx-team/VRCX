@@ -80,6 +80,11 @@ export default defineConfig([
         config: 'flat/recommended'
     }),
     {
+        ignores: [
+            '**/__tests__/**',
+            '**/*.spec.{js,mjs,cjs,vue}',
+            '**/*.test.{js,mjs,cjs,vue}'
+        ],
         plugins: { 'pretty-import': prettyImport },
         rules: {
             'pretty-import/separate-type-imports': 'warn',

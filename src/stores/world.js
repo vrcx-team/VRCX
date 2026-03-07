@@ -5,18 +5,20 @@ import { useI18n } from 'vue-i18n';
 
 import {
     checkVRChatCache,
+    createDefaultWorldRef,
+    evictMapCache,
     getAvailablePlatforms,
     getBundleDateSize,
     getWorldMemo,
     isRealInstance,
     parseLocation,
-    replaceBioSymbols
+    sanitizeEntityJson
 } from '../shared/utils';
 import { instanceRequest, miscRequest, worldRequest } from '../api';
 import { database } from '../service/database';
-import { useAvatarStore } from './avatar';
+import { patchWorldFromEvent } from '../query';
+import { processBulk } from '../service/request';
 import { useFavoriteStore } from './favorite';
-import { useGroupStore } from './group';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
 import { useUiStore } from './ui';
@@ -28,8 +30,6 @@ export const useWorldStore = defineStore('World', () => {
     const favoriteStore = useFavoriteStore();
     const instanceStore = useInstanceStore();
     const userStore = useUserStore();
-    const avatarStore = useAvatarStore();
-    const groupStore = useGroupStore();
     const uiStore = useUiStore();
     const { t } = useI18n();
 
@@ -64,9 +64,12 @@ export const useWorldStore = defineStore('World', () => {
 
     watch(
         () => watchState.isLoggedIn,
-        () => {
+        (isLoggedIn) => {
             worldDialog.visible = false;
             cachedWorlds.clear();
+            if (isLoggedIn) {
+                preloadOwnWorlds();
+            }
         },
         { flush: 'sync' }
     );
@@ -75,9 +78,11 @@ export const useWorldStore = defineStore('World', () => {
      *
      * @param {string} tag
      * @param {string} shortName
+     * @param options
      */
-    function showWorldDialog(tag, shortName = null) {
+    function showWorldDialog(tag, shortName = null, options = {}) {
         const D = worldDialog;
+        const forceRefresh = Boolean(options?.forceRefresh);
         const L = parseLocation(tag);
         if (L.worldId === '') {
             return;
@@ -89,7 +94,7 @@ export const useWorldStore = defineStore('World', () => {
             shortName
         });
         D.visible = true;
-        if (isMainDialogOpen && D.id === L.worldId) {
+        if (isMainDialogOpen && D.id === L.worldId && !forceRefresh) {
             uiStore.setDialogCrumbLabel('world', D.id, D.ref?.name || D.id);
             instanceStore.applyWorldDialogInstances();
             nextTick(() => (D.loading = false));
@@ -141,10 +146,10 @@ export const useWorldStore = defineStore('World', () => {
                 D.timeSpent = ref.timeSpent;
             }
         });
-        worldRequest
-            .getCachedWorld({
-                worldId: L.worldId
-            })
+        const loadWorldRequest = worldRequest.getWorld({
+            worldId: L.worldId
+        });
+        loadWorldRequest
             .catch((err) => {
                 nextTick(() => (D.loading = false));
                 D.id = null;
@@ -198,18 +203,13 @@ export const useWorldStore = defineStore('World', () => {
                                     args.json !== false;
                             }
                         });
-
-                    if (args.cache) {
-                        worldRequest.getWorld(args.params).then((args1) => {
-                            if (D.id === args1.ref.id) {
-                                updateVRChatWorldCache();
-                            }
-                        });
-                    }
                 }
             });
     }
 
+    /**
+     *
+     */
     function updateVRChatWorldCache() {
         const D = worldDialog;
         if (D.visible) {
@@ -228,21 +228,14 @@ export const useWorldStore = defineStore('World', () => {
         }
     }
 
+    /**
+     *
+     * @param WorldCache
+     */
     function cleanupWorldCache(WorldCache) {
-        const maxCacheSize = 10000;
-
-        if (WorldCache.size <= maxCacheSize) {
-            return;
-        }
-
-        const deletedCount = WorldCache.size - maxCacheSize;
-        while (WorldCache.size > maxCacheSize) {
-            const deletedKey = WorldCache.keys().next().value;
-            WorldCache.delete(deletedKey);
-        }
-        console.log(
-            `World cache cleanup: Deleted ${deletedCount}. Current cache size: ${WorldCache.size}`
-        );
+        evictMapCache(WorldCache, 10000, () => false, {
+            logLabel: 'World cache cleanup'
+        });
     }
 
     /**
@@ -251,55 +244,10 @@ export const useWorldStore = defineStore('World', () => {
      * @returns {object} ref
      */
     function applyWorld(json) {
-        if (json.name) {
-            json.name = replaceBioSymbols(json.name);
-        }
-        if (json.description) {
-            json.description = replaceBioSymbols(json.description);
-        }
+        sanitizeEntityJson(json, ['name', 'description']);
         let ref = cachedWorlds.get(json.id);
         if (typeof ref === 'undefined') {
-            ref = {
-                id: '',
-                name: '',
-                description: '',
-                defaultContentSettings: {},
-                authorId: '',
-                authorName: '',
-                capacity: 0,
-                recommendedCapacity: 0,
-                tags: [],
-                releaseStatus: '',
-                imageUrl: '',
-                thumbnailImageUrl: '',
-                assetUrl: '',
-                assetUrlObject: {},
-                pluginUrl: '',
-                pluginUrlObject: {},
-                unityPackageUrl: '',
-                unityPackageUrlObject: {},
-                unityPackages: [],
-                version: 0,
-                favorites: 0,
-                created_at: '',
-                updated_at: '',
-                publicationDate: '',
-                labsPublicationDate: '',
-                visits: 0,
-                popularity: 0,
-                heat: 0,
-                publicOccupants: 0,
-                privateOccupants: 0,
-                occupants: 0,
-                instances: [],
-                featured: false,
-                organization: '',
-                previewYoutubeId: '',
-                // VRCX
-                $isLabs: false,
-                //
-                ...json
-            };
+            ref = createDefaultWorldRef(json);
             cleanupWorldCache(cachedWorlds);
             cachedWorlds.set(ref.id, ref);
         } else {
@@ -336,7 +284,32 @@ export const useWorldStore = defineStore('World', () => {
             // update db cache
             database.addWorldToCache(ref);
         }
+        patchWorldFromEvent(ref);
         return ref;
+    }
+
+    /**
+     * Preload all own worlds into cache at startup for global search.
+     */
+    async function preloadOwnWorlds() {
+        const params = {
+            n: 50,
+            offset: 0,
+            sort: 'updated',
+            order: 'descending',
+            releaseStatus: 'all',
+            user: 'me'
+        };
+        await processBulk({
+            fn: (p) => worldRequest.getWorlds(p),
+            N: -1,
+            params,
+            handle: (args) => {
+                for (const json of args.json) {
+                    applyWorld(json);
+                }
+            }
+        });
     }
 
     return {
@@ -344,6 +317,7 @@ export const useWorldStore = defineStore('World', () => {
         cachedWorlds,
         showWorldDialog,
         updateVRChatWorldCache,
-        applyWorld
+        applyWorld,
+        preloadOwnWorlds
     };
 });

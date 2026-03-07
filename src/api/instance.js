@@ -3,6 +3,12 @@ import { toast } from 'vue-sonner';
 import { i18n } from '../plugin/i18n';
 import { request } from '../service/request';
 import { useInstanceStore } from '../stores';
+import {
+    entityQueryPolicies,
+    fetchWithEntityPolicy,
+    patchAndRefetchActiveQuery,
+    queryKeys
+} from '../query';
 
 const instanceReq = {
     /**
@@ -27,28 +33,14 @@ const instanceReq = {
      * @returns {Promise<{json: any, ref: any, cache?: boolean, params}>}
      */
     getCachedInstance(params) {
-        const instanceStore = useInstanceStore();
-        return new Promise((resolve, reject) => {
-            const ref = instanceStore.cachedInstances.get(
-                `${params.worldId}:${params.instanceId}`
-            );
-            if (typeof ref === 'undefined') {
-                instanceReq
-                    .getInstance(params)
-                    .then((args) => {
-                        args.ref = instanceStore.applyInstance(args.json);
-                        resolve(args);
-                    })
-                    .catch(reject);
-            } else {
-                resolve({
-                    cache: true,
-                    json: ref,
-                    params,
-                    ref
-                });
-            }
-        });
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.instance(params.worldId, params.instanceId),
+            policy: entityQueryPolicies.instance,
+            queryFn: () => instanceReq.getInstance(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
     },
 
     /**
@@ -65,6 +57,15 @@ const instanceReq = {
                 params
             };
             args.ref = instanceStore.applyInstance(json);
+            patchAndRefetchActiveQuery({
+                queryKey: queryKeys.instance(args.ref.worldId, args.ref.instanceId),
+                nextData: args
+            }).catch((err) => {
+                console.error(
+                    'Failed to refresh instance query after instance creation:',
+                    err
+                );
+            });
             return args;
         });
     },
@@ -107,6 +108,15 @@ const instanceReq = {
                 params
             };
             args.ref = instanceStore.applyInstance(json);
+            patchAndRefetchActiveQuery({
+                queryKey: queryKeys.instance(args.ref.worldId, args.ref.instanceId),
+                nextData: args
+            }).catch((err) => {
+                console.error(
+                    'Failed to refresh instance query after short-name resolve:',
+                    err
+                );
+            });
             return args;
         });
     },

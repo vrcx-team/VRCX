@@ -30,22 +30,41 @@
                             </template>
 
                             <template v-else-if="item.row.type === 'group-item'">
-                                <div class="x-friend-item" @click="showGroupDialog(item.row.ownerId)">
-                                    <template v-if="item.row.isVisible">
-                                        <div class="avatar">
-                                            <img :src="getSmallGroupIconUrl(item.row.iconUrl)" loading="lazy" />
+                                <ContextMenu>
+                                    <ContextMenuTrigger as-child>
+                                        <div class="x-friend-item" @click="showGroupDialog(item.row.ownerId)">
+                                            <template v-if="item.row.isVisible">
+                                                <div class="avatar">
+                                                    <img :src="getSmallGroupIconUrl(item.row.iconUrl)" loading="lazy" />
+                                                </div>
+                                                <div class="detail">
+                                                    <span class="name">
+                                                        <span v-text="item.row.name"></span>
+                                                        <span class="ml-1.5 font-normal">
+                                                            ({{ item.row.userCount }}/{{ item.row.capacity }})
+                                                        </span>
+                                                    </span>
+                                                    <Location
+                                                        class="text-xs"
+                                                        :location="item.row.location"
+                                                        :link="false" />
+                                                </div>
+                                            </template>
                                         </div>
-                                        <div class="detail">
-                                            <span class="name">
-                                                <span v-text="item.row.name"></span>
-                                                <span class="ml-1.5 font-normal">
-                                                    ({{ item.row.userCount }}/{{ item.row.capacity }})
-                                                </span>
-                                            </span>
-                                            <Location class="text-xs" :location="item.row.location" :link="false" />
-                                        </div>
-                                    </template>
-                                </div>
+                                    </ContextMenuTrigger>
+                                    <ContextMenuContent>
+                                        <ContextMenuItem
+                                            :disabled="!checkCanInviteSelf(item.row.location)"
+                                            @click="groupInstanceLaunch(item.row.location)">
+                                            {{ t('dialog.user.info.launch_invite_tooltip') }}
+                                        </ContextMenuItem>
+                                        <ContextMenuItem
+                                            :disabled="!checkCanInviteSelf(item.row.location)"
+                                            @click="groupInstanceSelfInvite(item.row.location)">
+                                            {{ t('dialog.user.info.self_invite_tooltip') }}
+                                        </ContextMenuItem>
+                                    </ContextMenuContent>
+                                </ContextMenu>
                             </template>
                         </div>
                     </template>
@@ -60,14 +79,27 @@
     import { computed, nextTick, onMounted, ref, watch } from 'vue';
     import { ChevronDown } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
+    import { useI18n } from 'vue-i18n';
     import { useVirtualizer } from '@tanstack/vue-virtual';
 
-    import { useAppearanceSettingsStore, useGroupStore } from '../../../stores';
-    import { convertFileUrlToImageUrl } from '../../../shared/utils';
+    import {
+        ContextMenu,
+        ContextMenuContent,
+        ContextMenuItem,
+        ContextMenuTrigger
+    } from '../../../components/ui/context-menu';
+    import { buildGroupHeaderRow, buildGroupItemRow, estimateGroupRowSize, getGroupId } from '../groupsSidebarUtils';
+    import { checkCanInviteSelf, convertFileUrlToImageUrl, parseLocation } from '../../../shared/utils';
+    import { useAppearanceSettingsStore, useGroupStore, useLaunchStore } from '../../../stores';
+    import { instanceRequest } from '../../../api';
 
     import BackToTop from '../../../components/BackToTop.vue';
     import Location from '../../../components/Location.vue';
 
+    const { t } = useI18n();
+
+    const launchStore = useLaunchStore();
     const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
     const { showGroupDialog, sortGroupInstancesByInGame } = useGroupStore();
     const { groupInstances } = storeToRefs(useGroupStore());
@@ -98,50 +130,27 @@
         return Array.from(groupMap.values()).sort(sortGroupInstancesByInGame);
     });
 
-    const buildGroupHeaderRow = (group, index) => ({
-        type: 'group-header',
-        key: `group-header:${getGroupId(group)}`,
-        groupId: getGroupId(group),
-        label: group[0]?.group?.name ?? '',
-        count: group.length,
-        isCollapsed: Boolean(groupInstancesCfg.value[getGroupId(group)]?.isCollapsed),
-        headerPaddingTop: index === 0 ? '0px' : '10px'
-    });
+    const buildGroupHeaderRowLocal = (group, index) => buildGroupHeaderRow(group, index, groupInstancesCfg.value);
 
-    const buildGroupItemRow = (ref, index, groupId) => ({
-        type: 'group-item',
-        key: `group-item:${groupId}:${ref?.instance?.id ?? index}`,
-        ownerId: ref?.instance?.ownerId ?? '',
-        iconUrl: ref?.group?.iconUrl ?? '',
-        name: ref?.group?.name ?? '',
-        userCount: ref?.instance?.userCount ?? 0,
-        capacity: ref?.instance?.capacity ?? 0,
-        location: ref?.instance?.location ?? '',
-        isVisible: Boolean(isAgeGatedInstancesVisible.value || !(ref?.ageGate || ref?.location?.includes('~ageGate')))
-    });
+    const buildGroupItemRowLocal = (ref, index, groupId) =>
+        buildGroupItemRow(ref, index, groupId, isAgeGatedInstancesVisible.value);
 
     const virtualRows = computed(() => {
         const rows = [];
         groupedGroupInstances.value.forEach((group, index) => {
             if (!group?.length) return;
             const groupId = getGroupId(group);
-            rows.push(buildGroupHeaderRow(group, index));
+            rows.push(buildGroupHeaderRowLocal(group, index));
             if (!groupInstancesCfg.value[groupId]?.isCollapsed) {
                 group.forEach((ref, idx) => {
-                    rows.push(buildGroupItemRow(ref, idx, groupId));
+                    rows.push(buildGroupItemRowLocal(ref, idx, groupId));
                 });
             }
         });
         return rows;
     });
 
-    const estimateRowSize = (row) => {
-        if (!row) return 44;
-        if (row.type === 'group-header') {
-            return 30;
-        }
-        return 52;
-    };
+    const estimateRowSize = (row) => estimateGroupRowSize(row);
 
     const virtualizer = useVirtualizer(
         computed(() => ({
@@ -170,16 +179,45 @@
         transform: `translateY(${item.virtualItem.start}px)`
     });
 
+    /**
+     *
+     * @param url
+     */
     function getSmallGroupIconUrl(url) {
         return convertFileUrlToImageUrl(url);
     }
 
+    /**
+     *
+     * @param groupId
+     */
     function toggleGroupSidebarCollapse(groupId) {
         groupInstancesCfg.value[groupId].isCollapsed = !groupInstancesCfg.value[groupId].isCollapsed;
     }
 
-    function getGroupId(group) {
-        return group[0]?.group?.groupId || '';
+    /**
+     * @param {string} location - Instance location tag
+     */
+    function groupInstanceLaunch(location) {
+        if (!location) return;
+        launchStore.showLaunchDialog(location);
+    }
+
+    /**
+     * @param {string} location - Instance location tag
+     */
+    function groupInstanceSelfInvite(location) {
+        if (!location) return;
+        const L = parseLocation(location);
+        if (!L.isRealInstance) return;
+        instanceRequest
+            .selfInvite({
+                instanceId: L.instanceId,
+                worldId: L.worldId
+            })
+            .then(() => {
+                toast.success(t('message.invite.self_sent'));
+            });
     }
 
     onMounted(() => {

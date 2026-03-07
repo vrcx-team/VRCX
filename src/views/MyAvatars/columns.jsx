@@ -115,7 +115,7 @@ export function getColumns({
                 const ref = row.original;
                 return (
                     <span
-                        class="cursor-pointer font-medium"
+                        class="cursor-pointer"
                         onClick={(e) => {
                             e.stopPropagation();
                             onShowAvatarDialog(ref.id);
@@ -123,42 +123,6 @@ export function getColumns({
                     >
                         {ref.name}
                     </span>
-                );
-            }
-        },
-        {
-            id: 'platforms',
-            header: () => t('dialog.avatar.info.platform'),
-            size: 120,
-            enableSorting: false,
-            meta: { label: () => t('dialog.avatar.info.platform') },
-            cell: ({ row }) => {
-                const ref = row.original;
-                const platforms = getAvailablePlatforms(ref.unityPackages);
-                return (
-                    <div class="flex items-center gap-1">
-                        {platforms.isPC && (
-                            <Badge class="x-tag-platform-pc" variant="outline">
-                                <Monitor class="h-3.5 w-3.5" />
-                            </Badge>
-                        )}
-                        {platforms.isQuest && (
-                            <Badge
-                                class="x-tag-platform-quest"
-                                variant="outline"
-                            >
-                                <Smartphone class="h-3.5 w-3.5" />
-                            </Badge>
-                        )}
-                        {platforms.isIos && (
-                            <Badge
-                                class="text-[#8e8e93] border-[#8e8e93]"
-                                variant="outline"
-                            >
-                                <Apple class="h-3.5 w-3.5" />
-                            </Badge>
-                        )}
-                    </div>
                 );
             }
         },
@@ -203,11 +167,47 @@ export function getColumns({
             }
         },
         {
-            id: 'releaseStatus',
-            accessorKey: 'releaseStatus',
-            header: () => t('dialog.avatar.tags.public'),
+            id: 'platforms',
+            header: () => t('dialog.avatar.info.platform'),
             size: 120,
-            meta: { label: () => t('dialog.avatar.tags.public') },
+            enableSorting: false,
+            meta: { label: () => t('dialog.avatar.info.platform') },
+            cell: ({ row }) => {
+                const ref = row.original;
+                const platforms = getAvailablePlatforms(ref.unityPackages);
+                return (
+                    <div class="flex items-center gap-1">
+                        {platforms.isPC && (
+                            <Badge class="x-tag-platform-pc" variant="outline">
+                                <Monitor class="h-3.5 w-3.5" />
+                            </Badge>
+                        )}
+                        {platforms.isQuest && (
+                            <Badge
+                                class="x-tag-platform-quest"
+                                variant="outline"
+                            >
+                                <Smartphone class="h-3.5 w-3.5" />
+                            </Badge>
+                        )}
+                        {platforms.isIos && (
+                            <Badge
+                                class="text-[#8e8e93] border-[#8e8e93]"
+                                variant="outline"
+                            >
+                                <Apple class="h-3.5 w-3.5" />
+                            </Badge>
+                        )}
+                    </div>
+                );
+            }
+        },
+        {
+            id: 'visibility',
+            accessorKey: 'releaseStatus',
+            header: () => t('dialog.avatar.info.visibility'),
+            size: 120,
+            meta: { label: () => t('dialog.avatar.info.visibility') },
             cell: ({ row }) => {
                 const ref = row.original;
                 return (
@@ -235,11 +235,7 @@ export function getColumns({
             },
             cell: ({ row }) => {
                 const time = row.original?.$timeSpent;
-                return time ? (
-                    <span class=" text-sm">{timeToText(time)}</span>
-                ) : (
-                    <span class=" text-sm">-</span>
-                );
+                return time ? <span>{timeToText(time)}</span> : <span>-</span>;
             }
         },
         {
@@ -256,9 +252,7 @@ export function getColumns({
                 class: 'text-right',
                 label: () => t('dialog.avatar.info.version')
             },
-            cell: ({ row }) => (
-                <span class=" text-sm">{row.original.version ?? '-'}</span>
-            )
+            cell: ({ row }) => <span>{row.original.version ?? '-'}</span>
         },
         {
             id: 'pcPerf',
@@ -275,7 +269,7 @@ export function getColumns({
                 const perf = getPlatformInfo(row.original.unityPackages)?.pc
                     ?.performanceRating;
                 return perf ? (
-                    <span class="text-sm">{perf}</span>
+                    <span>{perf}</span>
                 ) : (
                     <span class="text-muted-foreground">-</span>
                 );
@@ -297,7 +291,7 @@ export function getColumns({
                 const perf = getPlatformInfo(row.original.unityPackages)
                     ?.android?.performanceRating;
                 return perf ? (
-                    <span class="text-sm">{perf}</span>
+                    <span>{perf}</span>
                 ) : (
                     <span class="text-muted-foreground">-</span>
                 );
@@ -319,7 +313,7 @@ export function getColumns({
                 const perf = getPlatformInfo(row.original.unityPackages)?.ios
                     ?.performanceRating;
                 return perf ? (
-                    <span class="text-sm">{perf}</span>
+                    <span>{perf}</span>
                 ) : (
                     <span class="text-muted-foreground">-</span>
                 );
@@ -338,11 +332,7 @@ export function getColumns({
             meta: { label: () => t('dialog.avatar.info.last_updated') },
             cell: ({ row }) => {
                 const ref = row.original;
-                return (
-                    <span class=" text-sm">
-                        {formatDateFilter(ref.updated_at, 'long')}
-                    </span>
-                );
+                return <span>{formatDateFilter(ref.updated_at, 'long')}</span>;
             }
         },
         {
@@ -358,11 +348,7 @@ export function getColumns({
             meta: { label: () => t('dialog.avatar.info.created_at') },
             cell: ({ row }) => {
                 const ref = row.original;
-                return (
-                    <span class=" text-sm">
-                        {formatDateFilter(ref.created_at, 'long')}
-                    </span>
-                );
+                return <span>{formatDateFilter(ref.created_at, 'long')}</span>;
             }
         },
         {

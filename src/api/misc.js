@@ -1,5 +1,11 @@
 import { request } from '../service/request';
 import { useUserStore } from '../stores';
+import {
+    entityQueryPolicies,
+    fetchWithEntityPolicy,
+    queryClient,
+    queryKeys
+} from '../query';
 
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
@@ -16,6 +22,17 @@ const miscReq = {
             };
             return args;
         });
+    },
+
+    getCachedFile(params) {
+        return fetchWithEntityPolicy({
+            queryKey: queryKeys.file(params.fileId),
+            policy: entityQueryPolicies.fileObject,
+            queryFn: () => miscReq.getFile(params)
+        }).then(({ data, cache }) => ({
+            ...data,
+            cache
+        }));
     },
 
     saveNote(params) {
@@ -192,6 +209,10 @@ const miscReq = {
                 json,
                 fileId
             };
+            queryClient.removeQueries({
+                queryKey: queryKeys.file(fileId),
+                exact: true
+            });
             return args;
         });
     },

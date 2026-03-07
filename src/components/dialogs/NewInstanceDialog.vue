@@ -546,6 +546,7 @@
     import { useI18n } from 'vue-i18n';
 
     import {
+        buildLegacyInstanceTag,
         copyToClipboard,
         getLaunchURL,
         hasGroupPermission,
@@ -690,6 +691,10 @@
         return map;
     });
 
+    /**
+     *
+     * @param userId
+     */
     function resolveUserDisplayName(userId) {
         if (currentUser.value?.id && currentUser.value.id === userId) {
             return currentUser.value.displayName;
@@ -742,6 +747,10 @@
         return groups;
     });
 
+    /**
+     *
+     * @param value
+     */
     function handleRoleIdsChange(value) {
         const next = Array.isArray(value) ? value.map((v) => String(v ?? '')).filter(Boolean) : [];
         newInstanceDialog.value.roleIds = next;
@@ -757,10 +766,17 @@
 
     initializeNewInstanceDialog();
 
+    /**
+     *
+     */
     function closeInviteDialog() {
         inviteDialog.value.visible = false;
     }
 
+    /**
+     *
+     * @param tag
+     */
     function showInviteDialog(tag) {
         if (!isRealInstance(tag)) {
             return;
@@ -788,11 +804,20 @@
             });
     }
 
+    /**
+     *
+     * @param location
+     * @param shortName
+     */
     function handleAttachGame(location, shortName) {
         tryOpenInstanceInVrc(location, shortName);
         closeInviteDialog();
     }
 
+    /**
+     *
+     * @param tag
+     */
     async function initNewInstanceDialog(tag) {
         if (!isRealInstance(tag)) {
             return;
@@ -823,6 +848,9 @@
         updateNewInstanceDialog();
         D.visible = true;
     }
+    /**
+     *
+     */
     function initializeNewInstanceDialog() {
         configRepository
             .getBool('instanceDialogQueueEnabled', true)
@@ -860,6 +888,9 @@
             .getString('instanceDialogDisplayName', '')
             .then((value) => (newInstanceDialog.value.displayName = value));
     }
+    /**
+     *
+     */
     function saveNewInstanceDialog() {
         const {
             accessType,
@@ -883,6 +914,10 @@
         configRepository.setBool('instanceDialogAgeGate', ageGate);
         configRepository.setString('instanceDialogDisplayName', displayName);
     }
+    /**
+     *
+     * @param tabName
+     */
     function newInstanceTabClick(tabName) {
         if (tabName === 'Normal') {
             buildInstance();
@@ -890,6 +925,10 @@
             buildLegacyInstance();
         }
     }
+    /**
+     *
+     * @param noChanges
+     */
     function updateNewInstanceDialog(noChanges) {
         const D = newInstanceDialog.value;
         if (D.instanceId) {
@@ -905,6 +944,10 @@
         }
         D.url = getLaunchURL(L);
     }
+    /**
+     *
+     * @param location
+     */
     function selfInvite(location) {
         const L = parseLocation(location);
         if (!L.isRealInstance) {
@@ -920,6 +963,9 @@
                 return args;
             });
     }
+    /**
+     *
+     */
     async function handleCreateNewInstance() {
         const args = await createNewInstance(newInstanceDialog.value.worldId, newInstanceDialog.value);
 
@@ -931,6 +977,9 @@
             updateNewInstanceDialog();
         }
     }
+    /**
+     *
+     */
     function buildInstance() {
         const D = newInstanceDialog.value;
         D.instanceCreated = false;
@@ -965,56 +1014,37 @@
         }
         saveNewInstanceDialog();
     }
+    /**
+     *
+     */
     function buildLegacyInstance() {
         const D = newInstanceDialog.value;
         D.instanceCreated = false;
         D.shortName = '';
         D.secureOrShortName = '';
-        const tags = [];
         if (D.instanceName) {
             D.instanceName = D.instanceName.replace(/[^A-Za-z0-9]/g, '');
-            tags.push(D.instanceName);
-        } else {
-            const randValue = (99999 * Math.random() + 1).toFixed(0);
-            tags.push(String(randValue).padStart(5, '0'));
         }
         if (!D.userId) {
             D.userId = currentUser.value.id;
         }
-        const userId = D.userId;
-        if (D.accessType !== 'public') {
-            if (D.accessType === 'friends+') {
-                tags.push(`~hidden(${userId})`);
-            } else if (D.accessType === 'friends') {
-                tags.push(`~friends(${userId})`);
-            } else if (D.accessType === 'group') {
-                tags.push(`~group(${D.groupId})`);
-                tags.push(`~groupAccessType(${D.groupAccessType})`);
-            } else {
-                tags.push(`~private(${userId})`);
-            }
-            if (D.accessType === 'invite+') {
-                tags.push('~canRequestInvite');
-            }
-        }
-        if (D.accessType === 'group' && D.ageGate) {
-            tags.push('~ageGate');
-        }
-        if (D.region === 'US West') {
-            tags.push(`~region(us)`);
-        } else if (D.region === 'US East') {
-            tags.push(`~region(use)`);
-        } else if (D.region === 'Europe') {
-            tags.push(`~region(eu)`);
-        } else if (D.region === 'Japan') {
-            tags.push(`~region(jp)`);
-        }
         if (D.accessType !== 'invite' && D.accessType !== 'friends') {
             D.strict = false;
         }
-        if (D.strict) {
-            tags.push('~strict');
-        }
+
+        const instanceName = D.instanceName || String((99999 * Math.random() + 1).toFixed(0)).padStart(5, '0');
+
+        D.instanceId = buildLegacyInstanceTag({
+            instanceName,
+            userId: D.userId,
+            accessType: D.accessType,
+            groupId: D.groupId,
+            groupAccessType: D.groupAccessType,
+            region: D.region,
+            ageGate: D.ageGate,
+            strict: D.strict
+        });
+
         if (D.groupId && D.groupId !== D.lastSelectedGroupId) {
             D.roleIds = [];
             const ref = cachedGroups.get(D.groupId);
@@ -1038,10 +1068,13 @@
             D.groupRef = {};
             D.lastSelectedGroupId = '';
         }
-        D.instanceId = tags.join('');
         updateNewInstanceDialog(false);
         saveNewInstanceDialog();
     }
+    /**
+     *
+     * @param location
+     */
     async function copyInstanceUrl(location) {
         const L = parseLocation(location);
         const args = await instanceRequest.getInstanceShortName({

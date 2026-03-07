@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col data-table">
+    <div class="flex flex-col min-w-0 data-table">
         <div v-if="$slots.toolbar" class="mb-2">
             <slot name="toolbar"></slot>
         </div>
@@ -10,12 +10,12 @@
                     <colgroup>
                         <col v-for="col in table.getVisibleLeafColumns()" :key="col.id" :style="getColStyle(col)" />
                     </colgroup>
-                    <ContextMenu v-if="enableColumnVisibility">
+                    <ContextMenu v-if="showHeaderContextMenu">
                         <ContextMenuTrigger as-child>
                             <TableHeader>
                                 <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-                                    <template v-if="enableColumnReorder">
-                                        <DragDropProvider @dragEnd="onHeaderDragEnd">
+                                    <template v-if="effectiveColumnReorder">
+                                        <DragDropProvider :key="dndContextKey" @dragEnd="onHeaderDragEnd">
                                             <template v-for="(header, hIdx) in headerGroup.headers" :key="header.id">
                                                 <SortableTableHead
                                                     v-if="isReorderable(header)"
@@ -76,21 +76,60 @@
                                 @update:model-value="col.toggleVisibility(!!$event)">
                                 {{ resolveHeaderLabel(col) }}
                             </ContextMenuCheckboxItem>
+                            <template v-if="tcColumnOrderLocked != null">
+                                <ContextMenuSeparator />
+                                <ContextMenuCheckboxItem
+                                    :model-value="tcColumnOrderLocked"
+                                    @update:model-value="table.options.meta.columnOrderLocked.value = $event">
+                                    {{ t('table.header_menu.lock_column_order') }}
+                                </ContextMenuCheckboxItem>
+                            </template>
+                            <template v-if="tcResetAll">
+                                <ContextMenuSeparator />
+                                <ContextMenuItem inset @select="tcResetAll">
+                                    {{ t('table.header_menu.reset_all') }}
+                                </ContextMenuItem>
+                            </template>
                         </ContextMenuContent>
                     </ContextMenu>
-                    <TableHeader v-else>
-                        <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-                            <template v-if="enableColumnReorder">
-                                <DragDropProvider @dragEnd="onHeaderDragEnd">
-                                    <template v-for="(header, hIdx) in headerGroup.headers" :key="header.id">
-                                        <SortableTableHead
-                                            v-if="isReorderable(header)"
-                                            :header="header"
-                                            :index="reorderableIndex(headerGroup.headers, hIdx)"
-                                            :header-class="getHeaderClass(header)"
-                                            :pinned-style="getPinnedStyle(header.column)" />
+                    <ContextMenu v-else-if="showHeaderContextMenuNoVisibility">
+                        <ContextMenuTrigger as-child>
+                            <TableHeader>
+                                <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
+                                    <template v-if="effectiveColumnReorder">
+                                        <DragDropProvider :key="dndContextKey" @dragEnd="onHeaderDragEnd">
+                                            <template v-for="(header, hIdx) in headerGroup.headers" :key="header.id">
+                                                <SortableTableHead
+                                                    v-if="isReorderable(header)"
+                                                    :header="header"
+                                                    :index="reorderableIndex(headerGroup.headers, hIdx)"
+                                                    :header-class="getHeaderClass(header)"
+                                                    :pinned-style="getPinnedStyle(header.column)" />
+                                                <TableHead
+                                                    v-else
+                                                    :class="getHeaderClass(header)"
+                                                    :style="getPinnedStyle(header.column)">
+                                                    <template v-if="!header.isPlaceholder">
+                                                        <FlexRender
+                                                            :render="header.column.columnDef.header"
+                                                            :props="header.getContext()" />
+                                                        <div
+                                                            v-if="header.column.getCanResize?.()"
+                                                            class="absolute right-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
+                                                            @mousedown.stop="header.getResizeHandler?.()($event)"
+                                                            @touchstart.stop="header.getResizeHandler?.()($event)">
+                                                            <div
+                                                                class="absolute right-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
+                                                        </div>
+                                                    </template>
+                                                </TableHead>
+                                            </template>
+                                        </DragDropProvider>
+                                    </template>
+                                    <template v-else>
                                         <TableHead
-                                            v-else
+                                            v-for="header in headerGroup.headers"
+                                            :key="header.id"
                                             :class="getHeaderClass(header)"
                                             :style="getPinnedStyle(header.column)">
                                             <template v-if="!header.isPlaceholder">
@@ -108,29 +147,44 @@
                                             </template>
                                         </TableHead>
                                     </template>
-                                </DragDropProvider>
+                                </TableRow>
+                            </TableHeader>
+                        </ContextMenuTrigger>
+                        <ContextMenuContent class="w-48">
+                            <template v-if="tcColumnOrderLocked != null">
+                                <ContextMenuCheckboxItem
+                                    :model-value="tcColumnOrderLocked"
+                                    @update:model-value="table.options.meta.columnOrderLocked.value = $event">
+                                    {{ t('table.header_menu.lock_column_order') }}
+                                </ContextMenuCheckboxItem>
                             </template>
-                            <template v-else>
-                                <TableHead
-                                    v-for="header in headerGroup.headers"
-                                    :key="header.id"
-                                    :class="getHeaderClass(header)"
-                                    :style="getPinnedStyle(header.column)">
-                                    <template v-if="!header.isPlaceholder">
-                                        <FlexRender
-                                            :render="header.column.columnDef.header"
-                                            :props="header.getContext()" />
+                            <template v-if="tcResetAll">
+                                <ContextMenuSeparator v-if="tcColumnOrderLocked != null" />
+                                <ContextMenuItem inset @select="tcResetAll">
+                                    {{ t('table.header_menu.reset_all') }}
+                                </ContextMenuItem>
+                            </template>
+                        </ContextMenuContent>
+                    </ContextMenu>
+                    <TableHeader v-else>
+                        <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
+                            <TableHead
+                                v-for="header in headerGroup.headers"
+                                :key="header.id"
+                                :class="getHeaderClass(header)"
+                                :style="getPinnedStyle(header.column)">
+                                <template v-if="!header.isPlaceholder">
+                                    <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
+                                    <div
+                                        v-if="header.column.getCanResize?.()"
+                                        class="absolute right-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
+                                        @mousedown.stop="header.getResizeHandler?.()($event)"
+                                        @touchstart.stop="header.getResizeHandler?.()($event)">
                                         <div
-                                            v-if="header.column.getCanResize?.()"
-                                            class="absolute right-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
-                                            @mousedown.stop="header.getResizeHandler?.()($event)"
-                                            @touchstart.stop="header.getResizeHandler?.()($event)">
-                                            <div
-                                                class="absolute right-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
-                                        </div>
-                                    </template>
-                                </TableHead>
-                            </template>
+                                            class="absolute right-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
+                                    </div>
+                                </template>
+                            </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -255,6 +309,14 @@
     import { useI18n } from 'vue-i18n';
 
     import {
+        ContextMenu,
+        ContextMenuCheckboxItem,
+        ContextMenuContent,
+        ContextMenuItem,
+        ContextMenuSeparator,
+        ContextMenuTrigger
+    } from '../context-menu';
+    import {
         Pagination,
         PaginationContent,
         PaginationEllipsis,
@@ -271,7 +333,6 @@
         isSpacer,
         resolveHeaderLabel
     } from './dataTableHelpers.js';
-    import { ContextMenu, ContextMenuCheckboxItem, ContextMenuContent, ContextMenuTrigger } from '../context-menu';
 
     import DataTableEmpty from './DataTableEmpty.vue';
     import SortableTableHead from './SortableTableHead.vue';
@@ -340,6 +401,27 @@
 
     const { t } = useI18n();
     const tableScrollRef = ref(null);
+
+    const tableMeta = computed(() => props.table?.options?.meta ?? {});
+
+    const tcResetAll = computed(() => tableMeta.value.resetAll ?? null);
+    const tcColumnOrderLocked = computed(() => {
+        const val = tableMeta.value.columnOrderLocked;
+        if (val == null) return null;
+        return typeof val === 'object' && 'value' in val ? val.value : val;
+    });
+
+    const showHeaderContextMenu = computed(
+        () => props.enableColumnVisibility || tcResetAll.value || tcColumnOrderLocked.value != null
+    );
+
+    const showHeaderContextMenuNoVisibility = computed(
+        () => !props.enableColumnVisibility && (tcResetAll.value || tcColumnOrderLocked.value != null)
+    );
+
+    const effectiveColumnReorder = computed(() => props.enableColumnReorder && tcColumnOrderLocked.value !== true);
+
+    const dndContextKey = computed(() => (props.table?.getVisibleLeafColumns?.() ?? []).map((c) => c.id).join(','));
 
     const emptyType = computed(() => {
         const totalRows = props.table?.getCoreRowModel?.().rows?.length ?? 0;
@@ -427,6 +509,7 @@
         const reorderableIds = allColumns
             .filter((col) => {
                 if (isSpacer(col)) return false;
+                if (!col.columnDef?.meta?.label) return false;
                 if (getPinnedState(col)) return false;
                 if (col.columnDef?.meta?.disableReorder) return false;
                 return true;
@@ -502,6 +585,19 @@
         get: () => props.table.getState?.().pagination?.pageSize ?? 0,
         set: (size) => handlePageSizeChange(size)
     });
+
+    // When the current pageSize is not in the available pageSizes list
+    watch(
+        [pageSizeProxy, () => props.pageSizes],
+        ([current, sizes]) => {
+            if (!sizes?.length || sizes.includes(current)) {
+                return;
+            }
+            const nearest = sizes.reduce((prev, s) => (Math.abs(s - current) < Math.abs(prev - current) ? s : prev));
+            handlePageSizeChange(nearest);
+        },
+        { immediate: true }
+    );
 
     const pageSizeValue = computed({
         get: () => String(pageSizeProxy.value),

@@ -1,128 +1,155 @@
 <template>
     <Sidebar side="left" variant="sidebar" collapsible="icon">
-        <SidebarContent class="pt-2">
-            <SidebarGroup>
-                <SidebarGroupContent>
-                    <SidebarMenu v-if="navLayoutReady">
-                        <template v-for="item in menuItems" :key="item.index">
-                            <SidebarMenuItem v-if="!item.children?.length">
-                                <SidebarMenuButton
-                                    :is-active="activeMenuIndex === item.index"
-                                    :tooltip="item.titleIsCustom ? item.title : t(item.title || '')"
-                                    @click="handleMenuItemClick(item)">
-                                    <i
-                                        :class="item.icon"
-                                        class="inline-flex size-6 items-center justify-center text-lg relative">
-                                        <span
-                                            v-if="isNavItemNotified(item)"
-                                            class="notify-dot-not-collapsed"
-                                            :class="{ '-right-1!': isCollapsed }"
-                                            aria-hidden="true"></span>
-                                    </i>
-                                    <span v-show="!isCollapsed">{{
-                                        item.titleIsCustom ? item.title : t(item.title || '')
-                                    }}</span>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-
-                            <SidebarMenuItem v-else>
-                                <DropdownMenu
-                                    v-if="isCollapsed"
-                                    :open="collapsedDropdownOpenId === item.index"
-                                    @update:open="(value) => handleCollapsedDropdownOpenChange(item.index, value)">
-                                    <DropdownMenuTrigger as-child>
+        <ContextMenu>
+            <ContextMenuTrigger as-child>
+                <SidebarContent class="pt-2" style="container-type: inline-size">
+                    <SidebarGroup>
+                        <SidebarGroupContent>
+                            <SidebarMenu v-if="navLayoutReady">
+                                <template v-for="item in menuItems" :key="item.index">
+                                    <SidebarMenuItem v-if="!item.children?.length">
                                         <SidebarMenuButton
-                                            :is-active="item.children?.some((e) => e.index === activeMenuIndex)"
-                                            :tooltip="item.titleIsCustom ? item.title : t(item.title || '')">
+                                            :is-active="activeMenuIndex === item.index"
+                                            :tooltip="getItemTooltip(item)"
+                                            @click="handleMenuItemClick(item)">
                                             <i
                                                 :class="item.icon"
-                                                class="inline-flex size-6 items-center justify-center text-lg relative"
-                                                ><span
+                                                class="inline-flex size-6 items-center justify-center text-lg relative">
+                                                <span
                                                     v-if="isNavItemNotified(item)"
-                                                    class="notify-dot -right-1!"
-                                                    aria-hidden="true"></span
-                                            ></i>
+                                                    class="notify-dot-not-collapsed"
+                                                    :class="{ '-right-1!': isCollapsed }"
+                                                    aria-hidden="true"></span>
+                                            </i>
                                             <span v-show="!isCollapsed">{{
                                                 item.titleIsCustom ? item.title : t(item.title || '')
                                             }}</span>
+                                            <span
+                                                v-if="item.action === 'direct-access' && !isCollapsed"
+                                                class="nav-shortcut-hint ml-auto inline-flex items-center gap-0.5">
+                                                <Kbd>{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
+                                                <Kbd>D</Kbd>
+                                            </span>
                                         </SidebarMenuButton>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent side="right" align="start" class="w-56">
-                                        <DropdownMenuItem
-                                            v-for="entry in item.children"
-                                            :key="entry.index"
-                                            @select="(event) => handleCollapsedSubmenuSelect(event, entry, item.index)">
-                                            <i
-                                                v-if="entry.icon"
-                                                :class="entry.icon"
-                                                class="inline-flex size-4 items-center justify-center text-base relative"
-                                                ><span
-                                                    v-if="isEntryNotified(entry)"
-                                                    class="notify-dot -right-1! top-0.5!"
-                                                    aria-hidden="true"></span
-                                            ></i>
-                                            <span>{{ t(entry.label) }}</span>
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                    </SidebarMenuItem>
 
-                                <Collapsible
-                                    v-else
-                                    class="group/collapsible"
-                                    :default-open="
-                                        activeMenuIndex && item.children?.some((e) => e.index === activeMenuIndex)
-                                    ">
-                                    <template #default="{ open }">
-                                        <CollapsibleTrigger as-child>
-                                            <SidebarMenuButton
-                                                :is-active="item.children?.some((e) => e.index === activeMenuIndex)"
-                                                :tooltip="item.titleIsCustom ? item.title : t(item.title || '')">
-                                                <i
-                                                    :class="item.icon"
-                                                    class="inline-flex size-6 items-center justify-center text-lg relative"
-                                                    ><span
-                                                        v-if="isNavItemNotified(item)"
-                                                        class="notify-dot"
-                                                        aria-hidden="true"></span
-                                                ></i>
-                                                <span v-show="!isCollapsed">{{
-                                                    item.titleIsCustom ? item.title : t(item.title || '')
-                                                }}</span>
+                                    <SidebarMenuItem v-else>
+                                        <DropdownMenu
+                                            v-if="isCollapsed"
+                                            :open="collapsedDropdownOpenId === item.index"
+                                            @update:open="
+                                                (value) => handleCollapsedDropdownOpenChange(item.index, value)
+                                            ">
+                                            <DropdownMenuTrigger as-child>
+                                                <SidebarMenuButton
+                                                    :is-active="item.children?.some((e) => e.index === activeMenuIndex)"
+                                                    :tooltip="item.titleIsCustom ? item.title : t(item.title || '')">
+                                                    <i
+                                                        :class="item.icon"
+                                                        class="inline-flex size-6 items-center justify-center text-lg relative"
+                                                        ><span
+                                                            v-if="isNavItemNotified(item)"
+                                                            class="notify-dot -right-1!"
+                                                            aria-hidden="true"></span
+                                                    ></i>
+                                                    <span v-show="!isCollapsed">{{
+                                                        item.titleIsCustom ? item.title : t(item.title || '')
+                                                    }}</span>
+                                                </SidebarMenuButton>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent side="right" align="start" class="w-56">
+                                                <DropdownMenuItem
+                                                    v-for="entry in item.children"
+                                                    :key="entry.index"
+                                                    @select="
+                                                        (event) =>
+                                                            handleCollapsedSubmenuSelect(event, entry, item.index)
+                                                    ">
+                                                    <i
+                                                        v-if="entry.icon"
+                                                        :class="entry.icon"
+                                                        class="inline-flex size-4 items-center justify-center text-base relative"
+                                                        ><span
+                                                            v-if="isEntryNotified(entry)"
+                                                            class="notify-dot -right-1! top-0.5!"
+                                                            aria-hidden="true"></span
+                                                    ></i>
+                                                    <span>{{ t(entry.label) }}</span>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
 
-                                                <ChevronRight
-                                                    v-show="!isCollapsed"
-                                                    class="ml-auto transition-transform"
-                                                    :class="open ? 'rotate-90' : ''" />
-                                            </SidebarMenuButton>
-                                        </CollapsibleTrigger>
-                                        <CollapsibleContent>
-                                            <SidebarMenuSub>
-                                                <SidebarMenuSubItem v-for="entry in item.children" :key="entry.index">
-                                                    <SidebarMenuSubButton
-                                                        :is-active="activeMenuIndex === entry.index"
-                                                        @click="handleSubmenuClick(entry, item.index)">
+                                        <Collapsible
+                                            v-else
+                                            class="group/collapsible"
+                                            :default-open="
+                                                activeMenuIndex &&
+                                                item.children?.some((e) => e.index === activeMenuIndex)
+                                            ">
+                                            <template #default="{ open }">
+                                                <CollapsibleTrigger as-child>
+                                                    <SidebarMenuButton
+                                                        :is-active="
+                                                            item.children?.some((e) => e.index === activeMenuIndex)
+                                                        "
+                                                        :tooltip="
+                                                            item.titleIsCustom ? item.title : t(item.title || '')
+                                                        ">
                                                         <i
-                                                            v-if="entry.icon"
-                                                            :class="entry.icon"
-                                                            class="inline-flex size-5 items-center justify-center text-base relative"
+                                                            :class="item.icon"
+                                                            class="inline-flex size-6 items-center justify-center text-lg relative"
                                                             ><span
-                                                                v-if="isEntryNotified(entry)"
-                                                                class="notify-dot -right-0.5!"
+                                                                v-if="isNavItemNotified(item)"
+                                                                class="notify-dot"
                                                                 aria-hidden="true"></span
                                                         ></i>
-                                                        <span>{{ t(entry.label) }}</span>
-                                                    </SidebarMenuSubButton>
-                                                </SidebarMenuSubItem>
-                                            </SidebarMenuSub>
-                                        </CollapsibleContent>
-                                    </template>
-                                </Collapsible>
-                            </SidebarMenuItem>
-                        </template>
-                    </SidebarMenu>
-                </SidebarGroupContent>
-            </SidebarGroup>
-        </SidebarContent>
+                                                        <span v-show="!isCollapsed">{{
+                                                            item.titleIsCustom ? item.title : t(item.title || '')
+                                                        }}</span>
+
+                                                        <ChevronRight
+                                                            v-show="!isCollapsed"
+                                                            class="ml-auto transition-transform"
+                                                            :class="open ? 'rotate-90' : ''" />
+                                                    </SidebarMenuButton>
+                                                </CollapsibleTrigger>
+                                                <CollapsibleContent>
+                                                    <SidebarMenuSub>
+                                                        <SidebarMenuSubItem
+                                                            v-for="entry in item.children"
+                                                            :key="entry.index">
+                                                            <SidebarMenuSubButton
+                                                                :is-active="activeMenuIndex === entry.index"
+                                                                @click="handleSubmenuClick(entry, item.index)">
+                                                                <i
+                                                                    v-if="entry.icon"
+                                                                    :class="entry.icon"
+                                                                    class="inline-flex size-5 items-center justify-center text-base relative"
+                                                                    ><span
+                                                                        v-if="isEntryNotified(entry)"
+                                                                        class="notify-dot -right-0.5!"
+                                                                        aria-hidden="true"></span
+                                                                ></i>
+                                                                <span>{{ t(entry.label) }}</span>
+                                                            </SidebarMenuSubButton>
+                                                        </SidebarMenuSubItem>
+                                                    </SidebarMenuSub>
+                                                </CollapsibleContent>
+                                            </template>
+                                        </Collapsible>
+                                    </SidebarMenuItem>
+                                </template>
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                </SidebarContent>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+                <ContextMenuItem :disabled="!hasNotifications" @click="clearAllNotifications">
+                    {{ t('nav_menu.mark_all_read') }}
+                </ContextMenuItem>
+            </ContextMenuContent>
+        </ContextMenu>
 
         <SidebarFooter class="px-2 py-3">
             <SidebarMenu>
@@ -333,9 +360,11 @@
         DropdownMenuSubTrigger,
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
-    import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
+    import { computed, defineAsyncComponent, h, onMounted, ref, watch } from 'vue';
+    import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
     import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
     import { ChevronRight, Heart } from 'lucide-vue-next';
+    import { Kbd } from '@/components/ui/kbd';
     import { TooltipWrapper } from '@/components/ui/tooltip';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -351,6 +380,7 @@
         useUiStore,
         useVRCXUpdaterStore
     } from '../stores';
+    import { getFirstNavRoute, isEntryNotified, normalizeHiddenKeys, sanitizeLayout } from './navMenuUtils';
     import { THEME_CONFIG, links, navDefinitions } from '../shared/constants';
     import { openExternalLink } from '../shared/utils';
 
@@ -360,6 +390,21 @@
 
     const { t, locale } = useI18n();
     const router = useRouter();
+
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
+    const getItemTooltip = (item) => {
+        const label = item.titleIsCustom ? item.title : t(item.title || '');
+        if (item.action !== 'direct-access') {
+            return label;
+        }
+        return () =>
+            h('span', { class: 'inline-flex items-center gap-1' }, [
+                label,
+                h(Kbd, () => (isMac ? '⌘' : 'Ctrl')),
+                h(Kbd, () => 'D')
+            ]);
+    };
 
     const createDefaultNavLayout = () => [
         { type: 'item', key: 'feed' },
@@ -398,29 +443,14 @@
     ];
 
     const navDefinitionMap = new Map(navDefinitions.map((item) => [item.key, item]));
-    const DEFAULT_FOLDER_ICON = 'ri-folder-line';
-
-    const normalizeHiddenKeys = (hiddenKeys = []) => {
-        if (!Array.isArray(hiddenKeys)) {
-            return [];
-        }
-        const seen = new Set();
-        const normalized = [];
-        hiddenKeys.forEach((key) => {
-            if (!key || seen.has(key) || !navDefinitionMap.has(key)) {
-                return;
-            }
-            seen.add(key);
-            normalized.push(key);
-        });
-        return normalized;
-    };
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
     const { pendingVRCXUpdate, pendingVRCXInstall, appVersion } = storeToRefs(VRCXUpdaterStore);
     const { showVRCXUpdateDialog, showChangeLogDialog } = VRCXUpdaterStore;
     const uiStore = useUiStore();
     const { notifiedMenus } = storeToRefs(uiStore);
+    const { clearAllNotifications } = uiStore;
+    const hasNotifications = computed(() => notifiedMenus.value.length > 0);
     const { directAccessPaste } = useSearchStore();
     const { logout } = useAuthStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -478,7 +508,7 @@
         const currentRouteName = currentRoute?.name;
         const navKey = currentRoute?.meta?.navKey || currentRouteName;
         if (!navKey) {
-            return getFirstNavRoute(navLayout.value) || 'feed';
+            return getFirstNavRouteLocal(navLayout.value) || 'feed';
         }
 
         for (const entry of navLayout.value) {
@@ -490,7 +520,7 @@
             }
         }
 
-        return getFirstNavRoute(navLayout.value) || 'feed';
+        return getFirstNavRouteLocal(navLayout.value) || 'feed';
     });
 
     const version = computed(() => appVersion.value?.split('VRCX ')?.[1] || '-');
@@ -533,90 +563,8 @@
         return `nav-folder-${dayjs().toISOString()}-${Math.random().toString().slice(2, 4)}`;
     };
 
-    const sanitizeLayout = (layout, hiddenKeys = []) => {
-        const usedKeys = new Set();
-        const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys);
-        const hiddenSet = new Set(normalizedHiddenKeys);
-        const normalized = [];
-        const chartsKeys = ['charts-instance', 'charts-mutual'];
-
-        const appendItemEntry = (key, target = normalized) => {
-            if (!key || usedKeys.has(key) || !navDefinitionMap.has(key)) {
-                return;
-            }
-            target.push({ type: 'item', key });
-            usedKeys.add(key);
-        };
-
-        const appendChartsFolder = (target = normalized) => {
-            if (chartsKeys.some((key) => usedKeys.has(key))) {
-                return;
-            }
-            if (!chartsKeys.every((key) => navDefinitionMap.has(key))) {
-                return;
-            }
-            chartsKeys.forEach((key) => usedKeys.add(key));
-            target.push({
-                type: 'folder',
-                id: 'default-folder-charts',
-                nameKey: 'nav_tooltip.charts',
-                name: t('nav_tooltip.charts'),
-                icon: 'ri-pie-chart-line',
-                items: [...chartsKeys]
-            });
-        };
-
-        if (Array.isArray(layout)) {
-            layout.forEach((entry) => {
-                if (entry?.type === 'item') {
-                    if (entry.key === 'charts') {
-                        appendChartsFolder();
-                        return;
-                    }
-                    appendItemEntry(entry.key);
-                    return;
-                }
-
-                if (entry?.type === 'folder') {
-                    const folderItems = [];
-                    (entry.items || []).forEach((key) => {
-                        if (!key || usedKeys.has(key) || !navDefinitionMap.has(key)) {
-                            return;
-                        }
-                        folderItems.push(key);
-                        usedKeys.add(key);
-                    });
-
-                    if (folderItems.length >= 1) {
-                        const folderNameKey = entry.nameKey || null;
-                        const folderName = folderNameKey ? t(folderNameKey) : entry.name || '';
-                        normalized.push({
-                            type: 'folder',
-                            id: entry.id || generateFolderId(),
-                            name: folderName,
-                            nameKey: folderNameKey,
-                            icon: entry.icon || DEFAULT_FOLDER_ICON,
-                            items: folderItems
-                        });
-                    }
-                }
-            });
-        }
-
-        navDefinitions.forEach((item) => {
-            if (!usedKeys.has(item.key) && !hiddenSet.has(item.key)) {
-                if (chartsKeys.includes(item.key)) {
-                    return;
-                }
-                appendItemEntry(item.key);
-            }
-        });
-
-        if (!chartsKeys.some((key) => usedKeys.has(key)) && !chartsKeys.some((key) => hiddenSet.has(key))) {
-            appendChartsFolder();
-        }
-
-        return normalized;
+    const sanitizeLayoutLocal = (layout, hiddenKeys = []) => {
+        return sanitizeLayout(layout, hiddenKeys, navDefinitionMap, navDefinitions, t, generateFolderId);
     };
 
     const themeDisplayName = (themeKey) => {
@@ -673,10 +621,10 @@
 
     const customNavDialogVisible = ref(false);
     const navHiddenKeys = ref([]);
-    const defaultNavLayout = computed(() => sanitizeLayout(createDefaultNavLayout(), []));
+    const defaultNavLayout = computed(() => sanitizeLayoutLocal(createDefaultNavLayout(), []));
 
     const saveNavLayout = async (layout, hiddenKeys = []) => {
-        const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys);
+        const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys, navDefinitionMap);
         try {
             await configRepository.setString(
                 'VRCX_customNavMenuLayoutList',
@@ -695,8 +643,8 @@
     };
 
     const handleCustomNavSave = async (layout, hiddenKeys = []) => {
-        const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys);
-        const sanitized = sanitizeLayout(layout, normalizedHiddenKeys);
+        const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys, navDefinitionMap);
+        const sanitized = sanitizeLayoutLocal(layout, normalizedHiddenKeys);
         navLayout.value = sanitized;
         navHiddenKeys.value = normalizedHiddenKeys;
         await saveNavLayout(sanitized, normalizedHiddenKeys);
@@ -720,9 +668,9 @@
         } catch (error) {
             console.error('Failed to load custom nav', error);
         } finally {
-            const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeysData);
+            const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeysData, navDefinitionMap);
             const fallbackLayout = layoutData?.length ? layoutData : createDefaultNavLayout();
-            const sanitized = sanitizeLayout(fallbackLayout, normalizedHiddenKeys);
+            const sanitized = sanitizeLayoutLocal(fallbackLayout, normalizedHiddenKeys);
             navLayout.value = sanitized;
             navHiddenKeys.value = normalizedHiddenKeys;
             if (
@@ -744,26 +692,6 @@
         }
     };
 
-    const isEntryNotified = (entry) => {
-        if (!entry) {
-            return false;
-        }
-        const targets = [];
-        if (entry.index) {
-            targets.push(entry.index);
-        }
-        if (entry.routeName) {
-            targets.push(entry.routeName);
-        }
-        if (entry.path) {
-            const lastSegment = entry.path.split('/').pop();
-            if (lastSegment) {
-                targets.push(lastSegment);
-            }
-        }
-        return targets.some((key) => notifiedMenus.value.includes(key));
-    };
-
     const isNavItemNotified = (item) => {
         if (!item) {
             return false;
@@ -772,7 +700,7 @@
             return true;
         }
         if (item.children?.length) {
-            return item.children.some((entry) => isEntryNotified(entry));
+            return item.children.some((entry) => isEntryNotified(entry, notifiedMenus.value));
         }
         return false;
     };
@@ -804,30 +732,18 @@
         router.push({ name: routeName });
     };
 
-    function getFirstNavRoute(layout) {
-        for (const entry of layout) {
-            if (entry.type === 'item') {
-                const definition = navDefinitionMap.get(entry.key);
-                if (definition?.routeName) {
-                    return definition.routeName;
-                }
-            }
-            if (entry.type === 'folder' && entry.items?.length) {
-                const definition = entry.items.map((key) => navDefinitionMap.get(key)).find((def) => def?.routeName);
-                if (definition?.routeName) {
-                    return definition.routeName;
-                }
-            }
-        }
-        return null;
-    }
+    /**
+     *
+     * @param layout
+     */
+    const getFirstNavRouteLocal = (layout) => getFirstNavRoute(layout, navDefinitionMap);
 
     let hasNavigatedToInitialRoute = false;
     const navigateToFirstNavEntry = () => {
         if (hasNavigatedToInitialRoute) {
             return;
         }
-        const firstRoute = getFirstNavRoute(navLayout.value);
+        const firstRoute = getFirstNavRouteLocal(navLayout.value);
         if (!firstRoute) {
             return;
         }
@@ -892,5 +808,11 @@
         background-color: #ef4444;
         border-radius: 50%;
         transform: translateY(-50%);
+    }
+
+    @container (max-width: 220px) {
+        .nav-shortcut-hint {
+            display: none;
+        }
     }
 </style>

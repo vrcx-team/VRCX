@@ -1,4 +1,22 @@
-import { displayLocation, parseLocation } from '../locationParser';
+import { vi } from 'vitest';
+
+// Mock transitive deps from location.js → stores → columns.jsx → i18n
+vi.mock('../../../views/Feed/Feed.vue', () => ({
+    default: { template: '<div />' }
+}));
+vi.mock('../../../views/Feed/columns.jsx', () => ({ columns: [] }));
+vi.mock('../../../plugin/router', () => ({
+    default: { push: vi.fn(), currentRoute: { value: {} } }
+}));
+
+import {
+    displayLocation,
+    parseLocation,
+    resolveRegion,
+    translateAccessType
+} from '../locationParser';
+import { getLocationText } from '../location';
+import { accessTypeLocaleKeyMap } from '../../constants';
 
 describe('Location Utils', () => {
     describe('parseLocation', () => {
@@ -406,6 +424,174 @@ describe('Location Utils', () => {
                     expect(result.worldId).toBeDefined();
                 }).not.toThrow();
             });
+        });
+    });
+
+    describe('resolveRegion', () => {
+        test('returns empty string for offline', () => {
+            const L = parseLocation('offline');
+            expect(resolveRegion(L)).toBe('');
+        });
+
+        test('returns empty string for private', () => {
+            const L = parseLocation('private');
+            expect(resolveRegion(L)).toBe('');
+        });
+
+        test('returns empty string for traveling', () => {
+            const L = parseLocation('traveling');
+            expect(resolveRegion(L)).toBe('');
+        });
+
+        test('returns explicit region when present', () => {
+            const L = parseLocation('wrld_12345:67890~region(eu)');
+            expect(resolveRegion(L)).toBe('eu');
+        });
+
+        test('defaults to us when instance exists but no region', () => {
+            const L = parseLocation('wrld_12345:67890');
+            expect(resolveRegion(L)).toBe('us');
+        });
+
+        test('returns empty string for world-only (no instance)', () => {
+            const L = parseLocation('wrld_12345');
+            expect(resolveRegion(L)).toBe('');
+        });
+
+        test('returns jp region', () => {
+            const L = parseLocation('wrld_12345:67890~region(jp)');
+            expect(resolveRegion(L)).toBe('jp');
+        });
+    });
+
+    describe('translateAccessType', () => {
+        // Simple mock translation: returns the key itself
+        const t = (key) => key;
+
+        test('returns raw name when not in keyMap', () => {
+            expect(
+                translateAccessType('unknown', t, accessTypeLocaleKeyMap)
+            ).toBe('unknown');
+        });
+
+        test('translates public', () => {
+            expect(
+                translateAccessType('public', t, accessTypeLocaleKeyMap)
+            ).toBe(accessTypeLocaleKeyMap['public']);
+        });
+
+        test('translates invite', () => {
+            expect(
+                translateAccessType('invite', t, accessTypeLocaleKeyMap)
+            ).toBe(accessTypeLocaleKeyMap['invite']);
+        });
+
+        test('translates friends', () => {
+            expect(
+                translateAccessType('friends', t, accessTypeLocaleKeyMap)
+            ).toBe(accessTypeLocaleKeyMap['friends']);
+        });
+
+        test('translates friends+', () => {
+            expect(
+                translateAccessType('friends+', t, accessTypeLocaleKeyMap)
+            ).toBe(accessTypeLocaleKeyMap['friends+']);
+        });
+
+        test('prefixes Group for groupPublic', () => {
+            const result = translateAccessType(
+                'groupPublic',
+                t,
+                accessTypeLocaleKeyMap
+            );
+            expect(result).toBe(
+                `${accessTypeLocaleKeyMap['group']} ${accessTypeLocaleKeyMap['groupPublic']}`
+            );
+        });
+
+        test('prefixes Group for groupPlus', () => {
+            const result = translateAccessType(
+                'groupPlus',
+                t,
+                accessTypeLocaleKeyMap
+            );
+            expect(result).toBe(
+                `${accessTypeLocaleKeyMap['group']} ${accessTypeLocaleKeyMap['groupPlus']}`
+            );
+        });
+    });
+
+    describe('getLocationText', () => {
+        const t = (key) => key;
+        const opts = (overrides = {}) => ({
+            hint: '',
+            worldName: undefined,
+            accessTypeLabel: 'Public',
+            t,
+            ...overrides
+        });
+
+        test('returns offline label', () => {
+            const L = parseLocation('offline');
+            expect(getLocationText(L, opts())).toBe('location.offline');
+        });
+
+        test('returns private label', () => {
+            const L = parseLocation('private');
+            expect(getLocationText(L, opts())).toBe('location.private');
+        });
+
+        test('returns traveling label', () => {
+            const L = parseLocation('traveling');
+            expect(getLocationText(L, opts())).toBe('location.traveling');
+        });
+
+        test('returns hint with access type when instance exists', () => {
+            const L = parseLocation('wrld_12345:67890');
+            expect(getLocationText(L, opts({ hint: 'My World' }))).toBe(
+                'My World · Public'
+            );
+        });
+
+        test('returns hint alone when no instance', () => {
+            const L = parseLocation('wrld_12345');
+            expect(getLocationText(L, opts({ hint: 'My World' }))).toBe(
+                'My World'
+            );
+        });
+
+        test('returns world name with access type when cached', () => {
+            const L = parseLocation('wrld_12345:67890');
+            expect(getLocationText(L, opts({ worldName: 'Cool World' }))).toBe(
+                'Cool World · Public'
+            );
+        });
+
+        test('returns world name alone when no instance', () => {
+            const L = parseLocation('wrld_12345');
+            expect(getLocationText(L, opts({ worldName: 'Cool World' }))).toBe(
+                'Cool World'
+            );
+        });
+
+        test('falls back to worldId when no cached name', () => {
+            const L = parseLocation('wrld_12345:67890');
+            expect(getLocationText(L, opts())).toBe('wrld_12345 · Public');
+        });
+
+        test('returns empty string for empty location', () => {
+            const L = parseLocation('');
+            expect(getLocationText(L, opts())).toBe('');
+        });
+
+        test('hint takes priority over worldName', () => {
+            const L = parseLocation('wrld_12345:67890');
+            expect(
+                getLocationText(
+                    L,
+                    opts({ hint: 'Hint Text', worldName: 'World Name' })
+                )
+            ).toBe('Hint Text · Public');
         });
     });
 });

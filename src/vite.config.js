@@ -3,13 +3,19 @@ import { resolve } from 'node:path';
 import fs from 'node:fs';
 
 import { defineConfig, loadEnv } from 'vite';
+import { browserslistToTargets } from 'lightningcss';
 
+import browserslist from 'browserslist';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 
 import { languageCodes } from './localization/locales';
 
+/**
+ *
+ * @param assetId
+ */
 function getAssetLanguage(assetId) {
     if (!assetId) return null;
 
@@ -31,6 +37,10 @@ function getAssetLanguage(assetId) {
     return language || null;
 }
 
+/**
+ *
+ * @param moduleId
+ */
 function getManualChunk(moduleId) {
     const language = getAssetLanguage(moduleId);
     if (!language) return;
@@ -40,6 +50,11 @@ function getManualChunk(moduleId) {
 
 const defaultAssetName = '[hash][extname]';
 
+/**
+ *
+ * @param root0
+ * @param root0.name
+ */
 function getAssetFilename({ name }) {
     const language = getAssetLanguage(name);
     if (!language) return `assets/${defaultAssetName}`;
@@ -94,11 +109,27 @@ export default defineConfig(({ mode }) => {
         css: {
             transformer: 'lightningcss',
             lightningcss: {
-                minify: true,
-                targets: {
-                    chrome: 140
-                }
+                drafts: {
+                    nesting: true,
+                    customMedia: true
+                },
+                errorRecovery: true,
+                targets: browserslistToTargets(browserslist('Chrome 144'))
             }
+        },
+        optimizeDeps: {
+            include: [
+                'vue',
+                'vue/jsx-runtime',
+                'reka-ui',
+                'pinia',
+                'vue-i18n',
+                'tailwindcss',
+                'lucide-vue-next',
+                '@vueuse/core',
+                'vue-sonner',
+                'dayjs'
+            ]
         },
         define: {
             LINUX: JSON.stringify(process.env.PLATFORM === 'linux'),
@@ -111,7 +142,8 @@ export default defineConfig(({ mode }) => {
             strictPort: true
         },
         build: {
-            target: 'chrome140',
+            target: 'chrome144',
+            cssTarget: 'chrome144',
             outDir: '../build/html',
             license: true,
             emptyOutDir: true,

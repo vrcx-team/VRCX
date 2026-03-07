@@ -41,7 +41,7 @@
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { useI18n } from 'vue-i18n';
 
-    import { copyToClipboard } from '../../../shared/utils';
+    import { copyToClipboard, formatCsvField } from '../../../shared/utils';
 
     const { t } = useI18n();
 
@@ -83,6 +83,11 @@
         'data'
     ]);
 
+    /**
+     *
+     * @param label
+     * @param checked
+     */
     function toggleGroupLogsExportOption(label, checked) {
         const selection = checkedGroupLogsExportLogsOptions.value;
         const index = selection.indexOf(label);
@@ -94,9 +99,10 @@
         updateGroupLogsExportContent();
     }
 
+    /**
+     *
+     */
     function updateGroupLogsExportContent() {
-        const formatter = (str) => (/[\x00-\x1f,"]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str);
-
         const sortedCheckedOptions = checkGroupsLogsExportLogsOptions
             .filter((option) => checkedGroupLogsExportLogsOptions.value.includes(option.label))
             .map((option) => option.label);
@@ -106,18 +112,24 @@
         const content = props.groupLogsModerationTable.data
             .map((item) =>
                 sortedCheckedOptions
-                    .map((key) => formatter(key === 'data' ? JSON.stringify(item[key]) : item[key]))
+                    .map((key) => formatCsvField(key === 'data' ? JSON.stringify(item[key]) : item[key]))
                     .join(',')
             )
             .join('\n');
 
-        groupLogsExportContent.value = header + content; // Update ref
+        groupLogsExportContent.value = header + content;
     }
 
+    /**
+     *
+     */
     function handleCopyGroupLogsExportContent() {
         copyToClipboard(groupLogsExportContent.value);
     }
 
+    /**
+     *
+     */
     function setIsGroupLogsExportDialogVisible() {
         emit('update:isGroupLogsExportDialogVisible', false);
     }

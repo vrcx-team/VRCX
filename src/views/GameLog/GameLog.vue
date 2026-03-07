@@ -139,9 +139,6 @@
     }
 
     const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
-    const pageSize = computed(() =>
-        gameLogTable.value.pageSizeLinked ? appearanceSettingsStore.tablePageSize : gameLogTable.value.pageSize
-    );
 
     function getGameLogRowId(row) {
         if (row?.rowId != null) return `row:${row.rowId}`;
@@ -165,7 +162,7 @@
         initialSorting: [],
         initialPagination: {
             pageIndex: 0,
-            pageSize: pageSize.value
+            pageSize: appearanceSettingsStore.tablePageSize
         },
         tableOptions: {
             autoResetPageIndex: false
@@ -179,22 +176,10 @@
     });
 
     const handlePageSizeChange = (size) => {
-        if (gameLogTable.value.pageSizeLinked) {
-            appearanceSettingsStore.setTablePageSize(size);
-        } else {
-            gameLogTable.value.pageSize = size;
-        }
-    };
-
-    watch(pageSize, (size) => {
-        if (pagination.value.pageSize === size) {
-            return;
-        }
         pagination.value = {
             ...pagination.value,
             pageIndex: 0,
             pageSize: size
         };
-        table.setPageSize(size);
-    });
+    };
 </script>

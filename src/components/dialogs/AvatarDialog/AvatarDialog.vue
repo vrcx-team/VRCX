@@ -799,8 +799,7 @@
         switch (command) {
             case 'Refresh':
                 const avatarId = D.id;
-                D.id = '';
-                showAvatarDialog(avatarId);
+                showAvatarDialog(avatarId, { forceRefresh: true });
                 break;
             case 'Share':
                 copyAvatarUrl(D.id);
@@ -1038,8 +1037,7 @@
             toast.success(t('message.upload.success'));
             // force refresh cover image
             const avatarId = avatarDialog.value.id;
-            avatarDialog.value.id = '';
-            showAvatarDialog(avatarId);
+            showAvatarDialog(avatarId, { forceRefresh: true });
         } catch (error) {
             console.error('avatar image upload process failed:', error);
             toast.error(t('message.upload.error'));
