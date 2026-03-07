@@ -1352,15 +1352,14 @@
         border: 1px solid var(--border);
         padding: 8px;
         cursor: pointer;
-        box-shadow: 0 0 6px rgba(15, 23, 42, 0.04);
-        transition:
-            box-shadow 0.2s ease,
-            transform 0.2s ease;
+        transition: background-color 0.15s ease;
     }
 
     .group-item:hover {
-        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.07);
-        transform: translateY(-2px);
+        background-color: var(--accent);
+        box-shadow:
+            0 4px 6px -1px rgb(0 0 0 / 0.1),
+            0 2px 4px -2px rgb(0 0 0 / 0.1);
     }
 
     .group-item__top {
@@ -1544,19 +1543,17 @@
         border-radius: calc(8px * var(--favorites-card-scale, 1));
         padding: var(--favorites-card-padding-y, 8px) var(--favorites-card-padding-x, 10px);
         cursor: pointer;
-        transition:
-            border-color 0.2s ease,
-            box-shadow 0.2s ease,
-            transform 0.2s ease;
-        box-shadow: 0 0 6px rgba(15, 23, 42, 0.04);
+        transition: background-color 0.15s ease;
         width: 100%;
         min-width: var(--favorites-card-min-width, 240px);
         max-width: var(--favorites-card-target-width, 320px);
     }
 
     :deep(.favorites-search-card:hover) {
-        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
-        transform: translateY(calc(-2px * var(--favorites-card-scale, 1)));
+        background-color: var(--accent);
+        box-shadow:
+            0 4px 6px -1px rgb(0 0 0 / 0.1),
+            0 2px 4px -2px rgb(0 0 0 / 0.1);
     }
 
     :deep(.favorites-search-card.is-selected) {

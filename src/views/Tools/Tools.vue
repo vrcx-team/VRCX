@@ -530,7 +530,7 @@
     }
 
     .tool-card {
-        transition: all 0.3s ease;
+        transition: background-color 0.15s ease;
         position: relative;
         overflow: visible;
         border-radius: 8px;
@@ -538,7 +538,10 @@
         width: 100%;
 
         &:hover {
-            transform: translateY(-2px);
+            background-color: var(--accent);
+            box-shadow:
+                0 4px 6px -1px rgb(0 0 0 / 0.1),
+                0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
 
         .tool-content {

@@ -684,6 +684,10 @@
     const hasUserSelectedAvatarGroup = ref(false);
     const remoteAvatarGroupsResolved = ref(false);
 
+    /**
+     *
+     * @param value
+     */
     function handleSortFavoritesChange(value) {
         const next = Boolean(value);
         if (next !== sortFavorites.value) {
@@ -706,11 +710,17 @@
         avatarToolbarMenuOpen.value = false;
     };
 
+    /**
+     *
+     */
     function handleAvatarImportClick() {
         closeAvatarToolbarMenu();
         showAvatarImportDialog();
     }
 
+    /**
+     *
+     */
     function handleAvatarExportClick() {
         closeAvatarToolbarMenu();
         showAvatarExportDialog();
@@ -720,6 +730,9 @@
         loadAvatarSplitterPreferences();
     });
 
+    /**
+     *
+     */
     async function loadAvatarSplitterPreferences() {
         const storedSize = await configRepository.getString('VRCX_FavoritesAvatarSplitter', '260');
         const parsedSize = Number(storedSize);
@@ -921,6 +934,11 @@
         }
     );
 
+    /**
+     *
+     * @param key
+     * @param visible
+     */
     function handleGroupMenuVisible(key, visible) {
         if (visible) {
             activeGroupMenu.value = key;
@@ -931,6 +949,9 @@
         }
     }
 
+    /**
+     *
+     */
     function ensureSelectedGroup() {
         if (selectedGroup.value && isGroupAvailable(selectedGroup.value)) {
             return;
@@ -938,6 +959,9 @@
         selectDefaultGroup();
     }
 
+    /**
+     *
+     */
     function selectDefaultGroup() {
         if (!hasUserSelectedAvatarGroup.value) {
             const remote =
@@ -967,6 +991,10 @@
         clearSelectedAvatars();
     }
 
+    /**
+     *
+     * @param group
+     */
     function isGroupAvailable(group) {
         if (!group) {
             return false;
@@ -986,6 +1014,12 @@
         return false;
     }
 
+    /**
+     *
+     * @param type
+     * @param key
+     * @param options
+     */
     function selectGroup(type, key, options = {}) {
         if (selectedGroup.value?.type === type && selectedGroup.value?.key === key) {
             return;
@@ -997,14 +1031,27 @@
         clearSelectedAvatars();
     }
 
+    /**
+     *
+     */
     function clearSelectedAvatars() {
         selectedFavoriteAvatars.value = [];
     }
 
+    /**
+     *
+     * @param type
+     * @param key
+     */
     function isGroupActive(type, key) {
         return selectedGroup.value?.type === type && selectedGroup.value?.key === key;
     }
 
+    /**
+     *
+     * @param type
+     * @param key
+     */
     function handleGroupClick(type, key) {
         if (hasSearchInput.value) {
             avatarFavoriteSearch.value = '';
@@ -1013,6 +1060,9 @@
         selectGroup(type, key, { userInitiated: true });
     }
 
+    /**
+     *
+     */
     function startLocalGroupCreation() {
         if (!isLocalUserVrcPlusSupporter.value || isCreatingLocalGroup.value) {
             return;
@@ -1024,11 +1074,17 @@
         });
     }
 
+    /**
+     *
+     */
     function cancelLocalGroupCreation() {
         isCreatingLocalGroup.value = false;
         newLocalGroupName.value = '';
     }
 
+    /**
+     *
+     */
     function handleLocalGroupCreationConfirm() {
         const name = newLocalGroupName.value.trim();
         if (!name) {
@@ -1044,6 +1100,11 @@
         });
     }
 
+    /**
+     *
+     * @param id
+     * @param value
+     */
     function toggleAvatarSelection(id, value) {
         if (value) {
             if (!selectedFavoriteAvatars.value.includes(id)) {
@@ -1054,40 +1115,71 @@
         }
     }
 
+    /**
+     *
+     */
     function showAvatarExportDialog() {
         avatarExportDialogVisible.value = true;
     }
 
+    /**
+     *
+     */
     function handleRefreshFavorites() {
         refreshFavorites();
         getLocalAvatarFavorites();
     }
 
+    /**
+     *
+     * @param group
+     * @param visibility
+     */
     function handleVisibilitySelection(group, visibility) {
         const menuKey = remoteGroupMenuKey(group.key);
         changeAvatarGroupVisibility(group.name, visibility, menuKey);
     }
 
+    /**
+     *
+     * @param group
+     */
     function handleRemoteRename(group) {
         handleGroupMenuVisible(remoteGroupMenuKey(group.key), false);
         changeFavoriteGroupName(group);
     }
 
+    /**
+     *
+     * @param group
+     */
     function handleRemoteClear(group) {
         handleGroupMenuVisible(remoteGroupMenuKey(group.key), false);
         clearFavoriteGroup(group);
     }
 
+    /**
+     *
+     * @param groupName
+     */
     function handleLocalRename(groupName) {
         handleGroupMenuVisible(localGroupMenuKey(groupName), false);
         promptLocalAvatarFavoriteGroupRename(groupName);
     }
 
+    /**
+     *
+     * @param groupName
+     */
     function handleLocalDelete(groupName) {
         handleGroupMenuVisible(localGroupMenuKey(groupName), false);
         promptLocalAvatarFavoriteGroupDelete(groupName);
     }
 
+    /**
+     *
+     * @param groupName
+     */
     async function handleCheckInvalidAvatars(groupName) {
         handleGroupMenuVisible(localGroupMenuKey(groupName), false);
 
@@ -1178,11 +1270,18 @@
         }
     }
 
+    /**
+     *
+     */
     function handleHistoryClear() {
         handleGroupMenuVisible(historyGroupMenuKey, false);
         promptClearAvatarHistory();
     }
 
+    /**
+     *
+     * @param group
+     */
     function changeFavoriteGroupName(group) {
         const currentName = group.displayName || group.name;
         modalStore
@@ -1221,6 +1320,12 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param name
+     * @param visibility
+     * @param menuKey
+     */
     function changeAvatarGroupVisibility(name, visibility, menuKey = null) {
         const params = {
             type: 'avatar',
@@ -1243,6 +1348,10 @@
         });
     }
 
+    /**
+     *
+     * @param ctx
+     */
     function clearFavoriteGroup(ctx) {
         modalStore
             .confirm({
@@ -1260,6 +1369,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param group
+     */
     function promptLocalAvatarFavoriteGroupRename(group) {
         modalStore
             .prompt({
@@ -1285,6 +1398,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param group
+     */
     function promptLocalAvatarFavoriteGroupDelete(group) {
         modalStore
             .confirm({
@@ -1299,6 +1416,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param value
+     */
     function doSearchAvatarFavorites(value) {
         if (typeof value === 'string') {
             avatarFavoriteSearch.value = value;
@@ -1353,6 +1474,9 @@
     }
     const searchAvatarFavorites = debounce(doSearchAvatarFavorites, 200);
 
+    /**
+     *
+     */
     async function refreshLocalAvatarFavorites() {
         if (refreshingLocalFavorites.value) {
             return;
@@ -1399,6 +1523,9 @@
         }
     }
 
+    /**
+     *
+     */
     function cancelLocalAvatarRefresh() {
         if (!refreshingLocalFavorites.value) {
             return;
@@ -1416,6 +1543,9 @@
         refreshingLocalFavorites.value = false;
     }
 
+    /**
+     *
+     */
     function toggleSelectAllAvatars() {
         if (!activeRemoteGroup.value) {
             return;
@@ -1427,6 +1557,9 @@
         }
     }
 
+    /**
+     *
+     */
     function copySelectedAvatars() {
         if (!selectedFavoriteAvatars.value.length) {
             return;
@@ -1436,6 +1569,9 @@
         showAvatarImportDialog();
     }
 
+    /**
+     *
+     */
     function showAvatarBulkUnfavoriteSelectionConfirm() {
         if (!selectedFavoriteAvatars.value.length) {
             return;
@@ -1455,6 +1591,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param ids
+     */
     function bulkUnfavoriteSelectedAvatars(ids) {
         ids.forEach((id) => {
             favoriteRequest.deleteFavorite({
@@ -1473,6 +1613,10 @@
         }
     });
 
+    /**
+     *
+     * @param value
+     */
     function formatVisibility(value) {
         if (!value) {
             return '';
@@ -1568,15 +1712,14 @@
         border: 1px solid var(--border);
         padding: 8px;
         cursor: pointer;
-        box-shadow: 0 0 6px rgba(15, 23, 42, 0.04);
-        transition:
-            box-shadow 0.2s ease,
-            transform 0.2s ease;
+        transition: background-color 0.15s ease;
     }
 
     .group-item:hover {
-        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.07);
-        transform: translateY(-2px);
+        background-color: var(--accent);
+        box-shadow:
+            0 4px 6px -1px rgb(0 0 0 / 0.1),
+            0 2px 4px -2px rgb(0 0 0 / 0.1);
     }
 
     .group-item__top {
@@ -1773,19 +1916,17 @@
         border-radius: calc(8px * var(--favorites-card-scale, 1));
         padding: var(--favorites-card-padding-y, 8px) var(--favorites-card-padding-x, 10px);
         cursor: pointer;
-        transition:
-            border-color 0.2s ease,
-            box-shadow 0.2s ease,
-            transform 0.2s ease;
-        box-shadow: 0 0 6px rgba(15, 23, 42, 0.04);
+        transition: background-color 0.15s ease;
         width: 100%;
         min-width: var(--favorites-card-min-width, 240px);
         max-width: var(--favorites-card-target-width, 320px);
     }
 
     :deep(.favorites-search-card:hover) {
-        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
-        transform: translateY(calc(-2px * var(--favorites-card-scale, 1)));
+        background-color: var(--accent);
+        box-shadow:
+            0 4px 6px -1px rgb(0 0 0 / 0.1),
+            0 2px 4px -2px rgb(0 0 0 / 0.1);
     }
 
     :deep(.favorites-search-card__content) {

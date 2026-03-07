@@ -1,13 +1,11 @@
 <template>
-    <HoverCard :open-delay="500" :close-delay="100">
+    <HoverCard :open-delay="700" :close-delay="100">
         <HoverCardTrigger as="div">
             <ContextMenu>
                 <ContextMenuTrigger as="div">
-                    <div
-                        class="avatar-card-wrapper rounded-lg transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md"
-                        @click="$emit('click')">
+                    <div class="avatar-card-wrapper rounded-lg" @click="$emit('click')">
                         <Card
-                            class="avatar-card flex flex-col gap-0 p-0 cursor-pointer overflow-hidden rounded-lg relative"
+                            class="avatar-card flex flex-col gap-0 p-0 cursor-pointer overflow-hidden rounded-lg relative transition-colors hover:bg-accent hover:shadow-md"
                             :class="isActive ? 'border-2 border-primary' : 'border border-border/50'">
                             <div class="w-full aspect-5/2 overflow-hidden bg-muted relative">
                                 <img

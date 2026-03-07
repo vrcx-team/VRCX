@@ -241,16 +241,17 @@
         display: grid;
         gap: calc(14px * var(--card-scale) * var(--card-spacing));
         border-radius: 8px;
-        transition:
-            box-shadow 0.2s ease,
-            transform 0.2s ease;
+        transition: background-color 0.15s ease;
         width: 100%;
         max-width: var(--friend-card-target-width, 220px);
         min-width: var(--friend-card-min-width, 220px);
         box-sizing: border-box;
 
         &:hover {
-            transform: translateY(calc(-2px * var(--card-scale)));
+            background-color: var(--accent);
+            box-shadow:
+                0 4px 6px -1px rgb(0 0 0 / 0.1),
+                0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
     }
 

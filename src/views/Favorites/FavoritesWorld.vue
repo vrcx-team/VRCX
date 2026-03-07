@@ -621,11 +621,17 @@
         worldToolbarMenuOpen.value = false;
     };
 
+    /**
+     *
+     */
     function handleWorldImportClick() {
         closeWorldToolbarMenu();
         showWorldImportDialog();
     }
 
+    /**
+     *
+     */
     function handleWorldExportClick() {
         closeWorldToolbarMenu();
         showExportDialog();
@@ -635,6 +641,9 @@
         loadWorldSplitterPreferences();
     });
 
+    /**
+     *
+     */
     async function loadWorldSplitterPreferences() {
         const storedSize = await configRepository.getString('VRCX_FavoritesWorldSplitter', '260');
         const parsedSize = Number(storedSize);
@@ -889,6 +898,10 @@
 
     const getLocalRowItems = (row) => (row && Array.isArray(row.items) ? row.items : []);
 
+    /**
+     *
+     * @param value
+     */
     function handleSortFavoritesChange(value) {
         const next = Boolean(value);
         if (next !== sortFavorites.value) {
@@ -946,6 +959,11 @@
 
     onMounted(() => {});
 
+    /**
+     *
+     * @param key
+     * @param visible
+     */
     function handleGroupMenuVisible(key, visible) {
         if (visible) {
             activeGroupMenu.value = key;
@@ -956,6 +974,9 @@
         }
     }
 
+    /**
+     *
+     */
     function ensureSelectedGroup() {
         if (selectedGroup.value && isGroupAvailable(selectedGroup.value)) {
             return;
@@ -963,6 +984,11 @@
         selectDefaultGroup();
     }
 
+    /**
+     *
+     * @param type
+     * @param key
+     */
     function handleGroupClick(type, key) {
         if (hasSearchInput.value) {
             worldFavoriteSearch.value = '';
@@ -971,6 +997,9 @@
         selectGroup(type, key, { userInitiated: true });
     }
 
+    /**
+     *
+     */
     function selectDefaultGroup() {
         if (!hasUserSelectedWorldGroup.value) {
             const remoteKey = favoriteWorldGroups.value[0]?.key || worldGroupPlaceholders[0]?.key || null;
@@ -991,6 +1020,10 @@
         clearSelectedWorlds();
     }
 
+    /**
+     *
+     * @param group
+     */
     function isGroupAvailable(group) {
         if (!group) {
             return false;
@@ -1007,6 +1040,12 @@
         return false;
     }
 
+    /**
+     *
+     * @param type
+     * @param key
+     * @param options
+     */
     function selectGroup(type, key, options = {}) {
         if (selectedGroup.value?.type === type && selectedGroup.value?.key === key) {
             return;
@@ -1018,10 +1057,19 @@
         clearSelectedWorlds();
     }
 
+    /**
+     *
+     * @param type
+     * @param key
+     */
     function isGroupActive(type, key) {
         return selectedGroup.value?.type === type && selectedGroup.value?.key === key;
     }
 
+    /**
+     *
+     * @param value
+     */
     function formatVisibility(value) {
         if (!value) {
             return '';
@@ -1029,6 +1077,9 @@
         return value.charAt(0).toUpperCase() + value.slice(1);
     }
 
+    /**
+     *
+     */
     function startLocalGroupCreation() {
         if (isCreatingLocalGroup.value) {
             return;
@@ -1040,11 +1091,17 @@
         });
     }
 
+    /**
+     *
+     */
     function cancelLocalGroupCreation() {
         isCreatingLocalGroup.value = false;
         newLocalGroupName.value = '';
     }
 
+    /**
+     *
+     */
     function handleLocalGroupCreationConfirm() {
         const name = newLocalGroupName.value.trim();
         if (!name) {
@@ -1058,6 +1115,11 @@
         });
     }
 
+    /**
+     *
+     * @param id
+     * @param value
+     */
     function toggleWorldSelection(id, value) {
         if (value) {
             if (!selectedFavoriteWorlds.value.includes(id)) {
@@ -1068,10 +1130,16 @@
         }
     }
 
+    /**
+     *
+     */
     function clearSelectedWorlds() {
         selectedFavoriteWorlds.value = [];
     }
 
+    /**
+     *
+     */
     function toggleSelectAllWorlds() {
         if (!activeRemoteGroup.value) {
             return;
@@ -1083,6 +1151,9 @@
         }
     }
 
+    /**
+     *
+     */
     function copySelectedWorlds() {
         if (!selectedFavoriteWorlds.value.length) {
             return;
@@ -1092,6 +1163,9 @@
         showWorldImportDialog();
     }
 
+    /**
+     *
+     */
     function showWorldBulkUnfavoriteSelectionConfirm() {
         if (!selectedFavoriteWorlds.value.length) {
             return;
@@ -1111,6 +1185,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param ids
+     */
     function bulkUnfavoriteSelectedWorlds(ids) {
         ids.forEach((id) => {
             favoriteRequest.deleteFavorite({
@@ -1121,15 +1199,27 @@
         worldEditMode.value = false;
     }
 
+    /**
+     *
+     */
     function showExportDialog() {
         worldExportDialogVisible.value = true;
     }
 
+    /**
+     *
+     */
     function handleRefreshFavorites() {
         refreshFavorites();
         getLocalWorldFavorites();
     }
 
+    /**
+     *
+     * @param group
+     * @param visibility
+     * @param menuKey
+     */
     function changeWorldGroupVisibility(group, visibility, menuKey = null) {
         const params = {
             type: group.type,
@@ -1152,6 +1242,10 @@
         });
     }
 
+    /**
+     *
+     * @param group
+     */
     function promptLocalWorldFavoriteGroupRename(group) {
         modalStore
             .prompt({
@@ -1177,6 +1271,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param group
+     */
     function promptLocalWorldFavoriteGroupDelete(group) {
         modalStore
             .confirm({
@@ -1191,6 +1289,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param ctx
+     */
     function clearFavoriteGroup(ctx) {
         modalStore
             .confirm({
@@ -1208,6 +1310,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param worldFavoriteSearch
+     */
     function doSearchWorldFavorites(worldFavoriteSearch) {
         const search = worldFavoriteSearch.trim().toLowerCase();
         if (search.length < 3) {
@@ -1225,31 +1331,56 @@
     }
     const searchWorldFavorites = debounce(doSearchWorldFavorites, 200);
 
+    /**
+     *
+     * @param group
+     * @param visibility
+     */
     function handleVisibilitySelection(group, visibility) {
         const menuKey = remoteGroupMenuKey(group.key);
         changeWorldGroupVisibility(group, visibility, menuKey);
     }
 
+    /**
+     *
+     * @param group
+     */
     function handleRemoteRename(group) {
         handleGroupMenuVisible(remoteGroupMenuKey(group.key), false);
         changeFavoriteGroupName(group);
     }
 
+    /**
+     *
+     * @param group
+     */
     function handleRemoteClear(group) {
         handleGroupMenuVisible(remoteGroupMenuKey(group.key), false);
         clearFavoriteGroup(group);
     }
 
+    /**
+     *
+     * @param groupName
+     */
     function handleLocalRename(groupName) {
         handleGroupMenuVisible(localGroupMenuKey(groupName), false);
         promptLocalWorldFavoriteGroupRename(groupName);
     }
 
+    /**
+     *
+     * @param groupName
+     */
     function handleLocalDelete(groupName) {
         handleGroupMenuVisible(localGroupMenuKey(groupName), false);
         promptLocalWorldFavoriteGroupDelete(groupName);
     }
 
+    /**
+     *
+     * @param group
+     */
     function changeFavoriteGroupName(group) {
         const currentName = group.displayName || group.name;
         modalStore
@@ -1288,6 +1419,9 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     */
     async function refreshLocalWorldFavorites() {
         if (refreshingLocalFavorites.value) {
             return;
@@ -1333,6 +1467,9 @@
         }
     }
 
+    /**
+     *
+     */
     function cancelLocalWorldRefresh() {
         if (!refreshingLocalFavorites.value) {
             return;
@@ -1446,15 +1583,14 @@
         border: 1px solid var(--border);
         padding: 8px;
         cursor: pointer;
-        box-shadow: 0 0 6px rgba(15, 23, 42, 0.04);
-        transition:
-            box-shadow 0.2s ease,
-            transform 0.2s ease;
+        transition: background-color 0.15s ease;
     }
 
     .group-item:hover {
-        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.07);
-        transform: translateY(-2px);
+        background-color: var(--accent);
+        box-shadow:
+            0 4px 6px -1px rgb(0 0 0 / 0.1),
+            0 2px 4px -2px rgb(0 0 0 / 0.1);
     }
 
     .group-item__top {
@@ -1696,19 +1832,17 @@
         border-radius: calc(8px * var(--favorites-card-scale, 1));
         padding: var(--favorites-card-padding-y, 8px) var(--favorites-card-padding-x, 10px);
         cursor: pointer;
-        transition:
-            border-color 0.2s ease,
-            box-shadow 0.2s ease,
-            transform 0.2s ease;
-        box-shadow: 0 0 6px rgba(15, 23, 42, 0.04);
+        transition: background-color 0.15s ease;
         width: 100%;
         min-width: var(--favorites-card-min-width, 240px);
         max-width: var(--favorites-card-target-width, 320px);
     }
 
     :deep(.favorites-search-card:hover) {
-        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
-        transform: translateY(calc(-2px * var(--favorites-card-scale, 1)));
+        background-color: var(--accent);
+        box-shadow:
+            0 4px 6px -1px rgb(0 0 0 / 0.1),
+            0 2px 4px -2px rgb(0 0 0 / 0.1);
     }
 
     :deep(.favorites-search-card.is-selected) {
