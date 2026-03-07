@@ -720,7 +720,60 @@
                         "send_test": "发送 Webhook 测试",
                         "test_payload_invalid": "Webhook 测试载荷必须是有效 JSON",
                         "test_sent": "Webhook 测试已发送",
-                        "test_not_sent": "Webhook 测试未发送（请检查开关/地址）"
+                        "test_not_sent": "Webhook 测试未发送（请检查开关/地址）",
+                        "events": {
+                            "header": "Webhook 事件项",
+                            "actions": {
+                                "enable_all": "全部启用",
+                                "disable_all": "全部禁用",
+                                "reset_defaults": "恢复默认"
+                            },
+                            "categories": {
+                                "notification": "通知事件",
+                                "friend": "好友事件",
+                                "self": "自身事件",
+                                "instance": "实例事件",
+                                "favorite": "收藏事件",
+                                "vrchat": "VRChat 事件",
+                                "app": "应用事件"
+                            },
+                            "items": {
+                                "app_started": { "label": "应用启动", "description": "VRCX 启动时触发。" },
+                                "app_login_failed": { "label": "登录失败", "description": "登录流程失败时触发。" },
+                                "app_login_succeeded": { "label": "登录成功", "description": "登录流程成功时触发。" },
+                                "vrchat_started": { "label": "VRChat 启动", "description": "检测到 VRChat 进程启动时触发。" },
+                                "vrchat_closed": { "label": "VRChat 关闭", "description": "检测到 VRChat 进程退出时触发。" },
+                                "vrchat_crash_detected": { "label": "VRChat 崩溃检测", "description": "检测到 VRChat 异常退出时触发。" },
+                                "vrchat_auto_restart_triggered": { "label": "VRChat 自动重启触发", "description": "自动重启逻辑触发时发送。" },
+                                "vrchat_rejoin_last_instance": { "label": "重回上个实例", "description": "触发重回上个实例动作时发送。" },
+                                "self_world_joined": { "label": "自己进入世界", "description": "自己进入世界时触发。" },
+                                "self_instance_changed": { "label": "自己切换实例", "description": "自己切换实例时触发。" },
+                                "self_world_left": { "label": "自己离开世界", "description": "自己离开世界时触发。" },
+                                "favorite_world_added": { "label": "收藏世界新增", "description": "将世界加入收藏时触发。" },
+                                "favorite_world_removed": { "label": "收藏世界移除", "description": "将世界移出收藏时触发。" },
+                                "favorite_avatar_added": { "label": "收藏头像新增", "description": "将头像加入收藏时触发。" },
+                                "favorite_avatar_removed": { "label": "收藏头像移除", "description": "将头像移出收藏时触发。" },
+                                "friend_online": { "label": "好友上线", "description": "好友上线时触发。" },
+                                "friend_offline": { "label": "好友下线", "description": "好友下线时触发。" },
+                                "friend_name_changed": { "label": "好友名称变更", "description": "好友显示名变化时触发。" },
+                                "friend_last_seen_updated": { "label": "好友最后在线更新", "description": "好友最后在线时间变化时触发。" },
+                                "friend_time_together_updated": { "label": "好友共处时间更新", "description": "好友共处时间变化时触发。" },
+                                "friend_location_changed": { "label": "好友位置变更", "description": "好友位置变化时触发。" },
+                                "friend_avatar_changed": { "label": "好友头像变更", "description": "好友头像变化时触发。" },
+                                "friend_status_changed": { "label": "好友状态变更", "description": "好友状态变化时触发。" },
+                                "friend_note_updated": { "label": "好友备注更新", "description": "好友备注变化时触发。" },
+                                "instance_player_count_changed": { "label": "实例人数变化", "description": "监控实例人数变化时触发。" },
+                                "notification_friend_request_accepted": { "label": "好友请求已接受", "description": "接受好友请求时触发。" },
+                                "notification_friend_request_declined": { "label": "好友请求已拒绝", "description": "拒绝或隐藏好友请求时触发。" },
+                                "notification_invite_sent": { "label": "邀请已发送", "description": "通过通知流程发送邀请时触发。" },
+                                "notification_v2_updated": { "label": "通知 V2 更新", "description": "通知 V2 内容被更新时触发。" },
+                                "notification_v2_hidden": { "label": "通知 V2 隐藏", "description": "通知 V2 被隐藏或过期时触发。" },
+                                "notification_v2_seen": { "label": "通知 V2 已读", "description": "通知 V2 被标记已读时触发。" },
+                                "notification_v2_response_sent": { "label": "通知 V2 响应已发送", "description": "通知 V2 响应发送成功时触发。" },
+                                "notification_v2_response_failed": { "label": "通知 V2 响应发送失败", "description": "通知 V2 响应发送失败时触发。" },
+                                "notification_received_dynamic": { "label": "通知接收（动态）", "description": "控制 notification.<type>.received 动态通知事件。" }
+                            }
+                        }
                     }
                 }
             },

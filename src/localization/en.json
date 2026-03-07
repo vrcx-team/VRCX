@@ -776,7 +776,60 @@
                         "send_test": "Send Webhook Test",
                         "test_payload_invalid": "Webhook test payload must be valid JSON",
                         "test_sent": "Webhook test sent",
-                        "test_not_sent": "Webhook test not sent (check enable/url)"
+                        "test_not_sent": "Webhook test not sent (check enable/url)",
+                        "events": {
+                            "header": "Webhook Event Items",
+                            "actions": {
+                                "enable_all": "Enable All",
+                                "disable_all": "Disable All",
+                                "reset_defaults": "Reset Defaults"
+                            },
+                            "categories": {
+                                "notification": "Notification Events",
+                                "friend": "Friend Events",
+                                "self": "Self Events",
+                                "instance": "Instance Events",
+                                "favorite": "Favorite Events",
+                                "vrchat": "VRChat Events",
+                                "app": "App Events"
+                            },
+                            "items": {
+                                "app_started": { "label": "App Started", "description": "Emitted when VRCX launches." },
+                                "app_login_failed": { "label": "Login Failed", "description": "Emitted when login fails." },
+                                "app_login_succeeded": { "label": "Login Succeeded", "description": "Emitted when login succeeds." },
+                                "vrchat_started": { "label": "VRChat Started", "description": "Emitted when VRChat process starts." },
+                                "vrchat_closed": { "label": "VRChat Closed", "description": "Emitted when VRChat process exits." },
+                                "vrchat_crash_detected": { "label": "VRChat Crash Detected", "description": "Emitted when a VRChat crash is detected." },
+                                "vrchat_auto_restart_triggered": { "label": "VRChat Auto Restart", "description": "Emitted when auto restart is triggered." },
+                                "vrchat_rejoin_last_instance": { "label": "Rejoin Last Instance", "description": "Emitted when rejoin-last-instance is triggered." },
+                                "self_world_joined": { "label": "Self World Joined", "description": "Emitted when you join a world." },
+                                "self_instance_changed": { "label": "Self Instance Changed", "description": "Emitted when your instance changes." },
+                                "self_world_left": { "label": "Self World Left", "description": "Emitted when you leave a world." },
+                                "favorite_world_added": { "label": "Favorite World Added", "description": "Emitted when a world is favorited." },
+                                "favorite_world_removed": { "label": "Favorite World Removed", "description": "Emitted when a world favorite is removed." },
+                                "favorite_avatar_added": { "label": "Favorite Avatar Added", "description": "Emitted when an avatar is favorited." },
+                                "favorite_avatar_removed": { "label": "Favorite Avatar Removed", "description": "Emitted when an avatar favorite is removed." },
+                                "friend_online": { "label": "Friend Online", "description": "Emitted when a friend comes online." },
+                                "friend_offline": { "label": "Friend Offline", "description": "Emitted when a friend goes offline." },
+                                "friend_name_changed": { "label": "Friend Name Changed", "description": "Emitted when a friend changes display name." },
+                                "friend_last_seen_updated": { "label": "Friend Last Seen Updated", "description": "Emitted when friend last-seen changes." },
+                                "friend_time_together_updated": { "label": "Friend Time Together Updated", "description": "Emitted when time-together changes." },
+                                "friend_location_changed": { "label": "Friend Location Changed", "description": "Emitted when friend location changes." },
+                                "friend_avatar_changed": { "label": "Friend Avatar Changed", "description": "Emitted when friend avatar changes." },
+                                "friend_status_changed": { "label": "Friend Status Changed", "description": "Emitted when friend status changes." },
+                                "friend_note_updated": { "label": "Friend Note Updated", "description": "Emitted when friend note changes." },
+                                "instance_player_count_changed": { "label": "Instance Player Count Changed", "description": "Emitted when tracked instance player count changes." },
+                                "notification_friend_request_accepted": { "label": "Friend Request Accepted", "description": "Emitted when a friend request is accepted." },
+                                "notification_friend_request_declined": { "label": "Friend Request Declined", "description": "Emitted when a friend request is declined/hidden." },
+                                "notification_invite_sent": { "label": "Invite Sent", "description": "Emitted when an invite is sent from notification flow." },
+                                "notification_v2_updated": { "label": "Notification V2 Updated", "description": "Emitted when a V2 notification is updated." },
+                                "notification_v2_hidden": { "label": "Notification V2 Hidden", "description": "Emitted when a V2 notification is hidden/expired." },
+                                "notification_v2_seen": { "label": "Notification V2 Seen", "description": "Emitted when a V2 notification is marked seen." },
+                                "notification_v2_response_sent": { "label": "Notification V2 Response Sent", "description": "Emitted when a V2 notification response is sent." },
+                                "notification_v2_response_failed": { "label": "Notification V2 Response Failed", "description": "Emitted when a V2 notification response fails." },
+                                "notification_received_dynamic": { "label": "Notification Received (Dynamic)", "description": "Controls notification.<type>.received dynamic events." }
+                            }
+                        }
                     }
                 }
             },
