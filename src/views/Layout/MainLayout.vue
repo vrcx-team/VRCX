@@ -25,7 +25,7 @@
                         ]"
                         @layout="handleLayout">
                         <template #default="{ layout }">
-                            <ResizablePanel :default-size="mainDefaultSize" :order="1" :size-unit="'px'">
+                            <ResizablePanel :default-size="mainDefaultSize" :order="1">
                                 <RouterView v-slot="{ Component }">
                                     <KeepAlive exclude="ChartsInstance, ChartsMutual">
                                         <component :is="Component" />
@@ -46,7 +46,6 @@
                                 :collapsed-size="0"
                                 collapsible
                                 :order="2"
-                                :size-unit="'px'"
                                 :style="{ maxWidth: `${asideMaxPx}px` }">
                                 <Sidebar></Sidebar>
                             </ResizablePanel>
