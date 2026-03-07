@@ -9,7 +9,8 @@ export default defineConfig({
     define: {
         NIGHTLY: JSON.stringify(false),
         WINDOWS: JSON.stringify(true),
-        LINUX: JSON.stringify(false)
+        LINUX: JSON.stringify(false),
+        VERSION: JSON.stringify('test-version')
     },
     test: {
         globals: true,
@@ -32,3 +33,4 @@ export default defineConfig({
         }
     }
 });
+

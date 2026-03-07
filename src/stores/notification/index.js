@@ -51,6 +51,10 @@ import { useUiStore } from '../ui';
 import { useUserStore } from '../user';
 import { useWristOverlaySettingsStore } from '../settings/wristOverlay';
 import { watchState } from '../../service/watchState';
+import {
+    buildNotificationWebhookPayload,
+    getNotificationWebhookType
+} from './webhookEventHelpers';
 
 import configRepository from '../../service/config';
 import { emitWebhookEvent } from '../../service/webhookEvent';
@@ -175,16 +179,6 @@ export const useNotificationStore = defineStore('Notification', () => {
 
     init();
 
-    function getNotificationWebhookType(type) {
-        const map = {
-            friendRequest: 'friend_request',
-            ignoredFriendRequest: 'friend_request',
-            requestInvite: 'request_invite',
-            invite: 'invite'
-        };
-        return map[type] || type.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
-    }
-
     function handleNotification(args) {
         args.ref = applyNotification(args.json);
         const { ref } = args;
@@ -202,15 +196,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             }
         }
         if (ref.senderUserId !== userStore.currentUser.id) {
-            const payload = {
-                id: ref.id,
-                type: ref.type,
-                senderUserId: ref.senderUserId,
-                senderUsername: ref.senderUsername,
-                message: ref.message,
-                details: ref.details,
-                createdAt: ref.created_at
-            };
+            const payload = buildNotificationWebhookPayload(ref);
             emitWebhookEvent(`notification.${getNotificationWebhookType(ref.type)}.received`, payload);
             if (
                 ref.type !== 'friendRequest' &&
@@ -412,6 +398,12 @@ export const useNotificationStore = defineStore('Notification', () => {
         );
         if (ref) {
             ref.seen = true;
+            if (ref.version >= 2) {
+                emitWebhookEvent(
+                    'notification.v2.seen',
+                    buildNotificationWebhookPayload(ref)
+                );
+            }
         }
         database.seenNotificationV2(notificationId);
     }
@@ -676,6 +668,10 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         database.addNotificationV2ToDatabase(ref);
         notificationTable.value.data.push(ref);
+        emitWebhookEvent(
+            `notification.${getNotificationWebhookType(ref.type)}.received`,
+            buildNotificationWebhookPayload(ref)
+        );
         queueNotificationNoty(ref);
         sharedFeedStore.addEntry(ref);
     }
@@ -696,6 +692,13 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (json.seen) {
             handleNotificationSee(notificationId);
         }
+        emitWebhookEvent('notification.v2.updated', {
+            notificationId,
+            ...buildNotificationWebhookPayload({
+                id: notificationId,
+                ...json
+            })
+        });
     }
 
     function handleNotificationV2Hide(notificationId) {
@@ -706,7 +709,13 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (ref) {
             ref.expiresAt = new Date().toJSON();
             ref.seen = true;
+            emitWebhookEvent(
+                'notification.v2.hidden',
+                buildNotificationWebhookPayload(ref)
+            );
+            return;
         }
+        emitWebhookEvent('notification.v2.hidden', { id: notificationId });
     }
 
     function expireFriendRequestNotifications() {
@@ -1324,6 +1333,11 @@ export const useNotificationStore = defineStore('Notification', () => {
                 console.log('Notification response', args);
                 if (!args.json) return;
                 handleNotificationV2Hide(notificationId);
+                emitWebhookEvent('notification.v2.response_sent', {
+                    notificationId,
+                    responseType,
+                    responseData
+                });
                 new Noty({
                     type: 'success',
                     text: escapeTag(args.json)
@@ -1332,6 +1346,11 @@ export const useNotificationStore = defineStore('Notification', () => {
             .catch(() => {
                 handleNotificationV2Hide(notificationId);
                 notificationRequest.hideNotificationV2(notificationId);
+                emitWebhookEvent('notification.v2.response_failed', {
+                    notificationId,
+                    responseType,
+                    responseData
+                });
             });
     }
 

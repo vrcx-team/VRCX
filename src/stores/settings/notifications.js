@@ -9,6 +9,10 @@ import { useVrStore } from '../vr';
 
 import configRepository from '../../service/config';
 import { configureWebhookEventExporter, emitWebhookEvent } from '../../service/webhookEvent';
+import {
+    createDefaultWebhookEventEnabledMap,
+    normalizeWebhookEventEnabledMap
+} from '../../shared/constants/webhookEvents';
 
 export const useNotificationsSettingsStore = defineStore(
     'NotificationsSettings',
@@ -124,6 +128,9 @@ export const useNotificationsSettingsStore = defineStore(
         const webhookEventExportEnabled = ref(false);
         const webhookEventExportUrl = ref('');
         const webhookEventExportBearerToken = ref('');
+        const webhookEventEnabledMap = ref(
+            createDefaultWebhookEventEnabledMap()
+        );
         const webhookEventTestName = ref('vrcx.webhook.test');
         const webhookEventTestPayload = ref('{\n  "message": "hello from VRCX"\n}');
 
@@ -146,7 +153,8 @@ export const useNotificationsSettingsStore = defineStore(
                 notificationTimeoutConfig,
                 webhookEventExportEnabledConfig,
                 webhookEventExportUrlConfig,
-                webhookEventExportBearerTokenConfig
+                webhookEventExportBearerTokenConfig,
+                webhookEventEnabledEventsConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_overlayToast', 'Game Running'),
                 configRepository.getBool('VRCX_overlayNotifications', true),
@@ -171,7 +179,8 @@ export const useNotificationsSettingsStore = defineStore(
                 configRepository.getString('VRCX_notificationTimeout', '3000'),
                 configRepository.getBool('VRCX_eventExportEnabled', false),
                 configRepository.getString('VRCX_eventExportWebhookUrl', ''),
-                configRepository.getString('VRCX_eventExportBearerToken', '')
+                configRepository.getString('VRCX_eventExportBearerToken', ''),
+                configRepository.getString('VRCX_eventExportEnabledEvents', '{}')
             ]);
 
             overlayToast.value = overlayToastConfig;
@@ -194,6 +203,16 @@ export const useNotificationsSettingsStore = defineStore(
             webhookEventExportUrl.value = webhookEventExportUrlConfig;
             webhookEventExportBearerToken.value =
                 webhookEventExportBearerTokenConfig;
+            let parsedEnabledEvents = {};
+            try {
+                parsedEnabledEvents = JSON.parse(
+                    webhookEventEnabledEventsConfig || '{}'
+                );
+            } catch {
+                parsedEnabledEvents = {};
+            }
+            webhookEventEnabledMap.value =
+                normalizeWebhookEventEnabledMap(parsedEnabledEvents);
 
             initSharedFeedFilters();
 
@@ -431,7 +450,8 @@ export const useNotificationsSettingsStore = defineStore(
             await configureWebhookEventExporter({
                 enabled: webhookEventExportEnabled.value,
                 webhookUrl: webhookEventExportUrl.value,
-                bearerToken: webhookEventExportBearerToken.value
+                bearerToken: webhookEventExportBearerToken.value,
+                enabledEvents: webhookEventEnabledMap.value
             });
         }
 
@@ -447,6 +467,30 @@ export const useNotificationsSettingsStore = defineStore(
 
         function setWebhookEventExportBearerToken(value) {
             webhookEventExportBearerToken.value = value;
+            saveWebhookEventExportSettings();
+        }
+
+        function setWebhookEventEnabled(eventKey, enabled) {
+            if (!eventKey) return;
+            webhookEventEnabledMap.value = {
+                ...webhookEventEnabledMap.value,
+                [eventKey]: Boolean(enabled)
+            };
+            saveWebhookEventExportSettings();
+        }
+
+        function setAllWebhookEventsEnabled(enabled) {
+            const next = {};
+            const value = Boolean(enabled);
+            for (const key of Object.keys(webhookEventEnabledMap.value)) {
+                next[key] = value;
+            }
+            webhookEventEnabledMap.value = next;
+            saveWebhookEventExportSettings();
+        }
+
+        function resetWebhookEventEnabledDefaults() {
+            webhookEventEnabledMap.value = createDefaultWebhookEventEnabledMap();
             saveWebhookEventExportSettings();
         }
 
@@ -517,6 +561,7 @@ export const useNotificationsSettingsStore = defineStore(
             webhookEventExportEnabled,
             webhookEventExportUrl,
             webhookEventExportBearerToken,
+            webhookEventEnabledMap,
             webhookEventTestName,
             webhookEventTestPayload,
 
@@ -541,6 +586,9 @@ export const useNotificationsSettingsStore = defineStore(
             setWebhookEventExportEnabled,
             setWebhookEventExportUrl,
             setWebhookEventExportBearerToken,
+            setWebhookEventEnabled,
+            setAllWebhookEventsEnabled,
+            resetWebhookEventEnabledDefaults,
             testWebhookEventExport
         };
     }
