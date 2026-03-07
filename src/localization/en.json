@@ -198,7 +198,9 @@
         },
         "my_avatars": {
             "filter": "Filter",
-            "clear_filters": "Clear All"
+            "clear_filters": "Clear All",
+            "table_view": "Table View",
+            "grid_view": "Grid View"
         },
         "search": {
             "search_placeholder": "Search",
@@ -1323,7 +1325,8 @@
                 "create_impostor": "Create Impostor",
                 "manage_tags": "Manage Tags",
                 "manage_tags_placeholder": "Add a tag...",
-                "manage_tags_hint": "Click a tag to change its color"
+                "manage_tags_hint": "Click a tag to change its color",
+                "view_details": "View Details"
             },
             "info": {
                 "header": "Info",
