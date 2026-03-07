@@ -19,6 +19,7 @@ import { useUserStore } from './user';
 import { useWorldStore } from './world';
 import { watchState } from '../service/watchState';
 import { emitWebhookEvent } from '../service/webhookEvent';
+import { shouldEmitWebhookEventRuntime } from '../service/webhookEventGate';
 
 export const useFavoriteStore = defineStore('Favorite', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -319,10 +320,14 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 groupKey: args.ref.$groupKey
             });
         } else if (args.ref.type === 'avatar') {
-            emitWebhookEvent('favorite.avatar.added', {
-                favoriteId: args.ref.favoriteId,
-                groupKey: args.ref.$groupKey
-            });
+            if (
+                shouldEmitWebhookEventRuntime('favorite.avatar.added', watchState)
+            ) {
+                emitWebhookEvent('favorite.avatar.added', {
+                    favoriteId: args.ref.favoriteId,
+                    groupKey: args.ref.$groupKey
+                });
+            }
         }
         applyFavorite(args.ref.type, args.ref.favoriteId);
         friendStore.updateFriend(args.ref.favoriteId);
