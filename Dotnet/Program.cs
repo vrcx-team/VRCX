@@ -20,8 +20,10 @@ namespace VRCX
         public static string ConfigLocation { get; private set; }
         public static string Version { get; private set; }
         public static bool LaunchDebug;
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public static AppApi AppApiInstance { get; private set; }
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private const string ConfigFileName = "VRCX.json";
+        private const string DatabaseFileName = "VRCX.sqlite3";
 
         private static void SetProgramDirectories()
         {
@@ -30,25 +32,25 @@ namespace VRCX
                     "VRCX");
 
             BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            ConfigLocation = Path.Join(AppDataDirectory, "VRCX.sqlite3");
+            ConfigLocation = Path.Join(AppDataDirectory, DatabaseFileName);
 
             if (!Directory.Exists(AppDataDirectory))
             {
                 Directory.CreateDirectory(AppDataDirectory);
 
                 // Migrate config to AppData
-                if (File.Exists(Path.Join(BaseDirectory, "VRCX.json")))
+                if (File.Exists(Path.Join(BaseDirectory, ConfigFileName )))
                 {
-                    File.Move(Path.Join(BaseDirectory, "VRCX.json"), Path.Join(AppDataDirectory, "VRCX.json"));
-                    File.Copy(Path.Join(AppDataDirectory, "VRCX.json"),
+                    File.Move(Path.Join(BaseDirectory, ConfigFileName ), Path.Join(AppDataDirectory, ConfigFileName ));
+                    File.Copy(Path.Join(AppDataDirectory, ConfigFileName ),
                         Path.Join(AppDataDirectory, "VRCX-backup.json"));
                 }
 
-                if (File.Exists(Path.Join(BaseDirectory, "VRCX.sqlite3")))
+                if (File.Exists(Path.Join(BaseDirectory, DatabaseFileName)))
                 {
-                    File.Move(Path.Join(BaseDirectory, "VRCX.sqlite3"),
-                        Path.Join(AppDataDirectory, "VRCX.sqlite3"));
-                    File.Copy(Path.Join(AppDataDirectory, "VRCX.sqlite3"),
+                    File.Move(Path.Join(BaseDirectory, DatabaseFileName),
+                        Path.Join(AppDataDirectory, DatabaseFileName));
+                    File.Copy(Path.Join(AppDataDirectory, DatabaseFileName),
                         Path.Join(AppDataDirectory, "VRCX-backup.sqlite3"));
                 }
             }
@@ -88,6 +90,11 @@ namespace VRCX
             var fileName = Path.Join(AppDataDirectory, "logs", "VRCX.log");
             if (StartupArgs.LaunchArguments.IsOverlay)
                 fileName = Path.Join(AppDataDirectory, "logs", "VRCX.Overlay.log");
+
+            // check directory exist
+            var logDir = Path.GetDirectoryName(fileName);
+            if (!string.IsNullOrEmpty(logDir))
+                Directory.CreateDirectory(logDir);
 
             LogManager.Setup().LoadConfiguration(builder =>
             {
