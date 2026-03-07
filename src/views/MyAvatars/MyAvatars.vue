@@ -6,14 +6,20 @@
                 :model-value="viewMode"
                 variant="outline"
                 @update:model-value="handleViewModeChange">
-                <TooltipWrapper :content="t('view.my_avatars.table_view')" side="bottom" :delay-duration="300">
-                    <ToggleGroupItem value="table" class="px-2">
-                        <List class="size-4" />
+                <TooltipWrapper :content="t('view.my_avatars.grid_view')" side="bottom" :delay-duration="300">
+                    <ToggleGroupItem
+                        value="grid"
+                        class="px-2"
+                        :class="viewMode === 'grid' && 'bg-accent text-accent-foreground'">
+                        <LayoutGrid class="size-4" />
                     </ToggleGroupItem>
                 </TooltipWrapper>
-                <TooltipWrapper :content="t('view.my_avatars.grid_view')" side="bottom" :delay-duration="300">
-                    <ToggleGroupItem value="grid" class="px-2">
-                        <LayoutGrid class="size-4" />
+                <TooltipWrapper :content="t('view.my_avatars.table_view')" side="bottom" :delay-duration="300">
+                    <ToggleGroupItem
+                        value="table"
+                        class="px-2"
+                        :class="viewMode === 'table' && 'bg-accent text-accent-foreground'">
+                        <List class="size-4" />
                     </ToggleGroupItem>
                 </TooltipWrapper>
             </ToggleGroup>
@@ -346,7 +352,7 @@
     const avatars = ref([]);
     const avatarTagsMap = ref(new Map());
     const imageUploadInput = ref(null);
-    const viewMode = ref('table');
+    const viewMode = ref('grid');
     const gridScrollRef = ref(null);
     const gridContainerRefEl = ref(null);
     const cropDialogOpen = ref(false);
@@ -434,7 +440,10 @@
         // search filter
         if (searchText.value) {
             const query = searchText.value.toLowerCase();
-            list = list.filter((a) => a.name?.toLowerCase().includes(query));
+            list = list.filter(
+                (a) =>
+                    a.name?.toLowerCase().includes(query) || a.$tags?.some((t) => t.tag.toLowerCase().includes(query))
+            );
         }
 
         return list;
@@ -842,7 +851,7 @@
 
     onBeforeMount(async () => {
         try {
-            const storedMode = await configRepository.getString('VRCX_MyAvatarsViewMode', 'table');
+            const storedMode = await configRepository.getString('VRCX_MyAvatarsViewMode', 'grid');
             if (storedMode === 'grid' || storedMode === 'table') {
                 viewMode.value = storedMode;
             }
