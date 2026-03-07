@@ -113,6 +113,7 @@
                                         :key="group.key"
                                         :class="[
                                             'group-item',
+                                            `group-item--${group.visibility}`,
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]"
                                         @click="handleGroupClick('remote', group.key)">
@@ -127,9 +128,6 @@
                                                 <span class="group-item__visibility-text">{{
                                                     t(`view.favorite.visibility.${group.visibility}`)
                                                 }}</span>
-                                                <span
-                                                    class="group-item__visibility-dot"
-                                                    :class="worldGroupVisibilityDotColors[group.visibility]"></span>
                                             </span>
                                             <DropdownMenu
                                                 :open="activeGroupMenu === remoteGroupMenuKey(group.key)"
@@ -1500,10 +1498,19 @@
     }
 
     .group-item__visibility-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        flex-shrink: 0;
+        display: none;
+    }
+
+    .group-item--public {
+        border-left: 3px solid #22c55e;
+    }
+
+    .group-item--friends {
+        border-left: 3px solid #0ea5e9;
+    }
+
+    .group-item--private {
+        border-left: 3px solid #ef4444;
     }
 
     .group-item.is-active {

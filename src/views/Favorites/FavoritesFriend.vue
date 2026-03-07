@@ -113,6 +113,7 @@
                                         :key="group.key"
                                         :class="[
                                             'group-item',
+                                            `group-item--${group.visibility}`,
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]"
                                         @click="handleGroupClick('remote', group.key)">
@@ -127,9 +128,6 @@
                                                 <span class="group-item__visibility-text">{{
                                                     t(`view.favorite.visibility.${group.visibility}`)
                                                 }}</span>
-                                                <span
-                                                    class="group-item__visibility-dot"
-                                                    :class="friendGroupVisibilityDotColors[group.visibility]"></span>
                                             </span>
                                             <DropdownMenu
                                                 :open="activeGroupMenu === remoteGroupMenuKey(group.key)"
@@ -568,6 +566,10 @@
     const newLocalGroupName = ref('');
     const newLocalGroupInput = ref(null);
 
+    /**
+     *
+     * @param value
+     */
     function handleSortFavoritesChange(value) {
         const next = Boolean(value);
         if (next !== sortFavorites.value) {
@@ -586,11 +588,17 @@
         friendToolbarMenuOpen.value = false;
     };
 
+    /**
+     *
+     */
     function handleFriendImportClick() {
         closeFriendToolbarMenu();
         showFriendImportDialog();
     }
 
+    /**
+     *
+     */
     function handleFriendExportClick() {
         closeFriendToolbarMenu();
         showFriendExportDialog();
@@ -600,6 +608,9 @@
         loadFriendSplitterPreferences();
     });
 
+    /**
+     *
+     */
     async function loadFriendSplitterPreferences() {
         const storedSize = await configRepository.getString('VRCX_FavoritesFriendSplitter', '260');
         const parsedSize = Number(storedSize);
@@ -803,6 +814,10 @@
         }
     );
 
+    /**
+     *
+     * @param visibility
+     */
     function getBadgeVariant(visibility) {
         switch (visibility) {
             case 'public':
@@ -814,16 +829,27 @@
         }
     }
 
+    /**
+     *
+     */
     function showFriendExportDialog() {
         friendExportDialogVisible.value = true;
     }
 
+    /**
+     *
+     */
     function handleRefreshFavorites() {
         refreshFavorites();
         getLocalWorldFavorites();
         getLocalFriendFavorites();
     }
 
+    /**
+     *
+     * @param key
+     * @param visible
+     */
     function handleGroupMenuVisible(key, visible) {
         if (visible) {
             activeGroupMenu.value = key;
@@ -834,6 +860,9 @@
         }
     }
 
+    /**
+     *
+     */
     function ensureSelectedGroup() {
         if (selectedGroup.value && isGroupAvailable(selectedGroup.value)) {
             return;
@@ -841,6 +870,9 @@
         selectDefaultGroup();
     }
 
+    /**
+     *
+     */
     function selectDefaultGroup() {
         if (favoriteFriendGroups.value.length) {
             const nextGroup =
@@ -858,6 +890,10 @@
         clearSelectedFriends();
     }
 
+    /**
+     *
+     * @param group
+     */
     function isGroupAvailable(group) {
         if (!group) {
             return false;
@@ -871,6 +907,11 @@
         return false;
     }
 
+    /**
+     *
+     * @param type
+     * @param key
+     */
     function selectGroup(type, key) {
         if (selectedGroup.value?.type === type && selectedGroup.value?.key === key) {
             return;
@@ -879,10 +920,20 @@
         clearSelectedFriends();
     }
 
+    /**
+     *
+     * @param type
+     * @param key
+     */
     function isGroupActive(type, key) {
         return selectedGroup.value?.type === type && selectedGroup.value?.key === key;
     }
 
+    /**
+     *
+     * @param type
+     * @param key
+     */
     function handleGroupClick(type, key) {
         if (hasSearchInput.value) {
             friendFavoriteSearch.value = '';
@@ -891,6 +942,10 @@
         selectGroup(type, key);
     }
 
+    /**
+     *
+     * @param searchTerm
+     */
     function doSearchFriendFavorites(searchTerm) {
         const search = searchTerm.trim().toLowerCase();
         if (search.length < 3) {
@@ -908,6 +963,11 @@
     }
     const searchFriendFavorites = debounce(doSearchFriendFavorites, 200);
 
+    /**
+     *
+     * @param id
+     * @param value
+     */
     function toggleFriendSelection(id, value) {
         if (value) {
             if (!selectedFavoriteFriends.value.includes(id)) {
@@ -918,10 +978,16 @@
         }
     }
 
+    /**
+     *
+     */
     function clearSelectedFriends() {
         selectedFavoriteFriends.value = [];
     }
 
+    /**
+     *
+     */
     function toggleSelectAllFriends() {
         if (!activeRemoteGroup.value) {
             return;
@@ -933,6 +999,9 @@
         }
     }
 
+    /**
+     *
+     */
     function copySelectedFriends() {
         if (!selectedFavoriteFriends.value.length) {
             return;
@@ -942,6 +1011,9 @@
         showFriendImportDialog();
     }
 
+    /**
+     *
+     */
     function showFriendBulkUnfavoriteSelectionConfirm() {
         if (!selectedFavoriteFriends.value.length) {
             return;
@@ -956,6 +1028,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param ids
+     */
     function bulkUnfavoriteSelectedFriends(ids) {
         if (isLocalGroupSelected.value && activeLocalGroupName.value) {
             ids.forEach((id) => {
@@ -972,6 +1048,10 @@
         friendEditMode.value = false;
     }
 
+    /**
+     *
+     * @param ctx
+     */
     function clearFavoriteGroup(ctx) {
         modalStore
             .confirm({
@@ -989,21 +1069,38 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param group
+     * @param visibility
+     */
     function handleVisibilitySelection(group, visibility) {
         const menuKey = remoteGroupMenuKey(group.key);
         changeFriendGroupVisibility(group.name, visibility, menuKey);
     }
 
+    /**
+     *
+     * @param group
+     */
     function handleRemoteRename(group) {
         handleGroupMenuVisible(remoteGroupMenuKey(group.key), false);
         changeFavoriteGroupName(group);
     }
 
+    /**
+     *
+     * @param group
+     */
     function handleRemoteClear(group) {
         handleGroupMenuVisible(remoteGroupMenuKey(group.key), false);
         clearFavoriteGroup(group);
     }
 
+    /**
+     *
+     * @param group
+     */
     function changeFavoriteGroupName(group) {
         const currentName = group.displayName || group.name;
         modalStore
@@ -1042,6 +1139,12 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param name
+     * @param visibility
+     * @param menuKey
+     */
     function changeFriendGroupVisibility(name, visibility, menuKey = null) {
         const params = {
             type: 'friend',
@@ -1064,6 +1167,10 @@
         });
     }
 
+    /**
+     *
+     * @param value
+     */
     function formatVisibility(value) {
         if (!value) {
             return '';
@@ -1071,6 +1178,9 @@
         return value.charAt(0).toUpperCase() + value.slice(1);
     }
 
+    /**
+     *
+     */
     function startLocalGroupCreation() {
         isCreatingLocalGroup.value = true;
         newLocalGroupName.value = '';
@@ -1079,11 +1189,17 @@
         });
     }
 
+    /**
+     *
+     */
     function cancelLocalGroupCreation() {
         isCreatingLocalGroup.value = false;
         newLocalGroupName.value = '';
     }
 
+    /**
+     *
+     */
     function handleLocalGroupCreationConfirm() {
         const name = newLocalGroupName.value.trim();
         if (!name) {
@@ -1096,6 +1212,10 @@
         selectGroup('local', name);
     }
 
+    /**
+     *
+     * @param group
+     */
     function handleLocalRename(group) {
         handleGroupMenuVisible(localGroupMenuKey(group), false);
         modalStore
@@ -1123,6 +1243,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param group
+     */
     function handleLocalDelete(group) {
         handleGroupMenuVisible(localGroupMenuKey(group), false);
         modalStore
@@ -1280,10 +1404,19 @@
     }
 
     .group-item__visibility-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        flex-shrink: 0;
+        display: none;
+    }
+
+    .group-item--public {
+        border-left: 3px solid #22c55e;
+    }
+
+    .group-item--friends {
+        border-left: 3px solid #0ea5e9;
+    }
+
+    .group-item--private {
+        border-left: 3px solid #ef4444;
     }
 
     .group-item.is-active {
