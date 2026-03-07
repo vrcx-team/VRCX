@@ -1,134 +1,155 @@
 <template>
     <Sidebar side="left" variant="sidebar" collapsible="icon">
-        <SidebarContent class="pt-2" style="container-type: inline-size">
-            <SidebarGroup>
-                <SidebarGroupContent>
-                    <SidebarMenu v-if="navLayoutReady">
-                        <template v-for="item in menuItems" :key="item.index">
-                            <SidebarMenuItem v-if="!item.children?.length">
-                                <SidebarMenuButton
-                                    :is-active="activeMenuIndex === item.index"
-                                    :tooltip="getItemTooltip(item)"
-                                    @click="handleMenuItemClick(item)">
-                                    <i
-                                        :class="item.icon"
-                                        class="inline-flex size-6 items-center justify-center text-lg relative">
-                                        <span
-                                            v-if="isNavItemNotified(item)"
-                                            class="notify-dot-not-collapsed"
-                                            :class="{ '-right-1!': isCollapsed }"
-                                            aria-hidden="true"></span>
-                                    </i>
-                                    <span v-show="!isCollapsed">{{
-                                        item.titleIsCustom ? item.title : t(item.title || '')
-                                    }}</span>
-                                    <span
-                                        v-if="item.action === 'direct-access' && !isCollapsed"
-                                        class="nav-shortcut-hint ml-auto inline-flex items-center gap-0.5">
-                                        <Kbd>{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
-                                        <Kbd>D</Kbd>
-                                    </span>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-
-                            <SidebarMenuItem v-else>
-                                <DropdownMenu
-                                    v-if="isCollapsed"
-                                    :open="collapsedDropdownOpenId === item.index"
-                                    @update:open="(value) => handleCollapsedDropdownOpenChange(item.index, value)">
-                                    <DropdownMenuTrigger as-child>
+        <ContextMenu>
+            <ContextMenuTrigger as-child>
+                <SidebarContent class="pt-2" style="container-type: inline-size">
+                    <SidebarGroup>
+                        <SidebarGroupContent>
+                            <SidebarMenu v-if="navLayoutReady">
+                                <template v-for="item in menuItems" :key="item.index">
+                                    <SidebarMenuItem v-if="!item.children?.length">
                                         <SidebarMenuButton
-                                            :is-active="item.children?.some((e) => e.index === activeMenuIndex)"
-                                            :tooltip="item.titleIsCustom ? item.title : t(item.title || '')">
+                                            :is-active="activeMenuIndex === item.index"
+                                            :tooltip="getItemTooltip(item)"
+                                            @click="handleMenuItemClick(item)">
                                             <i
                                                 :class="item.icon"
-                                                class="inline-flex size-6 items-center justify-center text-lg relative"
-                                                ><span
+                                                class="inline-flex size-6 items-center justify-center text-lg relative">
+                                                <span
                                                     v-if="isNavItemNotified(item)"
-                                                    class="notify-dot -right-1!"
-                                                    aria-hidden="true"></span
-                                            ></i>
+                                                    class="notify-dot-not-collapsed"
+                                                    :class="{ '-right-1!': isCollapsed }"
+                                                    aria-hidden="true"></span>
+                                            </i>
                                             <span v-show="!isCollapsed">{{
                                                 item.titleIsCustom ? item.title : t(item.title || '')
                                             }}</span>
+                                            <span
+                                                v-if="item.action === 'direct-access' && !isCollapsed"
+                                                class="nav-shortcut-hint ml-auto inline-flex items-center gap-0.5">
+                                                <Kbd>{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
+                                                <Kbd>D</Kbd>
+                                            </span>
                                         </SidebarMenuButton>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent side="right" align="start" class="w-56">
-                                        <DropdownMenuItem
-                                            v-for="entry in item.children"
-                                            :key="entry.index"
-                                            @select="(event) => handleCollapsedSubmenuSelect(event, entry, item.index)">
-                                            <i
-                                                v-if="entry.icon"
-                                                :class="entry.icon"
-                                                class="inline-flex size-4 items-center justify-center text-base relative"
-                                                ><span
-                                                    v-if="isEntryNotified(entry)"
-                                                    class="notify-dot -right-1! top-0.5!"
-                                                    aria-hidden="true"></span
-                                            ></i>
-                                            <span>{{ t(entry.label) }}</span>
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                    </SidebarMenuItem>
 
-                                <Collapsible
-                                    v-else
-                                    class="group/collapsible"
-                                    :default-open="
-                                        activeMenuIndex && item.children?.some((e) => e.index === activeMenuIndex)
-                                    ">
-                                    <template #default="{ open }">
-                                        <CollapsibleTrigger as-child>
-                                            <SidebarMenuButton
-                                                :is-active="item.children?.some((e) => e.index === activeMenuIndex)"
-                                                :tooltip="item.titleIsCustom ? item.title : t(item.title || '')">
-                                                <i
-                                                    :class="item.icon"
-                                                    class="inline-flex size-6 items-center justify-center text-lg relative"
-                                                    ><span
-                                                        v-if="isNavItemNotified(item)"
-                                                        class="notify-dot"
-                                                        aria-hidden="true"></span
-                                                ></i>
-                                                <span v-show="!isCollapsed">{{
-                                                    item.titleIsCustom ? item.title : t(item.title || '')
-                                                }}</span>
+                                    <SidebarMenuItem v-else>
+                                        <DropdownMenu
+                                            v-if="isCollapsed"
+                                            :open="collapsedDropdownOpenId === item.index"
+                                            @update:open="
+                                                (value) => handleCollapsedDropdownOpenChange(item.index, value)
+                                            ">
+                                            <DropdownMenuTrigger as-child>
+                                                <SidebarMenuButton
+                                                    :is-active="item.children?.some((e) => e.index === activeMenuIndex)"
+                                                    :tooltip="item.titleIsCustom ? item.title : t(item.title || '')">
+                                                    <i
+                                                        :class="item.icon"
+                                                        class="inline-flex size-6 items-center justify-center text-lg relative"
+                                                        ><span
+                                                            v-if="isNavItemNotified(item)"
+                                                            class="notify-dot -right-1!"
+                                                            aria-hidden="true"></span
+                                                    ></i>
+                                                    <span v-show="!isCollapsed">{{
+                                                        item.titleIsCustom ? item.title : t(item.title || '')
+                                                    }}</span>
+                                                </SidebarMenuButton>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent side="right" align="start" class="w-56">
+                                                <DropdownMenuItem
+                                                    v-for="entry in item.children"
+                                                    :key="entry.index"
+                                                    @select="
+                                                        (event) =>
+                                                            handleCollapsedSubmenuSelect(event, entry, item.index)
+                                                    ">
+                                                    <i
+                                                        v-if="entry.icon"
+                                                        :class="entry.icon"
+                                                        class="inline-flex size-4 items-center justify-center text-base relative"
+                                                        ><span
+                                                            v-if="isEntryNotified(entry)"
+                                                            class="notify-dot -right-1! top-0.5!"
+                                                            aria-hidden="true"></span
+                                                    ></i>
+                                                    <span>{{ t(entry.label) }}</span>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
 
-                                                <ChevronRight
-                                                    v-show="!isCollapsed"
-                                                    class="ml-auto transition-transform"
-                                                    :class="open ? 'rotate-90' : ''" />
-                                            </SidebarMenuButton>
-                                        </CollapsibleTrigger>
-                                        <CollapsibleContent>
-                                            <SidebarMenuSub>
-                                                <SidebarMenuSubItem v-for="entry in item.children" :key="entry.index">
-                                                    <SidebarMenuSubButton
-                                                        :is-active="activeMenuIndex === entry.index"
-                                                        @click="handleSubmenuClick(entry, item.index)">
+                                        <Collapsible
+                                            v-else
+                                            class="group/collapsible"
+                                            :default-open="
+                                                activeMenuIndex &&
+                                                item.children?.some((e) => e.index === activeMenuIndex)
+                                            ">
+                                            <template #default="{ open }">
+                                                <CollapsibleTrigger as-child>
+                                                    <SidebarMenuButton
+                                                        :is-active="
+                                                            item.children?.some((e) => e.index === activeMenuIndex)
+                                                        "
+                                                        :tooltip="
+                                                            item.titleIsCustom ? item.title : t(item.title || '')
+                                                        ">
                                                         <i
-                                                            v-if="entry.icon"
-                                                            :class="entry.icon"
-                                                            class="inline-flex size-5 items-center justify-center text-base relative"
+                                                            :class="item.icon"
+                                                            class="inline-flex size-6 items-center justify-center text-lg relative"
                                                             ><span
-                                                                v-if="isEntryNotified(entry)"
-                                                                class="notify-dot -right-0.5!"
+                                                                v-if="isNavItemNotified(item)"
+                                                                class="notify-dot"
                                                                 aria-hidden="true"></span
                                                         ></i>
-                                                        <span>{{ t(entry.label) }}</span>
-                                                    </SidebarMenuSubButton>
-                                                </SidebarMenuSubItem>
-                                            </SidebarMenuSub>
-                                        </CollapsibleContent>
-                                    </template>
-                                </Collapsible>
-                            </SidebarMenuItem>
-                        </template>
-                    </SidebarMenu>
-                </SidebarGroupContent>
-            </SidebarGroup>
-        </SidebarContent>
+                                                        <span v-show="!isCollapsed">{{
+                                                            item.titleIsCustom ? item.title : t(item.title || '')
+                                                        }}</span>
+
+                                                        <ChevronRight
+                                                            v-show="!isCollapsed"
+                                                            class="ml-auto transition-transform"
+                                                            :class="open ? 'rotate-90' : ''" />
+                                                    </SidebarMenuButton>
+                                                </CollapsibleTrigger>
+                                                <CollapsibleContent>
+                                                    <SidebarMenuSub>
+                                                        <SidebarMenuSubItem
+                                                            v-for="entry in item.children"
+                                                            :key="entry.index">
+                                                            <SidebarMenuSubButton
+                                                                :is-active="activeMenuIndex === entry.index"
+                                                                @click="handleSubmenuClick(entry, item.index)">
+                                                                <i
+                                                                    v-if="entry.icon"
+                                                                    :class="entry.icon"
+                                                                    class="inline-flex size-5 items-center justify-center text-base relative"
+                                                                    ><span
+                                                                        v-if="isEntryNotified(entry)"
+                                                                        class="notify-dot -right-0.5!"
+                                                                        aria-hidden="true"></span
+                                                                ></i>
+                                                                <span>{{ t(entry.label) }}</span>
+                                                            </SidebarMenuSubButton>
+                                                        </SidebarMenuSubItem>
+                                                    </SidebarMenuSub>
+                                                </CollapsibleContent>
+                                            </template>
+                                        </Collapsible>
+                                    </SidebarMenuItem>
+                                </template>
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                </SidebarContent>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+                <ContextMenuItem :disabled="!hasNotifications" @click="clearAllNotifications">
+                    {{ t('nav_menu.mark_all_read') }}
+                </ContextMenuItem>
+            </ContextMenuContent>
+        </ContextMenu>
 
         <SidebarFooter class="px-2 py-3">
             <SidebarMenu>
@@ -340,6 +361,7 @@
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
     import { computed, defineAsyncComponent, h, onMounted, ref, watch } from 'vue';
+    import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
     import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
     import { ChevronRight, Heart } from 'lucide-vue-next';
     import { Kbd } from '@/components/ui/kbd';
@@ -427,6 +449,8 @@
     const { showVRCXUpdateDialog, showChangeLogDialog } = VRCXUpdaterStore;
     const uiStore = useUiStore();
     const { notifiedMenus } = storeToRefs(uiStore);
+    const { clearAllNotifications } = uiStore;
+    const hasNotifications = computed(() => notifiedMenus.value.length > 0);
     const { directAccessPaste } = useSearchStore();
     const { logout } = useAuthStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();

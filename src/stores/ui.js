@@ -308,6 +308,11 @@ export const useUiStore = defineStore('Ui', () => {
         updateTrayIconNotify();
     }
 
+    function clearAllNotifications() {
+        notifiedMenus.value = [];
+        updateTrayIconNotify();
+    }
+
     function updateTrayIconNotify(force = false) {
         const newState =
             appearanceSettings.notificationIconDot &&
@@ -332,6 +337,7 @@ export const useUiStore = defineStore('Ui', () => {
 
         notifyMenu,
         removeNotify,
+        clearAllNotifications,
         showConsole,
         updateTrayIconNotify,
         pushDialogCrumb,
