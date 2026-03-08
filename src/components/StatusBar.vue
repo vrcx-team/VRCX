@@ -616,7 +616,7 @@
 
     .ws-sparkline {
         flex-shrink: 0;
-        border-radius: 2px;
+        border-radius: var(--radius-sm);
     }
 
     .status-bar-zoom-field {

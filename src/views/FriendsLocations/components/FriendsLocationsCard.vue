@@ -266,7 +266,7 @@
         right: calc(8px * var(--card-scale));
         inline-size: calc(12px * var(--card-scale));
         block-size: calc(12px * var(--card-scale));
-        border-radius: 999px;
+        border-radius: var(--radius-full);
         pointer-events: none;
     }
 

@@ -21,9 +21,9 @@
             <template #Info>
                 <template v-if="isFriendOnline(userDialog.friend) || currentUser.id === userDialog.id">
                     <div
-                        class="mb-2 pb-2"
+                        class="mb-2 pb-2 border-b border-border"
                         v-if="userDialog.ref.location"
-                        style="display: flex; flex-direction: column; border-bottom: 1px solid #e4e7ed14">
+                        style="display: flex; flex-direction: column">
                         <div style="flex: none">
                             <template v-if="isRealInstance(userDialog.$location.tag)">
                                 <InstanceActionBar
@@ -185,7 +185,7 @@
                                     <Avatar
                                         class="cursor-pointer size-15! rounded-lg!"
                                         :style="{
-                                            background: userDialog.isRepresentedGroupLoading ? '#f5f7fa' : ''
+                                            background: userDialog.isRepresentedGroupLoading ? 'var(--muted)' : ''
                                         }"
                                         @click="showFullscreenImageDialog(userDialog.representedGroup.iconUrl)">
                                         <AvatarImage

@@ -165,7 +165,7 @@
                     @click="openExternalLink('https://github.com/vrcx-team/VRCX/graphs/contributors')" />
             </div>
         </div>
-        <div class="options-container" style="margin-top: 45px; border-top: 1px solid #eee; padding-top: 30px">
+        <div class="options-container border-t border-border" style="margin-top: 45px; padding-top: 30px">
             <span class="header">{{ t('view.settings.general.legal_notice.header') }}</span>
             <div class="options-container-item" style="display: block">
                 <p>

@@ -1784,7 +1784,7 @@
     .group-item__placeholder-tag {
         width: 64px;
         height: 18px;
-        border-radius: 999px;
+        border-radius: var(--radius-full);
     }
 
     .group-item--new {

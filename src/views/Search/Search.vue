@@ -334,9 +334,9 @@
                                     <span v-text="group.name"></span>
                                     <span style="margin-left: 6px; font-weight: normal">({{ group.memberCount }})</span>
                                     <span
+                                        class="text-muted-foreground"
                                         style="
                                             margin-left: 6px;
-                                            color: #909399;
                                             font-weight: normal;
                                             font-family: monospace;
                                             font-size: 12px;

@@ -685,7 +685,8 @@
                         </div>
                         <div
                             v-if="groupDialog.ref.membershipStatus === 'member'"
-                            style="width: 100%; margin-top: 8px; border-top: 1px solid #e4e7ed14">
+                            class="border-t border-border"
+                            style="width: 100%; margin-top: 8px">
                             <div style="width: 100%; display: flex; margin-top: 8px">
                                 <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
                                     <div class="flex-1 overflow-hidden">
@@ -1109,7 +1110,7 @@
                             v-slot:[`label-${index}`]>
                             <span style="font-weight: bold; font-size: 16px" v-text="gallery.name" />
                             <i class="x-status-icon" style="margin-left: 6px" :class="groupGalleryStatus(gallery)" />
-                            <span style="color: #909399; font-size: 12px; margin-left: 6px">{{
+                            <span class="text-muted-foreground" style="font-size: 12px; margin-left: 6px">{{
                                 groupDialog.galleries[gallery.id] ? groupDialog.galleries[gallery.id].length : 0
                             }}</span>
                         </template>
@@ -1117,7 +1118,7 @@
                             v-for="(gallery, index) in groupDialog.ref.galleries"
                             :key="`content-${index}`"
                             v-slot:[String(index)]>
-                            <span style="color: #c7c7c7; padding: 8px" v-text="gallery.description" />
+                            <span class="text-muted-foreground" style="padding: 8px" v-text="gallery.description" />
                             <div
                                 style="
                                     display: grid;

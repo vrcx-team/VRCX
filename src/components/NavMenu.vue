@@ -804,7 +804,7 @@
         right: 0;
         width: 6px;
         height: 6px;
-        background-color: #ef4444;
+        background-color: var(--color-red-500);
         border-radius: 50%;
         transform: translateY(-50%);
     }
@@ -815,7 +815,7 @@
         right: 0;
         width: 6px;
         height: 6px;
-        background-color: #ef4444;
+        background-color: var(--color-red-500);
         border-radius: 50%;
         transform: translateY(-50%);
     }

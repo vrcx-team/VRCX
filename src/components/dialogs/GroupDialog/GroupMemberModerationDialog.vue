@@ -206,7 +206,7 @@
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.sent_invites')
                                     }}</span>
-                                    <span style="color: #909399; font-size: 12px; margin-left: 6px">{{
+                                    <span class="text-muted-foreground" style="font-size: 12px; margin-left: 6px">{{
                                         groupInvitesModerationTable.data.length
                                     }}</span>
                                 </template>
@@ -214,7 +214,7 @@
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.join_requests')
                                     }}</span>
-                                    <span style="color: #909399; font-size: 12px; margin-left: 6px">{{
+                                    <span class="text-muted-foreground" style="font-size: 12px; margin-left: 6px">{{
                                         groupJoinRequestsModerationTable.data.length
                                     }}</span>
                                 </template>
@@ -222,7 +222,7 @@
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.blocked_requests')
                                     }}</span>
-                                    <span style="color: #909399; font-size: 12px; margin-left: 6px">{{
+                                    <span class="text-muted-foreground" style="font-size: 12px; margin-left: 6px">{{
                                         groupBlockedModerationTable.data.length
                                     }}</span>
                                 </template>

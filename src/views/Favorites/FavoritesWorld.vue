@@ -1658,7 +1658,7 @@
     .group-item__placeholder-tag {
         width: 64px;
         height: 18px;
-        border-radius: 999px;
+        border-radius: var(--radius-full);
     }
 
     .group-item--new {
@@ -1759,7 +1759,7 @@
 
     .favorites-content__scroll--local::-webkit-scrollbar-thumb {
         background-color: var(--border);
-        border-radius: 999px;
+        border-radius: var(--radius-full);
         border: 2px solid transparent;
         background-clip: content-box;
     }
