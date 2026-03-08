@@ -6,14 +6,17 @@
             </DialogHeader>
 
             <div v-if="moderateGroupDialog.visible">
-                <div class="x-friend-item" style="cursor: default">
-                    <div class="avatar">
-                        <img :src="userImage(moderateGroupDialog.userObject)" loading="lazy" />
+                <div class="box-border flex items-center p-1.5 text-[13px] cursor-default">
+                    <div class="relative inline-block flex-none size-9 mr-2.5">
+                        <img
+                            class="size-full rounded-full object-cover"
+                            :src="userImage(moderateGroupDialog.userObject)"
+                            loading="lazy" />
                     </div>
-                    <div class="detail">
+                    <div class="flex-1 overflow-hidden">
                         <span
                             v-if="moderateGroupDialog.userObject.id"
-                            class="name"
+                            class="block truncate font-medium leading-[18px]"
                             :style="{ color: moderateGroupDialog.userObject.$userColour }"
                             v-text="moderateGroupDialog.userObject.displayName"></span>
                         <span v-else v-text="moderateGroupDialog.userId"></span>
@@ -86,6 +89,10 @@
         }
     ]);
 
+    /**
+     *
+     * @param value
+     */
     function setGroupId(value) {
         moderateGroupDialog.value.groupId = String(value ?? '');
     }
@@ -101,6 +108,9 @@
         }
     );
 
+    /**
+     *
+     */
     function initDialog() {
         const D = moderateGroupDialog.value;
         if (D.groupId) {

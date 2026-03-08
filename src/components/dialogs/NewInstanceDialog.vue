@@ -170,12 +170,17 @@
                                     :deselect-on-reselect="true"
                                     @change="buildInstance">
                                     <template #item="{ item, selected }">
-                                        <div class="x-friend-item flex w-full items-center">
-                                            <div class="avatar">
-                                                <img :src="item.iconUrl" loading="lazy" />
+                                        <div class="flex w-full items-center p-1.5 text-[13px]">
+                                            <div class="relative inline-block flex-none size-9 mr-2.5">
+                                                <img
+                                                    class="size-full rounded-full object-cover"
+                                                    :src="item.iconUrl"
+                                                    loading="lazy" />
                                             </div>
-                                            <div class="detail">
-                                                <span class="name" v-text="item.label"></span>
+                                            <div class="flex-1 overflow-hidden">
+                                                <span
+                                                    class="block truncate font-medium leading-[18px]"
+                                                    v-text="item.label"></span>
                                             </div>
                                             <CheckIcon
                                                 :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
@@ -378,14 +383,19 @@
                                     :deselect-on-reselect="true"
                                     @change="buildLegacyInstance">
                                     <template #item="{ item, selected }">
-                                        <div class="x-friend-item flex w-full items-center">
+                                        <div class="flex w-full items-center p-1.5 text-[13px]">
                                             <template v-if="item.user">
-                                                <div class="avatar" :class="userStatusClass(item.user)">
-                                                    <img :src="userImage(item.user)" loading="lazy" />
+                                                <div
+                                                    class="relative inline-block flex-none size-9 mr-2.5"
+                                                    :class="userStatusClass(item.user)">
+                                                    <img
+                                                        class="size-full rounded-full object-cover"
+                                                        :src="userImage(item.user)"
+                                                        loading="lazy" />
                                                 </div>
-                                                <div class="detail">
+                                                <div class="flex-1 overflow-hidden">
                                                     <span
-                                                        class="name"
+                                                        class="block truncate font-medium leading-[18px]"
                                                         :style="{ color: item.user.$userColour }"
                                                         v-text="item.user.displayName"></span>
                                                 </div>
@@ -414,12 +424,17 @@
                                     :deselect-on-reselect="true"
                                     @change="buildLegacyInstance">
                                     <template #item="{ item, selected }">
-                                        <div class="x-friend-item flex w-full items-center">
-                                            <div class="avatar">
-                                                <img :src="item.iconUrl" loading="lazy" />
+                                        <div class="flex w-full items-center p-1.5 text-[13px]">
+                                            <div class="relative inline-block flex-none size-9 mr-2.5">
+                                                <img
+                                                    class="size-full rounded-full object-cover"
+                                                    :src="item.iconUrl"
+                                                    loading="lazy" />
                                             </div>
-                                            <div class="detail">
-                                                <span class="name" v-text="item.label"></span>
+                                            <div class="flex-1 overflow-hidden">
+                                                <span
+                                                    class="block truncate font-medium leading-[18px]"
+                                                    v-text="item.label"></span>
                                             </div>
                                             <CheckIcon
                                                 :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />

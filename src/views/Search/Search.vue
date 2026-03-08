@@ -30,17 +30,22 @@
                         <Checkbox v-model="searchUserSortByLastLoggedIn" />
                         <span>{{ t('view.search.user.sort_by_last_logged_in') }}</span>
                     </label>
-                    <div class="x-friend-list" style="min-height: 500px">
+                    <div style="min-height: 500px">
                         <div
                             v-for="user in searchUserResults"
                             :key="user.id"
-                            class="x-friend-item"
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
                             @click="showUserDialog(user.id)">
-                            <div class="avatar">
-                                <img :src="userImage(user, true)" loading="lazy" />
+                            <div class="relative inline-block flex-none size-9 mr-2.5">
+                                <img
+                                    class="size-full rounded-full object-cover"
+                                    :src="userImage(user, true)"
+                                    loading="lazy" />
                             </div>
-                            <div class="detail">
-                                <span class="name" v-text="user.displayName"></span>
+                            <div class="flex-1 overflow-hidden">
+                                <span
+                                    class="block truncate font-medium leading-[18px]"
+                                    v-text="user.displayName"></span>
                                 <span
                                     v-if="randomUserColours"
                                     class="block truncate text-xs"
@@ -100,17 +105,20 @@
                             <span>{{ t('view.search.world.community_lab') }}</span>
                         </label>
                     </div>
-                    <div class="x-friend-list" style="min-height: 500px">
+                    <div style="min-height: 500px">
                         <div
                             v-for="world in searchWorldResults"
                             :key="world.id"
-                            class="x-friend-item"
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
                             @click="showWorldDialog(world.id)">
-                            <div class="avatar">
-                                <img :src="world.thumbnailImageUrl" loading="lazy" />
+                            <div class="relative inline-block flex-none size-9 mr-2.5">
+                                <img
+                                    class="size-full rounded-full object-cover"
+                                    :src="world.thumbnailImageUrl"
+                                    loading="lazy" />
                             </div>
-                            <div class="detail">
-                                <span class="name" v-text="world.name"></span>
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]" v-text="world.name"></span>
                                 <span v-if="world.occupants" class="block truncate text-xs"
                                     >{{ world.authorName }} ({{ world.occupants }})</span
                                 >
@@ -251,18 +259,26 @@
                             </SelectContent>
                         </Select>
                     </div>
-                    <div class="x-friend-list" style="margin-top: 20px; min-height: 500px">
+                    <div style="margin-top: 20px; min-height: 500px">
                         <div
                             v-for="avatar in searchAvatarPage"
                             :key="avatar.id"
-                            class="x-friend-item"
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
                             @click="showAvatarDialog(avatar.id)">
-                            <div class="avatar">
-                                <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
-                                <img v-else-if="avatar.imageUrl" :src="avatar.imageUrl" loading="lazy" />
+                            <div class="relative inline-block flex-none size-9 mr-2.5">
+                                <img
+                                    v-if="avatar.thumbnailImageUrl"
+                                    class="size-full rounded-full object-cover"
+                                    :src="avatar.thumbnailImageUrl"
+                                    loading="lazy" />
+                                <img
+                                    v-else-if="avatar.imageUrl"
+                                    class="size-full rounded-full object-cover"
+                                    :src="avatar.imageUrl"
+                                    loading="lazy" />
                             </div>
-                            <div class="detail">
-                                <span class="name" v-text="avatar.name"></span>
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]" v-text="avatar.name"></span>
                                 <span
                                     v-if="avatar.releaseStatus === 'public'"
                                     class="block truncate text-xs"
@@ -301,17 +317,20 @@
             </template>
             <template #group>
                 <div style="min-height: 60px">
-                    <div class="x-friend-list" style="min-height: 500px">
+                    <div style="min-height: 500px">
                         <div
                             v-for="group in searchGroupResults"
                             :key="group.id"
-                            class="x-friend-item"
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
                             @click="showGroupDialog(group.id)">
-                            <div class="avatar">
-                                <img :src="getSmallThumbnailUrl(group.iconUrl)" loading="lazy" />
+                            <div class="relative inline-block flex-none size-9 mr-2.5">
+                                <img
+                                    class="size-full rounded-full object-cover"
+                                    :src="getSmallThumbnailUrl(group.iconUrl)"
+                                    loading="lazy" />
                             </div>
-                            <div class="detail">
-                                <span class="name">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     <span v-text="group.name"></span>
                                     <span style="margin-left: 5px; font-weight: normal">({{ group.memberCount }})</span>
                                     <span
@@ -428,16 +447,28 @@
     const searchWorldCategoryIndex = ref(null);
     const searchWorldResults = ref([]);
 
+    /**
+     *
+     * @param value
+     */
     function handleSearchAvatarFilterChange(value) {
         searchAvatarFilter.value = value;
         searchAvatar();
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleSearchAvatarFilterRemoteChange(value) {
         searchAvatarFilterRemote.value = value;
         searchAvatar();
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleSearchAvatarSortChange(value) {
         searchAvatarSort.value = value;
         searchAvatar();
@@ -453,10 +484,17 @@
     const searchGroupParams = ref({});
     const searchGroupResults = ref([]);
 
+    /**
+     *
+     * @param url
+     */
     function getSmallThumbnailUrl(url) {
         return convertFileUrlToImageUrl(url);
     }
 
+    /**
+     *
+     */
     function handleClearSearch() {
         searchUserParams.value = {};
         searchWorldParams.value = {};
@@ -469,15 +507,26 @@
         clearSearch();
     }
 
+    /**
+     *
+     * @param text
+     */
     function updateSearchText(text) {
         searchText.value = text;
     }
 
+    /**
+     *
+     * @param tabName
+     */
     function handleSearchTabChange(tabName) {
         searchText.value = '';
         activeSearchTab.value = tabName;
     }
 
+    /**
+     *
+     */
     function search() {
         switch (activeSearchTab.value) {
             case 'user':
@@ -495,6 +544,9 @@
         }
     }
 
+    /**
+     *
+     */
     async function searchUser() {
         searchUserParams.value = {
             n: 10,
@@ -506,12 +558,20 @@
         await handleMoreSearchUser();
     }
 
+    /**
+     *
+     * @param go
+     */
     async function handleMoreSearchUser(go = null) {
         isSearchUserLoading.value = true;
         await moreSearchUser(go, searchUserParams.value);
         isSearchUserLoading.value = false;
     }
 
+    /**
+     *
+     * @param ref
+     */
     function searchWorld(ref) {
         searchWorldOption.value = '';
         searchWorldCategoryIndex.value = ref?.index ?? null;
@@ -581,12 +641,20 @@
         moreSearchWorld();
     }
 
+    /**
+     *
+     * @param index
+     */
     function handleSearchWorldCategorySelect(index) {
         searchWorldCategoryIndex.value = index;
         const row = cachedConfig.value?.dynamicWorldRows?.find((r) => r.index === index);
         searchWorld(row || {});
     }
 
+    /**
+     *
+     * @param go
+     */
     function moreSearchWorld(go) {
         const params = searchWorldParams.value;
         if (go) {
@@ -614,6 +682,9 @@
             });
     }
 
+    /**
+     *
+     */
     async function searchAvatar() {
         let ref;
         isSearchAvatarLoading.value = true;
@@ -712,6 +783,10 @@
         searchAvatarResults.value = avatarsArray;
         searchAvatarPage.value = avatarsArray.slice(0, 10);
     }
+    /**
+     *
+     * @param n
+     */
     function moreSearchAvatar(n) {
         let offset;
         if (n === -1) {
@@ -724,6 +799,9 @@
         }
         searchAvatarPage.value = searchAvatarResults.value.slice(offset, offset + 10);
     }
+    /**
+     *
+     */
     async function searchGroup() {
         searchGroupParams.value = {
             n: 10,
@@ -732,6 +810,10 @@
         };
         await moreSearchGroup();
     }
+    /**
+     *
+     * @param go
+     */
     async function moreSearchGroup(go) {
         const params = searchGroupParams.value;
         if (go) {

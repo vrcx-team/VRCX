@@ -65,17 +65,26 @@
                 >
                 <Spinner v-if="setAvatarTagsDialog.loading" class="inline-block ml-2" />
                 <br />
-                <div class="x-friend-list" style="margin-top: 10px; min-height: 60px; max-height: 280px">
+                <div
+                    class="flex flex-wrap items-start max-h-[300px] overflow-hidden auto"
+                    style="margin-top: 10px; min-height: 60px">
                     <div
                         v-for="avatar in setAvatarTagsDialog.ownAvatars"
                         :key="avatar.id"
-                        :class="['item-width', 'x-friend-item', 'x-friend-item-border']"
+                        :class="[
+                            'item-width',
+                            'box-border flex items-center p-1.5 text-[13px] cursor-pointer border border-border rounded'
+                        ]"
                         @click="showAvatarDialog(avatar.id)">
-                        <div class="avatar">
-                            <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
+                        <div class="relative inline-block flex-none size-9 mr-2.5">
+                            <img
+                                v-if="avatar.thumbnailImageUrl"
+                                class="size-full rounded-full object-cover"
+                                :src="avatar.thumbnailImageUrl"
+                                loading="lazy" />
                         </div>
-                        <div class="detail">
-                            <span class="name" v-text="avatar.name"></span>
+                        <div class="flex-1 overflow-hidden">
+                            <span class="block truncate font-medium leading-[18px]" v-text="avatar.name"></span>
                             <span
                                 v-if="avatar.releaseStatus === 'public'"
                                 class="block truncate text-xs"

@@ -37,8 +37,7 @@
                 <div
                     v-for="image in galleryTable"
                     :key="image.id"
-                    class="x-friend-item"
-                    style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                    class="box-border inline-block mt-2.5 cursor-default">
                     <template v-if="image.versions && image.versions.length > 0">
                         <div
                             v-if="image.versions[image.versions.length - 1].file.url"
