@@ -353,7 +353,7 @@
                             @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)"
                             loading="lazy" />
                     </div>
-                    <div class="x-friend-list" style="max-height: none">
+                    <div class="flex flex-wrap items-start px-2.5" style="max-height: none">
                         <span
                             v-if="groupDialog.instances.length"
                             style="font-size: 12px; font-weight: bold; margin: 5px">
@@ -373,35 +373,42 @@
                             </div>
                             <div
                                 v-if="room.users.length"
-                                class="x-friend-list"
+                                class="flex flex-wrap items-start"
                                 style="margin: 10px 0; padding: 0; max-height: unset">
                                 <div
                                     v-for="user in room.users"
                                     :key="user.id"
-                                    class="x-friend-item x-friend-item-border"
+                                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                                     @click="showUserDialog(user.id)">
-                                    <div class="avatar" :class="userStatusClass(user)">
-                                        <img :src="userImage(user)" loading="lazy" />
+                                    <div
+                                        class="relative inline-block flex-none size-9 mr-2.5"
+                                        :class="userStatusClass(user)">
+                                        <img
+                                            class="size-full rounded-full object-cover"
+                                            :src="userImage(user)"
+                                            loading="lazy" />
                                     </div>
-                                    <div class="detail">
+                                    <div class="flex-1 overflow-hidden">
                                         <span
-                                            class="name"
+                                            class="block truncate font-medium leading-[18px]"
                                             :style="{ color: user.$userColour }"
                                             v-text="user.displayName" />
-                                        <span v-if="user.location === 'traveling'" class="extra">
+                                        <span v-if="user.location === 'traveling'" class="block truncate text-xs">
                                             <Spinner class="inline-block mr-1" />
                                             <Timer :epoch="user.$travelingToTime" />
                                         </span>
-                                        <span v-else class="extra">
+                                        <span v-else class="block truncate text-xs">
                                             <Timer :epoch="user.$location_at" />
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="width: 100%; cursor: default">
-                            <div class="detail">
-                                <span class="name">{{ t('dialog.group.info.announcement') }}</span>
+                        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">{{
+                                    t('dialog.group.info.announcement')
+                                }}</span>
                                 <span style="display: block" v-text="groupDialog.announcement.title" />
                                 <div
                                     v-if="groupDialog.announcement.imageUrl"
@@ -420,7 +427,7 @@
                                         loading="lazy" />
                                 </div>
                                 <pre
-                                    class="extra"
+                                    class="text-xs"
                                     style="
                                         display: inline-block;
                                         vertical-align: top;
@@ -434,7 +441,7 @@
                                 <br />
                                 <div
                                     v-if="groupDialog.announcement.id"
-                                    class="extra"
+                                    class="text-xs"
                                     style="float: right; margin-left: 5px">
                                     <TooltipWrapper v-if="groupDialog.announcement.roleIds.length" side="top">
                                         <template #content>
@@ -505,11 +512,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="width: 100%; cursor: default">
-                            <div class="detail">
-                                <span class="name">{{ t('dialog.group.info.rules') }}</span>
+                        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">{{
+                                    t('dialog.group.info.rules')
+                                }}</span>
                                 <pre
-                                    class="extra"
+                                    class="text-xs"
                                     style="
                                         font-family: inherit;
                                         font-size: 12px;
@@ -520,9 +529,11 @@
                                 >
                             </div>
                         </div>
-                        <div class="x-friend-item x-friend-item-no-hover" style="width: 100%; cursor: default">
-                            <div class="detail" style="overflow: visible">
-                                <span class="name">{{ t('dialog.group.info.upcoming_events') }}</span>
+                        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
+                            <div class="flex-1" style="overflow: visible">
+                                <span class="block truncate font-medium leading-[18px]">{{
+                                    t('dialog.group.info.upcoming_events')
+                                }}</span>
                                 <template v-if="upcomingCalenderEvents.length > 0">
                                     <br />
                                     <div class="grid-view events-row">
@@ -536,12 +547,14 @@
                                             card-class="group-dialog-grid-card" />
                                     </div>
                                 </template>
-                                <span v-else class="extra">-</span>
+                                <span v-else class="block truncate text-xs">-</span>
                             </div>
                         </div>
-                        <div class="x-friend-item x-friend-item-no-hover" style="width: 100%; cursor: default">
-                            <div class="detail" style="overflow: visible">
-                                <span class="name">{{ t('dialog.group.info.past_events') }}</span>
+                        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
+                            <div class="flex-1" style="overflow: visible">
+                                <span class="block truncate font-medium leading-[18px]">{{
+                                    t('dialog.group.info.past_events')
+                                }}</span>
                                 <template v-if="pastCalenderEvents.length > 0">
                                     <br />
                                     <div class="grid-view events-row">
@@ -555,27 +568,35 @@
                                             card-class="group-dialog-grid-card" />
                                     </div>
                                 </template>
-                                <span v-else class="extra">-</span>
+                                <span v-else class="block truncate text-xs">-</span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">{{ t('dialog.group.info.members') }}</span>
-                                <div class="extra">
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">{{
+                                    t('dialog.group.info.members')
+                                }}</span>
+                                <div class="block truncate text-xs">
                                     {{ groupDialog.ref.memberCount }} ({{ groupDialog.ref.onlineMemberCount }})
                                 </div>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">{{ t('dialog.group.info.created_at') }}</span>
-                                <span class="extra">{{ formatDateFilter(groupDialog.ref.createdAt, 'long') }}</span>
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">{{
+                                    t('dialog.group.info.created_at')
+                                }}</span>
+                                <span class="block truncate text-xs">{{
+                                    formatDateFilter(groupDialog.ref.createdAt, 'long')
+                                }}</span>
                             </div>
                         </div>
-                        <div class="x-friend-item" @click="showPreviousInstancesListDialog(groupDialog.ref)">
-                            <div class="detail">
+                        <div
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px]"
+                            @click="showPreviousInstancesListDialog(groupDialog.ref)">
+                            <div class="flex-1 overflow-hidden">
                                 <div
-                                    class="name"
+                                    class="block truncate font-medium leading-[18px]"
                                     style="display: flex; justify-content: space-between; align-items: center">
                                     <span>
                                         {{ t('dialog.group.info.last_visited') }}
@@ -584,12 +605,16 @@
                                         <MoreHorizontal style="margin-right: 16px" />
                                     </TooltipWrapper>
                                 </div>
-                                <span class="extra">{{ formatDateFilter(groupDialog.lastVisit, 'long') }}</span>
+                                <span class="block truncate text-xs">{{
+                                    formatDateFilter(groupDialog.lastVisit, 'long')
+                                }}</span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">{{ t('dialog.group.info.links') }}</span>
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">{{
+                                    t('dialog.group.info.links')
+                                }}</span>
                                 <div
                                     v-if="groupDialog.ref.links && groupDialog.ref.links.length > 0"
                                     style="margin-top: 5px"
@@ -613,14 +638,16 @@
                                         </TooltipWrapper>
                                     </template>
                                 </div>
-                                <div v-else class="extra">-</div>
+                                <div v-else class="block truncate text-xs">-</div>
                             </div>
                         </div>
                         <div class="inline-flex justify-between w-full">
-                            <div class="x-friend-item" style="cursor: default; width: 50%">
-                                <div class="detail">
-                                    <span class="name">{{ t('dialog.group.info.url') }}</span>
-                                    <span class="extra"
+                            <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-1/2">
+                                <div class="flex-1 overflow-hidden">
+                                    <span class="block truncate font-medium leading-[18px]">{{
+                                        t('dialog.group.info.url')
+                                    }}</span>
+                                    <span class="block truncate text-xs"
                                         >{{ groupDialog.ref.$url }}
                                         <TooltipWrapper side="top" :content="t('dialog.group.info.url_tooltip')">
                                             <Button
@@ -633,10 +660,12 @@
                                     ></span>
                                 </div>
                             </div>
-                            <div class="x-friend-item w-1/2" style="cursor: default; width: 50%">
-                                <div class="detail">
-                                    <span class="name">{{ t('dialog.group.info.id') }}</span>
-                                    <span class="extra"
+                            <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-1/2">
+                                <div class="flex-1 overflow-hidden">
+                                    <span class="block truncate font-medium leading-[18px]">{{
+                                        t('dialog.group.info.id')
+                                    }}</span>
+                                    <span class="block truncate text-xs"
                                         >{{ groupDialog.id }}
                                         <TooltipWrapper side="top" :content="t('dialog.group.info.id_tooltip')">
                                             <Button
@@ -654,19 +683,27 @@
                             v-if="groupDialog.ref.membershipStatus === 'member'"
                             style="width: 100%; margin-top: 10px; border-top: 1px solid #e4e7ed14">
                             <div style="width: 100%; display: flex; margin-top: 10px">
-                                <div class="x-friend-item" style="cursor: default">
-                                    <div class="detail">
-                                        <span class="name">{{ t('dialog.group.info.joined_at') }}</span>
-                                        <span class="extra">{{
+                                <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                                    <div class="flex-1 overflow-hidden">
+                                        <span class="block truncate font-medium leading-[18px]">{{
+                                            t('dialog.group.info.joined_at')
+                                        }}</span>
+                                        <span class="block truncate text-xs">{{
                                             formatDateFilter(groupDialog.ref.myMember.joinedAt, 'long')
                                         }}</span>
                                     </div>
                                 </div>
-                                <div class="x-friend-item" style="cursor: default">
-                                    <div class="detail">
-                                        <span class="name">{{ t('dialog.group.info.roles') }}</span>
-                                        <span v-if="groupDialog.memberRoles.length === 0" class="extra"> - </span>
-                                        <span v-else class="extra">
+                                <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                                    <div class="flex-1 overflow-hidden">
+                                        <span class="block truncate font-medium leading-[18px]">{{
+                                            t('dialog.group.info.roles')
+                                        }}</span>
+                                        <span
+                                            v-if="groupDialog.memberRoles.length === 0"
+                                            class="block truncate text-xs">
+                                            -
+                                        </span>
+                                        <span v-else class="block truncate text-xs">
                                             <template v-for="(role, rIndex) in groupDialog.memberRoles" :key="rIndex">
                                                 <TooltipWrapper side="top">
                                                     <template #content>
@@ -722,13 +759,12 @@
                             :placeholder="t('dialog.group.posts.search_placeholder')"
                             style="width: 89%; margin-bottom: 10px"
                             @input="updateGroupPostSearch" />
-                        <div class="x-friend-list">
+                        <div class="flex flex-wrap items-start">
                             <div
                                 v-for="post in groupDialog.postsFiltered"
                                 :key="post.id"
-                                class="x-friend-item"
-                                style="width: 100%; cursor: default">
-                                <div class="detail">
+                                class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
+                                <div class="flex-1 overflow-hidden">
                                     <span style="display: block" v-text="post.title" />
                                     <div v-if="post.imageUrl" style="display: inline-block; margin-right: 5px">
                                         <img
@@ -745,7 +781,7 @@
                                             loading="lazy" />
                                     </div>
                                     <pre
-                                        class="extra"
+                                        class="text-xs"
                                         style="
                                             display: inline-block;
                                             vertical-align: top;
@@ -757,7 +793,7 @@
                                         >{{ post.text || '-' }}</pre
                                     >
                                     <br />
-                                    <div v-if="post.authorId" class="extra" style="float: right; margin-left: 5px">
+                                    <div v-if="post.authorId" class="text-xs" style="float: right; margin-left: 5px">
                                         <TooltipWrapper v-if="post.roleIds.length" side="top">
                                             <template #content>
                                                 <span>{{ t('dialog.group.posts.visibility') }}</span>
@@ -911,22 +947,25 @@
                         </div>
                         <div
                             v-if="groupDialog.memberSearch.length"
-                            class="x-friend-list"
+                            class="flex flex-wrap items-start"
                             style="margin-top: 10px; overflow: auto; max-height: 250px; min-width: 130px">
                             <div
                                 v-for="user in groupDialog.memberSearchResults"
                                 :key="user.id"
-                                class="x-friend-item x-friend-item-border"
+                                class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                                 @click="showUserDialog(user.userId)">
-                                <div class="avatar">
-                                    <img :src="userImage(user.user)" loading="lazy" />
+                                <div class="relative inline-block flex-none size-9 mr-2.5">
+                                    <img
+                                        class="size-full rounded-full object-cover"
+                                        :src="userImage(user.user)"
+                                        loading="lazy" />
                                 </div>
-                                <div class="detail">
+                                <div class="flex-1 overflow-hidden">
                                     <span
-                                        class="name"
+                                        class="block truncate font-medium leading-[18px]"
                                         :style="{ color: user.user?.$userColour }"
                                         v-text="user.user?.displayName" />
-                                    <span class="extra">
+                                    <span class="block truncate text-xs">
                                         <template v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')">
                                             <TooltipWrapper
                                                 v-if="user.isRepresenting"
@@ -971,22 +1010,25 @@
                         </div>
                         <ul
                             v-else-if="groupDialog.members.length > 0"
-                            class="infinite-list x-friend-list"
+                            class="infinite-list flex flex-wrap items-start"
                             style="margin-top: 10px; overflow: auto; max-height: 250px; min-width: 130px">
                             <li
                                 v-for="user in groupDialog.members"
                                 :key="user.id"
-                                class="infinite-list-item x-friend-item x-friend-item-border"
+                                class="infinite-list-item box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                                 @click="showUserDialog(user.userId)">
-                                <div class="avatar">
-                                    <img :src="userImage(user.user)" loading="lazy" />
+                                <div class="relative inline-block flex-none size-9 mr-2.5">
+                                    <img
+                                        class="size-full rounded-full object-cover"
+                                        :src="userImage(user.user)"
+                                        loading="lazy" />
                                 </div>
-                                <div class="detail">
+                                <div class="flex-1 overflow-hidden">
                                     <span
-                                        class="name"
+                                        class="block truncate font-medium leading-[18px]"
                                         :style="{ color: user.user?.$userColour }"
                                         v-text="user.user?.displayName" />
-                                    <span class="extra">
+                                    <span class="block truncate text-xs">
                                         <template v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')">
                                             <TooltipWrapper
                                                 v-if="user.isRepresenting"
@@ -1030,11 +1072,13 @@
                             </li>
                             <div
                                 v-if="!isGroupMembersDone"
-                                class="x-friend-item"
+                                class="box-border flex items-center p-1.5 text-[13px] cursor-pointer"
                                 style="width: 100%; height: 45px; text-align: center"
                                 @click="loadMoreGroupMembers">
-                                <div v-if="!isGroupMembersLoading" class="detail">
-                                    <span class="name">{{ t('dialog.group.members.load_more') }}</span>
+                                <div v-if="!isGroupMembersLoading" class="flex-1 overflow-hidden">
+                                    <span class="block truncate font-medium leading-[18px]">{{
+                                        t('dialog.group.members.load_more')
+                                    }}</span>
                                 </div>
                             </div>
                         </ul>
@@ -1373,6 +1417,11 @@
         }
     );
 
+    /**
+     *
+     * @param groupId
+     * @param userId
+     */
     function showInviteGroupDialog(groupId, userId) {
         if (groupId) {
             inviteGroupDialog.value.groupId = groupId;
@@ -1383,17 +1432,32 @@
         inviteGroupDialog.value.visible = true;
     }
 
+    /**
+     *
+     * @param groupRef
+     */
     function showPreviousInstancesListDialog(groupRef) {
         instanceStore.showPreviousInstancesListDialog('group', groupRef);
     }
 
+    /**
+     *
+     * @param groupId
+     */
     function setGroupRepresentation(groupId) {
         handleGroupRepresentationChange(groupId, true);
     }
+    /**
+     *
+     * @param groupId
+     */
     function clearGroupRepresentation(groupId) {
         handleGroupRepresentationChange(groupId, false);
     }
 
+    /**
+     *
+     */
     function groupMembersSearch() {
         if (groupDialog.value.memberSearch.length < 3) {
             groupDialog.value.memberSearchResults = [];
@@ -1403,6 +1467,9 @@
         debounce(groupMembersSearchDebounced, 200)();
     }
 
+    /**
+     *
+     */
     function groupMembersSearchDebounced() {
         const D = groupDialog.value;
         const search = D.memberSearch;
@@ -1436,6 +1503,11 @@
             });
     }
 
+    /**
+     *
+     * @param groupId
+     * @param isSet
+     */
     function handleGroupRepresentationChange(groupId, isSet) {
         groupRequest
             .setGroupRepresentation(groupId, {
@@ -1452,6 +1524,10 @@
             });
     }
 
+    /**
+     *
+     * @param id
+     */
     function cancelGroupRequest(id) {
         groupRequest
             .cancelGroupRequest({
@@ -1463,6 +1539,10 @@
                 }
             });
     }
+    /**
+     *
+     * @param post
+     */
     function confirmDeleteGroupPost(post) {
         modalStore
             .confirm({
@@ -1504,6 +1584,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param gallery
+     */
     function groupGalleryStatus(gallery) {
         const style = {};
         if (!gallery.membersOnly) {
@@ -1516,6 +1600,10 @@
         return style;
     }
 
+    /**
+     *
+     * @param command
+     */
     function groupDialogCommand(command) {
         const D = groupDialog.value;
         if (D.visible === false) {
@@ -1565,6 +1653,10 @@
         }
     }
 
+    /**
+     *
+     * @param groupId
+     */
     function blockGroup(groupId) {
         modalStore
             .confirm({
@@ -1586,6 +1678,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param groupId
+     */
     function unblockGroup(groupId) {
         modalStore
             .confirm({
@@ -1608,6 +1704,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param id
+     */
     function joinGroup(id) {
         if (!id) {
             return null;
@@ -1634,6 +1734,10 @@
             });
     }
 
+    /**
+     *
+     * @param tabName
+     */
     function handleGroupDialogTab(tabName) {
         groupDialog.value.lastActiveTab = tabName;
         if (tabName === 'Members') {
@@ -1645,10 +1749,17 @@
         }
     }
 
+    /**
+     *
+     */
     function loadLastActiveTab() {
         handleGroupDialogTab(groupDialog.value.lastActiveTab);
     }
 
+    /**
+     *
+     * @param tabName
+     */
     function groupDialogTabClick(tabName) {
         if (tabName === groupDialogTabCurrentName.value) {
             if (tabName === 'JSON') {
@@ -1660,6 +1771,11 @@
         groupDialogTabCurrentName.value = tabName;
     }
 
+    /**
+     *
+     * @param groupId
+     * @param post
+     */
     function showGroupPostEditDialog(groupId, post) {
         const D = groupPostEditDialog;
         D.sendNotification = true;
@@ -1692,6 +1808,9 @@
         D.visible = true;
     }
 
+    /**
+     *
+     */
     async function getGroupDialogGroupMembers() {
         const D = groupDialog.value;
         D.members = [];
@@ -1730,6 +1849,9 @@
         await loadMoreGroupMembers();
     }
 
+    /**
+     *
+     */
     async function loadMoreGroupMembers() {
         if (isGroupMembersDone.value || isGroupMembersLoading.value) {
             return;
@@ -1778,6 +1900,9 @@
             });
     }
 
+    /**
+     *
+     */
     async function getGroupGalleries() {
         updateGroupDialogData({ ...groupDialog.value, galleries: {} });
         groupDialogGalleryCurrentName.value = '0';
@@ -1788,6 +1913,11 @@
         isGroupGalleryLoading.value = false;
     }
 
+    /**
+     *
+     * @param groupId
+     * @param galleryId
+     */
     async function getGroupGallery(groupId, galleryId) {
         try {
             const params = {
@@ -1819,6 +1949,9 @@
         }
     }
 
+    /**
+     *
+     */
     function refreshGroupDialogTreeData() {
         const D = groupDialog.value;
         treeData.value = {
@@ -1830,6 +1963,9 @@
         };
     }
 
+    /**
+     *
+     */
     async function loadAllGroupMembers() {
         if (isGroupMembersLoading.value) {
             return;
@@ -1845,6 +1981,10 @@
         }
     }
 
+    /**
+     *
+     * @param sortOrder
+     */
     async function setGroupMemberSortOrder(sortOrder) {
         const D = groupDialog.value;
         if (D.memberSortOrder?.value === sortOrder?.value) {
@@ -1854,6 +1994,10 @@
         await getGroupDialogGroupMembers();
     }
 
+    /**
+     *
+     * @param filter
+     */
     async function setGroupMemberFilter(filter) {
         const D = groupDialog.value;
         if (D.memberFilter === filter) {
@@ -1863,6 +2007,10 @@
         await getGroupDialogGroupMembers();
     }
 
+    /**
+     *
+     * @param obj
+     */
     function updateGroupDialogData(obj) {
         groupDialog.value = {
             ...groupDialog.value,
@@ -1870,6 +2018,10 @@
         };
     }
 
+    /**
+     *
+     * @param event
+     */
     function updateFollowingCalendarData(event) {
         const calendar = groupDialog.value.calendar;
         for (let i = 0; i < calendar.length; i++) {

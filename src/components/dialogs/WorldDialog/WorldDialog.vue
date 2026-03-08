@@ -380,22 +380,27 @@
                                 </div>
                                 <div
                                     v-if="room.$location.userId || room.users.length"
-                                    class="x-friend-list"
+                                    class="flex flex-wrap items-start"
                                     style="margin: 10px 0; max-height: unset">
                                     <div
                                         v-if="room.$location.userId"
-                                        class="x-friend-item x-friend-item-border"
+                                        class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                                         @click="showUserDialog(room.$location.userId)">
                                         <template v-if="room.$location.user">
-                                            <div class="avatar" :class="userStatusClass(room.$location.user)">
-                                                <img :src="userImage(room.$location.user, true)" loading="lazy" />
+                                            <div
+                                                class="relative inline-block flex-none size-9 mr-2.5"
+                                                :class="userStatusClass(room.$location.user)">
+                                                <img
+                                                    class="size-full rounded-full object-cover"
+                                                    :src="userImage(room.$location.user, true)"
+                                                    loading="lazy" />
                                             </div>
-                                            <div class="detail">
+                                            <div class="flex-1 overflow-hidden">
                                                 <span
-                                                    class="name"
+                                                    class="block truncate font-medium leading-[18px]"
                                                     :style="{ color: room.$location.user.$userColour }"
                                                     v-text="room.$location.user.displayName" />
-                                                <span class="extra">
+                                                <span class="block truncate text-xs">
                                                     {{ t('dialog.world.instances.instance_creator') }}
                                                 </span>
                                             </div>
@@ -405,21 +410,26 @@
                                     <div
                                         v-for="user in room.users"
                                         :key="user.id"
-                                        class="x-friend-item x-friend-item-border"
+                                        class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                                         @click="showUserDialog(user.id)">
-                                        <div class="avatar" :class="userStatusClass(user)">
-                                            <img :src="userImage(user, true)" loading="lazy" />
+                                        <div
+                                            class="relative inline-block flex-none size-9 mr-2.5"
+                                            :class="userStatusClass(user)">
+                                            <img
+                                                class="size-full rounded-full object-cover"
+                                                :src="userImage(user, true)"
+                                                loading="lazy" />
                                         </div>
-                                        <div class="detail">
+                                        <div class="flex-1 overflow-hidden">
                                             <span
-                                                class="name"
+                                                class="block truncate font-medium leading-[18px]"
                                                 :style="{ color: user.$userColour }"
                                                 v-text="user.displayName" />
-                                            <span v-if="user.location === 'traveling'" class="extra">
+                                            <span v-if="user.location === 'traveling'" class="block truncate text-xs">
                                                 <Spinner class="inline-block mr-1" />
                                                 <Timer :epoch="user.$travelingToTime" />
                                             </span>
-                                            <span v-else class="extra">
+                                            <span v-else class="block truncate text-xs">
                                                 <Timer :epoch="user.$location_at" />
                                             </span>
                                         </div>
@@ -430,15 +440,15 @@
                     </div>
                 </template>
                 <template #Info>
-                    <div class="x-friend-list" style="max-height: none">
-                        <div class="x-friend-item" style="width: 100%; cursor: default">
-                            <div class="detail">
-                                <span class="name">
+                    <div class="flex flex-wrap items-start px-2.5" style="max-height: none">
+                        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.memo') }}
                                 </span>
                                 <InputGroupTextareaField
                                     v-model="memo"
-                                    class="extra"
+                                    class="text-xs"
                                     :rows="2"
                                     :placeholder="t('dialog.world.info.memo_placeholder')"
                                     input-class="resize-none min-h-0"
@@ -446,12 +456,12 @@
                             </div>
                         </div>
                         <div style="width: 100%; display: flex">
-                            <div class="x-friend-item" style="width: 100%; cursor: default">
-                                <div class="detail">
-                                    <span class="name">
+                            <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
+                                <div class="flex-1 overflow-hidden">
+                                    <span class="block truncate font-medium leading-[18px]">
                                         {{ t('dialog.world.info.id') }}
                                     </span>
-                                    <span class="extra" style="display: inline">
+                                    <span class="block truncate text-xs" style="display: inline">
                                         {{ worldDialog.id }}
                                     </span>
                                     <TooltipWrapper side="top" :content="t('dialog.world.info.id_tooltip')">
@@ -483,95 +493,95 @@
                         </div>
                         <div
                             v-if="worldDialog.ref.previewYoutubeId"
-                            class="x-friend-item"
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer"
                             style="width: 350px"
                             @click="
                                 openExternalLink(`https://www.youtube.com/watch?v=${worldDialog.ref.previewYoutubeId}`)
                             ">
-                            <div class="detail">
-                                <span class="name">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.youtube_preview') }}
                                 </span>
-                                <span class="extra">
+                                <span class="block truncate text-xs">
                                     https://www.youtube.com/watch?v={{ worldDialog.ref.previewYoutubeId }}
                                 </span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="width: 100%; cursor: default">
-                            <div class="detail">
-                                <span class="name">
+                        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.author_tags') }}
                                 </span>
                                 <span
                                     v-if="
                                         worldDialog.ref.tags?.filter((tag) => tag.startsWith('author_tag')).length > 0
                                     "
-                                    class="extra">
+                                    class="block truncate text-xs">
                                     {{ worldTags }}
                                 </span>
-                                <span v-else class="extra"> - </span>
+                                <span v-else class="block truncate text-xs"> - </span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.players') }}
                                 </span>
-                                <span class="extra">
+                                <span class="block truncate text-xs">
                                     {{ commaNumber(worldDialog.ref.occupants) }}
                                 </span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.favorites') }}
                                 </span>
-                                <span class="extra">
+                                <span class="block truncate text-xs">
                                     {{ commaNumber(worldDialog.ref.favorites)
                                     }}<span
                                         v-if="worldDialog.ref?.favorites > 0 && worldDialog.ref?.visits > 0"
-                                        class="extra">
+                                        class="text-xs">
                                         ({{ favoriteRate }}%)
                                     </span>
                                 </span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.visits') }}
                                 </span>
-                                <span class="extra">
+                                <span class="block truncate text-xs">
                                     {{ commaNumber(worldDialog.ref.visits) }}
                                 </span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.capacity') }}
                                 </span>
-                                <span class="extra">
+                                <span class="block truncate text-xs">
                                     {{ commaNumber(worldDialog.ref.recommendedCapacity) }} ({{
                                         commaNumber(worldDialog.ref.capacity)
                                     }})
                                 </span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.created_at') }}
                                 </span>
-                                <span class="extra">
+                                <span class="block truncate text-xs">
                                     {{ formatDateFilter(worldDialog.ref.created_at, 'long') }}
                                 </span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name" style="display: inline">
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]" style="display: inline">
                                     {{ t('dialog.world.info.last_updated') }}
                                 </span>
                                 <TooltipWrapper
@@ -590,30 +600,28 @@
                                     </template>
                                     <ChevronDown class="inline-block" />
                                 </TooltipWrapper>
-                                <span class="extra">
+                                <span class="block truncate text-xs">
                                     {{ formatDateFilter(worldDialog.ref.updated_at, 'long') }}
                                 </span>
                             </div>
                         </div>
                         <div
                             v-if="worldDialog.ref.labsPublicationDate !== 'none'"
-                            class="x-friend-item"
-                            style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.labs_publication_date') }}
                                 </span>
-                                <span class="extra">
+                                <span class="block truncate text-xs">
                                     {{ formatDateFilter(worldDialog.ref.labsPublicationDate, 'long') }}
                                 </span>
                             </div>
                         </div>
                         <div
                             v-if="worldDialog.ref.publicationDate !== 'none'"
-                            class="x-friend-item"
-                            style="cursor: default">
-                            <div class="detail">
-                                <span class="name" style="display: inline">
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]" style="display: inline">
                                     {{ t('dialog.world.info.publication_date') }}
                                 </span>
                                 <TooltipWrapper v-if="isTimeInLabVisible" side="top" style="margin-left: 5px">
@@ -625,62 +633,68 @@
                                     </template>
                                     <ChevronDown class="inline-block" />
                                 </TooltipWrapper>
-                                <span class="extra">
+                                <span class="block truncate text-xs">
                                     {{ formatDateFilter(worldDialog.ref.publicationDate, 'long') }}
                                 </span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.version') }}
                                 </span>
-                                <span class="extra" v-text="worldDialog.ref.version" />
+                                <span class="block truncate text-xs" v-text="worldDialog.ref.version" />
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.heat') }}
                                 </span>
-                                <span class="extra">
+                                <span class="block truncate text-xs">
                                     {{ commaNumber(worldDialog.ref.heat) }} {{ '🔥'.repeat(worldDialog.ref.heat) }}
                                 </span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.popularity') }}
                                 </span>
-                                <span class="extra">
+                                <span class="block truncate text-xs">
                                     {{ commaNumber(worldDialog.ref.popularity) }}
                                     {{ '💖'.repeat(worldDialog.ref.popularity) }}
                                 </span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="width: 100%; cursor: default">
-                            <div class="detail">
-                                <span class="name">
+                        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.platform') }}
                                 </span>
-                                <span class="extra" style="white-space: normal">{{ worldDialogPlatform }}</span>
+                                <span class="block truncate text-xs" style="white-space: normal">{{
+                                    worldDialogPlatform
+                                }}</span>
                             </div>
                         </div>
 
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.last_visited') }}
                                 </span>
-                                <span class="extra">{{ formatDateFilter(worldDialog.lastVisit, 'long') }}</span>
+                                <span class="block truncate text-xs">{{
+                                    formatDateFilter(worldDialog.lastVisit, 'long')
+                                }}</span>
                             </div>
                         </div>
 
-                        <div class="x-friend-item" @click="showPreviousInstancesListDialog(worldDialog.ref)">
-                            <div class="detail">
+                        <div
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px]"
+                            @click="showPreviousInstancesListDialog(worldDialog.ref)">
+                            <div class="flex-1 overflow-hidden">
                                 <div
-                                    class="name"
+                                    class="block truncate font-medium leading-[18px]"
                                     style="display: flex; justify-content: space-between; align-items: center">
                                     <div>
                                         {{ t('dialog.world.info.visit_count') }}
@@ -690,17 +704,17 @@
                                         <MoreHorizontal style="margin-right: 16px" />
                                     </TooltipWrapper>
                                 </div>
-                                <span v-if="worldDialog.visitCount === 0" class="extra">-</span>
-                                <span v-else class="extra" v-text="worldDialog.visitCount"></span>
+                                <span v-if="worldDialog.visitCount === 0" class="block truncate text-xs">-</span>
+                                <span v-else class="block truncate text-xs" v-text="worldDialog.visitCount"></span>
                             </div>
                         </div>
 
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     {{ t('dialog.world.info.time_spent') }}
                                 </span>
-                                <span class="extra">
+                                <span class="block truncate text-xs">
                                     {{ worldDialog.timeSpent === 0 ? ' - ' : timeSpent }}
                                 </span>
                             </div>

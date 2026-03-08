@@ -344,11 +344,13 @@
                 :unmount-on-hide="false"
                 @update:modelValue="avatarDialogTabClick">
                 <template #Info>
-                    <div class="x-friend-list" style="max-height: unset">
+                    <div class="flex flex-wrap items-start px-2.5" style="max-height: unset">
                         <div
                             v-if="avatarDialog.galleryImages.length || avatarDialog.ref.authorId === currentUser.id"
                             style="width: 100%">
-                            <span class="name">{{ t('dialog.avatar.info.gallery') }}</span>
+                            <span class="block truncate font-medium leading-[18px]">{{
+                                t('dialog.avatar.info.gallery')
+                            }}</span>
                             <input
                                 id="AvatarGalleryUploadButton"
                                 type="file"
@@ -384,46 +386,56 @@
                             </div>
                         </div>
                         <div v-if="avatarDialog.ref.publishedListings?.length">
-                            <span class="name">{{ t('dialog.avatar.info.listings') }}</span>
+                            <span class="block truncate font-medium leading-[18px]">{{
+                                t('dialog.avatar.info.listings')
+                            }}</span>
                             <div
                                 v-for="listing in avatarDialog.ref.publishedListings"
                                 :key="listing.id"
-                                class="x-friend-item"
-                                style="width: 100%; cursor: default">
-                                <div class="avatar">
+                                class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
+                                <div class="relative inline-block flex-none size-9 mr-2.5">
                                     <img
+                                        class="size-full rounded-full object-cover"
                                         :src="getImageUrlFromImageId(listing.imageId)"
                                         @click="showFullscreenImageDialog(getImageUrlFromImageId(listing.imageId))"
                                         loading="lazy" />
                                 </div>
-                                <div class="detail">
-                                    <span class="name">{{ listing.displayName }}</span>
-                                    <span class="extra" style="text-decoration: underline; font-style: italic"
+                                <div class="flex-1 overflow-hidden">
+                                    <span class="block truncate font-medium leading-[18px]">{{
+                                        listing.displayName
+                                    }}</span>
+                                    <span
+                                        class="block truncate text-xs"
+                                        style="text-decoration: underline; font-style: italic"
                                         >${{ commaNumber(listing.priceTokens) }}V</span
                                     >
                                     <span
-                                        class="extra"
+                                        class="block truncate text-xs"
                                         style="text-overflow: ellipsis; text-wrap: auto"
                                         v-text="listing.description"></span>
                                 </div>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="width: 100%; cursor: default">
-                            <div class="detail">
-                                <span class="name" style="margin-bottom: 5px">{{ t('dialog.avatar.info.memo') }}</span>
+                        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]" style="margin-bottom: 5px">{{
+                                    t('dialog.avatar.info.memo')
+                                }}</span>
                                 <InputGroupTextareaField
                                     v-model="memo"
-                                    class="extra"
+                                    class="text-xs"
                                     :rows="2"
                                     :placeholder="t('dialog.avatar.info.memo_placeholder')"
                                     input-class="resize-none min-h-0"
                                     @change="onAvatarMemoChange" />
                             </div>
                         </div>
-                        <div class="x-friend-item" style="width: 100%; cursor: default">
-                            <div class="detail">
-                                <span class="name">{{ t('dialog.avatar.info.id') }}</span>
-                                <span class="extra"
+                        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">{{
+                                    t('dialog.avatar.info.id')
+                                }}</span>
+                                <span class="block truncate text-xs"
                                     >{{ avatarDialog.id
                                     }}<TooltipWrapper side="top" :content="t('dialog.avatar.info.id_tooltip')">
                                         <DropdownMenu>
@@ -449,15 +461,19 @@
                                 >
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">{{ t('dialog.avatar.info.created_at') }}</span>
-                                <span class="extra">{{ formatDateFilter(avatarDialog.ref.created_at, 'long') }}</span>
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">{{
+                                    t('dialog.avatar.info.created_at')
+                                }}</span>
+                                <span class="block truncate text-xs">{{
+                                    formatDateFilter(avatarDialog.ref.created_at, 'long')
+                                }}</span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name" style="display: inline">{{
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block font-medium leading-[18px]" style="display: inline">{{
                                     t('dialog.avatar.info.last_updated')
                                 }}</span>
                                 <TooltipWrapper
@@ -476,32 +492,45 @@
                                     </template>
                                     <ChevronDown class="inline-block" />
                                 </TooltipWrapper>
-                                <span class="extra">{{ formatDateFilter(avatarDialog.ref.updated_at, 'long') }}</span>
+                                <span class="block truncate text-xs">{{
+                                    formatDateFilter(avatarDialog.ref.updated_at, 'long')
+                                }}</span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">{{ t('dialog.avatar.info.version') }}</span>
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">{{
+                                    t('dialog.avatar.info.version')
+                                }}</span>
                                 <span
                                     v-if="avatarDialog.ref.version !== 0"
-                                    class="extra"
+                                    class="block truncate text-xs"
                                     v-text="avatarDialog.ref.version"></span>
-                                <span v-else class="extra">-</span>
+                                <span v-else class="block truncate text-xs">-</span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="cursor: default">
-                            <div class="detail">
-                                <span class="name">{{ t('dialog.avatar.info.time_spent') }}</span>
+                        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">{{
+                                    t('dialog.avatar.info.time_spent')
+                                }}</span>
 
-                                <span v-if="avatarDialog.timeSpent === 0" class="extra">-</span>
-                                <span v-else class="extra">{{ timeToText(avatarDialog.timeSpent) }}</span>
+                                <span v-if="avatarDialog.timeSpent === 0" class="block truncate text-xs">-</span>
+                                <span v-else class="block truncate text-xs">{{
+                                    timeToText(avatarDialog.timeSpent)
+                                }}</span>
                             </div>
                         </div>
-                        <div class="x-friend-item" style="width: 100%; cursor: default">
-                            <div class="detail">
-                                <span class="name">{{ t('dialog.avatar.info.platform') }}</span>
-                                <span v-if="avatarDialogPlatform" class="extra" v-text="avatarDialogPlatform"></span>
-                                <span v-else class="extra">-</span>
+                        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">{{
+                                    t('dialog.avatar.info.platform')
+                                }}</span>
+                                <span
+                                    v-if="avatarDialogPlatform"
+                                    class="block truncate text-xs"
+                                    v-text="avatarDialogPlatform"></span>
+                                <span v-else class="block truncate text-xs">-</span>
                             </div>
                         </div>
                     </div>

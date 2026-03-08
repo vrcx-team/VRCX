@@ -73,7 +73,7 @@
                         :key="avatar.id"
                         :class="[
                             'item-width',
-                            'box-border flex items-center p-1.5 text-[13px] cursor-pointer border border-border rounded'
+                            'box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:rounded-[25px_5px_5px_25px]'
                         ]"
                         @click="showAvatarDialog(avatar.id)">
                         <div class="relative inline-block flex-none size-9 mr-2.5">
@@ -154,6 +154,9 @@
         }
     );
 
+    /**
+     *
+     */
     function closeSetAvatarTagsDialog() {
         emit('update:setAvatarTagsDialog', {
             ...props.setAvatarTagsDialog,
@@ -161,6 +164,9 @@
         });
     }
 
+    /**
+     *
+     */
     function updateSelectedAvatarTags() {
         const D = props.setAvatarTagsDialog;
         if (D.contentHorror) {
@@ -202,6 +208,11 @@
         D.selectedTagsCsv = D.selectedTags.join(',').replace(/content_/g, '');
     }
 
+    /**
+     *
+     * @param avatarId
+     * @param checked
+     */
     function toggleAvatarSelection(avatarId, checked) {
         const D = props.setAvatarTagsDialog;
         const isSelected = D.selectedAvatarIds.includes(avatarId);
@@ -213,6 +224,9 @@
         }
     }
 
+    /**
+     *
+     */
     function updateAvatarTagsString() {
         const D = props.setAvatarTagsDialog;
         for (const ref of D.ownAvatars) {
@@ -238,6 +252,9 @@
         }
     }
 
+    /**
+     *
+     */
     function setAvatarTagsSelectToggle() {
         const D = props.setAvatarTagsDialog;
         const allSelected = D.ownAvatars.length === D.selectedAvatarIds.length;
@@ -252,6 +269,9 @@
         }
     }
 
+    /**
+     *
+     */
     async function saveSetAvatarTagsDialog() {
         const D = props.setAvatarTagsDialog;
         if (D.loading) {
@@ -287,6 +307,9 @@
         }
     }
 
+    /**
+     *
+     */
     function updateInputAvatarTags() {
         const D = props.setAvatarTagsDialog;
         D.contentHorror = false;
