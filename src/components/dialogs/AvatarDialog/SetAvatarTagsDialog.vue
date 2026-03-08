@@ -72,7 +72,7 @@
                         v-for="avatar in setAvatarTagsDialog.ownAvatars"
                         :key="avatar.id"
                         :class="[
-                            'item-width',
+                            'w-[335px]',
                             'box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:rounded-[25px_5px_5px_25px]'
                         ]"
                         @click="showAvatarDialog(avatar.id)">
@@ -343,9 +343,3 @@
         }
     }
 </script>
-
-<style scoped>
-    .item-width {
-        width: 335px;
-    }
-</style>

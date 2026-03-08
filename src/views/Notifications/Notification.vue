@@ -295,17 +295,3 @@
         sendInviteRequestResponseDialogVisible.value = true;
     }
 </script>
-
-<style scoped>
-    .button-pd-0 {
-        padding: 0;
-    }
-
-    .notification-image {
-        flex: none;
-        height: 30px;
-        width: 30px;
-        border-radius: 4px;
-        object-fit: cover;
-    }
-</style>

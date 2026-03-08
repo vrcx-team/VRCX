@@ -463,11 +463,3 @@
         friendsListSearchChange();
     }
 </script>
-
-<style scoped>
-    .friends-list-avatar {
-        object-fit: cover;
-        height: 22px;
-        width: 22px;
-    }
-</style>

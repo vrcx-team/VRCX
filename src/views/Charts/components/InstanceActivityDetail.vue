@@ -4,7 +4,7 @@
             <transition name="el-fade-in-linear">
                 <Location
                     v-show="!isLoading"
-                    class="location"
+                    class="flex items-center justify-center"
                     :location="activityDetailData[0]?.location"
                     is-open-previous-instance-info-dialog />
             </transition>
@@ -407,11 +407,3 @@
         initEcharts
     });
 </script>
-
-<style scoped>
-    .location {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-</style>

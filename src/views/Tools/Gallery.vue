@@ -11,27 +11,25 @@
             <template #label-gallery>
                 <span>
                     {{ t('dialog.gallery_icons.gallery') }}
-                    <span class="gallery-tab-count"> {{ galleryTable.length }}/64 </span>
+                    <span class="text-xs ml-[5px]"> {{ galleryTable.length }}/64 </span>
                 </span>
             </template>
             <template #label-icons>
                 <span>
                     {{ t('dialog.gallery_icons.icons') }}
-                    <span class="gallery-tab-count"> {{ VRCPlusIconsTable.length }}/64 </span>
+                    <span class="text-xs ml-[5px]"> {{ VRCPlusIconsTable.length }}/64 </span>
                 </span>
             </template>
             <template #label-emojis>
                 <span>
                     {{ t('dialog.gallery_icons.emojis') }}
-                    <span class="gallery-tab-count">
-                        {{ emojiTable.length }}/{{ cachedConfigTyped.maxUserEmoji }}
-                    </span>
+                    <span class="text-xs ml-[5px]"> {{ emojiTable.length }}/{{ cachedConfigTyped.maxUserEmoji }} </span>
                 </span>
             </template>
             <template #label-stickers>
                 <span>
                     {{ t('dialog.gallery_icons.stickers') }}
-                    <span class="gallery-tab-count">
+                    <span class="text-xs ml-[5px]">
                         {{ stickerTable.length }}/{{ cachedConfigTyped.maxUserStickers }}
                     </span>
                 </span>
@@ -39,13 +37,13 @@
             <template #label-prints>
                 <span>
                     {{ t('dialog.gallery_icons.prints') }}
-                    <span class="gallery-tab-count"> {{ printTable.length }}/64 </span>
+                    <span class="text-xs ml-[5px]"> {{ printTable.length }}/64 </span>
                 </span>
             </template>
             <template #label-inventory>
                 <span>
                     {{ t('dialog.gallery_icons.inventory') }}
-                    <span class="gallery-tab-count">
+                    <span class="text-xs ml-[5px]">
                         {{ inventoryTable.length }}
                     </span>
                 </span>
@@ -464,12 +462,12 @@
                                 :hint="image.worldName" />
                             <span v-else class="block">&nbsp;</span>
                             <DisplayName
-                                class="block truncate gallery-meta"
+                                class="block truncate font-mono"
                                 v-if="image.authorId"
                                 :userid="image.authorId"
                                 :hint="image.authorName" />
-                            <span v-else class="gallery-meta">&nbsp;</span>
-                            <span v-if="image.createdAt" class="block truncate gallery-meta gallery-meta--small">
+                            <span v-else class="font-mono block">&nbsp;</span>
+                            <span v-if="image.createdAt" class="block truncate font-mono text-[11px]">
                                 {{ formatDateFilter(image.createdAt, 'long') }}
                             </span>
                             <span v-else class="block">&nbsp;</span>
@@ -525,7 +523,7 @@
                             <span class="block truncate" v-text="item.name"></span>
                             <span v-if="item.description" class="block truncate" v-text="item.description"></span>
                             <span v-else class="block">&nbsp;</span>
-                            <span class="block truncate gallery-meta gallery-meta--small">
+                            <span class="block truncate font-mono text-[11px]">
                                 {{ formatDateFilter(item.created_at, 'long') }}
                             </span>
                             <span v-if="item.itemType === 'prop'">{{ t('dialog.gallery_icons.item') }}</span>
@@ -1222,19 +1220,3 @@
             .catch(() => {});
     }
 </script>
-
-<style scoped>
-    .gallery-tab-count {
-        font-size: 12px;
-        margin-left: 5px;
-    }
-
-    .gallery-meta {
-        font-family: monospace;
-        display: block;
-    }
-
-    .gallery-meta--small {
-        font-size: 11px;
-    }
-</style>

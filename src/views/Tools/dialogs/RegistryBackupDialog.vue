@@ -271,9 +271,3 @@
         isRegistryBackupDialogVisible.value = false;
     }
 </script>
-
-<style scoped>
-    .button-pd-0 {
-        padding: 0;
-    }
-</style>

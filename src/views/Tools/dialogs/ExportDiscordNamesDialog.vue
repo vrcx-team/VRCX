@@ -98,5 +98,3 @@
         emit('update:discordNamesDialogVisible', false);
     }
 </script>
-
-<style scoped></style>

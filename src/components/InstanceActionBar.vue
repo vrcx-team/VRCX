@@ -380,12 +380,3 @@
         immediate: true
     });
 </script>
-
-<style scoped>
-    .inline-block {
-        display: inline-block;
-    }
-    .ml-5 {
-        margin-left: 5px;
-    }
-</style>

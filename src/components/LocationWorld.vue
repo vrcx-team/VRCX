@@ -129,9 +129,3 @@
         groupStore.showGroupDialog(L.groupId);
     }
 </script>
-
-<style scoped>
-    .inline-block {
-        display: inline-block;
-    }
-</style>

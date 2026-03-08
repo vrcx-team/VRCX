@@ -1,6 +1,6 @@
 <template>
     <div class="cursor-pointer">
-        <div v-if="!text" class="transparent">-</div>
+        <div v-if="!text" class="text-transparent">-</div>
         <div v-show="text" class="flex items-center">
             <div v-if="region" :class="['flags', 'mr-1.5', 'shrink-0', region]"></div>
             <TooltipWrapper :content="tooltipContent" :disabled="tooltipDisabled" :delay-duration="300" side="top">
@@ -293,9 +293,3 @@
         showGroupDialog(L.groupId);
     }
 </script>
-
-<style scoped>
-    .transparent {
-        color: transparent;
-    }
-</style>

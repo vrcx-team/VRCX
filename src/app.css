@@ -6,14 +6,6 @@ html {
     animation: rotating 2s linear infinite;
 }
 
-.x-app {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    cursor: default;
-}
-
 .x-container {
     position: relative;
     padding: 10px;
@@ -35,31 +27,6 @@ html.dark .x-container {
     background: var(--sidebar);
 }
 
-.x-app > .x-container {
-    padding-top: 15px;
-}
-
-/*FIXME: this is a nasty temporary hack*/
-.force-pointer-on-hover a,
-.force-pointer-on-hover button,
-.force-pointer-on-hover [role='button'],
-.force-pointer-on-hover label,
-.force-pointer-on-hover summary,
-.force-pointer-on-hover .x-link,
-.force-pointer-on-hover input[type='submit'] {
-    cursor: pointer !important;
-}
-
 [data-sonner-toast] [data-content] [data-description] {
     white-space: pre-line;
-}
-
-.main-layout-wrapper {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    height: 100%;
-    min-height: 0;
-    min-width: 0;
-    overflow: hidden;
 }

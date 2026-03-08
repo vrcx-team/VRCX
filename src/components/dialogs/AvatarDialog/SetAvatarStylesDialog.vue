@@ -1,9 +1,11 @@
 <template>
     <Dialog
         :open="setAvatarStylesDialog.visible"
-        @update:open="(open) => {
-            if (!open) closeSetAvatarStylesDialog();
-        }">
+        @update:open="
+            (open) => {
+                if (!open) closeSetAvatarStylesDialog();
+            }
+        ">
         <DialogContent class="x-dialog sm:max-w-100">
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.set_avatar_styles.header') }}</DialogTitle>
@@ -11,61 +13,61 @@
 
             <template v-if="setAvatarStylesDialog.visible">
                 <div>
-                <span>{{ t('dialog.set_avatar_styles.primary_style') }}</span>
+                    <span>{{ t('dialog.set_avatar_styles.primary_style') }}</span>
+                    <br />
+                    <Select
+                        :model-value="setAvatarStylesDialog.primaryStyle"
+                        @update:modelValue="(v) => updateDialog({ primaryStyle: v === SELECT_CLEAR_VALUE ? '' : v })">
+                        <SelectTrigger size="sm" style="display: inline-flex">
+                            <SelectValue :placeholder="t('dialog.set_avatar_styles.select_style')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem :value="SELECT_CLEAR_VALUE">{{ t('dialog.gallery_select.none') }}</SelectItem>
+                            <SelectItem
+                                v-for="(style, index) in setAvatarStylesDialog.availableAvatarStyles"
+                                :key="index"
+                                :value="style">
+                                {{ style }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
                 <br />
-                <Select
-                    :model-value="setAvatarStylesDialog.primaryStyle"
-                    @update:modelValue="(v) => updateDialog({ primaryStyle: v === SELECT_CLEAR_VALUE ? '' : v })">
-                    <SelectTrigger size="sm" style="display: inline-flex">
-                        <SelectValue :placeholder="t('dialog.set_avatar_styles.select_style')" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem :value="SELECT_CLEAR_VALUE">{{ t('dialog.gallery_select.none') }}</SelectItem>
-                        <SelectItem
-                            v-for="(style, index) in setAvatarStylesDialog.availableAvatarStyles"
-                            :key="index"
-                            :value="style">
-                            {{ style }}
-                        </SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
 
-            <br />
+                <div>
+                    <span>{{ t('dialog.set_avatar_styles.secondary_style') }}</span>
+                    <br />
+                    <Select
+                        :model-value="setAvatarStylesDialog.secondaryStyle"
+                        @update:modelValue="(v) => updateDialog({ secondaryStyle: v === SELECT_CLEAR_VALUE ? '' : v })">
+                        <SelectTrigger size="sm" style="display: inline-flex">
+                            <SelectValue :placeholder="t('dialog.set_avatar_styles.select_style')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem :value="SELECT_CLEAR_VALUE">{{ t('dialog.gallery_select.none') }}</SelectItem>
+                            <SelectItem
+                                v-for="(style, index) in setAvatarStylesDialog.availableAvatarStyles"
+                                :key="index"
+                                :value="style">
+                                {{ style }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
 
-            <div>
-                <span>{{ t('dialog.set_avatar_styles.secondary_style') }}</span>
                 <br />
-                <Select
-                    :model-value="setAvatarStylesDialog.secondaryStyle"
-                    @update:modelValue="(v) => updateDialog({ secondaryStyle: v === SELECT_CLEAR_VALUE ? '' : v })">
-                    <SelectTrigger size="sm" style="display: inline-flex">
-                        <SelectValue :placeholder="t('dialog.set_avatar_styles.select_style')" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem :value="SELECT_CLEAR_VALUE">{{ t('dialog.gallery_select.none') }}</SelectItem>
-                        <SelectItem
-                            v-for="(style, index) in setAvatarStylesDialog.availableAvatarStyles"
-                            :key="index"
-                            :value="style">
-                            {{ style }}
-                        </SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
 
-            <br />
+                <div style="font-size: 12px">{{ t('dialog.set_world_tags.author_tags') }}</div>
 
-            <div style="font-size: 12px">{{ t('dialog.set_world_tags.author_tags') }}</div>
-
-            <InputGroupTextareaField
-                :model-value="setAvatarStylesDialog.authorTags"
-                :autosize="{ minRows: 2, maxRows: 5 }"
-                :rows="2"
-                placeholder=""
-                style="margin-top: 10px"
-                input-class="resize-none"
-                @update:modelValue="(v) => updateDialog({ authorTags: v })" />
+                <InputGroupTextareaField
+                    :model-value="setAvatarStylesDialog.authorTags"
+                    :autosize="{ minRows: 2, maxRows: 5 }"
+                    :rows="2"
+                    placeholder=""
+                    style="margin-top: 10px"
+                    input-class="resize-none"
+                    @update:modelValue="(v) => updateDialog({ authorTags: v })" />
             </template>
 
             <DialogFooter>
@@ -199,5 +201,3 @@
             });
     }
 </script>
-
-<style scoped></style>

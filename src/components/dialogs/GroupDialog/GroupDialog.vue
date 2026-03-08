@@ -536,7 +536,7 @@
                                 }}</span>
                                 <template v-if="upcomingCalenderEvents.length > 0">
                                     <br />
-                                    <div class="grid-view events-row">
+                                    <div class="grid-view flex flex-wrap gap-4 overflow-y-auto max-h-[360px] py-2.5">
                                         <GroupCalendarEventCard
                                             v-for="value in upcomingCalenderEvents"
                                             :key="value.id"
@@ -557,7 +557,7 @@
                                 }}</span>
                                 <template v-if="pastCalenderEvents.length > 0">
                                     <br />
-                                    <div class="grid-view events-row">
+                                    <div class="grid-view flex flex-wrap gap-4 overflow-y-auto max-h-[360px] py-2.5">
                                         <GroupCalendarEventCard
                                             v-for="value in pastCalenderEvents"
                                             :key="value.id"
@@ -2035,19 +2035,3 @@
         }
     }
 </script>
-<style scoped>
-    .time-group-container {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        overflow: visible;
-    }
-    .events-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-        overflow-y: auto;
-        max-height: 360px;
-        padding: 9px 0;
-    }
-</style>
