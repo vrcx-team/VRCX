@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import { createFriendPresenceCoordinator } from '../coordinators/friendPresenceCoordinator';
+import { createFriendPresenceCoordinator } from '../friendPresenceCoordinator';
 
 /**
  * @returns {object} Mock dependencies and mutable state for friend presence tests.

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { createGameCoordinator } from '../coordinators/gameCoordinator';
+import { createGameCoordinator } from '../gameCoordinator';
 
 /**
  *

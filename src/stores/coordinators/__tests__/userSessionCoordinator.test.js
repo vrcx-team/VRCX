@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { createUserSessionCoordinator } from '../coordinators/userSessionCoordinator';
+import { createUserSessionCoordinator } from '../userSessionCoordinator';
 
 /**
  *

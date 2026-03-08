@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import { createFriendRelationshipCoordinator } from '../coordinators/friendRelationshipCoordinator';
+import { createFriendRelationshipCoordinator } from '../friendRelationshipCoordinator';
 
 /**
  * @returns {Promise<void>} Promise flush helper.

@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import { createUserEventCoordinator } from '../coordinators/userEventCoordinator';
+import { createUserEventCoordinator } from '../userEventCoordinator';
 
 /**
  * @returns {object} Mock dependencies for user event tests.

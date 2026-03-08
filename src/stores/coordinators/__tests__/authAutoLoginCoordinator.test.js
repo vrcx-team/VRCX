@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { createAuthAutoLoginCoordinator } from '../coordinators/authAutoLoginCoordinator';
+import { createAuthAutoLoginCoordinator } from '../authAutoLoginCoordinator';
 
 /**
  *
