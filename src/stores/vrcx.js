@@ -234,6 +234,13 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     /**
+     * @param {string} value
+     */
+    function setProxyServer(value) {
+        proxyServer.value = value;
+    }
+
+    /**
      *
      */
     function clearVRCXCache() {
@@ -862,6 +869,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
         appStartAt,
         proxyServer,
+        setProxyServer,
         currentlyDroppingFile,
         isRegistryBackupDialogVisible,
         ipcEnabled,

@@ -208,6 +208,13 @@ export const useWorldStore = defineStore('World', () => {
     }
 
     /**
+     * @param {boolean} value
+     */
+    function setWorldDialogLoading(value) {
+        worldDialog.loading = value;
+    }
+
+    /**
      *
      */
     function updateVRChatWorldCache() {
@@ -316,6 +323,7 @@ export const useWorldStore = defineStore('World', () => {
         worldDialog,
         cachedWorlds,
         showWorldDialog,
+        setWorldDialogLoading,
         updateVRChatWorldCache,
         applyWorld,
         preloadOwnWorlds

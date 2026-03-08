@@ -243,6 +243,13 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     /**
+     * @param {boolean} value
+     */
+    function setAvatarDialogLoading(value) {
+        avatarDialog.value.loading = value;
+    }
+
+    /**
      *
      * @param {string} avatarId
      * @returns {Promise<string[]>}
@@ -800,6 +807,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         lookupAvatars,
         selectAvatarWithConfirmation,
         selectAvatarWithoutConfirmation,
+        setAvatarDialogLoading,
         showAvatarAuthorDialog,
         addAvatarWearTime,
         preloadOwnAvatars

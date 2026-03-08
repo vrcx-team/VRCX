@@ -62,7 +62,7 @@ async function saveUserMemo(id, memo) {
         } else {
             ref.$nickName = '';
         }
-        userStore.userDialog.memo = memo;
+        userStore.setUserDialogMemo(memo);
     }
 }
 

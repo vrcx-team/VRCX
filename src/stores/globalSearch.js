@@ -150,6 +150,13 @@ export const useGlobalSearchStore = defineStore('GlobalSearch', () => {
     }
 
     /**
+     * @param {string} value
+     */
+    function setQuery(value) {
+        query.value = value;
+    }
+
+    /**
      * @param {{id: string, type: string}} item
      */
     function selectResult(item) {
@@ -187,6 +194,7 @@ export const useGlobalSearchStore = defineStore('GlobalSearch', () => {
 
         open,
         close,
+        setQuery,
         selectResult
     };
 });

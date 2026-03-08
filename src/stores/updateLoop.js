@@ -151,6 +151,10 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         state.nextClearVRCXCacheCheck = value;
     }
 
+    function setNextGroupInstanceRefresh(value) {
+        state.nextGroupInstanceRefresh = value;
+    }
+
     return {
         // state,
 
@@ -159,6 +163,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         nextDiscordUpdate,
         ipcTimeout,
         updateLoop,
+        setNextGroupInstanceRefresh,
         setNextClearVRCXCacheCheck
     };
 });

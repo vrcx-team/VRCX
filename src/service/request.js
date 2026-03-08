@@ -167,7 +167,7 @@ export function request(endpoint, options) {
                     parsed.status === 429 &&
                     init.url.endsWith('/instances/groups')
                 ) {
-                    updateLoopStore.nextGroupInstanceRefresh = 120; // 1min
+                    updateLoopStore.setNextGroupInstanceRefresh(120); // 1min
                     $throw(429, t('api.status_code.429'), endpoint);
                 }
                 if (parsed.status === 504 || parsed.status === 502) {

@@ -21,7 +21,7 @@ const imageReq = {
         } catch (error) {
             console.error('Failed to cleanup avatar upload:', error);
         }
-        avatarStore.avatarDialog.loading = false;
+        avatarStore.setAvatarDialogLoading(false);
     },
 
     async uploadAvatarImage(params, fileId) {
@@ -154,7 +154,7 @@ const imageReq = {
         } catch (error) {
             console.error('Failed to cleanup world upload:', error);
         }
-        worldStore.worldDialog.loading = false;
+        worldStore.setWorldDialogLoading(false);
     },
 
     async uploadWorldImage(params, fileId) {

@@ -564,7 +564,7 @@ function handlePipeline(args) {
                 uiStore.notifyMenu('notification');
             }
             notificationStore.queueNotificationNoty(noty);
-            notificationStore.notificationTable.data.push(noty);
+            notificationStore.appendNotificationTableEntry(noty);
             sharedFeedStore.addEntry(noty);
             break;
 
