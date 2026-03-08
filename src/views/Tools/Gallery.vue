@@ -85,10 +85,9 @@
                     </ButtonGroup>
                     <br />
                     <div
-                        class="x-friend-item"
+                        class="inline-block mt-2.5 w-auto cursor-default"
                         v-for="image in galleryTable"
-                        :key="image.id"
-                        style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                        :key="image.id">
                         <template v-if="image.versions && image.versions.length > 0">
                             <div
                                 class="h-[200px] w-[200px] rounded-[20px] overflow-hidden"
@@ -158,10 +157,9 @@
                     </ButtonGroup>
                     <br />
                     <div
-                        class="x-friend-item"
+                        class="inline-block mt-2.5 w-auto cursor-default"
                         v-for="image in VRCPlusIconsTable"
-                        :key="image.id"
-                        style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                        :key="image.id">
                         <template v-if="image.versions && image.versions.length > 0"
                             ><div
                                 class="h-[200px] w-[200px] rounded-[20px] overflow-hidden"
@@ -295,11 +293,7 @@
                         </template>
                     </div>
                     <br />
-                    <div
-                        class="x-friend-item"
-                        v-for="image in emojiTable"
-                        :key="image.id"
-                        style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                    <div class="inline-block mt-2.5 w-auto cursor-default" v-for="image in emojiTable" :key="image.id">
                         <template v-if="image.versions && image.versions.length > 0">
                             <div
                                 class="h-[200px] w-[200px] rounded-[20px] overflow-hidden cursor-pointer"
@@ -377,10 +371,9 @@
                     </ButtonGroup>
                     <br />
                     <div
-                        class="x-friend-item"
+                        class="inline-block mt-2.5 w-auto cursor-default"
                         v-for="image in stickerTable"
-                        :key="image.id"
-                        style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                        :key="image.id">
                         <template v-if="image.versions && image.versions.length > 0">
                             <div
                                 class="h-[200px] w-[200px] rounded-[20px] overflow-hidden cursor-pointer"
@@ -452,11 +445,7 @@
                         </label>
                     </div>
                     <br />
-                    <div
-                        class="x-friend-item"
-                        v-for="image in printTable"
-                        :key="image.id"
-                        style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                    <div class="inline-block mt-2.5 w-auto cursor-default" v-for="image in printTable" :key="image.id">
                         <div
                             class="h-[200px] w-[200px] rounded-[20px] overflow-hidden cursor-pointer"
                             @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))">
@@ -523,10 +512,9 @@
                     </div>
                     <br />
                     <div
-                        class="x-friend-item"
+                        class="inline-block mt-2.5 w-auto cursor-default"
                         v-for="item in inventoryTable"
-                        :key="item.id"
-                        style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                        :key="item.id">
                         <div class="h-[200px] w-[200px] rounded-[20px] overflow-hidden cursor-default">
                             <img
                                 class="h-full w-full rounded-[15px] object-cover"
@@ -687,19 +675,35 @@
         galleryDialogVisible.value = false;
     });
 
+    /**
+     *
+     */
     function startUpload() {
         pendingUploads.value += 1;
     }
 
+    /**
+     *
+     */
     function finishUpload() {
         pendingUploads.value = Math.max(0, pendingUploads.value - 1);
     }
 
+    /**
+     *
+     */
     function goBack() {
         galleryDialogVisible.value = false;
         router.push({ name: 'tools' });
     }
 
+    /**
+     *
+     * @param file
+     * @param title
+     * @param aspectRatio
+     * @param handler
+     */
     function openCropDialog(file, title, aspectRatio, handler) {
         cropDialogTitle.value = title;
         cropDialogAspectRatio.value = aspectRatio;
@@ -708,6 +712,10 @@
         cropDialogOpen.value = true;
     }
 
+    /**
+     *
+     * @param blob
+     */
     async function onCropConfirm(blob) {
         if (!cropDialogUploadHandler.value) {
             return;
@@ -722,6 +730,10 @@
         }
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangeGallery(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#GalleryUploadButton',
@@ -752,10 +764,17 @@
         });
     }
 
+    /**
+     *
+     */
     function displayGalleryUpload() {
         document.getElementById('GalleryUploadButton').click();
     }
 
+    /**
+     *
+     * @param fileId
+     */
     function setProfilePicOverride(fileId) {
         if (!isLocalUserVrcPlusSupporter.value) {
             toast.error(t('message.vrcplus.required'));
@@ -778,6 +797,10 @@
             });
     }
 
+    /**
+     *
+     * @param fileId
+     */
     function compareCurrentProfilePic(fileId) {
         const currentProfilePicOverride = extractFileId(currentUser.value.profilePicOverride);
         if (fileId === currentProfilePicOverride) {
@@ -786,6 +809,10 @@
         return false;
     }
 
+    /**
+     *
+     * @param fileId
+     */
     function deleteGalleryImage(fileId) {
         miscRequest.deleteFile(fileId).then((args) => {
             const array = galleryTable.value;
@@ -801,6 +828,10 @@
         });
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangeVRCPlusIcon(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#VRCPlusIconUploadButton',
@@ -833,10 +864,17 @@
         });
     }
 
+    /**
+     *
+     */
     function displayVRCPlusIconUpload() {
         document.getElementById('VRCPlusIconUploadButton').click();
     }
 
+    /**
+     *
+     * @param fileId
+     */
     function setVRCPlusIcon(fileId) {
         if (!isLocalUserVrcPlusSupporter.value) {
             toast.error(t('message.vrcplus.required'));
@@ -859,6 +897,10 @@
             });
     }
 
+    /**
+     *
+     * @param userIcon
+     */
     function compareCurrentVRCPlusIcon(userIcon) {
         const currentUserIcon = extractFileId(currentUser.value.userIcon);
         if (userIcon === currentUserIcon) {
@@ -867,6 +909,10 @@
         return false;
     }
 
+    /**
+     *
+     * @param fileId
+     */
     function deleteVRCPlusIcon(fileId) {
         miscRequest.deleteFile(fileId).then((args) => {
             const array = VRCPlusIconsTable.value;
@@ -881,6 +927,10 @@
         });
     }
 
+    /**
+     *
+     * @param fileName
+     */
     function parseEmojiFileName(fileName) {
         // remove file extension
         fileName = fileName.replace(/\.[^/.]+$/, '');
@@ -904,6 +954,10 @@
         }
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangeEmoji(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#EmojiUploadButton',
@@ -950,10 +1004,17 @@
         });
     }
 
+    /**
+     *
+     */
     function displayEmojiUpload() {
         document.getElementById('EmojiUploadButton').click();
     }
 
+    /**
+     *
+     * @param fileId
+     */
     function deleteEmoji(fileId) {
         miscRequest.deleteFile(fileId).then((args) => {
             const array = emojiTable.value;
@@ -968,6 +1029,10 @@
         });
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangeSticker(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#StickerUploadButton',
@@ -1002,10 +1067,17 @@
         });
     }
 
+    /**
+     *
+     */
     function displayStickerUpload() {
         document.getElementById('StickerUploadButton').click();
     }
 
+    /**
+     *
+     * @param fileId
+     */
     function deleteSticker(fileId) {
         miscRequest.deleteFile(fileId).then((args) => {
             const array = stickerTable.value;
@@ -1021,6 +1093,10 @@
         });
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangePrint(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#PrintUploadButton',
@@ -1063,10 +1139,17 @@
         });
     }
 
+    /**
+     *
+     */
     function displayPrintUpload() {
         document.getElementById('PrintUploadButton').click();
     }
 
+    /**
+     *
+     * @param printId
+     */
     function deletePrint(printId) {
         vrcPlusImageRequest.deletePrint(printId).then((args) => {
             const array = printTable.value;
@@ -1080,6 +1163,10 @@
         });
     }
 
+    /**
+     *
+     * @param inventoryId
+     */
     async function consumeInventoryBundle(inventoryId) {
         try {
             await inventoryRequest.consumeInventoryBundle({
@@ -1104,6 +1191,9 @@
         // inventoryItemsCreated: 0
     }
 
+    /**
+     *
+     */
     async function redeemReward() {
         modalStore
             .prompt({

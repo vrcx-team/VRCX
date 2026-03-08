@@ -80,11 +80,12 @@
                             <br /><br />
                         </template>
                         <span>
-                            <span class="x-tag-platform-pc">PC: </span>{{ instance?.platforms?.standalonewindows }}
+                            <span class="text-platform-pc border-platform-pc!">PC: </span
+                            >{{ instance?.platforms?.standalonewindows }}
                         </span>
-                        <br />
                         <span>
-                            <span class="x-tag-platform-quest">Android: </span>{{ instance?.platforms?.android }}
+                            <span class="text-platform-quest border-platform-quest!">Android: </span
+                            >{{ instance?.platforms?.android }}
                         </span>
                         <br />
                         <span><span>iOS: </span>{{ instance?.platforms?.ios }}</span>

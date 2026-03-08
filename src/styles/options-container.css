@@ -1,0 +1,36 @@
+/*
+ * Options container layout styles.
+ * Used in Settings, Tools, and Charts views.
+ */
+
+.options-container {
+    margin-top: 30px;
+    padding: 0 10px 10px 10px;
+}
+
+.options-container .header-bar {
+    display: flex;
+    align-items: center;
+}
+
+.options-container .header {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.options-container .sub-header {
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.options-container-item {
+    font-size: 12px;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.options-container-item .name {
+    display: inline-block;
+    width: 235px;
+}

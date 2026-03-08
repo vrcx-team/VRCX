@@ -55,13 +55,13 @@
                             </Badge>
                             <TooltipWrapper v-if="worldDialog.isPC" side="top" content="PC">
                                 <Badge
-                                    class="x-tag-platform-pc"
+                                    class="text-platform-pc border-platform-pc!"
                                     variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
-                                    <Monitor class="h-4 w-4 x-tag-platform-pc" />
+                                    <Monitor class="h-4 w-4 text-platform-pc" />
                                     <span
                                         v-if="worldDialog.fileAnalysis.standalonewindows?._fileSize"
-                                        :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']">
+                                        class="x-grey text-platform-pc border-l-[0.8px] border-solid ml-1.5 pl-1.5 pb-px">
                                         {{ worldDialog.fileAnalysis.standalonewindows._fileSize }}
                                     </span>
                                 </Badge>
@@ -69,13 +69,13 @@
 
                             <TooltipWrapper v-if="worldDialog.isQuest" side="top" content="Quest">
                                 <Badge
-                                    class="x-tag-platform-quest"
+                                    class="text-platform-quest border-platform-quest!"
                                     variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
-                                    <Smartphone class="h-4 w-4 x-tag-platform-quest" />
+                                    <Smartphone class="h-4 w-4 text-platform-quest" />
                                     <span
                                         v-if="worldDialog.fileAnalysis.android?._fileSize"
-                                        :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']">
+                                        class="x-grey text-platform-quest border-l-[0.8px] border-solid ml-1.5 pl-1.5 pb-px">
                                         {{ worldDialog.fileAnalysis.android._fileSize }}
                                     </span>
                                 </Badge>
@@ -89,12 +89,7 @@
                                     <Apple class="h-4 w-4 text-platform-ios" />
                                     <span
                                         v-if="worldDialog.fileAnalysis.ios?._fileSize"
-                                        :class="[
-                                            'x-grey',
-                                            'x-tag-border-left',
-                                            'text-platform-ios',
-                                            'border-platform-ios'
-                                        ]">
+                                        class="x-grey text-platform-ios border-platform-ios border-l-[0.8px] border-solid ml-1.5 pl-1.5 pb-px">
                                         {{ worldDialog.fileAnalysis.ios._fileSize }}
                                     </span>
                                 </Badge>

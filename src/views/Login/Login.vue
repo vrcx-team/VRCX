@@ -103,13 +103,18 @@
                             <div
                                 v-for="user in savedCredentials"
                                 :key="user.user.id"
-                                class="x-friend-item hover:bg-muted rounded-xs"
+                                class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted rounded-xs"
                                 @click="clickSavedLogin(user)">
-                                <div class="avatar">
-                                    <img :src="userImage(user.user)" loading="lazy" />
+                                <div class="relative inline-block flex-none size-9 mr-2.5">
+                                    <img
+                                        class="size-full rounded-full object-cover"
+                                        :src="userImage(user.user)"
+                                        loading="lazy" />
                                 </div>
-                                <div class="detail">
-                                    <span class="name" v-text="user.user.displayName"></span>
+                                <div class="flex-1 overflow-hidden">
+                                    <span
+                                        class="block truncate font-medium leading-[18px]"
+                                        v-text="user.user.displayName"></span>
                                     <span class="block truncate text-xs" v-text="user.user.username"></span>
                                     <span class="block truncate text-xs" v-text="user.loginParams.endpoint"></span>
                                 </div>
@@ -210,11 +215,19 @@
         }
     });
 
+    /**
+     *
+     * @param userId
+     */
     async function clickDeleteSavedLogin(userId) {
         await deleteSavedLogin(userId);
         await updateSavedCredentials();
     }
 
+    /**
+     *
+     * @param user
+     */
     async function clickSavedLogin(user) {
         await relogin(user);
         await updateSavedCredentials();
@@ -227,6 +240,9 @@
         await updateSavedCredentials();
     });
 
+    /**
+     *
+     */
     async function updateSavedCredentials() {
         if (watchState.isLoggedIn) {
             return;
@@ -234,6 +250,9 @@
         savedCredentials.value = await getAllSavedCredentials();
     }
 
+    /**
+     *
+     */
     function postLoginRedirect() {
         const redirect = route.query.redirect;
         if (typeof redirect === 'string' && redirect.startsWith('/') && redirect !== '/login') {
@@ -340,7 +359,7 @@
         display: grid;
     }
 
-    .x-saved-account-list > .x-friend-item {
+    .x-saved-account-list > div {
         width: 100%;
     }
 

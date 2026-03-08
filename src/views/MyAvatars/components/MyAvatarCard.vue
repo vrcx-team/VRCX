@@ -166,10 +166,13 @@
 
                     <span class="text-muted-foreground">{{ t('dialog.avatar.info.platform') }}</span>
                     <div class="flex items-center gap-1">
-                        <Badge v-if="platformInfo.isPC" class="x-tag-platform-pc" variant="outline">
+                        <Badge v-if="platformInfo.isPC" class="text-platform-pc border-platform-pc!" variant="outline">
                             <Monitor class="h-3 w-3" />
                         </Badge>
-                        <Badge v-if="platformInfo.isQuest" class="x-tag-platform-quest" variant="outline">
+                        <Badge
+                            v-if="platformInfo.isQuest"
+                            class="text-platform-quest border-platform-quest!"
+                            variant="outline">
                             <Smartphone class="h-3 w-3" />
                         </Badge>
                         <Badge

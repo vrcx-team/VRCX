@@ -76,10 +76,12 @@
         </div>
         <div class="options-container">
             <span class="header">{{ t('view.profile.game_info.header') }}</span>
-            <div class="x-friend-list" style="margin-top: 10px">
-                <div class="x-friend-item">
-                    <div class="detail" @click="getVisits">
-                        <span class="name">{{ t('view.profile.game_info.online_users') }}</span>
+            <div class="px-2.5 overflow-y-auto overflow-x-hidden" style="margin-top: 10px">
+                <div class="box-border flex items-center p-1.5 text-[13px] cursor-pointer">
+                    <div class="flex-1 overflow-hidden" @click="getVisits">
+                        <span class="block truncate font-medium leading-[18px]">{{
+                            t('view.profile.game_info.online_users')
+                        }}</span>
                         <span v-if="visits" class="block truncate text-xs">{{
                             t('view.profile.game_info.user_online', { count: visits })
                         }}</span>

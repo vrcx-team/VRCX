@@ -67,3 +67,60 @@
     border-radius: 0;
     mask-image: url(/images/masks/phone.svg) !important;
 }
+
+/* Inline status dot indicators (used in dialogs and sidebar) */
+i.x-user-status,
+i.x-status-icon {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--status-offline-alt);
+    border-radius: 50%;
+}
+
+/* Suppress the ::after pseudo-element on inline <i> status dots.
+   The ::after is for avatar containers (.status-icon divs), not for <i> dots
+   which display status via their own background property. */
+i.x-user-status::after,
+i.x-status-icon::after {
+    display: none;
+}
+
+i.x-user-status.active {
+    background: var(--status-active);
+}
+
+i.x-user-status.online {
+    background: var(--status-online);
+}
+
+i.x-user-status.joinme {
+    background: var(--status-joinme);
+    mask-image: url(/images/masks/joinme.svg);
+}
+
+i.x-user-status.askme {
+    background: var(--status-askme);
+    mask-image: url(/images/masks/askme.svg);
+}
+
+i.x-user-status.busy {
+    background: var(--status-busy);
+    mask-image: url(/images/masks/busy.svg);
+}
+
+i.x-status-icon.green {
+    background: var(--status-online);
+}
+
+i.x-status-icon.blue {
+    background: var(--status-joinme);
+}
+
+i.x-status-icon.orange {
+    background: var(--status-askme);
+}
+
+i.x-status-icon.red {
+    background: var(--status-busy);
+}

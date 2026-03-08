@@ -84,7 +84,7 @@
                         v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
                         side="top"
                         :content="t('dialog.user.tags.age_verified')">
-                        <Badge variant="outline" class="x-tag-age-verification">
+                        <Badge variant="outline" class="text-[#3b82f6] border-[#3b82f6]!">
                             <template v-if="userDialog.ref.ageVerificationStatus === '18+'">
                                 <IdCard class="h-4 w-4" /> 18+
                             </template>
@@ -97,7 +97,7 @@
                         v-if="userDialog.isFriend && userDialog.friend"
                         side="top"
                         :content="t('dialog.user.tags.friend_number')">
-                        <Badge variant="outline" class="x-tag-friend">
+                        <Badge variant="outline" class="text-amber-400 border-amber-400!">
                             <UserPlus class="h-4 w-4" />
                             {{ userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : '' }}
                         </Badge>
@@ -106,7 +106,7 @@
                         v-if="userDialog.mutualFriendCount"
                         side="top"
                         :content="t('dialog.user.tags.mutual_friends')">
-                        <Badge variant="outline" class="x-tag-mutual-friend border-zinc-500/50! dark:border-zinc-400!">
+                        <Badge variant="outline" class="border-zinc-500/50! dark:border-zinc-400!">
                             <Users class="h-4 w-4" />
                             {{ userDialog.mutualFriendCount }}
                         </Badge>
@@ -117,7 +117,7 @@
                         :content="t('dialog.user.tags.open_in_discord')">
                         <Badge
                             variant="outline"
-                            class="x-tag-discord cursor-pointer"
+                            class="text-[#7289da] border-[#7289da]! cursor-pointer"
                             @click="openDiscordProfile(userDialog.ref.discordId)">
                             <i class="ri-discord-line text-xs"></i>
                             {{ t('dialog.user.tags.discord') }}
@@ -134,13 +134,13 @@
                     </Badge>
 
                     <TooltipWrapper v-if="userDialog.ref.$platform === 'standalonewindows'" side="top" content="PC">
-                        <Badge variant="outline" class="x-tag-platform-pc">
-                            <Monitor class="m-0.5 x-tag-platform-pc" />
+                        <Badge variant="outline" class="text-platform-pc border-platform-pc!">
+                            <Monitor class="m-0.5 text-platform-pc" />
                         </Badge>
                     </TooltipWrapper>
                     <TooltipWrapper v-else-if="userDialog.ref.$platform === 'android'" side="top" content="Android">
-                        <Badge variant="outline" class="x-tag-platform-quest">
-                            <Smartphone class="m-0.5 x-tag-platform-quest" />
+                        <Badge variant="outline" class="text-platform-quest border-platform-quest!">
+                            <Smartphone class="m-0.5 text-platform-quest" />
                         </Badge>
                     </TooltipWrapper>
                     <TooltipWrapper v-else-if="userDialog.ref.$platform === 'ios'" side="top" content="iOS">
@@ -148,7 +148,7 @@
                             <Apple class="m-0.5 text-platform-ios" />
                         </Badge>
                     </TooltipWrapper>
-                    <Badge v-else-if="userDialog.ref.$platform" variant="outline" class="x-tag-platform-other">
+                    <Badge v-else-if="userDialog.ref.$platform" variant="outline" class="text-muted-foreground">
                         {{ userDialog.ref.$platform }}
                     </Badge>
 

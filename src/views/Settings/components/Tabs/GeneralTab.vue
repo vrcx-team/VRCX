@@ -2,31 +2,43 @@
     <div>
         <div class="options-container" style="margin-top: 0">
             <span class="header">{{ t('view.settings.general.general.header') }}</span>
-            <div class="x-friend-list" style="margin-top: 10px">
-                <div class="x-friend-item" style="cursor: default">
-                    <div class="detail">
-                        <span class="name">{{ t('view.settings.general.general.version') }}</span>
+            <div class="px-2.5 overflow-y-auto overflow-x-hidden" style="margin-top: 10px">
+                <div class="box-border flex items-center p-1.5 text-[13px] cursor-default">
+                    <div class="flex-1 overflow-hidden">
+                        <span class="block truncate font-medium leading-[18px]">{{
+                            t('view.settings.general.general.version')
+                        }}</span>
                         <span class="block truncate text-xs" v-text="appVersion"></span>
                     </div>
                 </div>
-                <div class="x-friend-item" @click="checkForVRCXUpdate">
-                    <div class="detail">
-                        <span class="name">{{ t('view.settings.general.general.latest_app_version') }}</span>
+                <div class="box-border flex items-center p-1.5 text-[13px] cursor-pointer" @click="checkForVRCXUpdate">
+                    <div class="flex-1 overflow-hidden">
+                        <span class="block truncate font-medium leading-[18px]">{{
+                            t('view.settings.general.general.latest_app_version')
+                        }}</span>
                         <span v-if="latestAppVersion" class="block truncate text-xs" v-text="latestAppVersion"></span>
                         <span v-else class="block truncate text-xs">{{
                             t('view.settings.general.general.latest_app_version_refresh')
                         }}</span>
                     </div>
                 </div>
-                <div class="x-friend-item" @click="openExternalLink(links.github)">
-                    <div class="detail">
-                        <span class="name">{{ t('view.settings.general.general.repository_url') }}</span>
+                <div
+                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer"
+                    @click="openExternalLink(links.github)">
+                    <div class="flex-1 overflow-hidden">
+                        <span class="block truncate font-medium leading-[18px]">{{
+                            t('view.settings.general.general.repository_url')
+                        }}</span>
                         <span v-once class="block truncate text-xs">{{ links.github }}</span>
                     </div>
                 </div>
-                <div class="x-friend-item" @click="openExternalLink(links.discord)">
-                    <div class="detail">
-                        <span class="name">{{ t('view.settings.general.general.support') }}</span>
+                <div
+                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer"
+                    @click="openExternalLink(links.discord)">
+                    <div class="flex-1 overflow-hidden">
+                        <span class="block truncate font-medium leading-[18px]">{{
+                            t('view.settings.general.general.support')
+                        }}</span>
                         <span v-once class="block truncate text-xs">{{ links.discord }}</span>
                     </div>
                 </div>

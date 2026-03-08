@@ -11,6 +11,8 @@
 @import './animated-emoji.css';
 @import './fonts.css';
 @import './noty.css';
+@import './status-icon.css';
+@import './options-container.css';
 
 @custom-variant dark (&:is(.dark *));
 
